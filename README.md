@@ -1,2 +1,2 @@
 # AntCashManager
-My cash manager application like an Ant.
+My cash manager application like an ant.
