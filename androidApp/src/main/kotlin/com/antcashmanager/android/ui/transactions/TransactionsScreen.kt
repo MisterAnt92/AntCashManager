@@ -68,9 +68,10 @@ fun TransactionsScreen(transactionRepository: TransactionRepository) {
     }
 }
 
+private val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+
 @Composable
 private fun TransactionItem(transaction: Transaction) {
-    val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
     Card(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier

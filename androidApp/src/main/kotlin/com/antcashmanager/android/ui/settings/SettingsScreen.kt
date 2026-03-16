@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -74,7 +74,7 @@ fun SettingsScreen(settingsRepository: SettingsRepository) {
                 .fillMaxWidth()
                 .clickable { showThemeDialog = true }
         )
-        Divider()
+        HorizontalDivider()
 
         // Privacy Policy
         ListItem(
@@ -83,7 +83,7 @@ fun SettingsScreen(settingsRepository: SettingsRepository) {
                 .fillMaxWidth()
                 .clickable { showPrivacyDialog = true }
         )
-        Divider()
+        HorizontalDivider()
 
         // App Version
         ListItem(
@@ -91,7 +91,7 @@ fun SettingsScreen(settingsRepository: SettingsRepository) {
             supportingContent = { Text(BuildConfig.VERSION_NAME) },
             modifier = Modifier.fillMaxWidth()
         )
-        Divider()
+        HorizontalDivider()
     }
 
     if (showThemeDialog) {

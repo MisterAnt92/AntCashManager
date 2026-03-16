@@ -22,7 +22,7 @@ class SettingsRepositoryImpl(
     override fun getTheme(): Flow<AppTheme> =
         context.dataStore.data.map { preferences ->
             val themeName = preferences[themeKey] ?: AppTheme.SYSTEM.name
-            AppTheme.valueOf(themeName)
+            AppTheme.entries.find { it.name == themeName } ?: AppTheme.SYSTEM
         }
 
     override suspend fun setTheme(theme: AppTheme) {
