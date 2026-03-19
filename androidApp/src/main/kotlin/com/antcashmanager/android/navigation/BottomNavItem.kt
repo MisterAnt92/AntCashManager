@@ -1,8 +1,8 @@
 package com.antcashmanager.android.navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 
@@ -20,7 +20,7 @@ sealed class BottomNavItem(
     data object Transactions : BottomNavItem(
         route = "transactions",
         title = "Transactions",
-        icon = Icons.Default.List
+        icon = Icons.AutoMirrored.Filled.List
     )
 
     data object Settings : BottomNavItem(
