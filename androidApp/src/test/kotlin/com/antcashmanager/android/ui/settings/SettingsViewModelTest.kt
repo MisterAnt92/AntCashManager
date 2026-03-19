@@ -1,11 +1,16 @@
 package com.antcashmanager.android.ui.settings
 
 import com.antcashmanager.domain.model.AppTheme
+import com.antcashmanager.domain.model.Category
+import com.antcashmanager.domain.model.Transaction
+import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
+import com.antcashmanager.domain.repository.TransactionRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -15,6 +20,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -22,14 +28,18 @@ import org.junit.Test
 class SettingsViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
-    private lateinit var fakeRepo: FakeSettingsRepository
+    private lateinit var fakeSettingsRepo: FakeSettingsRepository
+    private lateinit var fakeTransactionRepo: FakeTransactionRepository
+    private lateinit var fakeCategoryRepo: FakeCategoryRepository
     private lateinit var viewModel: SettingsViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        fakeRepo = FakeSettingsRepository()
-        viewModel = SettingsViewModel(fakeRepo)
+        fakeSettingsRepo = FakeSettingsRepository()
+        fakeTransactionRepo = FakeTransactionRepository()
+        fakeCategoryRepo = FakeCategoryRepository()
+        viewModel = SettingsViewModel(fakeSettingsRepo, fakeTransactionRepo, fakeCategoryRepo)
     }
 
     @After
@@ -97,7 +107,31 @@ class SettingsViewModelTest {
 
         collectJob.cancel()
     }
+
+    @Test
+    fun `deleteAllData clears transactions and categories`() = runTest(testDispatcher) {
+        // Add some test data
+        fakeTransactionRepo.transactions.value = listOf(
+            Transaction(id = 1, title = "Test", amount = 100.0, category = "Food", type = com.antcashmanager.domain.model.TransactionType.EXPENSE),
+        )
+        fakeCategoryRepo.categories.value = listOf(
+            Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373),
+        )
+
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.deleteResult.collect {}
+        }
+
+        viewModel.deleteAllData()
+        advanceUntilIdle()
+
+        assertTrue(fakeTransactionRepo.transactions.value.isEmpty())
+        assertTrue(fakeCategoryRepo.categories.value.isEmpty())
+        collectJob.cancel()
+    }
 }
+
+// ── Fake Repositories ──
 
 private class FakeSettingsRepository : SettingsRepository {
     private val themeFlow = MutableStateFlow(AppTheme.SYSTEM)
@@ -106,5 +140,60 @@ private class FakeSettingsRepository : SettingsRepository {
 
     override suspend fun setTheme(theme: AppTheme) {
         themeFlow.value = theme
+    }
+}
+
+private class FakeTransactionRepository : TransactionRepository {
+    val transactions = MutableStateFlow<List<Transaction>>(emptyList())
+
+    override fun getAllTransactions(): Flow<List<Transaction>> = transactions
+
+    override suspend fun getTransactionById(id: Long): Transaction? =
+        transactions.value.find { it.id == id }
+
+    override suspend fun insertTransaction(transaction: Transaction): Long {
+        transactions.value = transactions.value + transaction
+        return transaction.id
+    }
+
+    override suspend fun updateTransaction(transaction: Transaction) {
+        transactions.value = transactions.value.map { if (it.id == transaction.id) transaction else it }
+    }
+
+    override suspend fun deleteTransaction(transaction: Transaction) {
+        transactions.value = transactions.value.filter { it.id != transaction.id }
+    }
+
+    override suspend fun deleteAllTransactions() {
+        transactions.value = emptyList()
+    }
+
+    override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> =
+        transactions.map { list -> list.filter { it.timestamp in from..to } }
+}
+
+private class FakeCategoryRepository : CategoryRepository {
+    val categories = MutableStateFlow<List<Category>>(emptyList())
+
+    override fun getAllCategories(): Flow<List<Category>> = categories
+
+    override suspend fun getCategoryById(id: Long): Category? =
+        categories.value.find { it.id == id }
+
+    override suspend fun insertCategory(category: Category): Long {
+        categories.value = categories.value + category
+        return category.id
+    }
+
+    override suspend fun updateCategory(category: Category) {
+        categories.value = categories.value.map { if (it.id == category.id) category else it }
+    }
+
+    override suspend fun deleteCategory(category: Category) {
+        categories.value = categories.value.filter { it.id != category.id }
+    }
+
+    override suspend fun deleteAllCategories() {
+        categories.value = emptyList()
     }
 }

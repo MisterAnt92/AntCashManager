@@ -15,22 +15,28 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.antcashmanager.android.ui.categories.CategoriesScreen
+import com.antcashmanager.android.ui.charts.ChartsScreen
 import com.antcashmanager.android.ui.home.HomeScreen
 import com.antcashmanager.android.ui.settings.SettingsScreen
 import com.antcashmanager.android.ui.transactions.TransactionsScreen
+import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
 
 val bottomNavItems = listOf(
     BottomNavItem.Home,
+    BottomNavItem.Charts,
     BottomNavItem.Transactions,
-    BottomNavItem.Settings
+    BottomNavItem.Categories,
+    BottomNavItem.Settings,
 )
 
 @Composable
 fun AntCashManagerNavHost(
     transactionRepository: TransactionRepository,
-    settingsRepository: SettingsRepository
+    settingsRepository: SettingsRepository,
+    categoryRepository: CategoryRepository,
 ) {
     val navController = rememberNavController()
     Scaffold(
@@ -51,25 +57,35 @@ fun AntCashManagerNavHost(
                                 launchSingleTop = true
                                 restoreState = true
                             }
-                        }
+                        },
                     )
                 }
             }
-        }
+        },
     ) { innerPadding ->
         NavHost(
             navController = navController,
             startDestination = BottomNavItem.Home.route,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
         ) {
             composable(BottomNavItem.Home.route) {
                 HomeScreen(transactionRepository = transactionRepository)
             }
+            composable(BottomNavItem.Charts.route) {
+                ChartsScreen(transactionRepository = transactionRepository)
+            }
             composable(BottomNavItem.Transactions.route) {
                 TransactionsScreen(transactionRepository = transactionRepository)
             }
+            composable(BottomNavItem.Categories.route) {
+                CategoriesScreen(categoryRepository = categoryRepository)
+            }
             composable(BottomNavItem.Settings.route) {
-                SettingsScreen(settingsRepository = settingsRepository)
+                SettingsScreen(
+                    settingsRepository = settingsRepository,
+                    transactionRepository = transactionRepository,
+                    categoryRepository = categoryRepository,
+                )
             }
         }
     }

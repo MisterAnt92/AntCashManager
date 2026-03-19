@@ -28,4 +28,12 @@ class TransactionRepositoryImpl(
 
     override suspend fun deleteTransaction(transaction: Transaction) =
         transactionDao.deleteTransaction(transaction.toEntity())
+
+    override suspend fun deleteAllTransactions() =
+        transactionDao.deleteAllTransactions()
+
+    override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> =
+        transactionDao.getTransactionsByDateRange(from, to).map { entities ->
+            entities.map { it.toDomain() }
+        }
 }

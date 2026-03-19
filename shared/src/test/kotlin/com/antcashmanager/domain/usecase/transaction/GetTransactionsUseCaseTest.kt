@@ -88,5 +88,10 @@ private class FakeTransactionRepository(
     override suspend fun updateTransaction(transaction: Transaction) = Unit
 
     override suspend fun deleteTransaction(transaction: Transaction) = Unit
+
+    override suspend fun deleteAllTransactions() = Unit
+
+    override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> =
+        flowOf(transactions.filter { it.timestamp in from..to })
 }
 

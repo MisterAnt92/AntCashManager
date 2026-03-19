@@ -30,7 +30,8 @@ class MainActivity : ComponentActivity() {
             AntCashManagerTheme(darkTheme = isDark) {
                 AntCashManagerNavHost(
                     transactionRepository = app.transactionRepository,
-                    settingsRepository = app.settingsRepository
+                    settingsRepository = app.settingsRepository,
+                    categoryRepository = app.categoryRepository,
                 )
             }
         }

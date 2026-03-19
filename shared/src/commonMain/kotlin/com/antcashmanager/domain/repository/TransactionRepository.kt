@@ -9,4 +9,6 @@ interface TransactionRepository {
     suspend fun insertTransaction(transaction: Transaction): Long
     suspend fun updateTransaction(transaction: Transaction)
     suspend fun deleteTransaction(transaction: Transaction)
+    suspend fun deleteAllTransactions()
+    fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>>
 }

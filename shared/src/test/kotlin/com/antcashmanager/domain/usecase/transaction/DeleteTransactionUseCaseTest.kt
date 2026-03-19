@@ -77,5 +77,12 @@ private class FakeDeleteTransactionRepository(
     override suspend fun deleteTransaction(transaction: Transaction) {
         transactions.remove(transaction)
     }
+
+    override suspend fun deleteAllTransactions() {
+        transactions.clear()
+    }
+
+    override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> =
+        flowOf(transactions.filter { it.timestamp in from..to })
 }
 
