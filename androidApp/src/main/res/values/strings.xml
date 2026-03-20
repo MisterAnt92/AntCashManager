@@ -16,11 +16,32 @@
     <string name="home_expenses">Expenses</string>
     <string name="home_recent_transactions">Recent Transactions</string>
     <string name="home_no_transactions">No transactions yet.\nAdd your first transaction!</string>
+    <string name="home_empty_ant">Our little ant is waiting for your first transaction! 🐜</string>
 
     <!-- Transactions Screen -->
     <string name="transactions_title">Transactions</string>
     <string name="transactions_empty">No transactions yet</string>
-    <string name="transactions_empty_subtitle">Your transactions will appear here</string>
+    <string name="transactions_empty_subtitle">Tap + to add your first transaction</string>
+    <string name="transactions_add">Add Transaction</string>
+    <string name="transactions_edit">Edit Transaction</string>
+    <string name="transactions_title_label">Title</string>
+    <string name="transactions_amount_label">Amount</string>
+    <string name="transactions_category_label">Category</string>
+    <string name="transactions_type_label">Type</string>
+    <string name="transactions_type_income">Income</string>
+    <string name="transactions_type_expense">Expense</string>
+    <string name="transactions_date_label">Date</string>
+    <string name="transactions_delete_title">Delete Transaction?</string>
+    <string name="transactions_delete_message">Are you sure you want to delete \"%s\"?</string>
+    <string name="transactions_add_content_desc">Add Transaction</string>
+    <string name="transactions_no_categories">No categories available. Add a category first.</string>
+    <string name="transactions_pick_date">Pick date</string>
+    <string name="transactions_notes_label">Notes</string>
+    <string name="transactions_payee_label">Payee</string>
+    <string name="transactions_location_label">Location</string>
+    <string name="transactions_recurring">Recurring</string>
+    <string name="transactions_tags_label">Tags</string>
+    <string name="transactions_empty_ant">The ant piggy bank is empty! Start saving! 🐜🐷</string>
 
     <!-- Categories Screen -->
     <string name="categories_title">Categories</string>
@@ -33,6 +54,11 @@
     <string name="categories_delete_message">Are you sure you want to delete \"%s\"?</string>
     <string name="categories_add_content_desc">Add Category</string>
     <string name="categories_selected">Selected</string>
+    <string name="categories_tab_expense">Expense</string>
+    <string name="categories_tab_income">Income</string>
+    <string name="categories_default_badge">Default</string>
+    <string name="categories_cannot_delete_default">Default categories cannot be deleted</string>
+    <string name="categories_icon_label">Icon</string>
 
     <!-- Charts Screen -->
     <string name="charts_title">Charts</string>
@@ -46,6 +72,7 @@
     <string name="charts_no_data">No data for the selected period</string>
     <string name="charts_pick_start_date">Pick start date</string>
     <string name="charts_pick_end_date">Pick end date</string>
+    <string name="charts_empty_ant">No data to chart yet! The ant is working hard! 🐜📊</string>
 
     <!-- Range Presets -->
     <string name="range_week">7 days</string>
@@ -64,6 +91,17 @@
     <string name="settings_theme_system">System Default</string>
     <string name="settings_language">Language</string>
     <string name="settings_language_subtitle">Choose the app language</string>
+    <string name="settings_display">Display</string>
+    <string name="settings_show_charts">Show Charts</string>
+    <string name="settings_show_charts_subtitle">Show or hide the Charts section in the navigation bar</string>
+    <string name="settings_accessibility">Accessibility</string>
+    <string name="settings_accessibility_subtitle">Customize how the app looks and behaves for better usability</string>
+    <string name="settings_high_contrast">High Contrast</string>
+    <string name="settings_high_contrast_subtitle">Increase contrast for better readability. Uses bolder colors and stronger borders.</string>
+    <string name="settings_large_text">Large Text</string>
+    <string name="settings_large_text_subtitle">Increase font size across the app for easier reading.</string>
+    <string name="settings_reduce_motion">Reduce Motion</string>
+    <string name="settings_reduce_motion_subtitle">Minimize animations and transitions. Helpful for users sensitive to motion.</string>
     <string name="settings_data_management">Data Management</string>
     <string name="settings_delete_all">Delete All Data</string>
     <string name="settings_delete_all_subtitle">Permanently remove all transactions and categories</string>

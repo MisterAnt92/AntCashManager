@@ -89,3 +89,27 @@ val AppTypography = Typography(
     ),
 )
 
+/**
+ * Returns a scaled version of [AppTypography] for the large-text accessibility setting.
+ * Every font size and line height is multiplied by [factor] (default 1.25×).
+ */
+fun scaledTypography(factor: Float = 1.25f): Typography {
+    fun TextStyle.scaled() = copy(
+        fontSize = fontSize * factor,
+        lineHeight = lineHeight * factor,
+    )
+    return Typography(
+        headlineLarge = AppTypography.headlineLarge.scaled(),
+        headlineMedium = AppTypography.headlineMedium.scaled(),
+        headlineSmall = AppTypography.headlineSmall.scaled(),
+        titleLarge = AppTypography.titleLarge.scaled(),
+        titleMedium = AppTypography.titleMedium.scaled(),
+        titleSmall = AppTypography.titleSmall.scaled(),
+        bodyLarge = AppTypography.bodyLarge.scaled(),
+        bodyMedium = AppTypography.bodyMedium.scaled(),
+        bodySmall = AppTypography.bodySmall.scaled(),
+        labelLarge = AppTypography.labelLarge.scaled(),
+        labelMedium = AppTypography.labelMedium.scaled(),
+        labelSmall = AppTypography.labelSmall.scaled(),
+    )
+}

@@ -23,4 +23,10 @@ class CategoryRepositoryImpl(
         categoryDao.deleteCategory(category.toEntity())
     override suspend fun deleteAllCategories() =
         categoryDao.deleteAllCategories()
+    override fun getCategoriesByType(type: String): Flow<List<Category>> =
+        categoryDao.getCategoriesByType(type).map { entities ->
+            entities.map { it.toDomain() }
+        }
+    override suspend fun getDefaultCategoryCount(): Int =
+        categoryDao.getDefaultCategoryCount()
 }

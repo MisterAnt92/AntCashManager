@@ -5,6 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -87,7 +88,7 @@ private class FakeCategoryRepository : CategoryRepository {
     override suspend fun getCategoryById(id: Long): Category? =
         categories.value.find { it.id == id }
     override suspend fun insertCategory(category: Category): Long {
-        categories.value = categories.value + category
+        categories.value += category
         return category.id
     }
     override suspend fun updateCategory(category: Category) {
@@ -99,4 +100,8 @@ private class FakeCategoryRepository : CategoryRepository {
     override suspend fun deleteAllCategories() {
         categories.value = emptyList()
     }
+    override fun getCategoriesByType(type: String): Flow<List<Category>> =
+        categories.map { list -> list.filter { it.type == type } }
+    override suspend fun getDefaultCategoryCount(): Int =
+        categories.value.count { it.isDefault }
 }

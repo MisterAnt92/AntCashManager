@@ -4,6 +4,7 @@ import com.antcashmanager.domain.repository.CategoryRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -72,4 +73,8 @@ private class FakeCategoryRepository : CategoryRepository {
     override suspend fun deleteAllCategories() {
         categories.value = emptyList()
     }
+    override fun getCategoriesByType(type: String): Flow<List<Category>> =
+        categories.map { list -> list.filter { it.type == type } }
+    override suspend fun getDefaultCategoryCount(): Int =
+        categories.value.count { it.isDefault }
 }

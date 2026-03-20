@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.transactions
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,6 +25,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -70,6 +72,12 @@ internal fun TransactionsContent(transactions: List<Transaction>) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_ant_mascot),
+                    contentDescription = null,
+                    modifier = Modifier.size(96.dp),
+                )
+                Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = stringResource(R.string.transactions_empty),
                     style = MaterialTheme.typography.bodyLarge,
@@ -80,6 +88,12 @@ internal fun TransactionsContent(transactions: List<Transaction>) {
                     text = stringResource(R.string.transactions_empty_subtitle),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = stringResource(R.string.transactions_empty_ant),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                 )
             }
         } else {
@@ -134,11 +148,34 @@ private fun TransactionItem(transaction: Transaction) {
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
+                val subtitleParts = buildList {
+                    add(transaction.category)
+                    add(dateFormat.format(Date(transaction.timestamp)))
+                    if (transaction.payee.isNotBlank()) add(transaction.payee)
+                }
                 Text(
-                    text = "${transaction.category} • ${dateFormat.format(Date(transaction.timestamp))}",
+                    text = subtitleParts.joinToString(" • "),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+                if (transaction.notes.isNotBlank()) {
+                    Text(
+                        text = transaction.notes,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+                if (transaction.tags.isNotBlank()) {
+                    Text(
+                        text = transaction.tags.split(",").joinToString(" ") { "#${it.trim()}" },
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
             }
             Text(
                 text = "${if (transaction.type == TransactionType.INCOME) "+" else "-"}€%.2f".format(transaction.amount),

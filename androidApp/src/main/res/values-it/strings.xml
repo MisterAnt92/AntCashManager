@@ -16,11 +16,32 @@
     <string name="home_expenses">Uscite</string>
     <string name="home_recent_transactions">Transazioni Recenti</string>
     <string name="home_no_transactions">Nessuna transazione.\nAggiungi la tua prima transazione!</string>
+    <string name="home_empty_ant">La nostra formichina aspetta la tua prima transazione! 🐜</string>
 
     <!-- Transactions Screen -->
     <string name="transactions_title">Transazioni</string>
     <string name="transactions_empty">Nessuna transazione</string>
     <string name="transactions_empty_subtitle">Le tue transazioni appariranno qui</string>
+    <string name="transactions_add">Aggiungi Transazione</string>
+    <string name="transactions_edit">Modifica Transazione</string>
+    <string name="transactions_title_label">Titolo</string>
+    <string name="transactions_amount_label">Importo</string>
+    <string name="transactions_category_label">Categoria</string>
+    <string name="transactions_type_label">Tipo</string>
+    <string name="transactions_type_income">Entrata</string>
+    <string name="transactions_type_expense">Uscita</string>
+    <string name="transactions_date_label">Data</string>
+    <string name="transactions_delete_title">Eliminare la transazione?</string>
+    <string name="transactions_delete_message">Sei sicuro di voler eliminare \"%s\"?</string>
+    <string name="transactions_add_content_desc">Aggiungi Transazione</string>
+    <string name="transactions_no_categories">Nessuna categoria disponibile. Aggiungi prima una categoria.</string>
+    <string name="transactions_pick_date">Seleziona data</string>
+    <string name="transactions_notes_label">Note</string>
+    <string name="transactions_payee_label">Beneficiario</string>
+    <string name="transactions_location_label">Luogo</string>
+    <string name="transactions_recurring">Ricorrente</string>
+    <string name="transactions_tags_label">Tag</string>
+    <string name="transactions_empty_ant">Il salvadanaio della formichina \u00e8 vuoto! Inizia a risparmiare! 🐜🐷</string>
 
     <!-- Categories Screen -->
     <string name="categories_title">Categorie</string>
@@ -33,6 +54,11 @@
     <string name="categories_delete_message">Sei sicuro di voler eliminare \"%s\"?</string>
     <string name="categories_add_content_desc">Aggiungi Categoria</string>
     <string name="categories_selected">Selezionato</string>
+    <string name="categories_tab_expense">Uscite</string>
+    <string name="categories_tab_income">Entrate</string>
+    <string name="categories_default_badge">Predefinita</string>
+    <string name="categories_cannot_delete_default">Le categorie predefinite non possono essere eliminate</string>
+    <string name="categories_icon_label">Icona</string>
 
     <!-- Charts Screen -->
     <string name="charts_title">Grafici</string>
@@ -46,6 +72,7 @@
     <string name="charts_no_data">Nessun dato per il periodo selezionato</string>
     <string name="charts_pick_start_date">Seleziona data inizio</string>
     <string name="charts_pick_end_date">Seleziona data fine</string>
+    <string name="charts_empty_ant">Nessun dato da mostrare! La formichina sta lavorando sodo! 🐜📊</string>
 
     <!-- Range Presets -->
     <string name="range_week">7 giorni</string>
@@ -64,6 +91,17 @@
     <string name="settings_theme_system">Predefinito di sistema</string>
     <string name="settings_language">Lingua</string>
     <string name="settings_language_subtitle">Scegli la lingua dell\'app</string>
+    <string name="settings_display">Visualizzazione</string>
+    <string name="settings_show_charts">Mostra Grafici</string>
+    <string name="settings_show_charts_subtitle">Mostra o nascondi la sezione Grafici nella barra di navigazione</string>
+    <string name="settings_accessibility">Accessibilit\u00e0</string>
+    <string name="settings_accessibility_subtitle">Personalizza l\'aspetto e il comportamento dell\'app per una migliore usabilit\u00e0</string>
+    <string name="settings_high_contrast">Contrasto Elevato</string>
+    <string name="settings_high_contrast_subtitle">Aumenta il contrasto per una migliore leggibilit\u00e0. Usa colori pi\u00f9 decisi e bordi pi\u00f9 marcati.</string>
+    <string name="settings_large_text">Testo Grande</string>
+    <string name="settings_large_text_subtitle">Aumenta la dimensione del testo in tutta l\'app per facilitare la lettura.</string>
+    <string name="settings_reduce_motion">Riduci Movimento</string>
+    <string name="settings_reduce_motion_subtitle">Minimizza animazioni e transizioni. Utile per chi \u00e8 sensibile al movimento.</string>
     <string name="settings_data_management">Gestione Dati</string>
     <string name="settings_delete_all">Elimina tutti i dati</string>
     <string name="settings_delete_all_subtitle">Rimuovi permanentemente tutte le transazioni e categorie</string>
@@ -88,20 +126,19 @@
     <string name="dialog_delete">Elimina</string>
     <string name="dialog_add">Aggiungi</string>
     <string name="dialog_delete_all_title">Eliminare tutti i dati?</string>
-    <string name="dialog_delete_all_message">Questa azione eliminerà permanentemente tutte le transazioni e le categorie. Non è possibile annullare.</string>
+    <string name="dialog_delete_all_message">Questa azione eliminer\u00e0 permanentemente tutte le transazioni e le categorie. Non \u00e8 possibile annullare.</string>
     <string name="dialog_data_deleted">Dati Eliminati</string>
     <string name="dialog_data_deleted_message">Tutti i dati sono stati eliminati con successo.</string>
 
     <!-- Privacy Policy -->
     <string name="privacy_policy_title">Informativa sulla Privacy</string>
-    <string name="privacy_policy_content">AntCashManager si impegna a proteggere la tua privacy. Questa applicazione non raccoglie né condivide dati personali con terze parti. Tutti i dati finanziari sono memorizzati localmente sul tuo dispositivo e non vengono mai trasmessi a server esterni.\n\nI tuoi dati rimangono interamente sul tuo dispositivo e sotto il tuo controllo. Non utilizziamo servizi di analisi, tracciamento o pubblicità.\n\nPer qualsiasi domanda sulla privacy, contattaci attraverso la pagina dello store.</string>
+    <string name="privacy_policy_content">AntCashManager si impegna a proteggere la tua privacy. Questa applicazione non raccoglie n\u00e9 condivide dati personali con terze parti. Tutti i dati finanziari sono memorizzati localmente sul tuo dispositivo e non vengono mai trasmessi a server esterni.\n\nI tuoi dati rimangono interamente sul tuo dispositivo e sotto il tuo controllo. Non utilizziamo servizi di analisi, tracciamento o pubblicit\u00e0.\n\nPer qualsiasi domanda sulla privacy, contattaci attraverso la pagina dello store.</string>
 
     <!-- Languages -->
     <string name="language_system">Predefinito di sistema</string>
     <string name="language_english">English</string>
     <string name="language_italian">Italiano</string>
-    <string name="language_french">Français</string>
+    <string name="language_french">Fran\u00e7ais</string>
     <string name="language_german">Deutsch</string>
-    <string name="language_spanish">Español</string>
+    <string name="language_spanish">Espa\u00f1ol</string>
 </resources>
-

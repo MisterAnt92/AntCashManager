@@ -3,6 +3,7 @@ package com.antcashmanager.data.repository
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -20,6 +21,10 @@ class SettingsRepositoryImpl(
 
     private val themeKey = stringPreferencesKey("theme")
     private val languageKey = stringPreferencesKey("language")
+    private val showChartsKey = booleanPreferencesKey("show_charts")
+    private val highContrastKey = booleanPreferencesKey("high_contrast")
+    private val largeTextKey = booleanPreferencesKey("large_text")
+    private val reduceMotionKey = booleanPreferencesKey("reduce_motion")
 
     override fun getTheme(): Flow<AppTheme> =
         context.dataStore.data.map { preferences ->
@@ -42,6 +47,50 @@ class SettingsRepositoryImpl(
     override suspend fun setLanguage(language: AppLanguage) {
         context.dataStore.edit { preferences ->
             preferences[languageKey] = language.name
+        }
+    }
+
+    override fun getShowCharts(): Flow<Boolean> =
+        context.dataStore.data.map { preferences ->
+            preferences[showChartsKey] ?: true
+        }
+
+    override suspend fun setShowCharts(show: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[showChartsKey] = show
+        }
+    }
+
+    override fun getHighContrast(): Flow<Boolean> =
+        context.dataStore.data.map { preferences ->
+            preferences[highContrastKey] ?: false
+        }
+
+    override suspend fun setHighContrast(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[highContrastKey] = enabled
+        }
+    }
+
+    override fun getLargeText(): Flow<Boolean> =
+        context.dataStore.data.map { preferences ->
+            preferences[largeTextKey] ?: false
+        }
+
+    override suspend fun setLargeText(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[largeTextKey] = enabled
+        }
+    }
+
+    override fun getReduceMotion(): Flow<Boolean> =
+        context.dataStore.data.map { preferences ->
+            preferences[reduceMotionKey] ?: false
+        }
+
+    override suspend fun setReduceMotion(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[reduceMotionKey] = enabled
         }
     }
 }

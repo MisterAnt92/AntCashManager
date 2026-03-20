@@ -31,6 +31,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             val theme by getThemeUseCase().collectAsState(initial = AppTheme.SYSTEM)
             val language by getLanguageUseCase().collectAsState(initial = AppLanguage.SYSTEM)
+            val highContrast by app.settingsRepository.getHighContrast()
+                .collectAsState(initial = false)
+            val largeText by app.settingsRepository.getLargeText()
+                .collectAsState(initial = false)
             val isDark = when (theme) {
                 AppTheme.LIGHT -> false
                 AppTheme.DARK -> true
@@ -38,7 +42,11 @@ class MainActivity : ComponentActivity() {
             }
 
             WithAppLocale(language = language) {
-                AntCashManagerTheme(darkTheme = isDark) {
+                AntCashManagerTheme(
+                    darkTheme = isDark,
+                    highContrast = highContrast,
+                    largeText = largeText,
+                ) {
                     AntCashManagerNavHost(
                         transactionRepository = app.transactionRepository,
                         settingsRepository = app.settingsRepository,

@@ -10,7 +10,12 @@ fun TransactionEntity.toDomain(): Transaction = Transaction(
     amount = amount,
     category = category,
     type = TransactionType.valueOf(type),
-    timestamp = timestamp
+    timestamp = timestamp,
+    notes = notes,
+    payee = payee,
+    location = location,
+    isRecurring = isRecurring,
+    tags = tags,
 )
 
 fun Transaction.toEntity(): TransactionEntity = TransactionEntity(
@@ -19,5 +24,10 @@ fun Transaction.toEntity(): TransactionEntity = TransactionEntity(
     amount = amount,
     category = category,
     type = type.name,
-    timestamp = timestamp
+    timestamp = timestamp,
+    notes = notes,
+    payee = payee,
+    location = location,
+    isRecurring = isRecurring,
+    tags = tags,
 )

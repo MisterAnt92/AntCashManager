@@ -21,4 +21,8 @@ interface CategoryDao {
     suspend fun deleteCategory(category: CategoryEntity)
     @Query("DELETE FROM categories")
     suspend fun deleteAllCategories()
+    @Query("SELECT * FROM categories WHERE type = :type ORDER BY name ASC")
+    fun getCategoriesByType(type: String): Flow<List<CategoryEntity>>
+    @Query("SELECT COUNT(*) FROM categories WHERE is_default = 1")
+    suspend fun getDefaultCategoryCount(): Int
 }

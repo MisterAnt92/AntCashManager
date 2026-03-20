@@ -4,4 +4,6 @@ data class Category(
     val name: String,
     val icon: String = "category",
     val color: Long = 0xFF9E9E9E,
+    val type: String = "EXPENSE",
+    val isDefault: Boolean = false,
 )

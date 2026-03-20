@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.categories
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -19,10 +20,26 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.CurrencyExchange
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.DirectionsCar
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LocalDining
+import androidx.compose.material.icons.filled.LocalHospital
+import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material.icons.filled.Payments
+import androidx.compose.material.icons.filled.ReceiptLong
+import androidx.compose.material.icons.filled.Restaurant
+import androidx.compose.material.icons.filled.Savings
+import androidx.compose.material.icons.filled.School
+import androidx.compose.material.icons.filled.ShoppingBag
+import androidx.compose.material.icons.filled.TheaterComedy
+import androidx.compose.material.icons.filled.TrendingUp
+import androidx.compose.material.icons.filled.Work
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -32,11 +49,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,6 +65,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -56,21 +78,30 @@ import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.repository.CategoryRepository
 
+/** Map icon key names to Material Icons. */
+val categoryIconMap: Map<String, ImageVector> = mapOf(
+    "home" to Icons.Default.Home,
+    "directions_car" to Icons.Default.DirectionsCar,
+    "restaurant" to Icons.Default.Restaurant,
+    "receipt_long" to Icons.Default.ReceiptLong,
+    "local_dining" to Icons.Default.LocalDining,
+    "theater_comedy" to Icons.Default.TheaterComedy,
+    "local_hospital" to Icons.Default.LocalHospital,
+    "shopping_bag" to Icons.Default.ShoppingBag,
+    "school" to Icons.Default.School,
+    "more_horiz" to Icons.Default.MoreHoriz,
+    "payments" to Icons.Default.Payments,
+    "savings" to Icons.Default.Savings,
+    "currency_exchange" to Icons.Default.CurrencyExchange,
+    "trending_up" to Icons.Default.TrendingUp,
+    "work" to Icons.Default.Work,
+)
+
 val categoryColors = listOf(
-    0xFFE57373L, // Red
-    0xFFFF8A65L, // Deep Orange
-    0xFFFFB74DL, // Orange
-    0xFFFFD54FL, // Amber
-    0xFFDCE775L, // Lime
-    0xFF81C784L, // Green
-    0xFF4DB6ACL, // Teal
-    0xFF4FC3F7L, // Light Blue
-    0xFF64B5F6L, // Blue
-    0xFF7986CBL, // Indigo
-    0xFFBA68C8L, // Purple
-    0xFFF06292L, // Pink
-    0xFF90A4AEL, // Blue Grey
-    0xFFA1887FL, // Brown
+    0xFFE57373L, 0xFFFF8A65L, 0xFFFFB74DL, 0xFFFFD54FL,
+    0xFFDCE775L, 0xFF81C784L, 0xFF4DB6ACL, 0xFF4FC3F7L,
+    0xFF64B5F6L, 0xFF7986CBL, 0xFFBA68C8L, 0xFFF06292L,
+    0xFF90A4AEL, 0xFFA1887FL,
 )
 
 @Composable
@@ -83,23 +114,34 @@ fun CategoriesScreen(categoryRepository: CategoryRepository) {
                 CategoriesViewModel(categoryRepository) as T
         },
     )
-    val categories by viewModel.categories.collectAsState()
+    val expenseCategories by viewModel.expenseCategories.collectAsState()
+    val incomeCategories by viewModel.incomeCategories.collectAsState()
 
     CategoriesContent(
-        categories = categories,
-        onAddCategory = { name, icon, color -> viewModel.addCategory(name, icon, color) },
+        expenseCategories = expenseCategories,
+        incomeCategories = incomeCategories,
+        onAddCategory = { name, icon, color, type -> viewModel.addCategory(name, icon, color, type) },
         onDeleteCategory = { viewModel.deleteCategory(it) },
     )
 }
 
 @Composable
 internal fun CategoriesContent(
-    categories: List<Category>,
-    onAddCategory: (String, String, Long) -> Unit = { _, _, _ -> },
+    expenseCategories: List<Category>,
+    incomeCategories: List<Category>,
+    onAddCategory: (String, String, Long, String) -> Unit = { _, _, _, _ -> },
     onDeleteCategory: (Category) -> Unit = {},
 ) {
+    var selectedTab by remember { mutableIntStateOf(0) }
     var showAddDialog by remember { mutableStateOf(false) }
     var categoryToDelete by remember { mutableStateOf<Category?>(null) }
+
+    val tabs = listOf(
+        stringResource(R.string.categories_tab_expense),
+        stringResource(R.string.categories_tab_income),
+    )
+    val currentCategories = if (selectedTab == 0) expenseCategories else incomeCategories
+    val currentType = if (selectedTab == 0) "EXPENSE" else "INCOME"
 
     Scaffold(
         floatingActionButton = {
@@ -125,14 +167,32 @@ internal fun CategoriesContent(
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-            if (categories.isEmpty()) {
+            TabRow(selectedTabIndex = selectedTab) {
+                tabs.forEachIndexed { index, title ->
+                    Tab(
+                        selected = selectedTab == index,
+                        onClick = { selectedTab = index },
+                        text = { Text(title, fontWeight = FontWeight.SemiBold) },
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            if (currentCategories.isEmpty()) {
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_ant_mascot),
+                        contentDescription = null,
+                        modifier = Modifier.size(96.dp),
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
                     Text(
                         text = stringResource(R.string.categories_empty),
                         style = MaterialTheme.typography.bodyLarge,
@@ -147,12 +207,17 @@ internal fun CategoriesContent(
                 }
             } else {
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    items(categories, key = { it.id }) { category ->
+                    items(currentCategories, key = { it.id }) { category ->
                         CategoryItem(
                             category = category,
-                            onDelete = { categoryToDelete = category },
+                            onDelete = {
+                                if (!category.isDefault) {
+                                    categoryToDelete = category
+                                }
+                            },
                         )
                     }
+                    item { Spacer(modifier = Modifier.height(72.dp)) }
                 }
             }
         }
@@ -160,8 +225,9 @@ internal fun CategoriesContent(
 
     if (showAddDialog) {
         AddCategoryDialog(
+            currentType = currentType,
             onConfirm = { name, icon, color ->
-                onAddCategory(name, icon, color)
+                onAddCategory(name, icon, color, currentType)
                 showAddDialog = false
             },
             onDismiss = { showAddDialog = false },
@@ -199,6 +265,8 @@ private fun CategoryItem(
     category: Category,
     onDelete: () -> Unit,
 ) {
+    val icon = categoryIconMap[category.icon]
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -220,25 +288,44 @@ private fun CategoryItem(
                     .background(Color(category.color)),
                 contentAlignment = Alignment.Center,
             ) {
-                Text(
-                    text = category.name.take(1).uppercase(),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                )
+                if (icon != null) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(22.dp),
+                    )
+                } else {
+                    Text(
+                        text = category.name.take(1).uppercase(),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
             }
             Spacer(modifier = Modifier.width(16.dp))
-            Text(
-                text = category.name,
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.weight(1f),
-            )
-            IconButton(onClick = onDelete) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = stringResource(R.string.dialog_delete),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = category.name,
+                    style = MaterialTheme.typography.titleMedium,
                 )
+                if (category.isDefault) {
+                    Text(
+                        text = stringResource(R.string.categories_default_badge),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+            }
+            if (!category.isDefault) {
+                IconButton(onClick = onDelete) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = stringResource(R.string.dialog_delete),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
         }
     }
@@ -247,6 +334,7 @@ private fun CategoryItem(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun AddCategoryDialog(
+    currentType: String,
     onConfirm: (String, String, Long) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -321,16 +409,19 @@ private fun AddCategoryDialog(
 
 // ── Previews ──
 
-@Preview(showBackground = true, name = "CategoriesScreen - With Data")
+@Preview(showBackground = true, name = "CategoriesScreen - With Tabs")
 @Composable
 private fun CategoriesContentPreview() {
     AntCashManagerTheme(dynamicColor = false) {
         CategoriesContent(
-            categories = listOf(
-                Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373),
-                Category(id = 2, name = "Transport", icon = "category", color = 0xFF4FC3F7),
-                Category(id = 3, name = "Entertainment", icon = "category", color = 0xFFBA68C8),
-                Category(id = 4, name = "Work", icon = "category", color = 0xFF81C784),
+            expenseCategories = listOf(
+                Category(id = 1, name = "Casa", icon = "home", color = 0xFF4FC3F7, type = "EXPENSE", isDefault = true),
+                Category(id = 2, name = "Cibo", icon = "restaurant", color = 0xFFE57373, type = "EXPENSE", isDefault = true),
+                Category(id = 3, name = "Shopping", icon = "shopping_bag", color = 0xFFDCE775, type = "EXPENSE"),
+            ),
+            incomeCategories = listOf(
+                Category(id = 10, name = "Stipendio", icon = "payments", color = 0xFF81C784, type = "INCOME", isDefault = true),
+                Category(id = 11, name = "Freelance", icon = "work", color = 0xFFA1887F, type = "INCOME", isDefault = true),
             ),
         )
     }
@@ -340,7 +431,10 @@ private fun CategoriesContentPreview() {
 @Composable
 private fun CategoriesContentEmptyPreview() {
     AntCashManagerTheme(dynamicColor = false) {
-        CategoriesContent(categories = emptyList())
+        CategoriesContent(
+            expenseCategories = emptyList(),
+            incomeCategories = emptyList(),
+        )
     }
 }
 
@@ -349,9 +443,11 @@ private fun CategoriesContentEmptyPreview() {
 private fun CategoriesContentDarkPreview() {
     AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
         CategoriesContent(
-            categories = listOf(
-                Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373),
-                Category(id = 2, name = "Salary", icon = "category", color = 0xFF81C784),
+            expenseCategories = listOf(
+                Category(id = 1, name = "Trasporti", icon = "directions_car", color = 0xFF64B5F6, type = "EXPENSE", isDefault = true),
+            ),
+            incomeCategories = listOf(
+                Category(id = 10, name = "Stipendio", icon = "payments", color = 0xFF81C784, type = "INCOME", isDefault = true),
             ),
         )
     }
@@ -362,9 +458,9 @@ private fun CategoriesContentDarkPreview() {
 private fun AddCategoryDialogPreview() {
     AntCashManagerTheme(dynamicColor = false) {
         AddCategoryDialog(
+            currentType = "EXPENSE",
             onConfirm = { _, _, _ -> },
             onDismiss = {},
         )
     }
 }
-

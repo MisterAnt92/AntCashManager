@@ -7,6 +7,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -40,12 +41,22 @@ fun AntCashManagerNavHost(
     categoryRepository: CategoryRepository,
 ) {
     val navController = rememberNavController()
+    val showCharts by settingsRepository.getShowCharts().collectAsState(initial = true)
+
+    val visibleNavItems = buildList {
+        add(BottomNavItem.Home)
+        if (showCharts) add(BottomNavItem.Charts)
+        add(BottomNavItem.Transactions)
+        add(BottomNavItem.Categories)
+        add(BottomNavItem.Settings)
+    }
+
     Scaffold(
         bottomBar = {
             NavigationBar {
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentDestination = navBackStackEntry?.destination
-                bottomNavItems.forEach { item ->
+                visibleNavItems.forEach { item ->
                     NavigationBarItem(
                         icon = { Icon(item.icon, contentDescription = stringResource(item.titleResId)) },
                         label = { Text(stringResource(item.titleResId)) },

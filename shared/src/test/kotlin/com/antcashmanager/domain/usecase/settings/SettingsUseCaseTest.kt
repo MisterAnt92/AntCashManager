@@ -90,6 +90,10 @@ class SetThemeUseCaseTest {
 internal class FakeSettingsRepository : SettingsRepository {
     private val themeFlow = MutableStateFlow(AppTheme.SYSTEM)
     private val languageFlow = MutableStateFlow(AppLanguage.SYSTEM)
+    private val showChartsFlow = MutableStateFlow(true)
+    private val highContrastFlow = MutableStateFlow(false)
+    private val largeTextFlow = MutableStateFlow(false)
+    private val reduceMotionFlow = MutableStateFlow(false)
 
     override fun getTheme(): Flow<AppTheme> = themeFlow
 
@@ -102,5 +106,14 @@ internal class FakeSettingsRepository : SettingsRepository {
     override suspend fun setLanguage(language: AppLanguage) {
         languageFlow.value = language
     }
+
+    override fun getShowCharts(): Flow<Boolean> = showChartsFlow
+    override suspend fun setShowCharts(show: Boolean) { showChartsFlow.value = show }
+    override fun getHighContrast(): Flow<Boolean> = highContrastFlow
+    override suspend fun setHighContrast(enabled: Boolean) { highContrastFlow.value = enabled }
+    override fun getLargeText(): Flow<Boolean> = largeTextFlow
+    override suspend fun setLargeText(enabled: Boolean) { largeTextFlow.value = enabled }
+    override fun getReduceMotion(): Flow<Boolean> = reduceMotionFlow
+    override suspend fun setReduceMotion(enabled: Boolean) { reduceMotionFlow.value = enabled }
 }
 

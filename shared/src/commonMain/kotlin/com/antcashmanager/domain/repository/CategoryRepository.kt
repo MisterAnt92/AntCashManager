@@ -8,4 +8,6 @@ interface CategoryRepository {
     suspend fun updateCategory(category: Category)
     suspend fun deleteCategory(category: Category)
     suspend fun deleteAllCategories()
+    fun getCategoriesByType(type: String): Flow<List<Category>>
+    suspend fun getDefaultCategoryCount(): Int
 }

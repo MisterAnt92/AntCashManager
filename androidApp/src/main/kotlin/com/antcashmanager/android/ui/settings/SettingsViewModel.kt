@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(
-    settingsRepository: SettingsRepository,
+    private val settingsRepository: SettingsRepository,
     transactionRepository: TransactionRepository,
     private val categoryRepository: CategoryRepository,
 ) : ViewModel() {
@@ -46,6 +46,34 @@ class SettingsViewModel(
             initialValue = AppLanguage.SYSTEM,
         )
 
+    val showCharts = settingsRepository.getShowCharts()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = true,
+        )
+
+    val highContrast = settingsRepository.getHighContrast()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = false,
+        )
+
+    val largeText = settingsRepository.getLargeText()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = false,
+        )
+
+    val reduceMotion = settingsRepository.getReduceMotion()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = false,
+        )
+
     private val _deleteResult = MutableStateFlow<DeleteResult>(DeleteResult.Idle)
     val deleteResult: StateFlow<DeleteResult> = _deleteResult.asStateFlow()
 
@@ -60,6 +88,34 @@ class SettingsViewModel(
         Logger.d("SettingsViewModel") { "Setting language to: $language" }
         viewModelScope.launch {
             setLanguageUseCase(language)
+        }
+    }
+
+    fun setShowCharts(show: Boolean) {
+        Logger.d("SettingsViewModel") { "Setting show charts: $show" }
+        viewModelScope.launch {
+            settingsRepository.setShowCharts(show)
+        }
+    }
+
+    fun setHighContrast(enabled: Boolean) {
+        Logger.d("SettingsViewModel") { "Setting high contrast: $enabled" }
+        viewModelScope.launch {
+            settingsRepository.setHighContrast(enabled)
+        }
+    }
+
+    fun setLargeText(enabled: Boolean) {
+        Logger.d("SettingsViewModel") { "Setting large text: $enabled" }
+        viewModelScope.launch {
+            settingsRepository.setLargeText(enabled)
+        }
+    }
+
+    fun setReduceMotion(enabled: Boolean) {
+        Logger.d("SettingsViewModel") { "Setting reduce motion: $enabled" }
+        viewModelScope.launch {
+            settingsRepository.setReduceMotion(enabled)
         }
     }
 

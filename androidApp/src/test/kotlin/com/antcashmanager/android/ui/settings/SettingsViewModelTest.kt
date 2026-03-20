@@ -137,6 +137,10 @@ class SettingsViewModelTest {
 private class FakeSettingsRepository : SettingsRepository {
     private val themeFlow = MutableStateFlow(AppTheme.SYSTEM)
     private val languageFlow = MutableStateFlow(AppLanguage.SYSTEM)
+    private val showChartsFlow = MutableStateFlow(true)
+    private val highContrastFlow = MutableStateFlow(false)
+    private val largeTextFlow = MutableStateFlow(false)
+    private val reduceMotionFlow = MutableStateFlow(false)
 
     override fun getTheme(): Flow<AppTheme> = themeFlow
 
@@ -149,6 +153,15 @@ private class FakeSettingsRepository : SettingsRepository {
     override suspend fun setLanguage(language: AppLanguage) {
         languageFlow.value = language
     }
+
+    override fun getShowCharts(): Flow<Boolean> = showChartsFlow
+    override suspend fun setShowCharts(show: Boolean) { showChartsFlow.value = show }
+    override fun getHighContrast(): Flow<Boolean> = highContrastFlow
+    override suspend fun setHighContrast(enabled: Boolean) { highContrastFlow.value = enabled }
+    override fun getLargeText(): Flow<Boolean> = largeTextFlow
+    override suspend fun setLargeText(enabled: Boolean) { largeTextFlow.value = enabled }
+    override fun getReduceMotion(): Flow<Boolean> = reduceMotionFlow
+    override suspend fun setReduceMotion(enabled: Boolean) { reduceMotionFlow.value = enabled }
 }
 
 private class FakeTransactionRepository : TransactionRepository {
@@ -204,4 +217,10 @@ private class FakeCategoryRepository : CategoryRepository {
     override suspend fun deleteAllCategories() {
         categories.value = emptyList()
     }
+
+    override fun getCategoriesByType(type: String): Flow<List<Category>> =
+        categories.map { list -> list.filter { it.type == type } }
+
+    override suspend fun getDefaultCategoryCount(): Int =
+        categories.value.count { it.isDefault }
 }

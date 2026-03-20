@@ -6,10 +6,14 @@ fun CategoryEntity.toDomain(): Category = Category(
     name = name,
     icon = icon,
     color = color,
+    type = type,
+    isDefault = isDefault,
 )
 fun Category.toEntity(): CategoryEntity = CategoryEntity(
     id = id,
     name = name,
     icon = icon,
     color = color,
+    type = type,
+    isDefault = isDefault,
 )

@@ -11,12 +11,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Accessibility
 import androidx.compose.material.icons.filled.Backup
+import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.Contrast
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Feedback
+import androidx.compose.material.icons.filled.FormatSize
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.MotionPhotosOff
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.PrivacyTip
 import androidx.compose.material.icons.filled.RestorePage
@@ -24,6 +29,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -69,6 +75,10 @@ fun SettingsScreen(
     val currentTheme by viewModel.theme.collectAsState()
     val currentLanguage by viewModel.language.collectAsState()
     val deleteResult by viewModel.deleteResult.collectAsState()
+    val showCharts by viewModel.showCharts.collectAsState()
+    val highContrast by viewModel.highContrast.collectAsState()
+    val largeText by viewModel.largeText.collectAsState()
+    val reduceMotion by viewModel.reduceMotion.collectAsState()
 
     SettingsContent(
         currentTheme = currentTheme,
@@ -79,6 +89,14 @@ fun SettingsScreen(
         onDeleteAllData = { viewModel.deleteAllData() },
         deleteResult = deleteResult,
         onResetDeleteResult = { viewModel.resetDeleteResult() },
+        showCharts = showCharts,
+        onShowChartsChanged = { viewModel.setShowCharts(it) },
+        highContrast = highContrast,
+        onHighContrastChanged = { viewModel.setHighContrast(it) },
+        largeText = largeText,
+        onLargeTextChanged = { viewModel.setLargeText(it) },
+        reduceMotion = reduceMotion,
+        onReduceMotionChanged = { viewModel.setReduceMotion(it) },
     )
 }
 
@@ -92,6 +110,14 @@ internal fun SettingsContent(
     onDeleteAllData: () -> Unit = {},
     deleteResult: DeleteResult = DeleteResult.Idle,
     onResetDeleteResult: () -> Unit = {},
+    showCharts: Boolean = true,
+    onShowChartsChanged: (Boolean) -> Unit = {},
+    highContrast: Boolean = false,
+    onHighContrastChanged: (Boolean) -> Unit = {},
+    largeText: Boolean = false,
+    onLargeTextChanged: (Boolean) -> Unit = {},
+    reduceMotion: Boolean = false,
+    onReduceMotionChanged: (Boolean) -> Unit = {},
 ) {
     var showThemeDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
@@ -145,6 +171,64 @@ internal fun SettingsContent(
                 subtitle = languageDisplayName(currentLanguage),
                 leadingIcon = Icons.Default.Language,
                 onClick = { showLanguageDialog = true },
+            )
+        }
+
+        // ── Display Section ──
+        AppCardSectionHeader(title = stringResource(R.string.settings_display))
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            AppCard(
+                title = stringResource(R.string.settings_show_charts),
+                subtitle = stringResource(R.string.settings_show_charts_subtitle),
+                leadingIcon = Icons.Default.BarChart,
+                trailingContent = {
+                    Switch(
+                        checked = showCharts,
+                        onCheckedChange = onShowChartsChanged,
+                    )
+                },
+                onClick = { onShowChartsChanged(!showCharts) },
+            )
+        }
+
+        // ── Accessibility Section ──
+        AppCardSectionHeader(title = stringResource(R.string.settings_accessibility))
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            AppCard(
+                title = stringResource(R.string.settings_high_contrast),
+                subtitle = stringResource(R.string.settings_high_contrast_subtitle),
+                leadingIcon = Icons.Default.Contrast,
+                trailingContent = {
+                    Switch(
+                        checked = highContrast,
+                        onCheckedChange = onHighContrastChanged,
+                    )
+                },
+                onClick = { onHighContrastChanged(!highContrast) },
+            )
+            AppCard(
+                title = stringResource(R.string.settings_large_text),
+                subtitle = stringResource(R.string.settings_large_text_subtitle),
+                leadingIcon = Icons.Default.FormatSize,
+                trailingContent = {
+                    Switch(
+                        checked = largeText,
+                        onCheckedChange = onLargeTextChanged,
+                    )
+                },
+                onClick = { onLargeTextChanged(!largeText) },
+            )
+            AppCard(
+                title = stringResource(R.string.settings_reduce_motion),
+                subtitle = stringResource(R.string.settings_reduce_motion_subtitle),
+                leadingIcon = Icons.Default.MotionPhotosOff,
+                trailingContent = {
+                    Switch(
+                        checked = reduceMotion,
+                        onCheckedChange = onReduceMotionChanged,
+                    )
+                },
+                onClick = { onReduceMotionChanged(!reduceMotion) },
             )
         }
 

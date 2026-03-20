@@ -1,0 +1,111 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Ant body -->
+    <path
+        android:fillColor="#6D4C00"
+        android:pathData="M54,68 C44,68 37,60 37,51 C37,42 44,34 54,34 C64,34 71,42 71,51 C71,60 64,68 54,68Z" />
+
+    <!-- Ant head -->
+    <path
+        android:fillColor="#8B6300"
+        android:pathData="M54,38 C47,38 42,33 42,27 C42,21 47,16 54,16 C61,16 66,21 66,27 C66,33 61,38 54,38Z" />
+
+    <!-- Left eye -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M49,25 C47.5,25 46.5,26 46.5,27.5 C46.5,29 47.5,30 49,30 C50.5,30 51.5,29 51.5,27.5 C51.5,26 50.5,25 49,25Z" />
+    <path
+        android:fillColor="#1A0E00"
+        android:pathData="M49,26 C48.2,26 47.5,26.7 47.5,27.5 C47.5,28.3 48.2,29 49,29 C49.8,29 50.5,28.3 50.5,27.5 C50.5,26.7 49.8,26 49,26Z" />
+
+    <!-- Right eye -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M59,25 C57.5,25 56.5,26 56.5,27.5 C56.5,29 57.5,30 59,30 C60.5,30 61.5,29 61.5,27.5 C61.5,26 60.5,25 59,25Z" />
+    <path
+        android:fillColor="#1A0E00"
+        android:pathData="M59,26 C58.2,26 57.5,26.7 57.5,27.5 C57.5,28.3 58.2,29 59,29 C59.8,29 60.5,28.3 60.5,27.5 C60.5,26.7 59.8,26 59,26Z" />
+
+    <!-- Smile -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#1A0E00"
+        android:strokeWidth="1.2"
+        android:pathData="M50,31 Q54,35 58,31" />
+
+    <!-- Left antenna -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#6D4C00"
+        android:strokeWidth="1.8"
+        android:pathData="M48,18 Q44,10 39,8" />
+    <path
+        android:fillColor="#FFD54F"
+        android:pathData="M39,6 A2,2 0 1,0 39,10 A2,2 0 1,0 39,6Z" />
+
+    <!-- Right antenna -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#6D4C00"
+        android:strokeWidth="1.8"
+        android:pathData="M60,18 Q64,10 69,8" />
+    <path
+        android:fillColor="#FFD54F"
+        android:pathData="M69,6 A2,2 0 1,0 69,10 A2,2 0 1,0 69,6Z" />
+
+    <!-- Front legs -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#6D4C00"
+        android:strokeWidth="2"
+        android:pathData="M39,46 Q31,44 27,48" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#6D4C00"
+        android:strokeWidth="2"
+        android:pathData="M69,46 Q77,44 81,48" />
+
+    <!-- Middle legs -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#6D4C00"
+        android:strokeWidth="2"
+        android:pathData="M38,55 Q30,57 26,62" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#6D4C00"
+        android:strokeWidth="2"
+        android:pathData="M70,55 Q78,57 82,62" />
+
+    <!-- Back legs -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#6D4C00"
+        android:strokeWidth="2"
+        android:pathData="M41,64 Q35,70 32,76" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#6D4C00"
+        android:strokeWidth="2"
+        android:pathData="M67,64 Q73,70 76,76" />
+
+    <!-- Coin -->
+    <path
+        android:fillColor="#FFD54F"
+        android:pathData="M54,80 A9,9 0 1,0 54,98 A9,9 0 1,0 54,80Z" />
+    <path
+        android:fillColor="#FFC107"
+        android:pathData="M54,83 A6,6 0 1,0 54,95 A6,6 0 1,0 54,83Z" />
+    <!-- € symbol -->
+    <path
+        android:fillColor="#6D4C00"
+        android:strokeColor="#6D4C00"
+        android:strokeWidth="1"
+        android:pathData="M57,86 Q54,84 51,87 Q50,89 51,91 Q54,94 57,92 M50,88 L57,88 M50,90 L57,90" />
+
+</vector>
+

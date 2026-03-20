@@ -6,7 +6,12 @@ data class Transaction(
     val amount: Double,
     val category: String,
     val type: TransactionType,
-    val timestamp: Long = System.currentTimeMillis()
+    val timestamp: Long = System.currentTimeMillis(),
+    val notes: String = "",
+    val payee: String = "",
+    val location: String = "",
+    val isRecurring: Boolean = false,
+    val tags: String = "",
 )
 
 enum class TransactionType {

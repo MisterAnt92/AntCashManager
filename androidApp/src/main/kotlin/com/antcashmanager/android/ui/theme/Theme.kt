@@ -105,9 +105,11 @@ private val AppShapes = Shapes(
 fun AntCashManagerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = true,
+    highContrast: Boolean = false,
+    largeText: Boolean = false,
     content: @Composable () -> Unit,
 ) {
-    val colorScheme = when {
+    val baseColorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
@@ -115,6 +117,39 @@ fun AntCashManagerTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
+
+    // Apply high-contrast overrides when enabled
+    val colorScheme = if (highContrast) {
+        if (darkTheme) {
+            baseColorScheme.copy(
+                primary = HighContrastPrimaryDark,
+                onPrimary = HighContrastOnPrimaryDark,
+                primaryContainer = HighContrastPrimaryContainerDark,
+                onPrimaryContainer = HighContrastOnPrimaryContainerDark,
+                background = HighContrastBackgroundDark,
+                onBackground = HighContrastOnBackgroundDark,
+                surface = HighContrastSurfaceDark,
+                onSurface = HighContrastOnSurfaceDark,
+                outline = HighContrastOutlineDark,
+            )
+        } else {
+            baseColorScheme.copy(
+                primary = HighContrastPrimaryLight,
+                onPrimary = HighContrastOnPrimaryLight,
+                primaryContainer = HighContrastPrimaryContainerLight,
+                onPrimaryContainer = HighContrastOnPrimaryContainerLight,
+                background = HighContrastBackgroundLight,
+                onBackground = HighContrastOnBackgroundLight,
+                surface = HighContrastSurfaceLight,
+                onSurface = HighContrastOnSurfaceLight,
+                outline = HighContrastOutlineLight,
+            )
+        }
+    } else {
+        baseColorScheme
+    }
+
+    val typography = if (largeText) scaledTypography() else AppTypography
 
     val view = LocalView.current
     if (!view.isInEditMode) {
@@ -126,7 +161,7 @@ fun AntCashManagerTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = AppTypography,
+        typography = typography,
         shapes = AppShapes,
         content = content,
     )
