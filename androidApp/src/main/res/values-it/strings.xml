@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AntCashManager</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_charts">Grafici</string>
+    <string name="nav_transactions">Transazioni</string>
+    <string name="nav_categories">Categorie</string>
+    <string name="nav_settings">Impostazioni</string>
+
+    <!-- Home Screen -->
+    <string name="home_dashboard">Riepilogo</string>
+    <string name="home_total_balance">Saldo Totale</string>
+    <string name="home_income">Entrate</string>
+    <string name="home_expenses">Uscite</string>
+    <string name="home_recent_transactions">Transazioni Recenti</string>
+    <string name="home_no_transactions">Nessuna transazione.\nAggiungi la tua prima transazione!</string>
+
+    <!-- Transactions Screen -->
+    <string name="transactions_title">Transazioni</string>
+    <string name="transactions_empty">Nessuna transazione</string>
+    <string name="transactions_empty_subtitle">Le tue transazioni appariranno qui</string>
+
+    <!-- Categories Screen -->
+    <string name="categories_title">Categorie</string>
+    <string name="categories_empty">Nessuna categoria</string>
+    <string name="categories_empty_subtitle">Tocca + per aggiungere la prima categoria</string>
+    <string name="categories_add">Aggiungi Categoria</string>
+    <string name="categories_name_label">Nome Categoria</string>
+    <string name="categories_color_label">Colore</string>
+    <string name="categories_delete_title">Eliminare la categoria?</string>
+    <string name="categories_delete_message">Sei sicuro di voler eliminare \"%s\"?</string>
+    <string name="categories_add_content_desc">Aggiungi Categoria</string>
+    <string name="categories_selected">Selezionato</string>
+
+    <!-- Charts Screen -->
+    <string name="charts_title">Grafici</string>
+    <string name="charts_period">Periodo</string>
+    <string name="charts_from">Dal: %s</string>
+    <string name="charts_to">Al: %s</string>
+    <string name="charts_income">Entrate</string>
+    <string name="charts_expenses">Uscite</string>
+    <string name="charts_expense_by_category">Uscite per Categoria</string>
+    <string name="charts_monthly_overview">Panoramica Mensile</string>
+    <string name="charts_no_data">Nessun dato per il periodo selezionato</string>
+    <string name="charts_pick_start_date">Seleziona data inizio</string>
+    <string name="charts_pick_end_date">Seleziona data fine</string>
+
+    <!-- Range Presets -->
+    <string name="range_week">7 giorni</string>
+    <string name="range_month">1 mese</string>
+    <string name="range_three_months">3 mesi</string>
+    <string name="range_six_months">6 mesi</string>
+    <string name="range_year">1 anno</string>
+    <string name="range_all">Tutto</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Impostazioni</string>
+    <string name="settings_appearance">Aspetto</string>
+    <string name="settings_theme">Tema</string>
+    <string name="settings_theme_light">Chiaro</string>
+    <string name="settings_theme_dark">Scuro</string>
+    <string name="settings_theme_system">Predefinito di sistema</string>
+    <string name="settings_language">Lingua</string>
+    <string name="settings_language_subtitle">Scegli la lingua dell\'app</string>
+    <string name="settings_data_management">Gestione Dati</string>
+    <string name="settings_delete_all">Elimina tutti i dati</string>
+    <string name="settings_delete_all_subtitle">Rimuovi permanentemente tutte le transazioni e categorie</string>
+    <string name="settings_backup">Backup Dati</string>
+    <string name="settings_backup_subtitle">Esporta i tuoi dati per sicurezza</string>
+    <string name="settings_restore">Ripristina Dati</string>
+    <string name="settings_restore_subtitle">Importa dati da un file di backup</string>
+    <string name="settings_support">Supporto</string>
+    <string name="settings_send_feedback">Invia Feedback</string>
+    <string name="settings_send_feedback_subtitle">Aiutaci a migliorare l\'app</string>
+    <string name="settings_privacy_policy">Informativa sulla Privacy</string>
+    <string name="settings_privacy_policy_subtitle">Come gestiamo i tuoi dati</string>
+    <string name="settings_about">Informazioni</string>
+    <string name="settings_app_version">Versione App</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_choose_theme">Scegli Tema</string>
+    <string name="dialog_choose_language">Scegli Lingua</string>
+    <string name="dialog_cancel">Annulla</string>
+    <string name="dialog_close">Chiudi</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_delete">Elimina</string>
+    <string name="dialog_add">Aggiungi</string>
+    <string name="dialog_delete_all_title">Eliminare tutti i dati?</string>
+    <string name="dialog_delete_all_message">Questa azione eliminerà permanentemente tutte le transazioni e le categorie. Non è possibile annullare.</string>
+    <string name="dialog_data_deleted">Dati Eliminati</string>
+    <string name="dialog_data_deleted_message">Tutti i dati sono stati eliminati con successo.</string>
+
+    <!-- Privacy Policy -->
+    <string name="privacy_policy_title">Informativa sulla Privacy</string>
+    <string name="privacy_policy_content">AntCashManager si impegna a proteggere la tua privacy. Questa applicazione non raccoglie né condivide dati personali con terze parti. Tutti i dati finanziari sono memorizzati localmente sul tuo dispositivo e non vengono mai trasmessi a server esterni.\n\nI tuoi dati rimangono interamente sul tuo dispositivo e sotto il tuo controllo. Non utilizziamo servizi di analisi, tracciamento o pubblicità.\n\nPer qualsiasi domanda sulla privacy, contattaci attraverso la pagina dello store.</string>
+
+    <!-- Languages -->
+    <string name="language_system">Predefinito di sistema</string>
+    <string name="language_english">English</string>
+    <string name="language_italian">Italiano</string>
+    <string name="language_french">Français</string>
+    <string name="language_german">Deutsch</string>
+    <string name="language_spanish">Español</string>
+</resources>
+

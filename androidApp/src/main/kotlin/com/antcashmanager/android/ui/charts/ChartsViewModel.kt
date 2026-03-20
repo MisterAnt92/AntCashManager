@@ -1,8 +1,10 @@
 package com.antcashmanager.android.ui.charts
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
+import com.antcashmanager.android.R
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.TransactionRepository
@@ -32,7 +34,7 @@ data class MonthlyAmount(
     val expense: Double,
 )
 
-@OptIn(ExperimentalCoroutinesApi::class)
+ @OptIn(ExperimentalCoroutinesApi::class)
 class ChartsViewModel(
     transactionRepository: TransactionRepository,
 ) : ViewModel() {
@@ -156,12 +158,12 @@ class ChartsViewModel(
     }
 }
 
-enum class RangePreset(val label: String) {
-    WEEK("7 days"),
-    MONTH("1 month"),
-    THREE_MONTHS("3 months"),
-    SIX_MONTHS("6 months"),
-    YEAR("1 year"),
-    ALL("All time"),
+enum class RangePreset(@StringRes val labelResId: Int) {
+    WEEK(R.string.range_week),
+    MONTH(R.string.range_month),
+    THREE_MONTHS(R.string.range_three_months),
+    SIX_MONTHS(R.string.range_six_months),
+    YEAR(R.string.range_year),
+    ALL(R.string.range_all),
 }
 

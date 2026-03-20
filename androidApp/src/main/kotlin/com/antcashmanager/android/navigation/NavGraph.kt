@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -46,8 +47,8 @@ fun AntCashManagerNavHost(
                 val currentDestination = navBackStackEntry?.destination
                 bottomNavItems.forEach { item ->
                     NavigationBarItem(
-                        icon = { Icon(item.icon, contentDescription = item.title) },
-                        label = { Text(item.title) },
+                        icon = { Icon(item.icon, contentDescription = stringResource(item.titleResId)) },
+                        label = { Text(stringResource(item.titleResId)) },
                         selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
                         onClick = {
                             navController.navigate(item.route) {

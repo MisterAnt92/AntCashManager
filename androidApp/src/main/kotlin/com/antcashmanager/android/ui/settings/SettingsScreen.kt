@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Feedback
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.PrivacyTip
 import androidx.compose.material.icons.filled.RestorePage
@@ -23,7 +24,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -35,15 +35,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.BuildConfig
+import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AppCard
 import com.antcashmanager.android.ui.components.AppCardSectionHeader
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
@@ -64,11 +67,14 @@ fun SettingsScreen(
         },
     )
     val currentTheme by viewModel.theme.collectAsState()
+    val currentLanguage by viewModel.language.collectAsState()
     val deleteResult by viewModel.deleteResult.collectAsState()
 
     SettingsContent(
         currentTheme = currentTheme,
         onThemeSelected = { viewModel.setTheme(it) },
+        currentLanguage = currentLanguage,
+        onLanguageSelected = { viewModel.setLanguage(it) },
         versionName = BuildConfig.VERSION_NAME,
         onDeleteAllData = { viewModel.deleteAllData() },
         deleteResult = deleteResult,
@@ -80,12 +86,15 @@ fun SettingsScreen(
 internal fun SettingsContent(
     currentTheme: AppTheme,
     onThemeSelected: (AppTheme) -> Unit,
+    currentLanguage: AppLanguage = AppLanguage.SYSTEM,
+    onLanguageSelected: (AppLanguage) -> Unit = {},
     versionName: String,
     onDeleteAllData: () -> Unit = {},
     deleteResult: DeleteResult = DeleteResult.Idle,
     onResetDeleteResult: () -> Unit = {},
 ) {
     var showThemeDialog by remember { mutableStateOf(false) }
+    var showLanguageDialog by remember { mutableStateOf(false) }
     var showPrivacyDialog by remember { mutableStateOf(false) }
     var showDeleteConfirmDialog by remember { mutableStateOf(false) }
     var showDeleteSuccessDialog by remember { mutableStateOf(false) }
@@ -112,31 +121,39 @@ internal fun SettingsContent(
             .padding(top = 16.dp, bottom = 24.dp),
     ) {
         Text(
-            text = "Settings",
+            text = stringResource(R.string.settings_title),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground,
         )
 
         // ── Appearance Section ──
-        AppCardSectionHeader(title = "Appearance")
-        AppCard(
-            title = "Theme",
-            subtitle = when (currentTheme) {
-                AppTheme.LIGHT -> "Light"
-                AppTheme.DARK -> "Dark"
-                AppTheme.SYSTEM -> "System Default"
-            },
-            leadingIcon = Icons.Default.Palette,
-            onClick = { showThemeDialog = true },
-        )
-
-        // ── Data Management Section ──
-        AppCardSectionHeader(title = "Data Management")
+        AppCardSectionHeader(title = stringResource(R.string.settings_appearance))
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             AppCard(
-                title = "Delete All Data",
-                subtitle = "Permanently remove all transactions and categories",
+                title = stringResource(R.string.settings_theme),
+                subtitle = when (currentTheme) {
+                    AppTheme.LIGHT -> stringResource(R.string.settings_theme_light)
+                    AppTheme.DARK -> stringResource(R.string.settings_theme_dark)
+                    AppTheme.SYSTEM -> stringResource(R.string.settings_theme_system)
+                },
+                leadingIcon = Icons.Default.Palette,
+                onClick = { showThemeDialog = true },
+            )
+            AppCard(
+                title = stringResource(R.string.settings_language),
+                subtitle = languageDisplayName(currentLanguage),
+                leadingIcon = Icons.Default.Language,
+                onClick = { showLanguageDialog = true },
+            )
+        }
+
+        // ── Data Management Section ──
+        AppCardSectionHeader(title = stringResource(R.string.settings_data_management))
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            AppCard(
+                title = stringResource(R.string.settings_delete_all),
+                subtitle = stringResource(R.string.settings_delete_all_subtitle),
                 leadingIcon = Icons.Default.Delete,
                 iconBackgroundColor = MaterialTheme.colorScheme.errorContainer,
                 iconTint = MaterialTheme.colorScheme.onErrorContainer,
@@ -144,8 +161,8 @@ internal fun SettingsContent(
                 onClick = { showDeleteConfirmDialog = true },
             )
             AppCard(
-                title = "Backup Data",
-                subtitle = "Export your data for safekeeping",
+                title = stringResource(R.string.settings_backup),
+                subtitle = stringResource(R.string.settings_backup_subtitle),
                 leadingIcon = Icons.Default.Backup,
                 iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
                 iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
@@ -155,8 +172,8 @@ internal fun SettingsContent(
                 },
             )
             AppCard(
-                title = "Restore Data",
-                subtitle = "Import data from a backup file",
+                title = stringResource(R.string.settings_restore),
+                subtitle = stringResource(R.string.settings_restore_subtitle),
                 leadingIcon = Icons.Default.RestorePage,
                 iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
                 iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
@@ -168,11 +185,11 @@ internal fun SettingsContent(
         }
 
         // ── Support Section ──
-        AppCardSectionHeader(title = "Support")
+        AppCardSectionHeader(title = stringResource(R.string.settings_support))
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             AppCard(
-                title = "Send Feedback",
-                subtitle = "Help us improve the app",
+                title = stringResource(R.string.settings_send_feedback),
+                subtitle = stringResource(R.string.settings_send_feedback_subtitle),
                 leadingIcon = Icons.Default.Feedback,
                 iconBackgroundColor = MaterialTheme.colorScheme.secondaryContainer,
                 iconTint = MaterialTheme.colorScheme.onSecondaryContainer,
@@ -188,8 +205,8 @@ internal fun SettingsContent(
                 },
             )
             AppCard(
-                title = "Privacy Policy",
-                subtitle = "How we handle your data",
+                title = stringResource(R.string.settings_privacy_policy),
+                subtitle = stringResource(R.string.settings_privacy_policy_subtitle),
                 leadingIcon = Icons.Default.PrivacyTip,
                 iconBackgroundColor = MaterialTheme.colorScheme.secondaryContainer,
                 iconTint = MaterialTheme.colorScheme.onSecondaryContainer,
@@ -198,9 +215,9 @@ internal fun SettingsContent(
         }
 
         // ── About Section ──
-        AppCardSectionHeader(title = "About")
+        AppCardSectionHeader(title = stringResource(R.string.settings_about))
         AppCard(
-            title = "App Version",
+            title = stringResource(R.string.settings_app_version),
             subtitle = versionName,
             leadingIcon = Icons.Default.Info,
             showChevron = false,
@@ -219,6 +236,17 @@ internal fun SettingsContent(
         )
     }
 
+    if (showLanguageDialog) {
+        LanguageSelectionDialog(
+            currentLanguage = currentLanguage,
+            onLanguageSelected = { language ->
+                onLanguageSelected(language)
+                showLanguageDialog = false
+            },
+            onDismiss = { showLanguageDialog = false },
+        )
+    }
+
     if (showPrivacyDialog) {
         PrivacyPolicyDialog(onDismiss = { showPrivacyDialog = false })
     }
@@ -233,11 +261,10 @@ internal fun SettingsContent(
                     tint = MaterialTheme.colorScheme.error,
                 )
             },
-            title = { Text("Delete All Data?") },
+            title = { Text(stringResource(R.string.dialog_delete_all_title)) },
             text = {
                 Text(
-                    "This action will permanently delete all transactions and categories. " +
-                        "This cannot be undone.",
+                    stringResource(R.string.dialog_delete_all_message),
                     style = MaterialTheme.typography.bodyMedium,
                 )
             },
@@ -248,12 +275,12 @@ internal fun SettingsContent(
                         showDeleteConfirmDialog = false
                     },
                 ) {
-                    Text("Delete", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(R.string.dialog_delete), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteConfirmDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.dialog_cancel))
                 }
             },
         )
@@ -262,15 +289,25 @@ internal fun SettingsContent(
     if (showDeleteSuccessDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteSuccessDialog = false },
-            title = { Text("Data Deleted") },
-            text = { Text("All data has been successfully deleted.") },
+            title = { Text(stringResource(R.string.dialog_data_deleted)) },
+            text = { Text(stringResource(R.string.dialog_data_deleted_message)) },
             confirmButton = {
                 TextButton(onClick = { showDeleteSuccessDialog = false }) {
-                    Text("OK")
+                    Text(stringResource(R.string.dialog_ok))
                 }
             },
         )
     }
+}
+
+@Composable
+private fun languageDisplayName(language: AppLanguage): String = when (language) {
+    AppLanguage.SYSTEM -> stringResource(R.string.language_system)
+    AppLanguage.ENGLISH -> stringResource(R.string.language_english)
+    AppLanguage.ITALIAN -> stringResource(R.string.language_italian)
+    AppLanguage.FRENCH -> stringResource(R.string.language_french)
+    AppLanguage.GERMAN -> stringResource(R.string.language_german)
+    AppLanguage.SPANISH -> stringResource(R.string.language_spanish)
 }
 
 @Composable
@@ -288,7 +325,7 @@ private fun ThemeSelectionDialog(
                 tint = MaterialTheme.colorScheme.primary,
             )
         },
-        title = { Text("Choose Theme") },
+        title = { Text(stringResource(R.string.dialog_choose_theme)) },
         text = {
             Column {
                 AppTheme.entries.forEach { theme ->
@@ -296,9 +333,9 @@ private fun ThemeSelectionDialog(
                         headlineContent = {
                             Text(
                                 when (theme) {
-                                    AppTheme.LIGHT -> "Light"
-                                    AppTheme.DARK -> "Dark"
-                                    AppTheme.SYSTEM -> "System Default"
+                                    AppTheme.LIGHT -> stringResource(R.string.settings_theme_light)
+                                    AppTheme.DARK -> stringResource(R.string.settings_theme_dark)
+                                    AppTheme.SYSTEM -> stringResource(R.string.settings_theme_system)
                                 },
                             )
                         },
@@ -314,7 +351,47 @@ private fun ThemeSelectionDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.dialog_cancel)) }
+        },
+    )
+}
+
+@Composable
+private fun LanguageSelectionDialog(
+    currentLanguage: AppLanguage,
+    onLanguageSelected: (AppLanguage) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        icon = {
+            androidx.compose.material3.Icon(
+                imageVector = Icons.Default.Language,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+            )
+        },
+        title = { Text(stringResource(R.string.dialog_choose_language)) },
+        text = {
+            Column {
+                AppLanguage.entries.forEach { language ->
+                    ListItem(
+                        headlineContent = {
+                            Text(languageDisplayName(language))
+                        },
+                        leadingContent = {
+                            RadioButton(
+                                selected = language == currentLanguage,
+                                onClick = { onLanguageSelected(language) },
+                            )
+                        },
+                        modifier = Modifier,
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.dialog_cancel)) }
         },
     )
 }
@@ -330,21 +407,15 @@ private fun PrivacyPolicyDialog(onDismiss: () -> Unit) {
                 tint = MaterialTheme.colorScheme.primary,
             )
         },
-        title = { Text("Privacy Policy") },
+        title = { Text(stringResource(R.string.privacy_policy_title)) },
         text = {
             Text(
-                text = "AntCashManager is committed to protecting your privacy. " +
-                    "This application does not collect or share personal data with third parties. " +
-                    "All financial data is stored locally on your device and is never transmitted " +
-                    "to external servers.\n\n" +
-                    "Your data remains entirely on your device and under your control. " +
-                    "We do not use analytics, tracking, or advertising services.\n\n" +
-                    "For any questions about privacy, please contact us through the app store listing.",
+                text = stringResource(R.string.privacy_policy_content),
                 style = MaterialTheme.typography.bodyMedium,
             )
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) { Text("Close") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.dialog_close)) }
         },
     )
 }
@@ -382,6 +453,18 @@ private fun ThemeSelectionDialogPreview() {
         ThemeSelectionDialog(
             currentTheme = AppTheme.SYSTEM,
             onThemeSelected = {},
+            onDismiss = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "LanguageSelectionDialog")
+@Composable
+private fun LanguageSelectionDialogPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        LanguageSelectionDialog(
+            currentLanguage = AppLanguage.SYSTEM,
+            onLanguageSelected = {},
             onDismiss = {},
         )
     }

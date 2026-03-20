@@ -3,11 +3,14 @@ package com.antcashmanager.android.ui.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
+import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
+import com.antcashmanager.domain.usecase.settings.GetLanguageUseCase
 import com.antcashmanager.domain.usecase.settings.GetThemeUseCase
+import com.antcashmanager.domain.usecase.settings.SetLanguageUseCase
 import com.antcashmanager.domain.usecase.settings.SetThemeUseCase
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,6 +28,8 @@ class SettingsViewModel(
 
     private val getThemeUseCase = GetThemeUseCase(settingsRepository)
     private val setThemeUseCase = SetThemeUseCase(settingsRepository)
+    private val getLanguageUseCase = GetLanguageUseCase(settingsRepository)
+    private val setLanguageUseCase = SetLanguageUseCase(settingsRepository)
     private val deleteAllTransactionsUseCase = DeleteAllTransactionsUseCase(transactionRepository)
 
     val theme = getThemeUseCase()
@@ -34,6 +39,13 @@ class SettingsViewModel(
             initialValue = AppTheme.SYSTEM,
         )
 
+    val language = getLanguageUseCase()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = AppLanguage.SYSTEM,
+        )
+
     private val _deleteResult = MutableStateFlow<DeleteResult>(DeleteResult.Idle)
     val deleteResult: StateFlow<DeleteResult> = _deleteResult.asStateFlow()
 
@@ -41,6 +53,13 @@ class SettingsViewModel(
         Logger.d("SettingsViewModel") { "Setting theme to: $theme" }
         viewModelScope.launch {
             setThemeUseCase(theme)
+        }
+    }
+
+    fun setLanguage(language: AppLanguage) {
+        Logger.d("SettingsViewModel") { "Setting language to: $language" }
+        viewModelScope.launch {
+            setLanguageUseCase(language)
         }
     }
 

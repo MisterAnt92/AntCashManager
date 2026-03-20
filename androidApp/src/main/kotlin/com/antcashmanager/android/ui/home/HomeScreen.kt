@@ -26,12 +26,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import co.touchlab.kermit.Logger
+import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
@@ -65,7 +67,7 @@ internal fun HomeContent(transactions: List<Transaction>) {
     ) {
         item {
             Text(
-                text = "Dashboard",
+                text = stringResource(R.string.home_dashboard),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,
@@ -89,7 +91,7 @@ internal fun HomeContent(transactions: List<Transaction>) {
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
-                        text = "Total Balance",
+                        text = stringResource(R.string.home_total_balance),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
                     )
@@ -135,7 +137,7 @@ internal fun HomeContent(transactions: List<Transaction>) {
                         Spacer(modifier = Modifier.padding(start = 8.dp))
                         Column {
                             Text(
-                                text = "Income",
+                                text = stringResource(R.string.home_income),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f),
                             )
@@ -169,7 +171,7 @@ internal fun HomeContent(transactions: List<Transaction>) {
                         Spacer(modifier = Modifier.padding(start = 8.dp))
                         Column {
                             Text(
-                                text = "Expenses",
+                                text = stringResource(R.string.home_expenses),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.7f),
                             )
@@ -188,7 +190,7 @@ internal fun HomeContent(transactions: List<Transaction>) {
         // Recent Transactions header
         item {
             Text(
-                text = "Recent Transactions",
+                text = stringResource(R.string.home_recent_transactions),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onBackground,
@@ -198,7 +200,7 @@ internal fun HomeContent(transactions: List<Transaction>) {
         if (transactions.isEmpty()) {
             item {
                 Text(
-                    text = "No transactions yet.\nAdd your first transaction!",
+                    text = stringResource(R.string.home_no_transactions),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,

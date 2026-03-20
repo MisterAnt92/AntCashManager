@@ -45,11 +45,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Logger
+import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.repository.CategoryRepository
@@ -106,7 +108,7 @@ internal fun CategoriesContent(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Add Category")
+                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.categories_add_content_desc))
             }
         },
     ) { innerPadding ->
@@ -118,7 +120,7 @@ internal fun CategoriesContent(
                 .padding(top = 16.dp),
         ) {
             Text(
-                text = "Categories",
+                text = stringResource(R.string.categories_title),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,
@@ -132,13 +134,13 @@ internal fun CategoriesContent(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
-                        text = "No categories yet",
+                        text = stringResource(R.string.categories_empty),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Tap + to add your first category",
+                        text = stringResource(R.string.categories_empty_subtitle),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -169,9 +171,9 @@ internal fun CategoriesContent(
     categoryToDelete?.let { category ->
         AlertDialog(
             onDismissRequest = { categoryToDelete = null },
-            title = { Text("Delete Category?") },
+            title = { Text(stringResource(R.string.categories_delete_title)) },
             text = {
-                Text("Are you sure you want to delete \"${category.name}\"?")
+                Text(stringResource(R.string.categories_delete_message, category.name))
             },
             confirmButton = {
                 TextButton(
@@ -180,12 +182,12 @@ internal fun CategoriesContent(
                         categoryToDelete = null
                     },
                 ) {
-                    Text("Delete", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(R.string.dialog_delete), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { categoryToDelete = null }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.dialog_cancel))
                 }
             },
         )
@@ -234,7 +236,7 @@ private fun CategoryItem(
             IconButton(onClick = onDelete) {
                 Icon(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete",
+                    contentDescription = stringResource(R.string.dialog_delete),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
@@ -253,19 +255,19 @@ private fun AddCategoryDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Add Category") },
+        title = { Text(stringResource(R.string.categories_add)) },
         text = {
             Column {
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Category Name") },
+                    label = { Text(stringResource(R.string.categories_name_label)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "Color",
+                    text = stringResource(R.string.categories_color_label),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -293,7 +295,7 @@ private fun AddCategoryDialog(
                             if (color == selectedColor) {
                                 Icon(
                                     imageVector = Icons.Default.Check,
-                                    contentDescription = "Selected",
+                                    contentDescription = stringResource(R.string.categories_selected),
                                     tint = Color.White,
                                     modifier = Modifier.size(18.dp),
                                 )
@@ -308,11 +310,11 @@ private fun AddCategoryDialog(
                 onClick = { if (name.isNotBlank()) onConfirm(name.trim(), "category", selectedColor) },
                 enabled = name.isNotBlank(),
             ) {
-                Text("Add")
+                Text(stringResource(R.string.dialog_add))
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.dialog_cancel)) }
         },
     )
 }

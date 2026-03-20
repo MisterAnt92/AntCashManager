@@ -24,11 +24,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import co.touchlab.kermit.Logger
+import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
@@ -56,7 +58,7 @@ internal fun TransactionsContent(transactions: List<Transaction>) {
             .padding(top = 16.dp),
     ) {
         Text(
-            text = "Transactions",
+            text = stringResource(R.string.transactions_title),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground,
@@ -69,13 +71,13 @@ internal fun TransactionsContent(transactions: List<Transaction>) {
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text = "No transactions yet",
+                    text = stringResource(R.string.transactions_empty),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Your transactions will appear here",
+                    text = stringResource(R.string.transactions_empty_subtitle),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                 )

@@ -42,6 +42,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Logger
+import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.usecase.transaction.DateRange
@@ -100,7 +102,7 @@ internal fun ChartsContent(
             .padding(top = 16.dp, bottom = 24.dp),
     ) {
         Text(
-            text = "Charts",
+            text = stringResource(R.string.charts_title),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground,
@@ -116,7 +118,7 @@ internal fun ChartsContent(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = "Period",
+                    text = stringResource(R.string.charts_period),
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -133,7 +135,7 @@ internal fun ChartsContent(
                                 onPresetSelected(preset)
                             },
                             label = {
-                                Text(text = preset.label, style = MaterialTheme.typography.labelSmall)
+                                Text(text = stringResource(preset.labelResId), style = MaterialTheme.typography.labelSmall)
                             },
                         )
                     }
@@ -144,20 +146,20 @@ internal fun ChartsContent(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Text(
-                        text = "From: ${dateFormat.format(Date(dateRange.from))}",
+                        text = stringResource(R.string.charts_from, dateFormat.format(Date(dateRange.from))),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.weight(1f),
                     )
                     IconButton(onClick = { showFromPicker = true }, modifier = Modifier.size(32.dp)) {
-                        Icon(Icons.Default.CalendarMonth, contentDescription = "Pick start date", modifier = Modifier.size(20.dp))
+                        Icon(Icons.Default.CalendarMonth, contentDescription = stringResource(R.string.charts_pick_start_date), modifier = Modifier.size(20.dp))
                     }
                     Text(
-                        text = "To: ${dateFormat.format(Date(dateRange.to))}",
+                        text = stringResource(R.string.charts_to, dateFormat.format(Date(dateRange.to))),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.weight(1f),
                     )
                     IconButton(onClick = { showToPicker = true }, modifier = Modifier.size(32.dp)) {
-                        Icon(Icons.Default.CalendarMonth, contentDescription = "Pick end date", modifier = Modifier.size(20.dp))
+                        Icon(Icons.Default.CalendarMonth, contentDescription = stringResource(R.string.charts_pick_end_date), modifier = Modifier.size(20.dp))
                     }
                 }
             }
@@ -171,7 +173,7 @@ internal fun ChartsContent(
                 shape = MaterialTheme.shapes.medium,
             ) {
                 Column(modifier = Modifier.padding(12.dp)) {
-                    Text("Income", style = MaterialTheme.typography.labelMedium)
+                    Text(stringResource(R.string.charts_income), style = MaterialTheme.typography.labelMedium)
                     Text(
                         text = "€%.2f".format(chartData.totalIncome),
                         style = MaterialTheme.typography.titleMedium,
@@ -185,7 +187,7 @@ internal fun ChartsContent(
                 shape = MaterialTheme.shapes.medium,
             ) {
                 Column(modifier = Modifier.padding(12.dp)) {
-                    Text("Expenses", style = MaterialTheme.typography.labelMedium)
+                    Text(stringResource(R.string.charts_expenses), style = MaterialTheme.typography.labelMedium)
                     Text(
                         text = "€%.2f".format(chartData.totalExpense),
                         style = MaterialTheme.typography.titleMedium,
@@ -197,7 +199,7 @@ internal fun ChartsContent(
         Spacer(modifier = Modifier.height(20.dp))
         // Pie chart
         if (chartData.expenseByCategory.isNotEmpty()) {
-            Text("Expenses by Category", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+            Text(stringResource(R.string.charts_expense_by_category), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
             Spacer(modifier = Modifier.height(12.dp))
             PieChart(data = chartData.expenseByCategory, modifier = Modifier.fillMaxWidth().height(220.dp))
             Spacer(modifier = Modifier.height(8.dp))
@@ -206,14 +208,14 @@ internal fun ChartsContent(
         Spacer(modifier = Modifier.height(20.dp))
         // Bar chart
         if (chartData.monthlyData.isNotEmpty()) {
-            Text("Monthly Overview", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+            Text(stringResource(R.string.charts_monthly_overview), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
             Spacer(modifier = Modifier.height(12.dp))
             BarChart(data = chartData.monthlyData, modifier = Modifier.fillMaxWidth().height(200.dp))
         }
         if (chartData.expenseByCategory.isEmpty() && chartData.monthlyData.isEmpty()) {
             Spacer(modifier = Modifier.height(48.dp))
             Text(
-                text = "No data for the selected period",
+                text = stringResource(R.string.charts_no_data),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
@@ -231,9 +233,9 @@ internal fun ChartsContent(
                     state.selectedDateMillis?.let { onDateRangeChanged(it, dateRange.to) }
                     selectedPreset = -1
                     showFromPicker = false
-                }) { Text("OK") }
+                }) { Text(stringResource(R.string.dialog_ok)) }
             },
-            dismissButton = { TextButton(onClick = { showFromPicker = false }) { Text("Cancel") } },
+            dismissButton = { TextButton(onClick = { showFromPicker = false }) { Text(stringResource(R.string.dialog_cancel)) } },
         ) { DatePicker(state = state) }
     }
     if (showToPicker) {
@@ -245,9 +247,9 @@ internal fun ChartsContent(
                     state.selectedDateMillis?.let { onDateRangeChanged(dateRange.from, it) }
                     selectedPreset = -1
                     showToPicker = false
-                }) { Text("OK") }
+                }) { Text(stringResource(R.string.dialog_ok)) }
             },
-            dismissButton = { TextButton(onClick = { showToPicker = false }) { Text("Cancel") } },
+            dismissButton = { TextButton(onClick = { showToPicker = false }) { Text(stringResource(R.string.dialog_cancel)) } },
         ) { DatePicker(state = state) }
     }
 }
@@ -313,11 +315,11 @@ private fun BarChart(data: List<MonthlyAmount>, modifier: Modifier = Modifier) {
     Row(modifier = Modifier.fillMaxWidth().padding(top = 4.dp), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
         Canvas(modifier = Modifier.size(10.dp)) { drawCircle(color = incomeColor) }
         Spacer(modifier = Modifier.width(4.dp))
-        Text("Income", style = MaterialTheme.typography.labelSmall)
+        Text(stringResource(R.string.charts_income), style = MaterialTheme.typography.labelSmall)
         Spacer(modifier = Modifier.width(16.dp))
         Canvas(modifier = Modifier.size(10.dp)) { drawCircle(color = expenseColor) }
         Spacer(modifier = Modifier.width(4.dp))
-        Text("Expenses", style = MaterialTheme.typography.labelSmall)
+        Text(stringResource(R.string.charts_expenses), style = MaterialTheme.typography.labelSmall)
     }
 }
 // Previews

@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.settings
 
+import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.Transaction
@@ -135,11 +136,18 @@ class SettingsViewModelTest {
 
 private class FakeSettingsRepository : SettingsRepository {
     private val themeFlow = MutableStateFlow(AppTheme.SYSTEM)
+    private val languageFlow = MutableStateFlow(AppLanguage.SYSTEM)
 
     override fun getTheme(): Flow<AppTheme> = themeFlow
 
     override suspend fun setTheme(theme: AppTheme) {
         themeFlow.value = theme
+    }
+
+    override fun getLanguage(): Flow<AppLanguage> = languageFlow
+
+    override suspend fun setLanguage(language: AppLanguage) {
+        languageFlow.value = language
     }
 }
 
