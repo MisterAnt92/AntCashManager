@@ -133,6 +133,21 @@
     <string name="dialog_ok">OK</string>
     <string name="dialog_delete">L\u00f6schen</string>
     <string name="dialog_add">Hinzuf\u00fcgen</string>
+
+    <!-- Common Actions -->
+    <string name="common_confirm">Best\u00e4tigen</string>
+    <string name="common_cancel">Abbrechen</string>
+
+    <!-- Backup/Restore -->
+    <string name="backup_success_title">Backup Abgeschlossen</string>
+    <string name="backup_success_message">Ihre Daten wurden erfolgreich exportiert.</string>
+    <string name="backup_error_title">Backup Fehlgeschlagen</string>
+    <string name="backup_error_message">Backup konnte nicht erstellt werden: %s</string>
+    <string name="restore_success_title">Wiederherstellung Abgeschlossen</string>
+    <string name="restore_success_message">Erfolgreich %1$d Transaktionen und %2$d Kategorien wiederhergestellt.</string>
+    <string name="restore_error_title">Wiederherstellung Fehlgeschlagen</string>
+    <string name="restore_error_message">Backup konnte nicht wiederhergestellt werden: %s</string>
+
     <string name="dialog_delete_all_title">Alle Daten l\u00f6schen?</string>
     <string name="dialog_delete_all_message">Diese Aktion wird alle Transaktionen und Kategorien dauerhaft l\u00f6schen. Dies kann nicht r\u00fcckg\u00e4ngig gemacht werden.</string>
     <string name="dialog_data_deleted">Daten gel\u00f6scht</string>
@@ -152,4 +167,12 @@
     <string name="language_french">Fran\u00e7ais</string>
     <string name="language_german">Deutsch</string>
     <string name="language_spanish">Espa\u00f1ol</string>
+
+    <!-- Add Transaction Screen -->
+    <string name="add_transaction">Transaktion Hinzuf\u00fcgen</string>
+    <string name="transaction_title">Transaktionstext</string>
+    <string name="transaction_amount">Betrag</string>
+    <string name="transaction_type">Transaktionstyp</string>
+    <string name="transaction_category">Kategorie</string>
+    <string name="transaction_date">Datum</string>
 </resources>

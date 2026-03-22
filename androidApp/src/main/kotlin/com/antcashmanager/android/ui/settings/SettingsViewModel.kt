@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.BuildConfig
+import com.antcashmanager.android.data.backup.BackupService
+import com.antcashmanager.android.data.backup.RestoreResult
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.Transaction
@@ -38,6 +40,14 @@ class SettingsViewModel(
     private val getLanguageUseCase = GetLanguageUseCase(settingsRepository)
     private val setLanguageUseCase = SetLanguageUseCase(settingsRepository)
     private val deleteAllTransactionsUseCase = DeleteAllTransactionsUseCase(transactionRepository)
+
+    private val backupService = BackupService(transactionRepository, categoryRepository)
+
+    private val _backupResult = MutableStateFlow<BackupResult>(BackupResult.Idle)
+    val backupResult: StateFlow<BackupResult> = _backupResult.asStateFlow()
+
+    private val _restoreResult = MutableStateFlow<RestoreOperationResult>(RestoreOperationResult.Idle)
+    val restoreResult: StateFlow<RestoreOperationResult> = _restoreResult.asStateFlow()
 
     /**
      * Import debug data from asset `debug_initial_data.json`.
@@ -256,6 +266,58 @@ class SettingsViewModel(
     fun resetDeleteResult() {
         _deleteResult.value = DeleteResult.Idle
     }
+
+    /**
+     * Creates a backup of all app data and returns the JSON string.
+     * The caller is responsible for saving the string to a file.
+     */
+    fun createBackup(onResult: (String?) -> Unit) {
+        Logger.d("SettingsViewModel") { "Creating backup..." }
+        _backupResult.value = BackupResult.Loading
+        viewModelScope.launch {
+            val result = backupService.createBackup()
+            result.fold(
+                onSuccess = { jsonString ->
+                    _backupResult.value = BackupResult.Success
+                    onResult(jsonString)
+                },
+                onFailure = { error ->
+                    _backupResult.value = BackupResult.Error(error.message ?: "Unknown error")
+                    onResult(null)
+                },
+            )
+        }
+    }
+
+    /**
+     * Restores app data from a JSON string.
+     */
+    fun restoreBackup(jsonString: String) {
+        Logger.d("SettingsViewModel") { "Restoring backup..." }
+        _restoreResult.value = RestoreOperationResult.Loading
+        viewModelScope.launch {
+            val result = backupService.restoreBackup(jsonString)
+            result.fold(
+                onSuccess = { restoreResult ->
+                    _restoreResult.value = RestoreOperationResult.Success(
+                        transactions = restoreResult.transactionsRestored,
+                        categories = restoreResult.categoriesRestored,
+                    )
+                },
+                onFailure = { error ->
+                    _restoreResult.value = RestoreOperationResult.Error(error.message ?: "Unknown error")
+                },
+            )
+        }
+    }
+
+    fun resetBackupResult() {
+        _backupResult.value = BackupResult.Idle
+    }
+
+    fun resetRestoreResult() {
+        _restoreResult.value = RestoreOperationResult.Idle
+    }
 }
 
 sealed interface DeleteResult {
@@ -263,3 +325,18 @@ sealed interface DeleteResult {
     data object Success : DeleteResult
     data class Error(val message: String) : DeleteResult
 }
+
+sealed interface BackupResult {
+    data object Idle : BackupResult
+    data object Loading : BackupResult
+    data object Success : BackupResult
+    data class Error(val message: String) : BackupResult
+}
+
+sealed interface RestoreOperationResult {
+    data object Idle : RestoreOperationResult
+    data object Loading : RestoreOperationResult
+    data class Success(val transactions: Int, val categories: Int) : RestoreOperationResult
+    data class Error(val message: String) : RestoreOperationResult
+}
+

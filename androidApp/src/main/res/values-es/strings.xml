@@ -137,6 +137,21 @@
     <string name="dialog_ok">OK</string>
     <string name="dialog_delete">Eliminar</string>
     <string name="dialog_add">A\u00f1adir</string>
+
+    <!-- Common Actions -->
+    <string name="common_confirm">Confirmar</string>
+    <string name="common_cancel">Cancelar</string>
+
+    <!-- Backup/Restore -->
+    <string name="backup_success_title">Copia de Seguridad Completada</string>
+    <string name="backup_success_message">Tus datos han sido exportados correctamente.</string>
+    <string name="backup_error_title">Error en Copia de Seguridad</string>
+    <string name="backup_error_message">No se pudo crear la copia de seguridad: %s</string>
+    <string name="restore_success_title">Restauraci\u00f3n Completada</string>
+    <string name="restore_success_message">Se restauraron correctamente %1$d transacciones y %2$d categor\u00edas.</string>
+    <string name="restore_error_title">Error en Restauraci\u00f3n</string>
+    <string name="restore_error_message">No se pudo restaurar la copia de seguridad: %s</string>
+
     <string name="dialog_delete_all_title">\u00bfEliminar todos los datos?</string>
     <string name="dialog_delete_all_message">Esta acci\u00f3n eliminar\u00e1 permanentemente todas las transacciones y categor\u00edas. No se puede deshacer.</string>
     <string name="dialog_data_deleted">Datos eliminados</string>
@@ -152,4 +167,12 @@
     <string name="language_french">Fran\u00e7ais</string>
     <string name="language_german">Deutsch</string>
     <string name="language_spanish">Espa\u00f1ol</string>
+
+    <!-- Add Transaction Screen -->
+    <string name="add_transaction">A\u00f1adir Transacci\u00f3n</string>
+    <string name="transaction_title">T\u00edtulo de Transacci\u00f3n</string>
+    <string name="transaction_amount">Cantidad</string>
+    <string name="transaction_type">Tipo de Transacci\u00f3n</string>
+    <string name="transaction_category">Categor\u00eda</string>
+    <string name="transaction_date">Fecha</string>
 </resources>

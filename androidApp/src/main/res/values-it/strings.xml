@@ -154,6 +154,20 @@
     <string name="dialog_ok">OK</string>
     <string name="dialog_delete">Elimina</string>
     <string name="dialog_add">Aggiungi</string>
+
+    <!-- Common Actions -->
+    <string name="common_confirm">Conferma</string>
+    <string name="common_cancel">Annulla</string>
+
+    <!-- Backup/Restore -->
+    <string name="backup_success_title">Backup Completato</string>
+    <string name="backup_success_message">I tuoi dati sono stati esportati con successo.</string>
+    <string name="backup_error_title">Backup Fallito</string>
+    <string name="backup_error_message">Impossibile creare il backup: %s</string>
+    <string name="restore_success_title">Ripristino Completato</string>
+    <string name="restore_success_message">Ripristinate con successo %1$d transazioni e %2$d categorie.</string>
+    <string name="restore_error_title">Ripristino Fallito</string>
+    <string name="restore_error_message">Impossibile ripristinare il backup: %s</string>
     <string name="dialog_delete_all_title">Eliminare tutti i dati?</string>
     <string name="dialog_delete_all_message">Questa azione eliminer\u00e0 permanentemente tutte le transazioni e le categorie. Non \u00e8 possibile annullare.</string>
     <string name="dialog_data_deleted">Dati Eliminati</string>
@@ -174,4 +188,12 @@
     <string name="language_german">Deutsch</string>
     <string name="language_spanish">Espa\u00f1ol</string>
     <string name="back">Indietro</string>
+
+    <!-- Add Transaction Screen -->
+    <string name="add_transaction">Aggiungi Transazione</string>
+    <string name="transaction_title">Titolo Transazione</string>
+    <string name="transaction_amount">Importo</string>
+    <string name="transaction_type">Tipo di Transazione</string>
+    <string name="transaction_category">Categoria</string>
+    <string name="transaction_date">Data</string>
 </resources>

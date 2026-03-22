@@ -137,6 +137,21 @@
     <string name="dialog_ok">OK</string>
     <string name="dialog_delete">Supprimer</string>
     <string name="dialog_add">Ajouter</string>
+
+    <!-- Common Actions -->
+    <string name="common_confirm">Confirmer</string>
+    <string name="common_cancel">Annuler</string>
+
+    <!-- Backup/Restore -->
+    <string name="backup_success_title">Sauvegarde Termin\u00e9e</string>
+    <string name="backup_success_message">Vos donn\u00e9es ont \u00e9t\u00e9 export\u00e9es avec succ\u00e8s.</string>
+    <string name="backup_error_title">\u00c9chec de la Sauvegarde</string>
+    <string name="backup_error_message">Impossible de cr\u00e9er la sauvegarde\u00a0: %s</string>
+    <string name="restore_success_title">Restauration Termin\u00e9e</string>
+    <string name="restore_success_message">%1$d transactions et %2$d cat\u00e9gories ont \u00e9t\u00e9 restaur\u00e9es avec succ\u00e8s.</string>
+    <string name="restore_error_title">\u00c9chec de la Restauration</string>
+    <string name="restore_error_message">Impossible de restaurer la sauvegarde\u00a0: %s</string>
+
     <string name="dialog_delete_all_title">Supprimer toutes les donn\u00e9es ?</string>
     <string name="dialog_delete_all_message">Cette action supprimera d\u00e9finitivement toutes les transactions et cat\u00e9gories. Cette action est irr\u00e9versible.</string>
     <string name="dialog_data_deleted">Donn\u00e9es supprim\u00e9es</string>
@@ -152,4 +167,12 @@
     <string name="language_french">Fran\u00e7ais</string>
     <string name="language_german">Deutsch</string>
     <string name="language_spanish">Espa\u00f1ol</string>
+
+    <!-- Add Transaction Screen -->
+    <string name="add_transaction">Ajouter une Transaction</string>
+    <string name="transaction_title">Titre de la Transaction</string>
+    <string name="transaction_amount">Montant</string>
+    <string name="transaction_type">Type de Transaction</string>
+    <string name="transaction_category">Cat\u00e9gorie</string>
+    <string name="transaction_date">Date</string>
 </resources>

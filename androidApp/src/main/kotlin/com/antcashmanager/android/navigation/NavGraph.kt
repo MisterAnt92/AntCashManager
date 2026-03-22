@@ -23,6 +23,7 @@ import com.antcashmanager.android.ui.charts.ChartsScreen
 import com.antcashmanager.android.ui.home.HomeScreen
 import com.antcashmanager.android.ui.settings.SettingsScreen
 import com.antcashmanager.android.ui.settings.display.DisplayScreen
+import com.antcashmanager.android.ui.transactions.AddTransactionScreen
 import com.antcashmanager.android.ui.transactions.TransactionsScreen
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.domain.model.CurrencyFormat
@@ -103,7 +104,11 @@ fun AntCashManagerNavHost(
                     ChartsScreen(transactionRepository = transactionRepository)
                 }
                 composable(BottomNavItem.Transactions.route) {
-                    TransactionsScreen(transactionRepository = transactionRepository)
+                    TransactionsScreen(
+                        transactionRepository = transactionRepository,
+                        categoryRepository = categoryRepository,
+                        navController = navController,
+                    )
                 }
                 composable(BottomNavItem.Categories.route) {
                     CategoriesScreen(categoryRepository = categoryRepository)
@@ -120,6 +125,15 @@ fun AntCashManagerNavHost(
                     DisplayScreen(
                         settingsRepository = settingsRepository,
                         navController = navController,
+                    )
+                }
+                composable("add_transaction") {
+                    AddTransactionScreen(
+                        transactionRepository = transactionRepository,
+                        categoryRepository = categoryRepository,
+                        onNavigateBack = {
+                            navController.popBackStack()
+                        },
                     )
                 }
             }

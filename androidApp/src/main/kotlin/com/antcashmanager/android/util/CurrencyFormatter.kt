@@ -9,7 +9,7 @@ val LocalCurrencyFormat = compositionLocalOf { CurrencyFormat.DEFAULT }
 
 /**
  * Formats [amount] as an absolute monetary value using [format] preferences.
- * Example: 1234567.89, format(symbol="€", digits=2, dec=",", thou=".")  -> "€1.234.567,89"
+ * Example: 1234567.89, format(symbol="€", digits=2, dec=",", thou="")  -> "€1234567,89"
  */
 fun formatAmount(amount: Double, format: CurrencyFormat): String {
     val absAmount = abs(amount)

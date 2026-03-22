@@ -1,0 +1,267 @@
+package com.antcashmanager.android.ui.transactions
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import co.touchlab.kermit.Logger
+import com.antcashmanager.android.R
+import com.antcashmanager.domain.model.TransactionType
+import com.antcashmanager.domain.repository.CategoryRepository
+import com.antcashmanager.domain.repository.TransactionRepository
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
+// ══════════════════════════════════════════════════════════════════════════════
+// SCREEN
+// ══════════════════════════════════════════════════════════════════════════════
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AddTransactionScreen(
+    transactionRepository: TransactionRepository,
+    categoryRepository: CategoryRepository,
+    onNavigateBack: () -> Unit,
+) {
+    Logger.d("AddTransactionScreen") { "Displaying AddTransactionScreen" }
+
+    val viewModel: TransactionsViewModel = viewModel(
+        factory = object : androidx.lifecycle.ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T =
+                TransactionsViewModel(transactionRepository, categoryRepository) as T
+        },
+    )
+
+    val state by viewModel.state.collectAsState()
+
+    AddTransactionContent(
+        state = state,
+        onNavigateBack = onNavigateBack,
+        onAddTransaction = { title, amount, category, type, timestamp ->
+            viewModel.addTransaction(title, amount, category, type, timestamp)
+            onNavigateBack()
+        },
+    )
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// CONTENT
+// ══════════════════════════════════════════════════════════════════════════════
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun AddTransactionContent(
+    state: TransactionsState,
+    onNavigateBack: () -> Unit,
+    onAddTransaction: (String, Double, String, TransactionType, Long) -> Unit,
+) {
+    var title by remember { mutableStateOf("") }
+    var amount by remember { mutableStateOf("") }
+    var selectedCategory by remember { mutableStateOf("") }
+    var transactionType by remember { mutableStateOf(TransactionType.EXPENSE) }
+    var selectedDate by remember { mutableStateOf(System.currentTimeMillis()) }
+    var showCategoryMenu by remember { mutableStateOf(false) }
+    var showDatePicker by remember { mutableStateOf(false) }
+
+    // Date picker dialog
+    if (showDatePicker) {
+        val datePickerState = rememberDatePickerState(initialSelectedDateMillis = selectedDate)
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let { date ->
+                            selectedDate = date
+                        }
+                        showDatePicker = false
+                    },
+                ) {
+                    Text(stringResource(R.string.common_confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDatePicker = false }) {
+                    Text(stringResource(R.string.common_cancel))
+                }
+            },
+        ) {
+            DatePicker(state = datePickerState)
+        }
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(R.string.add_transaction)) },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.common_cancel),
+                        )
+                    }
+                },
+            )
+        },
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+        ) {
+            // Title field
+            OutlinedTextField(
+                value = title,
+                onValueChange = { title = it },
+                label = { Text(stringResource(R.string.transaction_title)) },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Amount field
+            OutlinedTextField(
+                value = amount,
+                onValueChange = { amount = it },
+                label = { Text(stringResource(R.string.transaction_amount)) },
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                singleLine = true,
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Transaction type (Radio buttons)
+            Text(stringResource(R.string.transaction_type), style = MaterialTheme.typography.labelLarge)
+            Column(modifier = Modifier.selectableGroup()) {
+                TransactionType.entries.forEach { type ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        RadioButton(
+                            selected = transactionType == type,
+                            onClick = { transactionType = type },
+                        )
+                        Text(
+                            text = type.name,
+                            modifier = Modifier.padding(start = 8.dp),
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Category dropdown
+            OutlinedTextField(
+                value = selectedCategory,
+                onValueChange = { },
+                label = { Text(stringResource(R.string.transaction_category)) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .let { if (showCategoryMenu) it else it },
+                readOnly = true,
+                trailingIcon = {
+                    IconButton(onClick = { showCategoryMenu = !showCategoryMenu }) {
+                        Text("▼")
+                    }
+                },
+            )
+            if (showCategoryMenu) {
+                DropdownMenu(
+                    expanded = showCategoryMenu,
+                    onDismissRequest = { showCategoryMenu = false },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    state.categories.forEach { category ->
+                        DropdownMenuItem(
+                            text = { Text(category.name) },
+                            onClick = {
+                                selectedCategory = category.name
+                                showCategoryMenu = false
+                            },
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Date field
+            OutlinedTextField(
+                value = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(selectedDate)),
+                onValueChange = { },
+                label = { Text(stringResource(R.string.transaction_date)) },
+                modifier = Modifier.fillMaxWidth(),
+                readOnly = true,
+                trailingIcon = {
+                    IconButton(onClick = { showDatePicker = true }) {
+                        Text("📅")
+                    }
+                },
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Submit button
+            Button(
+                onClick = {
+                    if (title.isNotBlank() && amount.isNotBlank() && selectedCategory.isNotBlank()) {
+                        onAddTransaction(title, amount.toDoubleOrNull() ?: 0.0, selectedCategory, transactionType, selectedDate)
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+            ) {
+                Text(stringResource(R.string.add_transaction))
+            }
+        }
+    }
+}

@@ -2,6 +2,8 @@ package com.antcashmanager.android.ui.settings
 
 import android.content.Intent
 import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -101,6 +103,8 @@ fun SettingsScreen(
     val currentTheme by viewModel.theme.collectAsState()
     val currentLanguage by viewModel.language.collectAsState()
     val deleteResult by viewModel.deleteResult.collectAsState()
+    val backupResult by viewModel.backupResult.collectAsState()
+    val restoreResult by viewModel.restoreResult.collectAsState()
     val showCharts by viewModel.showCharts.collectAsState()
     val highContrast by viewModel.highContrast.collectAsState()
     val largeText by viewModel.largeText.collectAsState()
@@ -119,6 +123,12 @@ fun SettingsScreen(
         onDeleteAllData = { viewModel.deleteAllData() },
         deleteResult = deleteResult,
         onResetDeleteResult = { viewModel.resetDeleteResult() },
+        backupResult = backupResult,
+        onCreateBackup = { callback -> viewModel.createBackup(callback) },
+        onResetBackupResult = { viewModel.resetBackupResult() },
+        restoreResult = restoreResult,
+        onRestoreBackup = { json -> viewModel.restoreBackup(json) },
+        onResetRestoreResult = { viewModel.resetRestoreResult() },
         showCharts = showCharts,
         onShowChartsChanged = { viewModel.setShowCharts(it) },
         highContrast = highContrast,
@@ -151,6 +161,12 @@ internal fun SettingsContent(
     onDeleteAllData: () -> Unit = {},
     deleteResult: DeleteResult = DeleteResult.Idle,
     onResetDeleteResult: () -> Unit = {},
+    backupResult: BackupResult = BackupResult.Idle,
+    onCreateBackup: ((String?) -> Unit) -> Unit = {},
+    onResetBackupResult: () -> Unit = {},
+    restoreResult: RestoreOperationResult = RestoreOperationResult.Idle,
+    onRestoreBackup: (String) -> Unit = {},
+    onResetRestoreResult: () -> Unit = {},
     showCharts: Boolean = true,
     onShowChartsChanged: (Boolean) -> Unit = {},
     highContrast: Boolean = false,
@@ -165,7 +181,7 @@ internal fun SettingsContent(
     onDecimalDigitsSelected: (Int) -> Unit = {},
     decimalSeparator: String = ",",
     onDecimalSeparatorSelected: (String) -> Unit = {},
-    thousandsSeparator: String = ".",
+    thousandsSeparator: String = "",
     onThousandsSeparatorSelected: (String) -> Unit = {},
     onResetAllPreferences: () -> Unit = {},
     onImportDebugData: (android.content.Context) -> Unit = {},
@@ -182,7 +198,81 @@ internal fun SettingsContent(
     var showDecimalSeparatorDialog by remember { mutableStateOf(false) }
     var showThousandsSeparatorDialog by remember { mutableStateOf(false) }
     var showResetPreferencesDialog by remember { mutableStateOf(false) }
+    var showBackupSuccessDialog by remember { mutableStateOf(false) }
+    var showBackupErrorDialog by remember { mutableStateOf(false) }
+    var showRestoreSuccessDialog by remember { mutableStateOf(false) }
+    var showRestoreErrorDialog by remember { mutableStateOf(false) }
+    var restoreSuccessInfo by remember { mutableStateOf<Pair<Int, Int>?>(null) }
+    var backupErrorMessage by remember { mutableStateOf("") }
+    var restoreErrorMessage by remember { mutableStateOf("") }
     val context = LocalContext.current
+
+    // Backup: Create document launcher
+    var pendingBackupData by remember { mutableStateOf<String?>(null) }
+    val backupLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("application/json"),
+    ) { uri ->
+        uri?.let {
+            pendingBackupData?.let { jsonData ->
+                try {
+                    context.contentResolver.openOutputStream(uri)?.use { outputStream ->
+                        outputStream.write(jsonData.toByteArray())
+                    }
+                    showBackupSuccessDialog = true
+                } catch (e: Exception) {
+                    backupErrorMessage = e.message ?: "Unknown error"
+                    showBackupErrorDialog = true
+                }
+            }
+        }
+        pendingBackupData = null
+    }
+
+    // Restore: Open document launcher
+    val restoreLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument(),
+    ) { uri ->
+        uri?.let {
+            try {
+                val jsonString = context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                    inputStream.bufferedReader().readText()
+                }
+                jsonString?.let { onRestoreBackup(it) }
+            } catch (e: Exception) {
+                restoreErrorMessage = e.message ?: "Unknown error"
+                showRestoreErrorDialog = true
+            }
+        }
+    }
+
+    // Handle backup result
+    LaunchedEffect(backupResult) {
+        when (backupResult) {
+            is BackupResult.Error -> {
+                backupErrorMessage = (backupResult as BackupResult.Error).message
+                showBackupErrorDialog = true
+                onResetBackupResult()
+            }
+            else -> {}
+        }
+    }
+
+    // Handle restore result
+    LaunchedEffect(restoreResult) {
+        when (val result = restoreResult) {
+            is RestoreOperationResult.Success -> {
+                restoreSuccessInfo = Pair(result.transactions, result.categories)
+                showRestoreSuccessDialog = true
+                onResetRestoreResult()
+            }
+            is RestoreOperationResult.Error -> {
+                restoreErrorMessage = result.message
+                showRestoreErrorDialog = true
+                onResetRestoreResult()
+            }
+            else -> {}
+        }
+    }
 
     LaunchedEffect(deleteResult) {
         when (deleteResult) {
@@ -318,8 +408,14 @@ internal fun SettingsContent(
                 iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
                 iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
                 onClick = {
-                    // TODO: Implement backup functionality
-                    Logger.d("Settings") { "Backup data tapped" }
+                    val timestamp = java.text.SimpleDateFormat("yyyyMMdd_HHmmss", java.util.Locale.getDefault())
+                        .format(java.util.Date())
+                    onCreateBackup { jsonData ->
+                        jsonData?.let {
+                            pendingBackupData = it
+                            backupLauncher.launch("antcashmanager_backup_$timestamp.json")
+                        }
+                    }
                 },
             )
             AppCard(
@@ -329,8 +425,7 @@ internal fun SettingsContent(
                 iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
                 iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
                 onClick = {
-                    // TODO: Implement restore functionality
-                    Logger.d("Settings") { "Restore data tapped" }
+                    restoreLauncher.launch(arrayOf("application/json"))
                 },
             )
             AppCard(
@@ -460,6 +555,66 @@ internal fun SettingsContent(
             text = { Text(stringResource(R.string.dialog_data_deleted_message)) },
             confirmButton = {
                 TextButton(onClick = { showDeleteSuccessDialog = false }) {
+                    Text(stringResource(R.string.dialog_ok))
+                }
+            },
+        )
+    }
+
+    // Backup success dialog
+    if (showBackupSuccessDialog) {
+        AlertDialog(
+            onDismissRequest = { showBackupSuccessDialog = false },
+            title = { Text(stringResource(R.string.backup_success_title)) },
+            text = { Text(stringResource(R.string.backup_success_message)) },
+            confirmButton = {
+                TextButton(onClick = { showBackupSuccessDialog = false }) {
+                    Text(stringResource(R.string.dialog_ok))
+                }
+            },
+        )
+    }
+
+    // Backup error dialog
+    if (showBackupErrorDialog) {
+        AlertDialog(
+            onDismissRequest = { showBackupErrorDialog = false },
+            title = { Text(stringResource(R.string.backup_error_title)) },
+            text = { Text(stringResource(R.string.backup_error_message, backupErrorMessage)) },
+            confirmButton = {
+                TextButton(onClick = { showBackupErrorDialog = false }) {
+                    Text(stringResource(R.string.dialog_ok))
+                }
+            },
+        )
+    }
+
+    // Restore success dialog
+    if (showRestoreSuccessDialog) {
+        AlertDialog(
+            onDismissRequest = { showRestoreSuccessDialog = false },
+            title = { Text(stringResource(R.string.restore_success_title)) },
+            text = {
+                restoreSuccessInfo?.let { (transactions, categories) ->
+                    Text(stringResource(R.string.restore_success_message, transactions, categories))
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showRestoreSuccessDialog = false }) {
+                    Text(stringResource(R.string.dialog_ok))
+                }
+            },
+        )
+    }
+
+    // Restore error dialog
+    if (showRestoreErrorDialog) {
+        AlertDialog(
+            onDismissRequest = { showRestoreErrorDialog = false },
+            title = { Text(stringResource(R.string.restore_error_title)) },
+            text = { Text(stringResource(R.string.restore_error_message, restoreErrorMessage)) },
+            confirmButton = {
+                TextButton(onClick = { showRestoreErrorDialog = false }) {
                     Text(stringResource(R.string.dialog_ok))
                 }
             },

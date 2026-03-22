@@ -154,6 +154,20 @@
     <string name="dialog_ok">OK</string>
     <string name="dialog_delete">Delete</string>
     <string name="dialog_add">Add</string>
+
+    <!-- Common Actions -->
+    <string name="common_confirm">Confirm</string>
+    <string name="common_cancel">Cancel</string>
+
+    <!-- Backup/Restore -->
+    <string name="backup_success_title">Backup Complete</string>
+    <string name="backup_success_message">Your data has been successfully exported.</string>
+    <string name="backup_error_title">Backup Failed</string>
+    <string name="backup_error_message">Could not create backup: %s</string>
+    <string name="restore_success_title">Restore Complete</string>
+    <string name="restore_success_message">Successfully restored %1$d transactions and %2$d categories.</string>
+    <string name="restore_error_title">Restore Failed</string>
+    <string name="restore_error_message">Could not restore backup: %s</string>
     <string name="dialog_delete_all_title">Delete All Data?</string>
     <string name="dialog_delete_all_message">This action will permanently delete all transactions and categories. This cannot be undone.</string>
     <string name="dialog_data_deleted">Data Deleted</string>
@@ -175,4 +189,12 @@
     <string name="language_spanish">Español</string>
     <string name="debug_import_started">Debug import started</string>
     <string name="back">Back</string>
+
+    <!-- Add Transaction Screen -->
+    <string name="add_transaction">Add Transaction</string>
+    <string name="transaction_title">Transaction Title</string>
+    <string name="transaction_amount">Amount</string>
+    <string name="transaction_type">Transaction Type</string>
+    <string name="transaction_category">Category</string>
+    <string name="transaction_date">Date</string>
 </resources>

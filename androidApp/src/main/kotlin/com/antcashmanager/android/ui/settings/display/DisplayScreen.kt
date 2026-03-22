@@ -409,7 +409,7 @@ private fun DisplayContentPreview() {
             onDecimalDigitsSelected = {},
             decimalSeparator = ",",
             onDecimalSeparatorSelected = {},
-            thousandsSeparator = ".",
+            thousandsSeparator = "",
             onThousandsSeparatorSelected = {},
             showTransactionNotes = true,
             onShowTransactionNotesChanged = {},
