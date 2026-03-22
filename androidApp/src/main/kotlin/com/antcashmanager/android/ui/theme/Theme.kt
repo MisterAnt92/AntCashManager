@@ -10,6 +10,7 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -107,6 +108,7 @@ fun AntCashManagerTheme(
     dynamicColor: Boolean = true,
     highContrast: Boolean = false,
     largeText: Boolean = false,
+    reduceMotion: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val baseColorScheme = when {
@@ -163,6 +165,9 @@ fun AntCashManagerTheme(
         colorScheme = colorScheme,
         typography = typography,
         shapes = AppShapes,
-        content = content,
-    )
+    ) {
+        CompositionLocalProvider(LocalReduceMotion provides reduceMotion) {
+            content()
+        }
+    }
 }

@@ -94,6 +94,10 @@ internal class FakeSettingsRepository : SettingsRepository {
     private val highContrastFlow = MutableStateFlow(false)
     private val largeTextFlow = MutableStateFlow(false)
     private val reduceMotionFlow = MutableStateFlow(false)
+    private val currencySymbolFlow = MutableStateFlow("\u20ac")
+    private val decimalDigitsFlow = MutableStateFlow(2)
+    private val decimalSeparatorFlow = MutableStateFlow(",")
+    private val thousandsSeparatorFlow = MutableStateFlow(".")
 
     override fun getTheme(): Flow<AppTheme> = themeFlow
 
@@ -115,5 +119,26 @@ internal class FakeSettingsRepository : SettingsRepository {
     override suspend fun setLargeText(enabled: Boolean) { largeTextFlow.value = enabled }
     override fun getReduceMotion(): Flow<Boolean> = reduceMotionFlow
     override suspend fun setReduceMotion(enabled: Boolean) { reduceMotionFlow.value = enabled }
-}
 
+    override fun getCurrencySymbol(): Flow<String> = currencySymbolFlow
+    override suspend fun setCurrencySymbol(symbol: String) { currencySymbolFlow.value = symbol }
+    override fun getDecimalDigits(): Flow<Int> = decimalDigitsFlow
+    override suspend fun setDecimalDigits(digits: Int) { decimalDigitsFlow.value = digits }
+    override fun getDecimalSeparator(): Flow<String> = decimalSeparatorFlow
+    override suspend fun setDecimalSeparator(separator: String) { decimalSeparatorFlow.value = separator }
+    override fun getThousandsSeparator(): Flow<String> = thousandsSeparatorFlow
+    override suspend fun setThousandsSeparator(separator: String) { thousandsSeparatorFlow.value = separator }
+
+    override suspend fun resetAllPreferences() {
+        themeFlow.value = AppTheme.SYSTEM
+        languageFlow.value = AppLanguage.SYSTEM
+        showChartsFlow.value = true
+        highContrastFlow.value = false
+        largeTextFlow.value = false
+        reduceMotionFlow.value = false
+        currencySymbolFlow.value = "\u20ac"
+        decimalDigitsFlow.value = 2
+        decimalSeparatorFlow.value = ","
+        thousandsSeparatorFlow.value = "."
+    }
+}

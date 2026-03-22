@@ -42,6 +42,11 @@
     <string name="transactions_recurring">Ricorrente</string>
     <string name="transactions_tags_label">Tag</string>
     <string name="transactions_empty_ant">Il salvadanaio della formichina \u00e8 vuoto! Inizia a risparmiare! 🐜🐷</string>
+    <string name="transactions_recurrence_interval">Intervallo di ricorrenza</string>
+    <string name="transactions_interval_daily">Giornaliero</string>
+    <string name="transactions_interval_weekly">Settimanale</string>
+    <string name="transactions_interval_monthly">Mensile</string>
+    <string name="transactions_interval_yearly">Annuale</string>
 
     <!-- Categories Screen -->
     <string name="categories_title">Categorie</string>
@@ -92,8 +97,21 @@
     <string name="settings_language">Lingua</string>
     <string name="settings_language_subtitle">Scegli la lingua dell\'app</string>
     <string name="settings_display">Visualizzazione</string>
+    <string name="settings_display_subtitle">Personalizza valuta, decimali e formattazione</string>
     <string name="settings_show_charts">Mostra Grafici</string>
-    <string name="settings_show_charts_subtitle">Mostra o nascondi la sezione Grafici nella barra di navigazione</string>
+    <string name="settings_show_charts_subtitle">Mostra la sezione grafici nella navigazione</string>
+    <string name="settings_currency_symbol">Simbolo Valuta</string>
+    <string name="settings_decimal_digits">Cifre Decimali</string>
+    <string name="settings_decimal_digits_subtitle">%d cifre decimali</string>
+    <string name="settings_decimal_separator">Separatore Decimali</string>
+    <string name="settings_thousands_separator">Separatore Migliaia</string>
+    <string name="settings_format_preview">Anteprima: %s</string>
+    <string name="settings_separator_comma">Virgola (,)</string>
+    <string name="settings_separator_period">Punto (.)</string>
+    <string name="settings_separator_space">Spazio</string>
+    <string name="settings_separator_none">Nessuno</string>
+    <string name="settings_reset_preferences">Ripristina Tutte le Preferenze</string>
+    <string name="settings_reset_preferences_subtitle">Ripristina tutte le impostazioni ai valori predefiniti</string>
     <string name="settings_accessibility">Accessibilit\u00e0</string>
     <string name="settings_accessibility_subtitle">Personalizza l\'aspetto e il comportamento dell\'app per una migliore usabilit\u00e0</string>
     <string name="settings_high_contrast">Contrasto Elevato</string>
@@ -114,12 +132,23 @@
     <string name="settings_send_feedback_subtitle">Aiutaci a migliorare l\'app</string>
     <string name="settings_privacy_policy">Informativa sulla Privacy</string>
     <string name="settings_privacy_policy_subtitle">Come gestiamo i tuoi dati</string>
+    <string name="settings_buy_coffee">Offrimi un caff\u00e8 ☕</string>
+    <string name="settings_buy_coffee_subtitle">Sostieni lo sviluppo con una piccola donazione</string>
+    <string name="settings_donate_paypal_subtitle">Dona tramite PayPal</string>
+    <string name="settings_donate_bmc_subtitle">Dona su buymeacoffee.com</string>
     <string name="settings_about">Informazioni</string>
     <string name="settings_app_version">Versione App</string>
+    <string name="settings_third_party">Terze parti</string>
+    <string name="settings_third_party_libraries">Librerie Open-source</string>
+    <string name="settings_third_party_subtitle">Visualizza le librerie open-source utilizzate in questa app</string>
 
     <!-- Dialogs -->
     <string name="dialog_choose_theme">Scegli Tema</string>
     <string name="dialog_choose_language">Scegli Lingua</string>
+    <string name="dialog_choose_currency">Simbolo Valuta</string>
+    <string name="dialog_choose_decimal_digits">Cifre Decimali</string>
+    <string name="dialog_choose_decimal_separator">Separatore Decimali</string>
+    <string name="dialog_choose_thousands_separator">Separatore Migliaia</string>
     <string name="dialog_cancel">Annulla</string>
     <string name="dialog_close">Chiudi</string>
     <string name="dialog_ok">OK</string>
@@ -129,10 +158,13 @@
     <string name="dialog_delete_all_message">Questa azione eliminer\u00e0 permanentemente tutte le transazioni e le categorie. Non \u00e8 possibile annullare.</string>
     <string name="dialog_data_deleted">Dati Eliminati</string>
     <string name="dialog_data_deleted_message">Tutti i dati sono stati eliminati con successo.</string>
+    <string name="dialog_reset_preferences_title">Ripristina Preferenze</string>
+    <string name="dialog_reset_preferences_message">Questa operazione ripristiner\u00e0 tutte le impostazioni ai valori predefiniti. Continuare?</string>
+    <string name="dialog_reset">Ripristina</string>
 
     <!-- Privacy Policy -->
     <string name="privacy_policy_title">Informativa sulla Privacy</string>
-    <string name="privacy_policy_content">AntCashManager si impegna a proteggere la tua privacy. Questa applicazione non raccoglie n\u00e9 condivide dati personali con terze parti. Tutti i dati finanziari sono memorizzati localmente sul tuo dispositivo e non vengono mai trasmessi a server esterni.\n\nI tuoi dati rimangono interamente sul tuo dispositivo e sotto il tuo controllo. Non utilizziamo servizi di analisi, tracciamento o pubblicit\u00e0.\n\nPer qualsiasi domanda sulla privacy, contattaci attraverso la pagina dello store.</string>
+    <string name="privacy_policy_content">AntCashManager si impegna a proteggere la tua privacy. Questa applicazione non raccoglie n\u00e9 condivide dati personali con terze parti. Tutti i dati finanziari sono memorizzati localmente sul tuo dispositivo e non vengono mai trasmessi a server esterni.\n\nI tuoi dati rimangono interamente sul tuo dispositivo e sotto il tuo controllo. Non utilizziamo pubblicit\u00e0.\n\nPer qualsiasi domanda sulla privacy, contattaci attraverso la pagina dello store.</string>
 
     <!-- Languages -->
     <string name="language_system">Predefinito di sistema</string>
@@ -141,4 +173,5 @@
     <string name="language_french">Fran\u00e7ais</string>
     <string name="language_german">Deutsch</string>
     <string name="language_spanish">Espa\u00f1ol</string>
+    <string name="back">Indietro</string>
 </resources>

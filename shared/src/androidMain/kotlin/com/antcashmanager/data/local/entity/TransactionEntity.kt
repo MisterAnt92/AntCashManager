@@ -23,4 +23,6 @@ data class TransactionEntity(
     val isRecurring: Boolean = false,
     @ColumnInfo(defaultValue = "")
     val tags: String = "",
+    @ColumnInfo(name = "recurrence_interval", defaultValue = "")
+    val recurrenceInterval: String = "",
 )

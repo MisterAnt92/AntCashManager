@@ -2,7 +2,6 @@ package com.antcashmanager.android.ui.charts
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
@@ -43,7 +43,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -53,7 +52,11 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.components.AntEmptyState
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.android.ui.theme.LocalReduceMotion
+import com.antcashmanager.android.util.LocalCurrencyFormat
+import com.antcashmanager.android.util.formatAmount
 import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.usecase.transaction.DateRange
 import java.text.SimpleDateFormat
@@ -93,6 +96,7 @@ internal fun ChartsContent(
     onPresetSelected: (RangePreset) -> Unit = {},
 ) {
     val dateFormat = remember { SimpleDateFormat("dd MMM yyyy", Locale.getDefault()) }
+    val fmt = LocalCurrencyFormat.current
     var selectedPreset by remember { mutableIntStateOf(1) }
     var showFromPicker by remember { mutableStateOf(false) }
     var showToPicker by remember { mutableStateOf(false) }
@@ -139,6 +143,7 @@ internal fun ChartsContent(
                             label = {
                                 Text(text = stringResource(preset.labelResId), style = MaterialTheme.typography.labelSmall)
                             },
+                            shape = RoundedCornerShape(50),
                         )
                     }
                 }
@@ -177,7 +182,7 @@ internal fun ChartsContent(
                 Column(modifier = Modifier.padding(12.dp)) {
                     Text(stringResource(R.string.charts_income), style = MaterialTheme.typography.labelMedium)
                     Text(
-                        text = "€%.2f".format(chartData.totalIncome),
+                        text = formatAmount(chartData.totalIncome, fmt),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                     )
@@ -191,7 +196,7 @@ internal fun ChartsContent(
                 Column(modifier = Modifier.padding(12.dp)) {
                     Text(stringResource(R.string.charts_expenses), style = MaterialTheme.typography.labelMedium)
                     Text(
-                        text = "€%.2f".format(chartData.totalExpense),
+                        text = formatAmount(chartData.totalExpense, fmt),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                     )
@@ -216,30 +221,11 @@ internal fun ChartsContent(
         }
         if (chartData.expenseByCategory.isEmpty() && chartData.monthlyData.isEmpty()) {
             Spacer(modifier = Modifier.height(48.dp))
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_ant_mascot),
-                    contentDescription = null,
-                    modifier = Modifier.size(96.dp),
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    text = stringResource(R.string.charts_no_data),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = stringResource(R.string.charts_empty_ant),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                    textAlign = TextAlign.Center,
-                )
-            }
+            AntEmptyState(
+                mascotRes = R.drawable.ic_ant_mascot,
+                title = stringResource(R.string.charts_no_data),
+                subtitle = stringResource(R.string.charts_empty_ant),
+            )
         }
     }
     // Date pickers
@@ -276,7 +262,9 @@ internal fun ChartsContent(
 private fun PieChart(data: Map<String, Double>, modifier: Modifier = Modifier) {
     val total = data.values.sum()
     if (total == 0.0) return
-    val animatedProgress by animateFloatAsState(targetValue = 1f, animationSpec = tween(800), label = "pie")
+    val reduceMotion = LocalReduceMotion.current
+    val animDuration = if (reduceMotion) 0 else 800
+    val animatedProgress by animateFloatAsState(targetValue = 1f, animationSpec = tween(animDuration), label = "pie")
     Canvas(modifier = modifier) {
         val diameter = minOf(size.width, size.height) * 0.75f
         val topLeft = Offset((size.width - diameter) / 2f, (size.height - diameter) / 2f)
@@ -292,6 +280,7 @@ private fun PieChart(data: Map<String, Double>, modifier: Modifier = Modifier) {
 @Composable
 private fun PieLegend(data: Map<String, Double>) {
     val total = data.values.sum()
+    val fmt = LocalCurrencyFormat.current
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         data.entries.forEachIndexed { index, (category, value) ->
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -299,7 +288,7 @@ private fun PieLegend(data: Map<String, Double>) {
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(text = category, style = MaterialTheme.typography.bodySmall, modifier = Modifier.weight(1f))
                 Text(
-                    text = "€%.2f (%.0f%%)".format(value, value / total * 100),
+                    text = "${formatAmount(value, fmt)} (%.0f%%)".format(value / total * 100),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -313,7 +302,9 @@ private fun BarChart(data: List<MonthlyAmount>, modifier: Modifier = Modifier) {
     val incomeColor = MaterialTheme.colorScheme.primary
     val expenseColor = MaterialTheme.colorScheme.error
     val labelColor = MaterialTheme.colorScheme.onSurfaceVariant
-    val animatedProgress by animateFloatAsState(targetValue = 1f, animationSpec = tween(800), label = "bar")
+    val reduceMotion = LocalReduceMotion.current
+    val animDuration = if (reduceMotion) 0 else 800
+    val animatedProgress by animateFloatAsState(targetValue = 1f, animationSpec = tween(animDuration), label = "bar")
     Canvas(modifier = modifier) {
         val barAreaHeight = size.height - 30.dp.toPx()
         val barGroupWidth = size.width / data.size.coerceAtLeast(1)

@@ -114,4 +114,7 @@ private class FakeTransactionRepository : TransactionRepository {
     }
     override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> =
         transactions.map { list -> list.filter { it.timestamp in from..to } }
+
+    override fun getRecurringTransactions(): Flow<List<Transaction>> =
+        transactions.map { list -> list.filter { it.isRecurring } }
 }

@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.antcashmanager.domain.model.AppLanguage
@@ -25,6 +26,10 @@ class SettingsRepositoryImpl(
     private val highContrastKey = booleanPreferencesKey("high_contrast")
     private val largeTextKey = booleanPreferencesKey("large_text")
     private val reduceMotionKey = booleanPreferencesKey("reduce_motion")
+    private val currencySymbolKey = stringPreferencesKey("currency_symbol")
+    private val decimalDigitsKey = intPreferencesKey("decimal_digits")
+    private val decimalSeparatorKey = stringPreferencesKey("decimal_separator")
+    private val thousandsSeparatorKey = stringPreferencesKey("thousands_separator")
 
     override fun getTheme(): Flow<AppTheme> =
         context.dataStore.data.map { preferences ->
@@ -91,6 +96,49 @@ class SettingsRepositoryImpl(
     override suspend fun setReduceMotion(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[reduceMotionKey] = enabled
+        }
+    }
+
+    override fun getCurrencySymbol(): Flow<String> =
+        context.dataStore.data.map { it[currencySymbolKey] ?: "\u20ac" }
+
+    override suspend fun setCurrencySymbol(symbol: String) {
+        context.dataStore.edit { it[currencySymbolKey] = symbol }
+    }
+
+    override fun getDecimalDigits(): Flow<Int> =
+        context.dataStore.data.map { it[decimalDigitsKey] ?: 2 }
+
+    override suspend fun setDecimalDigits(digits: Int) {
+        context.dataStore.edit { it[decimalDigitsKey] = digits }
+    }
+
+    override fun getDecimalSeparator(): Flow<String> =
+        context.dataStore.data.map { it[decimalSeparatorKey] ?: "," }
+
+    override suspend fun setDecimalSeparator(separator: String) {
+        context.dataStore.edit { it[decimalSeparatorKey] = separator }
+    }
+
+    override fun getThousandsSeparator(): Flow<String> =
+        context.dataStore.data.map { it[thousandsSeparatorKey] ?: "." }
+
+    override suspend fun setThousandsSeparator(separator: String) {
+        context.dataStore.edit { it[thousandsSeparatorKey] = separator }
+    }
+
+    override suspend fun resetAllPreferences() {
+        context.dataStore.edit { prefs ->
+            prefs[themeKey] = AppTheme.SYSTEM.name
+            prefs[languageKey] = AppLanguage.SYSTEM.name
+            prefs[showChartsKey] = true
+            prefs[highContrastKey] = false
+            prefs[largeTextKey] = false
+            prefs[reduceMotionKey] = false
+            prefs[currencySymbolKey] = "\u20ac"
+            prefs[decimalDigitsKey] = 2
+            prefs[decimalSeparatorKey] = ","
+            prefs[thousandsSeparatorKey] = "."
         }
     }
 }

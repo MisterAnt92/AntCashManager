@@ -1,6 +1,5 @@
 package com.antcashmanager.android.ui.home
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +16,7 @@ import androidx.compose.material.icons.automirrored.filled.TrendingDown
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -27,7 +27,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -36,7 +35,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.components.AntEmptyState
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.android.util.LocalCurrencyFormat
+import com.antcashmanager.android.util.formatAmount
+import com.antcashmanager.android.util.formatAmountWithSign
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.TransactionRepository
@@ -56,6 +59,7 @@ fun HomeScreen(transactionRepository: TransactionRepository) {
 
 @Composable
 internal fun HomeContent(transactions: List<Transaction>) {
+    val fmt = LocalCurrencyFormat.current
     val totalIncome = transactions.filter { it.type == TransactionType.INCOME }.sumOf { it.amount }
     val totalExpense = transactions.filter { it.type == TransactionType.EXPENSE }.sumOf { it.amount }
     val balance = totalIncome - totalExpense
@@ -99,7 +103,7 @@ internal fun HomeContent(transactions: List<Transaction>) {
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "€%.2f".format(balance),
+                        text = formatAmount(balance, fmt),
                         style = MaterialTheme.typography.headlineLarge,
                         fontWeight = FontWeight.Bold,
                         color = if (balance >= 0) {
@@ -144,7 +148,7 @@ internal fun HomeContent(transactions: List<Transaction>) {
                                 color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f),
                             )
                             Text(
-                                text = "€%.2f".format(totalIncome),
+                                text = formatAmount(totalIncome, fmt),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSecondaryContainer,
@@ -178,7 +182,7 @@ internal fun HomeContent(transactions: List<Transaction>) {
                                 color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.7f),
                             )
                             Text(
-                                text = "€%.2f".format(totalExpense),
+                                text = formatAmount(totalExpense, fmt),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onErrorContainer,
@@ -201,32 +205,11 @@ internal fun HomeContent(transactions: List<Transaction>) {
 
         if (transactions.isEmpty()) {
             item {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 32.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_ant_mascot),
-                        contentDescription = null,
-                        modifier = Modifier.size(96.dp),
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Text(
-                        text = stringResource(R.string.home_no_transactions),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center,
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = stringResource(R.string.home_empty_ant),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                        textAlign = TextAlign.Center,
-                    )
-                }
+                AntEmptyState(
+                    mascotRes = R.drawable.ic_ant_mascot,
+                    title = stringResource(R.string.home_no_transactions),
+                    subtitle = stringResource(R.string.home_empty_ant),
+                )
             }
         } else {
             items(transactions.take(5)) { transaction ->
@@ -243,6 +226,7 @@ private val dateFormat = SimpleDateFormat("dd MMM", Locale.getDefault())
 
 @Composable
 private fun RecentTransactionItem(transaction: Transaction) {
+    val fmt = LocalCurrencyFormat.current
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -293,9 +277,25 @@ private fun RecentTransactionItem(transaction: Transaction) {
                         overflow = TextOverflow.Ellipsis,
                     )
                 }
+                if (transaction.isRecurring) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Repeat,
+                            contentDescription = stringResource(R.string.transactions_recurring),
+                            modifier = Modifier.size(12.dp),
+                            tint = MaterialTheme.colorScheme.tertiary,
+                        )
+                        Spacer(modifier = Modifier.padding(start = 4.dp))
+                        Text(
+                            text = stringResource(R.string.transactions_recurring),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.tertiary,
+                        )
+                    }
+                }
             }
             Text(
-                text = "${if (transaction.type == TransactionType.INCOME) "+" else "-"}€%.2f".format(transaction.amount),
+                text = formatAmountWithSign(transaction.amount, fmt, transaction.type == TransactionType.INCOME),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.SemiBold,
                 color = if (transaction.type == TransactionType.INCOME) {

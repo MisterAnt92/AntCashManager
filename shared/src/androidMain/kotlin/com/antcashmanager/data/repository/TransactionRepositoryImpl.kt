@@ -36,4 +36,9 @@ class TransactionRepositoryImpl(
         transactionDao.getTransactionsByDateRange(from, to).map { entities ->
             entities.map { it.toDomain() }
         }
+
+    override fun getRecurringTransactions(): Flow<List<Transaction>> =
+        transactionDao.getRecurringTransactions().map { entities ->
+            entities.map { it.toDomain() }
+        }
 }

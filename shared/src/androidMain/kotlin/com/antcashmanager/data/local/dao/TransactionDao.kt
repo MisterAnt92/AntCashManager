@@ -14,6 +14,9 @@ interface TransactionDao {
     @Query("SELECT * FROM transactions ORDER BY timestamp DESC")
     fun getAllTransactions(): Flow<List<TransactionEntity>>
 
+    @Query("SELECT COUNT(*) FROM transactions")
+    suspend fun getCount(): Int
+
     @Query("SELECT * FROM transactions WHERE id = :id")
     suspend fun getTransactionById(id: Long): TransactionEntity?
 
@@ -31,4 +34,7 @@ interface TransactionDao {
 
     @Query("SELECT * FROM transactions WHERE timestamp BETWEEN :from AND :to ORDER BY timestamp DESC")
     fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<TransactionEntity>>
+
+    @Query("SELECT * FROM transactions WHERE is_recurring = 1 ORDER BY timestamp DESC")
+    fun getRecurringTransactions(): Flow<List<TransactionEntity>>
 }

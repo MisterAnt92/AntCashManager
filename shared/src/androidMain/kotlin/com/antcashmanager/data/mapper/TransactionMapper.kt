@@ -16,6 +16,7 @@ fun TransactionEntity.toDomain(): Transaction = Transaction(
     location = location,
     isRecurring = isRecurring,
     tags = tags,
+    recurrenceInterval = recurrenceInterval,
 )
 
 fun Transaction.toEntity(): TransactionEntity = TransactionEntity(
@@ -30,4 +31,5 @@ fun Transaction.toEntity(): TransactionEntity = TransactionEntity(
     location = location,
     isRecurring = isRecurring,
     tags = tags,
+    recurrenceInterval = recurrenceInterval,
 )

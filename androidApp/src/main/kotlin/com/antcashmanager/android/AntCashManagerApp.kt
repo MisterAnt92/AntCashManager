@@ -14,6 +14,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import com.antcashmanager.domain.usecase.transaction.ProcessRecurringTransactionsUseCase
+import com.antcashmanager.android.debug.DebugDataSeeder
+import android.content.Context
+import com.antcashmanager.android.BuildConfig
 
 class AntCashManagerApp : Application() {
 
@@ -38,6 +42,15 @@ class AntCashManagerApp : Application() {
 
         appScope.launch {
             seedDefaultCategories()
+        }
+        // Seed debug data (non-blocking) only in debug builds
+        if (BuildConfig.DEBUG) {
+            appScope.launch {
+                DebugDataSeeder.seedIfNeeded(this@AntCashManagerApp, database.transactionDao())
+            }
+        }
+        appScope.launch {
+            ProcessRecurringTransactionsUseCase(transactionRepository).invoke()
         }
     }
 

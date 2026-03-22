@@ -12,8 +12,14 @@ data class Transaction(
     val location: String = "",
     val isRecurring: Boolean = false,
     val tags: String = "",
+    val recurrenceInterval: String = "",
 )
 
 enum class TransactionType {
     INCOME, EXPENSE
 }
+
+enum class RecurrenceInterval {
+    DAILY, WEEKLY, MONTHLY, YEARLY
+}
+

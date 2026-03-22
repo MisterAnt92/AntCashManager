@@ -17,4 +17,17 @@ interface SettingsRepository {
     suspend fun setLargeText(enabled: Boolean)
     fun getReduceMotion(): Flow<Boolean>
     suspend fun setReduceMotion(enabled: Boolean)
+
+    // ── Currency / number format ──
+    fun getCurrencySymbol(): Flow<String>
+    suspend fun setCurrencySymbol(symbol: String)
+    fun getDecimalDigits(): Flow<Int>
+    suspend fun setDecimalDigits(digits: Int)
+    fun getDecimalSeparator(): Flow<String>
+    suspend fun setDecimalSeparator(separator: String)
+    fun getThousandsSeparator(): Flow<String>
+    suspend fun setThousandsSeparator(separator: String)
+
+    /** Resets every preference to its factory default. */
+    suspend fun resetAllPreferences()
 }

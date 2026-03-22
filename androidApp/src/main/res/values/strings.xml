@@ -42,6 +42,11 @@
     <string name="transactions_recurring">Recurring</string>
     <string name="transactions_tags_label">Tags</string>
     <string name="transactions_empty_ant">The ant piggy bank is empty! Start saving! 🐜🐷</string>
+    <string name="transactions_recurrence_interval">Recurrence Interval</string>
+    <string name="transactions_interval_daily">Daily</string>
+    <string name="transactions_interval_weekly">Weekly</string>
+    <string name="transactions_interval_monthly">Monthly</string>
+    <string name="transactions_interval_yearly">Yearly</string>
 
     <!-- Categories Screen -->
     <string name="categories_title">Categories</string>
@@ -92,8 +97,21 @@
     <string name="settings_language">Language</string>
     <string name="settings_language_subtitle">Choose the app language</string>
     <string name="settings_display">Display</string>
+    <string name="settings_display_subtitle">Customize currency, decimals, and formatting</string>
     <string name="settings_show_charts">Show Charts</string>
-    <string name="settings_show_charts_subtitle">Show or hide the Charts section in the navigation bar</string>
+    <string name="settings_show_charts_subtitle">Show the charts section in navigation</string>
+    <string name="settings_currency_symbol">Currency Symbol</string>
+    <string name="settings_decimal_digits">Decimal Digits</string>
+    <string name="settings_decimal_digits_subtitle">%d decimal places</string>
+    <string name="settings_decimal_separator">Decimal Separator</string>
+    <string name="settings_thousands_separator">Thousands Separator</string>
+    <string name="settings_format_preview">Preview: %s</string>
+    <string name="settings_separator_comma">Comma (,)</string>
+    <string name="settings_separator_period">Period (.)</string>
+    <string name="settings_separator_space">Space</string>
+    <string name="settings_separator_none">None</string>
+    <string name="settings_reset_preferences">Reset All Preferences</string>
+    <string name="settings_reset_preferences_subtitle">Restore all settings to their default values</string>
     <string name="settings_accessibility">Accessibility</string>
     <string name="settings_accessibility_subtitle">Customize how the app looks and behaves for better usability</string>
     <string name="settings_high_contrast">High Contrast</string>
@@ -114,12 +132,23 @@
     <string name="settings_send_feedback_subtitle">Help us improve the app</string>
     <string name="settings_privacy_policy">Privacy Policy</string>
     <string name="settings_privacy_policy_subtitle">How we handle your data</string>
+    <string name="settings_buy_coffee">Buy me a coffee ☕</string>
+    <string name="settings_buy_coffee_subtitle">Support the development with a small donation</string>
+    <string name="settings_donate_paypal_subtitle">Donate via PayPal</string>
+    <string name="settings_donate_bmc_subtitle">Donate on buymeacoffee.com</string>
     <string name="settings_about">About</string>
     <string name="settings_app_version">App Version</string>
+    <string name="settings_third_party">Third-party</string>
+    <string name="settings_third_party_libraries">Open-source Libraries</string>
+    <string name="settings_third_party_subtitle">View the open-source libraries used in this app</string>
 
     <!-- Dialogs -->
     <string name="dialog_choose_theme">Choose Theme</string>
     <string name="dialog_choose_language">Choose Language</string>
+    <string name="dialog_choose_currency">Currency Symbol</string>
+    <string name="dialog_choose_decimal_digits">Decimal Digits</string>
+    <string name="dialog_choose_decimal_separator">Decimal Separator</string>
+    <string name="dialog_choose_thousands_separator">Thousands Separator</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_close">Close</string>
     <string name="dialog_ok">OK</string>
@@ -129,6 +158,9 @@
     <string name="dialog_delete_all_message">This action will permanently delete all transactions and categories. This cannot be undone.</string>
     <string name="dialog_data_deleted">Data Deleted</string>
     <string name="dialog_data_deleted_message">All data has been successfully deleted.</string>
+    <string name="dialog_reset_preferences_title">Reset All Preferences</string>
+    <string name="dialog_reset_preferences_message">This will restore all settings to their default values. Continue?</string>
+    <string name="dialog_reset">Reset</string>
 
     <!-- Privacy Policy -->
     <string name="privacy_policy_title">Privacy Policy</string>
@@ -141,4 +173,6 @@
     <string name="language_french">Français</string>
     <string name="language_german">Deutsch</string>
     <string name="language_spanish">Español</string>
+    <string name="debug_import_started">Debug import started</string>
+    <string name="back">Back</string>
 </resources>

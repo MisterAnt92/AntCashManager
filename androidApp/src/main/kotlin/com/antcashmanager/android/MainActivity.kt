@@ -35,6 +35,8 @@ class MainActivity : ComponentActivity() {
                 .collectAsState(initial = false)
             val largeText by app.settingsRepository.getLargeText()
                 .collectAsState(initial = false)
+            val reduceMotion by app.settingsRepository.getReduceMotion()
+                .collectAsState(initial = false)
             val isDark = when (theme) {
                 AppTheme.LIGHT -> false
                 AppTheme.DARK -> true
@@ -46,6 +48,7 @@ class MainActivity : ComponentActivity() {
                     darkTheme = isDark,
                     highContrast = highContrast,
                     largeText = largeText,
+                    reduceMotion = reduceMotion,
                 ) {
                     AntCashManagerNavHost(
                         transactionRepository = app.transactionRepository,

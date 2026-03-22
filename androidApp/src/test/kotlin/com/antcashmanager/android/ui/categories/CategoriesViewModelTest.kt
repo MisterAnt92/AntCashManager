@@ -43,15 +43,60 @@ class CategoriesViewModelTest {
         collectJob.cancel()
     }
     @Test
-    fun `addCategory adds a new category`() = runTest(testDispatcher) {
+    fun `addCategory adds a new expense category`() = runTest(testDispatcher) {
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.categories.collect {}
         }
         advanceUntilIdle()
-        viewModel.addCategory("Food", "category", 0xFFE57373)
+        viewModel.addCategory("Food", "category", 0xFFE57373, "EXPENSE")
         advanceUntilIdle()
         assertEquals(1, viewModel.categories.value.size)
         assertEquals("Food", viewModel.categories.value.first().name)
+        assertEquals("EXPENSE", viewModel.categories.value.first().type)
+        collectJob.cancel()
+    }
+
+    @Test
+    fun `addCategory adds a new income category`() = runTest(testDispatcher) {
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.categories.collect {}
+        }
+        advanceUntilIdle()
+        viewModel.addCategory("Salary", "payments", 0xFF81C784, "INCOME")
+        advanceUntilIdle()
+        assertEquals(1, viewModel.categories.value.size)
+        assertEquals("Salary", viewModel.categories.value.first().name)
+        assertEquals("INCOME", viewModel.categories.value.first().type)
+        collectJob.cancel()
+    }
+
+    @Test
+    fun `expenseCategories filters by EXPENSE type`() = runTest(testDispatcher) {
+        fakeRepo.categories.value = listOf(
+            Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373, type = "EXPENSE"),
+            Category(id = 2, name = "Salary", icon = "payments", color = 0xFF81C784, type = "INCOME"),
+        )
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.expenseCategories.collect {}
+        }
+        advanceUntilIdle()
+        assertEquals(1, viewModel.expenseCategories.value.size)
+        assertEquals("Food", viewModel.expenseCategories.value.first().name)
+        collectJob.cancel()
+    }
+
+    @Test
+    fun `incomeCategories filters by INCOME type`() = runTest(testDispatcher) {
+        fakeRepo.categories.value = listOf(
+            Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373, type = "EXPENSE"),
+            Category(id = 2, name = "Salary", icon = "payments", color = 0xFF81C784, type = "INCOME"),
+        )
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.incomeCategories.collect {}
+        }
+        advanceUntilIdle()
+        assertEquals(1, viewModel.incomeCategories.value.size)
+        assertEquals("Salary", viewModel.incomeCategories.value.first().name)
         collectJob.cancel()
     }
     @Test
