@@ -1,5 +1,7 @@
 package com.antcashmanager.android.ui.transactions
 
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDownward
@@ -40,6 +43,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -50,8 +55,12 @@ import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AntEmptyState
+import com.antcashmanager.android.ui.components.AnimatedCard
+import com.antcashmanager.android.ui.components.AnimatedListItem
 import com.antcashmanager.android.ui.components.DateRangeFilter
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.android.ui.theme.IncomeGreen
+import com.antcashmanager.android.ui.theme.ExpenseRed
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.android.util.formatAmountWithSign
 import com.antcashmanager.domain.model.Transaction
@@ -165,11 +174,13 @@ internal fun TransactionsContent(
             FloatingActionButton(
                 onClick = { navController?.navigate("add_transaction") },
                 containerColor = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.shadow(8.dp, RoundedCornerShape(16.dp)),
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = stringResource(R.string.transactions_add),
                     tint = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.size(28.dp),
                 )
             }
         },
@@ -259,109 +270,135 @@ private fun TransactionsList(
 }
 
 private val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
-
 @Composable
 private fun TransactionItem(transaction: Transaction) {
     val fmt = LocalCurrencyFormat.current
     val isIncome = transaction.type == TransactionType.INCOME
+    val cardBackgroundColor = if (isIncome) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer
 
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-        ),
-        shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.5.dp),
-    ) {
-        Row(
+    AnimatedListItem(index = transaction.id.toInt()) {
+        AnimatedCard(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
+                .shadow(4.dp, RoundedCornerShape(12.dp)),
+            backgroundColor = cardBackgroundColor,
         ) {
-            // Icon
-            Icon(
-                imageVector = if (isIncome) Icons.Default.ArrowDownward else Icons.Default.ArrowUpward,
-                contentDescription = null,
-                tint = if (isIncome) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
-                modifier = Modifier.size(20.dp),
-            )
-
-            Spacer(modifier = Modifier.width(12.dp))
-
-            // Content
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = transaction.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-
-                // Subtitle
-                val subtitleParts = buildList {
-                    add(transaction.category)
-                    add(dateFormat.format(Date(transaction.timestamp)))
-                    if (transaction.payee.isNotBlank()) add(transaction.payee)
-                    if (transaction.location.isNotBlank()) add(transaction.location)
-                }
-                Text(
-                    text = subtitleParts.joinToString(" • "),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-
-                // Notes
-                if (transaction.notes.isNotBlank()) {
-                    Text(
-                        text = transaction.notes,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
-
-                // Tags
-                if (transaction.tags.isNotBlank()) {
-                    Text(
-                        text = transaction.tags.split(",").joinToString(" ") { "#${it.trim()}" },
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
-
-                // Recurring indicator
-                if (transaction.isRecurring) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Default.Repeat,
-                            contentDescription = stringResource(R.string.transactions_recurring),
-                            modifier = Modifier.size(14.dp),
-                            tint = MaterialTheme.colorScheme.tertiary,
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                // Icon with background
+                Box(
+                    modifier = Modifier
+                        .size(44.dp)
+                        .background(
+                            if (isIncome) IncomeGreen.copy(alpha = 0.25f) else ExpenseRed.copy(alpha = 0.25f),
+                            shape = RoundedCornerShape(8.dp),
                         )
-                        Spacer(modifier = Modifier.width(4.dp))
+                        .padding(8.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        imageVector = if (isIncome) Icons.Default.ArrowDownward else Icons.Default.ArrowUpward,
+                        contentDescription = null,
+                        tint = if (isIncome) IncomeGreen else ExpenseRed,
+                        modifier = Modifier.size(20.dp),
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                // Content
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = transaction.title,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        color = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onErrorContainer,
+                    )
+
+                    // Subtitle
+                    val subtitleParts = buildList {
+                        add(transaction.category)
+                        add(dateFormat.format(Date(transaction.timestamp)))
+                        if (transaction.payee.isNotBlank()) add(transaction.payee)
+                        if (transaction.location.isNotBlank()) add(transaction.location)
+                    }
+                    Text(
+                        text = subtitleParts.joinToString(" • "),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f) else MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.7f),
+                    )
+
+                    // Notes
+                    if (transaction.notes.isNotBlank()) {
                         Text(
-                            text = transaction.recurrenceInterval.ifBlank {
-                                stringResource(R.string.transactions_recurring)
-                            },
+                            text = transaction.notes,
                             style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.tertiary,
+                            color = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f) else MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.6f),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                         )
                     }
+
+                    // Tags
+                    if (transaction.tags.isNotBlank()) {
+                        Text(
+                            text = transaction.tags.split(",").joinToString(" ") { "#${it.trim()}" },
+                            style = MaterialTheme.typography.labelSmall,
+                            color = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onErrorContainer,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+
+                    // Recurring indicator
+                    if (transaction.isRecurring) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(top = 4.dp),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Repeat,
+                                contentDescription = stringResource(R.string.transactions_recurring),
+                                modifier = Modifier.size(12.dp),
+                                tint = MaterialTheme.colorScheme.tertiary,
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = transaction.recurrenceInterval.ifBlank {
+                                    stringResource(R.string.transactions_recurring)
+                                },
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.tertiary,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                        }
+                    }
+                }
+
+                // Amount with background
+                Box(
+                    modifier = Modifier
+                        .background(
+                            if (isIncome) IncomeGreen.copy(alpha = 0.15f) else ExpenseRed.copy(alpha = 0.15f),
+                            shape = RoundedCornerShape(8.dp),
+                        )
+                        .padding(8.dp),
+                ) {
+                    Text(
+                        text = formatAmountWithSign(transaction.amount, fmt, isIncome),
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = if (isIncome) IncomeGreen else ExpenseRed,
+                    )
                 }
             }
-
-            // Amount
-            Text(
-                text = formatAmountWithSign(transaction.amount, fmt, isIncome),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = if (isIncome) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
-            )
         }
     }
 }
