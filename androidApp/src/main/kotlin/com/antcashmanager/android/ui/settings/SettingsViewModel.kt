@@ -60,6 +60,8 @@ class SettingsViewModel(
                     }
                     val obj = JSONObject(json)
                     val transactions = obj.optJSONArray("transactions") ?: return@withContext
+                    // Clear existing data for demo
+                    transactionRepository.deleteAllTransactions()
                     for (i in 0 until transactions.length()) {
                         try {
                             val t = transactions.getJSONObject(i)
@@ -87,7 +89,7 @@ class SettingsViewModel(
                                 } else {
                                     ""
                                 },
-                                recurrenceInterval = t.optString("recurrenceInterval", ""),
+                                recurrenceInterval = t.optString("recurrenceRule", ""),
                             )
                             try {
                                 transactionRepository.insertTransaction(transaction)
