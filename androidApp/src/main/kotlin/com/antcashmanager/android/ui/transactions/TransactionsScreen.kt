@@ -1,11 +1,9 @@
 package com.antcashmanager.android.ui.transactions
 
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,9 +20,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Repeat
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -58,6 +53,7 @@ import com.antcashmanager.android.ui.components.AntEmptyState
 import com.antcashmanager.android.ui.components.AnimatedCard
 import com.antcashmanager.android.ui.components.AnimatedListItem
 import com.antcashmanager.android.ui.components.DateRangeFilter
+import com.antcashmanager.android.ui.components.SkeletonLoader
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.IncomeGreen
 import com.antcashmanager.android.ui.theme.ExpenseRed
@@ -114,6 +110,7 @@ internal fun TransactionsContent(
     // Date picker state
     var showFromDatePicker by remember { mutableStateOf(false) }
     var showToDatePicker by remember { mutableStateOf(false) }
+    var searchQuery by remember { mutableStateOf("") }
 
     // From date picker dialog
     if (showFromDatePicker) {
@@ -214,6 +211,29 @@ internal fun TransactionsContent(
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // Search Bar
+            androidx.compose.material3.OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("Cerca per nome o importo...") },
+                placeholder = { Text("Es: Stipendio, 100") },
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp),
+                isError = searchQuery.length > 100,
+            )
+
+            if (searchQuery.isNotEmpty()) {
+                Text(
+                    text = "Risultati trovati: ${state.filteredTransactions.size}",
+                    style = MaterialTheme.typography.labelSmall,
+                    modifier = Modifier.padding(top = 8.dp),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             // Content based on state
             when {
                 state.isLoading -> LoadingState()
@@ -233,11 +253,44 @@ internal fun TransactionsContent(
 
 @Composable
 private fun LoadingState() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.fillMaxWidth(),
     ) {
-        CircularProgressIndicator()
+        items(5) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 4.dp),
+            ) {
+                // Header skeleton
+                SkeletonLoader(height = 16.dp, cornerRadius = 8)
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                // Subtitle skeleton
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    SkeletonLoader(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(12.dp),
+                        cornerRadius = 6,
+                    )
+                    SkeletonLoader(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(12.dp),
+                        cornerRadius = 6,
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                // Amount skeleton
+                SkeletonLoader(height = 20.dp, cornerRadius = 8)
+            }
+        }
+        item { Spacer(modifier = Modifier.height(80.dp)) }
     }
 }
 
@@ -483,4 +536,3 @@ private val sampleTransactions = listOf(
         timestamp = System.currentTimeMillis(),
     ),
 )
-

@@ -21,9 +21,13 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -289,3 +293,82 @@ fun SlideInOnAppear(
     }
 }
 
+/**
+ * Skeleton loading placeholder with shimmer effect for individual items
+ */
+@Composable
+fun SkeletonLoader(
+    modifier: Modifier = Modifier,
+    height: androidx.compose.ui.unit.Dp = 80.dp,
+    cornerRadius: Int = 12,
+) {
+    val infiniteTransition = rememberInfiniteTransition(label = "skeleton_shimmer")
+    val shimmerAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.2f,
+        targetValue = 0.9f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1200, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse,
+        ),
+        label = "shimmer_alpha",
+    )
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(height)
+            .background(
+                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = shimmerAlpha),
+                shape = RoundedCornerShape(cornerRadius.dp),
+            ),
+    )
+}
+
+/**
+ * Transaction skeleton loader - shows multiple placeholder cards
+ */
+@Composable
+fun TransactionSkeletonLoader(
+    modifier: Modifier = Modifier,
+    itemCount: Int = 5,
+) {
+    LazyColumn(
+        verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp),
+        modifier = modifier,
+    ) {
+        items(itemCount) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 4.dp),
+            ) {
+                // Header skeleton
+                SkeletonLoader(height = 16.dp, cornerRadius = 8)
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Subtitle skeleton
+                Row(
+                    horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp),
+                ) {
+                    SkeletonLoader(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(12.dp),
+                        cornerRadius = 6,
+                    )
+                    SkeletonLoader(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(12.dp),
+                        cornerRadius = 6,
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Amount skeleton
+                SkeletonLoader(height = 20.dp, cornerRadius = 8)
+            }
+        }
+        item { Spacer(modifier = Modifier.height(80.dp)) }
+    }
+}

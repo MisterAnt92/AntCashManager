@@ -20,15 +20,16 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 
 // ══════════════════════════════════════════════════════════════════════════════
-// STATE
+// EXTENDED STATE WITH SEARCH
 // ══════════════════════════════════════════════════════════════════════════════
 
 /**
- * UI State for Transactions screen.
+ * Extended TransactionsState with search functionality.
  */
-data class TransactionsState(
+data class TransactionsStateExtended(
     val transactions: List<Transaction> = emptyList(),
     val filteredTransactions: List<Transaction> = emptyList(),
     val categories: List<Category> = emptyList(),
@@ -37,6 +38,8 @@ data class TransactionsState(
     val selectedPresetIndex: Int = 1,
     val dateRangeFrom: Long = System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000),
     val dateRangeTo: Long = System.currentTimeMillis(),
+    val searchQuery: String = "",
+    val searchError: String? = null,
 ) {
     companion object {
         val PRESETS = listOf(
@@ -57,25 +60,26 @@ data class TransactionsState(
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// EVENTS
+// EXTENDED EVENTS WITH SEARCH
 // ══════════════════════════════════════════════════════════════════════════════
 
 /**
- * UI Events for Transactions screen.
+ * Extended TransactionsEvent with search functionality.
  */
-sealed interface TransactionsEvent {
-    data class SelectPreset(val index: Int) : TransactionsEvent
-    data class SetDateRange(val from: Long, val to: Long) : TransactionsEvent
-    data object AddTransactionClicked : TransactionsEvent
-    data class DeleteTransaction(val transaction: Transaction) : TransactionsEvent
-    data class UpdateTransaction(val transaction: Transaction) : TransactionsEvent
+sealed interface TransactionsEventExtended {
+    data class SelectPreset(val index: Int) : TransactionsEventExtended
+    data class SetDateRange(val from: Long, val to: Long) : TransactionsEventExtended
+    data class SearchTransactions(val query: String) : TransactionsEventExtended
+    data object AddTransactionClicked : TransactionsEventExtended
+    data class DeleteTransaction(val transaction: Transaction) : TransactionsEventExtended
+    data class UpdateTransaction(val transaction: Transaction) : TransactionsEventExtended
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// VIEWMODEL
+// EXTENDED VIEWMODEL WITH SEARCH
 // ══════════════════════════════════════════════════════════════════════════════
 
-class TransactionsViewModel(
+class TransactionsViewModelWithSearch(
     transactionRepository: TransactionRepository,
     categoryRepository: CategoryRepository,
 ) : ViewModel() {
@@ -88,18 +92,45 @@ class TransactionsViewModel(
     private val getCategoriesUseCase = GetCategoriesUseCase(categoryRepository)
 
     // ── Internal filter state ──
-    private val _filterState = MutableStateFlow(FilterState())
+    private val _filterState = MutableStateFlow(FilterStateExtended())
 
-    // ── Combined UI State ──
-    val state: StateFlow<TransactionsState> = combine(
+    // ── Combined UI State with filtering logic ──
+    val state: StateFlow<TransactionsStateExtended> = combine(
         getTransactionsUseCase(),
         getCategoriesUseCase(),
         _filterState,
     ) { transactions, categories, filterState ->
-        val filtered = transactions.filter {
+        // Apply date range filter
+        val dateFiltered = transactions.filter {
             it.timestamp in filterState.dateRangeFrom..filterState.dateRangeTo
         }
-        TransactionsState(
+
+        // Apply search filter (by title or amount) if query is not empty
+        val filtered = if (filterState.searchQuery.isBlank()) {
+            dateFiltered
+        } else {
+            val query = filterState.searchQuery.trim().lowercase()
+            dateFiltered.filter { transaction ->
+                // Search by title
+                val titleMatches = transaction.title.lowercase().contains(query)
+                
+                // Search by amount (handle various formats: "123", "123.45", etc.)
+                val amountMatches = try {
+                    val queryAmount = query.toDoubleOrNull()
+                    if (queryAmount != null) {
+                        abs(transaction.amount - queryAmount) < 0.01 // Allow small floating point difference
+                    } else {
+                        false
+                    }
+                } catch (e: Exception) {
+                    false
+                }
+
+                titleMatches || amountMatches
+            }
+        }
+
+        TransactionsStateExtended(
             transactions = transactions,
             filteredTransactions = filtered,
             categories = categories,
@@ -107,22 +138,25 @@ class TransactionsViewModel(
             selectedPresetIndex = filterState.selectedPresetIndex,
             dateRangeFrom = filterState.dateRangeFrom,
             dateRangeTo = filterState.dateRangeTo,
+            searchQuery = filterState.searchQuery,
+            searchError = validateSearchQuery(filterState.searchQuery),
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = TransactionsState(isLoading = true),
+        initialValue = TransactionsStateExtended(isLoading = true),
     )
 
     // ── Event Handling ──
-    fun onEvent(event: TransactionsEvent) {
+    fun onEvent(event: TransactionsEventExtended) {
         Logger.d("TransactionsViewModel") { "Event: $event" }
         when (event) {
-            is TransactionsEvent.SelectPreset -> selectPreset(event.index)
-            is TransactionsEvent.SetDateRange -> setDateRange(event.from, event.to)
-            is TransactionsEvent.AddTransactionClicked -> { /* Navigation handled by Screen */ }
-            is TransactionsEvent.DeleteTransaction -> deleteTransaction(event.transaction)
-            is TransactionsEvent.UpdateTransaction -> updateTransaction(event.transaction)
+            is TransactionsEventExtended.SelectPreset -> selectPreset(event.index)
+            is TransactionsEventExtended.SetDateRange -> setDateRange(event.from, event.to)
+            is TransactionsEventExtended.SearchTransactions -> updateSearch(event.query)
+            is TransactionsEventExtended.AddTransactionClicked -> { /* Navigation handled by Screen */ }
+            is TransactionsEventExtended.DeleteTransaction -> deleteTransaction(event.transaction)
+            is TransactionsEventExtended.UpdateTransaction -> updateTransaction(event.transaction)
         }
     }
 
@@ -131,7 +165,7 @@ class TransactionsViewModel(
         _filterState.update {
             it.copy(
                 selectedPresetIndex = index,
-                dateRangeFrom = TransactionsState.getDateFromForPreset(index),
+                dateRangeFrom = TransactionsStateExtended.getDateFromForPreset(index),
                 dateRangeTo = System.currentTimeMillis(),
             )
         }
@@ -141,18 +175,25 @@ class TransactionsViewModel(
         _filterState.update { it.copy(dateRangeFrom = from, dateRangeTo = to) }
     }
 
+    private fun updateSearch(query: String) {
+        Logger.d("TransactionsViewModel") { "Search query: '$query'" }
+        _filterState.update { it.copy(searchQuery = query) }
+    }
+
+    private fun validateSearchQuery(query: String): String? {
+        return when {
+            query.isBlank() -> null
+            query.length > 100 -> "La ricerca è troppo lunga (max 100 caratteri)"
+            else -> null
+        }
+    }
+
     fun addTransaction(
         title: String,
         amount: Double,
         category: String,
         type: TransactionType,
         timestamp: Long,
-        notes: String = "",
-        payee: String = "",
-        location: String = "",
-        tags: String = "",
-        isRecurring: Boolean = false,
-        recurrenceInterval: String = "",
     ) {
         Logger.d("TransactionsViewModel") { "Adding transaction: $title" }
         viewModelScope.launch {
@@ -163,12 +204,6 @@ class TransactionsViewModel(
                     category = category,
                     type = type,
                     timestamp = timestamp,
-                    notes = notes,
-                    payee = payee,
-                    location = location,
-                    tags = tags,
-                    isRecurring = isRecurring,
-                    recurrenceInterval = recurrenceInterval,
                 ),
             )
         }
@@ -190,11 +225,12 @@ class TransactionsViewModel(
 }
 
 /**
- * Internal filter state to track user filter selections.
+ * Internal filter state to track user filter selections with search.
  */
-private data class FilterState(
+private data class FilterStateExtended(
     val selectedPresetIndex: Int = 1,
     val dateRangeFrom: Long = System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000),
     val dateRangeTo: Long = System.currentTimeMillis(),
+    val searchQuery: String = "",
 )
 

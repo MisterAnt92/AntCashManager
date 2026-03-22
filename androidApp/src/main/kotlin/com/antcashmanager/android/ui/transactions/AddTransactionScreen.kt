@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -76,8 +77,8 @@ fun AddTransactionScreen(
     AddTransactionContent(
         state = state,
         onNavigateBack = onNavigateBack,
-        onAddTransaction = { title, amount, category, type, timestamp ->
-            viewModel.addTransaction(title, amount, category, type, timestamp)
+        onAddTransaction = { title, amount, category, type, timestamp, notes, payee, location, tags, isRecurring, recurrenceInterval ->
+            viewModel.addTransaction(title, amount, category, type, timestamp, notes, payee, location, tags, isRecurring, recurrenceInterval)
             onNavigateBack()
         },
     )
@@ -92,7 +93,7 @@ fun AddTransactionScreen(
 internal fun AddTransactionContent(
     state: TransactionsState,
     onNavigateBack: () -> Unit,
-    onAddTransaction: (String, Double, String, TransactionType, Long) -> Unit,
+    onAddTransaction: (String, Double, String, TransactionType, Long, String, String, String, String, Boolean, String) -> Unit,
 ) {
     var title by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("") }
@@ -101,6 +102,15 @@ internal fun AddTransactionContent(
     var selectedDate by remember { mutableStateOf(System.currentTimeMillis()) }
     var showCategoryMenu by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
+    
+    // Additional fields
+    var notes by remember { mutableStateOf("") }
+    var payee by remember { mutableStateOf("") }
+    var location by remember { mutableStateOf("") }
+    var tags by remember { mutableStateOf("") }
+    var isRecurring by remember { mutableStateOf(false) }
+    var recurrenceInterval by remember { mutableStateOf("") }
+    var showRecurrenceMenu by remember { mutableStateOf(false) }
 
     // Date picker dialog
     if (showDatePicker) {
@@ -151,13 +161,22 @@ internal fun AddTransactionContent(
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp),
         ) {
+            // === REQUIRED FIELDS SECTION ===
+            Text(
+                text = "Informazioni obbligatorie",
+                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            
             // Title field
             OutlinedTextField(
                 value = title,
                 onValueChange = { title = it },
                 label = { Text(stringResource(R.string.transaction_title)) },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth(),
                 singleLine = true,
+                shape = RoundedCornerShape(16.dp),
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -170,6 +189,7 @@ internal fun AddTransactionContent(
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 singleLine = true,
+                shape = RoundedCornerShape(16.dp),
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -204,9 +224,9 @@ internal fun AddTransactionContent(
                 onValueChange = { },
                 label = { Text(stringResource(R.string.transaction_category)) },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .let { if (showCategoryMenu) it else it },
+                    .fillMaxWidth(),
                 readOnly = true,
+                shape = RoundedCornerShape(16.dp),
                 trailingIcon = {
                     IconButton(onClick = { showCategoryMenu = !showCategoryMenu }) {
                         Text("▼")
@@ -240,6 +260,7 @@ internal fun AddTransactionContent(
                 label = { Text(stringResource(R.string.transaction_date)) },
                 modifier = Modifier.fillMaxWidth(),
                 readOnly = true,
+                shape = RoundedCornerShape(16.dp),
                 trailingIcon = {
                     IconButton(onClick = { showDatePicker = true }) {
                         Text("📅")
@@ -249,11 +270,138 @@ internal fun AddTransactionContent(
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            // === OPTIONAL FIELDS SECTION ===
+            Text(
+                text = "Informazioni aggiuntive (opzionali)",
+                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+
+            // Payee field
+            OutlinedTextField(
+                value = payee,
+                onValueChange = { payee = it },
+                label = { Text("Beneficiario") },
+                placeholder = { Text("Es: Ristorante, Farmacia") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                shape = RoundedCornerShape(16.dp),
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Location field
+            OutlinedTextField(
+                value = location,
+                onValueChange = { location = it },
+                label = { Text("Luogo") },
+                placeholder = { Text("Es: Centro Commerciale") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                shape = RoundedCornerShape(16.dp),
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Notes field
+            OutlinedTextField(
+                value = notes,
+                onValueChange = { notes = it },
+                label = { Text("Note") },
+                placeholder = { Text("Aggiungi note o dettagli...") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp),
+                shape = RoundedCornerShape(16.dp),
+                maxLines = 4,
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Tags field
+            OutlinedTextField(
+                value = tags,
+                onValueChange = { tags = it },
+                label = { Text("Tag") },
+                placeholder = { Text("Es: urgente, importante (separati da virgola)") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                shape = RoundedCornerShape(16.dp),
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // === RECURRING SECTION ===
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                androidx.compose.material3.Checkbox(
+                    checked = isRecurring,
+                    onCheckedChange = { isRecurring = it },
+                )
+                Text(
+                    text = "Ricorrente",
+                    modifier = Modifier.padding(start = 8.dp),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+
+            if (isRecurring) {
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = recurrenceInterval,
+                    onValueChange = { },
+                    label = { Text("Intervallo di ricorrenza") },
+                    modifier = Modifier.fillMaxWidth(),
+                    readOnly = true,
+                    shape = RoundedCornerShape(16.dp),
+                    trailingIcon = {
+                        IconButton(onClick = { showRecurrenceMenu = !showRecurrenceMenu }) {
+                            Text("▼")
+                        }
+                    },
+                )
+                if (showRecurrenceMenu) {
+                    DropdownMenu(
+                        expanded = showRecurrenceMenu,
+                        onDismissRequest = { showRecurrenceMenu = false },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        listOf("Giornaliero", "Settimanale", "Mensile", "Annuale").forEach { interval ->
+                            DropdownMenuItem(
+                                text = { Text(interval) },
+                                onClick = {
+                                    recurrenceInterval = interval
+                                    showRecurrenceMenu = false
+                                },
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
             // Submit button
             Button(
                 onClick = {
                     if (title.isNotBlank() && amount.isNotBlank() && selectedCategory.isNotBlank()) {
-                        onAddTransaction(title, amount.toDoubleOrNull() ?: 0.0, selectedCategory, transactionType, selectedDate)
+                        onAddTransaction(
+                            title,
+                            amount.toDoubleOrNull() ?: 0.0,
+                            selectedCategory,
+                            transactionType,
+                            selectedDate,
+                            notes,
+                            payee,
+                            location,
+                            tags,
+                            isRecurring,
+                            recurrenceInterval
+                        )
                     }
                 },
                 modifier = Modifier
@@ -262,6 +410,8 @@ internal fun AddTransactionContent(
             ) {
                 Text(stringResource(R.string.add_transaction))
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
