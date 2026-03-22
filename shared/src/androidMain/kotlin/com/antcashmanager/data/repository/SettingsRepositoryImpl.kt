@@ -26,6 +26,7 @@ class SettingsRepositoryImpl(
     private val highContrastKey = booleanPreferencesKey("high_contrast")
     private val largeTextKey = booleanPreferencesKey("large_text")
     private val reduceMotionKey = booleanPreferencesKey("reduce_motion")
+    private val showTransactionNotesKey = booleanPreferencesKey("show_transaction_notes")
     private val currencySymbolKey = stringPreferencesKey("currency_symbol")
     private val decimalDigitsKey = intPreferencesKey("decimal_digits")
     private val decimalSeparatorKey = stringPreferencesKey("decimal_separator")
@@ -99,6 +100,17 @@ class SettingsRepositoryImpl(
         }
     }
 
+    override fun getShowTransactionNotes(): Flow<Boolean> =
+        context.dataStore.data.map { preferences ->
+            preferences[showTransactionNotesKey] ?: true
+        }
+
+    override suspend fun setShowTransactionNotes(show: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[showTransactionNotesKey] = show
+        }
+    }
+
     override fun getCurrencySymbol(): Flow<String> =
         context.dataStore.data.map { it[currencySymbolKey] ?: "\u20ac" }
 
@@ -135,6 +147,7 @@ class SettingsRepositoryImpl(
             prefs[highContrastKey] = false
             prefs[largeTextKey] = false
             prefs[reduceMotionKey] = false
+            prefs[showTransactionNotesKey] = true
             prefs[currencySymbolKey] = "\u20ac"
             prefs[decimalDigitsKey] = 2
             prefs[decimalSeparatorKey] = ","

@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AntEmptyState
+import com.antcashmanager.android.ui.components.DateRangeFilter
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.android.util.formatAmount
@@ -59,9 +60,24 @@ fun HomeScreen(transactionRepository: TransactionRepository) {
 
 @Composable
 internal fun HomeContent(transactions: List<Transaction>) {
+    val selectedPresetIndex = androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(1) }
+    val dateRangeFrom = androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000)) }
+    val dateRangeTo = androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(System.currentTimeMillis()) }
+
+    // Preset labels
+    val presets = listOf(
+        "Oggi" to "today",
+        "7 giorni" to "week",
+        "Mese" to "month",
+        "Anno" to "year",
+    )
+
+    // Filter transactions by date range
+    val filteredTransactions = transactions.filter { it.timestamp in dateRangeFrom.value..dateRangeTo.value }
+
     val fmt = LocalCurrencyFormat.current
-    val totalIncome = transactions.filter { it.type == TransactionType.INCOME }.sumOf { it.amount }
-    val totalExpense = transactions.filter { it.type == TransactionType.EXPENSE }.sumOf { it.amount }
+    val totalIncome = filteredTransactions.filter { it.type == TransactionType.INCOME }.sumOf { it.amount }
+    val totalExpense = filteredTransactions.filter { it.type == TransactionType.EXPENSE }.sumOf { it.amount }
     val balance = totalIncome - totalExpense
 
     LazyColumn(
@@ -77,6 +93,35 @@ internal fun HomeContent(transactions: List<Transaction>) {
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,
+            )
+        }
+        
+        item {
+            DateRangeFilter(
+                selectedPresetIndex = selectedPresetIndex.value,
+                presets = presets,
+                dateRangeFrom = dateRangeFrom.value,
+                dateRangeTo = dateRangeTo.value,
+                onPresetSelected = { index ->
+                    selectedPresetIndex.value = index
+                    when (index) {
+                        0 -> {
+                            dateRangeFrom.value = System.currentTimeMillis() - (24 * 60 * 60 * 1000)
+                        }
+                        1 -> {
+                            dateRangeFrom.value = System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000)
+                        }
+                        2 -> {
+                            dateRangeFrom.value = System.currentTimeMillis() - (30 * 24 * 60 * 60 * 1000)
+                        }
+                        3 -> {
+                            dateRangeFrom.value = System.currentTimeMillis() - (365 * 24 * 60 * 60 * 1000)
+                        }
+                    }
+                    dateRangeTo.value = System.currentTimeMillis()
+                },
+                onFromDateEdit = { /* TODO: Show date picker */ },
+                onToDateEdit = { /* TODO: Show date picker */ },
             )
         }
 
@@ -212,7 +257,7 @@ internal fun HomeContent(transactions: List<Transaction>) {
                 )
             }
         } else {
-            items(transactions.take(5)) { transaction ->
+            items(filteredTransactions.take(5)) { transaction ->
                 RecentTransactionItem(transaction = transaction)
             }
         }

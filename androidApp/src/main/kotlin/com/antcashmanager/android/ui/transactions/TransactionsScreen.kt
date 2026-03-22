@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Repeat
@@ -37,6 +38,7 @@ import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.android.util.formatAmountWithSign
 import com.antcashmanager.android.ui.components.AntEmptyState
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.android.ui.components.DateRangeFilter
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.TransactionRepository
@@ -56,17 +58,79 @@ fun TransactionsScreen(transactionRepository: TransactionRepository) {
 
 @Composable
 internal fun TransactionsContent(transactions: List<Transaction>) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
-            .padding(top = 16.dp),
-    ) {
+    val selectedPresetIndex = androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(1) }
+    val dateRangeFrom = androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000)) }
+    val dateRangeTo = androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(System.currentTimeMillis()) }
+
+    // Preset labels
+    val presets = listOf(
+        "Oggi" to "today",
+        "7 giorni" to "week",
+        "Mese" to "month",
+        "Anno" to "year",
+    )
+
+    // Filter transactions by date range
+    val filteredTransactions = transactions.filter { it.timestamp in dateRangeFrom.value..dateRangeTo.value }
+
+    androidx.compose.material3.Scaffold(
+        floatingActionButton = {
+            androidx.compose.material3.FloatingActionButton(
+                onClick = {
+                    Logger.d("TransactionsScreen") { "Add transaction button clicked" }
+                    // TODO: Navigate to add transaction screen
+                },
+                containerColor = MaterialTheme.colorScheme.primary,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add transaction",
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                )
+            }
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
+                .padding(top = 16.dp)
+                .padding(padding),
+        ) {
         Text(
             text = stringResource(R.string.transactions_title),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground,
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        // Date range filter
+        DateRangeFilter(
+            selectedPresetIndex = selectedPresetIndex.value,
+            presets = presets,
+            dateRangeFrom = dateRangeFrom.value,
+            dateRangeTo = dateRangeTo.value,
+            onPresetSelected = { index ->
+                selectedPresetIndex.value = index
+                when (index) {
+                    0 -> {
+                        dateRangeFrom.value = System.currentTimeMillis() - (24 * 60 * 60 * 1000)
+                    }
+                    1 -> {
+                        dateRangeFrom.value = System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000)
+                    }
+                    2 -> {
+                        dateRangeFrom.value = System.currentTimeMillis() - (30 * 24 * 60 * 60 * 1000)
+                    }
+                    3 -> {
+                        dateRangeFrom.value = System.currentTimeMillis() - (365 * 24 * 60 * 60 * 1000)
+                    }
+                }
+                dateRangeTo.value = System.currentTimeMillis()
+            },
+            onFromDateEdit = { /* TODO: Show date picker */ },
+            onToDateEdit = { /* TODO: Show date picker */ },
         )
         Spacer(modifier = Modifier.height(16.dp))
         if (transactions.isEmpty()) {
@@ -78,11 +142,12 @@ internal fun TransactionsContent(transactions: List<Transaction>) {
             )
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(transactions) { transaction ->
+                items(filteredTransactions) { transaction ->
                     TransactionItem(transaction = transaction)
                 }
                 item { Spacer(modifier = Modifier.height(8.dp)) }
             }
+        }
         }
     }
 }
@@ -133,6 +198,7 @@ private fun TransactionItem(transaction: Transaction) {
                     add(transaction.category)
                     add(dateFormat.format(Date(transaction.timestamp)))
                     if (transaction.payee.isNotBlank()) add(transaction.payee)
+                    if (transaction.location.isNotBlank()) add(transaction.location)
                 }
                 Text(
                     text = subtitleParts.joinToString(" • "),

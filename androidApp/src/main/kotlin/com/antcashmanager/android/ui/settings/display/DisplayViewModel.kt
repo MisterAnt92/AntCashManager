@@ -24,6 +24,9 @@ class DisplayViewModel(
     val thousandsSeparator = settingsRepository.getThousandsSeparator()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ".")
 
+    val showTransactionNotes = settingsRepository.getShowTransactionNotes()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), true)
+
     fun setCurrencySymbol(symbol: String) {
         Logger.d("DisplayViewModel") { "Setting currency symbol: $symbol" }
         viewModelScope.launch { settingsRepository.setCurrencySymbol(symbol) }
@@ -42,6 +45,11 @@ class DisplayViewModel(
     fun setThousandsSeparator(separator: String) {
         Logger.d("DisplayViewModel") { "Setting thousands separator: $separator" }
         viewModelScope.launch { settingsRepository.setThousandsSeparator(separator) }
+    }
+
+    fun setShowTransactionNotes(show: Boolean) {
+        Logger.d("DisplayViewModel") { "Setting show transaction notes: $show" }
+        viewModelScope.launch { settingsRepository.setShowTransactionNotes(show) }
     }
 
     fun resetAllPreferences() {

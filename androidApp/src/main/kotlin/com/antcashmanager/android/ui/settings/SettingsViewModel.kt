@@ -161,6 +161,9 @@ class SettingsViewModel(
     val thousandsSeparator = settingsRepository.getThousandsSeparator()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ".")
 
+    val showTransactionNotes = settingsRepository.getShowTransactionNotes()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), true)
+
     private val _deleteResult = MutableStateFlow<DeleteResult>(DeleteResult.Idle)
     val deleteResult: StateFlow<DeleteResult> = _deleteResult.asStateFlow()
 
@@ -224,6 +227,11 @@ class SettingsViewModel(
     fun setThousandsSeparator(separator: String) {
         Logger.d("SettingsViewModel") { "Setting thousands separator: $separator" }
         viewModelScope.launch { settingsRepository.setThousandsSeparator(separator) }
+    }
+
+    fun setShowTransactionNotes(show: Boolean) {
+        Logger.d("SettingsViewModel") { "Setting show transaction notes: $show" }
+        viewModelScope.launch { settingsRepository.setShowTransactionNotes(show) }
     }
 
     fun resetAllPreferences() {

@@ -62,6 +62,7 @@ fun DisplayScreen(
     val decimalDigits by viewModel.decimalDigits.collectAsState()
     val decimalSeparator by viewModel.decimalSeparator.collectAsState()
     val thousandsSeparator by viewModel.thousandsSeparator.collectAsState()
+    val showTransactionNotes by viewModel.showTransactionNotes.collectAsState()
 
     DisplayContent(
         currencySymbol = currencySymbol,
@@ -72,6 +73,8 @@ fun DisplayScreen(
         onDecimalSeparatorSelected = { viewModel.setDecimalSeparator(it) },
         thousandsSeparator = thousandsSeparator,
         onThousandsSeparatorSelected = { viewModel.setThousandsSeparator(it) },
+        showTransactionNotes = showTransactionNotes,
+        onShowTransactionNotesChanged = { viewModel.setShowTransactionNotes(it) },
         onResetAllPreferences = { viewModel.resetAllPreferences() },
         onNavigateBack = { navController.popBackStack() },
     )
@@ -88,6 +91,8 @@ internal fun DisplayContent(
     onDecimalSeparatorSelected: (String) -> Unit,
     thousandsSeparator: String,
     onThousandsSeparatorSelected: (String) -> Unit,
+    showTransactionNotes: Boolean,
+    onShowTransactionNotesChanged: (Boolean) -> Unit,
     onResetAllPreferences: () -> Unit,
     onNavigateBack: () -> Unit,
 ) {
@@ -144,6 +149,18 @@ internal fun DisplayContent(
                 subtitle = separatorLabel(thousandsSeparator, isThou = true),
                 leadingIcon = Icons.Default.MoreHoriz,
                 onClick = { showThousandsSeparatorDialog = true },
+            )
+            AppCard(
+                title = "Mostra Note Transazioni",
+                subtitle = if (showTransactionNotes) "Note visibili negli item" else "Note nascoste",
+                leadingIcon = Icons.Default.TextFields,
+                trailingContent = {
+                    androidx.compose.material3.Switch(
+                        checked = showTransactionNotes,
+                        onCheckedChange = onShowTransactionNotesChanged,
+                    )
+                },
+                onClick = { onShowTransactionNotesChanged(!showTransactionNotes) },
             )
             AppCard(
                 title = stringResource(R.string.settings_reset_preferences),
@@ -394,6 +411,8 @@ private fun DisplayContentPreview() {
             onDecimalSeparatorSelected = {},
             thousandsSeparator = ".",
             onThousandsSeparatorSelected = {},
+            showTransactionNotes = true,
+            onShowTransactionNotesChanged = {},
             onResetAllPreferences = {},
             onNavigateBack = {},
         )

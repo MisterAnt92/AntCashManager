@@ -17,6 +17,8 @@ interface SettingsRepository {
     suspend fun setLargeText(enabled: Boolean)
     fun getReduceMotion(): Flow<Boolean>
     suspend fun setReduceMotion(enabled: Boolean)
+    fun getShowTransactionNotes(): Flow<Boolean>
+    suspend fun setShowTransactionNotes(show: Boolean)
 
     // ── Currency / number format ──
     fun getCurrencySymbol(): Flow<String>
