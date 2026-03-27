@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.settings.display
+package com.antcashmanager.android.ui.screen.home.settings.display
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,6 +22,7 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -36,7 +37,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AppCard
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
@@ -48,12 +52,12 @@ import com.antcashmanager.domain.repository.SettingsRepository
 @Composable
 fun DisplayScreen(
     settingsRepository: SettingsRepository,
-    navController: androidx.navigation.NavController,
+    navController: NavController,
 ) {
     val viewModel: DisplayViewModel = viewModel(
-        factory = object : androidx.lifecycle.ViewModelProvider.Factory {
+        factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
-            override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T =
+            override fun <T : ViewModel> create(modelClass: Class<T>): T =
                 DisplayViewModel(settingsRepository) as T
         },
     )
@@ -155,7 +159,7 @@ internal fun DisplayContent(
                 subtitle = if (showTransactionNotes) "Note visibili negli item" else "Note nascoste",
                 leadingIcon = Icons.Default.TextFields,
                 trailingContent = {
-                    androidx.compose.material3.Switch(
+                    Switch(
                         checked = showTransactionNotes,
                         onCheckedChange = onShowTransactionNotesChanged,
                     )

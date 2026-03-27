@@ -44,3 +44,24 @@ fun formatAmountWithSign(amount: Double, format: CurrencyFormat, isIncome: Boole
     return "$sign${formatAmount(amount, format)}"
 }
 
+/**
+ * Formats [amount] with negative support.
+ * Negative amounts show the minus sign before the currency symbol.
+ * Example: 1234.56 -> "€1.234,56", -1234.56 -> "-€1.234,56"
+ */
+fun formatAmountWithNegative(amount: Double, format: CurrencyFormat): String {
+    return if (amount < 0) {
+        "-${formatAmount(amount, format)}"
+    } else {
+        formatAmount(amount, format)
+    }
+}
+
+/**
+ * Formats [amount] for transaction display showing +/- based on actual amount sign.
+ * Example: 1234.56 -> "+€1.234,56", -1234.56 -> "-€1.234,56"
+ */
+fun formatTransactionAmount(amount: Double, format: CurrencyFormat): String {
+    val sign = if (amount < 0) "-" else "+"
+    return "$sign${formatAmount(amount, format)}"
+}

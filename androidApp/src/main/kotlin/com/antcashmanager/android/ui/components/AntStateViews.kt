@@ -55,10 +55,10 @@ fun AntEmptyState(
     AnimatedVisibility(
         visible = visible,
         enter = fadeIn(animationSpec = tween(enterDuration)) +
-            scaleIn(
-                initialScale = 0.85f,
-                animationSpec = tween(enterDuration),
-            ),
+                scaleIn(
+                    initialScale = 0.85f,
+                    animationSpec = tween(enterDuration),
+                ),
     ) {
         Column(
             modifier = modifier

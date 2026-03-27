@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.settings
+package com.antcashmanager.android.ui.screen.home.settings
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.BuildConfig
 import com.antcashmanager.android.data.backup.BackupService
-import com.antcashmanager.android.data.backup.RestoreResult
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.Transaction

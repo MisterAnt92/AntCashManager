@@ -133,7 +133,7 @@ class SettingsRepositoryImpl(
     }
 
     override fun getThousandsSeparator(): Flow<String> =
-        context.dataStore.data.map { it[thousandsSeparatorKey] ?: "." }
+        context.dataStore.data.map { it[thousandsSeparatorKey] ?: "" }
 
     override suspend fun setThousandsSeparator(separator: String) {
         context.dataStore.edit { it[thousandsSeparatorKey] = separator }
@@ -151,7 +151,7 @@ class SettingsRepositoryImpl(
             prefs[currencySymbolKey] = "\u20ac"
             prefs[decimalDigitsKey] = 2
             prefs[decimalSeparatorKey] = ","
-            prefs[thousandsSeparatorKey] = "."
+            prefs[thousandsSeparatorKey] = ""
         }
     }
 }

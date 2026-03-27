@@ -1,4 +1,5 @@
-package com.antcashmanager.android.ui.charts
+package com.antcashmanager.android.ui.screen.home.charts
+import android.graphics.Paint
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
@@ -16,7 +17,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DatePicker
@@ -45,14 +48,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AntEmptyState
+import com.antcashmanager.android.ui.components.HelpButton
+import com.antcashmanager.android.ui.components.HelpDialogContent
+import com.antcashmanager.android.ui.components.SimpleHelpFeature
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.LocalReduceMotion
 import com.antcashmanager.android.util.LocalCurrencyFormat
@@ -72,9 +79,9 @@ private val pieColors = listOf(
 fun ChartsScreen(transactionRepository: TransactionRepository) {
     Logger.d("ChartsScreen") { "Displaying ChartsScreen" }
     val viewModel: ChartsViewModel = viewModel(
-        factory = object : androidx.lifecycle.ViewModelProvider.Factory {
+        factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
-            override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T =
+            override fun <T : ViewModel> create(modelClass: Class<T>): T =
                 ChartsViewModel(transactionRepository) as T
         },
     )
@@ -100,6 +107,13 @@ internal fun ChartsContent(
     var selectedPreset by remember { mutableIntStateOf(1) }
     var showFromPicker by remember { mutableStateOf(false) }
     var showToPicker by remember { mutableStateOf(false) }
+    var showHelpDialog by remember { mutableStateOf(false) }
+
+    // Help dialog
+    if (showHelpDialog) {
+        HelpDialog(onDismiss = { showHelpDialog = false })
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -107,12 +121,19 @@ internal fun ChartsContent(
             .padding(horizontal = 16.dp)
             .padding(top = 16.dp, bottom = 24.dp),
     ) {
-        Text(
-            text = stringResource(R.string.charts_title),
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground,
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                text = stringResource(R.string.charts_title),
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+            HelpButton(onHelpClick = { showHelpDialog = true })
+        }
         Spacer(modifier = Modifier.height(16.dp))
         // Period filter card
         Card(
@@ -318,7 +339,7 @@ private fun BarChart(data: List<MonthlyAmount>, modifier: Modifier = Modifier) {
             drawRoundRect(color = expenseColor, topLeft = Offset(groupX + gap / 2f, barAreaHeight - expenseH), size = Size(barWidth, expenseH), cornerRadius = CornerRadius(4.dp.toPx()))
             drawContext.canvas.nativeCanvas.drawText(
                 item.label, groupX, size.height - 4.dp.toPx(),
-                android.graphics.Paint().apply { color = labelColor.hashCode(); textSize = 10.sp.toPx(); textAlign = android.graphics.Paint.Align.CENTER },
+                Paint().apply { color = labelColor.hashCode(); textSize = 10.sp.toPx(); textAlign = Paint.Align.CENTER },
             )
         }
     }
@@ -355,7 +376,37 @@ private fun ChartsContentEmptyPreview() {
         ChartsContent(chartData = ChartData(), dateRange = DateRange(System.currentTimeMillis() - 30L * 24 * 60 * 60 * 1000, System.currentTimeMillis()))
     }
 }
-@Preview(showBackground = true, name = "ChartsScreen - Dark")
+
+@Composable
+private fun HelpDialog(onDismiss: () -> Unit) {
+    val helpFeatures = listOf(
+        SimpleHelpFeature(
+            title = "Visualizzazione Grafici",
+            description = "Vedi i tuoi dati finanziari in formato grafico con pie chart per le categorie",
+            icon = Icons.Default.BarChart,
+        ),
+        SimpleHelpFeature(
+            title = "Filtri Temporali",
+            description = "Seleziona periodi predefiniti o personalizzati per analizzare i tuoi dati",
+            icon = Icons.Default.CalendarMonth,
+        ),
+        SimpleHelpFeature(
+            title = "Analisi Dettagliata",
+            description = "Visualizza il riepilogo mensile e l'analisi per categoria",
+            icon = Icons.Default.TrendingUp,
+        ),
+    )
+
+    HelpDialogContent(
+        isVisible = true,
+        title = "Guida Grafici",
+        description = "Visualizza grafici e analisi dei tuoi dati finanziari!",
+        features = helpFeatures,
+        onDismiss = onDismiss,
+    )
+}
+
+@Preview(showBackground = true, name = "ChartsScreen - Default")
 @Composable
 private fun ChartsContentDarkPreview() {
     AntCashManagerTheme(darkTheme = true, dynamicColor = false) {

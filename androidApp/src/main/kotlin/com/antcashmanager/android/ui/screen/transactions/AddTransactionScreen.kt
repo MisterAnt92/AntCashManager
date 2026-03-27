@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.transactions
+package com.antcashmanager.android.ui.screen.home.transactions
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +15,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
@@ -41,6 +42,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
@@ -65,9 +68,9 @@ fun AddTransactionScreen(
     Logger.d("AddTransactionScreen") { "Displaying AddTransactionScreen" }
 
     val viewModel: TransactionsViewModel = viewModel(
-        factory = object : androidx.lifecycle.ViewModelProvider.Factory {
+        factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
-            override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T =
+            override fun <T : ViewModel> create(modelClass: Class<T>): T =
                 TransactionsViewModel(transactionRepository, categoryRepository) as T
         },
     )
@@ -338,7 +341,7 @@ internal fun AddTransactionContent(
                     .padding(vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                androidx.compose.material3.Checkbox(
+                Checkbox(
                     checked = isRecurring,
                     onCheckedChange = { isRecurring = it },
                 )

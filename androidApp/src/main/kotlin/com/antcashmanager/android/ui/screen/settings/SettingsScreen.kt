@@ -1,7 +1,9 @@
-package com.antcashmanager.android.ui.settings
+package com.antcashmanager.android.ui.screen.home.settings
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -22,7 +25,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Backup
-import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Coffee
 import androidx.compose.material.icons.filled.Contrast
 import androidx.compose.material.icons.filled.DarkMode
@@ -34,7 +36,6 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.automirrored.filled.LibraryBooks
 import androidx.compose.material.icons.filled.MonetizationOn
-import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.MotionPhotosOff
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Payment
@@ -45,13 +46,8 @@ import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -70,33 +66,45 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.BuildConfig
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AppCard
 import com.antcashmanager.android.ui.components.AppCardSectionHeader
+import com.antcashmanager.android.ui.components.AppDivider
+import com.antcashmanager.android.ui.components.AppListItem
+import com.antcashmanager.android.ui.components.AppRadioButton
+import com.antcashmanager.android.ui.components.AppSwitch
+import com.antcashmanager.android.ui.components.HelpButton
+import com.antcashmanager.android.ui.components.HelpDialogContent
+import com.antcashmanager.android.ui.components.SimpleHelpFeature
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
-import com.antcashmanager.android.util.formatAmount
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun SettingsScreen(
     settingsRepository: SettingsRepository,
     transactionRepository: TransactionRepository,
     categoryRepository: CategoryRepository,
-    navController: androidx.navigation.NavController,
+    navController: NavController,
 ) {
     Logger.d("SettingsScreen") { "Displaying SettingsScreen" }
     val viewModel: SettingsViewModel = viewModel(
-        factory = object : androidx.lifecycle.ViewModelProvider.Factory {
+        factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
-            override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T =
+            override fun <T : ViewModel> create(modelClass: Class<T>): T =
                 SettingsViewModel(settingsRepository, transactionRepository, categoryRepository) as T
         },
     )
@@ -184,8 +192,8 @@ internal fun SettingsContent(
     thousandsSeparator: String = "",
     onThousandsSeparatorSelected: (String) -> Unit = {},
     onResetAllPreferences: () -> Unit = {},
-    onImportDebugData: (android.content.Context) -> Unit = {},
-    navController: androidx.navigation.NavController? = null,
+    onImportDebugData: (Context) -> Unit = {},
+    navController: NavController? = null,
 ) {
     var showThemeDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
@@ -202,6 +210,7 @@ internal fun SettingsContent(
     var showBackupErrorDialog by remember { mutableStateOf(false) }
     var showRestoreSuccessDialog by remember { mutableStateOf(false) }
     var showRestoreErrorDialog by remember { mutableStateOf(false) }
+    var showHelpDialog by remember { mutableStateOf(false) }
     var restoreSuccessInfo by remember { mutableStateOf<Pair<Int, Int>?>(null) }
     var backupErrorMessage by remember { mutableStateOf("") }
     var restoreErrorMessage by remember { mutableStateOf("") }
@@ -287,6 +296,11 @@ internal fun SettingsContent(
         }
     }
 
+    // Help dialog
+    if (showHelpDialog) {
+        HelpDialog(onDismiss = { showHelpDialog = false })
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -298,23 +312,31 @@ internal fun SettingsContent(
         var titleTapCount by remember { mutableStateOf(0) }
         val context = LocalContext.current
 
-        Text(
-            text = stringResource(R.string.settings_title),
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.clickable {
-                if (com.antcashmanager.android.BuildConfig.DEBUG) {
-                    titleTapCount += 1
-                    if (titleTapCount >= 5) {
-                        titleTapCount = 0
-                        // call the provided callback which will perform import in ViewModel
-                        onImportDebugData(context)
-                        android.widget.Toast.makeText(context, context.getString(R.string.debug_import_started), android.widget.Toast.LENGTH_SHORT).show()
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                text = stringResource(R.string.settings_title),
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.clickable {
+                    if (BuildConfig.DEBUG) {
+                        titleTapCount += 1
+                        if (titleTapCount >= 5) {
+                            titleTapCount = 0
+                            // call the provided callback which will perform import in ViewModel
+                            onImportDebugData(context)
+                            Toast.makeText(context, context.getString(R.string.debug_import_started), Toast.LENGTH_SHORT).show()
+                        }
                     }
-                }
-            },
-        )
+                },
+            )
+            HelpButton(onHelpClick = { showHelpDialog = true })
+        }
+        Spacer(modifier = Modifier.height(16.dp))
 
         // ── Appearance Section ──
         AppCardSectionHeader(title = stringResource(R.string.settings_appearance))
@@ -356,7 +378,7 @@ internal fun SettingsContent(
                 subtitle = stringResource(R.string.settings_high_contrast_subtitle),
                 leadingIcon = Icons.Default.Contrast,
                 trailingContent = {
-                    Switch(
+                    AppSwitch(
                         checked = highContrast,
                         onCheckedChange = onHighContrastChanged,
                     )
@@ -368,7 +390,7 @@ internal fun SettingsContent(
                 subtitle = stringResource(R.string.settings_large_text_subtitle),
                 leadingIcon = Icons.Default.FormatSize,
                 trailingContent = {
-                    Switch(
+                    AppSwitch(
                         checked = largeText,
                         onCheckedChange = onLargeTextChanged,
                     )
@@ -380,7 +402,7 @@ internal fun SettingsContent(
                 subtitle = stringResource(R.string.settings_reduce_motion_subtitle),
                 leadingIcon = Icons.Default.MotionPhotosOff,
                 trailingContent = {
-                    Switch(
+                    AppSwitch(
                         checked = reduceMotion,
                         onCheckedChange = onReduceMotionChanged,
                     )
@@ -408,8 +430,8 @@ internal fun SettingsContent(
                 iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
                 iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
                 onClick = {
-                    val timestamp = java.text.SimpleDateFormat("yyyyMMdd_HHmmss", java.util.Locale.getDefault())
-                        .format(java.util.Date())
+                    val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
+                        .format(Date())
                     onCreateBackup { jsonData ->
                         jsonData?.let {
                             pendingBackupData = it
@@ -449,10 +471,10 @@ internal fun SettingsContent(
                 iconBackgroundColor = MaterialTheme.colorScheme.secondaryContainer,
                 iconTint = MaterialTheme.colorScheme.onSecondaryContainer,
                 onClick = {
-                    val emailIntent = Intent(android.content.Intent.ACTION_SENDTO).apply {
-                        data = android.net.Uri.parse("mailto:")
-                        putExtra(android.content.Intent.EXTRA_EMAIL, arrayOf("feedback@antcashmanager.com"))
-                        putExtra(android.content.Intent.EXTRA_SUBJECT, "AntCashManager Feedback - v$versionName")
+                    val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+                        data = Uri.parse("mailto:")
+                        putExtra(Intent.EXTRA_EMAIL, arrayOf("feedback@antcashmanager.com"))
+                        putExtra(Intent.EXTRA_SUBJECT, "AntCashManager Feedback - v$versionName")
                     }
                     if (emailIntent.resolveActivity(context.packageManager) != null) {
                         context.startActivity(emailIntent)
@@ -520,7 +542,7 @@ internal fun SettingsContent(
         AlertDialog(
             onDismissRequest = { showDeleteConfirmDialog = false },
             icon = {
-                androidx.compose.material3.Icon(
+                Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.error,
@@ -742,15 +764,14 @@ private fun CurrencySymbolDialog(
                 verticalArrangement = Arrangement.spacedBy(0.dp),
             ) {
                 CurrencyFormat.SUPPORTED_CURRENCIES.forEach { (symbol, label) ->
-                    ListItem(
+                    AppListItem(
                         headlineContent = { Text(label) },
                         leadingContent = {
-                            RadioButton(
+                            AppRadioButton(
                                 selected = symbol == currentSymbol,
                                 onClick = { onSymbolSelected(symbol) },
                             )
                         },
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                     )
                 }
             }
@@ -780,17 +801,16 @@ private fun DecimalDigitsDialog(
         text = {
             Column {
                 (0..4).forEach { digits ->
-                    ListItem(
+                    AppListItem(
                         headlineContent = {
                             Text(stringResource(R.string.settings_decimal_digits_subtitle, digits))
                         },
                         leadingContent = {
-                            RadioButton(
+                            AppRadioButton(
                                 selected = digits == currentDigits,
                                 onClick = { onDigitsSelected(digits) },
                             )
                         },
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                     )
                 }
             }
@@ -822,15 +842,14 @@ private fun SeparatorDialog(
         text = {
             Column {
                 options.forEach { (value, label) ->
-                    ListItem(
+                    AppListItem(
                         headlineContent = { Text(label) },
                         leadingContent = {
-                            RadioButton(
+                            AppRadioButton(
                                 selected = value == currentValue,
                                 onClick = { onSelected(value) },
                             )
                         },
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                     )
                 }
             }
@@ -846,7 +865,7 @@ private fun SeparatorDialog(
  * Ciascuna riga è cliccabile e apre il rispettivo link di donazione.
  */
 @Composable
-private fun DonationCard(context: android.content.Context) {
+private fun DonationCard(context: Context) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -892,7 +911,7 @@ private fun DonationCard(context: android.content.Context) {
                 }
             }
 
-            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+            AppDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
             // ── PayPal row ──
             Row(
@@ -942,7 +961,7 @@ private fun DonationCard(context: android.content.Context) {
                 )
             }
 
-            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+            AppDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
             // ── Buy Me a Coffee row ──
             Row(
@@ -1012,7 +1031,7 @@ private val thirdPartyLibraries = listOf(
 
 @Composable
 private fun ThirdPartyLibrariesDialog(
-    context: android.content.Context,
+    context: Context,
     onDismiss: () -> Unit,
 ) {
     AlertDialog(
@@ -1028,7 +1047,7 @@ private fun ThirdPartyLibrariesDialog(
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 thirdPartyLibraries.forEach { lib ->
-                    ListItem(
+                    AppListItem(
                         headlineContent = {
                             Text(
                                 text = lib.name,
@@ -1036,7 +1055,6 @@ private fun ThirdPartyLibrariesDialog(
                                 fontWeight = FontWeight.Medium,
                             )
                         },
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                         modifier = Modifier.clickable {
                             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(lib.url))
                             context.startActivity(intent)
@@ -1060,7 +1078,7 @@ private fun ThemeSelectionDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         icon = {
-            androidx.compose.material3.Icon(
+            Icon(
                 imageVector = Icons.Default.DarkMode,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
@@ -1070,7 +1088,7 @@ private fun ThemeSelectionDialog(
         text = {
             Column {
                 AppTheme.entries.forEach { theme ->
-                    ListItem(
+                    AppListItem(
                         headlineContent = {
                             Text(
                                 when (theme) {
@@ -1081,12 +1099,11 @@ private fun ThemeSelectionDialog(
                             )
                         },
                         leadingContent = {
-                            RadioButton(
+                            AppRadioButton(
                                 selected = theme == currentTheme,
                                 onClick = { onThemeSelected(theme) },
                             )
                         },
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                     )
                 }
             }
@@ -1106,7 +1123,7 @@ private fun LanguageSelectionDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         icon = {
-            androidx.compose.material3.Icon(
+            Icon(
                 imageVector = Icons.Default.Language,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
@@ -1116,17 +1133,16 @@ private fun LanguageSelectionDialog(
         text = {
             Column {
                 AppLanguage.entries.forEach { language ->
-                    ListItem(
+                    AppListItem(
                         headlineContent = {
                             Text(languageDisplayName(language))
                         },
                         leadingContent = {
-                            RadioButton(
+                            AppRadioButton(
                                 selected = language == currentLanguage,
                                 onClick = { onLanguageSelected(language) },
                             )
                         },
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                     )
                 }
             }
@@ -1142,7 +1158,7 @@ private fun PrivacyPolicyDialog(onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
         icon = {
-            androidx.compose.material3.Icon(
+            Icon(
                 imageVector = Icons.Default.PrivacyTip,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
@@ -1211,12 +1227,46 @@ private fun LanguageSelectionDialogPreview() {
     }
 }
 
+@Composable
+private fun HelpDialog(onDismiss: () -> Unit) {
+    val helpFeatures = listOf(
+        SimpleHelpFeature(
+            title = "Preferenze Tema",
+            description = "Personalizza l'aspetto dell'app con tema chiaro, scuro o automatico",
+            icon = Icons.Default.Palette,
+        ),
+        SimpleHelpFeature(
+            title = "Preferenze Valuta",
+            description = "Scegli il simbolo, il formato e i separatori delle cifre",
+            icon = Icons.Default.MonetizationOn,
+        ),
+        SimpleHelpFeature(
+            title = "Accessibilità",
+            description = "Attiva alto contrasto, testo grande e riduci animazioni",
+            icon = Icons.Default.Contrast,
+        ),
+        SimpleHelpFeature(
+            title = "Backup e Ripristino",
+            description = "Salva e ripristina tutti i tuoi dati",
+            icon = Icons.Default.Backup,
+        ),
+    )
+
+    HelpDialogContent(
+        isVisible = true,
+        title = "Guida Impostazioni",
+        description = "Personalizza le tue preferenze dell'app!",
+        features = helpFeatures,
+        onDismiss = onDismiss,
+    )
+}
+
 @Preview(showBackground = true, name = "DonationCard - Light")
 @Composable
 private fun DonationCardLightPreview() {
     AntCashManagerTheme(dynamicColor = false) {
-        Column(modifier = androidx.compose.ui.Modifier.padding(16.dp)) {
-            DonationCard(context = androidx.compose.ui.platform.LocalContext.current)
+        Column(modifier = Modifier.padding(16.dp)) {
+            DonationCard(context = LocalContext.current)
         }
     }
 }
@@ -1225,8 +1275,8 @@ private fun DonationCardLightPreview() {
 @Composable
 private fun DonationCardDarkPreview() {
     AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
-        Column(modifier = androidx.compose.ui.Modifier.padding(16.dp)) {
-            DonationCard(context = androidx.compose.ui.platform.LocalContext.current)
+        Column(modifier = Modifier.padding(16.dp)) {
+            DonationCard(context = LocalContext.current)
         }
     }
 }

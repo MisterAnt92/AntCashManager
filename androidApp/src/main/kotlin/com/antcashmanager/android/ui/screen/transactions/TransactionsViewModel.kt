@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.transactions
+package com.antcashmanager.android.ui.screen.home.transactions
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

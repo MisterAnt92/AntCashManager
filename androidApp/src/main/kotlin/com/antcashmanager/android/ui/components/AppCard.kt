@@ -163,7 +163,10 @@ fun AppCardSectionHeader(
 @Composable
 private fun AppCardBasicPreview() {
     AntCashManagerTheme(dynamicColor = false) {
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             AppCard(
                 title = "Theme",
                 subtitle = "System Default",
@@ -178,7 +181,10 @@ private fun AppCardBasicPreview() {
 @Composable
 private fun AppCardWithSwitchPreview() {
     AntCashManagerTheme(dynamicColor = false) {
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             AppCard(
                 title = "Auto Backup",
                 subtitle = "Automatically backup data",
@@ -196,7 +202,10 @@ private fun AppCardWithSwitchPreview() {
 @Composable
 private fun AppCardDestructivePreview() {
     AntCashManagerTheme(dynamicColor = false) {
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             AppCard(
                 title = "Delete All Data",
                 subtitle = "Permanently remove all transactions",
@@ -214,7 +223,10 @@ private fun AppCardDestructivePreview() {
 @Composable
 private fun AppCardDarkPreview() {
     AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             AppCardSectionHeader(title = "Appearance")
             AppCard(
                 title = "Theme",

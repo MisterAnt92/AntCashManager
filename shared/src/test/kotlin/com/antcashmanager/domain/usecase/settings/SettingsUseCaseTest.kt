@@ -94,10 +94,11 @@ internal class FakeSettingsRepository : SettingsRepository {
     private val highContrastFlow = MutableStateFlow(false)
     private val largeTextFlow = MutableStateFlow(false)
     private val reduceMotionFlow = MutableStateFlow(false)
+    private val showTransactionNotesFlow = MutableStateFlow(true)
     private val currencySymbolFlow = MutableStateFlow("\u20ac")
     private val decimalDigitsFlow = MutableStateFlow(2)
     private val decimalSeparatorFlow = MutableStateFlow(",")
-    private val thousandsSeparatorFlow = MutableStateFlow(".")
+    private val thousandsSeparatorFlow = MutableStateFlow("")
 
     override fun getTheme(): Flow<AppTheme> = themeFlow
 
@@ -119,6 +120,8 @@ internal class FakeSettingsRepository : SettingsRepository {
     override suspend fun setLargeText(enabled: Boolean) { largeTextFlow.value = enabled }
     override fun getReduceMotion(): Flow<Boolean> = reduceMotionFlow
     override suspend fun setReduceMotion(enabled: Boolean) { reduceMotionFlow.value = enabled }
+    override fun getShowTransactionNotes(): Flow<Boolean> = showTransactionNotesFlow
+    override suspend fun setShowTransactionNotes(show: Boolean) { showTransactionNotesFlow.value = show }
 
     override fun getCurrencySymbol(): Flow<String> = currencySymbolFlow
     override suspend fun setCurrencySymbol(symbol: String) { currencySymbolFlow.value = symbol }
@@ -136,9 +139,10 @@ internal class FakeSettingsRepository : SettingsRepository {
         highContrastFlow.value = false
         largeTextFlow.value = false
         reduceMotionFlow.value = false
+        showTransactionNotesFlow.value = true
         currencySymbolFlow.value = "\u20ac"
         decimalDigitsFlow.value = 2
         decimalSeparatorFlow.value = ","
-        thousandsSeparatorFlow.value = "."
+        thousandsSeparatorFlow.value = ""
     }
 }

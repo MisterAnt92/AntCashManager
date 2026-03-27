@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.home
+package com.antcashmanager.android.ui.screen.home.home
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
@@ -46,19 +46,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AntEmptyState
 import com.antcashmanager.android.ui.components.AnimatedCard
-import com.antcashmanager.android.ui.components.AnimatedCounter
 import com.antcashmanager.android.ui.components.AnimatedListItem
+import com.antcashmanager.android.ui.components.text.BalanceText
+import com.antcashmanager.android.ui.components.text.CompactMoneyText
 import com.antcashmanager.android.ui.components.DateRangeFilter
 import com.antcashmanager.android.ui.components.FadeInOnAppear
+import com.antcashmanager.android.ui.components.HelpButton
+import com.antcashmanager.android.ui.components.HelpDialogContent
+import com.antcashmanager.android.ui.components.SimpleHelpFeature
+import com.antcashmanager.android.ui.components.text.TransactionAmountText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
-import com.antcashmanager.android.util.LocalCurrencyFormat
-import com.antcashmanager.android.util.formatAmount
-import com.antcashmanager.android.util.formatAmountWithSign
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.TransactionRepository
@@ -77,9 +81,9 @@ fun HomeScreen(transactionRepository: TransactionRepository) {
     Logger.d("HomeScreen") { "Displaying HomeScreen" }
 
     val viewModel: HomeViewModel = viewModel(
-        factory = object : androidx.lifecycle.ViewModelProvider.Factory {
+        factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
-            override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T =
+            override fun <T : ViewModel> create(modelClass: Class<T>): T =
                 HomeViewModel(transactionRepository) as T
         },
     )
@@ -102,11 +106,11 @@ internal fun HomeContent(
     state: HomeState,
     onEvent: (HomeEvent) -> Unit,
 ) {
-    val fmt = LocalCurrencyFormat.current
 
     // Date picker state
     var showFromDatePicker by remember { mutableStateOf(false) }
     var showToDatePicker by remember { mutableStateOf(false) }
+    var showHelpDialog by remember { mutableStateOf(false) }
 
     // From date picker dialog
     if (showFromDatePicker) {
@@ -162,6 +166,11 @@ internal fun HomeContent(
         }
     }
 
+    // Help dialog
+    if (showHelpDialog) {
+        HelpDialog(onDismiss = { showHelpDialog = false })
+    }
+
     when {
         state.isLoading -> LoadingState()
         else -> {
@@ -172,14 +181,21 @@ internal fun HomeContent(
                     .padding(top = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                // Header
+                // Header with Help Button
                 item {
-                    Text(
-                        text = stringResource(R.string.home_dashboard),
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground,
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Text(
+                            text = stringResource(R.string.home_dashboard),
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onBackground,
+                        )
+                        HelpButton(onHelpClick = { showHelpDialog = true })
+                    }
                 }
 
                 // Date Range Filter
@@ -197,7 +213,7 @@ internal fun HomeContent(
 
                 // Balance Card
                 item {
-                    BalanceCard(balance = state.balance, fmt = fmt)
+                    BalanceCard(balance = state.balance)
                 }
 
                 // Income / Expense Row
@@ -205,7 +221,6 @@ internal fun HomeContent(
                     IncomeExpenseRow(
                         totalIncome = state.totalIncome,
                         totalExpense = state.totalExpense,
-                        fmt = fmt,
                     )
                 }
 
@@ -261,7 +276,6 @@ private fun LoadingState() {
 @Composable
 private fun BalanceCard(
     balance: Double,
-    fmt: com.antcashmanager.domain.model.CurrencyFormat,
 ) {
     val balanceColor by animateColorAsState(
         targetValue = if (balance >= 0) IncomeGreen else ExpenseRed,
@@ -287,9 +301,10 @@ private fun BalanceCard(
                     fontWeight = FontWeight.SemiBold,
                 )
                 Spacer(modifier = Modifier.height(12.dp))
-                AnimatedCounter(
-                    value = formatAmount(balance, fmt),
+                BalanceText(
+                    amount = balance,
                     modifier = Modifier.align(Alignment.CenterHorizontally),
+                    fontSize = 32,
                 )
                 Box(
                     modifier = Modifier
@@ -317,7 +332,6 @@ private fun BalanceCard(
 private fun IncomeExpenseRow(
     totalIncome: Double,
     totalExpense: Double,
-    fmt: com.antcashmanager.domain.model.CurrencyFormat,
 ) {
     FadeInOnAppear(durationMillis = 800) {
         Row(
@@ -363,9 +377,10 @@ private fun IncomeExpenseRow(
                         fontWeight = FontWeight.SemiBold,
                     )
                     Spacer(modifier = Modifier.height(4.dp))
-                    AnimatedCounter(
-                        value = formatAmount(totalIncome, fmt),
-                        modifier = Modifier,
+                    CompactMoneyText(
+                        amount = totalIncome,
+                        fontSize = 18,
+                        fontWeight = FontWeight.Bold,
                     )
                 }
             }
@@ -409,9 +424,10 @@ private fun IncomeExpenseRow(
                         fontWeight = FontWeight.SemiBold,
                     )
                     Spacer(modifier = Modifier.height(4.dp))
-                    AnimatedCounter(
-                        value = formatAmount(totalExpense, fmt),
-                        modifier = Modifier,
+                    CompactMoneyText(
+                        amount = totalExpense,
+                        fontSize = 18,
+                        fontWeight = FontWeight.Bold,
                     )
                 }
             }
@@ -423,7 +439,6 @@ private val dateFormat = SimpleDateFormat("dd MMM", Locale.getDefault())
 
 @Composable
 private fun RecentTransactionItem(transaction: Transaction) {
-    val fmt = LocalCurrencyFormat.current
     val isIncome = transaction.type == TransactionType.INCOME
     val cardBackgroundColor = if (isIncome) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer
 
@@ -506,6 +521,7 @@ private fun RecentTransactionItem(transaction: Transaction) {
 
                 Spacer(modifier = Modifier.width(8.dp))
 
+                // Amount with background
                 Box(
                     modifier = Modifier
                         .background(
@@ -514,11 +530,8 @@ private fun RecentTransactionItem(transaction: Transaction) {
                         )
                         .padding(8.dp),
                 ) {
-                    Text(
-                        text = formatAmountWithSign(transaction.amount, fmt, isIncome),
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = if (isIncome) IncomeGreen else ExpenseRed,
+                    TransactionAmountText(
+                        amount = if (isIncome) transaction.amount else -transaction.amount,
                     )
                 }
             }
@@ -613,4 +626,37 @@ private fun HomeContentDarkPreview() {
             onEvent = {},
         )
     }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// HELP DIALOG
+// ══════════════════════════════════════════════════════════════════════════════
+
+@Composable
+private fun HelpDialog(onDismiss: () -> Unit) {
+    val helpFeatures = listOf(
+        SimpleHelpFeature(
+            title = "Dashboard",
+            description = "Visualizza il saldo totale, entrate e uscite nel periodo selezionato.",
+            icon = Icons.AutoMirrored.Filled.TrendingUp,
+        ),
+        SimpleHelpFeature(
+            title = "Filtri Intervallo Date",
+            description = "Filtra le transazioni per date specifiche o usa i preset disponibili.",
+            icon = Icons.Default.ArrowUpward,
+        ),
+        SimpleHelpFeature(
+            title = "Transazioni Recenti",
+            description = "Visualizza le ultime transazioni aggiunte con dettagli e categoria.",
+            icon = Icons.Default.Repeat,
+        ),
+    )
+
+    HelpDialogContent(
+        isVisible = true,
+        title = "Guida Dashboard",
+        description = "Benvenuto nel Dashboard! Qui puoi visualizzare il riepilogo finanziario e le transazioni recenti.",
+        features = helpFeatures,
+        onDismiss = onDismiss,
+    )
 }

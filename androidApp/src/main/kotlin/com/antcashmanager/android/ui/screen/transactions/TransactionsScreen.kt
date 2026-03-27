@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.transactions
+package com.antcashmanager.android.ui.screen.home.transactions
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +26,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -39,12 +40,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
@@ -53,12 +55,14 @@ import com.antcashmanager.android.ui.components.AntEmptyState
 import com.antcashmanager.android.ui.components.AnimatedCard
 import com.antcashmanager.android.ui.components.AnimatedListItem
 import com.antcashmanager.android.ui.components.DateRangeFilter
+import com.antcashmanager.android.ui.components.HelpButton
+import com.antcashmanager.android.ui.components.HelpDialogContent
+import com.antcashmanager.android.ui.components.SimpleHelpFeature
 import com.antcashmanager.android.ui.components.SkeletonLoader
+import com.antcashmanager.android.ui.components.text.TransactionAmountText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.IncomeGreen
 import com.antcashmanager.android.ui.theme.ExpenseRed
-import com.antcashmanager.android.util.LocalCurrencyFormat
-import com.antcashmanager.android.util.formatAmountWithSign
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.CategoryRepository
@@ -80,9 +84,9 @@ fun TransactionsScreen(
     Logger.d("TransactionsScreen") { "Displaying TransactionsScreen" }
 
     val viewModel: TransactionsViewModel = viewModel(
-        factory = object : androidx.lifecycle.ViewModelProvider.Factory {
+        factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
-            override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T =
+            override fun <T : ViewModel> create(modelClass: Class<T>): T =
                 TransactionsViewModel(transactionRepository, categoryRepository) as T
         },
     )
@@ -111,6 +115,7 @@ internal fun TransactionsContent(
     var showFromDatePicker by remember { mutableStateOf(false) }
     var showToDatePicker by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
+    var showHelpDialog by remember { mutableStateOf(false) }
 
     // From date picker dialog
     if (showFromDatePicker) {
@@ -166,6 +171,11 @@ internal fun TransactionsContent(
         }
     }
 
+    // Help dialog
+    if (showHelpDialog) {
+        HelpDialog(onDismiss = { showHelpDialog = false })
+    }
+
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
@@ -188,13 +198,20 @@ internal fun TransactionsContent(
                 .padding(padding)
                 .padding(start = 16.dp, end = 16.dp, top = 16.dp),
         ) {
-            // Header
-            Text(
-                text = stringResource(R.string.transactions_title),
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
+            // Header with Help Button
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(
+                    text = stringResource(R.string.transactions_title),
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+                HelpButton(onHelpClick = { showHelpDialog = true })
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -212,7 +229,7 @@ internal fun TransactionsContent(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Search Bar
-            androidx.compose.material3.OutlinedTextField(
+            OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
                 modifier = Modifier.fillMaxWidth(),
@@ -325,7 +342,6 @@ private fun TransactionsList(
 private val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
 @Composable
 private fun TransactionItem(transaction: Transaction) {
-    val fmt = LocalCurrencyFormat.current
     val isIncome = transaction.type == TransactionType.INCOME
     val cardBackgroundColor = if (isIncome) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer
 
@@ -444,11 +460,8 @@ private fun TransactionItem(transaction: Transaction) {
                         )
                         .padding(8.dp),
                 ) {
-                    Text(
-                        text = formatAmountWithSign(transaction.amount, fmt, isIncome),
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = if (isIncome) IncomeGreen else ExpenseRed,
+                    TransactionAmountText(
+                        amount = if (isIncome) transaction.amount else -transaction.amount,
                     )
                 }
             }
@@ -536,3 +549,36 @@ private val sampleTransactions = listOf(
         timestamp = System.currentTimeMillis(),
     ),
 )
+
+// ══════════════════════════════════════════════════════════════════════════════
+// HELP DIALOG
+// ══════════════════════════════════════════════════════════════════════════════
+
+@Composable
+private fun HelpDialog(onDismiss: () -> Unit) {
+    val helpFeatures = listOf(
+        SimpleHelpFeature(
+            title = "Visualizza Transazioni",
+            description = "Vedi tutte le tue transazioni di entrata e uscita con dettagli completi.",
+            icon = Icons.Default.ArrowDownward,
+        ),
+        SimpleHelpFeature(
+            title = "Filtri Data",
+            description = "Filtra le transazioni per intervallo di date o usa i preset predefiniti.",
+            icon = Icons.Default.ArrowUpward,
+        ),
+        SimpleHelpFeature(
+            title = "Cerca Transazioni",
+            description = "Cerca transazioni per nome, importo, categoria o altre proprietà.",
+            icon = Icons.Default.Repeat,
+        ),
+    )
+
+    HelpDialogContent(
+        isVisible = true,
+        title = "Guida Transazioni",
+        description = "Gestisci tutte le tue transazioni! Puoi visualizzare, cercare e filtrare le tue operazioni finanziarie.",
+        features = helpFeatures,
+        onDismiss = onDismiss,
+    )
+}

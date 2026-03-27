@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.categories
+package com.antcashmanager.android.ui.screen.home.categories
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
@@ -30,6 +29,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocalDining
 import androidx.compose.material.icons.filled.LocalHospital
 import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material.icons.filled.ReceiptLong
 import androidx.compose.material.icons.filled.Restaurant
@@ -69,10 +69,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AntEmptyState
+import com.antcashmanager.android.ui.components.HelpButton
+import com.antcashmanager.android.ui.components.HelpDialogContent
+import com.antcashmanager.android.ui.components.SimpleHelpFeature
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.repository.CategoryRepository
@@ -107,9 +112,9 @@ val categoryColors = listOf(
 fun CategoriesScreen(categoryRepository: CategoryRepository) {
     Logger.d("CategoriesScreen") { "Displaying CategoriesScreen" }
     val viewModel: CategoriesViewModel = viewModel(
-        factory = object : androidx.lifecycle.ViewModelProvider.Factory {
+        factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
-            override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T =
+            override fun <T : ViewModel> create(modelClass: Class<T>): T =
                 CategoriesViewModel(categoryRepository) as T
         },
     )
@@ -134,6 +139,12 @@ internal fun CategoriesContent(
     var selectedTab by remember { mutableIntStateOf(0) }
     var showAddDialog by remember { mutableStateOf(false) }
     var categoryToDelete by remember { mutableStateOf<Category?>(null) }
+    var showHelpDialog by remember { mutableStateOf(false) }
+
+    // Help dialog
+    if (showHelpDialog) {
+        HelpDialog(onDismiss = { showHelpDialog = false })
+    }
 
     val tabs = listOf(
         stringResource(R.string.categories_tab_expense),
@@ -160,12 +171,19 @@ internal fun CategoriesContent(
                 .padding(horizontal = 16.dp)
                 .padding(top = 16.dp),
         ) {
-            Text(
-                text = stringResource(R.string.categories_title),
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(
+                    text = stringResource(R.string.categories_title),
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+                HelpButton(onHelpClick = { showHelpDialog = true })
+            }
             Spacer(modifier = Modifier.height(12.dp))
 
             TabRow(selectedTabIndex = selectedTab) {
@@ -433,6 +451,40 @@ private fun CategoriesContentDarkPreview() {
             ),
         )
     }
+}
+
+@Composable
+private fun HelpDialog(onDismiss: () -> Unit) {
+    val helpFeatures = listOf(
+        SimpleHelpFeature(
+            title = "Gestione Categorie",
+            description = "Organizza le tue spese e entrate in categorie personalizzate",
+            icon = Icons.Default.ShoppingBag,
+        ),
+        SimpleHelpFeature(
+            title = "Aggiungi Categoria",
+            description = "Crea nuove categorie per personalizzare la tua app",
+            icon = Icons.Default.Add,
+        ),
+        SimpleHelpFeature(
+            title = "Modifica Categoria",
+            description = "Personalizza icona e colore di ogni categoria",
+            icon = Icons.Default.Palette,
+        ),
+        SimpleHelpFeature(
+            title = "Elimina Categoria",
+            description = "Rimuovi le categorie non più necessarie (eccetto quelle predefinite)",
+            icon = Icons.Default.Delete,
+        ),
+    )
+
+    HelpDialogContent(
+        isVisible = true,
+        title = "Guida Categorie",
+        description = "Gestisci le tue categorie di spesa e entrate!",
+        features = helpFeatures,
+        onDismiss = onDismiss,
+    )
 }
 
 @Preview(showBackground = true, name = "AddCategoryDialog")
