@@ -37,37 +37,37 @@ class CategoriesViewModelTest {
     @Test
     fun `initial categories list is empty`() = runTest(testDispatcher) {
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.categories.collect {}
+            viewModel.state.collect {}
         }
         advanceUntilIdle()
-        assertTrue(viewModel.categories.value.isEmpty())
+        assertTrue(viewModel.state.value.categories.isEmpty())
         collectJob.cancel()
     }
     @Test
     fun `addCategory adds a new expense category`() = runTest(testDispatcher) {
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.categories.collect {}
+            viewModel.state.collect {}
         }
         advanceUntilIdle()
         viewModel.addCategory("Food", "category", 0xFFE57373, "EXPENSE")
         advanceUntilIdle()
-        assertEquals(1, viewModel.categories.value.size)
-        assertEquals("Food", viewModel.categories.value.first().name)
-        assertEquals("EXPENSE", viewModel.categories.value.first().type)
+        assertEquals(1, viewModel.state.value.categories.size)
+        assertEquals("Food", viewModel.state.value.categories.first().name)
+        assertEquals("EXPENSE", viewModel.state.value.categories.first().type)
         collectJob.cancel()
     }
 
     @Test
     fun `addCategory adds a new income category`() = runTest(testDispatcher) {
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.categories.collect {}
+            viewModel.state.collect {}
         }
         advanceUntilIdle()
         viewModel.addCategory("Salary", "payments", 0xFF81C784, "INCOME")
         advanceUntilIdle()
-        assertEquals(1, viewModel.categories.value.size)
-        assertEquals("Salary", viewModel.categories.value.first().name)
-        assertEquals("INCOME", viewModel.categories.value.first().type)
+        assertEquals(1, viewModel.state.value.categories.size)
+        assertEquals("Salary", viewModel.state.value.categories.first().name)
+        assertEquals("INCOME", viewModel.state.value.categories.first().type)
         collectJob.cancel()
     }
 
@@ -78,11 +78,11 @@ class CategoriesViewModelTest {
             Category(id = 2, name = "Salary", icon = "payments", color = 0xFF81C784, type = "INCOME"),
         )
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.expenseCategories.collect {}
+            viewModel.state.collect {}
         }
         advanceUntilIdle()
-        assertEquals(1, viewModel.expenseCategories.value.size)
-        assertEquals("Food", viewModel.expenseCategories.value.first().name)
+        assertEquals(1, viewModel.state.value.expenseCategories.size)
+        assertEquals("Food", viewModel.state.value.expenseCategories.first().name)
         collectJob.cancel()
     }
 
@@ -93,11 +93,11 @@ class CategoriesViewModelTest {
             Category(id = 2, name = "Salary", icon = "payments", color = 0xFF81C784, type = "INCOME"),
         )
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.incomeCategories.collect {}
+            viewModel.state.collect {}
         }
         advanceUntilIdle()
-        assertEquals(1, viewModel.incomeCategories.value.size)
-        assertEquals("Salary", viewModel.incomeCategories.value.first().name)
+        assertEquals(1, viewModel.state.value.incomeCategories.size)
+        assertEquals("Salary", viewModel.state.value.incomeCategories.first().name)
         collectJob.cancel()
     }
     @Test
@@ -105,12 +105,12 @@ class CategoriesViewModelTest {
         val category = Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373)
         fakeRepo.categories.value = listOf(category)
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.categories.collect {}
+            viewModel.state.collect {}
         }
         advanceUntilIdle()
         viewModel.deleteCategory(category)
         advanceUntilIdle()
-        assertTrue(viewModel.categories.value.isEmpty())
+        assertTrue(viewModel.state.value.categories.isEmpty())
         collectJob.cancel()
     }
     @Test
@@ -118,13 +118,13 @@ class CategoriesViewModelTest {
         val category = Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373)
         fakeRepo.categories.value = listOf(category)
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.categories.collect {}
+            viewModel.state.collect {}
         }
         advanceUntilIdle()
         val updated = category.copy(name = "Groceries")
         viewModel.updateCategory(updated)
         advanceUntilIdle()
-        assertEquals("Groceries", viewModel.categories.value.first().name)
+        assertEquals("Groceries", viewModel.state.value.categories.first().name)
         collectJob.cancel()
     }
 }

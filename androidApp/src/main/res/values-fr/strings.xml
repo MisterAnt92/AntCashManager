@@ -166,13 +166,47 @@
     <string name="language_italian">Italiano</string>
     <string name="language_french">Fran\u00e7ais</string>
     <string name="language_german">Deutsch</string>
-    <string name="language_spanish">Espa\u00f1ol</string>
+
 
     <!-- Add Transaction Screen -->
     <string name="add_transaction">Ajouter une Transaction</string>
     <string name="transaction_title">Titre de la Transaction</string>
     <string name="transaction_amount">Montant</string>
     <string name="transaction_type">Type de Transaction</string>
-    <string name="transaction_category">Cat\u00e9gorie</string>
+    <string name="transaction_category">Catégorie</string>
     <string name="transaction_date">Date</string>
+
+    <!-- Add Transaction Steps -->
+    <string name="add_transaction_select_category">Sélectionner une Catégorie</string>
+    <string name="add_transaction_choose_category">Choisissez une catégorie pour la transaction</string>
+    <string name="add_transaction_no_categories_available">Aucune catégorie disponible</string>
+    <string name="add_transaction_cancel">Annuler</string>
+    <string name="add_transaction_next">Suivant</string>
+    <string name="add_transaction_previous">Précédent</string>
+    <string name="add_transaction_select_type">Sélectionner le Type</string>
+    <string name="add_transaction_selected_category">Catégorie: %s</string>
+    <string name="add_transaction_choose_type">Choisissez le type de transaction</string>
+    <string name="add_transaction_income_label">Revenu</string>
+    <string name="add_transaction_expense_label">Dépense</string>
+    <string name="add_transaction_details">Détails de la Transaction</string>
+    <string name="add_transaction_category_type">Catégorie: %s | Type: %s</string>
+    <string name="add_transaction_title_required">Titre *</string>
+    <string name="add_transaction_amount_required">Montant *</string>
+    <string name="add_transaction_date_label">Date: %s</string>
+    <string name="add_transaction_notes_label">Notes</string>
+    <string name="add_transaction_payee_label">Bénéficiaire</string>
+    <string name="add_transaction_location_label">Lieu</string>
+    <string name="add_transaction_confirmation">Confirmation</string>
+    <string name="add_transaction_summary">Résumé de la Transaction</string>
+    <string name="add_transaction_field_category">Catégorie</string>
+    <string name="add_transaction_field_type">Type</string>
+    <string name="add_transaction_field_title">Titre</string>
+    <string name="add_transaction_field_amount">Montant</string>
+    <string name="add_transaction_field_date">Date</string>
+    <string name="add_transaction_field_notes">Notes</string>
+    <string name="add_transaction_field_payee">Bénéficiaire</string>
+    <string name="add_transaction_field_location">Lieu</string>
+    <string name="add_transaction_save">Enregistrer</string>
+    <string name="add_transaction_back">Retour</string>
+    <string name="add_transaction_none">Aucun</string>
 </resources>

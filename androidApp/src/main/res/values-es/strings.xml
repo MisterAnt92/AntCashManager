@@ -166,13 +166,47 @@
     <string name="language_italian">Italiano</string>
     <string name="language_french">Fran\u00e7ais</string>
     <string name="language_german">Deutsch</string>
-    <string name="language_spanish">Espa\u00f1ol</string>
+
 
     <!-- Add Transaction Screen -->
-    <string name="add_transaction">A\u00f1adir Transacci\u00f3n</string>
-    <string name="transaction_title">T\u00edtulo de Transacci\u00f3n</string>
+    <string name="add_transaction">Añadir Transacción</string>
+    <string name="transaction_title">Título de Transacción</string>
     <string name="transaction_amount">Cantidad</string>
-    <string name="transaction_type">Tipo de Transacci\u00f3n</string>
-    <string name="transaction_category">Categor\u00eda</string>
+    <string name="transaction_type">Tipo de Transacción</string>
+    <string name="transaction_category">Categoría</string>
     <string name="transaction_date">Fecha</string>
+
+    <!-- Add Transaction Steps -->
+    <string name="add_transaction_select_category">Seleccionar Categoría</string>
+    <string name="add_transaction_choose_category">Elige una categoría para la transacción</string>
+    <string name="add_transaction_no_categories_available">No hay categorías disponibles</string>
+    <string name="add_transaction_cancel">Cancelar</string>
+    <string name="add_transaction_next">Siguiente</string>
+    <string name="add_transaction_previous">Anterior</string>
+    <string name="add_transaction_select_type">Seleccionar Tipo</string>
+    <string name="add_transaction_selected_category">Categoría: %s</string>
+    <string name="add_transaction_choose_type">Elige el tipo de transacción</string>
+    <string name="add_transaction_income_label">Ingreso</string>
+    <string name="add_transaction_expense_label">Gasto</string>
+    <string name="add_transaction_details">Detalles de la Transacción</string>
+    <string name="add_transaction_category_type">Categoría: %s | Tipo: %s</string>
+    <string name="add_transaction_title_required">Título *</string>
+    <string name="add_transaction_amount_required">Cantidad *</string>
+    <string name="add_transaction_date_label">Fecha: %s</string>
+    <string name="add_transaction_notes_label">Notas</string>
+    <string name="add_transaction_payee_label">Beneficiario</string>
+    <string name="add_transaction_location_label">Ubicación</string>
+    <string name="add_transaction_confirmation">Confirmación</string>
+    <string name="add_transaction_summary">Resumen de Transacción</string>
+    <string name="add_transaction_field_category">Categoría</string>
+    <string name="add_transaction_field_type">Tipo</string>
+    <string name="add_transaction_field_title">Título</string>
+    <string name="add_transaction_field_amount">Cantidad</string>
+    <string name="add_transaction_field_date">Fecha</string>
+    <string name="add_transaction_field_notes">Notas</string>
+    <string name="add_transaction_field_payee">Beneficiario</string>
+    <string name="add_transaction_field_location">Ubicación</string>
+    <string name="add_transaction_save">Guardar</string>
+    <string name="add_transaction_back">Atrás</string>
+    <string name="add_transaction_none">Ninguno</string>
 </resources>

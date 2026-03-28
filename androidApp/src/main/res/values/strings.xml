@@ -197,4 +197,38 @@
     <string name="transaction_type">Transaction Type</string>
     <string name="transaction_category">Category</string>
     <string name="transaction_date">Date</string>
+
+    <!-- Add Transaction Steps -->
+    <string name="add_transaction_select_category">Select Category</string>
+    <string name="add_transaction_choose_category">Choose a category for the transaction</string>
+    <string name="add_transaction_no_categories_available">No categories available</string>
+    <string name="add_transaction_cancel">Cancel</string>
+    <string name="add_transaction_next">Next</string>
+    <string name="add_transaction_previous">Previous</string>
+    <string name="add_transaction_select_type">Select Type</string>
+    <string name="add_transaction_selected_category">Category: %s</string>
+    <string name="add_transaction_choose_type">Choose the transaction type</string>
+    <string name="add_transaction_income_label">Income</string>
+    <string name="add_transaction_expense_label">Expense</string>
+    <string name="add_transaction_details">Transaction Details</string>
+    <string name="add_transaction_category_type">Category: %s | Type: %s</string>
+    <string name="add_transaction_title_required">Title *</string>
+    <string name="add_transaction_amount_required">Amount *</string>
+    <string name="add_transaction_date_label">Date: %s</string>
+    <string name="add_transaction_notes_label">Notes</string>
+    <string name="add_transaction_payee_label">Payee</string>
+    <string name="add_transaction_location_label">Location</string>
+    <string name="add_transaction_confirmation">Confirmation</string>
+    <string name="add_transaction_summary">Transaction Summary</string>
+    <string name="add_transaction_field_category">Category</string>
+    <string name="add_transaction_field_type">Type</string>
+    <string name="add_transaction_field_title">Title</string>
+    <string name="add_transaction_field_amount">Amount</string>
+    <string name="add_transaction_field_date">Date</string>
+    <string name="add_transaction_field_notes">Notes</string>
+    <string name="add_transaction_field_payee">Payee</string>
+    <string name="add_transaction_field_location">Location</string>
+    <string name="add_transaction_save">Save</string>
+    <string name="add_transaction_back">Back</string>
+    <string name="add_transaction_none">None</string>
 </resources>

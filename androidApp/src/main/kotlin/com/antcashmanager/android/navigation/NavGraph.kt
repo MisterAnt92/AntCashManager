@@ -18,12 +18,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.antcashmanager.android.ui.screen.add_transaction.AddTransactionScreen
 import com.antcashmanager.android.ui.screen.home.categories.CategoriesScreen
 import com.antcashmanager.android.ui.screen.home.charts.ChartsScreen
 import com.antcashmanager.android.ui.screen.home.home.HomeScreen
 import com.antcashmanager.android.ui.screen.home.settings.SettingsScreen
 import com.antcashmanager.android.ui.screen.settings_display.DisplayScreen
-import com.antcashmanager.android.ui.screen.home.transactions.AddTransactionScreen
 import com.antcashmanager.android.ui.screen.home.transactions.TransactionsScreen
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.domain.model.CurrencyFormat
@@ -132,6 +132,9 @@ fun AntCashManagerNavHost(
                         transactionRepository = transactionRepository,
                         categoryRepository = categoryRepository,
                         onNavigateBack = {
+                            navController.popBackStack()
+                        },
+                        onTransactionAdded = {
                             navController.popBackStack()
                         },
                     )

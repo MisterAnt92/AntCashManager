@@ -196,4 +196,38 @@
     <string name="transaction_type">Tipo di Transazione</string>
     <string name="transaction_category">Categoria</string>
     <string name="transaction_date">Data</string>
+
+    <!-- Add Transaction Steps -->
+    <string name="add_transaction_select_category">Seleziona Categoria</string>
+    <string name="add_transaction_choose_category">Scegli una categoria per la transazione</string>
+    <string name="add_transaction_no_categories_available">Nessuna categoria disponibile</string>
+    <string name="add_transaction_cancel">Annulla</string>
+    <string name="add_transaction_next">Avanti</string>
+    <string name="add_transaction_previous">Indietro</string>
+    <string name="add_transaction_select_type">Seleziona Tipo</string>
+    <string name="add_transaction_selected_category">Categoria: %s</string>
+    <string name="add_transaction_choose_type">Scegli il tipo di transazione</string>
+    <string name="add_transaction_income_label">Entrata</string>
+    <string name="add_transaction_expense_label">Uscita</string>
+    <string name="add_transaction_details">Dettagli Transazione</string>
+    <string name="add_transaction_category_type">Categoria: %s | Tipo: %s</string>
+    <string name="add_transaction_title_required">Titolo *</string>
+    <string name="add_transaction_amount_required">Importo *</string>
+    <string name="add_transaction_date_label">Data: %s</string>
+    <string name="add_transaction_notes_label">Note</string>
+    <string name="add_transaction_payee_label">Beneficiario</string>
+    <string name="add_transaction_location_label">Luogo</string>
+    <string name="add_transaction_confirmation">Conferma</string>
+    <string name="add_transaction_summary">Riepilogo Transazione</string>
+    <string name="add_transaction_field_category">Categoria</string>
+    <string name="add_transaction_field_type">Tipo</string>
+    <string name="add_transaction_field_title">Titolo</string>
+    <string name="add_transaction_field_amount">Importo</string>
+    <string name="add_transaction_field_date">Data</string>
+    <string name="add_transaction_field_notes">Note</string>
+    <string name="add_transaction_field_payee">Beneficiario</string>
+    <string name="add_transaction_field_location">Luogo</string>
+    <string name="add_transaction_save">Salva</string>
+    <string name="add_transaction_back">Indietro</string>
+    <string name="add_transaction_none">Nessuno</string>
 </resources>
