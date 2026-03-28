@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.screen.home.settings
+package com.antcashmanager.android.ui.screen.settings
 
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme

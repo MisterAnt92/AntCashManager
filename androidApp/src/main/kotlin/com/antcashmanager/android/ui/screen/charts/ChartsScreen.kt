@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.screen.home.charts
+package com.antcashmanager.android.ui.screen.charts
 
 import android.graphics.Paint
 import androidx.compose.animation.core.animateFloatAsState

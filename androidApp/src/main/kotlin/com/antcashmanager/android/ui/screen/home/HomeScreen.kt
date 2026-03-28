@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.screen.home.home
+package com.antcashmanager.android.ui.screen.home
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween

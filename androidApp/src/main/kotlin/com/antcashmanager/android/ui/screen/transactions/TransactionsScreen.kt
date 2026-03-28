@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.screen.home.transactions
+package com.antcashmanager.android.ui.screen.transactions
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

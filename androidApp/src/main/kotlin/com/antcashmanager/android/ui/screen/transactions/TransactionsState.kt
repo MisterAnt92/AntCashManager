@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.screen.home.transactions
+package com.antcashmanager.android.ui.screen.transactions
 
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.Transaction

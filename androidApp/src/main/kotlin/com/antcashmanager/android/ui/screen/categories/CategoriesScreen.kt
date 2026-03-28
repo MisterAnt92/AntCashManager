@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.screen.home.categories
+package com.antcashmanager.android.ui.screen.categories
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

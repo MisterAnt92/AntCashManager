@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.screen.home.charts
+package com.antcashmanager.android.ui.screen.charts
 
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel

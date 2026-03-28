@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.screen.add_transaction
+package com.antcashmanager.android.ui.screen.transaction_add
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -83,11 +83,14 @@ fun AddTransactionScreen(
     )
 
     val state by viewModel.state.collectAsState()
+    @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
+    var hasNavigatedBack by remember { mutableStateOf(false) }
 
-    // Se la transazione è stata creata, naviga indietro
-    if (state.selectedCategory == null && state.selectedType == null && 
-        state.title.isEmpty() && state.currentStep == AddTransactionStep.CATEGORY_SELECTION) {
-        // Transazione completata, naviga indietro
+    // Naviga indietro solo una volta dopo il reset dello state (transazione completata)
+    if (!hasNavigatedBack && state.selectedCategory == null && state.selectedType == null && 
+        state.title.isEmpty() && state.currentStep == AddTransactionStep.CATEGORY_SELECTION &&
+        state.isLoading == false) {
+        hasNavigatedBack = true
         onTransactionAdded()
     }
 

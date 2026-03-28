@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.screen.home.categories
+package com.antcashmanager.android.ui.screen.categories
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

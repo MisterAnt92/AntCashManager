@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.screen.home.settings
+package com.antcashmanager.android.ui.screen.settings
 
 import android.content.Context
 import android.content.Intent
