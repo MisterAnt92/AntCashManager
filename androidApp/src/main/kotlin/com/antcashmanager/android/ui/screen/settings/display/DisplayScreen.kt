@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.screen.home.settings.display
+package com.antcashmanager.android.ui.screen.settings.display
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

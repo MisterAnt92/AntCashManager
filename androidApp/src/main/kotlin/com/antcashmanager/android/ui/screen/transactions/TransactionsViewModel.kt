@@ -15,6 +15,7 @@ import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.UpdateTransactionUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
@@ -114,6 +115,13 @@ class TransactionsViewModel(
         initialValue = TransactionsState(isLoading = true),
     )
 
+    // Convenience StateFlows for consumers/tests
+    val transactions = state.map { it.filteredTransactions }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    val categories = state.map { it.categories }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
     // ── Event Handling ──
     fun onEvent(event: TransactionsEvent) {
         Logger.d("TransactionsViewModel") { "Event: $event" }
@@ -174,14 +182,15 @@ class TransactionsViewModel(
         }
     }
 
-    private fun updateTransaction(transaction: Transaction) {
+    // Make update/delete public so tests can call them
+    fun updateTransaction(transaction: Transaction) {
         Logger.d("TransactionsViewModel") { "Updating transaction: ${transaction.title}" }
         viewModelScope.launch {
             updateTransactionUseCase(transaction)
         }
     }
 
-    private fun deleteTransaction(transaction: Transaction) {
+    fun deleteTransaction(transaction: Transaction) {
         Logger.d("TransactionsViewModel") { "Deleting transaction: ${transaction.title}" }
         viewModelScope.launch {
             deleteTransactionUseCase(transaction)
