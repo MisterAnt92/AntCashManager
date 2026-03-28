@@ -9,8 +9,9 @@ import com.antcashmanager.domain.usecase.category.DeleteCategoryUseCase
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.category.InsertCategoryUseCase
 import com.antcashmanager.domain.usecase.category.UpdateCategoryUseCase
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class CategoriesViewModel(
@@ -22,26 +23,26 @@ class CategoriesViewModel(
     private val updateCategoryUseCase = UpdateCategoryUseCase(categoryRepository)
     private val deleteCategoryUseCase = DeleteCategoryUseCase(categoryRepository)
 
-    val categories = getCategoriesUseCase()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = emptyList(),
-        )
+    private val _state = MutableStateFlow(CategoriesState())
+    val state: StateFlow<CategoriesState> = _state
 
-    val expenseCategories = categoryRepository.getCategoriesByType("EXPENSE")
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = emptyList(),
-        )
-
-    val incomeCategories = categoryRepository.getCategoriesByType("INCOME")
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = emptyList(),
-        )
+    init {
+        viewModelScope.launch {
+            getCategoriesUseCase().collect { cats ->
+                _state.update { it.copy(categories = cats) }
+            }
+        }
+        viewModelScope.launch {
+            categoryRepository.getCategoriesByType("EXPENSE").collect { cats ->
+                _state.update { it.copy(expenseCategories = cats) }
+            }
+        }
+        viewModelScope.launch {
+            categoryRepository.getCategoriesByType("INCOME").collect { cats ->
+                _state.update { it.copy(incomeCategories = cats) }
+            }
+        }
+    }
 
     fun addCategory(name: String, icon: String, color: Long, type: String = "EXPENSE") {
         Logger.d("CategoriesViewModel") { "Adding category: $name ($type)" }

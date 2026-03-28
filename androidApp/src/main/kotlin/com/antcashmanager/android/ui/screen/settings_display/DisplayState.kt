@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.screen.settings.display
+package com.antcashmanager.android.ui.screen.settings_display
 
 data class DisplayState(
     val currencySymbol: String = "\u20ac",

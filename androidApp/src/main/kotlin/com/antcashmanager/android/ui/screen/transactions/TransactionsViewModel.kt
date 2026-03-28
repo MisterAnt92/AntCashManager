@@ -1,9 +1,12 @@
 package com.antcashmanager.android.ui.screen.home.transactions
 
+// ══════════════════════════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════════════════════════
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
-import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.CategoryRepository
@@ -15,47 +18,11 @@ import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.UpdateTransactionUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-
-// ══════════════════════════════════════════════════════════════════════════════
-// STATE
-// ══════════════════════════════════════════════════════════════════════════════
-
-/**
- * UI State for Transactions screen.
- */
-data class TransactionsState(
-    val transactions: List<Transaction> = emptyList(),
-    val filteredTransactions: List<Transaction> = emptyList(),
-    val categories: List<Category> = emptyList(),
-    val isLoading: Boolean = false,
-    val error: String? = null,
-    val selectedPresetIndex: Int = 1,
-    val dateRangeFrom: Long = System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000),
-    val dateRangeTo: Long = System.currentTimeMillis(),
-) {
-    companion object {
-        val PRESETS = listOf(
-            "Oggi" to "today",
-            "7 giorni" to "week",
-            "Mese" to "month",
-            "Anno" to "year",
-        )
-
-        fun getDateFromForPreset(index: Int): Long = when (index) {
-            0 -> System.currentTimeMillis() - (24 * 60 * 60 * 1000)
-            1 -> System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000)
-            2 -> System.currentTimeMillis() - (30L * 24 * 60 * 60 * 1000)
-            3 -> System.currentTimeMillis() - (365L * 24 * 60 * 60 * 1000)
-            else -> System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000)
-        }
-    }
-}
 
 // ══════════════════════════════════════════════════════════════════════════════
 // EVENTS
@@ -115,12 +82,7 @@ class TransactionsViewModel(
         initialValue = TransactionsState(isLoading = true),
     )
 
-    // Convenience StateFlows for consumers/tests
-    val transactions = state.map { it.filteredTransactions }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
-
-    val categories = state.map { it.categories }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+    // ...existing code...
 
     // ── Event Handling ──
     fun onEvent(event: TransactionsEvent) {
@@ -128,7 +90,9 @@ class TransactionsViewModel(
         when (event) {
             is TransactionsEvent.SelectPreset -> selectPreset(event.index)
             is TransactionsEvent.SetDateRange -> setDateRange(event.from, event.to)
-            is TransactionsEvent.AddTransactionClicked -> { /* Navigation handled by Screen */ }
+            is TransactionsEvent.AddTransactionClicked -> { /* Navigation handled by Screen */
+            }
+
             is TransactionsEvent.DeleteTransaction -> deleteTransaction(event.transaction)
             is TransactionsEvent.UpdateTransaction -> updateTransaction(event.transaction)
         }

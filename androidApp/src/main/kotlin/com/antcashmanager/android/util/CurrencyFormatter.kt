@@ -39,19 +39,20 @@ fun formatAmount(amount: Double, format: CurrencyFormat): String {
 
     return buildString {
         append(format.currencySymbol)
-        append(intWithSeparator)
-        if (format.decimalDigits > 0 && decPart.isNotEmpty()) {
-            // Ensure we don't end up with a trailing thousands separator right before
-            // the decimal separator (some edge cases / custom separators can cause this).
-            if (format.thousandsSeparator.isNotEmpty() && intWithSeparator.endsWith(format.thousandsSeparator)) {
-                // remove trailing thousands separator to avoid e.g. "1.000. ,50" or ambiguity
-                val trimmed = intWithSeparator.removeSuffix(format.thousandsSeparator)
-                // replace previous appended intWithSeparator (simple approach: rebuild string)
-                setLength(0)
-                append(format.currencySymbol)
-                append(trimmed)
-            }
+        
+        val hasDecimals = format.decimalDigits > 0 && decPart.isNotEmpty()
+        val hasThousandsSep = format.thousandsSeparator.isNotEmpty()
+        val endsWithThousandsSep = intWithSeparator.endsWith(format.thousandsSeparator)
 
+        val finalIntPart = if (hasDecimals && hasThousandsSep && endsWithThousandsSep) {
+            intWithSeparator.removeSuffix(format.thousandsSeparator)
+        } else {
+            intWithSeparator
+        }
+        
+        append(finalIntPart)
+        
+        if (hasDecimals) {
             append(format.decimalSeparator)
             append(decPart)
         }

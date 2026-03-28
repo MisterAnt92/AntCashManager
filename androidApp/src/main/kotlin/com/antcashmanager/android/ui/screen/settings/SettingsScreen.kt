@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.LibraryBooks
 import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.Coffee
 import androidx.compose.material.icons.filled.Contrast
@@ -34,7 +35,6 @@ import androidx.compose.material.icons.filled.Feedback
 import androidx.compose.material.icons.filled.FormatSize
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
-import androidx.compose.material.icons.automirrored.filled.LibraryBooks
 import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material.icons.filled.MotionPhotosOff
 import androidx.compose.material.icons.filled.Palette
@@ -105,27 +105,22 @@ fun SettingsScreen(
         factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                SettingsViewModel(settingsRepository, transactionRepository, categoryRepository) as T
+                SettingsViewModel(
+                    settingsRepository,
+                    transactionRepository,
+                    categoryRepository
+                ) as T
         },
     )
-    val currentTheme by viewModel.theme.collectAsState()
-    val currentLanguage by viewModel.language.collectAsState()
+    val state by viewModel.state.collectAsState()
     val deleteResult by viewModel.deleteResult.collectAsState()
     val backupResult by viewModel.backupResult.collectAsState()
     val restoreResult by viewModel.restoreResult.collectAsState()
-    val showCharts by viewModel.showCharts.collectAsState()
-    val highContrast by viewModel.highContrast.collectAsState()
-    val largeText by viewModel.largeText.collectAsState()
-    val reduceMotion by viewModel.reduceMotion.collectAsState()
-    val currencySymbol by viewModel.currencySymbol.collectAsState()
-    val decimalDigits by viewModel.decimalDigits.collectAsState()
-    val decimalSeparator by viewModel.decimalSeparator.collectAsState()
-    val thousandsSeparator by viewModel.thousandsSeparator.collectAsState()
 
     SettingsContent(
-        currentTheme = currentTheme,
+        currentTheme = state.theme,
         onThemeSelected = { viewModel.setTheme(it) },
-        currentLanguage = currentLanguage,
+        currentLanguage = state.language,
         onLanguageSelected = { viewModel.setLanguage(it) },
         versionName = BuildConfig.VERSION_NAME,
         onDeleteAllData = { viewModel.deleteAllData() },
@@ -137,21 +132,21 @@ fun SettingsScreen(
         restoreResult = restoreResult,
         onRestoreBackup = { json -> viewModel.restoreBackup(json) },
         onResetRestoreResult = { viewModel.resetRestoreResult() },
-        showCharts = showCharts,
+        showCharts = state.showCharts,
         onShowChartsChanged = { viewModel.setShowCharts(it) },
-        highContrast = highContrast,
+        highContrast = state.highContrast,
         onHighContrastChanged = { viewModel.setHighContrast(it) },
-        largeText = largeText,
+        largeText = state.largeText,
         onLargeTextChanged = { viewModel.setLargeText(it) },
-        reduceMotion = reduceMotion,
+        reduceMotion = state.reduceMotion,
         onReduceMotionChanged = { viewModel.setReduceMotion(it) },
-        currencySymbol = currencySymbol,
+        currencySymbol = state.currencySymbol,
         onCurrencySymbolSelected = { viewModel.setCurrencySymbol(it) },
-        decimalDigits = decimalDigits,
+        decimalDigits = state.decimalDigits,
         onDecimalDigitsSelected = { viewModel.setDecimalDigits(it) },
-        decimalSeparator = decimalSeparator,
+        decimalSeparator = state.decimalSeparator,
         onDecimalSeparatorSelected = { viewModel.setDecimalSeparator(it) },
-        thousandsSeparator = thousandsSeparator,
+        thousandsSeparator = state.thousandsSeparator,
         onThousandsSeparatorSelected = { viewModel.setThousandsSeparator(it) },
         onResetAllPreferences = { viewModel.resetAllPreferences() },
         onImportDebugData = { ctx -> viewModel.importDebugData(ctx) },
@@ -262,6 +257,7 @@ internal fun SettingsContent(
                 showBackupErrorDialog = true
                 onResetBackupResult()
             }
+
             else -> {}
         }
     }
@@ -274,11 +270,13 @@ internal fun SettingsContent(
                 showRestoreSuccessDialog = true
                 onResetRestoreResult()
             }
+
             is RestoreOperationResult.Error -> {
                 restoreErrorMessage = result.message
                 showRestoreErrorDialog = true
                 onResetRestoreResult()
             }
+
             else -> {}
         }
     }
@@ -289,9 +287,11 @@ internal fun SettingsContent(
                 showDeleteSuccessDialog = true
                 onResetDeleteResult()
             }
+
             is DeleteResult.Error -> {
                 onResetDeleteResult()
             }
+
             DeleteResult.Idle -> Unit
         }
     }
@@ -329,7 +329,11 @@ internal fun SettingsContent(
                             titleTapCount = 0
                             // call the provided callback which will perform import in ViewModel
                             onImportDebugData(context)
-                            Toast.makeText(context, context.getString(R.string.debug_import_started), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.debug_import_started),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 },
@@ -559,7 +563,10 @@ internal fun SettingsContent(
                         showDeleteConfirmDialog = false
                     },
                 ) {
-                    Text(stringResource(R.string.dialog_delete), color = MaterialTheme.colorScheme.error)
+                    Text(
+                        stringResource(R.string.dialog_delete),
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
             },
             dismissButton = {
@@ -708,7 +715,10 @@ internal fun SettingsContent(
                     onResetAllPreferences()
                     showResetPreferencesDialog = false
                 }) {
-                    Text(stringResource(R.string.dialog_reset), color = MaterialTheme.colorScheme.error)
+                    Text(
+                        stringResource(R.string.dialog_reset),
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
             },
             dismissButton = {
@@ -732,12 +742,13 @@ private fun languageDisplayName(language: AppLanguage): String = when (language)
 
 @Composable
 private fun separatorLabel(value: String, isThou: Boolean): String {
-    val options = if (isThou) CurrencyFormat.THOUSANDS_SEPARATORS else CurrencyFormat.DECIMAL_SEPARATORS
+    val options =
+        if (isThou) CurrencyFormat.THOUSANDS_SEPARATORS else CurrencyFormat.DECIMAL_SEPARATORS
     return options.find { it.first == value }?.second ?: when (value) {
         "," -> stringResource(R.string.settings_separator_comma)
         "." -> stringResource(R.string.settings_separator_period)
         " " -> stringResource(R.string.settings_separator_space)
-        ""  -> stringResource(R.string.settings_separator_none)
+        "" -> stringResource(R.string.settings_separator_none)
         else -> value
     }
 }
@@ -1023,7 +1034,10 @@ private val thirdPartyLibraries = listOf(
     LibraryInfo("Jetpack Compose", "https://developer.android.com/jetpack/compose"),
     LibraryInfo("Room Database", "https://developer.android.com/training/data-storage/room"),
     LibraryInfo("Navigation Compose", "https://developer.android.com/jetpack/compose/navigation"),
-    LibraryInfo("DataStore Preferences", "https://developer.android.com/topic/libraries/architecture/datastore"),
+    LibraryInfo(
+        "DataStore Preferences",
+        "https://developer.android.com/topic/libraries/architecture/datastore"
+    ),
     LibraryInfo("Material Icons Extended", "https://fonts.google.com/icons"),
     LibraryInfo("Kotlinx Coroutines", "https://github.com/Kotlin/kotlinx.coroutines"),
     LibraryInfo("Kermit Logger", "https://github.com/touchlab/Kermit"),

@@ -30,13 +30,10 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.text.AppText
-import androidx.compose.material3.Text
 
 /**
  * Custom button allineato ad [AppStyles.button].
@@ -83,7 +80,8 @@ fun AppButton(
         pressedElevation = 8.dp,
     )
     val resolvedIconSize = iconSize ?: 24.dp
-    val resolvedTextStyle = textStyle ?: androidx.compose.material3.MaterialTheme.typography.labelLarge
+    val resolvedTextStyle =
+        textStyle ?: androidx.compose.material3.MaterialTheme.typography.labelLarge
 
     // Clean text
     val cleanedText = text.trim().replace(Regex("\\s+"), " ")

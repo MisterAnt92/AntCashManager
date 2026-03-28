@@ -51,23 +51,23 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
-import com.antcashmanager.android.ui.components.AntEmptyState
 import com.antcashmanager.android.ui.components.AnimatedCard
 import com.antcashmanager.android.ui.components.AnimatedListItem
-import com.antcashmanager.android.ui.components.text.BalanceText
-import com.antcashmanager.android.ui.components.text.CompactMoneyText
+import com.antcashmanager.android.ui.components.AntEmptyState
 import com.antcashmanager.android.ui.components.DateRangeFilter
 import com.antcashmanager.android.ui.components.FadeInOnAppear
 import com.antcashmanager.android.ui.components.HelpButton
 import com.antcashmanager.android.ui.components.HelpDialogContent
 import com.antcashmanager.android.ui.components.SimpleHelpFeature
+import com.antcashmanager.android.ui.components.text.BalanceText
+import com.antcashmanager.android.ui.components.text.CompactMoneyText
 import com.antcashmanager.android.ui.components.text.TransactionAmountText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.android.ui.theme.ExpenseRed
+import com.antcashmanager.android.ui.theme.IncomeGreen
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.TransactionRepository
-import com.antcashmanager.android.ui.theme.IncomeGreen
-import com.antcashmanager.android.ui.theme.ExpenseRed
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -114,7 +114,8 @@ internal fun HomeContent(
 
     // From date picker dialog
     if (showFromDatePicker) {
-        val datePickerState = rememberDatePickerState(initialSelectedDateMillis = state.dateRangeFrom)
+        val datePickerState =
+            rememberDatePickerState(initialSelectedDateMillis = state.dateRangeFrom)
         DatePickerDialog(
             onDismissRequest = { showFromDatePicker = false },
             confirmButton = {
@@ -313,7 +314,10 @@ private fun BalanceCard(
                             elevation = 2.dp,
                             shape = RoundedCornerShape(50.dp),
                         )
-                        .background(balanceColor.copy(alpha = 0.2f), shape = RoundedCornerShape(50.dp))
+                        .background(
+                            balanceColor.copy(alpha = 0.2f),
+                            shape = RoundedCornerShape(50.dp)
+                        )
                         .padding(horizontal = 8.dp, vertical = 4.dp),
                 ) {
                     Text(
@@ -357,7 +361,10 @@ private fun IncomeExpenseRow(
                         Box(
                             modifier = Modifier
                                 .size(40.dp)
-                                .background(IncomeGreen.copy(alpha = 0.25f), shape = RoundedCornerShape(8.dp))
+                                .background(
+                                    IncomeGreen.copy(alpha = 0.25f),
+                                    shape = RoundedCornerShape(8.dp)
+                                )
                                 .padding(8.dp),
                             contentAlignment = Alignment.Center,
                         ) {
@@ -404,7 +411,10 @@ private fun IncomeExpenseRow(
                         Box(
                             modifier = Modifier
                                 .size(40.dp)
-                                .background(ExpenseRed.copy(alpha = 0.25f), shape = RoundedCornerShape(8.dp))
+                                .background(
+                                    ExpenseRed.copy(alpha = 0.25f),
+                                    shape = RoundedCornerShape(8.dp)
+                                )
                                 .padding(8.dp),
                             contentAlignment = Alignment.Center,
                         ) {
@@ -440,7 +450,8 @@ private val dateFormat = SimpleDateFormat("dd MMM", Locale.getDefault())
 @Composable
 private fun RecentTransactionItem(transaction: Transaction) {
     val isIncome = transaction.type == TransactionType.INCOME
-    val cardBackgroundColor = if (isIncome) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer
+    val cardBackgroundColor =
+        if (isIncome) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer
 
     AnimatedListItem(index = transaction.id.toInt()) {
         AnimatedCard(
@@ -486,13 +497,17 @@ private fun RecentTransactionItem(transaction: Transaction) {
                     Text(
                         text = "${transaction.category} • ${dateFormat.format(Date(transaction.timestamp))}",
                         style = MaterialTheme.typography.bodySmall,
-                        color = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f) else MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.7f),
+                        color = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer.copy(
+                            alpha = 0.7f
+                        ) else MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.7f),
                     )
                     if (transaction.notes.isNotBlank()) {
                         Text(
                             text = transaction.notes,
                             style = MaterialTheme.typography.labelSmall,
-                            color = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f) else MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.6f),
+                            color = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer.copy(
+                                alpha = 0.6f
+                            ) else MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.6f),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )

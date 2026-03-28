@@ -51,9 +51,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
-import com.antcashmanager.android.ui.components.AntEmptyState
 import com.antcashmanager.android.ui.components.AnimatedCard
 import com.antcashmanager.android.ui.components.AnimatedListItem
+import com.antcashmanager.android.ui.components.AntEmptyState
 import com.antcashmanager.android.ui.components.DateRangeFilter
 import com.antcashmanager.android.ui.components.HelpButton
 import com.antcashmanager.android.ui.components.HelpDialogContent
@@ -61,8 +61,8 @@ import com.antcashmanager.android.ui.components.SimpleHelpFeature
 import com.antcashmanager.android.ui.components.SkeletonLoader
 import com.antcashmanager.android.ui.components.text.TransactionAmountText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
-import com.antcashmanager.android.ui.theme.IncomeGreen
 import com.antcashmanager.android.ui.theme.ExpenseRed
+import com.antcashmanager.android.ui.theme.IncomeGreen
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.CategoryRepository
@@ -119,7 +119,8 @@ internal fun TransactionsContent(
 
     // From date picker dialog
     if (showFromDatePicker) {
-        val datePickerState = rememberDatePickerState(initialSelectedDateMillis = state.dateRangeFrom)
+        val datePickerState =
+            rememberDatePickerState(initialSelectedDateMillis = state.dateRangeFrom)
         DatePickerDialog(
             onDismissRequest = { showFromDatePicker = false },
             confirmButton = {
@@ -153,7 +154,12 @@ internal fun TransactionsContent(
                 TextButton(
                     onClick = {
                         datePickerState.selectedDateMillis?.let { selectedDate ->
-                            onEvent(TransactionsEvent.SetDateRange(state.dateRangeFrom, selectedDate))
+                            onEvent(
+                                TransactionsEvent.SetDateRange(
+                                    state.dateRangeFrom,
+                                    selectedDate
+                                )
+                            )
                         }
                         showToDatePicker = false
                     },
@@ -283,7 +289,7 @@ private fun LoadingState() {
                 // Header skeleton
                 SkeletonLoader(height = 16.dp, cornerRadius = 8)
                 Spacer(modifier = Modifier.height(8.dp))
-                
+
                 // Subtitle skeleton
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -302,7 +308,7 @@ private fun LoadingState() {
                     )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                
+
                 // Amount skeleton
                 SkeletonLoader(height = 20.dp, cornerRadius = 8)
             }
@@ -340,10 +346,12 @@ private fun TransactionsList(
 }
 
 private val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+
 @Composable
 private fun TransactionItem(transaction: Transaction) {
     val isIncome = transaction.type == TransactionType.INCOME
-    val cardBackgroundColor = if (isIncome) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer
+    val cardBackgroundColor =
+        if (isIncome) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer
 
     AnimatedListItem(index = transaction.id.toInt()) {
         AnimatedCard(
@@ -401,7 +409,9 @@ private fun TransactionItem(transaction: Transaction) {
                     Text(
                         text = subtitleParts.joinToString(" • "),
                         style = MaterialTheme.typography.labelSmall,
-                        color = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f) else MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.7f),
+                        color = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer.copy(
+                            alpha = 0.7f
+                        ) else MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.7f),
                     )
 
                     // Notes
@@ -409,7 +419,9 @@ private fun TransactionItem(transaction: Transaction) {
                         Text(
                             text = transaction.notes,
                             style = MaterialTheme.typography.labelSmall,
-                            color = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f) else MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.6f),
+                            color = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer.copy(
+                                alpha = 0.6f
+                            ) else MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.6f),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
@@ -418,7 +430,8 @@ private fun TransactionItem(transaction: Transaction) {
                     // Tags
                     if (transaction.tags.isNotBlank()) {
                         Text(
-                            text = transaction.tags.split(",").joinToString(" ") { "#${it.trim()}" },
+                            text = transaction.tags.split(",")
+                                .joinToString(" ") { "#${it.trim()}" },
                             style = MaterialTheme.typography.labelSmall,
                             color = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onErrorContainer,
                             maxLines = 1,

@@ -81,7 +81,19 @@ fun AddTransactionScreen(
         state = state,
         onNavigateBack = onNavigateBack,
         onAddTransaction = { title, amount, category, type, timestamp, notes, payee, location, tags, isRecurring, recurrenceInterval ->
-            viewModel.addTransaction(title, amount, category, type, timestamp, notes, payee, location, tags, isRecurring, recurrenceInterval)
+            viewModel.addTransaction(
+                title,
+                amount,
+                category,
+                type,
+                timestamp,
+                notes,
+                payee,
+                location,
+                tags,
+                isRecurring,
+                recurrenceInterval
+            )
             onNavigateBack()
         },
     )
@@ -105,7 +117,7 @@ internal fun AddTransactionContent(
     var selectedDate by remember { mutableStateOf(System.currentTimeMillis()) }
     var showCategoryMenu by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
-    
+
     // Additional fields
     var notes by remember { mutableStateOf("") }
     var payee by remember { mutableStateOf("") }
@@ -170,7 +182,7 @@ internal fun AddTransactionContent(
                 style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
-            
+
             // Title field
             OutlinedTextField(
                 value = title,
@@ -198,7 +210,10 @@ internal fun AddTransactionContent(
             Spacer(modifier = Modifier.height(12.dp))
 
             // Transaction type (Radio buttons)
-            Text(stringResource(R.string.transaction_type), style = MaterialTheme.typography.labelLarge)
+            Text(
+                stringResource(R.string.transaction_type),
+                style = MaterialTheme.typography.labelLarge
+            )
             Column(modifier = Modifier.selectableGroup()) {
                 TransactionType.entries.forEach { type ->
                     Row(
@@ -258,7 +273,10 @@ internal fun AddTransactionContent(
 
             // Date field
             OutlinedTextField(
-                value = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(selectedDate)),
+                value = SimpleDateFormat(
+                    "yyyy-MM-dd",
+                    Locale.getDefault()
+                ).format(Date(selectedDate)),
                 onValueChange = { },
                 label = { Text(stringResource(R.string.transaction_date)) },
                 modifier = Modifier.fillMaxWidth(),
@@ -373,7 +391,12 @@ internal fun AddTransactionContent(
                         onDismissRequest = { showRecurrenceMenu = false },
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        listOf("Giornaliero", "Settimanale", "Mensile", "Annuale").forEach { interval ->
+                        listOf(
+                            "Giornaliero",
+                            "Settimanale",
+                            "Mensile",
+                            "Annuale"
+                        ).forEach { interval ->
                             DropdownMenuItem(
                                 text = { Text(interval) },
                                 onClick = {

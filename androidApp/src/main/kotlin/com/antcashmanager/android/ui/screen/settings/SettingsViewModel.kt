@@ -23,16 +23,34 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+
 
 class SettingsViewModel(
     private val settingsRepository: SettingsRepository,
     private val transactionRepository: TransactionRepository,
     private val categoryRepository: CategoryRepository,
 ) : ViewModel() {
+
+    companion object {
+        private const val TAG = "SettingsViewModel"
+        private const val SHARING_TIMEOUT = 5_000L
+        private val DEFAULT_THEME = AppTheme.SYSTEM
+        private val DEFAULT_LANGUAGE = AppLanguage.SYSTEM
+        private const val DEFAULT_SHOW_CHARTS = true
+        private const val DEFAULT_HIGH_CONTRAST = false
+        private const val DEFAULT_LARGE_TEXT = false
+        private const val DEFAULT_REDUCE_MOTION = false
+        private const val DEFAULT_CURRENCY_SYMBOL = "\u20ac"
+        private const val DEFAULT_DECIMAL_DIGITS = 2
+        private const val DEFAULT_DECIMAL_SEPARATOR = ","
+        private const val DEFAULT_THOUSANDS_SEPARATOR = "."
+        private const val DEFAULT_SHOW_TRANSACTION_NOTES = true
+    }
 
     private val getThemeUseCase = GetThemeUseCase(settingsRepository)
     private val setThemeUseCase = SetThemeUseCase(settingsRepository)
@@ -45,7 +63,8 @@ class SettingsViewModel(
     private val _backupResult = MutableStateFlow<BackupResult>(BackupResult.Idle)
     val backupResult: StateFlow<BackupResult> = _backupResult.asStateFlow()
 
-    private val _restoreResult = MutableStateFlow<RestoreOperationResult>(RestoreOperationResult.Idle)
+    private val _restoreResult =
+        MutableStateFlow<RestoreOperationResult>(RestoreOperationResult.Idle)
     val restoreResult: StateFlow<RestoreOperationResult> = _restoreResult.asStateFlow()
 
     /**
@@ -63,8 +82,8 @@ class SettingsViewModel(
                     val assetName = "debug_initial_data.json"
                     val json = try {
                         context.assets.open(assetName).bufferedReader().use { it.readText() }
-                    } catch (e: Exception) {
-                        Logger.e("SettingsViewModel") { "Cannot open debug asset: ${e.message}" }
+                    } catch (ex: Exception) {
+                        Logger.e("SettingsViewModel") { "Cannot open debug asset: ${ex.message}" }
                         return@withContext
                     }
                     val obj = JSONObject(json)
@@ -81,7 +100,7 @@ class SettingsViewModel(
                                 category = t.optString("category", "Uncategorized"),
                                 type = try {
                                     TransactionType.valueOf(t.optString("type", "EXPENSE"))
-                                } catch (e: Exception) {
+                                } catch (_: Exception) {
                                     TransactionType.EXPENSE
                                 },
                                 timestamp = t.optLong("timestamp", System.currentTimeMillis()),
@@ -102,151 +121,173 @@ class SettingsViewModel(
                             )
                             try {
                                 transactionRepository.insertTransaction(transaction)
-                            } catch (e: Exception) {
+                            } catch (_: Exception) {
                                 // ignore individual insert failures in debug import
                             }
-                        } catch (e: Exception) {
+                        } catch (_: Exception) {
                             // ignore malformed entries
                         }
                     }
                 }
-            } catch (e: Exception) {
-                Logger.e("SettingsViewModel") { "Error importing debug data: ${e.message}" }
+            } catch (ex: Exception) {
+                Logger.e("SettingsViewModel") { "Error importing debug data: ${ex.message}" }
             }
         }
     }
 
-    val theme = getThemeUseCase()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = AppTheme.SYSTEM,
+
+    // Stato aggregato delle preferenze - combinare i flussi in gruppi
+    val state: StateFlow<SettingsState> = combine(
+        combine(
+            getThemeUseCase().stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
+                DEFAULT_THEME
+            ),
+            getLanguageUseCase().stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
+                DEFAULT_LANGUAGE
+            ),
+            settingsRepository.getShowCharts().stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
+                DEFAULT_SHOW_CHARTS
+            ),
+            settingsRepository.getHighContrast().stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
+                DEFAULT_HIGH_CONTRAST
+            ),
+            settingsRepository.getLargeText().stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
+                DEFAULT_LARGE_TEXT
+            ),
+        ) { theme, language, showCharts, highContrast, largeText ->
+            SettingsPreferences1(theme, language, showCharts, highContrast, largeText)
+        },
+        combine(
+            settingsRepository.getReduceMotion().stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
+                DEFAULT_REDUCE_MOTION
+            ),
+            settingsRepository.getCurrencySymbol().stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
+                DEFAULT_CURRENCY_SYMBOL
+            ),
+            settingsRepository.getDecimalDigits().stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
+                DEFAULT_DECIMAL_DIGITS
+            ),
+            settingsRepository.getDecimalSeparator().stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
+                DEFAULT_DECIMAL_SEPARATOR
+            ),
+            settingsRepository.getThousandsSeparator().stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
+                DEFAULT_THOUSANDS_SEPARATOR
+            ),
+        ) { reduceMotion, currencySymbol, decimalDigits, decimalSeparator, thousandsSeparator ->
+            SettingsPreferences2(reduceMotion, currencySymbol, decimalDigits, decimalSeparator, thousandsSeparator)
+        },
+        settingsRepository.getShowTransactionNotes().stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
+            DEFAULT_SHOW_TRANSACTION_NOTES
+        ),
+    ) { prefs1, prefs2, showTransactionNotes ->
+        SettingsState(
+            theme = prefs1.theme,
+            language = prefs1.language,
+            showCharts = prefs1.showCharts,
+            highContrast = prefs1.highContrast,
+            largeText = prefs1.largeText,
+            reduceMotion = prefs2.reduceMotion,
+            currencySymbol = prefs2.currencySymbol,
+            decimalDigits = prefs2.decimalDigits,
+            decimalSeparator = prefs2.decimalSeparator,
+            thousandsSeparator = prefs2.thousandsSeparator,
+            showTransactionNotes = showTransactionNotes,
         )
-
-    val language = getLanguageUseCase()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = AppLanguage.SYSTEM,
-        )
-
-    val showCharts = settingsRepository.getShowCharts()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = true,
-        )
-
-    val highContrast = settingsRepository.getHighContrast()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = false,
-        )
-
-    val largeText = settingsRepository.getLargeText()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = false,
-        )
-
-    val reduceMotion = settingsRepository.getReduceMotion()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = false,
-        )
-
-    val currencySymbol = settingsRepository.getCurrencySymbol()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), "\u20ac")
-
-    val decimalDigits = settingsRepository.getDecimalDigits()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 2)
-
-    val decimalSeparator = settingsRepository.getDecimalSeparator()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ",")
-
-    val thousandsSeparator = settingsRepository.getThousandsSeparator()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ".")
-
-    val showTransactionNotes = settingsRepository.getShowTransactionNotes()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), true)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_TIMEOUT), SettingsState())
 
     private val _deleteResult = MutableStateFlow<DeleteResult>(DeleteResult.Idle)
     val deleteResult: StateFlow<DeleteResult> = _deleteResult.asStateFlow()
 
-    fun setTheme(theme: AppTheme) {
-        Logger.d("SettingsViewModel") { "Setting theme to: $theme" }
-        viewModelScope.launch {
-            setThemeUseCase(theme)
-        }
+
+    /**
+     * Funzione di utilità per loggare e lanciare l'azione in coroutine.
+     */
+    private fun updatePreference(logMsg: String, action: suspend () -> Unit) {
+        Logger.d(TAG) { logMsg }
+        viewModelScope.launch { action() }
     }
 
-    fun setLanguage(language: AppLanguage) {
-        Logger.d("SettingsViewModel") { "Setting language to: $language" }
-        viewModelScope.launch {
-            setLanguageUseCase(language)
-        }
-    }
+    fun setTheme(theme: AppTheme) = updatePreference(
+        logMsg = "Setting theme to: $theme",
+        action = { setThemeUseCase(theme) },
+    )
 
-    fun setShowCharts(show: Boolean) {
-        Logger.d("SettingsViewModel") { "Setting show charts: $show" }
-        viewModelScope.launch {
-            settingsRepository.setShowCharts(show)
-        }
-    }
+    fun setLanguage(language: AppLanguage) = updatePreference(
+        logMsg = "Setting language to: $language",
+        action = { setLanguageUseCase(language) },
+    )
 
-    fun setHighContrast(enabled: Boolean) {
-        Logger.d("SettingsViewModel") { "Setting high contrast: $enabled" }
-        viewModelScope.launch {
-            settingsRepository.setHighContrast(enabled)
-        }
-    }
+    fun setShowCharts(show: Boolean) = updatePreference(
+        logMsg = "Setting show charts: $show",
+        action = { settingsRepository.setShowCharts(show) },
+    )
 
-    fun setLargeText(enabled: Boolean) {
-        Logger.d("SettingsViewModel") { "Setting large text: $enabled" }
-        viewModelScope.launch {
-            settingsRepository.setLargeText(enabled)
-        }
-    }
+    fun setHighContrast(enabled: Boolean) = updatePreference(
+        logMsg = "Setting high contrast: $enabled",
+        action = { settingsRepository.setHighContrast(enabled) },
+    )
 
-    fun setReduceMotion(enabled: Boolean) {
-        Logger.d("SettingsViewModel") { "Setting reduce motion: $enabled" }
-        viewModelScope.launch {
-            settingsRepository.setReduceMotion(enabled)
-        }
-    }
+    fun setLargeText(enabled: Boolean) = updatePreference(
+        logMsg = "Setting large text: $enabled",
+        action = { settingsRepository.setLargeText(enabled) },
+    )
 
-    fun setCurrencySymbol(symbol: String) {
-        Logger.d("SettingsViewModel") { "Setting currency symbol: $symbol" }
-        viewModelScope.launch { settingsRepository.setCurrencySymbol(symbol) }
-    }
+    fun setReduceMotion(enabled: Boolean) = updatePreference(
+        logMsg = "Setting reduce motion: $enabled",
+        action = { settingsRepository.setReduceMotion(enabled) },
+    )
 
-    fun setDecimalDigits(digits: Int) {
-        Logger.d("SettingsViewModel") { "Setting decimal digits: $digits" }
-        viewModelScope.launch { settingsRepository.setDecimalDigits(digits) }
-    }
+    fun setCurrencySymbol(symbol: String) = updatePreference(
+        logMsg = "Setting currency symbol: $symbol",
+        action = { settingsRepository.setCurrencySymbol(symbol) },
+    )
 
-    fun setDecimalSeparator(separator: String) {
-        Logger.d("SettingsViewModel") { "Setting decimal separator: $separator" }
-        viewModelScope.launch { settingsRepository.setDecimalSeparator(separator) }
-    }
+    fun setDecimalDigits(digits: Int) = updatePreference(
+        logMsg = "Setting decimal digits: $digits",
+        action = { settingsRepository.setDecimalDigits(digits) },
+    )
 
-    fun setThousandsSeparator(separator: String) {
-        Logger.d("SettingsViewModel") { "Setting thousands separator: $separator" }
-        viewModelScope.launch { settingsRepository.setThousandsSeparator(separator) }
-    }
+    fun setDecimalSeparator(separator: String) = updatePreference(
+        logMsg = "Setting decimal separator: $separator",
+        action = { settingsRepository.setDecimalSeparator(separator) },
+    )
 
-    fun setShowTransactionNotes(show: Boolean) {
-        Logger.d("SettingsViewModel") { "Setting show transaction notes: $show" }
-        viewModelScope.launch { settingsRepository.setShowTransactionNotes(show) }
-    }
+    fun setThousandsSeparator(separator: String) = updatePreference(
+        logMsg = "Setting thousands separator: $separator",
+        action = { settingsRepository.setThousandsSeparator(separator) },
+    )
 
-    fun resetAllPreferences() {
-        Logger.d("SettingsViewModel") { "Resetting all preferences" }
-        viewModelScope.launch { settingsRepository.resetAllPreferences() }
-    }
+    fun setShowTransactionNotes(show: Boolean) = updatePreference(
+        logMsg = "Setting show transaction notes: $show",
+        action = { settingsRepository.setShowTransactionNotes(show) },
+    )
+
+    fun resetAllPreferences() = updatePreference(
+        logMsg = "Resetting all preferences",
+        action = { settingsRepository.resetAllPreferences() },
+    )
 
     fun deleteAllData() {
         Logger.d("SettingsViewModel") { "Deleting all data" }
@@ -304,7 +345,8 @@ class SettingsViewModel(
                     )
                 },
                 onFailure = { error ->
-                    _restoreResult.value = RestoreOperationResult.Error(error.message ?: "Unknown error")
+                    _restoreResult.value =
+                        RestoreOperationResult.Error(error.message ?: "Unknown error")
                 },
             )
         }
@@ -338,4 +380,21 @@ sealed interface RestoreOperationResult {
     data class Success(val transactions: Int, val categories: Int) : RestoreOperationResult
     data class Error(val message: String) : RestoreOperationResult
 }
+
+// Data class di supporto per il combine dei preferenze
+private data class SettingsPreferences1(
+    val theme: AppTheme,
+    val language: AppLanguage,
+    val showCharts: Boolean,
+    val highContrast: Boolean,
+    val largeText: Boolean,
+)
+
+private data class SettingsPreferences2(
+    val reduceMotion: Boolean,
+    val currencySymbol: String,
+    val decimalDigits: Int,
+    val decimalSeparator: String,
+    val thousandsSeparator: String,
+)
 

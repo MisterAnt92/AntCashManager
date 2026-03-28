@@ -113,7 +113,7 @@ class TransactionsViewModelWithSearch(
             dateFiltered.filter { transaction ->
                 // Search by title
                 val titleMatches = transaction.title.lowercase().contains(query)
-                
+
                 // Search by amount (handle various formats: "123", "123.45", etc.)
                 val amountMatches = try {
                     val queryAmount = query.toDoubleOrNull()
@@ -154,7 +154,9 @@ class TransactionsViewModelWithSearch(
             is TransactionsEventExtended.SelectPreset -> selectPreset(event.index)
             is TransactionsEventExtended.SetDateRange -> setDateRange(event.from, event.to)
             is TransactionsEventExtended.SearchTransactions -> updateSearch(event.query)
-            is TransactionsEventExtended.AddTransactionClicked -> { /* Navigation handled by Screen */ }
+            is TransactionsEventExtended.AddTransactionClicked -> { /* Navigation handled by Screen */
+            }
+
             is TransactionsEventExtended.DeleteTransaction -> deleteTransaction(event.transaction)
             is TransactionsEventExtended.UpdateTransaction -> updateTransaction(event.transaction)
         }

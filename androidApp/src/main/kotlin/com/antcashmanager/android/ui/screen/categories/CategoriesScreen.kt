@@ -20,6 +20,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ReceiptLong
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CurrencyExchange
@@ -87,7 +89,7 @@ val categoryIconMap: Map<String, ImageVector> = mapOf(
     "home" to Icons.Default.Home,
     "directions_car" to Icons.Default.DirectionsCar,
     "restaurant" to Icons.Default.Restaurant,
-    "receipt_long" to Icons.Default.ReceiptLong,
+    "receipt_long" to Icons.AutoMirrored.Filled.ReceiptLong,
     "local_dining" to Icons.Default.LocalDining,
     "theater_comedy" to Icons.Default.TheaterComedy,
     "local_hospital" to Icons.Default.LocalHospital,
@@ -97,7 +99,7 @@ val categoryIconMap: Map<String, ImageVector> = mapOf(
     "payments" to Icons.Default.Payments,
     "savings" to Icons.Default.Savings,
     "currency_exchange" to Icons.Default.CurrencyExchange,
-    "trending_up" to Icons.Default.TrendingUp,
+    "trending_up" to Icons.AutoMirrored.Filled.TrendingUp,
     "work" to Icons.Default.Work,
 )
 
@@ -118,21 +120,17 @@ fun CategoriesScreen(categoryRepository: CategoryRepository) {
                 CategoriesViewModel(categoryRepository) as T
         },
     )
-    val expenseCategories by viewModel.expenseCategories.collectAsState()
-    val incomeCategories by viewModel.incomeCategories.collectAsState()
-
+    val state by viewModel.state.collectAsState()
     CategoriesContent(
-        expenseCategories = expenseCategories,
-        incomeCategories = incomeCategories,
-        onAddCategory = { name, icon, color, type -> viewModel.addCategory(name, icon, color, type) },
-        onDeleteCategory = { viewModel.deleteCategory(it) },
+        state = state,
+        onAddCategory = viewModel::addCategory,
+        onDeleteCategory = viewModel::deleteCategory,
     )
 }
 
 @Composable
 internal fun CategoriesContent(
-    expenseCategories: List<Category>,
-    incomeCategories: List<Category>,
+    state: CategoriesState,
     onAddCategory: (String, String, Long, String) -> Unit = { _, _, _, _ -> },
     onDeleteCategory: (Category) -> Unit = {},
 ) {
@@ -150,7 +148,8 @@ internal fun CategoriesContent(
         stringResource(R.string.categories_tab_expense),
         stringResource(R.string.categories_tab_income),
     )
-    val currentCategories = if (selectedTab == 0) expenseCategories else incomeCategories
+    val currentCategories =
+        if (selectedTab == 0) state.expenseCategories else state.incomeCategories
     val currentType = if (selectedTab == 0) "EXPENSE" else "INCOME"
 
     Scaffold(
@@ -160,7 +159,10 @@ internal fun CategoriesContent(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             ) {
-                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.categories_add_content_desc))
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription = stringResource(R.string.categories_add_content_desc)
+                )
             }
         },
     ) { innerPadding ->
@@ -248,7 +250,10 @@ internal fun CategoriesContent(
                         categoryToDelete = null
                     },
                 ) {
-                    Text(stringResource(R.string.dialog_delete), color = MaterialTheme.colorScheme.error)
+                    Text(
+                        stringResource(R.string.dialog_delete),
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
             },
             dismissButton = {
@@ -372,7 +377,11 @@ private fun AddCategoryDialog(
                                 .background(Color(color))
                                 .then(
                                     if (color == selectedColor) {
-                                        Modifier.border(3.dp, MaterialTheme.colorScheme.primary, CircleShape)
+                                        Modifier.border(
+                                            3.dp,
+                                            MaterialTheme.colorScheme.primary,
+                                            CircleShape
+                                        )
                                     } else {
                                         Modifier
                                     },
@@ -395,7 +404,13 @@ private fun AddCategoryDialog(
         },
         confirmButton = {
             TextButton(
-                onClick = { if (name.isNotBlank()) onConfirm(name.trim(), "category", selectedColor) },
+                onClick = {
+                    if (name.isNotBlank()) onConfirm(
+                        name.trim(),
+                        "category",
+                        selectedColor
+                    )
+                },
                 enabled = name.isNotBlank(),
             ) {
                 Text(stringResource(R.string.dialog_add))
@@ -414,14 +429,50 @@ private fun AddCategoryDialog(
 private fun CategoriesContentPreview() {
     AntCashManagerTheme(dynamicColor = false) {
         CategoriesContent(
-            expenseCategories = listOf(
-                Category(id = 1, name = "Casa", icon = "home", color = 0xFF4FC3F7, type = "EXPENSE", isDefault = true),
-                Category(id = 2, name = "Cibo", icon = "restaurant", color = 0xFFE57373, type = "EXPENSE", isDefault = true),
-                Category(id = 3, name = "Shopping", icon = "shopping_bag", color = 0xFFDCE775, type = "EXPENSE"),
-            ),
-            incomeCategories = listOf(
-                Category(id = 10, name = "Stipendio", icon = "payments", color = 0xFF81C784, type = "INCOME", isDefault = true),
-                Category(id = 11, name = "Freelance", icon = "work", color = 0xFFA1887F, type = "INCOME", isDefault = true),
+            state = CategoriesState(
+                expenseCategories = listOf(
+                    Category(
+                        id = 1,
+                        name = "Casa",
+                        icon = "home",
+                        color = 0xFF4FC3F7,
+                        type = "EXPENSE",
+                        isDefault = true
+                    ),
+                    Category(
+                        id = 2,
+                        name = "Cibo",
+                        icon = "restaurant",
+                        color = 0xFFE57373,
+                        type = "EXPENSE",
+                        isDefault = true
+                    ),
+                    Category(
+                        id = 3,
+                        name = "Shopping",
+                        icon = "shopping_bag",
+                        color = 0xFFDCE775,
+                        type = "EXPENSE"
+                    ),
+                ),
+                incomeCategories = listOf(
+                    Category(
+                        id = 10,
+                        name = "Stipendio",
+                        icon = "payments",
+                        color = 0xFF81C784,
+                        type = "INCOME",
+                        isDefault = true
+                    ),
+                    Category(
+                        id = 11,
+                        name = "Freelance",
+                        icon = "work",
+                        color = 0xFFA1887F,
+                        type = "INCOME",
+                        isDefault = true
+                    ),
+                ),
             ),
         )
     }
@@ -432,8 +483,10 @@ private fun CategoriesContentPreview() {
 private fun CategoriesContentEmptyPreview() {
     AntCashManagerTheme(dynamicColor = false) {
         CategoriesContent(
-            expenseCategories = emptyList(),
-            incomeCategories = emptyList(),
+            state = CategoriesState(
+                expenseCategories = emptyList(),
+                incomeCategories = emptyList(),
+            ),
         )
     }
 }
@@ -443,11 +496,27 @@ private fun CategoriesContentEmptyPreview() {
 private fun CategoriesContentDarkPreview() {
     AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
         CategoriesContent(
-            expenseCategories = listOf(
-                Category(id = 1, name = "Trasporti", icon = "directions_car", color = 0xFF64B5F6, type = "EXPENSE", isDefault = true),
-            ),
-            incomeCategories = listOf(
-                Category(id = 10, name = "Stipendio", icon = "payments", color = 0xFF81C784, type = "INCOME", isDefault = true),
+            state = CategoriesState(
+                expenseCategories = listOf(
+                    Category(
+                        id = 1,
+                        name = "Trasporti",
+                        icon = "directions_car",
+                        color = 0xFF64B5F6,
+                        type = "EXPENSE",
+                        isDefault = true
+                    ),
+                ),
+                incomeCategories = listOf(
+                    Category(
+                        id = 10,
+                        name = "Stipendio",
+                        icon = "payments",
+                        color = 0xFF81C784,
+                        type = "INCOME",
+                        isDefault = true
+                    ),
+                ),
             ),
         )
     }

@@ -20,21 +20,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import java.util.Calendar
 
-data class ChartData(
-    val incomeByCategory: Map<String, Double> = emptyMap(),
-    val expenseByCategory: Map<String, Double> = emptyMap(),
-    val totalIncome: Double = 0.0,
-    val totalExpense: Double = 0.0,
-    val monthlyData: List<MonthlyAmount> = emptyList(),
-)
-
-data class MonthlyAmount(
-    val label: String,
-    val income: Double,
-    val expense: Double,
-)
-
- @OptIn(ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 class ChartsViewModel(
     transactionRepository: TransactionRepository,
 ) : ViewModel() {

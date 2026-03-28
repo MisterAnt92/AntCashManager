@@ -1,4 +1,5 @@
 package com.antcashmanager.android.ui.screen.home.charts
+
 import android.graphics.Paint
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -69,12 +70,14 @@ import com.antcashmanager.domain.usecase.transaction.DateRange
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
 private val pieColors = listOf(
     Color(0xFFE57373), Color(0xFF81C784), Color(0xFF64B5F6),
     Color(0xFFFFB74D), Color(0xFFBA68C8), Color(0xFF4FC3F7),
     Color(0xFFF06292), Color(0xFFDCE775), Color(0xFF4DB6AC),
     Color(0xFF7986CB), Color(0xFFA1887F), Color(0xFF90A4AE),
 )
+
 @Composable
 fun ChartsScreen(transactionRepository: TransactionRepository) {
     Logger.d("ChartsScreen") { "Displaying ChartsScreen" }
@@ -94,6 +97,7 @@ fun ChartsScreen(transactionRepository: TransactionRepository) {
         onPresetSelected = { viewModel.setPresetRange(it) },
     )
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ChartsContent(
@@ -162,7 +166,10 @@ internal fun ChartsContent(
                                 onPresetSelected(preset)
                             },
                             label = {
-                                Text(text = stringResource(preset.labelResId), style = MaterialTheme.typography.labelSmall)
+                                Text(
+                                    text = stringResource(preset.labelResId),
+                                    style = MaterialTheme.typography.labelSmall
+                                )
                             },
                             shape = RoundedCornerShape(50),
                         )
@@ -174,34 +181,57 @@ internal fun ChartsContent(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Text(
-                        text = stringResource(R.string.charts_from, dateFormat.format(Date(dateRange.from))),
+                        text = stringResource(
+                            R.string.charts_from,
+                            dateFormat.format(Date(dateRange.from))
+                        ),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.weight(1f),
                     )
-                    IconButton(onClick = { showFromPicker = true }, modifier = Modifier.size(32.dp)) {
-                        Icon(Icons.Default.CalendarMonth, contentDescription = stringResource(R.string.charts_pick_start_date), modifier = Modifier.size(20.dp))
+                    IconButton(
+                        onClick = { showFromPicker = true },
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.CalendarMonth,
+                            contentDescription = stringResource(R.string.charts_pick_start_date),
+                            modifier = Modifier.size(20.dp)
+                        )
                     }
                     Text(
-                        text = stringResource(R.string.charts_to, dateFormat.format(Date(dateRange.to))),
+                        text = stringResource(
+                            R.string.charts_to,
+                            dateFormat.format(Date(dateRange.to))
+                        ),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.weight(1f),
                     )
                     IconButton(onClick = { showToPicker = true }, modifier = Modifier.size(32.dp)) {
-                        Icon(Icons.Default.CalendarMonth, contentDescription = stringResource(R.string.charts_pick_end_date), modifier = Modifier.size(20.dp))
+                        Icon(
+                            Icons.Default.CalendarMonth,
+                            contentDescription = stringResource(R.string.charts_pick_end_date),
+                            modifier = Modifier.size(20.dp)
+                        )
                     }
                 }
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
         // Summary cards
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             Card(
                 modifier = Modifier.weight(1f),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
                 shape = MaterialTheme.shapes.medium,
             ) {
                 Column(modifier = Modifier.padding(12.dp)) {
-                    Text(stringResource(R.string.charts_income), style = MaterialTheme.typography.labelMedium)
+                    Text(
+                        stringResource(R.string.charts_income),
+                        style = MaterialTheme.typography.labelMedium
+                    )
                     Text(
                         text = formatAmount(chartData.totalIncome, fmt),
                         style = MaterialTheme.typography.titleMedium,
@@ -215,7 +245,10 @@ internal fun ChartsContent(
                 shape = MaterialTheme.shapes.medium,
             ) {
                 Column(modifier = Modifier.padding(12.dp)) {
-                    Text(stringResource(R.string.charts_expenses), style = MaterialTheme.typography.labelMedium)
+                    Text(
+                        stringResource(R.string.charts_expenses),
+                        style = MaterialTheme.typography.labelMedium
+                    )
                     Text(
                         text = formatAmount(chartData.totalExpense, fmt),
                         style = MaterialTheme.typography.titleMedium,
@@ -227,18 +260,36 @@ internal fun ChartsContent(
         Spacer(modifier = Modifier.height(20.dp))
         // Pie chart
         if (chartData.expenseByCategory.isNotEmpty()) {
-            Text(stringResource(R.string.charts_expense_by_category), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+            Text(
+                stringResource(R.string.charts_expense_by_category),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
+            )
             Spacer(modifier = Modifier.height(12.dp))
-            PieChart(data = chartData.expenseByCategory, modifier = Modifier.fillMaxWidth().height(220.dp))
+            PieChart(
+                data = chartData.expenseByCategory,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(220.dp)
+            )
             Spacer(modifier = Modifier.height(8.dp))
             PieLegend(data = chartData.expenseByCategory)
         }
         Spacer(modifier = Modifier.height(20.dp))
         // Bar chart
         if (chartData.monthlyData.isNotEmpty()) {
-            Text(stringResource(R.string.charts_monthly_overview), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+            Text(
+                stringResource(R.string.charts_monthly_overview),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
+            )
             Spacer(modifier = Modifier.height(12.dp))
-            BarChart(data = chartData.monthlyData, modifier = Modifier.fillMaxWidth().height(200.dp))
+            BarChart(
+                data = chartData.monthlyData,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+            )
         }
         if (chartData.expenseByCategory.isEmpty() && chartData.monthlyData.isEmpty()) {
             Spacer(modifier = Modifier.height(48.dp))
@@ -261,7 +312,11 @@ internal fun ChartsContent(
                     showFromPicker = false
                 }) { Text(stringResource(R.string.dialog_ok)) }
             },
-            dismissButton = { TextButton(onClick = { showFromPicker = false }) { Text(stringResource(R.string.dialog_cancel)) } },
+            dismissButton = {
+                TextButton(onClick = {
+                    showFromPicker = false
+                }) { Text(stringResource(R.string.dialog_cancel)) }
+            },
         ) { DatePicker(state = state) }
     }
     if (showToPicker) {
@@ -275,17 +330,26 @@ internal fun ChartsContent(
                     showToPicker = false
                 }) { Text(stringResource(R.string.dialog_ok)) }
             },
-            dismissButton = { TextButton(onClick = { showToPicker = false }) { Text(stringResource(R.string.dialog_cancel)) } },
+            dismissButton = {
+                TextButton(onClick = {
+                    showToPicker = false
+                }) { Text(stringResource(R.string.dialog_cancel)) }
+            },
         ) { DatePicker(state = state) }
     }
 }
+
 @Composable
 private fun PieChart(data: Map<String, Double>, modifier: Modifier = Modifier) {
     val total = data.values.sum()
     if (total == 0.0) return
     val reduceMotion = LocalReduceMotion.current
     val animDuration = if (reduceMotion) 0 else 800
-    val animatedProgress by animateFloatAsState(targetValue = 1f, animationSpec = tween(animDuration), label = "pie")
+    val animatedProgress by animateFloatAsState(
+        targetValue = 1f,
+        animationSpec = tween(animDuration),
+        label = "pie"
+    )
     Canvas(modifier = modifier) {
         val diameter = minOf(size.width, size.height) * 0.75f
         val topLeft = Offset((size.width - diameter) / 2f, (size.height - diameter) / 2f)
@@ -293,11 +357,19 @@ private fun PieChart(data: Map<String, Double>, modifier: Modifier = Modifier) {
         var startAngle = -90f
         data.entries.forEachIndexed { index, (_, value) ->
             val sweep = (value / total * 360f * animatedProgress).toFloat()
-            drawArc(color = pieColors[index % pieColors.size], startAngle = startAngle, sweepAngle = sweep, useCenter = true, topLeft = topLeft, size = arcSize)
+            drawArc(
+                color = pieColors[index % pieColors.size],
+                startAngle = startAngle,
+                sweepAngle = sweep,
+                useCenter = true,
+                topLeft = topLeft,
+                size = arcSize
+            )
             startAngle += sweep
         }
     }
 }
+
 @Composable
 private fun PieLegend(data: Map<String, Double>) {
     val total = data.values.sum()
@@ -307,7 +379,11 @@ private fun PieLegend(data: Map<String, Double>) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Canvas(modifier = Modifier.size(12.dp)) { drawCircle(color = pieColors[index % pieColors.size]) }
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(text = category, style = MaterialTheme.typography.bodySmall, modifier = Modifier.weight(1f))
+                Text(
+                    text = category,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.weight(1f)
+                )
                 Text(
                     text = "${formatAmount(value, fmt)} (%.0f%%)".format(value / total * 100),
                     style = MaterialTheme.typography.bodySmall,
@@ -317,6 +393,7 @@ private fun PieLegend(data: Map<String, Double>) {
         }
     }
 }
+
 @Composable
 private fun BarChart(data: List<MonthlyAmount>, modifier: Modifier = Modifier) {
     val maxValue = data.maxOf { maxOf(it.income, it.expense) }.coerceAtLeast(1.0)
@@ -325,7 +402,11 @@ private fun BarChart(data: List<MonthlyAmount>, modifier: Modifier = Modifier) {
     val labelColor = MaterialTheme.colorScheme.onSurfaceVariant
     val reduceMotion = LocalReduceMotion.current
     val animDuration = if (reduceMotion) 0 else 800
-    val animatedProgress by animateFloatAsState(targetValue = 1f, animationSpec = tween(animDuration), label = "bar")
+    val animatedProgress by animateFloatAsState(
+        targetValue = 1f,
+        animationSpec = tween(animDuration),
+        label = "bar"
+    )
     Canvas(modifier = modifier) {
         val barAreaHeight = size.height - 30.dp.toPx()
         val barGroupWidth = size.width / data.size.coerceAtLeast(1)
@@ -334,16 +415,35 @@ private fun BarChart(data: List<MonthlyAmount>, modifier: Modifier = Modifier) {
         data.forEachIndexed { index, item ->
             val groupX = index * barGroupWidth + barGroupWidth / 2f
             val incomeH = (item.income / maxValue * barAreaHeight * animatedProgress).toFloat()
-            drawRoundRect(color = incomeColor, topLeft = Offset(groupX - barWidth - gap / 2f, barAreaHeight - incomeH), size = Size(barWidth, incomeH), cornerRadius = CornerRadius(4.dp.toPx()))
+            drawRoundRect(
+                color = incomeColor,
+                topLeft = Offset(groupX - barWidth - gap / 2f, barAreaHeight - incomeH),
+                size = Size(barWidth, incomeH),
+                cornerRadius = CornerRadius(4.dp.toPx())
+            )
             val expenseH = (item.expense / maxValue * barAreaHeight * animatedProgress).toFloat()
-            drawRoundRect(color = expenseColor, topLeft = Offset(groupX + gap / 2f, barAreaHeight - expenseH), size = Size(barWidth, expenseH), cornerRadius = CornerRadius(4.dp.toPx()))
+            drawRoundRect(
+                color = expenseColor,
+                topLeft = Offset(groupX + gap / 2f, barAreaHeight - expenseH),
+                size = Size(barWidth, expenseH),
+                cornerRadius = CornerRadius(4.dp.toPx())
+            )
             drawContext.canvas.nativeCanvas.drawText(
                 item.label, groupX, size.height - 4.dp.toPx(),
-                Paint().apply { color = labelColor.hashCode(); textSize = 10.sp.toPx(); textAlign = Paint.Align.CENTER },
+                Paint().apply {
+                    color = labelColor.hashCode(); textSize = 10.sp.toPx(); textAlign =
+                    Paint.Align.CENTER
+                },
             )
         }
     }
-    Row(modifier = Modifier.fillMaxWidth().padding(top = 4.dp), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 4.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Canvas(modifier = Modifier.size(10.dp)) { drawCircle(color = incomeColor) }
         Spacer(modifier = Modifier.width(4.dp))
         Text(stringResource(R.string.charts_income), style = MaterialTheme.typography.labelSmall)
@@ -353,6 +453,7 @@ private fun BarChart(data: List<MonthlyAmount>, modifier: Modifier = Modifier) {
         Text(stringResource(R.string.charts_expenses), style = MaterialTheme.typography.labelSmall)
     }
 }
+
 // Previews
 @Preview(showBackground = true, name = "ChartsScreen - With Data")
 @Composable
@@ -361,19 +462,38 @@ private fun ChartsContentPreview() {
         ChartsContent(
             chartData = ChartData(
                 incomeByCategory = mapOf("Work" to 2500.0, "Freelance" to 800.0),
-                expenseByCategory = mapOf("Food" to 350.0, "Transport" to 120.0, "Entertainment" to 80.0, "Utilities" to 200.0),
+                expenseByCategory = mapOf(
+                    "Food" to 350.0,
+                    "Transport" to 120.0,
+                    "Entertainment" to 80.0,
+                    "Utilities" to 200.0
+                ),
                 totalIncome = 3300.0, totalExpense = 750.0,
-                monthlyData = listOf(MonthlyAmount("Jan 26", 2000.0, 800.0), MonthlyAmount("Feb 26", 2500.0, 650.0), MonthlyAmount("Mar 26", 3300.0, 750.0)),
+                monthlyData = listOf(
+                    MonthlyAmount("Jan 26", 2000.0, 800.0),
+                    MonthlyAmount("Feb 26", 2500.0, 650.0),
+                    MonthlyAmount("Mar 26", 3300.0, 750.0)
+                ),
             ),
-            dateRange = DateRange(System.currentTimeMillis() - 30L * 24 * 60 * 60 * 1000, System.currentTimeMillis()),
+            dateRange = DateRange(
+                System.currentTimeMillis() - 30L * 24 * 60 * 60 * 1000,
+                System.currentTimeMillis()
+            ),
         )
     }
 }
+
 @Preview(showBackground = true, name = "ChartsScreen - Empty")
 @Composable
 private fun ChartsContentEmptyPreview() {
     AntCashManagerTheme(dynamicColor = false) {
-        ChartsContent(chartData = ChartData(), dateRange = DateRange(System.currentTimeMillis() - 30L * 24 * 60 * 60 * 1000, System.currentTimeMillis()))
+        ChartsContent(
+            chartData = ChartData(),
+            dateRange = DateRange(
+                System.currentTimeMillis() - 30L * 24 * 60 * 60 * 1000,
+                System.currentTimeMillis()
+            )
+        )
     }
 }
 
@@ -411,8 +531,16 @@ private fun HelpDialog(onDismiss: () -> Unit) {
 private fun ChartsContentDarkPreview() {
     AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
         ChartsContent(
-            chartData = ChartData(expenseByCategory = mapOf("Food" to 350.0, "Transport" to 120.0), totalIncome = 2000.0, totalExpense = 470.0, monthlyData = listOf(MonthlyAmount("Feb 26", 2000.0, 470.0))),
-            dateRange = DateRange(System.currentTimeMillis() - 30L * 24 * 60 * 60 * 1000, System.currentTimeMillis()),
+            chartData = ChartData(
+                expenseByCategory = mapOf("Food" to 350.0, "Transport" to 120.0),
+                totalIncome = 2000.0,
+                totalExpense = 470.0,
+                monthlyData = listOf(MonthlyAmount("Feb 26", 2000.0, 470.0))
+            ),
+            dateRange = DateRange(
+                System.currentTimeMillis() - 30L * 24 * 60 * 60 * 1000,
+                System.currentTimeMillis()
+            ),
         )
     }
 }

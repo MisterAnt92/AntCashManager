@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.screen.settings.display
+package com.antcashmanager.android.ui.screen.settings_display
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -132,7 +132,8 @@ internal fun DisplayContent(
         ) {
             AppCard(
                 title = stringResource(R.string.settings_currency_symbol),
-                subtitle = CurrencyFormat.SUPPORTED_CURRENCIES.find { it.first == currencySymbol }?.second ?: currencySymbol,
+                subtitle = CurrencyFormat.SUPPORTED_CURRENCIES.find { it.first == currencySymbol }?.second
+                    ?: currencySymbol,
                 leadingIcon = Icons.Default.MonetizationOn,
                 onClick = { showCurrencyDialog = true },
             )
@@ -254,7 +255,10 @@ internal fun DisplayContent(
                     onResetAllPreferences()
                     showResetPreferencesDialog = false
                 }) {
-                    Text(stringResource(R.string.dialog_reset), color = MaterialTheme.colorScheme.error)
+                    Text(
+                        stringResource(R.string.dialog_reset),
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
             },
             dismissButton = {
@@ -268,12 +272,13 @@ internal fun DisplayContent(
 
 @Composable
 private fun separatorLabel(value: String, isThou: Boolean): String {
-    val options = if (isThou) CurrencyFormat.THOUSANDS_SEPARATORS else CurrencyFormat.DECIMAL_SEPARATORS
+    val options =
+        if (isThou) CurrencyFormat.THOUSANDS_SEPARATORS else CurrencyFormat.DECIMAL_SEPARATORS
     return options.find { it.first == value }?.second ?: when (value) {
         "," -> stringResource(R.string.settings_separator_comma)
         "." -> stringResource(R.string.settings_separator_period)
         " " -> stringResource(R.string.settings_separator_space)
-        ""  -> stringResource(R.string.settings_separator_none)
+        "" -> stringResource(R.string.settings_separator_none)
         else -> value
     }
 }

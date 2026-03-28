@@ -14,7 +14,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.antcashmanager.android.R
 
 /**
  * AppIcon - composable icon riutilizzabile con valori di default coerenti al tema
