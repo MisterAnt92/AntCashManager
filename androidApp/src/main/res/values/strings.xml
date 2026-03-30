@@ -100,6 +100,9 @@
     <string name="settings_display_subtitle">Customize currency, decimals, and formatting</string>
     <string name="settings_show_charts">Show Charts</string>
     <string name="settings_show_charts_subtitle">Show the charts section in navigation</string>
+    <string name="settings_show_charts_section">Show Charts Section</string>
+    <string name="settings_show_charts_section_visible">Charts section visible in navigation</string>
+    <string name="settings_show_charts_section_hidden">Charts section hidden from navigation</string>
     <string name="settings_currency_symbol">Currency Symbol</string>
     <string name="settings_decimal_digits">Decimal Digits</string>
     <string name="settings_decimal_digits_subtitle">%d decimal places</string>

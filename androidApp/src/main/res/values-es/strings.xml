@@ -85,6 +85,9 @@
     <string name="settings_display">Pantalla</string>
     <string name="settings_show_charts">Mostrar gr\u00e1ficos</string>
     <string name="settings_show_charts_subtitle">Mostrar u ocultar la secci\u00f3n de Gr\u00e1ficos en la barra de navegaci\u00f3n</string>
+    <string name="settings_show_charts_section">Mostrar sección de Gráficos</string>
+    <string name="settings_show_charts_section_visible">Sección de Gráficos visible en la navegación</string>
+    <string name="settings_show_charts_section_hidden">Sección de Gráficos oculta de la navegación</string>
     <string name="settings_currency_symbol">S\u00edmbolo de moneda</string>
     <string name="settings_decimal_digits">D\u00edgitos decimales</string>
     <string name="settings_decimal_digits_subtitle">%d decimales</string>

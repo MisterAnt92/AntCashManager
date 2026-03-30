@@ -85,6 +85,9 @@
     <string name="settings_display">Anzeige</string>
     <string name="settings_show_charts">Diagramme anzeigen</string>
     <string name="settings_show_charts_subtitle">Diagramme-Bereich in der Navigationsleiste ein- oder ausblenden</string>
+    <string name="settings_show_charts_section">Diagramm-Bereich anzeigen</string>
+    <string name="settings_show_charts_section_visible">Diagramm-Bereich in der Navigation sichtbar</string>
+    <string name="settings_show_charts_section_hidden">Diagramm-Bereich in der Navigation ausgeblendet</string>
     <string name="settings_currency_symbol">W\u00e4hrungssymbol</string>
     <string name="settings_decimal_digits">Dezimalstellen</string>
     <string name="settings_decimal_digits_subtitle">%d Dezimalstellen</string>

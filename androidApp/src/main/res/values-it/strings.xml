@@ -100,6 +100,9 @@
     <string name="settings_display_subtitle">Personalizza valuta, decimali e formattazione</string>
     <string name="settings_show_charts">Mostra Grafici</string>
     <string name="settings_show_charts_subtitle">Mostra la sezione grafici nella navigazione</string>
+    <string name="settings_show_charts_section">Mostra sezione grafici</string>
+    <string name="settings_show_charts_section_visible">Sezione grafici visibile nella navigazione</string>
+    <string name="settings_show_charts_section_hidden">Sezione grafici nascosta dalla navigazione</string>
     <string name="settings_currency_symbol">Simbolo Valuta</string>
     <string name="settings_decimal_digits">Cifre Decimali</string>
     <string name="settings_decimal_digits_subtitle">%d cifre decimali</string>

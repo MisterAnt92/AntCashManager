@@ -8,6 +8,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Exposure
 import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material.icons.filled.MoreHoriz
@@ -67,6 +68,7 @@ fun DisplayScreen(
     val decimalSeparator by viewModel.decimalSeparator.collectAsState()
     val thousandsSeparator by viewModel.thousandsSeparator.collectAsState()
     val showTransactionNotes by viewModel.showTransactionNotes.collectAsState()
+    val showChartsSection by viewModel.showChartsSection.collectAsState()
 
     DisplayContent(
         currencySymbol = currencySymbol,
@@ -79,6 +81,8 @@ fun DisplayScreen(
         onThousandsSeparatorSelected = { viewModel.setThousandsSeparator(it) },
         showTransactionNotes = showTransactionNotes,
         onShowTransactionNotesChanged = { viewModel.setShowTransactionNotes(it) },
+        showChartsSection = showChartsSection,
+        onShowChartsSectionChanged = { viewModel.setShowChartsSection(it) },
         onResetAllPreferences = { viewModel.resetAllPreferences() },
         onNavigateBack = { navController.popBackStack() },
     )
@@ -97,6 +101,8 @@ internal fun DisplayContent(
     onThousandsSeparatorSelected: (String) -> Unit,
     showTransactionNotes: Boolean,
     onShowTransactionNotesChanged: (Boolean) -> Unit,
+    showChartsSection: Boolean,
+    onShowChartsSectionChanged: (Boolean) -> Unit,
     onResetAllPreferences: () -> Unit,
     onNavigateBack: () -> Unit,
 ) {
@@ -166,6 +172,18 @@ internal fun DisplayContent(
                     )
                 },
                 onClick = { onShowTransactionNotesChanged(!showTransactionNotes) },
+            )
+            AppCard(
+                title = stringResource(R.string.settings_show_charts_section),
+                subtitle = if (showChartsSection) stringResource(R.string.settings_show_charts_section_visible) else stringResource(R.string.settings_show_charts_section_hidden),
+                leadingIcon = Icons.Default.BarChart,
+                trailingContent = {
+                    Switch(
+                        checked = showChartsSection,
+                        onCheckedChange = onShowChartsSectionChanged,
+                    )
+                },
+                onClick = { onShowChartsSectionChanged(!showChartsSection) },
             )
             AppCard(
                 title = stringResource(R.string.settings_reset_preferences),
@@ -422,6 +440,8 @@ private fun DisplayContentPreview() {
             onThousandsSeparatorSelected = {},
             showTransactionNotes = true,
             onShowTransactionNotesChanged = {},
+            showChartsSection = true,
+            onShowChartsSectionChanged = {},
             onResetAllPreferences = {},
             onNavigateBack = {},
         )

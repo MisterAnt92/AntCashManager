@@ -85,6 +85,9 @@
     <string name="settings_display">Affichage</string>
     <string name="settings_show_charts">Afficher les graphiques</string>
     <string name="settings_show_charts_subtitle">Afficher ou masquer la section Graphiques dans la barre de navigation</string>
+    <string name="settings_show_charts_section">Afficher la section Graphiques</string>
+    <string name="settings_show_charts_section_visible">Section Graphiques visible dans la navigation</string>
+    <string name="settings_show_charts_section_hidden">Section Graphiques masquée de la navigation</string>
     <string name="settings_currency_symbol">Symbole de devise</string>
     <string name="settings_decimal_digits">Chiffres d\u00e9cimaux</string>
     <string name="settings_decimal_digits_subtitle">%d d\u00e9cimales</string>

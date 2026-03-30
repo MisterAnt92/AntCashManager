@@ -68,6 +68,14 @@ class DisplayViewModel(
             DEFAULT_SHOW_TRANSACTION_NOTES,
         )
 
+    // Espone la preferenza per la visualizzazione della sezione grafici
+    val showChartsSection = settingsRepository.getShowCharts()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
+            true,
+        )
+
     /**
      * Aggiorna il simbolo valuta.
      */
@@ -106,6 +114,14 @@ class DisplayViewModel(
     fun setShowTransactionNotes(show: Boolean) = updatePreference(
         logMsg = "Setting show transaction notes: $show",
         action = { settingsRepository.setShowTransactionNotes(show) },
+    )
+
+    /**
+     * Aggiorna la preferenza per la visualizzazione della sezione grafici.
+     */
+    fun setShowChartsSection(show: Boolean) = updatePreference(
+        logMsg = "Setting show charts section: $show",
+        action = { settingsRepository.setShowCharts(show) },
     )
 
     /**
