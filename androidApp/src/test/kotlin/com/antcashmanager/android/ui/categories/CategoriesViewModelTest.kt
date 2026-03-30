@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.categories
-import com.antcashmanager.android.ui.screen.home.categories.CategoriesViewModel
+
+import com.antcashmanager.android.ui.screen.categories.CategoriesViewModel
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.repository.CategoryRepository
 import kotlinx.coroutines.Dispatchers
@@ -19,21 +20,25 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+
 @OptIn(ExperimentalCoroutinesApi::class)
 class CategoriesViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var fakeRepo: FakeCategoryRepository
     private lateinit var viewModel: CategoriesViewModel
+
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         fakeRepo = FakeCategoryRepository()
         viewModel = CategoriesViewModel(fakeRepo)
     }
+
     @After
     fun tearDown() {
         Dispatchers.resetMain()
     }
+
     @Test
     fun `initial categories list is empty`() = runTest(testDispatcher) {
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
@@ -43,6 +48,7 @@ class CategoriesViewModelTest {
         assertTrue(viewModel.state.value.categories.isEmpty())
         collectJob.cancel()
     }
+
     @Test
     fun `addCategory adds a new expense category`() = runTest(testDispatcher) {
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
@@ -74,8 +80,20 @@ class CategoriesViewModelTest {
     @Test
     fun `expenseCategories filters by EXPENSE type`() = runTest(testDispatcher) {
         fakeRepo.categories.value = listOf(
-            Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373, type = "EXPENSE"),
-            Category(id = 2, name = "Salary", icon = "payments", color = 0xFF81C784, type = "INCOME"),
+            Category(
+                id = 1,
+                name = "Food",
+                icon = "category",
+                color = 0xFFE57373,
+                type = "EXPENSE"
+            ),
+            Category(
+                id = 2,
+                name = "Salary",
+                icon = "payments",
+                color = 0xFF81C784,
+                type = "INCOME"
+            ),
         )
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.state.collect {}
@@ -89,8 +107,20 @@ class CategoriesViewModelTest {
     @Test
     fun `incomeCategories filters by INCOME type`() = runTest(testDispatcher) {
         fakeRepo.categories.value = listOf(
-            Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373, type = "EXPENSE"),
-            Category(id = 2, name = "Salary", icon = "payments", color = 0xFF81C784, type = "INCOME"),
+            Category(
+                id = 1,
+                name = "Food",
+                icon = "category",
+                color = 0xFFE57373,
+                type = "EXPENSE"
+            ),
+            Category(
+                id = 2,
+                name = "Salary",
+                icon = "payments",
+                color = 0xFF81C784,
+                type = "INCOME"
+            ),
         )
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.state.collect {}
@@ -100,6 +130,7 @@ class CategoriesViewModelTest {
         assertEquals("Salary", viewModel.state.value.incomeCategories.first().name)
         collectJob.cancel()
     }
+
     @Test
     fun `deleteCategory removes category`() = runTest(testDispatcher) {
         val category = Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373)
@@ -113,6 +144,7 @@ class CategoriesViewModelTest {
         assertTrue(viewModel.state.value.categories.isEmpty())
         collectJob.cancel()
     }
+
     @Test
     fun `updateCategory updates existing category`() = runTest(testDispatcher) {
         val category = Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373)
@@ -128,26 +160,33 @@ class CategoriesViewModelTest {
         collectJob.cancel()
     }
 }
+
 private class FakeCategoryRepository : CategoryRepository {
     val categories = MutableStateFlow<List<Category>>(emptyList())
     override fun getAllCategories(): Flow<List<Category>> = categories
     override suspend fun getCategoryById(id: Long): Category? =
         categories.value.find { it.id == id }
+
     override suspend fun insertCategory(category: Category): Long {
         categories.value += category
         return category.id
     }
+
     override suspend fun updateCategory(category: Category) {
         categories.value = categories.value.map { if (it.id == category.id) category else it }
     }
+
     override suspend fun deleteCategory(category: Category) {
         categories.value = categories.value.filter { it.id != category.id }
     }
+
     override suspend fun deleteAllCategories() {
         categories.value = emptyList()
     }
+
     override fun getCategoriesByType(type: String): Flow<List<Category>> =
         categories.map { list -> list.filter { it.type == type } }
+
     override suspend fun getDefaultCategoryCount(): Int =
         categories.value.count { it.isDefault }
 }

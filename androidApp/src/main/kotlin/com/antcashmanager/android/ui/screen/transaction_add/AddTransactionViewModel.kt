@@ -150,7 +150,7 @@ class AddTransactionViewModel(
 
     private fun nextStep() {
         val currentState = _internalState.value
-        
+
         // Validazione del step corrente prima di procedere
         if (!isCurrentStepValid(currentState)) {
             Logger.w(TAG) { "Cannot proceed: current step is not valid" }
@@ -208,7 +208,7 @@ class AddTransactionViewModel(
         viewModelScope.launch {
             try {
                 _internalState.update { it.copy(isLoading = true) }
-                
+
                 val transaction = Transaction(
                     title = currentState.title,
                     amount = amount,

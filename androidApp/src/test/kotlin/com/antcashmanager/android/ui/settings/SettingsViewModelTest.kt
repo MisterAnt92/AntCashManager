@@ -1,6 +1,6 @@
 package com.antcashmanager.android.ui.settings
 
-import com.antcashmanager.android.ui.screen.home.settings.SettingsViewModel
+import com.antcashmanager.android.ui.screen.settings.SettingsViewModel
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.Category
@@ -114,7 +114,13 @@ class SettingsViewModelTest {
     fun `deleteAllData clears transactions and categories`() = runTest(testDispatcher) {
         // Add some test data
         fakeTransactionRepo.transactions.value = listOf(
-            Transaction(id = 1, title = "Test", amount = 100.0, category = "Food", type = com.antcashmanager.domain.model.TransactionType.EXPENSE),
+            Transaction(
+                id = 1,
+                title = "Test",
+                amount = 100.0,
+                category = "Food",
+                type = com.antcashmanager.domain.model.TransactionType.EXPENSE
+            ),
         )
         fakeCategoryRepo.categories.value = listOf(
             Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373),
@@ -156,13 +162,25 @@ private class FakeSettingsRepository : SettingsRepository {
     }
 
     override fun getShowCharts(): Flow<Boolean> = showChartsFlow
-    override suspend fun setShowCharts(show: Boolean) { showChartsFlow.value = show }
+    override suspend fun setShowCharts(show: Boolean) {
+        showChartsFlow.value = show
+    }
+
     override fun getHighContrast(): Flow<Boolean> = highContrastFlow
-    override suspend fun setHighContrast(enabled: Boolean) { highContrastFlow.value = enabled }
+    override suspend fun setHighContrast(enabled: Boolean) {
+        highContrastFlow.value = enabled
+    }
+
     override fun getLargeText(): Flow<Boolean> = largeTextFlow
-    override suspend fun setLargeText(enabled: Boolean) { largeTextFlow.value = enabled }
+    override suspend fun setLargeText(enabled: Boolean) {
+        largeTextFlow.value = enabled
+    }
+
     override fun getReduceMotion(): Flow<Boolean> = reduceMotionFlow
-    override suspend fun setReduceMotion(enabled: Boolean) { reduceMotionFlow.value = enabled }
+    override suspend fun setReduceMotion(enabled: Boolean) {
+        reduceMotionFlow.value = enabled
+    }
+
     // Additional preferences required by SettingsRepository
     private val showTransactionNotesFlow = MutableStateFlow(true)
     private val currencySymbolFlow = MutableStateFlow("\u20ac")
@@ -171,19 +189,29 @@ private class FakeSettingsRepository : SettingsRepository {
     private val thousandsSeparatorFlow = MutableStateFlow(".")
 
     override fun getShowTransactionNotes(): Flow<Boolean> = showTransactionNotesFlow
-    override suspend fun setShowTransactionNotes(show: Boolean) { showTransactionNotesFlow.value = show }
+    override suspend fun setShowTransactionNotes(show: Boolean) {
+        showTransactionNotesFlow.value = show
+    }
 
     override fun getCurrencySymbol(): Flow<String> = currencySymbolFlow
-    override suspend fun setCurrencySymbol(symbol: String) { currencySymbolFlow.value = symbol }
+    override suspend fun setCurrencySymbol(symbol: String) {
+        currencySymbolFlow.value = symbol
+    }
 
     override fun getDecimalDigits(): Flow<Int> = decimalDigitsFlow
-    override suspend fun setDecimalDigits(digits: Int) { decimalDigitsFlow.value = digits }
+    override suspend fun setDecimalDigits(digits: Int) {
+        decimalDigitsFlow.value = digits
+    }
 
     override fun getDecimalSeparator(): Flow<String> = decimalSeparatorFlow
-    override suspend fun setDecimalSeparator(separator: String) { decimalSeparatorFlow.value = separator }
+    override suspend fun setDecimalSeparator(separator: String) {
+        decimalSeparatorFlow.value = separator
+    }
 
     override fun getThousandsSeparator(): Flow<String> = thousandsSeparatorFlow
-    override suspend fun setThousandsSeparator(separator: String) { thousandsSeparatorFlow.value = separator }
+    override suspend fun setThousandsSeparator(separator: String) {
+        thousandsSeparatorFlow.value = separator
+    }
 
     override suspend fun resetAllPreferences() {
         // reset to defaults
@@ -215,7 +243,8 @@ private class FakeTransactionRepository : TransactionRepository {
     }
 
     override suspend fun updateTransaction(transaction: Transaction) {
-        transactions.value = transactions.value.map { if (it.id == transaction.id) transaction else it }
+        transactions.value =
+            transactions.value.map { if (it.id == transaction.id) transaction else it }
     }
 
     override suspend fun deleteTransaction(transaction: Transaction) {

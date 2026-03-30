@@ -1,8 +1,10 @@
 package com.antcashmanager.android.ui.screen.transaction_add
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +22,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -84,19 +87,23 @@ fun AddTransactionScreen(
 
     val state by viewModel.state.collectAsState()
     @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
-    var hasNavigatedBack by remember { mutableStateOf(false) }
+    var hasSubmittedOnce by remember { mutableStateOf(false) }
 
-    // Naviga indietro solo una volta dopo il reset dello state (transazione completata)
-    if (!hasNavigatedBack && state.selectedCategory == null && state.selectedType == null && 
+    // Naviga indietro solo se: transazione è stata sottomessa E stato è stato resettato
+    if (hasSubmittedOnce && state.selectedCategory == null && state.selectedType == null && 
         state.title.isEmpty() && state.currentStep == AddTransactionStep.CATEGORY_SELECTION &&
         state.isLoading == false) {
-        hasNavigatedBack = true
         onTransactionAdded()
     }
 
     AddTransactionContent(
         state = state,
-        onEvent = viewModel::onEvent,
+        onEvent = { event ->
+            if (event is AddTransactionEvent.Submit) {
+                hasSubmittedOnce = true
+            }
+            viewModel.onEvent(event)
+        },
         onNavigateBack = onNavigateBack,
     )
 }
@@ -206,25 +213,35 @@ private fun CategorySelectionStep(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState()),
+                .padding(16.dp),
         ) {
             AppText(
                 stringResource(R.string.add_transaction_choose_category),
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(bottom = 16.dp),
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(bottom = 24.dp),
             )
 
             if (categories.isEmpty()) {
-                AppText(stringResource(R.string.add_transaction_no_categories_available), style = MaterialTheme.typography.bodyMedium)
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    AppText(
+                        stringResource(R.string.add_transaction_no_categories_available),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
             } else {
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
+                    columns = GridCells.Fixed(3),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(400.dp),
+                        .weight(1f),
                 ) {
                     items(categories) { category ->
                         CategoryCard(
@@ -236,11 +253,11 @@ private fun CategorySelectionStep(
                 }
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 AppButton(
                     text = stringResource(R.string.add_transaction_cancel),
@@ -264,29 +281,64 @@ private fun CategoryCard(
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
+    val backgroundColor = if (isSelected) {
+        MaterialTheme.colorScheme.primaryContainer
+    } else {
+        MaterialTheme.colorScheme.surface
+    }
+    
+    val borderColor = if (isSelected) {
+        MaterialTheme.colorScheme.primary
+    } else {
+        MaterialTheme.colorScheme.outlineVariant
+    }
+
     Column(
         modifier = Modifier
-            .clip(RoundedCornerShape(12.dp))
-            .background(
-                if (isSelected) MaterialTheme.colorScheme.primaryContainer
-                else MaterialTheme.colorScheme.surfaceVariant,
+            .clip(RoundedCornerShape(16.dp))
+            .background(backgroundColor)
+            .border(
+                width = if (isSelected) 2.dp else 1.dp,
+                color = borderColor,
+                shape = RoundedCornerShape(16.dp)
             )
             .clickable(onClick = onClick)
-            .padding(16.dp),
+            .padding(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
+        // Icona della categoria - più grande e prominente
         Text(
             text = category.icon,
-            style = MaterialTheme.typography.displayLarge,
-            modifier = Modifier.size(48.dp),
+            style = MaterialTheme.typography.displayMedium,
+            modifier = Modifier
+                .size(56.dp)
+                .padding(4.dp),
         )
-        Spacer(modifier = Modifier.height(8.dp))
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Nome della categoria - testo con migliore leggibilità
         AppText(
             text = category.name,
-            style = MaterialTheme.typography.labelMedium,
+            style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.SemiBold,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 4.dp),
+            maxLines = 2,
         )
+
+        // Indicatore di selezione
+        if (isSelected) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Icon(
+                imageVector = androidx.compose.material.icons.Icons.Default.Check,
+                contentDescription = stringResource(R.string.categories_selected),
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(20.dp),
+            )
+        }
     }
 }
 
@@ -623,3 +675,66 @@ private fun ConfirmationField(label: String, value: String) {
     }
 }
 
+// ══════════════════════════════════════════════════════════════════════════════
+// PREVIEWS
+// ══════════════════════════════════════════════════════════════════════════════
+
+@androidx.compose.ui.tooling.preview.Preview
+@Composable
+fun CategoryCardPreview() {
+    MaterialTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            // Non-selected category
+            CategoryCard(
+                category = Category(
+                    id = 1,
+                    name = "Food",
+                    icon = "🍔",
+                    color = 0xFFFF6B6B,
+                    type = "EXPENSE"
+                ),
+                isSelected = false,
+                onClick = {}
+            )
+
+            // Selected category
+            CategoryCard(
+                category = Category(
+                    id = 2,
+                    name = "Salary",
+                    icon = "💰",
+                    color = 0xFF51CF66,
+                    type = "INCOME"
+                ),
+                isSelected = true,
+                onClick = {}
+            )
+        }
+    }
+}
+
+@androidx.compose.ui.tooling.preview.Preview
+@Composable
+fun CategorySelectionStepPreview() {
+    MaterialTheme {
+        CategorySelectionStep(
+            categories = listOf(
+                Category(1, "Food", "🍔", 0xFFFF6B6B, "EXPENSE"),
+                Category(2, "Transport", "🚗", 0xFFFFA500, "EXPENSE"),
+                Category(3, "Entertainment", "🎮", 0xFF9C27B0, "EXPENSE"),
+                Category(4, "Salary", "💰", 0xFF51CF66, "INCOME"),
+                Category(5, "Gifts", "🎁", 0xFFE91E63, "INCOME"),
+                Category(6, "Business", "💼", 0xFF2196F3, "INCOME"),
+            ),
+            selectedCategory = Category(2, "Transport", "🚗", 0xFFFFA500, "EXPENSE"),
+            onSelectCategory = {},
+            onNext = {},
+            onCancel = {}
+        )
+    }
+}

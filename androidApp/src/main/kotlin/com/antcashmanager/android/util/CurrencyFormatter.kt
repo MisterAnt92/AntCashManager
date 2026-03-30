@@ -17,7 +17,8 @@ fun formatAmount(amount: Double, format: CurrencyFormat): String {
 
     val dotIndex = rawFormatted.indexOf('.')
     val intPart = if (dotIndex >= 0) rawFormatted.substring(0, dotIndex) else rawFormatted
-    val decPart = if (dotIndex >= 0 && format.decimalDigits > 0) rawFormatted.substring(dotIndex + 1) else ""
+    val decPart =
+        if (dotIndex >= 0 && format.decimalDigits > 0) rawFormatted.substring(dotIndex + 1) else ""
 
     val intWithSeparator = if (format.thousandsSeparator.isNotEmpty() && intPart.length > 3) {
         // If thousands separator is the same as decimal separator it would create ambiguity
@@ -39,7 +40,7 @@ fun formatAmount(amount: Double, format: CurrencyFormat): String {
 
     return buildString {
         append(format.currencySymbol)
-        
+
         val hasDecimals = format.decimalDigits > 0 && decPart.isNotEmpty()
         val hasThousandsSep = format.thousandsSeparator.isNotEmpty()
         val endsWithThousandsSep = intWithSeparator.endsWith(format.thousandsSeparator)
@@ -49,9 +50,9 @@ fun formatAmount(amount: Double, format: CurrencyFormat): String {
         } else {
             intWithSeparator
         }
-        
+
         append(finalIntPart)
-        
+
         if (hasDecimals) {
             append(format.decimalSeparator)
             append(decPart)

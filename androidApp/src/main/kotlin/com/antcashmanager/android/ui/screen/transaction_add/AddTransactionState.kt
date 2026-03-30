@@ -23,11 +23,11 @@ enum class AddTransactionStep {
 data class AddTransactionState(
     // ── Navigazione ──
     val currentStep: AddTransactionStep = AddTransactionStep.CATEGORY_SELECTION,
-    
+
     // ── Dati categoria e tipo ──
     val selectedCategory: Category? = null,
     val selectedType: TransactionType? = null,
-    
+
     // ── Dettagli transazione ──
     val title: String = "",
     val amount: String = "",
@@ -38,7 +38,7 @@ data class AddTransactionState(
     val tags: String = "",
     val isRecurring: Boolean = false,
     val recurrenceInterval: String = "",
-    
+
     // ── Dati disponibili ──
     val categories: List<Category> = emptyList(),
     val isLoading: Boolean = false,

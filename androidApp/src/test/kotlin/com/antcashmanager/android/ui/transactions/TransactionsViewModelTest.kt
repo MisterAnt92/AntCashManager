@@ -1,6 +1,6 @@
 package com.antcashmanager.android.ui.transactions
 
-import com.antcashmanager.android.ui.screen.home.transactions.TransactionsViewModel
+import com.antcashmanager.android.ui.screen.transactions.TransactionsViewModel
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
@@ -48,29 +48,29 @@ class TransactionsViewModelTest {
     @Test
     fun `initial transactions list is empty`() = runTest(testDispatcher) {
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.transactions.collect {}
+            viewModel.state.collect {}
         }
         advanceUntilIdle()
 
-        assertTrue(viewModel.transactions.value.isEmpty())
+        assertTrue(viewModel.state.value.transactions.isEmpty())
         collectJob.cancel()
     }
 
     @Test
     fun `initial categories list is empty`() = runTest(testDispatcher) {
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.categories.collect {}
+            viewModel.state.collect {}
         }
         advanceUntilIdle()
 
-        assertTrue(viewModel.categories.value.isEmpty())
+        assertTrue(viewModel.state.value.categories.isEmpty())
         collectJob.cancel()
     }
 
     @Test
     fun `addTransaction adds a new transaction`() = runTest(testDispatcher) {
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.transactions.collect {}
+            viewModel.state.collect {}
         }
         advanceUntilIdle()
 
@@ -84,10 +84,10 @@ class TransactionsViewModelTest {
         )
         advanceUntilIdle()
 
-        assertEquals(1, viewModel.transactions.value.size)
-        assertEquals("Lunch", viewModel.transactions.value.first().title)
-        assertEquals(15.0, viewModel.transactions.value.first().amount, 0.01)
-        assertEquals(TransactionType.EXPENSE, viewModel.transactions.value.first().type)
+        assertEquals(1, viewModel.state.value.transactions.size)
+        assertEquals("Lunch", viewModel.state.value.transactions.first().title)
+        assertEquals(15.0, viewModel.state.value.transactions.first().amount, 0.01)
+        assertEquals(TransactionType.EXPENSE, viewModel.state.value.transactions.first().type)
         collectJob.cancel()
     }
 
@@ -105,15 +105,15 @@ class TransactionsViewModelTest {
         fakeTransactionRepo.transactions.value = listOf(transaction)
 
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.transactions.collect {}
+            viewModel.state.collect {}
         }
         advanceUntilIdle()
-        assertEquals(1, viewModel.transactions.value.size)
+        assertEquals(1, viewModel.state.value.transactions.size)
 
         viewModel.deleteTransaction(transaction)
         advanceUntilIdle()
 
-        assertTrue(viewModel.transactions.value.isEmpty())
+        assertTrue(viewModel.state.value.transactions.isEmpty())
         collectJob.cancel()
     }
 
@@ -131,7 +131,7 @@ class TransactionsViewModelTest {
         fakeTransactionRepo.transactions.value = listOf(transaction)
 
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.transactions.collect {}
+            viewModel.state.collect {}
         }
         advanceUntilIdle()
 
@@ -139,9 +139,9 @@ class TransactionsViewModelTest {
         viewModel.updateTransaction(updated)
         advanceUntilIdle()
 
-        assertEquals(1, viewModel.transactions.value.size)
-        assertEquals("Espresso", viewModel.transactions.value.first().title)
-        assertEquals(2.5, viewModel.transactions.value.first().amount, 0.01)
+        assertEquals(1, viewModel.state.value.transactions.size)
+        assertEquals("Espresso", viewModel.state.value.transactions.first().title)
+        assertEquals(2.5, viewModel.state.value.transactions.first().amount, 0.01)
         collectJob.cancel()
     }
 
@@ -153,20 +153,20 @@ class TransactionsViewModelTest {
         )
 
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.categories.collect {}
+            viewModel.state.collect {}
         }
         advanceUntilIdle()
 
-        assertEquals(2, viewModel.categories.value.size)
-        assertEquals("Food", viewModel.categories.value[0].name)
-        assertEquals("Transport", viewModel.categories.value[1].name)
+        assertEquals(2, viewModel.state.value.categories.size)
+        assertEquals("Food", viewModel.state.value.categories[0].name)
+        assertEquals("Transport", viewModel.state.value.categories[1].name)
         collectJob.cancel()
     }
 
     @Test
     fun `addTransaction with income type`() = runTest(testDispatcher) {
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.transactions.collect {}
+            viewModel.state.collect {}
         }
         advanceUntilIdle()
 
@@ -180,9 +180,9 @@ class TransactionsViewModelTest {
         )
         advanceUntilIdle()
 
-        assertEquals(1, viewModel.transactions.value.size)
-        assertEquals(TransactionType.INCOME, viewModel.transactions.value.first().type)
-        assertEquals(3000.0, viewModel.transactions.value.first().amount, 0.01)
+        assertEquals(1, viewModel.state.value.transactions.size)
+        assertEquals(TransactionType.INCOME, viewModel.state.value.transactions.first().type)
+        assertEquals(3000.0, viewModel.state.value.transactions.first().amount, 0.01)
         collectJob.cancel()
     }
 }

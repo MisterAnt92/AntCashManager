@@ -18,12 +18,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.antcashmanager.android.ui.screen.transaction_add.AddTransactionScreen
 import com.antcashmanager.android.ui.screen.categories.CategoriesScreen
 import com.antcashmanager.android.ui.screen.charts.ChartsScreen
 import com.antcashmanager.android.ui.screen.home.HomeScreen
 import com.antcashmanager.android.ui.screen.settings.SettingsScreen
 import com.antcashmanager.android.ui.screen.settings_display.DisplayScreen
+import com.antcashmanager.android.ui.screen.transaction_add.AddTransactionScreen
 import com.antcashmanager.android.ui.screen.transactions.TransactionsScreen
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.domain.model.CurrencyFormat
@@ -50,7 +50,8 @@ fun AntCashManagerNavHost(
     val currencySymbol by settingsRepository.getCurrencySymbol().collectAsState(initial = "\u20ac")
     val decimalDigits by settingsRepository.getDecimalDigits().collectAsState(initial = 2)
     val decimalSeparator by settingsRepository.getDecimalSeparator().collectAsState(initial = ",")
-    val thousandsSeparator by settingsRepository.getThousandsSeparator().collectAsState(initial = ".")
+    val thousandsSeparator by settingsRepository.getThousandsSeparator()
+        .collectAsState(initial = ".")
 
     val currencyFormat = CurrencyFormat(
         currencySymbol = currencySymbol,
@@ -75,7 +76,12 @@ fun AntCashManagerNavHost(
                     val currentDestination = navBackStackEntry?.destination
                     visibleNavItems.forEach { item ->
                         NavigationBarItem(
-                            icon = { Icon(item.icon, contentDescription = stringResource(item.titleResId)) },
+                            icon = {
+                                Icon(
+                                    item.icon,
+                                    contentDescription = stringResource(item.titleResId)
+                                )
+                            },
                             label = { Text(stringResource(item.titleResId)) },
                             selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
                             onClick = {

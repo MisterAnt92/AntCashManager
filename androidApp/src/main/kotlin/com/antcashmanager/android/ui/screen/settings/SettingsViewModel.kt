@@ -194,7 +194,13 @@ class SettingsViewModel(
                 DEFAULT_THOUSANDS_SEPARATOR
             ),
         ) { reduceMotion, currencySymbol, decimalDigits, decimalSeparator, thousandsSeparator ->
-            SettingsPreferences2(reduceMotion, currencySymbol, decimalDigits, decimalSeparator, thousandsSeparator)
+            SettingsPreferences2(
+                reduceMotion,
+                currencySymbol,
+                decimalDigits,
+                decimalSeparator,
+                thousandsSeparator
+            )
         },
         settingsRepository.getShowTransactionNotes().stateIn(
             viewModelScope,
