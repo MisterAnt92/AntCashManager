@@ -31,6 +31,7 @@ class SettingsRepositoryImpl(
     private val decimalDigitsKey = intPreferencesKey("decimal_digits")
     private val decimalSeparatorKey = stringPreferencesKey("decimal_separator")
     private val thousandsSeparatorKey = stringPreferencesKey("thousands_separator")
+    private val dateFormatKey = stringPreferencesKey("date_format")
 
     override fun getTheme(): Flow<AppTheme> =
         context.dataStore.data.map { preferences ->
@@ -139,6 +140,13 @@ class SettingsRepositoryImpl(
         context.dataStore.edit { it[thousandsSeparatorKey] = separator }
     }
 
+    override fun getDateFormat(): Flow<String> =
+        context.dataStore.data.map { it[dateFormatKey] ?: "dd/MM/yyyy" }
+
+    override suspend fun setDateFormat(pattern: String) {
+        context.dataStore.edit { it[dateFormatKey] = pattern }
+    }
+
     override suspend fun resetAllPreferences() {
         context.dataStore.edit { prefs ->
             prefs[themeKey] = AppTheme.SYSTEM.name
@@ -152,6 +160,7 @@ class SettingsRepositoryImpl(
             prefs[decimalDigitsKey] = 2
             prefs[decimalSeparatorKey] = ","
             prefs[thousandsSeparatorKey] = ""
+            prefs[dateFormatKey] = "dd/MM/yyyy"
         }
     }
 }

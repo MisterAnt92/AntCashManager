@@ -109,6 +109,17 @@
     <string name="settings_large_text_subtitle">Aumenta el tama\u00f1o de fuente en toda la app para facilitar la lectura.</string>
     <string name="settings_reduce_motion">Reducir movimiento</string>
     <string name="settings_reduce_motion_subtitle">Minimiza las animaciones y transiciones. \u00datil para usuarios sensibles al movimiento.</string>
+    <string name="settings_date_format">Formato de fecha</string>
+    <string name="settings_date_format_subtitle">%s</string>
+    <string name="settings_section_currency">Moneda</string>
+    <string name="settings_section_charts">Gr\u00e1ficos</string>
+    <string name="settings_section_dates">Fechas</string>
+    <string name="settings_section_other">Otros</string>
+    <string name="date_format_ddmmyyyy">DD/MM/AAAA</string>
+    <string name="date_format_mmddyyyy">MM/DD/AAAA</string>
+    <string name="date_format_yyyymmdd">AAAA-MM-DD</string>
+    <string name="date_format_ddmmmyyyy">DD MMM AAAA</string>
+    <string name="dialog_choose_date_format">Elegir formato de fecha</string>
     <string name="settings_data_management">Gesti\u00f3n de datos</string>
     <string name="settings_delete_all">Eliminar todos los datos</string>
     <string name="settings_delete_all_subtitle">Eliminar permanentemente todas las transacciones y categor\u00edas</string>

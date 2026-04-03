@@ -25,6 +25,7 @@ class DisplayViewModel(
         private const val DEFAULT_DECIMAL_SEPARATOR = ","
         private const val DEFAULT_THOUSANDS_SEPARATOR = "."
         private const val DEFAULT_SHOW_TRANSACTION_NOTES = true
+        private const val DEFAULT_DATE_FORMAT = "dd/MM/yyyy"
         private const val SHARING_TIMEOUT = 5_000L
     }
 
@@ -76,6 +77,14 @@ class DisplayViewModel(
             true,
         )
 
+    // Espone il formato data
+    val dateFormat = settingsRepository.getDateFormat()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
+            DEFAULT_DATE_FORMAT,
+        )
+
     /**
      * Aggiorna il simbolo valuta.
      */
@@ -122,6 +131,14 @@ class DisplayViewModel(
     fun setShowChartsSection(show: Boolean) = updatePreference(
         logMsg = "Setting show charts section: $show",
         action = { settingsRepository.setShowCharts(show) },
+    )
+
+    /**
+     * Aggiorna il formato data.
+     */
+    fun setDateFormat(pattern: String) = updatePreference(
+        logMsg = "Setting date format: $pattern",
+        action = { settingsRepository.setDateFormat(pattern) },
     )
 
     /**

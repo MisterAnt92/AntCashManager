@@ -9,6 +9,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Exposure
 import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material.icons.filled.MoreHoriz
@@ -44,10 +45,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AppCard
+import com.antcashmanager.android.ui.components.AppCardSectionHeader
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.formatAmount
 import com.antcashmanager.domain.model.CurrencyFormat
+import com.antcashmanager.domain.model.DateFormatType
 import com.antcashmanager.domain.repository.SettingsRepository
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,6 +75,7 @@ fun DisplayScreen(
     val thousandsSeparator by viewModel.thousandsSeparator.collectAsState()
     val showTransactionNotes by viewModel.showTransactionNotes.collectAsState()
     val showChartsSection by viewModel.showChartsSection.collectAsState()
+    val dateFormat by viewModel.dateFormat.collectAsState()
 
     DisplayContent(
         currencySymbol = currencySymbol,
@@ -83,6 +90,8 @@ fun DisplayScreen(
         onShowTransactionNotesChanged = { viewModel.setShowTransactionNotes(it) },
         showChartsSection = showChartsSection,
         onShowChartsSectionChanged = { viewModel.setShowChartsSection(it) },
+        dateFormat = dateFormat,
+        onDateFormatSelected = { viewModel.setDateFormat(it) },
         onResetAllPreferences = { viewModel.resetAllPreferences() },
         onNavigateBack = { navController.popBackStack() },
     )
@@ -103,6 +112,8 @@ internal fun DisplayContent(
     onShowTransactionNotesChanged: (Boolean) -> Unit,
     showChartsSection: Boolean,
     onShowChartsSectionChanged: (Boolean) -> Unit,
+    dateFormat: String,
+    onDateFormatSelected: (String) -> Unit,
     onResetAllPreferences: () -> Unit,
     onNavigateBack: () -> Unit,
 ) {
@@ -110,6 +121,7 @@ internal fun DisplayContent(
     var showDecimalDigitsDialog by remember { mutableStateOf(false) }
     var showDecimalSeparatorDialog by remember { mutableStateOf(false) }
     var showThousandsSeparatorDialog by remember { mutableStateOf(false) }
+    var showDateFormatDialog by remember { mutableStateOf(false) }
     var showResetPreferencesDialog by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -136,6 +148,11 @@ internal fun DisplayContent(
                 .padding(top = 16.dp, bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
+            // ═════════════════════════════════════════════════════════
+            // SEZIONE VALUTA
+            // ═════════════════════════════════════════════════════════
+            AppCardSectionHeader(title = stringResource(R.string.settings_section_currency))
+
             AppCard(
                 title = stringResource(R.string.settings_currency_symbol),
                 subtitle = CurrencyFormat.SUPPORTED_CURRENCIES.find { it.first == currencySymbol }?.second
@@ -161,41 +178,6 @@ internal fun DisplayContent(
                 leadingIcon = Icons.Default.MoreHoriz,
                 onClick = { showThousandsSeparatorDialog = true },
             )
-            AppCard(
-                title = "Mostra Note Transazioni",
-                subtitle = if (showTransactionNotes) "Note visibili negli item" else "Note nascoste",
-                leadingIcon = Icons.Default.TextFields,
-                trailingContent = {
-                    Switch(
-                        checked = showTransactionNotes,
-                        onCheckedChange = onShowTransactionNotesChanged,
-                    )
-                },
-                onClick = { onShowTransactionNotesChanged(!showTransactionNotes) },
-            )
-            AppCard(
-                title = stringResource(R.string.settings_show_charts_section),
-                subtitle = if (showChartsSection) stringResource(R.string.settings_show_charts_section_visible) else stringResource(
-                    R.string.settings_show_charts_section_hidden
-                ),
-                leadingIcon = Icons.Default.BarChart,
-                trailingContent = {
-                    Switch(
-                        checked = showChartsSection,
-                        onCheckedChange = onShowChartsSectionChanged,
-                    )
-                },
-                onClick = { onShowChartsSectionChanged(!showChartsSection) },
-            )
-            AppCard(
-                title = stringResource(R.string.settings_reset_preferences),
-                subtitle = stringResource(R.string.settings_reset_preferences_subtitle),
-                leadingIcon = Icons.Default.Refresh,
-                iconBackgroundColor = MaterialTheme.colorScheme.errorContainer,
-                iconTint = MaterialTheme.colorScheme.onErrorContainer,
-                showChevron = false,
-                onClick = { showResetPreferencesDialog = true },
-            )
             // Live format preview
             Text(
                 text = stringResource(
@@ -212,7 +194,75 @@ internal fun DisplayContent(
                 ),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(start = 4.dp, top = 2.dp),
+                modifier = Modifier.padding(start = 4.dp, top = 2.dp, bottom = 8.dp),
+            )
+
+            // ═════════════════════════════════════════════════════════
+            // SEZIONE DATE
+            // ═════════════════════════════════════════════════════════
+            AppCardSectionHeader(title = stringResource(R.string.settings_section_dates))
+
+            val currentDateExample = remember(dateFormat) {
+                try {
+                    val formatter = SimpleDateFormat(dateFormat, Locale.getDefault())
+                    formatter.format(Date())
+                } catch (e: Exception) {
+                    dateFormat
+                }
+            }
+
+            AppCard(
+                title = stringResource(R.string.settings_date_format),
+                subtitle = stringResource(R.string.settings_date_format_subtitle, currentDateExample),
+                leadingIcon = Icons.Default.CalendarMonth,
+                onClick = { showDateFormatDialog = true },
+            )
+
+            // ═════════════════════════════════════════════════════════
+            // SEZIONE GRAFICI
+            // ═════════════════════════════════════════════════════════
+            AppCardSectionHeader(title = stringResource(R.string.settings_section_charts))
+
+            AppCard(
+                title = stringResource(R.string.settings_show_charts_section),
+                subtitle = if (showChartsSection) stringResource(R.string.settings_show_charts_section_visible) else stringResource(
+                    R.string.settings_show_charts_section_hidden
+                ),
+                leadingIcon = Icons.Default.BarChart,
+                trailingContent = {
+                    Switch(
+                        checked = showChartsSection,
+                        onCheckedChange = onShowChartsSectionChanged,
+                    )
+                },
+                onClick = { onShowChartsSectionChanged(!showChartsSection) },
+            )
+
+            // ═════════════════════════════════════════════════════════
+            // SEZIONE ALTRO
+            // ═════════════════════════════════════════════════════════
+            AppCardSectionHeader(title = stringResource(R.string.settings_section_other))
+
+            AppCard(
+                title = "Mostra Note Transazioni",
+                subtitle = if (showTransactionNotes) "Note visibili negli item" else "Note nascoste",
+                leadingIcon = Icons.Default.TextFields,
+                trailingContent = {
+                    Switch(
+                        checked = showTransactionNotes,
+                        onCheckedChange = onShowTransactionNotesChanged,
+                    )
+                },
+                onClick = { onShowTransactionNotesChanged(!showTransactionNotes) },
+            )
+            AppCard(
+                title = stringResource(R.string.settings_reset_preferences),
+                subtitle = stringResource(R.string.settings_reset_preferences_subtitle),
+                leadingIcon = Icons.Default.Refresh,
+                iconBackgroundColor = MaterialTheme.colorScheme.errorContainer,
+                iconTint = MaterialTheme.colorScheme.onErrorContainer,
+                showChevron = false,
+                onClick = { showResetPreferencesDialog = true },
             )
         }
     }
@@ -250,6 +300,14 @@ internal fun DisplayContent(
             currentValue = thousandsSeparator,
             onSelected = { onThousandsSeparatorSelected(it); showThousandsSeparatorDialog = false },
             onDismiss = { showThousandsSeparatorDialog = false },
+        )
+    }
+
+    if (showDateFormatDialog) {
+        DateFormatDialog(
+            currentFormat = dateFormat,
+            onFormatSelected = { onDateFormatSelected(it); showDateFormatDialog = false },
+            onDismiss = { showDateFormatDialog = false },
         )
     }
 
@@ -427,6 +485,60 @@ private fun SeparatorDialog(
     )
 }
 
+@Composable
+private fun DateFormatDialog(
+    currentFormat: String,
+    onFormatSelected: (String) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val formats = listOf(
+        DateFormatType.DD_MM_YYYY.pattern to stringResource(R.string.date_format_ddmmyyyy),
+        DateFormatType.MM_DD_YYYY.pattern to stringResource(R.string.date_format_mmddyyyy),
+        DateFormatType.YYYY_MM_DD.pattern to stringResource(R.string.date_format_yyyymmdd),
+        DateFormatType.DD_MMM_YYYY.pattern to stringResource(R.string.date_format_ddmmmyyyy),
+    )
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        icon = {
+            Icon(
+                imageVector = Icons.Default.CalendarMonth,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+            )
+        },
+        title = { Text(stringResource(R.string.dialog_choose_date_format)) },
+        text = {
+            Column {
+                formats.forEach { (pattern, label) ->
+                    val exampleDate = remember(pattern) {
+                        try {
+                            SimpleDateFormat(pattern, Locale.getDefault()).format(Date())
+                        } catch (e: Exception) {
+                            pattern
+                        }
+                    }
+                    ListItem(
+                        headlineContent = { Text(label) },
+                        supportingContent = { Text(exampleDate, style = MaterialTheme.typography.bodySmall) },
+                        leadingContent = {
+                            RadioButton(
+                                selected = pattern == currentFormat,
+                                onClick = { onFormatSelected(pattern) },
+                            )
+                        },
+                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                        modifier = Modifier,
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.dialog_cancel)) }
+        },
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun DisplayContentPreview() {
@@ -444,6 +556,8 @@ private fun DisplayContentPreview() {
             onShowTransactionNotesChanged = {},
             showChartsSection = true,
             onShowChartsSectionChanged = {},
+            dateFormat = "dd/MM/yyyy",
+            onDateFormatSelected = {},
             onResetAllPreferences = {},
             onNavigateBack = {},
         )

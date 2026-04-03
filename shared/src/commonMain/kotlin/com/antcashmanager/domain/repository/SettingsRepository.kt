@@ -30,6 +30,10 @@ interface SettingsRepository {
     fun getThousandsSeparator(): Flow<String>
     suspend fun setThousandsSeparator(separator: String)
 
+    // ── Date format ──
+    fun getDateFormat(): Flow<String>
+    suspend fun setDateFormat(pattern: String)
+
     /** Resets every preference to its factory default. */
     suspend fun resetAllPreferences()
 }
