@@ -8,22 +8,24 @@ import com.antcashmanager.domain.model.TransactionType
 // ══════════════════════════════════════════════════════════════════════════════
 
 /**
- * Enum per rappresentare i vari step del wizard di aggiunta transazioni.
+ * Flusso semplificato:
+ * - Nuova transazione: Categoria → Dettagli (salvataggio diretto)
+ * - Modifica transazione: Dettagli (salvataggio diretto)
+ *
+ * Categoria, Tipo e Data sono sempre modificabili al tap tramite dialog.
  */
 enum class AddTransactionStep {
     CATEGORY_SELECTION,
-    TYPE_SELECTION,
     DETAILS,
-    CONFIRMATION,
 }
 
 /**
- * Data class che rappresenta lo stato della schermata di aggiunta transazione.
+ * Data class che rappresenta lo stato della schermata di aggiunta/modifica transazione.
  */
 data class AddTransactionState(
     // ── Navigazione ──
     val currentStep: AddTransactionStep = AddTransactionStep.CATEGORY_SELECTION,
-    val isModifying: Boolean = false, // true se modifichi, false se aggiungi
+    val isModifying: Boolean = false,
 
     // ── Dati categoria e tipo ──
     val selectedCategory: Category? = null,
@@ -44,6 +46,12 @@ data class AddTransactionState(
     val categories: List<Category> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null,
+    val isTransactionSaved: Boolean = false,
+
+    // ── Dialog states ──
+    val showCategoryDialog: Boolean = false,
+    val showTypeDialog: Boolean = false,
+    val showDatePicker: Boolean = false,
 )
 
 /**
@@ -54,4 +62,3 @@ internal data class FilterState(
     val dateRangeFrom: Long = System.currentTimeMillis() - (30 * 24 * 60 * 60 * 1000),
     val dateRangeTo: Long = System.currentTimeMillis(),
 )
-

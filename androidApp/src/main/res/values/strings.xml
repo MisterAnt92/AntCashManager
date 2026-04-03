@@ -231,9 +231,11 @@
     <string name="add_transaction_field_notes">Notes</string>
     <string name="add_transaction_field_payee">Payee</string>
     <string name="add_transaction_field_location">Location</string>
-    <string name="add_transaction_save">Save</string>
-     <string name="add_transaction_back">Back</string>
-     <string name="add_transaction_none">None</string>
+     <string name="add_transaction_save">Save</string>
+     <string name="add_transaction_update">Update</string>
+     <string name="edit_transaction_title">Edit Transaction</string>
+      <string name="add_transaction_back">Back</string>
+      <string name="add_transaction_none">None</string>
      <string name="add_transaction_category">Category</string>
      <string name="add_transaction_type">Type</string>
      <string name="add_transaction_tags_label">Tags</string>
@@ -241,4 +243,11 @@
      <string name="add_transaction_recurring_label">Recurring Transaction</string>
      <string name="add_transaction_field_tags">Tags</string>
      <string name="add_transaction_field_recurrence">Recurrence</string>
+
+     <!-- Recurrence intervals -->
+     <string name="recurrence_interval_label">Recurrence Interval</string>
+     <string name="recurrence_interval_daily">Daily</string>
+     <string name="recurrence_interval_weekly">Weekly</string>
+     <string name="recurrence_interval_monthly">Monthly</string>
+     <string name="recurrence_interval_yearly">Yearly</string>
 </resources>

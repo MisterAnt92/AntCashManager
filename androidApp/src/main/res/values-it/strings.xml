@@ -231,8 +231,10 @@
     <string name="add_transaction_field_notes">Note</string>
     <string name="add_transaction_field_payee">Beneficiario</string>
     <string name="add_transaction_field_location">Luogo</string>
-    <string name="add_transaction_save">Salva</string>
-     <string name="add_transaction_back">Indietro</string>
+     <string name="add_transaction_save">Salva</string>
+     <string name="add_transaction_update">Modifica</string>
+     <string name="edit_transaction_title">Modifica Transazione</string>
+      <string name="add_transaction_back">Indietro</string>
      <string name="add_transaction_none">Nessuno</string>
      <string name="add_transaction_category">Categoria</string>
      <string name="add_transaction_type">Tipo</string>
@@ -241,4 +243,11 @@
      <string name="add_transaction_recurring_label">Transazione Ricorrente</string>
      <string name="add_transaction_field_tags">Tag</string>
      <string name="add_transaction_field_recurrence">Ricorrenza</string>
+
+     <!-- Recurrence intervals -->
+     <string name="recurrence_interval_label">Intervallo di Ricorrenza</string>
+     <string name="recurrence_interval_daily">Giornaliera</string>
+     <string name="recurrence_interval_weekly">Settimanale</string>
+     <string name="recurrence_interval_monthly">Mensile</string>
+     <string name="recurrence_interval_yearly">Annuale</string>
 </resources>

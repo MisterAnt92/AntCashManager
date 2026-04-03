@@ -12,10 +12,8 @@ import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.UpdateTransactionUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -24,11 +22,15 @@ import kotlinx.coroutines.launch
 // ══════════════════════════════════════════════════════════════════════════════
 
 /**
- * Events per la schermata di aggiunta transazione.
+ * Events per la schermata di aggiunta/modifica transazione.
+ * Flusso semplificato: Categoria → Dettagli (con salvataggio diretto).
  */
 sealed interface AddTransactionEvent {
+    // ── Selezione ──
     data class SelectCategory(val category: Category) : AddTransactionEvent
     data class SelectType(val type: TransactionType) : AddTransactionEvent
+
+    // ── Modifica campi ──
     data class UpdateTitle(val title: String) : AddTransactionEvent
     data class UpdateAmount(val amount: String) : AddTransactionEvent
     data class UpdateNotes(val notes: String) : AddTransactionEvent
@@ -38,12 +40,22 @@ sealed interface AddTransactionEvent {
     data class UpdateTimestamp(val timestamp: Long) : AddTransactionEvent
     data class SetRecurring(val isRecurring: Boolean) : AddTransactionEvent
     data class UpdateRecurrenceInterval(val interval: String) : AddTransactionEvent
+
+    // ── Navigazione ──
     data object NextStep : AddTransactionEvent
     data object PreviousStep : AddTransactionEvent
-    data object EditCategory : AddTransactionEvent
-    data object EditType : AddTransactionEvent
     data object Submit : AddTransactionEvent
     data object Cancel : AddTransactionEvent
+
+    // ── Dialog inline per modifica rapida ──
+    data object EditCategory : AddTransactionEvent
+    data object EditType : AddTransactionEvent
+    data object EditDate : AddTransactionEvent
+    data object ShowCategoryDialog : AddTransactionEvent
+    data object ShowTypeDialog : AddTransactionEvent
+    data object DismissCategoryDialog : AddTransactionEvent
+    data object DismissTypeDialog : AddTransactionEvent
+    data object DismissDatePicker : AddTransactionEvent
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -58,7 +70,6 @@ class AddTransactionViewModel(
 
     companion object {
         private const val TAG = "AddTransactionViewModel"
-        private const val SHARING_TIMEOUT = 5_000L
     }
 
     // ── UseCases ──
@@ -66,38 +77,35 @@ class AddTransactionViewModel(
     private val updateTransactionUseCase = UpdateTransactionUseCase(transactionRepository)
     private val getCategoriesUseCase = GetCategoriesUseCase(categoryRepository)
 
-    // ── Internal state ──
-    private val _internalState = MutableStateFlow(AddTransactionState())
-
-    // ── Public state ──
-    val state: StateFlow<AddTransactionState> = combine(
-        _internalState,
-        getCategoriesUseCase(),
-    ) { internalState, categories ->
-        internalState.copy(categories = categories)
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
-        initialValue = AddTransactionState(isLoading = true),
-    )
+    // ── State ──
+    private val _state = MutableStateFlow(AddTransactionState())
+    val state: StateFlow<AddTransactionState> = _state.asStateFlow()
 
     init {
+        loadCategories()
         if (transactionId != null) {
             loadTransactionForEdit(transactionId)
+        }
+    }
+
+    private fun loadCategories() {
+        viewModelScope.launch {
+            getCategoriesUseCase().collect { categories ->
+                _state.update { it.copy(categories = categories) }
+            }
         }
     }
 
     private fun loadTransactionForEdit(id: Long) {
         viewModelScope.launch {
             try {
-                _internalState.update { it.copy(isLoading = true) }
+                _state.update { it.copy(isLoading = true) }
                 val transaction = transactionRepository.getTransactionById(id)
 
                 if (transaction != null) {
-                    val categories = getCategoriesUseCase()
-                    categories.collect { categoryList ->
+                    getCategoriesUseCase().collect { categoryList ->
                         val selectedCat = categoryList.find { it.name == transaction.category }
-                        _internalState.update {
+                        _state.update {
                             it.copy(
                                 isModifying = true,
                                 selectedCategory = selectedCat,
@@ -113,25 +121,20 @@ class AddTransactionViewModel(
                                 recurrenceInterval = transaction.recurrenceInterval,
                                 currentStep = AddTransactionStep.DETAILS,
                                 isLoading = false,
+                                categories = categoryList,
                             )
                         }
                     }
                 } else {
                     Logger.w(TAG) { "Transaction with id $id not found" }
-                    _internalState.update {
-                        it.copy(
-                            isLoading = false,
-                            error = "Transazione non trovata"
-                        )
+                    _state.update {
+                        it.copy(isLoading = false, error = "Transazione non trovata")
                     }
                 }
             } catch (ex: Exception) {
                 Logger.e(TAG) { "Error loading transaction: ${ex.message}" }
-                _internalState.update {
-                    it.copy(
-                        isLoading = false,
-                        error = "Errore nel caricamento della transazione"
-                    )
+                _state.update {
+                    it.copy(isLoading = false, error = "Errore nel caricamento della transazione")
                 }
             }
         }
@@ -145,21 +148,27 @@ class AddTransactionViewModel(
         when (event) {
             is AddTransactionEvent.SelectCategory -> selectCategory(event.category)
             is AddTransactionEvent.SelectType -> selectType(event.type)
-            is AddTransactionEvent.UpdateTitle -> updateTitle(event.title)
-            is AddTransactionEvent.UpdateAmount -> updateAmount(event.amount)
-            is AddTransactionEvent.UpdateNotes -> updateNotes(event.notes)
-            is AddTransactionEvent.UpdatePayee -> updatePayee(event.payee)
-            is AddTransactionEvent.UpdateLocation -> updateLocation(event.location)
-            is AddTransactionEvent.UpdateTags -> updateTags(event.tags)
-            is AddTransactionEvent.UpdateTimestamp -> updateTimestamp(event.timestamp)
-            is AddTransactionEvent.SetRecurring -> setRecurring(event.isRecurring)
-            is AddTransactionEvent.UpdateRecurrenceInterval -> updateRecurrenceInterval(event.interval)
+            is AddTransactionEvent.UpdateTitle -> _state.update { it.copy(title = event.title) }
+            is AddTransactionEvent.UpdateAmount -> _state.update { it.copy(amount = event.amount) }
+            is AddTransactionEvent.UpdateNotes -> _state.update { it.copy(notes = event.notes) }
+            is AddTransactionEvent.UpdatePayee -> _state.update { it.copy(payee = event.payee) }
+            is AddTransactionEvent.UpdateLocation -> _state.update { it.copy(location = event.location) }
+            is AddTransactionEvent.UpdateTags -> _state.update { it.copy(tags = event.tags) }
+            is AddTransactionEvent.UpdateTimestamp -> _state.update { it.copy(timestamp = event.timestamp) }
+            is AddTransactionEvent.SetRecurring -> _state.update { it.copy(isRecurring = event.isRecurring) }
+            is AddTransactionEvent.UpdateRecurrenceInterval -> _state.update { it.copy(recurrenceInterval = event.interval) }
             is AddTransactionEvent.NextStep -> nextStep()
             is AddTransactionEvent.PreviousStep -> previousStep()
-            is AddTransactionEvent.EditCategory -> editCategory()
-            is AddTransactionEvent.EditType -> editType()
+            is AddTransactionEvent.EditCategory -> _state.update { it.copy(showCategoryDialog = true) }
+            is AddTransactionEvent.EditType -> _state.update { it.copy(showTypeDialog = true) }
+            is AddTransactionEvent.EditDate -> _state.update { it.copy(showDatePicker = true) }
+            is AddTransactionEvent.ShowCategoryDialog -> _state.update { it.copy(showCategoryDialog = true) }
+            is AddTransactionEvent.ShowTypeDialog -> _state.update { it.copy(showTypeDialog = true) }
+            is AddTransactionEvent.DismissCategoryDialog -> _state.update { it.copy(showCategoryDialog = false) }
+            is AddTransactionEvent.DismissTypeDialog -> _state.update { it.copy(showTypeDialog = false) }
+            is AddTransactionEvent.DismissDatePicker -> _state.update { it.copy(showDatePicker = false) }
             is AddTransactionEvent.Submit -> submitTransaction()
-            is AddTransactionEvent.Cancel -> cancel()
+            is AddTransactionEvent.Cancel -> _state.value = AddTransactionState()
         }
     }
 
@@ -168,127 +177,76 @@ class AddTransactionViewModel(
     private fun selectCategory(category: Category) {
         Logger.d(TAG) { "Category selected: ${category.name}, type: ${category.type}" }
 
-        // Converti il tipo categoria in TransactionType
         val transactionType = if (category.type.uppercase() == "INCOME")
             TransactionType.INCOME
         else
             TransactionType.EXPENSE
 
-        // Aggiorna stato con categoria e tipo automaticamente selezionato
-        _internalState.update {
+        val currentStep = _state.value.currentStep
+        val isModifying = _state.value.isModifying
+
+        _state.update {
             it.copy(
                 selectedCategory = category,
-                selectedType = transactionType
+                selectedType = transactionType,
+                showCategoryDialog = false,
             )
         }
 
-        Logger.d(TAG) { "Transaction type auto-selected: $transactionType" }
+        // In creazione, al passo CATEGORY_SELECTION → avanza direttamente a DETAILS
+        if (!isModifying && currentStep == AddTransactionStep.CATEGORY_SELECTION) {
+            Logger.d(TAG) { "Auto-advancing to DETAILS after category selection" }
+            _state.update { it.copy(currentStep = AddTransactionStep.DETAILS) }
+        }
     }
 
     private fun selectType(type: TransactionType) {
         Logger.d(TAG) { "Type selected: $type" }
-        _internalState.update { it.copy(selectedType = type) }
-    }
-
-    private fun updateTitle(title: String) {
-        _internalState.update { it.copy(title = title) }
-    }
-
-    private fun updateAmount(amount: String) {
-        _internalState.update { it.copy(amount = amount) }
-    }
-
-    private fun updateNotes(notes: String) {
-        _internalState.update { it.copy(notes = notes) }
-    }
-
-    private fun updatePayee(payee: String) {
-        _internalState.update { it.copy(payee = payee) }
-    }
-
-    private fun updateLocation(location: String) {
-        _internalState.update { it.copy(location = location) }
-    }
-
-    private fun updateTags(tags: String) {
-        _internalState.update { it.copy(tags = tags) }
-    }
-
-    private fun updateTimestamp(timestamp: Long) {
-        _internalState.update { it.copy(timestamp = timestamp) }
-    }
-
-    private fun setRecurring(isRecurring: Boolean) {
-        _internalState.update { it.copy(isRecurring = isRecurring) }
-    }
-
-    private fun updateRecurrenceInterval(interval: String) {
-        _internalState.update { it.copy(recurrenceInterval = interval) }
+        _state.update {
+            it.copy(selectedType = type, showTypeDialog = false)
+        }
     }
 
     private fun nextStep() {
-        val currentState = _internalState.value
-
-        // Validazione del step corrente prima di procedere
-        if (!isCurrentStepValid(currentState)) {
-            Logger.w(TAG) { "Cannot proceed: current step is not valid" }
-            return
+        val nextStep = when (_state.value.currentStep) {
+            AddTransactionStep.CATEGORY_SELECTION -> AddTransactionStep.DETAILS
+            AddTransactionStep.DETAILS -> return // Salvataggio diretto dal form
         }
-
-        val nextStep = when (currentState.currentStep) {
-            // Se il tipo è già selezionato (dalla categoria), salta direttamente a DETAILS
-            AddTransactionStep.CATEGORY_SELECTION ->
-                if (currentState.selectedType != null) AddTransactionStep.DETAILS
-                else AddTransactionStep.TYPE_SELECTION
-            AddTransactionStep.TYPE_SELECTION -> AddTransactionStep.DETAILS
-            AddTransactionStep.DETAILS -> AddTransactionStep.CONFIRMATION
-            AddTransactionStep.CONFIRMATION -> return
-        }
-
         Logger.d(TAG) { "Moving to next step: $nextStep" }
-        _internalState.update { it.copy(currentStep = nextStep) }
+        _state.update { it.copy(currentStep = nextStep) }
     }
 
     private fun previousStep() {
-        val currentState = _internalState.value
-        val previousStep = when (currentState.currentStep) {
+        val prev = when (_state.value.currentStep) {
             AddTransactionStep.CATEGORY_SELECTION -> return
-            AddTransactionStep.TYPE_SELECTION -> AddTransactionStep.CATEGORY_SELECTION
-            AddTransactionStep.DETAILS -> AddTransactionStep.TYPE_SELECTION
-            AddTransactionStep.CONFIRMATION -> AddTransactionStep.DETAILS
+            AddTransactionStep.DETAILS ->
+                if (_state.value.isModifying) return
+                else AddTransactionStep.CATEGORY_SELECTION
         }
-
-        Logger.d(TAG) { "Moving to previous step: $previousStep" }
-        _internalState.update { it.copy(currentStep = previousStep) }
+        Logger.d(TAG) { "Moving to previous step: $prev" }
+        _state.update { it.copy(currentStep = prev) }
     }
 
     private fun submitTransaction() {
-        val currentState = _internalState.value
+        val currentState = _state.value
 
-        // Validazione finale
         if (currentState.selectedCategory == null || currentState.selectedType == null) {
-            Logger.e(TAG) { "Cannot submit: category or type not selected" }
-            _internalState.update { it.copy(error = "Categoria e tipo sono obbligatori") }
+            _state.update { it.copy(error = "Categoria e tipo sono obbligatori") }
             return
         }
-
         if (currentState.title.isBlank() || currentState.amount.isBlank()) {
-            Logger.e(TAG) { "Cannot submit: title or amount is blank" }
-            _internalState.update { it.copy(error = "Titolo e importo sono obbligatori") }
+            _state.update { it.copy(error = "Titolo e importo sono obbligatori") }
             return
         }
-
         val amount = currentState.amount.toDoubleOrNull()
         if (amount == null || amount <= 0) {
-            Logger.e(TAG) { "Cannot submit: invalid amount" }
-            _internalState.update { it.copy(error = "Importo non valido") }
+            _state.update { it.copy(error = "Importo non valido") }
             return
         }
 
-        Logger.d(TAG) { "Submitting transaction: ${currentState.title}" }
         viewModelScope.launch {
             try {
-                _internalState.update { it.copy(isLoading = true) }
+                _state.update { it.copy(isLoading = true) }
 
                 val transaction = Transaction(
                     id = if (currentState.isModifying) transactionId ?: 0 else 0,
@@ -313,48 +271,16 @@ class AddTransactionViewModel(
                     Logger.d(TAG) { "Transaction inserted successfully" }
                 }
 
-                _internalState.value = AddTransactionState()
+                _state.update { it.copy(isTransactionSaved = true, isLoading = false) }
             } catch (ex: Exception) {
                 Logger.e(TAG) { "Error submitting transaction: ${ex.message}" }
-                _internalState.update { it.copy(error = "Errore durante il salvataggio") }
-            } finally {
-                _internalState.update { it.copy(isLoading = false) }
+                _state.update { it.copy(error = "Errore durante il salvataggio", isLoading = false) }
             }
         }
     }
 
-    private fun cancel() {
-        Logger.d(TAG) { "Cancelling transaction entry" }
-        _internalState.value = AddTransactionState()
-    }
-
-    /**
-     * Valida il step corrente prima di procedere al successivo.
-     */
-    private fun isCurrentStepValid(state: AddTransactionState): Boolean {
-        return when (state.currentStep) {
-            AddTransactionStep.CATEGORY_SELECTION -> state.selectedCategory != null
-            AddTransactionStep.TYPE_SELECTION -> state.selectedType != null
-            AddTransactionStep.DETAILS -> state.title.isNotBlank() && state.amount.isNotBlank()
-            AddTransactionStep.CONFIRMATION -> true
-        }
-    }
-
-    /**
-     * Resetta lo stato a quello iniziale.
-     */
     fun reset() {
         Logger.d(TAG) { "Resetting state" }
-        _internalState.value = AddTransactionState()
-    }
-
-    private fun editCategory() {
-        Logger.d(TAG) { "Editing category" }
-        _internalState.update { it.copy(currentStep = AddTransactionStep.CATEGORY_SELECTION) }
-    }
-
-    private fun editType() {
-        Logger.d(TAG) { "Editing type" }
-        _internalState.update { it.copy(currentStep = AddTransactionStep.TYPE_SELECTION) }
+        _state.value = AddTransactionState()
     }
 }
