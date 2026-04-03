@@ -51,61 +51,60 @@ class SettingsViewModelTest {
 
     @Test
     fun `initial theme is SYSTEM`() = runTest(testDispatcher) {
-        // Avvia un collector per attivare WhileSubscribed
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.theme.collect {}
+            viewModel.state.collect {}
         }
         advanceUntilIdle()
-        assertEquals(AppTheme.SYSTEM, viewModel.theme.value)
+        assertEquals(AppTheme.SYSTEM, viewModel.state.value.theme)
         collectJob.cancel()
     }
 
     @Test
     fun `setTheme updates theme to DARK`() = runTest(testDispatcher) {
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.theme.collect {}
+            viewModel.state.collect {}
         }
         advanceUntilIdle()
 
         viewModel.setTheme(AppTheme.DARK)
         advanceUntilIdle()
 
-        assertEquals(AppTheme.DARK, viewModel.theme.value)
+        assertEquals(AppTheme.DARK, viewModel.state.value.theme)
         collectJob.cancel()
     }
 
     @Test
     fun `setTheme updates theme to LIGHT`() = runTest(testDispatcher) {
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.theme.collect {}
+            viewModel.state.collect {}
         }
         advanceUntilIdle()
 
         viewModel.setTheme(AppTheme.LIGHT)
         advanceUntilIdle()
 
-        assertEquals(AppTheme.LIGHT, viewModel.theme.value)
+        assertEquals(AppTheme.LIGHT, viewModel.state.value.theme)
         collectJob.cancel()
     }
 
     @Test
     fun `setTheme can switch between themes`() = runTest(testDispatcher) {
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.theme.collect {}
+            viewModel.state.collect {}
         }
         advanceUntilIdle()
 
         viewModel.setTheme(AppTheme.DARK)
         advanceUntilIdle()
-        assertEquals(AppTheme.DARK, viewModel.theme.value)
+        assertEquals(AppTheme.DARK, viewModel.state.value.theme)
 
         viewModel.setTheme(AppTheme.LIGHT)
         advanceUntilIdle()
-        assertEquals(AppTheme.LIGHT, viewModel.theme.value)
+        assertEquals(AppTheme.LIGHT, viewModel.state.value.theme)
 
         viewModel.setTheme(AppTheme.SYSTEM)
         advanceUntilIdle()
-        assertEquals(AppTheme.SYSTEM, viewModel.theme.value)
+        assertEquals(AppTheme.SYSTEM, viewModel.state.value.theme)
 
         collectJob.cancel()
     }

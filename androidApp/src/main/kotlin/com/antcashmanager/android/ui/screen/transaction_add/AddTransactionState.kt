@@ -23,6 +23,7 @@ enum class AddTransactionStep {
 data class AddTransactionState(
     // ── Navigazione ──
     val currentStep: AddTransactionStep = AddTransactionStep.CATEGORY_SELECTION,
+    val isModifying: Boolean = false, // true se modifichi, false se aggiungi
 
     // ── Dati categoria e tipo ──
     val selectedCategory: Category? = null,

@@ -1,6 +1,7 @@
 package com.antcashmanager.android.ui.screen.transactions
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -264,6 +265,7 @@ internal fun TransactionsContent(
                 else -> TransactionsList(
                     transactions = state.filteredTransactions,
                     onDelete = { onEvent(TransactionsEvent.DeleteTransaction(it)) },
+                    navController = navController, // pass navController here
                 )
             }
         }
@@ -331,6 +333,7 @@ private fun EmptyState() {
 private fun TransactionsList(
     transactions: List<Transaction>,
     onDelete: (Transaction) -> Unit,
+    navController: NavController? = null, // aggiunto parametro opzionale
 ) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -339,7 +342,12 @@ private fun TransactionsList(
             items = transactions,
             key = { it.id },
         ) { transaction ->
-            TransactionItem(transaction = transaction)
+            TransactionItem(
+                transaction = transaction,
+                onClick = {
+                    navController?.navigate("add_transaction?transactionId=${transaction.id}")
+                }
+            )
         }
         item { Spacer(modifier = Modifier.height(80.dp)) }
     }
@@ -348,7 +356,7 @@ private fun TransactionsList(
 private val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
 
 @Composable
-private fun TransactionItem(transaction: Transaction) {
+private fun TransactionItem(transaction: Transaction, onClick: (() -> Unit)? = null) {
     val isIncome = transaction.type == TransactionType.INCOME
     val cardBackgroundColor =
         if (isIncome) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer
@@ -357,7 +365,8 @@ private fun TransactionItem(transaction: Transaction) {
         AnimatedCard(
             modifier = Modifier
                 .fillMaxWidth()
-                .shadow(4.dp, RoundedCornerShape(12.dp)),
+                .shadow(4.dp, RoundedCornerShape(12.dp))
+                .let { if (onClick != null) it.clickable { onClick() } else it },
             backgroundColor = cardBackgroundColor,
         ) {
             Row(

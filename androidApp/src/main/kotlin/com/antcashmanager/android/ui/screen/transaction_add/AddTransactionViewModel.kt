@@ -10,6 +10,7 @@ import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
+import com.antcashmanager.domain.usecase.transaction.UpdateTransactionUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -39,6 +40,8 @@ sealed interface AddTransactionEvent {
     data class UpdateRecurrenceInterval(val interval: String) : AddTransactionEvent
     data object NextStep : AddTransactionEvent
     data object PreviousStep : AddTransactionEvent
+    data object EditCategory : AddTransactionEvent
+    data object EditType : AddTransactionEvent
     data object Submit : AddTransactionEvent
     data object Cancel : AddTransactionEvent
 }
@@ -50,6 +53,7 @@ sealed interface AddTransactionEvent {
 class AddTransactionViewModel(
     private val transactionRepository: TransactionRepository,
     private val categoryRepository: CategoryRepository,
+    private val transactionId: Long? = null,
 ) : ViewModel() {
 
     companion object {
@@ -59,6 +63,7 @@ class AddTransactionViewModel(
 
     // ── UseCases ──
     private val insertTransactionUseCase = InsertTransactionUseCase(transactionRepository)
+    private val updateTransactionUseCase = UpdateTransactionUseCase(transactionRepository)
     private val getCategoriesUseCase = GetCategoriesUseCase(categoryRepository)
 
     // ── Internal state ──
@@ -75,6 +80,62 @@ class AddTransactionViewModel(
         started = SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
         initialValue = AddTransactionState(isLoading = true),
     )
+
+    init {
+        if (transactionId != null) {
+            loadTransactionForEdit(transactionId)
+        }
+    }
+
+    private fun loadTransactionForEdit(id: Long) {
+        viewModelScope.launch {
+            try {
+                _internalState.update { it.copy(isLoading = true) }
+                val transaction = transactionRepository.getTransactionById(id)
+
+                if (transaction != null) {
+                    val categories = getCategoriesUseCase()
+                    categories.collect { categoryList ->
+                        val selectedCat = categoryList.find { it.name == transaction.category }
+                        _internalState.update {
+                            it.copy(
+                                isModifying = true,
+                                selectedCategory = selectedCat,
+                                selectedType = transaction.type,
+                                title = transaction.title,
+                                amount = transaction.amount.toString(),
+                                notes = transaction.notes,
+                                payee = transaction.payee,
+                                location = transaction.location,
+                                tags = transaction.tags,
+                                timestamp = transaction.timestamp,
+                                isRecurring = transaction.isRecurring,
+                                recurrenceInterval = transaction.recurrenceInterval,
+                                currentStep = AddTransactionStep.DETAILS,
+                                isLoading = false,
+                            )
+                        }
+                    }
+                } else {
+                    Logger.w(TAG) { "Transaction with id $id not found" }
+                    _internalState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = "Transazione non trovata"
+                        )
+                    }
+                }
+            } catch (ex: Exception) {
+                Logger.e(TAG) { "Error loading transaction: ${ex.message}" }
+                _internalState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = "Errore nel caricamento della transazione"
+                    )
+                }
+            }
+        }
+    }
 
     /**
      * Gestisce gli eventi della UI.
@@ -95,6 +156,8 @@ class AddTransactionViewModel(
             is AddTransactionEvent.UpdateRecurrenceInterval -> updateRecurrenceInterval(event.interval)
             is AddTransactionEvent.NextStep -> nextStep()
             is AddTransactionEvent.PreviousStep -> previousStep()
+            is AddTransactionEvent.EditCategory -> editCategory()
+            is AddTransactionEvent.EditType -> editType()
             is AddTransactionEvent.Submit -> submitTransaction()
             is AddTransactionEvent.Cancel -> cancel()
         }
@@ -210,6 +273,7 @@ class AddTransactionViewModel(
                 _internalState.update { it.copy(isLoading = true) }
 
                 val transaction = Transaction(
+                    id = if (currentState.isModifying) transactionId ?: 0 else 0,
                     title = currentState.title,
                     amount = amount,
                     category = currentState.selectedCategory.name,
@@ -223,8 +287,14 @@ class AddTransactionViewModel(
                     recurrenceInterval = currentState.recurrenceInterval,
                 )
 
-                insertTransactionUseCase(transaction)
-                Logger.d(TAG) { "Transaction submitted successfully" }
+                if (currentState.isModifying) {
+                    updateTransactionUseCase(transaction)
+                    Logger.d(TAG) { "Transaction updated successfully" }
+                } else {
+                    insertTransactionUseCase(transaction)
+                    Logger.d(TAG) { "Transaction inserted successfully" }
+                }
+
                 _internalState.value = AddTransactionState()
             } catch (ex: Exception) {
                 Logger.e(TAG) { "Error submitting transaction: ${ex.message}" }
@@ -259,5 +329,14 @@ class AddTransactionViewModel(
         Logger.d(TAG) { "Resetting state" }
         _internalState.value = AddTransactionState()
     }
-}
 
+    private fun editCategory() {
+        Logger.d(TAG) { "Editing category" }
+        _internalState.update { it.copy(currentStep = AddTransactionStep.CATEGORY_SELECTION) }
+    }
+
+    private fun editType() {
+        Logger.d(TAG) { "Editing type" }
+        _internalState.update { it.copy(currentStep = AddTransactionStep.TYPE_SELECTION) }
+    }
+}

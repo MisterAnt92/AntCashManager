@@ -23,8 +23,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -54,6 +57,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.components.AppCard
+import com.antcashmanager.android.ui.components.AppCategoryCard
+import com.antcashmanager.android.ui.components.AppSelectionItemCard
 import com.antcashmanager.android.ui.components.button.AppButton
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.domain.model.Category
@@ -72,6 +78,7 @@ import java.util.Locale
 fun AddTransactionScreen(
     transactionRepository: TransactionRepository,
     categoryRepository: CategoryRepository,
+    transactionId: Long? = null, // nuovo parametro opzionale
     onNavigateBack: () -> Unit,
     onTransactionAdded: () -> Unit,
 ) {
@@ -81,7 +88,7 @@ fun AddTransactionScreen(
         factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                AddTransactionViewModel(transactionRepository, categoryRepository) as T
+                AddTransactionViewModel(transactionRepository, categoryRepository, transactionId) as T
         },
     )
 
@@ -113,6 +120,7 @@ fun AddTransactionScreen(
 // ══════════════════════════════════════════════════════════════════════════════
 
 @Composable
+@Suppress("UnusedMaterial3ScaffoldPaddingParameter")
 internal fun AddTransactionContent(
     state: AddTransactionState,
     onEvent: (AddTransactionEvent) -> Unit,
@@ -121,7 +129,7 @@ internal fun AddTransactionContent(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
     ) { _ ->
-        // Content padding is applied via Column modifier below
+        // Content is provided by individual step Scaffolds which manage their own padding
         when (state.currentStep) {
             AddTransactionStep.CATEGORY_SELECTION -> {
                 CategorySelectionStep(
@@ -244,7 +252,7 @@ private fun CategorySelectionStep(
                         .weight(1f),
                 ) {
                     items(categories) { category ->
-                        CategoryCard(
+                        AppCategoryCard(
                             category = category,
                             isSelected = selectedCategory?.id == category.id,
                             onClick = { onSelectCategory(category) },
@@ -275,72 +283,6 @@ private fun CategorySelectionStep(
     }
 }
 
-@Composable
-private fun CategoryCard(
-    category: Category,
-    isSelected: Boolean,
-    onClick: () -> Unit,
-) {
-    val backgroundColor = if (isSelected) {
-        MaterialTheme.colorScheme.primaryContainer
-    } else {
-        MaterialTheme.colorScheme.surface
-    }
-    
-    val borderColor = if (isSelected) {
-        MaterialTheme.colorScheme.primary
-    } else {
-        MaterialTheme.colorScheme.outlineVariant
-    }
-
-    Column(
-        modifier = Modifier
-            .clip(RoundedCornerShape(16.dp))
-            .background(backgroundColor)
-            .border(
-                width = if (isSelected) 2.dp else 1.dp,
-                color = borderColor,
-                shape = RoundedCornerShape(16.dp)
-            )
-            .clickable(onClick = onClick)
-            .padding(12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        // Icona della categoria - più grande e prominente
-        Text(
-            text = category.icon,
-            style = MaterialTheme.typography.displayMedium,
-            modifier = Modifier
-                .size(56.dp)
-                .padding(4.dp),
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Nome della categoria - testo con migliore leggibilità
-        AppText(
-            text = category.name,
-            style = MaterialTheme.typography.bodySmall,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 4.dp),
-            maxLines = 2,
-        )
-
-        // Indicatore di selezione
-        if (isSelected) {
-            Spacer(modifier = Modifier.height(8.dp))
-            Icon(
-                imageVector = androidx.compose.material.icons.Icons.Default.Check,
-                contentDescription = stringResource(R.string.categories_selected),
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(20.dp),
-            )
-        }
-    }
-}
 
 // ══════════════════════════════════════════════════════════════════════════════
 // STEP 2: TYPE SELECTION
@@ -520,11 +462,33 @@ private fun DetailsStep(
                 modifier = Modifier.padding(bottom = 16.dp),
             )
 
-            // Title
+            // Category Selection Field - sempre visibile
+             AppSelectionItemCard(
+                 label = stringResource(R.string.add_transaction_category),
+                 value = state.selectedCategory?.name ?: "-",
+                 icon = state.selectedCategory?.icon,
+                 isEditable = state.isModifying,
+                 onClick = if (state.isModifying) {{ onEvent(AddTransactionEvent.EditCategory) }} else null,
+             )
+             Spacer(modifier = Modifier.height(12.dp))
+
+             // Type Selection Field - sempre visibile
+              AppSelectionItemCard(
+                  label = stringResource(R.string.add_transaction_type),
+                  value = if (state.selectedType == TransactionType.INCOME)
+                      stringResource(R.string.add_transaction_income_label)
+                  else
+                      stringResource(R.string.add_transaction_expense_label),
+                  icon = if (state.selectedType == TransactionType.INCOME) "💰" else "💸",
+                  isEditable = state.isModifying,
+                  onClick = if (state.isModifying) {{ onEvent(AddTransactionEvent.EditType) }} else null,
+              )
+            Spacer(modifier = Modifier.height(12.dp))
             OutlinedTextField(
                 value = state.title,
                 onValueChange = { onEvent(AddTransactionEvent.UpdateTitle(it)) },
                 label = { Text(stringResource(R.string.add_transaction_title_required)) },
+                shape = RoundedCornerShape(16.dp),
                 modifier = Modifier.fillMaxWidth(),
             )
             Spacer(modifier = Modifier.height(12.dp))
@@ -535,14 +499,18 @@ private fun DetailsStep(
                 onValueChange = { onEvent(AddTransactionEvent.UpdateAmount(it)) },
                 label = { Text(stringResource(R.string.add_transaction_amount_required)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                shape = RoundedCornerShape(16.dp),
                 modifier = Modifier.fillMaxWidth(),
             )
             Spacer(modifier = Modifier.height(12.dp))
 
             // Date
-            TextButton(onClick = { showDatePicker = true }) {
-                Text(stringResource(R.string.add_transaction_date_label, SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(state.timestamp))))
-            }
+             AppSelectionItemCard(
+                 label = stringResource(R.string.add_transaction_field_date),
+                 value = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(state.timestamp)),
+                 isEditable = true,
+                 onClick = { showDatePicker = true },
+             )
             Spacer(modifier = Modifier.height(12.dp))
 
             // Notes
@@ -550,6 +518,7 @@ private fun DetailsStep(
                 value = state.notes,
                 onValueChange = { onEvent(AddTransactionEvent.UpdateNotes(it)) },
                 label = { Text(stringResource(R.string.add_transaction_notes_label)) },
+                shape = RoundedCornerShape(16.dp),
                 modifier = Modifier.fillMaxWidth(),
             )
             Spacer(modifier = Modifier.height(12.dp))
@@ -559,6 +528,7 @@ private fun DetailsStep(
                 value = state.payee,
                 onValueChange = { onEvent(AddTransactionEvent.UpdatePayee(it)) },
                 label = { Text(stringResource(R.string.add_transaction_payee_label)) },
+                shape = RoundedCornerShape(16.dp),
                 modifier = Modifier.fillMaxWidth(),
             )
             Spacer(modifier = Modifier.height(12.dp))
@@ -568,26 +538,82 @@ private fun DetailsStep(
                 value = state.location,
                 onValueChange = { onEvent(AddTransactionEvent.UpdateLocation(it)) },
                 label = { Text(stringResource(R.string.add_transaction_location_label)) },
+                shape = RoundedCornerShape(16.dp),
                 modifier = Modifier.fillMaxWidth(),
             )
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Tags
+            OutlinedTextField(
+                value = state.tags,
+                onValueChange = { onEvent(AddTransactionEvent.UpdateTags(it)) },
+                label = { Text(stringResource(R.string.add_transaction_tags_label)) },
+                placeholder = { Text(stringResource(R.string.add_transaction_tags_placeholder)) },
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Recurring
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                AppText(
+                    stringResource(R.string.add_transaction_recurring_label),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                Checkbox(
+                    checked = state.isRecurring,
+                    onCheckedChange = { onEvent(AddTransactionEvent.SetRecurring(it)) },
+                )
+            }
+
+            if (state.isRecurring) {
+                Spacer(modifier = Modifier.height(12.dp))
+                RecurrenceIntervalDropdown(
+                    selectedInterval = state.recurrenceInterval,
+                    onIntervalChange = { onEvent(AddTransactionEvent.UpdateRecurrenceInterval(it)) },
+                )
+            }
+
             Spacer(modifier = Modifier.height(32.dp))
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                AppButton(
-                    text = stringResource(R.string.add_transaction_previous),
-                    modifier = Modifier.weight(1f),
-                    onClick = onPrevious,
-                )
-                AppButton(
-                    text = stringResource(R.string.add_transaction_next),
-                    modifier = Modifier.weight(1f),
-                    enabled = state.title.isNotBlank() && state.amount.isNotBlank(),
-                    onClick = onNext,
-                )
-            }
+                 modifier = Modifier.fillMaxWidth(),
+                 horizontalArrangement = Arrangement.spacedBy(8.dp),
+             ) {
+                 if (state.isModifying) {
+                     AppButton(
+                         text = stringResource(R.string.add_transaction_summary),
+                         modifier = Modifier.weight(1f),
+                         onClick = onPrevious,
+                     )
+                     AppButton(
+                         text = stringResource(R.string.add_transaction_save),
+                         modifier = Modifier.weight(1f),
+                         enabled = state.title.isNotBlank() && state.amount.isNotBlank(),
+                         onClick = onNext,
+                     )
+                 } else {
+                     AppButton(
+                         text = stringResource(R.string.add_transaction_previous),
+                         modifier = Modifier.weight(1f),
+                         onClick = onPrevious,
+                     )
+                     AppButton(
+                         text = stringResource(R.string.add_transaction_next),
+                         modifier = Modifier.weight(1f),
+                         enabled = state.title.isNotBlank() && state.amount.isNotBlank(),
+                         onClick = onNext,
+                     )
+                 }
+             }
         }
     }
 }
@@ -626,8 +652,16 @@ private fun ConfirmationStep(
                 modifier = Modifier.padding(bottom = 16.dp),
             )
 
-            ConfirmationField(stringResource(R.string.add_transaction_field_category), state.selectedCategory?.name ?: "-")
-            ConfirmationField(stringResource(R.string.add_transaction_field_type), if (state.selectedType == TransactionType.INCOME) stringResource(R.string.add_transaction_income_label) else stringResource(R.string.add_transaction_expense_label))
+             ConfirmationField(
+                 stringResource(R.string.add_transaction_field_category),
+                 state.selectedCategory?.name ?: "-",
+                 icon = state.selectedCategory?.icon
+             )
+             ConfirmationField(
+                 stringResource(R.string.add_transaction_field_type),
+                 if (state.selectedType == TransactionType.INCOME) stringResource(R.string.add_transaction_income_label) else stringResource(R.string.add_transaction_expense_label),
+                 icon = if (state.selectedType == TransactionType.INCOME) "💰" else "💸"
+             )
             ConfirmationField(stringResource(R.string.add_transaction_field_title), state.title)
             ConfirmationField(stringResource(R.string.add_transaction_field_amount), state.amount)
             ConfirmationField(stringResource(R.string.add_transaction_field_date), SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(state.timestamp)))
@@ -640,38 +674,114 @@ private fun ConfirmationStep(
             if (state.location.isNotEmpty()) {
                 ConfirmationField(stringResource(R.string.add_transaction_field_location), state.location)
             }
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                AppButton(
-                    text = stringResource(R.string.add_transaction_previous),
-                    modifier = Modifier.weight(1f),
-                    onClick = onPrevious,
-                )
-                AppButton(
-                    text = stringResource(R.string.add_transaction_save),
-                    modifier = Modifier.weight(1f),
-                    onClick = onSubmit,
+            if (state.tags.isNotEmpty()) {
+                val formattedTags = state.tags.split(",").joinToString(" ") { "#${it.trim()}" }
+                ConfirmationField(stringResource(R.string.add_transaction_field_tags), formattedTags)
+            }
+            if (state.isRecurring) {
+                ConfirmationField(
+                    stringResource(R.string.add_transaction_field_recurrence),
+                    state.recurrenceInterval.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
                 )
             }
+
+            Row(
+                 modifier = Modifier.fillMaxWidth(),
+                 horizontalArrangement = Arrangement.spacedBy(8.dp),
+             ) {
+                 if (state.isModifying) {
+                     AppButton(
+                         text = stringResource(R.string.add_transaction_save),
+                         modifier = Modifier.fillMaxWidth(),
+                         onClick = onSubmit,
+                     )
+                 } else {
+                     AppButton(
+                         text = stringResource(R.string.add_transaction_previous),
+                         modifier = Modifier.weight(1f),
+                         onClick = onPrevious,
+                     )
+                     AppButton(
+                         text = stringResource(R.string.add_transaction_save),
+                         modifier = Modifier.weight(1f),
+                         onClick = onSubmit,
+                     )
+                 }
+             }
         }
     }
 }
 
 @Composable
-private fun ConfirmationField(label: String, value: String) {
-    Row(
+ private fun ConfirmationField(label: String, value: String, icon: String? = null) {
+     Row(
+         modifier = Modifier
+             .fillMaxWidth()
+             .padding(vertical = 8.dp),
+         horizontalArrangement = Arrangement.SpaceBetween,
+         verticalAlignment = Alignment.CenterVertically,
+     ) {
+         AppText(label, style = MaterialTheme.typography.labelMedium)
+         Row(
+             horizontalArrangement = Arrangement.spacedBy(8.dp),
+             verticalAlignment = Alignment.CenterVertically,
+         ) {
+             if (icon != null) {
+                 AppText(icon, style = MaterialTheme.typography.titleLarge)
+             }
+             AppText(value, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
+         }
+     }
+ }
+
+// ══════════════════════════════════════════════════════════════════════════════
+// RECURRENCE INTERVAL DROPDOWN
+// ══════════════════════════════════════════════════════════════════════════════
+
+@Composable
+private fun RecurrenceIntervalDropdown(
+    selectedInterval: String,
+    onIntervalChange: (String) -> Unit,
+) {
+    val intervals = listOf("daily", "weekly", "monthly", "yearly")
+    var expanded by remember { mutableStateOf(false) }
+
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .clickable { expanded = !expanded }
+            .padding(horizontal = 16.dp, vertical = 12.dp),
     ) {
-        AppText(label, style = MaterialTheme.typography.labelMedium)
-        AppText(value, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
+        AppText(
+            text = selectedInterval.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.fillMaxWidth(),
+        )
+
+        if (expanded) {
+            androidx.compose.material3.DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.fillMaxWidth(0.9f),
+            ) {
+                intervals.forEach { interval ->
+                    androidx.compose.material3.DropdownMenuItem(
+                        text = {
+                            AppText(
+                                text = interval.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                        },
+                        onClick = {
+                            onIntervalChange(interval)
+                            expanded = false
+                        },
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -690,7 +800,7 @@ fun CategoryCardPreview() {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // Non-selected category
-            CategoryCard(
+            AppCategoryCard(
                 category = Category(
                     id = 1,
                     name = "Food",
@@ -703,7 +813,7 @@ fun CategoryCardPreview() {
             )
 
             // Selected category
-            CategoryCard(
+            AppCategoryCard(
                 category = Category(
                     id = 2,
                     name = "Salary",

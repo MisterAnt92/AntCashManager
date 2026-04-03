@@ -11,6 +11,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -82,7 +83,13 @@ fun AntCashManagerNavHost(
                                     contentDescription = stringResource(item.titleResId)
                                 )
                             },
-                            label = { Text(stringResource(item.titleResId)) },
+                            label = {
+                                Text(
+                                    stringResource(item.titleResId),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            },
                             selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
                             onClick = {
                                 navController.navigate(item.route) {
@@ -133,10 +140,20 @@ fun AntCashManagerNavHost(
                         navController = navController,
                     )
                 }
-                composable("add_transaction") {
+                composable(
+                    route = "add_transaction?transactionId={transactionId}",
+                    arguments = listOf(
+                        androidx.navigation.navArgument("transactionId") {
+                            type = androidx.navigation.NavType.LongType
+                            defaultValue = -1L
+                        }
+                    )
+                ) { backStackEntry ->
+                    val transactionId = backStackEntry.arguments?.getLong("transactionId")?.takeIf { it != -1L }
                     AddTransactionScreen(
                         transactionRepository = transactionRepository,
                         categoryRepository = categoryRepository,
+                        transactionId = transactionId,
                         onNavigateBack = {
                             navController.popBackStack()
                         },
