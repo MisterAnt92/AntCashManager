@@ -18,7 +18,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
@@ -343,12 +345,18 @@ private fun AddCategoryDialog(
 ) {
     var name by remember { mutableStateOf("") }
     var selectedColor by remember { mutableLongStateOf(categoryColors.first()) }
+    var selectedIcon by remember { mutableStateOf("category") }
 
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.categories_add)) },
         text = {
-            Column {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState()),
+            ) {
+                // Category Name
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
@@ -357,6 +365,59 @@ private fun AddCategoryDialog(
                     modifier = Modifier.fillMaxWidth(),
                 )
                 Spacer(modifier = Modifier.height(16.dp))
+
+                // Icon Selection
+                Text(
+                    text = stringResource(R.string.categories_icon_label),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    categoryIconMap.forEach { (iconKey, iconVector) ->
+                        Box(
+                            modifier = Modifier
+                                .size(44.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    if (iconKey == selectedIcon)
+                                        MaterialTheme.colorScheme.primaryContainer
+                                    else
+                                        MaterialTheme.colorScheme.surfaceVariant
+                                )
+                                .then(
+                                    if (iconKey == selectedIcon) {
+                                        Modifier.border(
+                                            2.dp,
+                                            MaterialTheme.colorScheme.primary,
+                                            CircleShape
+                                        )
+                                    } else {
+                                        Modifier
+                                    },
+                                )
+                                .clickable { selectedIcon = iconKey },
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Icon(
+                                imageVector = iconVector,
+                                contentDescription = null,
+                                tint = if (iconKey == selectedIcon)
+                                    MaterialTheme.colorScheme.primary
+                                else
+                                    MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.size(24.dp),
+                            )
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Color Selection
                 Text(
                     text = stringResource(R.string.categories_color_label),
                     style = MaterialTheme.typography.labelLarge,
@@ -405,7 +466,7 @@ private fun AddCategoryDialog(
                 onClick = {
                     if (name.isNotBlank()) onConfirm(
                         name.trim(),
-                        "category",
+                        selectedIcon,
                         selectedColor
                     )
                 },

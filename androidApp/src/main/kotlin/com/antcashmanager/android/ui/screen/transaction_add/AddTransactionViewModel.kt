@@ -166,8 +166,23 @@ class AddTransactionViewModel(
     // ── Event Handlers ──
 
     private fun selectCategory(category: Category) {
-        Logger.d(TAG) { "Category selected: ${category.name}" }
-        _internalState.update { it.copy(selectedCategory = category) }
+        Logger.d(TAG) { "Category selected: ${category.name}, type: ${category.type}" }
+
+        // Converti il tipo categoria in TransactionType
+        val transactionType = if (category.type.uppercase() == "INCOME")
+            TransactionType.INCOME
+        else
+            TransactionType.EXPENSE
+
+        // Aggiorna stato con categoria e tipo automaticamente selezionato
+        _internalState.update {
+            it.copy(
+                selectedCategory = category,
+                selectedType = transactionType
+            )
+        }
+
+        Logger.d(TAG) { "Transaction type auto-selected: $transactionType" }
     }
 
     private fun selectType(type: TransactionType) {
@@ -221,7 +236,10 @@ class AddTransactionViewModel(
         }
 
         val nextStep = when (currentState.currentStep) {
-            AddTransactionStep.CATEGORY_SELECTION -> AddTransactionStep.TYPE_SELECTION
+            // Se il tipo è già selezionato (dalla categoria), salta direttamente a DETAILS
+            AddTransactionStep.CATEGORY_SELECTION ->
+                if (currentState.selectedType != null) AddTransactionStep.DETAILS
+                else AddTransactionStep.TYPE_SELECTION
             AddTransactionStep.TYPE_SELECTION -> AddTransactionStep.DETAILS
             AddTransactionStep.DETAILS -> AddTransactionStep.CONFIRMATION
             AddTransactionStep.CONFIRMATION -> return

@@ -1,7 +1,6 @@
 package com.antcashmanager.android.ui.screen.transaction_add
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -22,12 +20,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -57,15 +52,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
-import com.antcashmanager.android.ui.components.AppCard
 import com.antcashmanager.android.ui.components.AppCategoryCard
 import com.antcashmanager.android.ui.components.AppSelectionItemCard
 import com.antcashmanager.android.ui.components.button.AppButton
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.domain.model.Category
+import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.TransactionRepository
-import com.antcashmanager.domain.model.TransactionType
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -88,18 +82,24 @@ fun AddTransactionScreen(
         factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                AddTransactionViewModel(transactionRepository, categoryRepository, transactionId) as T
+                AddTransactionViewModel(
+                    transactionRepository,
+                    categoryRepository,
+                    transactionId
+                ) as T
         },
     )
 
     val state by viewModel.state.collectAsState()
+
     @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
     var hasSubmittedOnce by remember { mutableStateOf(false) }
 
     // Naviga indietro solo se: transazione è stata sottomessa E stato è stato resettato
-    if (hasSubmittedOnce && state.selectedCategory == null && state.selectedType == null && 
+    if (hasSubmittedOnce && state.selectedCategory == null && state.selectedType == null &&
         state.title.isEmpty() && state.currentStep == AddTransactionStep.CATEGORY_SELECTION &&
-        state.isLoading == false) {
+        state.isLoading == false
+    ) {
         onTransactionAdded()
     }
 
@@ -208,10 +208,18 @@ private fun CategorySelectionStep(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { AppText(stringResource(R.string.add_transaction_select_category), fontWeight = FontWeight.Bold) },
+                title = {
+                    AppText(
+                        stringResource(R.string.add_transaction_select_category),
+                        fontWeight = FontWeight.Bold
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onCancel) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.add_transaction_back))
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            stringResource(R.string.add_transaction_back)
+                        )
                     }
                 },
             )
@@ -301,10 +309,18 @@ private fun TypeSelectionStep(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { AppText(stringResource(R.string.add_transaction_select_type), fontWeight = FontWeight.Bold) },
+                title = {
+                    AppText(
+                        stringResource(R.string.add_transaction_select_type),
+                        fontWeight = FontWeight.Bold
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onCancel) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.add_transaction_back))
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            stringResource(R.string.add_transaction_back)
+                        )
                     }
                 },
             )
@@ -318,7 +334,10 @@ private fun TypeSelectionStep(
                 .verticalScroll(rememberScrollState()),
         ) {
             AppText(
-                stringResource(R.string.add_transaction_selected_category, selectedCategory?.name ?: stringResource(R.string.add_transaction_none)),
+                stringResource(
+                    R.string.add_transaction_selected_category,
+                    selectedCategory?.name ?: stringResource(R.string.add_transaction_none)
+                ),
                 style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier.padding(bottom = 16.dp),
             )
@@ -440,10 +459,18 @@ private fun DetailsStep(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { AppText(stringResource(R.string.add_transaction_details), fontWeight = FontWeight.Bold) },
+                title = {
+                    AppText(
+                        stringResource(R.string.add_transaction_details),
+                        fontWeight = FontWeight.Bold
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onCancel) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.add_transaction_back))
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            stringResource(R.string.add_transaction_back)
+                        )
                     }
                 },
             )
@@ -457,32 +484,42 @@ private fun DetailsStep(
                 .verticalScroll(rememberScrollState()),
         ) {
             AppText(
-                stringResource(R.string.add_transaction_category_type, state.selectedCategory?.name ?: stringResource(R.string.add_transaction_none), if (state.selectedType == TransactionType.INCOME) stringResource(R.string.add_transaction_income_label) else stringResource(R.string.add_transaction_expense_label)),
+                stringResource(
+                    R.string.add_transaction_category_type,
+                    state.selectedCategory?.name ?: stringResource(R.string.add_transaction_none),
+                    if (state.selectedType == TransactionType.INCOME) stringResource(R.string.add_transaction_income_label) else stringResource(
+                        R.string.add_transaction_expense_label
+                    )
+                ),
                 style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier.padding(bottom = 16.dp),
             )
 
             // Category Selection Field - sempre visibile
-             AppSelectionItemCard(
-                 label = stringResource(R.string.add_transaction_category),
-                 value = state.selectedCategory?.name ?: "-",
-                 icon = state.selectedCategory?.icon,
-                 isEditable = state.isModifying,
-                 onClick = if (state.isModifying) {{ onEvent(AddTransactionEvent.EditCategory) }} else null,
-             )
-             Spacer(modifier = Modifier.height(12.dp))
+            AppSelectionItemCard(
+                label = stringResource(R.string.add_transaction_category),
+                value = state.selectedCategory?.name ?: "-",
+                icon = state.selectedCategory?.icon,
+                isEditable = state.isModifying,
+                onClick = if (state.isModifying) {
+                    { onEvent(AddTransactionEvent.EditCategory) }
+                } else null,
+            )
+            Spacer(modifier = Modifier.height(12.dp))
 
-             // Type Selection Field - sempre visibile
-              AppSelectionItemCard(
-                  label = stringResource(R.string.add_transaction_type),
-                  value = if (state.selectedType == TransactionType.INCOME)
-                      stringResource(R.string.add_transaction_income_label)
-                  else
-                      stringResource(R.string.add_transaction_expense_label),
-                  icon = if (state.selectedType == TransactionType.INCOME) "💰" else "💸",
-                  isEditable = state.isModifying,
-                  onClick = if (state.isModifying) {{ onEvent(AddTransactionEvent.EditType) }} else null,
-              )
+            // Type Selection Field - sempre visibile
+            AppSelectionItemCard(
+                label = stringResource(R.string.add_transaction_type),
+                value = if (state.selectedType == TransactionType.INCOME)
+                    stringResource(R.string.add_transaction_income_label)
+                else
+                    stringResource(R.string.add_transaction_expense_label),
+                icon = if (state.selectedType == TransactionType.INCOME) "💰" else "💸",
+                isEditable = state.isModifying,
+                onClick = if (state.isModifying) {
+                    { onEvent(AddTransactionEvent.EditType) }
+                } else null,
+            )
             Spacer(modifier = Modifier.height(12.dp))
             OutlinedTextField(
                 value = state.title,
@@ -505,12 +542,15 @@ private fun DetailsStep(
             Spacer(modifier = Modifier.height(12.dp))
 
             // Date
-             AppSelectionItemCard(
-                 label = stringResource(R.string.add_transaction_field_date),
-                 value = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(state.timestamp)),
-                 isEditable = true,
-                 onClick = { showDatePicker = true },
-             )
+            AppSelectionItemCard(
+                label = stringResource(R.string.add_transaction_field_date),
+                value = SimpleDateFormat(
+                    "dd/MM/yyyy",
+                    Locale.getDefault()
+                ).format(Date(state.timestamp)),
+                isEditable = true,
+                onClick = { showDatePicker = true },
+            )
             Spacer(modifier = Modifier.height(12.dp))
 
             // Notes
@@ -585,35 +625,35 @@ private fun DetailsStep(
             Spacer(modifier = Modifier.height(32.dp))
 
             Row(
-                 modifier = Modifier.fillMaxWidth(),
-                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-             ) {
-                 if (state.isModifying) {
-                     AppButton(
-                         text = stringResource(R.string.add_transaction_summary),
-                         modifier = Modifier.weight(1f),
-                         onClick = onPrevious,
-                     )
-                     AppButton(
-                         text = stringResource(R.string.add_transaction_save),
-                         modifier = Modifier.weight(1f),
-                         enabled = state.title.isNotBlank() && state.amount.isNotBlank(),
-                         onClick = onNext,
-                     )
-                 } else {
-                     AppButton(
-                         text = stringResource(R.string.add_transaction_previous),
-                         modifier = Modifier.weight(1f),
-                         onClick = onPrevious,
-                     )
-                     AppButton(
-                         text = stringResource(R.string.add_transaction_next),
-                         modifier = Modifier.weight(1f),
-                         enabled = state.title.isNotBlank() && state.amount.isNotBlank(),
-                         onClick = onNext,
-                     )
-                 }
-             }
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                if (state.isModifying) {
+                    AppButton(
+                        text = stringResource(R.string.add_transaction_summary),
+                        modifier = Modifier.weight(1f),
+                        onClick = onPrevious,
+                    )
+                    AppButton(
+                        text = stringResource(R.string.add_transaction_save),
+                        modifier = Modifier.weight(1f),
+                        enabled = state.title.isNotBlank() && state.amount.isNotBlank(),
+                        onClick = onNext,
+                    )
+                } else {
+                    AppButton(
+                        text = stringResource(R.string.add_transaction_previous),
+                        modifier = Modifier.weight(1f),
+                        onClick = onPrevious,
+                    )
+                    AppButton(
+                        text = stringResource(R.string.add_transaction_next),
+                        modifier = Modifier.weight(1f),
+                        enabled = state.title.isNotBlank() && state.amount.isNotBlank(),
+                        onClick = onNext,
+                    )
+                }
+            }
         }
     }
 }
@@ -629,10 +669,18 @@ private fun ConfirmationStep(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { AppText(stringResource(R.string.add_transaction_confirmation), fontWeight = FontWeight.Bold) },
+                title = {
+                    AppText(
+                        stringResource(R.string.add_transaction_confirmation),
+                        fontWeight = FontWeight.Bold
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onCancel) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.add_transaction_back))
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            stringResource(R.string.add_transaction_back)
+                        )
                     }
                 },
             )
@@ -652,19 +700,24 @@ private fun ConfirmationStep(
                 modifier = Modifier.padding(bottom = 16.dp),
             )
 
-             ConfirmationField(
-                 stringResource(R.string.add_transaction_field_category),
-                 state.selectedCategory?.name ?: "-",
-                 icon = state.selectedCategory?.icon
-             )
-             ConfirmationField(
-                 stringResource(R.string.add_transaction_field_type),
-                 if (state.selectedType == TransactionType.INCOME) stringResource(R.string.add_transaction_income_label) else stringResource(R.string.add_transaction_expense_label),
-                 icon = if (state.selectedType == TransactionType.INCOME) "💰" else "💸"
-             )
+            ConfirmationField(
+                stringResource(R.string.add_transaction_field_category),
+                state.selectedCategory?.name ?: "-",
+                icon = state.selectedCategory?.icon
+            )
+            ConfirmationField(
+                stringResource(R.string.add_transaction_field_type),
+                if (state.selectedType == TransactionType.INCOME) stringResource(R.string.add_transaction_income_label) else stringResource(
+                    R.string.add_transaction_expense_label
+                ),
+                icon = if (state.selectedType == TransactionType.INCOME) "💰" else "💸"
+            )
             ConfirmationField(stringResource(R.string.add_transaction_field_title), state.title)
             ConfirmationField(stringResource(R.string.add_transaction_field_amount), state.amount)
-            ConfirmationField(stringResource(R.string.add_transaction_field_date), SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(state.timestamp)))
+            ConfirmationField(
+                stringResource(R.string.add_transaction_field_date),
+                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(state.timestamp))
+            )
             if (state.notes.isNotEmpty()) {
                 ConfirmationField(stringResource(R.string.add_transaction_field_notes), state.notes)
             }
@@ -672,11 +725,17 @@ private fun ConfirmationStep(
                 ConfirmationField(stringResource(R.string.add_transaction_field_payee), state.payee)
             }
             if (state.location.isNotEmpty()) {
-                ConfirmationField(stringResource(R.string.add_transaction_field_location), state.location)
+                ConfirmationField(
+                    stringResource(R.string.add_transaction_field_location),
+                    state.location
+                )
             }
             if (state.tags.isNotEmpty()) {
                 val formattedTags = state.tags.split(",").joinToString(" ") { "#${it.trim()}" }
-                ConfirmationField(stringResource(R.string.add_transaction_field_tags), formattedTags)
+                ConfirmationField(
+                    stringResource(R.string.add_transaction_field_tags),
+                    formattedTags
+                )
             }
             if (state.isRecurring) {
                 ConfirmationField(
@@ -686,53 +745,57 @@ private fun ConfirmationStep(
             }
 
             Row(
-                 modifier = Modifier.fillMaxWidth(),
-                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-             ) {
-                 if (state.isModifying) {
-                     AppButton(
-                         text = stringResource(R.string.add_transaction_save),
-                         modifier = Modifier.fillMaxWidth(),
-                         onClick = onSubmit,
-                     )
-                 } else {
-                     AppButton(
-                         text = stringResource(R.string.add_transaction_previous),
-                         modifier = Modifier.weight(1f),
-                         onClick = onPrevious,
-                     )
-                     AppButton(
-                         text = stringResource(R.string.add_transaction_save),
-                         modifier = Modifier.weight(1f),
-                         onClick = onSubmit,
-                     )
-                 }
-             }
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                if (state.isModifying) {
+                    AppButton(
+                        text = stringResource(R.string.add_transaction_save),
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = onSubmit,
+                    )
+                } else {
+                    AppButton(
+                        text = stringResource(R.string.add_transaction_previous),
+                        modifier = Modifier.weight(1f),
+                        onClick = onPrevious,
+                    )
+                    AppButton(
+                        text = stringResource(R.string.add_transaction_save),
+                        modifier = Modifier.weight(1f),
+                        onClick = onSubmit,
+                    )
+                }
+            }
         }
     }
 }
 
 @Composable
- private fun ConfirmationField(label: String, value: String, icon: String? = null) {
-     Row(
-         modifier = Modifier
-             .fillMaxWidth()
-             .padding(vertical = 8.dp),
-         horizontalArrangement = Arrangement.SpaceBetween,
-         verticalAlignment = Alignment.CenterVertically,
-     ) {
-         AppText(label, style = MaterialTheme.typography.labelMedium)
-         Row(
-             horizontalArrangement = Arrangement.spacedBy(8.dp),
-             verticalAlignment = Alignment.CenterVertically,
-         ) {
-             if (icon != null) {
-                 AppText(icon, style = MaterialTheme.typography.titleLarge)
-             }
-             AppText(value, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
-         }
-     }
- }
+private fun ConfirmationField(label: String, value: String, icon: String? = null) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        AppText(label, style = MaterialTheme.typography.labelMedium)
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            if (icon != null) {
+                AppText(icon, style = MaterialTheme.typography.titleLarge)
+            }
+            AppText(
+                value,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+    }
+}
 
 // ══════════════════════════════════════════════════════════════════════════════
 // RECURRENCE INTERVAL DROPDOWN

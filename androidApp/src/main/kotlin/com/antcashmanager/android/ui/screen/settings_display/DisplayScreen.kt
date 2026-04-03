@@ -175,7 +175,9 @@ internal fun DisplayContent(
             )
             AppCard(
                 title = stringResource(R.string.settings_show_charts_section),
-                subtitle = if (showChartsSection) stringResource(R.string.settings_show_charts_section_visible) else stringResource(R.string.settings_show_charts_section_hidden),
+                subtitle = if (showChartsSection) stringResource(R.string.settings_show_charts_section_visible) else stringResource(
+                    R.string.settings_show_charts_section_hidden
+                ),
                 leadingIcon = Icons.Default.BarChart,
                 trailingContent = {
                     Switch(

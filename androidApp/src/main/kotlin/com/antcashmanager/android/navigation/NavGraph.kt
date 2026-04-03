@@ -11,8 +11,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -149,7 +149,8 @@ fun AntCashManagerNavHost(
                         }
                     )
                 ) { backStackEntry ->
-                    val transactionId = backStackEntry.arguments?.getLong("transactionId")?.takeIf { it != -1L }
+                    val transactionId =
+                        backStackEntry.arguments?.getLong("transactionId")?.takeIf { it != -1L }
                     AddTransactionScreen(
                         transactionRepository = transactionRepository,
                         categoryRepository = categoryRepository,
