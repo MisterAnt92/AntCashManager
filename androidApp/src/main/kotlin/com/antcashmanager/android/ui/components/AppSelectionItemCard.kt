@@ -43,17 +43,21 @@ fun AppSelectionItemCard(
     onClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
+    val shape = RoundedCornerShape(12.dp)
+
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
+            .clip(shape)
             .background(MaterialTheme.colorScheme.surfaceVariant)
-            .apply {
+            .then(
                 if (isEditable && onClick != null) {
-                    clickable(onClick = onClick)
+                    Modifier.clickable(onClick = onClick)
+                } else {
+                    Modifier
                 }
-            }
-            .padding(12.dp),
+            )
+            .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {

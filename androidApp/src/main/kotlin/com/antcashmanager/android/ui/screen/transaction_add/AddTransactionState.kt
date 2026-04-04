@@ -26,6 +26,7 @@ data class AddTransactionState(
     // ── Navigazione ──
     val currentStep: AddTransactionStep = AddTransactionStep.CATEGORY_SELECTION,
     val isModifying: Boolean = false,
+    val transactionId: Long? = null,
 
     // ── Dati categoria e tipo ──
     val selectedCategory: Category? = null,
@@ -52,7 +53,17 @@ data class AddTransactionState(
     val showCategoryDialog: Boolean = false,
     val showTypeDialog: Boolean = false,
     val showDatePicker: Boolean = false,
-)
+) {
+    /**
+     * Verifica se il form è valido per il salvataggio.
+     */
+    val isFormValid: Boolean
+        get() = title.isNotBlank() &&
+                amount.isNotBlank() &&
+                amount.toDoubleOrNull() != null &&
+                selectedCategory != null &&
+                selectedType != null
+}
 
 /**
  * Data class per i filtri di transazione.

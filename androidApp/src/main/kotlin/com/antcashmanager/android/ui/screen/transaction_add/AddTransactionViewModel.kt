@@ -14,6 +14,7 @@ import com.antcashmanager.domain.usecase.transaction.UpdateTransactionUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -100,30 +101,34 @@ class AddTransactionViewModel(
         viewModelScope.launch {
             try {
                 _state.update { it.copy(isLoading = true) }
+                Logger.d(TAG) { "Loading transaction with id: $id" }
+
                 val transaction = transactionRepository.getTransactionById(id)
+                val categoryList = getCategoriesUseCase().first()
 
                 if (transaction != null) {
-                    getCategoriesUseCase().collect { categoryList ->
-                        val selectedCat = categoryList.find { it.name == transaction.category }
-                        _state.update {
-                            it.copy(
-                                isModifying = true,
-                                selectedCategory = selectedCat,
-                                selectedType = transaction.type,
-                                title = transaction.title,
-                                amount = transaction.amount.toString(),
-                                notes = transaction.notes,
-                                payee = transaction.payee,
-                                location = transaction.location,
-                                tags = transaction.tags,
-                                timestamp = transaction.timestamp,
-                                isRecurring = transaction.isRecurring,
-                                recurrenceInterval = transaction.recurrenceInterval,
-                                currentStep = AddTransactionStep.DETAILS,
-                                isLoading = false,
-                                categories = categoryList,
-                            )
-                        }
+                    val selectedCat = categoryList.find { it.name == transaction.category }
+                    Logger.d(TAG) { "Transaction loaded: ${transaction.title}, category: $selectedCat" }
+
+                    _state.update {
+                        it.copy(
+                            isModifying = true,
+                            transactionId = id,
+                            selectedCategory = selectedCat,
+                            selectedType = transaction.type,
+                            title = transaction.title,
+                            amount = transaction.amount.toString(),
+                            notes = transaction.notes,
+                            payee = transaction.payee,
+                            location = transaction.location,
+                            tags = transaction.tags,
+                            timestamp = transaction.timestamp,
+                            isRecurring = transaction.isRecurring,
+                            recurrenceInterval = transaction.recurrenceInterval,
+                            currentStep = AddTransactionStep.DETAILS,
+                            isLoading = false,
+                            categories = categoryList,
+                        )
                     }
                 } else {
                     Logger.w(TAG) { "Transaction with id $id not found" }

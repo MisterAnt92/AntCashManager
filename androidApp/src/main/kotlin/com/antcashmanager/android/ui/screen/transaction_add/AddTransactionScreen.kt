@@ -119,8 +119,16 @@ internal fun AddTransactionContent(
     onEvent: (AddTransactionEvent) -> Unit,
     onNavigateBack: () -> Unit,
 ) {
-    when (state.currentStep) {
-        AddTransactionStep.CATEGORY_SELECTION -> {
+    when {
+        state.isLoading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                androidx.compose.material3.CircularProgressIndicator()
+            }
+        }
+        state.currentStep == AddTransactionStep.CATEGORY_SELECTION -> {
             CategorySelectionStep(
                 categories = state.categories,
                 selectedCategory = state.selectedCategory,
@@ -128,8 +136,7 @@ internal fun AddTransactionContent(
                 onCancel = onNavigateBack,
             )
         }
-
-        AddTransactionStep.DETAILS -> {
+        state.currentStep == AddTransactionStep.DETAILS -> {
             DetailsStep(
                 state = state,
                 onEvent = onEvent,
@@ -480,10 +487,7 @@ private fun DetailsStep(
                     else
                         stringResource(R.string.add_transaction_save),
                     modifier = if (state.isModifying) Modifier.fillMaxWidth() else Modifier.weight(1f),
-                    enabled = state.title.isNotBlank()
-                            && state.amount.isNotBlank()
-                            && state.selectedCategory != null
-                            && state.selectedType != null,
+                    enabled = state.isFormValid,
                     onClick = { onEvent(AddTransactionEvent.Submit) },
                 )
             }

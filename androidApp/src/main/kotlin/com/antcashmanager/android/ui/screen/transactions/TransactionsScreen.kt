@@ -356,6 +356,17 @@ private fun TransactionsList(
 private val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
 
 @Composable
+private fun getRecurrenceIntervalLabel(interval: String): String {
+    return when (interval.lowercase()) {
+        "daily" -> stringResource(R.string.transactions_interval_daily)
+        "weekly" -> stringResource(R.string.transactions_interval_weekly)
+        "monthly" -> stringResource(R.string.transactions_interval_monthly)
+        "yearly" -> stringResource(R.string.transactions_interval_yearly)
+        else -> stringResource(R.string.transactions_recurring)
+    }
+}
+
+@Composable
 private fun TransactionItem(transaction: Transaction, onClick: (() -> Unit)? = null) {
     val isIncome = transaction.type == TransactionType.INCOME
     val cardBackgroundColor =
@@ -462,7 +473,9 @@ private fun TransactionItem(transaction: Transaction, onClick: (() -> Unit)? = n
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = transaction.recurrenceInterval.ifBlank {
+                                text = if (transaction.recurrenceInterval.isNotBlank()) {
+                                    getRecurrenceIntervalLabel(transaction.recurrenceInterval)
+                                } else {
                                     stringResource(R.string.transactions_recurring)
                                 },
                                 style = MaterialTheme.typography.labelSmall,
