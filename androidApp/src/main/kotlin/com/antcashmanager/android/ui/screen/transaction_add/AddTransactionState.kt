@@ -53,6 +53,7 @@ data class AddTransactionState(
     val showCategoryDialog: Boolean = false,
     val showTypeDialog: Boolean = false,
     val showDatePicker: Boolean = false,
+    val showDeleteConfirmDialog: Boolean = false,
 ) {
     /**
      * Verifica se il form è valido per il salvataggio.

@@ -22,6 +22,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Checkbox
@@ -279,6 +280,41 @@ private fun DetailsStep(
         }
     }
 
+    // ── Dialog: Conferma eliminazione ──
+    if (state.showDeleteConfirmDialog) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { onEvent(AddTransactionEvent.DismissDeleteConfirmDialog) },
+            title = {
+                AppText(
+                    text = stringResource(R.string.dialog_delete),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                )
+            },
+            text = {
+                AppText(
+                    text = "Sei sicuro di voler eliminare questa transazione? Questa azione non può essere annullata.",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { onEvent(AddTransactionEvent.ConfirmDelete) }
+                ) {
+                    Text(
+                        stringResource(R.string.dialog_delete),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { onEvent(AddTransactionEvent.DismissDeleteConfirmDialog) }) {
+                    Text(stringResource(R.string.dialog_cancel))
+                }
+            },
+        )
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -297,6 +333,20 @@ private fun DetailsStep(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             stringResource(R.string.add_transaction_back),
                         )
+                    }
+                },
+                actions = {
+                    // Pulsante elimina (solo in modalità modifica)
+                    if (state.isModifying) {
+                        IconButton(
+                            onClick = { onEvent(AddTransactionEvent.ShowDeleteConfirmDialog) }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = stringResource(R.string.dialog_delete),
+                                tint = MaterialTheme.colorScheme.error,
+                            )
+                        }
                     }
                 },
             )

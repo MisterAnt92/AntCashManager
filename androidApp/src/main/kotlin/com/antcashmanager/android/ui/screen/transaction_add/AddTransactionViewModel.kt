@@ -11,6 +11,7 @@ import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.UpdateTransactionUseCase
+import com.antcashmanager.domain.usecase.transaction.DeleteTransactionUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -57,6 +58,11 @@ sealed interface AddTransactionEvent {
     data object DismissCategoryDialog : AddTransactionEvent
     data object DismissTypeDialog : AddTransactionEvent
     data object DismissDatePicker : AddTransactionEvent
+
+    // ── Dialog eliminazione ──
+    data object ShowDeleteConfirmDialog : AddTransactionEvent
+    data object DismissDeleteConfirmDialog : AddTransactionEvent
+    data object ConfirmDelete : AddTransactionEvent
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -77,6 +83,7 @@ class AddTransactionViewModel(
     private val insertTransactionUseCase = InsertTransactionUseCase(transactionRepository)
     private val updateTransactionUseCase = UpdateTransactionUseCase(transactionRepository)
     private val getCategoriesUseCase = GetCategoriesUseCase(categoryRepository)
+    private val deleteTransactionUseCase = DeleteTransactionUseCase(transactionRepository)
 
     // ── State ──
     private val _state = MutableStateFlow(AddTransactionState())
@@ -174,6 +181,9 @@ class AddTransactionViewModel(
             is AddTransactionEvent.DismissDatePicker -> _state.update { it.copy(showDatePicker = false) }
             is AddTransactionEvent.Submit -> submitTransaction()
             is AddTransactionEvent.Cancel -> _state.value = AddTransactionState()
+            is AddTransactionEvent.ShowDeleteConfirmDialog -> _state.update { it.copy(showDeleteConfirmDialog = true) }
+            is AddTransactionEvent.DismissDeleteConfirmDialog -> _state.update { it.copy(showDeleteConfirmDialog = false) }
+            is AddTransactionEvent.ConfirmDelete -> deleteTransaction()
         }
     }
 
@@ -280,6 +290,45 @@ class AddTransactionViewModel(
             } catch (ex: Exception) {
                 Logger.e(TAG) { "Error submitting transaction: ${ex.message}" }
                 _state.update { it.copy(error = "Errore durante il salvataggio", isLoading = false) }
+            }
+        }
+    }
+
+    private fun deleteTransaction() {
+        viewModelScope.launch {
+            try {
+                _state.update { it.copy(isLoading = true) }
+                Logger.d(TAG) { "Deleting transaction with id: $transactionId" }
+
+                val transaction = transactionRepository.getTransactionById(transactionId!!)
+                if (transaction != null) {
+                    deleteTransactionUseCase(transaction)
+                    Logger.d(TAG) { "Transaction deleted successfully" }
+                    _state.update {
+                        it.copy(
+                            isTransactionSaved = true,
+                            isLoading = false,
+                            showDeleteConfirmDialog = false
+                        )
+                    }
+                } else {
+                    _state.update {
+                        it.copy(
+                            error = "Transazione non trovata",
+                            isLoading = false,
+                            showDeleteConfirmDialog = false
+                        )
+                    }
+                }
+            } catch (ex: Exception) {
+                Logger.e(TAG) { "Error deleting transaction: ${ex.message}" }
+                _state.update {
+                    it.copy(
+                        error = "Errore durante l'eliminazione",
+                        isLoading = false,
+                        showDeleteConfirmDialog = false
+                    )
+                }
             }
         }
     }
