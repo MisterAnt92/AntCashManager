@@ -97,19 +97,3 @@ fun AppDivider(
     )
 }
 
-/**
- * AppColumn - wrapper per Column con padding e spaziatura coerenti al tema
- * Utilizzo: AppColumn { AppText("Hello") }
- */
-@Composable
-fun AppColumn(
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
-) {
-    Column(
-        modifier = modifier.background(MaterialTheme.colorScheme.surface),
-    ) {
-        content()
-    }
-}
-

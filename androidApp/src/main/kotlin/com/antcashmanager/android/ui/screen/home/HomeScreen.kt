@@ -482,7 +482,7 @@ private fun RecentTransactionItem(transaction: Transaction) {
                         .size(44.dp)
                         .background(
                             if (isIncome) IncomeGreen.copy(alpha = 0.25f) else ExpenseRed.copy(alpha = 0.25f),
-                            shape = RoundedCornerShape(8.dp),
+                            shape = RoundedCornerShape(32.dp),
                         )
                         .padding(8.dp),
                     contentAlignment = Alignment.Center,
@@ -555,10 +555,6 @@ private fun RecentTransactionItem(transaction: Transaction) {
                 // Amount with background
                 Box(
                     modifier = Modifier
-                        .background(
-                            if (isIncome) IncomeGreen.copy(alpha = 0.15f) else ExpenseRed.copy(alpha = 0.15f),
-                            shape = RoundedCornerShape(8.dp),
-                        )
                         .padding(8.dp),
                 ) {
                     TransactionAmountText(
