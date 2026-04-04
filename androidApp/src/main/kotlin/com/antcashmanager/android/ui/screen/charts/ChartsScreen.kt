@@ -66,6 +66,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
+import com.antcashmanager.android.domain.usecase.share.BuildShareTextUseCase
 import com.antcashmanager.android.ui.components.AntEmptyState
 import com.antcashmanager.android.ui.components.HelpButton
 import com.antcashmanager.android.ui.components.HelpDialogContent
@@ -118,6 +119,7 @@ internal fun ChartsContent(
     onPresetSelected: (RangePreset) -> Unit = {},
 ) {
     val context = LocalContext.current
+    val buildShareTextUseCase = remember { BuildShareTextUseCase(context) }
     val dateFormat = remember { SimpleDateFormat("dd MMM yyyy", Locale.getDefault()) }
     val fmt = LocalCurrencyFormat.current
     val shareLabel = stringResource(R.string.share)
@@ -298,7 +300,7 @@ internal fun ChartsContent(
                         )
                         IconButton(
                             onClick = {
-                                val shareText = buildCategoryShareText(
+                                val shareText = buildShareTextUseCase.buildCategoryShareText(
                                     data = chartData.expenseByCategory,
                                     fmt = fmt,
                                 )
@@ -356,7 +358,7 @@ internal fun ChartsContent(
                         )
                         IconButton(
                             onClick = {
-                                val shareText = buildMonthlyShareText(
+                                val shareText = buildShareTextUseCase.buildMonthlyShareText(
                                     data = chartData.monthlyData,
                                     fmt = fmt,
                                 )
@@ -429,7 +431,7 @@ internal fun ChartsContent(
                         )
                         IconButton(
                             onClick = {
-                                val shareText = buildYearlyShareText(
+                                val shareText = buildShareTextUseCase.buildYearlyShareText(
                                     data = chartData.yearlyData,
                                     fmt = fmt,
                                 )
@@ -787,86 +789,6 @@ private fun YearlyBarChart(data: List<YearlyAmount>, modifier: Modifier = Modifi
     }
 }
 
-/**
- * Costruisce il testo da condividere per le uscite per categoria.
- */
-private fun buildCategoryShareText(
-    data: Map<String, Double>,
-    fmt: CurrencyFormat,
-): String {
-    val total = data.values.sum()
-    val sb = StringBuilder()
-    sb.appendLine("📊 Uscite per Categoria")
-    sb.appendLine("━━━━━━━━━━━━━━━━━━━━")
-    data.entries.forEach { (category, value) ->
-        val percentage = if (total > 0) (value / total * 100) else 0.0
-        sb.appendLine("• $category: ${formatAmount(value, fmt)} (%.1f%%)".format(percentage))
-    }
-    sb.appendLine("━━━━━━━━━━━━━━━━━━━━")
-    sb.appendLine("💰 Totale: ${formatAmount(total, fmt)}")
-    sb.appendLine("\n— AntCashManager 🐜")
-    return sb.toString()
-}
-
-/**
- * Costruisce il testo da condividere per la panoramica mensile.
- */
-private fun buildMonthlyShareText(
-    data: List<MonthlyAmount>,
-    fmt: CurrencyFormat,
-): String {
-    val sb = StringBuilder()
-    sb.appendLine("📅 Panoramica Mensile")
-    sb.appendLine("━━━━━━━━━━━━━━━━━━━━")
-    var totalIncome = 0.0
-    var totalExpense = 0.0
-    data.forEach { item ->
-        totalIncome += item.income
-        totalExpense += item.expense
-        val balance = item.income - item.expense
-        val balanceSymbol = if (balance >= 0) "📈" else "📉"
-        sb.appendLine("${item.label}:")
-        sb.appendLine("  💰 Entrate: ${formatAmount(item.income, fmt)}")
-        sb.appendLine("  💸 Uscite: ${formatAmount(item.expense, fmt)}")
-        sb.appendLine("  $balanceSymbol Saldo: ${formatAmount(balance, fmt)}")
-    }
-    sb.appendLine("━━━━━━━━━━━━━━━━━━━━")
-    sb.appendLine("📊 Totale Entrate: ${formatAmount(totalIncome, fmt)}")
-    sb.appendLine("📊 Totale Uscite: ${formatAmount(totalExpense, fmt)}")
-    sb.appendLine("📊 Bilancio: ${formatAmount(totalIncome - totalExpense, fmt)}")
-    sb.appendLine("\n— AntCashManager 🐜")
-    return sb.toString()
-}
-
-/**
- * Costruisce il testo da condividere per la panoramica annuale.
- */
-private fun buildYearlyShareText(
-    data: List<YearlyAmount>,
-    fmt: CurrencyFormat,
-): String {
-    val sb = StringBuilder()
-    sb.appendLine("📆 Panoramica Annuale")
-    sb.appendLine("━━━━━━━━━━━━━━━━━━━━")
-    var totalIncome = 0.0
-    var totalExpense = 0.0
-    data.forEach { item ->
-        totalIncome += item.income
-        totalExpense += item.expense
-        val balance = item.income - item.expense
-        val balanceSymbol = if (balance >= 0) "📈" else "📉"
-        sb.appendLine("${item.label}:")
-        sb.appendLine("  💰 Entrate: ${formatAmount(item.income, fmt)}")
-        sb.appendLine("  💸 Uscite: ${formatAmount(item.expense, fmt)}")
-        sb.appendLine("  $balanceSymbol Saldo: ${formatAmount(balance, fmt)}")
-    }
-    sb.appendLine("━━━━━━━━━━━━━━━━━━━━")
-    sb.appendLine("📊 Totale Entrate: ${formatAmount(totalIncome, fmt)}")
-    sb.appendLine("📊 Totale Uscite: ${formatAmount(totalExpense, fmt)}")
-    sb.appendLine("📊 Bilancio: ${formatAmount(totalIncome - totalExpense, fmt)}")
-    sb.appendLine("\n— AntCashManager 🐜")
-    return sb.toString()
-}
 
 // Previews
 @Preview(showBackground = true, name = "ChartsScreen - With Data")

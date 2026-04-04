@@ -85,6 +85,16 @@
     <string name="share_categories_subject">AntCashManager - Uscite per Categoria</string>
     <string name="share_monthly_subject">AntCashManager - Panoramica Mensile</string>
     <string name="share_yearly_subject">AntCashManager - Panoramica Annuale</string>
+    <string name="share_category_title">Uscite per Categoria</string>
+    <string name="share_monthly_title">Panoramica Mensile</string>
+    <string name="share_yearly_title">Panoramica Annuale</string>
+    <string name="share_total">Totale</string>
+    <string name="share_income">Entrate</string>
+    <string name="share_expense">Uscite</string>
+    <string name="share_balance">Saldo</string>
+    <string name="share_total_income">Totale Entrate</string>
+    <string name="share_total_expense">Totale Uscite</string>
+    <string name="share_final_balance">Bilancio Finale</string>
 
     <!-- Range Presets -->
     <string name="range_week">7 giorni</string>

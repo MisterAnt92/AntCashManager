@@ -85,6 +85,16 @@
     <string name="share_categories_subject">AntCashManager - Expenses by Category</string>
     <string name="share_monthly_subject">AntCashManager - Monthly Overview</string>
     <string name="share_yearly_subject">AntCashManager - Yearly Overview</string>
+    <string name="share_category_title">Expenses by Category</string>
+    <string name="share_monthly_title">Monthly Overview</string>
+    <string name="share_yearly_title">Yearly Overview</string>
+    <string name="share_total">Total</string>
+    <string name="share_income">Income</string>
+    <string name="share_expense">Expenses</string>
+    <string name="share_balance">Balance</string>
+    <string name="share_total_income">Total Income</string>
+    <string name="share_total_expense">Total Expenses</string>
+    <string name="share_final_balance">Final Balance</string>
 
     <!-- Range Presets -->
     <string name="range_week">7 days</string>

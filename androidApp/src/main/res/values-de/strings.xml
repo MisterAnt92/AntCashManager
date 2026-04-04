@@ -75,6 +75,16 @@
     <string name="share_categories_subject">AntCashManager - Ausgaben nach Kategorie</string>
     <string name="share_monthly_subject">AntCashManager - Monatsübersicht</string>
     <string name="share_yearly_subject">AntCashManager - Jahresübersicht</string>
+    <string name="share_category_title">Ausgaben nach Kategorie</string>
+    <string name="share_monthly_title">Monatsübersicht</string>
+    <string name="share_yearly_title">Jahresübersicht</string>
+    <string name="share_total">Gesamt</string>
+    <string name="share_income">Einnahmen</string>
+    <string name="share_expense">Ausgaben</string>
+    <string name="share_balance">Saldo</string>
+    <string name="share_total_income">Gesamteinnahmen</string>
+    <string name="share_total_expense">Gesamtausgaben</string>
+    <string name="share_final_balance">Endbilanz</string>
     <string name="range_week">7 Tage</string>
     <string name="range_month">1 Monat</string>
     <string name="range_three_months">3 Monate</string>

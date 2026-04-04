@@ -75,6 +75,16 @@
     <string name="share_categories_subject">AntCashManager - Dépenses par Catégorie</string>
     <string name="share_monthly_subject">AntCashManager - Aperçu Mensuel</string>
     <string name="share_yearly_subject">AntCashManager - Aperçu Annuel</string>
+    <string name="share_category_title">Dépenses par Catégorie</string>
+    <string name="share_monthly_title">Aperçu Mensuel</string>
+    <string name="share_yearly_title">Aperçu Annuel</string>
+    <string name="share_total">Total</string>
+    <string name="share_income">Revenus</string>
+    <string name="share_expense">Dépenses</string>
+    <string name="share_balance">Solde</string>
+    <string name="share_total_income">Revenus Totaux</string>
+    <string name="share_total_expense">Dépenses Totales</string>
+    <string name="share_final_balance">Bilan Final</string>
     <string name="range_week">7 jours</string>
     <string name="range_month">1 mois</string>
     <string name="range_three_months">3 mois</string>
