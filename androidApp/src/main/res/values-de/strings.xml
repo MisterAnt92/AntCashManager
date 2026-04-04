@@ -13,6 +13,8 @@
     <string name="home_recent_transactions">Letzte Transaktionen</string>
     <string name="home_no_transactions">Noch keine Transaktionen.\nF\u00fcge deine erste Transaktion hinzu!</string>
     <string name="home_empty_ant">Unsere kleine Ameise wartet auf deine erste Transaktion! 🐜</string>
+    <string name="home_balance_positive">📈 Positiv</string>
+    <string name="home_balance_negative">📉 Negativ</string>
     <string name="transactions_title">Transaktionen</string>
     <string name="transactions_empty">Noch keine Transaktionen</string>
     <string name="transactions_empty_subtitle">Deine Transaktionen werden hier angezeigt</string>
@@ -71,6 +73,8 @@
     <string name="charts_empty_ant">Noch keine Daten zum Anzeigen! Die Ameise arbeitet flei\u00dfig! 🐜📊</string>
     <string name="share">Teilen</string>
     <string name="share_categories_subject">AntCashManager - Ausgaben nach Kategorie</string>
+    <string name="share_monthly_subject">AntCashManager - Monatsübersicht</string>
+    <string name="share_yearly_subject">AntCashManager - Jahresübersicht</string>
     <string name="range_week">7 Tage</string>
     <string name="range_month">1 Monat</string>
     <string name="range_three_months">3 Monate</string>

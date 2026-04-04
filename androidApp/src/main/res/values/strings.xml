@@ -17,6 +17,8 @@
     <string name="home_recent_transactions">Recent Transactions</string>
     <string name="home_no_transactions">No transactions yet.\nAdd your first transaction!</string>
     <string name="home_empty_ant">Our little ant is waiting for your first transaction! 🐜</string>
+    <string name="home_balance_positive">📈 Positive</string>
+    <string name="home_balance_negative">📉 Negative</string>
 
     <!-- Transactions Screen -->
     <string name="transactions_title">Transactions</string>
@@ -81,6 +83,8 @@
     <string name="charts_empty_ant">No data to chart yet! The ant is working hard! 🐜📊</string>
     <string name="share">Share</string>
     <string name="share_categories_subject">AntCashManager - Expenses by Category</string>
+    <string name="share_monthly_subject">AntCashManager - Monthly Overview</string>
+    <string name="share_yearly_subject">AntCashManager - Yearly Overview</string>
 
     <!-- Range Presets -->
     <string name="range_week">7 days</string>

@@ -120,6 +120,7 @@ internal fun ChartsContent(
     val context = LocalContext.current
     val dateFormat = remember { SimpleDateFormat("dd MMM yyyy", Locale.getDefault()) }
     val fmt = LocalCurrencyFormat.current
+    val shareLabel = stringResource(R.string.share)
     var selectedPreset by remember { mutableIntStateOf(1) }
     var showFromPicker by remember { mutableStateOf(false) }
     var showToPicker by remember { mutableStateOf(false) }
@@ -276,7 +277,6 @@ internal fun ChartsContent(
         // Pie chart section
         if (chartData.expenseByCategory.isNotEmpty()) {
             val categoryShareSubject = stringResource(R.string.share_categories_subject)
-            val shareLabel = stringResource(R.string.share)
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -334,6 +334,8 @@ internal fun ChartsContent(
         Spacer(modifier = Modifier.height(16.dp))
         // Bar chart section - Monthly Overview
         if (chartData.monthlyData.isNotEmpty()) {
+            val monthlyShareSubject = stringResource(R.string.share_monthly_subject)
+
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
@@ -342,11 +344,39 @@ internal fun ChartsContent(
                 shape = MaterialTheme.shapes.medium,
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    AppText(
-                        text = stringResource(R.string.charts_monthly_overview),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold,
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        AppText(
+                            text = stringResource(R.string.charts_monthly_overview),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                        IconButton(
+                            onClick = {
+                                val shareText = buildMonthlyShareText(
+                                    data = chartData.monthlyData,
+                                    fmt = fmt,
+                                )
+                                val intent = Intent(Intent.ACTION_SEND).apply {
+                                    type = "text/plain"
+                                    putExtra(Intent.EXTRA_SUBJECT, monthlyShareSubject)
+                                    putExtra(Intent.EXTRA_TEXT, shareText)
+                                }
+                                context.startActivity(Intent.createChooser(intent, shareLabel))
+                            },
+                            modifier = Modifier.size(32.dp),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                contentDescription = shareLabel,
+                                modifier = Modifier.size(20.dp),
+                                tint = MaterialTheme.colorScheme.primary,
+                            )
+                        }
+                    }
                     Spacer(modifier = Modifier.height(12.dp))
 
                     // Legend at top
@@ -377,6 +407,8 @@ internal fun ChartsContent(
 
         // Bar chart section - Yearly Overview
         if (chartData.yearlyData.isNotEmpty()) {
+            val yearlyShareSubject = stringResource(R.string.share_yearly_subject)
+
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
@@ -385,11 +417,39 @@ internal fun ChartsContent(
                 shape = MaterialTheme.shapes.medium,
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    AppText(
-                        text = stringResource(R.string.charts_yearly_overview),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold,
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        AppText(
+                            text = stringResource(R.string.charts_yearly_overview),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                        IconButton(
+                            onClick = {
+                                val shareText = buildYearlyShareText(
+                                    data = chartData.yearlyData,
+                                    fmt = fmt,
+                                )
+                                val intent = Intent(Intent.ACTION_SEND).apply {
+                                    type = "text/plain"
+                                    putExtra(Intent.EXTRA_SUBJECT, yearlyShareSubject)
+                                    putExtra(Intent.EXTRA_TEXT, shareText)
+                                }
+                                context.startActivity(Intent.createChooser(intent, shareLabel))
+                            },
+                            modifier = Modifier.size(32.dp),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                contentDescription = shareLabel,
+                                modifier = Modifier.size(20.dp),
+                                tint = MaterialTheme.colorScheme.primary,
+                            )
+                        }
+                    }
                     Spacer(modifier = Modifier.height(12.dp))
 
                     // Legend at top
@@ -744,6 +804,66 @@ private fun buildCategoryShareText(
     }
     sb.appendLine("━━━━━━━━━━━━━━━━━━━━")
     sb.appendLine("💰 Totale: ${formatAmount(total, fmt)}")
+    sb.appendLine("\n— AntCashManager 🐜")
+    return sb.toString()
+}
+
+/**
+ * Costruisce il testo da condividere per la panoramica mensile.
+ */
+private fun buildMonthlyShareText(
+    data: List<MonthlyAmount>,
+    fmt: CurrencyFormat,
+): String {
+    val sb = StringBuilder()
+    sb.appendLine("📅 Panoramica Mensile")
+    sb.appendLine("━━━━━━━━━━━━━━━━━━━━")
+    var totalIncome = 0.0
+    var totalExpense = 0.0
+    data.forEach { item ->
+        totalIncome += item.income
+        totalExpense += item.expense
+        val balance = item.income - item.expense
+        val balanceSymbol = if (balance >= 0) "📈" else "📉"
+        sb.appendLine("${item.label}:")
+        sb.appendLine("  💰 Entrate: ${formatAmount(item.income, fmt)}")
+        sb.appendLine("  💸 Uscite: ${formatAmount(item.expense, fmt)}")
+        sb.appendLine("  $balanceSymbol Saldo: ${formatAmount(balance, fmt)}")
+    }
+    sb.appendLine("━━━━━━━━━━━━━━━━━━━━")
+    sb.appendLine("📊 Totale Entrate: ${formatAmount(totalIncome, fmt)}")
+    sb.appendLine("📊 Totale Uscite: ${formatAmount(totalExpense, fmt)}")
+    sb.appendLine("📊 Bilancio: ${formatAmount(totalIncome - totalExpense, fmt)}")
+    sb.appendLine("\n— AntCashManager 🐜")
+    return sb.toString()
+}
+
+/**
+ * Costruisce il testo da condividere per la panoramica annuale.
+ */
+private fun buildYearlyShareText(
+    data: List<YearlyAmount>,
+    fmt: CurrencyFormat,
+): String {
+    val sb = StringBuilder()
+    sb.appendLine("📆 Panoramica Annuale")
+    sb.appendLine("━━━━━━━━━━━━━━━━━━━━")
+    var totalIncome = 0.0
+    var totalExpense = 0.0
+    data.forEach { item ->
+        totalIncome += item.income
+        totalExpense += item.expense
+        val balance = item.income - item.expense
+        val balanceSymbol = if (balance >= 0) "📈" else "📉"
+        sb.appendLine("${item.label}:")
+        sb.appendLine("  💰 Entrate: ${formatAmount(item.income, fmt)}")
+        sb.appendLine("  💸 Uscite: ${formatAmount(item.expense, fmt)}")
+        sb.appendLine("  $balanceSymbol Saldo: ${formatAmount(balance, fmt)}")
+    }
+    sb.appendLine("━━━━━━━━━━━━━━━━━━━━")
+    sb.appendLine("📊 Totale Entrate: ${formatAmount(totalIncome, fmt)}")
+    sb.appendLine("📊 Totale Uscite: ${formatAmount(totalExpense, fmt)}")
+    sb.appendLine("📊 Bilancio: ${formatAmount(totalIncome - totalExpense, fmt)}")
     sb.appendLine("\n— AntCashManager 🐜")
     return sb.toString()
 }

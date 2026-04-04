@@ -17,6 +17,8 @@
     <string name="home_recent_transactions">Transazioni Recenti</string>
     <string name="home_no_transactions">Nessuna transazione.\nAggiungi la tua prima transazione!</string>
     <string name="home_empty_ant">La nostra formichina aspetta la tua prima transazione! 🐜</string>
+    <string name="home_balance_positive">📈 Positivo</string>
+    <string name="home_balance_negative">📉 Negativo</string>
 
     <!-- Transactions Screen -->
     <string name="transactions_title">Transazioni</string>
@@ -81,6 +83,8 @@
     <string name="charts_empty_ant">Nessun dato da mostrare! La formichina sta lavorando sodo! 🐜📊</string>
     <string name="share">Condividi</string>
     <string name="share_categories_subject">AntCashManager - Uscite per Categoria</string>
+    <string name="share_monthly_subject">AntCashManager - Panoramica Mensile</string>
+    <string name="share_yearly_subject">AntCashManager - Panoramica Annuale</string>
 
     <!-- Range Presets -->
     <string name="range_week">7 giorni</string>

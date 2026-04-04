@@ -296,12 +296,28 @@ private fun BalanceCard(
                     .padding(28.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                AppText(
-                    text = stringResource(R.string.home_total_balance),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
-                    fontWeight = FontWeight.SemiBold,
-                )
+                // Title with ant and piggy bank
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    AppText(
+                        text = "🐜",
+                        style = MaterialTheme.typography.titleLarge,
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    AppText(
+                        text = stringResource(R.string.home_total_balance),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    AppText(
+                        text = "🐷",
+                        style = MaterialTheme.typography.titleLarge,
+                    )
+                }
                 Spacer(modifier = Modifier.height(12.dp))
                 BalanceText(
                     amount = balance,
@@ -318,7 +334,11 @@ private fun BalanceCard(
                         .padding(horizontal = 8.dp, vertical = 4.dp),
                 ) {
                     AppText(
-                        text = if (balance >= 0) "📈 Positive" else "📉 Negative",
+                        text = if (balance >= 0) {
+                            stringResource(R.string.home_balance_positive)
+                        } else {
+                            stringResource(R.string.home_balance_negative)
+                        },
                         style = MaterialTheme.typography.labelSmall,
                         color = balanceColor,
                         fontWeight = FontWeight.Bold,

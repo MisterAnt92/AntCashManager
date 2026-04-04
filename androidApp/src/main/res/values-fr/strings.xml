@@ -13,6 +13,8 @@
     <string name="home_recent_transactions">Transactions R\u00e9centes</string>
     <string name="home_no_transactions">Aucune transaction.\nAjoutez votre premi\u00e8re transaction !</string>
     <string name="home_empty_ant">Notre petite fourmi attend votre premi\u00e8re transaction ! 🐜</string>
+    <string name="home_balance_positive">📈 Positif</string>
+    <string name="home_balance_negative">📉 Négatif</string>
     <string name="transactions_title">Transactions</string>
     <string name="transactions_empty">Aucune transaction</string>
     <string name="transactions_empty_subtitle">Vos transactions appara\u00eetront ici</string>
@@ -71,6 +73,8 @@
     <string name="charts_empty_ant">Aucune donn\u00e9e \u00e0 afficher ! La fourmi travaille dur ! 🐜📊</string>
     <string name="share">Partager</string>
     <string name="share_categories_subject">AntCashManager - Dépenses par Catégorie</string>
+    <string name="share_monthly_subject">AntCashManager - Aperçu Mensuel</string>
+    <string name="share_yearly_subject">AntCashManager - Aperçu Annuel</string>
     <string name="range_week">7 jours</string>
     <string name="range_month">1 mois</string>
     <string name="range_three_months">3 mois</string>

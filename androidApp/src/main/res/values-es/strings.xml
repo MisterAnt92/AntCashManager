@@ -13,6 +13,8 @@
     <string name="home_recent_transactions">Transacciones Recientes</string>
     <string name="home_no_transactions">A\u00fan no hay transacciones.\n\u00a1A\u00f1ade tu primera transacci\u00f3n!</string>
     <string name="home_empty_ant">\u00a1Nuestra hormiguita espera tu primera transacci\u00f3n! 🐜</string>
+    <string name="home_balance_positive">📈 Positivo</string>
+    <string name="home_balance_negative">📉 Negativo</string>
     <string name="transactions_title">Transacciones</string>
     <string name="transactions_empty">No hay transacciones</string>
     <string name="transactions_empty_subtitle">Tus transacciones aparecer\u00e1n aqu\u00ed</string>
@@ -71,6 +73,8 @@
     <string name="charts_empty_ant">\u00a1A\u00fan no hay datos para graficar! \u00a1La hormiga est\u00e1 trabajando duro! 🐜📊</string>
     <string name="share">Compartir</string>
     <string name="share_categories_subject">AntCashManager - Gastos por Categoría</string>
+    <string name="share_monthly_subject">AntCashManager - Resumen Mensual</string>
+    <string name="share_yearly_subject">AntCashManager - Resumen Anual</string>
     <string name="range_week">7 d\u00edas</string>
     <string name="range_month">1 mes</string>
     <string name="range_three_months">3 meses</string>
