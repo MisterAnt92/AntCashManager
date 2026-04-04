@@ -82,6 +82,7 @@ import com.antcashmanager.android.ui.components.AppSwitch
 import com.antcashmanager.android.ui.components.HelpButton
 import com.antcashmanager.android.ui.components.HelpDialogContent
 import com.antcashmanager.android.ui.components.SimpleHelpFeature
+import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
@@ -317,7 +318,7 @@ internal fun SettingsContent(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Text(
+            AppText(
                 text = stringResource(R.string.settings_title),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,

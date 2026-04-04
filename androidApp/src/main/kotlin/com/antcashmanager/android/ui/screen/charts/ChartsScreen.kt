@@ -61,6 +61,7 @@ import com.antcashmanager.android.ui.components.AntEmptyState
 import com.antcashmanager.android.ui.components.HelpButton
 import com.antcashmanager.android.ui.components.HelpDialogContent
 import com.antcashmanager.android.ui.components.SimpleHelpFeature
+import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.LocalReduceMotion
 import com.antcashmanager.android.util.LocalCurrencyFormat
@@ -130,7 +131,7 @@ internal fun ChartsContent(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Text(
+            AppText(
                 text = stringResource(R.string.charts_title),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
@@ -148,7 +149,7 @@ internal fun ChartsContent(
             shape = MaterialTheme.shapes.medium,
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(
+                AppText(
                     text = stringResource(R.string.charts_period),
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -260,10 +261,10 @@ internal fun ChartsContent(
         Spacer(modifier = Modifier.height(20.dp))
         // Pie chart
         if (chartData.expenseByCategory.isNotEmpty()) {
-            Text(
-                stringResource(R.string.charts_expense_by_category),
+            AppText(
+                text = stringResource(R.string.charts_expense_by_category),
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
             )
             Spacer(modifier = Modifier.height(12.dp))
             PieChart(
@@ -278,10 +279,10 @@ internal fun ChartsContent(
         Spacer(modifier = Modifier.height(20.dp))
         // Bar chart
         if (chartData.monthlyData.isNotEmpty()) {
-            Text(
-                stringResource(R.string.charts_monthly_overview),
+            AppText(
+                text = stringResource(R.string.charts_monthly_overview),
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
             )
             Spacer(modifier = Modifier.height(12.dp))
             BarChart(

@@ -80,6 +80,7 @@ import com.antcashmanager.android.ui.components.AntEmptyState
 import com.antcashmanager.android.ui.components.HelpButton
 import com.antcashmanager.android.ui.components.HelpDialogContent
 import com.antcashmanager.android.ui.components.SimpleHelpFeature
+import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.repository.CategoryRepository
@@ -178,7 +179,7 @@ internal fun CategoriesContent(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Text(
+                AppText(
                     text = stringResource(R.string.categories_title),
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
@@ -301,7 +302,7 @@ private fun CategoryItem(
                         modifier = Modifier.size(22.dp),
                     )
                 } else {
-                    Text(
+                    AppText(
                         text = category.name.take(1).uppercase(),
                         style = MaterialTheme.typography.titleMedium,
                         color = Color.White,
@@ -311,12 +312,12 @@ private fun CategoryItem(
             }
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(
+                AppText(
                     text = category.name,
                     style = MaterialTheme.typography.titleMedium,
                 )
                 if (category.isDefault) {
-                    Text(
+                    AppText(
                         text = stringResource(R.string.categories_default_badge),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.primary,
@@ -367,7 +368,7 @@ private fun AddCategoryDialog(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Icon Selection
-                Text(
+                AppText(
                     text = stringResource(R.string.categories_icon_label),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -418,7 +419,7 @@ private fun AddCategoryDialog(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Color Selection
-                Text(
+                AppText(
                     text = stringResource(R.string.categories_color_label),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,

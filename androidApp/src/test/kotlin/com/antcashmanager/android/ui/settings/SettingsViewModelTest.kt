@@ -212,6 +212,14 @@ private class FakeSettingsRepository : SettingsRepository {
         thousandsSeparatorFlow.value = separator
     }
 
+    override fun getDateFormat(): Flow<String> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun setDateFormat(pattern: String) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun resetAllPreferences() {
         // reset to defaults
         themeFlow.value = AppTheme.SYSTEM

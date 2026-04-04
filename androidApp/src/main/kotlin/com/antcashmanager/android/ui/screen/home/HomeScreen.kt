@@ -59,6 +59,7 @@ import com.antcashmanager.android.ui.components.FadeInOnAppear
 import com.antcashmanager.android.ui.components.HelpButton
 import com.antcashmanager.android.ui.components.HelpDialogContent
 import com.antcashmanager.android.ui.components.SimpleHelpFeature
+import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.text.BalanceText
 import com.antcashmanager.android.ui.components.text.CompactMoneyText
 import com.antcashmanager.android.ui.components.text.TransactionAmountText
@@ -189,7 +190,7 @@ internal fun HomeContent(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
-                        Text(
+                        AppText(
                             text = stringResource(R.string.home_dashboard),
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
@@ -227,7 +228,7 @@ internal fun HomeContent(
 
                 // Recent Transactions header
                 item {
-                    Text(
+                    AppText(
                         text = stringResource(R.string.home_recent_transactions),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
@@ -295,7 +296,7 @@ private fun BalanceCard(
                     .padding(28.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(
+                AppText(
                     text = stringResource(R.string.home_total_balance),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
@@ -320,7 +321,7 @@ private fun BalanceCard(
                         )
                         .padding(horizontal = 8.dp, vertical = 4.dp),
                 ) {
-                    Text(
+                    AppText(
                         text = if (balance >= 0) "📈 Positive" else "📉 Negative",
                         style = MaterialTheme.typography.labelSmall,
                         color = balanceColor,
@@ -377,7 +378,7 @@ private fun IncomeExpenseRow(
                         }
                     }
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(
+                    AppText(
                         text = stringResource(R.string.home_income),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f),
@@ -427,7 +428,7 @@ private fun IncomeExpenseRow(
                         }
                     }
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(
+                    AppText(
                         text = stringResource(R.string.home_expenses),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.8f),
@@ -497,7 +498,7 @@ private fun RecentTransactionItem(transaction: Transaction) {
                 Spacer(modifier = Modifier.width(12.dp))
 
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
+                    AppText(
                         text = transaction.title,
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.SemiBold,
@@ -505,7 +506,7 @@ private fun RecentTransactionItem(transaction: Transaction) {
                         overflow = TextOverflow.Ellipsis,
                         color = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onErrorContainer,
                     )
-                    Text(
+                    AppText(
                         text = "${transaction.category} • ${dateFormat.format(Date(transaction.timestamp))}",
                         style = MaterialTheme.typography.bodySmall,
                         color = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer.copy(
@@ -513,7 +514,7 @@ private fun RecentTransactionItem(transaction: Transaction) {
                         ) else MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.7f),
                     )
                     if (transaction.notes.isNotBlank()) {
-                        Text(
+                        AppText(
                             text = transaction.notes,
                             style = MaterialTheme.typography.labelSmall,
                             color = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer.copy(
@@ -535,7 +536,7 @@ private fun RecentTransactionItem(transaction: Transaction) {
                                 tint = MaterialTheme.colorScheme.tertiary,
                             )
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text(
+                            AppText(
                                 text = if (transaction.recurrenceInterval.isNotBlank()) {
                                     getRecurrenceIntervalLabel(transaction.recurrenceInterval)
                                 } else {

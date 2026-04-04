@@ -60,6 +60,7 @@ import com.antcashmanager.android.ui.components.HelpButton
 import com.antcashmanager.android.ui.components.HelpDialogContent
 import com.antcashmanager.android.ui.components.SimpleHelpFeature
 import com.antcashmanager.android.ui.components.SkeletonLoader
+import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.text.TransactionAmountText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.ExpenseRed
@@ -211,7 +212,7 @@ internal fun TransactionsContent(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Text(
+                AppText(
                     text = stringResource(R.string.transactions_title),
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
@@ -248,7 +249,7 @@ internal fun TransactionsContent(
             )
 
             if (searchQuery.isNotEmpty()) {
-                Text(
+                AppText(
                     text = "Risultati trovati: ${state.filteredTransactions.size}",
                     style = MaterialTheme.typography.labelSmall,
                     modifier = Modifier.padding(top = 8.dp),
@@ -410,7 +411,7 @@ private fun TransactionItem(transaction: Transaction, onClick: (() -> Unit)? = n
 
                 // Content
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
+                    AppText(
                         text = transaction.title,
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.SemiBold,
@@ -426,7 +427,7 @@ private fun TransactionItem(transaction: Transaction, onClick: (() -> Unit)? = n
                         if (transaction.payee.isNotBlank()) add(transaction.payee)
                         if (transaction.location.isNotBlank()) add(transaction.location)
                     }
-                    Text(
+                    AppText(
                         text = subtitleParts.joinToString(" • "),
                         style = MaterialTheme.typography.labelSmall,
                         color = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer.copy(
@@ -436,7 +437,7 @@ private fun TransactionItem(transaction: Transaction, onClick: (() -> Unit)? = n
 
                     // Notes
                     if (transaction.notes.isNotBlank()) {
-                        Text(
+                        AppText(
                             text = transaction.notes,
                             style = MaterialTheme.typography.labelSmall,
                             color = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer.copy(
@@ -449,7 +450,7 @@ private fun TransactionItem(transaction: Transaction, onClick: (() -> Unit)? = n
 
                     // Tags
                     if (transaction.tags.isNotBlank()) {
-                        Text(
+                        AppText(
                             text = transaction.tags.split(",")
                                 .joinToString(" ") { "#${it.trim()}" },
                             style = MaterialTheme.typography.labelSmall,
@@ -472,7 +473,7 @@ private fun TransactionItem(transaction: Transaction, onClick: (() -> Unit)? = n
                                 tint = MaterialTheme.colorScheme.tertiary,
                             )
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text(
+                            AppText(
                                 text = if (transaction.recurrenceInterval.isNotBlank()) {
                                     getRecurrenceIntervalLabel(transaction.recurrenceInterval)
                                 } else {
