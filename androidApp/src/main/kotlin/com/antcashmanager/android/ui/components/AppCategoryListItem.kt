@@ -4,10 +4,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -18,12 +20,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.Category
+import com.antcashmanager.android.ui.screen.categories.categoryIconMap
 
 /**
  * Elemento categoria in lista orizzontale con icona e nome su singola riga.
@@ -68,12 +72,31 @@ fun AppCategoryListItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        // Icona della categoria
-        Text(
-            text = category.icon,
-            style = MaterialTheme.typography.headlineLarge,
-            modifier = Modifier.size(48.dp)
-        )
+        // Icona della categoria con sfondo colorato circolare
+        val iconVector = categoryIconMap[category.icon]
+        Box(
+            modifier = Modifier
+                .size(32.dp)
+                .clip(CircleShape)
+                .background(Color(category.color)),
+            contentAlignment = Alignment.Center,
+        ) {
+            if (iconVector != null) {
+                Icon(
+                    imageVector = iconVector,
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(18.dp),
+                )
+            } else {
+                AppText(
+                    text = category.name.take(1).uppercase(),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+        }
 
         // Nome della categoria - prende tutto lo spazio disponibile
         AppText(
@@ -104,7 +127,7 @@ private fun AppCategoryListItemPreviewNonSelected() {
             category = Category(
                 id = 1,
                 name = "Food & Dining",
-                icon = "🍔",
+                icon = "restaurant",
                 color = 0xFFFF6B6B,
                 type = "EXPENSE"
             ),
@@ -122,7 +145,7 @@ private fun AppCategoryListItemPreviewSelected() {
             category = Category(
                 id = 2,
                 name = "Salary & Wages",
-                icon = "💰",
+                icon = "payments",
                 color = 0xFF51CF66,
                 type = "INCOME"
             ),
