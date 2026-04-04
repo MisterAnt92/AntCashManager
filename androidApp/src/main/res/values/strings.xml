@@ -74,10 +74,13 @@
     <string name="charts_expenses">Expenses</string>
     <string name="charts_expense_by_category">Expenses by Category</string>
     <string name="charts_monthly_overview">Monthly Overview</string>
+    <string name="charts_yearly_overview">Yearly Overview</string>
     <string name="charts_no_data">No data for the selected period</string>
     <string name="charts_pick_start_date">Pick start date</string>
     <string name="charts_pick_end_date">Pick end date</string>
     <string name="charts_empty_ant">No data to chart yet! The ant is working hard! 🐜📊</string>
+    <string name="share">Share</string>
+    <string name="share_categories_subject">AntCashManager - Expenses by Category</string>
 
     <!-- Range Presets -->
     <string name="range_week">7 days</string>

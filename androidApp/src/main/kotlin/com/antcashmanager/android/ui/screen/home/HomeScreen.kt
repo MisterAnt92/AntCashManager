@@ -312,12 +312,8 @@ private fun BalanceCard(
                     modifier = Modifier
                         .padding(top = 4.dp)
                         .shadow(
-                            elevation = 2.dp,
+                            elevation = 0.1.dp,
                             shape = RoundedCornerShape(50.dp),
-                        )
-                        .background(
-                            balanceColor.copy(alpha = 0.2f),
-                            shape = RoundedCornerShape(50.dp)
                         )
                         .padding(horizontal = 8.dp, vertical = 4.dp),
                 ) {
@@ -364,7 +360,7 @@ private fun IncomeExpenseRow(
                                 .size(40.dp)
                                 .background(
                                     IncomeGreen.copy(alpha = 0.25f),
-                                    shape = RoundedCornerShape(8.dp)
+                                    shape = RoundedCornerShape(32.dp)
                                 )
                                 .padding(8.dp),
                             contentAlignment = Alignment.Center,
@@ -414,7 +410,7 @@ private fun IncomeExpenseRow(
                                 .size(40.dp)
                                 .background(
                                     ExpenseRed.copy(alpha = 0.25f),
-                                    shape = RoundedCornerShape(8.dp)
+                                    shape = RoundedCornerShape(32.dp)
                                 )
                                 .padding(8.dp),
                             contentAlignment = Alignment.Center,

@@ -64,10 +64,13 @@
     <string name="charts_expenses">D\u00e9penses</string>
     <string name="charts_expense_by_category">D\u00e9penses par cat\u00e9gorie</string>
     <string name="charts_monthly_overview">Aper\u00e7u mensuel</string>
+    <string name="charts_yearly_overview">Aperçu annuel</string>
     <string name="charts_no_data">Aucune donn\u00e9e pour la p\u00e9riode s\u00e9lectionn\u00e9e</string>
     <string name="charts_pick_start_date">Choisir la date de d\u00e9but</string>
     <string name="charts_pick_end_date">Choisir la date de fin</string>
     <string name="charts_empty_ant">Aucune donn\u00e9e \u00e0 afficher ! La fourmi travaille dur ! 🐜📊</string>
+    <string name="share">Partager</string>
+    <string name="share_categories_subject">AntCashManager - Dépenses par Catégorie</string>
     <string name="range_week">7 jours</string>
     <string name="range_month">1 mois</string>
     <string name="range_three_months">3 mois</string>

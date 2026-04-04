@@ -74,10 +74,13 @@
     <string name="charts_expenses">Uscite</string>
     <string name="charts_expense_by_category">Uscite per Categoria</string>
     <string name="charts_monthly_overview">Panoramica Mensile</string>
+    <string name="charts_yearly_overview">Panoramica Annuale</string>
     <string name="charts_no_data">Nessun dato per il periodo selezionato</string>
     <string name="charts_pick_start_date">Seleziona data inizio</string>
     <string name="charts_pick_end_date">Seleziona data fine</string>
     <string name="charts_empty_ant">Nessun dato da mostrare! La formichina sta lavorando sodo! 🐜📊</string>
+    <string name="share">Condividi</string>
+    <string name="share_categories_subject">AntCashManager - Uscite per Categoria</string>
 
     <!-- Range Presets -->
     <string name="range_week">7 giorni</string>

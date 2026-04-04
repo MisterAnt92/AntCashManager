@@ -92,18 +92,25 @@ class ChartsViewModel(
     }
 
     private fun buildChartData(transactions: List<Transaction>): ChartData {
-        val incomeByCategory = transactions
-            .filter { it.type == TransactionType.INCOME }
+        Logger.d("ChartsViewModel") { "Building chart data from ${transactions.size} transactions" }
+
+        val incomeTransactions = transactions.filter { it.type == TransactionType.INCOME }
+        val expenseTransactions = transactions.filter { it.type == TransactionType.EXPENSE }
+
+        Logger.d("ChartsViewModel") { "Income transactions: ${incomeTransactions.size}, Expense transactions: ${expenseTransactions.size}" }
+
+        val incomeByCategory = incomeTransactions
             .groupBy { it.category }
             .mapValues { (_, txs) -> txs.sumOf { it.amount } }
 
-        val expenseByCategory = transactions
-            .filter { it.type == TransactionType.EXPENSE }
+        val expenseByCategory = expenseTransactions
             .groupBy { it.category }
             .mapValues { (_, txs) -> txs.sumOf { it.amount } }
 
         val totalIncome = incomeByCategory.values.sum()
         val totalExpense = expenseByCategory.values.sum()
+
+        Logger.d("ChartsViewModel") { "Total Income: $totalIncome, Total Expense: $totalExpense" }
 
         // Build monthly aggregation
         val cal = Calendar.getInstance()
@@ -134,12 +141,41 @@ class ChartsViewModel(
                 MonthlyAmount(label, amounts.first, amounts.second)
             }
 
+        Logger.d("ChartsViewModel") { "Monthly data: ${monthlyData.map { "${it.label}: income=${it.income}, expense=${it.expense}" }}" }
+
+        // Build yearly aggregation
+        val yearlyMap = mutableMapOf<Int, Pair<Double, Double>>()
+
+        transactions.forEach { tx ->
+            cal.timeInMillis = tx.timestamp
+            val year = cal.get(Calendar.YEAR)
+            val current = yearlyMap.getOrDefault(year, 0.0 to 0.0)
+            yearlyMap[year] = when (tx.type) {
+                TransactionType.INCOME -> (current.first + tx.amount) to current.second
+                TransactionType.EXPENSE -> current.first to (current.second + tx.amount)
+            }
+        }
+
+        val yearlyData = yearlyMap.entries
+            .sortedBy { it.key }
+            .map { (year, amounts) ->
+                YearlyAmount(
+                    year = year,
+                    label = year.toString(),
+                    income = amounts.first,
+                    expense = amounts.second,
+                )
+            }
+
+        Logger.d("ChartsViewModel") { "Yearly data: ${yearlyData.map { "${it.label}: income=${it.income}, expense=${it.expense}" }}" }
+
         return ChartData(
             incomeByCategory = incomeByCategory,
             expenseByCategory = expenseByCategory,
             totalIncome = totalIncome,
             totalExpense = totalExpense,
             monthlyData = monthlyData,
+            yearlyData = yearlyData,
         )
     }
 }

@@ -1,10 +1,14 @@
 package com.antcashmanager.android.ui.screen.charts
 
+import android.content.Intent
 import android.graphics.Paint
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,11 +19,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -42,11 +48,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -66,6 +75,7 @@ import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.LocalReduceMotion
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.android.util.formatAmount
+import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.usecase.transaction.DateRange
 import java.text.SimpleDateFormat
@@ -107,6 +117,7 @@ internal fun ChartsContent(
     onDateRangeChanged: (Long, Long) -> Unit = { _, _ -> },
     onPresetSelected: (RangePreset) -> Unit = {},
 ) {
+    val context = LocalContext.current
     val dateFormat = remember { SimpleDateFormat("dd MMM yyyy", Locale.getDefault()) }
     val fmt = LocalCurrencyFormat.current
     var selectedPreset by remember { mutableIntStateOf(1) }
@@ -124,7 +135,7 @@ internal fun ChartsContent(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp)
-            .padding(top = 16.dp, bottom = 24.dp),
+            .padding(top = 16.dp, bottom = 80.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -156,7 +167,9 @@ internal fun ChartsContent(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
                     RangePreset.entries.forEachIndexed { index, preset ->
@@ -169,7 +182,8 @@ internal fun ChartsContent(
                             label = {
                                 Text(
                                     text = stringResource(preset.labelResId),
-                                    style = MaterialTheme.typography.labelSmall
+                                    style = MaterialTheme.typography.labelSmall,
+                                    maxLines = 1,
                                 )
                             },
                             shape = RoundedCornerShape(50),
@@ -259,39 +273,151 @@ internal fun ChartsContent(
             }
         }
         Spacer(modifier = Modifier.height(20.dp))
-        // Pie chart
+        // Pie chart section
         if (chartData.expenseByCategory.isNotEmpty()) {
-            AppText(
-                text = stringResource(R.string.charts_expense_by_category),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            PieChart(
-                data = chartData.expenseByCategory,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(220.dp)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            PieLegend(data = chartData.expenseByCategory)
+            val categoryShareSubject = stringResource(R.string.share_categories_subject)
+            val shareLabel = stringResource(R.string.share)
+
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                ),
+                shape = MaterialTheme.shapes.medium,
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        AppText(
+                            text = stringResource(R.string.charts_expense_by_category),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                        IconButton(
+                            onClick = {
+                                val shareText = buildCategoryShareText(
+                                    data = chartData.expenseByCategory,
+                                    fmt = fmt,
+                                )
+                                val intent = Intent(Intent.ACTION_SEND).apply {
+                                    type = "text/plain"
+                                    putExtra(Intent.EXTRA_SUBJECT, categoryShareSubject)
+                                    putExtra(Intent.EXTRA_TEXT, shareText)
+                                }
+                                context.startActivity(Intent.createChooser(intent, shareLabel))
+                            },
+                            modifier = Modifier.size(32.dp),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                contentDescription = shareLabel,
+                                modifier = Modifier.size(20.dp),
+                                tint = MaterialTheme.colorScheme.primary,
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                    PieChart(
+                        data = chartData.expenseByCategory,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    PieLegend(data = chartData.expenseByCategory)
+                }
+            }
         }
-        Spacer(modifier = Modifier.height(20.dp))
-        // Bar chart
+        Spacer(modifier = Modifier.height(16.dp))
+        // Bar chart section - Monthly Overview
         if (chartData.monthlyData.isNotEmpty()) {
-            AppText(
-                text = stringResource(R.string.charts_monthly_overview),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            BarChart(
-                data = chartData.monthlyData,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-            )
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                ),
+                shape = MaterialTheme.shapes.medium,
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    AppText(
+                        text = stringResource(R.string.charts_monthly_overview),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // Legend at top
+                    BarChartLegend()
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Scrollable bar chart for many months
+                    val chartWidth = (chartData.monthlyData.size * 80).coerceAtLeast(300)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState())
+                    ) {
+                        BarChart(
+                            data = chartData.monthlyData,
+                            modifier = Modifier
+                                .width(chartWidth.dp)
+                                .height(180.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+            }
         }
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Bar chart section - Yearly Overview
+        if (chartData.yearlyData.isNotEmpty()) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                ),
+                shape = MaterialTheme.shapes.medium,
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    AppText(
+                        text = stringResource(R.string.charts_yearly_overview),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // Legend at top
+                    BarChartLegend()
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Scrollable bar chart for years
+                    val yearlyChartWidth = (chartData.yearlyData.size * 100).coerceAtLeast(300)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState())
+                    ) {
+                        YearlyBarChart(
+                            data = chartData.yearlyData,
+                            modifier = Modifier
+                                .width(yearlyChartWidth.dp)
+                                .height(200.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+            }
+        }
+
+        // Empty state
         if (chartData.expenseByCategory.isEmpty() && chartData.monthlyData.isEmpty()) {
             Spacer(modifier = Modifier.height(48.dp))
             AntEmptyState(
@@ -375,14 +501,23 @@ private fun PieChart(data: Map<String, Double>, modifier: Modifier = Modifier) {
 private fun PieLegend(data: Map<String, Double>) {
     val total = data.values.sum()
     val fmt = LocalCurrencyFormat.current
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         data.entries.forEachIndexed { index, (category, value) ->
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Canvas(modifier = Modifier.size(12.dp)) { drawCircle(color = pieColors[index % pieColors.size]) }
-                Spacer(modifier = Modifier.width(8.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(14.dp)
+                        .clip(CircleShape)
+                        .background(pieColors[index % pieColors.size])
+                )
+                Spacer(modifier = Modifier.width(10.dp))
                 Text(
                     text = category,
                     style = MaterialTheme.typography.bodySmall,
+                    fontWeight = FontWeight.Medium,
                     modifier = Modifier.weight(1f)
                 )
                 Text(
@@ -396,11 +531,50 @@ private fun PieLegend(data: Map<String, Double>) {
 }
 
 @Composable
+private fun BarChartLegend() {
+    val incomeColor = MaterialTheme.colorScheme.primary
+    val expenseColor = MaterialTheme.colorScheme.error
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .size(12.dp)
+                .clip(RoundedCornerShape(3.dp))
+                .background(incomeColor)
+        )
+        Spacer(modifier = Modifier.width(6.dp))
+        Text(
+            text = stringResource(R.string.charts_income),
+            style = MaterialTheme.typography.labelSmall,
+            fontWeight = FontWeight.Medium,
+        )
+        Spacer(modifier = Modifier.width(20.dp))
+        Box(
+            modifier = Modifier
+                .size(12.dp)
+                .clip(RoundedCornerShape(3.dp))
+                .background(expenseColor)
+        )
+        Spacer(modifier = Modifier.width(6.dp))
+        Text(
+            text = stringResource(R.string.charts_expenses),
+            style = MaterialTheme.typography.labelSmall,
+            fontWeight = FontWeight.Medium,
+        )
+    }
+}
+
+@Composable
 private fun BarChart(data: List<MonthlyAmount>, modifier: Modifier = Modifier) {
     val maxValue = data.maxOf { maxOf(it.income, it.expense) }.coerceAtLeast(1.0)
     val incomeColor = MaterialTheme.colorScheme.primary
     val expenseColor = MaterialTheme.colorScheme.error
     val labelColor = MaterialTheme.colorScheme.onSurfaceVariant
+    val gridColor = MaterialTheme.colorScheme.outlineVariant
     val reduceMotion = LocalReduceMotion.current
     val animDuration = if (reduceMotion) 0 else 800
     val animatedProgress by animateFloatAsState(
@@ -408,51 +582,170 @@ private fun BarChart(data: List<MonthlyAmount>, modifier: Modifier = Modifier) {
         animationSpec = tween(animDuration),
         label = "bar"
     )
+
     Canvas(modifier = modifier) {
-        val barAreaHeight = size.height - 30.dp.toPx()
+        val topPadding = 20.dp.toPx() // Space for value labels on top
+        val labelHeight = 24.dp.toPx()
+        val barAreaHeight = size.height - labelHeight - topPadding
         val barGroupWidth = size.width / data.size.coerceAtLeast(1)
-        val barWidth = (barGroupWidth * 0.3f).coerceAtMost(40.dp.toPx())
+        val barWidth = (barGroupWidth * 0.32f).coerceIn(20.dp.toPx(), 36.dp.toPx())
         val gap = 4.dp.toPx()
+
+        // Draw horizontal grid lines
+        val gridLines = 4
+        for (i in 0..gridLines) {
+            val y = topPadding + barAreaHeight * (1f - i.toFloat() / gridLines)
+            drawLine(
+                color = gridColor,
+                start = Offset(0f, y),
+                end = Offset(size.width, y),
+                strokeWidth = 1.dp.toPx(),
+            )
+        }
+
+        // Draw bars
         data.forEachIndexed { index, item ->
             val groupX = index * barGroupWidth + barGroupWidth / 2f
+
+            // Income bar
             val incomeH = (item.income / maxValue * barAreaHeight * animatedProgress).toFloat()
-            drawRoundRect(
-                color = incomeColor,
-                topLeft = Offset(groupX - barWidth - gap / 2f, barAreaHeight - incomeH),
-                size = Size(barWidth, incomeH),
-                cornerRadius = CornerRadius(4.dp.toPx())
-            )
+            if (incomeH > 0) {
+                val incomeTop = topPadding + barAreaHeight - incomeH
+                drawRoundRect(
+                    color = incomeColor,
+                    topLeft = Offset(groupX - barWidth - gap / 2f, incomeTop),
+                    size = Size(barWidth, incomeH),
+                    cornerRadius = CornerRadius(6.dp.toPx(), 6.dp.toPx())
+                )
+            }
+
+            // Expense bar
             val expenseH = (item.expense / maxValue * barAreaHeight * animatedProgress).toFloat()
-            drawRoundRect(
-                color = expenseColor,
-                topLeft = Offset(groupX + gap / 2f, barAreaHeight - expenseH),
-                size = Size(barWidth, expenseH),
-                cornerRadius = CornerRadius(4.dp.toPx())
-            )
+            if (expenseH > 0) {
+                val expenseTop = topPadding + barAreaHeight - expenseH
+                drawRoundRect(
+                    color = expenseColor,
+                    topLeft = Offset(groupX + gap / 2f, expenseTop),
+                    size = Size(barWidth, expenseH),
+                    cornerRadius = CornerRadius(6.dp.toPx(), 6.dp.toPx())
+                )
+            }
+
+            // Month label
             drawContext.canvas.nativeCanvas.drawText(
-                item.label, groupX, size.height - 4.dp.toPx(),
+                item.label,
+                groupX,
+                size.height - 4.dp.toPx(),
                 Paint().apply {
-                    color = labelColor.hashCode(); textSize = 10.sp.toPx(); textAlign =
-                    Paint.Align.CENTER
+                    color = labelColor.toArgb()
+                    textSize = 11.sp.toPx()
+                    textAlign = Paint.Align.CENTER
+                    isAntiAlias = true
                 },
             )
         }
     }
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 4.dp),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Canvas(modifier = Modifier.size(10.dp)) { drawCircle(color = incomeColor) }
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(stringResource(R.string.charts_income), style = MaterialTheme.typography.labelSmall)
-        Spacer(modifier = Modifier.width(16.dp))
-        Canvas(modifier = Modifier.size(10.dp)) { drawCircle(color = expenseColor) }
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(stringResource(R.string.charts_expenses), style = MaterialTheme.typography.labelSmall)
+}
+
+@Composable
+private fun YearlyBarChart(data: List<YearlyAmount>, modifier: Modifier = Modifier) {
+    val maxValue = data.maxOf { maxOf(it.income, it.expense) }.coerceAtLeast(1.0)
+    val incomeColor = MaterialTheme.colorScheme.primary
+    val expenseColor = MaterialTheme.colorScheme.error
+    val labelColor = MaterialTheme.colorScheme.onSurfaceVariant
+    val gridColor = MaterialTheme.colorScheme.outlineVariant
+    val reduceMotion = LocalReduceMotion.current
+    val animDuration = if (reduceMotion) 0 else 800
+    val animatedProgress by animateFloatAsState(
+        targetValue = 1f,
+        animationSpec = tween(animDuration),
+        label = "yearlyBar"
+    )
+
+    Canvas(modifier = modifier) {
+        val topPadding = 20.dp.toPx() // Space for value labels on top
+        val labelHeight = 28.dp.toPx()
+        val barAreaHeight = size.height - labelHeight - topPadding
+        val barGroupWidth = size.width / data.size.coerceAtLeast(1)
+        val barWidth = (barGroupWidth * 0.35f).coerceIn(25.dp.toPx(), 50.dp.toPx())
+        val gap = 6.dp.toPx()
+
+        // Draw horizontal grid lines
+        val gridLines = 4
+        for (i in 0..gridLines) {
+            val y = topPadding + barAreaHeight * (1f - i.toFloat() / gridLines)
+            drawLine(
+                color = gridColor,
+                start = Offset(0f, y),
+                end = Offset(size.width, y),
+                strokeWidth = 1.dp.toPx(),
+            )
+        }
+
+        // Draw bars
+        data.forEachIndexed { index, item ->
+            val groupX = index * barGroupWidth + barGroupWidth / 2f
+
+            // Income bar
+            val incomeH = (item.income / maxValue * barAreaHeight * animatedProgress).toFloat()
+            if (incomeH > 0) {
+                val incomeTop = topPadding + barAreaHeight - incomeH
+                drawRoundRect(
+                    color = incomeColor,
+                    topLeft = Offset(groupX - barWidth - gap / 2f, incomeTop),
+                    size = Size(barWidth, incomeH),
+                    cornerRadius = CornerRadius(6.dp.toPx(), 6.dp.toPx())
+                )
+            }
+
+            // Expense bar
+            val expenseH = (item.expense / maxValue * barAreaHeight * animatedProgress).toFloat()
+            if (expenseH > 0) {
+                val expenseTop = topPadding + barAreaHeight - expenseH
+                drawRoundRect(
+                    color = expenseColor,
+                    topLeft = Offset(groupX + gap / 2f, expenseTop),
+                    size = Size(barWidth, expenseH),
+                    cornerRadius = CornerRadius(6.dp.toPx(), 6.dp.toPx())
+                )
+            }
+
+            // Year label
+            drawContext.canvas.nativeCanvas.drawText(
+                item.label,
+                groupX,
+                size.height - 6.dp.toPx(),
+                Paint().apply {
+                    color = labelColor.toArgb()
+                    textSize = 13.sp.toPx()
+                    textAlign = Paint.Align.CENTER
+                    isAntiAlias = true
+                    isFakeBoldText = true
+                },
+            )
+        }
     }
+}
+
+/**
+ * Costruisce il testo da condividere per le uscite per categoria.
+ */
+private fun buildCategoryShareText(
+    data: Map<String, Double>,
+    fmt: CurrencyFormat,
+): String {
+    val total = data.values.sum()
+    val sb = StringBuilder()
+    sb.appendLine("📊 Uscite per Categoria")
+    sb.appendLine("━━━━━━━━━━━━━━━━━━━━")
+    data.entries.forEach { (category, value) ->
+        val percentage = if (total > 0) (value / total * 100) else 0.0
+        sb.appendLine("• $category: ${formatAmount(value, fmt)} (%.1f%%)".format(percentage))
+    }
+    sb.appendLine("━━━━━━━━━━━━━━━━━━━━")
+    sb.appendLine("💰 Totale: ${formatAmount(total, fmt)}")
+    sb.appendLine("\n— AntCashManager 🐜")
+    return sb.toString()
 }
 
 // Previews

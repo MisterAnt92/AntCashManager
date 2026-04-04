@@ -64,10 +64,13 @@
     <string name="charts_expenses">Gastos</string>
     <string name="charts_expense_by_category">Gastos por categor\u00eda</string>
     <string name="charts_monthly_overview">Resumen mensual</string>
+    <string name="charts_yearly_overview">Resumen anual</string>
     <string name="charts_no_data">No hay datos para el per\u00edodo seleccionado</string>
     <string name="charts_pick_start_date">Seleccionar fecha de inicio</string>
     <string name="charts_pick_end_date">Seleccionar fecha de fin</string>
     <string name="charts_empty_ant">\u00a1A\u00fan no hay datos para graficar! \u00a1La hormiga est\u00e1 trabajando duro! 🐜📊</string>
+    <string name="share">Compartir</string>
+    <string name="share_categories_subject">AntCashManager - Gastos por Categoría</string>
     <string name="range_week">7 d\u00edas</string>
     <string name="range_month">1 mes</string>
     <string name="range_three_months">3 meses</string>

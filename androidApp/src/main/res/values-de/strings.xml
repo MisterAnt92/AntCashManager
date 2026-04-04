@@ -64,10 +64,13 @@
     <string name="charts_expenses">Ausgaben</string>
     <string name="charts_expense_by_category">Ausgaben nach Kategorie</string>
     <string name="charts_monthly_overview">Monats\u00fcbersicht</string>
+    <string name="charts_yearly_overview">Jahresübersicht</string>
     <string name="charts_no_data">Keine Daten f\u00fcr den gew\u00e4hlten Zeitraum</string>
     <string name="charts_pick_start_date">Startdatum w\u00e4hlen</string>
     <string name="charts_pick_end_date">Enddatum w\u00e4hlen</string>
     <string name="charts_empty_ant">Noch keine Daten zum Anzeigen! Die Ameise arbeitet flei\u00dfig! 🐜📊</string>
+    <string name="share">Teilen</string>
+    <string name="share_categories_subject">AntCashManager - Ausgaben nach Kategorie</string>
     <string name="range_week">7 Tage</string>
     <string name="range_month">1 Monat</string>
     <string name="range_three_months">3 Monate</string>
