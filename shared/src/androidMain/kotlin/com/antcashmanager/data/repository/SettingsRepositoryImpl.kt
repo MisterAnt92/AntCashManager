@@ -32,6 +32,7 @@ class SettingsRepositoryImpl(
     private val decimalSeparatorKey = stringPreferencesKey("decimal_separator")
     private val thousandsSeparatorKey = stringPreferencesKey("thousands_separator")
     private val dateFormatKey = stringPreferencesKey("date_format")
+    private val dateFilterExpandedKey = booleanPreferencesKey("date_filter_expanded")
 
     override fun getTheme(): Flow<AppTheme> =
         context.dataStore.data.map { preferences ->
@@ -147,6 +148,17 @@ class SettingsRepositoryImpl(
         context.dataStore.edit { it[dateFormatKey] = pattern }
     }
 
+    override fun getDateFilterExpanded(): Flow<Boolean> =
+        context.dataStore.data.map { preferences ->
+            preferences[dateFilterExpandedKey] ?: true
+        }
+
+    override suspend fun setDateFilterExpanded(expanded: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[dateFilterExpandedKey] = expanded
+        }
+    }
+
     override suspend fun resetAllPreferences() {
         context.dataStore.edit { prefs ->
             prefs[themeKey] = AppTheme.SYSTEM.name
@@ -161,6 +173,7 @@ class SettingsRepositoryImpl(
             prefs[decimalSeparatorKey] = ","
             prefs[thousandsSeparatorKey] = ""
             prefs[dateFormatKey] = "dd/MM/yyyy"
+            prefs[dateFilterExpandedKey] = true
         }
     }
 }

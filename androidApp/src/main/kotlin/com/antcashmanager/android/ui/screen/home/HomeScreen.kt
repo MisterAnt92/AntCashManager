@@ -21,6 +21,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,14 +47,19 @@ import com.antcashmanager.android.ui.screen.home_transaction_detail.TransactionD
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
+import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
+import kotlinx.coroutines.launch
 
 // ══════════════════════════════════════════════════════════════════════════════
 // SCREEN
 // ══════════════════════════════════════════════════════════════════════════════
 
 @Composable
-fun HomeScreen(transactionRepository: TransactionRepository) {
+fun HomeScreen(
+    transactionRepository: TransactionRepository,
+    settingsRepository: SettingsRepository,
+) {
     Logger.d("HomeScreen") { "Displaying HomeScreen" }
 
     val viewModel: HomeViewModel = viewModel(
@@ -69,6 +75,7 @@ fun HomeScreen(transactionRepository: TransactionRepository) {
     HomeContent(
         state = state,
         onEvent = viewModel::onEvent,
+        settingsRepository = settingsRepository,
     )
 }
 
@@ -81,12 +88,17 @@ fun HomeScreen(transactionRepository: TransactionRepository) {
 internal fun HomeContent(
     state: HomeState,
     onEvent: (HomeEvent) -> Unit,
+    settingsRepository: SettingsRepository,
 ) {
 
     // Date picker state
     var showFromDatePicker by remember { mutableStateOf(false) }
     var showToDatePicker by remember { mutableStateOf(false) }
     var showHelpDialog by remember { mutableStateOf(false) }
+
+    // DateRangeFilter expanded state from settings
+    val dateFilterExpanded by settingsRepository.getDateFilterExpanded().collectAsState(initial = true)
+    val coroutineScope = rememberCoroutineScope()
 
     // From date picker dialog
     if (showFromDatePicker) {
@@ -190,6 +202,12 @@ internal fun HomeContent(
                         presets = HomeState.PRESETS,
                         dateRangeFrom = state.dateRangeFrom,
                         dateRangeTo = state.dateRangeTo,
+                        expanded = dateFilterExpanded,
+                        onExpandedChange = { expanded ->
+                            coroutineScope.launch {
+                                settingsRepository.setDateFilterExpanded(expanded)
+                            }
+                        },
                         onPresetSelected = { onEvent(HomeEvent.SelectPreset(it)) },
                         onFromDateEdit = { showFromDatePicker = true },
                         onToDateEdit = { showToDatePicker = true },
@@ -253,6 +271,36 @@ internal fun HomeContent(
 // PREVIEWS
 // ══════════════════════════════════════════════════════════════════════════════
 
+class MockHomeSettingsRepository : SettingsRepository {
+    override fun getTheme() = kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.AppTheme.SYSTEM)
+    override suspend fun setTheme(theme: com.antcashmanager.domain.model.AppTheme) {}
+    override fun getLanguage() = kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.AppLanguage.SYSTEM)
+    override suspend fun setLanguage(language: com.antcashmanager.domain.model.AppLanguage) {}
+    override fun getShowCharts() = kotlinx.coroutines.flow.flowOf(true)
+    override suspend fun setShowCharts(show: Boolean) {}
+    override fun getHighContrast() = kotlinx.coroutines.flow.flowOf(false)
+    override suspend fun setHighContrast(enabled: Boolean) {}
+    override fun getLargeText() = kotlinx.coroutines.flow.flowOf(false)
+    override suspend fun setLargeText(enabled: Boolean) {}
+    override fun getReduceMotion() = kotlinx.coroutines.flow.flowOf(false)
+    override suspend fun setReduceMotion(enabled: Boolean) {}
+    override fun getShowTransactionNotes() = kotlinx.coroutines.flow.flowOf(true)
+    override suspend fun setShowTransactionNotes(show: Boolean) {}
+    override fun getCurrencySymbol() = kotlinx.coroutines.flow.flowOf("€")
+    override suspend fun setCurrencySymbol(symbol: String) {}
+    override fun getDecimalDigits() = kotlinx.coroutines.flow.flowOf(2)
+    override suspend fun setDecimalDigits(digits: Int) {}
+    override fun getDecimalSeparator() = kotlinx.coroutines.flow.flowOf(",")
+    override suspend fun setDecimalSeparator(separator: String) {}
+    override fun getThousandsSeparator() = kotlinx.coroutines.flow.flowOf("")
+    override suspend fun setThousandsSeparator(separator: String) {}
+    override fun getDateFormat() = kotlinx.coroutines.flow.flowOf("dd/MM/yyyy")
+    override suspend fun setDateFormat(pattern: String) {}
+    override fun getDateFilterExpanded() = kotlinx.coroutines.flow.flowOf(true)
+    override suspend fun setDateFilterExpanded(expanded: Boolean) {}
+    override suspend fun resetAllPreferences() {}
+}
+
 private val sampleTransactions = listOf(
     Transaction(
         id = 1,
@@ -294,6 +342,7 @@ private fun HomeContentPreview() {
                 balance = 2294.5,
             ),
             onEvent = {},
+            settingsRepository = MockHomeSettingsRepository(),
         )
     }
 }
@@ -305,6 +354,7 @@ private fun HomeContentEmptyPreview() {
         HomeContent(
             state = HomeState(),
             onEvent = {},
+            settingsRepository = MockHomeSettingsRepository(),
         )
     }
 }
@@ -316,6 +366,7 @@ private fun HomeContentLoadingPreview() {
         HomeContent(
             state = HomeState(isLoading = true),
             onEvent = {},
+            settingsRepository = MockHomeSettingsRepository(),
         )
     }
 }
@@ -334,6 +385,7 @@ private fun HomeContentDarkPreview() {
                 balance = 2294.5,
             ),
             onEvent = {},
+            settingsRepository = MockHomeSettingsRepository(),
         )
     }
 }

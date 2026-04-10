@@ -34,6 +34,10 @@ interface SettingsRepository {
     fun getDateFormat(): Flow<String>
     suspend fun setDateFormat(pattern: String)
 
+    // ── Date Filter UI State ──
+    fun getDateFilterExpanded(): Flow<Boolean>
+    suspend fun setDateFilterExpanded(expanded: Boolean)
+
     /** Resets every preference to its factory default. */
     suspend fun resetAllPreferences()
 }

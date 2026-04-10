@@ -189,6 +189,8 @@
     <!-- Common Actions -->
     <string name="common_confirm">Confirm</string>
     <string name="common_cancel">Cancel</string>
+    <string name="common_collapse">Collapse</string>
+    <string name="common_expand">Expand</string>
 
     <!-- Backup/Restore -->
     <string name="backup_success_title">Backup Complete</string>

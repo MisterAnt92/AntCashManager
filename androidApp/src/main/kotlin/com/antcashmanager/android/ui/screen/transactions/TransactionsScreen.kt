@@ -37,6 +37,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -68,10 +69,12 @@ import com.antcashmanager.android.ui.theme.IncomeGreen
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.CategoryRepository
+import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlinx.coroutines.launch
 
 // ══════════════════════════════════════════════════════════════════════════════
 // SCREEN
@@ -81,6 +84,7 @@ import java.util.Locale
 fun TransactionsScreen(
     transactionRepository: TransactionRepository,
     categoryRepository: CategoryRepository,
+    settingsRepository: SettingsRepository,
     navController: NavController? = null,
 ) {
     Logger.d("TransactionsScreen") { "Displaying TransactionsScreen" }
@@ -98,6 +102,7 @@ fun TransactionsScreen(
     TransactionsContent(
         state = state,
         onEvent = viewModel::onEvent,
+        settingsRepository = settingsRepository,
         navController = navController,
     )
 }
@@ -111,6 +116,7 @@ fun TransactionsScreen(
 internal fun TransactionsContent(
     state: TransactionsState,
     onEvent: (TransactionsEvent) -> Unit,
+    settingsRepository: SettingsRepository,
     navController: NavController? = null,
 ) {
     // Date picker state
@@ -118,6 +124,10 @@ internal fun TransactionsContent(
     var showToDatePicker by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
     var showHelpDialog by remember { mutableStateOf(false) }
+
+    // DateRangeFilter expanded state from settings
+    val dateFilterExpanded by settingsRepository.getDateFilterExpanded().collectAsState(initial = true)
+    val coroutineScope = rememberCoroutineScope()
 
     // From date picker dialog
     if (showFromDatePicker) {
@@ -229,6 +239,12 @@ internal fun TransactionsContent(
                 presets = TransactionsState.PRESETS,
                 dateRangeFrom = state.dateRangeFrom,
                 dateRangeTo = state.dateRangeTo,
+                expanded = dateFilterExpanded,
+                onExpandedChange = { expanded ->
+                    coroutineScope.launch {
+                        settingsRepository.setDateFilterExpanded(expanded)
+                    }
+                },
                 onPresetSelected = { onEvent(TransactionsEvent.SelectPreset(it)) },
                 onFromDateEdit = { showFromDatePicker = true },
                 onToDateEdit = { showToDatePicker = true },
@@ -505,6 +521,36 @@ private fun TransactionItem(transaction: Transaction, onClick: (() -> Unit)? = n
 // PREVIEWS
 // ══════════════════════════════════════════════════════════════════════════════
 
+class MockSettingsRepository : SettingsRepository {
+    override fun getTheme() = kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.AppTheme.SYSTEM)
+    override suspend fun setTheme(theme: com.antcashmanager.domain.model.AppTheme) {}
+    override fun getLanguage() = kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.AppLanguage.SYSTEM)
+    override suspend fun setLanguage(language: com.antcashmanager.domain.model.AppLanguage) {}
+    override fun getShowCharts() = kotlinx.coroutines.flow.flowOf(true)
+    override suspend fun setShowCharts(show: Boolean) {}
+    override fun getHighContrast() = kotlinx.coroutines.flow.flowOf(false)
+    override suspend fun setHighContrast(enabled: Boolean) {}
+    override fun getLargeText() = kotlinx.coroutines.flow.flowOf(false)
+    override suspend fun setLargeText(enabled: Boolean) {}
+    override fun getReduceMotion() = kotlinx.coroutines.flow.flowOf(false)
+    override suspend fun setReduceMotion(enabled: Boolean) {}
+    override fun getShowTransactionNotes() = kotlinx.coroutines.flow.flowOf(true)
+    override suspend fun setShowTransactionNotes(show: Boolean) {}
+    override fun getCurrencySymbol() = kotlinx.coroutines.flow.flowOf("€")
+    override suspend fun setCurrencySymbol(symbol: String) {}
+    override fun getDecimalDigits() = kotlinx.coroutines.flow.flowOf(2)
+    override suspend fun setDecimalDigits(digits: Int) {}
+    override fun getDecimalSeparator() = kotlinx.coroutines.flow.flowOf(",")
+    override suspend fun setDecimalSeparator(separator: String) {}
+    override fun getThousandsSeparator() = kotlinx.coroutines.flow.flowOf("")
+    override suspend fun setThousandsSeparator(separator: String) {}
+    override fun getDateFormat() = kotlinx.coroutines.flow.flowOf("dd/MM/yyyy")
+    override suspend fun setDateFormat(pattern: String) {}
+    override fun getDateFilterExpanded() = kotlinx.coroutines.flow.flowOf(true)
+    override suspend fun setDateFilterExpanded(expanded: Boolean) {}
+    override suspend fun resetAllPreferences() {}
+}
+
 @Preview(showBackground = true, name = "TransactionsScreen - With Data")
 @Composable
 private fun TransactionsContentPreview() {
@@ -515,6 +561,7 @@ private fun TransactionsContentPreview() {
                 filteredTransactions = sampleTransactions,
             ),
             onEvent = {},
+            settingsRepository = MockSettingsRepository(),
         )
     }
 }
@@ -526,6 +573,7 @@ private fun TransactionsContentEmptyPreview() {
         TransactionsContent(
             state = TransactionsState(),
             onEvent = {},
+            settingsRepository = MockSettingsRepository(),
         )
     }
 }
@@ -537,6 +585,7 @@ private fun TransactionsContentLoadingPreview() {
         TransactionsContent(
             state = TransactionsState(isLoading = true),
             onEvent = {},
+            settingsRepository = MockSettingsRepository(),
         )
     }
 }
@@ -551,6 +600,7 @@ private fun TransactionsContentDarkPreview() {
                 filteredTransactions = sampleTransactions,
             ),
             onEvent = {},
+            settingsRepository = MockSettingsRepository(),
         )
     }
 }

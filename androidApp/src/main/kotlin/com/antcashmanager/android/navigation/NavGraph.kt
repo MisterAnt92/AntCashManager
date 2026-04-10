@@ -111,7 +111,10 @@ fun AntCashManagerNavHost(
                 modifier = Modifier.padding(innerPadding),
             ) {
                 composable(BottomNavItem.Home.route) {
-                    HomeScreen(transactionRepository = transactionRepository)
+                    HomeScreen(
+                        transactionRepository = transactionRepository,
+                        settingsRepository = settingsRepository,
+                    )
                 }
                 composable(BottomNavItem.Charts.route) {
                     ChartsScreen(transactionRepository = transactionRepository)
@@ -120,6 +123,7 @@ fun AntCashManagerNavHost(
                     TransactionsScreen(
                         transactionRepository = transactionRepository,
                         categoryRepository = categoryRepository,
+                        settingsRepository = settingsRepository,
                         navController = navController,
                     )
                 }
