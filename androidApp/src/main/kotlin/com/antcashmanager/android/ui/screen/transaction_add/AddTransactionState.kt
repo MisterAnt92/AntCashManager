@@ -1,6 +1,7 @@
 package com.antcashmanager.android.ui.screen.transaction_add
 
 import com.antcashmanager.domain.model.Category
+import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.TransactionType
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -42,6 +43,7 @@ data class AddTransactionState(
     val tags: String = "",
     val isRecurring: Boolean = false,
     val recurrenceInterval: String = "",
+    val selectedPaymentType: PaymentType = PaymentType.ELECTRONIC,
 
     // ── Dati disponibili ──
     val categories: List<Category> = emptyList(),
@@ -54,6 +56,7 @@ data class AddTransactionState(
     val showTypeDialog: Boolean = false,
     val showDatePicker: Boolean = false,
     val showDeleteConfirmDialog: Boolean = false,
+    val showPaymentTypeDialog: Boolean = false,
 ) {
     /**
      * Verifica se il form è valido per il salvataggio.

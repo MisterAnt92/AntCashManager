@@ -281,21 +281,22 @@
       <string name="recurrence_interval_monthly">Monthly</string>
       <string name="recurrence_interval_yearly">Yearly</string>
 
-      <!-- Transaction Details Dialog -->
-      <string name="transaction_details_title">Transaction Details</string>
-      <string name="transaction_details_id">Transaction ID</string>
-      <string name="transaction_details_title_label">Title</string>
-      <string name="transaction_details_category">Category</string>
-      <string name="transaction_details_type">Type</string>
-      <string name="transaction_details_amount">Amount</string>
-      <string name="transaction_details_date">Date</string>
-      <string name="transaction_details_time">Time</string>
-      <string name="transaction_details_notes">Notes</string>
-      <string name="transaction_details_payee">Payee</string>
-      <string name="transaction_details_location">Location</string>
-      <string name="transaction_details_recurrence">Recurrence</string>
-      <string name="transaction_details_tags">Tags</string>
-      <string name="transaction_details_close">Close</string>
+       <!-- Transaction Details Dialog -->
+       <string name="transaction_details_title">Transaction Details</string>
+       <string name="transaction_details_id">Transaction ID</string>
+       <string name="transaction_details_title_label">Title</string>
+       <string name="transaction_details_category">Category</string>
+       <string name="transaction_details_type">Type</string>
+       <string name="transaction_details_payment_type">Payment Type</string>
+       <string name="transaction_details_amount">Amount</string>
+       <string name="transaction_details_date">Date</string>
+       <string name="transaction_details_time">Time</string>
+       <string name="transaction_details_notes">Notes</string>
+       <string name="transaction_details_payee">Payee</string>
+       <string name="transaction_details_location">Location</string>
+       <string name="transaction_details_recurrence">Recurrence</string>
+       <string name="transaction_details_tags">Tags</string>
+       <string name="transaction_details_close">Close</string>
 
     <!-- Transaction Share -->
     <string name="transaction_share_button">Share Transaction</string>
@@ -306,5 +307,12 @@
     <string name="payment_type_electronic">Electronic Payment</string>
     <string name="payment_type_cash">Cash</string>
     <string name="payment_type_meal_vouchers">Meal Vouchers</string>
+
+    <!-- Add Transaction Payment Type -->
+    <string name="add_transaction_payment_type">Payment Type</string>
+    <string name="add_transaction_select_payment_type">Select Payment Type</string>
+    <string name="add_transaction_payment_type_electronic">Electronic</string>
+    <string name="add_transaction_payment_type_cash">Cash</string>
+    <string name="add_transaction_payment_type_meal_vouchers">Meal Vouchers</string>
 </resources>
 

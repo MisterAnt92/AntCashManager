@@ -63,6 +63,7 @@ import com.antcashmanager.android.ui.components.AppSelectionItemCard
 import com.antcashmanager.android.ui.components.button.AppButton
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.domain.model.Category
+import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.TransactionRepository
@@ -280,6 +281,15 @@ private fun DetailsStep(
         }
     }
 
+    // ── Dialog: Tipo di Pagamento ──
+    if (state.showPaymentTypeDialog) {
+        PaymentTypeSelectionDialog(
+            selectedPaymentType = state.selectedPaymentType,
+            onSelectPaymentType = { onEvent(AddTransactionEvent.SelectPaymentType(it)) },
+            onDismiss = { onEvent(AddTransactionEvent.DismissPaymentTypeDialog) },
+        )
+    }
+
     // ── Dialog: Conferma eliminazione ──
     if (state.showDeleteConfirmDialog) {
         androidx.compose.material3.AlertDialog(
@@ -448,6 +458,19 @@ private fun DetailsStep(
                 label = { Text(stringResource(R.string.add_transaction_location_label)) },
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier.fillMaxWidth(),
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // ── Tipo di Pagamento – sempre editabile al tap ──
+            AppSelectionItemCard(
+                label = stringResource(R.string.add_transaction_payment_type),
+                value = when (state.selectedPaymentType) {
+                    PaymentType.ELECTRONIC -> stringResource(R.string.add_transaction_payment_type_electronic)
+                    PaymentType.CASH -> stringResource(R.string.add_transaction_payment_type_cash)
+                    PaymentType.MEAL_VOUCHERS -> stringResource(R.string.add_transaction_payment_type_meal_vouchers)
+                },
+                isEditable = true,
+                onClick = { onEvent(AddTransactionEvent.EditPaymentType) },
             )
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -651,6 +674,74 @@ private fun TypeRadioButton(
         }
         AppText(
             text = typeLabel,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.weight(1f),
+        )
+    }
+}
+
+@Composable
+private fun PaymentTypeSelectionDialog(
+    selectedPaymentType: PaymentType?,
+    onSelectPaymentType: (PaymentType) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            AppText(
+                text = stringResource(R.string.add_transaction_select_payment_type),
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+            )
+        },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                PaymentType.entries.forEach { paymentType ->
+                    PaymentTypeRadioButton(
+                        paymentType = paymentType,
+                        isSelected = selectedPaymentType == paymentType,
+                        onClick = { onSelectPaymentType(paymentType) },
+                    )
+                }
+            }
+        },
+        confirmButton = {},
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.add_transaction_cancel))
+            }
+        },
+    )
+}
+
+@Composable
+private fun PaymentTypeRadioButton(
+    paymentType: PaymentType,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .background(
+                if (isSelected) MaterialTheme.colorScheme.primaryContainer
+                else MaterialTheme.colorScheme.surfaceVariant,
+            )
+            .clickable(onClick = onClick)
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        RadioButton(selected = isSelected, onClick = onClick)
+        val paymentTypeLabel = when (paymentType) {
+            PaymentType.CASH -> stringResource(R.string.add_transaction_payment_type_cash)
+            PaymentType.ELECTRONIC -> stringResource(R.string.add_transaction_payment_type_electronic)
+            PaymentType.MEAL_VOUCHERS -> stringResource(R.string.add_transaction_payment_type_meal_vouchers)
+        }
+        AppText(
+            text = paymentTypeLabel,
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.weight(1f),
         )

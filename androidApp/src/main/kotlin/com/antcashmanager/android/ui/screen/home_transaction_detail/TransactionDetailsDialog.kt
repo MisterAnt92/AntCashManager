@@ -30,6 +30,7 @@ import com.antcashmanager.android.ui.components.text.TransactionAmountText
 import com.antcashmanager.android.ui.screen.home.view.getRecurrenceIntervalLabel
 import com.antcashmanager.android.ui.screen.home_transaction_detail.view.TransactionDetailRow
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import java.text.SimpleDateFormat
@@ -104,6 +105,16 @@ fun TransactionDetailsDialog(
                         stringResource(R.string.transactions_type_income)
                     } else {
                         stringResource(R.string.transactions_type_expense)
+                    },
+                )
+
+                // Payment Type
+                TransactionDetailRow(
+                    label = stringResource(R.string.transaction_details_payment_type),
+                    value = when (transaction.paymentType) {
+                        PaymentType.ELECTRONIC -> stringResource(R.string.payment_type_electronic)
+                        PaymentType.CASH -> stringResource(R.string.payment_type_cash)
+                        PaymentType.MEAL_VOUCHERS -> stringResource(R.string.payment_type_meal_vouchers)
                     },
                 )
 
@@ -232,6 +243,7 @@ private fun TransactionDetailsDialogIncomePreview() {
                 isRecurring = true,
                 recurrenceInterval = "monthly",
                 tags = "salary, income, work",
+                paymentType = PaymentType.ELECTRONIC,
             ),
             onDismiss = {},
         )
@@ -252,6 +264,7 @@ private fun TransactionDetailsDialogExpensePreview() {
                 timestamp = System.currentTimeMillis(),
                 notes = "Weekly shopping",
                 tags = "food, groceries, shopping",
+                paymentType = PaymentType.CASH,
             ),
             onDismiss = {},
         )

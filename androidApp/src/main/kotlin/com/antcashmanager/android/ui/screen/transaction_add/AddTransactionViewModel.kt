@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.antcashmanager.domain.model.Category
+import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.CategoryRepository
@@ -31,6 +32,7 @@ sealed interface AddTransactionEvent {
     // ── Selezione ──
     data class SelectCategory(val category: Category) : AddTransactionEvent
     data class SelectType(val type: TransactionType) : AddTransactionEvent
+    data class SelectPaymentType(val paymentType: PaymentType) : AddTransactionEvent
 
     // ── Modifica campi ──
     data class UpdateTitle(val title: String) : AddTransactionEvent
@@ -53,10 +55,13 @@ sealed interface AddTransactionEvent {
     data object EditCategory : AddTransactionEvent
     data object EditType : AddTransactionEvent
     data object EditDate : AddTransactionEvent
+    data object EditPaymentType : AddTransactionEvent
     data object ShowCategoryDialog : AddTransactionEvent
     data object ShowTypeDialog : AddTransactionEvent
+    data object ShowPaymentTypeDialog : AddTransactionEvent
     data object DismissCategoryDialog : AddTransactionEvent
     data object DismissTypeDialog : AddTransactionEvent
+    data object DismissPaymentTypeDialog : AddTransactionEvent
     data object DismissDatePicker : AddTransactionEvent
 
     // ── Dialog eliminazione ──
@@ -132,6 +137,7 @@ class AddTransactionViewModel(
                             timestamp = transaction.timestamp,
                             isRecurring = transaction.isRecurring,
                             recurrenceInterval = transaction.recurrenceInterval,
+                            selectedPaymentType = transaction.paymentType,
                             currentStep = AddTransactionStep.DETAILS,
                             isLoading = false,
                             categories = categoryList,
@@ -160,6 +166,7 @@ class AddTransactionViewModel(
         when (event) {
             is AddTransactionEvent.SelectCategory -> selectCategory(event.category)
             is AddTransactionEvent.SelectType -> selectType(event.type)
+            is AddTransactionEvent.SelectPaymentType -> selectPaymentType(event.paymentType)
             is AddTransactionEvent.UpdateTitle -> _state.update { it.copy(title = event.title) }
             is AddTransactionEvent.UpdateAmount -> _state.update { it.copy(amount = event.amount) }
             is AddTransactionEvent.UpdateNotes -> _state.update { it.copy(notes = event.notes) }
@@ -174,10 +181,13 @@ class AddTransactionViewModel(
             is AddTransactionEvent.EditCategory -> _state.update { it.copy(showCategoryDialog = true) }
             is AddTransactionEvent.EditType -> _state.update { it.copy(showTypeDialog = true) }
             is AddTransactionEvent.EditDate -> _state.update { it.copy(showDatePicker = true) }
+            is AddTransactionEvent.EditPaymentType -> _state.update { it.copy(showPaymentTypeDialog = true) }
             is AddTransactionEvent.ShowCategoryDialog -> _state.update { it.copy(showCategoryDialog = true) }
             is AddTransactionEvent.ShowTypeDialog -> _state.update { it.copy(showTypeDialog = true) }
+            is AddTransactionEvent.ShowPaymentTypeDialog -> _state.update { it.copy(showPaymentTypeDialog = true) }
             is AddTransactionEvent.DismissCategoryDialog -> _state.update { it.copy(showCategoryDialog = false) }
             is AddTransactionEvent.DismissTypeDialog -> _state.update { it.copy(showTypeDialog = false) }
+            is AddTransactionEvent.DismissPaymentTypeDialog -> _state.update { it.copy(showPaymentTypeDialog = false) }
             is AddTransactionEvent.DismissDatePicker -> _state.update { it.copy(showDatePicker = false) }
             is AddTransactionEvent.Submit -> submitTransaction()
             is AddTransactionEvent.Cancel -> _state.value = AddTransactionState()
@@ -219,6 +229,13 @@ class AddTransactionViewModel(
         Logger.d(TAG) { "Type selected: $type" }
         _state.update {
             it.copy(selectedType = type, showTypeDialog = false)
+        }
+    }
+
+    private fun selectPaymentType(paymentType: PaymentType) {
+        Logger.d(TAG) { "Payment type selected: $paymentType" }
+        _state.update {
+            it.copy(selectedPaymentType = paymentType, showPaymentTypeDialog = false)
         }
     }
 
@@ -276,6 +293,7 @@ class AddTransactionViewModel(
                     tags = currentState.tags,
                     isRecurring = currentState.isRecurring,
                     recurrenceInterval = currentState.recurrenceInterval,
+                    paymentType = currentState.selectedPaymentType,
                 )
 
                 if (currentState.isModifying) {

@@ -260,21 +260,22 @@
       <string name="recurrence_interval_monthly">Mensuelle</string>
       <string name="recurrence_interval_yearly">Annuelle</string>
 
-      <!-- Transaction Details Dialog -->
-      <string name="transaction_details_title">Détails de la Transaction</string>
-      <string name="transaction_details_id">ID de Transaction</string>
-      <string name="transaction_details_title_label">Titre</string>
-      <string name="transaction_details_category">Catégorie</string>
-      <string name="transaction_details_type">Type</string>
-      <string name="transaction_details_amount">Montant</string>
-      <string name="transaction_details_date">Date</string>
-      <string name="transaction_details_time">Heure</string>
-      <string name="transaction_details_notes">Notes</string>
-      <string name="transaction_details_payee">Bénéficiaire</string>
-      <string name="transaction_details_location">Lieu</string>
-      <string name="transaction_details_recurrence">Récurrence</string>
-      <string name="transaction_details_tags">Étiquettes</string>
-      <string name="transaction_details_close">Fermer</string>
+       <!-- Transaction Details Dialog -->
+       <string name="transaction_details_title">Détails de la Transaction</string>
+       <string name="transaction_details_id">ID de Transaction</string>
+       <string name="transaction_details_title_label">Titre</string>
+       <string name="transaction_details_category">Catégorie</string>
+       <string name="transaction_details_type">Type</string>
+       <string name="transaction_details_payment_type">Type de Paiement</string>
+       <string name="transaction_details_amount">Montant</string>
+       <string name="transaction_details_date">Date</string>
+       <string name="transaction_details_time">Heure</string>
+       <string name="transaction_details_notes">Notes</string>
+       <string name="transaction_details_payee">Bénéficiaire</string>
+       <string name="transaction_details_location">Lieu</string>
+       <string name="transaction_details_recurrence">Récurrence</string>
+       <string name="transaction_details_tags">Étiquettes</string>
+       <string name="transaction_details_close">Fermer</string>
 
     <!-- Transaction Share -->
     <string name="transaction_share_button">Partager la Transaction</string>
