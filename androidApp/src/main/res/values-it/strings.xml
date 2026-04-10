@@ -298,6 +298,11 @@
     <!-- Transaction Share -->
     <string name="transaction_share_button">Condividi Transazione</string>
     <string name="transaction_share_via">Condiviso tramite</string>
-</resources>
 
+    <!-- Payment Type -->
+    <string name="payment_type_label">Tipo di Pagamento</string>
+    <string name="payment_type_electronic">Pagamento Elettronico</string>
+    <string name="payment_type_cash">Contante</string>
+    <string name="payment_type_meal_vouchers">Buoni Pasto</string>
+</resources>
 

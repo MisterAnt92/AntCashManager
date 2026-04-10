@@ -280,6 +280,10 @@
     <string name="transaction_share_button">Partager la Transaction</string>
     <string name="transaction_share_via">Partagé via</string>
 
+    <!-- Payment Type -->
+    <string name="payment_type_label">Type de Paiement</string>
+    <string name="payment_type_electronic">Paiement Électronique</string>
+    <string name="payment_type_cash">Espèces</string>
+    <string name="payment_type_meal_vouchers">Tickets Restaurant</string>
 </resources>
-
 

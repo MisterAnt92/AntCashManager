@@ -279,6 +279,11 @@
     <!-- Transaction Share -->
     <string name="transaction_share_button">Transaktion Teilen</string>
     <string name="transaction_share_via">Geteilt über</string>
-</resources>
 
+    <!-- Payment Type -->
+    <string name="payment_type_label">Zahlungsart</string>
+    <string name="payment_type_electronic">Elektronische Zahlung</string>
+    <string name="payment_type_cash">Bar</string>
+    <string name="payment_type_meal_vouchers">Essensgutscheine</string>
+</resources>
 

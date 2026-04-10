@@ -13,13 +13,17 @@ data class Transaction(
     val isRecurring: Boolean = false,
     val tags: String = "",
     val recurrenceInterval: String = "",
+    val paymentType: PaymentType = PaymentType.ELECTRONIC,
 )
 
 enum class TransactionType {
     INCOME, EXPENSE
 }
 
+enum class PaymentType {
+    ELECTRONIC, CASH, MEAL_VOUCHERS
+}
+
 enum class RecurrenceInterval {
     DAILY, WEEKLY, MONTHLY, YEARLY
 }
-

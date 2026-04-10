@@ -278,8 +278,12 @@
 
     <!-- Transaction Share -->
     <string name="transaction_share_button">Compartir Transacción</string>
-    <string name="transaction_share_via">Compartido mediante</string>
+    <string name="transaction_share_via">Compartido a través de</string>
 
+    <!-- Payment Type -->
+    <string name="payment_type_label">Tipo de Pago</string>
+    <string name="payment_type_electronic">Pago Electrónico</string>
+    <string name="payment_type_cash">Efectivo</string>
+    <string name="payment_type_meal_vouchers">Vales de Comida</string>
 </resources>
-
 

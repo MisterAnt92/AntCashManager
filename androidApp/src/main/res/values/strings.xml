@@ -298,6 +298,11 @@
     <!-- Transaction Share -->
     <string name="transaction_share_button">Share Transaction</string>
     <string name="transaction_share_via">Shared via</string>
- </resources>
 
+    <!-- Payment Type -->
+    <string name="payment_type_label">Payment Type</string>
+    <string name="payment_type_electronic">Electronic Payment</string>
+    <string name="payment_type_cash">Cash</string>
+    <string name="payment_type_meal_vouchers">Meal Vouchers</string>
+</resources>
 
