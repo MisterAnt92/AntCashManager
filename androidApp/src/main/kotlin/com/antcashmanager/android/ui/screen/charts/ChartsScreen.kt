@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Share
@@ -849,7 +850,7 @@ private fun HelpDialog(onDismiss: () -> Unit) {
         SimpleHelpFeature(
             title = "Analisi Dettagliata",
             description = "Visualizza il riepilogo mensile e l'analisi per categoria",
-            icon = Icons.Default.TrendingUp,
+            icon = Icons.AutoMirrored.Default.TrendingUp,
         ),
     )
 

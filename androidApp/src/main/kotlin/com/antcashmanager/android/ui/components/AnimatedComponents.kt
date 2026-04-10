@@ -32,6 +32,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Help
 import androidx.compose.material3.AlertDialog
@@ -416,7 +417,7 @@ fun HelpButton(
             ),
     ) {
         Icon(
-            imageVector = Icons.Default.Help,
+            imageVector = Icons.AutoMirrored.Default.Help,
             contentDescription = "Help",
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(20.dp),

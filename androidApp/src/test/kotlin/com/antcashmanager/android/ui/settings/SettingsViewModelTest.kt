@@ -220,6 +220,13 @@ private class FakeSettingsRepository : SettingsRepository {
         TODO("Not yet implemented")
     }
 
+    private val dateFilterExpandedFlow = MutableStateFlow(false)
+
+    override fun getDateFilterExpanded(): Flow<Boolean> = dateFilterExpandedFlow
+    override suspend fun setDateFilterExpanded(expanded: Boolean) {
+        dateFilterExpandedFlow.value = expanded
+    }
+
     override suspend fun resetAllPreferences() {
         // reset to defaults
         themeFlow.value = AppTheme.SYSTEM
@@ -233,6 +240,7 @@ private class FakeSettingsRepository : SettingsRepository {
         decimalDigitsFlow.value = 2
         decimalSeparatorFlow.value = ","
         thousandsSeparatorFlow.value = "."
+        dateFilterExpandedFlow.value = false
     }
 }
 

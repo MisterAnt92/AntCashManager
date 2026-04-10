@@ -27,6 +27,9 @@ kotlin {
             api(libs.room.runtime)
             implementation(libs.room.ktx)
         }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+        }
         val androidUnitTest by getting {
             dependencies {
                 implementation(libs.junit)
