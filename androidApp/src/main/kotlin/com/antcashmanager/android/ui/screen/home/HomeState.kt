@@ -17,6 +17,7 @@ data class HomeState(
     val selectedPresetIndex: Int = 1,
     val dateRangeFrom: Long = System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000),
     val dateRangeTo: Long = System.currentTimeMillis(),
+    val selectedTransaction: Transaction? = null,
 ) {
     companion object {
         val PRESETS = listOf(

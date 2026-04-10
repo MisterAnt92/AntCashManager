@@ -146,39 +146,100 @@ class HomeViewModelTest {
         assertEquals(800.0, expenses.first().amount, 0.01)
         collectJob.cancel()
     }
-}
 
-private class FakeTransactionRepository : TransactionRepository {
-    val transactions = MutableStateFlow<List<Transaction>>(emptyList())
+    @Test
+    fun `show transaction details event sets selected transaction`() = runTest(testDispatcher) {
+        val now = System.currentTimeMillis()
+        val transaction = Transaction(
+            id = 1,
+            title = "Test Transaction",
+            amount = 100.0,
+            category = "Test",
+            type = TransactionType.INCOME,
+            timestamp = now,
+        )
+        fakeRepo.transactions.value = listOf(transaction)
 
-    override fun getAllTransactions(): Flow<List<Transaction>> = transactions
-
-    override suspend fun getTransactionById(id: Long): Transaction? =
-        transactions.value.find { it.id == id }
-
-    override suspend fun insertTransaction(transaction: Transaction): Long {
-        transactions.value = transactions.value + transaction
-        return transaction.id
-    }
-
-    override suspend fun updateTransaction(transaction: Transaction) {
-        transactions.value = transactions.value.map {
-            if (it.id == transaction.id) transaction else it
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect {}
         }
+        advanceUntilIdle()
+
+        viewModel.onEvent(
+            com.antcashmanager.android.ui.screen.home.HomeEvent.ShowTransactionDetails(
+                transaction
+            )
+        )
+        advanceUntilIdle()
+
+        assertEquals(transaction, viewModel.state.value.selectedTransaction)
+        collectJob.cancel()
     }
 
-    override suspend fun deleteTransaction(transaction: Transaction) {
-        transactions.value = transactions.value.filter { it.id != transaction.id }
+    @Test
+    fun `dismiss transaction details clears selected transaction`() = runTest(testDispatcher) {
+        val now = System.currentTimeMillis()
+        val transaction = Transaction(
+            id = 1,
+            title = "Test Transaction",
+            amount = 100.0,
+            category = "Test",
+            type = TransactionType.INCOME,
+            timestamp = now,
+        )
+        fakeRepo.transactions.value = listOf(transaction)
+
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect {}
+        }
+        advanceUntilIdle()
+
+        viewModel.onEvent(
+            com.antcashmanager.android.ui.screen.home.HomeEvent.ShowTransactionDetails(
+                transaction
+            )
+        )
+        advanceUntilIdle()
+        assertEquals(transaction, viewModel.state.value.selectedTransaction)
+
+        viewModel.onEvent(com.antcashmanager.android.ui.screen.home.HomeEvent.DismissTransactionDetails)
+        advanceUntilIdle()
+        assertEquals(null, viewModel.state.value.selectedTransaction)
+        collectJob.cancel()
     }
 
-    override suspend fun deleteAllTransactions() {
-        transactions.value = emptyList()
+    private class FakeTransactionRepository : TransactionRepository {
+        val transactions = MutableStateFlow<List<Transaction>>(emptyList())
+
+        override fun getAllTransactions(): Flow<List<Transaction>> = transactions
+
+        override suspend fun getTransactionById(id: Long): Transaction? =
+            transactions.value.find { it.id == id }
+
+        override suspend fun insertTransaction(transaction: Transaction): Long {
+            transactions.value = transactions.value + transaction
+            return transaction.id
+        }
+
+        override suspend fun updateTransaction(transaction: Transaction) {
+            transactions.value = transactions.value.map {
+                if (it.id == transaction.id) transaction else it
+            }
+        }
+
+        override suspend fun deleteTransaction(transaction: Transaction) {
+            transactions.value = transactions.value.filter { it.id != transaction.id }
+        }
+
+        override suspend fun deleteAllTransactions() {
+            transactions.value = emptyList()
+        }
+
+        override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> =
+            transactions.map { list -> list.filter { it.timestamp in from..to } }
+
+        override fun getRecurringTransactions(): Flow<List<Transaction>> =
+            transactions.map { list -> list.filter { it.isRecurring } }
     }
-
-    override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> =
-        transactions.map { list -> list.filter { it.timestamp in from..to } }
-
-    override fun getRecurringTransactions(): Flow<List<Transaction>> =
-        transactions.map { list -> list.filter { it.isRecurring } }
 }
 

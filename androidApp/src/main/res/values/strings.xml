@@ -272,10 +272,32 @@
      <string name="add_transaction_field_tags">Tags</string>
      <string name="add_transaction_field_recurrence">Recurrence</string>
 
-     <!-- Recurrence intervals -->
-     <string name="recurrence_interval_label">Recurrence Interval</string>
-     <string name="recurrence_interval_daily">Daily</string>
-     <string name="recurrence_interval_weekly">Weekly</string>
-     <string name="recurrence_interval_monthly">Monthly</string>
-     <string name="recurrence_interval_yearly">Yearly</string>
-</resources>
+      <!-- Recurrence intervals -->
+      <string name="recurrence_interval_label">Recurrence Interval</string>
+      <string name="recurrence_interval_daily">Daily</string>
+      <string name="recurrence_interval_weekly">Weekly</string>
+      <string name="recurrence_interval_monthly">Monthly</string>
+      <string name="recurrence_interval_yearly">Yearly</string>
+
+      <!-- Transaction Details Dialog -->
+      <string name="transaction_details_title">Transaction Details</string>
+      <string name="transaction_details_id">Transaction ID</string>
+      <string name="transaction_details_title_label">Title</string>
+      <string name="transaction_details_category">Category</string>
+      <string name="transaction_details_type">Type</string>
+      <string name="transaction_details_amount">Amount</string>
+      <string name="transaction_details_date">Date</string>
+      <string name="transaction_details_time">Time</string>
+      <string name="transaction_details_notes">Notes</string>
+      <string name="transaction_details_payee">Payee</string>
+      <string name="transaction_details_location">Location</string>
+      <string name="transaction_details_recurrence">Recurrence</string>
+      <string name="transaction_details_tags">Tags</string>
+      <string name="transaction_details_close">Close</string>
+
+    <!-- Transaction Share -->
+    <string name="transaction_share_button">Share Transaction</string>
+    <string name="transaction_share_via">Shared via</string>
+ </resources>
+
+

@@ -272,10 +272,32 @@
      <string name="add_transaction_field_tags">Tag</string>
      <string name="add_transaction_field_recurrence">Ricorrenza</string>
 
-     <!-- Recurrence intervals -->
-     <string name="recurrence_interval_label">Intervallo di Ricorrenza</string>
-     <string name="recurrence_interval_daily">Giornaliera</string>
-     <string name="recurrence_interval_weekly">Settimanale</string>
-     <string name="recurrence_interval_monthly">Mensile</string>
-     <string name="recurrence_interval_yearly">Annuale</string>
+      <!-- Recurrence intervals -->
+      <string name="recurrence_interval_label">Intervallo di Ricorrenza</string>
+      <string name="recurrence_interval_daily">Giornaliera</string>
+      <string name="recurrence_interval_weekly">Settimanale</string>
+      <string name="recurrence_interval_monthly">Mensile</string>
+      <string name="recurrence_interval_yearly">Annuale</string>
+
+      <!-- Transaction Details Dialog -->
+      <string name="transaction_details_title">Dettagli Transazione</string>
+      <string name="transaction_details_id">ID Transazione</string>
+      <string name="transaction_details_title_label">Titolo</string>
+      <string name="transaction_details_category">Categoria</string>
+      <string name="transaction_details_type">Tipo</string>
+      <string name="transaction_details_amount">Importo</string>
+      <string name="transaction_details_date">Data</string>
+      <string name="transaction_details_time">Ora</string>
+      <string name="transaction_details_notes">Note</string>
+      <string name="transaction_details_payee">Beneficiario</string>
+      <string name="transaction_details_location">Luogo</string>
+      <string name="transaction_details_recurrence">Ricorrenza</string>
+      <string name="transaction_details_tags">Tag</string>
+      <string name="transaction_details_close">Chiudi</string>
+
+    <!-- Transaction Share -->
+    <string name="transaction_share_button">Condividi Transazione</string>
+    <string name="transaction_share_via">Condiviso tramite</string>
 </resources>
+
+

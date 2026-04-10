@@ -1,33 +1,17 @@
 package com.antcashmanager.android.ui.screen.home
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.TrendingDown
-import androidx.compose.material.icons.automirrored.filled.TrendingUp
-import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material.icons.filled.Repeat
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -40,10 +24,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
@@ -51,27 +33,20 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
-import com.antcashmanager.android.ui.components.AnimatedCard
-import com.antcashmanager.android.ui.components.AnimatedListItem
 import com.antcashmanager.android.ui.components.AntEmptyState
 import com.antcashmanager.android.ui.components.DateRangeFilter
-import com.antcashmanager.android.ui.components.FadeInOnAppear
 import com.antcashmanager.android.ui.components.HelpButton
-import com.antcashmanager.android.ui.components.HelpDialogContent
-import com.antcashmanager.android.ui.components.SimpleHelpFeature
 import com.antcashmanager.android.ui.components.text.AppText
-import com.antcashmanager.android.ui.components.text.BalanceText
-import com.antcashmanager.android.ui.components.text.CompactMoneyText
-import com.antcashmanager.android.ui.components.text.TransactionAmountText
+import com.antcashmanager.android.ui.screen.home.view.BalanceCard
+import com.antcashmanager.android.ui.screen.home.view.HelpDialog
+import com.antcashmanager.android.ui.screen.home.view.IncomeExpenseRow
+import com.antcashmanager.android.ui.screen.home.view.LoadingState
+import com.antcashmanager.android.ui.screen.home.view.RecentTransactionItem
+import com.antcashmanager.android.ui.screen.home_transaction_detail.TransactionDetailsDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
-import com.antcashmanager.android.ui.theme.ExpenseRed
-import com.antcashmanager.android.ui.theme.IncomeGreen
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.TransactionRepository
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 // ══════════════════════════════════════════════════════════════════════════════
 // SCREEN
@@ -173,6 +148,14 @@ internal fun HomeContent(
         HelpDialog(onDismiss = { showHelpDialog = false })
     }
 
+    // Transaction Details Dialog
+    if (state.selectedTransaction != null) {
+        TransactionDetailsDialog(
+            transaction = state.selectedTransaction,
+            onDismiss = { onEvent(HomeEvent.DismissTransactionDetails) },
+        )
+    }
+
     when {
         state.isLoading -> LoadingState()
         else -> {
@@ -250,7 +233,10 @@ internal fun HomeContent(
                         items = state.recentTransactions,
                         key = { it.id },
                     ) { transaction ->
-                        RecentTransactionItem(transaction = transaction)
+                        RecentTransactionItem(
+                            transaction = transaction,
+                            onClick = { onEvent(HomeEvent.ShowTransactionDetails(transaction)) },
+                        )
                     }
                 }
 
@@ -261,326 +247,7 @@ internal fun HomeContent(
     }
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-// COMPONENTS
-// ══════════════════════════════════════════════════════════════════════════════
 
-@Composable
-private fun LoadingState() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
-    ) {
-        CircularProgressIndicator()
-    }
-}
-
-@Composable
-private fun BalanceCard(
-    balance: Double,
-) {
-    val balanceColor by animateColorAsState(
-        targetValue = if (balance >= 0) IncomeGreen else ExpenseRed,
-        animationSpec = tween(600),
-        label = "balance_color",
-    )
-
-    FadeInOnAppear(durationMillis = 600) {
-        AnimatedCard(
-            modifier = Modifier.fillMaxWidth(),
-            backgroundColor = MaterialTheme.colorScheme.primaryContainer,
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(28.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                // Title with ant and piggy bank
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    AppText(
-                        text = "🐜",
-                        style = MaterialTheme.typography.titleLarge,
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    AppText(
-                        text = stringResource(R.string.home_total_balance),
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    AppText(
-                        text = "🐷",
-                        style = MaterialTheme.typography.titleLarge,
-                    )
-                }
-                Spacer(modifier = Modifier.height(12.dp))
-                BalanceText(
-                    amount = balance,
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    fontSize = 32,
-                )
-                Box(
-                    modifier = Modifier
-                        .padding(top = 4.dp)
-                        .shadow(
-                            elevation = 0.1.dp,
-                            shape = RoundedCornerShape(50.dp),
-                        )
-                        .padding(horizontal = 8.dp, vertical = 4.dp),
-                ) {
-                    AppText(
-                        text = if (balance >= 0) {
-                            stringResource(R.string.home_balance_positive)
-                        } else {
-                            stringResource(R.string.home_balance_negative)
-                        },
-                        style = MaterialTheme.typography.labelSmall,
-                        color = balanceColor,
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun IncomeExpenseRow(
-    totalIncome: Double,
-    totalExpense: Double,
-) {
-    FadeInOnAppear(durationMillis = 800) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            // Income Card
-            AnimatedCard(
-                modifier = Modifier
-                    .weight(1f)
-                    .shadow(6.dp, RoundedCornerShape(16.dp)),
-                backgroundColor = MaterialTheme.colorScheme.secondaryContainer,
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(40.dp)
-                                .background(
-                                    IncomeGreen.copy(alpha = 0.25f),
-                                    shape = RoundedCornerShape(32.dp)
-                                )
-                                .padding(8.dp),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.TrendingUp,
-                                contentDescription = null,
-                                tint = IncomeGreen,
-                                modifier = Modifier.size(20.dp),
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    AppText(
-                        text = stringResource(R.string.home_income),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f),
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    CompactMoneyText(
-                        amount = totalIncome,
-                        fontSize = 18,
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
-            }
-
-            // Expense Card
-            AnimatedCard(
-                modifier = Modifier
-                    .weight(1f)
-                    .shadow(6.dp, RoundedCornerShape(16.dp)),
-                backgroundColor = MaterialTheme.colorScheme.errorContainer,
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(40.dp)
-                                .background(
-                                    ExpenseRed.copy(alpha = 0.25f),
-                                    shape = RoundedCornerShape(32.dp)
-                                )
-                                .padding(8.dp),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.TrendingDown,
-                                contentDescription = null,
-                                tint = ExpenseRed,
-                                modifier = Modifier.size(20.dp),
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    AppText(
-                        text = stringResource(R.string.home_expenses),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.8f),
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    CompactMoneyText(
-                        amount = totalExpense,
-                        fontSize = 18,
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
-            }
-        }
-    }
-}
-
-private val dateFormat = SimpleDateFormat("dd MMM", Locale.getDefault())
-
-@Composable
-private fun getRecurrenceIntervalLabel(interval: String): String {
-    return when (interval.lowercase()) {
-        "daily" -> stringResource(R.string.transactions_interval_daily)
-        "weekly" -> stringResource(R.string.transactions_interval_weekly)
-        "monthly" -> stringResource(R.string.transactions_interval_monthly)
-        "yearly" -> stringResource(R.string.transactions_interval_yearly)
-        else -> stringResource(R.string.transactions_recurring)
-    }
-}
-
-@Composable
-private fun RecentTransactionItem(transaction: Transaction) {
-    val isIncome = transaction.type == TransactionType.INCOME
-    val cardBackgroundColor =
-        if (isIncome) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer
-
-    AnimatedListItem(index = transaction.id.toInt()) {
-        AnimatedCard(
-            modifier = Modifier.fillMaxWidth(),
-            backgroundColor = cardBackgroundColor,
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                // Icon with background
-                Box(
-                    modifier = Modifier
-                        .size(44.dp)
-                        .background(
-                            if (isIncome) IncomeGreen.copy(alpha = 0.25f) else ExpenseRed.copy(alpha = 0.25f),
-                            shape = RoundedCornerShape(32.dp),
-                        )
-                        .padding(8.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        imageVector = if (isIncome) Icons.Default.ArrowDownward else Icons.Default.ArrowUpward,
-                        contentDescription = null,
-                        tint = if (isIncome) IncomeGreen else ExpenseRed,
-                        modifier = Modifier.size(20.dp),
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(12.dp))
-
-                Column(modifier = Modifier.weight(1f)) {
-                    AppText(
-                        text = transaction.title,
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.SemiBold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        color = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onErrorContainer,
-                    )
-                    AppText(
-                        text = "${transaction.category} • ${dateFormat.format(Date(transaction.timestamp))}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer.copy(
-                            alpha = 0.7f
-                        ) else MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.7f),
-                    )
-                    if (transaction.notes.isNotBlank()) {
-                        AppText(
-                            text = transaction.notes,
-                            style = MaterialTheme.typography.labelSmall,
-                            color = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer.copy(
-                                alpha = 0.6f
-                            ) else MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.6f),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
-                    if (transaction.isRecurring) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(top = 4.dp),
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Repeat,
-                                contentDescription = stringResource(R.string.transactions_recurring),
-                                modifier = Modifier.size(14.dp),
-                                tint = MaterialTheme.colorScheme.tertiary,
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            AppText(
-                                text = if (transaction.recurrenceInterval.isNotBlank()) {
-                                    getRecurrenceIntervalLabel(transaction.recurrenceInterval)
-                                } else {
-                                    stringResource(R.string.transactions_recurring)
-                                },
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.tertiary,
-                                fontWeight = FontWeight.SemiBold,
-                            )
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                // Amount with background
-                Box(
-                    modifier = Modifier
-                        .padding(8.dp),
-                ) {
-                    TransactionAmountText(
-                        amount = if (isIncome) transaction.amount else -transaction.amount,
-                    )
-                }
-            }
-        }
-    }
-}
 
 // ══════════════════════════════════════════════════════════════════════════════
 // PREVIEWS
@@ -671,35 +338,48 @@ private fun HomeContentDarkPreview() {
     }
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-// HELP DIALOG
-// ══════════════════════════════════════════════════════════════════════════════
-
+@Preview(showBackground = true, name = "Transaction Details Dialog - Income")
 @Composable
-private fun HelpDialog(onDismiss: () -> Unit) {
-    val helpFeatures = listOf(
-        SimpleHelpFeature(
-            title = "Dashboard",
-            description = "Visualizza il saldo totale, entrate e uscite nel periodo selezionato.",
-            icon = Icons.AutoMirrored.Filled.TrendingUp,
-        ),
-        SimpleHelpFeature(
-            title = "Filtri Intervallo Date",
-            description = "Filtra le transazioni per date specifiche o usa i preset disponibili.",
-            icon = Icons.Default.ArrowUpward,
-        ),
-        SimpleHelpFeature(
-            title = "Transazioni Recenti",
-            description = "Visualizza le ultime transazioni aggiunte con dettagli e categoria.",
-            icon = Icons.Default.Repeat,
-        ),
-    )
-
-    HelpDialogContent(
-        isVisible = true,
-        title = "Guida Dashboard",
-        description = "Benvenuto nel Dashboard! Qui puoi visualizzare il riepilogo finanziario e le transazioni recenti.",
-        features = helpFeatures,
-        onDismiss = onDismiss,
-    )
+private fun TransactionDetailsDialogIncomePreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        TransactionDetailsDialog(
+            transaction = Transaction(
+                id = 1,
+                title = "Salary Payment",
+                amount = 2500.0,
+                category = "Work",
+                type = TransactionType.INCOME,
+                timestamp = System.currentTimeMillis(),
+                notes = "Monthly salary",
+                payee = "Acme Corp",
+                location = "Office",
+                isRecurring = true,
+                recurrenceInterval = "monthly",
+                tags = "salary,income",
+            ),
+            onDismiss = {},
+        )
+    }
 }
+
+@Preview(showBackground = true, name = "Transaction Details Dialog - Expense")
+@Composable
+private fun TransactionDetailsDialogExpensePreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        TransactionDetailsDialog(
+            transaction = Transaction(
+                id = 2,
+                title = "Groceries",
+                amount = 85.50,
+                category = "Food",
+                type = TransactionType.EXPENSE,
+                timestamp = System.currentTimeMillis(),
+                notes = "Weekly shopping",
+                tags = "food,groceries",
+            ),
+            onDismiss = {},
+        )
+    }
+}
+
+

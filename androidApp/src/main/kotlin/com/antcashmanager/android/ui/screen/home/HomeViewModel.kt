@@ -24,6 +24,8 @@ import kotlinx.coroutines.flow.update
 sealed interface HomeEvent {
     data class SelectPreset(val index: Int) : HomeEvent
     data class SetDateRange(val from: Long, val to: Long) : HomeEvent
+    data class ShowTransactionDetails(val transaction: com.antcashmanager.domain.model.Transaction) : HomeEvent
+    data object DismissTransactionDetails : HomeEvent
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -40,11 +42,15 @@ class HomeViewModel(
     // ── Internal filter state ──
     private val _filterState = MutableStateFlow(FilterState())
 
+    // ── Internal transaction selection state ──
+    private val _selectedTransactionState = MutableStateFlow<com.antcashmanager.domain.model.Transaction?>(null)
+
     // ── Combined UI State ──
     val state: StateFlow<HomeState> = combine(
         getTransactionsUseCase(),
         _filterState,
-    ) { transactions, filterState ->
+        _selectedTransactionState,
+    ) { transactions, filterState, selectedTransaction ->
         val filtered = transactions.filter {
             it.timestamp in filterState.dateRangeFrom..filterState.dateRangeTo
         }
@@ -63,6 +69,7 @@ class HomeViewModel(
             selectedPresetIndex = filterState.selectedPresetIndex,
             dateRangeFrom = filterState.dateRangeFrom,
             dateRangeTo = filterState.dateRangeTo,
+            selectedTransaction = selectedTransaction,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -87,6 +94,8 @@ class HomeViewModel(
         when (event) {
             is HomeEvent.SelectPreset -> selectPreset(event.index)
             is HomeEvent.SetDateRange -> setDateRange(event.from, event.to)
+            is HomeEvent.ShowTransactionDetails -> _selectedTransactionState.value = event.transaction
+            HomeEvent.DismissTransactionDetails -> _selectedTransactionState.value = null
         }
     }
 

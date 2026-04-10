@@ -253,10 +253,33 @@
      <string name="add_transaction_field_tags">Etiquetas</string>
      <string name="add_transaction_field_recurrence">Recurrencia</string>
 
-     <!-- Recurrence intervals -->
-     <string name="recurrence_interval_label">Intervalo de Recurrencia</string>
-     <string name="recurrence_interval_daily">Diaria</string>
-     <string name="recurrence_interval_weekly">Semanal</string>
-     <string name="recurrence_interval_monthly">Mensual</string>
-     <string name="recurrence_interval_yearly">Anual</string>
+      <!-- Recurrence intervals -->
+      <string name="recurrence_interval_label">Intervalo de Recurrencia</string>
+      <string name="recurrence_interval_daily">Diaria</string>
+      <string name="recurrence_interval_weekly">Semanal</string>
+      <string name="recurrence_interval_monthly">Mensual</string>
+      <string name="recurrence_interval_yearly">Anual</string>
+
+      <!-- Transaction Details Dialog -->
+      <string name="transaction_details_title">Detalles de la Transacción</string>
+      <string name="transaction_details_id">ID de Transacción</string>
+      <string name="transaction_details_title_label">Título</string>
+      <string name="transaction_details_category">Categoría</string>
+      <string name="transaction_details_type">Tipo</string>
+      <string name="transaction_details_amount">Cantidad</string>
+      <string name="transaction_details_date">Fecha</string>
+      <string name="transaction_details_time">Hora</string>
+      <string name="transaction_details_notes">Notas</string>
+      <string name="transaction_details_payee">Beneficiario</string>
+      <string name="transaction_details_location">Ubicación</string>
+      <string name="transaction_details_recurrence">Recurrencia</string>
+      <string name="transaction_details_tags">Etiquetas</string>
+      <string name="transaction_details_close">Cerrar</string>
+
+    <!-- Transaction Share -->
+    <string name="transaction_share_button">Compartir Transacción</string>
+    <string name="transaction_share_via">Compartido mediante</string>
+
 </resources>
+
+
