@@ -1,6 +1,8 @@
 package com.antcashmanager.domain.repository
+
 import com.antcashmanager.domain.model.Category
 import kotlinx.coroutines.flow.Flow
+
 interface CategoryRepository {
     fun getAllCategories(): Flow<List<Category>>
     suspend fun getCategoryById(id: Long): Category?

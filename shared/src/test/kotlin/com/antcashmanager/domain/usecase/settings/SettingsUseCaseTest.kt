@@ -95,14 +95,14 @@ internal class FakeSettingsRepository : SettingsRepository {
     private val largeTextFlow = MutableStateFlow(false)
     private val reduceMotionFlow = MutableStateFlow(false)
     private val showTransactionNotesFlow = MutableStateFlow(true)
-     private val currencySymbolFlow = MutableStateFlow("\u20ac")
-     private val decimalDigitsFlow = MutableStateFlow(2)
-     private val decimalSeparatorFlow = MutableStateFlow(",")
-     private val thousandsSeparatorFlow = MutableStateFlow("")
-     private val dateFormatFlow = MutableStateFlow("dd/MM/yyyy")
-     private val dateFilterExpandedFlow = MutableStateFlow(true)
+    private val currencySymbolFlow = MutableStateFlow("\u20ac")
+    private val decimalDigitsFlow = MutableStateFlow(2)
+    private val decimalSeparatorFlow = MutableStateFlow(",")
+    private val thousandsSeparatorFlow = MutableStateFlow("")
+    private val dateFormatFlow = MutableStateFlow("dd/MM/yyyy")
+    private val dateFilterExpandedFlow = MutableStateFlow(true)
 
-     override fun getTheme(): Flow<AppTheme> = themeFlow
+    override fun getTheme(): Flow<AppTheme> = themeFlow
 
     override suspend fun setTheme(theme: AppTheme) {
         themeFlow.value = theme
@@ -115,30 +115,61 @@ internal class FakeSettingsRepository : SettingsRepository {
     }
 
     override fun getShowCharts(): Flow<Boolean> = showChartsFlow
-    override suspend fun setShowCharts(show: Boolean) { showChartsFlow.value = show }
+    override suspend fun setShowCharts(show: Boolean) {
+        showChartsFlow.value = show
+    }
+
     override fun getHighContrast(): Flow<Boolean> = highContrastFlow
-    override suspend fun setHighContrast(enabled: Boolean) { highContrastFlow.value = enabled }
+    override suspend fun setHighContrast(enabled: Boolean) {
+        highContrastFlow.value = enabled
+    }
+
     override fun getLargeText(): Flow<Boolean> = largeTextFlow
-    override suspend fun setLargeText(enabled: Boolean) { largeTextFlow.value = enabled }
+    override suspend fun setLargeText(enabled: Boolean) {
+        largeTextFlow.value = enabled
+    }
+
     override fun getReduceMotion(): Flow<Boolean> = reduceMotionFlow
-    override suspend fun setReduceMotion(enabled: Boolean) { reduceMotionFlow.value = enabled }
+    override suspend fun setReduceMotion(enabled: Boolean) {
+        reduceMotionFlow.value = enabled
+    }
+
     override fun getShowTransactionNotes(): Flow<Boolean> = showTransactionNotesFlow
-    override suspend fun setShowTransactionNotes(show: Boolean) { showTransactionNotesFlow.value = show }
+    override suspend fun setShowTransactionNotes(show: Boolean) {
+        showTransactionNotesFlow.value = show
+    }
 
     override fun getCurrencySymbol(): Flow<String> = currencySymbolFlow
-    override suspend fun setCurrencySymbol(symbol: String) { currencySymbolFlow.value = symbol }
-    override fun getDecimalDigits(): Flow<Int> = decimalDigitsFlow
-    override suspend fun setDecimalDigits(digits: Int) { decimalDigitsFlow.value = digits }
-    override fun getDecimalSeparator(): Flow<String> = decimalSeparatorFlow
-    override suspend fun setDecimalSeparator(separator: String) { decimalSeparatorFlow.value = separator }
-     override fun getThousandsSeparator(): Flow<String> = thousandsSeparatorFlow
-     override suspend fun setThousandsSeparator(separator: String) { thousandsSeparatorFlow.value = separator }
-     override fun getDateFormat(): Flow<String> = dateFormatFlow
-     override suspend fun setDateFormat(format: String) { dateFormatFlow.value = format }
-     override fun getDateFilterExpanded(): Flow<Boolean> = dateFilterExpandedFlow
-     override suspend fun setDateFilterExpanded(expanded: Boolean) { dateFilterExpandedFlow.value = expanded }
+    override suspend fun setCurrencySymbol(symbol: String) {
+        currencySymbolFlow.value = symbol
+    }
 
-     override suspend fun resetAllPreferences() {
+    override fun getDecimalDigits(): Flow<Int> = decimalDigitsFlow
+    override suspend fun setDecimalDigits(digits: Int) {
+        decimalDigitsFlow.value = digits
+    }
+
+    override fun getDecimalSeparator(): Flow<String> = decimalSeparatorFlow
+    override suspend fun setDecimalSeparator(separator: String) {
+        decimalSeparatorFlow.value = separator
+    }
+
+    override fun getThousandsSeparator(): Flow<String> = thousandsSeparatorFlow
+    override suspend fun setThousandsSeparator(separator: String) {
+        thousandsSeparatorFlow.value = separator
+    }
+
+    override fun getDateFormat(): Flow<String> = dateFormatFlow
+    override suspend fun setDateFormat(format: String) {
+        dateFormatFlow.value = format
+    }
+
+    override fun getDateFilterExpanded(): Flow<Boolean> = dateFilterExpandedFlow
+    override suspend fun setDateFilterExpanded(expanded: Boolean) {
+        dateFilterExpandedFlow.value = expanded
+    }
+
+    override suspend fun resetAllPreferences() {
         themeFlow.value = AppTheme.SYSTEM
         languageFlow.value = AppLanguage.SYSTEM
         showChartsFlow.value = true
@@ -146,11 +177,11 @@ internal class FakeSettingsRepository : SettingsRepository {
         largeTextFlow.value = false
         reduceMotionFlow.value = false
         showTransactionNotesFlow.value = true
-         currencySymbolFlow.value = "\u20ac"
-         decimalDigitsFlow.value = 2
-         decimalSeparatorFlow.value = ","
-         thousandsSeparatorFlow.value = ""
-         dateFormatFlow.value = "dd/MM/yyyy"
-         dateFilterExpandedFlow.value = true
-     }
+        currencySymbolFlow.value = "\u20ac"
+        decimalDigitsFlow.value = 2
+        decimalSeparatorFlow.value = ","
+        thousandsSeparatorFlow.value = ""
+        dateFormatFlow.value = "dd/MM/yyyy"
+        dateFilterExpandedFlow.value = true
+    }
 }

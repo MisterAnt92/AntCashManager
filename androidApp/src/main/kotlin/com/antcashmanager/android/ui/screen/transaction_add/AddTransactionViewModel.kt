@@ -10,9 +10,9 @@ import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
+import com.antcashmanager.domain.usecase.transaction.DeleteTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.UpdateTransactionUseCase
-import com.antcashmanager.domain.usecase.transaction.DeleteTransactionUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -175,7 +175,12 @@ class AddTransactionViewModel(
             is AddTransactionEvent.UpdateTags -> _state.update { it.copy(tags = event.tags) }
             is AddTransactionEvent.UpdateTimestamp -> _state.update { it.copy(timestamp = event.timestamp) }
             is AddTransactionEvent.SetRecurring -> _state.update { it.copy(isRecurring = event.isRecurring) }
-            is AddTransactionEvent.UpdateRecurrenceInterval -> _state.update { it.copy(recurrenceInterval = event.interval) }
+            is AddTransactionEvent.UpdateRecurrenceInterval -> _state.update {
+                it.copy(
+                    recurrenceInterval = event.interval
+                )
+            }
+
             is AddTransactionEvent.NextStep -> nextStep()
             is AddTransactionEvent.PreviousStep -> previousStep()
             is AddTransactionEvent.EditCategory -> _state.update { it.copy(showCategoryDialog = true) }
@@ -184,15 +189,40 @@ class AddTransactionViewModel(
             is AddTransactionEvent.EditPaymentType -> _state.update { it.copy(showPaymentTypeDialog = true) }
             is AddTransactionEvent.ShowCategoryDialog -> _state.update { it.copy(showCategoryDialog = true) }
             is AddTransactionEvent.ShowTypeDialog -> _state.update { it.copy(showTypeDialog = true) }
-            is AddTransactionEvent.ShowPaymentTypeDialog -> _state.update { it.copy(showPaymentTypeDialog = true) }
-            is AddTransactionEvent.DismissCategoryDialog -> _state.update { it.copy(showCategoryDialog = false) }
+            is AddTransactionEvent.ShowPaymentTypeDialog -> _state.update {
+                it.copy(
+                    showPaymentTypeDialog = true
+                )
+            }
+
+            is AddTransactionEvent.DismissCategoryDialog -> _state.update {
+                it.copy(
+                    showCategoryDialog = false
+                )
+            }
+
             is AddTransactionEvent.DismissTypeDialog -> _state.update { it.copy(showTypeDialog = false) }
-            is AddTransactionEvent.DismissPaymentTypeDialog -> _state.update { it.copy(showPaymentTypeDialog = false) }
+            is AddTransactionEvent.DismissPaymentTypeDialog -> _state.update {
+                it.copy(
+                    showPaymentTypeDialog = false
+                )
+            }
+
             is AddTransactionEvent.DismissDatePicker -> _state.update { it.copy(showDatePicker = false) }
             is AddTransactionEvent.Submit -> submitTransaction()
             is AddTransactionEvent.Cancel -> _state.value = AddTransactionState()
-            is AddTransactionEvent.ShowDeleteConfirmDialog -> _state.update { it.copy(showDeleteConfirmDialog = true) }
-            is AddTransactionEvent.DismissDeleteConfirmDialog -> _state.update { it.copy(showDeleteConfirmDialog = false) }
+            is AddTransactionEvent.ShowDeleteConfirmDialog -> _state.update {
+                it.copy(
+                    showDeleteConfirmDialog = true
+                )
+            }
+
+            is AddTransactionEvent.DismissDeleteConfirmDialog -> _state.update {
+                it.copy(
+                    showDeleteConfirmDialog = false
+                )
+            }
+
             is AddTransactionEvent.ConfirmDelete -> deleteTransaction()
         }
     }
@@ -307,7 +337,12 @@ class AddTransactionViewModel(
                 _state.update { it.copy(isTransactionSaved = true, isLoading = false) }
             } catch (ex: Exception) {
                 Logger.e(TAG) { "Error submitting transaction: ${ex.message}" }
-                _state.update { it.copy(error = "Errore durante il salvataggio", isLoading = false) }
+                _state.update {
+                    it.copy(
+                        error = "Errore durante il salvataggio",
+                        isLoading = false
+                    )
+                }
             }
         }
     }

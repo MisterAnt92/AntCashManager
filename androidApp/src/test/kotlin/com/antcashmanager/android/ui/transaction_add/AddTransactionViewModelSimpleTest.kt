@@ -1,10 +1,8 @@
 package com.antcashmanager.android.ui.transaction_add
 
 import com.antcashmanager.android.ui.screen.transaction_add.AddTransactionEvent
-import com.antcashmanager.android.ui.screen.transaction_add.AddTransactionStep
 import com.antcashmanager.android.ui.screen.transaction_add.AddTransactionViewModel
 import com.antcashmanager.domain.model.Category
-import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.TransactionRepository
 import kotlinx.coroutines.Dispatchers
@@ -13,9 +11,10 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.junit.Assert.*
 
 /**
  * Test semplificati per le funzionalità core
@@ -37,14 +36,21 @@ class AddTransactionViewModelSimpleTest {
         Dispatchers.setMain(testDispatcher)
 
         mockTransactionRepository = object : TransactionRepository {
-            override fun getAllTransactions() = flowOf(emptyList<com.antcashmanager.domain.model.Transaction>())
+            override fun getAllTransactions() =
+                flowOf(emptyList<com.antcashmanager.domain.model.Transaction>())
+
             override suspend fun getTransactionById(id: Long) = null
-            override suspend fun insertTransaction(transaction: com.antcashmanager.domain.model.Transaction) = 1L
+            override suspend fun insertTransaction(transaction: com.antcashmanager.domain.model.Transaction) =
+                1L
+
             override suspend fun updateTransaction(transaction: com.antcashmanager.domain.model.Transaction) {}
             override suspend fun deleteTransaction(transaction: com.antcashmanager.domain.model.Transaction) {}
             override suspend fun deleteAllTransactions() {}
-            override fun getTransactionsByDateRange(from: Long, to: Long) = flowOf(emptyList<com.antcashmanager.domain.model.Transaction>())
-            override fun getRecurringTransactions() = flowOf(emptyList<com.antcashmanager.domain.model.Transaction>())
+            override fun getTransactionsByDateRange(from: Long, to: Long) =
+                flowOf(emptyList<com.antcashmanager.domain.model.Transaction>())
+
+            override fun getRecurringTransactions() =
+                flowOf(emptyList<com.antcashmanager.domain.model.Transaction>())
         }
 
         mockCategoryRepository = object : CategoryRepository {
@@ -54,7 +60,9 @@ class AddTransactionViewModelSimpleTest {
             override suspend fun updateCategory(category: Category) {}
             override suspend fun deleteCategory(category: Category) {}
             override suspend fun deleteAllCategories() {}
-            override fun getCategoriesByType(type: String) = flowOf(mockCategories.filter { it.type == type })
+            override fun getCategoriesByType(type: String) =
+                flowOf(mockCategories.filter { it.type == type })
+
             override suspend fun getDefaultCategoryCount() = mockCategories.size
         }
     }
@@ -67,7 +75,11 @@ class AddTransactionViewModelSimpleTest {
 
     @Test
     fun `test viewmodel creation with transactionId works`() = runTest(testDispatcher) {
-        val viewModel = AddTransactionViewModel(mockTransactionRepository, mockCategoryRepository, transactionId = 1L)
+        val viewModel = AddTransactionViewModel(
+            mockTransactionRepository,
+            mockCategoryRepository,
+            transactionId = 1L
+        )
         assertNotNull("ViewModel should be created with transactionId", viewModel)
     }
 

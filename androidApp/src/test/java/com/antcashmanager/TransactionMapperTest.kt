@@ -3,9 +3,8 @@ package com.antcashmanager
 import com.antcashmanager.data.local.entity.TransactionEntity
 import com.antcashmanager.data.mapper.toDomain
 import com.antcashmanager.data.mapper.toEntity
-import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class TransactionMapperTest {

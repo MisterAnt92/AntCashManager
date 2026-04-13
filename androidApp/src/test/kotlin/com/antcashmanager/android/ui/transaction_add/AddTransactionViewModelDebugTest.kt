@@ -1,7 +1,5 @@
 package com.antcashmanager.android.ui.transaction_add
 
-import com.antcashmanager.android.ui.screen.transaction_add.AddTransactionEvent
-import com.antcashmanager.android.ui.screen.transaction_add.AddTransactionStep
 import com.antcashmanager.android.ui.screen.transaction_add.AddTransactionViewModel
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.Transaction
@@ -15,9 +13,9 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
-import org.junit.Assert.*
 
 /**
  * Test debug per capire il problema con i test del ViewModel
@@ -55,12 +53,16 @@ class AddTransactionViewModelDebugTest {
 
         mockTransactionRepository = object : TransactionRepository {
             override fun getAllTransactions() = flowOf(emptyList<Transaction>())
-            override suspend fun getTransactionById(id: Long) = if (id == 1L) mockTransaction else null
+            override suspend fun getTransactionById(id: Long) =
+                if (id == 1L) mockTransaction else null
+
             override suspend fun insertTransaction(transaction: Transaction) = 1L
             override suspend fun updateTransaction(transaction: Transaction) {}
             override suspend fun deleteTransaction(transaction: Transaction) {}
             override suspend fun deleteAllTransactions() {}
-            override fun getTransactionsByDateRange(from: Long, to: Long) = flowOf(emptyList<Transaction>())
+            override fun getTransactionsByDateRange(from: Long, to: Long) =
+                flowOf(emptyList<Transaction>())
+
             override fun getRecurringTransactions() = flowOf(emptyList<Transaction>())
         }
 
@@ -71,7 +73,9 @@ class AddTransactionViewModelDebugTest {
             override suspend fun updateCategory(category: Category) {}
             override suspend fun deleteCategory(category: Category) {}
             override suspend fun deleteAllCategories() {}
-            override fun getCategoriesByType(type: String) = flowOf(mockCategories.filter { it.type == type })
+            override fun getCategoriesByType(type: String) =
+                flowOf(mockCategories.filter { it.type == type })
+
             override suspend fun getDefaultCategoryCount() = mockCategories.size
         }
     }
@@ -95,7 +99,11 @@ class AddTransactionViewModelDebugTest {
 
     @Test
     fun `debug test - check modifying mode`() = runTest(testDispatcher) {
-        val viewModel = AddTransactionViewModel(mockTransactionRepository, mockCategoryRepository, transactionId = 1L)
+        val viewModel = AddTransactionViewModel(
+            mockTransactionRepository,
+            mockCategoryRepository,
+            transactionId = 1L
+        )
 
         // Avanza il dispatcher per permettere l'inizializzazione
         testDispatcher.scheduler.advanceUntilIdle()

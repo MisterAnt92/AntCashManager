@@ -53,14 +53,56 @@ class BuildShareTextUseCase(private val context: Context) {
             val balance = item.income - item.expense
             val balanceSymbol = if (balance >= 0) "📈" else "📉"
             sb.appendLine("${item.label}:")
-            sb.appendLine("  💰 ${context.getString(R.string.share_income)}: ${formatAmount(item.income, fmt)}")
-            sb.appendLine("  💸 ${context.getString(R.string.share_expense)}: ${formatAmount(item.expense, fmt)}")
-            sb.appendLine("  $balanceSymbol ${context.getString(R.string.share_balance)}: ${formatAmount(balance, fmt)}")
+            sb.appendLine(
+                "  💰 ${context.getString(R.string.share_income)}: ${
+                    formatAmount(
+                        item.income,
+                        fmt
+                    )
+                }"
+            )
+            sb.appendLine(
+                "  💸 ${context.getString(R.string.share_expense)}: ${
+                    formatAmount(
+                        item.expense,
+                        fmt
+                    )
+                }"
+            )
+            sb.appendLine(
+                "  $balanceSymbol ${context.getString(R.string.share_balance)}: ${
+                    formatAmount(
+                        balance,
+                        fmt
+                    )
+                }"
+            )
         }
         sb.appendLine("━━━━━━━━━━━━━━━━━━━━")
-        sb.appendLine("📊 ${context.getString(R.string.share_total_income)}: ${formatAmount(totalIncome, fmt)}")
-        sb.appendLine("📊 ${context.getString(R.string.share_total_expense)}: ${formatAmount(totalExpense, fmt)}")
-        sb.appendLine("📊 ${context.getString(R.string.share_final_balance)}: ${formatAmount(totalIncome - totalExpense, fmt)}")
+        sb.appendLine(
+            "📊 ${context.getString(R.string.share_total_income)}: ${
+                formatAmount(
+                    totalIncome,
+                    fmt
+                )
+            }"
+        )
+        sb.appendLine(
+            "📊 ${context.getString(R.string.share_total_expense)}: ${
+                formatAmount(
+                    totalExpense,
+                    fmt
+                )
+            }"
+        )
+        sb.appendLine(
+            "📊 ${context.getString(R.string.share_final_balance)}: ${
+                formatAmount(
+                    totalIncome - totalExpense,
+                    fmt
+                )
+            }"
+        )
         sb.appendLine("\n— AntCashManager 🐜")
         return sb.toString()
     }
@@ -83,14 +125,56 @@ class BuildShareTextUseCase(private val context: Context) {
             val balance = item.income - item.expense
             val balanceSymbol = if (balance >= 0) "📈" else "📉"
             sb.appendLine("${item.label}:")
-            sb.appendLine("  💰 ${context.getString(R.string.share_income)}: ${formatAmount(item.income, fmt)}")
-            sb.appendLine("  💸 ${context.getString(R.string.share_expense)}: ${formatAmount(item.expense, fmt)}")
-            sb.appendLine("  $balanceSymbol ${context.getString(R.string.share_balance)}: ${formatAmount(balance, fmt)}")
+            sb.appendLine(
+                "  💰 ${context.getString(R.string.share_income)}: ${
+                    formatAmount(
+                        item.income,
+                        fmt
+                    )
+                }"
+            )
+            sb.appendLine(
+                "  💸 ${context.getString(R.string.share_expense)}: ${
+                    formatAmount(
+                        item.expense,
+                        fmt
+                    )
+                }"
+            )
+            sb.appendLine(
+                "  $balanceSymbol ${context.getString(R.string.share_balance)}: ${
+                    formatAmount(
+                        balance,
+                        fmt
+                    )
+                }"
+            )
         }
         sb.appendLine("━━━━━━━━━━━━━━━━━━━━")
-        sb.appendLine("📊 ${context.getString(R.string.share_total_income)}: ${formatAmount(totalIncome, fmt)}")
-        sb.appendLine("📊 ${context.getString(R.string.share_total_expense)}: ${formatAmount(totalExpense, fmt)}")
-        sb.appendLine("📊 ${context.getString(R.string.share_final_balance)}: ${formatAmount(totalIncome - totalExpense, fmt)}")
+        sb.appendLine(
+            "📊 ${context.getString(R.string.share_total_income)}: ${
+                formatAmount(
+                    totalIncome,
+                    fmt
+                )
+            }"
+        )
+        sb.appendLine(
+            "📊 ${context.getString(R.string.share_total_expense)}: ${
+                formatAmount(
+                    totalExpense,
+                    fmt
+                )
+            }"
+        )
+        sb.appendLine(
+            "📊 ${context.getString(R.string.share_final_balance)}: ${
+                formatAmount(
+                    totalIncome - totalExpense,
+                    fmt
+                )
+            }"
+        )
         sb.appendLine("\n— AntCashManager 🐜")
         return sb.toString()
     }

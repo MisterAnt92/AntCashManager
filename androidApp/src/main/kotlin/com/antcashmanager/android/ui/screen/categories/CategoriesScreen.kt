@@ -81,6 +81,7 @@ import com.antcashmanager.android.ui.components.HelpButton
 import com.antcashmanager.android.ui.components.HelpDialogContent
 import com.antcashmanager.android.ui.components.SimpleHelpFeature
 import com.antcashmanager.android.ui.components.text.AppText
+import com.antcashmanager.android.ui.screen.categories.view.HelpDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.repository.CategoryRepository

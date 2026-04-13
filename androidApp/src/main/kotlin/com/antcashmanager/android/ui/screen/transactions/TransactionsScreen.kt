@@ -71,10 +71,10 @@ import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import kotlinx.coroutines.launch
 
 // ══════════════════════════════════════════════════════════════════════════════
 // SCREEN
@@ -126,7 +126,8 @@ internal fun TransactionsContent(
     var showHelpDialog by remember { mutableStateOf(false) }
 
     // DateRangeFilter expanded state from settings
-    val dateFilterExpanded by settingsRepository.getDateFilterExpanded().collectAsState(initial = true)
+    val dateFilterExpanded by settingsRepository.getDateFilterExpanded()
+        .collectAsState(initial = true)
     val coroutineScope = rememberCoroutineScope()
 
     // From date picker dialog
@@ -522,9 +523,13 @@ private fun TransactionItem(transaction: Transaction, onClick: (() -> Unit)? = n
 // ══════════════════════════════════════════════════════════════════════════════
 
 class MockSettingsRepository : SettingsRepository {
-    override fun getTheme() = kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.AppTheme.SYSTEM)
+    override fun getTheme() =
+        kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.AppTheme.SYSTEM)
+
     override suspend fun setTheme(theme: com.antcashmanager.domain.model.AppTheme) {}
-    override fun getLanguage() = kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.AppLanguage.SYSTEM)
+    override fun getLanguage() =
+        kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.AppLanguage.SYSTEM)
+
     override suspend fun setLanguage(language: com.antcashmanager.domain.model.AppLanguage) {}
     override fun getShowCharts() = kotlinx.coroutines.flow.flowOf(true)
     override suspend fun setShowCharts(show: Boolean) {}

@@ -14,6 +14,7 @@ import com.antcashmanager.domain.usecase.ShareTransactionUseCase
  */
 class TransactionDetailsViewModel : ViewModel() {
     private val shareTransactionUseCase = ShareTransactionUseCase()
+
     /**
      * Condivide i dati della transazione usando lo use case
      * @param transaction La transazione da condividere

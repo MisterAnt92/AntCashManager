@@ -99,9 +99,9 @@
     <string name="settings_theme_system">Predeterminado del sistema</string>
     <string name="settings_language">Idioma</string>
     <string name="settings_language_subtitle">Elige el idioma de la aplicaci\u00f3n</string>
-     <string name="settings_display">Pantalla</string>
-     <string name="settings_display_subtitle">Personaliza la moneda, decimales y formateo</string>
-     <string name="settings_show_charts">Mostrar gráficos</string>
+    <string name="settings_display">Pantalla</string>
+    <string name="settings_display_subtitle">Personaliza la moneda, decimales y formateo</string>
+    <string name="settings_show_charts">Mostrar gráficos</string>
     <string name="settings_show_charts_subtitle">Mostrar u ocultar la secci\u00f3n de Gr\u00e1ficos en la barra de navegaci\u00f3n</string>
     <string name="settings_show_charts_section">Mostrar sección de Gráficos</string>
     <string name="settings_show_charts_section_visible">Sección de Gráficos visible en la navegación</string>
@@ -194,15 +194,15 @@
     <string name="privacy_policy_title">Pol\u00edtica de privacidad</string>
     <string name="privacy_policy_content">AntCashManager se compromete a proteger tu privacidad. Esta aplicaci\u00f3n no recopila ni comparte datos personales con terceros. Todos los datos financieros se almacenan localmente en tu dispositivo y nunca se transmiten a servidores externos.\n\nTus datos permanecen completamente en tu dispositivo y bajo tu control. No utilizamos servicios de an\u00e1lisis, seguimiento o publicidad.\n\nPara cualquier pregunta sobre privacidad, cont\u00e1ctanos a trav\u00e9s de la p\u00e1gina de la tienda.</string>
     <string name="language_system">Predeterminado del sistema</string>
-     <string name="language_english">English</string>
-     <string name="language_italian">Italiano</string>
-     <string name="language_french">Français</string>
-     <string name="language_german">Deutsch</string>
-     <string name="language_spanish">Español</string>
+    <string name="language_english">English</string>
+    <string name="language_italian">Italiano</string>
+    <string name="language_french">Français</string>
+    <string name="language_german">Deutsch</string>
+    <string name="language_spanish">Español</string>
 
-     <!-- Add Transaction Screen -->
-     <string name="debug_import_started">Importación de depuración iniciada</string>
-     <string name="back">Atrás</string>
+    <!-- Add Transaction Screen -->
+    <string name="debug_import_started">Importación de depuración iniciada</string>
+    <string name="back">Atrás</string>
     <string name="add_transaction">Añadir Transacción</string>
     <string name="transaction_title">Título de Transacción</string>
     <string name="transaction_amount">Cantidad</string>
@@ -240,42 +240,42 @@
     <string name="add_transaction_field_notes">Notas</string>
     <string name="add_transaction_field_payee">Beneficiario</string>
     <string name="add_transaction_field_location">Ubicación</string>
-     <string name="add_transaction_save">Guardar</string>
-     <string name="add_transaction_update">Modificar</string>
-     <string name="edit_transaction_title">Modificar Transacción</string>
-      <string name="add_transaction_back">Atrás</string>
-     <string name="add_transaction_none">Ninguno</string>
-     <string name="add_transaction_category">Categoría</string>
-     <string name="add_transaction_type">Tipo</string>
-     <string name="add_transaction_tags_label">Etiquetas</string>
-     <string name="add_transaction_tags_placeholder">Agregar etiquetas separadas por comas</string>
-     <string name="add_transaction_recurring_label">Transacción Recurrente</string>
-     <string name="add_transaction_field_tags">Etiquetas</string>
-     <string name="add_transaction_field_recurrence">Recurrencia</string>
+    <string name="add_transaction_save">Guardar</string>
+    <string name="add_transaction_update">Modificar</string>
+    <string name="edit_transaction_title">Modificar Transacción</string>
+    <string name="add_transaction_back">Atrás</string>
+    <string name="add_transaction_none">Ninguno</string>
+    <string name="add_transaction_category">Categoría</string>
+    <string name="add_transaction_type">Tipo</string>
+    <string name="add_transaction_tags_label">Etiquetas</string>
+    <string name="add_transaction_tags_placeholder">Agregar etiquetas separadas por comas</string>
+    <string name="add_transaction_recurring_label">Transacción Recurrente</string>
+    <string name="add_transaction_field_tags">Etiquetas</string>
+    <string name="add_transaction_field_recurrence">Recurrencia</string>
 
-      <!-- Recurrence intervals -->
-      <string name="recurrence_interval_label">Intervalo de Recurrencia</string>
-      <string name="recurrence_interval_daily">Diaria</string>
-      <string name="recurrence_interval_weekly">Semanal</string>
-      <string name="recurrence_interval_monthly">Mensual</string>
-      <string name="recurrence_interval_yearly">Anual</string>
+    <!-- Recurrence intervals -->
+    <string name="recurrence_interval_label">Intervalo de Recurrencia</string>
+    <string name="recurrence_interval_daily">Diaria</string>
+    <string name="recurrence_interval_weekly">Semanal</string>
+    <string name="recurrence_interval_monthly">Mensual</string>
+    <string name="recurrence_interval_yearly">Anual</string>
 
-       <!-- Transaction Details Dialog -->
-       <string name="transaction_details_title">Detalles de la Transacción</string>
-       <string name="transaction_details_id">ID de Transacción</string>
-       <string name="transaction_details_title_label">Título</string>
-       <string name="transaction_details_category">Categoría</string>
-       <string name="transaction_details_type">Tipo</string>
-       <string name="transaction_details_payment_type">Tipo de Pago</string>
-       <string name="transaction_details_amount">Cantidad</string>
-       <string name="transaction_details_date">Fecha</string>
-       <string name="transaction_details_time">Hora</string>
-       <string name="transaction_details_notes">Notas</string>
-       <string name="transaction_details_payee">Beneficiario</string>
-       <string name="transaction_details_location">Ubicación</string>
-       <string name="transaction_details_recurrence">Recurrencia</string>
-       <string name="transaction_details_tags">Etiquetas</string>
-       <string name="transaction_details_close">Cerrar</string>
+    <!-- Transaction Details Dialog -->
+    <string name="transaction_details_title">Detalles de la Transacción</string>
+    <string name="transaction_details_id">ID de Transacción</string>
+    <string name="transaction_details_title_label">Título</string>
+    <string name="transaction_details_category">Categoría</string>
+    <string name="transaction_details_type">Tipo</string>
+    <string name="transaction_details_payment_type">Tipo de Pago</string>
+    <string name="transaction_details_amount">Cantidad</string>
+    <string name="transaction_details_date">Fecha</string>
+    <string name="transaction_details_time">Hora</string>
+    <string name="transaction_details_notes">Notas</string>
+    <string name="transaction_details_payee">Beneficiario</string>
+    <string name="transaction_details_location">Ubicación</string>
+    <string name="transaction_details_recurrence">Recurrencia</string>
+    <string name="transaction_details_tags">Etiquetas</string>
+    <string name="transaction_details_close">Cerrar</string>
 
     <!-- Transaction Share -->
     <string name="transaction_share_button">Compartir Transacción</string>

@@ -20,13 +20,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.categories.categoryIconMap
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 /**
  * Componente per visualizzare categoria/tipo selezionati con icona, label e chevron se modificabile.

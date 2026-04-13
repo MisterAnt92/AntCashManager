@@ -78,7 +78,9 @@ fun DateRangeFilter(
                     .fillMaxWidth()
                     .clickable(
                         enabled = true,
-                        onClickLabel = if (expanded) stringResource(R.string.common_collapse) else stringResource(R.string.common_expand),
+                        onClickLabel = if (expanded) stringResource(R.string.common_collapse) else stringResource(
+                            R.string.common_expand
+                        ),
                     ) { onExpandedChange(!expanded) }
                     .semantics {
                         contentDescription = if (expanded) {
@@ -100,7 +102,9 @@ fun DateRangeFilter(
 
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowDown,
-                    contentDescription = if (expanded) stringResource(R.string.common_collapse) else stringResource(R.string.common_expand),
+                    contentDescription = if (expanded) stringResource(R.string.common_collapse) else stringResource(
+                        R.string.common_expand
+                    ),
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
                         .graphicsLayer(rotationZ = rotationAngle)
@@ -161,7 +165,11 @@ fun DateRangeFilter(
                             modifier = Modifier
                                 .size(32.dp)
                                 .semantics {
-                                    contentDescription = "Modifica data inizio: ${dateFormat.format(Date(dateRangeFrom))}"
+                                    contentDescription = "Modifica data inizio: ${
+                                        dateFormat.format(
+                                            Date(dateRangeFrom)
+                                        )
+                                    }"
                                 },
                         ) {
                             Icon(
@@ -186,7 +194,8 @@ fun DateRangeFilter(
                             modifier = Modifier
                                 .size(32.dp)
                                 .semantics {
-                                    contentDescription = "Modifica data fine: ${dateFormat.format(Date(dateRangeTo))}"
+                                    contentDescription =
+                                        "Modifica data fine: ${dateFormat.format(Date(dateRangeTo))}"
                                 },
                         ) {
                             Icon(

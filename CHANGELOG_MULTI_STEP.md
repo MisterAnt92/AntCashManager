@@ -3,9 +3,11 @@
 ## Modifiche Effettuate
 
 ### 1. Creazione Nuovo Package: `add_transaction`
+
 Posizione: `/androidApp/src/main/kotlin/com/antcashmanager/android/ui/screen/add_transaction/`
 
 File creati:
+
 - ✅ `AddTransactionState.kt` - Definizioni stato e enum step
 - ✅ `AddTransactionViewModel.kt` - Logica e gestione eventi
 - ✅ `AddTransactionScreen.kt` - Screen principale + 4 step
@@ -14,32 +16,38 @@ File creati:
 ### 2. Aggiornamenti File Esistenti
 
 #### `NavGraph.kt`
+
 - ✅ Aggiunto import per `AddTransactionScreen` dal nuovo package
 - ✅ Aggiunto callback `onTransactionAdded` alla route "add_transaction"
 - ✅ Gestione corretta della navigazione con popBackStack()
 
 #### Rinominazione File Vecchio
+
 - ✅ Rinominato `/transactions/AddTransactionScreen.kt` → `AddTransactionScreenOld.kt`
   (per evitare conflitti di import)
 
 ### 3. Architettura Multi-Step
 
 #### Step 1: Selezione Categoria
+
 - Grid 2x2 di categorie con icone
 - UI intuitiva con colori per la selezione
 - Categoria obbligatoria per procedere
 
 #### Step 2: Selezione Tipo
+
 - Radio button per Entrata/Uscita
 - Visualizza categoria selezionata nello step precedente
 - Tipo obbligatorio per procedere
 
 #### Step 3: Dettagli
+
 - Campi input: Titolo, Importo, Data, Note, Beneficiario, Luogo
 - DatePickerDialog integrato
 - Validazione: Titolo e Importo obbligatori
 
 #### Step 4: Conferma
+
 - Riepilogo completo dei dati
 - Visualizza solo campi valorizzati
 - Salvataggio nel database al click "Salva"
@@ -61,16 +69,19 @@ AddTransactionScreen
 ## Stato della Compilazione
 
 ### ✅ Errori Risolti
+
 - [x] `SettingsViewModel.kt` - Risolto il problema `combine` con 11 parametri
 - [x] Parametri exception non utilizzati rinominati con `_`
 
 ### ⚠️ Warning Accettabili
+
 - Enum step marcati come "never used" (sono usati implicitamente)
 - AddTransactionState marcato come "never used" (è usato da ViewModel)
 - Property `bottomNavItems` non usata in NavGraph (può essere rimossa se non necessaria)
 - AddTransactionScreen warning IDE dovuti a cache (non impedisce compilazione)
 
 ### ✅ File Verificati
+
 - AddTransactionViewModel.kt - **NESSUN ERRORE**
 - NavGraph.kt - **SOLO 1 WARNING NON CRITICO**
 - AddTransactionState.kt - **SOLO WARNING SU ENUM ENTRIES**

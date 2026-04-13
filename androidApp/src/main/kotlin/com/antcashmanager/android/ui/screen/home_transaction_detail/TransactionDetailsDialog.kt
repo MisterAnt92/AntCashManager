@@ -48,8 +48,10 @@ fun TransactionDetailsDialog(
     val context = LocalContext.current
     val viewModel: TransactionDetailsViewModel = viewModel()
     val isIncome = transaction.type == TransactionType.INCOME
-    val containerColor = if (isIncome) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer
-    val onContainerColor = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onErrorContainer
+    val containerColor =
+        if (isIncome) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer
+    val onContainerColor =
+        if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onErrorContainer
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -184,7 +186,8 @@ fun TransactionDetailsDialog(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
-                            val tagsList = transaction.tags.split(",").map { it.trim() }.filter { it.isNotBlank() }
+                            val tagsList = transaction.tags.split(",").map { it.trim() }
+                                .filter { it.isNotBlank() }
                             items(tagsList) { tag ->
                                 AssistChip(
                                     onClick = { },

@@ -1,6 +1,8 @@
 package com.antcashmanager.data.mapper
+
 import com.antcashmanager.data.local.entity.CategoryEntity
 import com.antcashmanager.domain.model.Category
+
 fun CategoryEntity.toDomain(): Category = Category(
     id = id,
     name = name,
@@ -9,6 +11,7 @@ fun CategoryEntity.toDomain(): Category = Category(
     type = type,
     isDefault = isDefault,
 )
+
 fun Category.toEntity(): CategoryEntity = CategoryEntity(
     id = id,
     name = name,

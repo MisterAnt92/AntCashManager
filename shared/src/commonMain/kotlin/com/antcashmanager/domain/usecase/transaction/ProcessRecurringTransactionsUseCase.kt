@@ -1,7 +1,6 @@
 package com.antcashmanager.domain.usecase.transaction
 
 import com.antcashmanager.domain.model.RecurrenceInterval
-import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.repository.TransactionRepository
 import kotlinx.coroutines.flow.first
 

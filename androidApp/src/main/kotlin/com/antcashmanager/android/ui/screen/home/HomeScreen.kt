@@ -97,7 +97,8 @@ internal fun HomeContent(
     var showHelpDialog by remember { mutableStateOf(false) }
 
     // DateRangeFilter expanded state from settings
-    val dateFilterExpanded by settingsRepository.getDateFilterExpanded().collectAsState(initial = true)
+    val dateFilterExpanded by settingsRepository.getDateFilterExpanded()
+        .collectAsState(initial = true)
     val coroutineScope = rememberCoroutineScope()
 
     // From date picker dialog
@@ -266,15 +267,18 @@ internal fun HomeContent(
 }
 
 
-
 // ══════════════════════════════════════════════════════════════════════════════
 // PREVIEWS
 // ══════════════════════════════════════════════════════════════════════════════
 
 class MockHomeSettingsRepository : SettingsRepository {
-    override fun getTheme() = kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.AppTheme.SYSTEM)
+    override fun getTheme() =
+        kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.AppTheme.SYSTEM)
+
     override suspend fun setTheme(theme: com.antcashmanager.domain.model.AppTheme) {}
-    override fun getLanguage() = kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.AppLanguage.SYSTEM)
+    override fun getLanguage() =
+        kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.AppLanguage.SYSTEM)
+
     override suspend fun setLanguage(language: com.antcashmanager.domain.model.AppLanguage) {}
     override fun getShowCharts() = kotlinx.coroutines.flow.flowOf(true)
     override suspend fun setShowCharts(show: Boolean) {}

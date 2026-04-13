@@ -59,7 +59,8 @@ fun CategoryListPreview() {
                         category = category,
                         isSelected = selectedCategory?.id == category.id,
                         onClick = {
-                            selectedCategory = if (selectedCategory?.id == category.id) null else category
+                            selectedCategory =
+                                if (selectedCategory?.id == category.id) null else category
                         },
                         modifier = Modifier.padding(bottom = 8.dp)
                     )

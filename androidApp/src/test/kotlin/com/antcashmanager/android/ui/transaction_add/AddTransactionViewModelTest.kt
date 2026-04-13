@@ -14,9 +14,13 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.junit.Assert.*
 
 /**
  * Test per verificare il funzionamento del ViewModel in modalità aggiunta e modifica.
@@ -61,12 +65,16 @@ class AddTransactionViewModelTest {
 
         mockTransactionRepository = object : TransactionRepository {
             override fun getAllTransactions() = flowOf(emptyList<Transaction>())
-            override suspend fun getTransactionById(id: Long) = if (id == 1L) mockTransaction else null
+            override suspend fun getTransactionById(id: Long) =
+                if (id == 1L) mockTransaction else null
+
             override suspend fun insertTransaction(transaction: Transaction) = 1L
             override suspend fun updateTransaction(transaction: Transaction) {}
             override suspend fun deleteTransaction(transaction: Transaction) {}
             override suspend fun deleteAllTransactions() {}
-            override fun getTransactionsByDateRange(from: Long, to: Long) = flowOf(emptyList<Transaction>())
+            override fun getTransactionsByDateRange(from: Long, to: Long) =
+                flowOf(emptyList<Transaction>())
+
             override fun getRecurringTransactions() = flowOf(emptyList<Transaction>())
         }
 
@@ -77,7 +85,9 @@ class AddTransactionViewModelTest {
             override suspend fun updateCategory(category: Category) {}
             override suspend fun deleteCategory(category: Category) {}
             override suspend fun deleteAllCategories() {}
-            override fun getCategoriesByType(type: String) = flowOf(mockCategories.filter { it.type == type })
+            override fun getCategoriesByType(type: String) =
+                flowOf(mockCategories.filter { it.type == type })
+
             override suspend fun getDefaultCategoryCount() = mockCategories.size
         }
     }
@@ -109,7 +119,11 @@ class AddTransactionViewModelTest {
 
         val state = viewModel.state.value
         assertEquals("Should select Food category", mockCategories[0], state.selectedCategory)
-        assertEquals("Type should be auto-set to EXPENSE", TransactionType.EXPENSE, state.selectedType)
+        assertEquals(
+            "Type should be auto-set to EXPENSE",
+            TransactionType.EXPENSE,
+            state.selectedType
+        )
         assertEquals(
             "Should auto-advance to DETAILS",
             AddTransactionStep.DETAILS,
@@ -127,7 +141,11 @@ class AddTransactionViewModelTest {
 
         val state = viewModel.state.value
         assertEquals("Should select Salary category", mockCategories[1], state.selectedCategory)
-        assertEquals("Type should be auto-set to INCOME", TransactionType.INCOME, state.selectedType)
+        assertEquals(
+            "Type should be auto-set to INCOME",
+            TransactionType.INCOME,
+            state.selectedType
+        )
     }
 
     // ── Modifica transazione esistente ──
@@ -231,7 +249,11 @@ class AddTransactionViewModelTest {
         val state = viewModel.state.value
         assertFalse("Dialog should be closed", state.showCategoryDialog)
         assertEquals("Should select new category", mockCategories[1], state.selectedCategory)
-        assertEquals("Should remain at DETAILS in modifying mode", AddTransactionStep.DETAILS, state.currentStep)
+        assertEquals(
+            "Should remain at DETAILS in modifying mode",
+            AddTransactionStep.DETAILS,
+            state.currentStep
+        )
     }
 
     @Test
@@ -243,7 +265,11 @@ class AddTransactionViewModelTest {
         )
         advanceUntilLoaded()
 
-        assertEquals("Should be at DETAILS", AddTransactionStep.DETAILS, viewModel.state.value.currentStep)
+        assertEquals(
+            "Should be at DETAILS",
+            AddTransactionStep.DETAILS,
+            viewModel.state.value.currentStep
+        )
 
         viewModel.onEvent(AddTransactionEvent.SelectCategory(mockCategories[1]))
         testDispatcher.scheduler.advanceUntilIdle()

@@ -27,7 +27,6 @@ import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DatePicker
@@ -53,7 +52,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
@@ -73,23 +71,21 @@ import com.antcashmanager.android.ui.components.HelpButton
 import com.antcashmanager.android.ui.components.HelpDialogContent
 import com.antcashmanager.android.ui.components.SimpleHelpFeature
 import com.antcashmanager.android.ui.components.text.AppText
+import com.antcashmanager.android.ui.screen.charts.view.BarChart
+import com.antcashmanager.android.ui.screen.charts.view.BarChartLegend
+import com.antcashmanager.android.ui.screen.charts.view.HelpDialog
+import com.antcashmanager.android.ui.screen.charts.view.PieChart
+import com.antcashmanager.android.ui.screen.charts.view.PieLegend
+import com.antcashmanager.android.ui.screen.charts.view.YearlyBarChart
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.LocalReduceMotion
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.android.util.formatAmount
-import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.usecase.transaction.DateRange
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-
-private val pieColors = listOf(
-    Color(0xFFE57373), Color(0xFF81C784), Color(0xFF64B5F6),
-    Color(0xFFFFB74D), Color(0xFFBA68C8), Color(0xFF4FC3F7),
-    Color(0xFFF06292), Color(0xFFDCE775), Color(0xFF4DB6AC),
-    Color(0xFF7986CB), Color(0xFFA1887F), Color(0xFF90A4AE),
-)
 
 @Composable
 fun ChartsScreen(transactionRepository: TransactionRepository) {
@@ -125,8 +121,11 @@ internal fun ChartsContent(
     val fmt = LocalCurrencyFormat.current
     val shareLabel = stringResource(R.string.share)
     var selectedPreset by remember { mutableIntStateOf(1) }
+    @Suppress("ASSIGNED_BUT_NOT_USED_VARIABLE")
     var showFromPicker by remember { mutableStateOf(false) }
+    @Suppress("ASSIGNED_BUT_NOT_USED_VARIABLE")
     var showToPicker by remember { mutableStateOf(false) }
+    @Suppress("ASSIGNED_BUT_NOT_USED_VARIABLE")
     var showHelpDialog by remember { mutableStateOf(false) }
 
     // Help dialog
@@ -529,269 +528,64 @@ internal fun ChartsContent(
     }
 }
 
-@Composable
-private fun PieChart(data: Map<String, Double>, modifier: Modifier = Modifier) {
-    val total = data.values.sum()
-    if (total == 0.0) return
-    val reduceMotion = LocalReduceMotion.current
-    val animDuration = if (reduceMotion) 0 else 800
-    val animatedProgress by animateFloatAsState(
-        targetValue = 1f,
-        animationSpec = tween(animDuration),
-        label = "pie"
-    )
-    Canvas(modifier = modifier) {
-        val diameter = minOf(size.width, size.height) * 0.75f
-        val topLeft = Offset((size.width - diameter) / 2f, (size.height - diameter) / 2f)
-        val arcSize = Size(diameter, diameter)
-        var startAngle = -90f
-        data.entries.forEachIndexed { index, (_, value) ->
-            val sweep = (value / total * 360f * animatedProgress).toFloat()
-            drawArc(
-                color = pieColors[index % pieColors.size],
-                startAngle = startAngle,
-                sweepAngle = sweep,
-                useCenter = true,
-                topLeft = topLeft,
-                size = arcSize
-            )
-            startAngle += sweep
-        }
-    }
-}
+// ══════════════════════════════════════════════════════════════════════════════
+// PREVIEWS
+// ══════════════════════════════════════════════════════════════════════════════
 
+@Preview(showBackground = true, name = "ChartsScreen - Default")
 @Composable
-private fun PieLegend(data: Map<String, Double>) {
-    val total = data.values.sum()
-    val fmt = LocalCurrencyFormat.current
-    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        data.entries.forEachIndexed { index, (category, value) ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(14.dp)
-                        .clip(CircleShape)
-                        .background(pieColors[index % pieColors.size])
-                )
-                Spacer(modifier = Modifier.width(10.dp))
-                Text(
-                    text = category,
-                    style = MaterialTheme.typography.bodySmall,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier.weight(1f)
-                )
-                Text(
-                    text = "${formatAmount(value, fmt)} (%.0f%%)".format(value / total * 100),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun BarChartLegend() {
-    val incomeColor = MaterialTheme.colorScheme.primary
-    val expenseColor = MaterialTheme.colorScheme.error
-
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier
-                .size(12.dp)
-                .clip(RoundedCornerShape(3.dp))
-                .background(incomeColor)
-        )
-        Spacer(modifier = Modifier.width(6.dp))
-        Text(
-            text = stringResource(R.string.charts_income),
-            style = MaterialTheme.typography.labelSmall,
-            fontWeight = FontWeight.Medium,
-        )
-        Spacer(modifier = Modifier.width(20.dp))
-        Box(
-            modifier = Modifier
-                .size(12.dp)
-                .clip(RoundedCornerShape(3.dp))
-                .background(expenseColor)
-        )
-        Spacer(modifier = Modifier.width(6.dp))
-        Text(
-            text = stringResource(R.string.charts_expenses),
-            style = MaterialTheme.typography.labelSmall,
-            fontWeight = FontWeight.Medium,
+private fun ChartsContentPreviewDefault() {
+    AntCashManagerTheme(dynamicColor = false) {
+        ChartsContent(
+            chartData = ChartData(
+                expenseByCategory = mapOf("Food" to 350.0, "Transport" to 120.0),
+                totalIncome = 2000.0,
+                totalExpense = 470.0,
+                monthlyData = listOf(MonthlyAmount("Feb 26", 2000.0, 470.0))
+            ),
+            dateRange = DateRange(
+                System.currentTimeMillis() - 30L * 24 * 60 * 60 * 1000,
+                System.currentTimeMillis()
+            ),
         )
     }
 }
 
+@Preview(showBackground = true, name = "ChartsScreen - Empty")
 @Composable
-private fun BarChart(data: List<MonthlyAmount>, modifier: Modifier = Modifier) {
-    val maxValue = data.maxOf { maxOf(it.income, it.expense) }.coerceAtLeast(1.0)
-    val incomeColor = MaterialTheme.colorScheme.primary
-    val expenseColor = MaterialTheme.colorScheme.error
-    val labelColor = MaterialTheme.colorScheme.onSurfaceVariant
-    val gridColor = MaterialTheme.colorScheme.outlineVariant
-    val reduceMotion = LocalReduceMotion.current
-    val animDuration = if (reduceMotion) 0 else 800
-    val animatedProgress by animateFloatAsState(
-        targetValue = 1f,
-        animationSpec = tween(animDuration),
-        label = "bar"
-    )
-
-    Canvas(modifier = modifier) {
-        val topPadding = 20.dp.toPx() // Space for value labels on top
-        val labelHeight = 24.dp.toPx()
-        val barAreaHeight = size.height - labelHeight - topPadding
-        val barGroupWidth = size.width / data.size.coerceAtLeast(1)
-        val barWidth = (barGroupWidth * 0.32f).coerceIn(20.dp.toPx(), 36.dp.toPx())
-        val gap = 4.dp.toPx()
-
-        // Draw horizontal grid lines
-        val gridLines = 4
-        for (i in 0..gridLines) {
-            val y = topPadding + barAreaHeight * (1f - i.toFloat() / gridLines)
-            drawLine(
-                color = gridColor,
-                start = Offset(0f, y),
-                end = Offset(size.width, y),
-                strokeWidth = 1.dp.toPx(),
-            )
-        }
-
-        // Draw bars
-        data.forEachIndexed { index, item ->
-            val groupX = index * barGroupWidth + barGroupWidth / 2f
-
-            // Income bar
-            val incomeH = (item.income / maxValue * barAreaHeight * animatedProgress).toFloat()
-            if (incomeH > 0) {
-                val incomeTop = topPadding + barAreaHeight - incomeH
-                drawRoundRect(
-                    color = incomeColor,
-                    topLeft = Offset(groupX - barWidth - gap / 2f, incomeTop),
-                    size = Size(barWidth, incomeH),
-                    cornerRadius = CornerRadius(6.dp.toPx(), 6.dp.toPx())
-                )
-            }
-
-            // Expense bar
-            val expenseH = (item.expense / maxValue * barAreaHeight * animatedProgress).toFloat()
-            if (expenseH > 0) {
-                val expenseTop = topPadding + barAreaHeight - expenseH
-                drawRoundRect(
-                    color = expenseColor,
-                    topLeft = Offset(groupX + gap / 2f, expenseTop),
-                    size = Size(barWidth, expenseH),
-                    cornerRadius = CornerRadius(6.dp.toPx(), 6.dp.toPx())
-                )
-            }
-
-            // Month label
-            drawContext.canvas.nativeCanvas.drawText(
-                item.label,
-                groupX,
-                size.height - 4.dp.toPx(),
-                Paint().apply {
-                    color = labelColor.toArgb()
-                    textSize = 11.sp.toPx()
-                    textAlign = Paint.Align.CENTER
-                    isAntiAlias = true
-                },
-            )
-        }
+private fun ChartsContentPreviewEmpty() {
+    AntCashManagerTheme(dynamicColor = false) {
+        ChartsContent(
+            chartData = ChartData(),
+            dateRange = DateRange(System.currentTimeMillis(), System.currentTimeMillis()),
+        )
     }
 }
 
+@Preview(showBackground = true, name = "ChartsScreen - Dark")
 @Composable
-private fun YearlyBarChart(data: List<YearlyAmount>, modifier: Modifier = Modifier) {
-    val maxValue = data.maxOf { maxOf(it.income, it.expense) }.coerceAtLeast(1.0)
-    val incomeColor = MaterialTheme.colorScheme.primary
-    val expenseColor = MaterialTheme.colorScheme.error
-    val labelColor = MaterialTheme.colorScheme.onSurfaceVariant
-    val gridColor = MaterialTheme.colorScheme.outlineVariant
-    val reduceMotion = LocalReduceMotion.current
-    val animDuration = if (reduceMotion) 0 else 800
-    val animatedProgress by animateFloatAsState(
-        targetValue = 1f,
-        animationSpec = tween(animDuration),
-        label = "yearlyBar"
-    )
-
-    Canvas(modifier = modifier) {
-        val topPadding = 20.dp.toPx() // Space for value labels on top
-        val labelHeight = 28.dp.toPx()
-        val barAreaHeight = size.height - labelHeight - topPadding
-        val barGroupWidth = size.width / data.size.coerceAtLeast(1)
-        val barWidth = (barGroupWidth * 0.35f).coerceIn(25.dp.toPx(), 50.dp.toPx())
-        val gap = 6.dp.toPx()
-
-        // Draw horizontal grid lines
-        val gridLines = 4
-        for (i in 0..gridLines) {
-            val y = topPadding + barAreaHeight * (1f - i.toFloat() / gridLines)
-            drawLine(
-                color = gridColor,
-                start = Offset(0f, y),
-                end = Offset(size.width, y),
-                strokeWidth = 1.dp.toPx(),
-            )
-        }
-
-        // Draw bars
-        data.forEachIndexed { index, item ->
-            val groupX = index * barGroupWidth + barGroupWidth / 2f
-
-            // Income bar
-            val incomeH = (item.income / maxValue * barAreaHeight * animatedProgress).toFloat()
-            if (incomeH > 0) {
-                val incomeTop = topPadding + barAreaHeight - incomeH
-                drawRoundRect(
-                    color = incomeColor,
-                    topLeft = Offset(groupX - barWidth - gap / 2f, incomeTop),
-                    size = Size(barWidth, incomeH),
-                    cornerRadius = CornerRadius(6.dp.toPx(), 6.dp.toPx())
-                )
-            }
-
-            // Expense bar
-            val expenseH = (item.expense / maxValue * barAreaHeight * animatedProgress).toFloat()
-            if (expenseH > 0) {
-                val expenseTop = topPadding + barAreaHeight - expenseH
-                drawRoundRect(
-                    color = expenseColor,
-                    topLeft = Offset(groupX + gap / 2f, expenseTop),
-                    size = Size(barWidth, expenseH),
-                    cornerRadius = CornerRadius(6.dp.toPx(), 6.dp.toPx())
-                )
-            }
-
-            // Year label
-            drawContext.canvas.nativeCanvas.drawText(
-                item.label,
-                groupX,
-                size.height - 6.dp.toPx(),
-                Paint().apply {
-                    color = labelColor.toArgb()
-                    textSize = 13.sp.toPx()
-                    textAlign = Paint.Align.CENTER
-                    isAntiAlias = true
-                    isFakeBoldText = true
-                },
-            )
-        }
+private fun ChartsContentPreviewDark() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        ChartsContent(
+            chartData = ChartData(
+                expenseByCategory = mapOf("Food" to 350.0, "Transport" to 120.0),
+                totalIncome = 2000.0,
+                totalExpense = 470.0,
+                monthlyData = listOf(MonthlyAmount("Feb 26", 2000.0, 470.0))
+            ),
+            dateRange = DateRange(
+                System.currentTimeMillis() - 30L * 24 * 60 * 60 * 1000,
+                System.currentTimeMillis()
+            ),
+        )
     }
 }
 
 
-// Previews
+// ══════════════════════════════════════════════════════════════════════════════
+// ADDITIONAL PREVIEW - WITH FULL DATA
+// ══════════════════════════════════════════════════════════════════════════════
+
 @Preview(showBackground = true, name = "ChartsScreen - With Data")
 @Composable
 private fun ChartsContentPreview() {
@@ -805,74 +599,18 @@ private fun ChartsContentPreview() {
                     "Entertainment" to 80.0,
                     "Utilities" to 200.0
                 ),
-                totalIncome = 3300.0, totalExpense = 750.0,
+                totalIncome = 3300.0,
+                totalExpense = 750.0,
                 monthlyData = listOf(
                     MonthlyAmount("Jan 26", 2000.0, 800.0),
                     MonthlyAmount("Feb 26", 2500.0, 650.0),
                     MonthlyAmount("Mar 26", 3300.0, 750.0)
                 ),
-            ),
-            dateRange = DateRange(
-                System.currentTimeMillis() - 30L * 24 * 60 * 60 * 1000,
-                System.currentTimeMillis()
-            ),
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "ChartsScreen - Empty")
-@Composable
-private fun ChartsContentEmptyPreview() {
-    AntCashManagerTheme(dynamicColor = false) {
-        ChartsContent(
-            chartData = ChartData(),
-            dateRange = DateRange(
-                System.currentTimeMillis() - 30L * 24 * 60 * 60 * 1000,
-                System.currentTimeMillis()
-            )
-        )
-    }
-}
-
-@Composable
-private fun HelpDialog(onDismiss: () -> Unit) {
-    val helpFeatures = listOf(
-        SimpleHelpFeature(
-            title = "Visualizzazione Grafici",
-            description = "Vedi i tuoi dati finanziari in formato grafico con pie chart per le categorie",
-            icon = Icons.Default.BarChart,
-        ),
-        SimpleHelpFeature(
-            title = "Filtri Temporali",
-            description = "Seleziona periodi predefiniti o personalizzati per analizzare i tuoi dati",
-            icon = Icons.Default.CalendarMonth,
-        ),
-        SimpleHelpFeature(
-            title = "Analisi Dettagliata",
-            description = "Visualizza il riepilogo mensile e l'analisi per categoria",
-            icon = Icons.AutoMirrored.Default.TrendingUp,
-        ),
-    )
-
-    HelpDialogContent(
-        isVisible = true,
-        title = "Guida Grafici",
-        description = "Visualizza grafici e analisi dei tuoi dati finanziari!",
-        features = helpFeatures,
-        onDismiss = onDismiss,
-    )
-}
-
-@Preview(showBackground = true, name = "ChartsScreen - Default")
-@Composable
-private fun ChartsContentDarkPreview() {
-    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
-        ChartsContent(
-            chartData = ChartData(
-                expenseByCategory = mapOf("Food" to 350.0, "Transport" to 120.0),
-                totalIncome = 2000.0,
-                totalExpense = 470.0,
-                monthlyData = listOf(MonthlyAmount("Feb 26", 2000.0, 470.0))
+                yearlyData = listOf(
+                    YearlyAmount(2024, "2024", 15000.0, 8500.0),
+                    YearlyAmount(2025, "2025", 18000.0, 9200.0),
+                    YearlyAmount(2026, "2026", 12000.0, 6500.0)
+                ),
             ),
             dateRange = DateRange(
                 System.currentTimeMillis() - 30L * 24 * 60 * 60 * 1000,

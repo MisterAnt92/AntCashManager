@@ -217,9 +217,9 @@
     <string name="language_italian">Italiano</string>
     <string name="language_french">Fran\u00e7ais</string>
     <string name="language_german">Deutsch</string>
-     <string name="language_spanish">Español</string>
-     <string name="debug_import_started">Importazione debug avviata</string>
-     <string name="back">Indietro</string>
+    <string name="language_spanish">Español</string>
+    <string name="debug_import_started">Importazione debug avviata</string>
+    <string name="back">Indietro</string>
 
     <!-- Add Transaction Screen -->
     <string name="add_transaction">Aggiungi Transazione</string>
@@ -259,42 +259,42 @@
     <string name="add_transaction_field_notes">Note</string>
     <string name="add_transaction_field_payee">Beneficiario</string>
     <string name="add_transaction_field_location">Luogo</string>
-     <string name="add_transaction_save">Salva</string>
-     <string name="add_transaction_update">Modifica</string>
-     <string name="edit_transaction_title">Modifica Transazione</string>
-      <string name="add_transaction_back">Indietro</string>
-     <string name="add_transaction_none">Nessuno</string>
-     <string name="add_transaction_category">Categoria</string>
-     <string name="add_transaction_type">Tipo</string>
-     <string name="add_transaction_tags_label">Tag</string>
-     <string name="add_transaction_tags_placeholder">Aggiungi tag separati da virgole</string>
-     <string name="add_transaction_recurring_label">Transazione Ricorrente</string>
-     <string name="add_transaction_field_tags">Tag</string>
-     <string name="add_transaction_field_recurrence">Ricorrenza</string>
+    <string name="add_transaction_save">Salva</string>
+    <string name="add_transaction_update">Modifica</string>
+    <string name="edit_transaction_title">Modifica Transazione</string>
+    <string name="add_transaction_back">Indietro</string>
+    <string name="add_transaction_none">Nessuno</string>
+    <string name="add_transaction_category">Categoria</string>
+    <string name="add_transaction_type">Tipo</string>
+    <string name="add_transaction_tags_label">Tag</string>
+    <string name="add_transaction_tags_placeholder">Aggiungi tag separati da virgole</string>
+    <string name="add_transaction_recurring_label">Transazione Ricorrente</string>
+    <string name="add_transaction_field_tags">Tag</string>
+    <string name="add_transaction_field_recurrence">Ricorrenza</string>
 
-      <!-- Recurrence intervals -->
-      <string name="recurrence_interval_label">Intervallo di Ricorrenza</string>
-      <string name="recurrence_interval_daily">Giornaliera</string>
-      <string name="recurrence_interval_weekly">Settimanale</string>
-      <string name="recurrence_interval_monthly">Mensile</string>
-      <string name="recurrence_interval_yearly">Annuale</string>
+    <!-- Recurrence intervals -->
+    <string name="recurrence_interval_label">Intervallo di Ricorrenza</string>
+    <string name="recurrence_interval_daily">Giornaliera</string>
+    <string name="recurrence_interval_weekly">Settimanale</string>
+    <string name="recurrence_interval_monthly">Mensile</string>
+    <string name="recurrence_interval_yearly">Annuale</string>
 
-       <!-- Transaction Details Dialog -->
-       <string name="transaction_details_title">Dettagli Transazione</string>
-       <string name="transaction_details_id">ID Transazione</string>
-       <string name="transaction_details_title_label">Titolo</string>
-       <string name="transaction_details_category">Categoria</string>
-       <string name="transaction_details_type">Tipo</string>
-       <string name="transaction_details_payment_type">Tipo di Pagamento</string>
-       <string name="transaction_details_amount">Importo</string>
-       <string name="transaction_details_date">Data</string>
-       <string name="transaction_details_time">Ora</string>
-       <string name="transaction_details_notes">Note</string>
-       <string name="transaction_details_payee">Beneficiario</string>
-       <string name="transaction_details_location">Luogo</string>
-       <string name="transaction_details_recurrence">Ricorrenza</string>
-       <string name="transaction_details_tags">Tag</string>
-       <string name="transaction_details_close">Chiudi</string>
+    <!-- Transaction Details Dialog -->
+    <string name="transaction_details_title">Dettagli Transazione</string>
+    <string name="transaction_details_id">ID Transazione</string>
+    <string name="transaction_details_title_label">Titolo</string>
+    <string name="transaction_details_category">Categoria</string>
+    <string name="transaction_details_type">Tipo</string>
+    <string name="transaction_details_payment_type">Tipo di Pagamento</string>
+    <string name="transaction_details_amount">Importo</string>
+    <string name="transaction_details_date">Data</string>
+    <string name="transaction_details_time">Ora</string>
+    <string name="transaction_details_notes">Note</string>
+    <string name="transaction_details_payee">Beneficiario</string>
+    <string name="transaction_details_location">Luogo</string>
+    <string name="transaction_details_recurrence">Ricorrenza</string>
+    <string name="transaction_details_tags">Tag</string>
+    <string name="transaction_details_close">Chiudi</string>
 
     <!-- Transaction Share -->
     <string name="transaction_share_button">Condividi Transazione</string>

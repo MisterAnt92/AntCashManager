@@ -213,7 +213,10 @@ internal fun DisplayContent(
 
             AppCard(
                 title = stringResource(R.string.settings_date_format),
-                subtitle = stringResource(R.string.settings_date_format_subtitle, currentDateExample),
+                subtitle = stringResource(
+                    R.string.settings_date_format_subtitle,
+                    currentDateExample
+                ),
                 leadingIcon = Icons.Default.CalendarMonth,
                 onClick = { showDateFormatDialog = true },
             )
@@ -520,7 +523,12 @@ private fun DateFormatDialog(
                     }
                     ListItem(
                         headlineContent = { Text(label) },
-                        supportingContent = { Text(exampleDate, style = MaterialTheme.typography.bodySmall) },
+                        supportingContent = {
+                            Text(
+                                exampleDate,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        },
                         leadingContent = {
                             RadioButton(
                                 selected = pattern == currentFormat,

@@ -83,6 +83,11 @@ import com.antcashmanager.android.ui.components.HelpButton
 import com.antcashmanager.android.ui.components.HelpDialogContent
 import com.antcashmanager.android.ui.components.SimpleHelpFeature
 import com.antcashmanager.android.ui.components.text.AppText
+import com.antcashmanager.android.ui.screen.settings.view.CurrencySymbolDialog
+import com.antcashmanager.android.ui.screen.settings.view.HelpDialog
+import com.antcashmanager.android.ui.screen.settings.view.LanguageSelectionDialog
+import com.antcashmanager.android.ui.screen.settings.view.PrivacyPolicyDialog
+import com.antcashmanager.android.ui.screen.settings.view.ThemeSelectionDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme

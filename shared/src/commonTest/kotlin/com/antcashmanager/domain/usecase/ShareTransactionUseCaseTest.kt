@@ -1,10 +1,13 @@
 package com.antcashmanager.domain.usecase
+
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import kotlin.test.Test
 import kotlin.test.assertTrue
+
 class ShareTransactionUseCaseTest {
     private val useCase = ShareTransactionUseCase()
+
     @Test
     fun `formatTransactionForShare should include transaction title`() {
         val transaction = Transaction(
@@ -18,6 +21,7 @@ class ShareTransactionUseCaseTest {
         val result = useCase.formatTransactionForShare(transaction, true)
         assertTrue(result.contains("Test Transaction"))
     }
+
     @Test
     fun `formatTransactionForShare should show plus sign for income`() {
         val transaction = Transaction(
@@ -31,6 +35,7 @@ class ShareTransactionUseCaseTest {
         val result = useCase.formatTransactionForShare(transaction, true)
         assertTrue(result.contains("+"))
     }
+
     @Test
     fun `formatTransactionForShare should include all data when complete`() {
         val transaction = Transaction(
