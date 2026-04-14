@@ -29,7 +29,7 @@ class ShareTransactionUseCase {
             } else {
                 ""
             }
-        val notesInfo = if (transaction.notes.isNotBlank()) {
+        val notesInfo = if (transaction.notes.isValidNote()) {
             "\nNotes: ${transaction.notes}"
         } else {
             ""
@@ -60,3 +60,17 @@ class ShareTransactionUseCase {
         """.trimIndent()
     }
 }
+
+/**
+ * Checks if a note string is valid for display.
+ * Returns false if the note is null, blank, or contains the string "null".
+ * Returns true if the note should be displayed.
+ */
+fun String?.isValidNote(): Boolean {
+    // Null or blank strings are not valid
+    if (this.isNullOrBlank()) return false
+    // Strings containing "null" are not valid
+    if (this.equals("null", ignoreCase = true)) return false
+    return true
+}
+

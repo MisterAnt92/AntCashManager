@@ -30,6 +30,7 @@ import com.antcashmanager.android.ui.components.text.TransactionAmountText
 import com.antcashmanager.android.ui.screen.home.view.getRecurrenceIntervalLabel
 import com.antcashmanager.android.ui.screen.home_transaction_detail.view.TransactionDetailRow
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.android.util.isValidNote
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
@@ -133,7 +134,7 @@ fun TransactionDetailsDialog(
                 )
 
                 // Notes (if not empty)
-                if (transaction.notes.isNotBlank()) {
+                if (transaction.notes.isValidNote()) {
                     TransactionDetailRow(
                         label = stringResource(R.string.transaction_details_notes),
                         value = transaction.notes,

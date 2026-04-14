@@ -90,3 +90,17 @@ fun formatTransactionAmount(amount: Double, format: CurrencyFormat): String {
     val sign = if (amount < 0) "-" else "+"
     return "$sign${formatAmount(amount, format)}"
 }
+
+/**
+ * Checks if a note string is valid for display.
+ * Returns false if the note is null, blank, or contains the string "null".
+ * Returns true if the note should be displayed.
+ */
+fun String?.isValidNote(): Boolean {
+    // Null or blank strings are not valid
+    if (this.isNullOrBlank()) return false
+    // Strings containing "null" are not valid
+    if (this.equals("null", ignoreCase = true)) return false
+    return true
+}
+

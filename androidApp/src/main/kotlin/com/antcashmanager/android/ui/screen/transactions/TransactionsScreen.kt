@@ -66,6 +66,7 @@ import com.antcashmanager.android.ui.components.text.TransactionAmountText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.ExpenseRed
 import com.antcashmanager.android.ui.theme.IncomeGreen
+import com.antcashmanager.android.util.isValidNote
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.CategoryRepository
@@ -453,7 +454,7 @@ private fun TransactionItem(transaction: Transaction, onClick: (() -> Unit)? = n
                     )
 
                     // Notes
-                    if (transaction.notes.isNotBlank()) {
+                    if (transaction.notes.isValidNote()) {
                         AppText(
                             text = transaction.notes,
                             style = MaterialTheme.typography.labelSmall,

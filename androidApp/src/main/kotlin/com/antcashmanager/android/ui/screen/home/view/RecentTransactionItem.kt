@@ -33,6 +33,7 @@ import com.antcashmanager.android.ui.components.text.TransactionAmountText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.ExpenseRed
 import com.antcashmanager.android.ui.theme.IncomeGreen
+import com.antcashmanager.android.util.isValidNote
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import java.text.SimpleDateFormat
@@ -112,7 +113,7 @@ fun RecentTransactionItem(
                             alpha = 0.7f
                         ) else MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.7f),
                     )
-                    if (transaction.notes.isNotBlank()) {
+                    if (transaction.notes.isValidNote()) {
                         AppText(
                             text = transaction.notes,
                             style = MaterialTheme.typography.labelSmall,
