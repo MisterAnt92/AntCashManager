@@ -7,6 +7,7 @@ package com.antcashmanager.android.ui.screen.transactions
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
+import com.antcashmanager.android.util.withCorrectAmounts
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.CategoryRepository
@@ -67,9 +68,14 @@ class TransactionsViewModel(
         val filtered = transactions.filter {
             it.timestamp in filterState.dateRangeFrom..filterState.dateRangeTo
         }
+
+        // Apply amount correction for EXPENSE transactions
+        val transformedTransactions = transactions.withCorrectAmounts()
+        val transformedFiltered = filtered.withCorrectAmounts()
+
         TransactionsState(
-            transactions = transactions,
-            filteredTransactions = filtered,
+            transactions = transformedTransactions,
+            filteredTransactions = transformedFiltered,
             categories = categories,
             isLoading = false,
             selectedPresetIndex = filterState.selectedPresetIndex,
@@ -81,8 +87,6 @@ class TransactionsViewModel(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = TransactionsState(isLoading = true),
     )
-
-    // ...existing code...
 
     // ── Event Handling ──
     fun onEvent(event: TransactionsEvent) {

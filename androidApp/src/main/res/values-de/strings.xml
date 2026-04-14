@@ -292,6 +292,10 @@
     <string name="payment_type_label">Zahlungsart</string>
     <string name="payment_type_electronic">Elektronische Zahlung</string>
     <string name="payment_type_cash">Bar</string>
-    <string name="payment_type_meal_vouchers">Essensgutscheine</string>
+    <string name="add_transaction_payment_type_meal_vouchers">Essensgutscheine</string>
+
+    <!-- Empty State -->
+    <string name="empty_state_no_transactions">Keine Transaktionen vorhanden</string>
+    <string name="empty_state_no_transactions_subtitle">Das Sparschwein wartet auf dich!</string>
 </resources>
 

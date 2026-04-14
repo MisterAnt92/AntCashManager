@@ -3,6 +3,10 @@ package com.antcashmanager.android.ui.screen.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
+import com.antcashmanager.android.util.calculateBalance
+import com.antcashmanager.android.util.calculateTotalExpense
+import com.antcashmanager.android.util.calculateTotalIncome
+import com.antcashmanager.android.util.withCorrectAmounts
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.usecase.transaction.GetTransactionsUseCase
@@ -57,17 +61,21 @@ class HomeViewModel(
         val filtered = transactions.filter {
             it.timestamp in filterState.dateRangeFrom..filterState.dateRangeTo
         }
-        val totalIncome = filtered.filter { it.type == TransactionType.INCOME }.sumOf { it.amount }
-        val totalExpense =
-            filtered.filter { it.type == TransactionType.EXPENSE }.sumOf { it.amount }
+
+        // Transform amounts based on transaction type - EXPENSE should be negative
+        val transformedTransactions = filtered.withCorrectAmounts()
+
+        val totalIncome = transformedTransactions.calculateTotalIncome()
+        val totalExpense = transformedTransactions.calculateTotalExpense() // This will be negative
+        val balance = transformedTransactions.calculateBalance() // Sum of all amounts
 
         HomeState(
-            transactions = transactions,
-            filteredTransactions = filtered,
-            recentTransactions = filtered.take(5),
+            transactions = transactions.withCorrectAmounts(),
+            filteredTransactions = transformedTransactions,
+            recentTransactions = transformedTransactions.take(5),
             totalIncome = totalIncome,
-            totalExpense = totalExpense,
-            balance = totalIncome - totalExpense,
+            totalExpense = totalExpense, // Will be negative for display
+            balance = balance,
             isLoading = false,
             selectedPresetIndex = filterState.selectedPresetIndex,
             dateRangeFrom = filterState.dateRangeFrom,

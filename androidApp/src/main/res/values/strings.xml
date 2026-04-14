@@ -321,5 +321,9 @@
     <string name="add_transaction_payment_type_electronic">Electronic</string>
     <string name="add_transaction_payment_type_cash">Cash</string>
     <string name="add_transaction_payment_type_meal_vouchers">Meal Vouchers</string>
+
+    <!-- Empty State -->
+    <string name="empty_state_no_transactions">No transactions present</string>
+    <string name="empty_state_no_transactions_subtitle">The piggy bank is waiting for you!</string>
 </resources>
 

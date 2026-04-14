@@ -239,12 +239,12 @@ internal fun HomeContent(
                 }
 
                 // Transactions content
-                if (state.transactions.isEmpty()) {
+                if (state.filteredTransactions.isEmpty()) {
                     item {
                         AntEmptyState(
-                            mascotRes = R.drawable.ic_ant_mascot,
-                            title = stringResource(R.string.home_no_transactions),
-                            subtitle = stringResource(R.string.home_empty_ant),
+                            mascotRes = R.drawable.ic_piggy_bank,
+                            title = stringResource(R.string.empty_state_no_transactions),
+                            subtitle = stringResource(R.string.empty_state_no_transactions_subtitle),
                         )
                     }
                 } else {
@@ -437,5 +437,4 @@ private fun TransactionDetailsDialogExpensePreview() {
         )
     }
 }
-
 

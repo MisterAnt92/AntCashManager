@@ -280,7 +280,7 @@ internal fun TransactionsContent(
             // Content based on state
             when {
                 state.isLoading -> LoadingState()
-                state.transactions.isEmpty() -> EmptyState()
+                state.filteredTransactions.isEmpty() -> EmptyState()
                 else -> TransactionsList(
                     transactions = state.filteredTransactions,
                     onDelete = { onEvent(TransactionsEvent.DeleteTransaction(it)) },
@@ -341,9 +341,9 @@ private fun LoadingState() {
 @Composable
 private fun EmptyState() {
     AntEmptyState(
-        mascotRes = R.drawable.ic_ant_mascot,
-        title = stringResource(R.string.transactions_empty),
-        subtitle = stringResource(R.string.transactions_empty_ant),
+        mascotRes = R.drawable.ic_piggy_bank,
+        title = stringResource(R.string.empty_state_no_transactions),
+        subtitle = stringResource(R.string.empty_state_no_transactions_subtitle),
         modifier = Modifier.fillMaxSize(),
     )
 }
@@ -511,7 +511,7 @@ private fun TransactionItem(transaction: Transaction, onClick: (() -> Unit)? = n
                         .padding(8.dp),
                 ) {
                     TransactionAmountText(
-                        amount = if (isIncome) transaction.amount else -transaction.amount,
+                        amount = transaction.amount, // Amount will already be negative for expenses
                     )
                 }
             }

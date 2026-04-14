@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
+import com.antcashmanager.android.util.withCorrectAmounts
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.TransactionRepository
@@ -36,7 +37,8 @@ class ChartsViewModel(
     val chartData: StateFlow<ChartData> = _dateRange
         .flatMapLatest { range ->
             getTransactionsByDateRangeUseCase(range).map { transactions ->
-                buildChartData(transactions)
+                // Apply amount correction for EXPENSE transactions
+                buildChartData(transactions.withCorrectAmounts())
             }
         }
         .stateIn(
@@ -105,10 +107,10 @@ class ChartsViewModel(
 
         val expenseByCategory = expenseTransactions
             .groupBy { it.category }
-            .mapValues { (_, txs) -> txs.sumOf { it.amount } }
+            .mapValues { (_, txs) -> txs.sumOf { it.amount } } // Will be negative values
 
         val totalIncome = incomeByCategory.values.sum()
-        val totalExpense = expenseByCategory.values.sum()
+        val totalExpense = expenseByCategory.values.sum() // Will be negative
 
         Logger.d("ChartsViewModel") { "Total Income: $totalIncome, Total Expense: $totalExpense" }
 
@@ -126,7 +128,7 @@ class ChartsViewModel(
             val current = monthlyMap.getOrDefault(key, 0.0 to 0.0)
             monthlyMap[key] = when (tx.type) {
                 TransactionType.INCOME -> (current.first + tx.amount) to current.second
-                TransactionType.EXPENSE -> current.first to (current.second + tx.amount)
+                TransactionType.EXPENSE -> current.first to (current.second + tx.amount) // tx.amount is already negative
             }
         }
 
@@ -138,7 +140,7 @@ class ChartsViewModel(
                 year * 100 + monthIdx
             }
             .map { (label, amounts) ->
-                MonthlyAmount(label, amounts.first, amounts.second)
+                MonthlyAmount(label, amounts.first, amounts.second) // second will be negative
             }
 
         Logger.d("ChartsViewModel") { "Monthly data: ${monthlyData.map { "${it.label}: income=${it.income}, expense=${it.expense}" }}" }
@@ -152,7 +154,7 @@ class ChartsViewModel(
             val current = yearlyMap.getOrDefault(year, 0.0 to 0.0)
             yearlyMap[year] = when (tx.type) {
                 TransactionType.INCOME -> (current.first + tx.amount) to current.second
-                TransactionType.EXPENSE -> current.first to (current.second + tx.amount)
+                TransactionType.EXPENSE -> current.first to (current.second + tx.amount) // tx.amount is already negative
             }
         }
 
@@ -163,7 +165,7 @@ class ChartsViewModel(
                     year = year,
                     label = year.toString(),
                     income = amounts.first,
-                    expense = amounts.second,
+                    expense = amounts.second, // Will be negative
                 )
             }
 
@@ -173,7 +175,7 @@ class ChartsViewModel(
             incomeByCategory = incomeByCategory,
             expenseByCategory = expenseByCategory,
             totalIncome = totalIncome,
-            totalExpense = totalExpense,
+            totalExpense = totalExpense, // Will be negative
             monthlyData = monthlyData,
             yearlyData = yearlyData,
         )
@@ -188,4 +190,3 @@ enum class RangePreset(@StringRes val labelResId: Int) {
     YEAR(R.string.range_year),
     ALL(R.string.range_all),
 }
-

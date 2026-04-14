@@ -158,7 +158,7 @@ fun RecentTransactionItem(
                         .padding(8.dp),
                 ) {
                     TransactionAmountText(
-                        amount = if (isIncome) transaction.amount else -transaction.amount,
+                        amount = transaction.amount, // Amount will already be negative for expenses
                     )
                 }
             }
@@ -219,4 +219,3 @@ private fun RecentTransactionItemRecurringExpensePreview() {
         )
     }
 }
-

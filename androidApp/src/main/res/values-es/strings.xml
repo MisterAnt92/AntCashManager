@@ -292,6 +292,10 @@
     <string name="payment_type_label">Tipo de Pago</string>
     <string name="payment_type_electronic">Pago Electrónico</string>
     <string name="payment_type_cash">Efectivo</string>
-    <string name="payment_type_meal_vouchers">Vales de Comida</string>
+    <string name="add_transaction_payment_type_meal_vouchers">Vales de Comida</string>
+
+    <!-- Empty State -->
+    <string name="empty_state_no_transactions">No hay transacciones presentes</string>
+    <string name="empty_state_no_transactions_subtitle">¡La alcancía te está esperando!</string>
 </resources>
 

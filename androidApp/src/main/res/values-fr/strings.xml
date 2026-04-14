@@ -292,6 +292,10 @@
     <string name="payment_type_label">Type de Paiement</string>
     <string name="payment_type_electronic">Paiement Électronique</string>
     <string name="payment_type_cash">Espèces</string>
-    <string name="payment_type_meal_vouchers">Tickets Restaurant</string>
+    <string name="add_transaction_payment_type_meal_vouchers">Tickets Repas</string>
+
+    <!-- Empty State -->
+    <string name="empty_state_no_transactions">Aucune transaction présente</string>
+    <string name="empty_state_no_transactions_subtitle">La tirelire vous attend !</string>
 </resources>
 
