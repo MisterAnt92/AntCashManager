@@ -64,6 +64,8 @@
     <string name="charts_to">Au : %s</string>
     <string name="charts_income">Revenus</string>
     <string name="charts_expenses">D\u00e9penses</string>
+    <string name="charts_balance">Solde</string>
+    <string name="charts_income_by_category">Revenus par catégorie</string>
     <string name="charts_expense_by_category">D\u00e9penses par cat\u00e9gorie</string>
     <string name="charts_monthly_overview">Aper\u00e7u mensuel</string>
     <string name="charts_yearly_overview">Aperçu annuel</string>

@@ -74,6 +74,8 @@
     <string name="charts_to">To: %s</string>
     <string name="charts_income">Income</string>
     <string name="charts_expenses">Expenses</string>
+    <string name="charts_balance">Balance</string>
+    <string name="charts_income_by_category">Income by Category</string>
     <string name="charts_expense_by_category">Expenses by Category</string>
     <string name="charts_monthly_overview">Monthly Overview</string>
     <string name="charts_yearly_overview">Yearly Overview</string>

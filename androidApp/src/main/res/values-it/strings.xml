@@ -74,6 +74,8 @@
     <string name="charts_to">Al: %s</string>
     <string name="charts_income">Entrate</string>
     <string name="charts_expenses">Uscite</string>
+    <string name="charts_balance">Bilancio</string>
+    <string name="charts_income_by_category">Entrate per Categoria</string>
     <string name="charts_expense_by_category">Uscite per Categoria</string>
     <string name="charts_monthly_overview">Panoramica Mensile</string>
     <string name="charts_yearly_overview">Panoramica Annuale</string>

@@ -1,11 +1,6 @@
 package com.antcashmanager.android.ui.screen.charts
 
 import android.content.Intent
-import android.graphics.Paint
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,12 +14,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.TrendingUp
-import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Card
@@ -48,18 +40,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -68,17 +53,14 @@ import com.antcashmanager.android.R
 import com.antcashmanager.android.domain.usecase.share.BuildShareTextUseCase
 import com.antcashmanager.android.ui.components.AntEmptyState
 import com.antcashmanager.android.ui.components.HelpButton
-import com.antcashmanager.android.ui.components.HelpDialogContent
-import com.antcashmanager.android.ui.components.SimpleHelpFeature
 import com.antcashmanager.android.ui.components.text.AppText
-import com.antcashmanager.android.ui.screen.charts.view.BarChart
+import com.antcashmanager.android.ui.screen.charts.view.ZoomableBarChart
 import com.antcashmanager.android.ui.screen.charts.view.BarChartLegend
 import com.antcashmanager.android.ui.screen.charts.view.HelpDialog
-import com.antcashmanager.android.ui.screen.charts.view.PieChart
+import com.antcashmanager.android.ui.screen.charts.view.ZoomablePieChart
 import com.antcashmanager.android.ui.screen.charts.view.PieLegend
-import com.antcashmanager.android.ui.screen.charts.view.YearlyBarChart
+import com.antcashmanager.android.ui.screen.charts.view.ZoomableYearlyBarChart
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
-import com.antcashmanager.android.ui.theme.LocalReduceMotion
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.android.util.formatAmount
 import com.antcashmanager.domain.repository.TransactionRepository
@@ -86,6 +68,7 @@ import com.antcashmanager.domain.usecase.transaction.DateRange
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.abs
 
 @Composable
 fun ChartsScreen(transactionRepository: TransactionRepository) {
@@ -121,11 +104,8 @@ internal fun ChartsContent(
     val fmt = LocalCurrencyFormat.current
     val shareLabel = stringResource(R.string.share)
     var selectedPreset by remember { mutableIntStateOf(1) }
-    @Suppress("ASSIGNED_BUT_NOT_USED_VARIABLE")
     var showFromPicker by remember { mutableStateOf(false) }
-    @Suppress("ASSIGNED_BUT_NOT_USED_VARIABLE")
     var showToPicker by remember { mutableStateOf(false) }
-    @Suppress("ASSIGNED_BUT_NOT_USED_VARIABLE")
     var showHelpDialog by remember { mutableStateOf(false) }
 
     // Help dialog
@@ -235,7 +215,7 @@ internal fun ChartsContent(
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
-        // Summary cards
+        // Summary cards with proper negative handling and balance
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -267,16 +247,103 @@ internal fun ChartsContent(
                         stringResource(R.string.charts_expenses),
                         style = MaterialTheme.typography.labelMedium
                     )
+                    // Display absolute value for expenses to show proper amount
                     Text(
-                        text = formatAmount(chartData.totalExpense, fmt),
+                        text = formatAmount(abs(chartData.totalExpense), fmt),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                     )
                 }
             }
+            Card(
+                modifier = Modifier.weight(1f),
+                colors = CardDefaults.cardColors(
+                    containerColor = if (chartData.totalIncome + chartData.totalExpense >= 0)
+                        MaterialTheme.colorScheme.primaryContainer
+                    else
+                        MaterialTheme.colorScheme.errorContainer
+                ),
+                shape = MaterialTheme.shapes.medium,
+            ) {
+                Column(modifier = Modifier.padding(12.dp)) {
+                    Text(
+                        stringResource(R.string.share_balance),
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                    Text(
+                        text = formatAmount(chartData.totalIncome + chartData.totalExpense, fmt),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = if (chartData.totalIncome + chartData.totalExpense >= 0)
+                            MaterialTheme.colorScheme.primary
+                        else
+                            MaterialTheme.colorScheme.error
+                    )
+                }
+            }
         }
         Spacer(modifier = Modifier.height(20.dp))
-        // Pie chart section
+
+        // Income pie chart section
+        if (chartData.incomeByCategory.isNotEmpty()) {
+            val incomeCategoryShareSubject = stringResource(R.string.share_categories_subject)
+
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                ),
+                shape = MaterialTheme.shapes.medium,
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        AppText(
+                            text = stringResource(R.string.charts_income_by_category),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                        IconButton(
+                            onClick = {
+                                val shareText = buildShareTextUseCase.buildCategoryShareText(
+                                    data = chartData.incomeByCategory,
+                                    fmt = fmt,
+                                )
+                                val intent = Intent(Intent.ACTION_SEND).apply {
+                                    type = "text/plain"
+                                    putExtra(Intent.EXTRA_SUBJECT, incomeCategoryShareSubject)
+                                    putExtra(Intent.EXTRA_TEXT, shareText)
+                                }
+                                context.startActivity(Intent.createChooser(intent, shareLabel))
+                            },
+                            modifier = Modifier.size(32.dp),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                contentDescription = shareLabel,
+                                modifier = Modifier.size(20.dp),
+                                tint = MaterialTheme.colorScheme.primary,
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                    ZoomablePieChart(
+                        data = chartData.incomeByCategory,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    PieLegend(data = chartData.incomeByCategory)
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        // Expense pie chart section
         if (chartData.expenseByCategory.isNotEmpty()) {
             val categoryShareSubject = stringResource(R.string.share_categories_subject)
 
@@ -300,8 +367,10 @@ internal fun ChartsContent(
                         )
                         IconButton(
                             onClick = {
+                                // Convert negative values to positive for display
+                                val positiveExpenseData = chartData.expenseByCategory.mapValues { abs(it.value) }
                                 val shareText = buildShareTextUseCase.buildCategoryShareText(
-                                    data = chartData.expenseByCategory,
+                                    data = positiveExpenseData,
                                     fmt = fmt,
                                 )
                                 val intent = Intent(Intent.ACTION_SEND).apply {
@@ -322,14 +391,16 @@ internal fun ChartsContent(
                         }
                     }
                     Spacer(modifier = Modifier.height(12.dp))
-                    PieChart(
-                        data = chartData.expenseByCategory,
+                    // Convert negative values to positive for pie chart display
+                    ZoomablePieChart(
+                        data = chartData.expenseByCategory.mapValues { abs(it.value) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(200.dp)
                     )
                     Spacer(modifier = Modifier.height(12.dp))
-                    PieLegend(data = chartData.expenseByCategory)
+                    // Pass converted data to legend as well
+                    PieLegend(data = chartData.expenseByCategory.mapValues { abs(it.value) })
                 }
             }
         }
@@ -393,7 +464,7 @@ internal fun ChartsContent(
                             .fillMaxWidth()
                             .horizontalScroll(rememberScrollState())
                     ) {
-                        BarChart(
+                        ZoomableBarChart(
                             data = chartData.monthlyData,
                             modifier = Modifier
                                 .width(chartWidth.dp)
@@ -466,7 +537,7 @@ internal fun ChartsContent(
                             .fillMaxWidth()
                             .horizontalScroll(rememberScrollState())
                     ) {
-                        YearlyBarChart(
+                        ZoomableYearlyBarChart(
                             data = chartData.yearlyData,
                             modifier = Modifier
                                 .width(yearlyChartWidth.dp)

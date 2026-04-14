@@ -64,6 +64,8 @@
     <string name="charts_to">Bis: %s</string>
     <string name="charts_income">Einnahmen</string>
     <string name="charts_expenses">Ausgaben</string>
+    <string name="charts_balance">Saldo</string>
+    <string name="charts_income_by_category">Einnahmen nach Kategorie</string>
     <string name="charts_expense_by_category">Ausgaben nach Kategorie</string>
     <string name="charts_monthly_overview">Monats\u00fcbersicht</string>
     <string name="charts_yearly_overview">Jahresübersicht</string>

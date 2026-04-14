@@ -64,6 +64,8 @@
     <string name="charts_to">Hasta: %s</string>
     <string name="charts_income">Ingresos</string>
     <string name="charts_expenses">Gastos</string>
+    <string name="charts_balance">Saldo</string>
+    <string name="charts_income_by_category">Ingresos por categoría</string>
     <string name="charts_expense_by_category">Gastos por categor\u00eda</string>
     <string name="charts_monthly_overview">Resumen mensual</string>
     <string name="charts_yearly_overview">Resumen anual</string>
