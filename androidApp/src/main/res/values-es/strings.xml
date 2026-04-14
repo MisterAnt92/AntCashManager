@@ -85,12 +85,19 @@
     <string name="share_total_income">Ingresos Totales</string>
     <string name="share_total_expense">Gastos Totales</string>
     <string name="share_final_balance">Balance Final</string>
-    <string name="range_week">7 d\u00edas</string>
+    <string name="range_week">7 días</string>
     <string name="range_month">1 mes</string>
     <string name="range_three_months">3 meses</string>
     <string name="range_six_months">6 meses</string>
-    <string name="range_year">1 a\u00f1o</string>
+    <string name="range_year">1 año</string>
     <string name="range_all">Todo</string>
+
+    <!-- Range Labels (for collapsed filter) -->
+    <string name="range_label_today">Hoy</string>
+    <string name="range_label_this_week">Esta semana</string>
+    <string name="range_label_this_month">Este mes</string>
+    <string name="range_label_this_year">Este año</string>
+    <string name="range_label_custom">Del %1$s al %2$s</string>
     <string name="settings_title">Ajustes</string>
     <string name="settings_appearance">Apariencia</string>
     <string name="settings_theme">Tema</string>

@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.antcashmanager.android.ui.preview
+package com.antcashmanager.android.ui.screen.categories.view
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding

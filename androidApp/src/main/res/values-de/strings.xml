@@ -91,6 +91,13 @@
     <string name="range_six_months">6 Monate</string>
     <string name="range_year">1 Jahr</string>
     <string name="range_all">Gesamt</string>
+
+    <!-- Range Labels (for collapsed filter) -->
+    <string name="range_label_today">Heute</string>
+    <string name="range_label_this_week">Diese Woche</string>
+    <string name="range_label_this_month">Dieser Monat</string>
+    <string name="range_label_this_year">Dieses Jahr</string>
+    <string name="range_label_custom">Vom %1$s bis %2$s</string>
     <string name="settings_title">Einstellungen</string>
     <string name="settings_appearance">Darstellung</string>
     <string name="settings_theme">Design</string>

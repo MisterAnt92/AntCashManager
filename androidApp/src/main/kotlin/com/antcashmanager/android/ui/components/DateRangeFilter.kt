@@ -31,11 +31,73 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.abs
+
+/**
+ * Helper function to determine the display text for the date range
+ * based on the selected preset index and actual date range values
+ */
+@Composable
+private fun getRangeDisplayText(
+    selectedPresetIndex: Int,
+    dateRangeFrom: Long,
+    dateRangeTo: Long,
+): String {
+    val currentTime = System.currentTimeMillis()
+    val dayInMillis = 24 * 60 * 60 * 1000L
+
+    // Check if current range matches preset calculations
+    val isMatchingPreset = when (selectedPresetIndex) {
+        0 -> { // Today
+            val expectedFrom = currentTime - dayInMillis
+            abs(dateRangeFrom - expectedFrom) < (60 * 60 * 1000) && // Within 1 hour tolerance
+                    abs(dateRangeTo - currentTime) < (60 * 60 * 1000)
+        }
+
+        1 -> { // Week (7 days)
+            val expectedFrom = currentTime - (7 * dayInMillis)
+            abs(dateRangeFrom - expectedFrom) < (2 * 60 * 60 * 1000) && // Within 2 hours tolerance
+                    abs(dateRangeTo - currentTime) < (2 * 60 * 60 * 1000)
+        }
+
+        2 -> { // Month (30 days)
+            val expectedFrom = currentTime - (30L * dayInMillis)
+            abs(dateRangeFrom - expectedFrom) < (24 * 60 * 60 * 1000) && // Within 1 day tolerance
+                    abs(dateRangeTo - currentTime) < (24 * 60 * 60 * 1000)
+        }
+
+        3 -> { // Year (365 days)
+            val expectedFrom = currentTime - (365L * dayInMillis)
+            abs(dateRangeFrom - expectedFrom) < (7L * 24 * 60 * 60 * 1000) && // Within 1 week tolerance
+                    abs(dateRangeTo - currentTime) < (7L * 24 * 60 * 60 * 1000)
+        }
+
+        else -> false
+    }
+
+    return if (isMatchingPreset) {
+        when (selectedPresetIndex) {
+            0 -> stringResource(R.string.range_label_today)
+            1 -> stringResource(R.string.range_label_this_week)
+            2 -> stringResource(R.string.range_label_this_month)
+            3 -> stringResource(R.string.range_label_this_year)
+            else -> stringResource(R.string.charts_period)
+        }
+    } else {
+        // Custom range - format dates
+        val shortDateFormat = SimpleDateFormat("dd MMM", Locale.getDefault())
+        val fromDate = shortDateFormat.format(Date(dateRangeFrom))
+        val toDate = shortDateFormat.format(Date(dateRangeTo))
+        stringResource(R.string.range_label_custom, fromDate, toDate)
+    }
+}
 
 /**
  * Componente collapsibile per filtrare per intervallo di date.
@@ -94,10 +156,16 @@ fun DateRangeFilter(
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
-                    text = stringResource(R.string.charts_period),
+                    text = getRangeDisplayText(
+                        selectedPresetIndex = selectedPresetIndex,
+                        dateRangeFrom = dateRangeFrom,
+                        dateRangeTo = dateRangeTo,
+                    ),
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.weight(1f),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
 
                 Icon(
@@ -214,3 +282,93 @@ fun DateRangeFilter(
     }
 }
 
+
+@Preview(showBackground = true)
+@Composable
+private fun DateRangeFilterPreview() {
+    AntCashManagerTheme {
+        Column(modifier = Modifier.padding(16.dp)) {
+            // Today preset - collapsed
+            DateRangeFilter(
+                selectedPresetIndex = 0,
+                presets = listOf(
+                    "Oggi" to "today",
+                    "7 giorni" to "week",
+                    "Mese" to "month",
+                    "Anno" to "year",
+                ),
+                dateRangeFrom = System.currentTimeMillis() - (24 * 60 * 60 * 1000),
+                dateRangeTo = System.currentTimeMillis(),
+                expanded = false,
+                onExpandedChange = {},
+                onPresetSelected = {},
+                onFromDateEdit = {},
+                onToDateEdit = {},
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Week preset - collapsed
+            DateRangeFilter(
+                selectedPresetIndex = 1,
+                presets = listOf(
+                    "Oggi" to "today",
+                    "7 giorni" to "week",
+                    "Mese" to "month",
+                    "Anno" to "year",
+                ),
+                dateRangeFrom = System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000),
+                dateRangeTo = System.currentTimeMillis(),
+                expanded = false,
+                onExpandedChange = {},
+                onPresetSelected = {},
+                onFromDateEdit = {},
+                onToDateEdit = {},
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Custom range - collapsed
+            DateRangeFilter(
+                selectedPresetIndex = 1, // But with different dates to show custom
+                presets = listOf(
+                    "Oggi" to "today",
+                    "7 giorni" to "week",
+                    "Mese" to "month",
+                    "Anno" to "year",
+                ),
+                dateRangeFrom = System.currentTimeMillis() - (15 * 24 * 60 * 60 * 1000), // 15 days ago
+                dateRangeTo = System.currentTimeMillis() - (5 * 24 * 60 * 60 * 1000), // 5 days ago
+                expanded = false,
+                onExpandedChange = {},
+                onPresetSelected = {},
+                onFromDateEdit = {},
+                onToDateEdit = {},
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun DateRangeFilterExpandedPreview() {
+    AntCashManagerTheme {
+        DateRangeFilter(
+            selectedPresetIndex = 2,
+            presets = listOf(
+                "Oggi" to "today",
+                "7 giorni" to "week",
+                "Mese" to "month",
+                "Anno" to "year",
+            ),
+            dateRangeFrom = System.currentTimeMillis() - (30 * 24 * 60 * 60 * 1000),
+            dateRangeTo = System.currentTimeMillis(),
+            expanded = true,
+            onExpandedChange = {},
+            onPresetSelected = {},
+            onFromDateEdit = {},
+            onToDateEdit = {},
+            modifier = Modifier.padding(16.dp)
+        )
+    }
+}

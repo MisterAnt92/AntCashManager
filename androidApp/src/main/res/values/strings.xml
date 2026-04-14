@@ -104,6 +104,13 @@
     <string name="range_year">1 year</string>
     <string name="range_all">All time</string>
 
+    <!-- Range Labels (for collapsed filter) -->
+    <string name="range_label_today">Today</string>
+    <string name="range_label_this_week">This Week</string>
+    <string name="range_label_this_month">This Month</string>
+    <string name="range_label_this_year">This Year</string>
+    <string name="range_label_custom">From %1$s to %2$s</string>
+
     <!-- Settings Screen -->
     <string name="settings_title">Settings</string>
     <string name="settings_appearance">Appearance</string>
