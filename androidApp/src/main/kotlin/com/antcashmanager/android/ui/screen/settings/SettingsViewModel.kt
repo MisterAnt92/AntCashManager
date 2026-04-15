@@ -290,6 +290,7 @@ class SettingsViewModel(
         action = { settingsRepository.setShowTransactionNotes(show) },
     )
 
+
     fun resetAllPreferences() = updatePreference(
         logMsg = "Resetting all preferences",
         action = { settingsRepository.resetAllPreferences() },

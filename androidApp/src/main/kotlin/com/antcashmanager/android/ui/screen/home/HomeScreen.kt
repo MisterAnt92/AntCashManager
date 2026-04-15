@@ -45,6 +45,7 @@ import com.antcashmanager.android.ui.screen.home.view.LoadingState
 import com.antcashmanager.android.ui.screen.home.view.RecentTransactionItem
 import com.antcashmanager.android.ui.screen.home_transaction_detail.TransactionDetailsDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.SettingsRepository
@@ -99,6 +100,10 @@ internal fun HomeContent(
     // DateRangeFilter expanded state from settings
     val dateFilterExpanded by settingsRepository.getDateFilterExpanded()
         .collectAsState(initial = true)
+    val showPaymentTypeBreakdown by settingsRepository.getShowPaymentTypeBreakdown()
+        .collectAsState(initial = false)
+    val reduceMotion by settingsRepository.getReduceMotion()
+        .collectAsState(initial = false)
     val coroutineScope = rememberCoroutineScope()
 
     // From date picker dialog
@@ -217,7 +222,12 @@ internal fun HomeContent(
 
                 // Balance Card
                 item {
-                    BalanceCard(balance = state.balance)
+                    BalanceCard(
+                        balance = state.balance,
+                        showPaymentTypeBreakdown = showPaymentTypeBreakdown,
+                        balanceByPaymentType = state.balanceByPaymentType,
+                        reduceMotion = reduceMotion,
+                    )
                 }
 
                 // Income / Expense Row
@@ -302,6 +312,8 @@ class MockHomeSettingsRepository : SettingsRepository {
     override suspend fun setDateFormat(pattern: String) {}
     override fun getDateFilterExpanded() = kotlinx.coroutines.flow.flowOf(true)
     override suspend fun setDateFilterExpanded(expanded: Boolean) {}
+    override fun getShowPaymentTypeBreakdown() = kotlinx.coroutines.flow.flowOf(true)
+    override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {}
     override suspend fun resetAllPreferences() {}
 }
 
@@ -344,6 +356,10 @@ private fun HomeContentPreview() {
                 totalIncome = 2500.0,
                 totalExpense = 205.5,
                 balance = 2294.5,
+                balanceByPaymentType = mapOf(
+                    PaymentType.ELECTRONIC to 1500.0,
+                    PaymentType.CASH to 794.5,
+                ),
             ),
             onEvent = {},
             settingsRepository = MockHomeSettingsRepository(),
@@ -387,6 +403,10 @@ private fun HomeContentDarkPreview() {
                 totalIncome = 2500.0,
                 totalExpense = 205.5,
                 balance = 2294.5,
+                balanceByPaymentType = mapOf(
+                    PaymentType.ELECTRONIC to 1800.0,
+                    PaymentType.CASH to 494.5,
+                ),
             ),
             onEvent = {},
             settingsRepository = MockHomeSettingsRepository(),

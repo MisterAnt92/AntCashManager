@@ -124,6 +124,7 @@
     <string name="settings_language_subtitle">Choose the app language</string>
     <string name="settings_display">Display</string>
     <string name="settings_display_subtitle">Customize currency, decimals, and formatting</string>
+    <string name="settings_display_home">Home Display</string>
     <string name="settings_show_charts">Show Charts</string>
     <string name="settings_show_charts_subtitle">Show the charts section in navigation</string>
     <string name="settings_show_charts_section">Show Charts Section</string>
@@ -327,5 +328,13 @@
     <!-- Empty State -->
     <string name="empty_state_no_transactions">No transactions present</string>
     <string name="empty_state_no_transactions_subtitle">The piggy bank is waiting for you!</string>
+
+    <!-- Payment Breakdown -->
+    <string name="settings_show_payment_breakdown">Show balance by payment type</string>
+    <string name="settings_show_payment_breakdown_desc">Display balance breakdown by payment method on the Home screen</string>
+    <string name="payment_breakdown_label">Balance by Payment Type</string>
+    <string name="payment_breakdown_item_desc">Balance with %1$s: %2$.2f</string>
 </resources>
+
+
 

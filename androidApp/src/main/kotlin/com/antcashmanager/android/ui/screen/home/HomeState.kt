@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.home
 
+import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 
 /**
@@ -12,6 +13,7 @@ data class HomeState(
     val totalIncome: Double = 0.0,
     val totalExpense: Double = 0.0,
     val balance: Double = 0.0,
+    val balanceByPaymentType: Map<PaymentType, Double> = emptyMap(),
     val isLoading: Boolean = false,
     val error: String? = null,
     val selectedPresetIndex: Int = 1,

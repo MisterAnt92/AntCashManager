@@ -110,7 +110,8 @@
     <string name="settings_language_subtitle">Elige el idioma de la aplicaci\u00f3n</string>
     <string name="settings_display">Pantalla</string>
     <string name="settings_display_subtitle">Personaliza la moneda, decimales y formateo</string>
-    <string name="settings_show_charts">Mostrar gráficos</string>
+    <string name="settings_display_home">Visualización de Inicio</string>
+    <string name="settings_show_charts">Mostrar Gráficos</string>
     <string name="settings_show_charts_subtitle">Mostrar u ocultar la secci\u00f3n de Gr\u00e1ficos en la barra de navegaci\u00f3n</string>
     <string name="settings_show_charts_section">Mostrar sección de Gráficos</string>
     <string name="settings_show_charts_section_visible">Sección de Gráficos visible en la navegación</string>
@@ -299,5 +300,14 @@
     <!-- Empty State -->
     <string name="empty_state_no_transactions">No hay transacciones presentes</string>
     <string name="empty_state_no_transactions_subtitle">¡La alcancía te está esperando!</string>
+
+    <!-- Payment Breakdown -->
+    <string name="settings_show_payment_breakdown">Mostrar saldo por tipo de pago</string>
+    <string name="settings_show_payment_breakdown_desc">Mostrar el desglose del saldo por método de pago en la pantalla de inicio</string>
+    <string name="payment_breakdown_label">Saldo por Tipo de Pago</string>
+    <string name="payment_breakdown_item_desc">Saldo con %1$s: %2$.2f</string>
+    <string name="payment_type_meal_vouchers">Vales de Comida</string>
 </resources>
+
+
 

@@ -33,6 +33,7 @@ class SettingsRepositoryImpl(
     private val thousandsSeparatorKey = stringPreferencesKey("thousands_separator")
     private val dateFormatKey = stringPreferencesKey("date_format")
     private val dateFilterExpandedKey = booleanPreferencesKey("date_filter_expanded")
+    private val showPaymentTypeBreakdownKey = booleanPreferencesKey("show_payment_type_breakdown")
 
     override fun getTheme(): Flow<AppTheme> =
         context.dataStore.data.map { preferences ->
@@ -159,6 +160,17 @@ class SettingsRepositoryImpl(
         }
     }
 
+    override fun getShowPaymentTypeBreakdown(): Flow<Boolean> =
+        context.dataStore.data.map { preferences ->
+            preferences[showPaymentTypeBreakdownKey] ?: false
+        }
+
+    override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[showPaymentTypeBreakdownKey] = show
+        }
+    }
+
     override suspend fun resetAllPreferences() {
         context.dataStore.edit { prefs ->
             prefs[themeKey] = AppTheme.SYSTEM.name
@@ -174,6 +186,7 @@ class SettingsRepositoryImpl(
             prefs[thousandsSeparatorKey] = ""
             prefs[dateFormatKey] = "dd/MM/yyyy"
             prefs[dateFilterExpandedKey] = true
+            prefs[showPaymentTypeBreakdownKey] = false
         }
     }
 }

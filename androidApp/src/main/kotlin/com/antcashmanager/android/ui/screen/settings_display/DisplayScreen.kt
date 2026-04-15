@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Exposure
 import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material.icons.filled.Payment
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material3.AlertDialog
@@ -46,6 +47,7 @@ import androidx.navigation.NavController
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AppCard
 import com.antcashmanager.android.ui.components.AppCardSectionHeader
+import com.antcashmanager.android.ui.components.AppSwitch
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.formatAmount
 import com.antcashmanager.domain.model.CurrencyFormat
@@ -76,6 +78,7 @@ fun DisplayScreen(
     val showTransactionNotes by viewModel.showTransactionNotes.collectAsState()
     val showChartsSection by viewModel.showChartsSection.collectAsState()
     val dateFormat by viewModel.dateFormat.collectAsState()
+    val showPaymentTypeBreakdown by viewModel.showPaymentTypeBreakdown.collectAsState()
 
     DisplayContent(
         currencySymbol = currencySymbol,
@@ -92,6 +95,8 @@ fun DisplayScreen(
         onShowChartsSectionChanged = { viewModel.setShowChartsSection(it) },
         dateFormat = dateFormat,
         onDateFormatSelected = { viewModel.setDateFormat(it) },
+        showPaymentTypeBreakdown = showPaymentTypeBreakdown,
+        onShowPaymentTypeBreakdownChanged = { viewModel.setShowPaymentTypeBreakdown(it) },
         onResetAllPreferences = { viewModel.resetAllPreferences() },
         onNavigateBack = { navController.popBackStack() },
     )
@@ -114,6 +119,8 @@ internal fun DisplayContent(
     onShowChartsSectionChanged: (Boolean) -> Unit,
     dateFormat: String,
     onDateFormatSelected: (String) -> Unit,
+    showPaymentTypeBreakdown: Boolean,
+    onShowPaymentTypeBreakdownChanged: (Boolean) -> Unit,
     onResetAllPreferences: () -> Unit,
     onNavigateBack: () -> Unit,
 ) {
@@ -239,6 +246,24 @@ internal fun DisplayContent(
                     )
                 },
                 onClick = { onShowChartsSectionChanged(!showChartsSection) },
+            )
+
+            // ═════════════════════════════════════════════════════════
+            // SEZIONE HOME DISPLAY
+            // ═════════════════════════════════════════════════════════
+            AppCardSectionHeader(title = stringResource(R.string.settings_display_home))
+
+            AppCard(
+                title = stringResource(R.string.settings_show_payment_breakdown),
+                subtitle = stringResource(R.string.settings_show_payment_breakdown_desc),
+                leadingIcon = Icons.Default.Payment,
+                trailingContent = {
+                    AppSwitch(
+                        checked = showPaymentTypeBreakdown,
+                        onCheckedChange = onShowPaymentTypeBreakdownChanged,
+                    )
+                },
+                onClick = { onShowPaymentTypeBreakdownChanged(!showPaymentTypeBreakdown) },
             )
 
             // ═════════════════════════════════════════════════════════
@@ -566,6 +591,8 @@ private fun DisplayContentPreview() {
             onShowChartsSectionChanged = {},
             dateFormat = "dd/MM/yyyy",
             onDateFormatSelected = {},
+            showPaymentTypeBreakdown = true,
+            onShowPaymentTypeBreakdownChanged = {},
             onResetAllPreferences = {},
             onNavigateBack = {},
         )

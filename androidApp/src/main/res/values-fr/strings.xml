@@ -110,7 +110,8 @@
     <string name="settings_language_subtitle">Choisissez la langue de l\'application</string>
     <string name="settings_display">Affichage</string>
     <string name="settings_display_subtitle">Personnalisez la devise, les décimales et le formatage</string>
-    <string name="settings_show_charts">Afficher les graphiques</string>
+    <string name="settings_display_home">Affichage d\'Accueil</string>
+    <string name="settings_show_charts">Afficher les Graphiques</string>
     <string name="settings_show_charts_subtitle">Afficher ou masquer la section Graphiques dans la barre de navigation</string>
     <string name="settings_show_charts_section">Afficher la section Graphiques</string>
     <string name="settings_show_charts_section_visible">Section Graphiques visible dans la navigation</string>
@@ -299,5 +300,14 @@
     <!-- Empty State -->
     <string name="empty_state_no_transactions">Aucune transaction présente</string>
     <string name="empty_state_no_transactions_subtitle">La tirelire vous attend !</string>
+
+    <!-- Payment Breakdown -->
+    <string name="settings_show_payment_breakdown">Afficher le solde par type de paiement</string>
+    <string name="settings_show_payment_breakdown_desc">Afficher la répartition du solde par méthode de paiement sur l\'écran d\'accueil</string>
+    <string name="payment_breakdown_label">Solde par Type de Paiement</string>
+    <string name="payment_breakdown_item_desc">Solde avec %1$s : %2$.2f</string>
+    <string name="payment_type_meal_vouchers">Tickets Repas</string>
 </resources>
+
+
 

@@ -380,6 +380,7 @@ internal fun SettingsContent(
             )
         }
 
+
         // ── Accessibility Section ──
         AppCardSectionHeader(title = stringResource(R.string.settings_accessibility))
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {

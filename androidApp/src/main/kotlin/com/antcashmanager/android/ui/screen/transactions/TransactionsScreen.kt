@@ -554,6 +554,8 @@ class MockSettingsRepository : SettingsRepository {
     override suspend fun setDateFormat(pattern: String) {}
     override fun getDateFilterExpanded() = kotlinx.coroutines.flow.flowOf(true)
     override suspend fun setDateFilterExpanded(expanded: Boolean) {}
+    override fun getShowPaymentTypeBreakdown() = kotlinx.coroutines.flow.flowOf(false)
+    override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {}
     override suspend fun resetAllPreferences() {}
 }
 

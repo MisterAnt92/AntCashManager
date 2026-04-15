@@ -227,6 +227,14 @@ private class FakeSettingsRepository : SettingsRepository {
         dateFilterExpandedFlow.value = expanded
     }
 
+    override fun getShowPaymentTypeBreakdown(): Flow<Boolean> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun resetAllPreferences() {
         // reset to defaults
         themeFlow.value = AppTheme.SYSTEM

@@ -38,6 +38,10 @@ interface SettingsRepository {
     fun getDateFilterExpanded(): Flow<Boolean>
     suspend fun setDateFilterExpanded(expanded: Boolean)
 
+    // ── Payment Type Breakdown ──
+    fun getShowPaymentTypeBreakdown(): Flow<Boolean>
+    suspend fun setShowPaymentTypeBreakdown(show: Boolean)
+
     /** Resets every preference to its factory default. */
     suspend fun resetAllPreferences()
 }

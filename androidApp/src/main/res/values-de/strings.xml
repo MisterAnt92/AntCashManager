@@ -110,6 +110,7 @@
     <string name="settings_language_subtitle">W\u00e4hle die App-Sprache</string>
     <string name="settings_display">Anzeige</string>
     <string name="settings_display_subtitle">Passe Währung, Dezimalstellen und Formatierung an</string>
+    <string name="settings_display_home">Startansicht</string>
     <string name="settings_show_charts">Diagramme anzeigen</string>
     <string name="settings_show_charts_subtitle">Diagramme-Bereich in der Navigationsleiste ein- oder ausblenden</string>
     <string name="settings_show_charts_section">Diagramm-Bereich anzeigen</string>
@@ -299,5 +300,14 @@
     <!-- Empty State -->
     <string name="empty_state_no_transactions">Keine Transaktionen vorhanden</string>
     <string name="empty_state_no_transactions_subtitle">Das Sparschwein wartet auf dich!</string>
+
+    <!-- Payment Breakdown -->
+    <string name="settings_show_payment_breakdown">Saldo nach Zahlungsart anzeigen</string>
+    <string name="settings_show_payment_breakdown_desc">Saldo-Aufschlüsselung nach Zahlungsmethode auf dem Startbildschirm anzeigen</string>
+    <string name="payment_breakdown_label">Saldo nach Zahlungsart</string>
+    <string name="payment_breakdown_item_desc">Saldo mit %1$s: %2$.2f</string>
+    <string name="payment_type_meal_vouchers">Essensgutscheine</string>
 </resources>
+
+
 

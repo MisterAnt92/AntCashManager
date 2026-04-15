@@ -69,6 +69,12 @@ class HomeViewModel(
         val totalExpense = transformedTransactions.calculateTotalExpense() // This will be negative
         val balance = transformedTransactions.calculateBalance() // Sum of all amounts
 
+        // Calculate balance by payment type (optimized with Map, excluding zeros)
+        val balanceByPaymentType = transformedTransactions
+            .groupBy { it.paymentType }
+            .mapValues { (_, txs) -> txs.sumOf { it.amount } }
+            .filterValues { it != 0.0 }
+
         HomeState(
             transactions = transactions.withCorrectAmounts(),
             filteredTransactions = transformedTransactions,
@@ -76,6 +82,7 @@ class HomeViewModel(
             totalIncome = totalIncome,
             totalExpense = totalExpense, // Will be negative for display
             balance = balance,
+            balanceByPaymentType = balanceByPaymentType,
             isLoading = false,
             selectedPresetIndex = filterState.selectedPresetIndex,
             dateRangeFrom = filterState.dateRangeFrom,

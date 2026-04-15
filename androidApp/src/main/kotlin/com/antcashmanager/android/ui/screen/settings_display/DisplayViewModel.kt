@@ -85,6 +85,14 @@ class DisplayViewModel(
             DEFAULT_DATE_FORMAT,
         )
 
+    // Espone la preferenza per mostrare il breakdown dei pagamenti
+    val showPaymentTypeBreakdown = settingsRepository.getShowPaymentTypeBreakdown()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
+            false,
+        )
+
     /**
      * Aggiorna il simbolo valuta.
      */
@@ -139,6 +147,14 @@ class DisplayViewModel(
     fun setDateFormat(pattern: String) = updatePreference(
         logMsg = "Setting date format: $pattern",
         action = { settingsRepository.setDateFormat(pattern) },
+    )
+
+    /**
+     * Aggiorna la preferenza per mostrare il breakdown dei pagamenti.
+     */
+    fun setShowPaymentTypeBreakdown(show: Boolean) = updatePreference(
+        logMsg = "Setting show payment type breakdown: $show",
+        action = { settingsRepository.setShowPaymentTypeBreakdown(show) },
     )
 
     /**

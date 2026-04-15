@@ -124,6 +124,7 @@
     <string name="settings_language_subtitle">Scegli la lingua dell\'app</string>
     <string name="settings_display">Visualizzazione</string>
     <string name="settings_display_subtitle">Personalizza valuta, decimali e formattazione</string>
+    <string name="settings_display_home">Visualizzazione Home</string>
     <string name="settings_show_charts">Mostra Grafici</string>
     <string name="settings_show_charts_subtitle">Mostra la sezione grafici nella navigazione</string>
     <string name="settings_show_charts_section">Mostra sezione grafici</string>
@@ -325,5 +326,13 @@
     <!-- Empty State -->
     <string name="empty_state_no_transactions">Nessuna transazione presente</string>
     <string name="empty_state_no_transactions_subtitle">Il salvadanaio ti sta aspettando!</string>
+
+    <!-- Payment Breakdown -->
+    <string name="settings_show_payment_breakdown">Mostra saldo per tipo di pagamento</string>
+    <string name="settings_show_payment_breakdown_desc">Visualizza il saldo suddiviso per metodo di pagamento nella schermata Home</string>
+    <string name="payment_breakdown_label">Saldo per Tipo di Pagamento</string>
+    <string name="payment_breakdown_item_desc">Saldo con %1$s: %2$.2f</string>
 </resources>
+
+
 
