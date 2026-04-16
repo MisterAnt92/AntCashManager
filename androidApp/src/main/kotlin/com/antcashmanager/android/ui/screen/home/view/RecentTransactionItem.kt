@@ -10,11 +10,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Repeat
+import androidx.compose.material.icons.filled.TrendingDown
+import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -35,6 +36,7 @@ import com.antcashmanager.android.ui.theme.ExpenseRed
 import com.antcashmanager.android.ui.theme.IncomeGreen
 import com.antcashmanager.android.util.isValidNote
 import com.antcashmanager.domain.model.Transaction
+import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.model.TransactionType
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -58,6 +60,7 @@ fun RecentTransactionItem(
     transaction: Transaction,
     onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
+    displayType: TransactionDisplayType = TransactionDisplayType.TREND,
 ) {
     val isIncome = transaction.type == TransactionType.INCOME
     val cardBackgroundColor =
@@ -76,26 +79,53 @@ fun RecentTransactionItem(
                     .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                // Icon with background
-                Box(
-                    modifier = Modifier
-                        .size(44.dp)
-                        .background(
-                            if (isIncome) IncomeGreen.copy(alpha = 0.25f) else ExpenseRed.copy(alpha = 0.25f),
-                            shape = RoundedCornerShape(32.dp),
-                        )
-                        .padding(8.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        imageVector = if (isIncome) Icons.Default.ArrowDownward else Icons.Default.ArrowUpward,
-                        contentDescription = null,
-                        tint = if (isIncome) IncomeGreen else ExpenseRed,
-                        modifier = Modifier.size(20.dp),
-                    )
+                // Icon based on display type
+                when (displayType) {
+                    TransactionDisplayType.TREND -> {
+                        // Icon with background
+                        Box(
+                            modifier = Modifier
+                                .size(44.dp)
+                                .background(
+                                    if (isIncome) IncomeGreen.copy(alpha = 0.25f) else ExpenseRed.copy(alpha = 0.25f),
+                                    shape = RoundedCornerShape(32.dp),
+                                )
+                                .padding(8.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Icon(
+                                imageVector = if (isIncome) Icons.Default.TrendingUp else Icons.Default.TrendingDown,
+                                contentDescription = null,
+                                tint = if (isIncome) IncomeGreen else ExpenseRed,
+                                modifier = Modifier.size(20.dp),
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                    }
+                    TransactionDisplayType.CATEGORY -> {
+                        // Category badge with first letter
+                        Box(
+                            modifier = Modifier
+                                .size(44.dp)
+                                .background(
+                                    color = MaterialTheme.colorScheme.primaryContainer,
+                                    shape = CircleShape
+                                ),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            AppText(
+                                text = transaction.category.take(1).uppercase(),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                    }
+                    TransactionDisplayType.NONE -> {
+                        // No icon - no spacer needed
+                    }
                 }
-
-                Spacer(modifier = Modifier.width(12.dp))
 
                 Column(modifier = Modifier.weight(1f)) {
                     AppText(
@@ -219,3 +249,58 @@ private fun RecentTransactionItemRecurringExpensePreview() {
         )
     }
 }
+
+@Preview(showBackground = true, name = "Transaction Item - Trend Display")
+@Composable
+private fun TransactionItemTrendPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        RecentTransactionItem(
+            transaction = Transaction(
+                id = 1,
+                title = "Groceries",
+                amount = -85.50,
+                category = "Food",
+                type = TransactionType.EXPENSE,
+                timestamp = System.currentTimeMillis(),
+            ),
+            displayType = TransactionDisplayType.TREND,
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Transaction Item - Category Display")
+@Composable
+private fun TransactionItemCategoryPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        RecentTransactionItem(
+            transaction = Transaction(
+                id = 2,
+                title = "Groceries",
+                amount = -85.50,
+                category = "Food",
+                type = TransactionType.EXPENSE,
+                timestamp = System.currentTimeMillis(),
+            ),
+            displayType = TransactionDisplayType.CATEGORY,
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Transaction Item - None Display")
+@Composable
+private fun TransactionItemNonePreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        RecentTransactionItem(
+            transaction = Transaction(
+                id = 3,
+                title = "Groceries",
+                amount = -85.50,
+                category = "Food",
+                type = TransactionType.EXPENSE,
+                timestamp = System.currentTimeMillis(),
+            ),
+            displayType = TransactionDisplayType.NONE,
+        )
+    }
+}
+

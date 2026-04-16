@@ -3,6 +3,7 @@ package com.antcashmanager.android.ui.screen.settingsDisplay
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
+import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
@@ -93,6 +94,14 @@ class DisplayViewModel(
             false,
         )
 
+    // Espone il tipo di visualizzazione delle transazioni
+    val transactionDisplayType = settingsRepository.getTransactionDisplayType()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
+            TransactionDisplayType.TREND,
+        )
+
     /**
      * Aggiorna il simbolo valuta.
      */
@@ -155,6 +164,14 @@ class DisplayViewModel(
     fun setShowPaymentTypeBreakdown(show: Boolean) = updatePreference(
         logMsg = "Setting show payment type breakdown: $show",
         action = { settingsRepository.setShowPaymentTypeBreakdown(show) },
+    )
+
+    /**
+     * Aggiorna il tipo di visualizzazione delle transazioni.
+     */
+    fun setTransactionDisplayType(displayType: TransactionDisplayType) = updatePreference(
+        logMsg = "Setting transaction display type: $displayType",
+        action = { settingsRepository.setTransactionDisplayType(displayType) },
     )
 
     /**

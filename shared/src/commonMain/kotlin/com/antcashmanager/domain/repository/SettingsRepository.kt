@@ -2,6 +2,7 @@ package com.antcashmanager.domain.repository
 
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
+import com.antcashmanager.domain.model.TransactionDisplayType
 import kotlinx.coroutines.flow.Flow
 
 interface SettingsRepository {
@@ -41,6 +42,10 @@ interface SettingsRepository {
     // ── Payment Type Breakdown ──
     fun getShowPaymentTypeBreakdown(): Flow<Boolean>
     suspend fun setShowPaymentTypeBreakdown(show: Boolean)
+
+    // ── Transaction Display Type ──
+    fun getTransactionDisplayType(): Flow<TransactionDisplayType>
+    suspend fun setTransactionDisplayType(displayType: TransactionDisplayType)
 
     /** Resets every preference to its factory default. */
     suspend fun resetAllPreferences()

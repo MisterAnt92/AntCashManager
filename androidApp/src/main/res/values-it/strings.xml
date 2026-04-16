@@ -332,6 +332,13 @@
     <string name="settings_show_payment_breakdown_desc">Visualizza il saldo suddiviso per metodo di pagamento nella schermata Home</string>
     <string name="payment_breakdown_label">Saldo per Tipo di Pagamento</string>
     <string name="payment_breakdown_item_desc">Saldo con %1$s: %2$.2f</string>
+
+    <!-- Transaction Display Type -->
+    <string name="settings_transaction_display">Visualizzazione Icone Transazioni</string>
+    <string name="settings_transaction_display_trend">Andamento</string>
+    <string name="settings_transaction_display_category">Categoria</string>
+    <string name="settings_transaction_display_none">Nessuna</string>
+    <string name="dialog_choose_transaction_display">Scegli visualizzazione</string>
 </resources>
 
 

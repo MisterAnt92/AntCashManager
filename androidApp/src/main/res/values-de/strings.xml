@@ -307,6 +307,13 @@
     <string name="payment_breakdown_label">Saldo nach Zahlungsart</string>
     <string name="payment_breakdown_item_desc">Saldo mit %1$s: %2$.2f</string>
     <string name="payment_type_meal_vouchers">Essensgutscheine</string>
+
+    <!-- Transaction Display Type -->
+    <string name="settings_transaction_display">Anzeige der Transaktionssymbole</string>
+    <string name="settings_transaction_display_trend">Trend</string>
+    <string name="settings_transaction_display_category">Kategorie</string>
+    <string name="settings_transaction_display_none">Keine</string>
+    <string name="dialog_choose_transaction_display">Anzeigetyp wählen</string>
 </resources>
 
 

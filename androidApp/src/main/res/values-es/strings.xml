@@ -307,6 +307,13 @@
     <string name="payment_breakdown_label">Saldo por Tipo de Pago</string>
     <string name="payment_breakdown_item_desc">Saldo con %1$s: %2$.2f</string>
     <string name="payment_type_meal_vouchers">Vales de Comida</string>
+
+    <!-- Transaction Display Type -->
+    <string name="settings_transaction_display">Visualización de Iconos de Transacciones</string>
+    <string name="settings_transaction_display_trend">Tendencia</string>
+    <string name="settings_transaction_display_category">Categoría</string>
+    <string name="settings_transaction_display_none">Ninguna</string>
+    <string name="dialog_choose_transaction_display">Elegir tipo de visualización</string>
 </resources>
 
 

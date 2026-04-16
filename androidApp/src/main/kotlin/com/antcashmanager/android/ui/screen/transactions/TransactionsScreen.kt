@@ -68,10 +68,12 @@ import com.antcashmanager.android.ui.theme.ExpenseRed
 import com.antcashmanager.android.ui.theme.IncomeGreen
 import com.antcashmanager.android.util.isValidNote
 import com.antcashmanager.domain.model.Transaction
+import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -556,6 +558,11 @@ class MockSettingsRepository : SettingsRepository {
     override suspend fun setDateFilterExpanded(expanded: Boolean) {}
     override fun getShowPaymentTypeBreakdown() = kotlinx.coroutines.flow.flowOf(false)
     override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {}
+    override fun getTransactionDisplayType(): Flow<TransactionDisplayType> =
+        kotlinx.coroutines.flow.flowOf(TransactionDisplayType.TREND)
+
+    override suspend fun setTransactionDisplayType(displayType: TransactionDisplayType) {}
+
     override suspend fun resetAllPreferences() {}
 }
 

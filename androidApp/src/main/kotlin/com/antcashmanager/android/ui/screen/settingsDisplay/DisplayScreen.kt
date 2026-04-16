@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.Payment
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.TextFields
+import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -52,6 +53,7 @@ import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.formatAmount
 import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.model.DateFormatType
+import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.SettingsRepository
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -79,6 +81,7 @@ fun DisplayScreen(
     val showChartsSection by viewModel.showChartsSection.collectAsState()
     val dateFormat by viewModel.dateFormat.collectAsState()
     val showPaymentTypeBreakdown by viewModel.showPaymentTypeBreakdown.collectAsState()
+    val transactionDisplayType by viewModel.transactionDisplayType.collectAsState()
 
     DisplayContent(
         currencySymbol = currencySymbol,
@@ -97,6 +100,8 @@ fun DisplayScreen(
         onDateFormatSelected = { viewModel.setDateFormat(it) },
         showPaymentTypeBreakdown = showPaymentTypeBreakdown,
         onShowPaymentTypeBreakdownChanged = { viewModel.setShowPaymentTypeBreakdown(it) },
+        transactionDisplayType = transactionDisplayType,
+        onTransactionDisplayTypeSelected = { viewModel.setTransactionDisplayType(it) },
         onResetAllPreferences = { viewModel.resetAllPreferences() },
         onNavigateBack = { navController.popBackStack() },
     )
@@ -121,6 +126,8 @@ internal fun DisplayContent(
     onDateFormatSelected: (String) -> Unit,
     showPaymentTypeBreakdown: Boolean,
     onShowPaymentTypeBreakdownChanged: (Boolean) -> Unit,
+    transactionDisplayType: TransactionDisplayType,
+    onTransactionDisplayTypeSelected: (TransactionDisplayType) -> Unit,
     onResetAllPreferences: () -> Unit,
     onNavigateBack: () -> Unit,
 ) {
@@ -130,6 +137,7 @@ internal fun DisplayContent(
     var showThousandsSeparatorDialog by remember { mutableStateOf(false) }
     var showDateFormatDialog by remember { mutableStateOf(false) }
     var showResetPreferencesDialog by remember { mutableStateOf(false) }
+    var showTransactionDisplayDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -266,6 +274,17 @@ internal fun DisplayContent(
                 onClick = { onShowPaymentTypeBreakdownChanged(!showPaymentTypeBreakdown) },
             )
 
+            AppCard(
+                title = stringResource(R.string.settings_transaction_display),
+                subtitle = when (transactionDisplayType) {
+                    TransactionDisplayType.TREND -> stringResource(R.string.settings_transaction_display_trend)
+                    TransactionDisplayType.CATEGORY -> stringResource(R.string.settings_transaction_display_category)
+                    TransactionDisplayType.NONE -> stringResource(R.string.settings_transaction_display_none)
+                },
+                leadingIcon = Icons.Default.Visibility,
+                onClick = { showTransactionDisplayDialog = true },
+            )
+
             // ═════════════════════════════════════════════════════════
             // SEZIONE ALTRO
             // ═════════════════════════════════════════════════════════
@@ -372,6 +391,17 @@ internal fun DisplayContent(
                     Text(stringResource(R.string.dialog_cancel))
                 }
             },
+        )
+    }
+
+    if (showTransactionDisplayDialog) {
+        TransactionDisplayDialog(
+            currentDisplayType = transactionDisplayType,
+            onDisplayTypeSelected = {
+                onTransactionDisplayTypeSelected(it)
+                showTransactionDisplayDialog = false
+            },
+            onDismiss = { showTransactionDisplayDialog = false },
         )
     }
 }
@@ -572,6 +602,50 @@ private fun DateFormatDialog(
     )
 }
 
+@Composable
+private fun TransactionDisplayDialog(
+    currentDisplayType: TransactionDisplayType,
+    onDisplayTypeSelected: (TransactionDisplayType) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val options = listOf(
+        TransactionDisplayType.TREND to stringResource(R.string.settings_transaction_display_trend),
+        TransactionDisplayType.CATEGORY to stringResource(R.string.settings_transaction_display_category),
+        TransactionDisplayType.NONE to stringResource(R.string.settings_transaction_display_none),
+    )
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        icon = {
+            Icon(
+                imageVector = Icons.Default.Visibility,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+            )
+        },
+        title = { Text(stringResource(R.string.dialog_choose_transaction_display)) },
+        text = {
+            Column {
+                options.forEach { (type, label) ->
+                    ListItem(
+                        headlineContent = { Text(label) },
+                        leadingContent = {
+                            RadioButton(
+                                selected = type == currentDisplayType,
+                                onClick = { onDisplayTypeSelected(type) },
+                            )
+                        },
+                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.dialog_cancel)) }
+        },
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun DisplayContentPreview() {
@@ -593,6 +667,8 @@ private fun DisplayContentPreview() {
             onDateFormatSelected = {},
             showPaymentTypeBreakdown = true,
             onShowPaymentTypeBreakdownChanged = {},
+            transactionDisplayType = TransactionDisplayType.TREND,
+            onTransactionDisplayTypeSelected = {},
             onResetAllPreferences = {},
             onNavigateBack = {},
         )

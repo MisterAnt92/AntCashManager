@@ -334,6 +334,13 @@
     <string name="settings_show_payment_breakdown_desc">Display balance breakdown by payment method on the Home screen</string>
     <string name="payment_breakdown_label">Balance by Payment Type</string>
     <string name="payment_breakdown_item_desc">Balance with %1$s: %2$.2f</string>
+
+    <!-- Transaction Display Type -->
+    <string name="settings_transaction_display">Transaction Icon Display</string>
+    <string name="settings_transaction_display_trend">Trend Arrows</string>
+    <string name="settings_transaction_display_category">Category</string>
+    <string name="settings_transaction_display_none">None</string>
+    <string name="dialog_choose_transaction_display">Choose display type</string>
 </resources>
 
 

@@ -307,6 +307,13 @@
     <string name="payment_breakdown_label">Solde par Type de Paiement</string>
     <string name="payment_breakdown_item_desc">Solde avec %1$s : %2$.2f</string>
     <string name="payment_type_meal_vouchers">Tickets Repas</string>
+
+    <!-- Transaction Display Type -->
+    <string name="settings_transaction_display">Affichage des Icônes de Transactions</string>
+    <string name="settings_transaction_display_trend">Tendance</string>
+    <string name="settings_transaction_display_category">Catégorie</string>
+    <string name="settings_transaction_display_none">Aucun</string>
+    <string name="dialog_choose_transaction_display">Choisir le type d\'affichage</string>
 </resources>
 
 

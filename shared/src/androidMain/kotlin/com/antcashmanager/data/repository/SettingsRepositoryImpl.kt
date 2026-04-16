@@ -10,6 +10,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
+import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -34,6 +35,7 @@ class SettingsRepositoryImpl(
     private val dateFormatKey = stringPreferencesKey("date_format")
     private val dateFilterExpandedKey = booleanPreferencesKey("date_filter_expanded")
     private val showPaymentTypeBreakdownKey = booleanPreferencesKey("show_payment_type_breakdown")
+    private val transactionDisplayTypeKey = stringPreferencesKey("transaction_display_type")
 
     override fun getTheme(): Flow<AppTheme> =
         context.dataStore.data.map { preferences ->
@@ -171,6 +173,22 @@ class SettingsRepositoryImpl(
         }
     }
 
+    override fun getTransactionDisplayType(): Flow<TransactionDisplayType> =
+        context.dataStore.data.map { preferences ->
+            val typeName = preferences[transactionDisplayTypeKey] ?: TransactionDisplayType.TREND.name
+            try {
+                TransactionDisplayType.valueOf(typeName)
+            } catch (_: IllegalArgumentException) {
+                TransactionDisplayType.TREND
+            }
+        }
+
+    override suspend fun setTransactionDisplayType(displayType: TransactionDisplayType) {
+        context.dataStore.edit { preferences ->
+            preferences[transactionDisplayTypeKey] = displayType.name
+        }
+    }
+
     override suspend fun resetAllPreferences() {
         context.dataStore.edit { prefs ->
             prefs[themeKey] = AppTheme.SYSTEM.name
@@ -187,6 +205,7 @@ class SettingsRepositoryImpl(
             prefs[dateFormatKey] = "dd/MM/yyyy"
             prefs[dateFilterExpandedKey] = true
             prefs[showPaymentTypeBreakdownKey] = false
+            prefs[transactionDisplayTypeKey] = TransactionDisplayType.TREND.name
         }
     }
 }

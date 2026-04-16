@@ -47,6 +47,7 @@ import com.antcashmanager.android.ui.screen.homeTransactionDetail.TransactionDet
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
+import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
@@ -104,6 +105,8 @@ internal fun HomeContent(
         .collectAsState(initial = false)
     val reduceMotion by settingsRepository.getReduceMotion()
         .collectAsState(initial = false)
+    val transactionDisplayType by settingsRepository.getTransactionDisplayType()
+        .collectAsState(initial = TransactionDisplayType.TREND)
     val coroutineScope = rememberCoroutineScope()
 
     // From date picker dialog
@@ -265,6 +268,7 @@ internal fun HomeContent(
                         RecentTransactionItem(
                             transaction = transaction,
                             onClick = { onEvent(HomeEvent.ShowTransactionDetails(transaction)) },
+                            displayType = transactionDisplayType,
                         )
                     }
                 }
@@ -314,6 +318,8 @@ class MockHomeSettingsRepository : SettingsRepository {
     override suspend fun setDateFilterExpanded(expanded: Boolean) {}
     override fun getShowPaymentTypeBreakdown() = kotlinx.coroutines.flow.flowOf(true)
     override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {}
+    override fun getTransactionDisplayType() = kotlinx.coroutines.flow.flowOf(TransactionDisplayType.TREND)
+    override suspend fun setTransactionDisplayType(displayType: TransactionDisplayType) {}
     override suspend fun resetAllPreferences() {}
 }
 
