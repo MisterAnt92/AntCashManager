@@ -2,6 +2,10 @@
 import json
 from pathlib import Path
 import time
+import random
+
+# Set seed for reproducible random distribution
+random.seed(42)
 
 ROOT = Path('/opt/src/GIT/app/AntCashManager')
 INPUT = ROOT / 'androidApp' / 'src' / 'main' / 'assets' / 'piggybankpro_data.json'
@@ -17,6 +21,17 @@ def color_to_hex(color_str):
         return '#{0:02X}{1:02X}{2:02X}{3:02X}'.format(a, r, g, b)
     except Exception:
         return '#FFCCCCCC'
+
+
+def assign_payment_type():
+    """Assign payment type randomly: 50% ELECTRONIC, 30% CASH, 20% MEAL_VOUCHERS."""
+    rand = random.random()
+    if rand < 0.5:
+        return 'ELECTRONIC'
+    elif rand < 0.8:
+        return 'CASH'
+    else:
+        return 'MEAL_VOUCHERS'
 
 
 def main():
@@ -68,7 +83,8 @@ def main():
             'notes': notes,
             'isRecurring': False,
             'recurrenceRule': None,
-            'tags': []
+            'tags': [],
+            'paymentType': assign_payment_type()
         })
 
     # Convert categories

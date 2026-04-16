@@ -8,6 +8,7 @@ import com.antcashmanager.android.BuildConfig
 import com.antcashmanager.android.data.backup.BackupService
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
+import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.CategoryRepository
@@ -118,6 +119,11 @@ class SettingsViewModel(
                                     ""
                                 },
                                 recurrenceInterval = t.optString("recurrenceRule", ""),
+                                paymentType = try {
+                                    PaymentType.valueOf(t.optString("paymentType", "ELECTRONIC"))
+                                } catch (_: Exception) {
+                                    PaymentType.ELECTRONIC
+                                },
                             )
                             try {
                                 transactionRepository.insertTransaction(transaction)

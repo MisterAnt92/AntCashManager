@@ -25,4 +25,6 @@ data class TransactionEntity(
     val tags: String = "",
     @ColumnInfo(name = "recurrence_interval", defaultValue = "")
     val recurrenceInterval: String = "",
+    @ColumnInfo(name = "payment_type", defaultValue = "ELECTRONIC")
+    val paymentType: String = "ELECTRONIC",
 )

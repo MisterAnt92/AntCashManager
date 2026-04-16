@@ -42,7 +42,8 @@ object DebugDataSeeder {
                             for (j in 0 until arr.length()) list.add(arr.optString(j))
                             list.joinToString(",")
                         } ?: ""),
-                        recurrenceInterval = t.optString("recurrenceInterval", "")
+                        recurrenceInterval = t.optString("recurrenceInterval", ""),
+                        paymentType = t.optString("paymentType", "ELECTRONIC")
                     )
                     try {
                         transactionDao.insertTransaction(entity)

@@ -1,7 +1,7 @@
 {
   "version": "debug_initial_data",
   "package_name": "com.github.emavgl.piggybankpro",
-  "created_at": 1776063170455,
+  "created_at": 1776315827754,
   "transactions": [
     {
       "id": 1,
@@ -13,7 +13,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 2,
@@ -25,7 +26,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 3,
@@ -37,7 +39,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 4,
@@ -49,7 +52,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 5,
@@ -61,7 +65,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 6,
@@ -73,7 +78,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 7,
@@ -85,7 +91,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 8,
@@ -97,7 +104,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 9,
@@ -109,7 +117,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 10,
@@ -121,7 +130,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 11,
@@ -133,7 +143,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 12,
@@ -145,7 +156,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 13,
@@ -157,7 +169,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 14,
@@ -169,7 +182,8 @@
       "notes": "Teatro con Mariachiara ",
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 15,
@@ -181,7 +195,8 @@
       "notes": "spesa al Mega con cosa di casa e cibo",
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 16,
@@ -193,7 +208,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 17,
@@ -205,7 +221,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 18,
@@ -217,7 +234,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 19,
@@ -229,7 +247,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 20,
@@ -241,7 +260,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 21,
@@ -253,7 +273,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 22,
@@ -265,7 +286,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 23,
@@ -277,7 +299,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 24,
@@ -289,7 +312,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 25,
@@ -301,7 +325,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 26,
@@ -313,7 +338,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 27,
@@ -325,7 +351,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 28,
@@ -337,7 +364,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 29,
@@ -349,7 +377,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 30,
@@ -361,7 +390,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 31,
@@ -373,7 +403,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 32,
@@ -385,7 +416,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 33,
@@ -397,7 +429,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 34,
@@ -409,7 +442,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 35,
@@ -421,7 +455,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 36,
@@ -433,7 +468,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 37,
@@ -445,7 +481,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 38,
@@ -457,7 +494,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 39,
@@ -469,7 +507,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 40,
@@ -481,7 +520,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 41,
@@ -493,7 +533,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 42,
@@ -505,7 +546,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 43,
@@ -517,7 +559,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 44,
@@ -529,7 +572,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 45,
@@ -541,7 +585,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 46,
@@ -553,7 +598,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 47,
@@ -565,7 +611,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 48,
@@ -577,7 +624,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 49,
@@ -589,7 +637,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 50,
@@ -601,7 +650,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 51,
@@ -613,7 +663,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 52,
@@ -625,7 +676,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 53,
@@ -637,7 +689,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 54,
@@ -649,7 +702,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 55,
@@ -661,7 +715,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 56,
@@ -673,7 +728,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 57,
@@ -685,7 +741,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 58,
@@ -697,7 +754,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 59,
@@ -709,7 +767,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 60,
@@ -721,7 +780,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 61,
@@ -733,7 +793,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 62,
@@ -745,7 +806,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 63,
@@ -757,7 +819,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 64,
@@ -769,7 +832,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 65,
@@ -781,7 +845,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 66,
@@ -793,7 +858,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 67,
@@ -805,7 +871,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 68,
@@ -817,7 +884,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 69,
@@ -829,7 +897,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 70,
@@ -841,7 +910,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 71,
@@ -853,7 +923,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 72,
@@ -865,7 +936,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 73,
@@ -877,7 +949,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 74,
@@ -889,7 +962,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 75,
@@ -901,7 +975,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 76,
@@ -913,7 +988,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 77,
@@ -925,7 +1001,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 78,
@@ -937,7 +1014,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 79,
@@ -949,7 +1027,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 80,
@@ -961,7 +1040,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 81,
@@ -973,7 +1053,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 82,
@@ -985,7 +1066,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 83,
@@ -997,7 +1079,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 84,
@@ -1009,7 +1092,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 85,
@@ -1021,7 +1105,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 86,
@@ -1033,7 +1118,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 87,
@@ -1045,7 +1131,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 88,
@@ -1057,7 +1144,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 89,
@@ -1069,7 +1157,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 90,
@@ -1081,7 +1170,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 91,
@@ -1093,7 +1183,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 92,
@@ -1105,7 +1196,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 93,
@@ -1117,7 +1209,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 94,
@@ -1129,7 +1222,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 95,
@@ -1141,7 +1235,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 96,
@@ -1153,7 +1248,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 97,
@@ -1165,7 +1261,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 98,
@@ -1177,7 +1274,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 99,
@@ -1189,7 +1287,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 100,
@@ -1201,7 +1300,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 101,
@@ -1213,7 +1313,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 102,
@@ -1225,7 +1326,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 103,
@@ -1237,7 +1339,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 104,
@@ -1249,7 +1352,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 105,
@@ -1261,7 +1365,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 106,
@@ -1273,7 +1378,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 107,
@@ -1285,7 +1391,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 108,
@@ -1297,7 +1404,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 109,
@@ -1309,7 +1417,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 110,
@@ -1321,7 +1430,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 111,
@@ -1333,7 +1443,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 112,
@@ -1345,7 +1456,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 113,
@@ -1357,7 +1469,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 114,
@@ -1369,7 +1482,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 115,
@@ -1381,7 +1495,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 116,
@@ -1393,7 +1508,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 117,
@@ -1405,7 +1521,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 118,
@@ -1417,7 +1534,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 119,
@@ -1429,7 +1547,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 120,
@@ -1441,7 +1560,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 121,
@@ -1453,7 +1573,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 122,
@@ -1465,7 +1586,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 123,
@@ -1477,7 +1599,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 124,
@@ -1489,7 +1612,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 125,
@@ -1501,7 +1625,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 126,
@@ -1513,7 +1638,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 127,
@@ -1525,7 +1651,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 128,
@@ -1537,7 +1664,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 129,
@@ -1549,7 +1677,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 130,
@@ -1561,7 +1690,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 131,
@@ -1573,7 +1703,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 132,
@@ -1585,7 +1716,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 133,
@@ -1597,7 +1729,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 134,
@@ -1609,7 +1742,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 135,
@@ -1621,7 +1755,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 136,
@@ -1633,7 +1768,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 137,
@@ -1645,7 +1781,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 138,
@@ -1657,7 +1794,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 139,
@@ -1669,7 +1807,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 140,
@@ -1681,7 +1820,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 141,
@@ -1693,7 +1833,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 142,
@@ -1705,7 +1846,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 143,
@@ -1717,7 +1859,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 144,
@@ -1729,7 +1872,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 145,
@@ -1741,7 +1885,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 146,
@@ -1753,7 +1898,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 147,
@@ -1765,7 +1911,8 @@
       "notes": "pizza spillo Mariachiara ",
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 148,
@@ -1777,7 +1924,8 @@
       "notes": "gas",
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 149,
@@ -1789,7 +1937,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 150,
@@ -1801,7 +1950,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 151,
@@ -1813,7 +1963,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 152,
@@ -1825,7 +1976,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 153,
@@ -1837,7 +1989,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 154,
@@ -1849,7 +2002,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 155,
@@ -1861,7 +2015,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 156,
@@ -1873,7 +2028,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 157,
@@ -1885,7 +2041,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 158,
@@ -1897,7 +2054,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 159,
@@ -1909,7 +2067,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 160,
@@ -1921,7 +2080,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 161,
@@ -1933,7 +2093,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 162,
@@ -1945,7 +2106,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 163,
@@ -1957,7 +2119,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 164,
@@ -1969,7 +2132,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 165,
@@ -1981,7 +2145,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 166,
@@ -1993,7 +2158,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 167,
@@ -2005,7 +2171,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 168,
@@ -2017,7 +2184,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 169,
@@ -2029,7 +2197,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 170,
@@ -2041,7 +2210,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 171,
@@ -2053,7 +2223,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 172,
@@ -2065,7 +2236,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 173,
@@ -2077,7 +2249,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 174,
@@ -2089,7 +2262,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 175,
@@ -2101,7 +2275,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 176,
@@ -2113,7 +2288,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 177,
@@ -2125,7 +2301,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 178,
@@ -2137,7 +2314,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 179,
@@ -2149,7 +2327,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 180,
@@ -2161,7 +2340,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 181,
@@ -2173,7 +2353,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 182,
@@ -2185,7 +2366,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 183,
@@ -2197,7 +2379,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 185,
@@ -2209,7 +2392,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 186,
@@ -2221,7 +2405,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 187,
@@ -2233,7 +2418,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 188,
@@ -2245,7 +2431,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 189,
@@ -2257,7 +2444,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 190,
@@ -2269,7 +2457,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 191,
@@ -2281,7 +2470,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 192,
@@ -2293,7 +2483,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 193,
@@ -2305,7 +2496,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 194,
@@ -2317,7 +2509,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 195,
@@ -2329,7 +2522,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 196,
@@ -2341,7 +2535,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 197,
@@ -2353,7 +2548,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 198,
@@ -2365,7 +2561,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 199,
@@ -2377,7 +2574,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 200,
@@ -2389,7 +2587,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 201,
@@ -2401,7 +2600,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 202,
@@ -2413,7 +2613,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 203,
@@ -2425,7 +2626,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 204,
@@ -2437,7 +2639,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 205,
@@ -2449,7 +2652,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 206,
@@ -2461,7 +2665,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 207,
@@ -2473,7 +2678,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 208,
@@ -2485,7 +2691,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 209,
@@ -2497,7 +2704,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 210,
@@ -2509,7 +2717,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 211,
@@ -2521,7 +2730,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 212,
@@ -2533,7 +2743,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 213,
@@ -2545,7 +2756,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 214,
@@ -2557,7 +2769,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 215,
@@ -2569,7 +2782,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 216,
@@ -2581,7 +2795,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 217,
@@ -2593,7 +2808,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 218,
@@ -2605,7 +2821,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 219,
@@ -2617,7 +2834,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 220,
@@ -2629,7 +2847,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 221,
@@ -2641,7 +2860,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 222,
@@ -2653,7 +2873,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 223,
@@ -2665,7 +2886,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 224,
@@ -2677,7 +2899,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 225,
@@ -2689,7 +2912,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 226,
@@ -2701,7 +2925,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 227,
@@ -2713,7 +2938,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 228,
@@ -2725,7 +2951,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 229,
@@ -2737,7 +2964,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 230,
@@ -2749,7 +2977,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 231,
@@ -2761,7 +2990,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 232,
@@ -2773,7 +3003,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 233,
@@ -2785,7 +3016,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 234,
@@ -2797,7 +3029,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 235,
@@ -2809,7 +3042,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 236,
@@ -2821,7 +3055,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 237,
@@ -2833,7 +3068,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 238,
@@ -2845,7 +3081,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 239,
@@ -2857,7 +3094,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 240,
@@ -2869,7 +3107,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 241,
@@ -2881,7 +3120,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 242,
@@ -2893,7 +3133,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 243,
@@ -2905,7 +3146,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 244,
@@ -2917,7 +3159,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 245,
@@ -2929,7 +3172,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 246,
@@ -2941,7 +3185,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 247,
@@ -2953,7 +3198,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 248,
@@ -2965,7 +3211,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 249,
@@ -2977,7 +3224,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 250,
@@ -2989,7 +3237,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 251,
@@ -3001,7 +3250,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 252,
@@ -3013,7 +3263,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 253,
@@ -3025,7 +3276,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 254,
@@ -3037,7 +3289,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 255,
@@ -3049,7 +3302,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 256,
@@ -3061,7 +3315,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 258,
@@ -3073,7 +3328,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 259,
@@ -3085,7 +3341,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 260,
@@ -3097,7 +3354,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 261,
@@ -3109,7 +3367,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 262,
@@ -3121,7 +3380,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 263,
@@ -3133,7 +3393,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 264,
@@ -3145,7 +3406,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 265,
@@ -3157,7 +3419,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 266,
@@ -3169,7 +3432,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 267,
@@ -3181,7 +3445,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 268,
@@ -3193,7 +3458,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 269,
@@ -3205,7 +3471,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 270,
@@ -3217,7 +3484,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 271,
@@ -3229,7 +3497,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 272,
@@ -3241,7 +3510,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 273,
@@ -3253,7 +3523,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 274,
@@ -3265,7 +3536,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 275,
@@ -3277,7 +3549,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 276,
@@ -3289,7 +3562,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 277,
@@ -3301,7 +3575,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 278,
@@ -3313,7 +3588,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 279,
@@ -3325,7 +3601,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 280,
@@ -3337,7 +3614,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 281,
@@ -3349,7 +3627,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 282,
@@ -3361,7 +3640,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 283,
@@ -3373,7 +3653,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 284,
@@ -3385,7 +3666,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 285,
@@ -3397,7 +3679,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 286,
@@ -3409,7 +3692,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 287,
@@ -3421,7 +3705,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 288,
@@ -3433,7 +3718,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 289,
@@ -3445,7 +3731,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 290,
@@ -3457,7 +3744,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 291,
@@ -3469,7 +3757,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 292,
@@ -3481,7 +3770,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 293,
@@ -3493,7 +3783,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 294,
@@ -3505,7 +3796,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 295,
@@ -3517,7 +3809,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 296,
@@ -3529,7 +3822,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 297,
@@ -3541,7 +3835,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 298,
@@ -3553,7 +3848,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 299,
@@ -3565,7 +3861,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 300,
@@ -3577,7 +3874,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 301,
@@ -3589,7 +3887,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 302,
@@ -3601,7 +3900,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 303,
@@ -3613,7 +3913,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 304,
@@ -3625,7 +3926,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 305,
@@ -3637,7 +3939,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 306,
@@ -3649,7 +3952,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 307,
@@ -3661,7 +3965,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 308,
@@ -3673,7 +3978,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 309,
@@ -3685,7 +3991,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 310,
@@ -3697,7 +4004,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 311,
@@ -3709,7 +4017,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 312,
@@ -3721,7 +4030,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 313,
@@ -3733,7 +4043,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 314,
@@ -3745,7 +4056,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 315,
@@ -3757,7 +4069,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 316,
@@ -3769,7 +4082,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 317,
@@ -3781,7 +4095,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 318,
@@ -3793,7 +4108,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 319,
@@ -3805,7 +4121,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 320,
@@ -3817,7 +4134,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 321,
@@ -3829,7 +4147,8 @@
       "notes": "1kg di vongole veraci",
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 322,
@@ -3841,7 +4160,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 323,
@@ -3853,7 +4173,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 324,
@@ -3865,7 +4186,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 325,
@@ -3877,7 +4199,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 326,
@@ -3889,7 +4212,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 327,
@@ -3901,7 +4225,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 328,
@@ -3913,7 +4238,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 329,
@@ -3925,7 +4251,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 330,
@@ -3937,7 +4264,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 331,
@@ -3949,7 +4277,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 332,
@@ -3961,7 +4290,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 333,
@@ -3973,7 +4303,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 334,
@@ -3985,7 +4316,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 335,
@@ -3997,7 +4329,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 336,
@@ -4009,7 +4342,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 337,
@@ -4021,7 +4355,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 338,
@@ -4033,7 +4368,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 339,
@@ -4045,7 +4381,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 340,
@@ -4057,7 +4394,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 341,
@@ -4069,7 +4407,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 342,
@@ -4081,7 +4420,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 343,
@@ -4093,7 +4433,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 344,
@@ -4105,7 +4446,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 345,
@@ -4117,7 +4459,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 346,
@@ -4129,7 +4472,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 347,
@@ -4141,7 +4485,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 348,
@@ -4153,7 +4498,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 349,
@@ -4165,7 +4511,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 350,
@@ -4177,7 +4524,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 351,
@@ -4189,7 +4537,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 352,
@@ -4201,7 +4550,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 353,
@@ -4213,7 +4563,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 354,
@@ -4225,7 +4576,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "CASH"
     },
     {
       "id": 355,
@@ -4237,7 +4589,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 356,
@@ -4249,7 +4602,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 357,
@@ -4261,7 +4615,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     },
     {
       "id": 358,
@@ -4273,7 +4628,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "ELECTRONIC"
     },
     {
       "id": 359,
@@ -4285,7 +4641,8 @@
       "notes": null,
       "isRecurring": false,
       "recurrenceRule": null,
-      "tags": []
+      "tags": [],
+      "paymentType": "MEAL_VOUCHERS"
     }
   ],
   "categories": [

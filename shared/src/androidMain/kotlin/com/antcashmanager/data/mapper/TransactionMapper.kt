@@ -1,6 +1,7 @@
 package com.antcashmanager.data.mapper
 
 import com.antcashmanager.data.local.entity.TransactionEntity
+import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 
@@ -17,6 +18,11 @@ fun TransactionEntity.toDomain(): Transaction = Transaction(
     isRecurring = isRecurring,
     tags = tags,
     recurrenceInterval = recurrenceInterval,
+    paymentType = try {
+        PaymentType.valueOf(paymentType)
+    } catch (_: IllegalArgumentException) {
+        PaymentType.ELECTRONIC
+    },
 )
 
 fun Transaction.toEntity(): TransactionEntity = TransactionEntity(
@@ -32,4 +38,5 @@ fun Transaction.toEntity(): TransactionEntity = TransactionEntity(
     isRecurring = isRecurring,
     tags = tags,
     recurrenceInterval = recurrenceInterval,
+    paymentType = paymentType.name,
 )

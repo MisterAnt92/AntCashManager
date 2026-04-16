@@ -1,6 +1,7 @@
 package com.antcashmanager.android.ui.home
 
 import com.antcashmanager.android.ui.screen.home.HomeViewModel
+import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.TransactionRepository
@@ -205,6 +206,151 @@ class HomeViewModelTest {
         viewModel.onEvent(com.antcashmanager.android.ui.screen.home.HomeEvent.DismissTransactionDetails)
         advanceUntilIdle()
         assertEquals(null, viewModel.state.value.selectedTransaction)
+        collectJob.cancel()
+    }
+
+    @Test
+    fun `balanceByPaymentType calculates correctly with mixed payment types`() = runTest(testDispatcher) {
+        val now = System.currentTimeMillis()
+        fakeRepo.transactions.value = listOf(
+            Transaction(
+                id = 1,
+                title = "Salary",
+                amount = 2000.0,
+                category = "Work",
+                type = TransactionType.INCOME,
+                timestamp = now,
+                paymentType = PaymentType.ELECTRONIC,
+            ),
+            Transaction(
+                id = 2,
+                title = "Cash Bonus",
+                amount = 300.0,
+                category = "Work",
+                type = TransactionType.INCOME,
+                timestamp = now,
+                paymentType = PaymentType.CASH,
+            ),
+            Transaction(
+                id = 3,
+                title = "Groceries",
+                amount = 150.0,  // Will become -150 after transformation
+                category = "Food",
+                type = TransactionType.EXPENSE,
+                timestamp = now,
+                paymentType = PaymentType.CASH,
+            ),
+            Transaction(
+                id = 4,
+                title = "Meal Voucher",
+                amount = 50.0,  // Will become -50 after transformation
+                category = "Food",
+                type = TransactionType.EXPENSE,
+                timestamp = now,
+                paymentType = PaymentType.MEAL_VOUCHERS,
+            ),
+        )
+
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect {}
+        }
+        advanceUntilIdle()
+
+        val balanceByPaymentType = viewModel.state.value.balanceByPaymentType
+        // ELECTRONIC: 2000 income = 2000
+        assertEquals(2000.0, balanceByPaymentType[PaymentType.ELECTRONIC] ?: 0.0, 0.01)
+        // CASH: 300 income - 150 expense = 150
+        assertEquals(150.0, balanceByPaymentType[PaymentType.CASH] ?: 0.0, 0.01)
+        // MEAL_VOUCHERS: 0 income - 50 expense = -50
+        assertEquals(-50.0, balanceByPaymentType[PaymentType.MEAL_VOUCHERS] ?: 0.0, 0.01)
+        collectJob.cancel()
+    }
+
+    @Test
+    fun `balanceByPaymentType excludes zero values`() = runTest(testDispatcher) {
+        val now = System.currentTimeMillis()
+        fakeRepo.transactions.value = listOf(
+            Transaction(
+                id = 1,
+                title = "Income",
+                amount = 100.0,
+                category = "Work",
+                type = TransactionType.INCOME,
+                timestamp = now,
+                paymentType = PaymentType.ELECTRONIC,
+            ),
+            Transaction(
+                id = 2,
+                title = "Expense",
+                amount = 100.0,
+                category = "Food",
+                type = TransactionType.EXPENSE,
+                timestamp = now,
+                paymentType = PaymentType.ELECTRONIC,
+            ),
+        )
+
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect {}
+        }
+        advanceUntilIdle()
+
+        val balanceByPaymentType = viewModel.state.value.balanceByPaymentType
+        // ELECTRONIC should be 0 (100 - 100), so it should be excluded from map
+        assertEquals(false, balanceByPaymentType.containsKey(PaymentType.ELECTRONIC))
+        collectJob.cancel()
+    }
+
+    @Test
+    fun `balanceByPaymentType is empty when no transactions`() = runTest(testDispatcher) {
+        fakeRepo.transactions.value = emptyList()
+
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect {}
+        }
+        advanceUntilIdle()
+
+        val balanceByPaymentType = viewModel.state.value.balanceByPaymentType
+        assertTrue(balanceByPaymentType.isEmpty())
+        collectJob.cancel()
+    }
+
+    @Test
+    fun `date filter affects balanceByPaymentType calculation`() = runTest(testDispatcher) {
+        val now = System.currentTimeMillis()
+        val yesterday = now - (24 * 60 * 60 * 1000)
+        val lastWeek = now - (7 * 24 * 60 * 60 * 1000)
+
+        fakeRepo.transactions.value = listOf(
+            Transaction(
+                id = 1,
+                title = "Recent Income",
+                amount = 1000.0,
+                category = "Work",
+                type = TransactionType.INCOME,
+                timestamp = yesterday,
+                paymentType = PaymentType.ELECTRONIC,
+            ),
+            Transaction(
+                id = 2,
+                title = "Old Income",
+                amount = 500.0,
+                category = "Work",
+                type = TransactionType.INCOME,
+                timestamp = lastWeek - (10 * 24 * 60 * 60 * 1000),
+                paymentType = PaymentType.CASH,
+            ),
+        )
+
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect {}
+        }
+        advanceUntilIdle()
+
+        // Default filter is last 7 days, so only the recent transaction should be included
+        val balanceByPaymentType = viewModel.state.value.balanceByPaymentType
+        assertEquals(1000.0, balanceByPaymentType[PaymentType.ELECTRONIC] ?: 0.0, 0.01)
+        assertEquals(false, balanceByPaymentType.containsKey(PaymentType.CASH))
         collectJob.cancel()
     }
 
