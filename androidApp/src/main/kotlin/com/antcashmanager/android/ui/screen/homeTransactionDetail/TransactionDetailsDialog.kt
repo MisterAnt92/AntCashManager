@@ -89,8 +89,15 @@ fun TransactionDetailsDialog(
                             color = onContainerColor,
                         )
                         Spacer(modifier = Modifier.height(8.dp))
+                        // Mostra importo con segno corretto: negativo per uscite, positivo per entrate
                         TransactionAmountText(
-                            amount = if (isIncome) transaction.amount else -transaction.amount,
+                            amount = if (transaction.type == TransactionType.EXPENSE) {
+                                // Per le uscite, assicuriamoci che sia negativo
+                                if (transaction.amount > 0) -transaction.amount else transaction.amount
+                            } else {
+                                // Per le entrate, assicuriamoci che sia positivo
+                                if (transaction.amount < 0) -transaction.amount else transaction.amount
+                            },
                         )
                     }
                 }
