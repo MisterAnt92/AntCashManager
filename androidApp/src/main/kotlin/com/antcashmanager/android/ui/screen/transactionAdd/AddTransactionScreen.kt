@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.screen.transaction_add
+package com.antcashmanager.android.ui.screen.transactionAdd
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,8 +12,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Logger
-import com.antcashmanager.android.ui.screen.transaction_add.view.CategorySelectionStep
-import com.antcashmanager.android.ui.screen.transaction_add.view.DetailsStep
+import com.antcashmanager.android.ui.screen.transactionAdd.view.CategorySelectionStep
+import com.antcashmanager.android.ui.screen.transactionAdd.view.DetailsStep
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.CategoryRepository

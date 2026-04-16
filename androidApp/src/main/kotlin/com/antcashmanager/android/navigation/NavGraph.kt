@@ -23,8 +23,8 @@ import com.antcashmanager.android.ui.screen.categories.CategoriesScreen
 import com.antcashmanager.android.ui.screen.charts.ChartsScreen
 import com.antcashmanager.android.ui.screen.home.HomeScreen
 import com.antcashmanager.android.ui.screen.settings.SettingsScreen
-import com.antcashmanager.android.ui.screen.settings_display.DisplayScreen
-import com.antcashmanager.android.ui.screen.transaction_add.AddTransactionScreen
+import com.antcashmanager.android.ui.screen.settingsDisplay.DisplayScreen
+import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionScreen
 import com.antcashmanager.android.ui.screen.transactions.TransactionsScreen
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.domain.model.CurrencyFormat

@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.screen.home_transaction_detail
+package com.antcashmanager.android.ui.screen.homeTransactionDetail
 
 import android.content.Context
 import android.content.Intent

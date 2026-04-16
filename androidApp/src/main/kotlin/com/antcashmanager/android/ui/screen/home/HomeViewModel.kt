@@ -7,7 +7,6 @@ import com.antcashmanager.android.util.calculateBalance
 import com.antcashmanager.android.util.calculateTotalExpense
 import com.antcashmanager.android.util.calculateTotalIncome
 import com.antcashmanager.android.util.withCorrectAmounts
-import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.usecase.transaction.GetTransactionsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow

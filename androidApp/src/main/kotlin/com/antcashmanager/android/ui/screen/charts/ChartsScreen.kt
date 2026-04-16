@@ -54,11 +54,11 @@ import com.antcashmanager.android.domain.usecase.share.BuildShareTextUseCase
 import com.antcashmanager.android.ui.components.AntEmptyState
 import com.antcashmanager.android.ui.components.HelpButton
 import com.antcashmanager.android.ui.components.text.AppText
-import com.antcashmanager.android.ui.screen.charts.view.ZoomableBarChart
 import com.antcashmanager.android.ui.screen.charts.view.BarChartLegend
 import com.antcashmanager.android.ui.screen.charts.view.HelpDialog
-import com.antcashmanager.android.ui.screen.charts.view.ZoomablePieChart
 import com.antcashmanager.android.ui.screen.charts.view.PieLegend
+import com.antcashmanager.android.ui.screen.charts.view.ZoomableBarChart
+import com.antcashmanager.android.ui.screen.charts.view.ZoomablePieChart
 import com.antcashmanager.android.ui.screen.charts.view.ZoomableYearlyBarChart
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.LocalCurrencyFormat
@@ -368,7 +368,8 @@ internal fun ChartsContent(
                         IconButton(
                             onClick = {
                                 // Convert negative values to positive for display
-                                val positiveExpenseData = chartData.expenseByCategory.mapValues { abs(it.value) }
+                                val positiveExpenseData =
+                                    chartData.expenseByCategory.mapValues { abs(it.value) }
                                 val shareText = buildShareTextUseCase.buildCategoryShareText(
                                     data = positiveExpenseData,
                                     fmt = fmt,

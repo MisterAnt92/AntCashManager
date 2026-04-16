@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.screen.home_transaction_detail
+package com.antcashmanager.android.ui.screen.homeTransactionDetail
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,7 +28,7 @@ import com.antcashmanager.android.ui.components.AnimatedCard
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.text.TransactionAmountText
 import com.antcashmanager.android.ui.screen.home.view.getRecurrenceIntervalLabel
-import com.antcashmanager.android.ui.screen.home_transaction_detail.view.TransactionDetailRow
+import com.antcashmanager.android.ui.screen.homeTransactionDetail.view.TransactionDetailRow
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.isValidNote
 import com.antcashmanager.domain.model.PaymentType

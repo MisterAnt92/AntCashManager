@@ -43,7 +43,7 @@ import com.antcashmanager.android.ui.screen.home.view.HelpDialog
 import com.antcashmanager.android.ui.screen.home.view.IncomeExpenseRow
 import com.antcashmanager.android.ui.screen.home.view.LoadingState
 import com.antcashmanager.android.ui.screen.home.view.RecentTransactionItem
-import com.antcashmanager.android.ui.screen.home_transaction_detail.TransactionDetailsDialog
+import com.antcashmanager.android.ui.screen.homeTransactionDetail.TransactionDetailsDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction

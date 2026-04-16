@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.screen.transaction_add.view
+package com.antcashmanager.android.ui.screen.transactionAdd.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -43,8 +43,8 @@ import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AppSelectionItemCard
 import com.antcashmanager.android.ui.components.button.AppButton
 import com.antcashmanager.android.ui.components.text.AppText
-import com.antcashmanager.android.ui.screen.transaction_add.AddTransactionEvent
-import com.antcashmanager.android.ui.screen.transaction_add.AddTransactionState
+import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionEvent
+import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionState
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.TransactionType
 import java.text.SimpleDateFormat

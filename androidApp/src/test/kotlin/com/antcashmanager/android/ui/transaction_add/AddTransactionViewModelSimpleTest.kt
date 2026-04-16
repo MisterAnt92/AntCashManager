@@ -1,7 +1,7 @@
 package com.antcashmanager.android.ui.transaction_add
 
-import com.antcashmanager.android.ui.screen.transaction_add.AddTransactionEvent
-import com.antcashmanager.android.ui.screen.transaction_add.AddTransactionViewModel
+import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionEvent
+import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionViewModel
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.TransactionRepository

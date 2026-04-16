@@ -37,7 +37,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathEffect as ComposePathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -59,6 +58,7 @@ import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.android.util.formatAmount
 import kotlin.math.max
 import kotlin.math.min
+import androidx.compose.ui.graphics.PathEffect as ComposePathEffect
 
 // Utility functions for safe float operations and crash prevention
 private fun Float.safeValue(fallback: Float = 0f): Float =
@@ -427,7 +427,8 @@ private fun DrawScope.drawZoomAwareGrid(
 ) {
     // Safety checks to prevent crashes
     if (!scale.isFinite() || scale <= 0f || !chartWidth.isFinite() || !chartHeight.isFinite() ||
-        chartWidth <= 0f || chartHeight <= 0f) {
+        chartWidth <= 0f || chartHeight <= 0f
+    ) {
         return
     }
 
@@ -447,18 +448,18 @@ private fun DrawScope.drawZoomAwareGrid(
     for (i in 1..gridLineCount) {
         val y = baseY - (heightStep * i)
         if (y.isFinite() && y >= 0f && y <= baseY) {
-                try {
-                    drawLine(
-                        color = gridColor,
-                        start = Offset(0f, y),
-                        end = Offset(chartWidth, y),
-                        strokeWidth = strokeWidth,
-                        pathEffect = dashPathEffect,
-                        cap = StrokeCap.Round
-                    )
-                } catch (_: Exception) {
-                    // Silently ignore drawing errors to prevent crash
-                }
+            try {
+                drawLine(
+                    color = gridColor,
+                    start = Offset(0f, y),
+                    end = Offset(chartWidth, y),
+                    strokeWidth = strokeWidth,
+                    pathEffect = dashPathEffect,
+                    cap = StrokeCap.Round
+                )
+            } catch (_: Exception) {
+                // Silently ignore drawing errors to prevent crash
+            }
         }
     }
 
@@ -469,18 +470,18 @@ private fun DrawScope.drawZoomAwareGrid(
         for (i in 1 until verticalLines) {
             val x = widthStep * i
             if (x.isFinite() && x >= 0f && x <= chartWidth) {
-                    try {
-                        drawLine(
-                            color = gridColor.copy(alpha = 0.3f),
-                            start = Offset(x, baseY - chartHeight),
-                            end = Offset(x, baseY),
-                            strokeWidth = strokeWidth,
-                            pathEffect = dashPathEffect,
-                            cap = StrokeCap.Round
-                        )
-                    } catch (_: Exception) {
-                        // Silently ignore drawing errors to prevent crash
-                    }
+                try {
+                    drawLine(
+                        color = gridColor.copy(alpha = 0.3f),
+                        start = Offset(x, baseY - chartHeight),
+                        end = Offset(x, baseY),
+                        strokeWidth = strokeWidth,
+                        pathEffect = dashPathEffect,
+                        cap = StrokeCap.Round
+                    )
+                } catch (_: Exception) {
+                    // Silently ignore drawing errors to prevent crash
+                }
             }
         }
     }
@@ -867,7 +868,8 @@ internal fun ZoomablePieChart(data: Map<String, Double>, modifier: Modifier = Mo
 
         // Reset zoom button with validation
         if ((scale != 1f || offsetX != 0f || offsetY != 0f) &&
-            scale.isFinite() && offsetX.isFinite() && offsetY.isFinite()) {
+            scale.isFinite() && offsetX.isFinite() && offsetY.isFinite()
+        ) {
             FloatingActionButton(
                 onClick = {
                     scale = 1f
@@ -928,11 +930,14 @@ internal fun ZoomableBarChart(data: List<MonthlyAmount>, modifier: Modifier = Mo
 
                             // Safe pan calculation with validation and scale division protection
                             val safeDivisor = scale.takeIf { it > 0.01f } ?: 1f
-                            val newOffsetX = (offsetX + pan.x / safeDivisor).takeIf { it.isFinite() } ?: offsetX
-                            val newOffsetY = (offsetY + pan.y / safeDivisor).takeIf { it.isFinite() } ?: offsetY
+                            val newOffsetX =
+                                (offsetX + pan.x / safeDivisor).takeIf { it.isFinite() } ?: offsetX
+                            val newOffsetY =
+                                (offsetY + pan.y / safeDivisor).takeIf { it.isFinite() } ?: offsetY
 
                             // Constrain pan to chart bounds with safety checks
-                            val maxOffsetX = (size.width * (scale - 1) / 2).takeIf { it.isFinite() } ?: 0f
+                            val maxOffsetX =
+                                (size.width * (scale - 1) / 2).takeIf { it.isFinite() } ?: 0f
                             val maxOffsetY = (size.height * 0.2f).takeIf { it.isFinite() } ?: 100f
                             offsetX = newOffsetX.coerceIn(-maxOffsetX, maxOffsetX)
                             offsetY = newOffsetY.coerceIn(-maxOffsetY, maxOffsetY)
@@ -961,20 +966,31 @@ internal fun ZoomableBarChart(data: List<MonthlyAmount>, modifier: Modifier = Mo
                             ?.takeIf { it > 0 } ?: 1.0
 
                         if (data.size <= 0) return@translate
-                        val barWidth = (size.width / (data.size * 2.5f)).takeIf { it.isFinite() && it > 0f } ?: 10f
+                        val barWidth =
+                            (size.width / (data.size * 2.5f)).takeIf { it.isFinite() && it > 0f }
+                                ?: 10f
                         val spacing = barWidth * 0.5f
                         val maxHeight = size.height * 0.75f
                         val baseY = size.height * 0.8f
 
                         // Draw professional grid with zoom awareness
-                        drawZoomAwareGrid(maxValue, size.width, maxHeight, baseY, gridColor, safeScale)
+                        drawZoomAwareGrid(
+                            maxValue,
+                            size.width,
+                            maxHeight,
+                            baseY,
+                            gridColor,
+                            safeScale
+                        )
 
                         data.forEachIndexed { index, month ->
                             try {
-                                val incomeHeight = ((month.income / maxValue * maxHeight * animatedProgress).toFloat())
-                                    .takeIf { it.isFinite() && it >= 0f } ?: 0f
-                                val expenseHeight = ((month.expense / maxValue * maxHeight * animatedProgress).toFloat())
-                                    .takeIf { it.isFinite() && it >= 0f } ?: 0f
+                                val incomeHeight =
+                                    ((month.income / maxValue * maxHeight * animatedProgress).toFloat())
+                                        .takeIf { it.isFinite() && it >= 0f } ?: 0f
+                                val expenseHeight =
+                                    ((month.expense / maxValue * maxHeight * animatedProgress).toFloat())
+                                        .takeIf { it.isFinite() && it >= 0f } ?: 0f
                                 val x = spacing + index * (barWidth * 2 + spacing * 1.5f)
 
                                 if (!x.isFinite() || x < 0f) return@forEachIndexed
@@ -1000,7 +1016,10 @@ internal fun ZoomableBarChart(data: List<MonthlyAmount>, modifier: Modifier = Mo
                                         drawRoundRect(
                                             color = Color.White.copy(alpha = 0.3f),
                                             topLeft = Offset(x + 2f, baseY - incomeHeight + 2f),
-                                            size = Size((barWidth - 4f).coerceAtLeast(0f), incomeHeight * 0.3f),
+                                            size = Size(
+                                                (barWidth - 4f).coerceAtLeast(0f),
+                                                incomeHeight * 0.3f
+                                            ),
                                             cornerRadius = CornerRadius(4f, 4f)
                                         )
                                     }
@@ -1017,7 +1036,10 @@ internal fun ZoomableBarChart(data: List<MonthlyAmount>, modifier: Modifier = Mo
                                     )
                                     drawRoundRect(
                                         brush = expenseBrush,
-                                        topLeft = Offset(x + barWidth + spacing * 0.5f, baseY - expenseHeight),
+                                        topLeft = Offset(
+                                            x + barWidth + spacing * 0.5f,
+                                            baseY - expenseHeight
+                                        ),
                                         size = Size(barWidth, expenseHeight),
                                         cornerRadius = CornerRadius(6f, 6f)
                                     )
@@ -1026,8 +1048,14 @@ internal fun ZoomableBarChart(data: List<MonthlyAmount>, modifier: Modifier = Mo
                                     if (expenseHeight > 6f) {
                                         drawRoundRect(
                                             color = Color.White.copy(alpha = 0.3f),
-                                            topLeft = Offset(x + barWidth + spacing * 0.5f + 2f, baseY - expenseHeight + 2f),
-                                            size = Size((barWidth - 4f).coerceAtLeast(0f), expenseHeight * 0.3f),
+                                            topLeft = Offset(
+                                                x + barWidth + spacing * 0.5f + 2f,
+                                                baseY - expenseHeight + 2f
+                                            ),
+                                            size = Size(
+                                                (barWidth - 4f).coerceAtLeast(0f),
+                                                expenseHeight * 0.3f
+                                            ),
                                             cornerRadius = CornerRadius(4f, 4f)
                                         )
                                     }
@@ -1049,7 +1077,12 @@ internal fun ZoomableBarChart(data: List<MonthlyAmount>, modifier: Modifier = Mo
                                                     textSize = scaledTextSize
                                                     textAlign = Paint.Align.CENTER
                                                     isAntiAlias = true
-                                                    setShadowLayer(2f, 1f, 1f, Color.Black.copy(alpha = 0.1f).toArgb())
+                                                    setShadowLayer(
+                                                        2f,
+                                                        1f,
+                                                        1f,
+                                                        Color.Black.copy(alpha = 0.1f).toArgb()
+                                                    )
                                                 }
                                             )
                                         }
@@ -1070,7 +1103,8 @@ internal fun ZoomableBarChart(data: List<MonthlyAmount>, modifier: Modifier = Mo
 
         // Reset zoom button with validation
         if ((scale != 1f || offsetX != 0f || offsetY != 0f) &&
-            scale.isFinite() && offsetX.isFinite() && offsetY.isFinite()) {
+            scale.isFinite() && offsetX.isFinite() && offsetY.isFinite()
+        ) {
             FloatingActionButton(
                 onClick = {
                     scale = 1f
@@ -1131,11 +1165,14 @@ internal fun ZoomableYearlyBarChart(data: List<YearlyAmount>, modifier: Modifier
 
                             // Safe pan calculation with validation and scale division protection
                             val safeDivisor = scale.takeIf { it > 0.01f } ?: 1f
-                            val newOffsetX = (offsetX + pan.x / safeDivisor).takeIf { it.isFinite() } ?: offsetX
-                            val newOffsetY = (offsetY + pan.y / safeDivisor).takeIf { it.isFinite() } ?: offsetY
+                            val newOffsetX =
+                                (offsetX + pan.x / safeDivisor).takeIf { it.isFinite() } ?: offsetX
+                            val newOffsetY =
+                                (offsetY + pan.y / safeDivisor).takeIf { it.isFinite() } ?: offsetY
 
                             // Constrain pan to chart bounds with safety checks
-                            val maxOffsetX = (size.width * (scale - 1) / 2).takeIf { it.isFinite() } ?: 0f
+                            val maxOffsetX =
+                                (size.width * (scale - 1) / 2).takeIf { it.isFinite() } ?: 0f
                             val maxOffsetY = (size.height * 0.2f).takeIf { it.isFinite() } ?: 100f
                             offsetX = newOffsetX.coerceIn(-maxOffsetX, maxOffsetX)
                             offsetY = newOffsetY.coerceIn(-maxOffsetY, maxOffsetY)
@@ -1164,20 +1201,31 @@ internal fun ZoomableYearlyBarChart(data: List<YearlyAmount>, modifier: Modifier
                             ?.takeIf { it > 0 } ?: 1.0
 
                         if (data.size <= 0) return@translate
-                        val barWidth = (size.width / (data.size * 2.8f)).takeIf { it.isFinite() && it > 0f } ?: 10f
+                        val barWidth =
+                            (size.width / (data.size * 2.8f)).takeIf { it.isFinite() && it > 0f }
+                                ?: 10f
                         val spacing = barWidth * 0.6f
                         val maxHeight = size.height * 0.75f
                         val baseY = size.height * 0.8f
 
                         // Draw professional grid with zoom awareness
-                        drawZoomAwareGrid(maxValue, size.width, maxHeight, baseY, gridColor, safeScale)
+                        drawZoomAwareGrid(
+                            maxValue,
+                            size.width,
+                            maxHeight,
+                            baseY,
+                            gridColor,
+                            safeScale
+                        )
 
                         data.forEachIndexed { index, year ->
                             try {
-                                val incomeHeight = ((year.income / maxValue * maxHeight * animatedProgress).toFloat())
-                                    .takeIf { it.isFinite() && it >= 0f } ?: 0f
-                                val expenseHeight = ((year.expense / maxValue * maxHeight * animatedProgress).toFloat())
-                                    .takeIf { it.isFinite() && it >= 0f } ?: 0f
+                                val incomeHeight =
+                                    ((year.income / maxValue * maxHeight * animatedProgress).toFloat())
+                                        .takeIf { it.isFinite() && it >= 0f } ?: 0f
+                                val expenseHeight =
+                                    ((year.expense / maxValue * maxHeight * animatedProgress).toFloat())
+                                        .takeIf { it.isFinite() && it >= 0f } ?: 0f
                                 val x = spacing + index * (barWidth * 2 + spacing * 1.8f)
 
                                 if (!x.isFinite() || x < 0f) return@forEachIndexed
@@ -1220,7 +1268,10 @@ internal fun ZoomableYearlyBarChart(data: List<YearlyAmount>, modifier: Modifier
                                             drawRoundRect(
                                                 color = Color.White.copy(alpha = 0.4f),
                                                 topLeft = Offset(x + 3f, baseY - incomeHeight + 3f),
-                                                size = Size((barWidth - 6f).coerceAtLeast(0f), incomeHeight * 0.25f),
+                                                size = Size(
+                                                    (barWidth - 6f).coerceAtLeast(0f),
+                                                    incomeHeight * 0.25f
+                                                ),
                                                 cornerRadius = CornerRadius(6f, 6f)
                                             )
                                         } catch (_: Exception) {
@@ -1244,7 +1295,10 @@ internal fun ZoomableYearlyBarChart(data: List<YearlyAmount>, modifier: Modifier
                                         try {
                                             drawRoundRect(
                                                 color = Color.Black.copy(alpha = 0.08f),
-                                                topLeft = Offset(x + barWidth + spacing * 0.7f + 3f, baseY - expenseHeight + 3f),
+                                                topLeft = Offset(
+                                                    x + barWidth + spacing * 0.7f + 3f,
+                                                    baseY - expenseHeight + 3f
+                                                ),
                                                 size = Size(barWidth, expenseHeight),
                                                 cornerRadius = CornerRadius(8f, 8f)
                                             )
@@ -1256,7 +1310,10 @@ internal fun ZoomableYearlyBarChart(data: List<YearlyAmount>, modifier: Modifier
                                     // Expense bar
                                     drawRoundRect(
                                         brush = expenseBrush,
-                                        topLeft = Offset(x + barWidth + spacing * 0.7f, baseY - expenseHeight),
+                                        topLeft = Offset(
+                                            x + barWidth + spacing * 0.7f,
+                                            baseY - expenseHeight
+                                        ),
                                         size = Size(barWidth, expenseHeight),
                                         cornerRadius = CornerRadius(8f, 8f)
                                     )
@@ -1266,8 +1323,14 @@ internal fun ZoomableYearlyBarChart(data: List<YearlyAmount>, modifier: Modifier
                                         try {
                                             drawRoundRect(
                                                 color = Color.White.copy(alpha = 0.4f),
-                                                topLeft = Offset(x + barWidth + spacing * 0.7f + 3f, baseY - expenseHeight + 3f),
-                                                size = Size((barWidth - 6f).coerceAtLeast(0f), expenseHeight * 0.25f),
+                                                topLeft = Offset(
+                                                    x + barWidth + spacing * 0.7f + 3f,
+                                                    baseY - expenseHeight + 3f
+                                                ),
+                                                size = Size(
+                                                    (barWidth - 6f).coerceAtLeast(0f),
+                                                    expenseHeight * 0.25f
+                                                ),
                                                 cornerRadius = CornerRadius(6f, 6f)
                                             )
                                         } catch (_: Exception) {
@@ -1293,7 +1356,12 @@ internal fun ZoomableYearlyBarChart(data: List<YearlyAmount>, modifier: Modifier
                                                     textAlign = Paint.Align.CENTER
                                                     isAntiAlias = true
                                                     isFakeBoldText = true
-                                                    setShadowLayer(3f, 1f, 2f, Color.Black.copy(alpha = 0.15f).toArgb())
+                                                    setShadowLayer(
+                                                        3f,
+                                                        1f,
+                                                        2f,
+                                                        Color.Black.copy(alpha = 0.15f).toArgb()
+                                                    )
                                                 }
                                             )
                                         }
@@ -1327,7 +1395,8 @@ internal fun ZoomableYearlyBarChart(data: List<YearlyAmount>, modifier: Modifier
 
         // Reset zoom button with validation
         if ((scale != 1f || offsetX != 0f || offsetY != 0f) &&
-            scale.isFinite() && offsetX.isFinite() && offsetY.isFinite()) {
+            scale.isFinite() && offsetX.isFinite() && offsetY.isFinite()
+        ) {
             FloatingActionButton(
                 onClick = {
                     scale = 1f
