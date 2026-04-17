@@ -426,15 +426,6 @@ internal fun SettingsContent(
         AppCardSectionHeader(title = stringResource(R.string.settings_data_management))
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             AppCard(
-                title = stringResource(R.string.settings_delete_all),
-                subtitle = stringResource(R.string.settings_delete_all_subtitle),
-                leadingIcon = Icons.Default.Delete,
-                iconBackgroundColor = MaterialTheme.colorScheme.errorContainer,
-                iconTint = MaterialTheme.colorScheme.onErrorContainer,
-                showChevron = false,
-                onClick = { showDeleteConfirmDialog = true },
-            )
-            AppCard(
                 title = stringResource(R.string.settings_backup),
                 subtitle = stringResource(R.string.settings_backup_subtitle),
                 leadingIcon = Icons.Default.Backup,
@@ -469,6 +460,15 @@ internal fun SettingsContent(
                 iconTint = MaterialTheme.colorScheme.onErrorContainer,
                 showChevron = false,
                 onClick = { showResetPreferencesDialog = true },
+            )
+            AppCard(
+                title = stringResource(R.string.settings_delete_all),
+                subtitle = stringResource(R.string.settings_delete_all_subtitle),
+                leadingIcon = Icons.Default.Delete,
+                iconBackgroundColor = MaterialTheme.colorScheme.errorContainer,
+                iconTint = MaterialTheme.colorScheme.onErrorContainer,
+                showChevron = false,
+                onClick = { showDeleteConfirmDialog = true },
             )
         }
 
