@@ -129,7 +129,7 @@ class AddTransactionViewModel(
                             selectedCategory = selectedCat,
                             selectedType = transaction.type,
                             title = transaction.title,
-                            amount = transaction.amount.toString(),
+                            amount = kotlin.math.abs(transaction.amount).toString(),
                             notes = transaction.notes,
                             payee = transaction.payee,
                             location = transaction.location,
@@ -168,7 +168,11 @@ class AddTransactionViewModel(
             is AddTransactionEvent.SelectType -> selectType(event.type)
             is AddTransactionEvent.SelectPaymentType -> selectPaymentType(event.paymentType)
             is AddTransactionEvent.UpdateTitle -> _state.update { it.copy(title = event.title) }
-            is AddTransactionEvent.UpdateAmount -> _state.update { it.copy(amount = event.amount) }
+            is AddTransactionEvent.UpdateAmount -> {
+                // Memorizza sempre il valore assoluto per la visualizzazione
+                val absoluteAmount = event.amount.toDoubleOrNull()?.let { kotlin.math.abs(it).toString() } ?: event.amount
+                _state.update { it.copy(amount = absoluteAmount) }
+            }
             is AddTransactionEvent.UpdateNotes -> _state.update { it.copy(notes = event.notes) }
             is AddTransactionEvent.UpdatePayee -> _state.update { it.copy(payee = event.payee) }
             is AddTransactionEvent.UpdateLocation -> _state.update { it.copy(location = event.location) }
