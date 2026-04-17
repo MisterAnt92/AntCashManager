@@ -41,4 +41,7 @@ class TransactionRepositoryImpl(
         transactionDao.getRecurringTransactions().map { entities ->
             entities.map { it.toDomain() }
         }
+
+    override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) =
+        transactionDao.updateCategoryData(categoryName, icon, color)
 }

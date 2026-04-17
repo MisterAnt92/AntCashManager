@@ -13,14 +13,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.TrendingDown
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
+import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Repeat
-import androidx.compose.material.icons.filled.TrendingDown
-import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -31,6 +33,7 @@ import com.antcashmanager.android.ui.components.AnimatedCard
 import com.antcashmanager.android.ui.components.AnimatedListItem
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.text.TransactionAmountText
+import com.antcashmanager.android.ui.screen.categories.categoryIconMap
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.ExpenseRed
 import com.antcashmanager.android.ui.theme.IncomeGreen
@@ -94,7 +97,7 @@ fun RecentTransactionItem(
                             contentAlignment = Alignment.Center,
                         ) {
                             Icon(
-                                imageVector = if (isIncome) Icons.Default.TrendingUp else Icons.Default.TrendingDown,
+                                imageVector = if (isIncome) Icons.AutoMirrored.Filled.TrendingUp else Icons.AutoMirrored.Filled.TrendingDown,
                                 contentDescription = null,
                                 tint = if (isIncome) IncomeGreen else ExpenseRed,
                                 modifier = Modifier.size(20.dp),
@@ -103,22 +106,34 @@ fun RecentTransactionItem(
                         Spacer(modifier = Modifier.width(12.dp))
                     }
                     TransactionDisplayType.CATEGORY -> {
-                        // Category badge with first letter
+                        // Category badge with icon from category data
+                        val categoryIconVector = categoryIconMap[transaction.categoryIcon]
                         Box(
                             modifier = Modifier
                                 .size(44.dp)
                                 .background(
-                                    color = MaterialTheme.colorScheme.primaryContainer,
+                                    color = Color(transaction.categoryColor),
                                     shape = CircleShape
                                 ),
                             contentAlignment = Alignment.Center,
                         ) {
-                            AppText(
-                                text = transaction.category.take(1).uppercase(),
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            )
+                            if (categoryIconVector != null) {
+                                // Show category icon
+                                Icon(
+                                    imageVector = categoryIconVector,
+                                    contentDescription = transaction.category,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(24.dp),
+                                )
+                            } else {
+                                // Fallback: show first letter of category name
+                                AppText(
+                                    text = transaction.category.take(1).uppercase(),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold,
+                                )
+                            }
                         }
                         Spacer(modifier = Modifier.width(12.dp))
                     }
@@ -208,6 +223,8 @@ private fun RecentTransactionItemIncomePreview() {
                 category = "Work",
                 type = TransactionType.INCOME,
                 timestamp = System.currentTimeMillis(),
+                categoryIcon = "payments",
+                categoryColor = 0xFF81C784,
             ),
         )
     }
@@ -226,6 +243,8 @@ private fun RecentTransactionItemExpensePreview() {
                 type = TransactionType.EXPENSE,
                 timestamp = System.currentTimeMillis(),
                 notes = "Weekly shopping",
+                categoryIcon = "restaurant",
+                categoryColor = 0xFFE57373,
             ),
         )
     }
@@ -245,6 +264,8 @@ private fun RecentTransactionItemRecurringExpensePreview() {
                 timestamp = System.currentTimeMillis(),
                 isRecurring = true,
                 recurrenceInterval = "monthly",
+                categoryIcon = "receipt_long",
+                categoryColor = 0xFFFFB74D,
             ),
         )
     }
@@ -280,6 +301,8 @@ private fun TransactionItemCategoryPreview() {
                 category = "Food",
                 type = TransactionType.EXPENSE,
                 timestamp = System.currentTimeMillis(),
+                categoryIcon = "restaurant",
+                categoryColor = 0xFFE57373,
             ),
             displayType = TransactionDisplayType.CATEGORY,
         )
@@ -303,4 +326,3 @@ private fun TransactionItemNonePreview() {
         )
     }
 }
-

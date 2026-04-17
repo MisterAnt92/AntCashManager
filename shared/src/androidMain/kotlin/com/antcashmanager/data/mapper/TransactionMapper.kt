@@ -23,6 +23,8 @@ fun TransactionEntity.toDomain(): Transaction = Transaction(
     } catch (_: IllegalArgumentException) {
         PaymentType.ELECTRONIC
     },
+    categoryIcon = categoryIcon,
+    categoryColor = categoryColor,
 )
 
 fun Transaction.toEntity(): TransactionEntity = TransactionEntity(
@@ -39,4 +41,6 @@ fun Transaction.toEntity(): TransactionEntity = TransactionEntity(
     tags = tags,
     recurrenceInterval = recurrenceInterval,
     paymentType = paymentType.name,
+    categoryIcon = categoryIcon,
+    categoryColor = categoryColor,
 )

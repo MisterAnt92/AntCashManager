@@ -39,10 +39,21 @@ sealed interface HomeEvent {
 
 class HomeViewModel(
     transactionRepository: TransactionRepository,
+    categoryRepository: com.antcashmanager.domain.repository.CategoryRepository,
 ) : ViewModel() {
 
     // ── UseCases ──
     private val getTransactionsUseCase = GetTransactionsUseCase(transactionRepository)
+
+    // ── Categories cache for enriching transactions ──
+    private val categoriesCache: StateFlow<Map<String, com.antcashmanager.domain.model.Category>> =
+        categoryRepository.getAllCategories()
+            .map { categories -> categories.associateBy { it.name } }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = emptyMap()
+            )
 
     // ── Internal filter state ──
     private val _filterState = MutableStateFlow(FilterState())
@@ -56,13 +67,28 @@ class HomeViewModel(
         getTransactionsUseCase(),
         _filterState,
         _selectedTransactionState,
-    ) { transactions, filterState, selectedTransaction ->
+        categoriesCache,
+    ) { transactions, filterState, selectedTransaction, categoryCache ->
         val filtered = transactions.filter {
             it.timestamp in filterState.dateRangeFrom..filterState.dateRangeTo
         }
 
+        // Enrich transactions with category icon and color from cache
+        val enrichedFiltered = filtered.map { transaction ->
+            val category = categoryCache[transaction.category]
+            if (category != null && (transaction.categoryIcon.isEmpty() || transaction.categoryColor == 0xFF90A4AE)) {
+                // Update transaction with category data
+                transaction.copy(
+                    categoryIcon = category.icon,
+                    categoryColor = category.color
+                )
+            } else {
+                transaction
+            }
+        }
+
         // Transform amounts based on transaction type - EXPENSE should be negative
-        val transformedTransactions = filtered.withCorrectAmounts()
+        val transformedTransactions = enrichedFiltered.withCorrectAmounts()
 
         val totalIncome = transformedTransactions.calculateTotalIncome()
         val totalExpense = transformedTransactions.calculateTotalExpense() // This will be negative

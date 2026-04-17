@@ -27,4 +27,8 @@ data class TransactionEntity(
     val recurrenceInterval: String = "",
     @ColumnInfo(name = "payment_type", defaultValue = "ELECTRONIC")
     val paymentType: String = "ELECTRONIC",
+    @ColumnInfo(name = "category_icon", defaultValue = "")
+    val categoryIcon: String = "",
+    @ColumnInfo(name = "category_color", defaultValue = "9474862")
+    val categoryColor: Long = 9474862, // 0xFF90A4AE in decimal
 )

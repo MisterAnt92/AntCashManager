@@ -15,6 +15,7 @@ data class HomeState(
     val balance: Double = 0.0,
     val balanceByPaymentType: Map<PaymentType, Double> = emptyMap(),
     val isLoading: Boolean = false,
+    val isSyncingCategories: Boolean = false,
     val error: String? = null,
     val selectedPresetIndex: Int = 1,
     val dateRangeFrom: Long = System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000),

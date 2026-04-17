@@ -12,4 +12,5 @@ interface TransactionRepository {
     suspend fun deleteAllTransactions()
     fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>>
     fun getRecurringTransactions(): Flow<List<Transaction>>
+    suspend fun updateCategoryData(categoryName: String, icon: String, color: Long)
 }

@@ -37,4 +37,7 @@ interface TransactionDao {
 
     @Query("SELECT * FROM transactions WHERE is_recurring = 1 ORDER BY timestamp DESC")
     fun getRecurringTransactions(): Flow<List<TransactionEntity>>
+
+    @Query("UPDATE transactions SET category_icon = :icon, category_color = :color WHERE category = :categoryName")
+    suspend fun updateCategoryData(categoryName: String, icon: String, color: Long)
 }

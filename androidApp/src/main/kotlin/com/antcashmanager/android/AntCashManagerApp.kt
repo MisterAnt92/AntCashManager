@@ -49,6 +49,13 @@ class AntCashManagerApp : Application() {
 
         val expenseCategories = listOf(
             Category(
+                name = "Non categorizzato",
+                icon = "more_horiz",
+                color = 0xFF90A4AE,
+                type = "EXPENSE",
+                isDefault = true
+            ),
+            Category(
                 name = "Casa",
                 icon = "home",
                 color = 0xFF4FC3F7,
@@ -121,6 +128,13 @@ class AntCashManagerApp : Application() {
         )
 
         val incomeCategories = listOf(
+            Category(
+                name = "Non categorizzato",
+                icon = "more_horiz",
+                color = 0xFF90A4AE,
+                type = "INCOME",
+                isDefault = true
+            ),
             Category(
                 name = "Stipendio",
                 icon = "payments",

@@ -19,6 +19,9 @@ class CategoryRepositoryImpl(
     override suspend fun getCategoryById(id: Long): Category? =
         categoryDao.getCategoryById(id)?.toDomain()
 
+    override suspend fun getCategoryByName(name: String): Category? =
+        categoryDao.getCategoryByName(name)?.toDomain()
+
     override suspend fun insertCategory(category: Category): Long =
         categoryDao.insertCategory(category.toEntity())
 

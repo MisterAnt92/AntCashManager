@@ -61,6 +61,7 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     transactionRepository: TransactionRepository,
     settingsRepository: SettingsRepository,
+    categoryRepository: com.antcashmanager.domain.repository.CategoryRepository,
 ) {
     Logger.d("HomeScreen") { "Displaying HomeScreen" }
 
@@ -68,7 +69,7 @@ fun HomeScreen(
         factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                HomeViewModel(transactionRepository) as T
+                HomeViewModel(transactionRepository, categoryRepository) as T
         },
     )
 

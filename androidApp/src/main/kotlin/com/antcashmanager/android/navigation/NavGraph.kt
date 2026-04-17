@@ -114,6 +114,7 @@ fun AntCashManagerNavHost(
                     HomeScreen(
                         transactionRepository = transactionRepository,
                         settingsRepository = settingsRepository,
+                        categoryRepository = categoryRepository,
                     )
                 }
                 composable(BottomNavItem.Charts.route) {
