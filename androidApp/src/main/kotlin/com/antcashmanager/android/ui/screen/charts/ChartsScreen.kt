@@ -118,7 +118,7 @@ internal fun ChartsContent(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp)
-            .padding(top = 16.dp, bottom = 80.dp),
+            .padding(bottom = 80.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),

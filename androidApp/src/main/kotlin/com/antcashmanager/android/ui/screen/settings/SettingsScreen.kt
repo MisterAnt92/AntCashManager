@@ -312,7 +312,7 @@ internal fun SettingsContent(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp)
-            .padding(top = 16.dp, bottom = 24.dp),
+            .padding(bottom = 24.dp),
     ) {
         // Detect multiple taps on title to trigger debug import when in debug build
         var titleTapCount by remember { mutableStateOf(0) }
@@ -346,7 +346,7 @@ internal fun SettingsContent(
             )
             HelpButton(onHelpClick = { showHelpDialog = true })
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         // ── Appearance Section ──
         AppCardSectionHeader(title = stringResource(R.string.settings_appearance))
