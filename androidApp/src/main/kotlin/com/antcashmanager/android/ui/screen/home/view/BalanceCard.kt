@@ -33,16 +33,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AnimatedCard
+import com.antcashmanager.android.ui.components.AppIcon
 import com.antcashmanager.android.ui.components.FadeInOnAppear
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.text.BalanceText
@@ -77,28 +80,13 @@ fun BalanceCard(
                     .padding(28.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                // Title with ant and piggy bank
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    AppText(
-                        text = "🐜",
-                        style = MaterialTheme.typography.titleLarge,
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    AppText(
-                        text = stringResource(R.string.home_total_balance),
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    AppText(
-                        text = "🐷",
-                        style = MaterialTheme.typography.titleLarge,
-                    )
-                }
+                // Title
+                AppText(
+                    text = stringResource(R.string.home_total_balance),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
+                    fontWeight = FontWeight.SemiBold,
+                )
                 Spacer(modifier = Modifier.height(12.dp))
                 BalanceText(
                     amount = balance,
@@ -175,15 +163,13 @@ private fun PaymentTypeBreakdown(
         }
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            orderedPaymentTypes.forEachIndexed { index, (paymentType, amount) ->
-                if (index > 0) {
-                    Spacer(modifier = Modifier.width(12.dp))
-                }
-
+            orderedPaymentTypes.forEach { (paymentType, amount) ->
                 FadeInOnAppear(
                     durationMillis = if (reduceMotion) 0 else 300,
                 ) {
@@ -226,26 +212,30 @@ private fun PaymentTypeItem(
         shape = RoundedCornerShape(12.dp),
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+            modifier = Modifier
+                .padding(horizontal = 12.dp, vertical = 10.dp)
+                .width(100.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                modifier = Modifier.size(20.dp),
+                modifier = Modifier.size(22.dp),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(6.dp))
             AppText(
                 text = paymentTypeName,
-                style = MaterialTheme.typography.labelSmall,
+                style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
-            Spacer(modifier = Modifier.height(2.dp))
+            Spacer(modifier = Modifier.height(4.dp))
             MoneyText(
                 amount = amount,
-                fontSize = 12,
+                fontSize = 15,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.Bold,
             )
@@ -360,6 +350,53 @@ private fun BalanceCardBreakdownHiddenPreview() {
             balance = 500.00,
             showPaymentTypeBreakdown = true,
             balanceByPaymentType = emptyMap(),
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Balance Card - With Long Labels Test")
+@Composable
+private fun BalanceCardLongLabelsPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        BalanceCard(
+            balance = 4500.00,
+            showPaymentTypeBreakdown = true,
+            balanceByPaymentType = mapOf(
+                PaymentType.ELECTRONIC to 2500.0,
+                PaymentType.CASH to 1500.0,
+                PaymentType.MEAL_VOUCHERS to 500.0,
+            ),
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Balance Card - Large Amounts Test")
+@Composable
+private fun BalanceCardLargeAmountsPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        BalanceCard(
+            balance = 125450.75,
+            showPaymentTypeBreakdown = true,
+            balanceByPaymentType = mapOf(
+                PaymentType.ELECTRONIC to 99999.99,
+                PaymentType.CASH to 12345.50,
+                PaymentType.MEAL_VOUCHERS to 13105.26,
+            ),
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Balance Card - Two Types Only")
+@Composable
+private fun BalanceCardTwoTypesPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        BalanceCard(
+            balance = 5500.00,
+            showPaymentTypeBreakdown = true,
+            balanceByPaymentType = mapOf(
+                PaymentType.ELECTRONIC to 3500.0,
+                PaymentType.MEAL_VOUCHERS to 2000.0,
+            ),
         )
     }
 }

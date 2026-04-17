@@ -42,6 +42,7 @@ fun MoneyText(
     fontWeight: FontWeight? = null,
     fontSize: Int? = null,
     showSign: Boolean = false,
+    maxLines: Int = 1,
 ) {
     val fmt = LocalCurrencyFormat.current
 
@@ -67,6 +68,7 @@ fun MoneyText(
         modifier = modifier,
         style = finalStyle,
         color = color,
+        maxLines = maxLines,
     )
 }
 
