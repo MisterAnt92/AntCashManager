@@ -49,6 +49,21 @@
     <string name="transactions_interval_weekly">Settimanale</string>
     <string name="transactions_interval_monthly">Mensile</string>
     <string name="transactions_interval_yearly">Annuale</string>
+    <!-- Transactions Filters -->
+    <string name="transactions_search">Cerca</string>
+    <string name="transactions_filter">Filtri</string>
+    <string name="transactions_search_label">Cerca transazioni</string>
+    <string name="transactions_search_placeholder">Nome o importo…</string>
+    <string name="transactions_advanced_filters">Filtri avanzati</string>
+    <string name="transactions_clear_filters">Cancella</string>
+    <string name="transactions_filter_type">Tipo transazione</string>
+    <string name="transactions_filter_payment">Tipo pagamento</string>
+    <string name="transactions_filter_category">Categoria</string>
+    <string name="transactions_results_count">Risultati: %1$d</string>
+    <string name="common_all">Tutti</string>
+    <string name="common_clear">Cancella</string>
+    <string name="transaction_type_income">Entrata</string>
+    <string name="transaction_type_expense">Uscita</string>
 
     <!-- Categories Screen -->
     <string name="categories_title">Categorie</string>
@@ -196,9 +211,11 @@
     <string name="dialog_delete">Elimina</string>
     <string name="dialog_add">Aggiungi</string>
 
-    <!-- Common Actions -->
-    <string name="common_confirm">Conferma</string>
-    <string name="common_cancel">Annulla</string>
+     <!-- Common Actions -->
+     <string name="common_confirm">Conferma</string>
+     <string name="common_cancel">Annulla</string>
+     <string name="common_collapse">Comprimi</string>
+     <string name="common_expand">Espandi</string>
 
     <!-- Backup/Restore -->
     <string name="backup_success_title">Backup Completato</string>

@@ -19,7 +19,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,9 +45,7 @@ fun IncomeExpenseRow(
         ) {
             // Income Card
             AnimatedCard(
-                modifier = Modifier
-                    .weight(1f)
-                    .shadow(6.dp, RoundedCornerShape(16.dp)),
+                modifier = Modifier.weight(1f),
                 backgroundColor = MaterialTheme.colorScheme.secondaryContainer,
             ) {
                 Column(
@@ -96,9 +93,7 @@ fun IncomeExpenseRow(
 
             // Expense Card
             AnimatedCard(
-                modifier = Modifier
-                    .weight(1f)
-                    .shadow(6.dp, RoundedCornerShape(16.dp)),
+                modifier = Modifier.weight(1f),
                 backgroundColor = MaterialTheme.colorScheme.errorContainer,
             ) {
                 Column(

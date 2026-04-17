@@ -49,6 +49,21 @@
     <string name="transactions_interval_weekly">Weekly</string>
     <string name="transactions_interval_monthly">Monthly</string>
     <string name="transactions_interval_yearly">Yearly</string>
+    <!-- Transactions Filters -->
+    <string name="transactions_search">Search</string>
+    <string name="transactions_filter">Filters</string>
+    <string name="transactions_search_label">Search transactions</string>
+    <string name="transactions_search_placeholder">Name or amount…</string>
+    <string name="transactions_advanced_filters">Advanced Filters</string>
+    <string name="transactions_clear_filters">Clear</string>
+    <string name="transactions_filter_type">Transaction Type</string>
+    <string name="transactions_filter_payment">Payment Type</string>
+    <string name="transactions_filter_category">Category</string>
+    <string name="transactions_results_count">Results: %1$d</string>
+    <string name="common_all">All</string>
+    <string name="common_clear">Clear</string>
+    <string name="transaction_type_income">Income</string>
+    <string name="transaction_type_expense">Expense</string>
 
     <!-- Categories Screen -->
     <string name="categories_title">Categories</string>

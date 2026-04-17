@@ -42,8 +42,23 @@
     <string name="transactions_interval_daily">Quotidien</string>
     <string name="transactions_interval_weekly">Hebdomadaire</string>
     <string name="transactions_interval_monthly">Mensuel</string>
-    <string name="transactions_interval_yearly">Annuel</string>
-    <string name="categories_title">Cat\u00e9gories</string>
+     <string name="transactions_interval_yearly">Annuel</string>
+     <!-- Transactions Filters -->
+     <string name="transactions_search">Rechercher</string>
+     <string name="transactions_filter">Filtres</string>
+     <string name="transactions_search_label">Rechercher les transactions</string>
+     <string name="transactions_search_placeholder">Nom ou montant…</string>
+     <string name="transactions_advanced_filters">Filtres avancés</string>
+     <string name="transactions_clear_filters">Effacer</string>
+     <string name="transactions_filter_type">Type de transaction</string>
+     <string name="transactions_filter_payment">Type de paiement</string>
+     <string name="transactions_filter_category">Catégorie</string>
+     <string name="transactions_results_count">Résultats : %1$d</string>
+     <string name="common_all">Tous</string>
+     <string name="common_clear">Effacer</string>
+     <string name="transaction_type_income">Revenu</string>
+     <string name="transaction_type_expense">Dépense</string>
+     <string name="categories_title">Catégories</string>
     <string name="categories_empty">Aucune cat\u00e9gorie</string>
     <string name="categories_empty_subtitle">Appuyez sur + pour ajouter votre premi\u00e8re cat\u00e9gorie</string>
     <string name="categories_add">Ajouter une cat\u00e9gorie</string>
@@ -180,9 +195,11 @@
     <string name="dialog_delete">Supprimer</string>
     <string name="dialog_add">Ajouter</string>
 
-    <!-- Common Actions -->
-    <string name="common_confirm">Confirmer</string>
-    <string name="common_cancel">Annuler</string>
+     <!-- Common Actions -->
+     <string name="common_confirm">Confirmer</string>
+     <string name="common_cancel">Annuler</string>
+     <string name="common_collapse">Réduire</string>
+     <string name="common_expand">Développer</string>
 
     <!-- Backup/Restore -->
     <string name="backup_success_title">Sauvegarde Termin\u00e9e</string>
@@ -291,11 +308,17 @@
     <string name="transaction_share_button">Partager la Transaction</string>
     <string name="transaction_share_via">Partagé via</string>
 
-    <!-- Payment Type -->
-    <string name="payment_type_label">Type de Paiement</string>
-    <string name="payment_type_electronic">Paiement Électronique</string>
-    <string name="payment_type_cash">Espèces</string>
-    <string name="add_transaction_payment_type_meal_vouchers">Tickets Repas</string>
+     <!-- Payment Type -->
+     <string name="payment_type_label">Type de Paiement</string>
+     <string name="payment_type_electronic">Paiement Électronique</string>
+     <string name="payment_type_cash">Espèces</string>
+     <string name="payment_type_meal_vouchers">Tickets Repas</string>
+     <!-- Add Transaction Payment Type -->
+     <string name="add_transaction_payment_type">Type de Paiement</string>
+     <string name="add_transaction_select_payment_type">Sélectionner Type de Paiement</string>
+     <string name="add_transaction_payment_type_electronic">Électronique</string>
+     <string name="add_transaction_payment_type_cash">Espèces</string>
+     <string name="add_transaction_payment_type_meal_vouchers">Tickets Repas</string>
 
     <!-- Empty State -->
     <string name="empty_state_no_transactions">Aucune transaction présente</string>
@@ -306,7 +329,6 @@
     <string name="settings_show_payment_breakdown_desc">Afficher la répartition du solde par méthode de paiement sur l\'écran d\'accueil</string>
     <string name="payment_breakdown_label">Solde par Type de Paiement</string>
     <string name="payment_breakdown_item_desc">Solde avec %1$s : %2$.2f</string>
-    <string name="payment_type_meal_vouchers">Tickets Repas</string>
 
     <!-- Transaction Display Type -->
     <string name="settings_transaction_display">Affichage des Icônes de Transactions</string>

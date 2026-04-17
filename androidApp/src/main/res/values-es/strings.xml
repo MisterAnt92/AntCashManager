@@ -42,8 +42,23 @@
     <string name="transactions_interval_daily">Diario</string>
     <string name="transactions_interval_weekly">Semanal</string>
     <string name="transactions_interval_monthly">Mensual</string>
-    <string name="transactions_interval_yearly">Anual</string>
-    <string name="categories_title">Categor\u00edas</string>
+     <string name="transactions_interval_yearly">Anual</string>
+     <!-- Transactions Filters -->
+     <string name="transactions_search">Buscar</string>
+     <string name="transactions_filter">Filtros</string>
+     <string name="transactions_search_label">Buscar transacciones</string>
+     <string name="transactions_search_placeholder">Nombre o cantidad…</string>
+     <string name="transactions_advanced_filters">Filtros avanzados</string>
+     <string name="transactions_clear_filters">Borrar</string>
+     <string name="transactions_filter_type">Tipo de transacción</string>
+     <string name="transactions_filter_payment">Tipo de pago</string>
+     <string name="transactions_filter_category">Categoría</string>
+     <string name="transactions_results_count">Resultados: %1$d</string>
+     <string name="common_all">Todos</string>
+     <string name="common_clear">Borrar</string>
+     <string name="transaction_type_income">Ingreso</string>
+     <string name="transaction_type_expense">Gasto</string>
+     <string name="categories_title">Categorías</string>
     <string name="categories_empty">No hay categor\u00edas</string>
     <string name="categories_empty_subtitle">Toca + para a\u00f1adir tu primera categor\u00eda</string>
     <string name="categories_add">A\u00f1adir Categor\u00eda</string>
@@ -180,9 +195,11 @@
     <string name="dialog_delete">Eliminar</string>
     <string name="dialog_add">A\u00f1adir</string>
 
-    <!-- Common Actions -->
-    <string name="common_confirm">Confirmar</string>
-    <string name="common_cancel">Cancelar</string>
+     <!-- Common Actions -->
+     <string name="common_confirm">Confirmar</string>
+     <string name="common_cancel">Cancelar</string>
+     <string name="common_collapse">Contraer</string>
+     <string name="common_expand">Expandir</string>
 
     <!-- Backup/Restore -->
     <string name="backup_success_title">Copia de Seguridad Completada</string>
@@ -291,11 +308,17 @@
     <string name="transaction_share_button">Compartir Transacción</string>
     <string name="transaction_share_via">Compartido a través de</string>
 
-    <!-- Payment Type -->
-    <string name="payment_type_label">Tipo de Pago</string>
-    <string name="payment_type_electronic">Pago Electrónico</string>
-    <string name="payment_type_cash">Efectivo</string>
-    <string name="add_transaction_payment_type_meal_vouchers">Vales de Comida</string>
+     <!-- Payment Type -->
+     <string name="payment_type_label">Tipo de Pago</string>
+     <string name="payment_type_electronic">Pago Electrónico</string>
+     <string name="payment_type_cash">Efectivo</string>
+     <string name="payment_type_meal_vouchers">Vales de Comida</string>
+     <!-- Add Transaction Payment Type -->
+     <string name="add_transaction_payment_type">Tipo de Pago</string>
+     <string name="add_transaction_select_payment_type">Seleccionar Tipo de Pago</string>
+     <string name="add_transaction_payment_type_electronic">Electrónico</string>
+     <string name="add_transaction_payment_type_cash">Efectivo</string>
+     <string name="add_transaction_payment_type_meal_vouchers">Vales de Comida</string>
 
     <!-- Empty State -->
     <string name="empty_state_no_transactions">No hay transacciones presentes</string>
@@ -306,7 +329,6 @@
     <string name="settings_show_payment_breakdown_desc">Mostrar el desglose del saldo por método de pago en la pantalla de inicio</string>
     <string name="payment_breakdown_label">Saldo por Tipo de Pago</string>
     <string name="payment_breakdown_item_desc">Saldo con %1$s: %2$.2f</string>
-    <string name="payment_type_meal_vouchers">Vales de Comida</string>
 
     <!-- Transaction Display Type -->
     <string name="settings_transaction_display">Visualización de Iconos de Transacciones</string>

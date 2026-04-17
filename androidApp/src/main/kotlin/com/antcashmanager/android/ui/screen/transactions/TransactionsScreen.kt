@@ -1,10 +1,17 @@
 package com.antcashmanager.android.ui.screen.transactions
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,12 +27,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Repeat
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -41,7 +54,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -67,6 +79,8 @@ import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.ExpenseRed
 import com.antcashmanager.android.ui.theme.IncomeGreen
 import com.antcashmanager.android.util.isValidNote
+import com.antcashmanager.domain.model.Category
+import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.model.TransactionType
@@ -114,7 +128,7 @@ fun TransactionsScreen(
 // CONTENT
 // ══════════════════════════════════════════════════════════════════════════════
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 internal fun TransactionsContent(
     state: TransactionsState,
@@ -122,10 +136,9 @@ internal fun TransactionsContent(
     settingsRepository: SettingsRepository,
     navController: NavController? = null,
 ) {
-    // Date picker state
+    // Local UI state for dialogs only (not business logic)
     var showFromDatePicker by remember { mutableStateOf(false) }
     var showToDatePicker by remember { mutableStateOf(false) }
-    var searchQuery by remember { mutableStateOf("") }
     var showHelpDialog by remember { mutableStateOf(false) }
 
     // DateRangeFilter expanded state from settings
@@ -203,7 +216,6 @@ internal fun TransactionsContent(
             FloatingActionButton(
                 onClick = { navController?.navigate("add_transaction") },
                 containerColor = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.shadow(8.dp, RoundedCornerShape(16.dp)),
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -220,7 +232,7 @@ internal fun TransactionsContent(
                 .padding(padding)
                 .padding(start = 16.dp, end = 16.dp, top = 16.dp),
         ) {
-            // Header with Help Button
+            // Header with action icons
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -232,10 +244,111 @@ internal fun TransactionsContent(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground,
                 )
-                HelpButton(onHelpClick = { showHelpDialog = true })
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    // Search toggle button
+                    IconButton(
+                        onClick = { onEvent(TransactionsEvent.ToggleSearchExpanded) },
+                    ) {
+                        Icon(
+                            imageVector = if (state.isSearchExpanded) Icons.Default.Close else Icons.Default.Search,
+                            contentDescription = stringResource(R.string.transactions_search),
+                            tint = if (state.searchQuery.isNotEmpty()) MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+
+                    // Filter toggle button
+                    IconButton(
+                        onClick = { onEvent(TransactionsEvent.ToggleFiltersExpanded) },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.FilterList,
+                            contentDescription = stringResource(R.string.transactions_filter),
+                            tint = if (state.hasActiveFilters) MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+
+                    HelpButton(onHelpClick = { showHelpDialog = true })
+                }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            // Collapsible Search Bar
+            AnimatedVisibility(
+                visible = state.isSearchExpanded,
+                enter = fadeIn() + expandVertically(),
+                exit = fadeOut() + shrinkVertically(),
+            ) {
+                Column {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    OutlinedTextField(
+                        value = state.searchQuery,
+                        onValueChange = { onEvent(TransactionsEvent.UpdateSearchQuery(it)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text(stringResource(R.string.transactions_search_label)) },
+                        placeholder = { Text(stringResource(R.string.transactions_search_placeholder)) },
+                        singleLine = true,
+                        shape = RoundedCornerShape(12.dp),
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        },
+                        trailingIcon = {
+                            if (state.searchQuery.isNotEmpty()) {
+                                IconButton(onClick = { onEvent(TransactionsEvent.UpdateSearchQuery("")) }) {
+                                    Icon(
+                                        imageVector = Icons.Default.Close,
+                                        contentDescription = stringResource(R.string.common_clear),
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                }
+                            }
+                        },
+                    )
+                }
+            }
+
+            // Collapsible Filters Card
+            AnimatedVisibility(
+                visible = state.isFiltersExpanded,
+                enter = fadeIn() + expandVertically(),
+                exit = fadeOut() + shrinkVertically(),
+            ) {
+                Column {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    FilterCard(
+                        categories = state.categories,
+                        selectedCategory = state.selectedCategory,
+                        selectedTransactionType = state.selectedTransactionType,
+                        selectedPaymentType = state.selectedPaymentType,
+                        onCategorySelected = { onEvent(TransactionsEvent.UpdateCategoryFilter(it)) },
+                        onTransactionTypeSelected = { onEvent(TransactionsEvent.UpdateTransactionTypeFilter(it)) },
+                        onPaymentTypeSelected = { onEvent(TransactionsEvent.UpdatePaymentTypeFilter(it)) },
+                        onClearFilters = { onEvent(TransactionsEvent.ClearAllFilters) },
+                    )
+                }
+            }
+
+            // Active filters indicator (compact) when filters collapsed
+            if (state.hasActiveFilters && !state.isFiltersExpanded) {
+                Spacer(modifier = Modifier.height(8.dp))
+                ActiveFiltersRow(
+                    searchQuery = state.searchQuery,
+                    selectedCategory = state.selectedCategory,
+                    selectedTransactionType = state.selectedTransactionType,
+                    selectedPaymentType = state.selectedPaymentType,
+                    onClearAll = { onEvent(TransactionsEvent.ClearAllFilters) },
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
 
             // Date Range Filter
             DateRangeFilter(
@@ -254,30 +367,17 @@ internal fun TransactionsContent(
                 onToDateEdit = { showToDatePicker = true },
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-            // Search Bar
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                modifier = Modifier.fillMaxWidth(),
-                label = { Text("Cerca per nome o importo...") },
-                placeholder = { Text("Es: Stipendio, 100") },
-                singleLine = true,
-                shape = RoundedCornerShape(12.dp),
-                isError = searchQuery.length > 100,
-            )
-
-            if (searchQuery.isNotEmpty()) {
+            // Results count when filters active
+            if (state.hasActiveFilters) {
                 AppText(
-                    text = "Risultati trovati: ${state.filteredTransactions.size}",
+                    text = stringResource(R.string.transactions_results_count, state.filteredTransactions.size),
                     style = MaterialTheme.typography.labelSmall,
-                    modifier = Modifier.padding(top = 8.dp),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+                Spacer(modifier = Modifier.height(8.dp))
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
 
             // Content based on state
             when {
@@ -286,9 +386,297 @@ internal fun TransactionsContent(
                 else -> TransactionsList(
                     transactions = state.filteredTransactions,
                     onDelete = { onEvent(TransactionsEvent.DeleteTransaction(it)) },
-                    navController = navController, // pass navController here
+                    navController = navController,
                 )
             }
+        }
+    }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// FILTER COMPONENTS
+// ══════════════════════════════════════════════════════════════════════════════
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun FilterCard(
+    categories: List<Category>,
+    selectedCategory: String?,
+    selectedTransactionType: TransactionType?,
+    selectedPaymentType: PaymentType?,
+    onCategorySelected: (String?) -> Unit,
+    onTransactionTypeSelected: (TransactionType?) -> Unit,
+    onPaymentTypeSelected: (PaymentType?) -> Unit,
+    onClearFilters: () -> Unit,
+) {
+    AnimatedCard(
+        modifier = Modifier.fillMaxWidth(),
+        backgroundColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            // Header with clear button
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                AppText(
+                    text = stringResource(R.string.transactions_advanced_filters),
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+
+                TextButton(onClick = onClearFilters) {
+                    Text(
+                        text = stringResource(R.string.transactions_clear_filters),
+                        style = MaterialTheme.typography.labelSmall,
+                    )
+                }
+            }
+
+            // Transaction Type Filter
+            Column {
+                AppText(
+                    text = stringResource(R.string.transactions_filter_type),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    FilterChip(
+                        selected = selectedTransactionType == null,
+                        onClick = { onTransactionTypeSelected(null) },
+                        label = { Text(stringResource(R.string.common_all), maxLines = 1) },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        ),
+                    )
+                    FilterChip(
+                        selected = selectedTransactionType == TransactionType.INCOME,
+                        onClick = {
+                            onTransactionTypeSelected(
+                                if (selectedTransactionType == TransactionType.INCOME) null
+                                else TransactionType.INCOME
+                            )
+                        },
+                        label = { Text(stringResource(R.string.transaction_type_income), maxLines = 1) },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.ArrowDownward,
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp),
+                                tint = IncomeGreen,
+                            )
+                        },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = IncomeGreen.copy(alpha = 0.2f),
+                        ),
+                    )
+                    FilterChip(
+                        selected = selectedTransactionType == TransactionType.EXPENSE,
+                        onClick = {
+                            onTransactionTypeSelected(
+                                if (selectedTransactionType == TransactionType.EXPENSE) null
+                                else TransactionType.EXPENSE
+                            )
+                        },
+                        label = { Text(stringResource(R.string.transaction_type_expense), maxLines = 1) },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.ArrowUpward,
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp),
+                                tint = ExpenseRed,
+                            )
+                        },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = ExpenseRed.copy(alpha = 0.2f),
+                        ),
+                    )
+                }
+            }
+
+            // Payment Type Filter
+            Column {
+                AppText(
+                    text = stringResource(R.string.transactions_filter_payment),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    FilterChip(
+                        selected = selectedPaymentType == null,
+                        onClick = { onPaymentTypeSelected(null) },
+                        label = { Text(stringResource(R.string.common_all), maxLines = 1) },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        ),
+                    )
+                    PaymentType.values().forEach { paymentType ->
+                        FilterChip(
+                            selected = selectedPaymentType == paymentType,
+                            onClick = {
+                                onPaymentTypeSelected(
+                                    if (selectedPaymentType == paymentType) null else paymentType
+                                )
+                            },
+                            label = {
+                                Text(
+                                    text = when (paymentType) {
+                                        PaymentType.ELECTRONIC -> stringResource(R.string.payment_type_electronic)
+                                        PaymentType.CASH -> stringResource(R.string.payment_type_cash)
+                                        PaymentType.MEAL_VOUCHERS -> stringResource(R.string.payment_type_meal_vouchers)
+                                    },
+                                    maxLines = 1,
+                                )
+                            },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            ),
+                        )
+                    }
+                }
+            }
+
+            // Category Filter (only show if categories available)
+            if (categories.isNotEmpty()) {
+                Column {
+                    AppText(
+                        text = stringResource(R.string.transactions_filter_category),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        FilterChip(
+                            selected = selectedCategory == null,
+                            onClick = { onCategorySelected(null) },
+                            label = { Text(stringResource(R.string.common_all), maxLines = 1) },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            ),
+                        )
+                        categories.take(8).forEach { category ->
+                            FilterChip(
+                                selected = selectedCategory == category.name,
+                                onClick = {
+                                    onCategorySelected(
+                                        if (selectedCategory == category.name) null else category.name
+                                    )
+                                },
+                                label = { Text(category.name, maxLines = 1) },
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                                ),
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun ActiveFiltersRow(
+    searchQuery: String,
+    selectedCategory: String?,
+    selectedTransactionType: TransactionType?,
+    selectedPaymentType: PaymentType?,
+    onClearAll: () -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        FlowRow(
+            modifier = Modifier.weight(1f),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            if (searchQuery.isNotEmpty()) {
+                FilterChip(
+                    selected = true,
+                    onClick = { },
+                    label = {
+                        Text(
+                            text = "\"$searchQuery\"",
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    },
+                    modifier = Modifier.height(28.dp),
+                )
+            }
+            selectedTransactionType?.let { type ->
+                FilterChip(
+                    selected = true,
+                    onClick = { },
+                    label = {
+                        Text(
+                            text = when (type) {
+                                TransactionType.INCOME -> stringResource(R.string.transaction_type_income)
+                                TransactionType.EXPENSE -> stringResource(R.string.transaction_type_expense)
+                            },
+                            maxLines = 1,
+                        )
+                    },
+                    modifier = Modifier.height(28.dp),
+                )
+            }
+            selectedPaymentType?.let { payment ->
+                FilterChip(
+                    selected = true,
+                    onClick = { },
+                    label = {
+                        Text(
+                            text = when (payment) {
+                                PaymentType.ELECTRONIC -> stringResource(R.string.payment_type_electronic)
+                                PaymentType.CASH -> stringResource(R.string.payment_type_cash)
+                                PaymentType.MEAL_VOUCHERS -> stringResource(R.string.payment_type_meal_vouchers)
+                            },
+                            maxLines = 1,
+                        )
+                    },
+                    modifier = Modifier.height(28.dp),
+                )
+            }
+            selectedCategory?.let { category ->
+                FilterChip(
+                    selected = true,
+                    onClick = { },
+                    label = { Text(category, maxLines = 1) },
+                    modifier = Modifier.height(28.dp),
+                )
+            }
+        }
+
+        IconButton(
+            onClick = onClearAll,
+            modifier = Modifier.size(32.dp),
+        ) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = stringResource(R.string.transactions_clear_filters),
+                modifier = Modifier.size(18.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }
@@ -397,7 +785,6 @@ private fun TransactionItem(transaction: Transaction, onClick: (() -> Unit)? = n
         AnimatedCard(
             modifier = Modifier
                 .fillMaxWidth()
-                .shadow(4.dp, RoundedCornerShape(12.dp))
                 .let { if (onClick != null) it.clickable { onClick() } else it },
             backgroundColor = cardBackgroundColor,
         ) {

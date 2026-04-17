@@ -32,7 +32,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -94,13 +93,7 @@ fun BalanceCard(
                     fontSize = 32,
                 )
                 Box(
-                    modifier = Modifier
-                        .padding(top = 4.dp)
-                        .shadow(
-                            elevation = 0.1.dp,
-                            shape = RoundedCornerShape(50.dp),
-                        )
-                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                 ) {
                     AppText(
                         text = if (balance >= 0) {

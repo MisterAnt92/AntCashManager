@@ -49,7 +49,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -76,8 +75,7 @@ fun AnimatedCard(
     Card(
         modifier = modifier
             .scale(scale.value)
-            .alpha(alpha.value)
-            .shadow(8.dp, RoundedCornerShape(borderRadius.dp)),
+            .alpha(alpha.value),
         colors = CardDefaults.cardColors(containerColor = backgroundColor),
         shape = RoundedCornerShape(borderRadius.dp),
     ) {
