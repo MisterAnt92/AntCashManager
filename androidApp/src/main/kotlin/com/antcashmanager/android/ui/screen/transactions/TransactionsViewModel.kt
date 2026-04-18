@@ -51,6 +51,8 @@ sealed interface TransactionsEvent {
     data class UpdatePaymentTypeFilter(val paymentType: PaymentType?) : TransactionsEvent
     data object ToggleSearchExpanded : TransactionsEvent
     data object ToggleFiltersExpanded : TransactionsEvent
+    data object ApplyFilters : TransactionsEvent
+    data object CancelFilterChanges : TransactionsEvent
     data object ClearAllFilters : TransactionsEvent
 
     // Transaction CRUD events
@@ -129,6 +131,10 @@ class TransactionsViewModel(
             selectedCategory = filterState.selectedCategory,
             selectedTransactionType = filterState.selectedTransactionType,
             selectedPaymentType = filterState.selectedPaymentType,
+            pendingSearchQuery = filterState.pendingSearchQuery,
+            pendingCategory = filterState.pendingCategory,
+            pendingTransactionType = filterState.pendingTransactionType,
+            pendingPaymentType = filterState.pendingPaymentType,
             isSearchExpanded = filterState.isSearchExpanded,
             isFiltersExpanded = filterState.isFiltersExpanded,
         )
@@ -153,6 +159,8 @@ class TransactionsViewModel(
             is TransactionsEvent.UpdatePaymentTypeFilter -> updatePaymentTypeFilter(event.paymentType)
             is TransactionsEvent.ToggleSearchExpanded -> toggleSearchExpanded()
             is TransactionsEvent.ToggleFiltersExpanded -> toggleFiltersExpanded()
+            is TransactionsEvent.ApplyFilters -> applyFilters()
+            is TransactionsEvent.CancelFilterChanges -> cancelFilterChanges()
             is TransactionsEvent.ClearAllFilters -> clearAllFilters()
 
             // Transaction CRUD events
@@ -179,19 +187,19 @@ class TransactionsViewModel(
 
     // ── Private Methods - Search & Filters ──
     private fun updateSearchQuery(query: String) {
-        _filterState.update { it.copy(searchQuery = query) }
+        _filterState.update { it.copy(pendingSearchQuery = query) }
     }
 
     private fun updateCategoryFilter(category: String?) {
-        _filterState.update { it.copy(selectedCategory = category) }
+        _filterState.update { it.copy(pendingCategory = category) }
     }
 
     private fun updateTransactionTypeFilter(type: TransactionType?) {
-        _filterState.update { it.copy(selectedTransactionType = type) }
+        _filterState.update { it.copy(pendingTransactionType = type) }
     }
 
     private fun updatePaymentTypeFilter(paymentType: PaymentType?) {
-        _filterState.update { it.copy(selectedPaymentType = paymentType) }
+        _filterState.update { it.copy(pendingPaymentType = paymentType) }
     }
 
     private fun toggleSearchExpanded() {
@@ -202,6 +210,28 @@ class TransactionsViewModel(
         _filterState.update { it.copy(isFiltersExpanded = !it.isFiltersExpanded) }
     }
 
+    private fun applyFilters() {
+        _filterState.update {
+            it.copy(
+                searchQuery = it.pendingSearchQuery,
+                selectedCategory = it.pendingCategory,
+                selectedTransactionType = it.pendingTransactionType,
+                selectedPaymentType = it.pendingPaymentType,
+            )
+        }
+    }
+
+    private fun cancelFilterChanges() {
+        _filterState.update {
+            it.copy(
+                pendingSearchQuery = it.searchQuery,
+                pendingCategory = it.selectedCategory,
+                pendingTransactionType = it.selectedTransactionType,
+                pendingPaymentType = it.selectedPaymentType,
+            )
+        }
+    }
+
     private fun clearAllFilters() {
         _filterState.update {
             it.copy(
@@ -209,6 +239,10 @@ class TransactionsViewModel(
                 selectedCategory = null,
                 selectedTransactionType = null,
                 selectedPaymentType = null,
+                pendingSearchQuery = "",
+                pendingCategory = null,
+                pendingTransactionType = null,
+                pendingPaymentType = null,
             )
         }
     }
@@ -270,12 +304,52 @@ private data class FilterState(
     val selectedPresetIndex: Int = 1,
     val dateRangeFrom: Long = System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000),
     val dateRangeTo: Long = System.currentTimeMillis(),
-    // Search & Filters
+    // Search & Filters - Active (confirmed)
     val searchQuery: String = "",
     val selectedCategory: String? = null,
     val selectedTransactionType: TransactionType? = null,
     val selectedPaymentType: PaymentType? = null,
+    // Pending (temporary) filters - awaiting confirmation
+    val pendingSearchQuery: String = "",
+    val pendingCategory: String? = null,
+    val pendingTransactionType: TransactionType? = null,
+    val pendingPaymentType: PaymentType? = null,
     // UI state
     val isSearchExpanded: Boolean = false,
     val isFiltersExpanded: Boolean = false,
-)
+) {
+    /**
+     * Check if pending filters differ from confirmed filters
+     */
+    val hasFilterChanges: Boolean
+        get() = pendingSearchQuery != searchQuery ||
+                pendingCategory != selectedCategory ||
+                pendingTransactionType != selectedTransactionType ||
+                pendingPaymentType != selectedPaymentType
+
+    /**
+     * Get number of active (confirmed) filters
+     */
+    val activeFilterCount: Int
+        get() {
+            var count = 0
+            if (searchQuery.isNotBlank()) count++
+            if (selectedCategory != null) count++
+            if (selectedTransactionType != null) count++
+            if (selectedPaymentType != null) count++
+            return count
+        }
+
+    /**
+     * Get number of pending filters
+     */
+    val pendingFilterCount: Int
+        get() {
+            var count = 0
+            if (pendingSearchQuery.isNotBlank()) count++
+            if (pendingCategory != null) count++
+            if (pendingTransactionType != null) count++
+            if (pendingPaymentType != null) count++
+            return count
+        }
+}

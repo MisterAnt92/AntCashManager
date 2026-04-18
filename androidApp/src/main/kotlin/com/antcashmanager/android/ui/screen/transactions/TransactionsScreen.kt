@@ -34,9 +34,11 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -326,13 +328,19 @@ internal fun TransactionsContent(
                     Spacer(modifier = Modifier.height(12.dp))
                     FilterCard(
                         categories = state.categories,
-                        selectedCategory = state.selectedCategory,
-                        selectedTransactionType = state.selectedTransactionType,
-                        selectedPaymentType = state.selectedPaymentType,
+                        selectedCategory = state.pendingCategory,
+                        selectedTransactionType = state.pendingTransactionType,
+                        selectedPaymentType = state.pendingPaymentType,
                         onCategorySelected = { onEvent(TransactionsEvent.UpdateCategoryFilter(it)) },
                         onTransactionTypeSelected = { onEvent(TransactionsEvent.UpdateTransactionTypeFilter(it)) },
                         onPaymentTypeSelected = { onEvent(TransactionsEvent.UpdatePaymentTypeFilter(it)) },
                         onClearFilters = { onEvent(TransactionsEvent.ClearAllFilters) },
+                        hasFilterChanges = state.hasFilterChanges,
+                        onApplyFilters = {
+                            onEvent(TransactionsEvent.ApplyFilters)
+                            onEvent(TransactionsEvent.ToggleFiltersExpanded)
+                        },
+                        onCancelFilters = { onEvent(TransactionsEvent.CancelFilterChanges) },
                     )
                 }
             }
@@ -409,6 +417,9 @@ private fun FilterCard(
     onTransactionTypeSelected: (TransactionType?) -> Unit,
     onPaymentTypeSelected: (PaymentType?) -> Unit,
     onClearFilters: () -> Unit,
+    hasFilterChanges: Boolean = false,
+    onApplyFilters: () -> Unit = {},
+    onCancelFilters: () -> Unit = {},
 ) {
     AnimatedCard(
         modifier = Modifier.fillMaxWidth(),
@@ -585,6 +596,39 @@ private fun FilterCard(
                                 ),
                             )
                         }
+                    }
+                }
+            }
+
+            // Action buttons footer
+            if (hasFilterChanges) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    OutlinedButton(
+                        onClick = onCancelFilters,
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(40.dp),
+                    ) {
+                        Text(
+                            text = stringResource(R.string.common_cancel),
+                            style = MaterialTheme.typography.labelMedium,
+                        )
+                    }
+                    Button(
+                        onClick = onApplyFilters,
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(40.dp),
+                    ) {
+                        Text(
+                            text = stringResource(R.string.common_confirm),
+                            style = MaterialTheme.typography.labelMedium,
+                        )
                     }
                 }
             }

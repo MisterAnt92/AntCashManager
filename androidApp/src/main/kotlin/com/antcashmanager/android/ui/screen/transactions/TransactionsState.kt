@@ -23,11 +23,17 @@ data class TransactionsState(
     val dateRangeFrom: Long = System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000),
     val dateRangeTo: Long = System.currentTimeMillis(),
 
-    // Search & Filters
+    // Search & Filters - Active (confirmed)
     val searchQuery: String = "",
     val selectedCategory: String? = null,
     val selectedTransactionType: TransactionType? = null,
     val selectedPaymentType: PaymentType? = null,
+
+    // Pending (temporary) filters - awaiting confirmation
+    val pendingSearchQuery: String = "",
+    val pendingCategory: String? = null,
+    val pendingTransactionType: TransactionType? = null,
+    val pendingPaymentType: PaymentType? = null,
 
     // UI state for collapsible sections
     val isSearchExpanded: Boolean = false,
@@ -41,6 +47,41 @@ data class TransactionsState(
                 selectedCategory != null ||
                 selectedTransactionType != null ||
                 selectedPaymentType != null
+
+    /**
+     * Computed property: true if pending filters differ from confirmed filters.
+     */
+    val hasFilterChanges: Boolean
+        get() = pendingSearchQuery != searchQuery ||
+                pendingCategory != selectedCategory ||
+                pendingTransactionType != selectedTransactionType ||
+                pendingPaymentType != selectedPaymentType
+
+    /**
+     * Get number of active (confirmed) filters.
+     */
+    val activeFilterCount: Int
+        get() {
+            var count = 0
+            if (searchQuery.isNotBlank()) count++
+            if (selectedCategory != null) count++
+            if (selectedTransactionType != null) count++
+            if (selectedPaymentType != null) count++
+            return count
+        }
+
+    /**
+     * Get number of pending filters.
+     */
+    val pendingFilterCount: Int
+        get() {
+            var count = 0
+            if (pendingSearchQuery.isNotBlank()) count++
+            if (pendingCategory != null) count++
+            if (pendingTransactionType != null) count++
+            if (pendingPaymentType != null) count++
+            return count
+        }
 
     companion object {
         val PRESETS = listOf(
