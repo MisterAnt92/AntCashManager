@@ -330,12 +330,22 @@
     <string name="payment_breakdown_label">Solde par Type de Paiement</string>
     <string name="payment_breakdown_item_desc">Solde avec %1$s : %2$.2f</string>
 
-    <!-- Transaction Display Type -->
-    <string name="settings_transaction_display">Affichage des Icônes de Transactions</string>
-    <string name="settings_transaction_display_trend">Tendance</string>
-    <string name="settings_transaction_display_category">Catégorie</string>
-    <string name="settings_transaction_display_none">Aucun</string>
-    <string name="dialog_choose_transaction_display">Choisir le type d\'affichage</string>
+     <!-- Transaction Display Type -->
+     <string name="settings_transaction_display">Affichage des Icônes de Transactions</string>
+     <string name="settings_transaction_display_trend">Tendance</string>
+     <string name="settings_transaction_display_category">Catégorie</string>
+     <string name="settings_transaction_display_none">Aucun</string>
+     <string name="dialog_choose_transaction_display">Choisir le type d\'affichage</string>
+
+     <!-- Feedback Email Bodies -->
+     <string name="feedback_email_body_english">Hi AntCashManager Team,\n\nI would like to share some feedback about the app:\n\n[Please describe your feedback here]\n\nThank you!</string>
+     <string name="feedback_email_body_italian">Ciao team di AntCashManager,\n\nVorrei condividere alcuni feedback sull\'app:\n\n[Per favore descrivi il tuo feedback qui]\n\nGrazie!</string>
+     <string name="feedback_email_body_french">Bonjour à l\'équipe d\'AntCashManager,\n\nJ\'aimerais partager des commentaires sur l\'application:\n\n[Veuillez décrire vos commentaires ici]\n\nMerci!</string>
+     <string name="feedback_email_body_german">Hallo AntCashManager-Team,\n\nIch möchte gerne Feedback zur App geben:\n\n[Bitte beschreiben Sie Ihr Feedback hier]\n\nDanke!</string>
+     <string name="feedback_email_body_spanish">Hola equipo de AntCashManager,\n\nMe gustaría compartir comentarios sobre la aplicación:\n\n[Por favor describe tu retroalimentación aquí]\n\n¡Gracias!</string>
+
+     <!-- Feedback Error Messages -->
+     <string name="no_email_app_installed">Aucune application email disponible</string>
 </resources>
 
 

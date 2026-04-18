@@ -107,6 +107,7 @@ fun SettingsScreen(
     navController: NavController,
 ) {
     Logger.d("SettingsScreen") { "Displaying SettingsScreen" }
+    val context = LocalContext.current
     val viewModel: SettingsViewModel = viewModel(
         factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
@@ -156,6 +157,16 @@ fun SettingsScreen(
         onThousandsSeparatorSelected = { viewModel.setThousandsSeparator(it) },
         onResetAllPreferences = { viewModel.resetAllPreferences() },
         onImportDebugData = { ctx -> viewModel.importDebugData(ctx) },
+        onSendFeedbackEmail = { emailBody ->
+            val success = viewModel.sendFeedbackEmail(emailBody, context)
+            if (!success) {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.no_email_app_installed),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        },
         navController = navController,
     )
 }
@@ -194,6 +205,7 @@ internal fun SettingsContent(
     onThousandsSeparatorSelected: (String) -> Unit = {},
     onResetAllPreferences: () -> Unit = {},
     onImportDebugData: (Context) -> Unit = {},
+    onSendFeedbackEmail: (String) -> Unit = {},
     navController: NavController? = null,
 ) {
     var showThemeDialog by remember { mutableStateOf(false) }
@@ -474,6 +486,16 @@ internal fun SettingsContent(
 
         // ── Support Section ──
         AppCardSectionHeader(title = stringResource(R.string.settings_support))
+        val feedbackEmailBody = stringResource(
+            when (currentLanguage) {
+                AppLanguage.ITALIAN -> R.string.feedback_email_body_italian
+                AppLanguage.ENGLISH -> R.string.feedback_email_body_english
+                AppLanguage.FRENCH -> R.string.feedback_email_body_french
+                AppLanguage.GERMAN -> R.string.feedback_email_body_german
+                AppLanguage.SPANISH -> R.string.feedback_email_body_spanish
+                AppLanguage.SYSTEM -> R.string.feedback_email_body_english
+            }
+        )
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             AppCard(
                 title = stringResource(R.string.settings_send_feedback),
@@ -482,14 +504,7 @@ internal fun SettingsContent(
                 iconBackgroundColor = MaterialTheme.colorScheme.secondaryContainer,
                 iconTint = MaterialTheme.colorScheme.onSecondaryContainer,
                 onClick = {
-                    val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
-                        data = Uri.parse("mailto:")
-                        putExtra(Intent.EXTRA_EMAIL, arrayOf("feedback@antcashmanager.com"))
-                        putExtra(Intent.EXTRA_SUBJECT, "AntCashManager Feedback - v$versionName")
-                    }
-                    if (emailIntent.resolveActivity(context.packageManager) != null) {
-                        context.startActivity(emailIntent)
-                    }
+                    onSendFeedbackEmail(feedbackEmailBody)
                 },
             )
             AppCard(

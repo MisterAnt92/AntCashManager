@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.BuildConfig
 import com.antcashmanager.android.data.backup.BackupService
+import com.antcashmanager.android.domain.usecase.feedback.SendFeedbackEmailUseCase
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.PaymentType
@@ -58,6 +59,7 @@ class SettingsViewModel(
     private val getLanguageUseCase = GetLanguageUseCase(settingsRepository)
     private val setLanguageUseCase = SetLanguageUseCase(settingsRepository)
     private val deleteAllTransactionsUseCase = DeleteAllTransactionsUseCase(transactionRepository)
+    private val sendFeedbackEmailUseCase = SendFeedbackEmailUseCase()
 
     private val backupService = BackupService(transactionRepository, categoryRepository)
 
@@ -371,6 +373,20 @@ class SettingsViewModel(
 
     fun resetRestoreResult() {
         _restoreResult.value = RestoreOperationResult.Idle
+    }
+
+    fun sendFeedbackEmail(emailBody: String, applicationContext: Context): Boolean {
+        val success = sendFeedbackEmailUseCase.sendFeedbackEmail(
+            applicationContext,
+            emailBody,
+            BuildConfig.VERSION_NAME
+        )
+        if (success) {
+            Logger.d(TAG) { "Feedback email intent launched successfully" }
+        } else {
+            Logger.w(TAG) { "No email app available to send feedback" }
+        }
+        return success
     }
 }
 
