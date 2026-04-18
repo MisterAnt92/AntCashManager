@@ -24,7 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
-import com.antcashmanager.android.ui.components.AppCategoryCard
+import com.antcashmanager.android.ui.components.card.AppCategoryCard
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType

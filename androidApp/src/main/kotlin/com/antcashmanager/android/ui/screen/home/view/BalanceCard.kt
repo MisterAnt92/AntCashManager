@@ -107,6 +107,8 @@ fun BalanceCard(
                     )
                 }
 
+                Spacer(modifier = Modifier.height(20.dp))
+
                 // Payment Type Breakdown
                 AnimatedVisibility(
                     visible = showPaymentTypeBreakdown && balanceByPaymentType.isNotEmpty(),
@@ -139,7 +141,7 @@ private fun PaymentTypeBreakdown(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 16.dp),
+            .padding(top = 0.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         AppText(
@@ -156,10 +158,8 @@ private fun PaymentTypeBreakdown(
         }
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             orderedPaymentTypes.forEach { (paymentType, amount) ->

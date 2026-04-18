@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.components
+package com.antcashmanager.android.ui.components.card
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

@@ -73,8 +73,8 @@ import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.BuildConfig
 import com.antcashmanager.android.R
-import com.antcashmanager.android.ui.components.AppCard
-import com.antcashmanager.android.ui.components.AppCardSectionHeader
+import com.antcashmanager.android.ui.components.card.AppCard
+import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
 import com.antcashmanager.android.ui.components.AppDivider
 import com.antcashmanager.android.ui.components.AppListItem
 import com.antcashmanager.android.ui.components.AppRadioButton

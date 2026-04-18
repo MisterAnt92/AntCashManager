@@ -49,8 +49,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.antcashmanager.android.R
-import com.antcashmanager.android.ui.components.AppCard
-import com.antcashmanager.android.ui.components.AppCardSectionHeader
+import com.antcashmanager.android.ui.components.card.AppCard
+import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
 import com.antcashmanager.android.ui.components.AppSwitch
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.formatAmount
