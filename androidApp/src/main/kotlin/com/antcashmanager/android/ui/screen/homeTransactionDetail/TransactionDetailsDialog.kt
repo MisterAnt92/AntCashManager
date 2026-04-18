@@ -11,8 +11,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,9 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.antcashmanager.android.R
-import com.antcashmanager.android.ui.components.AnimatedCard
 import com.antcashmanager.android.ui.components.text.AppText
-import com.antcashmanager.android.ui.components.text.TransactionAmountText
 import com.antcashmanager.android.ui.screen.home.view.getRecurrenceIntervalLabel
 import com.antcashmanager.android.ui.screen.homeTransactionDetail.view.TransactionDetailRow
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
@@ -49,10 +47,6 @@ fun TransactionDetailsDialog(
     val context = LocalContext.current
     val viewModel: TransactionDetailsViewModel = viewModel()
     val isIncome = transaction.type == TransactionType.INCOME
-    val containerColor =
-        if (isIncome) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer
-    val onContainerColor =
-        if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onErrorContainer
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -71,36 +65,17 @@ fun TransactionDetailsDialog(
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                // Header Card with Amount
-                AnimatedCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    backgroundColor = containerColor,
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        AppText(
-                            text = transaction.title,
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = onContainerColor,
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        // Mostra importo con segno corretto: negativo per uscite, positivo per entrate
-                        TransactionAmountText(
-                            amount = if (transaction.type == TransactionType.EXPENSE) {
-                                // Per le uscite, assicuriamoci che sia negativo
-                                if (transaction.amount > 0) -transaction.amount else transaction.amount
-                            } else {
-                                // Per le entrate, assicuriamoci che sia positivo
-                                if (transaction.amount < 0) -transaction.amount else transaction.amount
-                            },
-                        )
-                    }
-                }
+                // Title
+                TransactionDetailRow(
+                    label = stringResource(R.string.transaction_details_title),
+                    value = transaction.title,
+                )
+
+                // Amount
+                TransactionDetailRow(
+                    label = stringResource(R.string.transaction_details_amount),
+                    value = "${String.format("%.2f", kotlin.math.abs(transaction.amount))}€",
+                )
 
                 // Category
                 TransactionDetailRow(
@@ -197,7 +172,7 @@ fun TransactionDetailsDialog(
                             val tagsList = transaction.tags.split(",").map { it.trim() }
                                 .filter { it.isNotBlank() }
                             items(tagsList) { tag ->
-                                AssistChip(
+                                SuggestionChip(
                                     onClick = { },
                                     label = {
                                         AppText(
