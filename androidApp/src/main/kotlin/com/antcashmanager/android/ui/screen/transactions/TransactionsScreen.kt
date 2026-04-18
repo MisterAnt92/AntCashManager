@@ -72,6 +72,7 @@ import com.antcashmanager.android.ui.components.AnimatedListItem
 import com.antcashmanager.android.ui.components.AntEmptyState
 import com.antcashmanager.android.ui.components.DateRangeFilter
 import com.antcashmanager.android.ui.components.HelpButton
+import com.antcashmanager.android.ui.components.ScreenHeader
 import com.antcashmanager.android.ui.components.HelpDialogContent
 import com.antcashmanager.android.ui.components.SimpleHelpFeature
 import com.antcashmanager.android.ui.components.SkeletonLoader
@@ -232,52 +233,44 @@ internal fun TransactionsContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(start = 16.dp, end = 16.dp),
+                .padding(start = 16.dp, end = 16.dp, top = 12.dp),
         ) {
             // Header with action icons
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                AppText(
-                    text = stringResource(R.string.transactions_title),
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground,
-                )
-
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    // Search toggle button
-                    IconButton(
-                        onClick = { onEvent(TransactionsEvent.ToggleSearchExpanded) },
+            ScreenHeader(
+                title = stringResource(R.string.transactions_title),
+                actions = {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Icon(
-                            imageVector = if (state.isSearchExpanded) Icons.Default.Close else Icons.Default.Search,
-                            contentDescription = stringResource(R.string.transactions_search),
-                            tint = if (state.searchQuery.isNotEmpty()) MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
+                        // Search toggle button
+                        IconButton(
+                            onClick = { onEvent(TransactionsEvent.ToggleSearchExpanded) },
+                        ) {
+                            Icon(
+                                imageVector = if (state.isSearchExpanded) Icons.Default.Close else Icons.Default.Search,
+                                contentDescription = stringResource(R.string.transactions_search),
+                                tint = if (state.searchQuery.isNotEmpty()) MaterialTheme.colorScheme.primary
+                                else MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
 
-                    // Filter toggle button
-                    IconButton(
-                        onClick = { onEvent(TransactionsEvent.ToggleFiltersExpanded) },
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.FilterList,
-                            contentDescription = stringResource(R.string.transactions_filter),
-                            tint = if (state.hasActiveFilters) MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
+                        // Filter toggle button
+                        IconButton(
+                            onClick = { onEvent(TransactionsEvent.ToggleFiltersExpanded) },
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.FilterList,
+                                contentDescription = stringResource(R.string.transactions_filter),
+                                tint = if (state.hasActiveFilters) MaterialTheme.colorScheme.primary
+                                else MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
 
-                    HelpButton(onHelpClick = { showHelpDialog = true })
-                }
-            }
+                        HelpButton(onHelpClick = { showHelpDialog = true })
+                    }
+                },
+            )
 
             // Collapsible Search Bar
             AnimatedVisibility(

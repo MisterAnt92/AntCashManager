@@ -37,6 +37,7 @@ import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AntEmptyState
 import com.antcashmanager.android.ui.components.DateRangeFilter
 import com.antcashmanager.android.ui.components.HelpButton
+import com.antcashmanager.android.ui.components.ScreenHeader
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.home.view.BalanceCard
 import com.antcashmanager.android.ui.screen.home.view.HelpDialog
@@ -184,24 +185,15 @@ internal fun HomeContent(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 // Header with Help Button
                 item {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                    ) {
-                        AppText(
-                            text = stringResource(R.string.home_dashboard),
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onBackground,
-                        )
-                        HelpButton(onHelpClick = { showHelpDialog = true })
-                    }
+                    ScreenHeader(
+                        title = stringResource(R.string.home_dashboard),
+                        actions = { HelpButton(onHelpClick = { showHelpDialog = true }) },
+                    )
                 }
 
                 // Date Range Filter
@@ -465,4 +457,3 @@ private fun TransactionDetailsDialogExpensePreview() {
         )
     }
 }
-

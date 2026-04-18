@@ -1,5 +1,8 @@
 package com.antcashmanager.android.ui.components
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
@@ -7,10 +10,51 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.text.AppText
+
+// ══════════════════════════════════════════════════════════════════════════════
+// SCREEN HEADER - Unified header for all screens
+// ══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * ScreenHeader - Composable riusabile per i titoli degli screen con icone/azioni
+ * Standardizza padding e allineamento su tutti gli screen
+ *
+ * Utilizzo:
+ * ScreenHeader(
+ *     title = "Title",
+ *     actions = { HelpButton(...) }
+ * )
+ */
+@Composable
+fun ScreenHeader(
+    title: String,
+    modifier: Modifier = Modifier,
+    actions: @Composable (() -> Unit)? = null,
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        AppText(
+            text = title,
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.weight(1f),
+        )
+        if (actions != null) {
+            actions()
+        }
+    }
+}
 
 // ══════════════════════════════════════════════════════════════════════════════
 // APP COMPOSABLE WRAPPERS - Material3 Components with Theme Consistency
@@ -94,4 +138,3 @@ fun AppDivider(
         color = color,
     )
 }
-

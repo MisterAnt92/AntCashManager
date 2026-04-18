@@ -53,6 +53,7 @@ import com.antcashmanager.android.R
 import com.antcashmanager.android.domain.usecase.share.BuildShareTextUseCase
 import com.antcashmanager.android.ui.components.AntEmptyState
 import com.antcashmanager.android.ui.components.HelpButton
+import com.antcashmanager.android.ui.components.ScreenHeader
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.charts.view.BarChartLegend
 import com.antcashmanager.android.ui.screen.charts.view.HelpDialog
@@ -117,22 +118,13 @@ internal fun ChartsContent(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 16.dp, vertical = 12.dp)
             .padding(bottom = 80.dp),
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            AppText(
-                text = stringResource(R.string.charts_title),
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-            HelpButton(onHelpClick = { showHelpDialog = true })
-        }
+        ScreenHeader(
+            title = stringResource(R.string.charts_title),
+            actions = { HelpButton(onHelpClick = { showHelpDialog = true }) },
+        )
         Spacer(modifier = Modifier.height(16.dp))
         // Period filter card
         Card(

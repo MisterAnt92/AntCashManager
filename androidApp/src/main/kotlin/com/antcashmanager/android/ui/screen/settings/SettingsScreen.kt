@@ -76,6 +76,7 @@ import com.antcashmanager.android.ui.components.AppListItem
 import com.antcashmanager.android.ui.components.AppRadioButton
 import com.antcashmanager.android.ui.components.AppSwitch
 import com.antcashmanager.android.ui.components.HelpButton
+import com.antcashmanager.android.ui.components.ScreenHeader
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
 import com.antcashmanager.android.ui.components.text.AppText
@@ -322,13 +323,14 @@ internal fun SettingsContent(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 16.dp, vertical = 12.dp)
             .padding(bottom = 24.dp),
     ) {
         // Detect multiple taps on title to trigger debug import when in debug build
         var titleTapCount by remember { mutableStateOf(0) }
         val context = LocalContext.current
 
+        // Custom header with debug tap functionality
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -339,21 +341,23 @@ internal fun SettingsContent(
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.clickable {
-                    if (BuildConfig.DEBUG) {
-                        titleTapCount += 1
-                        if (titleTapCount >= 5) {
-                            titleTapCount = 0
-                            // call the provided callback which will perform import in ViewModel
-                            onImportDebugData(context)
-                            Toast.makeText(
-                                context,
-                                context.getString(R.string.debug_import_started),
-                                Toast.LENGTH_SHORT
-                            ).show()
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable {
+                        if (BuildConfig.DEBUG) {
+                            titleTapCount += 1
+                            if (titleTapCount >= 5) {
+                                titleTapCount = 0
+                                // call the provided callback which will perform import in ViewModel
+                                onImportDebugData(context)
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.debug_import_started),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         }
-                    }
-                },
+                    },
             )
             HelpButton(onHelpClick = { showHelpDialog = true })
         }

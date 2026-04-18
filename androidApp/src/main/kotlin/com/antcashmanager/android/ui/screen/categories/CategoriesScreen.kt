@@ -82,6 +82,7 @@ import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AntEmptyState
 import com.antcashmanager.android.ui.components.HelpButton
 import com.antcashmanager.android.ui.components.HelpDialogContent
+import com.antcashmanager.android.ui.components.ScreenHeader
 import com.antcashmanager.android.ui.components.SimpleHelpFeature
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.categories.view.HelpDialog
@@ -180,21 +181,12 @@ internal fun CategoriesContent(
                     end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
                     bottom = innerPadding.calculateBottomPadding(),
                 )
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = 16.dp, vertical = 12.dp),
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                AppText(
-                    text = stringResource(R.string.categories_title),
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground,
-                )
-                HelpButton(onHelpClick = { showHelpDialog = true })
-            }
+            ScreenHeader(
+                title = stringResource(R.string.categories_title),
+                actions = { HelpButton(onHelpClick = { showHelpDialog = true }) },
+            )
             Spacer(modifier = Modifier.height(12.dp))
 
             TabRow(selectedTabIndex = selectedTab) {
