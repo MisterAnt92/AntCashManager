@@ -229,181 +229,246 @@ internal fun TransactionsContent(
             }
         },
     ) { padding ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(start = 16.dp, end = 16.dp, top = 12.dp),
+                .padding(start = 16.dp, end = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             // Header with action icons
-            ScreenHeader(
-                title = stringResource(R.string.transactions_title),
-                actions = {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        // Search toggle button
-                        IconButton(
-                            onClick = { onEvent(TransactionsEvent.ToggleSearchExpanded) },
+            item {
+                ScreenHeader(
+                    title = stringResource(R.string.transactions_title),
+                    actions = {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Icon(
-                                imageVector = if (state.isSearchExpanded) Icons.Default.Close else Icons.Default.Search,
-                                contentDescription = stringResource(R.string.transactions_search),
-                                tint = if (state.searchQuery.isNotEmpty()) MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
+                            // Search toggle button
+                            IconButton(
+                                onClick = { onEvent(TransactionsEvent.ToggleSearchExpanded) },
+                            ) {
+                                Icon(
+                                    imageVector = if (state.isSearchExpanded) Icons.Default.Close else Icons.Default.Search,
+                                    contentDescription = stringResource(R.string.transactions_search),
+                                    tint = if (state.searchQuery.isNotEmpty()) MaterialTheme.colorScheme.primary
+                                    else MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
 
-                        // Filter toggle button
-                        IconButton(
-                            onClick = { onEvent(TransactionsEvent.ToggleFiltersExpanded) },
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.FilterList,
-                                contentDescription = stringResource(R.string.transactions_filter),
-                                tint = if (state.hasActiveFilters) MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
+                            // Filter toggle button
+                            IconButton(
+                                onClick = { onEvent(TransactionsEvent.ToggleFiltersExpanded) },
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.FilterList,
+                                    contentDescription = stringResource(R.string.transactions_filter),
+                                    tint = if (state.hasActiveFilters) MaterialTheme.colorScheme.primary
+                                    else MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
 
-                        HelpButton(onHelpClick = { showHelpDialog = true })
-                    }
-                },
-            )
+                            HelpButton(onHelpClick = { showHelpDialog = true })
+                        }
+                    },
+                )
+            }
 
             // Collapsible Search Bar
-            AnimatedVisibility(
-                visible = state.isSearchExpanded,
-                enter = fadeIn() + expandVertically(),
-                exit = fadeOut() + shrinkVertically(),
-            ) {
-                Column {
-                    Spacer(modifier = Modifier.height(12.dp))
-                    OutlinedTextField(
-                        value = state.searchQuery,
-                        onValueChange = { onEvent(TransactionsEvent.UpdateSearchQuery(it)) },
-                        modifier = Modifier.fillMaxWidth(),
-                        label = { Text(stringResource(R.string.transactions_search_label)) },
-                        placeholder = { Text(stringResource(R.string.transactions_search_placeholder)) },
-                        singleLine = true,
-                        shape = RoundedCornerShape(12.dp),
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Search,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        },
-                        trailingIcon = {
-                            if (state.searchQuery.isNotEmpty()) {
-                                IconButton(onClick = { onEvent(TransactionsEvent.UpdateSearchQuery("")) }) {
-                                    Icon(
-                                        imageVector = Icons.Default.Close,
-                                        contentDescription = stringResource(R.string.common_clear),
-                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    )
+            item {
+                AnimatedVisibility(
+                    visible = state.isSearchExpanded,
+                    enter = fadeIn() + expandVertically(),
+                    exit = fadeOut() + shrinkVertically(),
+                ) {
+                    Column {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        OutlinedTextField(
+                            value = state.searchQuery,
+                            onValueChange = { onEvent(TransactionsEvent.UpdateSearchQuery(it)) },
+                            modifier = Modifier.fillMaxWidth(),
+                            label = { Text(stringResource(R.string.transactions_search_label)) },
+                            placeholder = { Text(stringResource(R.string.transactions_search_placeholder)) },
+                            singleLine = true,
+                            shape = RoundedCornerShape(12.dp),
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.Search,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            },
+                            trailingIcon = {
+                                if (state.searchQuery.isNotEmpty()) {
+                                    IconButton(onClick = { onEvent(TransactionsEvent.UpdateSearchQuery("")) }) {
+                                        Icon(
+                                            imageVector = Icons.Default.Close,
+                                            contentDescription = stringResource(R.string.common_clear),
+                                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        )
+                                    }
                                 }
-                            }
-                        },
-                    )
+                            },
+                        )
+                    }
                 }
             }
 
             // Collapsible Filters Card
-            AnimatedVisibility(
-                visible = state.isFiltersExpanded,
-                enter = fadeIn() + expandVertically(),
-                exit = fadeOut() + shrinkVertically(),
-            ) {
-                Column {
-                    Spacer(modifier = Modifier.height(12.dp))
-                    FilterCard(
-                        categories = state.categories,
-                        selectedCategory = state.pendingCategory,
-                        selectedTransactionType = state.pendingTransactionType,
-                        selectedPaymentType = state.pendingPaymentType,
-                        onCategorySelected = { onEvent(TransactionsEvent.UpdateCategoryFilter(it)) },
-                        onTransactionTypeSelected = {
-                            onEvent(
-                                TransactionsEvent.UpdateTransactionTypeFilter(
-                                    it
+            item {
+                AnimatedVisibility(
+                    visible = state.isFiltersExpanded,
+                    enter = fadeIn() + expandVertically(),
+                    exit = fadeOut() + shrinkVertically(),
+                ) {
+                    Column {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        FilterCard(
+                            categories = state.categories,
+                            selectedCategory = state.pendingCategory,
+                            selectedTransactionType = state.pendingTransactionType,
+                            selectedPaymentType = state.pendingPaymentType,
+                            onCategorySelected = { onEvent(TransactionsEvent.UpdateCategoryFilter(it)) },
+                            onTransactionTypeSelected = {
+                                onEvent(
+                                    TransactionsEvent.UpdateTransactionTypeFilter(
+                                        it
+                                    )
                                 )
-                            )
-                        },
-                        onPaymentTypeSelected = {
-                            onEvent(
-                                TransactionsEvent.UpdatePaymentTypeFilter(
-                                    it
+                            },
+                            onPaymentTypeSelected = {
+                                onEvent(
+                                    TransactionsEvent.UpdatePaymentTypeFilter(
+                                        it
+                                    )
                                 )
-                            )
-                        },
-                        onClearFilters = { onEvent(TransactionsEvent.ClearAllFilters) },
-                        hasFilterChanges = state.hasFilterChanges,
-                        onApplyFilters = {
-                            onEvent(TransactionsEvent.ApplyFilters)
-                            onEvent(TransactionsEvent.ToggleFiltersExpanded)
-                        },
-                        onCancelFilters = { onEvent(TransactionsEvent.CancelFilterChanges) },
-                    )
+                            },
+                            onClearFilters = { onEvent(TransactionsEvent.ClearAllFilters) },
+                            hasFilterChanges = state.hasFilterChanges,
+                            onApplyFilters = {
+                                onEvent(TransactionsEvent.ApplyFilters)
+                                onEvent(TransactionsEvent.ToggleFiltersExpanded)
+                            },
+                            onCancelFilters = { onEvent(TransactionsEvent.CancelFilterChanges) },
+                        )
+                    }
                 }
             }
 
             // Active filters indicator (compact) when filters collapsed
-            if (state.hasActiveFilters && !state.isFiltersExpanded) {
-                Spacer(modifier = Modifier.height(8.dp))
-                ActiveFiltersRow(
-                    searchQuery = state.searchQuery,
-                    selectedCategory = state.selectedCategory,
-                    selectedTransactionType = state.selectedTransactionType,
-                    selectedPaymentType = state.selectedPaymentType,
-                    onClearAll = { onEvent(TransactionsEvent.ClearAllFilters) },
+            item {
+                if (state.hasActiveFilters && !state.isFiltersExpanded) {
+                    Column {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        ActiveFiltersRow(
+                            searchQuery = state.searchQuery,
+                            selectedCategory = state.selectedCategory,
+                            selectedTransactionType = state.selectedTransactionType,
+                            selectedPaymentType = state.selectedPaymentType,
+                            onClearAll = { onEvent(TransactionsEvent.ClearAllFilters) },
+                        )
+                    }
+                }
+            }
+
+            item { Spacer(modifier = Modifier.height(12.dp)) }
+
+            // Date Range Filter
+            item {
+                DateRangeFilter(
+                    selectedPresetIndex = state.selectedPresetIndex,
+                    presets = TransactionsState.PRESETS,
+                    dateRangeFrom = state.dateRangeFrom,
+                    dateRangeTo = state.dateRangeTo,
+                    expanded = dateFilterExpanded,
+                    onExpandedChange = { expanded ->
+                        coroutineScope.launch {
+                            settingsRepository.setDateFilterExpanded(expanded)
+                        }
+                    },
+                    onPresetSelected = { onEvent(TransactionsEvent.SelectPreset(it)) },
+                    onFromDateEdit = { showFromDatePicker = true },
+                    onToDateEdit = { showToDatePicker = true },
                 )
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Date Range Filter
-            DateRangeFilter(
-                selectedPresetIndex = state.selectedPresetIndex,
-                presets = TransactionsState.PRESETS,
-                dateRangeFrom = state.dateRangeFrom,
-                dateRangeTo = state.dateRangeTo,
-                expanded = dateFilterExpanded,
-                onExpandedChange = { expanded ->
-                    coroutineScope.launch {
-                        settingsRepository.setDateFilterExpanded(expanded)
-                    }
-                },
-                onPresetSelected = { onEvent(TransactionsEvent.SelectPreset(it)) },
-                onFromDateEdit = { showFromDatePicker = true },
-                onToDateEdit = { showToDatePicker = true },
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
+            item { Spacer(modifier = Modifier.height(12.dp)) }
 
             // Results count when filters active
-            if (state.hasActiveFilters) {
-                AppText(
-                    text = stringResource(
-                        R.string.transactions_results_count,
-                        state.filteredTransactions.size
-                    ),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Spacer(modifier = Modifier.height(8.dp))
+            item {
+                if (state.hasActiveFilters) {
+                    Column {
+                        AppText(
+                            text = stringResource(
+                                R.string.transactions_results_count,
+                                state.filteredTransactions.size
+                            ),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                }
             }
 
             // Content based on state
             when {
-                state.isLoading -> LoadingState()
-                state.filteredTransactions.isEmpty() -> EmptyState()
-                else -> TransactionsList(
-                    transactions = state.filteredTransactions,
-                    onDelete = { onEvent(TransactionsEvent.DeleteTransaction(it)) },
-                    navController = navController,
-                )
+                state.isLoading -> {
+                    items(5) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 4.dp),
+                        ) {
+                            SkeletonLoader(height = 16.dp, cornerRadius = 8)
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
+                                SkeletonLoader(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(12.dp),
+                                    cornerRadius = 6,
+                                )
+                                SkeletonLoader(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(12.dp),
+                                    cornerRadius = 6,
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+                            SkeletonLoader(height = 20.dp, cornerRadius = 8)
+                        }
+                    }
+                    item { Spacer(modifier = Modifier.height(80.dp)) }
+                }
+                state.filteredTransactions.isEmpty() -> {
+                    item {
+                        AntEmptyState(
+                            mascotRes = R.drawable.ic_piggy_bank,
+                            title = stringResource(R.string.empty_state_no_transactions),
+                            subtitle = stringResource(R.string.empty_state_no_transactions_subtitle),
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
+                }
+                else -> {
+                    items(
+                        items = state.filteredTransactions,
+                        key = { it.id },
+                    ) { transaction ->
+                        TransactionItem(
+                            transaction = transaction,
+                            onClick = {
+                                navController?.navigate("add_transaction?transactionId=${transaction.id}")
+                            }
+                        )
+                    }
+                    item { Spacer(modifier = Modifier.height(80.dp)) }
+                }
             }
         }
     }
@@ -747,82 +812,6 @@ private fun ActiveFiltersRow(
 // COMPONENTS
 // ══════════════════════════════════════════════════════════════════════════════
 
-@Composable
-private fun LoadingState() {
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        items(5) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 4.dp),
-            ) {
-                // Header skeleton
-                SkeletonLoader(height = 16.dp, cornerRadius = 8)
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // Subtitle skeleton
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    SkeletonLoader(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(12.dp),
-                        cornerRadius = 6,
-                    )
-                    SkeletonLoader(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(12.dp),
-                        cornerRadius = 6,
-                    )
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // Amount skeleton
-                SkeletonLoader(height = 20.dp, cornerRadius = 8)
-            }
-        }
-        item { Spacer(modifier = Modifier.height(80.dp)) }
-    }
-}
-
-@Composable
-private fun EmptyState() {
-    AntEmptyState(
-        mascotRes = R.drawable.ic_piggy_bank,
-        title = stringResource(R.string.empty_state_no_transactions),
-        subtitle = stringResource(R.string.empty_state_no_transactions_subtitle),
-        modifier = Modifier.fillMaxSize(),
-    )
-}
-
-@Composable
-private fun TransactionsList(
-    transactions: List<Transaction>,
-    onDelete: (Transaction) -> Unit,
-    navController: NavController? = null, // aggiunto parametro opzionale
-) {
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        items(
-            items = transactions,
-            key = { it.id },
-        ) { transaction ->
-            TransactionItem(
-                transaction = transaction,
-                onClick = {
-                    navController?.navigate("add_transaction?transactionId=${transaction.id}")
-                }
-            )
-        }
-        item { Spacer(modifier = Modifier.height(80.dp)) }
-    }
-}
 
 private val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
 
