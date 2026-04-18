@@ -170,9 +170,12 @@ class AddTransactionViewModel(
             is AddTransactionEvent.UpdateTitle -> _state.update { it.copy(title = event.title) }
             is AddTransactionEvent.UpdateAmount -> {
                 // Memorizza sempre il valore assoluto per la visualizzazione
-                val absoluteAmount = event.amount.toDoubleOrNull()?.let { kotlin.math.abs(it).toString() } ?: event.amount
+                val absoluteAmount =
+                    event.amount.toDoubleOrNull()?.let { kotlin.math.abs(it).toString() }
+                        ?: event.amount
                 _state.update { it.copy(amount = absoluteAmount) }
             }
+
             is AddTransactionEvent.UpdateNotes -> _state.update { it.copy(notes = event.notes) }
             is AddTransactionEvent.UpdatePayee -> _state.update { it.copy(payee = event.payee) }
             is AddTransactionEvent.UpdateLocation -> _state.update { it.copy(location = event.location) }

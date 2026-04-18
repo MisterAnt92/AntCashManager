@@ -31,17 +31,17 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -61,7 +61,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -332,8 +331,20 @@ internal fun TransactionsContent(
                         selectedTransactionType = state.pendingTransactionType,
                         selectedPaymentType = state.pendingPaymentType,
                         onCategorySelected = { onEvent(TransactionsEvent.UpdateCategoryFilter(it)) },
-                        onTransactionTypeSelected = { onEvent(TransactionsEvent.UpdateTransactionTypeFilter(it)) },
-                        onPaymentTypeSelected = { onEvent(TransactionsEvent.UpdatePaymentTypeFilter(it)) },
+                        onTransactionTypeSelected = {
+                            onEvent(
+                                TransactionsEvent.UpdateTransactionTypeFilter(
+                                    it
+                                )
+                            )
+                        },
+                        onPaymentTypeSelected = {
+                            onEvent(
+                                TransactionsEvent.UpdatePaymentTypeFilter(
+                                    it
+                                )
+                            )
+                        },
                         onClearFilters = { onEvent(TransactionsEvent.ClearAllFilters) },
                         hasFilterChanges = state.hasFilterChanges,
                         onApplyFilters = {
@@ -381,7 +392,10 @@ internal fun TransactionsContent(
             // Results count when filters active
             if (state.hasActiveFilters) {
                 AppText(
-                    text = stringResource(R.string.transactions_results_count, state.filteredTransactions.size),
+                    text = stringResource(
+                        R.string.transactions_results_count,
+                        state.filteredTransactions.size
+                    ),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -478,7 +492,12 @@ private fun FilterCard(
                                 else TransactionType.INCOME
                             )
                         },
-                        label = { Text(stringResource(R.string.transaction_type_income), maxLines = 1) },
+                        label = {
+                            Text(
+                                stringResource(R.string.transaction_type_income),
+                                maxLines = 1
+                            )
+                        },
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Default.ArrowDownward,
@@ -499,7 +518,12 @@ private fun FilterCard(
                                 else TransactionType.EXPENSE
                             )
                         },
-                        label = { Text(stringResource(R.string.transaction_type_expense), maxLines = 1) },
+                        label = {
+                            Text(
+                                stringResource(R.string.transaction_type_expense),
+                                maxLines = 1
+                            )
+                        },
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Default.ArrowUpward,

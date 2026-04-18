@@ -15,7 +15,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.TrendingDown
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
-import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -90,7 +89,9 @@ fun RecentTransactionItem(
                             modifier = Modifier
                                 .size(44.dp)
                                 .background(
-                                    if (isIncome) IncomeGreen.copy(alpha = 0.25f) else ExpenseRed.copy(alpha = 0.25f),
+                                    if (isIncome) IncomeGreen.copy(alpha = 0.25f) else ExpenseRed.copy(
+                                        alpha = 0.25f
+                                    ),
                                     shape = RoundedCornerShape(32.dp),
                                 )
                                 .padding(8.dp),
@@ -105,6 +106,7 @@ fun RecentTransactionItem(
                         }
                         Spacer(modifier = Modifier.width(12.dp))
                     }
+
                     TransactionDisplayType.CATEGORY -> {
                         // Category badge with icon from category data
                         val categoryIconVector = categoryIconMap[transaction.categoryIcon]
@@ -137,6 +139,7 @@ fun RecentTransactionItem(
                         }
                         Spacer(modifier = Modifier.width(12.dp))
                     }
+
                     TransactionDisplayType.NONE -> {
                         // No icon - no spacer needed
                     }

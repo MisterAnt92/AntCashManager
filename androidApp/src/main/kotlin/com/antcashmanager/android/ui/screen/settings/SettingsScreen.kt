@@ -28,9 +28,7 @@ import androidx.compose.material.icons.automirrored.filled.LibraryBooks
 import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.Coffee
 import androidx.compose.material.icons.filled.Contrast
-import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Exposure
 import androidx.compose.material.icons.filled.Feedback
 import androidx.compose.material.icons.filled.FormatSize
 import androidx.compose.material.icons.filled.Info
@@ -73,21 +71,22 @@ import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.BuildConfig
 import com.antcashmanager.android.R
-import com.antcashmanager.android.ui.components.card.AppCard
-import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
 import com.antcashmanager.android.ui.components.AppDivider
 import com.antcashmanager.android.ui.components.AppListItem
 import com.antcashmanager.android.ui.components.AppRadioButton
 import com.antcashmanager.android.ui.components.AppSwitch
 import com.antcashmanager.android.ui.components.HelpButton
-import com.antcashmanager.android.ui.components.HelpDialogContent
-import com.antcashmanager.android.ui.components.SimpleHelpFeature
+import com.antcashmanager.android.ui.components.card.AppCard
+import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.settings.view.CurrencySymbolDialog
+import com.antcashmanager.android.ui.screen.settings.view.DecimalDigitsDialog
 import com.antcashmanager.android.ui.screen.settings.view.HelpDialog
 import com.antcashmanager.android.ui.screen.settings.view.LanguageSelectionDialog
 import com.antcashmanager.android.ui.screen.settings.view.PrivacyPolicyDialog
+import com.antcashmanager.android.ui.screen.settings.view.SeparatorDialog
 import com.antcashmanager.android.ui.screen.settings.view.ThemeSelectionDialog
+import com.antcashmanager.android.ui.screen.settings.view.ThirdPartyLibrariesDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
@@ -815,84 +814,6 @@ private fun CurrencySymbolDialog(
     )
 }
 
-@Composable
-private fun DecimalDigitsDialog(
-    currentDigits: Int,
-    onDigitsSelected: (Int) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        icon = {
-            Icon(
-                imageVector = Icons.Default.Exposure,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-            )
-        },
-        title = { Text(stringResource(R.string.dialog_choose_decimal_digits)) },
-        text = {
-            Column {
-                (0..4).forEach { digits ->
-                    AppListItem(
-                        headlineContent = {
-                            Text(stringResource(R.string.settings_decimal_digits_subtitle, digits))
-                        },
-                        leadingContent = {
-                            AppRadioButton(
-                                selected = digits == currentDigits,
-                                onClick = { onDigitsSelected(digits) },
-                            )
-                        },
-                    )
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.dialog_cancel)) }
-        },
-    )
-}
-
-@Composable
-private fun SeparatorDialog(
-    title: String,
-    options: List<Pair<String, String>>,
-    currentValue: String,
-    onSelected: (String) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        icon = {
-            Icon(
-                imageVector = Icons.Default.TextFields,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-            )
-        },
-        title = { Text(title) },
-        text = {
-            Column {
-                options.forEach { (value, label) ->
-                    AppListItem(
-                        headlineContent = { Text(label) },
-                        leadingContent = {
-                            AppRadioButton(
-                                selected = value == currentValue,
-                                onClick = { onSelected(value) },
-                            )
-                        },
-                    )
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.dialog_cancel)) }
-        },
-    )
-}
-
 /**
  * Card di donazione con due opzioni: PayPal e Buy Me a Coffee.
  * Ciascuna riga è cliccabile e apre il rispettivo link di donazione.
@@ -1047,172 +968,6 @@ private fun DonationCard(context: Context) {
     }
 }
 
-private data class LibraryInfo(
-    val name: String,
-    val url: String,
-)
-
-private val thirdPartyLibraries = listOf(
-    LibraryInfo("Jetpack Compose", "https://developer.android.com/jetpack/compose"),
-    LibraryInfo("Room Database", "https://developer.android.com/training/data-storage/room"),
-    LibraryInfo("Navigation Compose", "https://developer.android.com/jetpack/compose/navigation"),
-    LibraryInfo(
-        "DataStore Preferences",
-        "https://developer.android.com/topic/libraries/architecture/datastore"
-    ),
-    LibraryInfo("Material Icons Extended", "https://fonts.google.com/icons"),
-    LibraryInfo("Kotlinx Coroutines", "https://github.com/Kotlin/kotlinx.coroutines"),
-    LibraryInfo("Kermit Logger", "https://github.com/touchlab/Kermit"),
-)
-
-@Composable
-private fun ThirdPartyLibrariesDialog(
-    context: Context,
-    onDismiss: () -> Unit,
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        icon = {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.LibraryBooks,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-            )
-        },
-        title = { Text(stringResource(R.string.settings_third_party_libraries)) },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                thirdPartyLibraries.forEach { lib ->
-                    AppListItem(
-                        headlineContent = {
-                            Text(
-                                text = lib.name,
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.Medium,
-                            )
-                        },
-                        modifier = Modifier.clickable {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(lib.url))
-                            context.startActivity(intent)
-                        },
-                    )
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.dialog_close)) }
-        },
-    )
-}
-
-@Composable
-private fun ThemeSelectionDialog(
-    currentTheme: AppTheme,
-    onThemeSelected: (AppTheme) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        icon = {
-            Icon(
-                imageVector = Icons.Default.DarkMode,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-            )
-        },
-        title = { Text(stringResource(R.string.dialog_choose_theme)) },
-        text = {
-            Column {
-                AppTheme.entries.forEach { theme ->
-                    AppListItem(
-                        headlineContent = {
-                            Text(
-                                when (theme) {
-                                    AppTheme.LIGHT -> stringResource(R.string.settings_theme_light)
-                                    AppTheme.DARK -> stringResource(R.string.settings_theme_dark)
-                                    AppTheme.SYSTEM -> stringResource(R.string.settings_theme_system)
-                                },
-                            )
-                        },
-                        leadingContent = {
-                            AppRadioButton(
-                                selected = theme == currentTheme,
-                                onClick = { onThemeSelected(theme) },
-                            )
-                        },
-                    )
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.dialog_cancel)) }
-        },
-    )
-}
-
-@Composable
-private fun LanguageSelectionDialog(
-    currentLanguage: AppLanguage,
-    onLanguageSelected: (AppLanguage) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        icon = {
-            Icon(
-                imageVector = Icons.Default.Language,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-            )
-        },
-        title = { Text(stringResource(R.string.dialog_choose_language)) },
-        text = {
-            Column {
-                AppLanguage.entries.forEach { language ->
-                    AppListItem(
-                        headlineContent = {
-                            Text(languageDisplayName(language))
-                        },
-                        leadingContent = {
-                            AppRadioButton(
-                                selected = language == currentLanguage,
-                                onClick = { onLanguageSelected(language) },
-                            )
-                        },
-                    )
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.dialog_cancel)) }
-        },
-    )
-}
-
-@Composable
-private fun PrivacyPolicyDialog(onDismiss: () -> Unit) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        icon = {
-            Icon(
-                imageVector = Icons.Default.PrivacyTip,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-            )
-        },
-        title = { Text(stringResource(R.string.privacy_policy_title)) },
-        text = {
-            Text(
-                text = stringResource(R.string.privacy_policy_content),
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.dialog_close)) }
-        },
-    )
-}
-
 // ── Previews ──
 
 @Preview(showBackground = true, name = "SettingsScreen - Light")
@@ -1261,40 +1016,6 @@ private fun LanguageSelectionDialogPreview() {
             onDismiss = {},
         )
     }
-}
-
-@Composable
-private fun HelpDialog(onDismiss: () -> Unit) {
-    val helpFeatures = listOf(
-        SimpleHelpFeature(
-            title = "Preferenze Tema",
-            description = "Personalizza l'aspetto dell'app con tema chiaro, scuro o automatico",
-            icon = Icons.Default.Palette,
-        ),
-        SimpleHelpFeature(
-            title = "Preferenze Valuta",
-            description = "Scegli il simbolo, il formato e i separatori delle cifre",
-            icon = Icons.Default.MonetizationOn,
-        ),
-        SimpleHelpFeature(
-            title = "Accessibilità",
-            description = "Attiva alto contrasto, testo grande e riduci animazioni",
-            icon = Icons.Default.Contrast,
-        ),
-        SimpleHelpFeature(
-            title = "Backup e Ripristino",
-            description = "Salva e ripristina tutti i tuoi dati",
-            icon = Icons.Default.Backup,
-        ),
-    )
-
-    HelpDialogContent(
-        isVisible = true,
-        title = "Guida Impostazioni",
-        description = "Personalizza le tue preferenze dell'app!",
-        features = helpFeatures,
-        onDismiss = onDismiss,
-    )
 }
 
 @Preview(showBackground = true, name = "DonationCard - Light")

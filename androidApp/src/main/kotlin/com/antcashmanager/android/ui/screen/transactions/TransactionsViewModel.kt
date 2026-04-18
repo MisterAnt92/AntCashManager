@@ -164,7 +164,9 @@ class TransactionsViewModel(
             is TransactionsEvent.ClearAllFilters -> clearAllFilters()
 
             // Transaction CRUD events
-            is TransactionsEvent.AddTransactionClicked -> { /* Navigation handled by Screen */ }
+            is TransactionsEvent.AddTransactionClicked -> { /* Navigation handled by Screen */
+            }
+
             is TransactionsEvent.DeleteTransaction -> deleteTransaction(event.transaction)
             is TransactionsEvent.UpdateTransaction -> updateTransaction(event.transaction)
         }

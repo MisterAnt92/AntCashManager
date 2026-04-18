@@ -318,7 +318,9 @@ class MockHomeSettingsRepository : SettingsRepository {
     override suspend fun setDateFilterExpanded(expanded: Boolean) {}
     override fun getShowPaymentTypeBreakdown() = kotlinx.coroutines.flow.flowOf(true)
     override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {}
-    override fun getTransactionDisplayType() = kotlinx.coroutines.flow.flowOf(TransactionDisplayType.TREND)
+    override fun getTransactionDisplayType() =
+        kotlinx.coroutines.flow.flowOf(TransactionDisplayType.TREND)
+
     override suspend fun setTransactionDisplayType(displayType: TransactionDisplayType) {}
     override suspend fun resetAllPreferences() {}
 }
