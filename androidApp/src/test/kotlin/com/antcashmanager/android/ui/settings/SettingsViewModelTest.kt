@@ -5,6 +5,7 @@ import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.Transaction
+import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
@@ -212,12 +213,26 @@ private class FakeSettingsRepository : SettingsRepository {
         thousandsSeparatorFlow.value = separator
     }
 
-    override fun getDateFormat(): Flow<String> {
-        TODO("Not yet implemented")
-    }
+    private val dateFormatFlow = MutableStateFlow("dd/MM/yyyy")
+    private val showPaymentTypeBreakdownFlow = MutableStateFlow(true)
+    private val transactionDisplayTypeFlow = MutableStateFlow(TransactionDisplayType.TREND)
+
+    override fun getDateFormat(): Flow<String> = dateFormatFlow
 
     override suspend fun setDateFormat(pattern: String) {
-        TODO("Not yet implemented")
+        dateFormatFlow.value = pattern
+    }
+
+    override fun getShowPaymentTypeBreakdown(): Flow<Boolean> = showPaymentTypeBreakdownFlow
+
+    override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {
+        showPaymentTypeBreakdownFlow.value = show
+    }
+
+    override fun getTransactionDisplayType(): Flow<TransactionDisplayType> = transactionDisplayTypeFlow
+
+    override suspend fun setTransactionDisplayType(displayType: TransactionDisplayType) {
+        transactionDisplayTypeFlow.value = displayType
     }
 
     private val dateFilterExpandedFlow = MutableStateFlow(false)
@@ -225,14 +240,6 @@ private class FakeSettingsRepository : SettingsRepository {
     override fun getDateFilterExpanded(): Flow<Boolean> = dateFilterExpandedFlow
     override suspend fun setDateFilterExpanded(expanded: Boolean) {
         dateFilterExpandedFlow.value = expanded
-    }
-
-    override fun getShowPaymentTypeBreakdown(): Flow<Boolean> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {
-        TODO("Not yet implemented")
     }
 
     override suspend fun resetAllPreferences() {
@@ -248,7 +255,10 @@ private class FakeSettingsRepository : SettingsRepository {
         decimalDigitsFlow.value = 2
         decimalSeparatorFlow.value = ","
         thousandsSeparatorFlow.value = "."
+        dateFormatFlow.value = "dd/MM/yyyy"
         dateFilterExpandedFlow.value = false
+        showPaymentTypeBreakdownFlow.value = true
+        transactionDisplayTypeFlow.value = TransactionDisplayType.TREND
     }
 }
 
@@ -283,6 +293,10 @@ private class FakeTransactionRepository : TransactionRepository {
 
     override fun getRecurringTransactions(): Flow<List<Transaction>> =
         transactions.map { list -> list.filter { it.isRecurring } }
+
+    override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) {
+        // No-op for test
+    }
 }
 
 private class FakeCategoryRepository : CategoryRepository {
@@ -315,4 +329,7 @@ private class FakeCategoryRepository : CategoryRepository {
 
     override suspend fun getDefaultCategoryCount(): Int =
         categories.value.count { it.isDefault }
+
+    override suspend fun getCategoryByName(name: String): Category? =
+        categories.value.find { it.name == name }
 }

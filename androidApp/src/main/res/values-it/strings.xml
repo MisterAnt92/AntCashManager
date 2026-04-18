@@ -269,7 +269,7 @@
     <string name="add_transaction_income_label">Entrata</string>
     <string name="add_transaction_expense_label">Uscita</string>
     <string name="add_transaction_details">Dettagli Transazione</string>
-    <string name="add_transaction_category_type">Categoria: %s | Tipo: %s</string>
+    <string name="add_transaction_category_type">Categoria: %1$s | Tipo: %2$s</string>
     <string name="add_transaction_title_required">Titolo *</string>
     <string name="add_transaction_amount_required">Importo *</string>
     <string name="add_transaction_date_label">Data: %s</string>

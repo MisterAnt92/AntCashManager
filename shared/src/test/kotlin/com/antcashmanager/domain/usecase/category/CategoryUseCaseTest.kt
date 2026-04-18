@@ -70,6 +70,9 @@ private class FakeCategoryRepository : CategoryRepository {
     override suspend fun getCategoryById(id: Long): Category? =
         categories.value.find { it.id == id }
 
+    override suspend fun getCategoryByName(name: String): Category? =
+        categories.value.find { it.name == name }
+
     override suspend fun insertCategory(category: Category): Long {
         categories.value = categories.value + category
         return category.id

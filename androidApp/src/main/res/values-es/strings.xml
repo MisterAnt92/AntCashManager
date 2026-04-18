@@ -250,7 +250,7 @@
     <string name="add_transaction_income_label">Ingreso</string>
     <string name="add_transaction_expense_label">Gasto</string>
     <string name="add_transaction_details">Detalles de la Transacción</string>
-    <string name="add_transaction_category_type">Categoría: %s | Tipo: %s</string>
+    <string name="add_transaction_category_type">Categoría: %1$s | Tipo: %2$s</string>
     <string name="add_transaction_title_required">Título *</string>
     <string name="add_transaction_amount_required">Cantidad *</string>
     <string name="add_transaction_date_label">Fecha: %s</string>

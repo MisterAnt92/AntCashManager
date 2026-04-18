@@ -13,7 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -117,7 +117,7 @@ internal fun HelpDialog(onDismiss: () -> Unit) {
         com.antcashmanager.android.ui.components.SimpleHelpFeature(
             title = "Entrate e Uscite",
             description = "Categorizza transazioni come entrate o uscite",
-            icon = Icons.Default.List,
+            icon = Icons.AutoMirrored.Filled.List,
         ),
         com.antcashmanager.android.ui.components.SimpleHelpFeature(
             title = "Elimina Categorie",
@@ -134,4 +134,3 @@ internal fun HelpDialog(onDismiss: () -> Unit) {
         onDismiss = onDismiss,
     )
 }
-

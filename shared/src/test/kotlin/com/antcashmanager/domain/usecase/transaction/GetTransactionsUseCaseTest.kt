@@ -96,5 +96,8 @@ private class FakeTransactionRepository(
 
     override fun getRecurringTransactions(): Flow<List<Transaction>> =
         flowOf(transactions.filter { it.isRecurring })
-}
 
+    override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) {
+        // No-op for test
+    }
+}

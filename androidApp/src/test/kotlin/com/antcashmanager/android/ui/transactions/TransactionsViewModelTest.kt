@@ -221,6 +221,10 @@ private class FakeTransactionRepository : TransactionRepository {
 
     override fun getRecurringTransactions(): Flow<List<Transaction>> =
         transactions.map { list -> list.filter { it.isRecurring } }
+
+    override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) {
+        // No-op for test
+    }
 }
 
 private class FakeCategoryRepository : CategoryRepository {
@@ -255,5 +259,7 @@ private class FakeCategoryRepository : CategoryRepository {
 
     override suspend fun getDefaultCategoryCount(): Int =
         categories.value.count { it.isDefault }
-}
 
+    override suspend fun getCategoryByName(name: String): Category? =
+        categories.value.find { it.name == name }
+}

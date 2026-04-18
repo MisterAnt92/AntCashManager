@@ -28,13 +28,15 @@ class HomeViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var fakeRepo: FakeTransactionRepository
+    private lateinit var fakeCategoryRepo: FakeCategoryRepository
     private lateinit var viewModel: HomeViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         fakeRepo = FakeTransactionRepository()
-        viewModel = HomeViewModel(fakeRepo)
+        fakeCategoryRepo = FakeCategoryRepository()
+        viewModel = HomeViewModel(fakeRepo, fakeCategoryRepo)
     }
 
     @After
@@ -386,6 +388,44 @@ class HomeViewModelTest {
 
         override fun getRecurringTransactions(): Flow<List<Transaction>> =
             transactions.map { list -> list.filter { it.isRecurring } }
+
+        override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) {
+            // No-op for test
+        }
+    }
+
+    private class FakeCategoryRepository : com.antcashmanager.domain.repository.CategoryRepository {
+        val categories = MutableStateFlow<List<com.antcashmanager.domain.model.Category>>(emptyList())
+
+        override fun getAllCategories(): Flow<List<com.antcashmanager.domain.model.Category>> = categories
+
+        override suspend fun getCategoryById(id: Long): com.antcashmanager.domain.model.Category? =
+            categories.value.find { it.id == id }
+
+        override suspend fun getCategoryByName(name: String): com.antcashmanager.domain.model.Category? =
+            categories.value.find { it.name == name }
+
+        override suspend fun insertCategory(category: com.antcashmanager.domain.model.Category): Long {
+            categories.value += category
+            return category.id
+        }
+
+        override suspend fun updateCategory(category: com.antcashmanager.domain.model.Category) {
+            categories.value = categories.value.map { if (it.id == category.id) category else it }
+        }
+
+        override suspend fun deleteCategory(category: com.antcashmanager.domain.model.Category) {
+            categories.value = categories.value.filter { it.id != category.id }
+        }
+
+        override suspend fun deleteAllCategories() {
+            categories.value = emptyList()
+        }
+
+        override fun getCategoriesByType(type: String): Flow<List<com.antcashmanager.domain.model.Category>> =
+            categories.map { list -> list.filter { it.type == type } }
+
+        override suspend fun getDefaultCategoryCount(): Int =
+            categories.value.count { it.isDefault }
     }
 }
-

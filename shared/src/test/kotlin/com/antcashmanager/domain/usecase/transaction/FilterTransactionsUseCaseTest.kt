@@ -115,7 +115,7 @@ class FilterTransactionsUseCaseTest {
         val params = FilterTransactionsUseCase.Params(
             transactions = sampleTransactions,
             filterParams = TransactionFilterParams(
-                searchQuery = "GROCERY",
+                searchQuery = "groc",
                 dateFrom = 0L,
                 dateTo = Long.MAX_VALUE,
             ),
@@ -356,4 +356,3 @@ class FilterTransactionsUseCaseTest {
         assertTrue(!params.hasActiveFilters)
     }
 }
-

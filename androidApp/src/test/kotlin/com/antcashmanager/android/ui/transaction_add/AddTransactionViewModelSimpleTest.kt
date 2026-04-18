@@ -51,6 +51,10 @@ class AddTransactionViewModelSimpleTest {
 
             override fun getRecurringTransactions() =
                 flowOf(emptyList<com.antcashmanager.domain.model.Transaction>())
+
+            override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) {
+                // No-op for test
+            }
         }
 
         mockCategoryRepository = object : CategoryRepository {
@@ -64,6 +68,9 @@ class AddTransactionViewModelSimpleTest {
                 flowOf(mockCategories.filter { it.type == type })
 
             override suspend fun getDefaultCategoryCount() = mockCategories.size
+
+            override suspend fun getCategoryByName(name: String): Category? =
+                mockCategories.find { it.name == name }
         }
     }
 

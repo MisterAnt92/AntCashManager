@@ -2,6 +2,7 @@ package com.antcashmanager.domain.usecase.settings
 
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
+import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -101,6 +102,8 @@ internal class FakeSettingsRepository : SettingsRepository {
     private val thousandsSeparatorFlow = MutableStateFlow("")
     private val dateFormatFlow = MutableStateFlow("dd/MM/yyyy")
     private val dateFilterExpandedFlow = MutableStateFlow(true)
+    private val showPaymentTypeBreakdownFlow = MutableStateFlow(true)
+    private val transactionDisplayTypeFlow = MutableStateFlow(TransactionDisplayType.TREND)
 
     override fun getTheme(): Flow<AppTheme> = themeFlow
 
@@ -169,6 +172,16 @@ internal class FakeSettingsRepository : SettingsRepository {
         dateFilterExpandedFlow.value = expanded
     }
 
+    override fun getShowPaymentTypeBreakdown(): Flow<Boolean> = showPaymentTypeBreakdownFlow
+    override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {
+        showPaymentTypeBreakdownFlow.value = show
+    }
+
+    override fun getTransactionDisplayType(): Flow<TransactionDisplayType> = transactionDisplayTypeFlow
+    override suspend fun setTransactionDisplayType(type: TransactionDisplayType) {
+        transactionDisplayTypeFlow.value = type
+    }
+
     override suspend fun resetAllPreferences() {
         themeFlow.value = AppTheme.SYSTEM
         languageFlow.value = AppLanguage.SYSTEM
@@ -183,5 +196,7 @@ internal class FakeSettingsRepository : SettingsRepository {
         thousandsSeparatorFlow.value = ""
         dateFormatFlow.value = "dd/MM/yyyy"
         dateFilterExpandedFlow.value = true
+        showPaymentTypeBreakdownFlow.value = true
+        transactionDisplayTypeFlow.value = TransactionDisplayType.TREND
     }
 }
