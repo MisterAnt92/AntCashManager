@@ -582,7 +582,7 @@ internal fun SettingsContent(
             },
             title = { Text(stringResource(R.string.dialog_delete_all_title)) },
             text = {
-                Text("Test")
+                Text(stringResource(R.string.dialog_delete_all_message))
             },
             confirmButton = {
                 TextButton(

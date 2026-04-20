@@ -56,7 +56,6 @@ import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.screen.settings.view.CurrencySymbolDialog
 import com.antcashmanager.android.ui.screen.settings.view.DecimalDigitsDialog
 import com.antcashmanager.android.ui.screen.settings.view.SeparatorDialog
-import com.antcashmanager.android.ui.screen.settings.view.TransactionIconDisplayDialog
 import com.antcashmanager.android.util.formatAmount
 import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.model.DateFormatType
@@ -143,7 +142,6 @@ internal fun DisplayContent(
     var showDecimalSeparatorDialog by remember { mutableStateOf(false) }
     var showThousandsSeparatorDialog by remember { mutableStateOf(false) }
     var showDateFormatDialog by remember { mutableStateOf(false) }
-    var showTransactionIconDisplayDialog by remember { mutableStateOf(false) }
     var showResetPreferencesDialog by remember { mutableStateOf(false) }
     var showTransactionDisplayDialog by remember { mutableStateOf(false) }
 
@@ -316,16 +314,6 @@ internal fun DisplayContent(
                 onClick = { onShowTransactionNotesChanged(!showTransactionNotes) },
             )
             AppCard(
-                title = stringResource(R.string.settings_transaction_display),
-                subtitle = when (transactionDisplayType) {
-                    TransactionDisplayType.TREND -> stringResource(R.string.settings_transaction_display_trend)
-                    TransactionDisplayType.CATEGORY -> stringResource(R.string.settings_transaction_display_category)
-                    TransactionDisplayType.NONE -> stringResource(R.string.settings_transaction_display_none)
-                },
-                leadingIcon = Icons.Default.TextFields,
-                onClick = { showTransactionIconDisplayDialog = true },
-            )
-            AppCard(
                 title = stringResource(R.string.settings_reset_preferences),
                 subtitle = stringResource(R.string.settings_reset_preferences_subtitle),
                 leadingIcon = Icons.Default.Refresh,
@@ -425,14 +413,6 @@ internal fun DisplayContent(
                 showTransactionDisplayDialog = false
             },
             onDismiss = { showTransactionDisplayDialog = false },
-        )
-    }
-
-    if (showTransactionIconDisplayDialog) {
-        TransactionIconDisplayDialog(
-            currentDisplayType = transactionDisplayType,
-            onDisplayTypeSelected = { onTransactionDisplayTypeSelected(it); showTransactionIconDisplayDialog = false },
-            onDismiss = { showTransactionIconDisplayDialog = false },
         )
     }
 }
