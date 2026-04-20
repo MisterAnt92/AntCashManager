@@ -344,8 +344,19 @@
      <string name="feedback_email_body_german">Hallo AntCashManager-Team,\n\nIch möchte gerne Feedback zur App geben:\n\n[Bitte beschreiben Sie Ihr Feedback hier]\n\nDanke!</string>
      <string name="feedback_email_body_spanish">Hola equipo de AntCashManager,\n\nMe gustaría compartir comentarios sobre la aplicación:\n\n[Por favor describe tu retroalimentación aquí]\n\n¡Gracias!</string>
 
-     <!-- Feedback Error Messages -->
-     <string name="no_email_app_installed">Keine E-Mail-App verfügbar</string>
+      <!-- Feedback Error Messages -->
+      <string name="no_email_app_installed">Keine E-Mail-App verfügbar</string>
+
+      <!-- Transaction Display Section -->
+      <string name="settings_transaction_display_section">Transaktionsanzeige</string>
+      <string name="settings_show_transaction_notes">Transaktionsnotizen anzeigen</string>
+      <string name="settings_show_transaction_notes_subtitle_enabled">Notizen in Transaktionselementen sichtbar</string>
+      <string name="settings_show_transaction_notes_subtitle_disabled">Notizen ausgeblendet</string>
+      <string name="settings_transaction_icon_display_subtitle">Wählen Sie die Anzeige von Symbolen</string>
+      <string name="settings_transaction_icon_display_trend">Trendsymbole</string>
+      <string name="settings_transaction_icon_display_category">Kategorie</string>
+      <string name="settings_transaction_icon_display_none">Keine</string>
+      <string name="dialog_choose_transaction_icon_display">Anzeigetyp für Symbole wählen</string>
 </resources>
 
 

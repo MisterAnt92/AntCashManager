@@ -2,6 +2,7 @@ package com.antcashmanager.android.ui.screen.settings
 
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
+import com.antcashmanager.domain.model.TransactionDisplayType
 
 /**
  * Stato UI per la schermata delle impostazioni.
@@ -18,5 +19,6 @@ data class SettingsState(
     val decimalSeparator: String = ",",
     val thousandsSeparator: String = ".",
     val showTransactionNotes: Boolean = true,
+    val transactionDisplayType: TransactionDisplayType = TransactionDisplayType.CATEGORY,
 )
 

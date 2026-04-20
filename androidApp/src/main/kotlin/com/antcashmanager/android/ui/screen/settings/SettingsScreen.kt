@@ -88,10 +88,12 @@ import com.antcashmanager.android.ui.screen.settings.view.PrivacyPolicyDialog
 import com.antcashmanager.android.ui.screen.settings.view.SeparatorDialog
 import com.antcashmanager.android.ui.screen.settings.view.ThemeSelectionDialog
 import com.antcashmanager.android.ui.screen.settings.view.ThirdPartyLibrariesDialog
+import com.antcashmanager.android.ui.screen.settings.view.TransactionIconDisplayDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.CurrencyFormat
+import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
@@ -394,6 +396,7 @@ internal fun SettingsContent(
                 onClick = { navController?.navigate("display") },
             )
         }
+
 
 
         // ── Accessibility Section ──
@@ -717,6 +720,7 @@ internal fun SettingsContent(
             onDismiss = { showThousandsSeparatorDialog = false },
         )
     }
+
 
     if (showResetPreferencesDialog) {
         AlertDialog(

@@ -52,6 +52,7 @@ class SettingsViewModel(
         private const val DEFAULT_DECIMAL_SEPARATOR = ","
         private const val DEFAULT_THOUSANDS_SEPARATOR = "."
         private const val DEFAULT_SHOW_TRANSACTION_NOTES = true
+        private val DEFAULT_TRANSACTION_DISPLAY_TYPE = com.antcashmanager.domain.model.TransactionDisplayType.CATEGORY
     }
 
     private val getThemeUseCase = GetThemeUseCase(settingsRepository)
@@ -215,7 +216,12 @@ class SettingsViewModel(
             SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
             DEFAULT_SHOW_TRANSACTION_NOTES
         ),
-    ) { prefs1, prefs2, showTransactionNotes ->
+        settingsRepository.getTransactionDisplayType().stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
+            DEFAULT_TRANSACTION_DISPLAY_TYPE
+        ),
+    ) { prefs1, prefs2, showTransactionNotes, transactionDisplayType ->
         SettingsState(
             theme = prefs1.theme,
             language = prefs1.language,
@@ -228,6 +234,7 @@ class SettingsViewModel(
             decimalSeparator = prefs2.decimalSeparator,
             thousandsSeparator = prefs2.thousandsSeparator,
             showTransactionNotes = showTransactionNotes,
+            transactionDisplayType = transactionDisplayType,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_TIMEOUT), SettingsState())
 
@@ -298,6 +305,10 @@ class SettingsViewModel(
         action = { settingsRepository.setShowTransactionNotes(show) },
     )
 
+    fun setTransactionDisplayType(displayType: com.antcashmanager.domain.model.TransactionDisplayType) = updatePreference(
+        logMsg = "Setting transaction display type: $displayType",
+        action = { settingsRepository.setTransactionDisplayType(displayType) },
+    )
 
     fun resetAllPreferences() = updatePreference(
         logMsg = "Resetting all preferences",

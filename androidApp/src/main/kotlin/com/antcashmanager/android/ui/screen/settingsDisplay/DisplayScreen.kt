@@ -53,6 +53,10 @@ import com.antcashmanager.android.ui.components.AppSwitch
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.android.ui.screen.settings.view.CurrencySymbolDialog
+import com.antcashmanager.android.ui.screen.settings.view.DecimalDigitsDialog
+import com.antcashmanager.android.ui.screen.settings.view.SeparatorDialog
+import com.antcashmanager.android.ui.screen.settings.view.TransactionIconDisplayDialog
 import com.antcashmanager.android.util.formatAmount
 import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.model.DateFormatType
@@ -80,9 +84,9 @@ fun DisplayScreen(
     val decimalDigits by viewModel.decimalDigits.collectAsState()
     val decimalSeparator by viewModel.decimalSeparator.collectAsState()
     val thousandsSeparator by viewModel.thousandsSeparator.collectAsState()
-    val showTransactionNotes by viewModel.showTransactionNotes.collectAsState()
     val showChartsSection by viewModel.showChartsSection.collectAsState()
     val dateFormat by viewModel.dateFormat.collectAsState()
+    val showTransactionNotes by viewModel.showTransactionNotes.collectAsState()
     val showPaymentTypeBreakdown by viewModel.showPaymentTypeBreakdown.collectAsState()
     val transactionDisplayType by viewModel.transactionDisplayType.collectAsState()
 
@@ -139,6 +143,7 @@ internal fun DisplayContent(
     var showDecimalSeparatorDialog by remember { mutableStateOf(false) }
     var showThousandsSeparatorDialog by remember { mutableStateOf(false) }
     var showDateFormatDialog by remember { mutableStateOf(false) }
+    var showTransactionIconDisplayDialog by remember { mutableStateOf(false) }
     var showResetPreferencesDialog by remember { mutableStateOf(false) }
     var showTransactionDisplayDialog by remember { mutableStateOf(false) }
 
@@ -299,8 +304,8 @@ internal fun DisplayContent(
             AppCardSectionHeader(title = stringResource(R.string.settings_section_other))
 
             AppCard(
-                title = "Mostra Note Transazioni",
-                subtitle = if (showTransactionNotes) "Note visibili negli item" else "Note nascoste",
+                title = stringResource(R.string.settings_show_transaction_notes),
+                subtitle = if (showTransactionNotes) stringResource(R.string.settings_show_transaction_notes_subtitle_enabled) else stringResource(R.string.settings_show_transaction_notes_subtitle_disabled),
                 leadingIcon = Icons.Default.TextFields,
                 trailingContent = {
                     Switch(
@@ -309,6 +314,16 @@ internal fun DisplayContent(
                     )
                 },
                 onClick = { onShowTransactionNotesChanged(!showTransactionNotes) },
+            )
+            AppCard(
+                title = stringResource(R.string.settings_transaction_display),
+                subtitle = when (transactionDisplayType) {
+                    TransactionDisplayType.TREND -> stringResource(R.string.settings_transaction_display_trend)
+                    TransactionDisplayType.CATEGORY -> stringResource(R.string.settings_transaction_display_category)
+                    TransactionDisplayType.NONE -> stringResource(R.string.settings_transaction_display_none)
+                },
+                leadingIcon = Icons.Default.TextFields,
+                onClick = { showTransactionIconDisplayDialog = true },
             )
             AppCard(
                 title = stringResource(R.string.settings_reset_preferences),
@@ -410,6 +425,14 @@ internal fun DisplayContent(
                 showTransactionDisplayDialog = false
             },
             onDismiss = { showTransactionDisplayDialog = false },
+        )
+    }
+
+    if (showTransactionIconDisplayDialog) {
+        TransactionIconDisplayDialog(
+            currentDisplayType = transactionDisplayType,
+            onDisplayTypeSelected = { onTransactionDisplayTypeSelected(it); showTransactionIconDisplayDialog = false },
+            onDismiss = { showTransactionIconDisplayDialog = false },
         )
     }
 }

@@ -25,8 +25,8 @@ class DisplayViewModel(
         private const val DEFAULT_DECIMAL_DIGITS = 2
         private const val DEFAULT_DECIMAL_SEPARATOR = ","
         private const val DEFAULT_THOUSANDS_SEPARATOR = "."
-        private const val DEFAULT_SHOW_TRANSACTION_NOTES = true
         private const val DEFAULT_DATE_FORMAT = "dd/MM/yyyy"
+        private const val DEFAULT_SHOW_TRANSACTION_NOTES = true
         private const val SHARING_TIMEOUT = 5_000L
     }
 
@@ -62,13 +62,6 @@ class DisplayViewModel(
             DEFAULT_THOUSANDS_SEPARATOR,
         )
 
-    // Espone la preferenza per la visualizzazione delle note
-    val showTransactionNotes = settingsRepository.getShowTransactionNotes()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
-            DEFAULT_SHOW_TRANSACTION_NOTES,
-        )
 
     // Espone la preferenza per la visualizzazione della sezione grafici
     val showChartsSection = settingsRepository.getShowCharts()
@@ -84,6 +77,14 @@ class DisplayViewModel(
             viewModelScope,
             SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
             DEFAULT_DATE_FORMAT,
+        )
+
+    // Espone la preferenza per mostrare le note delle transazioni
+    val showTransactionNotes = settingsRepository.getShowTransactionNotes()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
+            DEFAULT_SHOW_TRANSACTION_NOTES,
         )
 
     // Espone la preferenza per mostrare il breakdown dei pagamenti
@@ -134,13 +135,6 @@ class DisplayViewModel(
         action = { settingsRepository.setThousandsSeparator(separator) },
     )
 
-    /**
-     * Aggiorna la preferenza per la visualizzazione delle note.
-     */
-    fun setShowTransactionNotes(show: Boolean) = updatePreference(
-        logMsg = "Setting show transaction notes: $show",
-        action = { settingsRepository.setShowTransactionNotes(show) },
-    )
 
     /**
      * Aggiorna la preferenza per la visualizzazione della sezione grafici.
@@ -156,6 +150,14 @@ class DisplayViewModel(
     fun setDateFormat(pattern: String) = updatePreference(
         logMsg = "Setting date format: $pattern",
         action = { settingsRepository.setDateFormat(pattern) },
+    )
+
+    /**
+     * Aggiorna la preferenza per mostrare le note delle transazioni.
+     */
+    fun setShowTransactionNotes(show: Boolean) = updatePreference(
+        logMsg = "Setting show transaction notes: $show",
+        action = { settingsRepository.setShowTransactionNotes(show) },
     )
 
     /**
