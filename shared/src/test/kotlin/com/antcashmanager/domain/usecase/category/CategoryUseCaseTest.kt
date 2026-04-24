@@ -32,7 +32,7 @@ class CategoryUseCaseTest {
     fun `GetCategoriesUseCase returns all categories`() = runTest {
         val category = Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373)
         fakeRepo.categories.value = listOf(category)
-        val result = getCategoriesUseCase().first()
+        val result = getCategoriesUseCase().first().getOrThrow()
         assertEquals(1, result.size)
         assertEquals("Food", result.first().name)
     }
@@ -41,7 +41,7 @@ class CategoryUseCaseTest {
     fun `InsertCategoryUseCase adds category`() = runTest {
         val category = Category(name = "Transport", icon = "bus", color = 0xFF4FC3F7)
         insertCategoryUseCase(category)
-        val result = getCategoriesUseCase().first()
+        val result = getCategoriesUseCase().first().getOrThrow()
         assertEquals(1, result.size)
     }
 
@@ -50,7 +50,7 @@ class CategoryUseCaseTest {
         val category = Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373)
         fakeRepo.categories.value = listOf(category)
         deleteCategoryUseCase(category)
-        val result = getCategoriesUseCase().first()
+        val result = getCategoriesUseCase().first().getOrThrow()
         assertTrue(result.isEmpty())
     }
 
@@ -59,7 +59,7 @@ class CategoryUseCaseTest {
         val category = Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373)
         fakeRepo.categories.value = listOf(category)
         updateCategoryUseCase(category.copy(name = "Groceries"))
-        val result = getCategoriesUseCase().first()
+        val result = getCategoriesUseCase().first().getOrThrow()
         assertEquals("Groceries", result.first().name)
     }
 }

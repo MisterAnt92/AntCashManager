@@ -11,6 +11,7 @@ import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.transaction.DeleteTransactionUseCase
+import com.antcashmanager.domain.usecase.transaction.GetTransactionSuggestionsUseCase
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.UpdateTransactionUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.CancellationException
 
 // ══════════════════════════════════════════════════════════════════════════════
 // EVENTS
@@ -89,6 +91,7 @@ class AddTransactionViewModel(
     private val updateTransactionUseCase = UpdateTransactionUseCase(transactionRepository)
     private val getCategoriesUseCase = GetCategoriesUseCase(categoryRepository)
     private val deleteTransactionUseCase = DeleteTransactionUseCase(transactionRepository)
+    private val getTransactionSuggestionsUseCase = GetTransactionSuggestionsUseCase(transactionRepository)
 
     // ── State ──
     private val _state = MutableStateFlow(AddTransactionState())
@@ -96,6 +99,7 @@ class AddTransactionViewModel(
 
     init {
         loadCategories()
+        loadTransactionSuggestions()
         if (transactionId != null) {
             loadTransactionForEdit(transactionId)
         }
@@ -103,8 +107,38 @@ class AddTransactionViewModel(
 
     private fun loadCategories() {
         viewModelScope.launch {
-            getCategoriesUseCase().collect { categories ->
-                _state.update { it.copy(categories = categories) }
+            getCategoriesUseCase().collect { result ->
+                result.onSuccess { categories ->
+                    _state.update { it.copy(categories = categories) }
+                }.onFailure { error ->
+                    if (error is CancellationException) throw error
+                    Logger.e(TAG, error) { "Error loading categories: ${error.message}" }
+                    _state.update { it.copy(error = "Errore nel caricamento delle categorie") }
+                }
+            }
+        }
+    }
+
+    private fun loadTransactionSuggestions() {
+        Logger.d(TAG) { "Loading transaction suggestions" }
+        viewModelScope.launch {
+            getTransactionSuggestionsUseCase().collect { suggestions ->
+                Logger.d(TAG) {
+                    "Suggestions loaded - titles: ${suggestions.titles.size}, " +
+                    "payees: ${suggestions.payees.size}, " +
+                    "notes: ${suggestions.notes.size}, " +
+                    "locations: ${suggestions.locations.size}, " +
+                    "tags: ${suggestions.tags.size}"
+                }
+                _state.update {
+                    it.copy(
+                        titleSuggestions = suggestions.titles,
+                        payeeSuggestions = suggestions.payees,
+                        notesSuggestions = suggestions.notes,
+                        locationSuggestions = suggestions.locations,
+                        tagsSuggestions = suggestions.tags,
+                    )
+                }
             }
         }
     }
@@ -116,7 +150,16 @@ class AddTransactionViewModel(
                 Logger.d(TAG) { "Loading transaction with id: $id" }
 
                 val transaction = transactionRepository.getTransactionById(id)
-                val categoryList = getCategoriesUseCase().first()
+                val categoryResult = getCategoriesUseCase().first()
+                val categoryList = try {
+                    categoryResult.getOrThrow()
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    Logger.e(TAG) { "Error loading categories for edit: ${e.message}" }
+                    _state.update { it.copy(isLoading = false, error = "Errore nel caricamento delle categorie") }
+                    emptyList()
+                }
 
                 if (transaction != null) {
                     val selectedCat = categoryList.find { it.name == transaction.category }
@@ -149,6 +192,8 @@ class AddTransactionViewModel(
                         it.copy(isLoading = false, error = "Transazione non trovata")
                     }
                 }
+            } catch (ex: CancellationException) {
+                throw ex
             } catch (ex: Exception) {
                 Logger.e(TAG) { "Error loading transaction: ${ex.message}" }
                 _state.update {
@@ -169,11 +214,8 @@ class AddTransactionViewModel(
             is AddTransactionEvent.SelectPaymentType -> selectPaymentType(event.paymentType)
             is AddTransactionEvent.UpdateTitle -> _state.update { it.copy(title = event.title) }
             is AddTransactionEvent.UpdateAmount -> {
-                // Memorizza sempre il valore assoluto per la visualizzazione
-                val absoluteAmount =
-                    event.amount.toDoubleOrNull()?.let { kotlin.math.abs(it).toString() }
-                        ?: event.amount
-                _state.update { it.copy(amount = absoluteAmount) }
+                // Permetti input libero durante la digitazione, validazione al salvataggio
+                _state.update { it.copy(amount = event.amount) }
             }
 
             is AddTransactionEvent.UpdateNotes -> _state.update { it.copy(notes = event.notes) }
@@ -334,14 +376,28 @@ class AddTransactionViewModel(
                 )
 
                 if (currentState.isModifying) {
-                    updateTransactionUseCase(transaction)
-                    Logger.d(TAG) { "Transaction updated successfully" }
+                    val result = updateTransactionUseCase(transaction)
+                    result.onSuccess {
+                        Logger.d(TAG) { "Transaction updated successfully" }
+                        _state.update { it.copy(isTransactionSaved = true, isLoading = false) }
+                    }.onFailure { error ->
+                        if (error is CancellationException) throw error
+                        Logger.e(TAG, error) { "Error updating transaction" }
+                        _state.update { it.copy(error = "Errore durante il salvataggio", isLoading = false) }
+                    }
                 } else {
-                    insertTransactionUseCase(transaction)
-                    Logger.d(TAG) { "Transaction inserted successfully" }
+                    val result = insertTransactionUseCase(transaction)
+                    result.onSuccess {
+                        Logger.d(TAG) { "Transaction inserted successfully" }
+                        _state.update { it.copy(isTransactionSaved = true, isLoading = false) }
+                    }.onFailure { error ->
+                        if (error is CancellationException) throw error
+                        Logger.e(TAG, error) { "Error inserting transaction" }
+                        _state.update { it.copy(error = "Errore durante il salvataggio", isLoading = false) }
+                    }
                 }
-
-                _state.update { it.copy(isTransactionSaved = true, isLoading = false) }
+            } catch (ex: CancellationException) {
+                throw ex
             } catch (ex: Exception) {
                 Logger.e(TAG) { "Error submitting transaction: ${ex.message}" }
                 _state.update {
@@ -362,14 +418,26 @@ class AddTransactionViewModel(
 
                 val transaction = transactionRepository.getTransactionById(transactionId!!)
                 if (transaction != null) {
-                    deleteTransactionUseCase(transaction)
-                    Logger.d(TAG) { "Transaction deleted successfully" }
-                    _state.update {
-                        it.copy(
-                            isTransactionSaved = true,
-                            isLoading = false,
-                            showDeleteConfirmDialog = false
-                        )
+                    val result = deleteTransactionUseCase(transaction)
+                    result.onSuccess {
+                        Logger.d(TAG) { "Transaction deleted successfully" }
+                        _state.update {
+                            it.copy(
+                                isTransactionSaved = true,
+                                isLoading = false,
+                                showDeleteConfirmDialog = false
+                            )
+                        }
+                    }.onFailure { error ->
+                        if (error is CancellationException) throw error
+                        Logger.e(TAG, error) { "Error deleting transaction" }
+                        _state.update {
+                            it.copy(
+                                error = "Errore durante l'eliminazione",
+                                isLoading = false,
+                                showDeleteConfirmDialog = false
+                            )
+                        }
                     }
                 } else {
                     _state.update {
@@ -380,6 +448,8 @@ class AddTransactionViewModel(
                         )
                     }
                 }
+            } catch (ex: CancellationException) {
+                throw ex
             } catch (ex: Exception) {
                 Logger.e(TAG) { "Error deleting transaction: ${ex.message}" }
                 _state.update {

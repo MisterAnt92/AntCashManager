@@ -64,7 +64,7 @@ class HomeViewModel(
 
     // ── Combined UI State ──
     val state: StateFlow<HomeState> = combine(
-        getTransactionsUseCase(),
+        getTransactionsUseCase().map { it.getOrElse { emptyList() } },
         _filterState,
         _selectedTransactionState,
         categoriesCache,

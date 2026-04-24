@@ -10,22 +10,19 @@ import com.antcashmanager.domain.usecase.BaseUseCase
  */
 class GetCategoryByNameUseCase(
     private val categoryRepository: CategoryRepository,
-) : BaseUseCase<GetCategoryByNameUseCase.Params, Category>() {
+) : BaseUseCase<GetCategoryByNameUseCase.Params, Result<Category>>() {
 
-    override suspend fun invoke(params: Params): Category {
+    override suspend fun execute(params: Params): Result<Category> = runCatching {
         val category = categoryRepository.getCategoryByName(params.name)
 
-        // Se la categoria esiste, restituiscila
-        if (category != null) {
-            return category
-        }
+        if (category != null) return@runCatching category
 
-        // Altrimenti, restituisci categoria fallback "Non categorizzato"
-        return Category(
+        // Fallback "Non categorizzato"
+        Category(
             id = 0,
             name = "Non categorizzato",
             icon = "more_horiz",
-            color = 0xFF90A4AE,
+            color = 0xFF90A4AEL,
             type = params.type,
             isDefault = true,
         )
@@ -36,4 +33,3 @@ class GetCategoryByNameUseCase(
         val type: String = "EXPENSE",
     )
 }
-

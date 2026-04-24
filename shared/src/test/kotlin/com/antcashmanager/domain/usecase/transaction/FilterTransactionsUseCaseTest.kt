@@ -88,7 +88,7 @@ class FilterTransactionsUseCaseTest {
             ),
         )
 
-        val result = useCase(params)
+        val result = useCase(params).getOrThrow()
 
         assertEquals(5, result.size)
     }
@@ -104,7 +104,7 @@ class FilterTransactionsUseCaseTest {
             ),
         )
 
-        val result = useCase(params)
+        val result = useCase(params).getOrThrow()
 
         assertEquals(1, result.size)
         assertEquals("Salary", result[0].title)
@@ -121,7 +121,7 @@ class FilterTransactionsUseCaseTest {
             ),
         )
 
-        val result = useCase(params)
+        val result = useCase(params).getOrThrow()
 
         assertEquals(1, result.size)
         assertEquals("Groceries", result[0].title)
@@ -138,7 +138,7 @@ class FilterTransactionsUseCaseTest {
             ),
         )
 
-        val result = useCase(params)
+        val result = useCase(params).getOrThrow()
 
         assertEquals(1, result.size)
         assertEquals("Salary", result[0].title)
@@ -155,7 +155,7 @@ class FilterTransactionsUseCaseTest {
             ),
         )
 
-        val result = useCase(params)
+        val result = useCase(params).getOrThrow()
 
         assertEquals(2, result.size)
         assertTrue(result.all { it.category == "Food" })
@@ -172,7 +172,7 @@ class FilterTransactionsUseCaseTest {
             ),
         )
 
-        val result = useCase(params)
+        val result = useCase(params).getOrThrow()
 
         assertEquals(2, result.size)
         assertTrue(result.all { it.type == TransactionType.INCOME })
@@ -189,7 +189,7 @@ class FilterTransactionsUseCaseTest {
             ),
         )
 
-        val result = useCase(params)
+        val result = useCase(params).getOrThrow()
 
         assertEquals(3, result.size)
         assertTrue(result.all { it.type == TransactionType.EXPENSE })
@@ -206,7 +206,7 @@ class FilterTransactionsUseCaseTest {
             ),
         )
 
-        val result = useCase(params)
+        val result = useCase(params).getOrThrow()
 
         assertEquals(3, result.size)
         assertTrue(result.all { it.paymentType == PaymentType.ELECTRONIC })
@@ -223,7 +223,7 @@ class FilterTransactionsUseCaseTest {
             ),
         )
 
-        val result = useCase(params)
+        val result = useCase(params).getOrThrow()
 
         assertEquals(1, result.size)
         assertEquals("Groceries", result[0].title)
@@ -240,7 +240,7 @@ class FilterTransactionsUseCaseTest {
             ),
         )
 
-        val result = useCase(params)
+        val result = useCase(params).getOrThrow()
 
         assertEquals(1, result.size)
         assertEquals("Restaurant Lunch", result[0].title)
@@ -258,7 +258,7 @@ class FilterTransactionsUseCaseTest {
             ),
         )
 
-        val result = useCase(params)
+        val result = useCase(params).getOrThrow()
 
         assertEquals(1, result.size)
         assertEquals("Electric Bill", result[0].title)
@@ -276,7 +276,7 @@ class FilterTransactionsUseCaseTest {
             ),
         )
 
-        val result = useCase(params)
+        val result = useCase(params).getOrThrow()
 
         assertEquals(1, result.size)
         assertEquals("Restaurant Lunch", result[0].title)
@@ -292,7 +292,7 @@ class FilterTransactionsUseCaseTest {
             ),
         )
 
-        val result = useCase(params)
+        val result = useCase(params).getOrThrow()
 
         assertEquals(3, result.size)
         assertTrue(result.all { it.timestamp in 2000L..4000L })
@@ -305,7 +305,7 @@ class FilterTransactionsUseCaseTest {
             filterParams = TransactionFilterParams(),
         )
 
-        val result = useCase(params)
+        val result = useCase(params).getOrThrow()
 
         assertTrue(result.isEmpty())
     }
@@ -321,7 +321,7 @@ class FilterTransactionsUseCaseTest {
             ),
         )
 
-        val result = useCase(params)
+        val result = useCase(params).getOrThrow()
 
         assertTrue(result.isEmpty())
     }

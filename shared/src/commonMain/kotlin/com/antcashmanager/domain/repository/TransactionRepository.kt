@@ -13,4 +13,11 @@ interface TransactionRepository {
     fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>>
     fun getRecurringTransactions(): Flow<List<Transaction>>
     suspend fun updateCategoryData(categoryName: String, icon: String, color: Long)
+
+    // Metodi per suggerimenti transazioni
+    fun getDistinctTitles(): Flow<List<String>>
+    fun getDistinctPayees(): Flow<List<String>>
+    fun getDistinctNotes(): Flow<List<String>>
+    fun getDistinctLocations(): Flow<List<String>>
+    fun getDistinctTags(): Flow<List<String>>
 }

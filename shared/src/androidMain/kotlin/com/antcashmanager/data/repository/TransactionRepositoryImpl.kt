@@ -44,4 +44,20 @@ class TransactionRepositoryImpl(
 
     override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) =
         transactionDao.updateCategoryData(categoryName, icon, color)
+
+    // Implementazione metodi per suggerimenti
+    override fun getDistinctTitles(): Flow<List<String>> =
+        transactionDao.getDistinctTitles()
+
+    override fun getDistinctPayees(): Flow<List<String>> =
+        transactionDao.getDistinctPayees()
+
+    override fun getDistinctNotes(): Flow<List<String>> =
+        transactionDao.getDistinctNotes()
+
+    override fun getDistinctLocations(): Flow<List<String>> =
+        transactionDao.getDistinctLocations()
+
+    override fun getDistinctTags(): Flow<List<String>> =
+        transactionDao.getDistinctTags()
 }

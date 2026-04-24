@@ -28,8 +28,13 @@ class CategoriesViewModel(
 
     init {
         viewModelScope.launch {
-            getCategoriesUseCase().collect { cats ->
-                _state.update { it.copy(categories = cats) }
+            getCategoriesUseCase().collect { result ->
+                result.onSuccess { cats ->
+                    _state.update { it.copy(categories = cats) }
+                }.onFailure { error ->
+                    if (error is kotlinx.coroutines.CancellationException) throw error
+                    Logger.e("CategoriesViewModel", error) { "Error loading categories: ${error.message}" }
+                }
             }
         }
         viewModelScope.launch {
@@ -47,23 +52,35 @@ class CategoriesViewModel(
     fun addCategory(name: String, icon: String, color: Long, type: String = "EXPENSE") {
         Logger.d("CategoriesViewModel") { "Adding category: $name ($type)" }
         viewModelScope.launch {
-            insertCategoryUseCase(
+            val result = insertCategoryUseCase(
                 Category(name = name, icon = icon, color = color, type = type),
             )
+            result.onFailure { error ->
+                if (error is kotlinx.coroutines.CancellationException) throw error
+                Logger.e("CategoriesViewModel", error) { "Failed to insert category: ${error.message}" }
+            }
         }
     }
 
     fun updateCategory(category: Category) {
         Logger.d("CategoriesViewModel") { "Updating category: ${category.name}" }
         viewModelScope.launch {
-            updateCategoryUseCase(category)
+            val result = updateCategoryUseCase(category)
+            result.onFailure { error ->
+                if (error is kotlinx.coroutines.CancellationException) throw error
+                Logger.e("CategoriesViewModel", error) { "Failed to update category: ${error.message}" }
+            }
         }
     }
 
     fun deleteCategory(category: Category) {
         Logger.d("CategoriesViewModel") { "Deleting category: ${category.name}" }
         viewModelScope.launch {
-            deleteCategoryUseCase(category)
+            val result = deleteCategoryUseCase(category)
+            result.onFailure { error ->
+                if (error is kotlinx.coroutines.CancellationException) throw error
+                Logger.e("CategoriesViewModel", error) { "Failed to delete category: ${error.message}" }
+            }
         }
     }
 }

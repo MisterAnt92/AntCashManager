@@ -25,7 +25,7 @@ class GetThemeUseCaseTest {
 
     @Test
     fun `invoke returns SYSTEM theme by default`() = runTest {
-        val theme = useCase().first()
+        val theme = useCase().first().getOrThrow()
         assertEquals(AppTheme.SYSTEM, theme)
     }
 
@@ -33,7 +33,7 @@ class GetThemeUseCaseTest {
     fun `invoke returns DARK after setting dark theme`() = runTest {
         fakeRepo.setTheme(AppTheme.DARK)
 
-        val theme = useCase().first()
+        val theme = useCase().first().getOrThrow()
         assertEquals(AppTheme.DARK, theme)
     }
 
@@ -41,7 +41,7 @@ class GetThemeUseCaseTest {
     fun `invoke returns LIGHT after setting light theme`() = runTest {
         fakeRepo.setTheme(AppTheme.LIGHT)
 
-        val theme = useCase().first()
+        val theme = useCase().first().getOrThrow()
         assertEquals(AppTheme.LIGHT, theme)
     }
 }
@@ -63,7 +63,7 @@ class SetThemeUseCaseTest {
     fun `invoke sets theme to DARK`() = runTest {
         setThemeUseCase(AppTheme.DARK)
 
-        val currentTheme = getThemeUseCase().first()
+        val currentTheme = getThemeUseCase().first().getOrThrow()
         assertEquals(AppTheme.DARK, currentTheme)
     }
 
@@ -71,17 +71,17 @@ class SetThemeUseCaseTest {
     fun `invoke sets theme to LIGHT`() = runTest {
         setThemeUseCase(AppTheme.LIGHT)
 
-        val currentTheme = getThemeUseCase().first()
+        val currentTheme = getThemeUseCase().first().getOrThrow()
         assertEquals(AppTheme.LIGHT, currentTheme)
     }
 
     @Test
     fun `invoke changes theme from DARK to SYSTEM`() = runTest {
         setThemeUseCase(AppTheme.DARK)
-        assertEquals(AppTheme.DARK, getThemeUseCase().first())
+        assertEquals(AppTheme.DARK, getThemeUseCase().first().getOrThrow())
 
         setThemeUseCase(AppTheme.SYSTEM)
-        assertEquals(AppTheme.SYSTEM, getThemeUseCase().first())
+        assertEquals(AppTheme.SYSTEM, getThemeUseCase().first().getOrThrow())
     }
 }
 

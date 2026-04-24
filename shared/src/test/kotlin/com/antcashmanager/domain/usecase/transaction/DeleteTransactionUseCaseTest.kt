@@ -91,4 +91,10 @@ private class FakeDeleteTransactionRepository(
     override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) {
         // No-op for test
     }
+
+    override fun getDistinctTitles() = flowOf(emptyList<String>())
+    override fun getDistinctPayees() = flowOf(emptyList<String>())
+    override fun getDistinctNotes() = flowOf(emptyList<String>())
+    override fun getDistinctLocations() = flowOf(emptyList<String>())
+    override fun getDistinctTags() = flowOf(emptyList<String>())
 }

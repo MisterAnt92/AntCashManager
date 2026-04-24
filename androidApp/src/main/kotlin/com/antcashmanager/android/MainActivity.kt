@@ -12,11 +12,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import com.antcashmanager.android.navigation.AntCashManagerNavHost
-import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.android.ui.theme.AppThemeProvider
 import com.antcashmanager.domain.model.AppLanguage
-import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.usecase.settings.GetLanguageUseCase
-import com.antcashmanager.domain.usecase.settings.GetThemeUseCase
 import java.util.Locale
 
 class MainActivity : ComponentActivity() {
@@ -25,31 +23,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val app = application as AntCashManagerApp
-        val getThemeUseCase = GetThemeUseCase(app.settingsRepository)
         val getLanguageUseCase = GetLanguageUseCase(app.settingsRepository)
 
         setContent {
-            val theme by getThemeUseCase().collectAsState(initial = AppTheme.SYSTEM)
-            val language by getLanguageUseCase().collectAsState(initial = AppLanguage.SYSTEM)
-            val highContrast by app.settingsRepository.getHighContrast()
-                .collectAsState(initial = false)
-            val largeText by app.settingsRepository.getLargeText()
-                .collectAsState(initial = false)
-            val reduceMotion by app.settingsRepository.getReduceMotion()
-                .collectAsState(initial = false)
-            val isDark = when (theme) {
-                AppTheme.LIGHT -> false
-                AppTheme.DARK -> true
-                AppTheme.SYSTEM -> isSystemInDarkTheme()
-            }
+            val languageResult by getLanguageUseCase().collectAsState(initial = Result.success(AppLanguage.SYSTEM))
+            val language = languageResult.getOrElse { AppLanguage.SYSTEM }
 
             WithAppLocale(language = language) {
-                AntCashManagerTheme(
-                    darkTheme = isDark,
-                    highContrast = highContrast,
-                    largeText = largeText,
-                    reduceMotion = reduceMotion,
-                ) {
+                // Centralized theme provider reads theme & accessibility preferences
+                AppThemeProvider(settingsRepository = app.settingsRepository) {
                     AntCashManagerNavHost(
                         transactionRepository = app.transactionRepository,
                         settingsRepository = app.settingsRepository,

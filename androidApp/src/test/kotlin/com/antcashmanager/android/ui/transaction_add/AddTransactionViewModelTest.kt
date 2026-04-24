@@ -80,6 +80,13 @@ class AddTransactionViewModelTest {
             override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) {
                 // No-op for test
             }
+
+            // Metodi per suggerimenti
+            override fun getDistinctTitles() = flowOf(listOf("Spesa", "Carburante", "Ristorante"))
+            override fun getDistinctPayees() = flowOf(listOf("Supermercato", "Stazione"))
+            override fun getDistinctNotes() = flowOf(listOf("Cena con amici", "Spesa mensile"))
+            override fun getDistinctLocations() = flowOf(listOf("Milano", "Roma"))
+            override fun getDistinctTags() = flowOf(listOf("Food", "Transport", "Shopping"))
         }
 
         mockCategoryRepository = object : CategoryRepository {
@@ -529,6 +536,38 @@ class AddTransactionViewModelTest {
             AddTransactionStep.CATEGORY_SELECTION,
             state.currentStep,
         )
+    }
+
+    // ── Suggerimenti Transazioni ──
+
+    @Test
+    fun `suggestions are loaded on initialization`() = runTest(testDispatcher) {
+        viewModel = AddTransactionViewModel(mockTransactionRepository, mockCategoryRepository)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertEquals("Should have title suggestions", 3, state.titleSuggestions.size)
+        assertEquals("Should have payee suggestions", 2, state.payeeSuggestions.size)
+        assertEquals("Should have notes suggestions", 2, state.notesSuggestions.size)
+        assertEquals("Should have location suggestions", 2, state.locationSuggestions.size)
+        assertEquals("Should have tags suggestions", 3, state.tagsSuggestions.size)
+
+        assertTrue("Should contain Spesa", state.titleSuggestions.contains("Spesa"))
+        assertTrue("Should contain Milano", state.locationSuggestions.contains("Milano"))
+    }
+
+    @Test
+    fun `suggestions are available when editing transaction`() = runTest(testDispatcher) {
+        viewModel = AddTransactionViewModel(
+            mockTransactionRepository,
+            mockCategoryRepository,
+            transactionId = 1L,
+        )
+        advanceUntilLoaded()
+
+        val state = viewModel.state.value
+        assertTrue("Should have suggestions loaded", state.titleSuggestions.isNotEmpty())
+        assertTrue("Should have payee suggestions", state.payeeSuggestions.isNotEmpty())
     }
 
     // ── Helper ──

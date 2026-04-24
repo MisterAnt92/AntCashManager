@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AppSelectionItemCard
 import com.antcashmanager.android.ui.components.button.AppButton
+import com.antcashmanager.android.ui.components.input.AutocompleteTextField
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionEvent
 import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionState
@@ -222,11 +223,11 @@ internal fun DetailsStep(
             Spacer(modifier = Modifier.height(12.dp))
 
             // ── Titolo ──
-            OutlinedTextField(
+            AutocompleteTextField(
                 value = state.title,
                 onValueChange = { onEvent(AddTransactionEvent.UpdateTitle(it)) },
-                label = { Text(stringResource(R.string.add_transaction_title_required)) },
-                shape = RoundedCornerShape(16.dp),
+                suggestions = state.titleSuggestions,
+                label = stringResource(R.string.add_transaction_title_required),
                 modifier = Modifier.fillMaxWidth(),
             )
             Spacer(modifier = Modifier.height(12.dp))
@@ -234,11 +235,32 @@ internal fun DetailsStep(
             // ── Importo ──
             OutlinedTextField(
                 value = state.amount,
-                onValueChange = { onEvent(AddTransactionEvent.UpdateAmount(it)) },
+                onValueChange = { newValue ->
+                    // Permetti solo numeri e un singolo separatore decimale (punto o virgola)
+                    val filtered = newValue.filter { it.isDigit() || it == '.' || it == ',' }
+
+                    // Normalizza: sostituisci virgola con punto
+                    val normalized = filtered.replace(',', '.')
+
+                    // Previeni multipli punti decimali
+                    val dotCount = normalized.count { it == '.' }
+                    val finalValue = if (dotCount <= 1) {
+                        normalized
+                    } else {
+                        // Mantieni solo il primo punto
+                        val firstDotIndex = normalized.indexOf('.')
+                        normalized.substring(0, firstDotIndex + 1) +
+                        normalized.substring(firstDotIndex + 1).replace(".", "")
+                    }
+
+                    onEvent(AddTransactionEvent.UpdateAmount(finalValue))
+                },
                 label = { Text(stringResource(R.string.add_transaction_amount_required)) },
+                placeholder = { Text("0.00") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
             )
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -255,31 +277,31 @@ internal fun DetailsStep(
             Spacer(modifier = Modifier.height(12.dp))
 
             // ── Note ──
-            OutlinedTextField(
+            AutocompleteTextField(
                 value = state.notes,
                 onValueChange = { onEvent(AddTransactionEvent.UpdateNotes(it)) },
-                label = { Text(stringResource(R.string.add_transaction_notes_label)) },
-                shape = RoundedCornerShape(16.dp),
+                suggestions = state.notesSuggestions,
+                label = stringResource(R.string.add_transaction_notes_label),
                 modifier = Modifier.fillMaxWidth(),
             )
             Spacer(modifier = Modifier.height(12.dp))
 
             // ── Beneficiario ──
-            OutlinedTextField(
+            AutocompleteTextField(
                 value = state.payee,
                 onValueChange = { onEvent(AddTransactionEvent.UpdatePayee(it)) },
-                label = { Text(stringResource(R.string.add_transaction_payee_label)) },
-                shape = RoundedCornerShape(16.dp),
+                suggestions = state.payeeSuggestions,
+                label = stringResource(R.string.add_transaction_payee_label),
                 modifier = Modifier.fillMaxWidth(),
             )
             Spacer(modifier = Modifier.height(12.dp))
 
             // ── Luogo ──
-            OutlinedTextField(
+            AutocompleteTextField(
                 value = state.location,
                 onValueChange = { onEvent(AddTransactionEvent.UpdateLocation(it)) },
-                label = { Text(stringResource(R.string.add_transaction_location_label)) },
-                shape = RoundedCornerShape(16.dp),
+                suggestions = state.locationSuggestions,
+                label = stringResource(R.string.add_transaction_location_label),
                 modifier = Modifier.fillMaxWidth(),
             )
             Spacer(modifier = Modifier.height(12.dp))
@@ -298,12 +320,11 @@ internal fun DetailsStep(
             Spacer(modifier = Modifier.height(12.dp))
 
             // ── Tags ──
-            OutlinedTextField(
+            AutocompleteTextField(
                 value = state.tags,
                 onValueChange = { onEvent(AddTransactionEvent.UpdateTags(it)) },
-                label = { Text(stringResource(R.string.add_transaction_tags_label)) },
-                placeholder = { Text(stringResource(R.string.add_transaction_tags_placeholder)) },
-                shape = RoundedCornerShape(16.dp),
+                suggestions = state.tagsSuggestions,
+                label = stringResource(R.string.add_transaction_tags_label),
                 modifier = Modifier.fillMaxWidth(),
             )
             Spacer(modifier = Modifier.height(12.dp))

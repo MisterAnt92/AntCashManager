@@ -1,0 +1,6 @@
+assistant:
+  description: "Istruzioni per l'AI assistant del repository AntCashManager. Vedi .github/agent-android-clean-architecture.md"
+  repository_instructions: ".github/agent-android-clean-architecture.md"
+  # Nota: alcuni tool (es. GitHub Copilot/AI assistant) possono richiedere uno schema diverso.
+  # Questo file serve come punto centrale di riferimento per l'agente nel repository.
+

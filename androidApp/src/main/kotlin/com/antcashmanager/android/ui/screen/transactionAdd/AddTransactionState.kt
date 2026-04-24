@@ -51,6 +51,13 @@ data class AddTransactionState(
     val error: String? = null,
     val isTransactionSaved: Boolean = false,
 
+    // ── Suggerimenti per campi ──
+    val titleSuggestions: List<String> = emptyList(),
+    val payeeSuggestions: List<String> = emptyList(),
+    val notesSuggestions: List<String> = emptyList(),
+    val locationSuggestions: List<String> = emptyList(),
+    val tagsSuggestions: List<String> = emptyList(),
+
     // ── Dialog states ──
     val showCategoryDialog: Boolean = false,
     val showTypeDialog: Boolean = false,

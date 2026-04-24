@@ -40,4 +40,20 @@ interface TransactionDao {
 
     @Query("UPDATE transactions SET category_icon = :icon, category_color = :color WHERE category = :categoryName")
     suspend fun updateCategoryData(categoryName: String, icon: String, color: Long)
+
+    // Query per suggerimenti transazioni
+    @Query("SELECT DISTINCT title FROM transactions WHERE title != '' ORDER BY timestamp DESC LIMIT 20")
+    fun getDistinctTitles(): Flow<List<String>>
+
+    @Query("SELECT DISTINCT payee FROM transactions WHERE payee != '' ORDER BY timestamp DESC LIMIT 20")
+    fun getDistinctPayees(): Flow<List<String>>
+
+    @Query("SELECT DISTINCT notes FROM transactions WHERE notes != '' ORDER BY timestamp DESC LIMIT 20")
+    fun getDistinctNotes(): Flow<List<String>>
+
+    @Query("SELECT DISTINCT location FROM transactions WHERE location != '' ORDER BY timestamp DESC LIMIT 20")
+    fun getDistinctLocations(): Flow<List<String>>
+
+    @Query("SELECT DISTINCT tags FROM transactions WHERE tags != '' ORDER BY timestamp DESC LIMIT 20")
+    fun getDistinctTags(): Flow<List<String>>
 }

@@ -14,21 +14,21 @@ import com.antcashmanager.domain.usecase.BaseUseCase
  * - Transaction type (INCOME/EXPENSE)
  * - Payment type (ELECTRONIC/CASH/MEAL_VOUCHERS)
  */
-class FilterTransactionsUseCase : BaseUseCase<FilterTransactionsUseCase.Params, List<Transaction>>() {
+class FilterTransactionsUseCase : BaseUseCase<FilterTransactionsUseCase.Params, Result<List<Transaction>>>() {
 
     data class Params(
         val transactions: List<Transaction>,
         val filterParams: TransactionFilterParams,
     )
 
-    override suspend fun invoke(params: Params): List<Transaction> {
+    override suspend fun execute(params: Params): Result<List<Transaction>> = runCatching {
         val (transactions, filterParams) = params
 
         // Early return for empty list
-        if (transactions.isEmpty()) return emptyList()
+        if (transactions.isEmpty()) return@runCatching emptyList()
 
         // Use sequence for lazy evaluation - avoids intermediate list allocations
-        return transactions.asSequence()
+        transactions.asSequence()
             .filter { transaction ->
                 // Date range filter (always applied, short-circuit first)
                 transaction.timestamp in filterParams.dateFrom..filterParams.dateTo

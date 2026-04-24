@@ -47,7 +47,7 @@ class CurrencyFormatterTest {
     }
 
     @Test
-    fun `no decimal digits outputs rounded integer and no separator`() {
+    fun `no decimal digits outputs rounded integer and keeps thousands separator`() {
         val format = CurrencyFormat(
             currencySymbol = "€",
             decimalDigits = 0,
@@ -56,8 +56,8 @@ class CurrencyFormatterTest {
         )
 
         val formatted = formatAmount(1234.56, format)
-        // with 0 decimal digits the formatter uses %.0f so it will round
-        assertEquals("€1235", formatted)
+        // with 0 decimal digits the value is rounded and still grouped by thousands
+        assertEquals("€1.235", formatted)
     }
 
     @Test

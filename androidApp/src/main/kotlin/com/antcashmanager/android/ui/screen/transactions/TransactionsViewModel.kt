@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -90,8 +91,8 @@ class TransactionsViewModel(
 
     // ── Combined UI State ──
     val state: StateFlow<TransactionsState> = combine(
-        getTransactionsUseCase(),
-        getCategoriesUseCase(),
+        getTransactionsUseCase().map { it.getOrElse { emptyList() } },
+        getCategoriesUseCase().map { it.getOrElse { emptyList() } },
         _filterState,
         debouncedSearchQuery,
     ) { transactions, categories, filterState, debouncedQuery ->
@@ -109,14 +110,15 @@ class TransactionsViewModel(
             dateTo = filterState.dateRangeTo,
         )
 
-        // Filter transactions using UseCase
-        val filtered = viewModelScope.let {
-            filterTransactionsUseCase(
+        // Filter transactions using UseCase (Result-wrapped)
+        val filtered = run {
+            val result = filterTransactionsUseCase(
                 FilterTransactionsUseCase.Params(
                     transactions = transformedTransactions,
                     filterParams = filterParams,
                 )
             )
+            result.getOrElse { emptyList() }
         }
 
         TransactionsState(
@@ -265,7 +267,7 @@ class TransactionsViewModel(
     ) {
         Logger.d("TransactionsViewModel") { "Adding transaction: $title" }
         viewModelScope.launch {
-            insertTransactionUseCase(
+            val result = insertTransactionUseCase(
                 Transaction(
                     title = title,
                     amount = amount,
@@ -280,20 +282,32 @@ class TransactionsViewModel(
                     recurrenceInterval = recurrenceInterval,
                 ),
             )
+            result.onFailure { error ->
+                if (error is kotlinx.coroutines.CancellationException) throw error
+                Logger.e("TransactionsViewModel", error) { "Failed to insert transaction: ${error.message}" }
+            }
         }
     }
 
     fun updateTransaction(transaction: Transaction) {
         Logger.d("TransactionsViewModel") { "Updating transaction: ${transaction.title}" }
         viewModelScope.launch {
-            updateTransactionUseCase(transaction)
+            val result = updateTransactionUseCase(transaction)
+            result.onFailure { error ->
+                if (error is kotlinx.coroutines.CancellationException) throw error
+                Logger.e("TransactionsViewModel", error) { "Failed to update transaction: ${error.message}" }
+            }
         }
     }
 
     fun deleteTransaction(transaction: Transaction) {
         Logger.d("TransactionsViewModel") { "Deleting transaction: ${transaction.title}" }
         viewModelScope.launch {
-            deleteTransactionUseCase(transaction)
+            val result = deleteTransactionUseCase(transaction)
+            result.onFailure { error ->
+                if (error is kotlinx.coroutines.CancellationException) throw error
+                Logger.e("TransactionsViewModel", error) { "Failed to delete transaction: ${error.message}" }
+            }
         }
     }
 }

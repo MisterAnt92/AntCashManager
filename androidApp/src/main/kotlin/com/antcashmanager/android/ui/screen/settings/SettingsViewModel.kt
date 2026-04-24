@@ -26,10 +26,12 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import kotlinx.coroutines.CancellationException
 
 
 class SettingsViewModel(
@@ -148,12 +150,12 @@ class SettingsViewModel(
     // Stato aggregato delle preferenze - combinare i flussi in gruppi
     val state: StateFlow<SettingsState> = combine(
         combine(
-            getThemeUseCase().stateIn(
+            getThemeUseCase().map { it.getOrElse { DEFAULT_THEME } }.stateIn(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
                 DEFAULT_THEME
             ),
-            getLanguageUseCase().stateIn(
+            getLanguageUseCase().map { it.getOrElse { DEFAULT_LANGUAGE } }.stateIn(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
                 DEFAULT_LANGUAGE
@@ -245,9 +247,23 @@ class SettingsViewModel(
     /**
      * Funzione di utilità per loggare e lanciare l'azione in coroutine.
      */
-    private fun updatePreference(logMsg: String, action: suspend () -> Unit) {
+    private fun updatePreference(logMsg: String, action: suspend () -> Any?) {
         Logger.d(TAG) { logMsg }
-        viewModelScope.launch { action() }
+        viewModelScope.launch {
+            try {
+                val result = action()
+                if (result is Result<*>) {
+                    result.onFailure { error ->
+                        if (error is CancellationException) throw error
+                        Logger.e(TAG, error) { "Preference update failed: ${error.message}" }
+                    }
+                }
+            } catch (ex: CancellationException) {
+                throw ex
+            } catch (ex: Exception) {
+                Logger.e(TAG, ex) { "Preference update failed: ${ex.message}" }
+            }
+        }
     }
 
     fun setTheme(theme: AppTheme) = updatePreference(
@@ -319,9 +335,15 @@ class SettingsViewModel(
         Logger.d("SettingsViewModel") { "Deleting all data" }
         viewModelScope.launch {
             try {
-                deleteAllTransactionsUseCase()
-                categoryRepository.deleteAllCategories()
-                _deleteResult.value = DeleteResult.Success
+                val result = deleteAllTransactionsUseCase()
+                result.onSuccess {
+                    categoryRepository.deleteAllCategories()
+                    _deleteResult.value = DeleteResult.Success
+                }.onFailure { error ->
+                    if (error is kotlinx.coroutines.CancellationException) throw error
+                    Logger.e("SettingsViewModel", error) { "Error deleting data: ${error.message}" }
+                    _deleteResult.value = DeleteResult.Error(error.message ?: "Unknown error")
+                }
             } catch (e: Exception) {
                 Logger.e("SettingsViewModel") { "Error deleting data: ${e.message}" }
                 _deleteResult.value = DeleteResult.Error(e.message ?: "Unknown error")
@@ -437,4 +459,3 @@ private data class SettingsPreferences2(
     val decimalSeparator: String,
     val thousandsSeparator: String,
 )
-

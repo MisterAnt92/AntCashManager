@@ -2,12 +2,12 @@ package com.antcashmanager.android.ui.screen.settingsDisplay
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.BarChart
@@ -23,10 +23,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -39,10 +36,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -52,19 +47,28 @@ import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AppSwitch
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
-import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.screen.settings.view.CurrencySymbolDialog
 import com.antcashmanager.android.ui.screen.settings.view.DecimalDigitsDialog
+import com.antcashmanager.android.ui.screen.settings.view.DateFormatDialog
 import com.antcashmanager.android.ui.screen.settings.view.SeparatorDialog
+import com.antcashmanager.android.ui.screen.settings.view.TransactionDisplayDialog
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.formatAmount
 import com.antcashmanager.domain.model.CurrencyFormat
-import com.antcashmanager.domain.model.DateFormatType
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.SettingsRepository
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+/**
+ * Screen wrapper per la schermata "Visualizzazione".
+ * Si occupa di creare il ViewModel, raccogliere gli StateFlow e passare i
+ * valori al composable di presentazione `DisplayContent`.
+ *
+ * @param settingsRepository repository per le impostazioni (iniettato manualmente)
+ * @param navController NavController per la navigazione
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DisplayScreen(
@@ -113,6 +117,15 @@ fun DisplayScreen(
     )
 }
 
+/**
+ * Composable che rappresenta il contenuto della schermata "Visualizzazione".
+ * È stato scomposto in sotto-sezioni (`CurrencySection`, `DateSection`,
+ * `ChartsSection`, `HomeDisplaySection`, `OtherSection`) per migliorare la
+ * testabilità e ridurre la complessità (detekt warnings).
+ *
+ * I dialog vengono mostrati da variabili locali di stato e sono definiti in
+ * `com.antcashmanager.android.ui.screen.settings.view.SettingsDialogs.kt`.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun DisplayContent(
@@ -160,214 +173,79 @@ internal fun DisplayContent(
             )
         },
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(
-                    top = 0.dp,
-                    start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                    end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
-                    bottom = innerPadding.calculateBottomPadding(),
-                )
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 24.dp),
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(
+                start = 16.dp,
+                top = innerPadding.calculateTopPadding(),
+                end = 16.dp,
+                bottom = innerPadding.calculateBottomPadding() + 24.dp,
+            ),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            // ═════════════════════════════════════════════════════════
-            // SEZIONE VALUTA
-            // ═════════════════════════════════════════════════════════
-            AppCardSectionHeader(title = stringResource(R.string.settings_section_currency))
+            item { CurrencySection(
+                currencySymbol = currencySymbol,
+                decimalDigits = decimalDigits,
+                decimalSeparator = decimalSeparator,
+                thousandsSeparator = thousandsSeparator,
+                onShowCurrencyDialog = { showCurrencyDialog = true },
+                onShowDecimalDigitsDialog = { showDecimalDigitsDialog = true },
+                onShowDecimalSeparatorDialog = { showDecimalSeparatorDialog = true },
+                onShowThousandsSeparatorDialog = { showThousandsSeparatorDialog = true },
+            ) }
 
-            AppCard(
-                title = stringResource(R.string.settings_currency_symbol),
-                subtitle = CurrencyFormat.SUPPORTED_CURRENCIES.find { it.first == currencySymbol }?.second
-                    ?: currencySymbol,
-                leadingIcon = Icons.Default.MonetizationOn,
-                onClick = { showCurrencyDialog = true },
-            )
-            AppCard(
-                title = stringResource(R.string.settings_decimal_digits),
-                subtitle = stringResource(R.string.settings_decimal_digits_subtitle, decimalDigits),
-                leadingIcon = Icons.Default.Exposure,
-                onClick = { showDecimalDigitsDialog = true },
-            )
-            AppCard(
-                title = stringResource(R.string.settings_decimal_separator),
-                subtitle = separatorLabel(decimalSeparator, isThou = false),
-                leadingIcon = Icons.Default.TextFields,
-                onClick = { showDecimalSeparatorDialog = true },
-            )
-            AppCard(
-                title = stringResource(R.string.settings_thousands_separator),
-                subtitle = separatorLabel(thousandsSeparator, isThou = true),
-                leadingIcon = Icons.Default.MoreHoriz,
-                onClick = { showThousandsSeparatorDialog = true },
-            )
-            // Live format preview
-            Text(
-                text = stringResource(
-                    R.string.settings_format_preview,
-                    formatAmount(
-                        1234567.89,
-                        CurrencyFormat(
-                            currencySymbol = currencySymbol,
-                            decimalDigits = decimalDigits,
-                            decimalSeparator = decimalSeparator,
-                            thousandsSeparator = thousandsSeparator,
-                        ),
-                    ),
-                ),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(start = 4.dp, top = 2.dp, bottom = 8.dp),
-            )
+            item { DateSection(dateFormat = dateFormat, onShowDateFormatDialog = { showDateFormatDialog = true }) }
 
-            // ═════════════════════════════════════════════════════════
-            // SEZIONE DATE
-            // ═════════════════════════════════════════════════════════
-            AppCardSectionHeader(title = stringResource(R.string.settings_section_dates))
+            item { ChartsSection(showChartsSection = showChartsSection, onShowChartsSectionChanged = onShowChartsSectionChanged) }
 
-            val currentDateExample = remember(dateFormat) {
-                try {
-                    val formatter = SimpleDateFormat(dateFormat, Locale.getDefault())
-                    formatter.format(Date())
-                } catch (e: Exception) {
-                    dateFormat
-                }
-            }
+            item { HomeDisplaySection(
+                showPaymentTypeBreakdown = showPaymentTypeBreakdown,
+                onShowPaymentTypeBreakdownChanged = onShowPaymentTypeBreakdownChanged,
+                transactionDisplayType = transactionDisplayType,
+                onShowTransactionDisplayDialog = { showTransactionDisplayDialog = true },
+            ) }
 
-            AppCard(
-                title = stringResource(R.string.settings_date_format),
-                subtitle = stringResource(
-                    R.string.settings_date_format_subtitle,
-                    currentDateExample
-                ),
-                leadingIcon = Icons.Default.CalendarMonth,
-                onClick = { showDateFormatDialog = true },
-            )
+            item { OtherSection(
+                showTransactionNotes = showTransactionNotes,
+                onShowTransactionNotesChanged = onShowTransactionNotesChanged,
+                onShowResetPreferencesDialog = { showResetPreferencesDialog = true },
+            ) }
 
-            // ═════════════════════════════════════════════════════════
-            // SEZIONE GRAFICI
-            // ═════════════════════════════════════════════════════════
-            AppCardSectionHeader(title = stringResource(R.string.settings_section_charts))
-
-            AppCard(
-                title = stringResource(R.string.settings_show_charts_section),
-                subtitle = if (showChartsSection) stringResource(R.string.settings_show_charts_section_visible) else stringResource(
-                    R.string.settings_show_charts_section_hidden
-                ),
-                leadingIcon = Icons.Default.BarChart,
-                trailingContent = {
-                    Switch(
-                        checked = showChartsSection,
-                        onCheckedChange = onShowChartsSectionChanged,
-                    )
-                },
-                onClick = { onShowChartsSectionChanged(!showChartsSection) },
-            )
-
-            // ═════════════════════════════════════════════════════════
-            // SEZIONE HOME DISPLAY
-            // ═════════════════════════════════════════════════════════
-            AppCardSectionHeader(title = stringResource(R.string.settings_display_home))
-
-            AppCard(
-                title = stringResource(R.string.settings_show_payment_breakdown),
-                subtitle = stringResource(R.string.settings_show_payment_breakdown_desc),
-                leadingIcon = Icons.Default.Payment,
-                trailingContent = {
-                    AppSwitch(
-                        checked = showPaymentTypeBreakdown,
-                        onCheckedChange = onShowPaymentTypeBreakdownChanged,
-                    )
-                },
-                onClick = { onShowPaymentTypeBreakdownChanged(!showPaymentTypeBreakdown) },
-            )
-
-            AppCard(
-                title = stringResource(R.string.settings_transaction_display),
-                subtitle = when (transactionDisplayType) {
-                    TransactionDisplayType.TREND -> stringResource(R.string.settings_transaction_display_trend)
-                    TransactionDisplayType.CATEGORY -> stringResource(R.string.settings_transaction_display_category)
-                    TransactionDisplayType.NONE -> stringResource(R.string.settings_transaction_display_none)
-                },
-                leadingIcon = Icons.Default.Visibility,
-                onClick = { showTransactionDisplayDialog = true },
-            )
-
-            // ═════════════════════════════════════════════════════════
-            // SEZIONE ALTRO
-            // ═════════════════════════════════════════════════════════
-            AppCardSectionHeader(title = stringResource(R.string.settings_section_other))
-
-            AppCard(
-                title = stringResource(R.string.settings_show_transaction_notes),
-                subtitle = if (showTransactionNotes) stringResource(R.string.settings_show_transaction_notes_subtitle_enabled) else stringResource(R.string.settings_show_transaction_notes_subtitle_disabled),
-                leadingIcon = Icons.Default.TextFields,
-                trailingContent = {
-                    Switch(
-                        checked = showTransactionNotes,
-                        onCheckedChange = onShowTransactionNotesChanged,
-                    )
-                },
-                onClick = { onShowTransactionNotesChanged(!showTransactionNotes) },
-            )
-            AppCard(
-                title = stringResource(R.string.settings_reset_preferences),
-                subtitle = stringResource(R.string.settings_reset_preferences_subtitle),
-                leadingIcon = Icons.Default.Refresh,
-                iconBackgroundColor = MaterialTheme.colorScheme.errorContainer,
-                iconTint = MaterialTheme.colorScheme.onErrorContainer,
-                showChevron = false,
-                onClick = { showResetPreferencesDialog = true },
-            )
+            // Spacer per padding inferiore extra
+            item { androidx.compose.material3.Surface(modifier = Modifier.height(24.dp)) { } }
         }
     }
 
-    if (showCurrencyDialog) {
-        CurrencySymbolDialog(
-            currentSymbol = currencySymbol,
-            onSymbolSelected = { onCurrencySymbolSelected(it); showCurrencyDialog = false },
-            onDismiss = { showCurrencyDialog = false },
-        )
+    // Local handlers for dialog results to avoid complex inline lambdas and satisfy detekt
+    val handleCurrencySelected: (String) -> Unit = { symbol ->
+        onCurrencySymbolSelected(symbol)
+        showCurrencyDialog = false
     }
+    val dismissCurrency: () -> Unit = { showCurrencyDialog = false }
 
-    if (showDecimalDigitsDialog) {
-        DecimalDigitsDialog(
-            currentDigits = decimalDigits,
-            onDigitsSelected = { onDecimalDigitsSelected(it); showDecimalDigitsDialog = false },
-            onDismiss = { showDecimalDigitsDialog = false },
-        )
+    val handleDecimalDigitsSelected: (Int) -> Unit = { digits ->
+        onDecimalDigitsSelected(digits)
+        showDecimalDigitsDialog = false
     }
+    val dismissDecimalDigits: () -> Unit = { showDecimalDigitsDialog = false }
 
-    if (showDecimalSeparatorDialog) {
-        SeparatorDialog(
-            title = stringResource(R.string.dialog_choose_decimal_separator),
-            options = CurrencyFormat.DECIMAL_SEPARATORS.filter { it.first != thousandsSeparator },
-            currentValue = decimalSeparator,
-            onSelected = { onDecimalSeparatorSelected(it); showDecimalSeparatorDialog = false },
-            onDismiss = { showDecimalSeparatorDialog = false },
-        )
+    val handleDecimalSeparatorSelected: (String) -> Unit = { value ->
+        onDecimalSeparatorSelected(value)
+        showDecimalSeparatorDialog = false
     }
+    val dismissDecimalSeparator: () -> Unit = { showDecimalSeparatorDialog = false }
 
-    if (showThousandsSeparatorDialog) {
-        SeparatorDialog(
-            title = stringResource(R.string.dialog_choose_thousands_separator),
-            options = CurrencyFormat.THOUSANDS_SEPARATORS.filter { it.first != decimalSeparator },
-            currentValue = thousandsSeparator,
-            onSelected = { onThousandsSeparatorSelected(it); showThousandsSeparatorDialog = false },
-            onDismiss = { showThousandsSeparatorDialog = false },
-        )
+    val handleThousandsSeparatorSelected: (String) -> Unit = { value ->
+        onThousandsSeparatorSelected(value)
+        showThousandsSeparatorDialog = false
     }
+    val dismissThousandsSeparator: () -> Unit = { showThousandsSeparatorDialog = false }
 
-    if (showDateFormatDialog) {
-        DateFormatDialog(
-            currentFormat = dateFormat,
-            onFormatSelected = { onDateFormatSelected(it); showDateFormatDialog = false },
-            onDismiss = { showDateFormatDialog = false },
-        )
+    val handleDateFormatSelected: (String) -> Unit = { fmt ->
+        onDateFormatSelected(fmt)
+        showDateFormatDialog = false
     }
+    val dismissDateFormat: () -> Unit = { showDateFormatDialog = false }
 
     if (showResetPreferencesDialog) {
         AlertDialog(
@@ -405,14 +283,61 @@ internal fun DisplayContent(
         )
     }
 
+    val handleTransactionDisplaySelected: (TransactionDisplayType) -> Unit = { t ->
+        onTransactionDisplayTypeSelected(t)
+        showTransactionDisplayDialog = false
+    }
+    val dismissTransactionDisplay: () -> Unit = { showTransactionDisplayDialog = false }
+
+    if (showCurrencyDialog) {
+        CurrencySymbolDialog(
+            currentSymbol = currencySymbol,
+            onSymbolSelected = handleCurrencySelected,
+            onDismiss = dismissCurrency,
+        )
+    }
+
+    if (showDecimalDigitsDialog) {
+        DecimalDigitsDialog(
+            currentDigits = decimalDigits,
+            onDigitsSelected = handleDecimalDigitsSelected,
+            onDismiss = dismissDecimalDigits,
+        )
+    }
+
+    if (showDecimalSeparatorDialog) {
+        SeparatorDialog(
+            title = stringResource(R.string.dialog_choose_decimal_separator),
+            options = CurrencyFormat.DECIMAL_SEPARATORS.filter { it.first != thousandsSeparator },
+            currentValue = decimalSeparator,
+            onSelected = handleDecimalSeparatorSelected,
+            onDismiss = dismissDecimalSeparator,
+        )
+    }
+
+    if (showThousandsSeparatorDialog) {
+        SeparatorDialog(
+            title = stringResource(R.string.dialog_choose_thousands_separator),
+            options = CurrencyFormat.THOUSANDS_SEPARATORS.filter { it.first != decimalSeparator },
+            currentValue = thousandsSeparator,
+            onSelected = handleThousandsSeparatorSelected,
+            onDismiss = dismissThousandsSeparator,
+        )
+    }
+
+    if (showDateFormatDialog) {
+        DateFormatDialog(
+            currentFormat = dateFormat,
+            onFormatSelected = handleDateFormatSelected,
+            onDismiss = dismissDateFormat,
+        )
+    }
+
     if (showTransactionDisplayDialog) {
         TransactionDisplayDialog(
             currentDisplayType = transactionDisplayType,
-            onDisplayTypeSelected = {
-                onTransactionDisplayTypeSelected(it)
-                showTransactionDisplayDialog = false
-            },
-            onDismiss = { showTransactionDisplayDialog = false },
+            onDisplayTypeSelected = handleTransactionDisplaySelected,
+            onDismiss = dismissTransactionDisplay,
         )
     }
 }
@@ -431,231 +356,182 @@ private fun separatorLabel(value: String, isThou: Boolean): String {
 }
 
 @Composable
-private fun CurrencySymbolDialog(
-    currentSymbol: String,
-    onSymbolSelected: (String) -> Unit,
-    onDismiss: () -> Unit,
+private fun CurrencySection(
+    currencySymbol: String,
+    decimalDigits: Int,
+    decimalSeparator: String,
+    thousandsSeparator: String,
+    onShowCurrencyDialog: () -> Unit,
+    onShowDecimalDigitsDialog: () -> Unit,
+    onShowDecimalSeparatorDialog: () -> Unit,
+    onShowThousandsSeparatorDialog: () -> Unit,
 ) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        icon = {
-            Icon(
-                imageVector = Icons.Default.MonetizationOn,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-            )
-        },
-        title = { Text(stringResource(R.string.dialog_choose_currency)) },
-        text = {
-            Column(
-                modifier = Modifier.verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(0.dp),
-            ) {
-                CurrencyFormat.SUPPORTED_CURRENCIES.forEach { (symbol, label) ->
-                    ListItem(
-                        headlineContent = { Text(label) },
-                        leadingContent = {
-                            RadioButton(
-                                selected = symbol == currentSymbol,
-                                onClick = { onSymbolSelected(symbol) },
-                            )
-                        },
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                        modifier = Modifier,
-                    )
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.dialog_cancel)) }
-        },
+    AppCardSectionHeader(title = stringResource(R.string.settings_section_currency))
+    Spacer(modifier = Modifier.height(8.dp))
+
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        AppCard(
+            title = stringResource(R.string.settings_currency_symbol),
+            subtitle = CurrencyFormat.SUPPORTED_CURRENCIES.find { it.first == currencySymbol }?.second
+                ?: currencySymbol,
+            leadingIcon = Icons.Default.MonetizationOn,
+            onClick = onShowCurrencyDialog,
+        )
+
+        AppCard(
+            title = stringResource(R.string.settings_decimal_digits),
+            subtitle = stringResource(R.string.settings_decimal_digits_subtitle, decimalDigits),
+            leadingIcon = Icons.Default.Exposure,
+            onClick = onShowDecimalDigitsDialog,
+        )
+
+        AppCard(
+            title = stringResource(R.string.settings_decimal_separator),
+            subtitle = separatorLabel(decimalSeparator, isThou = false),
+            leadingIcon = Icons.Default.TextFields,
+            onClick = onShowDecimalSeparatorDialog,
+        )
+
+        AppCard(
+            title = stringResource(R.string.settings_thousands_separator),
+            subtitle = separatorLabel(thousandsSeparator, isThou = true),
+            leadingIcon = Icons.Default.MoreHoriz,
+            onClick = onShowThousandsSeparatorDialog,
+        )
+    }
+
+    Text(
+        text = stringResource(
+            R.string.settings_format_preview,
+            formatAmount(
+                1234567.89,
+                CurrencyFormat(
+                    currencySymbol = currencySymbol,
+                    decimalDigits = decimalDigits,
+                    decimalSeparator = decimalSeparator,
+                    thousandsSeparator = thousandsSeparator,
+                ),
+            ),
+        ),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier.padding(start = 4.dp, top = 2.dp, bottom = 8.dp),
     )
 }
 
 @Composable
-private fun DecimalDigitsDialog(
-    currentDigits: Int,
-    onDigitsSelected: (Int) -> Unit,
-    onDismiss: () -> Unit,
+private fun DateSection(
+    dateFormat: String,
+    onShowDateFormatDialog: () -> Unit,
 ) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        icon = {
-            Icon(
-                imageVector = Icons.Default.Exposure,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-            )
-        },
-        title = { Text(stringResource(R.string.dialog_choose_decimal_digits)) },
-        text = {
-            Column {
-                (0..4).forEach { digits ->
-                    ListItem(
-                        headlineContent = {
-                            Text(stringResource(R.string.settings_decimal_digits_subtitle, digits))
-                        },
-                        leadingContent = {
-                            RadioButton(
-                                selected = digits == currentDigits,
-                                onClick = { onDigitsSelected(digits) },
-                            )
-                        },
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                        modifier = Modifier,
-                    )
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.dialog_cancel)) }
-        },
+    AppCardSectionHeader(title = stringResource(R.string.settings_section_dates))
+    Spacer(modifier = Modifier.height(8.dp))
+
+    val currentDateExample = remember(dateFormat) {
+        kotlin.runCatching {
+            val formatter = SimpleDateFormat(dateFormat, Locale.getDefault())
+            formatter.format(Date())
+        }.getOrElse { dateFormat }
+    }
+
+    AppCard(
+        title = stringResource(R.string.settings_date_format),
+        subtitle = stringResource(R.string.settings_date_format_subtitle, currentDateExample),
+        leadingIcon = Icons.Default.CalendarMonth,
+        onClick = onShowDateFormatDialog,
     )
 }
 
 @Composable
-private fun SeparatorDialog(
-    title: String,
-    options: List<Pair<String, String>>,
-    currentValue: String,
-    onSelected: (String) -> Unit,
-    onDismiss: () -> Unit,
+private fun ChartsSection(
+    showChartsSection: Boolean,
+    onShowChartsSectionChanged: (Boolean) -> Unit,
 ) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        icon = {
-            Icon(
-                imageVector = Icons.Default.TextFields,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-            )
+    AppCardSectionHeader(title = stringResource(R.string.settings_section_charts))
+    Spacer(modifier = Modifier.height(8.dp))
+
+    AppCard(
+        title = stringResource(R.string.settings_show_charts_section),
+        subtitle = if (showChartsSection) stringResource(R.string.settings_show_charts_section_visible) else stringResource(
+            R.string.settings_show_charts_section_hidden
+        ),
+        leadingIcon = Icons.Default.BarChart,
+        trailingContent = {
+            Switch(checked = showChartsSection, onCheckedChange = onShowChartsSectionChanged)
         },
-        title = { Text(title) },
-        text = {
-            Column {
-                options.forEach { (value, label) ->
-                    ListItem(
-                        headlineContent = { Text(label) },
-                        leadingContent = {
-                            RadioButton(
-                                selected = value == currentValue,
-                                onClick = { onSelected(value) },
-                            )
-                        },
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                        modifier = Modifier,
-                    )
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.dialog_cancel)) }
-        },
+        onClick = { onShowChartsSectionChanged(!showChartsSection) },
     )
 }
 
 @Composable
-private fun DateFormatDialog(
-    currentFormat: String,
-    onFormatSelected: (String) -> Unit,
-    onDismiss: () -> Unit,
+private fun HomeDisplaySection(
+    showPaymentTypeBreakdown: Boolean,
+    onShowPaymentTypeBreakdownChanged: (Boolean) -> Unit,
+    transactionDisplayType: TransactionDisplayType,
+    onShowTransactionDisplayDialog: () -> Unit,
 ) {
-    val formats = listOf(
-        DateFormatType.DD_MM_YYYY.pattern to stringResource(R.string.date_format_ddmmyyyy),
-        DateFormatType.MM_DD_YYYY.pattern to stringResource(R.string.date_format_mmddyyyy),
-        DateFormatType.YYYY_MM_DD.pattern to stringResource(R.string.date_format_yyyymmdd),
-        DateFormatType.DD_MMM_YYYY.pattern to stringResource(R.string.date_format_ddmmmyyyy),
-    )
+    AppCardSectionHeader(title = stringResource(R.string.settings_display_home))
+    Spacer(modifier = Modifier.height(8.dp))
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        icon = {
-            Icon(
-                imageVector = Icons.Default.CalendarMonth,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-            )
-        },
-        title = { Text(stringResource(R.string.dialog_choose_date_format)) },
-        text = {
-            Column {
-                formats.forEach { (pattern, label) ->
-                    val exampleDate = remember(pattern) {
-                        try {
-                            SimpleDateFormat(pattern, Locale.getDefault()).format(Date())
-                        } catch (e: Exception) {
-                            pattern
-                        }
-                    }
-                    ListItem(
-                        headlineContent = { Text(label) },
-                        supportingContent = {
-                            Text(
-                                exampleDate,
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        },
-                        leadingContent = {
-                            RadioButton(
-                                selected = pattern == currentFormat,
-                                onClick = { onFormatSelected(pattern) },
-                            )
-                        },
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                        modifier = Modifier,
-                    )
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.dialog_cancel)) }
-        },
-    )
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        AppCard(
+            title = stringResource(R.string.settings_show_payment_breakdown),
+            subtitle = stringResource(R.string.settings_show_payment_breakdown_desc),
+            leadingIcon = Icons.Default.Payment,
+            trailingContent = {
+                AppSwitch(checked = showPaymentTypeBreakdown, onCheckedChange = onShowPaymentTypeBreakdownChanged)
+            },
+            onClick = { onShowPaymentTypeBreakdownChanged(!showPaymentTypeBreakdown) },
+        )
+
+        AppCard(
+            title = stringResource(R.string.settings_transaction_display),
+            subtitle = when (transactionDisplayType) {
+                TransactionDisplayType.TREND -> stringResource(R.string.settings_transaction_display_trend)
+                TransactionDisplayType.CATEGORY -> stringResource(R.string.settings_transaction_display_category)
+                TransactionDisplayType.NONE -> stringResource(R.string.settings_transaction_display_none)
+            },
+            leadingIcon = Icons.Default.Visibility,
+            onClick = onShowTransactionDisplayDialog,
+        )
+    }
 }
 
 @Composable
-private fun TransactionDisplayDialog(
-    currentDisplayType: TransactionDisplayType,
-    onDisplayTypeSelected: (TransactionDisplayType) -> Unit,
-    onDismiss: () -> Unit,
+private fun OtherSection(
+    showTransactionNotes: Boolean,
+    onShowTransactionNotesChanged: (Boolean) -> Unit,
+    onShowResetPreferencesDialog: () -> Unit,
 ) {
-    val options = listOf(
-        TransactionDisplayType.TREND to stringResource(R.string.settings_transaction_display_trend),
-        TransactionDisplayType.CATEGORY to stringResource(R.string.settings_transaction_display_category),
-        TransactionDisplayType.NONE to stringResource(R.string.settings_transaction_display_none),
-    )
+    AppCardSectionHeader(title = stringResource(R.string.settings_section_other))
+    Spacer(modifier = Modifier.height(8.dp))
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        icon = {
-            Icon(
-                imageVector = Icons.Default.Visibility,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-            )
-        },
-        title = { Text(stringResource(R.string.dialog_choose_transaction_display)) },
-        text = {
-            Column {
-                options.forEach { (type, label) ->
-                    ListItem(
-                        headlineContent = { Text(label) },
-                        leadingContent = {
-                            RadioButton(
-                                selected = type == currentDisplayType,
-                                onClick = { onDisplayTypeSelected(type) },
-                            )
-                        },
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                    )
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.dialog_cancel)) }
-        },
-    )
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        AppCard(
+            title = stringResource(R.string.settings_show_transaction_notes),
+            subtitle = if (showTransactionNotes) stringResource(R.string.settings_show_transaction_notes_subtitle_enabled) else stringResource(
+                R.string.settings_show_transaction_notes_subtitle_disabled
+            ),
+            leadingIcon = Icons.Default.TextFields,
+            trailingContent = {
+                Switch(checked = showTransactionNotes, onCheckedChange = onShowTransactionNotesChanged)
+            },
+            onClick = { onShowTransactionNotesChanged(!showTransactionNotes) },
+        )
+
+        AppCard(
+            title = stringResource(R.string.settings_reset_preferences),
+            subtitle = stringResource(R.string.settings_reset_preferences_subtitle),
+            leadingIcon = Icons.Default.Refresh,
+            iconBackgroundColor = MaterialTheme.colorScheme.errorContainer,
+            iconTint = MaterialTheme.colorScheme.onErrorContainer,
+            showChevron = false,
+            onClick = onShowResetPreferencesDialog,
+        )
+    }
 }
+
+// Dialog implementations moved to SettingsDialogs.kt
 
 @Preview(showBackground = true)
 @Composable
