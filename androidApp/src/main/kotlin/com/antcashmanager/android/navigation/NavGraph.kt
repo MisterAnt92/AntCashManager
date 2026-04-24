@@ -2,17 +2,21 @@ package com.antcashmanager.android.navigation
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -72,35 +76,45 @@ fun AntCashManagerNavHost(
 
         Scaffold(
             bottomBar = {
-                NavigationBar {
-                    val navBackStackEntry by navController.currentBackStackEntryAsState()
-                    val currentDestination = navBackStackEntry?.destination
-                    visibleNavItems.forEach { item ->
-                        NavigationBarItem(
-                            icon = {
-                                Icon(
-                                    item.icon,
-                                    contentDescription = stringResource(item.titleResId)
-                                )
-                            },
-                            label = {
-                                Text(
-                                    stringResource(item.titleResId),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
-                            },
-                            selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
-                            onClick = {
-                                navController.navigate(item.route) {
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        saveState = true
+                Surface(
+                    color = MaterialTheme.colorScheme.surface,
+                    tonalElevation = 6.dp,
+                    shadowElevation = 8.dp,
+                    shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+                ) {
+                    NavigationBar(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        tonalElevation = 0.dp,
+                    ) {
+                        val navBackStackEntry by navController.currentBackStackEntryAsState()
+                        val currentDestination = navBackStackEntry?.destination
+                        visibleNavItems.forEach { item ->
+                            NavigationBarItem(
+                                icon = {
+                                    Icon(
+                                        item.icon,
+                                        contentDescription = stringResource(item.titleResId)
+                                    )
+                                },
+                                label = {
+                                    Text(
+                                        stringResource(item.titleResId),
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                    )
+                                },
+                                selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
+                                onClick = {
+                                    navController.navigate(item.route) {
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
                                     }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            },
-                        )
+                                },
+                            )
+                        }
                     }
                 }
             },
