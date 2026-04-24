@@ -43,6 +43,7 @@ fun AppCategoryCard(
     category: Category,
     isSelected: Boolean,
     onClick: () -> Unit,
+    subtitle: String? = null,
     modifier: Modifier = Modifier,
 ) {
     val backgroundColor = if (isSelected) {
@@ -108,6 +109,16 @@ fun AppCategoryCard(
             modifier = Modifier.padding(horizontal = 4.dp),
             maxLines = 1,
         )
+
+        if (!subtitle.isNullOrBlank()) {
+            Spacer(modifier = Modifier.height(2.dp))
+            AppText(
+                text = subtitle,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+            )
+        }
 
         // Indicatore di selezione
         if (isSelected) {

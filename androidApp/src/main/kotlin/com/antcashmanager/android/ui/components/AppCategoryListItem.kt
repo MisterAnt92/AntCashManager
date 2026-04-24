@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -42,6 +43,7 @@ fun AppCategoryListItem(
     category: Category,
     isSelected: Boolean,
     onClick: () -> Unit,
+    subtitle: String? = null,
     modifier: Modifier = Modifier,
 ) {
     val backgroundColor = if (isSelected) {
@@ -97,14 +99,27 @@ fun AppCategoryListItem(
             }
         }
 
-        // Nome della categoria - prende tutto lo spazio disponibile
-        AppText(
-            text = category.name,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold,
+        // Nome categoria + tipo (Entrata/Uscita) per disambiguare nomi simili
+        Column(
             modifier = Modifier.weight(1f),
-            maxLines = 1
-        )
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+        ) {
+            AppText(
+                text = category.name,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold,
+                maxLines = 1,
+            )
+
+            if (!subtitle.isNullOrBlank()) {
+                AppText(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                )
+            }
+        }
 
         // Indicatore di selezione
         if (isSelected) {

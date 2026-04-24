@@ -29,6 +29,7 @@ import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.TransactionType
+import java.util.Locale
 
 @Composable
 internal fun CategorySelectionDialog(
@@ -54,10 +55,16 @@ internal fun CategorySelectionDialog(
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 items(categories) { category ->
+                    val typeLabel = when (category.type.uppercase(Locale.ROOT)) {
+                        "INCOME" -> stringResource(R.string.add_transaction_income_label)
+                        else -> stringResource(R.string.add_transaction_expense_label)
+                    }
+
                     AppCategoryCard(
                         category = category,
                         isSelected = selectedCategory?.id == category.id,
                         onClick = { onSelectCategory(category) },
+                        subtitle = typeLabel,
                     )
                 }
             }

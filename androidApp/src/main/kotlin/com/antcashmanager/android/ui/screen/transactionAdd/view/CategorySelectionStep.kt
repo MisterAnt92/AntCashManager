@@ -26,6 +26,7 @@ import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AppCategoryListItem
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.domain.model.Category
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,10 +87,16 @@ internal fun CategorySelectionStep(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     items(categories) { category ->
+                        val typeLabel = when (category.type.uppercase(Locale.ROOT)) {
+                            "INCOME" -> stringResource(R.string.add_transaction_income_label)
+                            else -> stringResource(R.string.add_transaction_expense_label)
+                        }
+
                         AppCategoryListItem(
                             category = category,
                             isSelected = selectedCategory?.id == category.id,
                             onClick = { onSelectCategory(category) },
+                            subtitle = typeLabel,
                         )
                     }
                 }
