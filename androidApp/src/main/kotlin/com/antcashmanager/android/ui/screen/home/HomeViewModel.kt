@@ -9,6 +9,8 @@ import com.antcashmanager.android.util.calculateTotalIncome
 import com.antcashmanager.android.util.withCorrectAmounts
 import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.usecase.transaction.GetTransactionsUseCase
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -40,10 +42,14 @@ sealed interface HomeEvent {
 class HomeViewModel(
     transactionRepository: TransactionRepository,
     categoryRepository: com.antcashmanager.domain.repository.CategoryRepository,
+    dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : ViewModel() {
 
     // ── UseCases ──
-    private val getTransactionsUseCase = GetTransactionsUseCase(transactionRepository)
+    private val getTransactionsUseCase = GetTransactionsUseCase(
+        transactionRepository = transactionRepository,
+        dispatcher = dispatcher,
+    )
 
     // ── Categories cache for enriching transactions ──
     private val categoriesCache: StateFlow<Map<String, com.antcashmanager.domain.model.Category>> =

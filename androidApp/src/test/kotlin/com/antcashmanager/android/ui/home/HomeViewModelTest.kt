@@ -37,7 +37,11 @@ class HomeViewModelTest {
         Dispatchers.setMain(testDispatcher)
         fakeRepo = FakeTransactionRepository()
         fakeCategoryRepo = FakeCategoryRepository()
-        viewModel = HomeViewModel(fakeRepo, fakeCategoryRepo)
+        viewModel = HomeViewModel(
+            transactionRepository = fakeRepo,
+            categoryRepository = fakeCategoryRepo,
+            dispatcher = testDispatcher,
+        )
     }
 
     @After
@@ -83,6 +87,9 @@ class HomeViewModelTest {
         }
         advanceUntilIdle()
 
+        viewModel.onEvent(com.antcashmanager.android.ui.screen.home.HomeEvent.SetDateRange(0L, Long.MAX_VALUE))
+        advanceUntilIdle()
+
         assertEquals(2, viewModel.transactions.value.size)
         assertEquals("Salary", viewModel.transactions.value[0].title)
         assertEquals("Groceries", viewModel.transactions.value[1].title)
@@ -96,6 +103,9 @@ class HomeViewModelTest {
         }
         advanceUntilIdle()
         assertTrue(viewModel.transactions.value.isEmpty())
+
+        viewModel.onEvent(com.antcashmanager.android.ui.screen.home.HomeEvent.SetDateRange(0L, Long.MAX_VALUE))
+        advanceUntilIdle()
 
         val now = System.currentTimeMillis()
         fakeRepo.transactions.value = listOf(
@@ -142,12 +152,15 @@ class HomeViewModelTest {
         }
         advanceUntilIdle()
 
+        viewModel.onEvent(com.antcashmanager.android.ui.screen.home.HomeEvent.SetDateRange(0L, Long.MAX_VALUE))
+        advanceUntilIdle()
+
         val incomes = viewModel.transactions.value.filter { it.type == TransactionType.INCOME }
         val expenses = viewModel.transactions.value.filter { it.type == TransactionType.EXPENSE }
         assertEquals(1, incomes.size)
         assertEquals(1, expenses.size)
         assertEquals(3000.0, incomes.first().amount, 0.01)
-        assertEquals(800.0, expenses.first().amount, 0.01)
+        assertEquals(-800.0, expenses.first().amount, 0.01)
         collectJob.cancel()
     }
 
@@ -259,6 +272,9 @@ class HomeViewModelTest {
         }
         advanceUntilIdle()
 
+        viewModel.onEvent(com.antcashmanager.android.ui.screen.home.HomeEvent.SetDateRange(0L, Long.MAX_VALUE))
+        advanceUntilIdle()
+
         val balanceByPaymentType = viewModel.state.value.balanceByPaymentType
         // ELECTRONIC: 2000 income = 2000
         assertEquals(2000.0, balanceByPaymentType[PaymentType.ELECTRONIC] ?: 0.0, 0.01)
@@ -354,6 +370,149 @@ class HomeViewModelTest {
         val balanceByPaymentType = viewModel.state.value.balanceByPaymentType
         assertEquals(1000.0, balanceByPaymentType[PaymentType.ELECTRONIC] ?: 0.0, 0.01)
         assertEquals(false, balanceByPaymentType.containsKey(PaymentType.CASH))
+        collectJob.cancel()
+    }
+
+    @Test
+    fun `totals and balance are calculated correctly for home cards`() = runTest(testDispatcher) {
+        val now = System.currentTimeMillis()
+        fakeRepo.transactions.value = listOf(
+            Transaction(
+                id = 1,
+                title = "Salary",
+                amount = 2000.0,
+                category = "Work",
+                type = TransactionType.INCOME,
+                timestamp = now,
+            ),
+            Transaction(
+                id = 2,
+                title = "Freelance",
+                amount = 500.0,
+                category = "Work",
+                type = TransactionType.INCOME,
+                timestamp = now,
+            ),
+            Transaction(
+                id = 3,
+                title = "Rent",
+                amount = 800.0,
+                category = "Home",
+                type = TransactionType.EXPENSE,
+                timestamp = now,
+            ),
+            Transaction(
+                id = 4,
+                title = "Groceries",
+                amount = 200.0,
+                category = "Food",
+                type = TransactionType.EXPENSE,
+                timestamp = now,
+            ),
+        )
+
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect {}
+        }
+        advanceUntilIdle()
+
+        viewModel.onEvent(com.antcashmanager.android.ui.screen.home.HomeEvent.SetDateRange(0L, Long.MAX_VALUE))
+        advanceUntilIdle()
+
+        val uiState = viewModel.state.value
+        assertEquals(2500.0, uiState.totalIncome, 0.01)
+        assertEquals(-1000.0, uiState.totalExpense, 0.01)
+        assertEquals(1500.0, uiState.balance, 0.01)
+
+        collectJob.cancel()
+    }
+
+    @Test
+    fun `amount signs are normalized before totals`() = runTest(testDispatcher) {
+        val now = System.currentTimeMillis()
+        fakeRepo.transactions.value = listOf(
+            // Wrong sign for INCOME in storage -> should be normalized to positive
+            Transaction(
+                id = 1,
+                title = "Refund",
+                amount = -120.0,
+                category = "Other",
+                type = TransactionType.INCOME,
+                timestamp = now,
+            ),
+            // Wrong sign for EXPENSE in storage -> should be normalized to negative
+            Transaction(
+                id = 2,
+                title = "Coffee",
+                amount = 20.0,
+                category = "Food",
+                type = TransactionType.EXPENSE,
+                timestamp = now,
+            ),
+        )
+
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect {}
+        }
+        advanceUntilIdle()
+
+        viewModel.onEvent(com.antcashmanager.android.ui.screen.home.HomeEvent.SetDateRange(0L, Long.MAX_VALUE))
+        advanceUntilIdle()
+
+        val uiState = viewModel.state.value
+        assertEquals(120.0, uiState.totalIncome, 0.01)
+        assertEquals(-20.0, uiState.totalExpense, 0.01)
+        assertEquals(100.0, uiState.balance, 0.01)
+
+        collectJob.cancel()
+    }
+
+    @Test
+    fun `set date range updates totals based on selected period`() = runTest(testDispatcher) {
+        val now = System.currentTimeMillis()
+        val old = now - (20L * 24 * 60 * 60 * 1000)
+        val from = now - (2L * 24 * 60 * 60 * 1000)
+
+        fakeRepo.transactions.value = listOf(
+            Transaction(
+                id = 1,
+                title = "Recent Income",
+                amount = 1000.0,
+                category = "Work",
+                type = TransactionType.INCOME,
+                timestamp = now,
+            ),
+            Transaction(
+                id = 2,
+                title = "Recent Expense",
+                amount = 300.0,
+                category = "Food",
+                type = TransactionType.EXPENSE,
+                timestamp = now,
+            ),
+            Transaction(
+                id = 3,
+                title = "Old Income",
+                amount = 900.0,
+                category = "Work",
+                type = TransactionType.INCOME,
+                timestamp = old,
+            ),
+        )
+
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect {}
+        }
+        advanceUntilIdle()
+
+        viewModel.onEvent(com.antcashmanager.android.ui.screen.home.HomeEvent.SetDateRange(from, now))
+        advanceUntilIdle()
+
+        val uiState = viewModel.state.value
+        assertEquals(1000.0, uiState.totalIncome, 0.01)
+        assertEquals(-300.0, uiState.totalExpense, 0.01)
+        assertEquals(700.0, uiState.balance, 0.01)
+
         collectJob.cancel()
     }
 

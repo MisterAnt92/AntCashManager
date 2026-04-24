@@ -4,14 +4,14 @@ import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 
 /**
- * Transforms transaction amount to be negative for EXPENSE types.
- * This ensures consistent behavior across the app where expenses are negative values.
+ * Normalizes transaction amount sign by type:
+ * - INCOME  -> always positive
+ * - EXPENSE -> always negative
  */
 fun Transaction.withCorrectAmount(): Transaction = this.copy(
-    amount = if (this.type == TransactionType.EXPENSE && this.amount > 0) {
-        -this.amount
-    } else {
-        this.amount
+    amount = when (this.type) {
+        TransactionType.INCOME -> kotlin.math.abs(this.amount)
+        TransactionType.EXPENSE -> -kotlin.math.abs(this.amount)
     }
 )
 
