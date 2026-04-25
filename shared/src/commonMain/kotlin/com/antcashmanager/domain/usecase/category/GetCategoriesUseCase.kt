@@ -3,6 +3,8 @@ package com.antcashmanager.domain.usecase.category
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.usecase.NoParamsFlowUseCase
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -12,7 +14,8 @@ import kotlinx.coroutines.flow.map
  */
 class GetCategoriesUseCase(
     private val categoryRepository: CategoryRepository,
-) : NoParamsFlowUseCase<Result<List<Category>>>() {
+    dispatcher: CoroutineDispatcher = Dispatchers.Default,
+) : NoParamsFlowUseCase<Result<List<Category>>>(dispatcher) {
 
     override fun execute(): Flow<Result<List<Category>>> =
         categoryRepository.getAllCategories()

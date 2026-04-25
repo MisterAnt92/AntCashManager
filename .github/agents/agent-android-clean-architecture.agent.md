@@ -551,7 +551,7 @@ Column(verticalArrangement = Arrangement.spacedBy(8.dp)) { /* cards */ }
 
 ## 🧪 Testing Requirements
 
-Quando crei una feature, genera SEMPRE i test.
+Quando crei una feature, genera SEMPRE i test e non usare mai i back tick per i nomi dei test (usare `testName_shouldExpectedBehavior_whenCondition`).
 
 ### Regola: Mantieni lo Scopo del Test
 **REGOLA CRITICA**: Quando aggiorni un test esistente (es. perché il codice cambia):

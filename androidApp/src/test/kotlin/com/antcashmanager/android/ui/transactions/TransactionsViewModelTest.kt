@@ -21,6 +21,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -38,7 +39,7 @@ class TransactionsViewModelTest {
         Dispatchers.setMain(testDispatcher)
         fakeTransactionRepo = FakeTransactionRepository()
         fakeCategoryRepo = FakeCategoryRepository()
-        viewModel = TransactionsViewModel(fakeTransactionRepo, fakeCategoryRepo)
+        viewModel = TransactionsViewModel(fakeTransactionRepo, fakeCategoryRepo, testDispatcher)
     }
 
     @After
@@ -184,6 +185,100 @@ class TransactionsViewModelTest {
         assertEquals(1, viewModel.state.value.transactions.size)
         assertEquals(TransactionType.INCOME, viewModel.state.value.transactions.first().type)
         assertEquals(3000.0, viewModel.state.value.transactions.first().amount, 0.01)
+        collectJob.cancel()
+    }
+
+    @Test
+    fun `search query filters transactions by title immediately`() = runTest(testDispatcher) {
+        val now = System.currentTimeMillis()
+        fakeTransactionRepo.transactions.value = listOf(
+            Transaction(
+                id = 1,
+                title = "Salary April",
+                amount = 2500.0,
+                category = "Work",
+                type = TransactionType.INCOME,
+                timestamp = now,
+            ),
+            Transaction(
+                id = 2,
+                title = "Groceries",
+                amount = 85.50,
+                category = "Food",
+                type = TransactionType.EXPENSE,
+                timestamp = now,
+            ),
+        )
+
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect {}
+        }
+        advanceUntilIdle()
+
+        // Ensure date range includes all data
+        viewModel.onEvent(
+            com.antcashmanager.android.ui.screen.transactions.TransactionsEvent.SetDateRange(
+                0L,
+                Long.MAX_VALUE,
+            )
+        )
+        advanceUntilIdle()
+
+        viewModel.onEvent(
+            com.antcashmanager.android.ui.screen.transactions.TransactionsEvent.UpdateSearchQuery("salary")
+        )
+        advanceUntilIdle()
+
+        assertEquals("salary", viewModel.state.value.searchQuery)
+        assertEquals(1, viewModel.state.value.filteredTransactions.size)
+        assertEquals("Salary April", viewModel.state.value.filteredTransactions.first().title)
+
+        collectJob.cancel()
+    }
+
+    @Test
+    fun `search query matches amount with comma separator`() = runTest(testDispatcher) {
+        val now = System.currentTimeMillis()
+        fakeTransactionRepo.transactions.value = listOf(
+            Transaction(
+                id = 1,
+                title = "Groceries",
+                amount = 85.50,
+                category = "Food",
+                type = TransactionType.EXPENSE,
+                timestamp = now,
+            ),
+            Transaction(
+                id = 2,
+                title = "Salary",
+                amount = 2500.0,
+                category = "Work",
+                type = TransactionType.INCOME,
+                timestamp = now,
+            ),
+        )
+
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect {}
+        }
+        advanceUntilIdle()
+
+        viewModel.onEvent(
+            com.antcashmanager.android.ui.screen.transactions.TransactionsEvent.SetDateRange(
+                0L,
+                Long.MAX_VALUE,
+            )
+        )
+        advanceUntilIdle()
+
+        viewModel.onEvent(
+            com.antcashmanager.android.ui.screen.transactions.TransactionsEvent.UpdateSearchQuery("85,5")
+        )
+        advanceUntilIdle()
+
+        assertFalse(viewModel.state.value.filteredTransactions.isEmpty())
+        assertEquals("Groceries", viewModel.state.value.filteredTransactions.first().title)
+
         collectJob.cancel()
     }
 }

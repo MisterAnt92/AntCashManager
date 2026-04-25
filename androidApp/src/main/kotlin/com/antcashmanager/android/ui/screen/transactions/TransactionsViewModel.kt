@@ -20,6 +20,8 @@ import com.antcashmanager.domain.usecase.transaction.GetTransactionsUseCase
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.TransactionFilterParams
 import com.antcashmanager.domain.usecase.transaction.UpdateTransactionUseCase
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -28,7 +30,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -70,14 +71,15 @@ sealed interface TransactionsEvent {
 class TransactionsViewModel(
     transactionRepository: TransactionRepository,
     categoryRepository: CategoryRepository,
+    dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : ViewModel() {
 
     // ── UseCases ──
-    private val getTransactionsUseCase = GetTransactionsUseCase(transactionRepository)
-    private val insertTransactionUseCase = InsertTransactionUseCase(transactionRepository)
-    private val updateTransactionUseCase = UpdateTransactionUseCase(transactionRepository)
-    private val deleteTransactionUseCase = DeleteTransactionUseCase(transactionRepository)
-    private val getCategoriesUseCase = GetCategoriesUseCase(categoryRepository)
+    private val getTransactionsUseCase = GetTransactionsUseCase(transactionRepository, dispatcher)
+    private val insertTransactionUseCase = InsertTransactionUseCase(transactionRepository, dispatcher)
+    private val updateTransactionUseCase = UpdateTransactionUseCase(transactionRepository, dispatcher)
+    private val deleteTransactionUseCase = DeleteTransactionUseCase(transactionRepository, dispatcher)
+    private val getCategoriesUseCase = GetCategoriesUseCase(categoryRepository, dispatcher)
     private val filterTransactionsUseCase = FilterTransactionsUseCase()
 
     // ── Internal filter state ──
@@ -191,7 +193,13 @@ class TransactionsViewModel(
 
     // ── Private Methods - Search & Filters ──
     private fun updateSearchQuery(query: String) {
-        _filterState.update { it.copy(pendingSearchQuery = query) }
+        _filterState.update {
+            it.copy(
+                pendingSearchQuery = query,
+                // Search is applied immediately from the search bar
+                searchQuery = query,
+            )
+        }
     }
 
     private fun updateCategoryFilter(category: String?) {

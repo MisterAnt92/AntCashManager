@@ -145,6 +145,23 @@ class FilterTransactionsUseCaseTest {
     }
 
     @Test
+    fun `search matches amount when comma decimal separator is used`() = runTest {
+        val params = FilterTransactionsUseCase.Params(
+            transactions = sampleTransactions,
+            filterParams = TransactionFilterParams(
+                searchQuery = "85,5",
+                dateFrom = 0L,
+                dateTo = Long.MAX_VALUE,
+            ),
+        )
+
+        val result = useCase(params).getOrThrow()
+
+        assertEquals(1, result.size)
+        assertEquals("Groceries", result[0].title)
+    }
+
+    @Test
     fun `filter by category returns only matching category`() = runTest {
         val params = FilterTransactionsUseCase.Params(
             transactions = sampleTransactions,

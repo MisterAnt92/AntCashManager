@@ -2,6 +2,7 @@ package com.antcashmanager.domain.usecase.transaction
 
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.usecase.BaseUseCase
+import kotlin.math.abs
 
 /**
  * UseCase for filtering transactions based on multiple criteria.
@@ -15,6 +16,10 @@ import com.antcashmanager.domain.usecase.BaseUseCase
  * - Payment type (ELECTRONIC/CASH/MEAL_VOUCHERS)
  */
 class FilterTransactionsUseCase : BaseUseCase<FilterTransactionsUseCase.Params, Result<List<Transaction>>>() {
+
+    companion object {
+        private const val AMOUNT_COMPARISON_EPSILON = 0.000001
+    }
 
     data class Params(
         val transactions: List<Transaction>,
@@ -35,9 +40,20 @@ class FilterTransactionsUseCase : BaseUseCase<FilterTransactionsUseCase.Params, 
             }
             .filter { transaction ->
                 // Search query filter (case-insensitive)
-                filterParams.searchQuery.isBlank() ||
-                        transaction.title.contains(filterParams.searchQuery, ignoreCase = true) ||
-                        transaction.amount.toString().contains(filterParams.searchQuery)
+                val rawQuery = filterParams.searchQuery.trim()
+                if (rawQuery.isBlank()) {
+                    true
+                } else {
+                    val normalizedQuery = rawQuery.replace(',', '.')
+                    val numericQuery = normalizedQuery.toDoubleOrNull()
+                    val absAmount = abs(transaction.amount)
+
+                    transaction.title.contains(rawQuery, ignoreCase = true) ||
+                            transaction.amount.toString().contains(normalizedQuery) ||
+                            absAmount.toString().contains(normalizedQuery) ||
+                            (numericQuery != null &&
+                                    abs(absAmount - numericQuery) < AMOUNT_COMPARISON_EPSILON)
+                }
             }
             .filter { transaction ->
                 // Category filter (exact match)
