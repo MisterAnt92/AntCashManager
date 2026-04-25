@@ -1,6 +1,7 @@
 package com.antcashmanager.android.ui.screen.charts
 
 import android.content.Intent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -40,6 +42,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -69,6 +72,7 @@ import com.antcashmanager.android.ui.screen.charts.view.ZoomableYearlyBarChart
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.android.util.formatAmount
+import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.usecase.transaction.DateRange
 import java.text.SimpleDateFormat
@@ -254,72 +258,50 @@ internal fun ChartsContent(
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
-        // Summary cards with proper negative handling and balance
+        // Summary cards with improved design and alignment
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Card(
+            val balance = chartData.totalIncome - chartData.totalExpense
+            
+            SummaryCard(
                 modifier = Modifier.weight(1f),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
-                shape = MaterialTheme.shapes.medium,
-            ) {
-                Column(modifier = Modifier.padding(12.dp)) {
-                    Text(
-                        stringResource(R.string.charts_income),
-                        style = MaterialTheme.typography.labelMedium
-                    )
-                    Text(
-                        text = formatAmount(chartData.totalIncome, fmt),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
-            }
-            Card(
+                state = SummaryCardState(
+                    label = stringResource(R.string.charts_income),
+                    amount = chartData.totalIncome,
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    fmt = fmt
+                )
+            )
+            SummaryCard(
                 modifier = Modifier.weight(1f),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
-                shape = MaterialTheme.shapes.medium,
-            ) {
-                Column(modifier = Modifier.padding(12.dp)) {
-                    Text(
-                        stringResource(R.string.charts_expenses),
-                        style = MaterialTheme.typography.labelMedium
-                    )
-                    // Display absolute value for expenses to show proper amount
-                    Text(
-                        text = formatAmount(abs(chartData.totalExpense), fmt),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
-            }
-            Card(
+                state = SummaryCardState(
+                    label = stringResource(R.string.charts_expenses),
+                    amount = chartData.totalExpense,
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                    contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                    fmt = fmt
+                )
+            )
+            SummaryCard(
                 modifier = Modifier.weight(1f),
-                colors = CardDefaults.cardColors(
-                    containerColor = if (chartData.totalIncome + chartData.totalExpense >= 0)
-                        MaterialTheme.colorScheme.primaryContainer
+                state = SummaryCardState(
+                    label = stringResource(R.string.share_balance),
+                    amount = balance,
+                    containerColor = if (balance >= 0)
+                        MaterialTheme.colorScheme.secondaryContainer
                     else
-                        MaterialTheme.colorScheme.errorContainer
-                ),
-                shape = MaterialTheme.shapes.medium,
-            ) {
-                Column(modifier = Modifier.padding(12.dp)) {
-                    Text(
-                        stringResource(R.string.share_balance),
-                        style = MaterialTheme.typography.labelMedium
-                    )
-                    Text(
-                        text = formatAmount(chartData.totalIncome + chartData.totalExpense, fmt),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = if (chartData.totalIncome + chartData.totalExpense >= 0)
-                            MaterialTheme.colorScheme.primary
-                        else
-                            MaterialTheme.colorScheme.error
-                    )
-                }
-            }
+                        MaterialTheme.colorScheme.errorContainer,
+                    contentColor = if (balance >= 0)
+                        MaterialTheme.colorScheme.onSecondaryContainer
+                    else
+                        MaterialTheme.colorScheme.onErrorContainer,
+                    fmt = fmt,
+                    isBalance = true
+                )
+            )
         }
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -643,6 +625,66 @@ internal fun ChartsContent(
         ) { DatePicker(state = state) }
     }
 }
+
+@Composable
+private fun SummaryCard(
+    state: SummaryCardState,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(containerColor = state.containerColor),
+        shape = MaterialTheme.shapes.medium,
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 12.dp, horizontal = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = state.label,
+                style = MaterialTheme.typography.labelSmall,
+                color = state.contentColor.copy(alpha = 0.8f),
+                fontWeight = FontWeight.Medium,
+                maxLines = 1
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = formatAmount(abs(state.amount), state.fmt),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = state.contentColor,
+                maxLines = 1
+            )
+            if (state.isBalance) {
+                Box(
+                    modifier = Modifier
+                        .padding(top = 4.dp)
+                        .size(6.dp)
+                        .background(
+                            if (state.amount >= 0) Color(0xFF4CAF50) else Color(0xFFF44336),
+                            CircleShape
+                        )
+                )
+            } else {
+                // Spacer to maintain same height across all cards
+                Spacer(modifier = Modifier.height(10.dp))
+            }
+        }
+    }
+}
+
+private data class SummaryCardState(
+    val label: String,
+    val amount: Double,
+    val containerColor: Color,
+    val contentColor: Color,
+    val fmt: CurrencyFormat,
+    val isBalance: Boolean = false
+)
 
 // ══════════════════════════════════════════════════════════════════════════════
 // PREVIEWS

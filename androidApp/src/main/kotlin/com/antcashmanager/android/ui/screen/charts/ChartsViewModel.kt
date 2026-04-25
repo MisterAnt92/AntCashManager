@@ -107,10 +107,10 @@ class ChartsViewModel(
 
         val expenseByCategory = expenseTransactions
             .groupBy { it.category }
-            .mapValues { (_, txs) -> txs.sumOf { it.amount } } // Will be negative values
+            .mapValues { (_, txs) -> kotlin.math.abs(txs.sumOf { it.amount }) } // Use absolute value for pie chart
 
         val totalIncome = incomeByCategory.values.sum()
-        val totalExpense = expenseByCategory.values.sum() // Will be negative
+        val totalExpense = expenseByCategory.values.sum() // Use absolute value (already absolute from map)
 
         Logger.d("ChartsViewModel") { "Total Income: $totalIncome, Total Expense: $totalExpense" }
 
@@ -128,7 +128,7 @@ class ChartsViewModel(
             val current = monthlyMap.getOrDefault(key, 0.0 to 0.0)
             monthlyMap[key] = when (tx.type) {
                 TransactionType.INCOME -> (current.first + tx.amount) to current.second
-                TransactionType.EXPENSE -> current.first to (current.second + tx.amount) // tx.amount is already negative
+                TransactionType.EXPENSE -> current.first to (current.second + kotlin.math.abs(tx.amount)) // Use absolute value
             }
         }
 
@@ -140,7 +140,7 @@ class ChartsViewModel(
                 year * 100 + monthIdx
             }
             .map { (label, amounts) ->
-                MonthlyAmount(label, amounts.first, amounts.second) // second will be negative
+                MonthlyAmount(label, amounts.first, amounts.second) // Both are positive
             }
 
         Logger.d("ChartsViewModel") { "Monthly data: ${monthlyData.map { "${it.label}: income=${it.income}, expense=${it.expense}" }}" }
@@ -154,7 +154,7 @@ class ChartsViewModel(
             val current = yearlyMap.getOrDefault(year, 0.0 to 0.0)
             yearlyMap[year] = when (tx.type) {
                 TransactionType.INCOME -> (current.first + tx.amount) to current.second
-                TransactionType.EXPENSE -> current.first to (current.second + tx.amount) // tx.amount is already negative
+                TransactionType.EXPENSE -> current.first to (current.second + kotlin.math.abs(tx.amount)) // Use absolute value
             }
         }
 
@@ -165,7 +165,7 @@ class ChartsViewModel(
                     year = year,
                     label = year.toString(),
                     income = amounts.first,
-                    expense = amounts.second, // Will be negative
+                    expense = amounts.second, // Positive
                 )
             }
 

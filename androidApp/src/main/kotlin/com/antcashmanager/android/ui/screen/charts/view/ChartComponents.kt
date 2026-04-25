@@ -504,7 +504,7 @@ internal fun BarChart(data: List<MonthlyAmount>, modifier: Modifier = Modifier) 
 
     Canvas(modifier = modifier) {
         if (data.isEmpty()) return@Canvas
-        val maxValue = data.maxOf { maxOf(it.income, it.expense) }.takeIf { it > 0 } ?: 1.0
+        val maxValue = data.maxOf { maxOf(it.income, it.expense) }.takeIf { it > 0.0 } ?: 1.0
         val barWidth = size.width / (data.size * 2.5f)
         val spacing = barWidth * 0.5f
         val maxHeight = size.height * 0.75f
@@ -600,7 +600,7 @@ internal fun YearlyBarChart(data: List<YearlyAmount>, modifier: Modifier = Modif
 
     Canvas(modifier = modifier) {
         if (data.isEmpty()) return@Canvas
-        val maxValue = data.maxOf { maxOf(it.income, it.expense) }.takeIf { it > 0 } ?: 1.0
+        val maxValue = data.maxOf { maxOf(it.income, it.expense) }.takeIf { it > 0.0 } ?: 1.0
         val barWidth = size.width / (data.size * 2.8f)
         val spacing = barWidth * 0.6f
         val maxHeight = size.height * 0.75f
@@ -973,7 +973,7 @@ internal fun ZoomableBarChart(
                         if (data.isEmpty()) return@translate
 
                         val maxValue = data.maxOfOrNull { maxOf(it.income, it.expense) }
-                            ?.takeIf { it > 0 } ?: 1.0
+                            ?.takeIf { it > 0.0 } ?: 1.0
 
                         if (data.size <= 0) return@translate
                         val barWidth =
@@ -1213,7 +1213,7 @@ internal fun ZoomableYearlyBarChart(
                         if (data.isEmpty()) return@translate
 
                         val maxValue = data.maxOfOrNull { maxOf(it.income, it.expense) }
-                            ?.takeIf { it > 0 } ?: 1.0
+                            ?.takeIf { it > 0.0 } ?: 1.0
 
                         if (data.size <= 0) return@translate
                         val barWidth =
