@@ -44,6 +44,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
@@ -311,6 +312,29 @@ internal fun TransactionsContent(
                                 }
                             },
                         )
+
+                        // Search Suggestions
+                        if (state.searchSuggestions.isNotEmpty()) {
+                            Spacer(modifier = Modifier.height(8.dp))
+                            FlowRow(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalArrangement = Arrangement.spacedBy(4.dp),
+                            ) {
+                                state.searchSuggestions.forEach { suggestion ->
+                                    SuggestionChip(
+                                        onClick = { onEvent(TransactionsEvent.UpdateSearchQuery(suggestion)) },
+                                        label = {
+                                            Text(
+                                                text = suggestion,
+                                                style = MaterialTheme.typography.labelMedium,
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis,
+                                            )
+                                        },
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }

@@ -16,12 +16,14 @@ import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.transaction.DeleteTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.FilterTransactionsUseCase
+import com.antcashmanager.domain.usecase.transaction.GetTransactionSuggestionsUseCase
 import com.antcashmanager.domain.usecase.transaction.GetTransactionsUseCase
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.TransactionFilterParams
 import com.antcashmanager.domain.usecase.transaction.UpdateTransactionUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -30,6 +32,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -67,7 +71,7 @@ sealed interface TransactionsEvent {
 // VIEWMODEL
 // ══════════════════════════════════════════════════════════════════════════════
 
-@OptIn(FlowPreview::class)
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class TransactionsViewModel(
     transactionRepository: TransactionRepository,
     categoryRepository: CategoryRepository,
@@ -81,9 +85,19 @@ class TransactionsViewModel(
     private val deleteTransactionUseCase = DeleteTransactionUseCase(transactionRepository, dispatcher)
     private val getCategoriesUseCase = GetCategoriesUseCase(categoryRepository, dispatcher)
     private val filterTransactionsUseCase = FilterTransactionsUseCase()
+    private val getTransactionSuggestionsUseCase = GetTransactionSuggestionsUseCase(transactionRepository, dispatcher)
 
     // ── Internal filter state ──
     private val _filterState = MutableStateFlow(FilterState())
+
+    // ── Transactions & Categories flows ──
+    private val transactionsFlow = getTransactionsUseCase()
+        .map { it.getOrElse { emptyList() }.withCorrectAmounts() }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    private val categoriesFlow = getCategoriesUseCase()
+        .map { it.getOrElse { emptyList() } }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     // ── Search query with debounce for performance ──
     private val debouncedSearchQuery = _filterState
@@ -91,40 +105,80 @@ class TransactionsViewModel(
         .distinctUntilChanged()
         .debounce(300L)
 
-    // ── Combined UI State ──
-    val state: StateFlow<TransactionsState> = combine(
-        getTransactionsUseCase().map { it.getOrElse { emptyList() } },
-        getCategoriesUseCase().map { it.getOrElse { emptyList() } },
-        _filterState,
+    // ── Filtered Transactions Flow (updates only on debounced changes or other filters) ──
+    private val filteredTransactionsFlow = combine(
+        transactionsFlow,
         debouncedSearchQuery,
-    ) { transactions, categories, filterState, debouncedQuery ->
+        _filterState.map { it.selectedCategory }.distinctUntilChanged(),
+        _filterState.map { it.selectedTransactionType }.distinctUntilChanged(),
+        _filterState.map { it.selectedPaymentType }.distinctUntilChanged(),
+        _filterState.map { it.dateRangeFrom }.distinctUntilChanged(),
+        _filterState.map { it.dateRangeTo }.distinctUntilChanged(),
+    ) { args: Array<Any?> ->
+        val transactions = args[0] as List<Transaction>
+        val query = args[1] as String
+        val category = args[2] as String?
+        val type = args[3] as TransactionType?
+        val payment = args[4] as PaymentType?
+        val from = args[5] as Long
+        val to = args[6] as Long
 
-        // Apply amount correction for EXPENSE transactions
-        val transformedTransactions = transactions.withCorrectAmounts()
-
-        // Build filter params
         val filterParams = TransactionFilterParams(
-            searchQuery = debouncedQuery,
-            categoryName = filterState.selectedCategory,
-            transactionType = filterState.selectedTransactionType,
-            paymentType = filterState.selectedPaymentType,
-            dateFrom = filterState.dateRangeFrom,
-            dateTo = filterState.dateRangeTo,
+            searchQuery = query,
+            categoryName = category,
+            transactionType = type,
+            paymentType = payment,
+            dateFrom = from,
+            dateTo = to,
         )
+        filterTransactionsUseCase(
+            FilterTransactionsUseCase.Params(transactions, filterParams)
+        ).getOrElse { emptyList() }
+    }
 
-        // Filter transactions using UseCase (Result-wrapped)
-        val filtered = run {
-            val result = filterTransactionsUseCase(
-                FilterTransactionsUseCase.Params(
-                    transactions = transformedTransactions,
-                    filterParams = filterParams,
-                )
-            )
-            result.getOrElse { emptyList() }
+    // ── Search Suggestions Flow (updates immediately on typing) ──
+    private val searchSuggestionsFlow = _filterState
+        .map { it.searchQuery }
+        .distinctUntilChanged()
+        .flatMapLatest { query ->
+            if (query.isBlank()) {
+                flowOf(emptyList<String>())
+            } else {
+                combine(
+                    transactionsFlow,
+                    getTransactionSuggestionsUseCase()
+                ) { transactions, suggestions ->
+                    val matchingFromHistory = transactions
+                        .asSequence()
+                        .map { it.title }
+                        .filter { it.contains(query, ignoreCase = true) && !it.equals(query, ignoreCase = true) }
+                        .distinct()
+                        .take(3)
+                        .toList()
+
+                    val matchingFromSuggestions = suggestions.titles
+                        .filter { 
+                            it.contains(query, ignoreCase = true) && 
+                            !it.equals(query, ignoreCase = true) && 
+                            it !in matchingFromHistory 
+                        }
+                        .take(3)
+
+                    (matchingFromHistory + matchingFromSuggestions).distinct()
+                }
+            }
         }
 
+    // ── Combined UI State ──
+    val state: StateFlow<TransactionsState> = combine(
+        transactionsFlow,
+        categoriesFlow,
+        filteredTransactionsFlow,
+        searchSuggestionsFlow,
+        _filterState,
+    ) { transactions, categories, filtered, suggestions, filterState ->
         TransactionsState(
-            transactions = transformedTransactions,
+            transactions = transactions,
             filteredTransactions = filtered,
             categories = categories,
             isLoading = false,
@@ -141,6 +195,7 @@ class TransactionsViewModel(
             pendingPaymentType = filterState.pendingPaymentType,
             isSearchExpanded = filterState.isSearchExpanded,
             isFiltersExpanded = filterState.isFiltersExpanded,
+            searchSuggestions = suggestions,
         )
     }.stateIn(
         scope = viewModelScope,

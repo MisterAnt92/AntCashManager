@@ -38,6 +38,9 @@ data class TransactionsState(
     // UI state for collapsible sections
     val isSearchExpanded: Boolean = false,
     val isFiltersExpanded: Boolean = false,
+
+    // Search Suggestions
+    val searchSuggestions: List<String> = emptyList(),
 ) {
     /**
      * Computed property: true if any filter is active (excluding date range).
