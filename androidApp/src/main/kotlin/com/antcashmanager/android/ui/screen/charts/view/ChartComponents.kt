@@ -714,7 +714,11 @@ internal fun YearlyBarChart(data: List<YearlyAmount>, modifier: Modifier = Modif
  * Safe implementation with crash prevention
  */
 @Composable
-internal fun ZoomablePieChart(data: Map<String, Double>, modifier: Modifier = Modifier) {
+internal fun ZoomablePieChart(
+    data: Map<String, Double>,
+    modifier: Modifier = Modifier,
+    zoomEnabled: Boolean = true,
+) {
     val total = data.values.sum()
     if (total <= 0.0) return
 
@@ -735,7 +739,8 @@ internal fun ZoomablePieChart(data: Map<String, Double>, modifier: Modifier = Mo
         Canvas(
             modifier = Modifier
                 .matchParentSize()
-                .pointerInput(Unit) {
+                .pointerInput(zoomEnabled) {
+                    if (!zoomEnabled) return@pointerInput
                     detectTransformGestures { _, pan, zoom, _ ->
                         try {
                             // Safe zoom calculation with validation
@@ -898,7 +903,11 @@ internal fun ZoomablePieChart(data: Map<String, Double>, modifier: Modifier = Mo
  * Safe implementation with crash prevention
  */
 @Composable
-internal fun ZoomableBarChart(data: List<MonthlyAmount>, modifier: Modifier = Modifier) {
+internal fun ZoomableBarChart(
+    data: List<MonthlyAmount>,
+    modifier: Modifier = Modifier,
+    zoomEnabled: Boolean = true,
+) {
     val reduceMotion = LocalReduceMotion.current
     val animDuration = if (reduceMotion) 0 else 1000
     val incomeColor = MaterialTheme.colorScheme.primary
@@ -921,7 +930,8 @@ internal fun ZoomableBarChart(data: List<MonthlyAmount>, modifier: Modifier = Mo
         Canvas(
             modifier = Modifier
                 .matchParentSize()
-                .pointerInput(Unit) {
+                .pointerInput(zoomEnabled) {
+                    if (!zoomEnabled) return@pointerInput
                     detectTransformGestures { _, pan, zoom, _ ->
                         try {
                             // Safe zoom calculation with validation
@@ -1133,7 +1143,11 @@ internal fun ZoomableBarChart(data: List<MonthlyAmount>, modifier: Modifier = Mo
  * Safe implementation with crash prevention
  */
 @Composable
-internal fun ZoomableYearlyBarChart(data: List<YearlyAmount>, modifier: Modifier = Modifier) {
+internal fun ZoomableYearlyBarChart(
+    data: List<YearlyAmount>,
+    modifier: Modifier = Modifier,
+    zoomEnabled: Boolean = true,
+) {
     val reduceMotion = LocalReduceMotion.current
     val animDuration = if (reduceMotion) 0 else 1200
     val incomeColor = MaterialTheme.colorScheme.primary
@@ -1156,7 +1170,8 @@ internal fun ZoomableYearlyBarChart(data: List<YearlyAmount>, modifier: Modifier
         Canvas(
             modifier = Modifier
                 .matchParentSize()
-                .pointerInput(Unit) {
+                .pointerInput(zoomEnabled) {
+                    if (!zoomEnabled) return@pointerInput
                     detectTransformGestures { _, pan, zoom, _ ->
                         try {
                             // Safe zoom calculation with validation

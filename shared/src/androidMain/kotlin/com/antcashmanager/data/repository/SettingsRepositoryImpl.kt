@@ -37,6 +37,7 @@ class SettingsRepositoryImpl(
     private val homeDateFilterPresetKey = intPreferencesKey("home_date_filter_preset")
     private val transactionsDateFilterPresetKey = intPreferencesKey("transactions_date_filter_preset")
     private val chartsDateFilterPresetKey = intPreferencesKey("charts_date_filter_preset")
+    private val chartsZoomEnabledKey = booleanPreferencesKey("charts_zoom_enabled")
     private val showPaymentTypeBreakdownKey = booleanPreferencesKey("show_payment_type_breakdown")
     private val transactionDisplayTypeKey = stringPreferencesKey("transaction_display_type")
     private val transactionsTransactionDisplayTypeKey = stringPreferencesKey("transactions_transaction_display_type")
@@ -187,6 +188,13 @@ class SettingsRepositoryImpl(
         context.dataStore.edit { it[chartsDateFilterPresetKey] = index }
     }
 
+    override fun getChartsZoomEnabled(): Flow<Boolean> =
+        context.dataStore.data.map { it[chartsZoomEnabledKey] ?: true }
+
+    override suspend fun setChartsZoomEnabled(enabled: Boolean) {
+        context.dataStore.edit { it[chartsZoomEnabledKey] = enabled }
+    }
+
     override fun getShowPaymentTypeBreakdown(): Flow<Boolean> =
         context.dataStore.data.map { preferences ->
             preferences[showPaymentTypeBreakdownKey] ?: false
@@ -248,6 +256,7 @@ class SettingsRepositoryImpl(
             prefs[homeDateFilterPresetKey] = 1
             prefs[transactionsDateFilterPresetKey] = 1
             prefs[chartsDateFilterPresetKey] = 1
+            prefs[chartsZoomEnabledKey] = true
             prefs[showPaymentTypeBreakdownKey] = false
             prefs[transactionDisplayTypeKey] = TransactionDisplayType.TREND.name
             prefs[transactionsTransactionDisplayTypeKey] = TransactionDisplayType.TREND.name

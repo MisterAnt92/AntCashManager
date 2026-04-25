@@ -105,6 +105,7 @@ internal class FakeSettingsRepository : SettingsRepository {
     private val showPaymentTypeBreakdownFlow = MutableStateFlow(true)
     private val transactionDisplayTypeFlow = MutableStateFlow(TransactionDisplayType.TREND)
     private val transactionsTransactionDisplayTypeFlow = MutableStateFlow(TransactionDisplayType.TREND)
+    private val chartsZoomEnabledFlow = MutableStateFlow(true)
 
     override fun getTheme(): Flow<AppTheme> = themeFlow
 
@@ -173,6 +174,20 @@ internal class FakeSettingsRepository : SettingsRepository {
         dateFilterExpandedFlow.value = expanded
     }
 
+    override fun getTransactionsDateFilterPreset(): Flow<Int> = throw UnsupportedOperationException()
+    override suspend fun setTransactionsDateFilterPreset(index: Int) {}
+
+    override fun getChartsDateFilterPreset(): Flow<Int> = throw UnsupportedOperationException()
+    override suspend fun setChartsDateFilterPreset(index: Int) {}
+
+    override fun getHomeDateFilterPreset(): Flow<Int> = throw UnsupportedOperationException()
+    override suspend fun setHomeDateFilterPreset(index: Int) {}
+
+    override fun getChartsZoomEnabled(): Flow<Boolean> = chartsZoomEnabledFlow
+    override suspend fun setChartsZoomEnabled(enabled: Boolean) {
+        chartsZoomEnabledFlow.value = enabled
+    }
+
     override fun getShowPaymentTypeBreakdown(): Flow<Boolean> = showPaymentTypeBreakdownFlow
     override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {
         showPaymentTypeBreakdownFlow.value = show
@@ -205,5 +220,6 @@ internal class FakeSettingsRepository : SettingsRepository {
         showPaymentTypeBreakdownFlow.value = true
         transactionDisplayTypeFlow.value = TransactionDisplayType.TREND
         transactionsTransactionDisplayTypeFlow.value = TransactionDisplayType.TREND
+        chartsZoomEnabledFlow.value = true
     }
 }

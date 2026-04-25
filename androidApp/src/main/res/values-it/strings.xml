@@ -139,7 +139,7 @@
     <string name="settings_language_subtitle">Scegli la lingua dell\'app</string>
     <string name="settings_display">Visualizzazione</string>
     <string name="settings_display_subtitle">Personalizza valuta, decimali e formattazione</string>
-    <string name="settings_display_home">Visualizzazione Home</string>
+    <string name="settings_display_home">Home</string>
     <string name="settings_show_charts">Mostra Grafici</string>
     <string name="settings_show_charts_subtitle">Mostra la sezione grafici nella navigazione</string>
     <string name="settings_show_charts_section">Mostra sezione grafici</string>
@@ -368,7 +368,11 @@
       <string name="no_email_app_installed">Nessuna app email disponibile</string>
 
       <!-- Transaction Display Section -->
-      <string name="settings_transaction_display_section">Visualizzazione Transazioni</string>
+      <string name="settings_display_charts">Grafici</string>
+      <string name="settings_charts_zoom">Abilita Zoom Grafici</string>
+      <string name="settings_charts_zoom_desc">Permette di ingrandire i grafici con il pinch-to-zoom</string>
+
+      <string name="settings_transaction_display_section">Transazioni</string>
       <string name="settings_show_transaction_notes">Mostra Note Transazioni</string>
       <string name="settings_show_transaction_notes_subtitle_enabled">Note visibili negli item transazioni</string>
       <string name="settings_show_transaction_notes_subtitle_disabled">Note nascoste</string>

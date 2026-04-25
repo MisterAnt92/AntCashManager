@@ -81,8 +81,16 @@ class DisplayViewModel(
         )
 
 
-    // Espone la preferenza per la visualizzazione della sezione grafici
+    // Espone la preferenza per mostrare la sezione grafici
     val showChartsSection = settingsRepository.getShowCharts()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
+            true,
+        )
+
+    // Espone la preferenza per lo zoom nei grafici
+    val chartsZoomEnabled = settingsRepository.getChartsZoomEnabled()
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
@@ -185,6 +193,14 @@ class DisplayViewModel(
     fun setShowChartsSection(show: Boolean) = updatePreference(
         logMsg = "Setting show charts section: $show",
         action = { settingsRepository.setShowCharts(show) },
+    )
+
+    /**
+     * Aggiorna la preferenza per lo zoom nei grafici.
+     */
+    fun setChartsZoomEnabled(enabled: Boolean) = updatePreference(
+        logMsg = "Setting charts zoom enabled: $enabled",
+        action = { settingsRepository.setChartsZoomEnabled(enabled) },
     )
 
     /**

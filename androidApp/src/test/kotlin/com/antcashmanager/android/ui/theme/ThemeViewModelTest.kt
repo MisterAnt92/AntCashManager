@@ -98,6 +98,18 @@ private class FakeSettingsRepository : SettingsRepository {
     override suspend fun setTransactionDisplayType(displayType: com.antcashmanager.domain.model.TransactionDisplayType) = Unit
     override fun getTransactionsTransactionDisplayType() = throw UnsupportedOperationException()
     override suspend fun setTransactionsTransactionDisplayType(displayType: com.antcashmanager.domain.model.TransactionDisplayType) = Unit
+    override fun getTransactionsDateFilterPreset(): Flow<Int> = throw UnsupportedOperationException()
+    override suspend fun setTransactionsDateFilterPreset(index: Int) {}
+
+    override fun getChartsDateFilterPreset(): Flow<Int> = throw UnsupportedOperationException()
+    override suspend fun setChartsDateFilterPreset(index: Int) {}
+
+    override fun getHomeDateFilterPreset(): Flow<Int> = throw UnsupportedOperationException()
+    override suspend fun setHomeDateFilterPreset(index: Int) {}
+
+    override fun getChartsZoomEnabled() = throw UnsupportedOperationException()
+    override suspend fun setChartsZoomEnabled(enabled: Boolean) = Unit
+
     override suspend fun resetAllPreferences() = Unit
 }
 

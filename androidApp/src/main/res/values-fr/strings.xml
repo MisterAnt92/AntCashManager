@@ -125,7 +125,7 @@
     <string name="settings_language_subtitle">Choisissez la langue de l\'application</string>
     <string name="settings_display">Affichage</string>
     <string name="settings_display_subtitle">Personnalisez la devise, les décimales et le formatage</string>
-    <string name="settings_display_home">Affichage d\'Accueil</string>
+    <string name="settings_display_home">Accueil</string>
     <string name="settings_show_charts">Afficher les Graphiques</string>
     <string name="settings_show_charts_subtitle">Afficher ou masquer la section Graphiques dans la barre de navigation</string>
     <string name="settings_show_charts_section">Afficher la section Graphiques</string>
@@ -348,7 +348,11 @@
       <string name="no_email_app_installed">Aucune application email disponible</string>
 
       <!-- Transaction Display Section -->
-      <string name="settings_transaction_display_section">Affichage des Transactions</string>
+      <string name="settings_display_charts">Graphiques</string>
+      <string name="settings_charts_zoom">Activer le zoom des graphiques</string>
+      <string name="settings_charts_zoom_desc">Permet de zoomer sur les graphiques avec le pincement</string>
+
+      <string name="settings_transaction_display_section">Transactions</string>
       <string name="settings_show_transaction_notes">Afficher les Notes de Transaction</string>
       <string name="settings_show_transaction_notes_subtitle_enabled">Notes visibles dans les éléments de transaction</string>
       <string name="settings_show_transaction_notes_subtitle_disabled">Notes masquées</string>

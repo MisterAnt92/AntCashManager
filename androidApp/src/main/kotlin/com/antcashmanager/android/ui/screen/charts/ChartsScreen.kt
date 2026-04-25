@@ -92,6 +92,9 @@ fun ChartsScreen(
     val screenDateFilterPreset by settingsRepository.getChartsDateFilterPreset()
         .collectAsState(initial = 1)
 
+    val chartsZoomEnabled by settingsRepository.getChartsZoomEnabled()
+        .collectAsState(initial = true)
+
     androidx.compose.runtime.LaunchedEffect(screenDateFilterPreset) {
         viewModel.setPresetRange(RangePreset.entries[screenDateFilterPreset])
     }
@@ -102,6 +105,7 @@ fun ChartsScreen(
         chartData = chartData,
         dateRange = dateRange,
         initialPresetIndex = screenDateFilterPreset,
+        zoomEnabled = chartsZoomEnabled,
         onDateRangeChanged = { from, to -> viewModel.setDateRange(from, to) },
         onPresetSelected = { preset ->
             coroutineScope.launch {
@@ -118,6 +122,7 @@ internal fun ChartsContent(
     chartData: ChartData,
     dateRange: DateRange,
     initialPresetIndex: Int = 1,
+    zoomEnabled: Boolean = true,
     onDateRangeChanged: (Long, Long) -> Unit = { _, _ -> },
     onPresetSelected: (RangePreset) -> Unit = {},
 ) {
@@ -351,6 +356,7 @@ internal fun ChartsContent(
                     Spacer(modifier = Modifier.height(12.dp))
                     ZoomablePieChart(
                         data = chartData.incomeByCategory,
+                        zoomEnabled = zoomEnabled,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(200.dp)
@@ -414,6 +420,7 @@ internal fun ChartsContent(
                     // Convert negative values to positive for pie chart display
                     ZoomablePieChart(
                         data = chartData.expenseByCategory.mapValues { abs(it.value) },
+                        zoomEnabled = zoomEnabled,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(200.dp)
@@ -486,6 +493,7 @@ internal fun ChartsContent(
                     ) {
                         ZoomableBarChart(
                             data = chartData.monthlyData,
+                            zoomEnabled = zoomEnabled,
                             modifier = Modifier
                                 .width(chartWidth.dp)
                                 .height(180.dp)
@@ -559,6 +567,7 @@ internal fun ChartsContent(
                     ) {
                         ZoomableYearlyBarChart(
                             data = chartData.yearlyData,
+                            zoomEnabled = zoomEnabled,
                             modifier = Modifier
                                 .width(yearlyChartWidth.dp)
                                 .height(200.dp)

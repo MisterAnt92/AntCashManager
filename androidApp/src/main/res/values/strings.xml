@@ -139,7 +139,7 @@
     <string name="settings_language_subtitle">Choose the app language</string>
     <string name="settings_display">Display</string>
     <string name="settings_display_subtitle">Customize currency, decimals, and formatting</string>
-    <string name="settings_display_home">Home Display</string>
+    <string name="settings_display_home">Home</string>
     <string name="settings_show_charts">Show Charts</string>
     <string name="settings_show_charts_subtitle">Show the charts section in navigation</string>
     <string name="settings_show_charts_section">Show Charts Section</string>
@@ -368,7 +368,11 @@
       <string name="no_email_app_installed">No email app installed</string>
 
       <!-- Transaction Display Section -->
-      <string name="settings_transaction_display_section">Transaction Display</string>
+      <string name="settings_display_charts">Charts</string>
+      <string name="settings_charts_zoom">Enable Charts Zoom</string>
+      <string name="settings_charts_zoom_desc">Allows to zoom in charts with pinch-to-zoom</string>
+
+      <string name="settings_transaction_display_section">Transactions</string>
       <string name="settings_show_transaction_notes">Show Transaction Notes</string>
       <string name="settings_show_transaction_notes_subtitle_enabled">Notes visible in transaction items</string>
       <string name="settings_show_transaction_notes_subtitle_disabled">Notes hidden</string>

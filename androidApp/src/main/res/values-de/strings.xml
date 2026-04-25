@@ -125,7 +125,7 @@
     <string name="settings_language_subtitle">W\u00e4hle die App-Sprache</string>
     <string name="settings_display">Anzeige</string>
     <string name="settings_display_subtitle">Passe Währung, Dezimalstellen und Formatierung an</string>
-    <string name="settings_display_home">Startansicht</string>
+    <string name="settings_display_home">Start</string>
     <string name="settings_show_charts">Diagramme anzeigen</string>
     <string name="settings_show_charts_subtitle">Diagramme-Bereich in der Navigationsleiste ein- oder ausblenden</string>
     <string name="settings_show_charts_section">Diagramm-Bereich anzeigen</string>
@@ -348,7 +348,11 @@
       <string name="no_email_app_installed">Keine E-Mail-App verfügbar</string>
 
       <!-- Transaction Display Section -->
-      <string name="settings_transaction_display_section">Transaktionsanzeige</string>
+      <string name="settings_display_charts">Diagramme</string>
+      <string name="settings_charts_zoom">Diagramm-Zoom aktivieren</string>
+      <string name="settings_charts_zoom_desc">Ermöglicht das Zoomen in Diagrammen mit Pinch-to-Zoom</string>
+
+      <string name="settings_transaction_display_section">Transaktionen</string>
       <string name="settings_show_transaction_notes">Transaktionsnotizen anzeigen</string>
       <string name="settings_show_transaction_notes_subtitle_enabled">Notizen in Transaktionselementen sichtbar</string>
       <string name="settings_show_transaction_notes_subtitle_disabled">Notizen ausgeblendet</string>

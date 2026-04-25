@@ -1039,6 +1039,9 @@ class MockSettingsRepository : SettingsRepository {
     override fun getChartsDateFilterPreset() = kotlinx.coroutines.flow.flowOf(1)
     override suspend fun setChartsDateFilterPreset(index: Int) {}
 
+    override fun getChartsZoomEnabled() = kotlinx.coroutines.flow.flowOf(true)
+    override suspend fun setChartsZoomEnabled(enabled: Boolean) {}
+
     override fun getShowPaymentTypeBreakdown() = kotlinx.coroutines.flow.flowOf(false)
     override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {}
     override fun getTransactionDisplayType(): Flow<TransactionDisplayType> =

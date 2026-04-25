@@ -48,6 +48,9 @@ interface SettingsRepository {
     fun getChartsDateFilterPreset(): Flow<Int>
     suspend fun setChartsDateFilterPreset(index: Int)
 
+    fun getChartsZoomEnabled(): Flow<Boolean>
+    suspend fun setChartsZoomEnabled(enabled: Boolean)
+
     // ── Payment Type Breakdown ──
     fun getShowPaymentTypeBreakdown(): Flow<Boolean>
     suspend fun setShowPaymentTypeBreakdown(show: Boolean)

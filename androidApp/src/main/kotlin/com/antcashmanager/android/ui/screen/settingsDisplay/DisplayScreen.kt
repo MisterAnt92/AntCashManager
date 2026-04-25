@@ -93,6 +93,7 @@ fun DisplayScreen(
     val showPaymentTypeBreakdown by viewModel.showPaymentTypeBreakdown.collectAsState()
     val transactionDisplayType by viewModel.transactionDisplayType.collectAsState()
     val transactionsTransactionDisplayType by viewModel.transactionsTransactionDisplayType.collectAsState()
+    val chartsZoomEnabled by viewModel.chartsZoomEnabled.collectAsState()
 
     DisplayContent(
         currencySymbol = currencySymbol,
@@ -107,6 +108,8 @@ fun DisplayScreen(
         onShowTransactionNotesChanged = { viewModel.setShowTransactionNotes(it) },
         showChartsSection = showChartsSection,
         onShowChartsSectionChanged = { viewModel.setShowChartsSection(it) },
+        chartsZoomEnabled = chartsZoomEnabled,
+        onChartsZoomEnabledChanged = { viewModel.setChartsZoomEnabled(it) },
         dateFormat = dateFormat,
         onDateFormatSelected = { viewModel.setDateFormat(it) },
         showPaymentTypeBreakdown = showPaymentTypeBreakdown,
@@ -144,6 +147,8 @@ internal fun DisplayContent(
     onShowTransactionNotesChanged: (Boolean) -> Unit,
     showChartsSection: Boolean,
     onShowChartsSectionChanged: (Boolean) -> Unit,
+    chartsZoomEnabled: Boolean,
+    onChartsZoomEnabledChanged: (Boolean) -> Unit,
     dateFormat: String,
     onDateFormatSelected: (String) -> Unit,
     showPaymentTypeBreakdown: Boolean,
@@ -202,7 +207,12 @@ internal fun DisplayContent(
 
             item { DateSection(dateFormat = dateFormat, onShowDateFormatDialog = { showDateFormatDialog = true }) }
 
-            item { ChartsSection(showChartsSection = showChartsSection, onShowChartsSectionChanged = onShowChartsSectionChanged) }
+            item { ChartsDisplaySection(
+                showChartsSection = showChartsSection,
+                onShowChartsSectionChanged = onShowChartsSectionChanged,
+                chartsZoomEnabled = chartsZoomEnabled,
+                onChartsZoomEnabledChanged = onChartsZoomEnabledChanged
+            ) }
 
             item { HomeDisplaySection(
                 showPaymentTypeBreakdown = showPaymentTypeBreakdown,
@@ -468,24 +478,38 @@ private fun DateSection(
 }
 
 @Composable
-private fun ChartsSection(
+private fun ChartsDisplaySection(
     showChartsSection: Boolean,
     onShowChartsSectionChanged: (Boolean) -> Unit,
+    chartsZoomEnabled: Boolean,
+    onChartsZoomEnabledChanged: (Boolean) -> Unit,
 ) {
-    AppCardSectionHeader(title = stringResource(R.string.settings_section_charts))
+    AppCardSectionHeader(title = stringResource(R.string.settings_display_charts))
     Spacer(modifier = Modifier.height(8.dp))
 
-    AppCard(
-        title = stringResource(R.string.settings_show_charts_section),
-        subtitle = if (showChartsSection) stringResource(R.string.settings_show_charts_section_visible) else stringResource(
-            R.string.settings_show_charts_section_hidden
-        ),
-        leadingIcon = Icons.Default.BarChart,
-        trailingContent = {
-            Switch(checked = showChartsSection, onCheckedChange = onShowChartsSectionChanged)
-        },
-        onClick = { onShowChartsSectionChanged(!showChartsSection) },
-    )
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        AppCard(
+            title = stringResource(R.string.settings_show_charts_section),
+            subtitle = if (showChartsSection) stringResource(R.string.settings_show_charts_section_visible) else stringResource(
+                R.string.settings_show_charts_section_hidden
+            ),
+            leadingIcon = Icons.Default.BarChart,
+            trailingContent = {
+                Switch(checked = showChartsSection, onCheckedChange = onShowChartsSectionChanged)
+            },
+            onClick = { onShowChartsSectionChanged(!showChartsSection) },
+        )
+
+        AppCard(
+            title = stringResource(R.string.settings_charts_zoom),
+            subtitle = stringResource(R.string.settings_charts_zoom_desc),
+            leadingIcon = Icons.Default.Visibility,
+            trailingContent = {
+                Switch(checked = chartsZoomEnabled, onCheckedChange = onChartsZoomEnabledChanged)
+            },
+            onClick = { onChartsZoomEnabledChanged(!chartsZoomEnabled) },
+        )
+    }
 }
 
 @Composable
@@ -595,6 +619,8 @@ private fun DisplayContentPreview() {
             onShowTransactionNotesChanged = {},
             showChartsSection = true,
             onShowChartsSectionChanged = {},
+            chartsZoomEnabled = true,
+            onChartsZoomEnabledChanged = {},
             dateFormat = "dd/MM/yyyy",
             onDateFormatSelected = {},
             showPaymentTypeBreakdown = true,
