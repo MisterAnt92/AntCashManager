@@ -68,6 +68,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.material3.Scaffold
+import androidx.compose.ui.unit.LayoutDirection
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.BuildConfig
 import com.antcashmanager.android.R
@@ -321,51 +326,61 @@ internal fun SettingsContent(
         HelpDialog(onDismiss = { showHelpDialog = false })
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp, vertical = 12.dp)
-            .padding(bottom = 24.dp),
-    ) {
-        // Detect multiple taps on title to trigger debug import when in debug build
-        var titleTapCount by remember { mutableStateOf(0) }
-        val context = LocalContext.current
-
-        // Custom header with debug tap functionality
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
+    Scaffold(
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    start = padding.calculateStartPadding(LayoutDirection.Ltr) + 16.dp,
+                    top = 0.dp,
+                    end = padding.calculateEndPadding(LayoutDirection.Ltr) + 16.dp,
+                    bottom = padding.calculateBottomPadding(),
+                )
+                .padding(vertical = 12.dp)
+                .verticalScroll(rememberScrollState())
+                .padding(bottom = 24.dp),
         ) {
-            AppText(
-                text = stringResource(R.string.settings_title),
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable {
-                        if (BuildConfig.DEBUG) {
-                            titleTapCount += 1
-                            if (titleTapCount >= 5) {
-                                titleTapCount = 0
-                                // call the provided callback which will perform import in ViewModel
-                                onImportDebugData(context)
-                                Toast.makeText(
-                                    context,
-                                    context.getString(R.string.debug_import_started),
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        }
-                    },
-            )
-            HelpButton(onHelpClick = { showHelpDialog = true })
-        }
-        Spacer(modifier = Modifier.height(12.dp))
+            // Detect multiple taps on title to trigger debug import when in debug build
+            var titleTapCount by remember { mutableStateOf(0) }
+            val context = LocalContext.current
 
-        // ── Appearance Section ──
+            // Custom header with debug tap functionality
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                AppText(
+                    text = stringResource(R.string.settings_title),
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable {
+                            if (BuildConfig.DEBUG) {
+                                titleTapCount += 1
+                                if (titleTapCount >= 5) {
+                                    titleTapCount = 0
+                                    // call the provided callback which will perform import in ViewModel
+                                    onImportDebugData(context)
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.debug_import_started),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+                        },
+                )
+                HelpButton(onHelpClick = { showHelpDialog = true })
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // ── Appearance Section ──
+            // ... rest of Column content ...
         AppCardSectionHeader(title = stringResource(R.string.settings_appearance))
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             AppCard(
@@ -542,6 +557,7 @@ internal fun SettingsContent(
             onClick = { showLibrariesDialog = true },
         )
     }
+    } // Closing Scaffold
 
     // ── Dialogs ──
     if (showThemeDialog) {

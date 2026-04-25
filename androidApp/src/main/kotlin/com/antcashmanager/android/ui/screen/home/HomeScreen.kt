@@ -47,6 +47,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.material3.Scaffold
+import androidx.compose.ui.unit.LayoutDirection
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AntEmptyState
@@ -220,12 +225,44 @@ internal fun HomeContent(
     when {
         state.isLoading -> LoadingState()
         else -> {
-            Box(modifier = Modifier.fillMaxSize()) {
+            Scaffold(
+                contentWindowInsets = WindowInsets(0, 0, 0, 0),
+                floatingActionButton = {
+                    // Scroll to top button
+                    AnimatedVisibility(
+                        visible = showScrollToTop,
+                        enter = fadeIn() + scaleIn(),
+                        exit = fadeOut() + scaleOut()
+                    ) {
+                        FloatingActionButton(
+                            onClick = {
+                                coroutineScope.launch {
+                                    listState.animateScrollToItem(0)
+                                }
+                            },
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            modifier = Modifier.padding(bottom = 8.dp) // Extra padding to avoid bottom bar
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowUpward,
+                                contentDescription = null
+                            )
+                        }
+                    }
+                }
+            ) { padding ->
                 LazyColumn(
                     state = listState,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                        .padding(
+                            start = padding.calculateStartPadding(LayoutDirection.Ltr) + 16.dp,
+                            top = 0.dp,
+                            end = padding.calculateEndPadding(LayoutDirection.Ltr) + 16.dp,
+                            bottom = padding.calculateBottomPadding(),
+                        )
+                        .padding(vertical = 12.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     // Header with Help Button
@@ -331,32 +368,6 @@ internal fun HomeContent(
 
                     // Bottom spacer
                     item { Spacer(modifier = Modifier.height(8.dp)) }
-                }
-
-                // Scroll to top button
-                AnimatedVisibility(
-                    visible = showScrollToTop,
-                    enter = fadeIn() + scaleIn(),
-                    exit = fadeOut() + scaleOut(),
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(16.dp)
-                ) {
-                    FloatingActionButton(
-                        onClick = {
-                            coroutineScope.launch {
-                                listState.animateScrollToItem(0)
-                            }
-                        },
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier.padding(bottom = 8.dp) // Extra padding to avoid bottom bar
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowUpward,
-                            contentDescription = stringResource(R.string.common_expand) // Use a generic top description or add new one
-                        )
-                    }
                 }
             }
         }

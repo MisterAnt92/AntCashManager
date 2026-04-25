@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -38,6 +41,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AppSelectionItemCard
@@ -150,6 +154,7 @@ internal fun DetailsStep(
     }
 
     Scaffold(
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             TopAppBar(
                 title = {
@@ -186,11 +191,15 @@ internal fun DetailsStep(
             )
         },
     ) { innerPadding ->
-        Column(
+        androidx.compose.foundation.layout.Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .padding(16.dp)
+                .padding(
+                    start = innerPadding.calculateStartPadding(LayoutDirection.Ltr) + 16.dp,
+                    top = innerPadding.calculateTopPadding() + 12.dp,
+                    end = innerPadding.calculateEndPadding(LayoutDirection.Ltr) + 16.dp,
+                    bottom = innerPadding.calculateBottomPadding(),
+                )
                 .verticalScroll(rememberScrollState()),
         ) {
             // ── Categoria – sempre editabile al tap ──

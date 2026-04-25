@@ -16,6 +16,9 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -63,6 +66,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -245,6 +249,7 @@ internal fun TransactionsContent(
     }
 
     Scaffold(
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         floatingActionButton = {
             Column(
                 horizontalAlignment = Alignment.End,
@@ -293,8 +298,13 @@ internal fun TransactionsContent(
             state = listState,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .padding(start = 16.dp, end = 16.dp),
+                .padding(
+                    start = padding.calculateStartPadding(LayoutDirection.Ltr) + 16.dp,
+                    top = 0.dp,
+                    end = padding.calculateEndPadding(LayoutDirection.Ltr) + 16.dp,
+                    bottom = padding.calculateBottomPadding(),
+                )
+                .padding(vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             // Header with action icons
