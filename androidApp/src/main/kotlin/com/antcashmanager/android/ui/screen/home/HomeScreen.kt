@@ -9,9 +9,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -38,6 +43,7 @@ import com.antcashmanager.android.ui.components.AntEmptyState
 import com.antcashmanager.android.ui.components.DateRangeFilter
 import com.antcashmanager.android.ui.components.HelpButton
 import com.antcashmanager.android.ui.components.ScreenHeader
+import com.antcashmanager.android.ui.components.SearchComponent
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.home.view.BalanceCard
 import com.antcashmanager.android.ui.screen.home.view.HelpDialog
@@ -233,13 +239,37 @@ internal fun HomeContent(
                     )
                 }
 
-                // Recent Transactions header
+                // Recent Transactions header with Search toggle
                 item {
-                    AppText(
-                        text = stringResource(R.string.home_recent_transactions),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onBackground,
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        AppText(
+                            text = stringResource(R.string.home_recent_transactions),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onBackground,
+                        )
+                        IconButton(onClick = { onEvent(HomeEvent.ToggleSearchExpanded) }) {
+                            Icon(
+                                imageVector = if (state.isSearchExpanded) Icons.Default.Close else Icons.Default.Search,
+                                contentDescription = stringResource(R.string.transactions_search),
+                                tint = if (state.searchQuery.isNotEmpty()) MaterialTheme.colorScheme.primary
+                                else MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
+                }
+
+                // Search Bar
+                item {
+                    SearchComponent(
+                        isVisible = state.isSearchExpanded,
+                        searchQuery = state.searchQuery,
+                        onSearchQueryChange = { onEvent(HomeEvent.UpdateSearchQuery(it)) },
+                        searchSuggestions = state.searchSuggestions,
                     )
                 }
 

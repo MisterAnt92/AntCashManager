@@ -21,6 +21,9 @@ data class HomeState(
     val dateRangeFrom: Long = System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000),
     val dateRangeTo: Long = System.currentTimeMillis(),
     val selectedTransaction: Transaction? = null,
+    val searchQuery: String = "",
+    val isSearchExpanded: Boolean = false,
+    val searchSuggestions: List<String> = emptyList(),
 ) {
     companion object {
         val PRESETS = listOf(

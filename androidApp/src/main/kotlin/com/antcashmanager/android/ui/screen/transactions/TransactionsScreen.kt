@@ -42,9 +42,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
@@ -75,6 +73,7 @@ import com.antcashmanager.android.ui.components.DateRangeFilter
 import com.antcashmanager.android.ui.components.HelpButton
 import com.antcashmanager.android.ui.components.ScreenHeader
 import com.antcashmanager.android.ui.components.HelpDialogContent
+import com.antcashmanager.android.ui.components.SearchComponent
 import com.antcashmanager.android.ui.components.SimpleHelpFeature
 import com.antcashmanager.android.ui.components.SkeletonLoader
 import com.antcashmanager.android.ui.components.text.AppText
@@ -278,65 +277,12 @@ internal fun TransactionsContent(
 
             // Collapsible Search Bar
             item {
-                AnimatedVisibility(
-                    visible = state.isSearchExpanded,
-                    enter = fadeIn() + expandVertically(),
-                    exit = fadeOut() + shrinkVertically(),
-                ) {
-                    Column {
-                        Spacer(modifier = Modifier.height(12.dp))
-                        OutlinedTextField(
-                            value = state.searchQuery,
-                            onValueChange = { onEvent(TransactionsEvent.UpdateSearchQuery(it)) },
-                            modifier = Modifier.fillMaxWidth(),
-                            label = { Text(stringResource(R.string.transactions_search_label)) },
-                            placeholder = { Text(stringResource(R.string.transactions_search_placeholder)) },
-                            singleLine = true,
-                            shape = RoundedCornerShape(12.dp),
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = Icons.Default.Search,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                            },
-                            trailingIcon = {
-                                if (state.searchQuery.isNotEmpty()) {
-                                    IconButton(onClick = { onEvent(TransactionsEvent.UpdateSearchQuery("")) }) {
-                                        Icon(
-                                            imageVector = Icons.Default.Close,
-                                            contentDescription = stringResource(R.string.common_clear),
-                                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        )
-                                    }
-                                }
-                            },
-                        )
-
-                        // Search Suggestions
-                        if (state.searchSuggestions.isNotEmpty()) {
-                            Spacer(modifier = Modifier.height(8.dp))
-                            FlowRow(
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                verticalArrangement = Arrangement.spacedBy(4.dp),
-                            ) {
-                                state.searchSuggestions.forEach { suggestion ->
-                                    SuggestionChip(
-                                        onClick = { onEvent(TransactionsEvent.UpdateSearchQuery(suggestion)) },
-                                        label = {
-                                            Text(
-                                                text = suggestion,
-                                                style = MaterialTheme.typography.labelMedium,
-                                                maxLines = 1,
-                                                overflow = TextOverflow.Ellipsis,
-                                            )
-                                        },
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
+                SearchComponent(
+                    isVisible = state.isSearchExpanded,
+                    searchQuery = state.searchQuery,
+                    onSearchQueryChange = { onEvent(TransactionsEvent.UpdateSearchQuery(it)) },
+                    searchSuggestions = state.searchSuggestions,
+                )
             }
 
             // Collapsible Filters Card
