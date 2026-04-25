@@ -381,6 +381,28 @@
       <string name="settings_transaction_icon_display_category">Category</string>
       <string name="settings_transaction_icon_display_none">None</string>
       <string name="dialog_choose_transaction_icon_display">Choose icon display type</string>
+
+    <!-- Tutorial -->
+    <string name="settings_tutorial">Tutorial</string>
+    <string name="settings_show_tutorial">Show Tutorial</string>
+    <string name="settings_show_tutorial_subtitle">Re-watch the initial app tutorial</string>
+    <string name="tutorial_welcome_title">Welcome to AntCashManager! 🐜</string>
+    <string name="tutorial_welcome_desc">Let\'s take a quick tour to see how our little ant helps you manage your money.</string>
+    <string name="tutorial_dashboard_title">Dashboard</string>
+    <string name="tutorial_dashboard_desc">Here you can see your total balance, monthly income and expenses at a glance.</string>
+    <string name="tutorial_transactions_title">Transactions</string>
+    <string name="tutorial_transactions_desc">Manage all your movements here. You can search, filter, and add new entries easily.</string>
+    <string name="tutorial_charts_title">Charts &amp; Insights</string>
+    <string name="tutorial_charts_desc">Visualize your spending habits with interactive charts. See where your money goes!</string>
+    <string name="tutorial_categories_title">Categories</string>
+    <string name="tutorial_categories_desc">Organize your transactions with custom categories, icons, and colors.</string>
+    <string name="tutorial_settings_title">Customization</string>
+    <string name="tutorial_settings_desc">Tailor the app to your needs: currency, date formats, accessibility, and themes.</string>
+    <string name="tutorial_finish_title">You\'re all set!</string>
+    <string name="tutorial_finish_desc">Start your financial journey with AntCashManager today. Happy saving!</string>
+    <string name="tutorial_next">Next</string>
+    <string name="tutorial_skip">Skip</string>
+    <string name="tutorial_finish">Got it!</string>
 </resources>
 
 

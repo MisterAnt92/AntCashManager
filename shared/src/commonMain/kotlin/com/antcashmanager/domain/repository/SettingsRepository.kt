@@ -62,6 +62,10 @@ interface SettingsRepository {
     fun getTransactionsTransactionDisplayType(): Flow<TransactionDisplayType>
     suspend fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType)
 
+    // ── Onboarding / Tutorial ──
+    fun getIsTutorialCompleted(): Flow<Boolean>
+    suspend fun setIsTutorialCompleted(completed: Boolean)
+
     /** Resets every preference to its factory default. */
     suspend fun resetAllPreferences()
 }

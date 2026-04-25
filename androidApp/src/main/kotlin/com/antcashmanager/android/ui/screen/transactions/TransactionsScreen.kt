@@ -1104,6 +1104,9 @@ class MockSettingsRepository : SettingsRepository {
 
     override suspend fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType) {}
 
+    override fun getIsTutorialCompleted(): Flow<Boolean> = kotlinx.coroutines.flow.flowOf(true)
+    override suspend fun setIsTutorialCompleted(completed: Boolean) {}
+
     override suspend fun resetAllPreferences() {}
 }
 

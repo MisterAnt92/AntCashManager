@@ -326,6 +326,11 @@ class SettingsViewModel(
         action = { settingsRepository.setTransactionDisplayType(displayType) },
     )
 
+    fun setIsTutorialCompleted(completed: Boolean) = updatePreference(
+        logMsg = "Setting tutorial completed: $completed",
+        action = { settingsRepository.setIsTutorialCompleted(completed) },
+    )
+
     fun resetAllPreferences() = updatePreference(
         logMsg = "Resetting all preferences",
         action = { settingsRepository.resetAllPreferences() },

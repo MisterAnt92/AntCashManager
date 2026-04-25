@@ -7,6 +7,7 @@ import com.antcashmanager.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -202,6 +203,9 @@ internal class FakeSettingsRepository : SettingsRepository {
     override suspend fun setTransactionsTransactionDisplayType(type: TransactionDisplayType) {
         transactionsTransactionDisplayTypeFlow.value = type
     }
+
+    override fun getIsTutorialCompleted(): Flow<Boolean> = flowOf(true)
+    override suspend fun setIsTutorialCompleted(completed: Boolean) {}
 
     override suspend fun resetAllPreferences() {
         themeFlow.value = AppTheme.SYSTEM

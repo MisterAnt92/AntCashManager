@@ -63,6 +63,7 @@ import com.antcashmanager.android.ui.components.DateRangeFilter
 import com.antcashmanager.android.ui.components.HelpButton
 import com.antcashmanager.android.ui.components.ScreenHeader
 import com.antcashmanager.android.ui.components.SearchComponent
+import com.antcashmanager.android.ui.components.TutorialOverlay
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.home.view.BalanceCard
 import com.antcashmanager.android.ui.screen.home.view.HelpDialog
@@ -151,11 +152,25 @@ internal fun HomeContent(
         .collectAsState(initial = false)
     val transactionDisplayType by settingsRepository.getTransactionDisplayType()
         .collectAsState(initial = TransactionDisplayType.TREND)
+    val isTutorialCompleted by settingsRepository.getIsTutorialCompleted()
+        .collectAsState(initial = true)
+    
     val coroutineScope = rememberCoroutineScope()
 
     val listState = rememberLazyListState()
     val showScrollToTop by remember {
         derivedStateOf { listState.firstVisibleItemIndex > 2 }
+    }
+
+    // Tutorial overlay
+    if (!isTutorialCompleted) {
+        TutorialOverlay(
+            onDismiss = {
+                coroutineScope.launch {
+                    settingsRepository.setIsTutorialCompleted(true)
+                }
+            }
+        )
     }
 
     // From date picker dialog
@@ -459,6 +474,11 @@ class MockHomeSettingsRepository : SettingsRepository {
         kotlinx.coroutines.flow.flowOf(TransactionDisplayType.TREND)
 
     override suspend fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType) {}
+
+    override fun getIsTutorialCompleted(): kotlinx.coroutines.flow.Flow<Boolean> =
+        kotlinx.coroutines.flow.flowOf(true)
+
+    override suspend fun setIsTutorialCompleted(completed: Boolean) {}
 
     override suspend fun resetAllPreferences() {}
 }

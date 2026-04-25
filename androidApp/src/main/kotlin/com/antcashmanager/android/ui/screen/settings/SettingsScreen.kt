@@ -82,6 +82,7 @@ import com.antcashmanager.android.ui.components.AppRadioButton
 import com.antcashmanager.android.ui.components.AppSwitch
 import com.antcashmanager.android.ui.components.HelpButton
 import com.antcashmanager.android.ui.components.ScreenHeader
+import com.antcashmanager.android.ui.components.TutorialOverlay
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
 import com.antcashmanager.android.ui.components.text.AppText
@@ -231,6 +232,7 @@ internal fun SettingsContent(
     var showRestoreSuccessDialog by remember { mutableStateOf(false) }
     var showRestoreErrorDialog by remember { mutableStateOf(false) }
     var showHelpDialog by remember { mutableStateOf(false) }
+    var showTutorial by remember { mutableStateOf(false) }
     var restoreSuccessInfo by remember { mutableStateOf<Pair<Int, Int>?>(null) }
     var backupErrorMessage by remember { mutableStateOf("") }
     var restoreErrorMessage by remember { mutableStateOf("") }
@@ -324,6 +326,10 @@ internal fun SettingsContent(
     // Help dialog
     if (showHelpDialog) {
         HelpDialog(onDismiss = { showHelpDialog = false })
+    }
+
+    if (showTutorial) {
+        TutorialOverlay(onDismiss = { showTutorial = false })
     }
 
     Scaffold(
@@ -538,6 +544,15 @@ internal fun SettingsContent(
             )
             DonationCard(context = context)
         }
+
+        // ── Tutorial Section ──
+        AppCardSectionHeader(title = stringResource(R.string.settings_tutorial))
+        AppCard(
+            title = stringResource(R.string.settings_show_tutorial),
+            subtitle = stringResource(R.string.settings_show_tutorial_subtitle),
+            leadingIcon = Icons.Default.Info,
+            onClick = { showTutorial = true },
+        )
 
         // ── About Section ──
         AppCardSectionHeader(title = stringResource(R.string.settings_about))

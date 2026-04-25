@@ -41,6 +41,7 @@ class SettingsRepositoryImpl(
     private val showPaymentTypeBreakdownKey = booleanPreferencesKey("show_payment_type_breakdown")
     private val transactionDisplayTypeKey = stringPreferencesKey("transaction_display_type")
     private val transactionsTransactionDisplayTypeKey = stringPreferencesKey("transactions_transaction_display_type")
+    private val isTutorialCompletedKey = booleanPreferencesKey("is_tutorial_completed")
 
     override fun getTheme(): Flow<AppTheme> =
         context.dataStore.data.map { preferences ->
@@ -238,6 +239,13 @@ class SettingsRepositoryImpl(
         }
     }
 
+    override fun getIsTutorialCompleted(): Flow<Boolean> =
+        context.dataStore.data.map { it[isTutorialCompletedKey] ?: false }
+
+    override suspend fun setIsTutorialCompleted(completed: Boolean) {
+        context.dataStore.edit { it[isTutorialCompletedKey] = completed }
+    }
+
     override suspend fun resetAllPreferences() {
         context.dataStore.edit { prefs ->
             prefs[themeKey] = AppTheme.SYSTEM.name
@@ -260,6 +268,7 @@ class SettingsRepositoryImpl(
             prefs[showPaymentTypeBreakdownKey] = false
             prefs[transactionDisplayTypeKey] = TransactionDisplayType.TREND.name
             prefs[transactionsTransactionDisplayTypeKey] = TransactionDisplayType.TREND.name
+            prefs[isTutorialCompletedKey] = false
         }
     }
 }

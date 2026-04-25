@@ -242,6 +242,18 @@ private class FakeSettingsRepository : SettingsRepository {
         transactionDisplayTypeFlow.value = displayType
     }
 
+    override fun getHomeDateFilterPreset(): Flow<Int> = flowOf(1)
+    override suspend fun setHomeDateFilterPreset(index: Int) {}
+    override fun getTransactionsDateFilterPreset(): Flow<Int> = flowOf(1)
+    override suspend fun setTransactionsDateFilterPreset(index: Int) {}
+    override fun getChartsDateFilterPreset(): Flow<Int> = flowOf(1)
+    override suspend fun setChartsDateFilterPreset(index: Int) {}
+    override fun getChartsZoomEnabled(): Flow<Boolean> = flowOf(true)
+    override suspend fun setChartsZoomEnabled(enabled: Boolean) {}
+
+    override fun getIsTutorialCompleted(): Flow<Boolean> = flowOf(true)
+    override suspend fun setIsTutorialCompleted(completed: Boolean) {}
+
     private val dateFilterExpandedFlow = MutableStateFlow(false)
 
     override fun getDateFilterExpanded(): Flow<Boolean> = dateFilterExpandedFlow
