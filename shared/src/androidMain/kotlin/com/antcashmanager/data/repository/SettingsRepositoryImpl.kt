@@ -34,6 +34,9 @@ class SettingsRepositoryImpl(
     private val thousandsSeparatorKey = stringPreferencesKey("thousands_separator")
     private val dateFormatKey = stringPreferencesKey("date_format")
     private val dateFilterExpandedKey = booleanPreferencesKey("date_filter_expanded")
+    private val homeDateFilterPresetKey = intPreferencesKey("home_date_filter_preset")
+    private val transactionsDateFilterPresetKey = intPreferencesKey("transactions_date_filter_preset")
+    private val chartsDateFilterPresetKey = intPreferencesKey("charts_date_filter_preset")
     private val showPaymentTypeBreakdownKey = booleanPreferencesKey("show_payment_type_breakdown")
     private val transactionDisplayTypeKey = stringPreferencesKey("transaction_display_type")
     private val transactionsTransactionDisplayTypeKey = stringPreferencesKey("transactions_transaction_display_type")
@@ -163,6 +166,27 @@ class SettingsRepositoryImpl(
         }
     }
 
+    override fun getHomeDateFilterPreset(): Flow<Int> =
+        context.dataStore.data.map { it[homeDateFilterPresetKey] ?: 1 }
+
+    override suspend fun setHomeDateFilterPreset(index: Int) {
+        context.dataStore.edit { it[homeDateFilterPresetKey] = index }
+    }
+
+    override fun getTransactionsDateFilterPreset(): Flow<Int> =
+        context.dataStore.data.map { it[transactionsDateFilterPresetKey] ?: 1 }
+
+    override suspend fun setTransactionsDateFilterPreset(index: Int) {
+        context.dataStore.edit { it[transactionsDateFilterPresetKey] = index }
+    }
+
+    override fun getChartsDateFilterPreset(): Flow<Int> =
+        context.dataStore.data.map { it[chartsDateFilterPresetKey] ?: 1 }
+
+    override suspend fun setChartsDateFilterPreset(index: Int) {
+        context.dataStore.edit { it[chartsDateFilterPresetKey] = index }
+    }
+
     override fun getShowPaymentTypeBreakdown(): Flow<Boolean> =
         context.dataStore.data.map { preferences ->
             preferences[showPaymentTypeBreakdownKey] ?: false
@@ -221,6 +245,9 @@ class SettingsRepositoryImpl(
             prefs[thousandsSeparatorKey] = ""
             prefs[dateFormatKey] = "dd/MM/yyyy"
             prefs[dateFilterExpandedKey] = true
+            prefs[homeDateFilterPresetKey] = 1
+            prefs[transactionsDateFilterPresetKey] = 1
+            prefs[chartsDateFilterPresetKey] = 1
             prefs[showPaymentTypeBreakdownKey] = false
             prefs[transactionDisplayTypeKey] = TransactionDisplayType.TREND.name
             prefs[transactionsTransactionDisplayTypeKey] = TransactionDisplayType.TREND.name

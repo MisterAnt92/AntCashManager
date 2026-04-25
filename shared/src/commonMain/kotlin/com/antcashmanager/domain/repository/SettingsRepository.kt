@@ -39,6 +39,15 @@ interface SettingsRepository {
     fun getDateFilterExpanded(): Flow<Boolean>
     suspend fun setDateFilterExpanded(expanded: Boolean)
 
+    fun getHomeDateFilterPreset(): Flow<Int>
+    suspend fun setHomeDateFilterPreset(index: Int)
+
+    fun getTransactionsDateFilterPreset(): Flow<Int>
+    suspend fun setTransactionsDateFilterPreset(index: Int)
+
+    fun getChartsDateFilterPreset(): Flow<Int>
+    suspend fun setChartsDateFilterPreset(index: Int)
+
     // ── Payment Type Breakdown ──
     fun getShowPaymentTypeBreakdown(): Flow<Boolean>
     suspend fun setShowPaymentTypeBreakdown(show: Boolean)

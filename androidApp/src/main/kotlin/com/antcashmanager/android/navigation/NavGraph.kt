@@ -132,7 +132,10 @@ fun AntCashManagerNavHost(
                     )
                 }
                 composable(BottomNavItem.Charts.route) {
-                    ChartsScreen(transactionRepository = transactionRepository)
+                    ChartsScreen(
+                        transactionRepository = transactionRepository,
+                        settingsRepository = settingsRepository,
+                    )
                 }
                 composable(BottomNavItem.Transactions.route) {
                     TransactionsScreen(

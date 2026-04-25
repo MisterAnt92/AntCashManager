@@ -71,8 +71,13 @@ import java.util.Date
 import java.util.Locale
 import kotlin.math.abs
 
+import kotlinx.coroutines.launch
+
 @Composable
-fun ChartsScreen(transactionRepository: TransactionRepository) {
+fun ChartsScreen(
+    transactionRepository: TransactionRepository,
+    settingsRepository: com.antcashmanager.domain.repository.SettingsRepository,
+) {
     Logger.d("ChartsScreen") { "Displaying ChartsScreen" }
     val viewModel: ChartsViewModel = viewModel(
         factory = object : ViewModelProvider.Factory {
@@ -83,11 +88,27 @@ fun ChartsScreen(transactionRepository: TransactionRepository) {
     )
     val chartData by viewModel.chartData.collectAsState()
     val dateRange by viewModel.dateRange.collectAsState()
+
+    val screenDateFilterPreset by settingsRepository.getChartsDateFilterPreset()
+        .collectAsState(initial = 1)
+
+    androidx.compose.runtime.LaunchedEffect(screenDateFilterPreset) {
+        viewModel.setPresetRange(RangePreset.entries[screenDateFilterPreset])
+    }
+
+    val coroutineScope = androidx.compose.runtime.rememberCoroutineScope()
+
     ChartsContent(
         chartData = chartData,
         dateRange = dateRange,
+        initialPresetIndex = screenDateFilterPreset,
         onDateRangeChanged = { from, to -> viewModel.setDateRange(from, to) },
-        onPresetSelected = { viewModel.setPresetRange(it) },
+        onPresetSelected = { preset ->
+            coroutineScope.launch {
+                settingsRepository.setChartsDateFilterPreset(preset.ordinal)
+            }
+            viewModel.setPresetRange(preset)
+        },
     )
 }
 
@@ -96,6 +117,7 @@ fun ChartsScreen(transactionRepository: TransactionRepository) {
 internal fun ChartsContent(
     chartData: ChartData,
     dateRange: DateRange,
+    initialPresetIndex: Int = 1,
     onDateRangeChanged: (Long, Long) -> Unit = { _, _ -> },
     onPresetSelected: (RangePreset) -> Unit = {},
 ) {
@@ -104,10 +126,15 @@ internal fun ChartsContent(
     val dateFormat = remember { SimpleDateFormat("dd MMM yyyy", Locale.getDefault()) }
     val fmt = LocalCurrencyFormat.current
     val shareLabel = stringResource(R.string.share)
-    var selectedPreset by remember { mutableIntStateOf(1) }
+    var selectedPreset by remember { mutableIntStateOf(initialPresetIndex) }
     var showFromPicker by remember { mutableStateOf(false) }
     var showToPicker by remember { mutableStateOf(false) }
     var showHelpDialog by remember { mutableStateOf(false) }
+
+    // Sync selectedPreset when initialPresetIndex changes
+    androidx.compose.runtime.LaunchedEffect(initialPresetIndex) {
+        selectedPreset = initialPresetIndex
+    }
 
     // Help dialog
     if (showHelpDialog) {

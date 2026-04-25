@@ -72,6 +72,7 @@ fun HomeScreen(
 ) {
     Logger.d("HomeScreen") { "Displaying HomeScreen" }
 
+    val coroutineScope = rememberCoroutineScope()
     val viewModel: HomeViewModel = viewModel(
         factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
@@ -82,9 +83,25 @@ fun HomeScreen(
 
     val state by viewModel.state.collectAsState()
 
+    // Screen specific date filter preset from settings
+    val screenDateFilterPreset by settingsRepository.getHomeDateFilterPreset()
+        .collectAsState(initial = 1)
+
+    // Sync screenDateFilterPreset with viewModel
+    androidx.compose.runtime.LaunchedEffect(screenDateFilterPreset) {
+        viewModel.onEvent(HomeEvent.SelectPreset(screenDateFilterPreset))
+    }
+
     HomeContent(
         state = state,
-        onEvent = viewModel::onEvent,
+        onEvent = { event ->
+            if (event is HomeEvent.SelectPreset) {
+                coroutineScope.launch {
+                    settingsRepository.setHomeDateFilterPreset(event.index)
+                }
+            }
+            viewModel.onEvent(event)
+        },
         settingsRepository = settingsRepository,
     )
 }
@@ -336,8 +353,19 @@ class MockHomeSettingsRepository : SettingsRepository {
     override suspend fun setThousandsSeparator(separator: String) {}
     override fun getDateFormat() = kotlinx.coroutines.flow.flowOf("dd/MM/yyyy")
     override suspend fun setDateFormat(pattern: String) {}
+
     override fun getDateFilterExpanded() = kotlinx.coroutines.flow.flowOf(true)
     override suspend fun setDateFilterExpanded(expanded: Boolean) {}
+
+    override fun getHomeDateFilterPreset() = kotlinx.coroutines.flow.flowOf(1)
+    override suspend fun setHomeDateFilterPreset(index: Int) {}
+
+    override fun getTransactionsDateFilterPreset() = kotlinx.coroutines.flow.flowOf(1)
+    override suspend fun setTransactionsDateFilterPreset(index: Int) {}
+
+    override fun getChartsDateFilterPreset() = kotlinx.coroutines.flow.flowOf(1)
+    override suspend fun setChartsDateFilterPreset(index: Int) {}
+
     override fun getShowPaymentTypeBreakdown() = kotlinx.coroutines.flow.flowOf(true)
     override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {}
     override fun getTransactionDisplayType() =

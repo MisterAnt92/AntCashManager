@@ -123,9 +123,24 @@ fun TransactionsScreen(
     val transactionDisplayType by settingsRepository.getTransactionsTransactionDisplayType()
         .collectAsState(initial = TransactionDisplayType.TREND)
 
+    val coroutineScope = rememberCoroutineScope()
+    val screenDateFilterPreset by settingsRepository.getTransactionsDateFilterPreset()
+        .collectAsState(initial = 1)
+
+    androidx.compose.runtime.LaunchedEffect(screenDateFilterPreset) {
+        viewModel.onEvent(TransactionsEvent.SelectPreset(screenDateFilterPreset))
+    }
+
     TransactionsContent(
         state = state,
-        onEvent = viewModel::onEvent,
+        onEvent = { event ->
+            if (event is TransactionsEvent.SelectPreset) {
+                coroutineScope.launch {
+                    settingsRepository.setTransactionsDateFilterPreset(event.index)
+                }
+            }
+            viewModel.onEvent(event)
+        },
         settingsRepository = settingsRepository,
         navController = navController,
         transactionDisplayType = transactionDisplayType,
@@ -1011,8 +1026,19 @@ class MockSettingsRepository : SettingsRepository {
     override suspend fun setThousandsSeparator(separator: String) {}
     override fun getDateFormat() = kotlinx.coroutines.flow.flowOf("dd/MM/yyyy")
     override suspend fun setDateFormat(pattern: String) {}
+
     override fun getDateFilterExpanded() = kotlinx.coroutines.flow.flowOf(true)
     override suspend fun setDateFilterExpanded(expanded: Boolean) {}
+
+    override fun getHomeDateFilterPreset() = kotlinx.coroutines.flow.flowOf(1)
+    override suspend fun setHomeDateFilterPreset(index: Int) {}
+
+    override fun getTransactionsDateFilterPreset() = kotlinx.coroutines.flow.flowOf(1)
+    override suspend fun setTransactionsDateFilterPreset(index: Int) {}
+
+    override fun getChartsDateFilterPreset() = kotlinx.coroutines.flow.flowOf(1)
+    override suspend fun setChartsDateFilterPreset(index: Int) {}
+
     override fun getShowPaymentTypeBreakdown() = kotlinx.coroutines.flow.flowOf(false)
     override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {}
     override fun getTransactionDisplayType(): Flow<TransactionDisplayType> =
