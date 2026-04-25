@@ -96,6 +96,8 @@ private class FakeSettingsRepository : SettingsRepository {
     override suspend fun setShowPaymentTypeBreakdown(show: Boolean) = Unit
     override fun getTransactionDisplayType() = throw UnsupportedOperationException()
     override suspend fun setTransactionDisplayType(displayType: com.antcashmanager.domain.model.TransactionDisplayType) = Unit
+    override fun getTransactionsTransactionDisplayType() = throw UnsupportedOperationException()
+    override suspend fun setTransactionsTransactionDisplayType(displayType: com.antcashmanager.domain.model.TransactionDisplayType) = Unit
     override suspend fun resetAllPreferences() = Unit
 }
 

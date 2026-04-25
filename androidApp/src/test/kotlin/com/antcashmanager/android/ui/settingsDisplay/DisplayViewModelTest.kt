@@ -218,6 +218,9 @@ private class FakeSettingsRepository : SettingsRepository {
 		transactionDisplayTypeFlow.value = displayType
 	}
 
+	override fun getTransactionsTransactionDisplayType(): Flow<TransactionDisplayType> = throw UnsupportedOperationException()
+	override suspend fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType) = Unit
+
 	override suspend fun resetAllPreferences() {
 		currencySymbolFlow.value = "\u20ac"
 		decimalDigitsFlow.value = 2

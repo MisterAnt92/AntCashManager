@@ -344,6 +344,12 @@ class MockHomeSettingsRepository : SettingsRepository {
         kotlinx.coroutines.flow.flowOf(TransactionDisplayType.TREND)
 
     override suspend fun setTransactionDisplayType(displayType: TransactionDisplayType) {}
+
+    override fun getTransactionsTransactionDisplayType() =
+        kotlinx.coroutines.flow.flowOf(TransactionDisplayType.TREND)
+
+    override suspend fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType) {}
+
     override suspend fun resetAllPreferences() {}
 }
 

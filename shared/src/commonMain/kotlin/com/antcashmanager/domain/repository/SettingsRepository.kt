@@ -47,6 +47,9 @@ interface SettingsRepository {
     fun getTransactionDisplayType(): Flow<TransactionDisplayType>
     suspend fun setTransactionDisplayType(displayType: TransactionDisplayType)
 
+    fun getTransactionsTransactionDisplayType(): Flow<TransactionDisplayType>
+    suspend fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType)
+
     /** Resets every preference to its factory default. */
     suspend fun resetAllPreferences()
 }

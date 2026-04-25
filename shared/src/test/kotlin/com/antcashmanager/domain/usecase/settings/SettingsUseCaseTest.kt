@@ -104,6 +104,7 @@ internal class FakeSettingsRepository : SettingsRepository {
     private val dateFilterExpandedFlow = MutableStateFlow(true)
     private val showPaymentTypeBreakdownFlow = MutableStateFlow(true)
     private val transactionDisplayTypeFlow = MutableStateFlow(TransactionDisplayType.TREND)
+    private val transactionsTransactionDisplayTypeFlow = MutableStateFlow(TransactionDisplayType.TREND)
 
     override fun getTheme(): Flow<AppTheme> = themeFlow
 
@@ -182,6 +183,11 @@ internal class FakeSettingsRepository : SettingsRepository {
         transactionDisplayTypeFlow.value = type
     }
 
+    override fun getTransactionsTransactionDisplayType(): Flow<TransactionDisplayType> = transactionsTransactionDisplayTypeFlow
+    override suspend fun setTransactionsTransactionDisplayType(type: TransactionDisplayType) {
+        transactionsTransactionDisplayTypeFlow.value = type
+    }
+
     override suspend fun resetAllPreferences() {
         themeFlow.value = AppTheme.SYSTEM
         languageFlow.value = AppLanguage.SYSTEM
@@ -198,5 +204,6 @@ internal class FakeSettingsRepository : SettingsRepository {
         dateFilterExpandedFlow.value = true
         showPaymentTypeBreakdownFlow.value = true
         transactionDisplayTypeFlow.value = TransactionDisplayType.TREND
+        transactionsTransactionDisplayTypeFlow.value = TransactionDisplayType.TREND
     }
 }

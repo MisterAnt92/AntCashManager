@@ -92,6 +92,7 @@ fun DisplayScreen(
     val showTransactionNotes by viewModel.showTransactionNotes.collectAsState()
     val showPaymentTypeBreakdown by viewModel.showPaymentTypeBreakdown.collectAsState()
     val transactionDisplayType by viewModel.transactionDisplayType.collectAsState()
+    val transactionsTransactionDisplayType by viewModel.transactionsTransactionDisplayType.collectAsState()
 
     DisplayContent(
         currencySymbol = currencySymbol,
@@ -112,6 +113,8 @@ fun DisplayScreen(
         onShowPaymentTypeBreakdownChanged = { viewModel.setShowPaymentTypeBreakdown(it) },
         transactionDisplayType = transactionDisplayType,
         onTransactionDisplayTypeSelected = { viewModel.setTransactionDisplayType(it) },
+        transactionsTransactionDisplayType = transactionsTransactionDisplayType,
+        onTransactionsTransactionDisplayTypeSelected = { viewModel.setTransactionsTransactionDisplayType(it) },
         onResetAllPreferences = { viewModel.resetAllPreferences() },
         onNavigateBack = { navController.popBackStack() },
     )
@@ -120,7 +123,7 @@ fun DisplayScreen(
 /**
  * Composable che rappresenta il contenuto della schermata "Visualizzazione".
  * È stato scomposto in sotto-sezioni (`CurrencySection`, `DateSection`,
- * `ChartsSection`, `HomeDisplaySection`, `OtherSection`) per migliorare la
+ * `ChartsSection`, `HomeDisplaySection`, `TransactionsDisplaySection`, `OtherSection`) per migliorare la
  * testabilità e ridurre la complessità (detekt warnings).
  *
  * I dialog vengono mostrati da variabili locali di stato e sono definiti in
@@ -147,6 +150,8 @@ internal fun DisplayContent(
     onShowPaymentTypeBreakdownChanged: (Boolean) -> Unit,
     transactionDisplayType: TransactionDisplayType,
     onTransactionDisplayTypeSelected: (TransactionDisplayType) -> Unit,
+    transactionsTransactionDisplayType: TransactionDisplayType,
+    onTransactionsTransactionDisplayTypeSelected: (TransactionDisplayType) -> Unit,
     onResetAllPreferences: () -> Unit,
     onNavigateBack: () -> Unit,
 ) {
@@ -157,6 +162,7 @@ internal fun DisplayContent(
     var showDateFormatDialog by remember { mutableStateOf(false) }
     var showResetPreferencesDialog by remember { mutableStateOf(false) }
     var showTransactionDisplayDialog by remember { mutableStateOf(false) }
+    var showTransactionsDisplayDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -203,6 +209,11 @@ internal fun DisplayContent(
                 onShowPaymentTypeBreakdownChanged = onShowPaymentTypeBreakdownChanged,
                 transactionDisplayType = transactionDisplayType,
                 onShowTransactionDisplayDialog = { showTransactionDisplayDialog = true },
+            ) }
+
+            item { TransactionsDisplaySection(
+                transactionDisplayType = transactionsTransactionDisplayType,
+                onShowTransactionDisplayDialog = { showTransactionsDisplayDialog = true },
             ) }
 
             item { OtherSection(
@@ -289,6 +300,12 @@ internal fun DisplayContent(
     }
     val dismissTransactionDisplay: () -> Unit = { showTransactionDisplayDialog = false }
 
+    val handleTransactionsDisplaySelected: (TransactionDisplayType) -> Unit = { t ->
+        onTransactionsTransactionDisplayTypeSelected(t)
+        showTransactionsDisplayDialog = false
+    }
+    val dismissTransactionsDisplay: () -> Unit = { showTransactionsDisplayDialog = false }
+
     if (showCurrencyDialog) {
         CurrencySymbolDialog(
             currentSymbol = currencySymbol,
@@ -338,6 +355,14 @@ internal fun DisplayContent(
             currentDisplayType = transactionDisplayType,
             onDisplayTypeSelected = handleTransactionDisplaySelected,
             onDismiss = dismissTransactionDisplay,
+        )
+    }
+
+    if (showTransactionsDisplayDialog) {
+        TransactionDisplayDialog(
+            currentDisplayType = transactionsTransactionDisplayType,
+            onDisplayTypeSelected = handleTransactionsDisplaySelected,
+            onDismiss = dismissTransactionsDisplay,
         )
     }
 }
@@ -498,6 +523,26 @@ private fun HomeDisplaySection(
 }
 
 @Composable
+private fun TransactionsDisplaySection(
+    transactionDisplayType: TransactionDisplayType,
+    onShowTransactionDisplayDialog: () -> Unit,
+) {
+    AppCardSectionHeader(title = stringResource(R.string.settings_transaction_display_section))
+    Spacer(modifier = Modifier.height(8.dp))
+
+    AppCard(
+        title = stringResource(R.string.settings_transaction_display),
+        subtitle = when (transactionDisplayType) {
+            TransactionDisplayType.TREND -> stringResource(R.string.settings_transaction_display_trend)
+            TransactionDisplayType.CATEGORY -> stringResource(R.string.settings_transaction_display_category)
+            TransactionDisplayType.NONE -> stringResource(R.string.settings_transaction_display_none)
+        },
+        leadingIcon = Icons.Default.Visibility,
+        onClick = onShowTransactionDisplayDialog,
+    )
+}
+
+@Composable
 private fun OtherSection(
     showTransactionNotes: Boolean,
     onShowTransactionNotesChanged: (Boolean) -> Unit,
@@ -556,6 +601,8 @@ private fun DisplayContentPreview() {
             onShowPaymentTypeBreakdownChanged = {},
             transactionDisplayType = TransactionDisplayType.TREND,
             onTransactionDisplayTypeSelected = {},
+            transactionsTransactionDisplayType = TransactionDisplayType.TREND,
+            onTransactionsTransactionDisplayTypeSelected = {},
             onResetAllPreferences = {},
             onNavigateBack = {},
         )

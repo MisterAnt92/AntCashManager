@@ -113,8 +113,16 @@ class DisplayViewModel(
             false,
         )
 
-    // Espone il tipo di visualizzazione delle transazioni
+    // Espone il tipo di visualizzazione delle transazioni (Home)
     val transactionDisplayType = settingsRepository.getTransactionDisplayType()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
+            TransactionDisplayType.TREND,
+        )
+
+    // Espone il tipo di visualizzazione delle transazioni (Transazioni)
+    val transactionsTransactionDisplayType = settingsRepository.getTransactionsTransactionDisplayType()
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
@@ -204,11 +212,19 @@ class DisplayViewModel(
     )
 
     /**
-     * Aggiorna il tipo di visualizzazione delle transazioni.
+     * Aggiorna il tipo di visualizzazione delle transazioni (Home).
      */
     fun setTransactionDisplayType(displayType: TransactionDisplayType) = updatePreference(
-        logMsg = "Setting transaction display type: $displayType",
+        logMsg = "Setting home transaction display type: $displayType",
         action = { settingsRepository.setTransactionDisplayType(displayType) },
+    )
+
+    /**
+     * Aggiorna il tipo di visualizzazione delle transazioni (Transazioni).
+     */
+    fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType) = updatePreference(
+        logMsg = "Setting transactions transaction display type: $displayType",
+        action = { settingsRepository.setTransactionsTransactionDisplayType(displayType) },
     )
 
     /**

@@ -236,6 +236,12 @@ private class FakeSettingsRepository : SettingsRepository {
         transactionDisplayTypeFlow.value = displayType
     }
 
+    override fun getTransactionsTransactionDisplayType(): Flow<TransactionDisplayType> = transactionDisplayTypeFlow
+
+    override suspend fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType) {
+        transactionDisplayTypeFlow.value = displayType
+    }
+
     private val dateFilterExpandedFlow = MutableStateFlow(false)
 
     override fun getDateFilterExpanded(): Flow<Boolean> = dateFilterExpandedFlow

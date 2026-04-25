@@ -177,9 +177,25 @@ class TransactionsViewModel(
         searchSuggestionsFlow,
         _filterState,
     ) { transactions, categories, filtered, suggestions, filterState ->
+        val categoryCache = categories.associateBy { it.name }
+
+        // Enrich transactions with category icon and color from cache
+        val enrichedFiltered = filtered.map { transaction ->
+            val category = categoryCache[transaction.category]
+            if (category != null && (transaction.categoryIcon.isEmpty() || transaction.categoryColor == 0xFF90A4AE)) {
+                // Update transaction with category data
+                transaction.copy(
+                    categoryIcon = category.icon,
+                    categoryColor = category.color
+                )
+            } else {
+                transaction
+            }
+        }
+
         TransactionsState(
             transactions = transactions,
-            filteredTransactions = filtered,
+            filteredTransactions = enrichedFiltered,
             categories = categories,
             isLoading = false,
             selectedPresetIndex = filterState.selectedPresetIndex,

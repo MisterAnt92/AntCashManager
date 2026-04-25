@@ -36,6 +36,7 @@ class SettingsRepositoryImpl(
     private val dateFilterExpandedKey = booleanPreferencesKey("date_filter_expanded")
     private val showPaymentTypeBreakdownKey = booleanPreferencesKey("show_payment_type_breakdown")
     private val transactionDisplayTypeKey = stringPreferencesKey("transaction_display_type")
+    private val transactionsTransactionDisplayTypeKey = stringPreferencesKey("transactions_transaction_display_type")
 
     override fun getTheme(): Flow<AppTheme> =
         context.dataStore.data.map { preferences ->
@@ -189,6 +190,22 @@ class SettingsRepositoryImpl(
         }
     }
 
+    override fun getTransactionsTransactionDisplayType(): Flow<TransactionDisplayType> =
+        context.dataStore.data.map { preferences ->
+            val typeName = preferences[transactionsTransactionDisplayTypeKey] ?: TransactionDisplayType.TREND.name
+            try {
+                TransactionDisplayType.valueOf(typeName)
+            } catch (_: IllegalArgumentException) {
+                TransactionDisplayType.TREND
+            }
+        }
+
+    override suspend fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType) {
+        context.dataStore.edit { preferences ->
+            preferences[transactionsTransactionDisplayTypeKey] = displayType.name
+        }
+    }
+
     override suspend fun resetAllPreferences() {
         context.dataStore.edit { prefs ->
             prefs[themeKey] = AppTheme.SYSTEM.name
@@ -206,6 +223,7 @@ class SettingsRepositoryImpl(
             prefs[dateFilterExpandedKey] = true
             prefs[showPaymentTypeBreakdownKey] = false
             prefs[transactionDisplayTypeKey] = TransactionDisplayType.TREND.name
+            prefs[transactionsTransactionDisplayTypeKey] = TransactionDisplayType.TREND.name
         }
     }
 }

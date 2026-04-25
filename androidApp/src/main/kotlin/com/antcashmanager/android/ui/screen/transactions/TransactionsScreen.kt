@@ -78,6 +78,7 @@ import com.antcashmanager.android.ui.components.SimpleHelpFeature
 import com.antcashmanager.android.ui.components.SkeletonLoader
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.text.TransactionAmountText
+import com.antcashmanager.android.ui.screen.categories.categoryIconMap
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.ExpenseRed
 import com.antcashmanager.android.ui.theme.IncomeGreen
@@ -119,11 +120,15 @@ fun TransactionsScreen(
 
     val state by viewModel.state.collectAsState()
 
+    val transactionDisplayType by settingsRepository.getTransactionsTransactionDisplayType()
+        .collectAsState(initial = TransactionDisplayType.TREND)
+
     TransactionsContent(
         state = state,
         onEvent = viewModel::onEvent,
         settingsRepository = settingsRepository,
         navController = navController,
+        transactionDisplayType = transactionDisplayType,
     )
 }
 
@@ -138,6 +143,7 @@ internal fun TransactionsContent(
     onEvent: (TransactionsEvent) -> Unit,
     settingsRepository: SettingsRepository,
     navController: NavController? = null,
+    transactionDisplayType: TransactionDisplayType = TransactionDisplayType.TREND,
 ) {
     // Local UI state for dialogs only (not business logic)
     var showFromDatePicker by remember { mutableStateOf(false) }
@@ -434,7 +440,8 @@ internal fun TransactionsContent(
                             transaction = transaction,
                             onClick = {
                                 navController?.navigate("add_transaction?transactionId=${transaction.id}")
-                            }
+                            },
+                            displayType = transactionDisplayType,
                         )
                     }
                     item { Spacer(modifier = Modifier.height(80.dp)) }
@@ -797,7 +804,11 @@ private fun getRecurrenceIntervalLabel(interval: String): String {
 }
 
 @Composable
-private fun TransactionItem(transaction: Transaction, onClick: (() -> Unit)? = null) {
+private fun TransactionItem(
+    transaction: Transaction,
+    onClick: (() -> Unit)? = null,
+    displayType: TransactionDisplayType = TransactionDisplayType.TREND,
+) {
     val isIncome = transaction.type == TransactionType.INCOME
     val cardBackgroundColor =
         if (isIncome) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer
@@ -813,29 +824,67 @@ private fun TransactionItem(transaction: Transaction, onClick: (() -> Unit)? = n
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                // Icon with background
-                Box(
-                    modifier = Modifier
-                        .size(44.dp)
-                        .background(
-                            if (isIncome) IncomeGreen.copy(alpha = 0.25f) else ExpenseRed.copy(alpha = 0.25f),
-                            shape = RoundedCornerShape(32.dp),
-                        )
-                        .padding(8.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        imageVector = if (isIncome) Icons.Default.ArrowDownward else Icons.Default.ArrowUpward,
-                        contentDescription = null,
-                        tint = if (isIncome) IncomeGreen else ExpenseRed,
-                        modifier = Modifier.size(20.dp),
-                    )
-                }
+                // Icon based on display type
+                when (displayType) {
+                    TransactionDisplayType.TREND -> {
+                        Box(
+                            modifier = Modifier
+                                .size(44.dp)
+                                .background(
+                                    if (isIncome) IncomeGreen.copy(alpha = 0.25f) else ExpenseRed.copy(
+                                        alpha = 0.25f
+                                    ),
+                                    shape = RoundedCornerShape(32.dp),
+                                )
+                                .padding(8.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Icon(
+                                imageVector = if (isIncome) Icons.Default.ArrowDownward else Icons.Default.ArrowUpward,
+                                contentDescription = null,
+                                tint = if (isIncome) IncomeGreen else ExpenseRed,
+                                modifier = Modifier.size(20.dp),
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                    }
 
-                Spacer(modifier = Modifier.width(12.dp))
+                    TransactionDisplayType.CATEGORY -> {
+                        val categoryIconVector = categoryIconMap[transaction.categoryIcon]
+                        Box(
+                            modifier = Modifier
+                                .size(44.dp)
+                                .background(
+                                    color = androidx.compose.ui.graphics.Color(transaction.categoryColor),
+                                    shape = androidx.compose.foundation.shape.CircleShape
+                                ),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            if (categoryIconVector != null) {
+                                Icon(
+                                    imageVector = categoryIconVector,
+                                    contentDescription = transaction.category,
+                                    tint = androidx.compose.ui.graphics.Color.White,
+                                    modifier = Modifier.size(24.dp),
+                                )
+                            } else {
+                                AppText(
+                                    text = transaction.category.take(1).uppercase(),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = androidx.compose.ui.graphics.Color.White,
+                                    fontWeight = FontWeight.Bold,
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                    }
+
+                    TransactionDisplayType.NONE -> {
+                        // No icon
+                    }
+                }
 
                 // Content
                 Column(modifier = Modifier.weight(1f)) {
@@ -970,6 +1019,11 @@ class MockSettingsRepository : SettingsRepository {
         kotlinx.coroutines.flow.flowOf(TransactionDisplayType.TREND)
 
     override suspend fun setTransactionDisplayType(displayType: TransactionDisplayType) {}
+
+    override fun getTransactionsTransactionDisplayType(): Flow<TransactionDisplayType> =
+        kotlinx.coroutines.flow.flowOf(TransactionDisplayType.TREND)
+
+    override suspend fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType) {}
 
     override suspend fun resetAllPreferences() {}
 }
