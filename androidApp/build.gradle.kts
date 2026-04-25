@@ -7,14 +7,14 @@ plugins {
 
 android {
     namespace = "com.antcashmanager.android"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.sformica.ant_cashmanager"
         minSdk = 26
-        targetSdk = 35
-        versionCode = 2
-        versionName = "1.4"
+        targetSdk = 36
+        versionCode = 3
+        versionName = "1.4.6"
     }
 
     buildTypes {
