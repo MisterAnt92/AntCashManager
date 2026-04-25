@@ -183,6 +183,7 @@ private class FakeSettingsRepository : SettingsRepository {
 	private val transactionDisplayTypeFlow = MutableStateFlow(TransactionDisplayType.TREND)
 	private val dateFilterExpandedFlow = MutableStateFlow(false)
 	private val chartsZoomEnabledFlow = MutableStateFlow(true)
+	private val isTutorialCompletedFlow = MutableStateFlow(false)
 
 	override fun getTheme() = throw UnsupportedOperationException()
 	override suspend fun setTheme(theme: com.antcashmanager.domain.model.AppTheme) = Unit
@@ -219,8 +220,11 @@ private class FakeSettingsRepository : SettingsRepository {
 		transactionDisplayTypeFlow.value = displayType
 	}
 
-	override fun getTransactionsTransactionDisplayType(): Flow<TransactionDisplayType> = throw UnsupportedOperationException()
-	override suspend fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType) = Unit
+	override fun getTransactionsTransactionDisplayType(): Flow<TransactionDisplayType> =
+		transactionDisplayTypeFlow
+	override suspend fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType) {
+		transactionDisplayTypeFlow.value = displayType
+	}
 
 	override fun getTransactionsDateFilterPreset(): Flow<Int> = throw UnsupportedOperationException()
 	override suspend fun setTransactionsDateFilterPreset(index: Int) {}
@@ -236,6 +240,11 @@ private class FakeSettingsRepository : SettingsRepository {
 		chartsZoomEnabledFlow.value = enabled
 	}
 
+	override fun getIsTutorialCompleted(): Flow<Boolean> = isTutorialCompletedFlow
+	override suspend fun setIsTutorialCompleted(completed: Boolean) {
+		isTutorialCompletedFlow.value = completed
+	}
+
 	override suspend fun resetAllPreferences() {
 		currencySymbolFlow.value = "\u20ac"
 		decimalDigitsFlow.value = 2
@@ -248,6 +257,7 @@ private class FakeSettingsRepository : SettingsRepository {
 		transactionDisplayTypeFlow.value = TransactionDisplayType.TREND
 		dateFilterExpandedFlow.value = false
 		chartsZoomEnabledFlow.value = true
+		isTutorialCompletedFlow.value = false
 	}
 }
 

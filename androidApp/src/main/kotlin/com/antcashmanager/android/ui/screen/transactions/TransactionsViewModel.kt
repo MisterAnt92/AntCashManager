@@ -30,7 +30,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -99,16 +98,14 @@ class TransactionsViewModel(
         .map { it.getOrElse { emptyList() } }
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
-    // ── Search query with debounce for performance ──
-    private val debouncedSearchQuery = _filterState
+    private val searchQueryFlow = _filterState
         .map { it.searchQuery }
         .distinctUntilChanged()
-        .debounce(300L)
 
-    // ── Filtered Transactions Flow (updates only on debounced changes or other filters) ──
+    // ── Filtered Transactions Flow (updates immediately on search and filter changes) ──
     private val filteredTransactionsFlow = combine(
         transactionsFlow,
-        debouncedSearchQuery,
+        searchQueryFlow,
         _filterState.map { it.selectedCategory }.distinctUntilChanged(),
         _filterState.map { it.selectedTransactionType }.distinctUntilChanged(),
         _filterState.map { it.selectedPaymentType }.distinctUntilChanged(),

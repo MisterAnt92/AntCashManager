@@ -3,6 +3,7 @@ package com.antcashmanager.android.ui.screen.settings
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -74,6 +75,7 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.unit.LayoutDirection
 import co.touchlab.kermit.Logger
+import com.antcashmanager.android.AntCashManagerApp
 import com.antcashmanager.android.BuildConfig
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AppDivider
@@ -237,6 +239,7 @@ internal fun SettingsContent(
     var backupErrorMessage by remember { mutableStateOf("") }
     var restoreErrorMessage by remember { mutableStateOf("") }
     val context = LocalContext.current
+    val analyticsManager = (context.applicationContext as? AntCashManagerApp)?.analyticsManager
 
     // Backup: Create document launcher
     var pendingBackupData by remember { mutableStateOf<String?>(null) }
@@ -249,8 +252,13 @@ internal fun SettingsContent(
                     context.contentResolver.openOutputStream(uri)?.use { outputStream ->
                         outputStream.write(jsonData.toByteArray())
                     }
+                    analyticsManager?.logEvent("backup_file_saved")
                     showBackupSuccessDialog = true
                 } catch (e: Exception) {
+                    val params = Bundle().apply {
+                        putString("error_message", e.message?.take(100) ?: "unknown")
+                    }
+                    analyticsManager?.logEvent("backup_file_save_error", params)
                     backupErrorMessage = e.message ?: "Unknown error"
                     showBackupErrorDialog = true
                 }
@@ -471,13 +479,15 @@ internal fun SettingsContent(
                 iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
                 iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
                 onClick = {
+                    analyticsManager?.logEvent("backup_create_requested")
                     val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
                         .format(Date())
                     onCreateBackup { jsonData ->
                         jsonData?.let {
+                            analyticsManager?.logEvent("backup_create_success")
                             pendingBackupData = it
                             backupLauncher.launch("antcashmanager_backup_$timestamp.json")
-                        }
+                        } ?: analyticsManager?.logEvent("backup_create_failed")
                     }
                 },
             )

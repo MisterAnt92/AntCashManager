@@ -1,17 +1,21 @@
 package com.antcashmanager.android.ui.screen.transactionAdd
 
+import android.os.Bundle
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Logger
+import com.antcashmanager.android.AntCashManagerApp
 import com.antcashmanager.android.ui.screen.transactionAdd.view.CategorySelectionStep
 import com.antcashmanager.android.ui.screen.transactionAdd.view.DetailsStep
 import com.antcashmanager.domain.model.Category
@@ -46,10 +50,18 @@ fun AddTransactionScreen(
     )
 
     val state by viewModel.state.collectAsState()
+    val analyticsManager = (LocalContext.current.applicationContext as AntCashManagerApp).analyticsManager
 
     // Naviga indietro quando la transazione è stata salvata con successo
-    if (state.isTransactionSaved) {
-        onTransactionAdded()
+    LaunchedEffect(state.isTransactionSaved) {
+        if (state.isTransactionSaved) {
+            val params = Bundle().apply {
+                putString("mode", if (state.isModifying) "update" else "create")
+                putString("transaction_type", state.selectedType?.name ?: "unknown")
+            }
+            analyticsManager.logEvent("transaction_submit_success", params)
+            onTransactionAdded()
+        }
     }
 
     AddTransactionContent(

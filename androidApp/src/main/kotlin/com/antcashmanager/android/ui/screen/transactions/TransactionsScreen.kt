@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.transactions
 
+import android.os.Bundle
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -62,6 +63,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -73,6 +75,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
+import com.antcashmanager.android.AntCashManagerApp
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AnimatedCard
 import com.antcashmanager.android.ui.components.AnimatedListItem
@@ -117,6 +120,7 @@ fun TransactionsScreen(
     navController: NavController? = null,
 ) {
     Logger.d("TransactionsScreen") { "Displaying TransactionsScreen" }
+    val analyticsManager = (LocalContext.current.applicationContext as AntCashManagerApp).analyticsManager
 
     val viewModel: TransactionsViewModel = viewModel(
         factory = object : ViewModelProvider.Factory {
@@ -142,6 +146,24 @@ fun TransactionsScreen(
     TransactionsContent(
         state = state,
         onEvent = { event ->
+            when (event) {
+                is TransactionsEvent.ApplyFilters -> {
+                    val params = Bundle().apply {
+                        putString("search_query", state.pendingSearchQuery.take(40))
+                        putString("category", state.pendingCategory ?: "all")
+                        putString("transaction_type", state.pendingTransactionType?.name ?: "all")
+                        putString("payment_type", state.pendingPaymentType?.name ?: "all")
+                    }
+                    analyticsManager.logEvent("transactions_filter_applied", params)
+                }
+
+                is TransactionsEvent.ClearAllFilters -> {
+                    analyticsManager.logEvent("transactions_filter_cleared")
+                }
+
+                else -> Unit
+            }
+
             if (event is TransactionsEvent.SelectPreset) {
                 coroutineScope.launch {
                     settingsRepository.setTransactionsDateFilterPreset(event.index)

@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
@@ -33,6 +32,7 @@ class MainActivity : ComponentActivity() {
                 // Centralized theme provider reads theme & accessibility preferences
                 AppThemeProvider(settingsRepository = app.settingsRepository) {
                     AntCashManagerNavHost(
+                        analyticsManager = app.analyticsManager,
                         transactionRepository = app.transactionRepository,
                         settingsRepository = app.settingsRepository,
                         categoryRepository = app.categoryRepository,

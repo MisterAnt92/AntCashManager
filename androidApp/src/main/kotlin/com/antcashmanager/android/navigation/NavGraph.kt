@@ -10,6 +10,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -23,6 +24,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.screen.categories.CategoriesScreen
 import com.antcashmanager.android.ui.screen.charts.ChartsScreen
 import com.antcashmanager.android.ui.screen.home.HomeScreen
@@ -46,6 +48,7 @@ val bottomNavItems = listOf(
 
 @Composable
 fun AntCashManagerNavHost(
+    analyticsManager: AnalyticsManager,
     transactionRepository: TransactionRepository,
     settingsRepository: SettingsRepository,
     categoryRepository: CategoryRepository,
@@ -74,6 +77,13 @@ fun AntCashManagerNavHost(
             add(BottomNavItem.Settings)
         }
 
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentDestination = navBackStackEntry?.destination
+
+        LaunchedEffect(currentDestination?.route) {
+            currentDestination?.route?.let(analyticsManager::logScreenView)
+        }
+
         Scaffold(
             bottomBar = {
                 Surface(
@@ -86,8 +96,6 @@ fun AntCashManagerNavHost(
                         containerColor = MaterialTheme.colorScheme.surface,
                         tonalElevation = 0.dp,
                     ) {
-                        val navBackStackEntry by navController.currentBackStackEntryAsState()
-                        val currentDestination = navBackStackEntry?.destination
                         visibleNavItems.forEach { item ->
                             NavigationBarItem(
                                 icon = {

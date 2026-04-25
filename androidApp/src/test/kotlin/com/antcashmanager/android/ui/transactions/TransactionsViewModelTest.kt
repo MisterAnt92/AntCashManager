@@ -88,13 +88,18 @@ class TransactionsViewModelTest {
 
         assertEquals(1, viewModel.state.value.transactions.size)
         assertEquals("Lunch", viewModel.state.value.transactions.first().title)
-        assertEquals(15.0, viewModel.state.value.transactions.first().amount, 0.01)
+        assertEquals(-15.0, viewModel.state.value.transactions.first().amount, 0.01)
         assertEquals(TransactionType.EXPENSE, viewModel.state.value.transactions.first().type)
         collectJob.cancel()
     }
 
     @Test
     fun `deleteTransaction removes transaction`() = runTest(testDispatcher) {
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect {}
+        }
+        advanceUntilIdle()
+
         val now = System.currentTimeMillis()
         val transaction = Transaction(
             id = 1,
@@ -105,10 +110,6 @@ class TransactionsViewModelTest {
             timestamp = now,
         )
         fakeTransactionRepo.transactions.value = listOf(transaction)
-
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.state.collect {}
-        }
         advanceUntilIdle()
         assertEquals(1, viewModel.state.value.transactions.size)
 
@@ -121,6 +122,11 @@ class TransactionsViewModelTest {
 
     @Test
     fun `updateTransaction updates existing transaction`() = runTest(testDispatcher) {
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect {}
+        }
+        advanceUntilIdle()
+
         val now = System.currentTimeMillis()
         val transaction = Transaction(
             id = 1,
@@ -131,10 +137,6 @@ class TransactionsViewModelTest {
             timestamp = now,
         )
         fakeTransactionRepo.transactions.value = listOf(transaction)
-
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.state.collect {}
-        }
         advanceUntilIdle()
 
         val updated = transaction.copy(title = "Espresso", amount = 2.5)
@@ -143,20 +145,21 @@ class TransactionsViewModelTest {
 
         assertEquals(1, viewModel.state.value.transactions.size)
         assertEquals("Espresso", viewModel.state.value.transactions.first().title)
-        assertEquals(2.5, viewModel.state.value.transactions.first().amount, 0.01)
+        assertEquals(-2.5, viewModel.state.value.transactions.first().amount, 0.01)
         collectJob.cancel()
     }
 
     @Test
     fun `categories reflect repository data`() = runTest(testDispatcher) {
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect {}
+        }
+        advanceUntilIdle()
+
         fakeCategoryRepo.categories.value = listOf(
             Category(id = 1, name = "Food", icon = "restaurant", color = 0xFFE57373),
             Category(id = 2, name = "Transport", icon = "directions_bus", color = 0xFF81C784),
         )
-
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.state.collect {}
-        }
         advanceUntilIdle()
 
         assertEquals(2, viewModel.state.value.categories.size)

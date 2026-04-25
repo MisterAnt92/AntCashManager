@@ -2,6 +2,7 @@ package com.antcashmanager.android
 
 import android.app.Application
 import co.touchlab.kermit.Logger
+import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.data.local.DatabaseProvider
 import com.antcashmanager.data.repository.CategoryRepositoryImpl
 import com.antcashmanager.data.repository.SettingsRepositoryImpl
@@ -26,11 +27,15 @@ class AntCashManagerApp : Application() {
     lateinit var categoryRepository: CategoryRepository
         private set
 
+    lateinit var analyticsManager: AnalyticsManager
+        private set
+
     private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun onCreate() {
         super.onCreate()
         Logger.d("AntCashManagerApp") { "Application started" }
+        analyticsManager = AnalyticsManager(this)
         val database = DatabaseProvider.getDatabase(this)
         transactionRepository = TransactionRepositoryImpl(database.transactionDao())
         settingsRepository = SettingsRepositoryImpl(this)

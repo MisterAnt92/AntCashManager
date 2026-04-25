@@ -150,6 +150,29 @@ cd AntCashManager
 
 ---
 
+## 📈 Firebase Analytics
+
+The app integrates Firebase Analytics (`firebase-analytics-ktx`) and tracks both navigation and key actions.
+
+### Tracked Events
+
+- `screen_view` (automatic on route change from `NavGraph`)
+- `transaction_submit_success` (after successful add/update in `AddTransactionScreen`)
+- `transactions_filter_applied` (when user confirms filters in `TransactionsScreen`)
+- `transactions_filter_cleared` (when user clears filters in `TransactionsScreen`)
+- `backup_create_requested` (when backup generation starts)
+- `backup_create_success` / `backup_create_failed` (backup payload generation result)
+- `backup_file_saved` / `backup_file_save_error` (file export result)
+
+### Naming Convention
+
+- Use lowercase snake_case for custom event names.
+- Keep event names concise and action-oriented (`<feature>_<action>_<result>`).
+- Keep parameter keys lowercase snake_case and values short/sanitized.
+- Reuse existing event names when extending tracking to avoid dashboard fragmentation.
+
+---
+
 ## 📁 Default Categories
 
 ### Expense

@@ -2,14 +2,20 @@ package com.antcashmanager.android.ui.screen.homeTransactionDetail
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Tag
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -35,6 +41,7 @@ import java.util.Locale
 private val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
 private val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TransactionDetailsDialog(
     transaction: Transaction,
@@ -149,7 +156,7 @@ fun TransactionDetailsDialog(
                     )
                 }
 
-                // Tags (if not empty) - as colored chips
+                // Tags (if not empty) - as colored round chips
                 if (transaction.tags.isNotBlank()) {
                     Column(
                         modifier = Modifier.fillMaxWidth(),
@@ -161,14 +168,15 @@ fun TransactionDetailsDialog(
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
-                        LazyRow(
+                        FlowRow(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(4.dp),
                         ) {
                             val tagsList = transaction.tags.split(",").map { it.trim() }
                                 .filter { it.isNotBlank() }
-                            items(tagsList) { tag ->
-                                SuggestionChip(
+                            tagsList.forEach { tag ->
+                                AssistChip(
                                     onClick = { },
                                     label = {
                                         AppText(
@@ -176,6 +184,20 @@ fun TransactionDetailsDialog(
                                             style = MaterialTheme.typography.labelSmall,
                                         )
                                     },
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Default.Tag,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(14.dp),
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    },
+                                    shape = RoundedCornerShape(16.dp),
+                                    colors = AssistChipDefaults.assistChipColors(
+                                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f),
+                                        labelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                    ),
+                                    border = null
                                 )
                             }
                         }
