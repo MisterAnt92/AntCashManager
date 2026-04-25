@@ -194,7 +194,7 @@ class HomeViewModel(
         HomeState(
             transactions = transactions,
             filteredTransactions = enrichedFiltered,
-            recentTransactions = enrichedFiltered.take(5),
+            recentTransactions = enrichedFiltered,
             totalIncome = totalIncome,
             totalExpense = totalExpense, // Will be negative for display
             balance = balance,

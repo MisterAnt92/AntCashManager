@@ -1,6 +1,12 @@
 package com.antcashmanager.android.ui.screen.home
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,12 +15,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -23,6 +32,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -134,6 +144,11 @@ internal fun HomeContent(
         .collectAsState(initial = TransactionDisplayType.TREND)
     val coroutineScope = rememberCoroutineScope()
 
+    val listState = rememberLazyListState()
+    val showScrollToTop by remember {
+        derivedStateOf { listState.firstVisibleItemIndex > 2 }
+    }
+
     // From date picker dialog
     if (showFromDatePicker) {
         val datePickerState =
@@ -205,115 +220,144 @@ internal fun HomeContent(
     when {
         state.isLoading -> LoadingState()
         else -> {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                // Header with Help Button
-                item {
-                    ScreenHeader(
-                        title = stringResource(R.string.home_dashboard),
-                        actions = { HelpButton(onHelpClick = { showHelpDialog = true }) },
-                    )
-                }
-
-                // Date Range Filter
-                item {
-                    DateRangeFilter(
-                        selectedPresetIndex = state.selectedPresetIndex,
-                        presets = HomeState.PRESETS,
-                        dateRangeFrom = state.dateRangeFrom,
-                        dateRangeTo = state.dateRangeTo,
-                        expanded = dateFilterExpanded,
-                        onExpandedChange = { expanded ->
-                            coroutineScope.launch {
-                                settingsRepository.setDateFilterExpanded(expanded)
-                            }
-                        },
-                        onPresetSelected = { onEvent(HomeEvent.SelectPreset(it)) },
-                        onFromDateEdit = { showFromDatePicker = true },
-                        onToDateEdit = { showToDatePicker = true },
-                    )
-                }
-
-                // Balance Card
-                item {
-                    BalanceCard(
-                        balance = state.balance,
-                        showPaymentTypeBreakdown = showPaymentTypeBreakdown,
-                        balanceByPaymentType = state.balanceByPaymentType,
-                        reduceMotion = reduceMotion,
-                    )
-                }
-
-                // Income / Expense Row
-                item {
-                    IncomeExpenseRow(
-                        totalIncome = state.totalIncome,
-                        totalExpense = state.totalExpense,
-                    )
-                }
-
-                // Recent Transactions header with Search toggle
-                item {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        AppText(
-                            text = stringResource(R.string.home_recent_transactions),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onBackground,
+            Box(modifier = Modifier.fillMaxSize()) {
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    // Header with Help Button
+                    item {
+                        ScreenHeader(
+                            title = stringResource(R.string.home_dashboard),
+                            actions = { HelpButton(onHelpClick = { showHelpDialog = true }) },
                         )
-                        IconButton(onClick = { onEvent(HomeEvent.ToggleSearchExpanded) }) {
-                            Icon(
-                                imageVector = if (state.isSearchExpanded) Icons.Default.Close else Icons.Default.Search,
-                                contentDescription = stringResource(R.string.transactions_search),
-                                tint = if (state.searchQuery.isNotEmpty()) MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.onSurfaceVariant,
+                    }
+
+                    // Date Range Filter
+                    item {
+                        DateRangeFilter(
+                            selectedPresetIndex = state.selectedPresetIndex,
+                            presets = HomeState.PRESETS,
+                            dateRangeFrom = state.dateRangeFrom,
+                            dateRangeTo = state.dateRangeTo,
+                            expanded = dateFilterExpanded,
+                            onExpandedChange = { expanded ->
+                                coroutineScope.launch {
+                                    settingsRepository.setDateFilterExpanded(expanded)
+                                }
+                            },
+                            onPresetSelected = { onEvent(HomeEvent.SelectPreset(it)) },
+                            onFromDateEdit = { showFromDatePicker = true },
+                            onToDateEdit = { showToDatePicker = true },
+                        )
+                    }
+
+                    // Balance Card
+                    item {
+                        BalanceCard(
+                            balance = state.balance,
+                            showPaymentTypeBreakdown = showPaymentTypeBreakdown,
+                            balanceByPaymentType = state.balanceByPaymentType,
+                            reduceMotion = reduceMotion,
+                        )
+                    }
+
+                    // Income / Expense Row
+                    item {
+                        IncomeExpenseRow(
+                            totalIncome = state.totalIncome,
+                            totalExpense = state.totalExpense,
+                        )
+                    }
+
+                    // Recent Transactions header with Search toggle
+                    item {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            AppText(
+                                text = stringResource(R.string.home_recent_transactions),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onBackground,
+                            )
+                            IconButton(onClick = { onEvent(HomeEvent.ToggleSearchExpanded) }) {
+                                Icon(
+                                    imageVector = if (state.isSearchExpanded) Icons.Default.Close else Icons.Default.Search,
+                                    contentDescription = stringResource(R.string.transactions_search),
+                                    tint = if (state.searchQuery.isNotEmpty()) MaterialTheme.colorScheme.primary
+                                    else MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                        }
+                    }
+
+                    // Search Bar
+                    item {
+                        SearchComponent(
+                            isVisible = state.isSearchExpanded,
+                            searchQuery = state.searchQuery,
+                            onSearchQueryChange = { onEvent(HomeEvent.UpdateSearchQuery(it)) },
+                            searchSuggestions = state.searchSuggestions,
+                        )
+                    }
+
+                    // Transactions content
+                    if (state.filteredTransactions.isEmpty()) {
+                        item {
+                            AntEmptyState(
+                                mascotRes = R.drawable.ic_piggy_bank,
+                                title = stringResource(R.string.empty_state_no_transactions),
+                                subtitle = stringResource(R.string.empty_state_no_transactions_subtitle),
+                            )
+                        }
+                    } else {
+                        items(
+                            items = state.recentTransactions,
+                            key = { it.id },
+                        ) { transaction ->
+                            RecentTransactionItem(
+                                transaction = transaction,
+                                onClick = { onEvent(HomeEvent.ShowTransactionDetails(transaction)) },
+                                displayType = transactionDisplayType,
                             )
                         }
                     }
+
+                    // Bottom spacer
+                    item { Spacer(modifier = Modifier.height(8.dp)) }
                 }
 
-                // Search Bar
-                item {
-                    SearchComponent(
-                        isVisible = state.isSearchExpanded,
-                        searchQuery = state.searchQuery,
-                        onSearchQueryChange = { onEvent(HomeEvent.UpdateSearchQuery(it)) },
-                        searchSuggestions = state.searchSuggestions,
-                    )
-                }
-
-                // Transactions content
-                if (state.filteredTransactions.isEmpty()) {
-                    item {
-                        AntEmptyState(
-                            mascotRes = R.drawable.ic_piggy_bank,
-                            title = stringResource(R.string.empty_state_no_transactions),
-                            subtitle = stringResource(R.string.empty_state_no_transactions_subtitle),
-                        )
-                    }
-                } else {
-                    items(
-                        items = state.recentTransactions,
-                        key = { it.id },
-                    ) { transaction ->
-                        RecentTransactionItem(
-                            transaction = transaction,
-                            onClick = { onEvent(HomeEvent.ShowTransactionDetails(transaction)) },
-                            displayType = transactionDisplayType,
+                // Scroll to top button
+                AnimatedVisibility(
+                    visible = showScrollToTop,
+                    enter = fadeIn() + scaleIn(),
+                    exit = fadeOut() + scaleOut(),
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(16.dp)
+                ) {
+                    FloatingActionButton(
+                        onClick = {
+                            coroutineScope.launch {
+                                listState.animateScrollToItem(0)
+                            }
+                        },
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        modifier = Modifier.padding(bottom = 8.dp) // Extra padding to avoid bottom bar
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowUpward,
+                            contentDescription = stringResource(R.string.common_expand) // Use a generic top description or add new one
                         )
                     }
                 }
-
-                // Bottom spacer
-                item { Spacer(modifier = Modifier.height(8.dp)) }
             }
         }
     }
