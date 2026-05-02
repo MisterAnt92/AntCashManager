@@ -11,10 +11,10 @@
 
     <!-- Body Outline -->
     <path
-        android:strokeColor="#FF8A95"
-        android:strokeWidth="1.8"
         android:fillColor="@android:color/transparent"
-        android:pathData="M54,58m-26,0a26,19 0 1,1 52,0a26,19 0 1,1 -52,0" />
+        android:pathData="M54,58m-26,0a26,19 0 1,1 52,0a26,19 0 1,1 -52,0"
+        android:strokeWidth="1.8"
+        android:strokeColor="#FF8A95" />
 
     <!-- Snout -->
     <path
@@ -79,10 +79,10 @@
 
     <!-- Tail -->
     <path
-        android:strokeColor="#FF8A95"
-        android:strokeWidth="2.5"
         android:fillColor="@android:color/transparent"
         android:pathData="M78,58 Q83,54 83,46 Q79,42 75,46 Q78,50 78,58"
+        android:strokeWidth="2.5"
+        android:strokeColor="#FF8A95"
         android:strokeLineCap="round" />
 
     <!-- Coin slot on top -->

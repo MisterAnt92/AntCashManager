@@ -2,7 +2,6 @@ package com.antcashmanager.android.ui.screen.settingsDisplay
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -52,8 +51,8 @@ import com.antcashmanager.android.ui.components.AppSwitch
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
 import com.antcashmanager.android.ui.screen.settings.view.CurrencySymbolDialog
-import com.antcashmanager.android.ui.screen.settings.view.DecimalDigitsDialog
 import com.antcashmanager.android.ui.screen.settings.view.DateFormatDialog
+import com.antcashmanager.android.ui.screen.settings.view.DecimalDigitsDialog
 import com.antcashmanager.android.ui.screen.settings.view.SeparatorDialog
 import com.antcashmanager.android.ui.screen.settings.view.TransactionDisplayDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
@@ -121,7 +120,11 @@ fun DisplayScreen(
         transactionDisplayType = transactionDisplayType,
         onTransactionDisplayTypeSelected = { viewModel.setTransactionDisplayType(it) },
         transactionsTransactionDisplayType = transactionsTransactionDisplayType,
-        onTransactionsTransactionDisplayTypeSelected = { viewModel.setTransactionsTransactionDisplayType(it) },
+        onTransactionsTransactionDisplayTypeSelected = {
+            viewModel.setTransactionsTransactionDisplayType(
+                it
+            )
+        },
         onResetAllPreferences = { viewModel.resetAllPreferences() },
         onNavigateBack = { navController.popBackStack() },
     )
@@ -199,43 +202,57 @@ internal fun DisplayContent(
             ),
             verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp),
         ) {
-            item { CurrencySection(
-                currencySymbol = currencySymbol,
-                decimalDigits = decimalDigits,
-                decimalSeparator = decimalSeparator,
-                thousandsSeparator = thousandsSeparator,
-                onShowCurrencyDialog = { showCurrencyDialog = true },
-                onShowDecimalDigitsDialog = { showDecimalDigitsDialog = true },
-                onShowDecimalSeparatorDialog = { showDecimalSeparatorDialog = true },
-                onShowThousandsSeparatorDialog = { showThousandsSeparatorDialog = true },
-            ) }
+            item {
+                CurrencySection(
+                    currencySymbol = currencySymbol,
+                    decimalDigits = decimalDigits,
+                    decimalSeparator = decimalSeparator,
+                    thousandsSeparator = thousandsSeparator,
+                    onShowCurrencyDialog = { showCurrencyDialog = true },
+                    onShowDecimalDigitsDialog = { showDecimalDigitsDialog = true },
+                    onShowDecimalSeparatorDialog = { showDecimalSeparatorDialog = true },
+                    onShowThousandsSeparatorDialog = { showThousandsSeparatorDialog = true },
+                )
+            }
 
-            item { DateSection(dateFormat = dateFormat, onShowDateFormatDialog = { showDateFormatDialog = true }) }
+            item {
+                DateSection(
+                    dateFormat = dateFormat,
+                    onShowDateFormatDialog = { showDateFormatDialog = true })
+            }
 
-            item { ChartsDisplaySection(
-                showChartsSection = showChartsSection,
-                onShowChartsSectionChanged = onShowChartsSectionChanged,
-                chartsZoomEnabled = chartsZoomEnabled,
-                onChartsZoomEnabledChanged = onChartsZoomEnabledChanged
-            ) }
+            item {
+                ChartsDisplaySection(
+                    showChartsSection = showChartsSection,
+                    onShowChartsSectionChanged = onShowChartsSectionChanged,
+                    chartsZoomEnabled = chartsZoomEnabled,
+                    onChartsZoomEnabledChanged = onChartsZoomEnabledChanged
+                )
+            }
 
-            item { HomeDisplaySection(
-                showPaymentTypeBreakdown = showPaymentTypeBreakdown,
-                onShowPaymentTypeBreakdownChanged = onShowPaymentTypeBreakdownChanged,
-                transactionDisplayType = transactionDisplayType,
-                onShowTransactionDisplayDialog = { showTransactionDisplayDialog = true },
-            ) }
+            item {
+                HomeDisplaySection(
+                    showPaymentTypeBreakdown = showPaymentTypeBreakdown,
+                    onShowPaymentTypeBreakdownChanged = onShowPaymentTypeBreakdownChanged,
+                    transactionDisplayType = transactionDisplayType,
+                    onShowTransactionDisplayDialog = { showTransactionDisplayDialog = true },
+                )
+            }
 
-            item { TransactionsDisplaySection(
-                transactionDisplayType = transactionsTransactionDisplayType,
-                onShowTransactionDisplayDialog = { showTransactionsDisplayDialog = true },
-            ) }
+            item {
+                TransactionsDisplaySection(
+                    transactionDisplayType = transactionsTransactionDisplayType,
+                    onShowTransactionDisplayDialog = { showTransactionsDisplayDialog = true },
+                )
+            }
 
-            item { OtherSection(
-                showTransactionNotes = showTransactionNotes,
-                onShowTransactionNotesChanged = onShowTransactionNotesChanged,
-                onShowResetPreferencesDialog = { showResetPreferencesDialog = true },
-            ) }
+            item {
+                OtherSection(
+                    showTransactionNotes = showTransactionNotes,
+                    onShowTransactionNotesChanged = onShowTransactionNotesChanged,
+                    onShowResetPreferencesDialog = { showResetPreferencesDialog = true },
+                )
+            }
 
             // Spacer per padding inferiore extra
             item { androidx.compose.material3.Surface(modifier = Modifier.height(24.dp)) { } }
@@ -533,7 +550,10 @@ private fun HomeDisplaySection(
             subtitle = stringResource(R.string.settings_show_payment_breakdown_desc),
             leadingIcon = Icons.Default.Payment,
             trailingContent = {
-                AppSwitch(checked = showPaymentTypeBreakdown, onCheckedChange = onShowPaymentTypeBreakdownChanged)
+                AppSwitch(
+                    checked = showPaymentTypeBreakdown,
+                    onCheckedChange = onShowPaymentTypeBreakdownChanged
+                )
             },
             onClick = { onShowPaymentTypeBreakdownChanged(!showPaymentTypeBreakdown) },
         )
@@ -588,7 +608,10 @@ private fun OtherSection(
             ),
             leadingIcon = Icons.Default.TextFields,
             trailingContent = {
-                Switch(checked = showTransactionNotes, onCheckedChange = onShowTransactionNotesChanged)
+                Switch(
+                    checked = showTransactionNotes,
+                    onCheckedChange = onShowTransactionNotesChanged
+                )
             },
             onClick = { onShowTransactionNotesChanged(!showTransactionNotes) },
         )

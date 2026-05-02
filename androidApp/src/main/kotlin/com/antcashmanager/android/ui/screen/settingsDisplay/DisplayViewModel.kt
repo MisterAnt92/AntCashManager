@@ -130,12 +130,13 @@ class DisplayViewModel(
         )
 
     // Espone il tipo di visualizzazione delle transazioni (Transazioni)
-    val transactionsTransactionDisplayType = settingsRepository.getTransactionsTransactionDisplayType()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
-            TransactionDisplayType.TREND,
-        )
+    val transactionsTransactionDisplayType =
+        settingsRepository.getTransactionsTransactionDisplayType()
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
+                TransactionDisplayType.TREND,
+            )
 
     /**
      * Aggiorna il simbolo valuta.
@@ -238,10 +239,11 @@ class DisplayViewModel(
     /**
      * Aggiorna il tipo di visualizzazione delle transazioni (Transazioni).
      */
-    fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType) = updatePreference(
-        logMsg = "Setting transactions transaction display type: $displayType",
-        action = { settingsRepository.setTransactionsTransactionDisplayType(displayType) },
-    )
+    fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType) =
+        updatePreference(
+            logMsg = "Setting transactions transaction display type: $displayType",
+            action = { settingsRepository.setTransactionsTransactionDisplayType(displayType) },
+        )
 
     /**
      * Ripristina tutte le preferenze ai valori di default.

@@ -29,10 +29,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -79,12 +79,16 @@ class TransactionsViewModel(
 
     // ── UseCases ──
     private val getTransactionsUseCase = GetTransactionsUseCase(transactionRepository, dispatcher)
-    private val insertTransactionUseCase = InsertTransactionUseCase(transactionRepository, dispatcher)
-    private val updateTransactionUseCase = UpdateTransactionUseCase(transactionRepository, dispatcher)
-    private val deleteTransactionUseCase = DeleteTransactionUseCase(transactionRepository, dispatcher)
+    private val insertTransactionUseCase =
+        InsertTransactionUseCase(transactionRepository, dispatcher)
+    private val updateTransactionUseCase =
+        UpdateTransactionUseCase(transactionRepository, dispatcher)
+    private val deleteTransactionUseCase =
+        DeleteTransactionUseCase(transactionRepository, dispatcher)
     private val getCategoriesUseCase = GetCategoriesUseCase(categoryRepository, dispatcher)
     private val filterTransactionsUseCase = FilterTransactionsUseCase()
-    private val getTransactionSuggestionsUseCase = GetTransactionSuggestionsUseCase(transactionRepository, dispatcher)
+    private val getTransactionSuggestionsUseCase =
+        GetTransactionSuggestionsUseCase(transactionRepository, dispatcher)
 
     // ── Internal filter state ──
     private val _filterState = MutableStateFlow(FilterState())
@@ -148,16 +152,21 @@ class TransactionsViewModel(
                     val matchingFromHistory = transactions
                         .asSequence()
                         .map { it.title }
-                        .filter { it.contains(query, ignoreCase = true) && !it.equals(query, ignoreCase = true) }
+                        .filter {
+                            it.contains(query, ignoreCase = true) && !it.equals(
+                                query,
+                                ignoreCase = true
+                            )
+                        }
                         .distinct()
                         .take(3)
                         .toList()
 
                     val matchingFromSuggestions = suggestions.titles
-                        .filter { 
-                            it.contains(query, ignoreCase = true) && 
-                            !it.equals(query, ignoreCase = true) && 
-                            it !in matchingFromHistory 
+                        .filter {
+                            it.contains(query, ignoreCase = true) &&
+                                    !it.equals(query, ignoreCase = true) &&
+                                    it !in matchingFromHistory
                         }
                         .take(3)
 
@@ -360,7 +369,10 @@ class TransactionsViewModel(
             )
             result.onFailure { error ->
                 if (error is kotlinx.coroutines.CancellationException) throw error
-                Logger.e("TransactionsViewModel", error) { "Failed to insert transaction: ${error.message}" }
+                Logger.e(
+                    "TransactionsViewModel",
+                    error
+                ) { "Failed to insert transaction: ${error.message}" }
             }
         }
     }
@@ -371,7 +383,10 @@ class TransactionsViewModel(
             val result = updateTransactionUseCase(transaction)
             result.onFailure { error ->
                 if (error is kotlinx.coroutines.CancellationException) throw error
-                Logger.e("TransactionsViewModel", error) { "Failed to update transaction: ${error.message}" }
+                Logger.e(
+                    "TransactionsViewModel",
+                    error
+                ) { "Failed to update transaction: ${error.message}" }
             }
         }
     }
@@ -382,7 +397,10 @@ class TransactionsViewModel(
             val result = deleteTransactionUseCase(transaction)
             result.onFailure { error ->
                 if (error is kotlinx.coroutines.CancellationException) throw error
-                Logger.e("TransactionsViewModel", error) { "Failed to delete transaction: ${error.message}" }
+                Logger.e(
+                    "TransactionsViewModel",
+                    error
+                ) { "Failed to delete transaction: ${error.message}" }
             }
         }
     }

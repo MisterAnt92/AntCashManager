@@ -20,6 +20,7 @@ import com.antcashmanager.domain.usecase.settings.GetThemeUseCase
 import com.antcashmanager.domain.usecase.settings.SetLanguageUseCase
 import com.antcashmanager.domain.usecase.settings.SetThemeUseCase
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -31,7 +32,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
-import kotlinx.coroutines.CancellationException
 
 
 class SettingsViewModel(
@@ -54,7 +54,8 @@ class SettingsViewModel(
         private const val DEFAULT_DECIMAL_SEPARATOR = ","
         private const val DEFAULT_THOUSANDS_SEPARATOR = "."
         private const val DEFAULT_SHOW_TRANSACTION_NOTES = true
-        private val DEFAULT_TRANSACTION_DISPLAY_TYPE = com.antcashmanager.domain.model.TransactionDisplayType.CATEGORY
+        private val DEFAULT_TRANSACTION_DISPLAY_TYPE =
+            com.antcashmanager.domain.model.TransactionDisplayType.CATEGORY
     }
 
     private val getThemeUseCase = GetThemeUseCase(settingsRepository)
@@ -321,10 +322,11 @@ class SettingsViewModel(
         action = { settingsRepository.setShowTransactionNotes(show) },
     )
 
-    fun setTransactionDisplayType(displayType: com.antcashmanager.domain.model.TransactionDisplayType) = updatePreference(
-        logMsg = "Setting transaction display type: $displayType",
-        action = { settingsRepository.setTransactionDisplayType(displayType) },
-    )
+    fun setTransactionDisplayType(displayType: com.antcashmanager.domain.model.TransactionDisplayType) =
+        updatePreference(
+            logMsg = "Setting transaction display type: $displayType",
+            action = { settingsRepository.setTransactionDisplayType(displayType) },
+        )
 
     fun setIsTutorialCompleted(completed: Boolean) = updatePreference(
         logMsg = "Setting tutorial completed: $completed",

@@ -14,13 +14,13 @@ import com.antcashmanager.domain.usecase.transaction.DeleteTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.GetTransactionSuggestionsUseCase
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.UpdateTransactionUseCase
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.CancellationException
 
 // ══════════════════════════════════════════════════════════════════════════════
 // EVENTS
@@ -91,7 +91,8 @@ class AddTransactionViewModel(
     private val updateTransactionUseCase = UpdateTransactionUseCase(transactionRepository)
     private val getCategoriesUseCase = GetCategoriesUseCase(categoryRepository)
     private val deleteTransactionUseCase = DeleteTransactionUseCase(transactionRepository)
-    private val getTransactionSuggestionsUseCase = GetTransactionSuggestionsUseCase(transactionRepository)
+    private val getTransactionSuggestionsUseCase =
+        GetTransactionSuggestionsUseCase(transactionRepository)
 
     // ── State ──
     private val _state = MutableStateFlow(AddTransactionState())
@@ -125,10 +126,10 @@ class AddTransactionViewModel(
             getTransactionSuggestionsUseCase().collect { suggestions ->
                 Logger.d(TAG) {
                     "Suggestions loaded - titles: ${suggestions.titles.size}, " +
-                    "payees: ${suggestions.payees.size}, " +
-                    "notes: ${suggestions.notes.size}, " +
-                    "locations: ${suggestions.locations.size}, " +
-                    "tags: ${suggestions.tags.size}"
+                            "payees: ${suggestions.payees.size}, " +
+                            "notes: ${suggestions.notes.size}, " +
+                            "locations: ${suggestions.locations.size}, " +
+                            "tags: ${suggestions.tags.size}"
                 }
                 _state.update {
                     it.copy(
@@ -157,7 +158,12 @@ class AddTransactionViewModel(
                     throw e
                 } catch (e: Exception) {
                     Logger.e(TAG) { "Error loading categories for edit: ${e.message}" }
-                    _state.update { it.copy(isLoading = false, error = "Errore nel caricamento delle categorie") }
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            error = "Errore nel caricamento delle categorie"
+                        )
+                    }
                     emptyList()
                 }
 
@@ -383,7 +389,12 @@ class AddTransactionViewModel(
                     }.onFailure { error ->
                         if (error is CancellationException) throw error
                         Logger.e(TAG, error) { "Error updating transaction" }
-                        _state.update { it.copy(error = "Errore durante il salvataggio", isLoading = false) }
+                        _state.update {
+                            it.copy(
+                                error = "Errore durante il salvataggio",
+                                isLoading = false
+                            )
+                        }
                     }
                 } else {
                     val result = insertTransactionUseCase(transaction)
@@ -393,7 +404,12 @@ class AddTransactionViewModel(
                     }.onFailure { error ->
                         if (error is CancellationException) throw error
                         Logger.e(TAG, error) { "Error inserting transaction" }
-                        _state.update { it.copy(error = "Errore durante il salvataggio", isLoading = false) }
+                        _state.update {
+                            it.copy(
+                                error = "Errore durante il salvataggio",
+                                isLoading = false
+                            )
+                        }
                     }
                 }
             } catch (ex: CancellationException) {

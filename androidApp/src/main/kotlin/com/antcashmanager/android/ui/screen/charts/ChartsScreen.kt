@@ -8,6 +8,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -30,6 +33,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
@@ -47,15 +51,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.material3.Scaffold
-import androidx.compose.ui.unit.LayoutDirection
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
 import com.antcashmanager.android.domain.usecase.share.BuildShareTextUseCase
@@ -75,12 +75,11 @@ import com.antcashmanager.android.util.formatAmount
 import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.usecase.transaction.DateRange
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import kotlin.math.abs
-
-import kotlinx.coroutines.launch
 
 @Composable
 fun ChartsScreen(
@@ -178,137 +177,6 @@ internal fun ChartsContent(
             Spacer(modifier = Modifier.height(16.dp))
             // Period filter card
             // ... rest of Column content ...
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-            ),
-            shape = MaterialTheme.shapes.medium,
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                AppText(
-                    text = stringResource(R.string.charts_period),
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                ) {
-                    RangePreset.entries.forEachIndexed { index, preset ->
-                        FilterChip(
-                            selected = selectedPreset == index,
-                            onClick = {
-                                selectedPreset = index
-                                onPresetSelected(preset)
-                            },
-                            label = {
-                                Text(
-                                    text = stringResource(preset.labelResId),
-                                    style = MaterialTheme.typography.labelSmall,
-                                    maxLines = 1,
-                                )
-                            },
-                            shape = RoundedCornerShape(50),
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    Text(
-                        text = stringResource(
-                            R.string.charts_from,
-                            dateFormat.format(Date(dateRange.from))
-                        ),
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.weight(1f),
-                    )
-                    IconButton(
-                        onClick = { showFromPicker = true },
-                        modifier = Modifier.size(32.dp)
-                    ) {
-                        Icon(
-                            Icons.Default.CalendarMonth,
-                            contentDescription = stringResource(R.string.charts_pick_start_date),
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                    Text(
-                        text = stringResource(
-                            R.string.charts_to,
-                            dateFormat.format(Date(dateRange.to))
-                        ),
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.weight(1f),
-                    )
-                    IconButton(onClick = { showToPicker = true }, modifier = Modifier.size(32.dp)) {
-                        Icon(
-                            Icons.Default.CalendarMonth,
-                            contentDescription = stringResource(R.string.charts_pick_end_date),
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                }
-            }
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        // Summary cards with improved design and alignment
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            val balance = chartData.totalIncome - chartData.totalExpense
-            
-            SummaryCard(
-                modifier = Modifier.weight(1f),
-                state = SummaryCardState(
-                    label = stringResource(R.string.charts_income),
-                    amount = chartData.totalIncome,
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    fmt = fmt
-                )
-            )
-            SummaryCard(
-                modifier = Modifier.weight(1f),
-                state = SummaryCardState(
-                    label = stringResource(R.string.charts_expenses),
-                    amount = chartData.totalExpense,
-                    containerColor = MaterialTheme.colorScheme.errorContainer,
-                    contentColor = MaterialTheme.colorScheme.onErrorContainer,
-                    fmt = fmt
-                )
-            )
-            SummaryCard(
-                modifier = Modifier.weight(1f),
-                state = SummaryCardState(
-                    label = stringResource(R.string.share_balance),
-                    amount = balance,
-                    containerColor = if (balance >= 0)
-                        MaterialTheme.colorScheme.secondaryContainer
-                    else
-                        MaterialTheme.colorScheme.errorContainer,
-                    contentColor = if (balance >= 0)
-                        MaterialTheme.colorScheme.onSecondaryContainer
-                    else
-                        MaterialTheme.colorScheme.onErrorContainer,
-                    fmt = fmt,
-                    isBalance = true
-                )
-            )
-        }
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // Income pie chart section
-        if (chartData.incomeByCategory.isNotEmpty()) {
-            val incomeCategoryShareSubject = stringResource(R.string.share_categories_subject)
-
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
@@ -317,275 +185,409 @@ internal fun ChartsContent(
                 shape = MaterialTheme.shapes.medium,
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
+                    AppText(
+                        text = stringResource(R.string.charts_period),
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
                     ) {
-                        AppText(
-                            text = stringResource(R.string.charts_income_by_category),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold,
-                        )
-                        IconButton(
-                            onClick = {
-                                val shareText = buildShareTextUseCase.buildCategoryShareText(
-                                    data = chartData.incomeByCategory,
-                                    fmt = fmt,
-                                )
-                                val intent = Intent(Intent.ACTION_SEND).apply {
-                                    type = "text/plain"
-                                    putExtra(Intent.EXTRA_SUBJECT, incomeCategoryShareSubject)
-                                    putExtra(Intent.EXTRA_TEXT, shareText)
-                                }
-                                context.startActivity(Intent.createChooser(intent, shareLabel))
-                            },
-                            modifier = Modifier.size(32.dp),
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Share,
-                                contentDescription = shareLabel,
-                                modifier = Modifier.size(20.dp),
-                                tint = MaterialTheme.colorScheme.primary,
+                        RangePreset.entries.forEachIndexed { index, preset ->
+                            FilterChip(
+                                selected = selectedPreset == index,
+                                onClick = {
+                                    selectedPreset = index
+                                    onPresetSelected(preset)
+                                },
+                                label = {
+                                    Text(
+                                        text = stringResource(preset.labelResId),
+                                        style = MaterialTheme.typography.labelSmall,
+                                        maxLines = 1,
+                                    )
+                                },
+                                shape = RoundedCornerShape(50),
                             )
                         }
                     }
-                    Spacer(modifier = Modifier.height(12.dp))
-                    ZoomablePieChart(
-                        data = chartData.incomeByCategory,
-                        zoomEnabled = zoomEnabled,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    PieLegend(data = chartData.incomeByCategory)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        Text(
+                            text = stringResource(
+                                R.string.charts_from,
+                                dateFormat.format(Date(dateRange.from))
+                            ),
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.weight(1f),
+                        )
+                        IconButton(
+                            onClick = { showFromPicker = true },
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.CalendarMonth,
+                                contentDescription = stringResource(R.string.charts_pick_start_date),
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                        Text(
+                            text = stringResource(
+                                R.string.charts_to,
+                                dateFormat.format(Date(dateRange.to))
+                            ),
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.weight(1f),
+                        )
+                        IconButton(
+                            onClick = { showToPicker = true },
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.CalendarMonth,
+                                contentDescription = stringResource(R.string.charts_pick_end_date),
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
-        }
-
-        // Expense pie chart section
-        if (chartData.expenseByCategory.isNotEmpty()) {
-            val categoryShareSubject = stringResource(R.string.share_categories_subject)
-
-            Card(
+            // Summary cards with improved design and alignment
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                ),
-                shape = MaterialTheme.shapes.medium,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        AppText(
-                            text = stringResource(R.string.charts_expense_by_category),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold,
-                        )
-                        IconButton(
-                            onClick = {
-                                // Convert negative values to positive for display
-                                val positiveExpenseData =
-                                    chartData.expenseByCategory.mapValues { abs(it.value) }
-                                val shareText = buildShareTextUseCase.buildCategoryShareText(
-                                    data = positiveExpenseData,
-                                    fmt = fmt,
-                                )
-                                val intent = Intent(Intent.ACTION_SEND).apply {
-                                    type = "text/plain"
-                                    putExtra(Intent.EXTRA_SUBJECT, categoryShareSubject)
-                                    putExtra(Intent.EXTRA_TEXT, shareText)
-                                }
-                                context.startActivity(Intent.createChooser(intent, shareLabel))
-                            },
-                            modifier = Modifier.size(32.dp),
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Share,
-                                contentDescription = shareLabel,
-                                modifier = Modifier.size(20.dp),
-                                tint = MaterialTheme.colorScheme.primary,
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(12.dp))
-                    // Convert negative values to positive for pie chart display
-                    ZoomablePieChart(
-                        data = chartData.expenseByCategory.mapValues { abs(it.value) },
-                        zoomEnabled = zoomEnabled,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
+                val balance = chartData.totalIncome - chartData.totalExpense
+
+                SummaryCard(
+                    modifier = Modifier.weight(1f),
+                    state = SummaryCardState(
+                        label = stringResource(R.string.charts_income),
+                        amount = chartData.totalIncome,
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        fmt = fmt
                     )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    // Pass converted data to legend as well
-                    PieLegend(data = chartData.expenseByCategory.mapValues { abs(it.value) })
-                }
+                )
+                SummaryCard(
+                    modifier = Modifier.weight(1f),
+                    state = SummaryCardState(
+                        label = stringResource(R.string.charts_expenses),
+                        amount = chartData.totalExpense,
+                        containerColor = MaterialTheme.colorScheme.errorContainer,
+                        contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                        fmt = fmt
+                    )
+                )
+                SummaryCard(
+                    modifier = Modifier.weight(1f),
+                    state = SummaryCardState(
+                        label = stringResource(R.string.share_balance),
+                        amount = balance,
+                        containerColor = if (balance >= 0)
+                            MaterialTheme.colorScheme.secondaryContainer
+                        else
+                            MaterialTheme.colorScheme.errorContainer,
+                        contentColor = if (balance >= 0)
+                            MaterialTheme.colorScheme.onSecondaryContainer
+                        else
+                            MaterialTheme.colorScheme.onErrorContainer,
+                        fmt = fmt,
+                        isBalance = true
+                    )
+                )
             }
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        // Bar chart section - Monthly Overview
-        if (chartData.monthlyData.isNotEmpty()) {
-            val monthlyShareSubject = stringResource(R.string.share_monthly_subject)
+            Spacer(modifier = Modifier.height(20.dp))
 
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                ),
-                shape = MaterialTheme.shapes.medium,
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        AppText(
-                            text = stringResource(R.string.charts_monthly_overview),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold,
-                        )
-                        IconButton(
-                            onClick = {
-                                val shareText = buildShareTextUseCase.buildMonthlyShareText(
-                                    data = chartData.monthlyData,
-                                    fmt = fmt,
-                                )
-                                val intent = Intent(Intent.ACTION_SEND).apply {
-                                    type = "text/plain"
-                                    putExtra(Intent.EXTRA_SUBJECT, monthlyShareSubject)
-                                    putExtra(Intent.EXTRA_TEXT, shareText)
-                                }
-                                context.startActivity(Intent.createChooser(intent, shareLabel))
-                            },
-                            modifier = Modifier.size(32.dp),
+            // Income pie chart section
+            if (chartData.incomeByCategory.isNotEmpty()) {
+                val incomeCategoryShareSubject = stringResource(R.string.share_categories_subject)
+
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                    ),
+                    shape = MaterialTheme.shapes.medium,
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Share,
-                                contentDescription = shareLabel,
-                                modifier = Modifier.size(20.dp),
-                                tint = MaterialTheme.colorScheme.primary,
+                            AppText(
+                                text = stringResource(R.string.charts_income_by_category),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold,
                             )
+                            IconButton(
+                                onClick = {
+                                    val shareText = buildShareTextUseCase.buildCategoryShareText(
+                                        data = chartData.incomeByCategory,
+                                        fmt = fmt,
+                                    )
+                                    val intent = Intent(Intent.ACTION_SEND).apply {
+                                        type = "text/plain"
+                                        putExtra(Intent.EXTRA_SUBJECT, incomeCategoryShareSubject)
+                                        putExtra(Intent.EXTRA_TEXT, shareText)
+                                    }
+                                    context.startActivity(Intent.createChooser(intent, shareLabel))
+                                },
+                                modifier = Modifier.size(32.dp),
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Share,
+                                    contentDescription = shareLabel,
+                                    modifier = Modifier.size(20.dp),
+                                    tint = MaterialTheme.colorScheme.primary,
+                                )
+                            }
                         }
-                    }
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    // Legend at top
-                    BarChartLegend()
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    // Scrollable bar chart for many months
-                    val chartWidth = (chartData.monthlyData.size * 80).coerceAtLeast(300)
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .horizontalScroll(rememberScrollState())
-                    ) {
-                        ZoomableBarChart(
-                            data = chartData.monthlyData,
+                        Spacer(modifier = Modifier.height(12.dp))
+                        ZoomablePieChart(
+                            data = chartData.incomeByCategory,
                             zoomEnabled = zoomEnabled,
                             modifier = Modifier
-                                .width(chartWidth.dp)
-                                .height(180.dp)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-            }
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Bar chart section - Yearly Overview
-        if (chartData.yearlyData.isNotEmpty()) {
-            val yearlyShareSubject = stringResource(R.string.share_yearly_subject)
-
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                ),
-                shape = MaterialTheme.shapes.medium,
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        AppText(
-                            text = stringResource(R.string.charts_yearly_overview),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold,
-                        )
-                        IconButton(
-                            onClick = {
-                                val shareText = buildShareTextUseCase.buildYearlyShareText(
-                                    data = chartData.yearlyData,
-                                    fmt = fmt,
-                                )
-                                val intent = Intent(Intent.ACTION_SEND).apply {
-                                    type = "text/plain"
-                                    putExtra(Intent.EXTRA_SUBJECT, yearlyShareSubject)
-                                    putExtra(Intent.EXTRA_TEXT, shareText)
-                                }
-                                context.startActivity(Intent.createChooser(intent, shareLabel))
-                            },
-                            modifier = Modifier.size(32.dp),
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Share,
-                                contentDescription = shareLabel,
-                                modifier = Modifier.size(20.dp),
-                                tint = MaterialTheme.colorScheme.primary,
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    // Legend at top
-                    BarChartLegend()
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    // Scrollable bar chart for years
-                    val yearlyChartWidth = (chartData.yearlyData.size * 100).coerceAtLeast(300)
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .horizontalScroll(rememberScrollState())
-                    ) {
-                        ZoomableYearlyBarChart(
-                            data = chartData.yearlyData,
-                            zoomEnabled = zoomEnabled,
-                            modifier = Modifier
-                                .width(yearlyChartWidth.dp)
+                                .fillMaxWidth()
                                 .height(200.dp)
                         )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        PieLegend(data = chartData.incomeByCategory)
                     }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+            }
 
-                    Spacer(modifier = Modifier.height(8.dp))
+            // Expense pie chart section
+            if (chartData.expenseByCategory.isNotEmpty()) {
+                val categoryShareSubject = stringResource(R.string.share_categories_subject)
+
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                    ),
+                    shape = MaterialTheme.shapes.medium,
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            AppText(
+                                text = stringResource(R.string.charts_expense_by_category),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                            IconButton(
+                                onClick = {
+                                    // Convert negative values to positive for display
+                                    val positiveExpenseData =
+                                        chartData.expenseByCategory.mapValues { abs(it.value) }
+                                    val shareText = buildShareTextUseCase.buildCategoryShareText(
+                                        data = positiveExpenseData,
+                                        fmt = fmt,
+                                    )
+                                    val intent = Intent(Intent.ACTION_SEND).apply {
+                                        type = "text/plain"
+                                        putExtra(Intent.EXTRA_SUBJECT, categoryShareSubject)
+                                        putExtra(Intent.EXTRA_TEXT, shareText)
+                                    }
+                                    context.startActivity(Intent.createChooser(intent, shareLabel))
+                                },
+                                modifier = Modifier.size(32.dp),
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Share,
+                                    contentDescription = shareLabel,
+                                    modifier = Modifier.size(20.dp),
+                                    tint = MaterialTheme.colorScheme.primary,
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(12.dp))
+                        // Convert negative values to positive for pie chart display
+                        ZoomablePieChart(
+                            data = chartData.expenseByCategory.mapValues { abs(it.value) },
+                            zoomEnabled = zoomEnabled,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp)
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        // Pass converted data to legend as well
+                        PieLegend(data = chartData.expenseByCategory.mapValues { abs(it.value) })
+                    }
                 }
             }
-        }
+            Spacer(modifier = Modifier.height(16.dp))
+            // Bar chart section - Monthly Overview
+            if (chartData.monthlyData.isNotEmpty()) {
+                val monthlyShareSubject = stringResource(R.string.share_monthly_subject)
 
-        // Empty state
-        if (chartData.expenseByCategory.isEmpty() && chartData.monthlyData.isEmpty()) {
-            Spacer(modifier = Modifier.height(48.dp))
-            AntEmptyState(
-                mascotRes = R.drawable.ic_ant_mascot,
-                title = stringResource(R.string.charts_no_data),
-                subtitle = stringResource(R.string.charts_empty_ant),
-            )
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                    ),
+                    shape = MaterialTheme.shapes.medium,
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            AppText(
+                                text = stringResource(R.string.charts_monthly_overview),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                            IconButton(
+                                onClick = {
+                                    val shareText = buildShareTextUseCase.buildMonthlyShareText(
+                                        data = chartData.monthlyData,
+                                        fmt = fmt,
+                                    )
+                                    val intent = Intent(Intent.ACTION_SEND).apply {
+                                        type = "text/plain"
+                                        putExtra(Intent.EXTRA_SUBJECT, monthlyShareSubject)
+                                        putExtra(Intent.EXTRA_TEXT, shareText)
+                                    }
+                                    context.startActivity(Intent.createChooser(intent, shareLabel))
+                                },
+                                modifier = Modifier.size(32.dp),
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Share,
+                                    contentDescription = shareLabel,
+                                    modifier = Modifier.size(20.dp),
+                                    tint = MaterialTheme.colorScheme.primary,
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        // Legend at top
+                        BarChartLegend()
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        // Scrollable bar chart for many months
+                        val chartWidth = (chartData.monthlyData.size * 80).coerceAtLeast(300)
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .horizontalScroll(rememberScrollState())
+                        ) {
+                            ZoomableBarChart(
+                                data = chartData.monthlyData,
+                                zoomEnabled = zoomEnabled,
+                                modifier = Modifier
+                                    .width(chartWidth.dp)
+                                    .height(180.dp)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Bar chart section - Yearly Overview
+            if (chartData.yearlyData.isNotEmpty()) {
+                val yearlyShareSubject = stringResource(R.string.share_yearly_subject)
+
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                    ),
+                    shape = MaterialTheme.shapes.medium,
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            AppText(
+                                text = stringResource(R.string.charts_yearly_overview),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                            IconButton(
+                                onClick = {
+                                    val shareText = buildShareTextUseCase.buildYearlyShareText(
+                                        data = chartData.yearlyData,
+                                        fmt = fmt,
+                                    )
+                                    val intent = Intent(Intent.ACTION_SEND).apply {
+                                        type = "text/plain"
+                                        putExtra(Intent.EXTRA_SUBJECT, yearlyShareSubject)
+                                        putExtra(Intent.EXTRA_TEXT, shareText)
+                                    }
+                                    context.startActivity(Intent.createChooser(intent, shareLabel))
+                                },
+                                modifier = Modifier.size(32.dp),
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Share,
+                                    contentDescription = shareLabel,
+                                    modifier = Modifier.size(20.dp),
+                                    tint = MaterialTheme.colorScheme.primary,
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        // Legend at top
+                        BarChartLegend()
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        // Scrollable bar chart for years
+                        val yearlyChartWidth = (chartData.yearlyData.size * 100).coerceAtLeast(300)
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .horizontalScroll(rememberScrollState())
+                        ) {
+                            ZoomableYearlyBarChart(
+                                data = chartData.yearlyData,
+                                zoomEnabled = zoomEnabled,
+                                modifier = Modifier
+                                    .width(yearlyChartWidth.dp)
+                                    .height(200.dp)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                }
+            }
+
+            // Empty state
+            if (chartData.expenseByCategory.isEmpty() && chartData.monthlyData.isEmpty()) {
+                Spacer(modifier = Modifier.height(48.dp))
+                AntEmptyState(
+                    mascotRes = R.drawable.ic_ant_mascot,
+                    title = stringResource(R.string.charts_no_data),
+                    subtitle = stringResource(R.string.charts_empty_ant),
+                )
+            }
         }
-    }
     } // Closing Scaffold
     // Date pickers
     if (showFromPicker) {

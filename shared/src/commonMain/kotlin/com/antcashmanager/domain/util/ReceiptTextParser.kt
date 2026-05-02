@@ -70,7 +70,7 @@ object ReceiptTextParser {
      */
     private val MEAL_VOUCHER_PATTERN = Regex(
         """(?:BUON[OI]\s+PAST[OI]|BUONI\s+PASTO|TICKET\s+(?:RESTAURANT|RISTORANTE|PASTO|RESTO)|"""
-            + """EDENRED|PLUXEE|SODEXO|MYBENEFIT|UP\s+DEJEUNER|BUONO\s+MENSA|VOUCHER\s+PASTO)""",
+                + """EDENRED|PLUXEE|SODEXO|MYBENEFIT|UP\s+DEJEUNER|BUONO\s+MENSA|VOUCHER\s+PASTO)""",
         RegexOption.IGNORE_CASE,
     )
 
@@ -81,8 +81,8 @@ object ReceiptTextParser {
      */
     private val ELECTRONIC_PATTERN = Regex(
         """(?:BANCOMAT|CARTA\s+(?:DI\s+CREDITO|DI\s+DEBITO)?|VISA|MASTERCARD|MAESTRO|"""
-            + """POS|PAYWAVE|CONTACTLESS|SATISPAY|APPLE\s+PAY|GOOGLE\s+PAY|AMEX|"""
-            + """AMERICAN\s+EXPRESS|BONIFICO|PAGAMENTO\s+ELETTRONICO|ELECTRONIC\s+PAYMENT)""",
+                + """POS|PAYWAVE|CONTACTLESS|SATISPAY|APPLE\s+PAY|GOOGLE\s+PAY|AMEX|"""
+                + """AMERICAN\s+EXPRESS|BONIFICO|PAGAMENTO\s+ELETTRONICO|ELECTRONIC\s+PAYMENT)""",
         RegexOption.IGNORE_CASE,
     )
 
@@ -174,16 +174,16 @@ object ReceiptTextParser {
         // 2. Fallback: prima riga non numerica
         return lines.firstOrNull { line ->
             line.length >= 3 &&
-                !line.matches(Regex("""[\d\s.,:;/\\-]+""")) &&
-                !line.startsWith("P.IVA", ignoreCase = true) &&
-                !line.startsWith("C.F.", ignoreCase = true)
+                    !line.matches(Regex("""[\d\s.,:;/\\-]+""")) &&
+                    !line.startsWith("P.IVA", ignoreCase = true) &&
+                    !line.startsWith("C.F.", ignoreCase = true)
         } ?: ""
     }
 
     private fun extractLocation(lines: List<String>): String {
         // 1. Cerca pattern indirizzo noto
         val addressLine = lines.firstOrNull { ADDRESS_PATTERN.containsMatchIn(it) }
-        
+
         // 2. Fallback: la prima o seconda riga spesso contengono il luogo (se non sono il payee)
         val fallbackLine = if (lines.size >= 2) {
             val firstLine = lines[0]
@@ -194,7 +194,7 @@ object ReceiptTextParser {
                 else -> ""
             }
         } else ""
-        
+
         return addressLine ?: fallbackLine
     }
 
@@ -241,11 +241,14 @@ object ReceiptTextParser {
         if (value.isBlank()) return 0.0
         val normalized = when {
             // formato europeo: "1.234,56"
-            value.contains(',') && value.contains('.') && value.lastIndexOf(',') > value.lastIndexOf('.') ->
+            value.contains(',') && value.contains('.') && value.lastIndexOf(',') > value.lastIndexOf(
+                '.'
+            ) ->
                 value.replace(".", "").replace(",", ".")
             // solo virgola come separatore decimale: "1234,56"
             value.contains(',') && !value.contains('.') ->
                 value.replace(",", ".")
+
             else -> value
         }
         return normalized.toDoubleOrNull() ?: 0.0

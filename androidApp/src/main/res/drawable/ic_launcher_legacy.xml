@@ -12,8 +12,8 @@
 
     <!-- Subtle gradient overlay -->
     <path
-        android:fillColor="#FFF0F3"
         android:fillAlpha="0.4"
+        android:fillColor="#FFF0F3"
         android:pathData="M24,24m-20,0a20,20 0 1,1 40,0a20,20 0 1,1 -40,0" />
 
     <!-- Piggy Bank Body (centered and scaled for 48dp) -->
@@ -23,10 +23,10 @@
 
     <!-- Body Outline -->
     <path
-        android:strokeColor="#FF8A95"
-        android:strokeWidth="0.8"
         android:fillColor="@android:color/transparent"
-        android:pathData="M24,26m-12,0a12,8.5 0 1,1 24,0a12,8.5 0 1,1 -24,0" />
+        android:pathData="M24,26m-12,0a12,8.5 0 1,1 24,0a12,8.5 0 1,1 -24,0"
+        android:strokeWidth="0.8"
+        android:strokeColor="#FF8A95" />
 
     <!-- Snout -->
     <path
@@ -83,10 +83,10 @@
 
     <!-- Tail -->
     <path
-        android:strokeColor="#FF8A95"
-        android:strokeWidth="1.2"
         android:fillColor="@android:color/transparent"
         android:pathData="M35,26 Q37.5,24 37.5,20 Q36,18 34,20 Q35,22 35,26"
+        android:strokeWidth="1.2"
+        android:strokeColor="#FF8A95"
         android:strokeLineCap="round" />
 
     <!-- Coin slot -->

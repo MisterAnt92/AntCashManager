@@ -25,7 +25,11 @@ class MainActivity : ComponentActivity() {
         val getLanguageUseCase = GetLanguageUseCase(app.settingsRepository)
 
         setContent {
-            val languageResult by getLanguageUseCase().collectAsState(initial = Result.success(AppLanguage.SYSTEM))
+            val languageResult by getLanguageUseCase().collectAsState(
+                initial = Result.success(
+                    AppLanguage.SYSTEM
+                )
+            )
             val language = languageResult.getOrElse { AppLanguage.SYSTEM }
 
             WithAppLocale(language = language) {

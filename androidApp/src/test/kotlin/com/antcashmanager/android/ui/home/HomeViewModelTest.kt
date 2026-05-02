@@ -87,7 +87,12 @@ class HomeViewModelTest {
         }
         advanceUntilIdle()
 
-        viewModel.onEvent(com.antcashmanager.android.ui.screen.home.HomeEvent.SetDateRange(0L, Long.MAX_VALUE))
+        viewModel.onEvent(
+            com.antcashmanager.android.ui.screen.home.HomeEvent.SetDateRange(
+                0L,
+                Long.MAX_VALUE
+            )
+        )
         advanceUntilIdle()
 
         assertEquals(2, viewModel.transactions.value.size)
@@ -104,7 +109,12 @@ class HomeViewModelTest {
         advanceUntilIdle()
         assertTrue(viewModel.transactions.value.isEmpty())
 
-        viewModel.onEvent(com.antcashmanager.android.ui.screen.home.HomeEvent.SetDateRange(0L, Long.MAX_VALUE))
+        viewModel.onEvent(
+            com.antcashmanager.android.ui.screen.home.HomeEvent.SetDateRange(
+                0L,
+                Long.MAX_VALUE
+            )
+        )
         advanceUntilIdle()
 
         val now = System.currentTimeMillis()
@@ -152,7 +162,12 @@ class HomeViewModelTest {
         }
         advanceUntilIdle()
 
-        viewModel.onEvent(com.antcashmanager.android.ui.screen.home.HomeEvent.SetDateRange(0L, Long.MAX_VALUE))
+        viewModel.onEvent(
+            com.antcashmanager.android.ui.screen.home.HomeEvent.SetDateRange(
+                0L,
+                Long.MAX_VALUE
+            )
+        )
         advanceUntilIdle()
 
         val incomes = viewModel.transactions.value.filter { it.type == TransactionType.INCOME }
@@ -226,64 +241,70 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `balanceByPaymentType calculates correctly with mixed payment types`() = runTest(testDispatcher) {
-        val now = System.currentTimeMillis()
-        fakeRepo.transactions.value = listOf(
-            Transaction(
-                id = 1,
-                title = "Salary",
-                amount = 2000.0,
-                category = "Work",
-                type = TransactionType.INCOME,
-                timestamp = now,
-                paymentType = PaymentType.ELECTRONIC,
-            ),
-            Transaction(
-                id = 2,
-                title = "Cash Bonus",
-                amount = 300.0,
-                category = "Work",
-                type = TransactionType.INCOME,
-                timestamp = now,
-                paymentType = PaymentType.CASH,
-            ),
-            Transaction(
-                id = 3,
-                title = "Groceries",
-                amount = 150.0,  // Will become -150 after transformation
-                category = "Food",
-                type = TransactionType.EXPENSE,
-                timestamp = now,
-                paymentType = PaymentType.CASH,
-            ),
-            Transaction(
-                id = 4,
-                title = "Meal Voucher",
-                amount = 50.0,  // Will become -50 after transformation
-                category = "Food",
-                type = TransactionType.EXPENSE,
-                timestamp = now,
-                paymentType = PaymentType.MEAL_VOUCHERS,
-            ),
-        )
+    fun `balanceByPaymentType calculates correctly with mixed payment types`() =
+        runTest(testDispatcher) {
+            val now = System.currentTimeMillis()
+            fakeRepo.transactions.value = listOf(
+                Transaction(
+                    id = 1,
+                    title = "Salary",
+                    amount = 2000.0,
+                    category = "Work",
+                    type = TransactionType.INCOME,
+                    timestamp = now,
+                    paymentType = PaymentType.ELECTRONIC,
+                ),
+                Transaction(
+                    id = 2,
+                    title = "Cash Bonus",
+                    amount = 300.0,
+                    category = "Work",
+                    type = TransactionType.INCOME,
+                    timestamp = now,
+                    paymentType = PaymentType.CASH,
+                ),
+                Transaction(
+                    id = 3,
+                    title = "Groceries",
+                    amount = 150.0,  // Will become -150 after transformation
+                    category = "Food",
+                    type = TransactionType.EXPENSE,
+                    timestamp = now,
+                    paymentType = PaymentType.CASH,
+                ),
+                Transaction(
+                    id = 4,
+                    title = "Meal Voucher",
+                    amount = 50.0,  // Will become -50 after transformation
+                    category = "Food",
+                    type = TransactionType.EXPENSE,
+                    timestamp = now,
+                    paymentType = PaymentType.MEAL_VOUCHERS,
+                ),
+            )
 
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.state.collect {}
+            val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.state.collect {}
+            }
+            advanceUntilIdle()
+
+            viewModel.onEvent(
+                com.antcashmanager.android.ui.screen.home.HomeEvent.SetDateRange(
+                    0L,
+                    Long.MAX_VALUE
+                )
+            )
+            advanceUntilIdle()
+
+            val balanceByPaymentType = viewModel.state.value.balanceByPaymentType
+            // ELECTRONIC: 2000 income = 2000
+            assertEquals(2000.0, balanceByPaymentType[PaymentType.ELECTRONIC] ?: 0.0, 0.01)
+            // CASH: 300 income - 150 expense = 150
+            assertEquals(150.0, balanceByPaymentType[PaymentType.CASH] ?: 0.0, 0.01)
+            // MEAL_VOUCHERS: 0 income - 50 expense = -50
+            assertEquals(-50.0, balanceByPaymentType[PaymentType.MEAL_VOUCHERS] ?: 0.0, 0.01)
+            collectJob.cancel()
         }
-        advanceUntilIdle()
-
-        viewModel.onEvent(com.antcashmanager.android.ui.screen.home.HomeEvent.SetDateRange(0L, Long.MAX_VALUE))
-        advanceUntilIdle()
-
-        val balanceByPaymentType = viewModel.state.value.balanceByPaymentType
-        // ELECTRONIC: 2000 income = 2000
-        assertEquals(2000.0, balanceByPaymentType[PaymentType.ELECTRONIC] ?: 0.0, 0.01)
-        // CASH: 300 income - 150 expense = 150
-        assertEquals(150.0, balanceByPaymentType[PaymentType.CASH] ?: 0.0, 0.01)
-        // MEAL_VOUCHERS: 0 income - 50 expense = -50
-        assertEquals(-50.0, balanceByPaymentType[PaymentType.MEAL_VOUCHERS] ?: 0.0, 0.01)
-        collectJob.cancel()
-    }
 
     @Test
     fun `balanceByPaymentType excludes zero values`() = runTest(testDispatcher) {
@@ -416,7 +437,12 @@ class HomeViewModelTest {
         }
         advanceUntilIdle()
 
-        viewModel.onEvent(com.antcashmanager.android.ui.screen.home.HomeEvent.SetDateRange(0L, Long.MAX_VALUE))
+        viewModel.onEvent(
+            com.antcashmanager.android.ui.screen.home.HomeEvent.SetDateRange(
+                0L,
+                Long.MAX_VALUE
+            )
+        )
         advanceUntilIdle()
 
         val uiState = viewModel.state.value
@@ -456,7 +482,12 @@ class HomeViewModelTest {
         }
         advanceUntilIdle()
 
-        viewModel.onEvent(com.antcashmanager.android.ui.screen.home.HomeEvent.SetDateRange(0L, Long.MAX_VALUE))
+        viewModel.onEvent(
+            com.antcashmanager.android.ui.screen.home.HomeEvent.SetDateRange(
+                0L,
+                Long.MAX_VALUE
+            )
+        )
         advanceUntilIdle()
 
         val uiState = viewModel.state.value
@@ -505,7 +536,12 @@ class HomeViewModelTest {
         }
         advanceUntilIdle()
 
-        viewModel.onEvent(com.antcashmanager.android.ui.screen.home.HomeEvent.SetDateRange(from, now))
+        viewModel.onEvent(
+            com.antcashmanager.android.ui.screen.home.HomeEvent.SetDateRange(
+                from,
+                now
+            )
+        )
         advanceUntilIdle()
 
         val uiState = viewModel.state.value
@@ -561,9 +597,11 @@ class HomeViewModelTest {
     }
 
     private class FakeCategoryRepository : com.antcashmanager.domain.repository.CategoryRepository {
-        val categories = MutableStateFlow<List<com.antcashmanager.domain.model.Category>>(emptyList())
+        val categories =
+            MutableStateFlow<List<com.antcashmanager.domain.model.Category>>(emptyList())
 
-        override fun getAllCategories(): Flow<List<com.antcashmanager.domain.model.Category>> = categories
+        override fun getAllCategories(): Flow<List<com.antcashmanager.domain.model.Category>> =
+            categories
 
         override suspend fun getCategoryById(id: Long): com.antcashmanager.domain.model.Category? =
             categories.value.find { it.id == id }

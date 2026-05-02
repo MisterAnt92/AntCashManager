@@ -5,7 +5,6 @@ import com.antcashmanager.android.ui.screen.receiptScan.ReceiptScanViewModel
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
-import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.service.ReceiptOcrService
@@ -241,7 +240,9 @@ private class FakeViewModelTransactionRepository : TransactionRepository {
     override suspend fun updateTransaction(transaction: Transaction) {}
     override suspend fun deleteTransaction(transaction: Transaction) {}
     override suspend fun deleteAllTransactions() {}
-    override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> = flowOf(emptyList())
+    override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> =
+        flowOf(emptyList())
+
     override fun getRecurringTransactions(): Flow<List<Transaction>> = flowOf(emptyList())
     override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) {}
     override fun getDistinctTitles() = flowOf(emptyList<String>())
@@ -256,13 +257,16 @@ private class FakeViewModelCategoryRepository(
 ) : CategoryRepository {
     override fun getAllCategories(): Flow<List<Category>> = flowOf(categories)
     override suspend fun getCategoryById(id: Long): Category? = categories.find { it.id == id }
-    override suspend fun getCategoryByName(name: String): Category? = categories.find { it.name == name }
+    override suspend fun getCategoryByName(name: String): Category? =
+        categories.find { it.name == name }
+
     override suspend fun insertCategory(category: Category): Long = 0L
     override suspend fun updateCategory(category: Category) {}
     override suspend fun deleteCategory(category: Category) {}
     override suspend fun deleteAllCategories() {}
     override fun getCategoriesByType(type: String): Flow<List<Category>> =
         flowOf(categories.filter { it.type.equals(type, ignoreCase = true) })
+
     override suspend fun getDefaultCategoryCount(): Int = categories.count { it.isDefault }
 }
 

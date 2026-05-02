@@ -58,27 +58,28 @@ class CreateTransactionFromReceiptUseCase(
      * @param params [CreateTransactionFromReceiptParams] con tutti i dati necessari.
      * @return [Result] con l'id della transazione inserita, o eccezione di dominio.
      */
-    override suspend fun execute(params: CreateTransactionFromReceiptParams): Result<Long> = runCatching {
-        val receipt = params.receiptData
+    override suspend fun execute(params: CreateTransactionFromReceiptParams): Result<Long> =
+        runCatching {
+            val receipt = params.receiptData
 
-        // Il tipo di pagamento viene dall'utente (se ha fatto override) o dall'OCR
-        val resolvedPaymentType = params.paymentType ?: receipt.paymentType
+            // Il tipo di pagamento viene dall'utente (se ha fatto override) o dall'OCR
+            val resolvedPaymentType = params.paymentType ?: receipt.paymentType
 
-        val transaction = Transaction(
-            title = params.title.ifBlank { receipt.payee.ifBlank { "Spesa" } },
-            amount = receipt.totalAmount,
-            category = params.categoryName,
-            type = TransactionType.EXPENSE,       // scontrini = SEMPRE uscite
-            paymentType = resolvedPaymentType,    // cash / buoni pasto / elettronico
-            timestamp = params.timestamp,
-            notes = params.notes,
-            payee = receipt.payee,
-            location = receipt.location,
-            categoryIcon = params.categoryIcon,
-            categoryColor = params.categoryColor,
-        )
+            val transaction = Transaction(
+                title = params.title.ifBlank { receipt.payee.ifBlank { "Spesa" } },
+                amount = receipt.totalAmount,
+                category = params.categoryName,
+                type = TransactionType.EXPENSE,       // scontrini = SEMPRE uscite
+                paymentType = resolvedPaymentType,    // cash / buoni pasto / elettronico
+                timestamp = params.timestamp,
+                notes = params.notes,
+                payee = receipt.payee,
+                location = receipt.location,
+                categoryIcon = params.categoryIcon,
+                categoryColor = params.categoryColor,
+            )
 
-        transactionRepository.insertTransaction(transaction)
-    }
+            transactionRepository.insertTransaction(transaction)
+        }
 }
 

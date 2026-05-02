@@ -211,11 +211,11 @@
     <string name="dialog_delete">Elimina</string>
     <string name="dialog_add">Aggiungi</string>
 
-     <!-- Common Actions -->
-     <string name="common_confirm">Conferma</string>
-     <string name="common_cancel">Annulla</string>
-     <string name="common_collapse">Comprimi</string>
-     <string name="common_expand">Espandi</string>
+    <!-- Common Actions -->
+    <string name="common_confirm">Conferma</string>
+    <string name="common_cancel">Annulla</string>
+    <string name="common_collapse">Comprimi</string>
+    <string name="common_expand">Espandi</string>
 
     <!-- Backup/Restore -->
     <string name="backup_success_title">Backup Completato</string>
@@ -350,37 +350,37 @@
     <string name="payment_breakdown_label">Saldo per Tipo di Pagamento</string>
     <string name="payment_breakdown_item_desc">Saldo con %1$s: %2$.2f</string>
 
-     <!-- Transaction Display Type -->
-     <string name="settings_transaction_display">Visualizzazione Icone Transazioni</string>
-     <string name="settings_transaction_display_trend">Andamento</string>
-     <string name="settings_transaction_display_category">Categoria</string>
-     <string name="settings_transaction_display_none">Nessuna</string>
-     <string name="dialog_choose_transaction_display">Scegli visualizzazione</string>
+    <!-- Transaction Display Type -->
+    <string name="settings_transaction_display">Visualizzazione Icone Transazioni</string>
+    <string name="settings_transaction_display_trend">Andamento</string>
+    <string name="settings_transaction_display_category">Categoria</string>
+    <string name="settings_transaction_display_none">Nessuna</string>
+    <string name="dialog_choose_transaction_display">Scegli visualizzazione</string>
 
-     <!-- Feedback Email Bodies -->
-     <string name="feedback_email_body_italian">Ciao team di AntCashManager,\n\nVorrei condividere alcuni feedback sull\'app:\n\n[Per favore descrivi il tuo feedback qui]\n\nGrazie!</string>
-     <string name="feedback_email_body_english">Hi AntCashManager Team,\n\nI would like to share some feedback about the app:\n\n[Please describe your feedback here]\n\nThank you!</string>
-     <string name="feedback_email_body_french">Bonjour à l\'équipe d\'AntCashManager,\n\nJ\'aimerais partager des commentaires sur l\'application:\n\n[Veuillez décrire vos commentaires ici]\n\nMerci!</string>
-     <string name="feedback_email_body_german">Hallo AntCashManager-Team,\n\nIch möchte gerne Feedback zur App geben:\n\n[Bitte beschreiben Sie Ihr Feedback hier]\n\nDanke!</string>
-     <string name="feedback_email_body_spanish">Hola equipo de AntCashManager,\n\nMe gustaría compartir comentarios sobre la aplicación:\n\n[Por favor describe tu retroalimentación aquí]\n\n¡Gracias!</string>
+    <!-- Feedback Email Bodies -->
+    <string name="feedback_email_body_italian">Ciao team di AntCashManager,\n\nVorrei condividere alcuni feedback sull\'app:\n\n[Per favore descrivi il tuo feedback qui]\n\nGrazie!</string>
+    <string name="feedback_email_body_english">Hi AntCashManager Team,\n\nI would like to share some feedback about the app:\n\n[Please describe your feedback here]\n\nThank you!</string>
+    <string name="feedback_email_body_french">Bonjour à l\'équipe d\'AntCashManager,\n\nJ\'aimerais partager des commentaires sur l\'application:\n\n[Veuillez décrire vos commentaires ici]\n\nMerci!</string>
+    <string name="feedback_email_body_german">Hallo AntCashManager-Team,\n\nIch möchte gerne Feedback zur App geben:\n\n[Bitte beschreiben Sie Ihr Feedback hier]\n\nDanke!</string>
+    <string name="feedback_email_body_spanish">Hola equipo de AntCashManager,\n\nMe gustaría compartir comentarios sobre la aplicación:\n\n[Por favor describe tu retroalimentación aquí]\n\n¡Gracias!</string>
 
-      <!-- Feedback Error Messages -->
-      <string name="no_email_app_installed">Nessuna app email disponibile</string>
+    <!-- Feedback Error Messages -->
+    <string name="no_email_app_installed">Nessuna app email disponibile</string>
 
-      <!-- Transaction Display Section -->
-      <string name="settings_display_charts">Grafici</string>
-      <string name="settings_charts_zoom">Abilita Zoom Grafici</string>
-      <string name="settings_charts_zoom_desc">Permette di ingrandire i grafici con il pinch-to-zoom</string>
+    <!-- Transaction Display Section -->
+    <string name="settings_display_charts">Grafici</string>
+    <string name="settings_charts_zoom">Abilita Zoom Grafici</string>
+    <string name="settings_charts_zoom_desc">Permette di ingrandire i grafici con il pinch-to-zoom</string>
 
-      <string name="settings_transaction_display_section">Transazioni</string>
-      <string name="settings_show_transaction_notes">Mostra Note Transazioni</string>
-      <string name="settings_show_transaction_notes_subtitle_enabled">Note visibili negli item transazioni</string>
-      <string name="settings_show_transaction_notes_subtitle_disabled">Note nascoste</string>
-      <string name="settings_transaction_icon_display_subtitle">Scegli come visualizzare le icone</string>
-      <string name="settings_transaction_icon_display_trend">Frecce Andamento</string>
-      <string name="settings_transaction_icon_display_category">Categoria</string>
-      <string name="settings_transaction_icon_display_none">Nessuna</string>
-      <string name="dialog_choose_transaction_icon_display">Scegli il tipo di visualizzazione</string>
+    <string name="settings_transaction_display_section">Transazioni</string>
+    <string name="settings_show_transaction_notes">Mostra Note Transazioni</string>
+    <string name="settings_show_transaction_notes_subtitle_enabled">Note visibili negli item transazioni</string>
+    <string name="settings_show_transaction_notes_subtitle_disabled">Note nascoste</string>
+    <string name="settings_transaction_icon_display_subtitle">Scegli come visualizzare le icone</string>
+    <string name="settings_transaction_icon_display_trend">Frecce Andamento</string>
+    <string name="settings_transaction_icon_display_category">Categoria</string>
+    <string name="settings_transaction_icon_display_none">Nessuna</string>
+    <string name="dialog_choose_transaction_icon_display">Scegli il tipo di visualizzazione</string>
 
     <!-- Receipt Scan Screen -->
     <string name="receipt_scan_title">Scansiona Scontrino</string>

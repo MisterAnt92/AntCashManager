@@ -105,7 +105,8 @@ internal class FakeSettingsRepository : SettingsRepository {
     private val dateFilterExpandedFlow = MutableStateFlow(true)
     private val showPaymentTypeBreakdownFlow = MutableStateFlow(true)
     private val transactionDisplayTypeFlow = MutableStateFlow(TransactionDisplayType.TREND)
-    private val transactionsTransactionDisplayTypeFlow = MutableStateFlow(TransactionDisplayType.TREND)
+    private val transactionsTransactionDisplayTypeFlow =
+        MutableStateFlow(TransactionDisplayType.TREND)
     private val chartsZoomEnabledFlow = MutableStateFlow(true)
 
     override fun getTheme(): Flow<AppTheme> = themeFlow
@@ -175,7 +176,9 @@ internal class FakeSettingsRepository : SettingsRepository {
         dateFilterExpandedFlow.value = expanded
     }
 
-    override fun getTransactionsDateFilterPreset(): Flow<Int> = throw UnsupportedOperationException()
+    override fun getTransactionsDateFilterPreset(): Flow<Int> =
+        throw UnsupportedOperationException()
+
     override suspend fun setTransactionsDateFilterPreset(index: Int) {}
 
     override fun getChartsDateFilterPreset(): Flow<Int> = throw UnsupportedOperationException()
@@ -194,12 +197,16 @@ internal class FakeSettingsRepository : SettingsRepository {
         showPaymentTypeBreakdownFlow.value = show
     }
 
-    override fun getTransactionDisplayType(): Flow<TransactionDisplayType> = transactionDisplayTypeFlow
+    override fun getTransactionDisplayType(): Flow<TransactionDisplayType> =
+        transactionDisplayTypeFlow
+
     override suspend fun setTransactionDisplayType(type: TransactionDisplayType) {
         transactionDisplayTypeFlow.value = type
     }
 
-    override fun getTransactionsTransactionDisplayType(): Flow<TransactionDisplayType> = transactionsTransactionDisplayTypeFlow
+    override fun getTransactionsTransactionDisplayType(): Flow<TransactionDisplayType> =
+        transactionsTransactionDisplayTypeFlow
+
     override suspend fun setTransactionsTransactionDisplayType(type: TransactionDisplayType) {
         transactionsTransactionDisplayTypeFlow.value = type
     }

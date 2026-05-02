@@ -35,12 +35,14 @@ class SettingsRepositoryImpl(
     private val dateFormatKey = stringPreferencesKey("date_format")
     private val dateFilterExpandedKey = booleanPreferencesKey("date_filter_expanded")
     private val homeDateFilterPresetKey = intPreferencesKey("home_date_filter_preset")
-    private val transactionsDateFilterPresetKey = intPreferencesKey("transactions_date_filter_preset")
+    private val transactionsDateFilterPresetKey =
+        intPreferencesKey("transactions_date_filter_preset")
     private val chartsDateFilterPresetKey = intPreferencesKey("charts_date_filter_preset")
     private val chartsZoomEnabledKey = booleanPreferencesKey("charts_zoom_enabled")
     private val showPaymentTypeBreakdownKey = booleanPreferencesKey("show_payment_type_breakdown")
     private val transactionDisplayTypeKey = stringPreferencesKey("transaction_display_type")
-    private val transactionsTransactionDisplayTypeKey = stringPreferencesKey("transactions_transaction_display_type")
+    private val transactionsTransactionDisplayTypeKey =
+        stringPreferencesKey("transactions_transaction_display_type")
     private val isTutorialCompletedKey = booleanPreferencesKey("is_tutorial_completed")
 
     override fun getTheme(): Flow<AppTheme> =
@@ -209,7 +211,8 @@ class SettingsRepositoryImpl(
 
     override fun getTransactionDisplayType(): Flow<TransactionDisplayType> =
         context.dataStore.data.map { preferences ->
-            val typeName = preferences[transactionDisplayTypeKey] ?: TransactionDisplayType.TREND.name
+            val typeName =
+                preferences[transactionDisplayTypeKey] ?: TransactionDisplayType.TREND.name
             try {
                 TransactionDisplayType.valueOf(typeName)
             } catch (_: IllegalArgumentException) {
@@ -225,7 +228,8 @@ class SettingsRepositoryImpl(
 
     override fun getTransactionsTransactionDisplayType(): Flow<TransactionDisplayType> =
         context.dataStore.data.map { preferences ->
-            val typeName = preferences[transactionsTransactionDisplayTypeKey] ?: TransactionDisplayType.TREND.name
+            val typeName = preferences[transactionsTransactionDisplayTypeKey]
+                ?: TransactionDisplayType.TREND.name
             try {
                 TransactionDisplayType.valueOf(typeName)
             } catch (_: IllegalArgumentException) {

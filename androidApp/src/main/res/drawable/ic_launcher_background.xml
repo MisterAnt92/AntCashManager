@@ -11,20 +11,20 @@
 
     <!-- Subtle pattern circles for texture -->
     <path
-        android:fillColor="#FFF0F3"
         android:fillAlpha="0.3"
+        android:fillColor="#FFF0F3"
         android:pathData="M20,20m-8,0a8,8 0 1,1 16,0a8,8 0 1,1 -16,0" />
     <path
-        android:fillColor="#FFF0F3"
         android:fillAlpha="0.2"
+        android:fillColor="#FFF0F3"
         android:pathData="M80,30m-6,0a6,6 0 1,1 12,0a6,6 0 1,1 -12,0" />
     <path
-        android:fillColor="#FFF0F3"
         android:fillAlpha="0.25"
+        android:fillColor="#FFF0F3"
         android:pathData="M30,80m-7,0a7,7 0 1,1 14,0a7,7 0 1,1 -14,0" />
     <path
-        android:fillColor="#FFF0F3"
         android:fillAlpha="0.15"
+        android:fillColor="#FFF0F3"
         android:pathData="M85,85m-5,0a5,5 0 1,1 10,0a5,5 0 1,1 -10,0" />
 </vector>
 

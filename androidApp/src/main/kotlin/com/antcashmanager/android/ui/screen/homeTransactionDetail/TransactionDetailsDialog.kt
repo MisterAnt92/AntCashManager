@@ -194,7 +194,9 @@ fun TransactionDetailsDialog(
                                     },
                                     shape = RoundedCornerShape(16.dp),
                                     colors = AssistChipDefaults.assistChipColors(
-                                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f),
+                                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(
+                                            alpha = 0.4f
+                                        ),
                                         labelColor = MaterialTheme.colorScheme.onPrimaryContainer
                                     ),
                                     border = null

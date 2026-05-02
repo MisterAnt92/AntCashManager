@@ -65,7 +65,11 @@ class AddTransactionViewModelDebugTest {
 
             override fun getRecurringTransactions() = flowOf(emptyList<Transaction>())
 
-            override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) {
+            override suspend fun updateCategoryData(
+                categoryName: String,
+                icon: String,
+                color: Long
+            ) {
                 // No-op for test
             }
 

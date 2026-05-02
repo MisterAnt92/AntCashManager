@@ -21,7 +21,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.PopupProperties
 
 /**
  * TextField con autocomplete che mostra suggerimenti basati sul testo inserito.

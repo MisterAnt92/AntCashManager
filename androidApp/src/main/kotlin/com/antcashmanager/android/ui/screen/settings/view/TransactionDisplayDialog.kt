@@ -36,7 +36,9 @@ fun TransactionDisplayDialog(
                     AppListItem(
                         headlineContent = { Text(label) },
                         leadingContent = {
-                            AppRadioButton(selected = type == currentDisplayType, onClick = { onDisplayTypeSelected(type) })
+                            AppRadioButton(
+                                selected = type == currentDisplayType,
+                                onClick = { onDisplayTypeSelected(type) })
                         },
                     )
                 }

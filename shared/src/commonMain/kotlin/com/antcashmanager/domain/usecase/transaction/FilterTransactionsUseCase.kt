@@ -15,7 +15,8 @@ import kotlin.math.abs
  * - Transaction type (INCOME/EXPENSE)
  * - Payment type (ELECTRONIC/CASH/MEAL_VOUCHERS)
  */
-class FilterTransactionsUseCase : BaseUseCase<FilterTransactionsUseCase.Params, Result<List<Transaction>>>() {
+class FilterTransactionsUseCase :
+    BaseUseCase<FilterTransactionsUseCase.Params, Result<List<Transaction>>>() {
 
     companion object {
         private const val AMOUNT_COMPARISON_EPSILON = 0.000001

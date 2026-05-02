@@ -4,19 +4,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -28,7 +27,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
-import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -273,7 +271,7 @@ internal fun DetailsStep(
                         // Mantieni solo il primo punto
                         val firstDotIndex = normalized.indexOf('.')
                         normalized.substring(0, firstDotIndex + 1) +
-                        normalized.substring(firstDotIndex + 1).replace(".", "")
+                                normalized.substring(firstDotIndex + 1).replace(".", "")
                     }
 
                     onEvent(AddTransactionEvent.UpdateAmount(finalValue))
@@ -517,8 +515,8 @@ private fun TagSelector(
         }
 
         // Suggestions
-        val filteredSuggestions = suggestions.filter { 
-            it.contains(tagInput, ignoreCase = true) && !currentTags.contains(it) 
+        val filteredSuggestions = suggestions.filter {
+            it.contains(tagInput, ignoreCase = true) && !currentTags.contains(it)
         }.take(5)
 
         if (tagInput.isNotBlank() && filteredSuggestions.isNotEmpty()) {

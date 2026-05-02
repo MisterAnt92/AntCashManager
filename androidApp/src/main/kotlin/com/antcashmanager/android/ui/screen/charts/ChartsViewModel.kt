@@ -110,7 +110,8 @@ class ChartsViewModel(
             .mapValues { (_, txs) -> kotlin.math.abs(txs.sumOf { it.amount }) } // Use absolute value for pie chart
 
         val totalIncome = incomeByCategory.values.sum()
-        val totalExpense = expenseByCategory.values.sum() // Use absolute value (already absolute from map)
+        val totalExpense =
+            expenseByCategory.values.sum() // Use absolute value (already absolute from map)
 
         Logger.d("ChartsViewModel") { "Total Income: $totalIncome, Total Expense: $totalExpense" }
 

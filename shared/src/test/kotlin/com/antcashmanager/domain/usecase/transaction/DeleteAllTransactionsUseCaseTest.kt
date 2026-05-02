@@ -102,7 +102,9 @@ private class FakeDeleteAllRepo : TransactionRepository {
     override suspend fun insertTransaction(transaction: Transaction): Long = 0L
     override suspend fun updateTransaction(transaction: Transaction) {}
     override suspend fun deleteTransaction(transaction: Transaction) {}
-    override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> = flowOf(emptyList())
+    override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> =
+        flowOf(emptyList())
+
     override fun getRecurringTransactions(): Flow<List<Transaction>> = flowOf(emptyList())
     override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) {}
     override fun getDistinctTitles() = flowOf(emptyList<String>())
@@ -125,7 +127,9 @@ private class SlowDeleteRepo(private val delayMs: Long) : TransactionRepository 
     override suspend fun insertTransaction(transaction: Transaction): Long = 0L
     override suspend fun updateTransaction(transaction: Transaction) {}
     override suspend fun deleteTransaction(transaction: Transaction) {}
-    override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> = flowOf(emptyList())
+    override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> =
+        flowOf(emptyList())
+
     override fun getRecurringTransactions(): Flow<List<Transaction>> = flowOf(emptyList())
     override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) {}
     override fun getDistinctTitles() = flowOf(emptyList<String>())

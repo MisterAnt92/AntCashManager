@@ -230,13 +230,15 @@ private class FakeSettingsRepository : SettingsRepository {
         showPaymentTypeBreakdownFlow.value = show
     }
 
-    override fun getTransactionDisplayType(): Flow<TransactionDisplayType> = transactionDisplayTypeFlow
+    override fun getTransactionDisplayType(): Flow<TransactionDisplayType> =
+        transactionDisplayTypeFlow
 
     override suspend fun setTransactionDisplayType(displayType: TransactionDisplayType) {
         transactionDisplayTypeFlow.value = displayType
     }
 
-    override fun getTransactionsTransactionDisplayType(): Flow<TransactionDisplayType> = transactionDisplayTypeFlow
+    override fun getTransactionsTransactionDisplayType(): Flow<TransactionDisplayType> =
+        transactionDisplayTypeFlow
 
     override suspend fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType) {
         transactionDisplayTypeFlow.value = displayType

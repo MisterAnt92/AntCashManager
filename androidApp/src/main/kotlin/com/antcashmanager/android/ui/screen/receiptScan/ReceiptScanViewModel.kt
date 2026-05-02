@@ -52,7 +52,7 @@ class ReceiptScanViewModel(
     val state: StateFlow<ReceiptScanState> = _state.asStateFlow()
 
     private var activeJob: Job? = null
-    
+
     private var distinctTitles = listOf<String>()
     private var distinctLocations = listOf<String>()
 
@@ -82,7 +82,7 @@ class ReceiptScanViewModel(
             scanReceiptUseCase(imageBytes)
                 .onSuccess { receiptData ->
                     Logger.i(TAG) { "Scan OK: amount=${receiptData.totalAmount}, payee=${receiptData.payee}" }
-                    
+
                     val refinedTitle = matchSuggestion(receiptData.payee, distinctTitles)
                         ?: matchAgainstRawText(receiptData.rawText, distinctTitles)
                         ?: receiptData.payee.ifBlank { "Spesa" }

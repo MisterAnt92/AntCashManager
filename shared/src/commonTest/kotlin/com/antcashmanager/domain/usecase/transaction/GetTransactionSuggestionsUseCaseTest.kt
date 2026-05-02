@@ -4,7 +4,6 @@ import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionSuggestions
 import com.antcashmanager.domain.repository.TransactionRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
@@ -29,7 +28,10 @@ class GetTransactionSuggestionsUseCaseTest {
     fun setup() {
         repository = FakeSuggestionsTransactionRepository()
         // UnconfinedTestDispatcher: il Flow emette immediatamente nei test
-        useCase = GetTransactionSuggestionsUseCase(repository, UnconfinedTestDispatcher(testDispatcher.scheduler))
+        useCase = GetTransactionSuggestionsUseCase(
+            repository,
+            UnconfinedTestDispatcher(testDispatcher.scheduler)
+        )
     }
 
     @Test
@@ -98,20 +100,21 @@ class GetTransactionSuggestionsUseCaseTest {
     }
 
     @Test
-    fun `invoke should return empty suggestions when no data available`() = runTest(testDispatcher) {
-        // Given
-        repository.titlesToReturn = emptyList()
-        repository.payeesToReturn = emptyList()
-        repository.notesToReturn = emptyList()
-        repository.locationsToReturn = emptyList()
-        repository.tagsToReturn = emptyList()
+    fun `invoke should return empty suggestions when no data available`() =
+        runTest(testDispatcher) {
+            // Given
+            repository.titlesToReturn = emptyList()
+            repository.payeesToReturn = emptyList()
+            repository.notesToReturn = emptyList()
+            repository.locationsToReturn = emptyList()
+            repository.tagsToReturn = emptyList()
 
-        // When
-        val result = useCase().first()
+            // When
+            val result = useCase().first()
 
-        // Then
-        assertEquals(TransactionSuggestions(), result)
-    }
+            // Then
+            assertEquals(TransactionSuggestions(), result)
+        }
 }
 
 /**

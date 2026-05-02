@@ -42,23 +42,23 @@
     <string name="transactions_interval_daily">Diario</string>
     <string name="transactions_interval_weekly">Semanal</string>
     <string name="transactions_interval_monthly">Mensual</string>
-     <string name="transactions_interval_yearly">Anual</string>
-     <!-- Transactions Filters -->
-     <string name="transactions_search">Buscar</string>
-     <string name="transactions_filter">Filtros</string>
-     <string name="transactions_search_label">Buscar transacciones</string>
-     <string name="transactions_search_placeholder">Nombre o cantidad…</string>
-     <string name="transactions_advanced_filters">Filtros avanzados</string>
-     <string name="transactions_clear_filters">Borrar</string>
-     <string name="transactions_filter_type">Tipo de transacción</string>
-     <string name="transactions_filter_payment">Tipo de pago</string>
-     <string name="transactions_filter_category">Categoría</string>
-     <string name="transactions_results_count">Resultados: %1$d</string>
-     <string name="common_all">Todos</string>
-     <string name="common_clear">Borrar</string>
-     <string name="transaction_type_income">Ingreso</string>
-     <string name="transaction_type_expense">Gasto</string>
-     <string name="categories_title">Categorías</string>
+    <string name="transactions_interval_yearly">Anual</string>
+    <!-- Transactions Filters -->
+    <string name="transactions_search">Buscar</string>
+    <string name="transactions_filter">Filtros</string>
+    <string name="transactions_search_label">Buscar transacciones</string>
+    <string name="transactions_search_placeholder">Nombre o cantidad…</string>
+    <string name="transactions_advanced_filters">Filtros avanzados</string>
+    <string name="transactions_clear_filters">Borrar</string>
+    <string name="transactions_filter_type">Tipo de transacción</string>
+    <string name="transactions_filter_payment">Tipo de pago</string>
+    <string name="transactions_filter_category">Categoría</string>
+    <string name="transactions_results_count">Resultados: %1$d</string>
+    <string name="common_all">Todos</string>
+    <string name="common_clear">Borrar</string>
+    <string name="transaction_type_income">Ingreso</string>
+    <string name="transaction_type_expense">Gasto</string>
+    <string name="categories_title">Categorías</string>
     <string name="categories_empty">No hay categor\u00edas</string>
     <string name="categories_empty_subtitle">Toca + para a\u00f1adir tu primera categor\u00eda</string>
     <string name="categories_add">A\u00f1adir Categor\u00eda</string>
@@ -195,11 +195,11 @@
     <string name="dialog_delete">Eliminar</string>
     <string name="dialog_add">A\u00f1adir</string>
 
-     <!-- Common Actions -->
-     <string name="common_confirm">Confirmar</string>
-     <string name="common_cancel">Cancelar</string>
-     <string name="common_collapse">Contraer</string>
-     <string name="common_expand">Expandir</string>
+    <!-- Common Actions -->
+    <string name="common_confirm">Confirmar</string>
+    <string name="common_cancel">Cancelar</string>
+    <string name="common_collapse">Contraer</string>
+    <string name="common_expand">Expandir</string>
 
     <!-- Backup/Restore -->
     <string name="backup_success_title">Copia de Seguridad Completada</string>
@@ -308,17 +308,17 @@
     <string name="transaction_share_button">Compartir Transacción</string>
     <string name="transaction_share_via">Compartido a través de</string>
 
-     <!-- Payment Type -->
-     <string name="payment_type_label">Tipo de Pago</string>
-     <string name="payment_type_electronic">Pago Electrónico</string>
-     <string name="payment_type_cash">Efectivo</string>
-     <string name="payment_type_meal_vouchers">Vales de Comida</string>
-     <!-- Add Transaction Payment Type -->
-     <string name="add_transaction_payment_type">Tipo de Pago</string>
-     <string name="add_transaction_select_payment_type">Seleccionar Tipo de Pago</string>
-     <string name="add_transaction_payment_type_electronic">Electrónico</string>
-     <string name="add_transaction_payment_type_cash">Efectivo</string>
-     <string name="add_transaction_payment_type_meal_vouchers">Vales de Comida</string>
+    <!-- Payment Type -->
+    <string name="payment_type_label">Tipo de Pago</string>
+    <string name="payment_type_electronic">Pago Electrónico</string>
+    <string name="payment_type_cash">Efectivo</string>
+    <string name="payment_type_meal_vouchers">Vales de Comida</string>
+    <!-- Add Transaction Payment Type -->
+    <string name="add_transaction_payment_type">Tipo de Pago</string>
+    <string name="add_transaction_select_payment_type">Seleccionar Tipo de Pago</string>
+    <string name="add_transaction_payment_type_electronic">Electrónico</string>
+    <string name="add_transaction_payment_type_cash">Efectivo</string>
+    <string name="add_transaction_payment_type_meal_vouchers">Vales de Comida</string>
 
     <!-- Empty State -->
     <string name="empty_state_no_transactions">No hay transacciones presentes</string>
@@ -330,37 +330,37 @@
     <string name="payment_breakdown_label">Saldo por Tipo de Pago</string>
     <string name="payment_breakdown_item_desc">Saldo con %1$s: %2$.2f</string>
 
-     <!-- Transaction Display Type -->
-     <string name="settings_transaction_display">Visualización de Iconos de Transacciones</string>
-     <string name="settings_transaction_display_trend">Tendencia</string>
-     <string name="settings_transaction_display_category">Categoría</string>
-     <string name="settings_transaction_display_none">Ninguna</string>
-     <string name="dialog_choose_transaction_display">Elegir tipo de visualización</string>
+    <!-- Transaction Display Type -->
+    <string name="settings_transaction_display">Visualización de Iconos de Transacciones</string>
+    <string name="settings_transaction_display_trend">Tendencia</string>
+    <string name="settings_transaction_display_category">Categoría</string>
+    <string name="settings_transaction_display_none">Ninguna</string>
+    <string name="dialog_choose_transaction_display">Elegir tipo de visualización</string>
 
-     <!-- Feedback Email Bodies -->
-     <string name="feedback_email_body_english">Hi AntCashManager Team,\n\nI would like to share some feedback about the app:\n\n[Please describe your feedback here]\n\nThank you!</string>
-     <string name="feedback_email_body_italian">Ciao team di AntCashManager,\n\nVorrei condividere alcuni feedback sull\'app:\n\n[Per favore descrivi il tuo feedback qui]\n\nGrazie!</string>
-     <string name="feedback_email_body_french">Bonjour à l\'équipe d\'AntCashManager,\n\nJ\'aimerais partager des commentaires sur l\'application:\n\n[Veuillez décrire vos commentaires ici]\n\nMerci!</string>
-     <string name="feedback_email_body_german">Hallo AntCashManager-Team,\n\nIch möchte gerne Feedback zur App geben:\n\n[Bitte beschreiben Sie Ihr Feedback hier]\n\nDanke!</string>
-     <string name="feedback_email_body_spanish">Hola equipo de AntCashManager,\n\nMe gustaría compartir comentarios sobre la aplicación:\n\n[Por favor describe tu retroalimentación aquí]\n\n¡Gracias!</string>
+    <!-- Feedback Email Bodies -->
+    <string name="feedback_email_body_english">Hi AntCashManager Team,\n\nI would like to share some feedback about the app:\n\n[Please describe your feedback here]\n\nThank you!</string>
+    <string name="feedback_email_body_italian">Ciao team di AntCashManager,\n\nVorrei condividere alcuni feedback sull\'app:\n\n[Per favore descrivi il tuo feedback qui]\n\nGrazie!</string>
+    <string name="feedback_email_body_french">Bonjour à l\'équipe d\'AntCashManager,\n\nJ\'aimerais partager des commentaires sur l\'application:\n\n[Veuillez décrire vos commentaires ici]\n\nMerci!</string>
+    <string name="feedback_email_body_german">Hallo AntCashManager-Team,\n\nIch möchte gerne Feedback zur App geben:\n\n[Bitte beschreiben Sie Ihr Feedback hier]\n\nDanke!</string>
+    <string name="feedback_email_body_spanish">Hola equipo de AntCashManager,\n\nMe gustaría compartir comentarios sobre la aplicación:\n\n[Por favor describe tu retroalimentación aquí]\n\n¡Gracias!</string>
 
-      <!-- Feedback Error Messages -->
-      <string name="no_email_app_installed">No hay aplicación de correo disponible</string>
+    <!-- Feedback Error Messages -->
+    <string name="no_email_app_installed">No hay aplicación de correo disponible</string>
 
-      <!-- Transaction Display Section -->
-      <string name="settings_display_charts">Gráficos</string>
-      <string name="settings_charts_zoom">Activar Zoom de Gráficos</string>
-      <string name="settings_charts_zoom_desc">Permite hacer zoom en los gráficos con el gesto de pellizcar</string>
+    <!-- Transaction Display Section -->
+    <string name="settings_display_charts">Gráficos</string>
+    <string name="settings_charts_zoom">Activar Zoom de Gráficos</string>
+    <string name="settings_charts_zoom_desc">Permite hacer zoom en los gráficos con el gesto de pellizcar</string>
 
-      <string name="settings_transaction_display_section">Transacciones</string>
-      <string name="settings_show_transaction_notes">Mostrar Notas de Transacciones</string>
-      <string name="settings_show_transaction_notes_subtitle_enabled">Notas visibles en los elementos de transacciones</string>
-      <string name="settings_show_transaction_notes_subtitle_disabled">Notas ocultas</string>
-      <string name="settings_transaction_icon_display_subtitle">Elige cómo se muestran los iconos</string>
-      <string name="settings_transaction_icon_display_trend">Flechas de Tendencia</string>
-      <string name="settings_transaction_icon_display_category">Categoría</string>
-      <string name="settings_transaction_icon_display_none">Ninguna</string>
-      <string name="dialog_choose_transaction_icon_display">Elige el tipo de visualización de iconos</string>
+    <string name="settings_transaction_display_section">Transacciones</string>
+    <string name="settings_show_transaction_notes">Mostrar Notas de Transacciones</string>
+    <string name="settings_show_transaction_notes_subtitle_enabled">Notas visibles en los elementos de transacciones</string>
+    <string name="settings_show_transaction_notes_subtitle_disabled">Notas ocultas</string>
+    <string name="settings_transaction_icon_display_subtitle">Elige cómo se muestran los iconos</string>
+    <string name="settings_transaction_icon_display_trend">Flechas de Tendencia</string>
+    <string name="settings_transaction_icon_display_category">Categoría</string>
+    <string name="settings_transaction_icon_display_none">Ninguna</string>
+    <string name="dialog_choose_transaction_icon_display">Elige el tipo de visualización de iconos</string>
 
     <!-- Receipt Scan Screen -->
     <string name="receipt_scan_title">Escanear ticket</string>

@@ -50,7 +50,8 @@ fun AddTransactionScreen(
     )
 
     val state by viewModel.state.collectAsState()
-    val analyticsManager = (LocalContext.current.applicationContext as AntCashManagerApp).analyticsManager
+    val analyticsManager =
+        (LocalContext.current.applicationContext as AntCashManagerApp).analyticsManager
 
     // Naviga indietro quando la transazione è stata salvata con successo
     LaunchedEffect(state.isTransactionSaved) {

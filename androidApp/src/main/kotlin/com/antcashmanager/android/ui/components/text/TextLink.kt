@@ -15,8 +15,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.antcashmanager.android.R
 import androidx.compose.ui.unit.sp
+import com.antcashmanager.android.R
 
 @Composable
 fun TextLink(

@@ -214,7 +214,9 @@ private class FakeCreateTransactionRepository : TransactionRepository {
     override suspend fun updateTransaction(transaction: Transaction) {}
     override suspend fun deleteTransaction(transaction: Transaction) {}
     override suspend fun deleteAllTransactions() {}
-    override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> = flowOf(emptyList())
+    override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> =
+        flowOf(emptyList())
+
     override fun getRecurringTransactions(): Flow<List<Transaction>> = flowOf(emptyList())
     override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) {}
     override fun getDistinctTitles() = flowOf(emptyList<String>())
@@ -224,7 +226,8 @@ private class FakeCreateTransactionRepository : TransactionRepository {
     override fun getDistinctTags() = flowOf(emptyList<String>())
 }
 
-private class SlowFakeCreateTransactionRepository(private val delayMs: Long) : TransactionRepository {
+private class SlowFakeCreateTransactionRepository(private val delayMs: Long) :
+    TransactionRepository {
     var insertCalled = false
 
     override suspend fun insertTransaction(transaction: Transaction): Long {
@@ -238,7 +241,9 @@ private class SlowFakeCreateTransactionRepository(private val delayMs: Long) : T
     override suspend fun updateTransaction(transaction: Transaction) {}
     override suspend fun deleteTransaction(transaction: Transaction) {}
     override suspend fun deleteAllTransactions() {}
-    override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> = flowOf(emptyList())
+    override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> =
+        flowOf(emptyList())
+
     override fun getRecurringTransactions(): Flow<List<Transaction>> = flowOf(emptyList())
     override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) {}
     override fun getDistinctTitles() = flowOf(emptyList<String>())

@@ -1,1 +1,3312 @@
-{"records":[{"title":"Bolletta acqua","value":-93.0,"datetime":1729271571194,"category_name":"Casa","category_type":0,"description":null,"id":1},{"title":"Spazzatura ","value":-63.0,"datetime":1729271604832,"category_name":"Casa","category_type":0,"description":null,"id":2},{"title":"Spesa ","value":-21.0,"datetime":1729271633713,"category_name":"Cibo","category_type":0,"description":null,"id":3},{"title":"Pizza asporto ","value":-17.0,"datetime":1729271650410,"category_name":"Cibo","category_type":0,"description":null,"id":4},{"title":"Center Casa ","value":-30.0,"datetime":1729271675879,"category_name":"Casa","category_type":0,"description":null,"id":5},{"title":"Spesa Famila","value":-9.65,"datetime":1729271699057,"category_name":"Casa","category_type":0,"description":null,"id":6},{"title":"Cooperativa ","value":-24.75,"datetime":1729271726692,"category_name":"Cibo","category_type":0,"description":null,"id":7},{"title":"Spesa Interspar ","value":-6.1,"datetime":1729271753876,"category_name":"Cibo","category_type":0,"description":null,"id":8},{"title":"Profumo lavatrice ","value":-9.5,"datetime":1729271792634,"category_name":"Casa","category_type":0,"description":null,"id":9},{"title":"Gelato ","value":-11.0,"datetime":1729271822242,"category_name":"Cibo","category_type":0,"description":null,"id":10},{"title":"Spesa ","value":-2.99,"datetime":1729271834274,"category_name":"Cibo","category_type":0,"description":null,"id":11},{"title":"Spesa Mega","value":-30.66,"datetime":1729271852963,"category_name":"Cibo","category_type":0,"description":null,"id":12},{"title":"Rimborso Nadia","value":20.4,"datetime":1729337564859,"category_name":"Rimborso","category_type":1,"description":null,"id":13},{"title":null,"value":-40.0,"datetime":1729576324506,"category_name":"Divertimento & Spettacolo ","category_type":0,"description":"Teatro con Mariachiara ","id":14},{"title":null,"value":-39.66,"datetime":1729961367266,"category_name":"Cibo","category_type":0,"description":"spesa al Mega con cosa di casa e cibo","id":15},{"title":"Cassa comune Anna","value":250.0,"datetime":1730357308971,"category_name":"Stipendio","category_type":1,"description":null,"id":16},{"title":"Spesa Famila","value":-22.52,"datetime":1730397784471,"category_name":"Cibo","category_type":0,"description":null,"id":17},{"title":"Cassa comune Simone","value":150.0,"datetime":1730399911878,"category_name":"Stipendio","category_type":1,"description":null,"id":18},{"title":"Cooperativa carne","value":-4.71,"datetime":1730399927567,"category_name":"Cibo","category_type":0,"description":null,"id":19},{"title":"2 Pizze ","value":-15.0,"datetime":1730419655917,"category_name":"Cibo","category_type":0,"description":null,"id":20},{"title":"Cena fuori con Anto e Mariachiara ","value":-60.0,"datetime":1730589157100,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":21},{"title":"Spesa Lidl","value":-9.83,"datetime":1730633712985,"category_name":"Cibo","category_type":0,"description":null,"id":22},{"title":"Spesa Eurospin ","value":-12.95,"datetime":1730633729193,"category_name":"Cibo","category_type":0,"description":null,"id":23},{"title":"Spesa Mega ","value":-17.8,"datetime":1730633779121,"category_name":"Cibo","category_type":0,"description":null,"id":24},{"title":"Buoni pasto","value":160.0,"datetime":1730633799278,"category_name":"Stipendio","category_type":1,"description":null,"id":25},{"title":"biglietti asilo nido mongolfiera ","value":-5.0,"datetime":1731010394609,"category_name":"Divertimento & Spettacolo ","category_type":0,"description":null,"id":26},{"title":"Spesa spezzatino cooperativa ","value":-17.84,"datetime":1731010409746,"category_name":"Cibo","category_type":0,"description":null,"id":27},{"title":"Cooperativa - tiramisù ","value":-9.96,"datetime":1731088302683,"category_name":"Cibo","category_type":0,"description":null,"id":28},{"title":"Cassa arance","value":-9.0,"datetime":1731092657167,"category_name":"Cibo","category_type":0,"description":null,"id":29},{"title":"ortofrutta Talpon","value":-3.5,"datetime":1731139736281,"category_name":"Cibo","category_type":0,"description":null,"id":30},{"title":"Cooperativa carne","value":-41.65,"datetime":1731139750651,"category_name":"Cibo","category_type":0,"description":null,"id":31},{"title":"Spesa Mega ","value":-35.95,"datetime":1731150741143,"category_name":"Cibo","category_type":0,"description":null,"id":32},{"title":"Spesa Interspar ","value":-6.8,"datetime":1733733831934,"category_name":"Cibo","category_type":0,"description":null,"id":33},{"title":"Spesa Mega","value":-23.9,"datetime":1733769199173,"category_name":"Cibo","category_type":0,"description":null,"id":34},{"title":"Spesa Famila","value":-23.97,"datetime":1733769351974,"category_name":"Cibo","category_type":0,"description":null,"id":35},{"title":"Formai","value":-9.12,"datetime":1733769372425,"category_name":"Cibo","category_type":0,"description":null,"id":36},{"title":"Bollette gas","value":-240.57,"datetime":1734097909772,"category_name":"Bollette","category_type":0,"description":null,"id":37},{"title":"Rimpinguato Anna","value":100.0,"datetime":1734098196135,"category_name":"Stipendio","category_type":1,"description":null,"id":38},{"title":"Rimpinguato Simone","value":100.0,"datetime":1734098208857,"category_name":"Stipendio","category_type":1,"description":null,"id":39},{"title":"Parte Simone ","value":100.0,"datetime":1734098245433,"category_name":"Stipendio","category_type":1,"description":null,"id":40},{"title":"Parte Anna","value":250.0,"datetime":1734098258625,"category_name":"Stipendio","category_type":1,"description":null,"id":41},{"title":"Buoni pasto","value":160.0,"datetime":1734098290037,"category_name":"Stipendio","category_type":1,"description":null,"id":42},{"title":"Salame cooperativa ","value":-30.92,"datetime":1734102055451,"category_name":"Cibo","category_type":0,"description":null,"id":43},{"title":"Spesa Eurospin ","value":-4.45,"datetime":1734107848990,"category_name":"Cibo","category_type":0,"description":null,"id":44},{"title":"Spesa Mega","value":-34.88,"datetime":1734107874453,"category_name":"Cibo","category_type":0,"description":null,"id":45},{"title":"Miele vario e propoli","value":-40.0,"datetime":1734163633345,"category_name":"Cibo","category_type":0,"description":null,"id":46},{"title":"Olio vergine Chia","value":-50.0,"datetime":1734163658065,"category_name":"Cibo","category_type":0,"description":null,"id":47},{"title":"Formaggi mercato ","value":-8.2,"datetime":1734165849579,"category_name":"Cibo","category_type":0,"description":null,"id":48},{"title":"Radicchio mercato ","value":-5.8,"datetime":1734165862782,"category_name":"Cibo","category_type":0,"description":null,"id":49},{"title":"Cassa arance e mandarini","value":-17.0,"datetime":1734684565304,"category_name":"Cibo","category_type":0,"description":null,"id":50},{"title":"Contributo Anna","value":100.0,"datetime":1734792042908,"category_name":"Stipendio","category_type":1,"description":null,"id":51},{"title":"Contributo Simone","value":100.0,"datetime":1734792055720,"category_name":"Stipendio","category_type":1,"description":null,"id":52},{"title":null,"value":-87.2,"datetime":1734867621209,"category_name":"Cibo","category_type":0,"description":null,"id":53},{"title":null,"value":-12.08,"datetime":1734867656829,"category_name":"Cibo","category_type":0,"description":null,"id":54},{"title":"pizza al portico","value":-14.0,"datetime":1734894599204,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":55},{"title":"Cooperativa carne","value":-33.63,"datetime":1735028481356,"category_name":"Cibo","category_type":0,"description":null,"id":56},{"title":"Spesa Mega","value":-41.25,"datetime":1735377563906,"category_name":"Cibo","category_type":0,"description":null,"id":57},{"title":"Spesa Interspar ","value":-14.46,"datetime":1735635000623,"category_name":"Cibo","category_type":0,"description":null,"id":58},{"title":"Cooperativa carne","value":-18.4,"datetime":1735635020539,"category_name":"Cibo","category_type":0,"description":null,"id":59},{"title":"Aldi","value":-2.7,"datetime":1735635046965,"category_name":"Cibo","category_type":0,"description":null,"id":60},{"title":"Sapori di Mare","value":-19.91,"datetime":1735635059945,"category_name":"Cibo","category_type":0,"description":null,"id":61},{"title":"Candle","value":-8.0,"datetime":1735635088144,"category_name":"Cibo","category_type":0,"description":null,"id":62},{"title":"Cinesi ","value":-6.0,"datetime":1735635101002,"category_name":"Cibo","category_type":0,"description":null,"id":63},{"title":"Pesce LZ","value":-74.0,"datetime":1735637247947,"category_name":"Cibo","category_type":0,"description":null,"id":64},{"title":"Cassa comune Anna","value":250.0,"datetime":1735725770629,"category_name":"Rimborso","category_type":1,"description":null,"id":65},{"title":"Cassa comune Simone","value":100.0,"datetime":1736078471475,"category_name":"Stipendio","category_type":1,"description":null,"id":66},{"title":"Spesa per pizza","value":-7.7,"datetime":1736078482978,"category_name":"Cibo","category_type":0,"description":null,"id":67},{"title":"Rimborso Mamma Anna ","value":20.0,"datetime":1736274871309,"category_name":"Rimborso","category_type":1,"description":null,"id":68},{"title":"Spesa Mega","value":-43.36,"datetime":1736674396343,"category_name":"Cibo","category_type":0,"description":null,"id":69},{"title":"Spesa corso Famila","value":-28.6,"datetime":1736884686191,"category_name":"Cibo","category_type":0,"description":null,"id":70},{"title":"Colazione Doro","value":-5.2,"datetime":1737281180379,"category_name":"Cibo","category_type":0,"description":null,"id":71},{"title":"Pizza Sant'Agostino ","value":-30.0,"datetime":1737281194839,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":72},{"title":"Bolletta Enel","value":-110.5,"datetime":1737281208968,"category_name":"Bollette","category_type":0,"description":null,"id":73},{"title":"Pranzo Fabbrica Pedavena ","value":-40.0,"datetime":1737882117706,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":74},{"title":"Arance ","value":-10.0,"datetime":1737882132376,"category_name":"Cibo","category_type":0,"description":null,"id":75},{"title":"Spesa Mega","value":-28.07,"datetime":1737904970220,"category_name":"Cibo","category_type":0,"description":null,"id":76},{"title":null,"value":-44.0,"datetime":1737904981431,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":77},{"title":"Pizza Regina Margherita ","value":-39.8,"datetime":1738089502351,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":78},{"title":"Bolletta acqua ","value":-22.84,"datetime":1738089634133,"category_name":"Bollette","category_type":0,"description":null,"id":79},{"title":"Rimborso Mamma Anna ","value":1.0,"datetime":1738217358653,"category_name":"Rimborso","category_type":1,"description":null,"id":80},{"title":"Spesa Mega","value":-28.0,"datetime":1738417621458,"category_name":"Cibo","category_type":0,"description":null,"id":81},{"title":"Contributo Anna","value":250.0,"datetime":1738430297036,"category_name":"Stipendio","category_type":1,"description":null,"id":82},{"title":"Contributo Simone","value":50.0,"datetime":1738430312575,"category_name":"Stipendio","category_type":1,"description":null,"id":83},{"title":"Contributo Simone","value":50.0,"datetime":1738522663255,"category_name":"Stipendio","category_type":1,"description":null,"id":84},{"title":"Pesce mercato ","value":-5.88,"datetime":1739009855187,"category_name":"Cibo","category_type":0,"description":null,"id":85},{"title":"Mozzarelle (1kg)","value":-13.0,"datetime":1739009891444,"category_name":"Cibo","category_type":0,"description":null,"id":86},{"title":"Profumatore lavatrice x3","value":-28.5,"datetime":1739013482649,"category_name":"Casa","category_type":0,"description":null,"id":87},{"title":"Regalo Mariachiara ","value":-26.9,"datetime":1739013501963,"category_name":"Casa","category_type":0,"description":null,"id":88},{"title":"Spesa cooperativa ","value":-8.59,"datetime":1739225017395,"category_name":"Cibo","category_type":0,"description":null,"id":89},{"title":"Rimpinguato Anna","value":100.0,"datetime":1739469986432,"category_name":"Stipendio","category_type":1,"description":null,"id":90},{"title":"Rimpinguato Simone","value":100.0,"datetime":1739469996292,"category_name":"Stipendio","category_type":1,"description":null,"id":91},{"title":"Bolletta Gas (2mesi)","value":-363.17,"datetime":1739470083368,"category_name":"Bollette","category_type":0,"description":null,"id":92},{"title":"Pianta","value":-5.5,"datetime":1739660400000,"category_name":"Casa","category_type":0,"description":null,"id":93},{"title":"Spesa Tosano","value":-69.85,"datetime":1739660400000,"category_name":"Cibo","category_type":0,"description":null,"id":94},{"title":"Spurgo pozzo nero","value":-50.0,"datetime":1740114726888,"category_name":"Bollette","category_type":0,"description":null,"id":95},{"title":"Cassa arance Chia 2kg","value":-18.0,"datetime":1740145349485,"category_name":"Cibo","category_type":0,"description":null,"id":96},{"title":"Cooperativa carne","value":-15.49,"datetime":1740212566189,"category_name":"Cibo","category_type":0,"description":null,"id":97},{"title":"Spesa Famila","value":-10.87,"datetime":1740507888354,"category_name":"Cibo","category_type":0,"description":null,"id":98},{"title":"Contributo Anna","value":250.0,"datetime":1740824052367,"category_name":"Stipendio","category_type":1,"description":null,"id":99},{"title":"Contributo Simone","value":100.0,"datetime":1740824063605,"category_name":"Stipendio","category_type":1,"description":null,"id":100},{"title":"Buoni pasto","value":150.0,"datetime":1740824074073,"category_name":"Stipendio","category_type":1,"description":null,"id":101},{"title":"Bolletta Internet ","value":-20.0,"datetime":1740824132607,"category_name":"Bollette","category_type":0,"description":null,"id":102},{"title":"Spesa Mega","value":-43.12,"datetime":1740948106091,"category_name":"Casa","category_type":0,"description":null,"id":103},{"title":"Spesa cooperativa ","value":-38.0,"datetime":1741434917336,"category_name":"Cibo","category_type":0,"description":null,"id":104},{"title":"Spesa Famila","value":-28.65,"datetime":1741717822720,"category_name":"Cibo","category_type":0,"description":null,"id":105},{"title":"Bolletta Enel","value":-115.0,"datetime":1741894371042,"category_name":"Bollette","category_type":0,"description":null,"id":106},{"title":"Cooperativa carne","value":-55.15,"datetime":1741944936550,"category_name":"Cibo","category_type":0,"description":null,"id":107},{"title":"Pizza con nonna","value":-92.4,"datetime":1741990065030,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":108},{"title":"Cassa comune Anna","value":100.0,"datetime":1742026351389,"category_name":"Rimborso","category_type":1,"description":null,"id":109},{"title":"Cassa comune Simone","value":100.0,"datetime":1742058289249,"category_name":"Rimborso","category_type":1,"description":null,"id":110},{"title":"Candele casa","value":-18.15,"datetime":1742058304447,"category_name":"Casa","category_type":0,"description":null,"id":111},{"title":"Spesa Eurospin ","value":-9.5,"datetime":1742642826203,"category_name":"Casa","category_type":0,"description":null,"id":112},{"title":"Cooperativa carne","value":-9.6,"datetime":1742642849831,"category_name":"Cibo","category_type":0,"description":null,"id":113},{"title":"Spesa Mega","value":-43.64,"datetime":1742725940023,"category_name":"Cibo","category_type":0,"description":null,"id":114},{"title":"Colomba di Pasqua Brun","value":-57.63,"datetime":1742816698616,"category_name":"Cibo","category_type":0,"description":null,"id":115},{"title":"Bolletta acqua ","value":-73.65,"datetime":1742931971058,"category_name":"Bollette","category_type":0,"description":null,"id":116},{"title":"Spesa Mega ","value":-70.27,"datetime":1743360756531,"category_name":"Cibo","category_type":0,"description":null,"id":117},{"title":"Bolletta Internet ","value":-20.0,"datetime":1743453474155,"category_name":"Bollette","category_type":0,"description":null,"id":118},{"title":"Cassa comune Anna","value":250.0,"datetime":1743482774651,"category_name":"Rimborso","category_type":1,"description":null,"id":119},{"title":"Cassa comune Simone","value":100.0,"datetime":1743482849587,"category_name":"Rimborso","category_type":1,"description":null,"id":120},{"title":"Buoni pasto ","value":150.0,"datetime":1743482861457,"category_name":"Rimborso","category_type":1,"description":null,"id":121},{"title":"Spesa Famila","value":-10.95,"datetime":1743526922438,"category_name":"Cibo","category_type":0,"description":null,"id":122},{"title":"Bolletta Contarina","value":-120.0,"datetime":1743665808771,"category_name":"Bollette","category_type":0,"description":null,"id":123},{"title":"Spesa Famila","value":-27.61,"datetime":1744133131398,"category_name":"Cibo","category_type":0,"description":null,"id":124},{"title":"Biglietti lotteria Mongolfiera ","value":-5.0,"datetime":1744277273647,"category_name":"Casa","category_type":0,"description":null,"id":125},{"title":"Pescheria ","value":-5.52,"datetime":1744438936607,"category_name":"Cibo","category_type":0,"description":null,"id":126},{"title":"Rimpinguato Anna","value":100.0,"datetime":1744627640364,"category_name":"Stipendio","category_type":1,"description":null,"id":127},{"title":"Rimpinguato Simone ","value":70.0,"datetime":1744627688990,"category_name":"Rimborso","category_type":1,"description":null,"id":128},{"title":"Cooperativa carne","value":-16.22,"datetime":1745009575232,"category_name":"Cibo","category_type":0,"description":null,"id":129},{"title":"Spesa Mega ","value":-90.6,"datetime":1745009595251,"category_name":"Cibo","category_type":0,"description":null,"id":130},{"title":"Pizza da Lino","value":-36.0,"datetime":1745445600000,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":131},{"title":"Center Casa ","value":-19.65,"datetime":1745592111169,"category_name":"Casa","category_type":0,"description":null,"id":132},{"title":"Spesa Tosano","value":-126.33,"datetime":1745592145244,"category_name":"Cibo","category_type":0,"description":null,"id":133},{"title":"Pizza da Pizzum ","value":-36.0,"datetime":1745616747344,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":134},{"title":"Rimpinguato Simone ","value":20.0,"datetime":1745667723919,"category_name":"Rimborso","category_type":1,"description":null,"id":135},{"title":"Rimpinguato Anna","value":20.0,"datetime":1745667735175,"category_name":"Rimborso","category_type":1,"description":null,"id":136},{"title":"Spesa Famila","value":-10.24,"datetime":1746077569682,"category_name":"Cibo","category_type":0,"description":null,"id":137},{"title":"Cassa comune Anna","value":250.0,"datetime":1746083552920,"category_name":"Rimborso","category_type":1,"description":null,"id":138},{"title":"Cassa comune Simone","value":100.0,"datetime":1746108933519,"category_name":"Rimborso","category_type":1,"description":null,"id":139},{"title":"Buoni pasto ","value":150.0,"datetime":1746108951881,"category_name":"Rimborso","category_type":1,"description":null,"id":140},{"title":"Spesa Mega","value":-28.65,"datetime":1746173478485,"category_name":"Cibo","category_type":0,"description":null,"id":141},{"title":"Spesa Eurospin ","value":-7.7,"datetime":1746197686450,"category_name":"Cibo","category_type":0,"description":null,"id":142},{"title":"Asparagi dal contadino ","value":-7.4,"datetime":1746270393956,"category_name":"Cibo","category_type":0,"description":null,"id":143},{"title":"Spesa Interspar ","value":-47.08,"datetime":1746377926987,"category_name":"Cibo","category_type":0,"description":null,"id":144},{"title":"Asparagi dal contadino + propoli","value":-18.0,"datetime":1746396000000,"category_name":"Cibo","category_type":0,"description":null,"id":145},{"title":"Spesa Mega","value":-45.93,"datetime":1746882990775,"category_name":"Cibo","category_type":0,"description":null,"id":146},{"title":null,"value":-30.0,"datetime":1747547573091,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":"pizza spillo Mariachiara ","id":147},{"title":null,"value":-85.0,"datetime":1747547628230,"category_name":"Bollette","category_type":0,"description":"gas","id":148},{"title":"Spesa Lidl","value":-17.1,"datetime":1747592339557,"category_name":"Cibo","category_type":0,"description":null,"id":149},{"title":"Spesa Famila","value":-31.48,"datetime":1747761358339,"category_name":"Cibo","category_type":0,"description":null,"id":150},{"title":"Regalo Chiara ","value":-10.0,"datetime":1747761424149,"category_name":"Casa","category_type":0,"description":null,"id":151},{"title":"Spesa Mega ","value":-20.32,"datetime":1748191970443,"category_name":"Cibo","category_type":0,"description":null,"id":152},{"title":"Idraulico ","value":-85.0,"datetime":1748546340537,"category_name":"Casa","category_type":0,"description":null,"id":153},{"title":"Spese TIM","value":-20.0,"datetime":1748546350164,"category_name":"Casa","category_type":0,"description":null,"id":154},{"title":"Spesa Tosano","value":-58.07,"datetime":1748687269122,"category_name":"Cibo","category_type":0,"description":null,"id":155},{"title":"Cassa comune Anna","value":250.0,"datetime":1748769206763,"category_name":"Stipendio","category_type":1,"description":null,"id":156},{"title":"Cassa comune Simone","value":100.0,"datetime":1748769218848,"category_name":"Stipendio","category_type":1,"description":null,"id":157},{"title":"Buoni pasto","value":138.0,"datetime":1748769381904,"category_name":"Stipendio","category_type":1,"description":null,"id":158},{"title":"Aperitivo Anto, Mariachiara,Nica e Domenico ","value":-19.5,"datetime":1748799994038,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":159},{"title":"Spesa Interspar","value":-3.85,"datetime":1749302612281,"category_name":"Casa","category_type":0,"description":null,"id":160},{"title":"Spesa Iper Spak","value":-37.5,"datetime":1749302636906,"category_name":"Casa","category_type":0,"description":null,"id":161},{"title":"Cenetta Osteria Ostile","value":-70.0,"datetime":1749334189133,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":162},{"title":"Spesa Interspar ","value":-11.16,"datetime":1749490224605,"category_name":"Cibo","category_type":0,"description":null,"id":163},{"title":"Spesa Famila","value":-32.61,"datetime":1749675770380,"category_name":"Casa","category_type":0,"description":null,"id":164},{"title":"Cooperativa carne","value":-7.05,"datetime":1749884857317,"category_name":"Casa","category_type":0,"description":null,"id":165},{"title":"Pesce mercato ","value":-4.6,"datetime":1749884881629,"category_name":"Casa","category_type":0,"description":null,"id":166},{"title":"Spesa Eurospin ","value":-7.33,"datetime":1749892229929,"category_name":"Casa","category_type":0,"description":null,"id":167},{"title":"Ombrellone Jesolo - prenotazione ","value":-21.9,"datetime":1749908500085,"category_name":"Casa","category_type":0,"description":null,"id":168},{"title":"Spesa Mega","value":-11.32,"datetime":1749917425039,"category_name":"Casa","category_type":0,"description":null,"id":169},{"title":"Bolletta Gas (2mesi)","value":-103.23,"datetime":1750159771908,"category_name":"Bollette","category_type":0,"description":null,"id":170},{"title":"Cooperativa carne","value":-12.81,"datetime":1750353964094,"category_name":"Cibo","category_type":0,"description":null,"id":171},{"title":"Bolletta Contarina","value":-20.0,"datetime":1750436600719,"category_name":"Bollette","category_type":0,"description":null,"id":172},{"title":"Spese casa Alibabà","value":-7.76,"datetime":1750520468529,"category_name":"Casa","category_type":0,"description":null,"id":173},{"title":"Spesa Iper Spak ","value":-14.05,"datetime":1750965974728,"category_name":"Cibo","category_type":0,"description":null,"id":174},{"title":"Bolletta Internet TIM","value":-20.0,"datetime":1751270753643,"category_name":"Bollette","category_type":0,"description":null,"id":175},{"title":"Spesa Alí","value":-1.79,"datetime":1751469896892,"category_name":"Casa","category_type":0,"description":null,"id":176},{"title":"Spesa Mega","value":-25.66,"datetime":1751469919998,"category_name":"Casa","category_type":0,"description":null,"id":177},{"title":"Cassa comune Anna","value":250.0,"datetime":1751470089419,"category_name":"Stipendio","category_type":1,"description":null,"id":178},{"title":"Cassa comune Simone","value":100.0,"datetime":1751476613749,"category_name":"Stipendio","category_type":1,"description":null,"id":179},{"title":"Buoni pasto","value":160.0,"datetime":1751476625869,"category_name":"Stipendio","category_type":1,"description":null,"id":180},{"title":"Spesa Pam","value":-10.56,"datetime":1751714089632,"category_name":"Casa","category_type":0,"description":null,"id":181},{"title":"Ortofrutta ","value":-2.5,"datetime":1751714104181,"category_name":"Casa","category_type":0,"description":null,"id":182},{"title":"Cena ai Brittoni","value":-73.0,"datetime":1751782520726,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":183},{"title":"Ortofrutta mercato Treviso ","value":-9.2,"datetime":1752319495484,"category_name":"Cibo","category_type":0,"description":null,"id":185},{"title":"Pescheria mercato Treviso ","value":-7.5,"datetime":1752319556247,"category_name":"Cibo","category_type":0,"description":null,"id":186},{"title":"Despar Treviso","value":-10.88,"datetime":1752319582052,"category_name":"Cibo","category_type":0,"description":null,"id":187},{"title":"Spesa Tosano","value":-88.79,"datetime":1752429985721,"category_name":"Cibo","category_type":0,"description":null,"id":188},{"title":"Center Casa ","value":-7.5,"datetime":1752430015945,"category_name":"Casa","category_type":0,"description":null,"id":189},{"title":"Bolletta acqua ","value":-43.26,"datetime":1752577768694,"category_name":"Bollette","category_type":0,"description":null,"id":190},{"title":"Spesa Famila","value":-32.56,"datetime":1753206201543,"category_name":"Cibo","category_type":0,"description":null,"id":191},{"title":"Pizza Sant'Agostino ","value":-52.0,"datetime":1753537682626,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":192},{"title":"Cassa comune Anna","value":250.0,"datetime":1753678641069,"category_name":"Stipendio","category_type":1,"description":null,"id":193},{"title":"Cassa comune Simone","value":100.0,"datetime":1753678692253,"category_name":"Stipendio","category_type":1,"description":null,"id":194},{"title":"Bolletta Internet ","value":-20.0,"datetime":1753722270772,"category_name":"Bollette","category_type":0,"description":null,"id":195},{"title":"Tameos arrosticini ","value":-40.2,"datetime":1754723896926,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":196},{"title":"Colazione","value":-4.6,"datetime":1754723918191,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":197},{"title":null,"value":-31.3,"datetime":1754757298096,"category_name":"Cibo","category_type":0,"description":null,"id":198},{"title":"Stura cedrata","value":-4.0,"datetime":1754758824512,"category_name":"Cibo","category_type":0,"description":null,"id":199},{"title":"Tameos arrosticini ","value":-24.0,"datetime":1754765130145,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":200},{"title":"Colazione ","value":-5.3,"datetime":1754832646371,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":201},{"title":"Coop","value":-4.52,"datetime":1754832661793,"category_name":"Cibo","category_type":0,"description":null,"id":202},{"title":"Spesa Mega ","value":-39.49,"datetime":1754929988657,"category_name":"Cibo","category_type":0,"description":null,"id":203},{"title":"Aldamidas X 5","value":-56.1,"datetime":1755064873017,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":204},{"title":"Bolletta Gas (2mesi)","value":-83.0,"datetime":1755179665673,"category_name":"Bollette","category_type":0,"description":null,"id":205},{"title":"Cooperativa carne","value":-8.12,"datetime":1755179870543,"category_name":"Cibo","category_type":0,"description":null,"id":206},{"title":"Cassa comune Anna","value":250.0,"datetime":1755179894392,"category_name":"Stipendio","category_type":1,"description":null,"id":207},{"title":"Cassa comune Simone","value":100.0,"datetime":1755179909463,"category_name":"Stipendio","category_type":1,"description":null,"id":208},{"title":"Cassa comune Simone","value":50.0,"datetime":1755455371560,"category_name":"Stipendio","category_type":1,"description":null,"id":209},{"title":"Rimborso bolletta ","value":3.0,"datetime":1755455384122,"category_name":"Rimborso","category_type":1,"description":null,"id":210},{"title":"Cassa comune Anna","value":50.0,"datetime":1755455552185,"category_name":"Stipendio","category_type":1,"description":null,"id":211},{"title":"Spesa Spak","value":-21.96,"datetime":1755541680836,"category_name":"Cibo","category_type":0,"description":null,"id":212},{"title":"Spesa Famila","value":-17.33,"datetime":1755622533096,"category_name":"Cibo","category_type":0,"description":null,"id":213},{"title":"Spesa mercato 21 Giraffe","value":-9.64,"datetime":1755946957446,"category_name":"Cibo","category_type":0,"description":null,"id":214},{"title":"Pesce mercato ","value":-8.0,"datetime":1755947003785,"category_name":"Cibo","category_type":0,"description":null,"id":215},{"title":"Spesa Coop","value":-33.45,"datetime":1756061342391,"category_name":"Cibo","category_type":0,"description":null,"id":216},{"title":"Bolletta Internet TIM","value":-19.9,"datetime":1756139592773,"category_name":"Bollette","category_type":0,"description":null,"id":217},{"title":"Cooperativa carne","value":-17.25,"datetime":1756356557820,"category_name":"Cibo","category_type":0,"description":null,"id":218},{"title":"Spesa Famila","value":-36.85,"datetime":1756356581610,"category_name":"Cibo","category_type":0,"description":null,"id":219},{"title":"Cooperativa carne","value":-20.88,"datetime":1756398688666,"category_name":"Cibo","category_type":0,"description":null,"id":220},{"title":"Olive mercato ","value":-7.5,"datetime":1756579047348,"category_name":"Cibo","category_type":0,"description":null,"id":221},{"title":"Cassa comune Anna","value":250.0,"datetime":1756702490424,"category_name":"Stipendio","category_type":1,"description":null,"id":222},{"title":"Cassa comune Simone","value":250.0,"datetime":1756702500611,"category_name":"Stipendio","category_type":1,"description":null,"id":223},{"title":"Cooperativa carne","value":-33.0,"datetime":1757006294814,"category_name":"Cibo","category_type":0,"description":null,"id":224},{"title":"Spesa Mega","value":-40.73,"datetime":1757354044258,"category_name":"Cibo","category_type":0,"description":null,"id":225},{"title":"Cooperativa carne","value":-7.97,"datetime":1757354081282,"category_name":"Cibo","category_type":0,"description":null,"id":226},{"title":"Spesa Eurospin ","value":-8.95,"datetime":1757354107400,"category_name":"Cibo","category_type":0,"description":null,"id":227},{"title":"Bolletta Enel","value":-96.01,"datetime":1757421164902,"category_name":"Bollette","category_type":0,"description":null,"id":228},{"title":"Bolletta Contarina","value":-68.06,"datetime":1758031753843,"category_name":"Bollette","category_type":0,"description":null,"id":229},{"title":"Profumatori lavatrice ","value":-19.0,"datetime":1758971389743,"category_name":"Cibo","category_type":0,"description":null,"id":230},{"title":"Spesa Mega","value":-78.63,"datetime":1758971424020,"category_name":"Cibo","category_type":0,"description":null,"id":231},{"title":"Bolletta acqua bimestrale ","value":-78.0,"datetime":1759236398654,"category_name":"Bollette","category_type":0,"description":null,"id":232},{"title":"Cassa comune Anna","value":250.0,"datetime":1759296121885,"category_name":"Rimborso","category_type":1,"description":null,"id":233},{"title":"Cassa comune Simone","value":150.0,"datetime":1759296136446,"category_name":"Stipendio","category_type":1,"description":null,"id":234},{"title":"Buoni pasto","value":150.0,"datetime":1759428030935,"category_name":"Stipendio","category_type":1,"description":null,"id":235},{"title":"Spesa Famila","value":-18.77,"datetime":1759428045442,"category_name":"Cibo","category_type":0,"description":null,"id":236},{"title":"Cooperativa carne","value":-15.8,"datetime":1759514027874,"category_name":"Cibo","category_type":0,"description":null,"id":237},{"title":"Spesa Mega ","value":-30.24,"datetime":1759514045287,"category_name":"Cibo","category_type":0,"description":null,"id":238},{"title":"Pizza Santa Lucia Spaghetti House ","value":-30.0,"datetime":1759673541116,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":239},{"title":"Bolletta Internet ","value":-19.9,"datetime":1759777275011,"category_name":"Bollette","category_type":0,"description":null,"id":240},{"title":"Spesa Famila","value":-8.26,"datetime":1759856134124,"category_name":"Cibo","category_type":0,"description":null,"id":241},{"title":"Spesa Mega ","value":-15.54,"datetime":1760031459889,"category_name":"Cibo","category_type":0,"description":null,"id":242},{"title":"Colazione Flora","value":-6.2,"datetime":1760255431297,"category_name":"Cibo","category_type":0,"description":null,"id":243},{"title":"Spesa Famila","value":-41.31,"datetime":1760461950170,"category_name":"Cibo","category_type":0,"description":null,"id":244},{"title":"Spesa Coop","value":-32.3,"datetime":1760895091105,"category_name":"Cibo","category_type":0,"description":null,"id":245},{"title":"Bolletta Gas (2mesi)","value":-60.0,"datetime":1760969748532,"category_name":"Bollette","category_type":0,"description":null,"id":246},{"title":"Cooperativa carne","value":-16.12,"datetime":1760977856216,"category_name":"Cibo","category_type":0,"description":null,"id":247},{"title":"Sagra di Roma Carbonara ","value":-33.0,"datetime":1761336619108,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":248},{"title":"Spesa Mega ","value":-73.14,"datetime":1761382958044,"category_name":"Cibo","category_type":0,"description":null,"id":249},{"title":"Eurobrico","value":-9.5,"datetime":1761382987026,"category_name":"Casa","category_type":0,"description":null,"id":250},{"title":"Cooperativa carne","value":-53.42,"datetime":1761846676524,"category_name":"Cibo","category_type":0,"description":null,"id":251},{"title":"Spesa Mega ","value":-17.38,"datetime":1761905806553,"category_name":"Cibo","category_type":0,"description":null,"id":252},{"title":"Cassa comune Anna","value":250.0,"datetime":1762069976845,"category_name":"Stipendio","category_type":1,"description":null,"id":253},{"title":"Cassa comune Simone","value":100.0,"datetime":1762071626864,"category_name":"Stipendio","category_type":1,"description":null,"id":254},{"title":"Bolletta Internet TIM","value":-20.0,"datetime":1762186111497,"category_name":"Bollette","category_type":0,"description":null,"id":255},{"title":"Spesa Famila","value":-26.0,"datetime":1762379357259,"category_name":"Cibo","category_type":0,"description":null,"id":256},{"title":"Cenetta Osteria Corder","value":-62.5,"datetime":1762677908539,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":258},{"title":"Pasticceria Amalia ","value":-20.0,"datetime":1762677925183,"category_name":"Cibo","category_type":0,"description":null,"id":259},{"title":"Spesa Spak","value":-36.0,"datetime":1763061043015,"category_name":"Cibo","category_type":0,"description":null,"id":260},{"title":"Spesa Mega","value":-30.15,"datetime":1763199740536,"category_name":"Cibo","category_type":0,"description":null,"id":261},{"title":"Bolletta Enel (2mesi)","value":-79.77,"datetime":1763230432902,"category_name":"Bollette","category_type":0,"description":null,"id":262},{"title":"Pizza regina margherita ","value":-15.5,"datetime":1763233903922,"category_name":"Cibo","category_type":0,"description":null,"id":263},{"title":"Rimborso Nadia","value":10.0,"datetime":1763386581767,"category_name":"Rimborso","category_type":1,"description":null,"id":264},{"title":"Cooperativa banco salumi","value":-18.33,"datetime":1763400902091,"category_name":"Cibo","category_type":0,"description":null,"id":265},{"title":"Spesa Mega","value":-37.94,"datetime":1763810687929,"category_name":"Cibo","category_type":0,"description":null,"id":266},{"title":"Carne cooperativa ","value":-5.78,"datetime":1764093867329,"category_name":"Cibo","category_type":0,"description":null,"id":267},{"title":"Famila","value":-10.28,"datetime":1764195658578,"category_name":"Cibo","category_type":0,"description":null,"id":268},{"title":"Ortofrutta mercato Treviso ","value":-8.0,"datetime":1764418792043,"category_name":"Cibo","category_type":0,"description":null,"id":269},{"title":"Pastine Amalia","value":-20.0,"datetime":1764418806933,"category_name":"Cibo","category_type":0,"description":null,"id":270},{"title":"Spesa Iper Spak ","value":-10.43,"datetime":1764495154960,"category_name":"Cibo","category_type":0,"description":null,"id":271},{"title":"Cassa comune Simone","value":150.0,"datetime":1764616766528,"category_name":"Stipendio","category_type":1,"description":null,"id":272},{"title":"Cassa comune Anna","value":250.0,"datetime":1764616774913,"category_name":"Stipendio","category_type":1,"description":null,"id":273},{"title":"Spesa Tosano","value":-90.49,"datetime":1764616787257,"category_name":"Cibo","category_type":0,"description":null,"id":274},{"title":"Buoni pasto Simone","value":150.0,"datetime":1764616812243,"category_name":"Stipendio","category_type":1,"description":null,"id":275},{"title":"Panificio Brun 3pan.","value":-73.03,"datetime":1764830162831,"category_name":"Cibo","category_type":0,"description":null,"id":276},{"title":"Osteria al ponte Venezia ","value":-28.5,"datetime":1765114329324,"category_name":"Cibo","category_type":0,"description":null,"id":277},{"title":"Osteria Corte Spaghetteria Venezia ","value":-68.0,"datetime":1765114343651,"category_name":"Cibo","category_type":0,"description":null,"id":278},{"title":"Cena a Fabbrica Pedavena TV","value":-42.5,"datetime":1765580400000,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":279},{"title":"Bolletta Gas (2mesi)","value":-173.83,"datetime":1765894810927,"category_name":"Bollette","category_type":0,"description":null,"id":280},{"title":"Ortofrutta Visentin","value":-36.0,"datetime":1766242085035,"category_name":"Cibo","category_type":0,"description":null,"id":281},{"title":"Spesa Interspar ","value":-3.98,"datetime":1766309881102,"category_name":"Cibo","category_type":0,"description":null,"id":282},{"title":"Spesa Tosano","value":-121.93,"datetime":1766309921936,"category_name":"Cibo","category_type":0,"description":null,"id":283},{"title":"Cooperativa ","value":-15.24,"datetime":1766567780468,"category_name":"Cibo","category_type":0,"description":null,"id":284},{"title":"Cooperativa ","value":-3.06,"datetime":1766567797005,"category_name":"Cibo","category_type":0,"description":null,"id":285},{"title":"Rimpinguato Anna","value":50.0,"datetime":1766861584206,"category_name":"Rimborso","category_type":1,"description":null,"id":286},{"title":"Rimpinguato Simone ","value":50.0,"datetime":1766861593873,"category_name":"Rimborso","category_type":1,"description":null,"id":287},{"title":"Cooperativa ","value":-9.45,"datetime":1766994226321,"category_name":"Cibo","category_type":0,"description":null,"id":288},{"title":"Pesce LZ","value":-47.85,"datetime":1767171582668,"category_name":"Cibo","category_type":0,"description":null,"id":289},{"title":"Spesa Mega","value":-44.27,"datetime":1767171637542,"category_name":"Cibo","category_type":0,"description":null,"id":290},{"title":"Cassa comune Simone","value":100.0,"datetime":1767222000000,"category_name":"Stipendio","category_type":1,"description":null,"id":291},{"title":"Cassa comune Anna","value":250.0,"datetime":1767222000000,"category_name":"Stipendio","category_type":1,"description":null,"id":292},{"title":"Cooperativa ","value":-1.72,"datetime":1767368938625,"category_name":"Cibo","category_type":0,"description":null,"id":293},{"title":"Colazione Bordin ","value":-5.2,"datetime":1767463486024,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":294},{"title":"Buoni pasto Simone","value":150.0,"datetime":1767539254807,"category_name":"Stipendio","category_type":1,"description":null,"id":295},{"title":null,"value":-26.46,"datetime":1767539269005,"category_name":"Cibo","category_type":0,"description":null,"id":296},{"title":"Cooperativa carne","value":-4.29,"datetime":1767599223505,"category_name":"Cibo","category_type":0,"description":null,"id":297},{"title":"Idraulico ","value":-20.0,"datetime":1768048211427,"category_name":"Bollette","category_type":0,"description":null,"id":298},{"title":"Bolletta Internet TIM","value":-20.0,"datetime":1768048218804,"category_name":"Bollette","category_type":0,"description":null,"id":299},{"title":"Pizza regina margherita x2","value":-15.5,"datetime":1768070022296,"category_name":"Cibo","category_type":0,"description":null,"id":300},{"title":"Spesa Eurospin ","value":-3.75,"datetime":1768126393240,"category_name":"Cibo","category_type":0,"description":null,"id":301},{"title":"Spesa Mega ","value":-52.42,"datetime":1768126484611,"category_name":"Cibo","category_type":0,"description":null,"id":302},{"title":"Cooperativa ","value":-3.8,"datetime":1768172400000,"category_name":"Cibo","category_type":0,"description":null,"id":303},{"title":"Bolletta Luce","value":-89.0,"datetime":1768502652897,"category_name":"Bollette","category_type":0,"description":null,"id":304},{"title":"Frittelle Quaggiotto","value":-8.7,"datetime":1768668559574,"category_name":"Cibo","category_type":0,"description":null,"id":305},{"title":"Cooperativa carne","value":-7.85,"datetime":1769242514849,"category_name":"Cibo","category_type":0,"description":null,"id":306},{"title":"Famila","value":-12.0,"datetime":1769537059477,"category_name":"Cibo","category_type":0,"description":null,"id":307},{"title":"Famila","value":-23.0,"datetime":1769637387418,"category_name":"Cibo","category_type":0,"description":null,"id":308},{"title":"Bolletta acqua bimestrale ","value":-38.0,"datetime":1769779030041,"category_name":"Bollette","category_type":0,"description":null,"id":309},{"title":"Pizza regina margherita x2","value":-14.5,"datetime":1769797664108,"category_name":"Cibo","category_type":0,"description":null,"id":310},{"title":"Bolletta Internet TIM","value":-20.0,"datetime":1769860313139,"category_name":"Bollette","category_type":0,"description":null,"id":311},{"title":"Cenetta da Alfredo","value":-87.0,"datetime":1769814000000,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":312},{"title":"Cassa comune Simone","value":100.0,"datetime":1769932299322,"category_name":"Rimborso","category_type":1,"description":null,"id":313},{"title":"Cassa comune Anna","value":250.0,"datetime":1769932316479,"category_name":"Rimborso","category_type":1,"description":null,"id":314},{"title":"Buoni pasto ","value":150.0,"datetime":1769932359293,"category_name":"Rimborso","category_type":1,"description":null,"id":315},{"title":"Spesa Famila","value":-25.47,"datetime":1770269867615,"category_name":"Cibo","category_type":0,"description":null,"id":316},{"title":"Le papere al Lago","value":-60.0,"datetime":1770418800000,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":317},{"title":"Spesa cooperativa Volpago","value":-6.6,"datetime":1770658698374,"category_name":"Cibo","category_type":0,"description":null,"id":318},{"title":"Spesa Famila","value":-27.35,"datetime":1770874794916,"category_name":"Cibo","category_type":0,"description":null,"id":319},{"title":"Pizza Regina Margherita x2","value":-15.5,"datetime":1770925539671,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":320},{"title":"Pescheria Volpago ","value":-23.0,"datetime":1771070997396,"category_name":"Cibo","category_type":0,"description":"1kg di vongole veraci","id":321},{"title":"Bolletta Gas (2mesi)","value":-266.38,"datetime":1771270442228,"category_name":"Bollette","category_type":0,"description":null,"id":322},{"title":"Spesa Lidl","value":-6.56,"datetime":1771790345263,"category_name":"Cibo","category_type":0,"description":null,"id":323},{"title":"Spesa Famila","value":-33.66,"datetime":1772084975341,"category_name":"Cibo","category_type":0,"description":null,"id":324},{"title":"Cassa comune Anna","value":250.0,"datetime":1772349761662,"category_name":"Stipendio","category_type":1,"description":null,"id":325},{"title":"Cassa comune Simone","value":100.0,"datetime":1772349770556,"category_name":"Stipendio","category_type":1,"description":null,"id":326},{"title":"Buoni pasto Simone","value":150.0,"datetime":1772349780779,"category_name":"Stipendio","category_type":1,"description":null,"id":327},{"title":"Spesa cooperativa ","value":-4.29,"datetime":1772472191408,"category_name":"Cibo","category_type":0,"description":null,"id":328},{"title":"Bolletta Internet TIM","value":-19.9,"datetime":1772733974045,"category_name":"Bollette","category_type":0,"description":null,"id":329},{"title":"Pizza Regina Margherita x2","value":-14.5,"datetime":1772911893338,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":330},{"title":"Osteria BellaVista (Crespano)","value":-98.0,"datetime":1773000887469,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":331},{"title":"Bolletta Luce","value":-102.0,"datetime":1773472399489,"category_name":"Bollette","category_type":0,"description":null,"id":332},{"title":"Pizza Regina Margherita x2","value":-15.0,"datetime":1773442800000,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":333},{"title":"Spesa Tosano","value":-108.0,"datetime":1773582394499,"category_name":"Cibo","category_type":0,"description":null,"id":334},{"title":"Asparagi punte al mercato ","value":-6.8,"datetime":1774079397090,"category_name":"Cibo","category_type":0,"description":null,"id":335},{"title":"Manzo straccetti ","value":-9.51,"datetime":1774079417070,"category_name":"Cibo","category_type":0,"description":null,"id":336},{"title":"Pizza regina margherita x2","value":-15.5,"datetime":1774119543151,"category_name":"Cibo","category_type":0,"description":null,"id":337},{"title":"Rimpinguato Anna","value":50.0,"datetime":1774377905367,"category_name":"Stipendio","category_type":1,"description":null,"id":338},{"title":"Rimpinguato Simone","value":50.0,"datetime":1774377914259,"category_name":"Stipendio","category_type":1,"description":null,"id":339},{"title":"Spesa Famila","value":-18.95,"datetime":1774393200000,"category_name":"Cibo","category_type":0,"description":null,"id":340},{"title":"Spesa Interspar ","value":-27.47,"datetime":1774511271807,"category_name":"Cibo","category_type":0,"description":null,"id":341},{"title":"Spesa Mega","value":-20.18,"datetime":1774704557871,"category_name":"Cibo","category_type":0,"description":null,"id":342},{"title":"Pizza regina margherita 1m","value":-32.9,"datetime":1774738146544,"category_name":"Cibo","category_type":0,"description":null,"id":343},{"title":"Focaccia pasquale x 3","value":-79.0,"datetime":1774738168727,"category_name":"Cibo","category_type":0,"description":null,"id":344},{"title":"Gelato ","value":-14.0,"datetime":1774796941143,"category_name":"Cibo","category_type":0,"description":null,"id":345},{"title":"Elettricista ","value":-30.0,"datetime":1774863580302,"category_name":"Casa","category_type":0,"description":null,"id":346},{"title":"Cassa comune Anna","value":250.0,"datetime":1775063301670,"category_name":"Stipendio","category_type":1,"description":null,"id":347},{"title":"Cassa comune Simone","value":100.0,"datetime":1775063311081,"category_name":"Stipendio","category_type":1,"description":null,"id":348},{"title":"Buoni pasto","value":150.0,"datetime":1775063326556,"category_name":"Stipendio","category_type":1,"description":null,"id":349},{"title":"Spesa Crai","value":-21.42,"datetime":1775108131608,"category_name":"Cibo","category_type":0,"description":null,"id":350},{"title":"Cooperativa carne","value":-58.36,"datetime":1775302075379,"category_name":"Cibo","category_type":0,"description":null,"id":351},{"title":"Spesa Spak","value":-43.76,"datetime":1775302095598,"category_name":"Cibo","category_type":0,"description":null,"id":352},{"title":"Aperitivo Treviso caffè artistico ","value":-12.0,"datetime":1775302129372,"category_name":"Pranzi / Cenette fuori","category_type":0,"description":null,"id":353},{"title":"Asparagi verdi 2kg","value":-15.9,"datetime":1775308559277,"category_name":"Cibo","category_type":0,"description":null,"id":354},{"title":"Carne Pasquetta ","value":30.0,"datetime":1775580993014,"category_name":"Rimborso","category_type":1,"description":null,"id":355},{"title":"Vinted - scarpe Salewa","value":30.0,"datetime":1775583361657,"category_name":"Rimborso","category_type":1,"description":null,"id":356},{"title":"Spesa Famila","value":-27.0,"datetime":1775683615200,"category_name":"Cibo","category_type":0,"description":null,"id":357},{"title":"Accessori moka - ferramenta Bianchi","value":-4.75,"datetime":1775905966781,"category_name":"Casa","category_type":0,"description":null,"id":358},{"title":"Spesa IperLando","value":-57.84,"datetime":1775905997892,"category_name":"Cibo","category_type":0,"description":null,"id":359}],"categories":[{"name":"Casa","category_type":0,"last_used":1775905983000,"record_count":0,"color":"255:129:199:132","is_archived":0,"icon_emoji":null,"sort_order":0,"icon":61461},{"name":"Trasporti","category_type":0,"last_used":null,"record_count":0,"color":"255:229:115:115","is_archived":0,"icon_emoji":null,"sort_order":0,"icon":61959},{"name":"Cibo","category_type":0,"last_used":1775906004000,"record_count":0,"color":"255:100:181:246","is_archived":0,"icon_emoji":null,"sort_order":0,"icon":63493},{"name":"Stipendio","category_type":1,"last_used":1775063332000,"record_count":0,"color":"255:255:183:77","is_archived":0,"icon_emoji":null,"sort_order":0,"icon":62805},{"name":"Bollette","category_type":0,"last_used":1773472407000,"record_count":37,"color":"255:253:216:53","is_archived":0,"icon_emoji":null,"sort_order":0,"icon":57349},{"name":"Rimborso","category_type":1,"last_used":1775583373000,"record_count":26,"color":"255:129:199:132","is_archived":0,"icon_emoji":null,"sort_order":0,"icon":62778},{"name":"Pranzi / Cenette fuori","category_type":0,"last_used":1775302145000,"record_count":34,"color":"255:255:183:77","is_archived":0,"icon_emoji":null,"sort_order":0,"icon":63512},{"name":"Divertimento & Spettacolo ","category_type":0,"last_used":1733733817000,"record_count":2,"color":"255:129:199:132","is_archived":0,"icon_emoji":null,"sort_order":0,"icon":63024}],"recurrent_record_patterns":[],"created_at":1776062035450,"package_name":"com.github.emavgl.piggybankpro","version":"1.0.73","database_version":"9"}
+{
+  "records": [
+    {
+      "title": "Bolletta acqua",
+      "value": -93.0,
+      "datetime": 1729271571194,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 1
+    },
+    {
+      "title": "Spazzatura ",
+      "value": -63.0,
+      "datetime": 1729271604832,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 2
+    },
+    {
+      "title": "Spesa ",
+      "value": -21.0,
+      "datetime": 1729271633713,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 3
+    },
+    {
+      "title": "Pizza asporto ",
+      "value": -17.0,
+      "datetime": 1729271650410,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 4
+    },
+    {
+      "title": "Center Casa ",
+      "value": -30.0,
+      "datetime": 1729271675879,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 5
+    },
+    {
+      "title": "Spesa Famila",
+      "value": -9.65,
+      "datetime": 1729271699057,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 6
+    },
+    {
+      "title": "Cooperativa ",
+      "value": -24.75,
+      "datetime": 1729271726692,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 7
+    },
+    {
+      "title": "Spesa Interspar ",
+      "value": -6.1,
+      "datetime": 1729271753876,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 8
+    },
+    {
+      "title": "Profumo lavatrice ",
+      "value": -9.5,
+      "datetime": 1729271792634,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 9
+    },
+    {
+      "title": "Gelato ",
+      "value": -11.0,
+      "datetime": 1729271822242,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 10
+    },
+    {
+      "title": "Spesa ",
+      "value": -2.99,
+      "datetime": 1729271834274,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 11
+    },
+    {
+      "title": "Spesa Mega",
+      "value": -30.66,
+      "datetime": 1729271852963,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 12
+    },
+    {
+      "title": "Rimborso Nadia",
+      "value": 20.4,
+      "datetime": 1729337564859,
+      "category_name": "Rimborso",
+      "category_type": 1,
+      "description": null,
+      "id": 13
+    },
+    {
+      "title": null,
+      "value": -40.0,
+      "datetime": 1729576324506,
+      "category_name": "Divertimento & Spettacolo ",
+      "category_type": 0,
+      "description": "Teatro con Mariachiara ",
+      "id": 14
+    },
+    {
+      "title": null,
+      "value": -39.66,
+      "datetime": 1729961367266,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": "spesa al Mega con cosa di casa e cibo",
+      "id": 15
+    },
+    {
+      "title": "Cassa comune Anna",
+      "value": 250.0,
+      "datetime": 1730357308971,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 16
+    },
+    {
+      "title": "Spesa Famila",
+      "value": -22.52,
+      "datetime": 1730397784471,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 17
+    },
+    {
+      "title": "Cassa comune Simone",
+      "value": 150.0,
+      "datetime": 1730399911878,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 18
+    },
+    {
+      "title": "Cooperativa carne",
+      "value": -4.71,
+      "datetime": 1730399927567,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 19
+    },
+    {
+      "title": "2 Pizze ",
+      "value": -15.0,
+      "datetime": 1730419655917,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 20
+    },
+    {
+      "title": "Cena fuori con Anto e Mariachiara ",
+      "value": -60.0,
+      "datetime": 1730589157100,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 21
+    },
+    {
+      "title": "Spesa Lidl",
+      "value": -9.83,
+      "datetime": 1730633712985,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 22
+    },
+    {
+      "title": "Spesa Eurospin ",
+      "value": -12.95,
+      "datetime": 1730633729193,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 23
+    },
+    {
+      "title": "Spesa Mega ",
+      "value": -17.8,
+      "datetime": 1730633779121,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 24
+    },
+    {
+      "title": "Buoni pasto",
+      "value": 160.0,
+      "datetime": 1730633799278,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 25
+    },
+    {
+      "title": "biglietti asilo nido mongolfiera ",
+      "value": -5.0,
+      "datetime": 1731010394609,
+      "category_name": "Divertimento & Spettacolo ",
+      "category_type": 0,
+      "description": null,
+      "id": 26
+    },
+    {
+      "title": "Spesa spezzatino cooperativa ",
+      "value": -17.84,
+      "datetime": 1731010409746,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 27
+    },
+    {
+      "title": "Cooperativa - tiramisù ",
+      "value": -9.96,
+      "datetime": 1731088302683,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 28
+    },
+    {
+      "title": "Cassa arance",
+      "value": -9.0,
+      "datetime": 1731092657167,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 29
+    },
+    {
+      "title": "ortofrutta Talpon",
+      "value": -3.5,
+      "datetime": 1731139736281,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 30
+    },
+    {
+      "title": "Cooperativa carne",
+      "value": -41.65,
+      "datetime": 1731139750651,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 31
+    },
+    {
+      "title": "Spesa Mega ",
+      "value": -35.95,
+      "datetime": 1731150741143,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 32
+    },
+    {
+      "title": "Spesa Interspar ",
+      "value": -6.8,
+      "datetime": 1733733831934,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 33
+    },
+    {
+      "title": "Spesa Mega",
+      "value": -23.9,
+      "datetime": 1733769199173,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 34
+    },
+    {
+      "title": "Spesa Famila",
+      "value": -23.97,
+      "datetime": 1733769351974,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 35
+    },
+    {
+      "title": "Formai",
+      "value": -9.12,
+      "datetime": 1733769372425,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 36
+    },
+    {
+      "title": "Bollette gas",
+      "value": -240.57,
+      "datetime": 1734097909772,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 37
+    },
+    {
+      "title": "Rimpinguato Anna",
+      "value": 100.0,
+      "datetime": 1734098196135,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 38
+    },
+    {
+      "title": "Rimpinguato Simone",
+      "value": 100.0,
+      "datetime": 1734098208857,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 39
+    },
+    {
+      "title": "Parte Simone ",
+      "value": 100.0,
+      "datetime": 1734098245433,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 40
+    },
+    {
+      "title": "Parte Anna",
+      "value": 250.0,
+      "datetime": 1734098258625,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 41
+    },
+    {
+      "title": "Buoni pasto",
+      "value": 160.0,
+      "datetime": 1734098290037,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 42
+    },
+    {
+      "title": "Salame cooperativa ",
+      "value": -30.92,
+      "datetime": 1734102055451,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 43
+    },
+    {
+      "title": "Spesa Eurospin ",
+      "value": -4.45,
+      "datetime": 1734107848990,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 44
+    },
+    {
+      "title": "Spesa Mega",
+      "value": -34.88,
+      "datetime": 1734107874453,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 45
+    },
+    {
+      "title": "Miele vario e propoli",
+      "value": -40.0,
+      "datetime": 1734163633345,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 46
+    },
+    {
+      "title": "Olio vergine Chia",
+      "value": -50.0,
+      "datetime": 1734163658065,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 47
+    },
+    {
+      "title": "Formaggi mercato ",
+      "value": -8.2,
+      "datetime": 1734165849579,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 48
+    },
+    {
+      "title": "Radicchio mercato ",
+      "value": -5.8,
+      "datetime": 1734165862782,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 49
+    },
+    {
+      "title": "Cassa arance e mandarini",
+      "value": -17.0,
+      "datetime": 1734684565304,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 50
+    },
+    {
+      "title": "Contributo Anna",
+      "value": 100.0,
+      "datetime": 1734792042908,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 51
+    },
+    {
+      "title": "Contributo Simone",
+      "value": 100.0,
+      "datetime": 1734792055720,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 52
+    },
+    {
+      "title": null,
+      "value": -87.2,
+      "datetime": 1734867621209,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 53
+    },
+    {
+      "title": null,
+      "value": -12.08,
+      "datetime": 1734867656829,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 54
+    },
+    {
+      "title": "pizza al portico",
+      "value": -14.0,
+      "datetime": 1734894599204,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 55
+    },
+    {
+      "title": "Cooperativa carne",
+      "value": -33.63,
+      "datetime": 1735028481356,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 56
+    },
+    {
+      "title": "Spesa Mega",
+      "value": -41.25,
+      "datetime": 1735377563906,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 57
+    },
+    {
+      "title": "Spesa Interspar ",
+      "value": -14.46,
+      "datetime": 1735635000623,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 58
+    },
+    {
+      "title": "Cooperativa carne",
+      "value": -18.4,
+      "datetime": 1735635020539,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 59
+    },
+    {
+      "title": "Aldi",
+      "value": -2.7,
+      "datetime": 1735635046965,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 60
+    },
+    {
+      "title": "Sapori di Mare",
+      "value": -19.91,
+      "datetime": 1735635059945,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 61
+    },
+    {
+      "title": "Candle",
+      "value": -8.0,
+      "datetime": 1735635088144,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 62
+    },
+    {
+      "title": "Cinesi ",
+      "value": -6.0,
+      "datetime": 1735635101002,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 63
+    },
+    {
+      "title": "Pesce LZ",
+      "value": -74.0,
+      "datetime": 1735637247947,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 64
+    },
+    {
+      "title": "Cassa comune Anna",
+      "value": 250.0,
+      "datetime": 1735725770629,
+      "category_name": "Rimborso",
+      "category_type": 1,
+      "description": null,
+      "id": 65
+    },
+    {
+      "title": "Cassa comune Simone",
+      "value": 100.0,
+      "datetime": 1736078471475,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 66
+    },
+    {
+      "title": "Spesa per pizza",
+      "value": -7.7,
+      "datetime": 1736078482978,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 67
+    },
+    {
+      "title": "Rimborso Mamma Anna ",
+      "value": 20.0,
+      "datetime": 1736274871309,
+      "category_name": "Rimborso",
+      "category_type": 1,
+      "description": null,
+      "id": 68
+    },
+    {
+      "title": "Spesa Mega",
+      "value": -43.36,
+      "datetime": 1736674396343,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 69
+    },
+    {
+      "title": "Spesa corso Famila",
+      "value": -28.6,
+      "datetime": 1736884686191,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 70
+    },
+    {
+      "title": "Colazione Doro",
+      "value": -5.2,
+      "datetime": 1737281180379,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 71
+    },
+    {
+      "title": "Pizza Sant'Agostino ",
+      "value": -30.0,
+      "datetime": 1737281194839,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 72
+    },
+    {
+      "title": "Bolletta Enel",
+      "value": -110.5,
+      "datetime": 1737281208968,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 73
+    },
+    {
+      "title": "Pranzo Fabbrica Pedavena ",
+      "value": -40.0,
+      "datetime": 1737882117706,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 74
+    },
+    {
+      "title": "Arance ",
+      "value": -10.0,
+      "datetime": 1737882132376,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 75
+    },
+    {
+      "title": "Spesa Mega",
+      "value": -28.07,
+      "datetime": 1737904970220,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 76
+    },
+    {
+      "title": null,
+      "value": -44.0,
+      "datetime": 1737904981431,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 77
+    },
+    {
+      "title": "Pizza Regina Margherita ",
+      "value": -39.8,
+      "datetime": 1738089502351,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 78
+    },
+    {
+      "title": "Bolletta acqua ",
+      "value": -22.84,
+      "datetime": 1738089634133,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 79
+    },
+    {
+      "title": "Rimborso Mamma Anna ",
+      "value": 1.0,
+      "datetime": 1738217358653,
+      "category_name": "Rimborso",
+      "category_type": 1,
+      "description": null,
+      "id": 80
+    },
+    {
+      "title": "Spesa Mega",
+      "value": -28.0,
+      "datetime": 1738417621458,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 81
+    },
+    {
+      "title": "Contributo Anna",
+      "value": 250.0,
+      "datetime": 1738430297036,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 82
+    },
+    {
+      "title": "Contributo Simone",
+      "value": 50.0,
+      "datetime": 1738430312575,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 83
+    },
+    {
+      "title": "Contributo Simone",
+      "value": 50.0,
+      "datetime": 1738522663255,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 84
+    },
+    {
+      "title": "Pesce mercato ",
+      "value": -5.88,
+      "datetime": 1739009855187,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 85
+    },
+    {
+      "title": "Mozzarelle (1kg)",
+      "value": -13.0,
+      "datetime": 1739009891444,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 86
+    },
+    {
+      "title": "Profumatore lavatrice x3",
+      "value": -28.5,
+      "datetime": 1739013482649,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 87
+    },
+    {
+      "title": "Regalo Mariachiara ",
+      "value": -26.9,
+      "datetime": 1739013501963,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 88
+    },
+    {
+      "title": "Spesa cooperativa ",
+      "value": -8.59,
+      "datetime": 1739225017395,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 89
+    },
+    {
+      "title": "Rimpinguato Anna",
+      "value": 100.0,
+      "datetime": 1739469986432,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 90
+    },
+    {
+      "title": "Rimpinguato Simone",
+      "value": 100.0,
+      "datetime": 1739469996292,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 91
+    },
+    {
+      "title": "Bolletta Gas (2mesi)",
+      "value": -363.17,
+      "datetime": 1739470083368,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 92
+    },
+    {
+      "title": "Pianta",
+      "value": -5.5,
+      "datetime": 1739660400000,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 93
+    },
+    {
+      "title": "Spesa Tosano",
+      "value": -69.85,
+      "datetime": 1739660400000,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 94
+    },
+    {
+      "title": "Spurgo pozzo nero",
+      "value": -50.0,
+      "datetime": 1740114726888,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 95
+    },
+    {
+      "title": "Cassa arance Chia 2kg",
+      "value": -18.0,
+      "datetime": 1740145349485,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 96
+    },
+    {
+      "title": "Cooperativa carne",
+      "value": -15.49,
+      "datetime": 1740212566189,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 97
+    },
+    {
+      "title": "Spesa Famila",
+      "value": -10.87,
+      "datetime": 1740507888354,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 98
+    },
+    {
+      "title": "Contributo Anna",
+      "value": 250.0,
+      "datetime": 1740824052367,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 99
+    },
+    {
+      "title": "Contributo Simone",
+      "value": 100.0,
+      "datetime": 1740824063605,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 100
+    },
+    {
+      "title": "Buoni pasto",
+      "value": 150.0,
+      "datetime": 1740824074073,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 101
+    },
+    {
+      "title": "Bolletta Internet ",
+      "value": -20.0,
+      "datetime": 1740824132607,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 102
+    },
+    {
+      "title": "Spesa Mega",
+      "value": -43.12,
+      "datetime": 1740948106091,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 103
+    },
+    {
+      "title": "Spesa cooperativa ",
+      "value": -38.0,
+      "datetime": 1741434917336,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 104
+    },
+    {
+      "title": "Spesa Famila",
+      "value": -28.65,
+      "datetime": 1741717822720,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 105
+    },
+    {
+      "title": "Bolletta Enel",
+      "value": -115.0,
+      "datetime": 1741894371042,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 106
+    },
+    {
+      "title": "Cooperativa carne",
+      "value": -55.15,
+      "datetime": 1741944936550,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 107
+    },
+    {
+      "title": "Pizza con nonna",
+      "value": -92.4,
+      "datetime": 1741990065030,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 108
+    },
+    {
+      "title": "Cassa comune Anna",
+      "value": 100.0,
+      "datetime": 1742026351389,
+      "category_name": "Rimborso",
+      "category_type": 1,
+      "description": null,
+      "id": 109
+    },
+    {
+      "title": "Cassa comune Simone",
+      "value": 100.0,
+      "datetime": 1742058289249,
+      "category_name": "Rimborso",
+      "category_type": 1,
+      "description": null,
+      "id": 110
+    },
+    {
+      "title": "Candele casa",
+      "value": -18.15,
+      "datetime": 1742058304447,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 111
+    },
+    {
+      "title": "Spesa Eurospin ",
+      "value": -9.5,
+      "datetime": 1742642826203,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 112
+    },
+    {
+      "title": "Cooperativa carne",
+      "value": -9.6,
+      "datetime": 1742642849831,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 113
+    },
+    {
+      "title": "Spesa Mega",
+      "value": -43.64,
+      "datetime": 1742725940023,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 114
+    },
+    {
+      "title": "Colomba di Pasqua Brun",
+      "value": -57.63,
+      "datetime": 1742816698616,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 115
+    },
+    {
+      "title": "Bolletta acqua ",
+      "value": -73.65,
+      "datetime": 1742931971058,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 116
+    },
+    {
+      "title": "Spesa Mega ",
+      "value": -70.27,
+      "datetime": 1743360756531,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 117
+    },
+    {
+      "title": "Bolletta Internet ",
+      "value": -20.0,
+      "datetime": 1743453474155,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 118
+    },
+    {
+      "title": "Cassa comune Anna",
+      "value": 250.0,
+      "datetime": 1743482774651,
+      "category_name": "Rimborso",
+      "category_type": 1,
+      "description": null,
+      "id": 119
+    },
+    {
+      "title": "Cassa comune Simone",
+      "value": 100.0,
+      "datetime": 1743482849587,
+      "category_name": "Rimborso",
+      "category_type": 1,
+      "description": null,
+      "id": 120
+    },
+    {
+      "title": "Buoni pasto ",
+      "value": 150.0,
+      "datetime": 1743482861457,
+      "category_name": "Rimborso",
+      "category_type": 1,
+      "description": null,
+      "id": 121
+    },
+    {
+      "title": "Spesa Famila",
+      "value": -10.95,
+      "datetime": 1743526922438,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 122
+    },
+    {
+      "title": "Bolletta Contarina",
+      "value": -120.0,
+      "datetime": 1743665808771,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 123
+    },
+    {
+      "title": "Spesa Famila",
+      "value": -27.61,
+      "datetime": 1744133131398,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 124
+    },
+    {
+      "title": "Biglietti lotteria Mongolfiera ",
+      "value": -5.0,
+      "datetime": 1744277273647,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 125
+    },
+    {
+      "title": "Pescheria ",
+      "value": -5.52,
+      "datetime": 1744438936607,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 126
+    },
+    {
+      "title": "Rimpinguato Anna",
+      "value": 100.0,
+      "datetime": 1744627640364,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 127
+    },
+    {
+      "title": "Rimpinguato Simone ",
+      "value": 70.0,
+      "datetime": 1744627688990,
+      "category_name": "Rimborso",
+      "category_type": 1,
+      "description": null,
+      "id": 128
+    },
+    {
+      "title": "Cooperativa carne",
+      "value": -16.22,
+      "datetime": 1745009575232,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 129
+    },
+    {
+      "title": "Spesa Mega ",
+      "value": -90.6,
+      "datetime": 1745009595251,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 130
+    },
+    {
+      "title": "Pizza da Lino",
+      "value": -36.0,
+      "datetime": 1745445600000,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 131
+    },
+    {
+      "title": "Center Casa ",
+      "value": -19.65,
+      "datetime": 1745592111169,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 132
+    },
+    {
+      "title": "Spesa Tosano",
+      "value": -126.33,
+      "datetime": 1745592145244,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 133
+    },
+    {
+      "title": "Pizza da Pizzum ",
+      "value": -36.0,
+      "datetime": 1745616747344,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 134
+    },
+    {
+      "title": "Rimpinguato Simone ",
+      "value": 20.0,
+      "datetime": 1745667723919,
+      "category_name": "Rimborso",
+      "category_type": 1,
+      "description": null,
+      "id": 135
+    },
+    {
+      "title": "Rimpinguato Anna",
+      "value": 20.0,
+      "datetime": 1745667735175,
+      "category_name": "Rimborso",
+      "category_type": 1,
+      "description": null,
+      "id": 136
+    },
+    {
+      "title": "Spesa Famila",
+      "value": -10.24,
+      "datetime": 1746077569682,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 137
+    },
+    {
+      "title": "Cassa comune Anna",
+      "value": 250.0,
+      "datetime": 1746083552920,
+      "category_name": "Rimborso",
+      "category_type": 1,
+      "description": null,
+      "id": 138
+    },
+    {
+      "title": "Cassa comune Simone",
+      "value": 100.0,
+      "datetime": 1746108933519,
+      "category_name": "Rimborso",
+      "category_type": 1,
+      "description": null,
+      "id": 139
+    },
+    {
+      "title": "Buoni pasto ",
+      "value": 150.0,
+      "datetime": 1746108951881,
+      "category_name": "Rimborso",
+      "category_type": 1,
+      "description": null,
+      "id": 140
+    },
+    {
+      "title": "Spesa Mega",
+      "value": -28.65,
+      "datetime": 1746173478485,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 141
+    },
+    {
+      "title": "Spesa Eurospin ",
+      "value": -7.7,
+      "datetime": 1746197686450,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 142
+    },
+    {
+      "title": "Asparagi dal contadino ",
+      "value": -7.4,
+      "datetime": 1746270393956,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 143
+    },
+    {
+      "title": "Spesa Interspar ",
+      "value": -47.08,
+      "datetime": 1746377926987,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 144
+    },
+    {
+      "title": "Asparagi dal contadino + propoli",
+      "value": -18.0,
+      "datetime": 1746396000000,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 145
+    },
+    {
+      "title": "Spesa Mega",
+      "value": -45.93,
+      "datetime": 1746882990775,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 146
+    },
+    {
+      "title": null,
+      "value": -30.0,
+      "datetime": 1747547573091,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": "pizza spillo Mariachiara ",
+      "id": 147
+    },
+    {
+      "title": null,
+      "value": -85.0,
+      "datetime": 1747547628230,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": "gas",
+      "id": 148
+    },
+    {
+      "title": "Spesa Lidl",
+      "value": -17.1,
+      "datetime": 1747592339557,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 149
+    },
+    {
+      "title": "Spesa Famila",
+      "value": -31.48,
+      "datetime": 1747761358339,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 150
+    },
+    {
+      "title": "Regalo Chiara ",
+      "value": -10.0,
+      "datetime": 1747761424149,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 151
+    },
+    {
+      "title": "Spesa Mega ",
+      "value": -20.32,
+      "datetime": 1748191970443,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 152
+    },
+    {
+      "title": "Idraulico ",
+      "value": -85.0,
+      "datetime": 1748546340537,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 153
+    },
+    {
+      "title": "Spese TIM",
+      "value": -20.0,
+      "datetime": 1748546350164,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 154
+    },
+    {
+      "title": "Spesa Tosano",
+      "value": -58.07,
+      "datetime": 1748687269122,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 155
+    },
+    {
+      "title": "Cassa comune Anna",
+      "value": 250.0,
+      "datetime": 1748769206763,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 156
+    },
+    {
+      "title": "Cassa comune Simone",
+      "value": 100.0,
+      "datetime": 1748769218848,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 157
+    },
+    {
+      "title": "Buoni pasto",
+      "value": 138.0,
+      "datetime": 1748769381904,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 158
+    },
+    {
+      "title": "Aperitivo Anto, Mariachiara,Nica e Domenico ",
+      "value": -19.5,
+      "datetime": 1748799994038,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 159
+    },
+    {
+      "title": "Spesa Interspar",
+      "value": -3.85,
+      "datetime": 1749302612281,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 160
+    },
+    {
+      "title": "Spesa Iper Spak",
+      "value": -37.5,
+      "datetime": 1749302636906,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 161
+    },
+    {
+      "title": "Cenetta Osteria Ostile",
+      "value": -70.0,
+      "datetime": 1749334189133,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 162
+    },
+    {
+      "title": "Spesa Interspar ",
+      "value": -11.16,
+      "datetime": 1749490224605,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 163
+    },
+    {
+      "title": "Spesa Famila",
+      "value": -32.61,
+      "datetime": 1749675770380,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 164
+    },
+    {
+      "title": "Cooperativa carne",
+      "value": -7.05,
+      "datetime": 1749884857317,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 165
+    },
+    {
+      "title": "Pesce mercato ",
+      "value": -4.6,
+      "datetime": 1749884881629,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 166
+    },
+    {
+      "title": "Spesa Eurospin ",
+      "value": -7.33,
+      "datetime": 1749892229929,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 167
+    },
+    {
+      "title": "Ombrellone Jesolo - prenotazione ",
+      "value": -21.9,
+      "datetime": 1749908500085,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 168
+    },
+    {
+      "title": "Spesa Mega",
+      "value": -11.32,
+      "datetime": 1749917425039,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 169
+    },
+    {
+      "title": "Bolletta Gas (2mesi)",
+      "value": -103.23,
+      "datetime": 1750159771908,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 170
+    },
+    {
+      "title": "Cooperativa carne",
+      "value": -12.81,
+      "datetime": 1750353964094,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 171
+    },
+    {
+      "title": "Bolletta Contarina",
+      "value": -20.0,
+      "datetime": 1750436600719,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 172
+    },
+    {
+      "title": "Spese casa Alibabà",
+      "value": -7.76,
+      "datetime": 1750520468529,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 173
+    },
+    {
+      "title": "Spesa Iper Spak ",
+      "value": -14.05,
+      "datetime": 1750965974728,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 174
+    },
+    {
+      "title": "Bolletta Internet TIM",
+      "value": -20.0,
+      "datetime": 1751270753643,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 175
+    },
+    {
+      "title": "Spesa Alí",
+      "value": -1.79,
+      "datetime": 1751469896892,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 176
+    },
+    {
+      "title": "Spesa Mega",
+      "value": -25.66,
+      "datetime": 1751469919998,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 177
+    },
+    {
+      "title": "Cassa comune Anna",
+      "value": 250.0,
+      "datetime": 1751470089419,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 178
+    },
+    {
+      "title": "Cassa comune Simone",
+      "value": 100.0,
+      "datetime": 1751476613749,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 179
+    },
+    {
+      "title": "Buoni pasto",
+      "value": 160.0,
+      "datetime": 1751476625869,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 180
+    },
+    {
+      "title": "Spesa Pam",
+      "value": -10.56,
+      "datetime": 1751714089632,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 181
+    },
+    {
+      "title": "Ortofrutta ",
+      "value": -2.5,
+      "datetime": 1751714104181,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 182
+    },
+    {
+      "title": "Cena ai Brittoni",
+      "value": -73.0,
+      "datetime": 1751782520726,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 183
+    },
+    {
+      "title": "Ortofrutta mercato Treviso ",
+      "value": -9.2,
+      "datetime": 1752319495484,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 185
+    },
+    {
+      "title": "Pescheria mercato Treviso ",
+      "value": -7.5,
+      "datetime": 1752319556247,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 186
+    },
+    {
+      "title": "Despar Treviso",
+      "value": -10.88,
+      "datetime": 1752319582052,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 187
+    },
+    {
+      "title": "Spesa Tosano",
+      "value": -88.79,
+      "datetime": 1752429985721,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 188
+    },
+    {
+      "title": "Center Casa ",
+      "value": -7.5,
+      "datetime": 1752430015945,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 189
+    },
+    {
+      "title": "Bolletta acqua ",
+      "value": -43.26,
+      "datetime": 1752577768694,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 190
+    },
+    {
+      "title": "Spesa Famila",
+      "value": -32.56,
+      "datetime": 1753206201543,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 191
+    },
+    {
+      "title": "Pizza Sant'Agostino ",
+      "value": -52.0,
+      "datetime": 1753537682626,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 192
+    },
+    {
+      "title": "Cassa comune Anna",
+      "value": 250.0,
+      "datetime": 1753678641069,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 193
+    },
+    {
+      "title": "Cassa comune Simone",
+      "value": 100.0,
+      "datetime": 1753678692253,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 194
+    },
+    {
+      "title": "Bolletta Internet ",
+      "value": -20.0,
+      "datetime": 1753722270772,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 195
+    },
+    {
+      "title": "Tameos arrosticini ",
+      "value": -40.2,
+      "datetime": 1754723896926,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 196
+    },
+    {
+      "title": "Colazione",
+      "value": -4.6,
+      "datetime": 1754723918191,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 197
+    },
+    {
+      "title": null,
+      "value": -31.3,
+      "datetime": 1754757298096,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 198
+    },
+    {
+      "title": "Stura cedrata",
+      "value": -4.0,
+      "datetime": 1754758824512,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 199
+    },
+    {
+      "title": "Tameos arrosticini ",
+      "value": -24.0,
+      "datetime": 1754765130145,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 200
+    },
+    {
+      "title": "Colazione ",
+      "value": -5.3,
+      "datetime": 1754832646371,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 201
+    },
+    {
+      "title": "Coop",
+      "value": -4.52,
+      "datetime": 1754832661793,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 202
+    },
+    {
+      "title": "Spesa Mega ",
+      "value": -39.49,
+      "datetime": 1754929988657,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 203
+    },
+    {
+      "title": "Aldamidas X 5",
+      "value": -56.1,
+      "datetime": 1755064873017,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 204
+    },
+    {
+      "title": "Bolletta Gas (2mesi)",
+      "value": -83.0,
+      "datetime": 1755179665673,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 205
+    },
+    {
+      "title": "Cooperativa carne",
+      "value": -8.12,
+      "datetime": 1755179870543,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 206
+    },
+    {
+      "title": "Cassa comune Anna",
+      "value": 250.0,
+      "datetime": 1755179894392,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 207
+    },
+    {
+      "title": "Cassa comune Simone",
+      "value": 100.0,
+      "datetime": 1755179909463,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 208
+    },
+    {
+      "title": "Cassa comune Simone",
+      "value": 50.0,
+      "datetime": 1755455371560,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 209
+    },
+    {
+      "title": "Rimborso bolletta ",
+      "value": 3.0,
+      "datetime": 1755455384122,
+      "category_name": "Rimborso",
+      "category_type": 1,
+      "description": null,
+      "id": 210
+    },
+    {
+      "title": "Cassa comune Anna",
+      "value": 50.0,
+      "datetime": 1755455552185,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 211
+    },
+    {
+      "title": "Spesa Spak",
+      "value": -21.96,
+      "datetime": 1755541680836,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 212
+    },
+    {
+      "title": "Spesa Famila",
+      "value": -17.33,
+      "datetime": 1755622533096,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 213
+    },
+    {
+      "title": "Spesa mercato 21 Giraffe",
+      "value": -9.64,
+      "datetime": 1755946957446,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 214
+    },
+    {
+      "title": "Pesce mercato ",
+      "value": -8.0,
+      "datetime": 1755947003785,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 215
+    },
+    {
+      "title": "Spesa Coop",
+      "value": -33.45,
+      "datetime": 1756061342391,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 216
+    },
+    {
+      "title": "Bolletta Internet TIM",
+      "value": -19.9,
+      "datetime": 1756139592773,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 217
+    },
+    {
+      "title": "Cooperativa carne",
+      "value": -17.25,
+      "datetime": 1756356557820,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 218
+    },
+    {
+      "title": "Spesa Famila",
+      "value": -36.85,
+      "datetime": 1756356581610,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 219
+    },
+    {
+      "title": "Cooperativa carne",
+      "value": -20.88,
+      "datetime": 1756398688666,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 220
+    },
+    {
+      "title": "Olive mercato ",
+      "value": -7.5,
+      "datetime": 1756579047348,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 221
+    },
+    {
+      "title": "Cassa comune Anna",
+      "value": 250.0,
+      "datetime": 1756702490424,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 222
+    },
+    {
+      "title": "Cassa comune Simone",
+      "value": 250.0,
+      "datetime": 1756702500611,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 223
+    },
+    {
+      "title": "Cooperativa carne",
+      "value": -33.0,
+      "datetime": 1757006294814,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 224
+    },
+    {
+      "title": "Spesa Mega",
+      "value": -40.73,
+      "datetime": 1757354044258,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 225
+    },
+    {
+      "title": "Cooperativa carne",
+      "value": -7.97,
+      "datetime": 1757354081282,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 226
+    },
+    {
+      "title": "Spesa Eurospin ",
+      "value": -8.95,
+      "datetime": 1757354107400,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 227
+    },
+    {
+      "title": "Bolletta Enel",
+      "value": -96.01,
+      "datetime": 1757421164902,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 228
+    },
+    {
+      "title": "Bolletta Contarina",
+      "value": -68.06,
+      "datetime": 1758031753843,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 229
+    },
+    {
+      "title": "Profumatori lavatrice ",
+      "value": -19.0,
+      "datetime": 1758971389743,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 230
+    },
+    {
+      "title": "Spesa Mega",
+      "value": -78.63,
+      "datetime": 1758971424020,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 231
+    },
+    {
+      "title": "Bolletta acqua bimestrale ",
+      "value": -78.0,
+      "datetime": 1759236398654,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 232
+    },
+    {
+      "title": "Cassa comune Anna",
+      "value": 250.0,
+      "datetime": 1759296121885,
+      "category_name": "Rimborso",
+      "category_type": 1,
+      "description": null,
+      "id": 233
+    },
+    {
+      "title": "Cassa comune Simone",
+      "value": 150.0,
+      "datetime": 1759296136446,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 234
+    },
+    {
+      "title": "Buoni pasto",
+      "value": 150.0,
+      "datetime": 1759428030935,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 235
+    },
+    {
+      "title": "Spesa Famila",
+      "value": -18.77,
+      "datetime": 1759428045442,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 236
+    },
+    {
+      "title": "Cooperativa carne",
+      "value": -15.8,
+      "datetime": 1759514027874,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 237
+    },
+    {
+      "title": "Spesa Mega ",
+      "value": -30.24,
+      "datetime": 1759514045287,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 238
+    },
+    {
+      "title": "Pizza Santa Lucia Spaghetti House ",
+      "value": -30.0,
+      "datetime": 1759673541116,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 239
+    },
+    {
+      "title": "Bolletta Internet ",
+      "value": -19.9,
+      "datetime": 1759777275011,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 240
+    },
+    {
+      "title": "Spesa Famila",
+      "value": -8.26,
+      "datetime": 1759856134124,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 241
+    },
+    {
+      "title": "Spesa Mega ",
+      "value": -15.54,
+      "datetime": 1760031459889,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 242
+    },
+    {
+      "title": "Colazione Flora",
+      "value": -6.2,
+      "datetime": 1760255431297,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 243
+    },
+    {
+      "title": "Spesa Famila",
+      "value": -41.31,
+      "datetime": 1760461950170,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 244
+    },
+    {
+      "title": "Spesa Coop",
+      "value": -32.3,
+      "datetime": 1760895091105,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 245
+    },
+    {
+      "title": "Bolletta Gas (2mesi)",
+      "value": -60.0,
+      "datetime": 1760969748532,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 246
+    },
+    {
+      "title": "Cooperativa carne",
+      "value": -16.12,
+      "datetime": 1760977856216,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 247
+    },
+    {
+      "title": "Sagra di Roma Carbonara ",
+      "value": -33.0,
+      "datetime": 1761336619108,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 248
+    },
+    {
+      "title": "Spesa Mega ",
+      "value": -73.14,
+      "datetime": 1761382958044,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 249
+    },
+    {
+      "title": "Eurobrico",
+      "value": -9.5,
+      "datetime": 1761382987026,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 250
+    },
+    {
+      "title": "Cooperativa carne",
+      "value": -53.42,
+      "datetime": 1761846676524,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 251
+    },
+    {
+      "title": "Spesa Mega ",
+      "value": -17.38,
+      "datetime": 1761905806553,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 252
+    },
+    {
+      "title": "Cassa comune Anna",
+      "value": 250.0,
+      "datetime": 1762069976845,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 253
+    },
+    {
+      "title": "Cassa comune Simone",
+      "value": 100.0,
+      "datetime": 1762071626864,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 254
+    },
+    {
+      "title": "Bolletta Internet TIM",
+      "value": -20.0,
+      "datetime": 1762186111497,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 255
+    },
+    {
+      "title": "Spesa Famila",
+      "value": -26.0,
+      "datetime": 1762379357259,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 256
+    },
+    {
+      "title": "Cenetta Osteria Corder",
+      "value": -62.5,
+      "datetime": 1762677908539,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 258
+    },
+    {
+      "title": "Pasticceria Amalia ",
+      "value": -20.0,
+      "datetime": 1762677925183,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 259
+    },
+    {
+      "title": "Spesa Spak",
+      "value": -36.0,
+      "datetime": 1763061043015,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 260
+    },
+    {
+      "title": "Spesa Mega",
+      "value": -30.15,
+      "datetime": 1763199740536,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 261
+    },
+    {
+      "title": "Bolletta Enel (2mesi)",
+      "value": -79.77,
+      "datetime": 1763230432902,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 262
+    },
+    {
+      "title": "Pizza regina margherita ",
+      "value": -15.5,
+      "datetime": 1763233903922,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 263
+    },
+    {
+      "title": "Rimborso Nadia",
+      "value": 10.0,
+      "datetime": 1763386581767,
+      "category_name": "Rimborso",
+      "category_type": 1,
+      "description": null,
+      "id": 264
+    },
+    {
+      "title": "Cooperativa banco salumi",
+      "value": -18.33,
+      "datetime": 1763400902091,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 265
+    },
+    {
+      "title": "Spesa Mega",
+      "value": -37.94,
+      "datetime": 1763810687929,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 266
+    },
+    {
+      "title": "Carne cooperativa ",
+      "value": -5.78,
+      "datetime": 1764093867329,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 267
+    },
+    {
+      "title": "Famila",
+      "value": -10.28,
+      "datetime": 1764195658578,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 268
+    },
+    {
+      "title": "Ortofrutta mercato Treviso ",
+      "value": -8.0,
+      "datetime": 1764418792043,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 269
+    },
+    {
+      "title": "Pastine Amalia",
+      "value": -20.0,
+      "datetime": 1764418806933,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 270
+    },
+    {
+      "title": "Spesa Iper Spak ",
+      "value": -10.43,
+      "datetime": 1764495154960,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 271
+    },
+    {
+      "title": "Cassa comune Simone",
+      "value": 150.0,
+      "datetime": 1764616766528,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 272
+    },
+    {
+      "title": "Cassa comune Anna",
+      "value": 250.0,
+      "datetime": 1764616774913,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 273
+    },
+    {
+      "title": "Spesa Tosano",
+      "value": -90.49,
+      "datetime": 1764616787257,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 274
+    },
+    {
+      "title": "Buoni pasto Simone",
+      "value": 150.0,
+      "datetime": 1764616812243,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 275
+    },
+    {
+      "title": "Panificio Brun 3pan.",
+      "value": -73.03,
+      "datetime": 1764830162831,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 276
+    },
+    {
+      "title": "Osteria al ponte Venezia ",
+      "value": -28.5,
+      "datetime": 1765114329324,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 277
+    },
+    {
+      "title": "Osteria Corte Spaghetteria Venezia ",
+      "value": -68.0,
+      "datetime": 1765114343651,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 278
+    },
+    {
+      "title": "Cena a Fabbrica Pedavena TV",
+      "value": -42.5,
+      "datetime": 1765580400000,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 279
+    },
+    {
+      "title": "Bolletta Gas (2mesi)",
+      "value": -173.83,
+      "datetime": 1765894810927,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 280
+    },
+    {
+      "title": "Ortofrutta Visentin",
+      "value": -36.0,
+      "datetime": 1766242085035,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 281
+    },
+    {
+      "title": "Spesa Interspar ",
+      "value": -3.98,
+      "datetime": 1766309881102,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 282
+    },
+    {
+      "title": "Spesa Tosano",
+      "value": -121.93,
+      "datetime": 1766309921936,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 283
+    },
+    {
+      "title": "Cooperativa ",
+      "value": -15.24,
+      "datetime": 1766567780468,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 284
+    },
+    {
+      "title": "Cooperativa ",
+      "value": -3.06,
+      "datetime": 1766567797005,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 285
+    },
+    {
+      "title": "Rimpinguato Anna",
+      "value": 50.0,
+      "datetime": 1766861584206,
+      "category_name": "Rimborso",
+      "category_type": 1,
+      "description": null,
+      "id": 286
+    },
+    {
+      "title": "Rimpinguato Simone ",
+      "value": 50.0,
+      "datetime": 1766861593873,
+      "category_name": "Rimborso",
+      "category_type": 1,
+      "description": null,
+      "id": 287
+    },
+    {
+      "title": "Cooperativa ",
+      "value": -9.45,
+      "datetime": 1766994226321,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 288
+    },
+    {
+      "title": "Pesce LZ",
+      "value": -47.85,
+      "datetime": 1767171582668,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 289
+    },
+    {
+      "title": "Spesa Mega",
+      "value": -44.27,
+      "datetime": 1767171637542,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 290
+    },
+    {
+      "title": "Cassa comune Simone",
+      "value": 100.0,
+      "datetime": 1767222000000,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 291
+    },
+    {
+      "title": "Cassa comune Anna",
+      "value": 250.0,
+      "datetime": 1767222000000,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 292
+    },
+    {
+      "title": "Cooperativa ",
+      "value": -1.72,
+      "datetime": 1767368938625,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 293
+    },
+    {
+      "title": "Colazione Bordin ",
+      "value": -5.2,
+      "datetime": 1767463486024,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 294
+    },
+    {
+      "title": "Buoni pasto Simone",
+      "value": 150.0,
+      "datetime": 1767539254807,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 295
+    },
+    {
+      "title": null,
+      "value": -26.46,
+      "datetime": 1767539269005,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 296
+    },
+    {
+      "title": "Cooperativa carne",
+      "value": -4.29,
+      "datetime": 1767599223505,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 297
+    },
+    {
+      "title": "Idraulico ",
+      "value": -20.0,
+      "datetime": 1768048211427,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 298
+    },
+    {
+      "title": "Bolletta Internet TIM",
+      "value": -20.0,
+      "datetime": 1768048218804,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 299
+    },
+    {
+      "title": "Pizza regina margherita x2",
+      "value": -15.5,
+      "datetime": 1768070022296,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 300
+    },
+    {
+      "title": "Spesa Eurospin ",
+      "value": -3.75,
+      "datetime": 1768126393240,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 301
+    },
+    {
+      "title": "Spesa Mega ",
+      "value": -52.42,
+      "datetime": 1768126484611,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 302
+    },
+    {
+      "title": "Cooperativa ",
+      "value": -3.8,
+      "datetime": 1768172400000,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 303
+    },
+    {
+      "title": "Bolletta Luce",
+      "value": -89.0,
+      "datetime": 1768502652897,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 304
+    },
+    {
+      "title": "Frittelle Quaggiotto",
+      "value": -8.7,
+      "datetime": 1768668559574,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 305
+    },
+    {
+      "title": "Cooperativa carne",
+      "value": -7.85,
+      "datetime": 1769242514849,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 306
+    },
+    {
+      "title": "Famila",
+      "value": -12.0,
+      "datetime": 1769537059477,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 307
+    },
+    {
+      "title": "Famila",
+      "value": -23.0,
+      "datetime": 1769637387418,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 308
+    },
+    {
+      "title": "Bolletta acqua bimestrale ",
+      "value": -38.0,
+      "datetime": 1769779030041,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 309
+    },
+    {
+      "title": "Pizza regina margherita x2",
+      "value": -14.5,
+      "datetime": 1769797664108,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 310
+    },
+    {
+      "title": "Bolletta Internet TIM",
+      "value": -20.0,
+      "datetime": 1769860313139,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 311
+    },
+    {
+      "title": "Cenetta da Alfredo",
+      "value": -87.0,
+      "datetime": 1769814000000,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 312
+    },
+    {
+      "title": "Cassa comune Simone",
+      "value": 100.0,
+      "datetime": 1769932299322,
+      "category_name": "Rimborso",
+      "category_type": 1,
+      "description": null,
+      "id": 313
+    },
+    {
+      "title": "Cassa comune Anna",
+      "value": 250.0,
+      "datetime": 1769932316479,
+      "category_name": "Rimborso",
+      "category_type": 1,
+      "description": null,
+      "id": 314
+    },
+    {
+      "title": "Buoni pasto ",
+      "value": 150.0,
+      "datetime": 1769932359293,
+      "category_name": "Rimborso",
+      "category_type": 1,
+      "description": null,
+      "id": 315
+    },
+    {
+      "title": "Spesa Famila",
+      "value": -25.47,
+      "datetime": 1770269867615,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 316
+    },
+    {
+      "title": "Le papere al Lago",
+      "value": -60.0,
+      "datetime": 1770418800000,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 317
+    },
+    {
+      "title": "Spesa cooperativa Volpago",
+      "value": -6.6,
+      "datetime": 1770658698374,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 318
+    },
+    {
+      "title": "Spesa Famila",
+      "value": -27.35,
+      "datetime": 1770874794916,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 319
+    },
+    {
+      "title": "Pizza Regina Margherita x2",
+      "value": -15.5,
+      "datetime": 1770925539671,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 320
+    },
+    {
+      "title": "Pescheria Volpago ",
+      "value": -23.0,
+      "datetime": 1771070997396,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": "1kg di vongole veraci",
+      "id": 321
+    },
+    {
+      "title": "Bolletta Gas (2mesi)",
+      "value": -266.38,
+      "datetime": 1771270442228,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 322
+    },
+    {
+      "title": "Spesa Lidl",
+      "value": -6.56,
+      "datetime": 1771790345263,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 323
+    },
+    {
+      "title": "Spesa Famila",
+      "value": -33.66,
+      "datetime": 1772084975341,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 324
+    },
+    {
+      "title": "Cassa comune Anna",
+      "value": 250.0,
+      "datetime": 1772349761662,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 325
+    },
+    {
+      "title": "Cassa comune Simone",
+      "value": 100.0,
+      "datetime": 1772349770556,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 326
+    },
+    {
+      "title": "Buoni pasto Simone",
+      "value": 150.0,
+      "datetime": 1772349780779,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 327
+    },
+    {
+      "title": "Spesa cooperativa ",
+      "value": -4.29,
+      "datetime": 1772472191408,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 328
+    },
+    {
+      "title": "Bolletta Internet TIM",
+      "value": -19.9,
+      "datetime": 1772733974045,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 329
+    },
+    {
+      "title": "Pizza Regina Margherita x2",
+      "value": -14.5,
+      "datetime": 1772911893338,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 330
+    },
+    {
+      "title": "Osteria BellaVista (Crespano)",
+      "value": -98.0,
+      "datetime": 1773000887469,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 331
+    },
+    {
+      "title": "Bolletta Luce",
+      "value": -102.0,
+      "datetime": 1773472399489,
+      "category_name": "Bollette",
+      "category_type": 0,
+      "description": null,
+      "id": 332
+    },
+    {
+      "title": "Pizza Regina Margherita x2",
+      "value": -15.0,
+      "datetime": 1773442800000,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 333
+    },
+    {
+      "title": "Spesa Tosano",
+      "value": -108.0,
+      "datetime": 1773582394499,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 334
+    },
+    {
+      "title": "Asparagi punte al mercato ",
+      "value": -6.8,
+      "datetime": 1774079397090,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 335
+    },
+    {
+      "title": "Manzo straccetti ",
+      "value": -9.51,
+      "datetime": 1774079417070,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 336
+    },
+    {
+      "title": "Pizza regina margherita x2",
+      "value": -15.5,
+      "datetime": 1774119543151,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 337
+    },
+    {
+      "title": "Rimpinguato Anna",
+      "value": 50.0,
+      "datetime": 1774377905367,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 338
+    },
+    {
+      "title": "Rimpinguato Simone",
+      "value": 50.0,
+      "datetime": 1774377914259,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 339
+    },
+    {
+      "title": "Spesa Famila",
+      "value": -18.95,
+      "datetime": 1774393200000,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 340
+    },
+    {
+      "title": "Spesa Interspar ",
+      "value": -27.47,
+      "datetime": 1774511271807,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 341
+    },
+    {
+      "title": "Spesa Mega",
+      "value": -20.18,
+      "datetime": 1774704557871,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 342
+    },
+    {
+      "title": "Pizza regina margherita 1m",
+      "value": -32.9,
+      "datetime": 1774738146544,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 343
+    },
+    {
+      "title": "Focaccia pasquale x 3",
+      "value": -79.0,
+      "datetime": 1774738168727,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 344
+    },
+    {
+      "title": "Gelato ",
+      "value": -14.0,
+      "datetime": 1774796941143,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 345
+    },
+    {
+      "title": "Elettricista ",
+      "value": -30.0,
+      "datetime": 1774863580302,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 346
+    },
+    {
+      "title": "Cassa comune Anna",
+      "value": 250.0,
+      "datetime": 1775063301670,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 347
+    },
+    {
+      "title": "Cassa comune Simone",
+      "value": 100.0,
+      "datetime": 1775063311081,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 348
+    },
+    {
+      "title": "Buoni pasto",
+      "value": 150.0,
+      "datetime": 1775063326556,
+      "category_name": "Stipendio",
+      "category_type": 1,
+      "description": null,
+      "id": 349
+    },
+    {
+      "title": "Spesa Crai",
+      "value": -21.42,
+      "datetime": 1775108131608,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 350
+    },
+    {
+      "title": "Cooperativa carne",
+      "value": -58.36,
+      "datetime": 1775302075379,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 351
+    },
+    {
+      "title": "Spesa Spak",
+      "value": -43.76,
+      "datetime": 1775302095598,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 352
+    },
+    {
+      "title": "Aperitivo Treviso caffè artistico ",
+      "value": -12.0,
+      "datetime": 1775302129372,
+      "category_name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "description": null,
+      "id": 353
+    },
+    {
+      "title": "Asparagi verdi 2kg",
+      "value": -15.9,
+      "datetime": 1775308559277,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 354
+    },
+    {
+      "title": "Carne Pasquetta ",
+      "value": 30.0,
+      "datetime": 1775580993014,
+      "category_name": "Rimborso",
+      "category_type": 1,
+      "description": null,
+      "id": 355
+    },
+    {
+      "title": "Vinted - scarpe Salewa",
+      "value": 30.0,
+      "datetime": 1775583361657,
+      "category_name": "Rimborso",
+      "category_type": 1,
+      "description": null,
+      "id": 356
+    },
+    {
+      "title": "Spesa Famila",
+      "value": -27.0,
+      "datetime": 1775683615200,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 357
+    },
+    {
+      "title": "Accessori moka - ferramenta Bianchi",
+      "value": -4.75,
+      "datetime": 1775905966781,
+      "category_name": "Casa",
+      "category_type": 0,
+      "description": null,
+      "id": 358
+    },
+    {
+      "title": "Spesa IperLando",
+      "value": -57.84,
+      "datetime": 1775905997892,
+      "category_name": "Cibo",
+      "category_type": 0,
+      "description": null,
+      "id": 359
+    }
+  ],
+  "categories": [
+    {
+      "name": "Casa",
+      "category_type": 0,
+      "last_used": 1775905983000,
+      "record_count": 0,
+      "color": "255:129:199:132",
+      "is_archived": 0,
+      "icon_emoji": null,
+      "sort_order": 0,
+      "icon": 61461
+    },
+    {
+      "name": "Trasporti",
+      "category_type": 0,
+      "last_used": null,
+      "record_count": 0,
+      "color": "255:229:115:115",
+      "is_archived": 0,
+      "icon_emoji": null,
+      "sort_order": 0,
+      "icon": 61959
+    },
+    {
+      "name": "Cibo",
+      "category_type": 0,
+      "last_used": 1775906004000,
+      "record_count": 0,
+      "color": "255:100:181:246",
+      "is_archived": 0,
+      "icon_emoji": null,
+      "sort_order": 0,
+      "icon": 63493
+    },
+    {
+      "name": "Stipendio",
+      "category_type": 1,
+      "last_used": 1775063332000,
+      "record_count": 0,
+      "color": "255:255:183:77",
+      "is_archived": 0,
+      "icon_emoji": null,
+      "sort_order": 0,
+      "icon": 62805
+    },
+    {
+      "name": "Bollette",
+      "category_type": 0,
+      "last_used": 1773472407000,
+      "record_count": 37,
+      "color": "255:253:216:53",
+      "is_archived": 0,
+      "icon_emoji": null,
+      "sort_order": 0,
+      "icon": 57349
+    },
+    {
+      "name": "Rimborso",
+      "category_type": 1,
+      "last_used": 1775583373000,
+      "record_count": 26,
+      "color": "255:129:199:132",
+      "is_archived": 0,
+      "icon_emoji": null,
+      "sort_order": 0,
+      "icon": 62778
+    },
+    {
+      "name": "Pranzi / Cenette fuori",
+      "category_type": 0,
+      "last_used": 1775302145000,
+      "record_count": 34,
+      "color": "255:255:183:77",
+      "is_archived": 0,
+      "icon_emoji": null,
+      "sort_order": 0,
+      "icon": 63512
+    },
+    {
+      "name": "Divertimento & Spettacolo ",
+      "category_type": 0,
+      "last_used": 1733733817000,
+      "record_count": 2,
+      "color": "255:129:199:132",
+      "is_archived": 0,
+      "icon_emoji": null,
+      "sort_order": 0,
+      "icon": 63024
+    }
+  ],
+  "recurrent_record_patterns": [],
+  "created_at": 1776062035450,
+  "package_name": "com.github.emavgl.piggybankpro",
+  "version": "1.0.73",
+  "database_version": "9"
+}

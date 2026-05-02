@@ -42,7 +42,8 @@ class InsertTransactionUseCaseTest {
     @Before
     fun setup() {
         fakeRepo = FakeInsertTransactionRepository()
-        useCase = InsertTransactionUseCase(fakeRepo, UnconfinedTestDispatcher(testDispatcher.scheduler))
+        useCase =
+            InsertTransactionUseCase(fakeRepo, UnconfinedTestDispatcher(testDispatcher.scheduler))
     }
 
     // ── Happy Path ───────────────────────────────────────────────────────────
@@ -123,15 +124,21 @@ private class FakeInsertTransactionRepository : TransactionRepository {
         return nextId++
     }
 
-    override fun getAllTransactions(): Flow<List<Transaction>> = flowOf(insertedTransactions.toList())
-    override suspend fun getTransactionById(id: Long): Transaction? = insertedTransactions.find { it.id == id }
+    override fun getAllTransactions(): Flow<List<Transaction>> =
+        flowOf(insertedTransactions.toList())
+
+    override suspend fun getTransactionById(id: Long): Transaction? =
+        insertedTransactions.find { it.id == id }
+
     override suspend fun updateTransaction(transaction: Transaction) = Unit
     override suspend fun deleteTransaction(transaction: Transaction) = Unit
     override suspend fun deleteAllTransactions() = Unit
     override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> =
         flowOf(insertedTransactions.filter { it.timestamp in from..to })
+
     override fun getRecurringTransactions(): Flow<List<Transaction>> =
         flowOf(insertedTransactions.filter { it.isRecurring })
+
     override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) {}
     override fun getDistinctTitles() = flowOf(emptyList<String>())
     override fun getDistinctPayees() = flowOf(emptyList<String>())
@@ -154,7 +161,9 @@ private class SlowFakeInsertRepository(private val delayMs: Long) : TransactionR
     override suspend fun updateTransaction(transaction: Transaction) {}
     override suspend fun deleteTransaction(transaction: Transaction) {}
     override suspend fun deleteAllTransactions() {}
-    override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> = flowOf(emptyList())
+    override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> =
+        flowOf(emptyList())
+
     override fun getRecurringTransactions(): Flow<List<Transaction>> = flowOf(emptyList())
     override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) {}
     override fun getDistinctTitles() = flowOf(emptyList<String>())

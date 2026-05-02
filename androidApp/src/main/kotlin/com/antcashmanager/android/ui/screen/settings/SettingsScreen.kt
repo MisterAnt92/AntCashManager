@@ -14,6 +14,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -47,6 +50,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -64,16 +68,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.material3.Scaffold
-import androidx.compose.ui.unit.LayoutDirection
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.AntCashManagerApp
 import com.antcashmanager.android.BuildConfig
@@ -83,7 +83,6 @@ import com.antcashmanager.android.ui.components.AppListItem
 import com.antcashmanager.android.ui.components.AppRadioButton
 import com.antcashmanager.android.ui.components.AppSwitch
 import com.antcashmanager.android.ui.components.HelpButton
-import com.antcashmanager.android.ui.components.ScreenHeader
 import com.antcashmanager.android.ui.components.TutorialOverlay
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
@@ -96,12 +95,10 @@ import com.antcashmanager.android.ui.screen.settings.view.PrivacyPolicyDialog
 import com.antcashmanager.android.ui.screen.settings.view.SeparatorDialog
 import com.antcashmanager.android.ui.screen.settings.view.ThemeSelectionDialog
 import com.antcashmanager.android.ui.screen.settings.view.ThirdPartyLibrariesDialog
-import com.antcashmanager.android.ui.screen.settings.view.TransactionIconDisplayDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.CurrencyFormat
-import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
@@ -395,193 +392,192 @@ internal fun SettingsContent(
 
             // ── Appearance Section ──
             // ... rest of Column content ...
-        AppCardSectionHeader(title = stringResource(R.string.settings_appearance))
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            AppCard(
-                title = stringResource(R.string.settings_theme),
-                subtitle = when (currentTheme) {
-                    AppTheme.LIGHT -> stringResource(R.string.settings_theme_light)
-                    AppTheme.DARK -> stringResource(R.string.settings_theme_dark)
-                    AppTheme.SYSTEM -> stringResource(R.string.settings_theme_system)
-                },
-                leadingIcon = Icons.Default.Palette,
-                onClick = { showThemeDialog = true },
-            )
-            AppCard(
-                title = stringResource(R.string.settings_language),
-                subtitle = languageDisplayName(currentLanguage),
-                leadingIcon = Icons.Default.Language,
-                onClick = { showLanguageDialog = true },
-            )
-        }
-
-        // ── Display Section ──
-        AppCardSectionHeader(title = stringResource(R.string.settings_display))
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            AppCard(
-                title = stringResource(R.string.settings_display),
-                subtitle = stringResource(R.string.settings_display_subtitle),
-                leadingIcon = Icons.Default.TextFields,
-                onClick = { navController?.navigate("display") },
-            )
-        }
-
-
-
-        // ── Accessibility Section ──
-        AppCardSectionHeader(title = stringResource(R.string.settings_accessibility))
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            AppCard(
-                title = stringResource(R.string.settings_high_contrast),
-                subtitle = stringResource(R.string.settings_high_contrast_subtitle),
-                leadingIcon = Icons.Default.Contrast,
-                trailingContent = {
-                    AppSwitch(
-                        checked = highContrast,
-                        onCheckedChange = onHighContrastChanged,
-                    )
-                },
-                onClick = { onHighContrastChanged(!highContrast) },
-            )
-            AppCard(
-                title = stringResource(R.string.settings_large_text),
-                subtitle = stringResource(R.string.settings_large_text_subtitle),
-                leadingIcon = Icons.Default.FormatSize,
-                trailingContent = {
-                    AppSwitch(
-                        checked = largeText,
-                        onCheckedChange = onLargeTextChanged,
-                    )
-                },
-                onClick = { onLargeTextChanged(!largeText) },
-            )
-            AppCard(
-                title = stringResource(R.string.settings_reduce_motion),
-                subtitle = stringResource(R.string.settings_reduce_motion_subtitle),
-                leadingIcon = Icons.Default.MotionPhotosOff,
-                trailingContent = {
-                    AppSwitch(
-                        checked = reduceMotion,
-                        onCheckedChange = onReduceMotionChanged,
-                    )
-                },
-                onClick = { onReduceMotionChanged(!reduceMotion) },
-            )
-        }
-
-        // ── Data Management Section ──
-        AppCardSectionHeader(title = stringResource(R.string.settings_data_management))
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            AppCard(
-                title = stringResource(R.string.settings_backup),
-                subtitle = stringResource(R.string.settings_backup_subtitle),
-                leadingIcon = Icons.Default.Backup,
-                iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
-                iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
-                onClick = {
-                    analyticsManager?.logEvent("backup_create_requested")
-                    val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
-                        .format(Date())
-                    onCreateBackup { jsonData ->
-                        jsonData?.let {
-                            analyticsManager?.logEvent("backup_create_success")
-                            pendingBackupData = it
-                            backupLauncher.launch("antcashmanager_backup_$timestamp.json")
-                        } ?: analyticsManager?.logEvent("backup_create_failed")
-                    }
-                },
-            )
-            AppCard(
-                title = stringResource(R.string.settings_restore),
-                subtitle = stringResource(R.string.settings_restore_subtitle),
-                leadingIcon = Icons.Default.RestorePage,
-                iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
-                iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
-                onClick = {
-                    restoreLauncher.launch(arrayOf("application/json"))
-                },
-            )
-            AppCard(
-                title = stringResource(R.string.settings_reset_preferences),
-                subtitle = stringResource(R.string.settings_reset_preferences_subtitle),
-                leadingIcon = Icons.Default.Refresh,
-                iconBackgroundColor = MaterialTheme.colorScheme.errorContainer,
-                iconTint = MaterialTheme.colorScheme.onErrorContainer,
-                showChevron = false,
-                onClick = { showResetPreferencesDialog = true },
-            )
-            AppCard(
-                title = stringResource(R.string.settings_delete_all),
-                subtitle = stringResource(R.string.settings_delete_all_subtitle),
-                leadingIcon = Icons.Default.Delete,
-                iconBackgroundColor = MaterialTheme.colorScheme.errorContainer,
-                iconTint = MaterialTheme.colorScheme.onErrorContainer,
-                showChevron = false,
-                onClick = { showDeleteConfirmDialog = true },
-            )
-        }
-
-        // ── Support Section ──
-        AppCardSectionHeader(title = stringResource(R.string.settings_support))
-        val feedbackEmailBody = stringResource(
-            when (currentLanguage) {
-                AppLanguage.ITALIAN -> R.string.feedback_email_body_italian
-                AppLanguage.ENGLISH -> R.string.feedback_email_body_english
-                AppLanguage.FRENCH -> R.string.feedback_email_body_french
-                AppLanguage.GERMAN -> R.string.feedback_email_body_german
-                AppLanguage.SPANISH -> R.string.feedback_email_body_spanish
-                AppLanguage.SYSTEM -> R.string.feedback_email_body_english
+            AppCardSectionHeader(title = stringResource(R.string.settings_appearance))
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                AppCard(
+                    title = stringResource(R.string.settings_theme),
+                    subtitle = when (currentTheme) {
+                        AppTheme.LIGHT -> stringResource(R.string.settings_theme_light)
+                        AppTheme.DARK -> stringResource(R.string.settings_theme_dark)
+                        AppTheme.SYSTEM -> stringResource(R.string.settings_theme_system)
+                    },
+                    leadingIcon = Icons.Default.Palette,
+                    onClick = { showThemeDialog = true },
+                )
+                AppCard(
+                    title = stringResource(R.string.settings_language),
+                    subtitle = languageDisplayName(currentLanguage),
+                    leadingIcon = Icons.Default.Language,
+                    onClick = { showLanguageDialog = true },
+                )
             }
-        )
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            AppCard(
-                title = stringResource(R.string.settings_send_feedback),
-                subtitle = stringResource(R.string.settings_send_feedback_subtitle),
-                leadingIcon = Icons.Default.Feedback,
-                iconBackgroundColor = MaterialTheme.colorScheme.secondaryContainer,
-                iconTint = MaterialTheme.colorScheme.onSecondaryContainer,
-                onClick = {
-                    onSendFeedbackEmail(feedbackEmailBody)
-                },
+
+            // ── Display Section ──
+            AppCardSectionHeader(title = stringResource(R.string.settings_display))
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                AppCard(
+                    title = stringResource(R.string.settings_display),
+                    subtitle = stringResource(R.string.settings_display_subtitle),
+                    leadingIcon = Icons.Default.TextFields,
+                    onClick = { navController?.navigate("display") },
+                )
+            }
+
+
+            // ── Accessibility Section ──
+            AppCardSectionHeader(title = stringResource(R.string.settings_accessibility))
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                AppCard(
+                    title = stringResource(R.string.settings_high_contrast),
+                    subtitle = stringResource(R.string.settings_high_contrast_subtitle),
+                    leadingIcon = Icons.Default.Contrast,
+                    trailingContent = {
+                        AppSwitch(
+                            checked = highContrast,
+                            onCheckedChange = onHighContrastChanged,
+                        )
+                    },
+                    onClick = { onHighContrastChanged(!highContrast) },
+                )
+                AppCard(
+                    title = stringResource(R.string.settings_large_text),
+                    subtitle = stringResource(R.string.settings_large_text_subtitle),
+                    leadingIcon = Icons.Default.FormatSize,
+                    trailingContent = {
+                        AppSwitch(
+                            checked = largeText,
+                            onCheckedChange = onLargeTextChanged,
+                        )
+                    },
+                    onClick = { onLargeTextChanged(!largeText) },
+                )
+                AppCard(
+                    title = stringResource(R.string.settings_reduce_motion),
+                    subtitle = stringResource(R.string.settings_reduce_motion_subtitle),
+                    leadingIcon = Icons.Default.MotionPhotosOff,
+                    trailingContent = {
+                        AppSwitch(
+                            checked = reduceMotion,
+                            onCheckedChange = onReduceMotionChanged,
+                        )
+                    },
+                    onClick = { onReduceMotionChanged(!reduceMotion) },
+                )
+            }
+
+            // ── Data Management Section ──
+            AppCardSectionHeader(title = stringResource(R.string.settings_data_management))
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                AppCard(
+                    title = stringResource(R.string.settings_backup),
+                    subtitle = stringResource(R.string.settings_backup_subtitle),
+                    leadingIcon = Icons.Default.Backup,
+                    iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
+                    iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
+                    onClick = {
+                        analyticsManager?.logEvent("backup_create_requested")
+                        val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
+                            .format(Date())
+                        onCreateBackup { jsonData ->
+                            jsonData?.let {
+                                analyticsManager?.logEvent("backup_create_success")
+                                pendingBackupData = it
+                                backupLauncher.launch("antcashmanager_backup_$timestamp.json")
+                            } ?: analyticsManager?.logEvent("backup_create_failed")
+                        }
+                    },
+                )
+                AppCard(
+                    title = stringResource(R.string.settings_restore),
+                    subtitle = stringResource(R.string.settings_restore_subtitle),
+                    leadingIcon = Icons.Default.RestorePage,
+                    iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
+                    iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
+                    onClick = {
+                        restoreLauncher.launch(arrayOf("application/json"))
+                    },
+                )
+                AppCard(
+                    title = stringResource(R.string.settings_reset_preferences),
+                    subtitle = stringResource(R.string.settings_reset_preferences_subtitle),
+                    leadingIcon = Icons.Default.Refresh,
+                    iconBackgroundColor = MaterialTheme.colorScheme.errorContainer,
+                    iconTint = MaterialTheme.colorScheme.onErrorContainer,
+                    showChevron = false,
+                    onClick = { showResetPreferencesDialog = true },
+                )
+                AppCard(
+                    title = stringResource(R.string.settings_delete_all),
+                    subtitle = stringResource(R.string.settings_delete_all_subtitle),
+                    leadingIcon = Icons.Default.Delete,
+                    iconBackgroundColor = MaterialTheme.colorScheme.errorContainer,
+                    iconTint = MaterialTheme.colorScheme.onErrorContainer,
+                    showChevron = false,
+                    onClick = { showDeleteConfirmDialog = true },
+                )
+            }
+
+            // ── Support Section ──
+            AppCardSectionHeader(title = stringResource(R.string.settings_support))
+            val feedbackEmailBody = stringResource(
+                when (currentLanguage) {
+                    AppLanguage.ITALIAN -> R.string.feedback_email_body_italian
+                    AppLanguage.ENGLISH -> R.string.feedback_email_body_english
+                    AppLanguage.FRENCH -> R.string.feedback_email_body_french
+                    AppLanguage.GERMAN -> R.string.feedback_email_body_german
+                    AppLanguage.SPANISH -> R.string.feedback_email_body_spanish
+                    AppLanguage.SYSTEM -> R.string.feedback_email_body_english
+                }
             )
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                AppCard(
+                    title = stringResource(R.string.settings_send_feedback),
+                    subtitle = stringResource(R.string.settings_send_feedback_subtitle),
+                    leadingIcon = Icons.Default.Feedback,
+                    iconBackgroundColor = MaterialTheme.colorScheme.secondaryContainer,
+                    iconTint = MaterialTheme.colorScheme.onSecondaryContainer,
+                    onClick = {
+                        onSendFeedbackEmail(feedbackEmailBody)
+                    },
+                )
+                AppCard(
+                    title = stringResource(R.string.settings_privacy_policy),
+                    subtitle = stringResource(R.string.settings_privacy_policy_subtitle),
+                    leadingIcon = Icons.Default.PrivacyTip,
+                    iconBackgroundColor = MaterialTheme.colorScheme.secondaryContainer,
+                    iconTint = MaterialTheme.colorScheme.onSecondaryContainer,
+                    onClick = { showPrivacyDialog = true },
+                )
+                DonationCard(context = context)
+            }
+
+            // ── Tutorial Section ──
+            AppCardSectionHeader(title = stringResource(R.string.settings_tutorial))
             AppCard(
-                title = stringResource(R.string.settings_privacy_policy),
-                subtitle = stringResource(R.string.settings_privacy_policy_subtitle),
-                leadingIcon = Icons.Default.PrivacyTip,
-                iconBackgroundColor = MaterialTheme.colorScheme.secondaryContainer,
-                iconTint = MaterialTheme.colorScheme.onSecondaryContainer,
-                onClick = { showPrivacyDialog = true },
+                title = stringResource(R.string.settings_show_tutorial),
+                subtitle = stringResource(R.string.settings_show_tutorial_subtitle),
+                leadingIcon = Icons.Default.Info,
+                onClick = { showTutorial = true },
             )
-            DonationCard(context = context)
+
+            // ── About Section ──
+            AppCardSectionHeader(title = stringResource(R.string.settings_about))
+            AppCard(
+                title = stringResource(R.string.settings_app_version),
+                subtitle = versionName,
+                leadingIcon = Icons.Default.Info,
+                showChevron = false,
+            )
+
+            // ── Third-party Libraries Section ──
+            AppCardSectionHeader(title = stringResource(R.string.settings_third_party))
+            AppCard(
+                title = stringResource(R.string.settings_third_party_libraries),
+                subtitle = stringResource(R.string.settings_third_party_subtitle),
+                leadingIcon = Icons.AutoMirrored.Filled.LibraryBooks,
+                onClick = { showLibrariesDialog = true },
+            )
         }
-
-        // ── Tutorial Section ──
-        AppCardSectionHeader(title = stringResource(R.string.settings_tutorial))
-        AppCard(
-            title = stringResource(R.string.settings_show_tutorial),
-            subtitle = stringResource(R.string.settings_show_tutorial_subtitle),
-            leadingIcon = Icons.Default.Info,
-            onClick = { showTutorial = true },
-        )
-
-        // ── About Section ──
-        AppCardSectionHeader(title = stringResource(R.string.settings_about))
-        AppCard(
-            title = stringResource(R.string.settings_app_version),
-            subtitle = versionName,
-            leadingIcon = Icons.Default.Info,
-            showChevron = false,
-        )
-
-        // ── Third-party Libraries Section ──
-        AppCardSectionHeader(title = stringResource(R.string.settings_third_party))
-        AppCard(
-            title = stringResource(R.string.settings_third_party_libraries),
-            subtitle = stringResource(R.string.settings_third_party_subtitle),
-            leadingIcon = Icons.AutoMirrored.Filled.LibraryBooks,
-            onClick = { showLibrariesDialog = true },
-        )
-    }
     } // Closing Scaffold
 
     // ── Dialogs ──

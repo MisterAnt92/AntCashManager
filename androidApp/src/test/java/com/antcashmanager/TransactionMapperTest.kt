@@ -72,7 +72,8 @@ class TransactionMapperTest {
     @Test
     fun `all payment types map correctly`() {
         val paymentTypes = listOf("ELECTRONIC", "CASH", "MEAL_VOUCHERS")
-        val expectedTypes = listOf(PaymentType.ELECTRONIC, PaymentType.CASH, PaymentType.MEAL_VOUCHERS)
+        val expectedTypes =
+            listOf(PaymentType.ELECTRONIC, PaymentType.CASH, PaymentType.MEAL_VOUCHERS)
 
         paymentTypes.zip(expectedTypes).forEach { (stringType, expectedType) ->
             val entity = TransactionEntity(

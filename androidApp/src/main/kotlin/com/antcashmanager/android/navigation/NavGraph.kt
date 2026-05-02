@@ -1,6 +1,7 @@
 package com.antcashmanager.android.navigation
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -14,7 +15,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -28,9 +28,9 @@ import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.screen.categories.CategoriesScreen
 import com.antcashmanager.android.ui.screen.charts.ChartsScreen
 import com.antcashmanager.android.ui.screen.home.HomeScreen
+import com.antcashmanager.android.ui.screen.receiptScan.ReceiptScanScreen
 import com.antcashmanager.android.ui.screen.settings.SettingsScreen
 import com.antcashmanager.android.ui.screen.settingsDisplay.DisplayScreen
-import com.antcashmanager.android.ui.screen.receiptScan.ReceiptScanScreen
 import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionScreen
 import com.antcashmanager.android.ui.screen.transactions.TransactionsScreen
 import com.antcashmanager.android.util.LocalCurrencyFormat

@@ -83,8 +83,8 @@ import com.antcashmanager.android.ui.components.AnimatedListItem
 import com.antcashmanager.android.ui.components.AntEmptyState
 import com.antcashmanager.android.ui.components.DateRangeFilter
 import com.antcashmanager.android.ui.components.HelpButton
-import com.antcashmanager.android.ui.components.ScreenHeader
 import com.antcashmanager.android.ui.components.HelpDialogContent
+import com.antcashmanager.android.ui.components.ScreenHeader
 import com.antcashmanager.android.ui.components.SearchComponent
 import com.antcashmanager.android.ui.components.SimpleHelpFeature
 import com.antcashmanager.android.ui.components.SkeletonLoader
@@ -121,7 +121,8 @@ fun TransactionsScreen(
     navController: NavController? = null,
 ) {
     Logger.d("TransactionsScreen") { "Displaying TransactionsScreen" }
-    val analyticsManager = (LocalContext.current.applicationContext as AntCashManagerApp).analyticsManager
+    val analyticsManager =
+        (LocalContext.current.applicationContext as AntCashManagerApp).analyticsManager
 
     val viewModel: TransactionsViewModel = viewModel(
         factory = object : ViewModelProvider.Factory {
@@ -522,6 +523,7 @@ internal fun TransactionsContent(
                     }
                     item { Spacer(modifier = Modifier.height(80.dp)) }
                 }
+
                 state.filteredTransactions.isEmpty() -> {
                     item {
                         AntEmptyState(
@@ -532,6 +534,7 @@ internal fun TransactionsContent(
                         )
                     }
                 }
+
                 else -> {
                     items(
                         items = state.filteredTransactions,
@@ -821,7 +824,10 @@ private fun ActiveFiltersRow(
                     onClick = { },
                     label = {
                         Text(
-                            text = stringResource(R.string.transactions_search_query_preview, searchQuery),
+                            text = stringResource(
+                                R.string.transactions_search_query_preview,
+                                searchQuery
+                            ),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )

@@ -33,7 +33,10 @@ class CategoriesViewModel(
                     _state.update { it.copy(categories = cats) }
                 }.onFailure { error ->
                     if (error is kotlinx.coroutines.CancellationException) throw error
-                    Logger.e("CategoriesViewModel", error) { "Error loading categories: ${error.message}" }
+                    Logger.e(
+                        "CategoriesViewModel",
+                        error
+                    ) { "Error loading categories: ${error.message}" }
                 }
             }
         }
@@ -57,7 +60,10 @@ class CategoriesViewModel(
             )
             result.onFailure { error ->
                 if (error is kotlinx.coroutines.CancellationException) throw error
-                Logger.e("CategoriesViewModel", error) { "Failed to insert category: ${error.message}" }
+                Logger.e(
+                    "CategoriesViewModel",
+                    error
+                ) { "Failed to insert category: ${error.message}" }
             }
         }
     }
@@ -68,7 +74,10 @@ class CategoriesViewModel(
             val result = updateCategoryUseCase(category)
             result.onFailure { error ->
                 if (error is kotlinx.coroutines.CancellationException) throw error
-                Logger.e("CategoriesViewModel", error) { "Failed to update category: ${error.message}" }
+                Logger.e(
+                    "CategoriesViewModel",
+                    error
+                ) { "Failed to update category: ${error.message}" }
             }
         }
     }
@@ -79,7 +88,10 @@ class CategoriesViewModel(
             val result = deleteCategoryUseCase(category)
             result.onFailure { error ->
                 if (error is kotlinx.coroutines.CancellationException) throw error
-                Logger.e("CategoriesViewModel", error) { "Failed to delete category: ${error.message}" }
+                Logger.e(
+                    "CategoriesViewModel",
+                    error
+                ) { "Failed to delete category: ${error.message}" }
             }
         }
     }
