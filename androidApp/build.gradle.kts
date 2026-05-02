@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material.icons)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.google.fonts)
     implementation(libs.kermit)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.firebase.analytics)

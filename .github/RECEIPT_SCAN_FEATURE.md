@@ -76,8 +76,8 @@ Schermata Transazioni → FAB ricevuta (terziario) → ReceiptScanScreen
 ```
 
 ### 1. CAPTURE Step
-- Tasto **"📷 Scatta Foto"** → fotocamera (necessita FileProvider)
-- Tasto **"🖼️ Scegli da Galleria"** → selezione immagine
+- Tasto **"Scatta Foto"** → fotocamera (necessita FileProvider)
+- Tasto **"Scegli da Galleria"** → selezione immagine
 
 ### 2. PROCESSING Step
 - Mostra spinner + "Analisi scontrino in corso…"
@@ -93,7 +93,7 @@ Schermata Transazioni → FAB ricevuta (terziario) → ReceiptScanScreen
 - **Campo editabile**: Luogo
 - **Card categoria** (default: prima categoria EXPENSE) → tap per dialog selezione
 - **Card tipo pagamento** (rilevato automaticamente es. "Bancomat") → tap per dialog selezione (**override utente**)
-- Pulsante "💾 Salva Transazione" → crea Transaction EXPENSE con paymentType scelto
+- Pulsante "Salva Transazione" → crea Transaction EXPENSE con paymentType scelto
 
 ### Dialogs
 - **Dialog Categoria**: lista categorie EXPENSE, radio button
