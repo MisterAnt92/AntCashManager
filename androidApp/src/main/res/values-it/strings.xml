@@ -381,6 +381,25 @@
       <string name="settings_transaction_icon_display_category">Categoria</string>
       <string name="settings_transaction_icon_display_none">Nessuna</string>
       <string name="dialog_choose_transaction_icon_display">Scegli il tipo di visualizzazione</string>
+
+    <!-- Receipt Scan Screen -->
+    <string name="receipt_scan_title">Scansiona Scontrino</string>
+    <string name="receipt_scan_capture_hint">Scatta una foto allo scontrino o scegline una dalla galleria per estrarre automaticamente importo, IVA, beneficiario e luogo.</string>
+    <string name="receipt_scan_take_photo">Scatta Foto</string>
+    <string name="receipt_scan_pick_gallery">Scegli dalla Galleria</string>
+    <string name="receipt_scan_processing">Analisi scontrino in corso…</string>
+    <string name="receipt_scan_total_label">Totale Estratto</string>
+    <string name="receipt_scan_title_label">Titolo Transazione</string>
+    <string name="receipt_scan_payee_label">Beneficiario / Esercente</string>
+    <string name="receipt_scan_location_label">Luogo</string>
+    <string name="receipt_scan_select_category">Seleziona Categoria</string>
+    <string name="receipt_scan_category_subtitle">Categoria di spesa per questa transazione</string>
+    <string name="receipt_scan_no_categories">Nessuna categoria di spesa disponibile. Aggiungi prima una categoria.</string>
+    <string name="receipt_scan_save">Salva Transazione</string>
+    <string name="receipt_scan_retry">Effettua nuova scansione</string>
+    <string name="receipt_scan_nav_label">Scansiona Scontrino</string>
+    <string name="receipt_scan_payment_type_subtitle">Metodo di pagamento — rilevato automaticamente, tocca per modificare</string>
+    <string name="receipt_scan_select_payment_type">Seleziona Tipo Pagamento</string>
 </resources>
 
 

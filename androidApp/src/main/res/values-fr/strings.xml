@@ -361,6 +361,25 @@
       <string name="settings_transaction_icon_display_category">Catégorie</string>
       <string name="settings_transaction_icon_display_none">Aucun</string>
       <string name="dialog_choose_transaction_icon_display">Choisir le type d\'affichage des icônes</string>
+
+    <!-- Receipt Scan Screen -->
+    <string name="receipt_scan_title">Scanner le reçu</string>
+    <string name="receipt_scan_capture_hint">Prenez une photo de votre reçu ou choisissez-en une dans la galerie pour extraire automatiquement le montant, la TVA, le bénéficiaire et l\'adresse.</string>
+    <string name="receipt_scan_take_photo">Prendre une photo</string>
+    <string name="receipt_scan_pick_gallery">Choisir dans la galerie</string>
+    <string name="receipt_scan_processing">Analyse du reçu…</string>
+    <string name="receipt_scan_total_label">Total extrait</string>
+    <string name="receipt_scan_title_label">Titre de la transaction</string>
+    <string name="receipt_scan_payee_label">Bénéficiaire / Commerçant</string>
+    <string name="receipt_scan_location_label">Lieu</string>
+    <string name="receipt_scan_select_category">Sélectionner une catégorie</string>
+    <string name="receipt_scan_category_subtitle">Catégorie de dépense pour cette transaction</string>
+    <string name="receipt_scan_no_categories">Aucune catégorie de dépense disponible. Ajoutez d\'abord une catégorie.</string>
+    <string name="receipt_scan_save">Enregistrer la transaction</string>
+    <string name="receipt_scan_retry">Nouvelle analyse</string>
+    <string name="receipt_scan_nav_label">Scanner le reçu</string>
+    <string name="receipt_scan_payment_type_subtitle">Mode de paiement — détecté automatiquement, appuyez pour modifier</string>
+    <string name="receipt_scan_select_payment_type">Sélectionner le mode de paiement</string>
 </resources>
 
 

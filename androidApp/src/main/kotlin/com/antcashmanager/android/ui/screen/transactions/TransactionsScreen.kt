@@ -36,6 +36,7 @@ import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.Receipt
 import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
@@ -299,6 +300,19 @@ internal fun TransactionsContent(
                             modifier = Modifier.size(20.dp)
                         )
                     }
+                }
+
+                // Scan receipt (OCR) button
+                FloatingActionButton(
+                    onClick = { navController?.navigate("receipt_scan") },
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Receipt,
+                        contentDescription = stringResource(R.string.receipt_scan_nav_label),
+                        modifier = Modifier.size(24.dp),
+                    )
                 }
 
                 // Add transaction button
@@ -807,7 +821,7 @@ private fun ActiveFiltersRow(
                     onClick = { },
                     label = {
                         Text(
-                            text = "\"$searchQuery\"",
+                            text = stringResource(R.string.transactions_search_query_preview, searchQuery),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )

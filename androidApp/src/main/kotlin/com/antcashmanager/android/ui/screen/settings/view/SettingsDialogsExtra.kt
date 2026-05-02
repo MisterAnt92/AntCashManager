@@ -176,7 +176,7 @@ fun ThirdPartyLibrariesDialog(onDismiss: () -> Unit) {
                             fontWeight = FontWeight.Medium
                         )
                         AppText(
-                            text = "by $author",
+                            text = stringResource(R.string.settings_third_party_author, author),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

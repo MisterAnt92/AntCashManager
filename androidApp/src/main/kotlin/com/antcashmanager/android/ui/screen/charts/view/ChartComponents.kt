@@ -228,7 +228,11 @@ internal fun PieLegend(data: Map<String, Double>) {
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "${formatAmount(value, fmt)} • %.1f%%".format(percentage),
+                        text = stringResource(
+                            R.string.charts_legend_item_subtitle,
+                            formatAmount(value, fmt),
+                            "%.1f%%".format(percentage)
+                        ),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )

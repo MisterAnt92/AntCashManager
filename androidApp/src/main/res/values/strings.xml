@@ -19,6 +19,7 @@
     <string name="home_empty_ant">Our little ant is waiting for your first transaction! 🐜</string>
     <string name="home_balance_positive">📈 Positive</string>
     <string name="home_balance_negative">📉 Negative</string>
+    <string name="home_transaction_item_subtitle">%1$s • %2$s</string>
 
     <!-- Transactions Screen -->
     <string name="transactions_title">Transactions</string>
@@ -59,6 +60,7 @@
     <string name="transactions_filter_type">Transaction Type</string>
     <string name="transactions_filter_payment">Payment Type</string>
     <string name="transactions_filter_category">Category</string>
+    <string name="transactions_search_query_preview">\"%s\"</string>
     <string name="transactions_results_count">Results: %1$d</string>
     <string name="common_all">All</string>
     <string name="common_clear">Clear</string>
@@ -81,6 +83,7 @@
     <string name="categories_default_badge">Default</string>
     <string name="categories_cannot_delete_default">Default categories cannot be deleted</string>
     <string name="categories_icon_label">Icon</string>
+    <string name="categories_selection_hint">Tap a category to select it (auto-advances in real app)</string>
 
     <!-- Charts Screen -->
     <string name="charts_title">Charts</string>
@@ -94,6 +97,7 @@
     <string name="charts_expense_by_category">Expenses by Category</string>
     <string name="charts_monthly_overview">Monthly Overview</string>
     <string name="charts_yearly_overview">Yearly Overview</string>
+    <string name="charts_legend_item_subtitle">%1$s • %2$s</string>
     <string name="charts_no_data">No data for the selected period</string>
     <string name="charts_pick_start_date">Pick start date</string>
     <string name="charts_pick_end_date">Pick end date</string>
@@ -190,11 +194,14 @@
     <string name="settings_privacy_policy_subtitle">How we handle your data</string>
     <string name="settings_buy_coffee">Buy me a coffee ☕</string>
     <string name="settings_buy_coffee_subtitle">Support the development with a small donation</string>
+    <string name="settings_donate_paypal_title">PayPal</string>
     <string name="settings_donate_paypal_subtitle">Donate via PayPal</string>
+    <string name="settings_donate_bmc_title">Buy Me a Coffee</string>
     <string name="settings_donate_bmc_subtitle">Donate on buymeacoffee.com</string>
     <string name="settings_about">About</string>
     <string name="settings_app_version">App Version</string>
     <string name="settings_third_party">Third-party</string>
+    <string name="settings_third_party_author">by %s</string>
     <string name="settings_third_party_libraries">Open-source Libraries</string>
     <string name="settings_third_party_subtitle">View the open-source libraries used in this app</string>
 
@@ -295,6 +302,8 @@
     <string name="add_transaction_type">Type</string>
     <string name="add_transaction_tags_label">Tags</string>
     <string name="add_transaction_tags_placeholder">Add tags separated by commas</string>
+    <string name="add_transaction_tags_suggestions">Suggestions:</string>
+    <string name="add_transaction_delete_confirm_msg">Are you sure you want to delete this transaction? This action cannot be undone.</string>
     <string name="add_transaction_recurring_label">Recurring Transaction</string>
     <string name="add_transaction_field_tags">Tags</string>
     <string name="add_transaction_field_recurrence">Recurrence</string>
@@ -321,6 +330,7 @@
     <string name="transaction_details_location">Location</string>
     <string name="transaction_details_recurrence">Recurrence</string>
     <string name="transaction_details_tags">Tags</string>
+    <string name="transaction_details_share">Share transaction</string>
     <string name="transaction_details_close">Close</string>
 
     <!-- Transaction Share -->
@@ -403,6 +413,32 @@
     <string name="tutorial_next">Next</string>
     <string name="tutorial_skip">Skip</string>
     <string name="tutorial_finish">Got it!</string>
+
+    <!-- Receipt Scan Screen -->
+    <string name="receipt_scan_title">Scan Receipt</string>
+    <string name="receipt_scan_capture_hint">Take a photo of your receipt or pick one from the gallery to automatically extract amount, VAT, payee and location.</string>
+    <string name="receipt_scan_take_photo">Take Photo</string>
+    <string name="receipt_scan_pick_gallery">Pick from Gallery</string>
+    <string name="receipt_scan_processing">Analysing receipt…</string>
+    <string name="receipt_scan_total_label">Extracted Total</string>
+    <string name="receipt_scan_title_label">Transaction Title</string>
+    <string name="receipt_scan_payee_label">Payee / Merchant</string>
+    <string name="receipt_scan_location_label">Location</string>
+    <string name="receipt_scan_select_category">Select Category</string>
+    <string name="receipt_scan_category_subtitle">Expense category for this transaction</string>
+    <string name="receipt_scan_no_categories">No expense categories available. Add a category first.</string>
+    <string name="receipt_scan_save">Save Transaction</string>
+    <string name="receipt_scan_retry">Effettua nuova scansione</string>
+    <string name="receipt_scan_nav_label">Scan Receipt</string>
+    <string name="receipt_scan_payment_type_subtitle">Payment method — detected automatically, tap to change</string>
+    <string name="receipt_scan_select_payment_type">Select Payment Type</string>
+    <string name="help_features_label">Features:</string>
+    <string name="common_close">Close</string>
+    <string name="common_click_here">Click here</string>
+    <string name="preview_app_text_title">Example Title</string>
+    <string name="preview_app_text_dark">Dark Title</string>
+    <string name="preview_app_text_clickable">Clickable Text</string>
+    <string name="preview_app_text_all_caps">this text is in all caps</string>
 </resources>
 
 

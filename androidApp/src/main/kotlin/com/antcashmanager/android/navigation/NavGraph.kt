@@ -30,6 +30,7 @@ import com.antcashmanager.android.ui.screen.charts.ChartsScreen
 import com.antcashmanager.android.ui.screen.home.HomeScreen
 import com.antcashmanager.android.ui.screen.settings.SettingsScreen
 import com.antcashmanager.android.ui.screen.settingsDisplay.DisplayScreen
+import com.antcashmanager.android.ui.screen.receiptScan.ReceiptScanScreen
 import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionScreen
 import com.antcashmanager.android.ui.screen.transactions.TransactionsScreen
 import com.antcashmanager.android.util.LocalCurrencyFormat
@@ -191,6 +192,14 @@ fun AntCashManagerNavHost(
                         onTransactionAdded = {
                             navController.popBackStack()
                         },
+                    )
+                }
+                composable("receipt_scan") {
+                    ReceiptScanScreen(
+                        transactionRepository = transactionRepository,
+                        categoryRepository = categoryRepository,
+                        onNavigateBack = { navController.popBackStack() },
+                        onTransactionSaved = { navController.popBackStack() },
                     )
                 }
             }

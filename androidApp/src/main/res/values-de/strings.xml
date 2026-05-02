@@ -361,6 +361,25 @@
       <string name="settings_transaction_icon_display_category">Kategorie</string>
       <string name="settings_transaction_icon_display_none">Keine</string>
       <string name="dialog_choose_transaction_icon_display">Anzeigetyp für Symbole wählen</string>
+
+    <!-- Receipt Scan Screen -->
+    <string name="receipt_scan_title">Kassenbon scannen</string>
+    <string name="receipt_scan_capture_hint">Machen Sie ein Foto von Ihrem Kassenbon oder wählen Sie eines aus der Galerie, um Betrag, MwSt., Empfänger und Ort automatisch zu extrahieren.</string>
+    <string name="receipt_scan_take_photo">Foto aufnehmen</string>
+    <string name="receipt_scan_pick_gallery">Aus Galerie wählen</string>
+    <string name="receipt_scan_processing">Kassenbon wird analysiert…</string>
+    <string name="receipt_scan_total_label">Extrahierter Betrag</string>
+    <string name="receipt_scan_title_label">Transaktionsbezeichnung</string>
+    <string name="receipt_scan_payee_label">Empfänger / Händler</string>
+    <string name="receipt_scan_location_label">Ort</string>
+    <string name="receipt_scan_select_category">Kategorie auswählen</string>
+    <string name="receipt_scan_category_subtitle">Ausgabenkategorie für diese Transaktion</string>
+    <string name="receipt_scan_no_categories">Keine Ausgabenkategorie verfügbar. Fügen Sie zuerst eine Kategorie hinzu.</string>
+    <string name="receipt_scan_save">Transaktion speichern</string>
+    <string name="receipt_scan_retry">Erneut scannen</string>
+    <string name="receipt_scan_nav_label">Kassenbon scannen</string>
+    <string name="receipt_scan_payment_type_subtitle">Zahlungsmethode — automatisch erkannt, zum Ändern tippen</string>
+    <string name="receipt_scan_select_payment_type">Zahlungsart auswählen</string>
 </resources>
 
 

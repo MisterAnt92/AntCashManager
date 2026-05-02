@@ -947,7 +947,7 @@ private fun DonationCard(context: Context) {
                 Spacer(modifier = Modifier.width(14.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "PayPal",
+                        text = stringResource(R.string.settings_donate_paypal_title),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
@@ -997,7 +997,7 @@ private fun DonationCard(context: Context) {
                 Spacer(modifier = Modifier.width(14.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Buy Me a Coffee",
+                        text = stringResource(R.string.settings_donate_bmc_title),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurface,
                     )

@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -23,6 +24,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.R
 
 /**
  * AppText - composable testuale riutilizzabile con valori di default coerenti al tema.
@@ -138,7 +140,7 @@ fun AppText(
 @Composable
 private fun AppTextPreviewLight() {
     AppText(
-        text = "Titolo di Esempio",
+        text = stringResource(R.string.preview_app_text_title),
         modifier = Modifier.fillMaxWidth(),
         style = MaterialTheme.typography.titleMedium,
         textAlign = TextAlign.Center
@@ -149,7 +151,7 @@ private fun AppTextPreviewLight() {
 @Composable
 private fun AppTextPreviewDark() {
     AppText(
-        text = "Titolo Scuro",
+        text = stringResource(R.string.preview_app_text_dark),
         modifier = Modifier.fillMaxWidth(),
         style = MaterialTheme.typography.titleMedium,
         textAlign = TextAlign.Center,
@@ -161,7 +163,7 @@ private fun AppTextPreviewDark() {
 @Composable
 private fun AppTextPreviewClickable() {
     AppText(
-        text = "Testo Cliccabile",
+        text = stringResource(R.string.preview_app_text_clickable),
         modifier = Modifier.fillMaxWidth(),
         style = MaterialTheme.typography.bodyLarge,
         onClick = { /* Do something */ }
@@ -172,7 +174,7 @@ private fun AppTextPreviewClickable() {
 @Composable
 private fun AppTextPreviewAllCaps() {
     AppText(
-        text = "this text is in all caps",
+        text = stringResource(R.string.preview_app_text_all_caps),
         modifier = Modifier.fillMaxWidth(),
         style = MaterialTheme.typography.bodyLarge,
         allCaps = true

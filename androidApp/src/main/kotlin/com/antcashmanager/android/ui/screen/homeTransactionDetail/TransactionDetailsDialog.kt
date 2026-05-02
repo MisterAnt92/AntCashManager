@@ -220,7 +220,7 @@ fun TransactionDetailsDialog(
                 }
             ) {
                 AppText(
-                    text = "Condividi transazione",
+                    text = stringResource(R.string.transaction_details_share),
                     color = MaterialTheme.colorScheme.primary,
                 )
             }

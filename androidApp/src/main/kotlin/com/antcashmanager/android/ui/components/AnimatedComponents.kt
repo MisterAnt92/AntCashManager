@@ -28,6 +28,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.ui.res.stringResource
+import com.antcashmanager.android.R
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -472,7 +474,7 @@ fun HelpDialogContent(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-                        text = "Funzionalità:",
+                        text = stringResource(R.string.help_features_label),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.primary,
@@ -485,7 +487,7 @@ fun HelpDialogContent(
             },
             confirmButton = {
                 androidx.compose.material3.TextButton(onClick = onDismiss) {
-                    Text("Chiudi")
+                    Text(stringResource(R.string.common_close))
                 }
             },
             modifier = Modifier

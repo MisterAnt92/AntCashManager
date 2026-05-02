@@ -145,7 +145,7 @@ internal fun DetailsStep(
             },
             text = {
                 AppText(
-                    text = "Sei sicuro di voler eliminare questa transazione? Questa azione non può essere annullata.",
+                    text = stringResource(R.string.add_transaction_delete_confirm_msg),
                     style = MaterialTheme.typography.bodyMedium,
                 )
             },
@@ -524,7 +524,7 @@ private fun TagSelector(
         if (tagInput.isNotBlank() && filteredSuggestions.isNotEmpty()) {
             Spacer(modifier = Modifier.height(8.dp))
             AppText(
-                text = "Suggerimenti:",
+                text = stringResource(R.string.add_transaction_tags_suggestions),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

@@ -1,0 +1,538 @@
+package com.antcashmanager.android.ui.screen.receiptScan
+
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Receipt
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.antcashmanager.android.R
+import com.antcashmanager.android.data.receipt.MlKitReceiptOcrService
+import com.antcashmanager.android.ui.components.AppSelectionItemCard
+import com.antcashmanager.android.ui.components.button.AppButton
+import com.antcashmanager.android.ui.screen.transactionAdd.view.CategorySelectionDialog
+import com.antcashmanager.android.ui.screen.transactionAdd.view.PaymentTypeSelectionDialog
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.domain.model.Category
+import com.antcashmanager.domain.model.PaymentType
+import com.antcashmanager.domain.repository.CategoryRepository
+import com.antcashmanager.domain.repository.TransactionRepository
+import com.antcashmanager.domain.usecase.receipt.ScanReceiptUseCase
+import kotlinx.coroutines.launch
+import java.io.File
+
+// ══════════════════════════════════════════════════════════════════════════════
+// SCREEN ENTRY POINT
+// ══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Schermata principale per la scansione scontrini.
+ * Gestisce il ciclo fotocamera → OCR → revisione → salvataggio transazione EXPENSE.
+ */
+@Composable
+fun ReceiptScanScreen(
+    transactionRepository: TransactionRepository,
+    categoryRepository: CategoryRepository,
+    onNavigateBack: () -> Unit,
+    onTransactionSaved: () -> Unit,
+) {
+    val viewModel: ReceiptScanViewModel = viewModel(
+        factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                val ocrService = MlKitReceiptOcrService()
+                val scanUseCase = ScanReceiptUseCase(ocrService)
+                return ReceiptScanViewModel(
+                    scanUseCase,
+                    transactionRepository,
+                    categoryRepository
+                ) as T
+            }
+        },
+    )
+
+    val state by viewModel.state.collectAsState()
+
+    LaunchedEffect(state.isTransactionSaved) {
+        if (state.isTransactionSaved) onTransactionSaved()
+    }
+
+    ReceiptScanContent(
+        state = state,
+        onImageBytes = viewModel::scanReceipt,
+        onUpdateTitle = viewModel::updateTitle,
+        onUpdatePayee = viewModel::updatePayee,
+        onUpdateLocation = viewModel::updateLocation,
+        onUpdateNotes = viewModel::updateNotes,
+        onSelectCategory = viewModel::selectCategory,
+        onShowCategoryDialog = viewModel::showCategoryDialog,
+        onDismissCategoryDialog = viewModel::dismissCategoryDialog,
+        onSelectPaymentType = viewModel::selectPaymentType,
+        onShowPaymentTypeDialog = viewModel::showPaymentTypeDialog,
+        onDismissPaymentTypeDialog = viewModel::dismissPaymentTypeDialog,
+        onRetry = viewModel::retryCapture,
+        onSave = viewModel::saveTransaction,
+        onClearError = viewModel::clearError,
+        onNavigateBack = onNavigateBack,
+    )
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// CONTENT COMPOSABLE
+// ══════════════════════════════════════════════════════════════════════════════
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun ReceiptScanContent(
+    state: ReceiptScanState,
+    onImageBytes: (ByteArray) -> Unit,
+    onUpdateTitle: (String) -> Unit,
+    onUpdatePayee: (String) -> Unit,
+    onUpdateLocation: (String) -> Unit,
+    onUpdateNotes: (String) -> Unit,
+    onSelectCategory: (Category) -> Unit,
+    onShowCategoryDialog: () -> Unit,
+    onDismissCategoryDialog: () -> Unit,
+    onSelectPaymentType: (PaymentType) -> Unit,
+    onShowPaymentTypeDialog: () -> Unit,
+    onDismissPaymentTypeDialog: () -> Unit,
+    onRetry: () -> Unit,
+    onSave: () -> Unit,
+    onClearError: () -> Unit,
+    onNavigateBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(state.error) {
+        state.error?.let { msg ->
+            scope.launch { snackbarHostState.showSnackbar(msg) }
+            onClearError()
+        }
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(R.string.receipt_scan_title)) },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.back),
+                        )
+                    }
+                },
+            )
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        modifier = modifier,
+    ) { innerPadding ->
+        when (state.step) {
+            ReceiptScanStep.CAPTURE ->
+                CaptureStep(
+                    onImageBytes = onImageBytes,
+                    modifier = Modifier.padding(innerPadding),
+                )
+
+            ReceiptScanStep.PROCESSING ->
+                ProcessingStep(modifier = Modifier.padding(innerPadding))
+
+            ReceiptScanStep.REVIEW ->
+                ReviewStep(
+                    state = state,
+                    onUpdateTitle = onUpdateTitle,
+                    onUpdatePayee = onUpdatePayee,
+                    onUpdateLocation = onUpdateLocation,
+                    onUpdateNotes = onUpdateNotes,
+                    onShowCategoryDialog = onShowCategoryDialog,
+                    onShowPaymentTypeDialog = onShowPaymentTypeDialog,
+                    onRetry = onRetry,
+                    onSave = onSave,
+                    modifier = Modifier.padding(innerPadding),
+                )
+        }
+    }
+
+    if (state.showCategoryDialog) {
+        CategorySelectionDialog(
+            categories = state.categories,
+            selectedCategory = state.selectedCategory,
+            onSelectCategory = onSelectCategory,
+            onDismiss = onDismissCategoryDialog,
+        )
+    }
+
+    if (state.showPaymentTypeDialog) {
+        PaymentTypeSelectionDialog(
+            selectedPaymentType = state.selectedPaymentType,
+            onSelectPaymentType = onSelectPaymentType,
+            onDismiss = onDismissPaymentTypeDialog,
+        )
+    }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// STEP: CAPTURE
+// ══════════════════════════════════════════════════════════════════════════════
+
+@Composable
+private fun CaptureStep(
+    onImageBytes: (ByteArray) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val context = LocalContext.current
+
+    // Launcher per foto dalla fotocamera (salva in file temp)
+    val tempFile = remember { File.createTempFile("receipt_", ".jpg", context.cacheDir) }
+    val tempUri = remember {
+        FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", tempFile)
+    }
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.TakePicture()
+    ) { success ->
+        if (success) {
+            val bytes = tempFile.readBytes()
+            if (bytes.isNotEmpty()) onImageBytes(bytes)
+        }
+    }
+
+    val galleryLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            val bytes = context.contentResolver.openInputStream(it)?.use { stream ->
+                stream.readBytes()
+            }
+            if (bytes != null && bytes.isNotEmpty()) onImageBytes(bytes)
+        }
+    }
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Icon(
+            imageVector = Icons.Default.Receipt,
+            contentDescription = null,
+            modifier = Modifier.size(80.dp),
+            tint = MaterialTheme.colorScheme.primary,
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        Text(
+            text = stringResource(R.string.receipt_scan_capture_hint),
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Spacer(modifier = Modifier.height(32.dp))
+        AppButton(
+            onClick = { cameraLauncher.launch(tempUri) },
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(R.string.receipt_scan_take_photo),
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        AppButton(
+            onClick = { galleryLauncher.launch("image/*") },
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(R.string.receipt_scan_pick_gallery),
+            buttonColor = MaterialTheme.colorScheme.secondary,
+            textColor = MaterialTheme.colorScheme.onSecondary,
+        )
+    }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// STEP: PROCESSING
+// ══════════════════════════════════════════════════════════════════════════════
+
+@Composable
+private fun ProcessingStep(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            CircularProgressIndicator()
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = stringResource(R.string.receipt_scan_processing),
+                style = MaterialTheme.typography.bodyLarge,
+            )
+        }
+    }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// STEP: REVIEW
+// ══════════════════════════════════════════════════════════════════════════════
+
+@Composable
+private fun ReviewStep(
+    state: ReceiptScanState,
+    onUpdateTitle: (String) -> Unit,
+    onUpdatePayee: (String) -> Unit,
+    onUpdateLocation: (String) -> Unit,
+    onUpdateNotes: (String) -> Unit,
+    onShowCategoryDialog: () -> Unit,
+    onShowPaymentTypeDialog: () -> Unit,
+    onRetry: () -> Unit,
+    onSave: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        // Importo estratto
+        ReceiptAmountCard(
+            amount = state.receiptData?.totalAmount ?: 0.0,
+            vatNote = state.vatNote,
+        )
+
+        // Selezione categoria (AppSelectionItemCard style)
+        AppSelectionItemCard(
+            label = stringResource(R.string.receipt_scan_select_category),
+            value = state.selectedCategory?.name
+                ?: stringResource(R.string.add_transaction_none),
+            icon = state.selectedCategory?.icon,
+            isEditable = true,
+            onClick = onShowCategoryDialog,
+        )
+
+        // Selezione tipo pagamento (AppSelectionItemCard style)
+        AppSelectionItemCard(
+            label = stringResource(R.string.receipt_scan_select_payment_type),
+            value = when (state.selectedPaymentType) {
+                PaymentType.ELECTRONIC -> stringResource(R.string.payment_type_electronic)
+                PaymentType.CASH -> stringResource(R.string.payment_type_cash)
+                PaymentType.MEAL_VOUCHERS -> stringResource(R.string.payment_type_meal_vouchers)
+            },
+            icon = when (state.selectedPaymentType) {
+                PaymentType.ELECTRONIC -> "💳"
+                PaymentType.CASH -> "💵"
+                PaymentType.MEAL_VOUCHERS -> "🎫"
+            },
+            isEditable = true,
+            onClick = onShowPaymentTypeDialog,
+        )
+
+        // Campo titolo (con shape RoundedCornerShape)
+        OutlinedTextField(
+            value = state.title,
+            onValueChange = onUpdateTitle,
+            label = { Text(stringResource(R.string.receipt_scan_title_label)) },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            singleLine = true,
+        )
+
+        // Campo beneficiario
+        OutlinedTextField(
+            value = state.payee,
+            onValueChange = onUpdatePayee,
+            label = { Text(stringResource(R.string.receipt_scan_payee_label)) },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            singleLine = true,
+        )
+
+        // Campo luogo
+        OutlinedTextField(
+            value = state.location,
+            onValueChange = onUpdateLocation,
+            label = { Text(stringResource(R.string.receipt_scan_location_label)) },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            singleLine = true,
+        )
+
+        // Campo note (Dettaglio prodotti)
+        OutlinedTextField(
+            value = state.notes,
+            onValueChange = onUpdateNotes,
+            label = { Text(stringResource(R.string.add_transaction_notes_label)) },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            minLines = 3,
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        AppButton(
+            text = stringResource(R.string.receipt_scan_save),
+            enabled = !state.isLoading && state.selectedCategory != null,
+            onClick = onSave,
+            modifier = Modifier.fillMaxWidth(),
+        )
+
+        AppButton(
+            text = stringResource(R.string.receipt_scan_retry),
+            onClick = onRetry,
+            modifier = Modifier.fillMaxWidth(),
+            buttonColor = MaterialTheme.colorScheme.secondary,
+            textColor = MaterialTheme.colorScheme.onSecondary,
+        )
+    }
+}
+
+@Composable
+private fun ReceiptAmountCard(
+    amount: Double,
+    vatNote: String,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(
+                color = MaterialTheme.colorScheme.primaryContainer,
+                shape = MaterialTheme.shapes.medium,
+            )
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = stringResource(R.string.receipt_scan_total_label),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+        )
+        Text(
+            text = stringResource(R.string.settings_format_preview, "€ %.2f".format(amount)),
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+        )
+        if (vatNote.isNotBlank()) {
+            Text(
+                text = vatNote,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+            )
+        }
+    }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PREVIEW
+// ══════════════════════════════════════════════════════════════════════════════
+
+@Preview(showBackground = true)
+@Composable
+fun ReceiptScanCapturePreview() {
+    AntCashManagerTheme {
+        ReceiptScanContent(
+            state = ReceiptScanState(step = ReceiptScanStep.CAPTURE),
+            onImageBytes = {},
+            onUpdateTitle = {},
+            onUpdatePayee = {},
+            onUpdateLocation = {},
+            onUpdateNotes = {},
+            onSelectCategory = {},
+            onShowCategoryDialog = {},
+            onDismissCategoryDialog = {},
+            onSelectPaymentType = {},
+            onShowPaymentTypeDialog = {},
+            onDismissPaymentTypeDialog = {},
+            onRetry = {},
+            onSave = {},
+            onClearError = {},
+            onNavigateBack = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ReceiptScanReviewPreview() {
+    AntCashManagerTheme {
+        val category =
+            Category(name = "Alimentari", type = "EXPENSE", icon = "🛒", color = 0xFF4CAF50)
+        ReceiptScanContent(
+            state = ReceiptScanState(
+                step = ReceiptScanStep.REVIEW,
+                title = "Esselunga",
+                payee = "Esselunga S.p.A.",
+                location = "Via Roma 1, Milano",
+                vatNote = "IVA 22%: €12.50",
+                selectedCategory = category,
+                selectedPaymentType = PaymentType.ELECTRONIC,
+                categories = listOf(category),
+                receiptData = com.antcashmanager.domain.model.ReceiptData(
+                    totalAmount = 68.90,
+                    vatRate = 22.0,
+                    vatAmount = 12.50,
+                    payee = "Esselunga S.p.A.",
+                    location = "Via Roma 1, Milano",
+                    paymentType = PaymentType.ELECTRONIC,
+                ),
+            ),
+            onImageBytes = {},
+            onUpdateTitle = {},
+            onUpdatePayee = {},
+            onUpdateLocation = {},
+            onUpdateNotes = {},
+            onSelectCategory = {},
+            onShowCategoryDialog = {},
+            onDismissCategoryDialog = {},
+            onSelectPaymentType = {},
+            onShowPaymentTypeDialog = {},
+            onDismissPaymentTypeDialog = {},
+            onRetry = {},
+            onSave = {},
+            onClearError = {},
+            onNavigateBack = {},
+        )
+    }
+}
+

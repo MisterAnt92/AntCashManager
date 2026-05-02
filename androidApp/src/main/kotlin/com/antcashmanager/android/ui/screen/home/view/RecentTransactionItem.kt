@@ -155,7 +155,11 @@ fun RecentTransactionItem(
                         color = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onErrorContainer,
                     )
                     AppText(
-                        text = "${transaction.category} • ${dateFormat.format(Date(transaction.timestamp))}",
+                        text = stringResource(
+                            R.string.home_transaction_item_subtitle,
+                            transaction.category,
+                            dateFormat.format(Date(transaction.timestamp))
+                        ),
                         style = MaterialTheme.typography.bodySmall,
                         color = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer.copy(
                             alpha = 0.7f
