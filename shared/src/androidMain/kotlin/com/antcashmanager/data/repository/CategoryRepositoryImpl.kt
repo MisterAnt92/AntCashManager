@@ -28,11 +28,13 @@ class CategoryRepositoryImpl(
     override suspend fun updateCategory(category: Category) =
         categoryDao.updateCategory(category.toEntity())
 
-    override suspend fun deleteCategory(category: Category) =
+    override suspend fun deleteCategory(category: Category) {
+        if (category.isDefault) return // Protegge le categorie predefinite dalla cancellazione
         categoryDao.deleteCategory(category.toEntity())
+    }
 
     override suspend fun deleteAllCategories() =
-        categoryDao.deleteAllCategories()
+        categoryDao.deleteAllNonDefaultCategories()
 
     override fun getCategoriesByType(type: String): Flow<List<Category>> =
         categoryDao.getCategoriesByType(type).map { entities ->

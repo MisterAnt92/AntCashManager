@@ -32,6 +32,9 @@ interface CategoryDao {
     @Query("DELETE FROM categories")
     suspend fun deleteAllCategories()
 
+    @Query("DELETE FROM categories WHERE is_default = 0")
+    suspend fun deleteAllNonDefaultCategories()
+
     @Query("SELECT * FROM categories WHERE type = :type ORDER BY name ASC")
     fun getCategoriesByType(type: String): Flow<List<CategoryEntity>>
 
