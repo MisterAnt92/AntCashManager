@@ -1198,3 +1198,19 @@ navController.popBackStack()
 **Quando in dubbio**: Consulta implementazioni esistenti (DisplayScreen, SettingsScreen, HomeScreen) come esempi di architettura corretta.
 
 **Ricorda**: Clean, testable, maintainable code > quick hacks. Qualità > velocità.
+
+# AGGIORNAMENTO: Controllo obbligatorio chiavi stringhe
+
+## Prima di aggiungere una nuova stringa in qualsiasi file `strings.xml` (tutte le lingue):
+#
+# 1. CERCA la chiave proposta in tutti i file `strings.xml` (en, it, fr, de, es).
+# 2. Se la chiave ESISTE già, RIUTILIZZALA e NON crearne una nuova.
+# 3. Se la chiave NON esiste, crea la nuova chiave in tutte le lingue.
+# 4. MAI creare chiavi duplicate o con nomi diversi per lo stesso concetto.
+# 5. Se trovi chiavi semanticamente identiche ma con nomi diversi, UNIFICA e aggiorna i riferimenti nel codice.
+#
+# Esempio:
+# - Se esiste già `help_dashboard_title`, NON creare `home_dashboard_title`.
+# - Se trovi sia `help_dashboard_title` che `home_dashboard_title`, scegli la più coerente (es. `help_dashboard_title`), elimina l'altra e aggiorna i riferimenti.
+#
+# Questo controllo è OBBLIGATORIO per tutte le modifiche future alle stringhe.

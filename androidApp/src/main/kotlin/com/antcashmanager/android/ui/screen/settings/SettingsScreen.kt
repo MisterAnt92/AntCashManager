@@ -365,7 +365,7 @@ internal fun SettingsContent(
             ) {
                 AppText(
                     text = stringResource(R.string.settings_title),
-                    style = MaterialTheme.typography.headlineMedium,
+                    style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier

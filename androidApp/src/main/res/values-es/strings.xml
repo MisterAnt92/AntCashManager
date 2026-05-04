@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- HelpDialog (Dashboard) -->
+    <string name="help_dashboard_title">Panel</string>
+    <string name="help_dashboard_desc">Visualiza el saldo total, ingresos y gastos para el período seleccionado.</string>
     <string name="app_name">AntCashManager</string>
     <string name="nav_home">Inicio</string>
     <string name="nav_charts">Gr\u00e1ficos</string>

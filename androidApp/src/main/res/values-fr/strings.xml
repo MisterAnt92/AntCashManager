@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- HelpDialog (Dashboard) -->
+    <string name="help_dashboard_title">Tableau de bord</string>
+    <string name="help_dashboard_desc">Affichez le solde total, les revenus et les dépenses pour la période sélectionnée.</string>
     <string name="app_name">AntCashManager</string>
     <string name="nav_home">Accueil</string>
     <string name="nav_charts">Graphiques</string>
