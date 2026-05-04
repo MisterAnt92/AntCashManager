@@ -39,6 +39,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -225,11 +226,16 @@ private fun CaptureStep(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
+    val isPreview = LocalInspectionMode.current
 
     // Launcher per foto dalla fotocamera (salva in file temp)
     val tempFile = remember { File.createTempFile("receipt_", ".jpg", context.cacheDir) }
     val tempUri = remember {
-        FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", tempFile)
+        if (isPreview) {
+            Uri.EMPTY
+        } else {
+            FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", tempFile)
+        }
     }
 
     val cameraLauncher = rememberLauncherForActivityResult(

@@ -9,14 +9,18 @@ import com.google.firebase.analytics.FirebaseAnalytics
  * Wrapper centralizzato per Firebase Analytics.
  * Espone metodi semplici per tracciare schermate ed eventi custom.
  */
-class AnalyticsManager {
+open class AnalyticsManager {
 
     companion object {
         private const val TAG = "AnalyticsManager"
         private const val MAX_NAME_LENGTH = 40
     }
 
-    private val firebaseAnalytics: FirebaseAnalytics
+    private val firebaseAnalytics: FirebaseAnalytics?
+
+    constructor() {
+        firebaseAnalytics = null
+    }
 
     constructor(context: Context) {
         firebaseAnalytics = FirebaseAnalytics.getInstance(context.applicationContext)
@@ -31,7 +35,7 @@ class AnalyticsManager {
                 putString(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
                 putString(FirebaseAnalytics.Param.SCREEN_CLASS, "ComposeNavHost")
             }
-            firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, params)
+            firebaseAnalytics?.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, params)
         }.onFailure { error ->
             Logger.e(TAG, error) { "Failed to log screen view for route=$route" }
         }
@@ -42,7 +46,7 @@ class AnalyticsManager {
         if (sanitizedName.isBlank()) return
 
         runCatching {
-            firebaseAnalytics.logEvent(sanitizedName, params)
+            firebaseAnalytics?.logEvent(sanitizedName, params)
         }.onFailure { error ->
             Logger.e(TAG, error) { "Failed to log event=$sanitizedName" }
         }

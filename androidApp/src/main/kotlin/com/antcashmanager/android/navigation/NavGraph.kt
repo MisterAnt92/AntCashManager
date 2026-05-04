@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -25,6 +26,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.antcashmanager.android.analytics.AnalyticsManager
+import com.antcashmanager.android.ui.components.AntScreenScaffold
 import com.antcashmanager.android.ui.screen.categories.CategoriesScreen
 import com.antcashmanager.android.ui.screen.charts.ChartsScreen
 import com.antcashmanager.android.ui.screen.home.HomeScreen
@@ -33,19 +35,18 @@ import com.antcashmanager.android.ui.screen.settings.SettingsScreen
 import com.antcashmanager.android.ui.screen.settingsDisplay.DisplayScreen
 import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionScreen
 import com.antcashmanager.android.ui.screen.transactions.TransactionsScreen
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.LocalCurrencyFormat
+import com.antcashmanager.domain.model.AppLanguage
+import com.antcashmanager.domain.model.AppTheme
+import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.CurrencyFormat
+import com.antcashmanager.domain.model.Transaction
+import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
-
-val bottomNavItems = listOf(
-    BottomNavItem.Home,
-    BottomNavItem.Charts,
-    BottomNavItem.Transactions,
-    BottomNavItem.Categories,
-    BottomNavItem.Settings,
-)
+import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun AntCashManagerNavHost(
@@ -85,7 +86,8 @@ fun AntCashManagerNavHost(
             currentDestination?.route?.let(analyticsManager::logScreenView)
         }
 
-        Scaffold(
+        AntScreenScaffold(
+            showTopBar = false, // Top bar nascosta sugli screen principali
             bottomBar = {
                 Surface(
                     color = MaterialTheme.colorScheme.surface,
@@ -205,4 +207,98 @@ fun AntCashManagerNavHost(
             }
         }
     }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PREVIEWS
+// ══════════════════════════════════════════════════════════════════════════════
+
+@Preview(showBackground = true)
+@Composable
+private fun AntCashManagerNavHostPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        AntCashManagerNavHost(
+            analyticsManager = PreviewAnalyticsManager(),
+            transactionRepository = PreviewTransactionRepository(),
+            settingsRepository = PreviewSettingsRepository(),
+            categoryRepository = PreviewCategoryRepository(),
+        )
+    }
+}
+
+private class PreviewAnalyticsManager : AnalyticsManager()
+
+private class PreviewSettingsRepository : SettingsRepository {
+    override fun getTheme() = flowOf(AppTheme.SYSTEM)
+    override suspend fun setTheme(theme: AppTheme) {}
+    override fun getLanguage() = flowOf(AppLanguage.SYSTEM)
+    override suspend fun setLanguage(language: AppLanguage) {}
+    override fun getShowCharts() = flowOf(true)
+    override suspend fun setShowCharts(show: Boolean) {}
+    override fun getHighContrast() = flowOf(false)
+    override suspend fun setHighContrast(enabled: Boolean) {}
+    override fun getLargeText() = flowOf(false)
+    override suspend fun setLargeText(enabled: Boolean) {}
+    override fun getReduceMotion() = flowOf(false)
+    override suspend fun setReduceMotion(enabled: Boolean) {}
+    override fun getShowTransactionNotes() = flowOf(true)
+    override suspend fun setShowTransactionNotes(show: Boolean) {}
+    override fun getCurrencySymbol() = flowOf("€")
+    override suspend fun setCurrencySymbol(symbol: String) {}
+    override fun getDecimalDigits() = flowOf(2)
+    override suspend fun setDecimalDigits(digits: Int) {}
+    override fun getDecimalSeparator() = flowOf(",")
+    override suspend fun setDecimalSeparator(separator: String) {}
+    override fun getThousandsSeparator() = flowOf(".")
+    override suspend fun setThousandsSeparator(separator: String) {}
+    override fun getDateFormat() = flowOf("dd/MM/yyyy")
+    override suspend fun setDateFormat(pattern: String) {}
+    override fun getDateFilterExpanded() = flowOf(true)
+    override suspend fun setDateFilterExpanded(expanded: Boolean) {}
+    override fun getHomeDateFilterPreset() = flowOf(1)
+    override suspend fun setHomeDateFilterPreset(index: Int) {}
+    override fun getTransactionsDateFilterPreset() = flowOf(1)
+    override suspend fun setTransactionsDateFilterPreset(index: Int) {}
+    override fun getChartsDateFilterPreset() = flowOf(1)
+    override suspend fun setChartsDateFilterPreset(index: Int) {}
+    override fun getChartsZoomEnabled() = flowOf(true)
+    override suspend fun setChartsZoomEnabled(enabled: Boolean) {}
+    override fun getShowPaymentTypeBreakdown() = flowOf(true)
+    override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {}
+    override fun getTransactionDisplayType() = flowOf(TransactionDisplayType.TREND)
+    override suspend fun setTransactionDisplayType(displayType: TransactionDisplayType) {}
+    override fun getTransactionsTransactionDisplayType() = flowOf(TransactionDisplayType.TREND)
+    override suspend fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType) {}
+    override fun getIsTutorialCompleted() = flowOf(true)
+    override suspend fun setIsTutorialCompleted(completed: Boolean) {}
+    override suspend fun resetAllPreferences() {}
+}
+
+private class PreviewTransactionRepository : TransactionRepository {
+    override fun getAllTransactions() = flowOf(emptyList<Transaction>())
+    override suspend fun getTransactionById(id: Long) = null
+    override suspend fun insertTransaction(transaction: Transaction) = 0L
+    override suspend fun updateTransaction(transaction: Transaction) {}
+    override suspend fun deleteTransaction(transaction: Transaction) {}
+    override suspend fun deleteAllTransactions() {}
+    override fun getTransactionsByDateRange(from: Long, to: Long) = flowOf(emptyList<Transaction>())
+    override fun getRecurringTransactions() = flowOf(emptyList<Transaction>())
+    override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) {}
+    override fun getDistinctTitles() = flowOf(emptyList<String>())
+    override fun getDistinctPayees() = flowOf(emptyList<String>())
+    override fun getDistinctNotes() = flowOf(emptyList<String>())
+    override fun getDistinctLocations() = flowOf(emptyList<String>())
+    override fun getDistinctTags() = flowOf(emptyList<String>())
+}
+
+private class PreviewCategoryRepository : CategoryRepository {
+    override fun getAllCategories() = flowOf(emptyList<Category>())
+    override suspend fun getCategoryById(id: Long) = null
+    override suspend fun getCategoryByName(name: String) = null
+    override suspend fun insertCategory(category: Category) = 0L
+    override suspend fun updateCategory(category: Category) {}
+    override suspend fun deleteCategory(category: Category) {}
+    override suspend fun deleteAllCategories() {}
+    override fun getCategoriesByType(type: String) = flowOf(emptyList<Category>())
+    override suspend fun getDefaultCategoryCount() = 0
 }

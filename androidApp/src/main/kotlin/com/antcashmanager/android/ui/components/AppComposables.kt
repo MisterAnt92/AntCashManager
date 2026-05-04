@@ -45,9 +45,10 @@ fun ScreenHeader(
     ) {
         AppText(
             text = title,
-            style = MaterialTheme.typography.headlineMedium,
+            style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground,
+            maxLines = 1,
             modifier = Modifier.weight(1f),
         )
         if (actions != null) {
