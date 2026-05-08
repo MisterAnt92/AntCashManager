@@ -112,6 +112,7 @@ fun SettingsScreen(
     transactionRepository: TransactionRepository,
     categoryRepository: CategoryRepository,
     navController: NavController,
+    modifier: Modifier = Modifier,
 ) {
     Logger.d("SettingsScreen") { "Displaying SettingsScreen" }
     val context = LocalContext.current
@@ -175,6 +176,7 @@ fun SettingsScreen(
             }
         },
         navController = navController,
+        modifier = modifier,
     )
 }
 
@@ -214,6 +216,7 @@ internal fun SettingsContent(
     onImportDebugData: (Context) -> Unit = {},
     onSendFeedbackEmail: (String) -> Unit = {},
     navController: NavController? = null,
+    modifier: Modifier = Modifier,
 ) {
     var showThemeDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
@@ -339,6 +342,7 @@ internal fun SettingsContent(
 
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        modifier = modifier
     ) { padding ->
         Column(
             modifier = Modifier

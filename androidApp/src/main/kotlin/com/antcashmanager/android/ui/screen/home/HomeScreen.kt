@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -50,7 +48,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -87,6 +84,7 @@ fun HomeScreen(
     transactionRepository: TransactionRepository,
     settingsRepository: SettingsRepository,
     categoryRepository: com.antcashmanager.domain.repository.CategoryRepository,
+    modifier: Modifier = Modifier,
 ) {
     Logger.d("HomeScreen") { "Displaying HomeScreen" }
 
@@ -121,6 +119,7 @@ fun HomeScreen(
             viewModel.onEvent(event)
         },
         settingsRepository = settingsRepository,
+        modifier = modifier,
     )
 }
 
@@ -134,6 +133,7 @@ internal fun HomeContent(
     state: HomeState,
     onEvent: (HomeEvent) -> Unit,
     settingsRepository: SettingsRepository,
+    modifier: Modifier = Modifier,
 ) {
 
     // Date picker state
@@ -267,19 +267,15 @@ internal fun HomeContent(
                             )
                         }
                     }
-                }
-            ) { padding ->
+                },
+                modifier = modifier.fillMaxSize()
+            ) { innerPadding ->
                 LazyColumn(
                     state = listState,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(
-                            start = padding.calculateStartPadding(LayoutDirection.Ltr) + 16.dp,
-                            top = 0.dp,
-                            end = padding.calculateEndPadding(LayoutDirection.Ltr) + 16.dp,
-                            bottom = padding.calculateBottomPadding(),
-                        )
-                        .padding(vertical = 12.dp),
+                        .padding(innerPadding)
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     // Header with Help Button
@@ -527,6 +523,7 @@ private fun HomeContentPreview() {
             ),
             onEvent = {},
             settingsRepository = MockHomeSettingsRepository(),
+            modifier = Modifier,
         )
     }
 }
@@ -539,6 +536,7 @@ private fun HomeContentEmptyPreview() {
             state = HomeState(),
             onEvent = {},
             settingsRepository = MockHomeSettingsRepository(),
+            modifier = Modifier,
         )
     }
 }
@@ -551,6 +549,7 @@ private fun HomeContentLoadingPreview() {
             state = HomeState(isLoading = true),
             onEvent = {},
             settingsRepository = MockHomeSettingsRepository(),
+            modifier = Modifier,
         )
     }
 }
@@ -568,12 +567,13 @@ private fun HomeContentDarkPreview() {
                 totalExpense = 205.5,
                 balance = 2294.5,
                 balanceByPaymentType = mapOf(
-                    PaymentType.ELECTRONIC to 1800.0,
-                    PaymentType.CASH to 494.5,
+                    PaymentType.ELECTRONIC to 1500.0,
+                    PaymentType.CASH to 794.5,
                 ),
             ),
             onEvent = {},
             settingsRepository = MockHomeSettingsRepository(),
+            modifier = Modifier,
         )
     }
 }

@@ -140,6 +140,7 @@ internal fun CategoriesContent(
     state: CategoriesState,
     onAddCategory: (String, String, Long, String) -> Unit = { _, _, _, _ -> },
     onDeleteCategory: (Category) -> Unit = {},
+    modifier: Modifier = Modifier,
 ) {
     var selectedTab by remember { mutableIntStateOf(0) }
     var showAddDialog by remember { mutableStateOf(false) }
@@ -173,17 +174,19 @@ internal fun CategoriesContent(
                 )
             }
         },
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp, vertical = 12.dp),
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(
-                    start = innerPadding.calculateStartPadding(LayoutDirection.Ltr) + 16.dp,
+                    start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
                     top = 0.dp,
-                    end = innerPadding.calculateEndPadding(LayoutDirection.Ltr) + 16.dp,
+                    end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
                     bottom = innerPadding.calculateBottomPadding(),
-                )
-                .padding(vertical = 12.dp),
+                ),
         ) {
             ScreenHeader(
                 title = stringResource(R.string.categories_title),
@@ -536,6 +539,7 @@ private fun CategoriesContentPreview() {
                     ),
                 ),
             ),
+            modifier = Modifier,
         )
     }
 }
@@ -549,6 +553,7 @@ private fun CategoriesContentEmptyPreview() {
                 expenseCategories = emptyList(),
                 incomeCategories = emptyList(),
             ),
+            modifier = Modifier,
         )
     }
 }
@@ -580,6 +585,7 @@ private fun CategoriesContentDarkPreview() {
                     ),
                 ),
             ),
+            modifier = Modifier,
         )
     }
 }

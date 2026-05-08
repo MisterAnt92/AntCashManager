@@ -78,6 +78,7 @@ fun ReceiptScanScreen(
     categoryRepository: CategoryRepository,
     onNavigateBack: () -> Unit,
     onTransactionSaved: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val viewModel: ReceiptScanViewModel = viewModel(
         factory = object : ViewModelProvider.Factory {
@@ -117,6 +118,7 @@ fun ReceiptScanScreen(
         onSave = viewModel::saveTransaction,
         onClearError = viewModel::clearError,
         onNavigateBack = onNavigateBack,
+        modifier = modifier,
     )
 }
 
@@ -170,17 +172,20 @@ internal fun ReceiptScanContent(
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp, vertical = 12.dp),
     ) { innerPadding ->
+        val contentModifier = Modifier.padding(innerPadding)
         when (state.step) {
             ReceiptScanStep.CAPTURE ->
                 CaptureStep(
                     onImageBytes = onImageBytes,
-                    modifier = Modifier.padding(innerPadding),
+                    modifier = contentModifier,
                 )
 
             ReceiptScanStep.PROCESSING ->
-                ProcessingStep(modifier = Modifier.padding(innerPadding))
+                ProcessingStep(modifier = contentModifier)
 
             ReceiptScanStep.REVIEW ->
                 ReviewStep(
@@ -193,7 +198,7 @@ internal fun ReceiptScanContent(
                     onShowPaymentTypeDialog = onShowPaymentTypeDialog,
                     onRetry = onRetry,
                     onSave = onSave,
-                    modifier = Modifier.padding(innerPadding),
+                    modifier = contentModifier,
                 )
         }
     }
@@ -260,8 +265,7 @@ private fun CaptureStep(
 
     Column(
         modifier = modifier
-            .fillMaxSize()
-            .padding(24.dp),
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -336,8 +340,7 @@ private fun ReviewStep(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         // Importo estratto
@@ -494,6 +497,7 @@ fun ReceiptScanCapturePreview() {
             onSave = {},
             onClearError = {},
             onNavigateBack = {},
+            modifier = Modifier,
         )
     }
 }
@@ -538,6 +542,7 @@ fun ReceiptScanReviewPreview() {
             onSave = {},
             onClearError = {},
             onNavigateBack = {},
+            modifier = Modifier,
         )
     }
 }

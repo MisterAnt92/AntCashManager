@@ -2,12 +2,10 @@ package com.antcashmanager.android.ui.screen.transactions
 
 import android.os.Bundle
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,11 +13,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -50,7 +46,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
@@ -69,7 +64,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -119,6 +113,7 @@ fun TransactionsScreen(
     categoryRepository: CategoryRepository,
     settingsRepository: SettingsRepository,
     navController: NavController? = null,
+    modifier: Modifier = Modifier,
 ) {
     Logger.d("TransactionsScreen") { "Displaying TransactionsScreen" }
     val analyticsManager =
@@ -133,10 +128,8 @@ fun TransactionsScreen(
     )
 
     val state by viewModel.state.collectAsState()
-
     val transactionDisplayType by settingsRepository.getTransactionsTransactionDisplayType()
         .collectAsState(initial = TransactionDisplayType.TREND)
-
     val coroutineScope = rememberCoroutineScope()
     val screenDateFilterPreset by settingsRepository.getTransactionsDateFilterPreset()
         .collectAsState(initial = 1)
@@ -146,36 +139,41 @@ fun TransactionsScreen(
     }
 
     TransactionsContent(
-        state = state,
-        onEvent = { event ->
-            when (event) {
-                is TransactionsEvent.ApplyFilters -> {
-                    val params = Bundle().apply {
-                        putString("search_query", state.pendingSearchQuery.take(40))
-                        putString("category", state.pendingCategory ?: "all")
-                        putString("transaction_type", state.pendingTransactionType?.name ?: "all")
-                        putString("payment_type", state.pendingPaymentType?.name ?: "all")
+        params = TransactionsContentParams(
+            state = state,
+            onEvent = { event ->
+                when (event) {
+                    is TransactionsEvent.ApplyFilters -> {
+                        val params = Bundle().apply {
+                            putString("search_query", state.pendingSearchQuery.take(40))
+                            putString("category", state.pendingCategory ?: "all")
+                            putString(
+                                "transaction_type",
+                                state.pendingTransactionType?.name ?: "all"
+                            )
+                            putString("payment_type", state.pendingPaymentType?.name ?: "all")
+                        }
+                        analyticsManager.logEvent("transactions_filter_applied", params)
                     }
-                    analyticsManager.logEvent("transactions_filter_applied", params)
-                }
 
-                is TransactionsEvent.ClearAllFilters -> {
-                    analyticsManager.logEvent("transactions_filter_cleared")
-                }
+                    is TransactionsEvent.ClearAllFilters -> {
+                        analyticsManager.logEvent("transactions_filter_cleared")
+                    }
 
-                else -> Unit
-            }
-
-            if (event is TransactionsEvent.SelectPreset) {
-                coroutineScope.launch {
-                    settingsRepository.setTransactionsDateFilterPreset(event.index)
+                    else -> Unit
                 }
-            }
-            viewModel.onEvent(event)
-        },
-        settingsRepository = settingsRepository,
-        navController = navController,
-        transactionDisplayType = transactionDisplayType,
+                if (event is TransactionsEvent.SelectPreset) {
+                    coroutineScope.launch {
+                        settingsRepository.setTransactionsDateFilterPreset(event.index)
+                    }
+                }
+                viewModel.onEvent(event)
+            },
+            settingsRepository = settingsRepository,
+            navController = navController,
+            transactionDisplayType = transactionDisplayType,
+            modifier = modifier,
+        ),
     )
 }
 
@@ -186,12 +184,15 @@ fun TransactionsScreen(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 internal fun TransactionsContent(
-    state: TransactionsState,
-    onEvent: (TransactionsEvent) -> Unit,
-    settingsRepository: SettingsRepository,
-    navController: NavController? = null,
-    transactionDisplayType: TransactionDisplayType = TransactionDisplayType.TREND,
+    params: TransactionsContentParams,
 ) {
+    val state = params.state
+    val onEvent = params.onEvent
+    val settingsRepository = params.settingsRepository
+    val navController = params.navController
+    val transactionDisplayType = params.transactionDisplayType
+    val modifier = params.modifier
+
     // Local UI state for dialogs only (not business logic)
     var showFromDatePicker by remember { mutableStateOf(false) }
     var showToDatePicker by remember { mutableStateOf(false) }
@@ -207,21 +208,20 @@ internal fun TransactionsContent(
         derivedStateOf { listState.firstVisibleItemIndex > 3 }
     }
 
-    // From date picker dialog
+    // Dialogs
     if (showFromDatePicker) {
-        val datePickerState =
-            rememberDatePickerState(initialSelectedDateMillis = state.dateRangeFrom)
+        val datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = state.dateRangeFrom
+        )
         DatePickerDialog(
             onDismissRequest = { showFromDatePicker = false },
             confirmButton = {
-                TextButton(
-                    onClick = {
-                        datePickerState.selectedDateMillis?.let { selectedDate ->
-                            onEvent(TransactionsEvent.SetDateRange(selectedDate, state.dateRangeTo))
-                        }
-                        showFromDatePicker = false
-                    },
-                ) {
+                TextButton(onClick = {
+                    datePickerState.selectedDateMillis?.let {
+                        onEvent(TransactionsEvent.SetDateRange(from = it, to = state.dateRangeTo))
+                    }
+                    showFromDatePicker = false
+                }) {
                     Text(stringResource(R.string.common_confirm))
                 }
             },
@@ -229,31 +229,25 @@ internal fun TransactionsContent(
                 TextButton(onClick = { showFromDatePicker = false }) {
                     Text(stringResource(R.string.common_cancel))
                 }
-            },
+            }
         ) {
             DatePicker(state = datePickerState)
         }
     }
 
-    // To date picker dialog
     if (showToDatePicker) {
-        val datePickerState = rememberDatePickerState(initialSelectedDateMillis = state.dateRangeTo)
+        val datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = state.dateRangeTo
+        )
         DatePickerDialog(
             onDismissRequest = { showToDatePicker = false },
             confirmButton = {
-                TextButton(
-                    onClick = {
-                        datePickerState.selectedDateMillis?.let { selectedDate ->
-                            onEvent(
-                                TransactionsEvent.SetDateRange(
-                                    state.dateRangeFrom,
-                                    selectedDate
-                                )
-                            )
-                        }
-                        showToDatePicker = false
-                    },
-                ) {
+                TextButton(onClick = {
+                    datePickerState.selectedDateMillis?.let {
+                        onEvent(TransactionsEvent.SetDateRange(from = state.dateRangeFrom, to = it))
+                    }
+                    showToDatePicker = false
+                }) {
                     Text(stringResource(R.string.common_confirm))
                 }
             },
@@ -261,90 +255,26 @@ internal fun TransactionsContent(
                 TextButton(onClick = { showToDatePicker = false }) {
                     Text(stringResource(R.string.common_cancel))
                 }
-            },
+            }
         ) {
             DatePicker(state = datePickerState)
         }
     }
 
-    // Help dialog
     if (showHelpDialog) {
         HelpDialog(onDismiss = { showHelpDialog = false })
     }
 
-    Scaffold(
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
-        floatingActionButton = {
-            Column(
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                // Scroll to top button
-                AnimatedVisibility(
-                    visible = showScrollToTop,
-                    enter = fadeIn() + scaleIn(),
-                    exit = fadeOut() + scaleOut()
-                ) {
-                    FloatingActionButton(
-                        onClick = {
-                            coroutineScope.launch {
-                                listState.animateScrollToItem(0)
-                            }
-                        },
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                        modifier = Modifier.size(44.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowUpward,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                }
-
-                // Scan receipt (OCR) button
-                FloatingActionButton(
-                    onClick = { navController?.navigate("receipt_scan") },
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Receipt,
-                        contentDescription = stringResource(R.string.receipt_scan_nav_label),
-                        modifier = Modifier.size(24.dp),
-                    )
-                }
-
-                // Add transaction button
-                FloatingActionButton(
-                    onClick = { navController?.navigate("add_transaction") },
-                    containerColor = MaterialTheme.colorScheme.primary,
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = stringResource(R.string.transactions_add),
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.size(28.dp),
-                    )
-                }
-            }
-        },
-    ) { padding ->
+    Box(modifier = modifier.fillMaxSize()) {
         LazyColumn(
-            state = listState,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(
-                    start = padding.calculateStartPadding(LayoutDirection.Ltr) + 16.dp,
-                    top = 0.dp,
-                    end = padding.calculateEndPadding(LayoutDirection.Ltr) + 16.dp,
-                    bottom = padding.calculateBottomPadding(),
-                )
-                .padding(vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            state = listState,
+            verticalArrangement = Arrangement.spacedBy(TransactionsScreenDefaults.CardSpacing),
+            contentPadding = PaddingValues(bottom = TransactionsScreenDefaults.ListBottomSpacer)
         ) {
-            // Header with action icons
+            // Header
             item {
                 ScreenHeader(
                     title = stringResource(R.string.transactions_title),
@@ -353,7 +283,6 @@ internal fun TransactionsContent(
                             horizontalArrangement = Arrangement.spacedBy(4.dp),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            // Search toggle button
                             IconButton(
                                 onClick = { onEvent(TransactionsEvent.ToggleSearchExpanded) },
                             ) {
@@ -364,8 +293,6 @@ internal fun TransactionsContent(
                                     else MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             }
-
-                            // Filter toggle button
                             IconButton(
                                 onClick = { onEvent(TransactionsEvent.ToggleFiltersExpanded) },
                             ) {
@@ -376,82 +303,62 @@ internal fun TransactionsContent(
                                     else MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             }
-
                             HelpButton(onHelpClick = { showHelpDialog = true })
                         }
                     },
                 )
             }
-
-            // Collapsible Search Bar
-            item {
-                SearchComponent(
-                    isVisible = state.isSearchExpanded,
-                    searchQuery = state.searchQuery,
-                    onSearchQueryChange = { onEvent(TransactionsEvent.UpdateSearchQuery(it)) },
-                    searchSuggestions = state.searchSuggestions,
-                )
-            }
-
-            // Collapsible Filters Card
-            item {
-                AnimatedVisibility(
-                    visible = state.isFiltersExpanded,
-                    enter = fadeIn() + expandVertically(),
-                    exit = fadeOut() + shrinkVertically(),
-                ) {
-                    Column {
-                        Spacer(modifier = Modifier.height(12.dp))
-                        FilterCard(
-                            categories = state.categories,
-                            selectedCategory = state.pendingCategory,
-                            selectedTransactionType = state.pendingTransactionType,
-                            selectedPaymentType = state.pendingPaymentType,
-                            onCategorySelected = { onEvent(TransactionsEvent.UpdateCategoryFilter(it)) },
-                            onTransactionTypeSelected = {
-                                onEvent(
-                                    TransactionsEvent.UpdateTransactionTypeFilter(
-                                        it
-                                    )
-                                )
-                            },
-                            onPaymentTypeSelected = {
-                                onEvent(
-                                    TransactionsEvent.UpdatePaymentTypeFilter(
-                                        it
-                                    )
-                                )
-                            },
-                            onClearFilters = { onEvent(TransactionsEvent.ClearAllFilters) },
-                            hasFilterChanges = state.hasFilterChanges,
-                            onApplyFilters = {
-                                onEvent(TransactionsEvent.ApplyFilters)
-                                onEvent(TransactionsEvent.ToggleFiltersExpanded)
-                            },
-                            onCancelFilters = { onEvent(TransactionsEvent.CancelFilterChanges) },
-                        )
-                    }
+            // Search bar
+            if (state.isSearchExpanded) {
+                item {
+                    SearchComponent(
+                        isVisible = true,
+                        searchQuery = state.searchQuery,
+                        onSearchQueryChange = { onEvent(TransactionsEvent.UpdateSearchQuery(it)) },
+                        searchSuggestions = state.searchSuggestions,
+                    )
                 }
             }
-
-            // Active filters indicator (compact) when filters collapsed
-            item {
-                if (state.hasActiveFilters && !state.isFiltersExpanded) {
-                    Column {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        ActiveFiltersRow(
-                            searchQuery = state.searchQuery,
-                            selectedCategory = state.selectedCategory,
-                            selectedTransactionType = state.selectedTransactionType,
-                            selectedPaymentType = state.selectedPaymentType,
-                            onClearAll = { onEvent(TransactionsEvent.ClearAllFilters) },
-                        )
-                    }
+            // Filters
+            if (state.isFiltersExpanded) {
+                item { Spacer(modifier = Modifier.height(12.dp)) }
+                item {
+                    FilterCard(
+                        categories = state.categories,
+                        selectedCategory = state.pendingCategory,
+                        selectedTransactionType = state.pendingTransactionType,
+                        selectedPaymentType = state.pendingPaymentType,
+                        onCategorySelected = { onEvent(TransactionsEvent.UpdateCategoryFilter(it)) },
+                        onTransactionTypeSelected = {
+                            onEvent(TransactionsEvent.UpdateTransactionTypeFilter(it))
+                        },
+                        onPaymentTypeSelected = {
+                            onEvent(TransactionsEvent.UpdatePaymentTypeFilter(it))
+                        },
+                        onClearFilters = { onEvent(TransactionsEvent.ClearAllFilters) },
+                        hasFilterChanges = state.hasFilterChanges,
+                        onApplyFilters = {
+                            onEvent(TransactionsEvent.ApplyFilters)
+                            onEvent(TransactionsEvent.ToggleFiltersExpanded)
+                        },
+                        onCancelFilters = { onEvent(TransactionsEvent.CancelFilterChanges) },
+                    )
                 }
             }
-
+            // Active filters indicator (compact)
+            if (state.hasActiveFilters && !state.isFiltersExpanded) {
+                item { Spacer(modifier = Modifier.height(8.dp)) }
+                item {
+                    ActiveFiltersRow(
+                        searchQuery = state.searchQuery,
+                        selectedCategory = state.selectedCategory,
+                        selectedTransactionType = state.selectedTransactionType,
+                        selectedPaymentType = state.selectedPaymentType,
+                        onClearAll = { onEvent(TransactionsEvent.ClearAllFilters) },
+                    )
+                }
+            }
             item { Spacer(modifier = Modifier.height(12.dp)) }
-
             // Date Range Filter
             item {
                 DateRangeFilter(
@@ -470,26 +377,21 @@ internal fun TransactionsContent(
                     onToDateEdit = { showToDatePicker = true },
                 )
             }
-
             item { Spacer(modifier = Modifier.height(12.dp)) }
-
-            // Results count when filters active
-            item {
-                if (state.hasActiveFilters) {
-                    Column {
-                        AppText(
-                            text = stringResource(
-                                R.string.transactions_results_count,
-                                state.filteredTransactions.size
-                            ),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                    }
+            // Results count
+            if (state.hasActiveFilters) {
+                item {
+                    AppText(
+                        text = stringResource(
+                            R.string.transactions_results_count,
+                            state.filteredTransactions.size
+                        ),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
+                item { Spacer(modifier = Modifier.height(8.dp)) }
             }
-
             // Content based on state
             when {
                 state.isLoading -> {
@@ -536,10 +438,7 @@ internal fun TransactionsContent(
                 }
 
                 else -> {
-                    items(
-                        items = state.filteredTransactions,
-                        key = { it.id },
-                    ) { transaction ->
+                    items(state.filteredTransactions) { transaction ->
                         TransactionItem(
                             transaction = transaction,
                             onClick = {
@@ -548,11 +447,104 @@ internal fun TransactionsContent(
                             displayType = transactionDisplayType,
                         )
                     }
-                    item { Spacer(modifier = Modifier.height(80.dp)) }
                 }
             }
         }
+        // FloatingActionButton scroll-to-top
+        AnimatedVisibility(
+            visible = showScrollToTop,
+            enter = fadeIn() + scaleIn(),
+            exit = fadeOut() + scaleOut(),
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(24.dp)
+        ) {
+            FloatingActionButton(
+                onClick = {
+                    coroutineScope.launch {
+                        listState.animateScrollToItem(0)
+                    }
+                },
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                modifier = Modifier.size(44.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowUpward,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+        }
+        // FloatingActionButton add transaction (sempre visibile)
+        FloatingActionButton(
+            onClick = { navController?.navigate("add_transaction") },
+            containerColor = MaterialTheme.colorScheme.primary,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 24.dp, bottom = 88.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = stringResource(R.string.transactions_add),
+                tint = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.size(28.dp),
+            )
+        }
+        // FloatingActionButton scan receipt (sempre visibile)
+        FloatingActionButton(
+            onClick = { navController?.navigate("receipt_scan") },
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 88.dp, bottom = 24.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Receipt,
+                contentDescription = stringResource(R.string.receipt_scan_nav_label),
+                modifier = Modifier.size(24.dp),
+            )
+        }
     }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PARAMS & COSTANTI
+// ══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Parametri raggruppati per TransactionsContent per ridurre la lunghezza della signature.
+ */
+data class TransactionsContentParams(
+    val state: TransactionsState,
+    val onEvent: (TransactionsEvent) -> Unit,
+    val settingsRepository: SettingsRepository,
+    val navController: NavController? = null,
+    val transactionDisplayType: TransactionDisplayType = TransactionDisplayType.TREND,
+    val modifier: Modifier = Modifier,
+)
+
+private object TransactionsScreenDefaults {
+    val ScreenHorizontalPadding = 16.dp
+    val ScreenVerticalPadding = 12.dp
+    val CardSpacing = 12.dp
+    val SectionSpacing = 8.dp
+    val FilterChipSpacing = 8.dp
+    val FilterChipVerticalSpacing = 4.dp
+    val FilterCardPadding = 12.dp
+    val SkeletonLoaderHeight = 16.dp
+    val SkeletonLoaderCornerRadius = 8
+    val SkeletonLoaderRowHeight = 12.dp
+    val SkeletonLoaderRowCornerRadius = 6
+    val SkeletonLoaderBottomHeight = 20.dp
+    val ScrollToTopButtonSize = 44.dp
+    val ScrollToTopIconSize = 20.dp
+    val ReceiptButtonIconSize = 24.dp
+    val AddButtonIconSize = 28.dp
+    val FilterHeaderSpacing = 4.dp
+    val FilterHeaderFontWeight = FontWeight.SemiBold
+    val FilterSectionSpacing = 6.dp
+    val ListBottomSpacer = 80.dp
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -1157,12 +1149,15 @@ class MockSettingsRepository : SettingsRepository {
 private fun TransactionsContentPreview() {
     AntCashManagerTheme(dynamicColor = false) {
         TransactionsContent(
-            state = TransactionsState(
-                transactions = sampleTransactions,
-                filteredTransactions = sampleTransactions,
+            params = TransactionsContentParams(
+                state = TransactionsState(
+                    transactions = sampleTransactions,
+                    filteredTransactions = sampleTransactions,
+                ),
+                onEvent = {},
+                settingsRepository = MockSettingsRepository(),
+                modifier = Modifier,
             ),
-            onEvent = {},
-            settingsRepository = MockSettingsRepository(),
         )
     }
 }
@@ -1172,9 +1167,12 @@ private fun TransactionsContentPreview() {
 private fun TransactionsContentEmptyPreview() {
     AntCashManagerTheme(dynamicColor = false) {
         TransactionsContent(
-            state = TransactionsState(),
-            onEvent = {},
-            settingsRepository = MockSettingsRepository(),
+            params = TransactionsContentParams(
+                state = TransactionsState(),
+                onEvent = {},
+                settingsRepository = MockSettingsRepository(),
+                modifier = Modifier,
+            ),
         )
     }
 }
@@ -1184,9 +1182,12 @@ private fun TransactionsContentEmptyPreview() {
 private fun TransactionsContentLoadingPreview() {
     AntCashManagerTheme(dynamicColor = false) {
         TransactionsContent(
-            state = TransactionsState(isLoading = true),
-            onEvent = {},
-            settingsRepository = MockSettingsRepository(),
+            params = TransactionsContentParams(
+                state = TransactionsState(isLoading = true),
+                onEvent = {},
+                settingsRepository = MockSettingsRepository(),
+                modifier = Modifier,
+            ),
         )
     }
 }
@@ -1196,12 +1197,15 @@ private fun TransactionsContentLoadingPreview() {
 private fun TransactionsContentDarkPreview() {
     AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
         TransactionsContent(
-            state = TransactionsState(
-                transactions = sampleTransactions,
-                filteredTransactions = sampleTransactions,
+            params = TransactionsContentParams(
+                state = TransactionsState(
+                    transactions = sampleTransactions,
+                    filteredTransactions = sampleTransactions,
+                ),
+                onEvent = {},
+                settingsRepository = MockSettingsRepository(),
+                modifier = Modifier,
             ),
-            onEvent = {},
-            settingsRepository = MockSettingsRepository(),
         )
     }
 }

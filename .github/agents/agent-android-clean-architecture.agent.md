@@ -1,14 +1,19 @@
 # GitHub Copilot Instructions - AntCashManager
 
 ## Project Overview
-AntCashManager è un'app Android di gestione finanziaria personale costruita con Jetpack Compose, Kotlin Multiplatform, e principi di Clean Architecture. Quando generi codice, segui SEMPRE queste linee guida architetturali.
+
+AntCashManager è un'app Android di gestione finanziaria personale costruita con Jetpack Compose,
+Kotlin Multiplatform, e principi di Clean Architecture. Quando generi codice, segui SEMPRE queste
+linee guida architetturali.
 
 ---
 
 ## ⚙️ Metodologia di Lavoro - OBBLIGATORIO
 
 ### Esecuzione per Step
+
 **REGOLA CRITICA**: Esegui SEMPRE task e procedimenti **step by step**:
+
 1. **Analizza** il contesto e i file esistenti prima di scrivere codice
 2. **Pianifica** i cambiamenti necessari
 3. **Implementa** un file/componente alla volta
@@ -16,10 +21,13 @@ AntCashManager è un'app Android di gestione finanziaria personale costruita con
 5. **Conferma** il completamento di ogni step prima di passare al successivo
 
 ### Pulizia Import e Package Name
+
 **REGOLA CRITICA**: Ogni volta che crei o modifichi una classe/file Kotlin:
+
 - ✅ **Rimuovi TUTTI gli import non utilizzati** prima di salvare
 - ✅ **Verifica che il `package` corrisponda** esattamente alla struttura di directory del file
-- ✅ Correggi il package name se errato (es. file in `ui/screen/home/` → `package com.antcashmanager.android.ui.screen.home`)
+- ✅ Correggi il package name se errato (es. file in `ui/screen/home/` →
+  `package com.antcashmanager.android.ui.screen.home`)
 - ❌ MAI lasciare import `unused` o package name sbagliato
 
 ```kotlin
@@ -43,11 +51,13 @@ import java.util.Date                       // unused import!
 ## 🏗️ Clean Architecture - Layer Structure
 
 ### Struttura a 3 Layer
+
 ```
 Presentation (androidApp) → Domain (shared/commonMain) → Data (shared/androidMain)
 ```
 
 **Regole CRITICHE**:
+
 - ✅ Presentation dipende SOLO da Domain
 - ✅ Domain è puro Kotlin (NO dipendenze Android/platform)
 - ✅ Data implementa le interfacce di Domain
@@ -89,14 +99,15 @@ class YourFeatureUseCase(
 
 **Base class da estendere in base al tipo:**
 
-| Tipo operazione | Base class | Metodo da implementare |
-|----------------|------------|----------------------|
-| suspend con parametri | `BaseUseCase<Params, Result<T>>` | `override suspend fun execute(params)` |
-| suspend senza parametri | `NoParamsUseCase<Result<T>>` | `override suspend fun execute()` |
-| Flow con parametri | `FlowUseCase<Params, Result<T>>` | `override fun execute(params): Flow<Result<T>>` |
-| Flow senza parametri | `NoParamsFlowUseCase<Result<T>>` | `override fun execute(): Flow<Result<T>>` |
+| Tipo operazione         | Base class                       | Metodo da implementare                          |
+|-------------------------|----------------------------------|-------------------------------------------------|
+| suspend con parametri   | `BaseUseCase<Params, Result<T>>` | `override suspend fun execute(params)`          |
+| suspend senza parametri | `NoParamsUseCase<Result<T>>`     | `override suspend fun execute()`                |
+| Flow con parametri      | `FlowUseCase<Params, Result<T>>` | `override fun execute(params): Flow<Result<T>>` |
+| Flow senza parametri    | `NoParamsFlowUseCase<Result<T>>` | `override fun execute(): Flow<Result<T>>`       |
 
 **Requirements**:
+
 - Nome termina con `UseCase`
 - Single responsibility
 - Usa `operator fun invoke()` per renderlo callable (ereditato dalla base class)
@@ -110,7 +121,8 @@ class YourFeatureUseCase(
 
 ### Pattern Result negli UseCase - OBBLIGATORIO
 
-**REGOLA CRITICA**: Gli UseCase DEVONO restituire `Result<T>` per gestire successo e failure in modo esplicito, seguendo la Clean Architecture.
+**REGOLA CRITICA**: Gli UseCase DEVONO restituire `Result<T>` per gestire successo e failure in modo
+esplicito, seguendo la Clean Architecture.
 
 #### Custom Domain Exceptions
 
@@ -192,6 +204,7 @@ fun insertTransaction(transaction: Transaction) {
 ### 2. ViewModel (Presentation Layer)
 
 Quando crei un ViewModel:
+
 ```kotlin
 package com.antcashmanager.android.ui.screen.yourfeature
 
@@ -238,6 +251,7 @@ class YourFeatureViewModel(
 ```
 
 **Requirements**:
+
 - `StateFlow` per esporre stato immutabile
 - `MutableStateFlow` privato per update interni
 - Kermit Logger per logging (`import co.touchlab.kermit.Logger`)
@@ -250,6 +264,7 @@ class YourFeatureViewModel(
 ### 3. State (Presentation Layer)
 
 Quando crei uno State:
+
 ```kotlin
 package com.antcashmanager.android.ui.screen.yourfeature
 
@@ -278,6 +293,7 @@ sealed class YourFeatureSideEffect {
 ```
 
 **Requirements**:
+
 - Immutable data class
 - Default values ragionevoli
 - KDoc documentation
@@ -289,6 +305,7 @@ sealed class YourFeatureSideEffect {
 ### 4. Screen (Composables)
 
 Quando crei uno Screen:
+
 ```kotlin
 package com.antcashmanager.android.ui.screen.yourfeature
 
@@ -347,6 +364,7 @@ private fun YourFeatureContentPreview() {
 ```
 
 **Requirements**:
+
 - Separare Screen wrapper da Content composable (testabilità)
 - SEMPRE `stringResource(R.string.*)` per stringhe (MAI hardcoded)
 - `@Preview` per ogni composable principale
@@ -392,11 +410,13 @@ private fun YourFeatureContentPreview() {
 
 ## 🧩 Componenti UI - USO OBBLIGATORIO DEI COMPONENTI ESISTENTI
 
-**REGOLA CRITICA**: Prima di creare qualsiasi componente UI, VERIFICA SEMPRE se esiste in `ui/components/`.
+**REGOLA CRITICA**: Prima di creare qualsiasi componente UI, VERIFICA SEMPRE se esiste in
+`ui/components/`.
 
 ### Componenti Disponibili (USARE QUESTI!)
 
 #### Layout & Structure
+
 ```kotlin
 // ✅ Header schermate
 ScreenHeader(
@@ -412,6 +432,7 @@ HelpButton(onHelpClick = { showHelpDialog = true })
 ```
 
 #### Card Components
+
 ```kotlin
 // ✅ Card standard
 AppCard(
@@ -429,6 +450,7 @@ AppCardSectionHeader(title = stringResource(R.string.section))
 ```
 
 #### Input Components
+
 ```kotlin
 // ✅ Switch
 AppSwitch(
@@ -450,6 +472,7 @@ AppListItem(
 ```
 
 #### Text Components
+
 ```kotlin
 // ✅ Text styled
 AppText(
@@ -513,6 +536,7 @@ fun CustomCard(...) {  // FORBIDDEN!
 Usa SEMPRE MaterialTheme centralizzato:
 
 ### Colors
+
 ```kotlin
 // ✅ CORRECT
 Card(
@@ -526,6 +550,7 @@ Card(containerColor = Color(0xFF123456)) // FORBIDDEN!
 ```
 
 ### Typography
+
 ```kotlin
 // ✅ CORRECT
 Text(
@@ -539,6 +564,7 @@ Text(fontSize = 24.sp) // FORBIDDEN!
 ```
 
 ### Spacing
+
 ```kotlin
 // ✅ Spacing consistente
 modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
@@ -551,12 +577,16 @@ Column(verticalArrangement = Arrangement.spacedBy(8.dp)) { /* cards */ }
 
 ## 🧪 Testing Requirements
 
-Quando crei una feature, genera SEMPRE i test e non usare mai i back tick per i nomi dei test (usare `testName_shouldExpectedBehavior_whenCondition`).
+Quando crei una feature, genera SEMPRE i test e non usare mai i back tick per i nomi dei test (usare
+`testName_shouldExpectedBehavior_whenCondition`).
 
 ### Regola: Mantieni lo Scopo del Test
+
 **REGOLA CRITICA**: Quando aggiorni un test esistente (es. perché il codice cambia):
+
 - ✅ **Mantieni SEMPRE lo scopo originale** del test (cosa si sta verificando)
-- ✅ Aggiorna solo le asserzioni per riflettere il nuovo contratto (es. `Result<T>` invece di valore diretto)
+- ✅ Aggiorna solo le asserzioni per riflettere il nuovo contratto (es. `Result<T>` invece di valore
+  diretto)
 - ✅ Il nome del test deve restare descrittivo dello scopo, non dell'implementazione
 - ❌ NON cambiare cosa si testa solo perché cambia come funziona internamente
 
@@ -688,13 +718,14 @@ private class SlowFakeRepository(private val delayMs: Long) : YourRepository {
 
 **TestDispatcher — quando usare quale:**
 
-| Dispatcher | Comportamento | Quando usarlo |
-|-----------|--------------|--------------|
-| `StandardTestDispatcher()` | Lazy: richiede `advanceUntilIdle()` | Test deterministici, timing preciso |
-| `UnconfinedTestDispatcher()` | Eager: esegue immediatamente | Flow tests, emissioni immediate |
-| `UnconfinedTestDispatcher(scheduler)` | Eager ma stesso scheduler | Setup in `@Before`, share scheduler |
+| Dispatcher                            | Comportamento                       | Quando usarlo                       |
+|---------------------------------------|-------------------------------------|-------------------------------------|
+| `StandardTestDispatcher()`            | Lazy: richiede `advanceUntilIdle()` | Test deterministici, timing preciso |
+| `UnconfinedTestDispatcher()`          | Eager: esegue immediatamente        | Flow tests, emissioni immediate     |
+| `UnconfinedTestDispatcher(scheduler)` | Eager ma stesso scheduler           | Setup in `@Before`, share scheduler |
 
 ### ViewModel Test
+
 ```kotlin
 @OptIn(ExperimentalCoroutinesApi::class)
 class YourFeatureViewModelTest {
@@ -718,9 +749,11 @@ class YourFeatureViewModelTest {
 ```
 
 **Test Requirements**:
+
 - Happy path + error cases + **cancellazione**
 - **Quando aggiorni un test: mantieni SEMPRE lo scopo originale**, anche se cambia l'implementazione
-- Test per `Result.isSuccess` / `Result.isFailure` e tipo esatto di eccezione (`assertIs<DomainException>`)
+- Test per `Result.isSuccess` / `Result.isFailure` e tipo esatto di eccezione (
+  `assertIs<DomainException>`)
 - `@OptIn(ExperimentalCoroutinesApi::class)` a livello di classe
 - `runTest(testDispatcher)` per condividere lo scheduler
 - `SlowFakeRepository` con `delay()` per testare la cancellazione
@@ -733,14 +766,15 @@ class YourFeatureViewModelTest {
 
 ## 📏 Code Length Limits - OBBLIGATORIO
 
-| Component | Max Lines | Se Superato |
-|-----------|-----------|-------------|
-| UseCase | 150 | Split in UseCase più piccoli |
-| ViewModel | 300 | Estrarre logica in UseCase |
-| Screen Composable | 400 | Estrarre sub-composables |
-| State/Model | 100 | Split in subclasses |
+| Component         | Max Lines | Se Superato                  |
+|-------------------|-----------|------------------------------|
+| UseCase           | 150       | Split in UseCase più piccoli |
+| ViewModel         | 300       | Estrarre logica in UseCase   |
+| Screen Composable | 400       | Estrarre sub-composables     |
+| State/Model       | 100       | Split in subclasses          |
 
 ### Extract Sub-Composables
+
 ```kotlin
 // ❌ BAD - Monolithic
 @Composable
@@ -785,6 +819,7 @@ class YourViewModel(...) : ViewModel() {
 ```
 
 **Levels**:
+
 - `Logger.v()` - Verbose
 - `Logger.d()` - Debug
 - `Logger.i()` - Info
@@ -797,7 +832,8 @@ class YourViewModel(...) : ViewModel() {
 
 ### Dispatcher Injection Pattern
 
-**REGOLA CRITICA**: Ogni UseCase DEVE accettare un `CoroutineDispatcher` nel costruttore per garantire testabilità e corretto threading.
+**REGOLA CRITICA**: Ogni UseCase DEVE accettare un `CoroutineDispatcher` nel costruttore per
+garantire testabilità e corretto threading.
 
 ```kotlin
 // ✅ CORRECT - dispatcher injection + Result
@@ -847,23 +883,28 @@ abstract class FlowUseCase<in Params, out Result>(
 ```
 
 **Perché `withContext` vs `flowOn`?**
+
 - `withContext`: per `suspend fun` — sposta l'esecuzione sul dispatcher e blocca finché non completa
-- `flowOn`: per `Flow` — cambia il dispatcher di *produzione* degli elementi senza bloccare il collector
+- `flowOn`: per `Flow` — cambia il dispatcher di *produzione* degli elementi senza bloccare il
+  collector
 
 ### Tabella Dispatcher
 
-| Dispatcher | Quando usarlo | Esempio |
-|-----------|--------------|---------|
-| `Dispatchers.Default` | Calcoli CPU-intensive, default KMP | Filtering, sorting |
-| `Dispatchers.IO` | Operazioni I/O (DB, rete) — Android only | Room DAO, Retrofit |
-| `Dispatchers.Main` | Aggiornare UI — solo in ViewModel/Screen | setState |
-| `TestDispatcher` | Solo nei test | `StandardTestDispatcher()` |
+| Dispatcher            | Quando usarlo                            | Esempio                    |
+|-----------------------|------------------------------------------|----------------------------|
+| `Dispatchers.Default` | Calcoli CPU-intensive, default KMP       | Filtering, sorting         |
+| `Dispatchers.IO`      | Operazioni I/O (DB, rete) — Android only | Room DAO, Retrofit         |
+| `Dispatchers.Main`    | Aggiornare UI — solo in ViewModel/Screen | setState                   |
+| `TestDispatcher`      | Solo nei test                            | `StandardTestDispatcher()` |
 
-> ⚠️ **Nota KMP**: `Dispatchers.IO` non è disponibile in `commonMain`. Usa `Dispatchers.Default` come default nelle base class per compatibilità multiplatform. I caller Android possono passare `Dispatchers.IO` esplicitamente se necessario.
+> ⚠️ **Nota KMP**: `Dispatchers.IO` non è disponibile in `commonMain`. Usa `Dispatchers.Default`
+> come default nelle base class per compatibilità multiplatform. I caller Android possono passare
+`Dispatchers.IO` esplicitamente se necessario.
 
 ### Cancellazione Cooperativa
 
-Le coroutine in Kotlin supportano la cancellazione *cooperativa*: ogni `suspend fun` è un punto di cancellazione.
+Le coroutine in Kotlin supportano la cancellazione *cooperativa*: ogni `suspend fun` è un punto di
+cancellazione.
 
 ```kotlin
 // ✅ Il UseCase è cancellabile automaticamente (delay/IO sono punti di cancellazione)
@@ -973,6 +1014,7 @@ override suspend fun execute() {
 ## 🚫 Anti-Patterns - MAI FARE QUESTI
 
 ### ❌ Business Logic in Composable
+
 ```kotlin
 // FORBIDDEN!
 @Composable
@@ -984,12 +1026,14 @@ fun Screen() {
 ```
 
 ### ❌ Hardcoded Strings
+
 ```kotlin
 // FORBIDDEN!
 Text("Error occurred!") // WRONG!
 ```
 
 ### ❌ ViewModel with Context
+
 ```kotlin
 // FORBIDDEN!
 class YourViewModel(
@@ -998,6 +1042,7 @@ class YourViewModel(
 ```
 
 ### ❌ Hardcoded Colors/Fonts
+
 ```kotlin
 // FORBIDDEN!
 Text(
@@ -1007,6 +1052,7 @@ Text(
 ```
 
 ### ❌ Ricreare Componenti Esistenti
+
 ```kotlin
 // FORBIDDEN!
 @Composable
@@ -1016,6 +1062,7 @@ fun MyCard(...) { // WRONG se AppCard esiste!
 ```
 
 ### ❌ UseCase senza Dispatcher Injection
+
 ```kotlin
 // FORBIDDEN!
 class InsertTransactionUseCase(
@@ -1028,6 +1075,7 @@ class InsertTransactionUseCase(
 ```
 
 ### ❌ Inghiottire CancellationException
+
 ```kotlin
 // FORBIDDEN!
 override suspend fun execute() {
@@ -1040,6 +1088,7 @@ override suspend fun execute() {
 ```
 
 ### ❌ runBlocking negli UseCase o ViewModel
+
 ```kotlin
 // FORBIDDEN!
 fun performAction() {
@@ -1050,6 +1099,7 @@ fun performAction() {
 ```
 
 ### ❌ Implementare invoke() invece di execute() nelle subclass
+
 ```kotlin
 // FORBIDDEN!
 class MyUseCase(repo: MyRepo, dispatcher: CoroutineDispatcher = Dispatchers.Default)
@@ -1064,6 +1114,7 @@ class MyUseCase(repo: MyRepo, dispatcher: CoroutineDispatcher = Dispatchers.Defa
 ```
 
 ### ❌ UseCase che lancia Exception invece di Result
+
 ```kotlin
 // FORBIDDEN!
 class GetTransactionUseCase(...) : BaseUseCase<Long, Transaction>(...) {
@@ -1080,6 +1131,7 @@ class GetTransactionUseCase(...) : BaseUseCase<Long, Result<Transaction>>(...) {
 ```
 
 ### ❌ Custom Exception fuori dal Domain Layer
+
 ```kotlin
 // FORBIDDEN!
 // In androidApp/ o nel Data Layer:
@@ -1088,6 +1140,7 @@ class InsertTransactionException : Exception("error") // WRONG!
 ```
 
 ### ❌ Import non utilizzati o package name errato
+
 ```kotlin
 // FORBIDDEN!
 package com.antcashmanager.android  // WRONG: file è in ui/screen/home/!
@@ -1138,6 +1191,7 @@ Prima di generare/committare codice:
 ## 🎯 Quick Reference
 
 ### File Naming
+
 - UseCase: `YourFeatureUseCase.kt`
 - Domain Exception: `YourFeatureException.kt`
 - ViewModel: `YourFeatureViewModel.kt`
@@ -1146,6 +1200,7 @@ Prima di generare/committare codice:
 - Test: `YourFeatureUseCaseTest.kt`, `YourFeatureViewModelTest.kt`
 
 ### Package Structure
+
 ```
 shared/commonMain/
 └── com.antcashmanager/
@@ -1166,6 +1221,7 @@ androidApp/
 ```
 
 ### Navigation
+
 ```kotlin
 // Navigate
 navController.navigate(Routes.SETTINGS)
@@ -1176,6 +1232,7 @@ navController.popBackStack()
 ```
 
 ### Componenti UI Checklist
+
 - [ ] Ho verificato `ui/components/` se componente esiste?
 - [ ] Sto usando `AppCard` invece di `Card`?
 - [ ] Sto usando `ScreenHeader` per titoli?
@@ -1195,22 +1252,36 @@ navController.popBackStack()
 
 ---
 
-**Quando in dubbio**: Consulta implementazioni esistenti (DisplayScreen, SettingsScreen, HomeScreen) come esempi di architettura corretta.
+**Quando in dubbio**: Consulta implementazioni esistenti (DisplayScreen, SettingsScreen, HomeScreen)
+come esempi di architettura corretta.
 
 **Ricorda**: Clean, testable, maintainable code > quick hacks. Qualità > velocità.
 
 # AGGIORNAMENTO: Controllo obbligatorio chiavi stringhe
 
 ## Prima di aggiungere una nuova stringa in qualsiasi file `strings.xml` (tutte le lingue):
+
 #
+
 # 1. CERCA la chiave proposta in tutti i file `strings.xml` (en, it, fr, de, es).
+
 # 2. Se la chiave ESISTE già, RIUTILIZZALA e NON crearne una nuova.
+
 # 3. Se la chiave NON esiste, crea la nuova chiave in tutte le lingue.
+
 # 4. MAI creare chiavi duplicate o con nomi diversi per lo stesso concetto.
+
 # 5. Se trovi chiavi semanticamente identiche ma con nomi diversi, UNIFICA e aggiorna i riferimenti nel codice.
+
 #
+
 # Esempio:
+
 # - Se esiste già `help_dashboard_title`, NON creare `home_dashboard_title`.
-# - Se trovi sia `help_dashboard_title` che `home_dashboard_title`, scegli la più coerente (es. `help_dashboard_title`), elimina l'altra e aggiorna i riferimenti.
+
+# - Se trovi sia `help_dashboard_title` che `home_dashboard_title`, scegli la più coerente (es.
+`help_dashboard_title`), elimina l'altra e aggiorna i riferimenti.
+
 #
+
 # Questo controllo è OBBLIGATORIO per tutte le modifiche future alle stringhe.
