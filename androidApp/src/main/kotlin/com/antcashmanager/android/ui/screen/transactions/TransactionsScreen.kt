@@ -450,60 +450,66 @@ internal fun TransactionsContent(
                 }
             }
         }
-        // FloatingActionButton scroll-to-top
-        AnimatedVisibility(
-            visible = showScrollToTop,
-            enter = fadeIn() + scaleIn(),
-            exit = fadeOut() + scaleOut(),
+        Column(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(24.dp)
+                .padding(24.dp),
+            horizontalAlignment = Alignment.End,
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            FloatingActionButton(
-                onClick = {
-                    coroutineScope.launch {
-                        listState.animateScrollToItem(0)
-                    }
-                },
-                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                modifier = Modifier.size(44.dp)
+            // Compare solo quando serve, sopra i FAB principali senza lasciare "buchi" in basso.
+            AnimatedVisibility(
+                visible = showScrollToTop,
+                enter = fadeIn() + scaleIn(),
+                exit = fadeOut() + scaleOut(),
             ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowUpward,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp)
-                )
+                FloatingActionButton(
+                    onClick = {
+                        coroutineScope.launch {
+                            listState.animateScrollToItem(0)
+                        }
+                    },
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    modifier = Modifier.size(44.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowUpward,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
             }
-        }
-        // FloatingActionButton add transaction (sempre visibile)
-        FloatingActionButton(
-            onClick = { navController?.navigate("add_transaction") },
-            containerColor = MaterialTheme.colorScheme.primary,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(end = 24.dp, bottom = 88.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = stringResource(R.string.transactions_add),
-                tint = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier.size(28.dp),
-            )
-        }
-        // FloatingActionButton scan receipt (sempre visibile)
-        FloatingActionButton(
-            onClick = { navController?.navigate("receipt_scan") },
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(end = 88.dp, bottom = 24.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Receipt,
-                contentDescription = stringResource(R.string.receipt_scan_nav_label),
-                modifier = Modifier.size(24.dp),
-            )
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.Bottom,
+            ) {
+                // FloatingActionButton scan receipt (sempre visibile)
+                FloatingActionButton(
+                    onClick = { navController?.navigate("receipt_scan") },
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Receipt,
+                        contentDescription = stringResource(R.string.receipt_scan_nav_label),
+                        modifier = Modifier.size(24.dp),
+                    )
+                }
+
+                // FloatingActionButton add transaction (sempre visibile)
+                FloatingActionButton(
+                    onClick = { navController?.navigate("add_transaction") },
+                    containerColor = MaterialTheme.colorScheme.primary,
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = stringResource(R.string.transactions_add),
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(28.dp),
+                    )
+                }
+            }
         }
     }
 }
