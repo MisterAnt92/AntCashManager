@@ -3,6 +3,9 @@
 ## Obiettivo
 Ottimizza l'efficienza, la qualità e la manutenibilità del codice seguendo Clean Architecture, best practice Android, e principi KMP. Applica SEMPRE queste regole quando generi, modifichi o suggerisci codice per questo progetto.
 
+## Metodologia di lavoro (obbligatoria)
+- Esegui SEMPRE task e procedimenti **step by step**: analisi → pianificazione → implementazione → verifica → conferma.
+
 ---
 
 ## 1. Architettura e Struttura
@@ -24,10 +27,12 @@ Ottimizza l'efficienza, la qualità e la manutenibilità del codice seguendo Cle
 - Commenta solo logica complessa, preferisci codice autoesplicativo.
 - Usa trailing comma in liste multi-linea.
 
-## 2.1 Regole trasversali (sempre attive)
-- Quando crei o aggiorni unit test, mantieni SEMPRE lo scopo originale del test anche se cambia il codice implementativo.
-- Quando crei o modifichi classi/file, rimuovi sempre tutti gli import non necessari prima di chiudere la modifica.
-- Quando crei o modifichi classi/file, verifica sempre che il `package name` sia coerente con la directory reale e correggilo se errato.
+## 2.1 Regole Trasversali (Sempre Attive)
+- ✅ Esegui SEMPRE task e procedimenti **step by step** (analisi → pianificazione → implementazione → verifica → conferma)
+- ✅ Quando crei o aggiorni unit test, **mantieni lo scopo originale del test** anche se cambia il codice implementativo
+- ✅ Quando crei o modifichi classi/file, **rimuovi sempre gli import non necessari** prima di chiudere la modifica
+- ✅ Quando crei o modifichi classi/file, **verifica sempre il `package name`** e correggilo se non corrisponde alla directory reale
+- ✅ Negli UseCase, usa SEMPRE `Result<T>` per restituire il valore desiderato o una custom exception di dominio, nel rispetto della Clean Architecture
 
 ---
 
@@ -47,6 +52,7 @@ Ottimizza l'efficienza, la qualità e la manutenibilità del codice seguendo Cle
   - Estendere la base class corretta (`BaseUseCase`, `FlowUseCase`, ecc.)
   - Accettare un `CoroutineDispatcher` nel costruttore (default: `Dispatchers.Default`)
   - Restituire SEMPRE `Result<T>` (NO eccezioni lanciate direttamente)
+  - Usare `Result<T>` per incapsulare sempre il valore desiderato o una custom exception di dominio, nel rispetto della Clean Architecture
   - Implementare SOLO `execute()`, MAI `invoke()`
   - KDoc obbligatoria
 - Le custom exception vanno SOLO in `shared/commonMain/domain/exception/`

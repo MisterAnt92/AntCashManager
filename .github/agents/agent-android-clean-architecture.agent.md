@@ -50,12 +50,16 @@ import java.util.Date                       // unused import!
 
 **REGOLA CRITICA**: Queste regole valgono in ogni task, anche durante refactor o migrazioni:
 
+- ✅ Esegui SEMPRE task e procedimenti **step by step** (analisi → pianificazione → implementazione
+  → verifica → conferma)
 - ✅ Quando crei o aggiorni unit test, **mantieni lo scopo originale del test** anche se cambia il
   codice implementativo
 - ✅ Quando crei o modifichi classi/file, **rimuovi sempre gli import non necessari** prima di
   chiudere la modifica
 - ✅ Quando crei o modifichi classi/file, **verifica sempre il `package name`** e correggilo se non
   corrisponde alla directory reale
+- ✅ Negli UseCase, usa SEMPRE `Result<T>` per restituire il valore desiderato o una custom
+  exception di dominio, nel rispetto della Clean Architecture
 
 ---
 
