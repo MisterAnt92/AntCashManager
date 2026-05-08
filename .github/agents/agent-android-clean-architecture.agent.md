@@ -46,6 +46,17 @@ import androidx.compose.ui.graphics.Color  // unused import!
 import java.util.Date                       // unused import!
 ```
 
+### Regole Trasversali (Sempre Attive)
+
+**REGOLA CRITICA**: Queste regole valgono in ogni task, anche durante refactor o migrazioni:
+
+- ✅ Quando crei o aggiorni unit test, **mantieni lo scopo originale del test** anche se cambia il
+  codice implementativo
+- ✅ Quando crei o modifichi classi/file, **rimuovi sempre gli import non necessari** prima di
+  chiudere la modifica
+- ✅ Quando crei o modifichi classi/file, **verifica sempre il `package name`** e correggilo se non
+  corrisponde alla directory reale
+
 ---
 
 ## 🏗️ Clean Architecture - Layer Structure

@@ -24,6 +24,11 @@ Ottimizza l'efficienza, la qualità e la manutenibilità del codice seguendo Cle
 - Commenta solo logica complessa, preferisci codice autoesplicativo.
 - Usa trailing comma in liste multi-linea.
 
+## 2.1 Regole trasversali (sempre attive)
+- Quando crei o aggiorni unit test, mantieni SEMPRE lo scopo originale del test anche se cambia il codice implementativo.
+- Quando crei o modifichi classi/file, rimuovi sempre tutti gli import non necessari prima di chiudere la modifica.
+- Quando crei o modifichi classi/file, verifica sempre che il `package name` sia coerente con la directory reale e correggilo se errato.
+
 ---
 
 ## 3. Android & Compose
