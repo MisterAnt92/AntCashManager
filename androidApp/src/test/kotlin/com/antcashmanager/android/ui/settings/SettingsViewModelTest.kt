@@ -3,10 +3,8 @@ package com.antcashmanager.android.ui.settings
 import com.antcashmanager.android.ui.screen.settings.SettingsViewModel
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
-import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionDisplayType
-import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
 import kotlinx.coroutines.Dispatchers
@@ -16,25 +14,22 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
+// import kotlinx.coroutines.test.StandardTestDispatcher
+// import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsViewModelTest {
-
-    private val testDispatcher = StandardTestDispatcher()
+    private val testDispatcher = Dispatchers.Default
     private lateinit var fakeSettingsRepo: FakeSettingsRepository
     private lateinit var fakeTransactionRepo: FakeTransactionRepository
-    private lateinit var fakeCategoryRepo: FakeCategoryRepository
     private lateinit var viewModel: SettingsViewModel
 
     @Before
@@ -42,8 +37,11 @@ class SettingsViewModelTest {
         Dispatchers.setMain(testDispatcher)
         fakeSettingsRepo = FakeSettingsRepository()
         fakeTransactionRepo = FakeTransactionRepository()
-        fakeCategoryRepo = FakeCategoryRepository()
-        viewModel = SettingsViewModel(fakeSettingsRepo, fakeTransactionRepo, fakeCategoryRepo)
+        viewModel = SettingsViewModel(
+            settingsRepository = fakeSettingsRepo,
+            transactionRepository = fakeTransactionRepo,
+            useCaseDispatcher = testDispatcher,
+        )
     }
 
     @After
@@ -53,7 +51,7 @@ class SettingsViewModelTest {
 
     @Test
     fun `initial theme is SYSTEM`() = runTest(testDispatcher) {
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+        val collectJob = launch {
             viewModel.state.collect {}
         }
         advanceUntilIdle()
@@ -63,7 +61,7 @@ class SettingsViewModelTest {
 
     @Test
     fun `setTheme updates theme to DARK`() = runTest(testDispatcher) {
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+        val collectJob = launch {
             viewModel.state.collect {}
         }
         advanceUntilIdle()
@@ -77,7 +75,7 @@ class SettingsViewModelTest {
 
     @Test
     fun `setTheme updates theme to LIGHT`() = runTest(testDispatcher) {
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+        val collectJob = launch {
             viewModel.state.collect {}
         }
         advanceUntilIdle()
@@ -91,7 +89,7 @@ class SettingsViewModelTest {
 
     @Test
     fun `setTheme can switch between themes`() = runTest(testDispatcher) {
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+        val collectJob = launch {
             viewModel.state.collect {}
         }
         advanceUntilIdle()
@@ -111,33 +109,6 @@ class SettingsViewModelTest {
         collectJob.cancel()
     }
 
-    @Test
-    fun `deleteAllData clears transactions and categories`() = runTest(testDispatcher) {
-        // Add some test data
-        fakeTransactionRepo.transactions.value = listOf(
-            Transaction(
-                id = 1,
-                title = "Test",
-                amount = 100.0,
-                category = "Food",
-                type = com.antcashmanager.domain.model.TransactionType.EXPENSE
-            ),
-        )
-        fakeCategoryRepo.categories.value = listOf(
-            Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373),
-        )
-
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.deleteResult.collect {}
-        }
-
-        viewModel.deleteAllData()
-        advanceUntilIdle()
-
-        assertTrue(fakeTransactionRepo.transactions.value.isEmpty())
-        assertTrue(fakeCategoryRepo.categories.value.isEmpty())
-        collectJob.cancel()
-    }
 }
 
 // ── Fake Repositories ──
@@ -256,6 +227,14 @@ private class FakeSettingsRepository : SettingsRepository {
     override fun getIsTutorialCompleted(): Flow<Boolean> = flowOf(true)
     override suspend fun setIsTutorialCompleted(completed: Boolean) {}
 
+    private val dataEncryptionEnabledFlow = MutableStateFlow(false)
+
+    override fun getDataEncryptionEnabled(): Flow<Boolean> = dataEncryptionEnabledFlow
+
+    override suspend fun setDataEncryptionEnabled(enabled: Boolean) {
+        dataEncryptionEnabledFlow.value = enabled
+    }
+
     private val dateFilterExpandedFlow = MutableStateFlow(false)
 
     override fun getDateFilterExpanded(): Flow<Boolean> = dateFilterExpandedFlow
@@ -280,6 +259,7 @@ private class FakeSettingsRepository : SettingsRepository {
         dateFilterExpandedFlow.value = false
         showPaymentTypeBreakdownFlow.value = true
         transactionDisplayTypeFlow.value = TransactionDisplayType.TREND
+        dataEncryptionEnabledFlow.value = false
     }
 }
 
@@ -324,39 +304,4 @@ private class FakeTransactionRepository : TransactionRepository {
     override fun getDistinctNotes() = flowOf(emptyList<String>())
     override fun getDistinctLocations() = flowOf(emptyList<String>())
     override fun getDistinctTags() = flowOf(emptyList<String>())
-}
-
-private class FakeCategoryRepository : CategoryRepository {
-    val categories = MutableStateFlow<List<Category>>(emptyList())
-
-    override fun getAllCategories(): Flow<List<Category>> = categories
-
-    override suspend fun getCategoryById(id: Long): Category? =
-        categories.value.find { it.id == id }
-
-    override suspend fun insertCategory(category: Category): Long {
-        categories.value = categories.value + category
-        return category.id
-    }
-
-    override suspend fun updateCategory(category: Category) {
-        categories.value = categories.value.map { if (it.id == category.id) category else it }
-    }
-
-    override suspend fun deleteCategory(category: Category) {
-        categories.value = categories.value.filter { it.id != category.id }
-    }
-
-    override suspend fun deleteAllCategories() {
-        categories.value = emptyList()
-    }
-
-    override fun getCategoriesByType(type: String): Flow<List<Category>> =
-        categories.map { list -> list.filter { it.type == type } }
-
-    override suspend fun getDefaultCategoryCount(): Int =
-        categories.value.count { it.isDefault }
-
-    override suspend fun getCategoryByName(name: String): Category? =
-        categories.value.find { it.name == name }
 }

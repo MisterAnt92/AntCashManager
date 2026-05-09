@@ -7,6 +7,7 @@ import com.antcashmanager.data.local.DatabaseProvider
 import com.antcashmanager.data.repository.CategoryRepositoryImpl
 import com.antcashmanager.data.repository.SettingsRepositoryImpl
 import com.antcashmanager.data.repository.TransactionRepositoryImpl
+import com.antcashmanager.data.security.LocalDataCipherImpl
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
@@ -30,19 +31,32 @@ class AntCashManagerApp : Application() {
     lateinit var analyticsManager: AnalyticsManager
         private set
 
+    private lateinit var localDataCipher: LocalDataCipherImpl
+
     private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun onCreate() {
         super.onCreate()
         Logger.d("AntCashManagerApp") { "Application started" }
         analyticsManager = AnalyticsManager(this)
+        localDataCipher = LocalDataCipherImpl(this)
         val database = DatabaseProvider.getDatabase(this)
-        transactionRepository = TransactionRepositoryImpl(database.transactionDao())
+        transactionRepository = TransactionRepositoryImpl(
+            database.transactionDao(),
+            localDataCipher,
+        )
         settingsRepository = SettingsRepositoryImpl(this)
         categoryRepository = CategoryRepositoryImpl(database.categoryDao())
 
         appScope.launch {
             seedDefaultCategories()
+        }
+    }
+
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        if (level >= TRIM_MEMORY_UI_HIDDEN) {
+            localDataCipher.clearCache()
         }
     }
 

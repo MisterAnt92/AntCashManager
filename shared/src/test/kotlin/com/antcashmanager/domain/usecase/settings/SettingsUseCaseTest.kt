@@ -213,6 +213,8 @@ internal class FakeSettingsRepository : SettingsRepository {
 
     override fun getIsTutorialCompleted(): Flow<Boolean> = flowOf(true)
     override suspend fun setIsTutorialCompleted(completed: Boolean) {}
+    override fun getDataEncryptionEnabled(): Flow<Boolean> = flowOf(false)
+    override suspend fun setDataEncryptionEnabled(enabled: Boolean) {}
 
     override suspend fun resetAllPreferences() {
         themeFlow.value = AppTheme.SYSTEM

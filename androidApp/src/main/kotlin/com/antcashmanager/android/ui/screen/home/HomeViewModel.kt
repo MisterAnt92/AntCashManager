@@ -57,6 +57,7 @@ class HomeViewModel(
     transactionRepository: TransactionRepository,
     categoryRepository: com.antcashmanager.domain.repository.CategoryRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
+    searchDebounceMs: Long = 300L,
 ) : ViewModel() {
 
     // ── UseCases ──
@@ -96,7 +97,7 @@ class HomeViewModel(
     private val debouncedSearchQuery = _filterState
         .map { it.searchQuery }
         .distinctUntilChanged()
-        .debounce(300L)
+        .debounce(searchDebounceMs)
 
     // ── Filtered Transactions Flow ──
     private val filteredTransactionsFlow = combine(
@@ -273,4 +274,3 @@ private data class FilterState(
     val searchQuery: String = "",
     val isSearchExpanded: Boolean = false,
 )
-

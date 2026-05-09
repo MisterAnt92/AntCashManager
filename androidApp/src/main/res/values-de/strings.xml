@@ -166,6 +166,9 @@
     <string name="date_format_ddmmmyyyy">TT MMM JJJJ</string>
     <string name="dialog_choose_date_format">Datumsformat w\u00e4hlen</string>
     <string name="settings_data_management">Datenverwaltung</string>
+    <string name="settings_security">Sicherheit</string>
+    <string name="settings_security_data_encryption">Datenschutz - Verschl\u00fcsselung</string>
+    <string name="settings_security_data_encryption_subtitle">Verschl\u00fcsselt und sch\u00fctzt lokale App-Daten</string>
     <string name="settings_delete_all">Alle Daten l\u00f6schen</string>
     <string name="settings_delete_all_subtitle">Alle Transaktionen und Kategorien dauerhaft entfernen</string>
     <string name="settings_backup">Daten sichern</string>

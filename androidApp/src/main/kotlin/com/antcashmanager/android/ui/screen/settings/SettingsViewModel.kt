@@ -5,27 +5,23 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.BuildConfig
-import com.antcashmanager.android.data.backup.BackupService
 import com.antcashmanager.android.domain.usecase.feedback.SendFeedbackEmailUseCase
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
-import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.usecase.settings.GetLanguageUseCase
 import com.antcashmanager.domain.usecase.settings.GetThemeUseCase
 import com.antcashmanager.domain.usecase.settings.SetLanguageUseCase
 import com.antcashmanager.domain.usecase.settings.SetThemeUseCase
-import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -37,7 +33,7 @@ import org.json.JSONObject
 class SettingsViewModel(
     private val settingsRepository: SettingsRepository,
     private val transactionRepository: TransactionRepository,
-    private val categoryRepository: CategoryRepository,
+    private val useCaseDispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : ViewModel() {
 
     companion object {
@@ -59,20 +55,16 @@ class SettingsViewModel(
     }
 
     private val getThemeUseCase = GetThemeUseCase(settingsRepository)
-    private val setThemeUseCase = SetThemeUseCase(settingsRepository)
+    private val setThemeUseCase = SetThemeUseCase(
+        settingsRepository = settingsRepository,
+        dispatcher = useCaseDispatcher,
+    )
     private val getLanguageUseCase = GetLanguageUseCase(settingsRepository)
-    private val setLanguageUseCase = SetLanguageUseCase(settingsRepository)
-    private val deleteAllTransactionsUseCase = DeleteAllTransactionsUseCase(transactionRepository)
+    private val setLanguageUseCase = SetLanguageUseCase(
+        settingsRepository = settingsRepository,
+        dispatcher = useCaseDispatcher,
+    )
     private val sendFeedbackEmailUseCase = SendFeedbackEmailUseCase()
-
-    private val backupService = BackupService(transactionRepository, categoryRepository)
-
-    private val _backupResult = MutableStateFlow<BackupResult>(BackupResult.Idle)
-    val backupResult: StateFlow<BackupResult> = _backupResult.asStateFlow()
-
-    private val _restoreResult =
-        MutableStateFlow<RestoreOperationResult>(RestoreOperationResult.Idle)
-    val restoreResult: StateFlow<RestoreOperationResult> = _restoreResult.asStateFlow()
 
     /**
      * Import debug data from asset `debug_initial_data.json`.
@@ -241,10 +233,6 @@ class SettingsViewModel(
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_TIMEOUT), SettingsState())
 
-    private val _deleteResult = MutableStateFlow<DeleteResult>(DeleteResult.Idle)
-    val deleteResult: StateFlow<DeleteResult> = _deleteResult.asStateFlow()
-
-
     /**
      * Funzione di utilità per loggare e lanciare l'azione in coroutine.
      */
@@ -338,83 +326,6 @@ class SettingsViewModel(
         action = { settingsRepository.resetAllPreferences() },
     )
 
-    fun deleteAllData() {
-        Logger.d("SettingsViewModel") { "Deleting all data" }
-        viewModelScope.launch {
-            try {
-                val result = deleteAllTransactionsUseCase()
-                result.onSuccess {
-                    categoryRepository.deleteAllCategories()
-                    _deleteResult.value = DeleteResult.Success
-                }.onFailure { error ->
-                    if (error is kotlinx.coroutines.CancellationException) throw error
-                    Logger.e("SettingsViewModel", error) { "Error deleting data: ${error.message}" }
-                    _deleteResult.value = DeleteResult.Error(error.message ?: "Unknown error")
-                }
-            } catch (e: Exception) {
-                Logger.e("SettingsViewModel") { "Error deleting data: ${e.message}" }
-                _deleteResult.value = DeleteResult.Error(e.message ?: "Unknown error")
-            }
-        }
-    }
-
-    fun resetDeleteResult() {
-        _deleteResult.value = DeleteResult.Idle
-    }
-
-    /**
-     * Creates a backup of all app data and returns the JSON string.
-     * The caller is responsible for saving the string to a file.
-     */
-    fun createBackup(onResult: (String?) -> Unit) {
-        Logger.d("SettingsViewModel") { "Creating backup..." }
-        _backupResult.value = BackupResult.Loading
-        viewModelScope.launch {
-            val result = backupService.createBackup()
-            result.fold(
-                onSuccess = { jsonString ->
-                    _backupResult.value = BackupResult.Success
-                    onResult(jsonString)
-                },
-                onFailure = { error ->
-                    _backupResult.value = BackupResult.Error(error.message ?: "Unknown error")
-                    onResult(null)
-                },
-            )
-        }
-    }
-
-    /**
-     * Restores app data from a JSON string.
-     */
-    fun restoreBackup(jsonString: String) {
-        Logger.d("SettingsViewModel") { "Restoring backup..." }
-        _restoreResult.value = RestoreOperationResult.Loading
-        viewModelScope.launch {
-            val result = backupService.restoreBackup(jsonString)
-            result.fold(
-                onSuccess = { restoreResult ->
-                    _restoreResult.value = RestoreOperationResult.Success(
-                        transactions = restoreResult.transactionsRestored,
-                        categories = restoreResult.categoriesRestored,
-                    )
-                },
-                onFailure = { error ->
-                    _restoreResult.value =
-                        RestoreOperationResult.Error(error.message ?: "Unknown error")
-                },
-            )
-        }
-    }
-
-    fun resetBackupResult() {
-        _backupResult.value = BackupResult.Idle
-    }
-
-    fun resetRestoreResult() {
-        _restoreResult.value = RestoreOperationResult.Idle
-    }
-
     fun sendFeedbackEmail(emailBody: String, applicationContext: Context): Boolean {
         val success = sendFeedbackEmailUseCase.sendFeedbackEmail(
             applicationContext,
@@ -430,25 +341,6 @@ class SettingsViewModel(
     }
 }
 
-sealed interface DeleteResult {
-    data object Idle : DeleteResult
-    data object Success : DeleteResult
-    data class Error(val message: String) : DeleteResult
-}
-
-sealed interface BackupResult {
-    data object Idle : BackupResult
-    data object Loading : BackupResult
-    data object Success : BackupResult
-    data class Error(val message: String) : BackupResult
-}
-
-sealed interface RestoreOperationResult {
-    data object Idle : RestoreOperationResult
-    data object Loading : RestoreOperationResult
-    data class Success(val transactions: Int, val categories: Int) : RestoreOperationResult
-    data class Error(val message: String) : RestoreOperationResult
-}
 
 // Data class di supporto per il combine dei preferenze
 private data class SettingsPreferences1(

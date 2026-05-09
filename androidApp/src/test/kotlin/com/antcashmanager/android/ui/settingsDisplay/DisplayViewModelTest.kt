@@ -275,6 +275,14 @@ private class FakeSettingsRepository : SettingsRepository {
         isTutorialCompletedFlow.value = completed
     }
 
+    private val dataEncryptionEnabledFlow = MutableStateFlow(false)
+
+    override fun getDataEncryptionEnabled(): Flow<Boolean> = dataEncryptionEnabledFlow
+
+    override suspend fun setDataEncryptionEnabled(enabled: Boolean) {
+        dataEncryptionEnabledFlow.value = enabled
+    }
+
     override suspend fun resetAllPreferences() {
         currencySymbolFlow.value = "\u20ac"
         decimalDigitsFlow.value = 2
@@ -288,6 +296,7 @@ private class FakeSettingsRepository : SettingsRepository {
         dateFilterExpandedFlow.value = false
         chartsZoomEnabledFlow.value = true
         isTutorialCompletedFlow.value = false
+        dataEncryptionEnabledFlow.value = false
     }
 }
 

@@ -4,15 +4,22 @@ import android.content.Context
 import androidx.room.Room
 
 object DatabaseProvider {
+    private const val DATABASE_NAME = "antcashmanager.db"
     private var database: AppDatabase? = null
 
     fun getDatabase(context: Context): AppDatabase {
         return database ?: synchronized(this) {
+            val appContext = context.applicationContext
+
             Room.databaseBuilder(
-                context.applicationContext,
+                appContext,
                 AppDatabase::class.java,
-                "antcashmanager.db"
-            ).build().also { database = it }
+                DATABASE_NAME,
+            )
+
+                .build().also {
+                database = it
+            }
         }
     }
 }

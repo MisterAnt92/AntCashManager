@@ -66,6 +66,10 @@ interface SettingsRepository {
     fun getIsTutorialCompleted(): Flow<Boolean>
     suspend fun setIsTutorialCompleted(completed: Boolean)
 
+    // ── Security ──
+    fun getDataEncryptionEnabled(): Flow<Boolean>
+    suspend fun setDataEncryptionEnabled(enabled: Boolean)
+
     /** Resets every preference to its factory default. */
     suspend fun resetAllPreferences()
 }

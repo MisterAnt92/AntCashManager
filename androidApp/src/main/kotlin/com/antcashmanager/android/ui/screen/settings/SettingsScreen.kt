@@ -3,10 +3,7 @@ package com.antcashmanager.android.ui.screen.settings
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,7 +29,6 @@ import androidx.compose.material.icons.automirrored.filled.LibraryBooks
 import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.Coffee
 import androidx.compose.material.icons.filled.Contrast
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Feedback
 import androidx.compose.material.icons.filled.FormatSize
 import androidx.compose.material.icons.filled.Info
@@ -42,8 +38,6 @@ import androidx.compose.material.icons.filled.MotionPhotosOff
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Payment
 import androidx.compose.material.icons.filled.PrivacyTip
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.RestorePage
 import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -54,7 +48,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -75,7 +68,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
-import com.antcashmanager.android.AntCashManagerApp
 import com.antcashmanager.android.BuildConfig
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AppDivider
@@ -87,7 +79,6 @@ import com.antcashmanager.android.ui.components.TutorialOverlay
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
 import com.antcashmanager.android.ui.components.text.AppText
-import com.antcashmanager.android.ui.screen.settings.view.CurrencySymbolDialog
 import com.antcashmanager.android.ui.screen.settings.view.DecimalDigitsDialog
 import com.antcashmanager.android.ui.screen.settings.view.HelpDialog
 import com.antcashmanager.android.ui.screen.settings.view.LanguageSelectionDialog
@@ -99,18 +90,13 @@ import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.CurrencyFormat
-import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @Composable
 fun SettingsScreen(
     settingsRepository: SettingsRepository,
     transactionRepository: TransactionRepository,
-    categoryRepository: CategoryRepository,
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
@@ -123,14 +109,10 @@ fun SettingsScreen(
                 SettingsViewModel(
                     settingsRepository,
                     transactionRepository,
-                    categoryRepository
                 ) as T
         },
     )
     val state by viewModel.state.collectAsState()
-    val deleteResult by viewModel.deleteResult.collectAsState()
-    val backupResult by viewModel.backupResult.collectAsState()
-    val restoreResult by viewModel.restoreResult.collectAsState()
 
     SettingsContent(
         currentTheme = state.theme,
@@ -138,15 +120,6 @@ fun SettingsScreen(
         currentLanguage = state.language,
         onLanguageSelected = { viewModel.setLanguage(it) },
         versionName = BuildConfig.VERSION_NAME,
-        onDeleteAllData = { viewModel.deleteAllData() },
-        deleteResult = deleteResult,
-        onResetDeleteResult = { viewModel.resetDeleteResult() },
-        backupResult = backupResult,
-        onCreateBackup = { callback -> viewModel.createBackup(callback) },
-        onResetBackupResult = { viewModel.resetBackupResult() },
-        restoreResult = restoreResult,
-        onRestoreBackup = { json -> viewModel.restoreBackup(json) },
-        onResetRestoreResult = { viewModel.resetRestoreResult() },
         showCharts = state.showCharts,
         onShowChartsChanged = { viewModel.setShowCharts(it) },
         highContrast = state.highContrast,
@@ -163,7 +136,6 @@ fun SettingsScreen(
         onDecimalSeparatorSelected = { viewModel.setDecimalSeparator(it) },
         thousandsSeparator = state.thousandsSeparator,
         onThousandsSeparatorSelected = { viewModel.setThousandsSeparator(it) },
-        onResetAllPreferences = { viewModel.resetAllPreferences() },
         onImportDebugData = { ctx -> viewModel.importDebugData(ctx) },
         onSendFeedbackEmail = { emailBody ->
             val success = viewModel.sendFeedbackEmail(emailBody, context)
@@ -187,15 +159,6 @@ internal fun SettingsContent(
     currentLanguage: AppLanguage = AppLanguage.SYSTEM,
     onLanguageSelected: (AppLanguage) -> Unit = {},
     versionName: String,
-    onDeleteAllData: () -> Unit = {},
-    deleteResult: DeleteResult = DeleteResult.Idle,
-    onResetDeleteResult: () -> Unit = {},
-    backupResult: BackupResult = BackupResult.Idle,
-    onCreateBackup: ((String?) -> Unit) -> Unit = {},
-    onResetBackupResult: () -> Unit = {},
-    restoreResult: RestoreOperationResult = RestoreOperationResult.Idle,
-    onRestoreBackup: (String) -> Unit = {},
-    onResetRestoreResult: () -> Unit = {},
     showCharts: Boolean = true,
     onShowChartsChanged: (Boolean) -> Unit = {},
     highContrast: Boolean = false,
@@ -212,7 +175,6 @@ internal fun SettingsContent(
     onDecimalSeparatorSelected: (String) -> Unit = {},
     thousandsSeparator: String = "",
     onThousandsSeparatorSelected: (String) -> Unit = {},
-    onResetAllPreferences: () -> Unit = {},
     onImportDebugData: (Context) -> Unit = {},
     onSendFeedbackEmail: (String) -> Unit = {},
     navController: NavController? = null,
@@ -221,115 +183,14 @@ internal fun SettingsContent(
     var showThemeDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
     var showPrivacyDialog by remember { mutableStateOf(false) }
-    var showDeleteConfirmDialog by remember { mutableStateOf(false) }
-    var showDeleteSuccessDialog by remember { mutableStateOf(false) }
     var showLibrariesDialog by remember { mutableStateOf(false) }
     var showCurrencyDialog by remember { mutableStateOf(false) }
     var showDecimalDigitsDialog by remember { mutableStateOf(false) }
     var showDecimalSeparatorDialog by remember { mutableStateOf(false) }
     var showThousandsSeparatorDialog by remember { mutableStateOf(false) }
-    var showResetPreferencesDialog by remember { mutableStateOf(false) }
-    var showBackupSuccessDialog by remember { mutableStateOf(false) }
-    var showBackupErrorDialog by remember { mutableStateOf(false) }
-    var showRestoreSuccessDialog by remember { mutableStateOf(false) }
-    var showRestoreErrorDialog by remember { mutableStateOf(false) }
     var showHelpDialog by remember { mutableStateOf(false) }
     var showTutorial by remember { mutableStateOf(false) }
-    var restoreSuccessInfo by remember { mutableStateOf<Pair<Int, Int>?>(null) }
-    var backupErrorMessage by remember { mutableStateOf("") }
-    var restoreErrorMessage by remember { mutableStateOf("") }
     val context = LocalContext.current
-    val analyticsManager = (context.applicationContext as? AntCashManagerApp)?.analyticsManager
-
-    // Backup: Create document launcher
-    var pendingBackupData by remember { mutableStateOf<String?>(null) }
-    val backupLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.CreateDocument("application/json"),
-    ) { uri ->
-        uri?.let {
-            pendingBackupData?.let { jsonData ->
-                try {
-                    context.contentResolver.openOutputStream(uri)?.use { outputStream ->
-                        outputStream.write(jsonData.toByteArray())
-                    }
-                    analyticsManager?.logEvent("backup_file_saved")
-                    showBackupSuccessDialog = true
-                } catch (e: Exception) {
-                    val params = Bundle().apply {
-                        putString("error_message", e.message?.take(100) ?: "unknown")
-                    }
-                    analyticsManager?.logEvent("backup_file_save_error", params)
-                    backupErrorMessage = e.message ?: "Unknown error"
-                    showBackupErrorDialog = true
-                }
-            }
-        }
-        pendingBackupData = null
-    }
-
-    // Restore: Open document launcher
-    val restoreLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.OpenDocument(),
-    ) { uri ->
-        uri?.let {
-            try {
-                val jsonString = context.contentResolver.openInputStream(uri)?.use { inputStream ->
-                    inputStream.bufferedReader().readText()
-                }
-                jsonString?.let { onRestoreBackup(it) }
-            } catch (e: Exception) {
-                restoreErrorMessage = e.message ?: "Unknown error"
-                showRestoreErrorDialog = true
-            }
-        }
-    }
-
-    // Handle backup result
-    LaunchedEffect(backupResult) {
-        when (backupResult) {
-            is BackupResult.Error -> {
-                backupErrorMessage = (backupResult as BackupResult.Error).message
-                showBackupErrorDialog = true
-                onResetBackupResult()
-            }
-
-            else -> {}
-        }
-    }
-
-    // Handle restore result
-    LaunchedEffect(restoreResult) {
-        when (val result = restoreResult) {
-            is RestoreOperationResult.Success -> {
-                restoreSuccessInfo = Pair(result.transactions, result.categories)
-                showRestoreSuccessDialog = true
-                onResetRestoreResult()
-            }
-
-            is RestoreOperationResult.Error -> {
-                restoreErrorMessage = result.message
-                showRestoreErrorDialog = true
-                onResetRestoreResult()
-            }
-
-            else -> {}
-        }
-    }
-
-    LaunchedEffect(deleteResult) {
-        when (deleteResult) {
-            is DeleteResult.Success -> {
-                showDeleteSuccessDialog = true
-                onResetDeleteResult()
-            }
-
-            is DeleteResult.Error -> {
-                onResetDeleteResult()
-            }
-
-            DeleteResult.Idle -> Unit
-        }
-    }
 
     // Help dialog
     if (showHelpDialog) {
@@ -473,51 +334,11 @@ internal fun SettingsContent(
             AppCardSectionHeader(title = stringResource(R.string.settings_data_management))
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 AppCard(
-                    title = stringResource(R.string.settings_backup),
-                    subtitle = stringResource(R.string.settings_backup_subtitle),
+                    title = stringResource(R.string.settings_data_management),
                     leadingIcon = Icons.Default.Backup,
                     iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
                     iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
-                    onClick = {
-                        analyticsManager?.logEvent("backup_create_requested")
-                        val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
-                            .format(Date())
-                        onCreateBackup { jsonData ->
-                            jsonData?.let {
-                                analyticsManager?.logEvent("backup_create_success")
-                                pendingBackupData = it
-                                backupLauncher.launch("antcashmanager_backup_$timestamp.json")
-                            } ?: analyticsManager?.logEvent("backup_create_failed")
-                        }
-                    },
-                )
-                AppCard(
-                    title = stringResource(R.string.settings_restore),
-                    subtitle = stringResource(R.string.settings_restore_subtitle),
-                    leadingIcon = Icons.Default.RestorePage,
-                    iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
-                    iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
-                    onClick = {
-                        restoreLauncher.launch(arrayOf("application/json"))
-                    },
-                )
-                AppCard(
-                    title = stringResource(R.string.settings_reset_preferences),
-                    subtitle = stringResource(R.string.settings_reset_preferences_subtitle),
-                    leadingIcon = Icons.Default.Refresh,
-                    iconBackgroundColor = MaterialTheme.colorScheme.errorContainer,
-                    iconTint = MaterialTheme.colorScheme.onErrorContainer,
-                    showChevron = false,
-                    onClick = { showResetPreferencesDialog = true },
-                )
-                AppCard(
-                    title = stringResource(R.string.settings_delete_all),
-                    subtitle = stringResource(R.string.settings_delete_all_subtitle),
-                    leadingIcon = Icons.Default.Delete,
-                    iconBackgroundColor = MaterialTheme.colorScheme.errorContainer,
-                    iconTint = MaterialTheme.colorScheme.onErrorContainer,
-                    showChevron = false,
-                    onClick = { showDeleteConfirmDialog = true },
+                    onClick = { navController?.navigate("settings_data") },
                 )
             }
 
@@ -611,113 +432,6 @@ internal fun SettingsContent(
         PrivacyPolicyDialog(onDismiss = { showPrivacyDialog = false })
     }
 
-    if (showDeleteConfirmDialog) {
-        AlertDialog(
-            onDismissRequest = { showDeleteConfirmDialog = false },
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.error,
-                )
-            },
-            title = { Text(stringResource(R.string.dialog_delete_all_title)) },
-            text = {
-                Text(stringResource(R.string.dialog_delete_all_message))
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        onDeleteAllData()
-                        showDeleteConfirmDialog = false
-                    },
-                ) {
-                    Text(
-                        stringResource(R.string.dialog_delete),
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDeleteConfirmDialog = false }) {
-                    Text(stringResource(R.string.dialog_cancel))
-                }
-            },
-        )
-    }
-
-    if (showDeleteSuccessDialog) {
-        AlertDialog(
-            onDismissRequest = { showDeleteSuccessDialog = false },
-            title = { Text(stringResource(R.string.dialog_data_deleted)) },
-            text = { Text(stringResource(R.string.dialog_data_deleted_message)) },
-            confirmButton = {
-                TextButton(onClick = { showDeleteSuccessDialog = false }) {
-                    Text(stringResource(R.string.dialog_ok))
-                }
-            },
-        )
-    }
-
-    // Backup success dialog
-    if (showBackupSuccessDialog) {
-        AlertDialog(
-            onDismissRequest = { showBackupSuccessDialog = false },
-            title = { Text(stringResource(R.string.backup_success_title)) },
-            text = { Text(stringResource(R.string.backup_success_message)) },
-            confirmButton = {
-                TextButton(onClick = { showBackupSuccessDialog = false }) {
-                    Text(stringResource(R.string.dialog_ok))
-                }
-            },
-        )
-    }
-
-    // Backup error dialog
-    if (showBackupErrorDialog) {
-        AlertDialog(
-            onDismissRequest = { showBackupErrorDialog = false },
-            title = { Text(stringResource(R.string.backup_error_title)) },
-            text = { Text(stringResource(R.string.backup_error_message, backupErrorMessage)) },
-            confirmButton = {
-                TextButton(onClick = { showBackupErrorDialog = false }) {
-                    Text(stringResource(R.string.dialog_ok))
-                }
-            },
-        )
-    }
-
-    // Restore success dialog
-    if (showRestoreSuccessDialog) {
-        AlertDialog(
-            onDismissRequest = { showRestoreSuccessDialog = false },
-            title = { Text(stringResource(R.string.restore_success_title)) },
-            text = {
-                restoreSuccessInfo?.let { (transactions, categories) ->
-                    Text(stringResource(R.string.restore_success_message, transactions, categories))
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showRestoreSuccessDialog = false }) {
-                    Text(stringResource(R.string.dialog_ok))
-                }
-            },
-        )
-    }
-
-    // Restore error dialog
-    if (showRestoreErrorDialog) {
-        AlertDialog(
-            onDismissRequest = { showRestoreErrorDialog = false },
-            title = { Text(stringResource(R.string.restore_error_title)) },
-            text = { Text(stringResource(R.string.restore_error_message, restoreErrorMessage)) },
-            confirmButton = {
-                TextButton(onClick = { showRestoreErrorDialog = false }) {
-                    Text(stringResource(R.string.dialog_ok))
-                }
-            },
-        )
-    }
 
     if (showLibrariesDialog) {
         ThirdPartyLibrariesDialog(
@@ -759,43 +473,6 @@ internal fun SettingsContent(
             currentValue = thousandsSeparator,
             onSelected = { onThousandsSeparatorSelected(it); showThousandsSeparatorDialog = false },
             onDismiss = { showThousandsSeparatorDialog = false },
-        )
-    }
-
-
-    if (showResetPreferencesDialog) {
-        AlertDialog(
-            onDismissRequest = { showResetPreferencesDialog = false },
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Refresh,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.error,
-                )
-            },
-            title = { Text(stringResource(R.string.dialog_reset_preferences_title)) },
-            text = {
-                Text(
-                    stringResource(R.string.dialog_reset_preferences_message),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    onResetAllPreferences()
-                    showResetPreferencesDialog = false
-                }) {
-                    Text(
-                        stringResource(R.string.dialog_reset),
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showResetPreferencesDialog = false }) {
-                    Text(stringResource(R.string.dialog_cancel))
-                }
-            },
         )
     }
 }

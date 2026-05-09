@@ -130,6 +130,9 @@ private class FakeSettingsRepository : SettingsRepository {
     override fun getIsTutorialCompleted() = throw UnsupportedOperationException()
     override suspend fun setIsTutorialCompleted(completed: Boolean) = Unit
 
+    override fun getDataEncryptionEnabled() = throw UnsupportedOperationException()
+    override suspend fun setDataEncryptionEnabled(enabled: Boolean) = Unit
+
     override suspend fun resetAllPreferences() = Unit
 }
 

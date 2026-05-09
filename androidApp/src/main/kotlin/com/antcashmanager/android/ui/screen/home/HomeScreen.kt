@@ -474,6 +474,11 @@ class MockHomeSettingsRepository : SettingsRepository {
 
     override suspend fun setIsTutorialCompleted(completed: Boolean) {}
 
+    override fun getDataEncryptionEnabled(): kotlinx.coroutines.flow.Flow<Boolean> =
+        kotlinx.coroutines.flow.flowOf(false)
+
+    override suspend fun setDataEncryptionEnabled(enabled: Boolean) {}
+
     override suspend fun resetAllPreferences() {}
 }
 

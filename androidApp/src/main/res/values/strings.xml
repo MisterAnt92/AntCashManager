@@ -184,6 +184,9 @@
     <string name="settings_reduce_motion">Reduce Motion</string>
     <string name="settings_reduce_motion_subtitle">Minimize animations and transitions. Helpful for users sensitive to motion.</string>
     <string name="settings_data_management">Data Management</string>
+    <string name="settings_security">Security</string>
+    <string name="settings_security_data_encryption">Data protection - Encryption</string>
+    <string name="settings_security_data_encryption_subtitle">Encrypt and protect local app data</string>
     <string name="settings_delete_all">Delete All Data</string>
     <string name="settings_delete_all_subtitle">Permanently remove all transactions and categories</string>
     <string name="settings_backup">Backup Data</string>

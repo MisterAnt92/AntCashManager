@@ -38,7 +38,7 @@ import com.antcashmanager.domain.model.Transaction
 import kotlinx.coroutines.flow.StateFlow
 
 // ❌ WRONG - import inutili, package errato
-package com.antcashmanager.android.ui  // WRONG package!
+package com.antcashmanager.android  // WRONG package!
 
 import com.antcashmanager.domain.model.Transaction
 import kotlinx.coroutines.flow.StateFlow
@@ -60,6 +60,8 @@ import java.util.Date                       // unused import!
   corrisponde alla directory reale
 - ✅ Negli UseCase, usa SEMPRE `Result<T>` per restituire il valore desiderato o una custom
   exception di dominio, nel rispetto della Clean Architecture
+- ❌ **NON modificare MAI `androidApp/google-services.json`**: e un file generato lato server,
+  usato direttamente dal codice, con chiavi/valori fissi
 
 ---
 
@@ -1200,6 +1202,7 @@ Prima di generare/committare codice:
 - [ ] KDoc per public API
 - [ ] `@Preview` per Composables
 - [ ] Spacing consistente (8.dp tra card)
+- [ ] NON ho modificato `androidApp/google-services.json` (file generato lato server con valori fissi)
 
 ---
 

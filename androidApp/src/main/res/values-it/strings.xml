@@ -180,6 +180,9 @@
     <string name="settings_reduce_motion">Riduci Movimento</string>
     <string name="settings_reduce_motion_subtitle">Minimizza animazioni e transizioni. Utile per chi \u00e8 sensibile al movimento.</string>
     <string name="settings_data_management">Gestione Dati</string>
+    <string name="settings_security">Sicurezza</string>
+    <string name="settings_security_data_encryption">Dati in sicurezza - Crittografia</string>
+    <string name="settings_security_data_encryption_subtitle">Cripta e protegge i dati locali dell\'app</string>
     <string name="settings_delete_all">Elimina tutti i dati</string>
     <string name="settings_delete_all_subtitle">Rimuovi permanentemente tutte le transazioni e categorie</string>
     <string name="settings_backup">Backup Dati</string>

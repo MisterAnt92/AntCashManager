@@ -1,0 +1,423 @@
+package com.antcashmanager.android.ui.screen.settingsData
+
+import android.os.Bundle
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Backup
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.RestorePage
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.antcashmanager.android.AntCashManagerApp
+import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.components.AppSwitch
+import com.antcashmanager.android.ui.components.card.AppCard
+import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.domain.repository.CategoryRepository
+import com.antcashmanager.domain.repository.SettingsRepository
+import com.antcashmanager.domain.repository.TransactionRepository
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SettingsDataScreen(
+    settingsRepository: SettingsRepository,
+    transactionRepository: TransactionRepository,
+    categoryRepository: CategoryRepository,
+    navController: NavController,
+) {
+    val viewModel: SettingsDataViewModel = viewModel(
+        factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T =
+                SettingsDataViewModel(
+                    settingsRepository = settingsRepository,
+                    transactionRepository = transactionRepository,
+                    categoryRepository = categoryRepository,
+                ) as T
+        },
+    )
+
+    val state by viewModel.state.collectAsState()
+
+    SettingsDataContent(
+        state = state,
+        onDeleteAllData = viewModel::deleteAllData,
+        onCreateBackup = viewModel::createBackup,
+        onRestoreBackup = viewModel::restoreBackup,
+        onResetAllPreferences = viewModel::resetAllPreferences,
+        onShowDeleteConfirmDialog = viewModel::showDeleteConfirmDialog,
+        onDismissDeleteConfirmDialog = viewModel::dismissDeleteConfirmDialog,
+        onDismissDeleteSuccessDialog = viewModel::dismissDeleteSuccessDialog,
+        onShowResetPreferencesDialog = viewModel::showResetPreferencesDialog,
+        onDismissResetPreferencesDialog = viewModel::dismissResetPreferencesDialog,
+        onDismissBackupSuccessDialog = viewModel::dismissBackupSuccessDialog,
+        onDismissBackupErrorDialog = viewModel::dismissBackupErrorDialog,
+        onDismissRestoreSuccessDialog = viewModel::dismissRestoreSuccessDialog,
+        onDismissRestoreErrorDialog = viewModel::dismissRestoreErrorDialog,
+        onBackupFileSaved = viewModel::onBackupFileSaved,
+        onBackupFileSaveError = viewModel::onBackupFileSaveError,
+        onRestoreFileReadError = viewModel::onRestoreFileReadError,
+        onClearPendingBackupRequest = viewModel::clearPendingBackupRequest,
+        onDataEncryptionEnabledChange = viewModel::setDataEncryptionEnabled,
+        onNavigateBack = { navController.popBackStack() },
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun SettingsDataContent(
+    state: SettingsDataState = SettingsDataState(),
+    onDeleteAllData: () -> Unit = {},
+    onCreateBackup: () -> Unit = {},
+    onRestoreBackup: (String) -> Unit = {},
+    onResetAllPreferences: () -> Unit = {},
+    onShowDeleteConfirmDialog: () -> Unit = {},
+    onDismissDeleteConfirmDialog: () -> Unit = {},
+    onDismissDeleteSuccessDialog: () -> Unit = {},
+    onShowResetPreferencesDialog: () -> Unit = {},
+    onDismissResetPreferencesDialog: () -> Unit = {},
+    onDismissBackupSuccessDialog: () -> Unit = {},
+    onDismissBackupErrorDialog: () -> Unit = {},
+    onDismissRestoreSuccessDialog: () -> Unit = {},
+    onDismissRestoreErrorDialog: () -> Unit = {},
+    onBackupFileSaved: () -> Unit = {},
+    onBackupFileSaveError: (String) -> Unit = {},
+    onRestoreFileReadError: (String) -> Unit = {},
+    onClearPendingBackupRequest: () -> Unit = {},
+    onDataEncryptionEnabledChange: (Boolean) -> Unit = {},
+    onNavigateBack: () -> Unit = {},
+) {
+    val context = LocalContext.current
+    val analyticsManager = (context.applicationContext as? AntCashManagerApp)?.analyticsManager
+    val backupLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("application/json"),
+    ) { uri ->
+        uri?.let {
+            state.pendingBackupData?.let { jsonData ->
+                try {
+                    context.contentResolver.openOutputStream(uri)?.use { outputStream ->
+                        outputStream.write(jsonData.toByteArray())
+                    }
+                    analyticsManager?.logEvent("backup_file_saved")
+                    onBackupFileSaved()
+                } catch (error: Exception) {
+                    val params = Bundle().apply {
+                        putString("error_message", error.message?.take(100) ?: "unknown")
+                    }
+                    analyticsManager?.logEvent("backup_file_save_error", params)
+                    onBackupFileSaveError(error.message ?: "Unknown error")
+                }
+            }
+        } ?: onClearPendingBackupRequest()
+    }
+
+    LaunchedEffect(state.pendingBackupFileName) {
+        state.pendingBackupFileName?.let { fileName ->
+            backupLauncher.launch(fileName)
+        }
+    }
+
+    val restoreLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument(),
+    ) { uri ->
+        uri?.let {
+            try {
+                val jsonString = context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                    inputStream.bufferedReader().readText()
+                }
+                jsonString?.let(onRestoreBackup)
+            } catch (error: Exception) {
+                onRestoreFileReadError(error.message ?: "Unknown error")
+            }
+        }
+    }
+
+    Scaffold(
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(R.string.settings_data_management)) },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.back),
+                        )
+                    }
+                },
+            )
+        },
+    ) { innerPadding ->
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(
+                start = innerPadding.calculateStartPadding(LayoutDirection.Ltr) + 16.dp,
+                top = innerPadding.calculateTopPadding() + 12.dp,
+                end = innerPadding.calculateEndPadding(LayoutDirection.Ltr) + 16.dp,
+                bottom = innerPadding.calculateBottomPadding() + 24.dp,
+            ),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            item {
+                AppCardSectionHeader(title = stringResource(R.string.settings_data_management))
+                Spacer(modifier = Modifier.height(8.dp))
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    AppCard(
+                        title = stringResource(R.string.settings_backup),
+                        subtitle = stringResource(R.string.settings_backup_subtitle),
+                        leadingIcon = Icons.Default.Backup,
+                        iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        onClick = {
+                            analyticsManager?.logEvent("backup_create_requested")
+                            onCreateBackup()
+                        },
+                    )
+                    AppCard(
+                        title = stringResource(R.string.settings_restore),
+                        subtitle = stringResource(R.string.settings_restore_subtitle),
+                        leadingIcon = Icons.Default.RestorePage,
+                        iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        onClick = { restoreLauncher.launch(arrayOf("application/json")) },
+                    )
+                    AppCard(
+                        title = stringResource(R.string.settings_reset_preferences),
+                        subtitle = stringResource(R.string.settings_reset_preferences_subtitle),
+                        leadingIcon = Icons.Default.Refresh,
+                        iconBackgroundColor = MaterialTheme.colorScheme.errorContainer,
+                        iconTint = MaterialTheme.colorScheme.onErrorContainer,
+                        showChevron = false,
+                        onClick = onShowResetPreferencesDialog,
+                    )
+                    AppCard(
+                        title = stringResource(R.string.settings_delete_all),
+                        subtitle = stringResource(R.string.settings_delete_all_subtitle),
+                        leadingIcon = Icons.Default.Delete,
+                        iconBackgroundColor = MaterialTheme.colorScheme.errorContainer,
+                        iconTint = MaterialTheme.colorScheme.onErrorContainer,
+                        showChevron = false,
+                        onClick = onShowDeleteConfirmDialog,
+                    )
+                }
+            }
+
+            item {
+                AppCardSectionHeader(title = stringResource(R.string.settings_security))
+                Spacer(modifier = Modifier.height(8.dp))
+                AppCard(
+                    title = stringResource(R.string.settings_security_data_encryption),
+                    subtitle = stringResource(R.string.settings_security_data_encryption_subtitle),
+                    leadingIcon = Icons.Default.Refresh,
+                    trailingContent = {
+                        AppSwitch(
+                            checked = state.dataEncryptionEnabled,
+                            onCheckedChange = onDataEncryptionEnabledChange,
+                        )
+                    },
+                    onClick = { onDataEncryptionEnabledChange(!state.dataEncryptionEnabled) },
+                )
+            }
+        }
+    }
+
+    if (state.showDeleteConfirmDialog) {
+        AlertDialog(
+            onDismissRequest = onDismissDeleteConfirmDialog,
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.error,
+                )
+            },
+            title = { Text(stringResource(R.string.dialog_delete_all_title)) },
+            text = { Text(stringResource(R.string.dialog_delete_all_message)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onDeleteAllData()
+                    },
+                ) {
+                    Text(
+                        stringResource(R.string.dialog_delete),
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismissDeleteConfirmDialog) {
+                    Text(stringResource(R.string.dialog_cancel))
+                }
+            },
+        )
+    }
+
+    if (state.showDeleteSuccessDialog) {
+        AlertDialog(
+            onDismissRequest = onDismissDeleteSuccessDialog,
+            title = { Text(stringResource(R.string.dialog_data_deleted)) },
+            text = { Text(stringResource(R.string.dialog_data_deleted_message)) },
+            confirmButton = {
+                TextButton(onClick = onDismissDeleteSuccessDialog) {
+                    Text(stringResource(R.string.dialog_ok))
+                }
+            },
+        )
+    }
+
+    if (state.showBackupSuccessDialog) {
+        AlertDialog(
+            onDismissRequest = onDismissBackupSuccessDialog,
+            title = { Text(stringResource(R.string.backup_success_title)) },
+            text = { Text(stringResource(R.string.backup_success_message)) },
+            confirmButton = {
+                TextButton(onClick = onDismissBackupSuccessDialog) {
+                    Text(stringResource(R.string.dialog_ok))
+                }
+            },
+        )
+    }
+
+    if (state.showBackupErrorDialog) {
+        AlertDialog(
+            onDismissRequest = onDismissBackupErrorDialog,
+            title = { Text(stringResource(R.string.backup_error_title)) },
+            text = {
+                Text(
+                    stringResource(
+                        R.string.backup_error_message,
+                        state.backupErrorMessage,
+                    )
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = onDismissBackupErrorDialog) {
+                    Text(stringResource(R.string.dialog_ok))
+                }
+            },
+        )
+    }
+
+    if (state.showRestoreSuccessDialog) {
+        AlertDialog(
+            onDismissRequest = onDismissRestoreSuccessDialog,
+            title = { Text(stringResource(R.string.restore_success_title)) },
+            text = {
+                state.restoreSuccessInfo?.let { info ->
+                    Text(
+                        stringResource(
+                            R.string.restore_success_message,
+                            info.transactions,
+                            info.categories,
+                        )
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = onDismissRestoreSuccessDialog) {
+                    Text(stringResource(R.string.dialog_ok))
+                }
+            },
+        )
+    }
+
+    if (state.showRestoreErrorDialog) {
+        AlertDialog(
+            onDismissRequest = onDismissRestoreErrorDialog,
+            title = { Text(stringResource(R.string.restore_error_title)) },
+            text = {
+                Text(
+                    stringResource(
+                        R.string.restore_error_message,
+                        state.restoreErrorMessage,
+                    )
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = onDismissRestoreErrorDialog) {
+                    Text(stringResource(R.string.dialog_ok))
+                }
+            },
+        )
+    }
+
+    if (state.showResetPreferencesDialog) {
+        AlertDialog(
+            onDismissRequest = onDismissResetPreferencesDialog,
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Refresh,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.error,
+                )
+            },
+            title = { Text(stringResource(R.string.dialog_reset_preferences_title)) },
+            text = {
+                Text(
+                    stringResource(R.string.dialog_reset_preferences_message),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    onResetAllPreferences()
+                }) {
+                    Text(
+                        stringResource(R.string.dialog_reset),
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismissResetPreferencesDialog) {
+                    Text(stringResource(R.string.dialog_cancel))
+                }
+            },
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SettingsDataContentPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        SettingsDataContent()
+    }
+}
+

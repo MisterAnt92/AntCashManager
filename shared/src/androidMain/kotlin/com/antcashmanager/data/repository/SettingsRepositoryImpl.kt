@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.antcashmanager.data.local.DatabaseEncryptionManager
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.TransactionDisplayType
@@ -44,6 +45,7 @@ class SettingsRepositoryImpl(
     private val transactionsTransactionDisplayTypeKey =
         stringPreferencesKey("transactions_transaction_display_type")
     private val isTutorialCompletedKey = booleanPreferencesKey("is_tutorial_completed")
+    private val dataEncryptionEnabledKey = booleanPreferencesKey("data_encryption_enabled")
 
     override fun getTheme(): Flow<AppTheme> =
         context.dataStore.data.map { preferences ->
@@ -250,6 +252,14 @@ class SettingsRepositoryImpl(
         context.dataStore.edit { it[isTutorialCompletedKey] = completed }
     }
 
+    override fun getDataEncryptionEnabled(): Flow<Boolean> =
+        context.dataStore.data.map { it[dataEncryptionEnabledKey] ?: false }
+
+    override suspend fun setDataEncryptionEnabled(enabled: Boolean) {
+        context.dataStore.edit { it[dataEncryptionEnabledKey] = enabled }
+        DatabaseEncryptionManager.setEncryptionDesired(context, enabled)
+    }
+
     override suspend fun resetAllPreferences() {
         context.dataStore.edit { prefs ->
             prefs[themeKey] = AppTheme.SYSTEM.name
@@ -273,6 +283,8 @@ class SettingsRepositoryImpl(
             prefs[transactionDisplayTypeKey] = TransactionDisplayType.TREND.name
             prefs[transactionsTransactionDisplayTypeKey] = TransactionDisplayType.TREND.name
             prefs[isTutorialCompletedKey] = false
+            prefs[dataEncryptionEnabledKey] = false
         }
+        DatabaseEncryptionManager.setEncryptionDesired(context, false)
     }
 }

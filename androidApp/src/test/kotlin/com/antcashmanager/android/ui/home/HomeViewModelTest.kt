@@ -12,8 +12,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
+// import kotlinx.coroutines.test.StandardTestDispatcher
+// import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -26,8 +26,7 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModelTest {
-
-    private val testDispatcher = StandardTestDispatcher()
+    private val testDispatcher = Dispatchers.Default
     private lateinit var fakeRepo: FakeTransactionRepository
     private lateinit var fakeCategoryRepo: FakeCategoryRepository
     private lateinit var viewModel: HomeViewModel
@@ -41,6 +40,7 @@ class HomeViewModelTest {
             transactionRepository = fakeRepo,
             categoryRepository = fakeCategoryRepo,
             dispatcher = testDispatcher,
+            searchDebounceMs = 0L,
         )
     }
 
@@ -51,7 +51,7 @@ class HomeViewModelTest {
 
     @Test
     fun `initial transactions list is empty`() = runTest(testDispatcher) {
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+        val collectJob = launch {
             viewModel.transactions.collect {}
         }
         advanceUntilIdle()
@@ -82,7 +82,7 @@ class HomeViewModelTest {
             ),
         )
 
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+        val collectJob = launch {
             viewModel.transactions.collect {}
         }
         advanceUntilIdle()
@@ -103,7 +103,7 @@ class HomeViewModelTest {
 
     @Test
     fun `transactions update when repository changes`() = runTest(testDispatcher) {
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+        val collectJob = launch {
             viewModel.transactions.collect {}
         }
         advanceUntilIdle()
@@ -157,7 +157,7 @@ class HomeViewModelTest {
             ),
         )
 
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+        val collectJob = launch {
             viewModel.transactions.collect {}
         }
         advanceUntilIdle()
@@ -192,7 +192,7 @@ class HomeViewModelTest {
         )
         fakeRepo.transactions.value = listOf(transaction)
 
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+        val collectJob = launch {
             viewModel.state.collect {}
         }
         advanceUntilIdle()
@@ -221,7 +221,7 @@ class HomeViewModelTest {
         )
         fakeRepo.transactions.value = listOf(transaction)
 
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+        val collectJob = launch {
             viewModel.state.collect {}
         }
         advanceUntilIdle()
@@ -283,7 +283,7 @@ class HomeViewModelTest {
                 ),
             )
 
-            val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            val collectJob = launch {
                 viewModel.state.collect {}
             }
             advanceUntilIdle()
@@ -330,7 +330,7 @@ class HomeViewModelTest {
             ),
         )
 
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+        val collectJob = launch {
             viewModel.state.collect {}
         }
         advanceUntilIdle()
@@ -345,7 +345,7 @@ class HomeViewModelTest {
     fun `balanceByPaymentType is empty when no transactions`() = runTest(testDispatcher) {
         fakeRepo.transactions.value = emptyList()
 
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+        val collectJob = launch {
             viewModel.state.collect {}
         }
         advanceUntilIdle()
@@ -382,7 +382,7 @@ class HomeViewModelTest {
             ),
         )
 
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+        val collectJob = launch {
             viewModel.state.collect {}
         }
         advanceUntilIdle()
@@ -432,7 +432,7 @@ class HomeViewModelTest {
             ),
         )
 
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+        val collectJob = launch {
             viewModel.state.collect {}
         }
         advanceUntilIdle()
@@ -477,7 +477,7 @@ class HomeViewModelTest {
             ),
         )
 
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+        val collectJob = launch {
             viewModel.state.collect {}
         }
         advanceUntilIdle()
@@ -531,7 +531,7 @@ class HomeViewModelTest {
             ),
         )
 
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+        val collectJob = launch {
             viewModel.state.collect {}
         }
         advanceUntilIdle()

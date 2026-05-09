@@ -31,6 +31,7 @@ import com.antcashmanager.android.ui.screen.charts.ChartsScreen
 import com.antcashmanager.android.ui.screen.home.HomeScreen
 import com.antcashmanager.android.ui.screen.receiptScan.ReceiptScanScreen
 import com.antcashmanager.android.ui.screen.settings.SettingsScreen
+import com.antcashmanager.android.ui.screen.settingsData.SettingsDataScreen
 import com.antcashmanager.android.ui.screen.settingsDisplay.DisplayScreen
 import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionScreen
 import com.antcashmanager.android.ui.screen.transactions.TransactionsScreen
@@ -162,13 +163,20 @@ fun AntCashManagerNavHost(
                     SettingsScreen(
                         settingsRepository = settingsRepository,
                         transactionRepository = transactionRepository,
-                        categoryRepository = categoryRepository,
                         navController = navController,
                     )
                 }
                 composable("display") {
                     DisplayScreen(
                         settingsRepository = settingsRepository,
+                        navController = navController,
+                    )
+                }
+                composable("settings_data") {
+                    SettingsDataScreen(
+                        settingsRepository = settingsRepository,
+                        transactionRepository = transactionRepository,
+                        categoryRepository = categoryRepository,
                         navController = navController,
                     )
                 }
@@ -270,6 +278,8 @@ private class PreviewSettingsRepository : SettingsRepository {
     override suspend fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType) {}
     override fun getIsTutorialCompleted() = flowOf(true)
     override suspend fun setIsTutorialCompleted(completed: Boolean) {}
+    override fun getDataEncryptionEnabled() = flowOf(false)
+    override suspend fun setDataEncryptionEnabled(enabled: Boolean) {}
     override suspend fun resetAllPreferences() {}
 }
 

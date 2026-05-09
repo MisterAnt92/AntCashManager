@@ -166,6 +166,9 @@
     <string name="date_format_ddmmmyyyy">JJ MMM AAAA</string>
     <string name="dialog_choose_date_format">Choisir le format de date</string>
     <string name="settings_data_management">Gestion des donn\u00e9es</string>
+    <string name="settings_security">S\u00e9curit\u00e9</string>
+    <string name="settings_security_data_encryption">Protection des donn\u00e9es - Chiffrement</string>
+    <string name="settings_security_data_encryption_subtitle">Chiffre et prot\u00e8ge les donn\u00e9es locales de l\'application</string>
     <string name="settings_delete_all">Supprimer toutes les donn\u00e9es</string>
     <string name="settings_delete_all_subtitle">Supprimer d\u00e9finitivement toutes les transactions et cat\u00e9gories</string>
     <string name="settings_backup">Sauvegarder les donn\u00e9es</string>
