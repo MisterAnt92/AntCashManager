@@ -37,6 +37,7 @@ import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.ExpenseRed
 import com.antcashmanager.android.ui.theme.IncomeGreen
 import com.antcashmanager.android.util.isValidNote
+import com.antcashmanager.android.util.translateCategory
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.model.TransactionType
@@ -157,7 +158,7 @@ fun RecentTransactionItem(
                     AppText(
                         text = stringResource(
                             R.string.home_transaction_item_subtitle,
-                            transaction.category,
+                            translateCategory(transaction.category),
                             dateFormat.format(Date(transaction.timestamp))
                         ),
                         style = MaterialTheme.typography.bodySmall,

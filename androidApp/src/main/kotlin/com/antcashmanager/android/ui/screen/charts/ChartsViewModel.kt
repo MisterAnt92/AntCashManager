@@ -6,9 +6,13 @@ import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
 import com.antcashmanager.android.util.withCorrectAmounts
+import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
+import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
+import com.antcashmanager.domain.usecase.settings.GetChartsDateFilterStateUseCase
+import com.antcashmanager.domain.usecase.settings.SetChartsDateFilterStateUseCase
 import com.antcashmanager.domain.usecase.transaction.DateRange
 import com.antcashmanager.domain.usecase.transaction.GetTransactionsByDateRangeUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,23 +20,28 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import java.util.Calendar
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ChartsViewModel(
     transactionRepository: TransactionRepository,
+    settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
     private val getTransactionsByDateRangeUseCase =
         GetTransactionsByDateRangeUseCase(transactionRepository)
-
-    private val calendar = Calendar.getInstance()
+    private val getChartsDateFilterStateUseCase = GetChartsDateFilterStateUseCase(settingsRepository)
+    private val setChartsDateFilterStateUseCase = SetChartsDateFilterStateUseCase(settingsRepository)
 
     private val _dateRange = MutableStateFlow(getDefaultDateRange())
     val dateRange: StateFlow<DateRange> = _dateRange.asStateFlow()
+    private val _selectedPresetIndex = MutableStateFlow(1)
+    val selectedPresetIndex: StateFlow<Int> = _selectedPresetIndex.asStateFlow()
 
     val chartData: StateFlow<ChartData> = _dateRange
         .flatMapLatest { range ->
@@ -47,12 +56,51 @@ class ChartsViewModel(
             initialValue = ChartData(),
         )
 
+    init {
+        observeSavedDateFilter()
+    }
+
     fun setDateRange(from: Long, to: Long) {
-        Logger.d("ChartsViewModel") { "Setting date range: $from - $to" }
-        _dateRange.value = DateRange(from, to)
+        val normalizedFrom = minOf(from, to)
+        val normalizedTo = maxOf(from, to)
+        Logger.d("ChartsViewModel") { "Setting date range: $normalizedFrom - $normalizedTo" }
+        _selectedPresetIndex.value = SavedDateFilter.CUSTOM_PRESET_INDEX
+        _dateRange.value = DateRange(normalizedFrom, normalizedTo)
+        persistDateFilter(
+            SavedDateFilter(
+                presetIndex = SavedDateFilter.CUSTOM_PRESET_INDEX,
+                from = normalizedFrom,
+                to = normalizedTo,
+            ),
+        )
     }
 
     fun setPresetRange(preset: RangePreset) {
+        val range = buildPresetDateRange(preset)
+        _selectedPresetIndex.value = preset.ordinal
+        _dateRange.value = range
+        persistDateFilter(
+            SavedDateFilter(
+                presetIndex = preset.ordinal,
+                from = range.from,
+                to = range.to,
+            ),
+        )
+    }
+
+    private fun observeSavedDateFilter() {
+        viewModelScope.launch {
+            getChartsDateFilterStateUseCase()
+                .map { result: Result<SavedDateFilter> -> result.getOrNull() }
+                .filterNotNull()
+                .collect { savedFilter: SavedDateFilter ->
+                    _selectedPresetIndex.value = savedFilter.presetIndex
+                    _dateRange.value = DateRange(savedFilter.from, savedFilter.to)
+                }
+        }
+    }
+
+    private fun buildPresetDateRange(preset: RangePreset): DateRange {
         val now = Calendar.getInstance()
         val from = Calendar.getInstance()
 
@@ -75,7 +123,19 @@ class ChartsViewModel(
         now.set(Calendar.SECOND, 59)
         now.set(Calendar.MILLISECOND, 999)
 
-        _dateRange.value = DateRange(from.timeInMillis, now.timeInMillis)
+        return DateRange(from.timeInMillis, now.timeInMillis)
+    }
+
+    private fun persistDateFilter(filter: SavedDateFilter) {
+        viewModelScope.launch {
+            val result = setChartsDateFilterStateUseCase(filter)
+            result.onFailure { error ->
+                if (error is kotlinx.coroutines.CancellationException) throw error
+                Logger.e("ChartsViewModel", error) {
+                    "Failed to persist charts date filter: ${error.message}"
+                }
+            }
+        }
     }
 
     private fun getDefaultDateRange(): DateRange {

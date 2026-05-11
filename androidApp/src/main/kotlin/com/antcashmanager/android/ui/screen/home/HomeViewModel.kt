@@ -7,7 +7,11 @@ import com.antcashmanager.android.util.calculateBalance
 import com.antcashmanager.android.util.calculateTotalExpense
 import com.antcashmanager.android.util.calculateTotalIncome
 import com.antcashmanager.android.util.withCorrectAmounts
+import com.antcashmanager.domain.model.SavedDateFilter
+import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
+import com.antcashmanager.domain.usecase.settings.GetHomeDateFilterStateUseCase
+import com.antcashmanager.domain.usecase.settings.SetHomeDateFilterStateUseCase
 import com.antcashmanager.domain.usecase.transaction.FilterTransactionsUseCase
 import com.antcashmanager.domain.usecase.transaction.GetTransactionSuggestionsUseCase
 import com.antcashmanager.domain.usecase.transaction.GetTransactionsUseCase
@@ -22,11 +26,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 // ══════════════════════════════════════════════════════════════════════════════
 // EVENTS
@@ -55,6 +61,7 @@ sealed interface HomeEvent {
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class HomeViewModel(
     transactionRepository: TransactionRepository,
+    settingsRepository: SettingsRepository,
     categoryRepository: com.antcashmanager.domain.repository.CategoryRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
     searchDebounceMs: Long = 300L,
@@ -68,6 +75,11 @@ class HomeViewModel(
     private val filterTransactionsUseCase = FilterTransactionsUseCase()
     private val getTransactionSuggestionsUseCase = GetTransactionSuggestionsUseCase(
         repository = transactionRepository,
+        dispatcher = dispatcher,
+    )
+    private val getHomeDateFilterStateUseCase = GetHomeDateFilterStateUseCase(settingsRepository)
+    private val setHomeDateFilterStateUseCase = SetHomeDateFilterStateUseCase(
+        settingsRepository = settingsRepository,
         dispatcher = dispatcher,
     )
 
@@ -223,6 +235,7 @@ class HomeViewModel(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     init {
+        observeSavedDateFilter()
         Logger.d("HomeViewModel") { "HomeViewModel initialized" }
     }
 
@@ -249,18 +262,71 @@ class HomeViewModel(
         _filterState.update { it.copy(isSearchExpanded = !it.isSearchExpanded) }
     }
 
-    private fun selectPreset(index: Int) {
-        _filterState.update {
-            it.copy(
-                selectedPresetIndex = index,
-                dateRangeFrom = HomeState.getDateFromForPreset(index),
-                dateRangeTo = System.currentTimeMillis(),
-            )
+    private fun observeSavedDateFilter() {
+        viewModelScope.launch {
+            getHomeDateFilterStateUseCase()
+                .map { result: Result<SavedDateFilter> -> result.getOrNull() }
+                .filterNotNull()
+                .collect { savedFilter: SavedDateFilter ->
+                    _filterState.update {
+                        it.copy(
+                            selectedPresetIndex = savedFilter.presetIndex,
+                            dateRangeFrom = savedFilter.from,
+                            dateRangeTo = savedFilter.to,
+                        )
+                    }
+                }
         }
     }
 
+    private fun selectPreset(index: Int) {
+        val dateRangeTo = System.currentTimeMillis()
+        val dateRangeFrom = HomeState.getDateFromForPreset(index)
+        _filterState.update {
+            it.copy(
+                selectedPresetIndex = index,
+                dateRangeFrom = dateRangeFrom,
+                dateRangeTo = dateRangeTo,
+            )
+        }
+        persistDateFilter(
+            SavedDateFilter(
+                presetIndex = index,
+                from = dateRangeFrom,
+                to = dateRangeTo,
+            ),
+        )
+    }
+
     private fun setDateRange(from: Long, to: Long) {
-        _filterState.update { it.copy(dateRangeFrom = from, dateRangeTo = to) }
+        val normalizedFrom = minOf(from, to)
+        val normalizedTo = maxOf(from, to)
+        _filterState.update {
+            it.copy(
+                selectedPresetIndex = SavedDateFilter.CUSTOM_PRESET_INDEX,
+                dateRangeFrom = normalizedFrom,
+                dateRangeTo = normalizedTo,
+            )
+        }
+        persistDateFilter(
+            SavedDateFilter(
+                presetIndex = SavedDateFilter.CUSTOM_PRESET_INDEX,
+                from = normalizedFrom,
+                to = normalizedTo,
+            ),
+        )
+    }
+
+    private fun persistDateFilter(filter: SavedDateFilter) {
+        viewModelScope.launch {
+            val result = setHomeDateFilterStateUseCase(filter)
+            result.onFailure { error ->
+                if (error is kotlinx.coroutines.CancellationException) throw error
+                Logger.e("HomeViewModel", error) {
+                    "Failed to persist home date filter: ${error.message}"
+                }
+            }
+        }
     }
 }
 

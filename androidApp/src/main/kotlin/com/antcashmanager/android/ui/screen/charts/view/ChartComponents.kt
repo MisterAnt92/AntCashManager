@@ -56,6 +56,7 @@ import com.antcashmanager.android.ui.screen.charts.YearlyAmount
 import com.antcashmanager.android.ui.theme.LocalReduceMotion
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.android.util.formatAmount
+import com.antcashmanager.android.util.translateCategory
 import kotlin.math.max
 import kotlin.math.min
 import androidx.compose.ui.graphics.PathEffect as ComposePathEffect
@@ -222,7 +223,7 @@ internal fun PieLegend(data: Map<String, Double>) {
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = category,
+                        text = translateCategory(category),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onSurface

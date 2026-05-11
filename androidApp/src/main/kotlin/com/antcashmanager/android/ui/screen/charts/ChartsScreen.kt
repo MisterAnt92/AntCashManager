@@ -75,7 +75,6 @@ import com.antcashmanager.android.util.formatAmount
 import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.usecase.transaction.DateRange
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -91,36 +90,23 @@ fun ChartsScreen(
         factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                ChartsViewModel(transactionRepository) as T
+                ChartsViewModel(transactionRepository, settingsRepository) as T
         },
     )
     val chartData by viewModel.chartData.collectAsState()
     val dateRange by viewModel.dateRange.collectAsState()
-
-    val screenDateFilterPreset by settingsRepository.getChartsDateFilterPreset()
-        .collectAsState(initial = 1)
+    val selectedPresetIndex by viewModel.selectedPresetIndex.collectAsState()
 
     val chartsZoomEnabled by settingsRepository.getChartsZoomEnabled()
         .collectAsState(initial = true)
 
-    androidx.compose.runtime.LaunchedEffect(screenDateFilterPreset) {
-        viewModel.setPresetRange(RangePreset.entries[screenDateFilterPreset])
-    }
-
-    val coroutineScope = androidx.compose.runtime.rememberCoroutineScope()
-
     ChartsContent(
         chartData = chartData,
         dateRange = dateRange,
-        initialPresetIndex = screenDateFilterPreset,
+        initialPresetIndex = selectedPresetIndex,
         zoomEnabled = chartsZoomEnabled,
         onDateRangeChanged = { from, to -> viewModel.setDateRange(from, to) },
-        onPresetSelected = { preset ->
-            coroutineScope.launch {
-                settingsRepository.setChartsDateFilterPreset(preset.ordinal)
-            }
-            viewModel.setPresetRange(preset)
-        },
+        onPresetSelected = viewModel::setPresetRange,
     )
 }
 

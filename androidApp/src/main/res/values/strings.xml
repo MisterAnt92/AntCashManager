@@ -420,6 +420,24 @@
     <string name="tutorial_skip">Skip</string>
     <string name="tutorial_finish">Got it!</string>
 
+    <!-- Category Translations (Keys) -->
+    <string name="category_uncategorized">Uncategorized</string>
+    <string name="category_home">Home</string>
+    <string name="category_transport">Transport</string>
+    <string name="category_food">Food</string>
+    <string name="category_bills">Bills</string>
+    <string name="category_dining">Dining out</string>
+    <string name="category_entertainment">Entertainment</string>
+    <string name="category_health">Health</string>
+    <string name="category_shopping">Shopping</string>
+    <string name="category_education">Education</string>
+    <string name="category_other">Other</string>
+    <string name="category_salary">Salary</string>
+    <string name="category_allowance">Allowance</string>
+    <string name="category_reimbursement">Reimbursement</string>
+    <string name="category_investments">Investments</string>
+    <string name="category_freelance">Freelance</string>
+
     <!-- Receipt Scan Screen -->
     <string name="receipt_scan_title">Scan Receipt</string>
     <string name="receipt_scan_capture_hint">Take a photo of your receipt or pick one from the gallery to automatically extract amount, VAT, payee and location.</string>
@@ -434,7 +452,7 @@
     <string name="receipt_scan_category_subtitle">Expense category for this transaction</string>
     <string name="receipt_scan_no_categories">No expense categories available. Add a category first.</string>
     <string name="receipt_scan_save">Save Transaction</string>
-    <string name="receipt_scan_retry">Effettua nuova scansione</string>
+    <string name="receipt_scan_retry">Scan again</string>
     <string name="receipt_scan_nav_label">Scan Receipt</string>
     <string name="receipt_scan_payment_type_subtitle">Payment method — detected automatically, tap to change</string>
     <string name="receipt_scan_select_payment_type">Select Payment Type</string>

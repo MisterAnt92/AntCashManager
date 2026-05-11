@@ -1,6 +1,7 @@
 package com.antcashmanager.android.ui.screen.receiptScan
 
 import android.net.Uri
+import androidx.activity.compose.LocalActivityResultRegistryOwner
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -232,6 +233,7 @@ private fun CaptureStep(
 ) {
     val context = LocalContext.current
     val isPreview = LocalInspectionMode.current
+    val registryOwner = LocalActivityResultRegistryOwner.current
 
     // Launcher per foto dalla fotocamera (salva in file temp)
     val tempFile = remember { File.createTempFile("receipt_", ".jpg", context.cacheDir) }
@@ -243,7 +245,7 @@ private fun CaptureStep(
         }
     }
 
-    val cameraLauncher = rememberLauncherForActivityResult(
+    val cameraLauncher = if (isPreview || registryOwner == null) null else rememberLauncherForActivityResult(
         ActivityResultContracts.TakePicture()
     ) { success ->
         if (success) {
@@ -252,7 +254,7 @@ private fun CaptureStep(
         }
     }
 
-    val galleryLauncher = rememberLauncherForActivityResult(
+    val galleryLauncher = if (isPreview || registryOwner == null) null else rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
@@ -284,13 +286,13 @@ private fun CaptureStep(
         )
         Spacer(modifier = Modifier.height(32.dp))
         AppButton(
-            onClick = { cameraLauncher.launch(tempUri) },
+            onClick = { cameraLauncher?.launch(tempUri) },
             modifier = Modifier.fillMaxWidth(),
             text = stringResource(R.string.receipt_scan_take_photo),
         )
         Spacer(modifier = Modifier.height(12.dp))
         AppButton(
-            onClick = { galleryLauncher.launch("image/*") },
+            onClick = { galleryLauncher?.launch("image/*") },
             modifier = Modifier.fillMaxWidth(),
             text = stringResource(R.string.receipt_scan_pick_gallery),
             buttonColor = MaterialTheme.colorScheme.secondary,

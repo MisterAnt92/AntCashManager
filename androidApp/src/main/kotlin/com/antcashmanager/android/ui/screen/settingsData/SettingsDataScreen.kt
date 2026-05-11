@@ -1,6 +1,7 @@
 package com.antcashmanager.android.ui.screen.settingsData
 
 import android.os.Bundle
+import androidx.activity.compose.LocalActivityResultRegistryOwner
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -34,6 +35,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
@@ -123,8 +125,10 @@ internal fun SettingsDataContent(
     onNavigateBack: () -> Unit = {},
 ) {
     val context = LocalContext.current
+    val isPreview = LocalInspectionMode.current
+    val registryOwner = LocalActivityResultRegistryOwner.current
     val analyticsManager = (context.applicationContext as? AntCashManagerApp)?.analyticsManager
-    val backupLauncher = rememberLauncherForActivityResult(
+    val backupLauncher = if (isPreview || registryOwner == null) null else rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("application/json"),
     ) { uri ->
         uri?.let {
@@ -148,11 +152,11 @@ internal fun SettingsDataContent(
 
     LaunchedEffect(state.pendingBackupFileName) {
         state.pendingBackupFileName?.let { fileName ->
-            backupLauncher.launch(fileName)
+            backupLauncher?.launch(fileName)
         }
     }
 
-    val restoreLauncher = rememberLauncherForActivityResult(
+    val restoreLauncher = if (isPreview || registryOwner == null) null else rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
     ) { uri ->
         uri?.let {
@@ -214,7 +218,7 @@ internal fun SettingsDataContent(
                         leadingIcon = Icons.Default.RestorePage,
                         iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
                         iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
-                        onClick = { restoreLauncher.launch(arrayOf("application/json")) },
+                        onClick = { restoreLauncher?.launch(arrayOf("application/json")) },
                     )
                     AppCard(
                         title = stringResource(R.string.settings_reset_preferences),

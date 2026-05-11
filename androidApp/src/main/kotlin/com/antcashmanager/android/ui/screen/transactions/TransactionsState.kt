@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.transactions
 
+import com.antcashmanager.android.R
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
@@ -88,10 +89,10 @@ data class TransactionsState(
 
     companion object {
         val PRESETS = listOf(
-            "Oggi" to "today",
-            "7 giorni" to "week",
-            "Mese" to "month",
-            "Anno" to "year",
+            R.string.range_label_today to "today",
+            R.string.range_week to "week",
+            R.string.range_month to "month",
+            R.string.range_year to "year",
         )
 
         fun getDateFromForPreset(index: Int): Long = when (index) {

@@ -41,6 +41,7 @@ import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.CurrencyFormat
+import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.CategoryRepository
@@ -264,10 +265,37 @@ private class PreviewSettingsRepository : SettingsRepository {
     override suspend fun setDateFilterExpanded(expanded: Boolean) {}
     override fun getHomeDateFilterPreset() = flowOf(1)
     override suspend fun setHomeDateFilterPreset(index: Int) {}
+    override fun getHomeDateFilterState() = flowOf(
+        SavedDateFilter(
+            presetIndex = 1,
+            from = System.currentTimeMillis() - (7L * 24 * 60 * 60 * 1000),
+            to = System.currentTimeMillis(),
+        ),
+    )
+
+    override suspend fun setHomeDateFilterState(filter: SavedDateFilter) {}
     override fun getTransactionsDateFilterPreset() = flowOf(1)
     override suspend fun setTransactionsDateFilterPreset(index: Int) {}
+    override fun getTransactionsDateFilterState() = flowOf(
+        SavedDateFilter(
+            presetIndex = 1,
+            from = System.currentTimeMillis() - (7L * 24 * 60 * 60 * 1000),
+            to = System.currentTimeMillis(),
+        ),
+    )
+
+    override suspend fun setTransactionsDateFilterState(filter: SavedDateFilter) {}
     override fun getChartsDateFilterPreset() = flowOf(1)
     override suspend fun setChartsDateFilterPreset(index: Int) {}
+    override fun getChartsDateFilterState() = flowOf(
+        SavedDateFilter(
+            presetIndex = 1,
+            from = System.currentTimeMillis() - (30L * 24 * 60 * 60 * 1000),
+            to = System.currentTimeMillis(),
+        ),
+    )
+
+    override suspend fun setChartsDateFilterState(filter: SavedDateFilter) {}
     override fun getChartsZoomEnabled() = flowOf(true)
     override suspend fun setChartsZoomEnabled(enabled: Boolean) {}
     override fun getShowPaymentTypeBreakdown() = flowOf(true)

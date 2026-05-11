@@ -109,7 +109,7 @@ private fun getRangeDisplayText(
 @Composable
 fun DateRangeFilter(
     selectedPresetIndex: Int,
-    presets: List<Pair<String, String>>,
+    presets: List<Pair<Int, String>>,
     dateRangeFrom: Long,
     dateRangeTo: Long,
     expanded: Boolean,
@@ -190,13 +190,13 @@ fun DateRangeFilter(
                             .padding(bottom = 8.dp),
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
                     ) {
-                        presets.forEachIndexed { index, (label, _) ->
+                        presets.forEachIndexed { index, (labelRes, _) ->
                             FilterChip(
                                 selected = selectedPresetIndex == index,
                                 onClick = { onPresetSelected(index) },
                                 label = {
                                     Text(
-                                        text = label,
+                                        text = stringResource(labelRes),
                                         style = MaterialTheme.typography.labelSmall,
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis,
@@ -292,10 +292,10 @@ private fun DateRangeFilterPreview() {
             DateRangeFilter(
                 selectedPresetIndex = 0,
                 presets = listOf(
-                    "Oggi" to "today",
-                    "7 giorni" to "week",
-                    "Mese" to "month",
-                    "Anno" to "year",
+                    R.string.range_label_today to "today",
+                    R.string.range_week to "week",
+                    R.string.range_month to "month",
+                    R.string.range_year to "year",
                 ),
                 dateRangeFrom = System.currentTimeMillis() - (24 * 60 * 60 * 1000),
                 dateRangeTo = System.currentTimeMillis(),
@@ -312,10 +312,10 @@ private fun DateRangeFilterPreview() {
             DateRangeFilter(
                 selectedPresetIndex = 1,
                 presets = listOf(
-                    "Oggi" to "today",
-                    "7 giorni" to "week",
-                    "Mese" to "month",
-                    "Anno" to "year",
+                    R.string.range_label_today to "today",
+                    R.string.range_week to "week",
+                    R.string.range_month to "month",
+                    R.string.range_year to "year",
                 ),
                 dateRangeFrom = System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000),
                 dateRangeTo = System.currentTimeMillis(),
@@ -332,10 +332,10 @@ private fun DateRangeFilterPreview() {
             DateRangeFilter(
                 selectedPresetIndex = 1, // But with different dates to show custom
                 presets = listOf(
-                    "Oggi" to "today",
-                    "7 giorni" to "week",
-                    "Mese" to "month",
-                    "Anno" to "year",
+                    R.string.range_label_today to "today",
+                    R.string.range_week to "week",
+                    R.string.range_month to "month",
+                    R.string.range_year to "year",
                 ),
                 dateRangeFrom = System.currentTimeMillis() - (15 * 24 * 60 * 60 * 1000), // 15 days ago
                 dateRangeTo = System.currentTimeMillis() - (5 * 24 * 60 * 60 * 1000), // 5 days ago
@@ -356,10 +356,10 @@ private fun DateRangeFilterExpandedPreview() {
         DateRangeFilter(
             selectedPresetIndex = 2,
             presets = listOf(
-                "Oggi" to "today",
-                "7 giorni" to "week",
-                "Mese" to "month",
-                "Anno" to "year",
+                R.string.range_label_today to "today",
+                R.string.range_week to "week",
+                R.string.range_month to "month",
+                R.string.range_year to "year",
             ),
             dateRangeFrom = System.currentTimeMillis() - (30 * 24 * 60 * 60 * 1000),
             dateRangeTo = System.currentTimeMillis(),

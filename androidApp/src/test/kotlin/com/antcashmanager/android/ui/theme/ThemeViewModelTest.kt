@@ -1,6 +1,7 @@
 package com.antcashmanager.android.ui.theme
 
 import com.antcashmanager.domain.model.AppTheme
+import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.repository.SettingsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -117,12 +118,20 @@ private class FakeSettingsRepository : SettingsRepository {
         throw UnsupportedOperationException()
 
     override suspend fun setTransactionsDateFilterPreset(index: Int) {}
+    override fun getTransactionsDateFilterState(): Flow<SavedDateFilter> =
+        throw UnsupportedOperationException()
+
+    override suspend fun setTransactionsDateFilterState(filter: SavedDateFilter) = Unit
 
     override fun getChartsDateFilterPreset(): Flow<Int> = throw UnsupportedOperationException()
     override suspend fun setChartsDateFilterPreset(index: Int) {}
+    override fun getChartsDateFilterState(): Flow<SavedDateFilter> = throw UnsupportedOperationException()
+    override suspend fun setChartsDateFilterState(filter: SavedDateFilter) = Unit
 
     override fun getHomeDateFilterPreset(): Flow<Int> = throw UnsupportedOperationException()
     override suspend fun setHomeDateFilterPreset(index: Int) {}
+    override fun getHomeDateFilterState(): Flow<SavedDateFilter> = throw UnsupportedOperationException()
+    override suspend fun setHomeDateFilterState(filter: SavedDateFilter) = Unit
 
     override fun getChartsZoomEnabled() = throw UnsupportedOperationException()
     override suspend fun setChartsZoomEnabled(enabled: Boolean) = Unit

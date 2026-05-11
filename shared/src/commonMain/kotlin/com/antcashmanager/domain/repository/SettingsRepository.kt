@@ -2,6 +2,7 @@ package com.antcashmanager.domain.repository
 
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
+import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.TransactionDisplayType
 import kotlinx.coroutines.flow.Flow
 
@@ -41,12 +42,18 @@ interface SettingsRepository {
 
     fun getHomeDateFilterPreset(): Flow<Int>
     suspend fun setHomeDateFilterPreset(index: Int)
+    fun getHomeDateFilterState(): Flow<SavedDateFilter>
+    suspend fun setHomeDateFilterState(filter: SavedDateFilter)
 
     fun getTransactionsDateFilterPreset(): Flow<Int>
     suspend fun setTransactionsDateFilterPreset(index: Int)
+    fun getTransactionsDateFilterState(): Flow<SavedDateFilter>
+    suspend fun setTransactionsDateFilterState(filter: SavedDateFilter)
 
     fun getChartsDateFilterPreset(): Flow<Int>
     suspend fun setChartsDateFilterPreset(index: Int)
+    fun getChartsDateFilterState(): Flow<SavedDateFilter>
+    suspend fun setChartsDateFilterState(filter: SavedDateFilter)
 
     fun getChartsZoomEnabled(): Flow<Boolean>
     suspend fun setChartsZoomEnabled(enabled: Boolean)

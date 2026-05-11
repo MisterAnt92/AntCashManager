@@ -3,6 +3,7 @@ package com.antcashmanager.android.ui.settings
 import com.antcashmanager.android.ui.screen.settings.SettingsViewModel
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
+import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.SettingsRepository
@@ -217,10 +218,25 @@ private class FakeSettingsRepository : SettingsRepository {
 
     override fun getHomeDateFilterPreset(): Flow<Int> = flowOf(1)
     override suspend fun setHomeDateFilterPreset(index: Int) {}
+    override fun getHomeDateFilterState(): Flow<SavedDateFilter> = flowOf(
+        SavedDateFilter(1, System.currentTimeMillis() - (7L * 24 * 60 * 60 * 1000), System.currentTimeMillis())
+    )
+
+    override suspend fun setHomeDateFilterState(filter: SavedDateFilter) {}
     override fun getTransactionsDateFilterPreset(): Flow<Int> = flowOf(1)
     override suspend fun setTransactionsDateFilterPreset(index: Int) {}
+    override fun getTransactionsDateFilterState(): Flow<SavedDateFilter> = flowOf(
+        SavedDateFilter(1, System.currentTimeMillis() - (7L * 24 * 60 * 60 * 1000), System.currentTimeMillis())
+    )
+
+    override suspend fun setTransactionsDateFilterState(filter: SavedDateFilter) {}
     override fun getChartsDateFilterPreset(): Flow<Int> = flowOf(1)
     override suspend fun setChartsDateFilterPreset(index: Int) {}
+    override fun getChartsDateFilterState(): Flow<SavedDateFilter> = flowOf(
+        SavedDateFilter(1, System.currentTimeMillis() - (30L * 24 * 60 * 60 * 1000), System.currentTimeMillis())
+    )
+
+    override suspend fun setChartsDateFilterState(filter: SavedDateFilter) {}
     override fun getChartsZoomEnabled(): Flow<Boolean> = flowOf(true)
     override suspend fun setChartsZoomEnabled(enabled: Boolean) {}
 

@@ -125,10 +125,10 @@
     <string name="range_all">Tutto</string>
 
     <!-- Range Labels (for collapsed filter) -->
-    <string name="range_label_today">Giornata di oggi</string>
-    <string name="range_label_this_week">Questa settimana</string>
-    <string name="range_label_this_month">Questo mese</string>
-    <string name="range_label_this_year">Questo anno</string>
+    <string name="range_label_today">Oggi</string>
+    <string name="range_label_this_week">7 giorni</string>
+    <string name="range_label_this_month">Mese</string>
+    <string name="range_label_this_year">Anno</string>
     <string name="range_label_custom">Da %1$s a %2$s</string>
 
     <!-- Settings Screen -->
@@ -387,6 +387,46 @@
     <string name="settings_transaction_icon_display_category">Categoria</string>
     <string name="settings_transaction_icon_display_none">Nessuna</string>
     <string name="dialog_choose_transaction_icon_display">Scegli il tipo di visualizzazione</string>
+
+    <!-- Tutorial -->
+    <string name="settings_tutorial">Tutorial</string>
+    <string name="settings_show_tutorial">Mostra Tutorial</string>
+    <string name="settings_show_tutorial_subtitle">Riguarda il tutorial iniziale dell\'app</string>
+    <string name="tutorial_welcome_title">Benvenuto su AntCashManager! 🐜</string>
+    <string name="tutorial_welcome_desc">Facciamo un breve tour per vedere come la nostra formichina ti aiuta a gestire i tuoi soldi.</string>
+    <string name="tutorial_dashboard_title">Dashboard</string>
+    <string name="tutorial_dashboard_desc">Qui puoi vedere il tuo saldo totale, le entrate e le uscite mensili a colpo d\'occhio.</string>
+    <string name="tutorial_transactions_title">Transazioni</string>
+    <string name="tutorial_transactions_desc">Gestisci tutti i tuoi movimenti qui. Puoi cercare, filtrare e aggiungere nuove voci facilmente.</string>
+    <string name="tutorial_charts_title">Grafici e Analisi</string>
+    <string name="tutorial_charts_desc">Visualizza le tue abitudini di spesa con grafici interattivi. Guarda dove vanno a finire i tuoi soldi!</string>
+    <string name="tutorial_categories_title">Categorie</string>
+    <string name="tutorial_categories_desc">Organizza le tue transazioni con categorie personalizzate, icone e colori.</string>
+    <string name="tutorial_settings_title">Personalizzazione</string>
+    <string name="tutorial_settings_desc">Adatta l\'app alle tue esigenze: valuta, formati data, accessibilit\u00e0 e temi.</string>
+    <string name="tutorial_finish_title">Sei pronto!</string>
+    <string name="tutorial_finish_desc">Inizia oggi il tuo viaggio finanziario con AntCashManager. Buon risparmio!</string>
+    <string name="tutorial_next">Avanti</string>
+    <string name="tutorial_skip">Salta</string>
+    <string name="tutorial_finish">Capito!</string>
+
+    <!-- Category Translations (Keys) -->
+    <string name="category_uncategorized">Non categorizzato</string>
+    <string name="category_home">Casa</string>
+    <string name="category_transport">Trasporti</string>
+    <string name="category_food">Cibo</string>
+    <string name="category_bills">Bollette</string>
+    <string name="category_dining">Pranzi/Cene fuori</string>
+    <string name="category_entertainment">Divertimento</string>
+    <string name="category_health">Salute</string>
+    <string name="category_shopping">Shopping</string>
+    <string name="category_education">Istruzione</string>
+    <string name="category_other">Altro</string>
+    <string name="category_salary">Stipendio</string>
+    <string name="category_allowance">Paghetta</string>
+    <string name="category_reimbursement">Rimborso</string>
+    <string name="category_investments">Investimenti</string>
+    <string name="category_freelance">Freelance</string>
 
     <!-- Receipt Scan Screen -->
     <string name="receipt_scan_title">Scansiona Scontrino</string>

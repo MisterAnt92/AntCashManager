@@ -7,12 +7,16 @@ package com.antcashmanager.android.ui.screen.transactions
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
+import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.android.util.withCorrectAmounts
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.CategoryRepository
+import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
+import com.antcashmanager.domain.usecase.settings.GetTransactionsDateFilterStateUseCase
+import com.antcashmanager.domain.usecase.settings.SetTransactionsDateFilterStateUseCase
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.transaction.DeleteTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.FilterTransactionsUseCase
@@ -30,6 +34,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -74,6 +79,7 @@ sealed interface TransactionsEvent {
 class TransactionsViewModel(
     transactionRepository: TransactionRepository,
     categoryRepository: CategoryRepository,
+    settingsRepository: SettingsRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : ViewModel() {
 
@@ -89,6 +95,13 @@ class TransactionsViewModel(
     private val filterTransactionsUseCase = FilterTransactionsUseCase()
     private val getTransactionSuggestionsUseCase =
         GetTransactionSuggestionsUseCase(transactionRepository, dispatcher)
+    private val getTransactionsDateFilterStateUseCase = GetTransactionsDateFilterStateUseCase(
+        settingsRepository = settingsRepository,
+    )
+    private val setTransactionsDateFilterStateUseCase = SetTransactionsDateFilterStateUseCase(
+        settingsRepository = settingsRepository,
+        dispatcher = dispatcher,
+    )
 
     // ── Internal filter state ──
     private val _filterState = MutableStateFlow(FilterState())
@@ -225,6 +238,10 @@ class TransactionsViewModel(
         initialValue = TransactionsState(isLoading = true),
     )
 
+    init {
+        observeSavedDateFilter()
+    }
+
     // ── Event Handling ──
     fun onEvent(event: TransactionsEvent) {
         Logger.d("TransactionsViewModel") { "Event: $event" }
@@ -254,18 +271,71 @@ class TransactionsViewModel(
     }
 
     // ── Private Methods - Date Range ──
-    private fun selectPreset(index: Int) {
-        _filterState.update {
-            it.copy(
-                selectedPresetIndex = index,
-                dateRangeFrom = TransactionsState.getDateFromForPreset(index),
-                dateRangeTo = System.currentTimeMillis(),
-            )
+    private fun observeSavedDateFilter() {
+        viewModelScope.launch {
+            getTransactionsDateFilterStateUseCase()
+                .map { result: Result<SavedDateFilter> -> result.getOrNull() }
+                .filterNotNull()
+                .collect { savedFilter: SavedDateFilter ->
+                    _filterState.update {
+                        it.copy(
+                            selectedPresetIndex = savedFilter.presetIndex,
+                            dateRangeFrom = savedFilter.from,
+                            dateRangeTo = savedFilter.to,
+                        )
+                    }
+                }
         }
     }
 
+    private fun selectPreset(index: Int) {
+        val dateRangeTo = System.currentTimeMillis()
+        val dateRangeFrom = TransactionsState.getDateFromForPreset(index)
+        _filterState.update {
+            it.copy(
+                selectedPresetIndex = index,
+                dateRangeFrom = dateRangeFrom,
+                dateRangeTo = dateRangeTo,
+            )
+        }
+        persistDateFilter(
+            SavedDateFilter(
+                presetIndex = index,
+                from = dateRangeFrom,
+                to = dateRangeTo,
+            ),
+        )
+    }
+
     private fun setDateRange(from: Long, to: Long) {
-        _filterState.update { it.copy(dateRangeFrom = from, dateRangeTo = to) }
+        val normalizedFrom = minOf(from, to)
+        val normalizedTo = maxOf(from, to)
+        _filterState.update {
+            it.copy(
+                selectedPresetIndex = SavedDateFilter.CUSTOM_PRESET_INDEX,
+                dateRangeFrom = normalizedFrom,
+                dateRangeTo = normalizedTo,
+            )
+        }
+        persistDateFilter(
+            SavedDateFilter(
+                presetIndex = SavedDateFilter.CUSTOM_PRESET_INDEX,
+                from = normalizedFrom,
+                to = normalizedTo,
+            ),
+        )
+    }
+
+    private fun persistDateFilter(filter: SavedDateFilter) {
+        viewModelScope.launch {
+            val result = setTransactionsDateFilterStateUseCase(filter)
+            result.onFailure { error ->
+                if (error is kotlinx.coroutines.CancellationException) throw error
+                Logger.e("TransactionsViewModel", error) {
+                    "Failed to persist transactions date filter: ${error.message}"
+                }
+            }
+        }
     }
 
     // ── Private Methods - Search & Filters ──

@@ -68,6 +68,7 @@ import com.antcashmanager.android.ui.screen.home.view.RecentTransactionItem
 import com.antcashmanager.android.ui.screen.homeTransactionDetail.TransactionDetailsDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.PaymentType
+import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.model.TransactionType
@@ -93,29 +94,15 @@ fun HomeScreen(
         factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                HomeViewModel(transactionRepository, categoryRepository) as T
+                HomeViewModel(transactionRepository, settingsRepository, categoryRepository) as T
         },
     )
 
     val state by viewModel.state.collectAsState()
 
-    // Screen specific date filter preset from settings
-    val screenDateFilterPreset by settingsRepository.getHomeDateFilterPreset()
-        .collectAsState(initial = 1)
-
-    // Sync screenDateFilterPreset with viewModel
-    androidx.compose.runtime.LaunchedEffect(screenDateFilterPreset) {
-        viewModel.onEvent(HomeEvent.SelectPreset(screenDateFilterPreset))
-    }
-
     HomeContent(
         state = state,
         onEvent = { event ->
-            if (event is HomeEvent.SelectPreset) {
-                coroutineScope.launch {
-                    settingsRepository.setHomeDateFilterPreset(event.index)
-                }
-            }
             viewModel.onEvent(event)
         },
         settingsRepository = settingsRepository,
@@ -447,12 +434,39 @@ class MockHomeSettingsRepository : SettingsRepository {
 
     override fun getHomeDateFilterPreset() = kotlinx.coroutines.flow.flowOf(1)
     override suspend fun setHomeDateFilterPreset(index: Int) {}
+    override fun getHomeDateFilterState() = kotlinx.coroutines.flow.flowOf(
+        SavedDateFilter(
+            presetIndex = 1,
+            from = System.currentTimeMillis() - (7L * 24 * 60 * 60 * 1000),
+            to = System.currentTimeMillis(),
+        ),
+    )
+
+    override suspend fun setHomeDateFilterState(filter: SavedDateFilter) {}
 
     override fun getTransactionsDateFilterPreset() = kotlinx.coroutines.flow.flowOf(1)
     override suspend fun setTransactionsDateFilterPreset(index: Int) {}
+    override fun getTransactionsDateFilterState() = kotlinx.coroutines.flow.flowOf(
+        SavedDateFilter(
+            presetIndex = 1,
+            from = System.currentTimeMillis() - (7L * 24 * 60 * 60 * 1000),
+            to = System.currentTimeMillis(),
+        ),
+    )
+
+    override suspend fun setTransactionsDateFilterState(filter: SavedDateFilter) {}
 
     override fun getChartsDateFilterPreset() = kotlinx.coroutines.flow.flowOf(1)
     override suspend fun setChartsDateFilterPreset(index: Int) {}
+    override fun getChartsDateFilterState() = kotlinx.coroutines.flow.flowOf(
+        SavedDateFilter(
+            presetIndex = 1,
+            from = System.currentTimeMillis() - (30L * 24 * 60 * 60 * 1000),
+            to = System.currentTimeMillis(),
+        ),
+    )
+
+    override suspend fun setChartsDateFilterState(filter: SavedDateFilter) {}
 
     override fun getChartsZoomEnabled() = kotlinx.coroutines.flow.flowOf(true)
     override suspend fun setChartsZoomEnabled(enabled: Boolean) {}
