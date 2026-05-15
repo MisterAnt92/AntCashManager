@@ -46,4 +46,3 @@ sealed interface RestoreOperationResult {
     data class Success(val transactions: Int, val categories: Int) : RestoreOperationResult
     data class Error(val message: String) : RestoreOperationResult
 }
-

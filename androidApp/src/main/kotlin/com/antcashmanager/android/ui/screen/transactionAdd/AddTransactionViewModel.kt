@@ -82,10 +82,6 @@ class AddTransactionViewModel(
     private val transactionId: Long? = null,
 ) : ViewModel() {
 
-    companion object {
-        private const val TAG = "AddTransactionViewModel"
-    }
-
     // ── UseCases ──
     private val insertTransactionUseCase = InsertTransactionUseCase(transactionRepository)
     private val updateTransactionUseCase = UpdateTransactionUseCase(transactionRepository)
@@ -113,18 +109,20 @@ class AddTransactionViewModel(
                     _state.update { it.copy(categories = categories) }
                 }.onFailure { error ->
                     if (error is CancellationException) throw error
-                    Logger.e(TAG, error) { "Error loading categories: ${error.message}" }
-                    _state.update { it.copy(error = "Errore nel caricamento delle categorie") }
+                    Logger.e(AddTransactionConstants.TAG, error) {
+                        "Error loading categories: ${error.message}"
+                    }
+                    _state.update { it.copy(error = AddTransactionConstants.ERROR_LOAD_CATEGORIES) }
                 }
             }
         }
     }
 
     private fun loadTransactionSuggestions() {
-        Logger.d(TAG) { "Loading transaction suggestions" }
+        Logger.d(AddTransactionConstants.TAG) { "Loading transaction suggestions" }
         viewModelScope.launch {
             getTransactionSuggestionsUseCase().collect { suggestions ->
-                Logger.d(TAG) {
+                Logger.d(AddTransactionConstants.TAG) {
                     "Suggestions loaded - titles: ${suggestions.titles.size}, " +
                             "payees: ${suggestions.payees.size}, " +
                             "notes: ${suggestions.notes.size}, " +
@@ -148,7 +146,7 @@ class AddTransactionViewModel(
         viewModelScope.launch {
             try {
                 _state.update { it.copy(isLoading = true) }
-                Logger.d(TAG) { "Loading transaction with id: $id" }
+                Logger.d(AddTransactionConstants.TAG) { "Loading transaction with id: $id" }
 
                 val transaction = transactionRepository.getTransactionById(id)
                 val categoryResult = getCategoriesUseCase().first()
@@ -157,11 +155,13 @@ class AddTransactionViewModel(
                 } catch (e: CancellationException) {
                     throw e
                 } catch (e: Exception) {
-                    Logger.e(TAG) { "Error loading categories for edit: ${e.message}" }
+                    Logger.e(AddTransactionConstants.TAG) {
+                        "Error loading categories for edit: ${e.message}"
+                    }
                     _state.update {
                         it.copy(
                             isLoading = false,
-                            error = "Errore nel caricamento delle categorie"
+                            error = AddTransactionConstants.ERROR_LOAD_CATEGORIES,
                         )
                     }
                     emptyList()
@@ -169,7 +169,9 @@ class AddTransactionViewModel(
 
                 if (transaction != null) {
                     val selectedCat = categoryList.find { it.name == transaction.category }
-                    Logger.d(TAG) { "Transaction loaded: ${transaction.title}, category: $selectedCat" }
+                    Logger.d(AddTransactionConstants.TAG) {
+                        "Transaction loaded: ${transaction.title}, category: $selectedCat"
+                    }
 
                     _state.update {
                         it.copy(
@@ -193,17 +195,23 @@ class AddTransactionViewModel(
                         )
                     }
                 } else {
-                    Logger.w(TAG) { "Transaction with id $id not found" }
+                    Logger.w(AddTransactionConstants.TAG) { "Transaction with id $id not found" }
                     _state.update {
-                        it.copy(isLoading = false, error = "Transazione non trovata")
+                        it.copy(
+                            isLoading = false,
+                            error = AddTransactionConstants.ERROR_TRANSACTION_NOT_FOUND,
+                        )
                     }
                 }
             } catch (ex: CancellationException) {
                 throw ex
             } catch (ex: Exception) {
-                Logger.e(TAG) { "Error loading transaction: ${ex.message}" }
+                Logger.e(AddTransactionConstants.TAG) { "Error loading transaction: ${ex.message}" }
                 _state.update {
-                    it.copy(isLoading = false, error = "Errore nel caricamento della transazione")
+                    it.copy(
+                        isLoading = false,
+                        error = AddTransactionConstants.ERROR_LOAD_TRANSACTION,
+                    )
                 }
             }
         }
@@ -213,7 +221,7 @@ class AddTransactionViewModel(
      * Gestisce gli eventi della UI.
      */
     fun onEvent(event: AddTransactionEvent) {
-        Logger.d(TAG) { "Event: $event" }
+        Logger.d(AddTransactionConstants.TAG) { "Event: $event" }
         when (event) {
             is AddTransactionEvent.SelectCategory -> selectCategory(event.category)
             is AddTransactionEvent.SelectType -> selectType(event.type)
@@ -285,7 +293,9 @@ class AddTransactionViewModel(
     // ── Event Handlers ──
 
     private fun selectCategory(category: Category) {
-        Logger.d(TAG) { "Category selected: ${category.name}, type: ${category.type}" }
+        Logger.d(AddTransactionConstants.TAG) {
+            "Category selected: ${category.name}, type: ${category.type}"
+        }
 
         val transactionType = if (category.type.uppercase() == "INCOME")
             TransactionType.INCOME
@@ -305,20 +315,20 @@ class AddTransactionViewModel(
 
         // In creazione, al passo CATEGORY_SELECTION → avanza direttamente a DETAILS
         if (!isModifying && currentStep == AddTransactionStep.CATEGORY_SELECTION) {
-            Logger.d(TAG) { "Auto-advancing to DETAILS after category selection" }
+            Logger.d(AddTransactionConstants.TAG) { "Auto-advancing to DETAILS after category selection" }
             _state.update { it.copy(currentStep = AddTransactionStep.DETAILS) }
         }
     }
 
     private fun selectType(type: TransactionType) {
-        Logger.d(TAG) { "Type selected: $type" }
+        Logger.d(AddTransactionConstants.TAG) { "Type selected: $type" }
         _state.update {
             it.copy(selectedType = type, showTypeDialog = false)
         }
     }
 
     private fun selectPaymentType(paymentType: PaymentType) {
-        Logger.d(TAG) { "Payment type selected: $paymentType" }
+        Logger.d(AddTransactionConstants.TAG) { "Payment type selected: $paymentType" }
         _state.update {
             it.copy(selectedPaymentType = paymentType, showPaymentTypeDialog = false)
         }
@@ -329,7 +339,7 @@ class AddTransactionViewModel(
             AddTransactionStep.CATEGORY_SELECTION -> AddTransactionStep.DETAILS
             AddTransactionStep.DETAILS -> return // Salvataggio diretto dal form
         }
-        Logger.d(TAG) { "Moving to next step: $nextStep" }
+        Logger.d(AddTransactionConstants.TAG) { "Moving to next step: $nextStep" }
         _state.update { it.copy(currentStep = nextStep) }
     }
 
@@ -340,7 +350,7 @@ class AddTransactionViewModel(
                 if (_state.value.isModifying) return
                 else AddTransactionStep.CATEGORY_SELECTION
         }
-        Logger.d(TAG) { "Moving to previous step: $prev" }
+        Logger.d(AddTransactionConstants.TAG) { "Moving to previous step: $prev" }
         _state.update { it.copy(currentStep = prev) }
     }
 
@@ -348,16 +358,16 @@ class AddTransactionViewModel(
         val currentState = _state.value
 
         if (currentState.selectedCategory == null || currentState.selectedType == null) {
-            _state.update { it.copy(error = "Categoria e tipo sono obbligatori") }
+            _state.update { it.copy(error = AddTransactionConstants.ERROR_REQUIRED_CATEGORY_TYPE) }
             return
         }
         if (currentState.title.isBlank() || currentState.amount.isBlank()) {
-            _state.update { it.copy(error = "Titolo e importo sono obbligatori") }
+            _state.update { it.copy(error = AddTransactionConstants.ERROR_REQUIRED_TITLE_AMOUNT) }
             return
         }
         val amount = currentState.amount.toDoubleOrNull()
         if (amount == null || amount <= 0) {
-            _state.update { it.copy(error = "Importo non valido") }
+            _state.update { it.copy(error = AddTransactionConstants.ERROR_INVALID_AMOUNT) }
             return
         }
 
@@ -384,14 +394,14 @@ class AddTransactionViewModel(
                 if (currentState.isModifying) {
                     val result = updateTransactionUseCase(transaction)
                     result.onSuccess {
-                        Logger.d(TAG) { "Transaction updated successfully" }
+                        Logger.d(AddTransactionConstants.TAG) { "Transaction updated successfully" }
                         _state.update { it.copy(isTransactionSaved = true, isLoading = false) }
                     }.onFailure { error ->
                         if (error is CancellationException) throw error
-                        Logger.e(TAG, error) { "Error updating transaction" }
+                        Logger.e(AddTransactionConstants.TAG, error) { "Error updating transaction" }
                         _state.update {
                             it.copy(
-                                error = "Errore durante il salvataggio",
+                                error = AddTransactionConstants.ERROR_SAVE,
                                 isLoading = false
                             )
                         }
@@ -399,14 +409,14 @@ class AddTransactionViewModel(
                 } else {
                     val result = insertTransactionUseCase(transaction)
                     result.onSuccess {
-                        Logger.d(TAG) { "Transaction inserted successfully" }
+                        Logger.d(AddTransactionConstants.TAG) { "Transaction inserted successfully" }
                         _state.update { it.copy(isTransactionSaved = true, isLoading = false) }
                     }.onFailure { error ->
                         if (error is CancellationException) throw error
-                        Logger.e(TAG, error) { "Error inserting transaction" }
+                        Logger.e(AddTransactionConstants.TAG, error) { "Error inserting transaction" }
                         _state.update {
                             it.copy(
-                                error = "Errore durante il salvataggio",
+                                error = AddTransactionConstants.ERROR_SAVE,
                                 isLoading = false
                             )
                         }
@@ -415,10 +425,12 @@ class AddTransactionViewModel(
             } catch (ex: CancellationException) {
                 throw ex
             } catch (ex: Exception) {
-                Logger.e(TAG) { "Error submitting transaction: ${ex.message}" }
+                Logger.e(AddTransactionConstants.TAG) {
+                    "Error submitting transaction: ${ex.message}"
+                }
                 _state.update {
                     it.copy(
-                        error = "Errore durante il salvataggio",
+                        error = AddTransactionConstants.ERROR_SAVE,
                         isLoading = false
                     )
                 }
@@ -430,13 +442,13 @@ class AddTransactionViewModel(
         viewModelScope.launch {
             try {
                 _state.update { it.copy(isLoading = true) }
-                Logger.d(TAG) { "Deleting transaction with id: $transactionId" }
+                Logger.d(AddTransactionConstants.TAG) { "Deleting transaction with id: $transactionId" }
 
                 val transaction = transactionRepository.getTransactionById(transactionId!!)
                 if (transaction != null) {
                     val result = deleteTransactionUseCase(transaction)
                     result.onSuccess {
-                        Logger.d(TAG) { "Transaction deleted successfully" }
+                        Logger.d(AddTransactionConstants.TAG) { "Transaction deleted successfully" }
                         _state.update {
                             it.copy(
                                 isTransactionSaved = true,
@@ -446,10 +458,10 @@ class AddTransactionViewModel(
                         }
                     }.onFailure { error ->
                         if (error is CancellationException) throw error
-                        Logger.e(TAG, error) { "Error deleting transaction" }
+                        Logger.e(AddTransactionConstants.TAG, error) { "Error deleting transaction" }
                         _state.update {
                             it.copy(
-                                error = "Errore durante l'eliminazione",
+                                error = AddTransactionConstants.ERROR_DELETE,
                                 isLoading = false,
                                 showDeleteConfirmDialog = false
                             )
@@ -458,7 +470,7 @@ class AddTransactionViewModel(
                 } else {
                     _state.update {
                         it.copy(
-                            error = "Transazione non trovata",
+                            error = AddTransactionConstants.ERROR_TRANSACTION_NOT_FOUND,
                             isLoading = false,
                             showDeleteConfirmDialog = false
                         )
@@ -467,10 +479,12 @@ class AddTransactionViewModel(
             } catch (ex: CancellationException) {
                 throw ex
             } catch (ex: Exception) {
-                Logger.e(TAG) { "Error deleting transaction: ${ex.message}" }
+                Logger.e(AddTransactionConstants.TAG) {
+                    "Error deleting transaction: ${ex.message}"
+                }
                 _state.update {
                     it.copy(
-                        error = "Errore durante l'eliminazione",
+                        error = AddTransactionConstants.ERROR_DELETE,
                         isLoading = false,
                         showDeleteConfirmDialog = false
                     )
@@ -480,7 +494,7 @@ class AddTransactionViewModel(
     }
 
     fun reset() {
-        Logger.d(TAG) { "Resetting state" }
+        Logger.d(AddTransactionConstants.TAG) { "Resetting state" }
         _state.value = AddTransactionState()
     }
 }

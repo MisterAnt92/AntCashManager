@@ -33,6 +33,12 @@ Ottimizza l'efficienza, la qualità e la manutenibilità del codice seguendo Cle
 - ✅ Quando crei o modifichi classi/file, **rimuovi sempre gli import non necessari** prima di chiudere la modifica
 - ✅ Quando crei o modifichi classi/file, **verifica sempre il `package name`** e correggilo se non corrisponde alla directory reale
 - ✅ Negli UseCase, usa SEMPRE `Result<T>` per restituire il valore desiderato o una custom exception di dominio, nel rispetto della Clean Architecture
+- ✅ Se una feature ha piu costanti condivise (tag, timeout, default, chiavi, pattern), crea SEMPRE una classe/object `<Feature>Constants` nel package della feature
+- ✅ Se crei una `data class` di feature, crea/usa SEMPRE il sotto-package `model` interno alla feature (es. `ui/screen/settings/model/SettingsUiModel.kt`)
+- ✅ Se una `data class` rappresenta lo **State** di Screen/ViewModel, deve rimanere nel file/classe `...State` della feature: non creare classi aggiuntive o `typealias` per quello stato
+- ✅ **Keep simple**: privilegia soluzioni semplici, leggibili e facili da mantenere
+- ✅ **Evita over engineering**: implementa solo ciò che serve al requisito attuale (YAGNI)
+- ✅ Esegui la build **solo al termine** delle modifiche/implementazioni, salvo necessità specifiche di diagnosi immediata, per velocizzare il flusso, ridurre chiamate inutili e ottimizzare l'uso delle risorse (tempo/token)
 
 ---
 
@@ -65,8 +71,19 @@ Ottimizza l'efficienza, la qualità e la manutenibilità del codice seguendo Cle
 - Consuma `Result<T>` con `onSuccess`/`onFailure`.
 - Usa Kermit Logger per logging.
 - NO logica di business, NO riferimenti a Context.
-- Se presenti constanti, crea classe `Constants` o usa `companion object`.
+- Se una classe usa poche costanti locali e private, puoi tenerle nel `companion object`.
+- Se le costanti sono condivise da piu file della stessa feature, crea SEMPRE `<Feature>Constants` nel package della feature (es. `SettingsConstants` in `ui/screen/settings/`).
+- Usa `companion object` solo per costanti realmente private alla singola classe.
 - Usa pattern `activeJob?.cancel()` per operazioni annullabili.
+
+---
+
+## 5.1 Regola Model per Feature
+- Le `data class` di Presentation devono stare nel package `model` della feature.
+- Eccezione: la `data class` che definisce lo stato UI (`<Feature>State`) resta nel file/classe `State` della feature.
+- Per lo stato UI di Screen/ViewModel non usare classi duplicate o `typealias`.
+- Esempio: per la feature Settings usa `androidApp/.../ui/screen/settings/model/`.
+- Evita di definire nuove `data class` dentro file Screen/ViewModel se sono riutilizzabili o parte del contratto UI.
 
 ---
 
@@ -96,6 +113,9 @@ Ottimizza l'efficienza, la qualità e la manutenibilità del codice seguendo Cle
 - runBlocking fuori dai test.
 - Override di `invoke()` nelle subclass di UseCase.
 - Inghiottire `CancellationException` senza rilanciarla.
+- Molte costanti duplicate in piu file senza `<Feature>Constants`.
+- `data class` di feature sparse fuori da `.../model/`.
+- Duplicare lo state di Screen/ViewModel con classi aggiuntive o `typealias`.
 
 ---
 
@@ -115,10 +135,12 @@ Ottimizza l'efficienza, la qualità e la manutenibilità del codice seguendo Cle
 - [ ] KDoc per API pubbliche
 - [ ] @Preview per composable principali
 - [ ] Spacing consistente (8.dp tra card)
+- [ ] Costanti feature centralizzate in `<Feature>Constants` (no magic numbers/string)
+- [ ] Data class di feature collocate in `.../model/`
+- [ ] La `data class` di stato (`<Feature>State`) resta nello State file, senza classi duplicate o `typealias`
 
 ---
 
 ## 10. Riferimenti
 - Consulta i file in `wiki/` e le implementazioni di esempio (DisplayScreen, SettingsScreen, HomeScreen) per dubbi architetturali.
 - In caso di incertezza, preferisci codice pulito, testabile e manutenibile.
-

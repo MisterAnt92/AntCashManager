@@ -36,24 +36,6 @@ class SettingsViewModel(
     private val useCaseDispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : ViewModel() {
 
-    companion object {
-        private const val TAG = "SettingsViewModel"
-        private const val SHARING_TIMEOUT = 5_000L
-        private val DEFAULT_THEME = AppTheme.SYSTEM
-        private val DEFAULT_LANGUAGE = AppLanguage.SYSTEM
-        private const val DEFAULT_SHOW_CHARTS = true
-        private const val DEFAULT_HIGH_CONTRAST = false
-        private const val DEFAULT_LARGE_TEXT = false
-        private const val DEFAULT_REDUCE_MOTION = false
-        private const val DEFAULT_CURRENCY_SYMBOL = "\u20ac"
-        private const val DEFAULT_DECIMAL_DIGITS = 2
-        private const val DEFAULT_DECIMAL_SEPARATOR = ","
-        private const val DEFAULT_THOUSANDS_SEPARATOR = "."
-        private const val DEFAULT_SHOW_TRANSACTION_NOTES = true
-        private val DEFAULT_TRANSACTION_DISPLAY_TYPE =
-            com.antcashmanager.domain.model.TransactionDisplayType.CATEGORY
-    }
-
     private val getThemeUseCase = GetThemeUseCase(settingsRepository)
     private val setThemeUseCase = SetThemeUseCase(
         settingsRepository = settingsRepository,
@@ -74,51 +56,70 @@ class SettingsViewModel(
      */
     fun importDebugData(context: Context) {
         if (!BuildConfig.DEBUG) return
-        Logger.d("SettingsViewModel") { "Importing debug data from assets" }
+        Logger.d(SettingsConstants.TAG) { "Importing debug data from assets" }
         viewModelScope.launch {
             try {
                 withContext(Dispatchers.IO) {
-                    val assetName = "debug_initial_data.json"
+                    val assetName = SettingsConstants.DEBUG_ASSET_NAME
                     val json = try {
                         context.assets.open(assetName).bufferedReader().use { it.readText() }
                     } catch (ex: Exception) {
-                        Logger.e("SettingsViewModel") { "Cannot open debug asset: ${ex.message}" }
+                        Logger.e(SettingsConstants.TAG) { "Cannot open debug asset: ${ex.message}" }
                         return@withContext
                     }
                     val obj = JSONObject(json)
-                    val transactions = obj.optJSONArray("transactions") ?: return@withContext
+                    val transactions = obj.optJSONArray(SettingsConstants.JSON_KEY_TRANSACTIONS) ?: return@withContext
                     // Clear existing data for demo
                     transactionRepository.deleteAllTransactions()
                     for (i in 0 until transactions.length()) {
                         try {
                             val t = transactions.getJSONObject(i)
                             val transaction = Transaction(
-                                id = t.optLong("id", 0L),
-                                title = t.optString("title", "Senza titolo"),
-                                amount = t.optDouble("amount", 0.0),
-                                category = t.optString("category", "Uncategorized"),
+                                id = t.optLong(SettingsConstants.JSON_KEY_ID, 0L),
+                                title = t.optString(
+                                    SettingsConstants.JSON_KEY_TITLE,
+                                    SettingsConstants.DEFAULT_TRANSACTION_TITLE,
+                                ),
+                                amount = t.optDouble(SettingsConstants.JSON_KEY_AMOUNT, 0.0),
+                                category = t.optString(
+                                    SettingsConstants.JSON_KEY_CATEGORY,
+                                    SettingsConstants.DEFAULT_TRANSACTION_CATEGORY,
+                                ),
                                 type = try {
-                                    TransactionType.valueOf(t.optString("type", "EXPENSE"))
+                                    TransactionType.valueOf(
+                                        t.optString(
+                                            SettingsConstants.JSON_KEY_TYPE,
+                                            SettingsConstants.DEFAULT_TRANSACTION_TYPE,
+                                        ),
+                                    )
                                 } catch (_: Exception) {
                                     TransactionType.EXPENSE
                                 },
-                                timestamp = t.optLong("timestamp", System.currentTimeMillis()),
-                                notes = t.optString("notes", ""),
-                                payee = t.optString("payee", ""),
-                                location = t.optString("location", ""),
-                                isRecurring = t.optBoolean("isRecurring", false),
-                                tags = if (t.has("tags")) {
-                                    t.optJSONArray("tags")?.let { arr ->
+                                timestamp = t.optLong(
+                                    SettingsConstants.JSON_KEY_TIMESTAMP,
+                                    System.currentTimeMillis(),
+                                ),
+                                notes = t.optString(SettingsConstants.JSON_KEY_NOTES, ""),
+                                payee = t.optString(SettingsConstants.JSON_KEY_PAYEE, ""),
+                                location = t.optString(SettingsConstants.JSON_KEY_LOCATION, ""),
+                                isRecurring = t.optBoolean(SettingsConstants.JSON_KEY_IS_RECURRING, false),
+                                tags = if (t.has(SettingsConstants.JSON_KEY_TAGS)) {
+                                    t.optJSONArray(SettingsConstants.JSON_KEY_TAGS)?.let { arr ->
                                         val list = mutableListOf<String>()
                                         for (j in 0 until arr.length()) list.add(arr.optString(j))
                                         list.joinToString(",")
-                                    } ?: t.optString("tags", "")
+                                    } ?: t.optString(SettingsConstants.JSON_KEY_TAGS, "")
                                 } else {
                                     ""
                                 },
-                                recurrenceInterval = t.optString("recurrenceRule", ""),
+                                recurrenceInterval = t.optString(SettingsConstants.JSON_KEY_RECURRENCE_RULE, ""),
                                 paymentType = try {
-                                    PaymentType.valueOf(t.optString("paymentType", "ELECTRONIC"))
+                                    PaymentType.valueOf(
+                                        t.optString(
+                                            SettingsConstants.JSON_KEY_PAYMENT_TYPE,
+                                            SettingsConstants.DEFAULT_PAYMENT_TYPE,
+                                        ),
+                                    )
                                 } catch (_: Exception) {
                                     PaymentType.ELECTRONIC
                                 },
@@ -134,7 +135,7 @@ class SettingsViewModel(
                     }
                 }
             } catch (ex: Exception) {
-                Logger.e("SettingsViewModel") { "Error importing debug data: ${ex.message}" }
+                Logger.e(SettingsConstants.TAG) { "Error importing debug data: ${ex.message}" }
             }
         }
     }
@@ -143,30 +144,30 @@ class SettingsViewModel(
     // Stato aggregato delle preferenze - combinare i flussi in gruppi
     val state: StateFlow<SettingsState> = combine(
         combine(
-            getThemeUseCase().map { it.getOrElse { DEFAULT_THEME } }.stateIn(
+            getThemeUseCase().map { it.getOrElse { SettingsConstants.DEFAULT_THEME } }.stateIn(
                 viewModelScope,
-                SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
-                DEFAULT_THEME
+                SharingStarted.WhileSubscribed(SettingsConstants.SHARING_TIMEOUT),
+                SettingsConstants.DEFAULT_THEME,
             ),
-            getLanguageUseCase().map { it.getOrElse { DEFAULT_LANGUAGE } }.stateIn(
+            getLanguageUseCase().map { it.getOrElse { SettingsConstants.DEFAULT_LANGUAGE } }.stateIn(
                 viewModelScope,
-                SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
-                DEFAULT_LANGUAGE
+                SharingStarted.WhileSubscribed(SettingsConstants.SHARING_TIMEOUT),
+                SettingsConstants.DEFAULT_LANGUAGE,
             ),
             settingsRepository.getShowCharts().stateIn(
                 viewModelScope,
-                SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
-                DEFAULT_SHOW_CHARTS
+                SharingStarted.WhileSubscribed(SettingsConstants.SHARING_TIMEOUT),
+                SettingsConstants.DEFAULT_SHOW_CHARTS,
             ),
             settingsRepository.getHighContrast().stateIn(
                 viewModelScope,
-                SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
-                DEFAULT_HIGH_CONTRAST
+                SharingStarted.WhileSubscribed(SettingsConstants.SHARING_TIMEOUT),
+                SettingsConstants.DEFAULT_HIGH_CONTRAST,
             ),
             settingsRepository.getLargeText().stateIn(
                 viewModelScope,
-                SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
-                DEFAULT_LARGE_TEXT
+                SharingStarted.WhileSubscribed(SettingsConstants.SHARING_TIMEOUT),
+                SettingsConstants.DEFAULT_LARGE_TEXT,
             ),
         ) { theme, language, showCharts, highContrast, largeText ->
             SettingsPreferences1(theme, language, showCharts, highContrast, largeText)
@@ -174,28 +175,28 @@ class SettingsViewModel(
         combine(
             settingsRepository.getReduceMotion().stateIn(
                 viewModelScope,
-                SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
-                DEFAULT_REDUCE_MOTION
+                SharingStarted.WhileSubscribed(SettingsConstants.SHARING_TIMEOUT),
+                SettingsConstants.DEFAULT_REDUCE_MOTION,
             ),
             settingsRepository.getCurrencySymbol().stateIn(
                 viewModelScope,
-                SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
-                DEFAULT_CURRENCY_SYMBOL
+                SharingStarted.WhileSubscribed(SettingsConstants.SHARING_TIMEOUT),
+                SettingsConstants.DEFAULT_CURRENCY_SYMBOL,
             ),
             settingsRepository.getDecimalDigits().stateIn(
                 viewModelScope,
-                SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
-                DEFAULT_DECIMAL_DIGITS
+                SharingStarted.WhileSubscribed(SettingsConstants.SHARING_TIMEOUT),
+                SettingsConstants.DEFAULT_DECIMAL_DIGITS,
             ),
             settingsRepository.getDecimalSeparator().stateIn(
                 viewModelScope,
-                SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
-                DEFAULT_DECIMAL_SEPARATOR
+                SharingStarted.WhileSubscribed(SettingsConstants.SHARING_TIMEOUT),
+                SettingsConstants.DEFAULT_DECIMAL_SEPARATOR,
             ),
             settingsRepository.getThousandsSeparator().stateIn(
                 viewModelScope,
-                SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
-                DEFAULT_THOUSANDS_SEPARATOR
+                SharingStarted.WhileSubscribed(SettingsConstants.SHARING_TIMEOUT),
+                SettingsConstants.DEFAULT_THOUSANDS_SEPARATOR,
             ),
         ) { reduceMotion, currencySymbol, decimalDigits, decimalSeparator, thousandsSeparator ->
             SettingsPreferences2(
@@ -208,13 +209,13 @@ class SettingsViewModel(
         },
         settingsRepository.getShowTransactionNotes().stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
-            DEFAULT_SHOW_TRANSACTION_NOTES
+            SharingStarted.WhileSubscribed(SettingsConstants.SHARING_TIMEOUT),
+            SettingsConstants.DEFAULT_SHOW_TRANSACTION_NOTES,
         ),
         settingsRepository.getTransactionDisplayType().stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(SHARING_TIMEOUT),
-            DEFAULT_TRANSACTION_DISPLAY_TYPE
+            SharingStarted.WhileSubscribed(SettingsConstants.SHARING_TIMEOUT),
+            SettingsConstants.DEFAULT_TRANSACTION_DISPLAY_TYPE,
         ),
     ) { prefs1, prefs2, showTransactionNotes, transactionDisplayType ->
         SettingsState(
@@ -231,26 +232,32 @@ class SettingsViewModel(
             showTransactionNotes = showTransactionNotes,
             transactionDisplayType = transactionDisplayType,
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_TIMEOUT), SettingsState())
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(SettingsConstants.SHARING_TIMEOUT),
+        SettingsState(),
+    )
 
     /**
      * Funzione di utilità per loggare e lanciare l'azione in coroutine.
      */
     private fun updatePreference(logMsg: String, action: suspend () -> Any?) {
-        Logger.d(TAG) { logMsg }
+        Logger.d(SettingsConstants.TAG) { logMsg }
         viewModelScope.launch {
             try {
                 val result = action()
                 if (result is Result<*>) {
                     result.onFailure { error ->
                         if (error is CancellationException) throw error
-                        Logger.e(TAG, error) { "Preference update failed: ${error.message}" }
+                        Logger.e(SettingsConstants.TAG, error) {
+                            "Preference update failed: ${error.message}"
+                        }
                     }
                 }
             } catch (ex: CancellationException) {
                 throw ex
             } catch (ex: Exception) {
-                Logger.e(TAG, ex) { "Preference update failed: ${ex.message}" }
+                Logger.e(SettingsConstants.TAG, ex) { "Preference update failed: ${ex.message}" }
             }
         }
     }
@@ -333,9 +340,9 @@ class SettingsViewModel(
             BuildConfig.VERSION_NAME
         )
         if (success) {
-            Logger.d(TAG) { "Feedback email intent launched successfully" }
+            Logger.d(SettingsConstants.TAG) { "Feedback email intent launched successfully" }
         } else {
-            Logger.w(TAG) { "No email app available to send feedback" }
+            Logger.w(SettingsConstants.TAG) { "No email app available to send feedback" }
         }
         return success
     }

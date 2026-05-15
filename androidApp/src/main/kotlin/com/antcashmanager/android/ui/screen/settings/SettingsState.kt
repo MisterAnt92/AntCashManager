@@ -21,4 +21,3 @@ data class SettingsState(
     val showTransactionNotes: Boolean = true,
     val transactionDisplayType: TransactionDisplayType = TransactionDisplayType.CATEGORY,
 )
-

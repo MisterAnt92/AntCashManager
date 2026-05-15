@@ -24,4 +24,3 @@ data class YearlyAmount(
     val income: Double,
     val expense: Double,
 )
-

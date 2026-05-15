@@ -1,6 +1,5 @@
 package com.antcashmanager.android.ui.screen.home
 
-import com.antcashmanager.android.R
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 
@@ -18,8 +17,8 @@ data class HomeState(
     val isLoading: Boolean = false,
     val isSyncingCategories: Boolean = false,
     val error: String? = null,
-    val selectedPresetIndex: Int = 1,
-    val dateRangeFrom: Long = System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000),
+    val selectedPresetIndex: Int = HomeConstants.DEFAULT_PRESET_INDEX,
+    val dateRangeFrom: Long = System.currentTimeMillis() - HomeConstants.ONE_WEEK_MS,
     val dateRangeTo: Long = System.currentTimeMillis(),
     val selectedTransaction: Transaction? = null,
     val searchQuery: String = "",
@@ -27,20 +26,14 @@ data class HomeState(
     val searchSuggestions: List<String> = emptyList(),
 ) {
     companion object {
-        val PRESETS = listOf(
-            R.string.range_label_today to "today",
-            R.string.range_week to "week",
-            R.string.range_month to "month",
-            R.string.range_year to "year",
-        )
+        val PRESETS = HomeConstants.PRESETS
 
         fun getDateFromForPreset(index: Int): Long = when (index) {
-            0 -> System.currentTimeMillis() - (24 * 60 * 60 * 1000)
-            1 -> System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000)
-            2 -> System.currentTimeMillis() - (30L * 24 * 60 * 60 * 1000)
-            3 -> System.currentTimeMillis() - (365L * 24 * 60 * 60 * 1000)
-            else -> System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000)
+            0 -> System.currentTimeMillis() - HomeConstants.ONE_DAY_MS
+            1 -> System.currentTimeMillis() - HomeConstants.ONE_WEEK_MS
+            2 -> System.currentTimeMillis() - HomeConstants.THIRTY_DAYS_MS
+            3 -> System.currentTimeMillis() - HomeConstants.ONE_YEAR_MS
+            else -> System.currentTimeMillis() - HomeConstants.ONE_WEEK_MS
         }
     }
 }
-

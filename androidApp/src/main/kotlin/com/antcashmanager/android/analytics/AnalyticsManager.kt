@@ -11,11 +11,6 @@ import com.google.firebase.analytics.FirebaseAnalytics
  */
 open class AnalyticsManager {
 
-    companion object {
-        private const val TAG = "AnalyticsManager"
-        private const val MAX_NAME_LENGTH = 40
-    }
-
     private val firebaseAnalytics: FirebaseAnalytics?
 
     constructor() {
@@ -33,11 +28,14 @@ open class AnalyticsManager {
         runCatching {
             val params = Bundle().apply {
                 putString(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
-                putString(FirebaseAnalytics.Param.SCREEN_CLASS, "ComposeNavHost")
+                putString(
+                    FirebaseAnalytics.Param.SCREEN_CLASS,
+                    AnalyticsConstants.SCREEN_CLASS_COMPOSE_NAV_HOST,
+                )
             }
             firebaseAnalytics?.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, params)
         }.onFailure { error ->
-            Logger.e(TAG, error) { "Failed to log screen view for route=$route" }
+            Logger.e(AnalyticsConstants.TAG, error) { "Failed to log screen view for route=$route" }
         }
     }
 
@@ -48,7 +46,7 @@ open class AnalyticsManager {
         runCatching {
             firebaseAnalytics?.logEvent(sanitizedName, params)
         }.onFailure { error ->
-            Logger.e(TAG, error) { "Failed to log event=$sanitizedName" }
+            Logger.e(AnalyticsConstants.TAG, error) { "Failed to log event=$sanitizedName" }
         }
     }
 
@@ -57,7 +55,7 @@ open class AnalyticsManager {
             .lowercase()
             .replace(Regex("[^a-z0-9_]"), "_")
             .trim('_')
-            .take(MAX_NAME_LENGTH)
+            .take(AnalyticsConstants.MAX_NAME_LENGTH)
 
     private fun String.toAnalyticsName(): String =
         substringBefore('?')

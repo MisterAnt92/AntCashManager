@@ -62,7 +62,7 @@ class BackupService(
                 val backupData = json.decodeFromString<BackupData>(jsonString)
 
                 // Validate version
-                if (backupData.version > BackupData.CURRENT_VERSION) {
+                if (backupData.version > BackupConstants.CURRENT_VERSION) {
                     return@withContext Result.failure(
                         IllegalStateException("Backup version ${backupData.version} is not supported. Please update the app."),
                     )

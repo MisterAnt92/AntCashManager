@@ -22,6 +22,7 @@ Questo file serve come prompt locale per Copilot, ottimizzando la generazione di
 - Applica MaterialTheme per colori, tipografia e spacing
 - Ogni UseCase accetta dispatcher, restituisce Result<T>, implementa solo execute()
 - ViewModel: StateFlow pubblico, MutableStateFlow privato, consuma Result con onSuccess/onFailure
+- Se una data class rappresenta lo stato di Screen/ViewModel (`<Feature>State`), mantienila nella classe/file State e non creare classi duplicate o `typealias`
 - Logger: usa Kermit, mai println/Log
 - Test: fake repository, mantieni scopo originale, naming chiaro
 - NO hardcoded string/color/font, NO runBlocking fuori dai test

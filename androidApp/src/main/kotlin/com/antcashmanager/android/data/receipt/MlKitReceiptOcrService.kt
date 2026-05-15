@@ -17,11 +17,6 @@ import kotlin.coroutines.resume
  * Compatibile con testi latini (italiano, inglese, francese, tedesco, spagnolo).
  */
 class MlKitReceiptOcrService : ReceiptOcrService {
-
-    companion object {
-        private const val TAG = "MlKitReceiptOcrService"
-    }
-
     private val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
     /**
@@ -44,11 +39,13 @@ class MlKitReceiptOcrService : ReceiptOcrService {
             suspendCancellableCoroutine { continuation ->
                 recognizer.process(inputImage)
                     .addOnSuccessListener { visionText ->
-                        Logger.d(TAG) { "OCR success: ${visionText.text.length} chars extracted" }
+                        Logger.d(ReceiptConstants.TAG) {
+                            "OCR success: ${visionText.text.length} chars extracted"
+                        }
                         continuation.resume(Result.success(visionText.text))
                     }
                     .addOnFailureListener { exception ->
-                        Logger.e(TAG, exception) { "OCR failed" }
+                        Logger.e(ReceiptConstants.TAG, exception) { "OCR failed" }
                         continuation.resume(
                             Result.failure(ReceiptScanException.OcrFailed(exception))
                         )
@@ -59,7 +56,7 @@ class MlKitReceiptOcrService : ReceiptOcrService {
                 }
             }
         } catch (e: Exception) {
-            Logger.e(TAG, e) { "Unexpected error during OCR" }
+            Logger.e(ReceiptConstants.TAG, e) { "Unexpected error during OCR" }
             Result.failure(ReceiptScanException.OcrFailed(e))
         }
     }

@@ -60,6 +60,8 @@ import java.util.Date                       // unused import!
   corrisponde alla directory reale
 - ✅ Negli UseCase, usa SEMPRE `Result<T>` per restituire il valore desiderato o una custom
   exception di dominio, nel rispetto della Clean Architecture
+- ✅ Se una `data class` e lo stato di Screen/ViewModel (`<Feature>State`), deve rimanere nel file
+  `State` della feature: NON creare classi aggiuntive o `typealias` per quel contratto di stato
 - ❌ **NON modificare MAI `androidApp/google-services.json`**: e un file generato lato server,
   usato direttamente dal codice, con chiavi/valori fissi
 
@@ -312,6 +314,8 @@ sealed class YourFeatureSideEffect {
 **Requirements**:
 
 - Immutable data class
+- La `data class` di stato UI (`<Feature>State`) resta nel file `State` della feature
+- Non usare classi duplicate o `typealias` per rappresentare lo stesso state Screen/ViewModel
 - Default values ragionevoli
 - KDoc documentation
 - Sealed classes per eventi e side-effects
@@ -1167,6 +1171,17 @@ import java.util.Date                           // unused → RIMUOVI!
 import com.antcashmanager.domain.model.Category // unused → RIMUOVI!
 ```
 
+### ❌ Duplicare lo State con classi extra o typealias
+
+```kotlin
+// FORBIDDEN!
+data class HomeState(...)
+typealias HomeUiState = HomeState // WRONG: alias inutile del contratto di stato
+
+// FORBIDDEN!
+data class HomeScreenState(...) // WRONG: duplicazione del medesimo stato
+```
+
 ---
 
 ## ✅ Pre-Commit Checklist
@@ -1189,6 +1204,7 @@ Prima di generare/committare codice:
 - [ ] `CancellationException` mai inghiottita senza re-throw
 - [ ] NO `runBlocking` fuori dai test
 - [ ] State immutabile
+- [ ] La `data class` di stato (`<Feature>State`) resta nel file `State` senza classi duplicate o `typealias`
 - [ ] Screen SOLO UI, NO logic
 - [ ] TUTTE stringhe in `strings.xml` (5 lingue)
 - [ ] NO hardcoded colors/typography

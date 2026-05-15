@@ -12,4 +12,3 @@ data class CategoriesState(
     val isLoading: Boolean = false,
     val error: String? = null,
 )
-

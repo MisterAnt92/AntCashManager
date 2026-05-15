@@ -28,10 +28,6 @@ class SettingsDataViewModel(
     private val categoryRepository: CategoryRepository,
 ) : ViewModel() {
 
-    companion object {
-        private const val TAG = "SettingsDataViewModel"
-    }
-
     private val deleteAllTransactionsUseCase = DeleteAllTransactionsUseCase(transactionRepository)
     private val backupService = BackupService(transactionRepository, categoryRepository)
     private val settingsRepositoryRef = settingsRepository
@@ -48,7 +44,7 @@ class SettingsDataViewModel(
     }
 
     fun setDataEncryptionEnabled(enabled: Boolean) {
-        Logger.d(TAG) { "Setting data encryption enabled: $enabled" }
+        Logger.d(SettingsDataConstants.TAG) { "Setting data encryption enabled: $enabled" }
         viewModelScope.launch {
             settingsRepositoryRef.setDataEncryptionEnabled(enabled)
         }
@@ -160,7 +156,7 @@ class SettingsDataViewModel(
     }
 
     fun deleteAllData() {
-        Logger.d(TAG) { "Deleting all data" }
+        Logger.d(SettingsDataConstants.TAG) { "Deleting all data" }
         viewModelScope.launch {
             try {
                 deleteAllTransactionsUseCase()
@@ -176,10 +172,14 @@ class SettingsDataViewModel(
                     }
                     .onFailure { error ->
                         if (error is CancellationException) throw error
-                        Logger.e(TAG, error) { "Error deleting data: ${error.message}" }
+                        Logger.e(SettingsDataConstants.TAG, error) {
+                            "Error deleting data: ${error.message}"
+                        }
                         _state.update {
                             it.copy(
-                                deleteResult = DeleteResult.Error(error.message ?: "Unknown error"),
+                                deleteResult = DeleteResult.Error(
+                                    error.message ?: SettingsDataConstants.UNKNOWN_ERROR,
+                                ),
                                 showDeleteConfirmDialog = false,
                             )
                         }
@@ -187,10 +187,12 @@ class SettingsDataViewModel(
             } catch (error: CancellationException) {
                 throw error
             } catch (error: Exception) {
-                Logger.e(TAG, error) { "Error deleting data: ${error.message}" }
+                Logger.e(SettingsDataConstants.TAG, error) { "Error deleting data: ${error.message}" }
                 _state.update {
                     it.copy(
-                        deleteResult = DeleteResult.Error(error.message ?: "Unknown error"),
+                        deleteResult = DeleteResult.Error(
+                            error.message ?: SettingsDataConstants.UNKNOWN_ERROR,
+                        ),
                         showDeleteConfirmDialog = false,
                     )
                 }
@@ -199,7 +201,7 @@ class SettingsDataViewModel(
     }
 
     fun createBackup() {
-        Logger.d(TAG) { "Creating backup" }
+        Logger.d(SettingsDataConstants.TAG) { "Creating backup" }
         _state.update { it.copy(backupResult = BackupResult.Loading) }
         viewModelScope.launch {
             backupService.createBackup()
@@ -207,7 +209,7 @@ class SettingsDataViewModel(
                     val payloadToPersist = if (_state.value.dataEncryptionEnabled) {
                         runCatching { BackupPayloadCipher.encrypt(jsonString) }
                             .getOrElse { error ->
-                                val message = error.message ?: "Unknown error"
+                                val message = error.message ?: SettingsDataConstants.UNKNOWN_ERROR
                                 _state.update {
                                     it.copy(
                                         backupResult = BackupResult.Error(message),
@@ -221,19 +223,23 @@ class SettingsDataViewModel(
                         jsonString
                     }
 
-                    val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
+                    val timestamp = SimpleDateFormat(
+                        SettingsDataConstants.BACKUP_TIMESTAMP_PATTERN,
+                        Locale.getDefault(),
+                    )
                         .format(Date())
                     _state.update {
                         it.copy(
                             backupResult = BackupResult.Success,
                             pendingBackupData = payloadToPersist,
-                            pendingBackupFileName = "antcashmanager_backup_$timestamp.json",
+                            pendingBackupFileName =
+                                "${SettingsDataConstants.BACKUP_FILE_PREFIX}$timestamp${SettingsDataConstants.BACKUP_FILE_SUFFIX}",
                         )
                     }
                 }
                 .onFailure { error ->
                     if (error is CancellationException) throw error
-                    val message = error.message ?: "Unknown error"
+                    val message = error.message ?: SettingsDataConstants.UNKNOWN_ERROR
                     _state.update {
                         it.copy(
                             backupResult = BackupResult.Error(message),
@@ -246,13 +252,13 @@ class SettingsDataViewModel(
     }
 
     fun restoreBackup(jsonString: String) {
-        Logger.d(TAG) { "Restoring backup" }
+        Logger.d(SettingsDataConstants.TAG) { "Restoring backup" }
         _state.update { it.copy(restoreResult = RestoreOperationResult.Loading) }
 
         val payloadToRestore = if (BackupPayloadCipher.isEncryptedPayload(jsonString)) {
             runCatching { BackupPayloadCipher.decrypt(jsonString) }
                 .getOrElse { error ->
-                    val message = error.message ?: "Unknown error"
+                    val message = error.message ?: SettingsDataConstants.UNKNOWN_ERROR
                     _state.update {
                         it.copy(
                             restoreResult = RestoreOperationResult.Error(message),
@@ -285,7 +291,7 @@ class SettingsDataViewModel(
                 }
                 .onFailure { error ->
                     if (error is CancellationException) throw error
-                    val message = error.message ?: "Unknown error"
+                    val message = error.message ?: SettingsDataConstants.UNKNOWN_ERROR
                     _state.update {
                         it.copy(
                             restoreResult = RestoreOperationResult.Error(message),
@@ -298,7 +304,7 @@ class SettingsDataViewModel(
     }
 
     fun resetAllPreferences() {
-        Logger.d(TAG) { "Resetting all preferences" }
+        Logger.d(SettingsDataConstants.TAG) { "Resetting all preferences" }
         viewModelScope.launch {
             settingsRepositoryRef.resetAllPreferences()
             _state.update { it.copy(showResetPreferencesDialog = false) }

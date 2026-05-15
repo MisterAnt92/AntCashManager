@@ -8,15 +8,11 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class BackupData(
-    val version: Int = CURRENT_VERSION,
+    val version: Int = BackupConstants.CURRENT_VERSION,
     val timestamp: Long = System.currentTimeMillis(),
     val transactions: List<TransactionBackup> = emptyList(),
     val categories: List<CategoryBackup> = emptyList(),
-) {
-    companion object {
-        const val CURRENT_VERSION = 1
-    }
-}
+)
 
 /**
  * Serializable representation of a Transaction for backup purposes.

@@ -18,29 +18,40 @@ class ThemeViewModel(
     private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
-    companion object {
-        private const val TAG = "ThemeViewModel"
-        private const val SHARING_TIMEOUT = 5_000L
-    }
-
     val appTheme = settingsRepository.getTheme()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_TIMEOUT), AppTheme.SYSTEM)
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(ThemeConstants.SHARING_TIMEOUT),
+            ThemeConstants.DEFAULT_THEME,
+        )
 
     val highContrast = settingsRepository.getHighContrast()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_TIMEOUT), false)
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(ThemeConstants.SHARING_TIMEOUT),
+            ThemeConstants.DEFAULT_HIGH_CONTRAST,
+        )
 
     val largeText = settingsRepository.getLargeText()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_TIMEOUT), false)
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(ThemeConstants.SHARING_TIMEOUT),
+            ThemeConstants.DEFAULT_LARGE_TEXT,
+        )
 
     val reduceMotion = settingsRepository.getReduceMotion()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(SHARING_TIMEOUT), false)
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(ThemeConstants.SHARING_TIMEOUT),
+            ThemeConstants.DEFAULT_REDUCE_MOTION,
+        )
 
     fun setTheme(theme: AppTheme) = updatePreference("Setting app theme: $theme") {
         settingsRepository.setTheme(theme)
     }
 
     private fun updatePreference(logMsg: String, action: suspend () -> Unit) {
-        Logger.d(TAG) { logMsg }
+        Logger.d(ThemeConstants.TAG) { logMsg }
         viewModelScope.launch { action() }
     }
 }
