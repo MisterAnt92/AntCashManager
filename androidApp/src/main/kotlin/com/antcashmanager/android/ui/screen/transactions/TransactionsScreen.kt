@@ -77,10 +77,10 @@ import com.antcashmanager.android.ui.components.AnimatedListItem
 import com.antcashmanager.android.ui.components.AntEmptyState
 import com.antcashmanager.android.ui.components.DateRangeFilter
 import com.antcashmanager.android.ui.components.HelpButton
-import com.antcashmanager.android.ui.components.HelpDialogContent
 import com.antcashmanager.android.ui.components.ScreenHeader
 import com.antcashmanager.android.ui.components.SearchComponent
-import com.antcashmanager.android.ui.components.SimpleHelpFeature
+import com.antcashmanager.android.ui.components.dialog.AppHelpDialog
+import com.antcashmanager.android.ui.components.dialog.HelpDialogFeatureSpec
 import com.antcashmanager.android.ui.components.SkeletonLoader
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.text.TransactionAmountText
@@ -1274,27 +1274,26 @@ private val sampleTransactions = listOf(
 @Composable
 private fun HelpDialog(onDismiss: () -> Unit) {
     val helpFeatures = listOf(
-        SimpleHelpFeature(
-            title = "Visualizza Transazioni",
-            description = "Vedi tutte le tue transazioni di entrata e uscita con dettagli completi.",
+        HelpDialogFeatureSpec(
+            titleResId = R.string.help_transactions_feature_view_title,
+            descriptionResId = R.string.help_transactions_feature_view_desc,
             icon = Icons.Default.ArrowDownward,
         ),
-        SimpleHelpFeature(
-            title = "Filtri Data",
-            description = "Filtra le transazioni per intervallo di date o usa i preset predefiniti.",
+        HelpDialogFeatureSpec(
+            titleResId = R.string.help_transactions_feature_filters_title,
+            descriptionResId = R.string.help_transactions_feature_filters_desc,
             icon = Icons.Default.ArrowUpward,
         ),
-        SimpleHelpFeature(
-            title = "Cerca Transazioni",
-            description = "Cerca transazioni per nome, importo, categoria o altre proprietà.",
+        HelpDialogFeatureSpec(
+            titleResId = R.string.help_transactions_feature_search_title,
+            descriptionResId = R.string.help_transactions_feature_search_desc,
             icon = Icons.Default.Repeat,
         ),
     )
 
-    HelpDialogContent(
-        isVisible = true,
-        title = "Guida Transazioni",
-        description = "Gestisci tutte le tue transazioni! Puoi visualizzare, cercare e filtrare le tue operazioni finanziarie.",
+    AppHelpDialog(
+        titleResId = R.string.help_transactions_title,
+        descriptionResId = R.string.help_transactions_desc,
         features = helpFeatures,
         onDismiss = onDismiss,
     )

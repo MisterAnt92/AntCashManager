@@ -10,12 +10,31 @@ import com.antcashmanager.android.R
 @Composable
 fun translateCategory(categoryName: String): String {
     val resId = when (categoryName) {
+        // Resource keys stored as plain names in DB
+        "category_uncategorized" -> R.string.category_uncategorized
+        "category_home" -> R.string.category_home
+        "category_transport" -> R.string.category_transport
+        "category_food" -> R.string.category_food
+        "category_bills" -> R.string.category_bills
+        "category_dining" -> R.string.category_dining
+        "category_entertainment" -> R.string.category_entertainment
+        "category_health" -> R.string.category_health
+        "category_shopping" -> R.string.category_shopping
+        "category_education" -> R.string.category_education
+        "category_other" -> R.string.category_other
+        "category_salary" -> R.string.category_salary
+        "category_allowance" -> R.string.category_allowance
+        "category_reimbursement" -> R.string.category_reimbursement
+        "category_investments" -> R.string.category_investments
+        "category_freelance" -> R.string.category_freelance
+
         "Non categorizzato" -> R.string.category_uncategorized
         "Casa" -> R.string.category_home
         "Trasporti" -> R.string.category_transport
         "Cibo" -> R.string.category_food
         "Bollette" -> R.string.category_bills
         "Pranzi/Cene fuori" -> R.string.category_dining
+        "Pranzi/Cenette fuori" -> R.string.category_dining
         "Divertimento" -> R.string.category_entertainment
         "Salute" -> R.string.category_health
         "Shopping" -> R.string.category_shopping

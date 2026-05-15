@@ -82,12 +82,11 @@ import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AntEmptyState
 import com.antcashmanager.android.ui.components.HelpButton
-import com.antcashmanager.android.ui.components.HelpDialogContent
 import com.antcashmanager.android.ui.components.ScreenHeader
-import com.antcashmanager.android.ui.components.SimpleHelpFeature
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.categories.view.HelpDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.android.util.translateCategory
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.repository.CategoryRepository
 
@@ -247,7 +246,7 @@ internal fun CategoriesContent(
             onDismissRequest = { categoryToDelete = null },
             title = { Text(stringResource(R.string.categories_delete_title)) },
             text = {
-                Text(stringResource(R.string.categories_delete_message, category.name))
+                Text(stringResource(R.string.categories_delete_message, translateCategory(category.name)))
             },
             confirmButton = {
                 TextButton(
@@ -277,6 +276,7 @@ private fun CategoryItem(
     onDelete: () -> Unit,
 ) {
     val icon = categoryIconMap[category.icon]
+    val translatedName = translateCategory(category.name)
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -308,7 +308,7 @@ private fun CategoryItem(
                     )
                 } else {
                     AppText(
-                        text = category.name.take(1).uppercase(),
+                        text = translatedName.take(1).uppercase(),
                         style = MaterialTheme.typography.titleMedium,
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
@@ -318,7 +318,7 @@ private fun CategoryItem(
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 AppText(
-                    text = category.name,
+                    text = translatedName,
                     style = MaterialTheme.typography.titleMedium,
                 )
                 if (category.isDefault) {
@@ -590,39 +590,6 @@ private fun CategoriesContentDarkPreview() {
     }
 }
 
-@Composable
-private fun HelpDialog(onDismiss: () -> Unit) {
-    val helpFeatures = listOf(
-        SimpleHelpFeature(
-            title = "Gestione Categorie",
-            description = "Organizza le tue spese e entrate in categorie personalizzate",
-            icon = Icons.Default.ShoppingBag,
-        ),
-        SimpleHelpFeature(
-            title = "Aggiungi Categoria",
-            description = "Crea nuove categorie per personalizzare la tua app",
-            icon = Icons.Default.Add,
-        ),
-        SimpleHelpFeature(
-            title = "Modifica Categoria",
-            description = "Personalizza icona e colore di ogni categoria",
-            icon = Icons.Default.Palette,
-        ),
-        SimpleHelpFeature(
-            title = "Elimina Categoria",
-            description = "Rimuovi le categorie non più necessarie (eccetto quelle predefinite)",
-            icon = Icons.Default.Delete,
-        ),
-    )
-
-    HelpDialogContent(
-        isVisible = true,
-        title = "Guida Categorie",
-        description = "Gestisci le tue categorie di spesa e entrate!",
-        features = helpFeatures,
-        onDismiss = onDismiss,
-    )
-}
 
 @Preview(showBackground = true, name = "AddCategoryDialog")
 @Composable

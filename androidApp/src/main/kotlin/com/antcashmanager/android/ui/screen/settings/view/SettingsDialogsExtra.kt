@@ -21,8 +21,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
-import com.antcashmanager.android.ui.components.HelpDialogContent
-import com.antcashmanager.android.ui.components.SimpleHelpFeature
+import com.antcashmanager.android.ui.components.dialog.AppHelpDialog
+import com.antcashmanager.android.ui.components.dialog.HelpDialogFeatureSpec
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
@@ -195,27 +195,26 @@ fun ThirdPartyLibrariesDialog(onDismiss: () -> Unit) {
 @Composable
 fun HelpDialog(onDismiss: () -> Unit) {
     val helpFeatures = listOf(
-        SimpleHelpFeature(
-            title = "Tema Scuro/Chiaro",
-            description = "Personalizza l'aspetto dell'app secondo le tue preferenze",
+        HelpDialogFeatureSpec(
+            titleResId = R.string.help_settings_feature_theme_title,
+            descriptionResId = R.string.help_settings_feature_theme_desc,
             icon = Icons.Default.Settings,
         ),
-        SimpleHelpFeature(
-            title = "Valuta",
-            description = "Seleziona la valuta preferita per visualizzare gli importi",
+        HelpDialogFeatureSpec(
+            titleResId = R.string.help_settings_feature_currency_title,
+            descriptionResId = R.string.help_settings_feature_currency_desc,
             icon = Icons.Default.Settings,
         ),
-        SimpleHelpFeature(
-            title = "Lingua",
-            description = "Scegli la lingua dell'interfaccia",
+        HelpDialogFeatureSpec(
+            titleResId = R.string.help_settings_feature_language_title,
+            descriptionResId = R.string.help_settings_feature_language_desc,
             icon = Icons.Default.Settings,
         ),
     )
 
-    HelpDialogContent(
-        isVisible = true,
-        title = "Guida Impostazioni",
-        description = "Personalizza l'app secondo le tue preferenze!",
+    AppHelpDialog(
+        titleResId = R.string.help_settings_title,
+        descriptionResId = R.string.help_settings_desc,
         features = helpFeatures,
         onDismiss = onDismiss,
     )

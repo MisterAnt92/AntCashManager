@@ -457,6 +457,55 @@
     <string name="receipt_scan_payment_type_subtitle">Payment method — detected automatically, tap to change</string>
     <string name="receipt_scan_select_payment_type">Select Payment Type</string>
     <string name="help_features_label">Features:</string>
+    <string name="common_help">Help</string>
+
+    <!-- Home Help Dialog -->
+    <string name="help_home_title">Home Guide</string>
+    <string name="help_home_desc">Welcome to Home! Here you can view your financial summary and recent transactions.</string>
+    <string name="help_home_feature_date_filters_title">Date Range Filters</string>
+    <string name="help_home_feature_date_filters_desc">Filter transactions by specific dates or use available presets.</string>
+    <string name="help_home_feature_recent_transactions_title">Recent Transactions</string>
+    <string name="help_home_feature_recent_transactions_desc">View your latest transactions with details and category.</string>
+
+    <!-- Charts Help Dialog -->
+    <string name="help_charts_title">Charts Guide</string>
+    <string name="help_charts_desc">View charts and analysis of your financial data.</string>
+    <string name="help_charts_feature_visualization_title">Chart Visualization</string>
+    <string name="help_charts_feature_visualization_desc">View your financial data in chart format with pie charts by category.</string>
+    <string name="help_charts_feature_filters_title">Time Filters</string>
+    <string name="help_charts_feature_filters_desc">Select preset or custom periods to analyze your data.</string>
+    <string name="help_charts_feature_analysis_title">Detailed Analysis</string>
+    <string name="help_charts_feature_analysis_desc">View monthly overview and category analysis.</string>
+
+    <!-- Transactions Help Dialog -->
+    <string name="help_transactions_title">Transactions Guide</string>
+    <string name="help_transactions_desc">Manage all your transactions. You can view, search, and filter your financial operations.</string>
+    <string name="help_transactions_feature_view_title">View Transactions</string>
+    <string name="help_transactions_feature_view_desc">See all your income and expense transactions with complete details.</string>
+    <string name="help_transactions_feature_filters_title">Date Filters</string>
+    <string name="help_transactions_feature_filters_desc">Filter transactions by date range or use preset ranges.</string>
+    <string name="help_transactions_feature_search_title">Search Transactions</string>
+    <string name="help_transactions_feature_search_desc">Search transactions by title, amount, category, or other properties.</string>
+
+    <!-- Settings Help Dialog -->
+    <string name="help_settings_title">Settings Guide</string>
+    <string name="help_settings_desc">Customize the app according to your preferences.</string>
+    <string name="help_settings_feature_theme_title">Light/Dark Theme</string>
+    <string name="help_settings_feature_theme_desc">Customize the app appearance according to your preferences.</string>
+    <string name="help_settings_feature_currency_title">Currency</string>
+    <string name="help_settings_feature_currency_desc">Select your preferred currency to display amounts.</string>
+    <string name="help_settings_feature_language_title">Language</string>
+    <string name="help_settings_feature_language_desc">Choose the interface language.</string>
+
+    <!-- Categories Help Dialog -->
+    <string name="help_categories_title">Categories Guide</string>
+    <string name="help_categories_desc">Manage your expense and income categories.</string>
+    <string name="help_categories_feature_management_title">Category Management</string>
+    <string name="help_categories_feature_management_desc">Create and customize categories to organize your transactions.</string>
+    <string name="help_categories_feature_income_expense_title">Income and Expenses</string>
+    <string name="help_categories_feature_income_expense_desc">Categorize transactions as income or expense.</string>
+    <string name="help_categories_feature_delete_title">Delete Categories</string>
+    <string name="help_categories_feature_delete_desc">Remove custom categories when they are no longer needed.</string>
     <string name="common_close">Close</string>
     <string name="common_click_here">Click here</string>
     <string name="preview_app_text_title">Example Title</string>

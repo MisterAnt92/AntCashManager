@@ -5,33 +5,33 @@ import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.runtime.Composable
-import com.antcashmanager.android.ui.components.HelpDialogContent
-import com.antcashmanager.android.ui.components.SimpleHelpFeature
+import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.components.dialog.AppHelpDialog
+import com.antcashmanager.android.ui.components.dialog.HelpDialogFeatureSpec
 
 @Composable
 internal fun HelpDialog(onDismiss: () -> Unit) {
     val helpFeatures = listOf(
-        SimpleHelpFeature(
-            title = "Visualizzazione Grafici",
-            description = "Vedi i tuoi dati finanziari in formato grafico con pie chart per le categorie",
+        HelpDialogFeatureSpec(
+            titleResId = R.string.help_charts_feature_visualization_title,
+            descriptionResId = R.string.help_charts_feature_visualization_desc,
             icon = Icons.Default.BarChart,
         ),
-        SimpleHelpFeature(
-            title = "Filtri Temporali",
-            description = "Seleziona periodi predefiniti o personalizzati per analizzare i tuoi dati",
+        HelpDialogFeatureSpec(
+            titleResId = R.string.help_charts_feature_filters_title,
+            descriptionResId = R.string.help_charts_feature_filters_desc,
             icon = Icons.Default.CalendarMonth,
         ),
-        SimpleHelpFeature(
-            title = "Analisi Dettagliata",
-            description = "Visualizza il riepilogo mensile e l'analisi per categoria",
+        HelpDialogFeatureSpec(
+            titleResId = R.string.help_charts_feature_analysis_title,
+            descriptionResId = R.string.help_charts_feature_analysis_desc,
             icon = Icons.AutoMirrored.Default.TrendingUp,
         ),
     )
 
-    HelpDialogContent(
-        isVisible = true,
-        title = "Guida Grafici",
-        description = "Visualizza grafici e analisi dei tuoi dati finanziari!",
+    AppHelpDialog(
+        titleResId = R.string.help_charts_title,
+        descriptionResId = R.string.help_charts_desc,
         features = helpFeatures,
         onDismiss = onDismiss,
     )

@@ -3,6 +3,56 @@
     <!-- HelpDialog (Dashboard) -->
     <string name="help_dashboard_title">Dashboard</string>
     <string name="help_dashboard_desc">Visualizza il saldo totale, entrate e uscite nel periodo selezionato.</string>
+    <string name="help_features_label">Caratteristiche:</string>
+    <string name="common_help">Aiuto</string>
+
+    <!-- Home Help Dialog -->
+    <string name="help_home_title">Guida Home</string>
+    <string name="help_home_desc">Benvenuto nella Home! Qui puoi visualizzare il riepilogo finanziario e le transazioni recenti.</string>
+    <string name="help_home_feature_date_filters_title">Filtri Intervallo Date</string>
+    <string name="help_home_feature_date_filters_desc">Filtra le transazioni per date specifiche o usa i preset disponibili.</string>
+    <string name="help_home_feature_recent_transactions_title">Transazioni Recenti</string>
+    <string name="help_home_feature_recent_transactions_desc">Visualizza le ultime transazioni con dettagli e categoria.</string>
+
+    <!-- Charts Help Dialog -->
+    <string name="help_charts_title">Guida Grafici</string>
+    <string name="help_charts_desc">Visualizza grafici e analisi dei tuoi dati finanziari.</string>
+    <string name="help_charts_feature_visualization_title">Visualizzazione Grafici</string>
+    <string name="help_charts_feature_visualization_desc">Vedi i tuoi dati finanziari in formato grafico con pie chart per categoria.</string>
+    <string name="help_charts_feature_filters_title">Filtri Temporali</string>
+    <string name="help_charts_feature_filters_desc">Seleziona periodi predefiniti o personalizzati per analizzare i tuoi dati.</string>
+    <string name="help_charts_feature_analysis_title">Analisi Dettagliata</string>
+    <string name="help_charts_feature_analysis_desc">Visualizza riepilogo mensile e analisi per categoria.</string>
+
+    <!-- Transactions Help Dialog -->
+    <string name="help_transactions_title">Guida Transazioni</string>
+    <string name="help_transactions_desc">Gestisci tutte le tue transazioni. Puoi visualizzare, cercare e filtrare le operazioni finanziarie.</string>
+    <string name="help_transactions_feature_view_title">Visualizza Transazioni</string>
+    <string name="help_transactions_feature_view_desc">Vedi tutte le transazioni di entrata e uscita con dettagli completi.</string>
+    <string name="help_transactions_feature_filters_title">Filtri Data</string>
+    <string name="help_transactions_feature_filters_desc">Filtra le transazioni per intervallo di date o usa i preset predefiniti.</string>
+    <string name="help_transactions_feature_search_title">Cerca Transazioni</string>
+    <string name="help_transactions_feature_search_desc">Cerca transazioni per titolo, importo, categoria o altre proprieta.</string>
+
+    <!-- Settings Help Dialog -->
+    <string name="help_settings_title">Guida Impostazioni</string>
+    <string name="help_settings_desc">Personalizza app secondo le tue preferenze.</string>
+    <string name="help_settings_feature_theme_title">Tema Chiaro/Scuro</string>
+    <string name="help_settings_feature_theme_desc">Personalizza aspetto app secondo le tue preferenze.</string>
+    <string name="help_settings_feature_currency_title">Valuta</string>
+    <string name="help_settings_feature_currency_desc">Seleziona la valuta preferita per visualizzare gli importi.</string>
+    <string name="help_settings_feature_language_title">Lingua</string>
+    <string name="help_settings_feature_language_desc">Scegli la lingua dell interfaccia.</string>
+
+    <!-- Categories Help Dialog -->
+    <string name="help_categories_title">Guida Categorie</string>
+    <string name="help_categories_desc">Gestisci le tue categorie di spesa ed entrata.</string>
+    <string name="help_categories_feature_management_title">Gestione Categorie</string>
+    <string name="help_categories_feature_management_desc">Crea e personalizza categorie per organizzare le tue transazioni.</string>
+    <string name="help_categories_feature_income_expense_title">Entrate e Uscite</string>
+    <string name="help_categories_feature_income_expense_desc">Categorizza le transazioni come entrate o uscite.</string>
+    <string name="help_categories_feature_delete_title">Elimina Categorie</string>
+    <string name="help_categories_feature_delete_desc">Rimuovi categorie personalizzate quando non sono piu necessarie.</string>
     <string name="app_name">AntCashManager</string>
 
     <!-- Navigation -->
@@ -22,7 +72,7 @@
     <string name="home_empty_ant">La nostra formichina aspetta la tua prima transazione! 🐜</string>
     <string name="home_balance_positive">📈 Positivo</string>
     <string name="home_balance_negative">📉 Negativo</string>
-
+    <string name="home_transaction_item_subtitle">%1$s • %2$s</string>
     <!-- Transactions Screen -->
     <string name="transactions_title">Transazioni</string>
     <string name="transactions_empty">Nessuna transazione</string>
@@ -326,7 +376,8 @@
     <string name="transaction_details_payee">Beneficiario</string>
     <string name="transaction_details_location">Luogo</string>
     <string name="transaction_details_recurrence">Ricorrenza</string>
-    <string name="transaction_details_tags">Tag</string>
+     <string name="transaction_details_tags">Tag</string>
+     <string name="transaction_details_share">Condividi Transazione</string>
     <string name="transaction_details_close">Chiudi</string>
 
     <!-- Transaction Share -->
@@ -444,8 +495,10 @@
     <string name="receipt_scan_save">Salva Transazione</string>
     <string name="receipt_scan_retry">Effettua nuova scansione</string>
     <string name="receipt_scan_nav_label">Scansiona Scontrino</string>
-    <string name="receipt_scan_payment_type_subtitle">Metodo di pagamento — rilevato automaticamente, tocca per modificare</string>
-    <string name="receipt_scan_select_payment_type">Seleziona Tipo Pagamento</string>
+     <string name="receipt_scan_payment_type_subtitle">Metodo di pagamento — rilevato automaticamente, tocca per modificare</string>
+     <string name="receipt_scan_select_payment_type">Seleziona Tipo Pagamento</string>
+
+
 </resources>
 
 

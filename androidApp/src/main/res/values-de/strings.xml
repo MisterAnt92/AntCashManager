@@ -17,8 +17,6 @@
     <string name="home_no_transactions">Noch keine Transaktionen.\nF\u00fcge deine erste Transaktion hinzu!</string>
     <string name="home_empty_ant">Unsere kleine Ameise wartet auf deine erste Transaktion! 🐜</string>
     <string name="home_balance_positive">📈 Positiv</string>
-    <string name="home_balance_negative">📉 Negativ</string>
-    <string name="transactions_title">Transaktionen</string>
     <string name="transactions_empty">Noch keine Transaktionen</string>
     <string name="transactions_empty_subtitle">Deine Transaktionen werden hier angezeigt</string>
     <string name="transactions_add">Transaktion hinzuf\u00fcgen</string>
@@ -86,8 +84,9 @@
     <string name="charts_income_by_category">Einnahmen nach Kategorie</string>
     <string name="charts_expense_by_category">Ausgaben nach Kategorie</string>
     <string name="charts_monthly_overview">Monats\u00fcbersicht</string>
-    <string name="charts_yearly_overview">Jahresübersicht</string>
-    <string name="charts_no_data">Keine Daten f\u00fcr den gew\u00e4hlten Zeitraum</string>
+     <string name="charts_yearly_overview">Jahresübersicht</string>
+     <string name="charts_legend_item_subtitle">%1$s • %2$s</string>
+    <string name="charts_no_data">Keine Daten für den gewählten Zeitraum</string>
     <string name="charts_pick_start_date">Startdatum w\u00e4hlen</string>
     <string name="charts_pick_end_date">Enddatum w\u00e4hlen</string>
     <string name="charts_empty_ant">Noch keine Daten zum Anzeigen! Die Ameise arbeitet flei\u00dfig! 🐜📊</string>
@@ -181,10 +180,12 @@
     <string name="settings_privacy_policy">Datenschutzrichtlinie</string>
     <string name="settings_privacy_policy_subtitle">Wie wir mit deinen Daten umgehen</string>
     <string name="settings_buy_coffee">Kauf mir einen Kaffee ☕</string>
-    <string name="settings_buy_coffee_subtitle">Unterst\u00fctze die Entwicklung mit einer kleinen Spende</string>
-    <string name="settings_donate_paypal_subtitle">Spenden \u00fcber PayPal</string>
-    <string name="settings_donate_bmc_subtitle">Spenden auf buymeacoffee.com</string>
-    <string name="settings_about">\u00dcber</string>
+     <string name="settings_buy_coffee_subtitle">Unterstütze die Entwicklung mit einer kleinen Spende</string>
+     <string name="settings_donate_paypal_title">PayPal</string>
+     <string name="settings_donate_paypal_subtitle">Spenden über PayPal</string>
+     <string name="settings_donate_bmc_title">Buy Me a Coffee</string>
+     <string name="settings_donate_bmc_subtitle">Spenden auf buymeacoffee.com</string>
+    <string name="settings_about">Über</string>
     <string name="settings_app_version">App-Version</string>
     <string name="settings_third_party">Drittanbieter</string>
     <string name="settings_third_party_libraries">Open-Source-Bibliotheken</string>
@@ -307,7 +308,8 @@
     <string name="transaction_details_payee">Empfänger</string>
     <string name="transaction_details_location">Ort</string>
     <string name="transaction_details_recurrence">Wiederholung</string>
-    <string name="transaction_details_tags">Tags</string>
+     <string name="transaction_details_tags">Tags</string>
+     <string name="transaction_details_share">Transaktion Teilen</string>
     <string name="transaction_details_close">Schließen</string>
 
     <!-- Transaction Share -->
@@ -384,8 +386,101 @@
     <string name="receipt_scan_save">Transaktion speichern</string>
     <string name="receipt_scan_retry">Erneut scannen</string>
     <string name="receipt_scan_nav_label">Kassenbon scannen</string>
-    <string name="receipt_scan_payment_type_subtitle">Zahlungsmethode — automatisch erkannt, zum Ändern tippen</string>
-    <string name="receipt_scan_select_payment_type">Zahlungsart auswählen</string>
+     <string name="receipt_scan_payment_type_subtitle">Zahlungsmethode — automatisch erkannt, zum Ändern tippen</string>
+     <string name="receipt_scan_select_payment_type">Zahlungsart auswählen</string>
+
+     <!-- Category Translations (Keys) -->
+     <string name="category_uncategorized">Unkategorisiert</string>
+     <string name="category_home">Zuhause</string>
+     <string name="category_transport">Verkehr</string>
+     <string name="category_food">Lebensmittel</string>
+     <string name="category_bills">Rechnungen</string>
+     <string name="category_dining">Essen gehen</string>
+     <string name="category_entertainment">Unterhaltung</string>
+     <string name="category_health">Gesundheit</string>
+     <string name="category_shopping">Einkaufen</string>
+     <string name="category_education">Bildung</string>
+     <string name="category_other">Sonstige</string>
+     <string name="category_salary">Gehalt</string>
+     <string name="category_allowance">Taschengeld</string>
+     <string name="category_reimbursement">Rückerstattung</string>
+     <string name="category_investments">Investitionen</string>
+     <string name="category_freelance">Freiberuflich</string>
+
+      <!-- Help Dialog -->
+      <string name="help_features_label">Funktionen:</string>
+      <string name="common_help">Hilfe</string>
+
+      <!-- Home Help Dialog -->
+      <string name="help_home_title">Startseitenhilfe</string>
+      <string name="help_home_desc">Willkommen auf der Startseite! Hier sehen Sie Ihre Finanzübersicht und aktuelle Transaktionen.</string>
+      <string name="help_home_feature_date_filters_title">Datumsbereichsfilter</string>
+      <string name="help_home_feature_date_filters_desc">Filtern Sie Transaktionen nach bestimmten Daten oder nutzen Sie verfügbare Vorgaben.</string>
+      <string name="help_home_feature_recent_transactions_title">Aktuelle Transaktionen</string>
+      <string name="help_home_feature_recent_transactions_desc">Sehen Sie Ihre neuesten Transaktionen mit Details und Kategorie.</string>
+
+      <!-- Charts Help Dialog -->
+      <string name="help_charts_title">Diagrammhilfe</string>
+      <string name="help_charts_desc">Zeigen Sie Diagramme und Analysen Ihrer Finanzdaten an.</string>
+      <string name="help_charts_feature_visualization_title">Diagrammvisualisierung</string>
+      <string name="help_charts_feature_visualization_desc">Zeigen Sie Finanzdaten als Diagramme mit Kreisdiagrammen pro Kategorie an.</string>
+      <string name="help_charts_feature_filters_title">Zeitfilter</string>
+      <string name="help_charts_feature_filters_desc">Wählen Sie vordefinierte oder benutzerdefinierte Zeiträume zur Analyse Ihrer Daten.</string>
+      <string name="help_charts_feature_analysis_title">Detaillierte Analyse</string>
+      <string name="help_charts_feature_analysis_desc">Sehen Sie die Monatsübersicht und die Analyse nach Kategorie.</string>
+
+      <!-- Transactions Help Dialog -->
+      <string name="help_transactions_title">Transaktionshilfe</string>
+      <string name="help_transactions_desc">Verwalten Sie alle Transaktionen. Sie können finanzielle Vorgänge anzeigen, suchen und filtern.</string>
+      <string name="help_transactions_feature_view_title">Transaktionen anzeigen</string>
+      <string name="help_transactions_feature_view_desc">Sehen Sie alle Einnahmen- und Ausgabentransaktionen mit vollständigen Details.</string>
+      <string name="help_transactions_feature_filters_title">Datumsfilter</string>
+      <string name="help_transactions_feature_filters_desc">Filtern Sie Transaktionen nach Zeitraum oder verwenden Sie Vorgaben.</string>
+      <string name="help_transactions_feature_search_title">Transaktionen suchen</string>
+      <string name="help_transactions_feature_search_desc">Suchen Sie Transaktionen nach Titel, Betrag, Kategorie oder anderen Eigenschaften.</string>
+
+      <!-- Settings Help Dialog -->
+      <string name="help_settings_title">Einstellungshilfe</string>
+      <string name="help_settings_desc">Passen Sie die App nach Ihren Vorlieben an.</string>
+      <string name="help_settings_feature_theme_title">Hell-/Dunkelmodus</string>
+      <string name="help_settings_feature_theme_desc">Passen Sie das Erscheinungsbild der App nach Ihren Vorlieben an.</string>
+      <string name="help_settings_feature_currency_title">Währung</string>
+      <string name="help_settings_feature_currency_desc">Wählen Sie Ihre bevorzugte Währung zur Anzeige von Beträgen.</string>
+      <string name="help_settings_feature_language_title">Sprache</string>
+      <string name="help_settings_feature_language_desc">Wählen Sie die Sprache der Benutzeroberfläche.</string>
+
+      <!-- Categories Help Dialog -->
+      <string name="help_categories_title">Kategorienhilfe</string>
+      <string name="help_categories_desc">Verwalten Sie Ihre Ausgaben- und Einnahmekategorien.</string>
+      <string name="help_categories_feature_management_title">Kategorienverwaltung</string>
+      <string name="help_categories_feature_management_desc">Erstellen und personalisieren Sie Kategorien, um Ihre Transaktionen zu organisieren.</string>
+      <string name="help_categories_feature_income_expense_title">Einnahmen und Ausgaben</string>
+      <string name="help_categories_feature_income_expense_desc">Ordnen Sie Transaktionen als Einnahmen oder Ausgaben ein.</string>
+      <string name="help_categories_feature_delete_title">Kategorien löschen</string>
+      <string name="help_categories_feature_delete_desc">Entfernen Sie benutzerdefinierte Kategorien, wenn sie nicht mehr benötigt werden.</string>
+
+      <!-- Tutorial -->
+      <string name="settings_tutorial">Anleitung</string>
+     <string name="settings_show_tutorial">Anleitung anzeigen</string>
+     <string name="settings_show_tutorial_subtitle">Ursprüngliches App-Tutorial erneut ansehen</string>
+     <string name="tutorial_welcome_title">Willkommen bei AntCashManager! 🐜</string>
+     <string name="tutorial_welcome_desc">Lassen Sie uns einen kurzen Rundgang machen, um zu sehen, wie unsere kleine Ameise Ihnen bei der Verwaltung Ihres Geldes hilft.</string>
+     <string name="tutorial_dashboard_title">Übersicht</string>
+     <string name="tutorial_dashboard_desc">Hier können Sie auf einen Blick Ihren Gesamtsaldo, monatliche Einnahmen und Ausgaben sehen.</string>
+     <string name="tutorial_transactions_title">Transaktionen</string>
+     <string name="tutorial_transactions_desc">Verwalten Sie alle Ihre Transaktionen hier. Sie können problemlos suchen, filtern und neue Einträge hinzufügen.</string>
+     <string name="tutorial_charts_title">Diagramme und Insights</string>
+     <string name="tutorial_charts_desc">Visualisieren Sie Ihre Ausgabengewohnheiten mit interaktiven Diagrammen. Sehen Sie, wo Ihr Geld fließt!</string>
+     <string name="tutorial_categories_title">Kategorien</string>
+     <string name="tutorial_categories_desc">Organisieren Sie Ihre Transaktionen mit benutzerdefinierten Kategorien, Symbolen und Farben.</string>
+     <string name="tutorial_settings_title">Anpassung</string>
+     <string name="tutorial_settings_desc">Passen Sie die App an Ihre Bedürfnisse an: Währung, Datumsformate, Barrierefreiheit und Designs.</string>
+     <string name="tutorial_finish_title">Sie sind bereit!</string>
+     <string name="tutorial_finish_desc">Beginnen Sie heute Ihre finanzielle Reise mit AntCashManager. Viel Spaß beim Sparen!</string>
+     <string name="tutorial_next">Weiter</string>
+     <string name="tutorial_skip">Überspringen</string>
+     <string name="tutorial_finish">Verstanden!</string>
+
 </resources>
 
 

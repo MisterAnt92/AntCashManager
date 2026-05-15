@@ -42,6 +42,7 @@ Ottimizza l'efficienza, la qualità e la manutenibilità del codice seguendo Cle
 - Usa ViewModel per la gestione dello stato, NO logica di business nei composable.
 - Implementa la lifecycle awareness (es. `LaunchedEffect`).
 - Tutte le stringhe user-facing DEVONO essere in `strings.xml` (5 lingue: en, it, fr, de, es).
+- E' VIETATO hardcodare stringhe: usa sempre `stringResource(R.string.*)`.
 - Usa SEMPRE i componenti UI esistenti in `ui/components/` prima di crearne di nuovi.
 - Applica MaterialTheme per colori, tipografia e spacing.
 
@@ -64,6 +65,7 @@ Ottimizza l'efficienza, la qualità e la manutenibilità del codice seguendo Cle
 - Consuma `Result<T>` con `onSuccess`/`onFailure`.
 - Usa Kermit Logger per logging.
 - NO logica di business, NO riferimenti a Context.
+- Se presenti constanti, crea classe `Constants` o usa `companion object`.
 - Usa pattern `activeJob?.cancel()` per operazioni annullabili.
 
 ---

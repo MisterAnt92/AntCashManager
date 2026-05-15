@@ -417,7 +417,7 @@ fun HelpButton(
     ) {
         Icon(
             imageVector = Icons.AutoMirrored.Default.Help,
-            contentDescription = "Help",
+            contentDescription = stringResource(R.string.common_help),
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(20.dp),
         )
@@ -452,7 +452,7 @@ fun HelpDialogContent(
                     IconButton(onClick = onDismiss) {
                         Icon(
                             imageVector = Icons.Default.Close,
-                            contentDescription = "Close",
+                            contentDescription = stringResource(R.string.common_close),
                             tint = MaterialTheme.colorScheme.onSurface,
                         )
                     }

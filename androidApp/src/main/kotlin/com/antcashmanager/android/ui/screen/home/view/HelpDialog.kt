@@ -5,8 +5,9 @@ import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.runtime.Composable
-import com.antcashmanager.android.ui.components.HelpDialogContent
-import com.antcashmanager.android.ui.components.SimpleHelpFeature
+import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.components.dialog.AppHelpDialog
+import com.antcashmanager.android.ui.components.dialog.HelpDialogFeatureSpec
 
 // ══════════════════════════════════════════════════════════════════════════════
 // HELP DIALOG
@@ -15,27 +16,26 @@ import com.antcashmanager.android.ui.components.SimpleHelpFeature
 @Composable
 fun HelpDialog(onDismiss: () -> Unit) {
     val helpFeatures = listOf(
-        SimpleHelpFeature(
-            title = "Dashboard",
-            description = "Visualizza il saldo totale, entrate e uscite nel periodo selezionato.",
+        HelpDialogFeatureSpec(
+            titleResId = R.string.help_dashboard_title,
+            descriptionResId = R.string.help_dashboard_desc,
             icon = Icons.AutoMirrored.Filled.TrendingUp,
         ),
-        SimpleHelpFeature(
-            title = "Filtri Intervallo Date",
-            description = "Filtra le transazioni per date specifiche o usa i preset disponibili.",
+        HelpDialogFeatureSpec(
+            titleResId = R.string.help_home_feature_date_filters_title,
+            descriptionResId = R.string.help_home_feature_date_filters_desc,
             icon = Icons.Default.ArrowUpward,
         ),
-        SimpleHelpFeature(
-            title = "Transazioni Recenti",
-            description = "Visualizza le ultime transazioni aggiunte con dettagli e categoria.",
+        HelpDialogFeatureSpec(
+            titleResId = R.string.help_home_feature_recent_transactions_title,
+            descriptionResId = R.string.help_home_feature_recent_transactions_desc,
             icon = Icons.Default.Repeat,
         ),
     )
 
-    HelpDialogContent(
-        isVisible = true,
-        title = "Guida Dashboard",
-        description = "Benvenuto nel Dashboard! Qui puoi visualizzare il riepilogo finanziario e le transazioni recenti.",
+    AppHelpDialog(
+        titleResId = R.string.help_home_title,
+        descriptionResId = R.string.help_home_desc,
         features = helpFeatures,
         onDismiss = onDismiss,
     )
