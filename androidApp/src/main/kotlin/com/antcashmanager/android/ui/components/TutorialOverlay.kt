@@ -14,10 +14,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,6 +37,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.components.button.AppButton
+import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 @Composable
@@ -80,7 +80,7 @@ fun TutorialOverlay(
         TutorialStep(
             titleRes = R.string.tutorial_finish_title,
             descRes = R.string.tutorial_finish_desc,
-            imageRes = null,
+            imageRes = R.drawable.final_step,
         ),
     )
 
@@ -106,10 +106,10 @@ fun TutorialOverlay(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 24.dp),
+                .padding(horizontal = 16.dp, vertical = 24.dp, ),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(
+            AppText(
                 text = stringResource(step.titleRes),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
@@ -122,12 +122,12 @@ fun TutorialOverlay(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            Text(
+            AppText(
                 text = stringResource(step.descRes),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(0.96f),
+                modifier = Modifier.fillMaxWidth(0.90f),
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -135,7 +135,7 @@ fun TutorialOverlay(
             if (step.imageRes != null) {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth(0.96f)
+                        .fillMaxWidth(0.75f)
                         .weight(1f),
                     contentAlignment = Alignment.Center,
                 ) {
@@ -143,7 +143,7 @@ fun TutorialOverlay(
                         painter = painterResource(id = step.imageRes),
                         contentDescription = stringResource(step.titleRes),
                         modifier = Modifier
-                            .fillMaxSize()
+                            .fillMaxSize(0.85f)
                             .clip(RoundedCornerShape(16.dp))
                             .background(
                                 color = MaterialTheme.colorScheme.surfaceVariant,
@@ -155,12 +155,13 @@ fun TutorialOverlay(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth(0.96f)
+                        .padding(vertical = 4.dp, horizontal = 4.dp)
                         .weight(1f),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     welcomeHighlights.forEachIndexed { index, textRes ->
-                        Text(
+                        AppText(
                             text = "• ${stringResource(textRes)}",
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onBackground,
@@ -175,7 +176,7 @@ fun TutorialOverlay(
             }
 
             Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
                 modifier = Modifier
                     .fillMaxWidth(0.96f)
                     .clearAndSetSemantics {
@@ -207,18 +208,18 @@ fun TutorialOverlay(
             ) {
                 if (!isLastStep) {
                     TextButton(onClick = onDismiss) {
-                        Text(text = stringResource(R.string.tutorial_skip))
+                        AppText(text = stringResource(R.string.tutorial_skip))
                     }
-                    Button(onClick = { currentStep += 1 }) {
-                        Text(text = stringResource(R.string.tutorial_next))
+                    AppButton(onClick = { currentStep += 1 }) {
+                        AppText(text = stringResource(R.string.tutorial_next))
                     }
                 } else {
                     Spacer(modifier = Modifier.weight(1f))
-                    Button(
+                    AppButton(
                         onClick = onDismiss,
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        Text(text = stringResource(R.string.tutorial_finish))
+                        AppText(text = stringResource(R.string.tutorial_finish))
                     }
                 }
             }

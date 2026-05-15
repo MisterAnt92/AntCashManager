@@ -41,7 +41,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -57,6 +56,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 /**
@@ -142,7 +142,7 @@ fun AnimatedCounter(
         modifier = modifier,
         label = "counter",
     ) { targetValue ->
-        androidx.compose.material3.Text(
+        AppText(
             text = targetValue,
             modifier = Modifier
                 .animateContentSize(
@@ -447,7 +447,7 @@ fun HelpDialogContent(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    Text(
+                    AppText(
                         text = title,
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
@@ -468,7 +468,7 @@ fun HelpDialogContent(
                         .verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    Text(
+                    AppText(
                         text = description,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -476,7 +476,7 @@ fun HelpDialogContent(
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    Text(
+                    AppText(
                         text = stringResource(R.string.help_features_label),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.SemiBold,
@@ -490,7 +490,7 @@ fun HelpDialogContent(
             },
             confirmButton = {
                 androidx.compose.material3.TextButton(onClick = onDismiss) {
-                    Text(stringResource(R.string.common_close))
+                    AppText(stringResource(R.string.common_close))
                 }
             },
             modifier = Modifier
@@ -530,13 +530,13 @@ private fun HelpFeatureItemRow(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            Text(
+            AppText(
                 text = feature.title,
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface,
             )
-            Text(
+            AppText(
                 text = feature.description,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -554,7 +554,7 @@ private fun AnimatedComponentsPreviewLight() {
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             AnimatedCard {
-                Text(
+                AppText(
                     text = "Animated card",
                     modifier = Modifier.padding(16.dp),
                 )

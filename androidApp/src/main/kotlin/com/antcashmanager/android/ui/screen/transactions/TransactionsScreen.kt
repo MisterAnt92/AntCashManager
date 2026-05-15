@@ -35,7 +35,6 @@ import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Receipt
 import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -82,6 +81,7 @@ import com.antcashmanager.android.ui.components.SearchComponent
 import com.antcashmanager.android.ui.components.dialog.AppHelpDialog
 import com.antcashmanager.android.ui.components.dialog.HelpDialogFeatureSpec
 import com.antcashmanager.android.ui.components.SkeletonLoader
+import com.antcashmanager.android.ui.components.button.AppButton
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.text.TransactionAmountText
 import com.antcashmanager.android.ui.screen.categories.categoryIconMap
@@ -587,7 +587,7 @@ private fun FilterCard(
                 )
 
                 TextButton(onClick = onClearFilters) {
-                    Text(
+                    AppText(
                         text = stringResource(R.string.transactions_clear_filters),
                         style = MaterialTheme.typography.labelSmall,
                     )
@@ -773,7 +773,7 @@ private fun FilterCard(
                             style = MaterialTheme.typography.labelMedium,
                         )
                     }
-                    Button(
+                    AppButton(
                         onClick = onApplyFilters,
                         modifier = Modifier
                             .weight(1f)

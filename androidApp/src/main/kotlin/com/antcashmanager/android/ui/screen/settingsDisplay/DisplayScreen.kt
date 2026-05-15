@@ -28,7 +28,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -50,6 +49,7 @@ import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AppSwitch
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
+import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.settings.view.CurrencySymbolDialog
 import com.antcashmanager.android.ui.screen.settings.view.DateFormatDialog
 import com.antcashmanager.android.ui.screen.settings.view.DecimalDigitsDialog
@@ -180,7 +180,7 @@ internal fun DisplayContent(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.settings_display)) },
+                title = { AppText(stringResource(R.string.settings_display)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
@@ -300,9 +300,9 @@ internal fun DisplayContent(
                     tint = MaterialTheme.colorScheme.error,
                 )
             },
-            title = { Text(stringResource(R.string.dialog_reset_preferences_title)) },
+            title = { AppText(stringResource(R.string.dialog_reset_preferences_title)) },
             text = {
-                Text(
+                AppText(
                     stringResource(R.string.dialog_reset_preferences_message),
                     style = MaterialTheme.typography.bodyMedium,
                 )
@@ -312,7 +312,7 @@ internal fun DisplayContent(
                     onResetAllPreferences()
                     showResetPreferencesDialog = false
                 }) {
-                    Text(
+                    AppText(
                         stringResource(R.string.dialog_reset),
                         color = MaterialTheme.colorScheme.error
                     )
@@ -320,7 +320,7 @@ internal fun DisplayContent(
             },
             dismissButton = {
                 TextButton(onClick = { showResetPreferencesDialog = false }) {
-                    Text(stringResource(R.string.dialog_cancel))
+                    AppText(stringResource(R.string.dialog_cancel))
                 }
             },
         )
@@ -457,7 +457,7 @@ private fun CurrencySection(
         )
     }
 
-    Text(
+    AppText(
         text = stringResource(
             R.string.settings_format_preview,
             formatAmount(
