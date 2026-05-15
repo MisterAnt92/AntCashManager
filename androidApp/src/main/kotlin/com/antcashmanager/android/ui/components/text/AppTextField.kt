@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.components.text
 
+import android.content.res.Configuration
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -26,6 +27,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 // AppText non serve qui - usa Text di Material3 direttamente se necessario
 
@@ -184,3 +186,21 @@ fun PreviewAppTextFieldWithStyle() {
         fontWeight = FontWeight.Bold
     )
 }
+
+@Preview(
+    name = "AppTextField - Dark",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Composable
+private fun previewAppTextFieldDark() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        AppTextField(
+            value = "Sample Text",
+            onValueChange = {},
+            label = { androidx.compose.material3.Text("Label") },
+            placeholder = { androidx.compose.material3.Text("Placeholder") },
+        )
+    }
+}
+

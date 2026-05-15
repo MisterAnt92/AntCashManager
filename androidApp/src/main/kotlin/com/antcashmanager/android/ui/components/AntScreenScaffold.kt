@@ -1,13 +1,18 @@
 package com.antcashmanager.android.ui.components
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 /**
  * Centralized scaffold wrapper for consistent padding, top bar, and content.
@@ -54,3 +59,29 @@ fun AntScreenScaffold(
         }
     }
 }
+
+@Preview(name = "AntScreenScaffold - Light", showBackground = true)
+@Composable
+private fun AntScreenScaffoldPreviewLight() {
+    AntCashManagerTheme(dynamicColor = false) {
+        AntScreenScaffold(
+            showTopBar = true,
+            topBarTitle = "Screen Title",
+            bottomBar = { Text("Bottom Bar", modifier = Modifier.padding(8.dp)) },
+            floatingActionButton = { Text("FAB", color = MaterialTheme.colorScheme.primary) },
+        ) {
+            Text("Screen content", modifier = Modifier.padding(16.dp))
+        }
+    }
+}
+
+@Preview(
+    name = "AntScreenScaffold - Dark",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Composable
+private fun AntScreenScaffoldPreviewDark() {
+    AntScreenScaffoldPreviewLight()
+}
+

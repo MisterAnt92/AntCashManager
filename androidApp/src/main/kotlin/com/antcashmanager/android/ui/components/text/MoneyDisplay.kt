@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.components.text
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -228,7 +229,11 @@ private fun CompactMoneyTextPreview() {
     }
 }
 
-@Preview(showBackground = true, name = "All MoneyText Variants - Dark")
+@Preview(
+    showBackground = true,
+    name = "All MoneyText Variants - Dark",
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
 @Composable
 private fun AllMoneyTextPreviewDark() {
     AntCashManagerTheme(darkTheme = true, dynamicColor = false) {

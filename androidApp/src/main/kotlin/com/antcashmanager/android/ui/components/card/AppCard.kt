@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.components.card
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -219,7 +220,11 @@ private fun AppCardDestructivePreview() {
     }
 }
 
-@Preview(showBackground = true, name = "AppCard - Dark")
+@Preview(
+    showBackground = true,
+    name = "AppCard - Dark",
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
 @Composable
 private fun AppCardDarkPreview() {
     AntCashManagerTheme(darkTheme = true, dynamicColor = false) {

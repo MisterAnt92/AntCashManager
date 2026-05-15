@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.components
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -155,3 +156,22 @@ private fun AppSelectionItemCardPreviewNoIcon() {
         )
     }
 }
+
+@Preview(
+    showBackground = true,
+    name = "AppSelectionItemCard - Dark",
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Composable
+private fun AppSelectionItemCardPreviewDark() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        AppSelectionItemCard(
+            label = "Category",
+            value = "Groceries",
+            icon = "restaurant",
+            isEditable = true,
+            onClick = {},
+        )
+    }
+}
+

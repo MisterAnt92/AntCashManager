@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.components
 
+import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -26,8 +27,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -101,3 +104,28 @@ fun SearchComponent(
         }
     }
 }
+
+@Preview(name = "SearchComponent - Light", showBackground = true)
+@Composable
+private fun SearchComponentPreviewLight() {
+    AntCashManagerTheme(dynamicColor = false) {
+        SearchComponent(
+            isVisible = true,
+            searchQuery = "gro",
+            onSearchQueryChange = {},
+            searchSuggestions = listOf("Groceries", "Grocery Market", "Group Dinner"),
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
+}
+
+@Preview(
+    name = "SearchComponent - Dark",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Composable
+private fun SearchComponentPreviewDark() {
+    SearchComponentPreviewLight()
+}
+

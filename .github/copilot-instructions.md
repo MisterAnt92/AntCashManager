@@ -51,6 +51,7 @@ Ottimizza l'efficienza, la qualità e la manutenibilità del codice seguendo Cle
 - E' VIETATO hardcodare stringhe: usa sempre `stringResource(R.string.*)`.
 - Usa SEMPRE i componenti UI esistenti in `ui/components/` prima di crearne di nuovi.
 - Applica MaterialTheme per colori, tipografia e spacing.
+- Quando crei un nuovo componente Composable, crea SEMPRE almeno due preview: una in modalita light e una in modalita dark (`uiMode = Configuration.UI_MODE_NIGHT_YES`).
 
 ---
 
@@ -134,6 +135,7 @@ Ottimizza l'efficienza, la qualità e la manutenibilità del codice seguendo Cle
 - [ ] Limiti di lunghezza rispettati
 - [ ] KDoc per API pubbliche
 - [ ] @Preview per composable principali
+- [ ] Ogni nuovo componente Composable ha preview sia light che dark
 - [ ] Spacing consistente (8.dp tra card)
 - [ ] Costanti feature centralizzate in `<Feature>Constants` (no magic numbers/string)
 - [ ] Data class di feature collocate in `.../model/`

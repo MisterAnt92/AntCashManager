@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.components.input
 
+import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,7 +21,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 /**
  * TextField con autocomplete che mostra suggerimenti basati sul testo inserito.
@@ -99,5 +102,29 @@ fun AutocompleteTextField(
             }
         }
     }
+}
+
+@Preview(name = "AutocompleteTextField - Light", showBackground = true)
+@Composable
+private fun AutocompleteTextFieldPreviewLight() {
+    AntCashManagerTheme(dynamicColor = false) {
+        AutocompleteTextField(
+            value = "gr",
+            onValueChange = {},
+            suggestions = listOf("Groceries", "Gym", "Gas", "Gift"),
+            label = "Search",
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
+}
+
+@Preview(
+    name = "AutocompleteTextField - Dark",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Composable
+private fun AutocompleteTextFieldPreviewDark() {
+    AutocompleteTextFieldPreviewLight()
 }
 

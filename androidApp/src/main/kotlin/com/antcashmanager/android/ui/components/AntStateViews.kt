@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.components
 
+import android.content.res.Configuration
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -28,9 +29,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.LocalReduceMotion
 
 /**
@@ -163,5 +168,39 @@ fun AntErrorState(
             }
         }
     }
+}
+
+@Preview(name = "AntStateViews - Light", showBackground = true)
+@Composable
+private fun AntStateViewsPreviewLight() {
+    AntCashManagerTheme(dynamicColor = false) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            AntEmptyState(
+                mascotRes = R.drawable.ic_piggy_bank,
+                title = stringResource(R.string.empty_state_no_transactions),
+                subtitle = stringResource(R.string.empty_state_no_transactions_subtitle),
+            )
+            AntErrorState(
+                mascotRes = R.drawable.ic_piggy_bank,
+                title = stringResource(R.string.restore_error_title),
+                subtitle = stringResource(R.string.restore_error_message, "backup.json"),
+                retryLabel = stringResource(R.string.common_confirm),
+                onRetry = {},
+            )
+        }
+    }
+}
+
+@Preview(
+    name = "AntStateViews - Dark",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Composable
+private fun AntStateViewsPreviewDark() {
+    AntStateViewsPreviewLight()
 }
 

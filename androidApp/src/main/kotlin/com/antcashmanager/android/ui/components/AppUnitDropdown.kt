@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.components
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenuItem
@@ -78,3 +79,26 @@ fun AppUnitDropdownPreview() {
         )
     }
 }
+
+@Preview(
+    name = "AppUnitDropdown - Dark",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Composable
+private fun AppUnitDropdownPreviewDark() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        var expanded by remember { mutableStateOf(false) }
+        var selected by remember { mutableStateOf("cm") }
+
+        AppUnitDropdown(
+            expanded = expanded,
+            onExpandedChange = { expanded = it },
+            selectedValue = selected,
+            label = "Length Unit",
+            onValueChange = { selected = it; expanded = false },
+            menuItems = listOf("mm", "cm", "in"),
+        )
+    }
+}
+

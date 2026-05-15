@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.components
 
+import android.content.res.Configuration
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
@@ -372,3 +373,32 @@ private fun DateRangeFilterExpandedPreview() {
         )
     }
 }
+
+@Preview(
+    name = "DateRangeFilter - Dark",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Composable
+private fun DateRangeFilterPreviewDark() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        DateRangeFilter(
+            selectedPresetIndex = 1,
+            presets = listOf(
+                R.string.range_label_today to "today",
+                R.string.range_week to "week",
+                R.string.range_month to "month",
+                R.string.range_year to "year",
+            ),
+            dateRangeFrom = System.currentTimeMillis() - (7L * 24 * 60 * 60 * 1000),
+            dateRangeTo = System.currentTimeMillis(),
+            expanded = true,
+            onExpandedChange = {},
+            onPresetSelected = {},
+            onFromDateEdit = {},
+            onToDateEdit = {},
+            modifier = Modifier.padding(16.dp),
+        )
+    }
+}
+

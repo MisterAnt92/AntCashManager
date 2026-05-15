@@ -70,12 +70,12 @@ import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.BuildConfig
 import com.antcashmanager.android.R
+import com.antcashmanager.android.navigation.BottomNavItem
 import com.antcashmanager.android.ui.components.AppDivider
 import com.antcashmanager.android.ui.components.AppListItem
 import com.antcashmanager.android.ui.components.AppRadioButton
 import com.antcashmanager.android.ui.components.AppSwitch
 import com.antcashmanager.android.ui.components.HelpButton
-import com.antcashmanager.android.ui.components.TutorialOverlay
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
 import com.antcashmanager.android.ui.components.text.AppText
@@ -147,6 +147,12 @@ fun SettingsScreen(
                 ).show()
             }
         },
+        onShowTutorial = {
+            viewModel.setIsTutorialCompleted(false)
+            navController.navigate(BottomNavItem.Home.route) {
+                launchSingleTop = true
+            }
+        },
         navController = navController,
         modifier = modifier,
     )
@@ -177,6 +183,7 @@ internal fun SettingsContent(
     onThousandsSeparatorSelected: (String) -> Unit = {},
     onImportDebugData: (Context) -> Unit = {},
     onSendFeedbackEmail: (String) -> Unit = {},
+    onShowTutorial: () -> Unit = {},
     navController: NavController? = null,
     modifier: Modifier = Modifier,
 ) {
@@ -189,16 +196,11 @@ internal fun SettingsContent(
     var showDecimalSeparatorDialog by remember { mutableStateOf(false) }
     var showThousandsSeparatorDialog by remember { mutableStateOf(false) }
     var showHelpDialog by remember { mutableStateOf(false) }
-    var showTutorial by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     // Help dialog
     if (showHelpDialog) {
         HelpDialog(onDismiss = { showHelpDialog = false })
-    }
-
-    if (showTutorial) {
-        TutorialOverlay(onDismiss = { showTutorial = false })
     }
 
     Scaffold(
@@ -382,7 +384,7 @@ internal fun SettingsContent(
                 title = stringResource(R.string.settings_show_tutorial),
                 subtitle = stringResource(R.string.settings_show_tutorial_subtitle),
                 leadingIcon = Icons.Default.Info,
-                onClick = { showTutorial = true },
+                onClick = onShowTutorial,
             )
 
             // ── About Section ──

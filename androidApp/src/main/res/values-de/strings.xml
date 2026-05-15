@@ -465,6 +465,10 @@
      <string name="settings_show_tutorial_subtitle">Ursprüngliches App-Tutorial erneut ansehen</string>
      <string name="tutorial_welcome_title">Willkommen bei AntCashManager! 🐜</string>
      <string name="tutorial_welcome_desc">Lassen Sie uns einen kurzen Rundgang machen, um zu sehen, wie unsere kleine Ameise Ihnen bei der Verwaltung Ihres Geldes hilft.</string>
+     <string name="tutorial_welcome_point_track">Erfassen Sie Einnahmen und Ausgaben in Sekunden.</string>
+     <string name="tutorial_welcome_point_insights">Sehen Sie Saldo und Trends auf einen Blick.</string>
+     <string name="tutorial_welcome_point_categories">Ordnen Sie Ausgaben mit smarten Kategorien.</string>
+     <string name="tutorial_welcome_point_customize">Passen Sie Sprache, Design und Formate an.</string>
      <string name="tutorial_dashboard_title">Übersicht</string>
      <string name="tutorial_dashboard_desc">Hier können Sie auf einen Blick Ihren Gesamtsaldo, monatliche Einnahmen und Ausgaben sehen.</string>
      <string name="tutorial_transactions_title">Transaktionen</string>
@@ -480,6 +484,7 @@
      <string name="tutorial_next">Weiter</string>
      <string name="tutorial_skip">Überspringen</string>
      <string name="tutorial_finish">Verstanden!</string>
+     <string name="tutorial_progress_cd">Tutorial-Schritt %1$d von %2$d</string>
 
 </resources>
 

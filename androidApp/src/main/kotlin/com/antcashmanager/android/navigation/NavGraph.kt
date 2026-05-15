@@ -58,6 +58,7 @@ fun AntCashManagerNavHost(
 ) {
     val navController = rememberNavController()
     val showCharts by settingsRepository.getShowCharts().collectAsState(initial = true)
+    val isTutorialCompleted by settingsRepository.getIsTutorialCompleted().collectAsState(initial = true)
     val currencySymbol by settingsRepository.getCurrencySymbol().collectAsState(initial = "\u20ac")
     val decimalDigits by settingsRepository.getDecimalDigits().collectAsState(initial = 2)
     val decimalSeparator by settingsRepository.getDecimalSeparator().collectAsState(initial = ",")
@@ -90,42 +91,44 @@ fun AntCashManagerNavHost(
         AntScreenScaffold(
             showTopBar = false, // Top bar nascosta sugli screen principali
             bottomBar = {
-                Surface(
-                    color = MaterialTheme.colorScheme.surface,
-                    tonalElevation = 6.dp,
-                    shadowElevation = 8.dp,
-                    shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
-                ) {
-                    NavigationBar(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        tonalElevation = 0.dp,
+                if (isTutorialCompleted) {
+                    Surface(
+                        color = MaterialTheme.colorScheme.surface,
+                        tonalElevation = 6.dp,
+                        shadowElevation = 8.dp,
+                        shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
                     ) {
-                        visibleNavItems.forEach { item ->
-                            NavigationBarItem(
-                                icon = {
-                                    Icon(
-                                        item.icon,
-                                        contentDescription = stringResource(item.titleResId)
-                                    )
-                                },
-                                label = {
-                                    Text(
-                                        stringResource(item.titleResId),
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                    )
-                                },
-                                selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
-                                onClick = {
-                                    navController.navigate(item.route) {
-                                        popUpTo(navController.graph.findStartDestination().id) {
-                                            saveState = true
+                        NavigationBar(
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            tonalElevation = 0.dp,
+                        ) {
+                            visibleNavItems.forEach { item ->
+                                NavigationBarItem(
+                                    icon = {
+                                        Icon(
+                                            item.icon,
+                                            contentDescription = stringResource(item.titleResId)
+                                        )
+                                    },
+                                    label = {
+                                        Text(
+                                            stringResource(item.titleResId),
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
+                                        )
+                                    },
+                                    selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
+                                    onClick = {
+                                        navController.navigate(item.route) {
+                                            popUpTo(navController.graph.findStartDestination().id) {
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                            restoreState = true
                                         }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
-                                },
-                            )
+                                    },
+                                )
+                            }
                         }
                     }
                 }

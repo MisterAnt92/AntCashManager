@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.components.card
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -168,3 +169,26 @@ private fun AppCategoryCardPreviewSelected() {
         )
     }
 }
+
+@Preview(
+    showBackground = true,
+    name = "AppCategoryCard - Dark",
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Composable
+private fun AppCategoryCardPreviewDark() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        AppCategoryCard(
+            category = Category(
+                id = 3,
+                name = "Transport",
+                icon = "directions_car",
+                color = 0xFF4DABF7,
+                type = "EXPENSE",
+            ),
+            isSelected = false,
+            onClick = {},
+        )
+    }
+}
+

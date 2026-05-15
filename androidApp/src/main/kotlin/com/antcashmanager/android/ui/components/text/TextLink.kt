@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.components.text
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 @Composable
 fun TextLink(
@@ -54,12 +56,24 @@ fun TextLink(
     )
 }
 
-@Preview(showBackground = true)
+@Preview(name = "TextLink - Light", showBackground = true)
 @Composable
-fun TextLinkPreview() {
-    TextLink(
-        modifier = Modifier,
-        text = stringResource(R.string.common_click_here),
-        onClick = { /* No-op for preview */ }
-    )
+private fun TextLinkPreviewLight() {
+    AntCashManagerTheme(dynamicColor = false) {
+        TextLink(
+            modifier = Modifier,
+            text = stringResource(R.string.common_click_here),
+            onClick = {},
+        )
+    }
+}
+
+@Preview(
+    name = "TextLink - Dark",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Composable
+private fun TextLinkPreviewDark() {
+    TextLinkPreviewLight()
 }

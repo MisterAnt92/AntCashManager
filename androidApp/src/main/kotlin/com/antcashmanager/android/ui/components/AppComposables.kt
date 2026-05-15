@@ -1,22 +1,28 @@
 package com.antcashmanager.android.ui.components
 
+import android.content.res.Configuration
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.ui.components.text.AppText
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 // ══════════════════════════════════════════════════════════════════════════════
 // SCREEN HEADER - Unified header for all screens
@@ -139,3 +145,37 @@ fun AppDivider(
         color = color,
     )
 }
+
+@Preview(name = "AppComposables - Light", showBackground = true)
+@Composable
+private fun AppComposablesPreviewLight() {
+    AntCashManagerTheme(dynamicColor = false) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            ScreenHeader(title = "Header", actions = { Text("Action") })
+            AppListItem(
+                headlineContent = { Text("List item") },
+                supportingContent = { Text("Support text") },
+                trailingContent = { AppSwitch(checked = true, onCheckedChange = {}) },
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                AppRadioButton(selected = true, onClick = {})
+                Text("Radio")
+            }
+            AppDivider()
+        }
+    }
+}
+
+@Preview(
+    name = "AppComposables - Dark",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Composable
+private fun AppComposablesPreviewDark() {
+    AppComposablesPreviewLight()
+}
+

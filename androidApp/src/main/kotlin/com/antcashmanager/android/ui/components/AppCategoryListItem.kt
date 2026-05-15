@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.components
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -168,3 +169,27 @@ private fun AppCategoryListItemPreviewSelected() {
         )
     }
 }
+
+@Preview(
+    showBackground = true,
+    name = "AppCategoryListItem - Dark",
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Composable
+private fun AppCategoryListItemPreviewDark() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        AppCategoryListItem(
+            category = Category(
+                id = 3,
+                name = "Transport",
+                icon = "directions_car",
+                color = 0xFF4DABF7,
+                type = "EXPENSE",
+            ),
+            isSelected = true,
+            onClick = {},
+            subtitle = "Expense",
+        )
+    }
+}
+

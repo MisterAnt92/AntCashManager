@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.components
 
+import android.content.res.Configuration
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -53,8 +54,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 /**
  * Animated card with scale and fade effect when appears
@@ -541,3 +544,34 @@ private fun HelpFeatureItemRow(
         }
     }
 }
+
+@Preview(name = "AnimatedComponents - Light", showBackground = true)
+@Composable
+private fun AnimatedComponentsPreviewLight() {
+    AntCashManagerTheme(dynamicColor = false) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            AnimatedCard {
+                Text(
+                    text = "Animated card",
+                    modifier = Modifier.padding(16.dp),
+                )
+            }
+            HelpButton(onHelpClick = {})
+            SkeletonLoader(height = 48.dp)
+        }
+    }
+}
+
+@Preview(
+    name = "AnimatedComponents - Dark",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Composable
+private fun AnimatedComponentsPreviewDark() {
+    AnimatedComponentsPreviewLight()
+}
+

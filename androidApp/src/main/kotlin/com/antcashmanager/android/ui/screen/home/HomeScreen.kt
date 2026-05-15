@@ -89,7 +89,6 @@ fun HomeScreen(
 ) {
     Logger.d("HomeScreen") { "Displaying HomeScreen" }
 
-    val coroutineScope = rememberCoroutineScope()
     val viewModel: HomeViewModel = viewModel(
         factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
@@ -147,15 +146,16 @@ internal fun HomeContent(
         derivedStateOf { listState.firstVisibleItemIndex > 2 }
     }
 
-    // Tutorial overlay
+    // Tutorial full-screen
     if (!isTutorialCompleted) {
         TutorialOverlay(
             onDismiss = {
                 coroutineScope.launch {
                     settingsRepository.setIsTutorialCompleted(true)
                 }
-            }
+            },
         )
+        return
     }
 
     // From date picker dialog

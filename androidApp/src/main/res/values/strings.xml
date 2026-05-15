@@ -404,6 +404,10 @@
     <string name="settings_show_tutorial_subtitle">Re-watch the initial app tutorial</string>
     <string name="tutorial_welcome_title">Welcome to AntCashManager! 🐜</string>
     <string name="tutorial_welcome_desc">Let\'s take a quick tour to see how our little ant helps you manage your money.</string>
+    <string name="tutorial_welcome_point_track">Track income and expenses in seconds.</string>
+    <string name="tutorial_welcome_point_insights">See balances and trends at a glance.</string>
+    <string name="tutorial_welcome_point_categories">Organize spending with smart categories.</string>
+    <string name="tutorial_welcome_point_customize">Customize language, theme, and formats.</string>
     <string name="tutorial_dashboard_title">Dashboard</string>
     <string name="tutorial_dashboard_desc">Here you can see your total balance, monthly income and expenses at a glance.</string>
     <string name="tutorial_transactions_title">Transactions</string>
@@ -419,6 +423,7 @@
     <string name="tutorial_next">Next</string>
     <string name="tutorial_skip">Skip</string>
     <string name="tutorial_finish">Got it!</string>
+    <string name="tutorial_progress_cd">Tutorial step %1$d of %2$d</string>
 
     <!-- Category Translations (Keys) -->
     <string name="category_uncategorized">Uncategorized</string>
