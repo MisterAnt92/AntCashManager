@@ -235,6 +235,7 @@
     <string name="backup_success_message">Your data has been successfully exported.</string>
     <string name="backup_error_title">Backup Failed</string>
     <string name="backup_error_message">Could not create backup: %s</string>
+    <string name="settings_data_file_picker_unavailable">File picker is not available on this device.</string>
     <string name="restore_success_title">Restore Complete</string>
     <string name="restore_success_message">Successfully restored %1$d transactions and %2$d categories.</string>
     <string name="restore_error_title">Restore Failed</string>

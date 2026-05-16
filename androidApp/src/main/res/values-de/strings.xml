@@ -209,6 +209,7 @@
     <string name="backup_success_message">Ihre Daten wurden erfolgreich exportiert.</string>
     <string name="backup_error_title">Backup Fehlgeschlagen</string>
     <string name="backup_error_message">Backup konnte nicht erstellt werden: %s</string>
+    <string name="settings_data_file_picker_unavailable">Dateiauswahl ist auf diesem Ger\u00e4t nicht verf\u00fcgbar.</string>
     <string name="restore_success_title">Wiederherstellung Abgeschlossen</string>
     <string name="restore_success_message">Erfolgreich %1$d Transaktionen und %2$d Kategorien wiederhergestellt.</string>
     <string name="restore_error_title">Wiederherstellung Fehlgeschlagen</string>
@@ -487,6 +488,3 @@
      <string name="tutorial_progress_cd">Tutorial-Schritt %1$d von %2$d</string>
 
 </resources>
-
-
-

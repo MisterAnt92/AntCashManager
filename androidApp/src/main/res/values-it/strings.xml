@@ -278,6 +278,7 @@
     <string name="backup_success_message">I tuoi dati sono stati esportati con successo.</string>
     <string name="backup_error_title">Backup Fallito</string>
     <string name="backup_error_message">Impossibile creare il backup: %s</string>
+    <string name="settings_data_file_picker_unavailable">Selettore file non disponibile su questo dispositivo.</string>
     <string name="restore_success_title">Ripristino Completato</string>
     <string name="restore_success_message">Ripristinate con successo %1$d transazioni e %2$d categorie.</string>
     <string name="restore_error_title">Ripristino Fallito</string>
@@ -503,8 +504,4 @@
      <string name="receipt_scan_payment_type_subtitle">Metodo di pagamento — rilevato automaticamente, tocca per modificare</string>
      <string name="receipt_scan_select_payment_type">Seleziona Tipo Pagamento</string>
 
-
 </resources>
-
-
-

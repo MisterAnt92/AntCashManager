@@ -1,7 +1,8 @@
 package com.antcashmanager.android.ui.screen.settingsData
 
+import android.app.Activity
+import android.content.ContextWrapper
 import android.os.Bundle
-import androidx.activity.compose.LocalActivityResultRegistryOwner
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -110,10 +111,13 @@ internal fun SettingsDataContent(
 ) {
     val context = LocalContext.current
     val isPreview = LocalInspectionMode.current
-    val registryOwner = LocalActivityResultRegistryOwner.current
+    val hasActivityHost = generateSequence(context) { current ->
+        (current as? ContextWrapper)?.baseContext
+    }.any { it is Activity }
+    val filePickerUnavailableMessage = stringResource(R.string.settings_data_file_picker_unavailable)
     val analyticsManager: AnalyticsManager = koinInject()
     val backupLauncher =
-        if (isPreview || registryOwner == null) null else rememberLauncherForActivityResult(
+        if (isPreview || !hasActivityHost) null else rememberLauncherForActivityResult(
             contract = ActivityResultContracts.CreateDocument("application/json"),
         ) { uri ->
             if (uri == null) {
@@ -149,12 +153,16 @@ internal fun SettingsDataContent(
 
     LaunchedEffect(state.pendingBackupFileName) {
         state.pendingBackupFileName?.let { fileName ->
-            backupLauncher?.launch(fileName)
+            if (backupLauncher != null) {
+                backupLauncher.launch(fileName)
+            } else {
+                onBackupFileSaveError(filePickerUnavailableMessage)
+            }
         }
     }
 
     val restoreLauncher =
-        if (isPreview || registryOwner == null) null else rememberLauncherForActivityResult(
+        if (isPreview || !hasActivityHost) null else rememberLauncherForActivityResult(
             contract = ActivityResultContracts.OpenDocument(),
         ) { uri ->
             if (uri == null) return@rememberLauncherForActivityResult
@@ -225,9 +233,13 @@ internal fun SettingsDataContent(
                         iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
                         iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
                         onClick = {
-                            restoreLauncher?.launch(
-                                arrayOf("application/json", "text/json", "text/plain"),
-                            )
+                            if (restoreLauncher != null) {
+                                restoreLauncher.launch(
+                                    arrayOf("application/json", "text/json", "text/plain"),
+                                )
+                            } else {
+                                onRestoreFileReadError(filePickerUnavailableMessage)
+                            }
                         },
                     )
                     AppCard(

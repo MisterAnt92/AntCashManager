@@ -216,6 +216,7 @@
     <string name="backup_success_message">Vos donn\u00e9es ont \u00e9t\u00e9 export\u00e9es avec succ\u00e8s.</string>
     <string name="backup_error_title">\u00c9chec de la Sauvegarde</string>
     <string name="backup_error_message">Impossible de cr\u00e9er la sauvegarde\u00a0: %s</string>
+    <string name="settings_data_file_picker_unavailable">Le s\u00e9lecteur de fichiers n\'est pas disponible sur cet appareil.</string>
     <string name="restore_success_title">Restauration Termin\u00e9e</string>
     <string name="restore_success_message">%1$d transactions et %2$d cat\u00e9gories ont \u00e9t\u00e9 restaur\u00e9es avec succ\u00e8s.</string>
     <string name="restore_error_title">\u00c9chec de la Restauration</string>
@@ -490,6 +491,3 @@
      <string name="tutorial_progress_cd">Étape du tutoriel %1$d sur %2$d</string>
 
 </resources>
-
-
-

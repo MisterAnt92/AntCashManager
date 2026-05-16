@@ -214,6 +214,7 @@
     <string name="backup_success_message">Tus datos han sido exportados correctamente.</string>
     <string name="backup_error_title">Error en Copia de Seguridad</string>
     <string name="backup_error_message">No se pudo crear la copia de seguridad: %s</string>
+    <string name="settings_data_file_picker_unavailable">El selector de archivos no est\u00e1 disponible en este dispositivo.</string>
     <string name="restore_success_title">Restauraci\u00f3n Completada</string>
     <string name="restore_success_message">Se restauraron correctamente %1$d transacciones y %2$d categor\u00edas.</string>
     <string name="restore_error_title">Error en Restauraci\u00f3n</string>
@@ -488,6 +489,3 @@
      <string name="tutorial_progress_cd">Paso del tutorial %1$d de %2$d</string>
 
 </resources>
-
-
-
