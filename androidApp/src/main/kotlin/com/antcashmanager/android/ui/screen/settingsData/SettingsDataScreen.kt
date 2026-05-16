@@ -49,6 +49,7 @@ import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
+import java.nio.charset.StandardCharsets
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -115,23 +116,35 @@ internal fun SettingsDataContent(
         if (isPreview || registryOwner == null) null else rememberLauncherForActivityResult(
             contract = ActivityResultContracts.CreateDocument("application/json"),
         ) { uri ->
-            uri?.let {
-                state.pendingBackupData?.let { jsonData ->
-                    try {
-                        context.contentResolver.openOutputStream(uri)?.use { outputStream ->
-                            outputStream.write(jsonData.toByteArray())
-                        }
-                        analyticsManager?.logEvent("backup_file_saved")
-                        onBackupFileSaved()
-                    } catch (error: Exception) {
-                        val params = Bundle().apply {
-                            putString("error_message", error.message?.take(100) ?: "unknown")
-                        }
-                        analyticsManager?.logEvent("backup_file_save_error", params)
-                        onBackupFileSaveError(error.message ?: "Unknown error")
-                    }
+            if (uri == null) {
+                onClearPendingBackupRequest()
+                return@rememberLauncherForActivityResult
+            }
+
+            val jsonData = state.pendingBackupData
+            if (jsonData.isNullOrBlank()) {
+                onBackupFileSaveError(SettingsDataConstants.UNKNOWN_ERROR)
+                return@rememberLauncherForActivityResult
+            }
+
+            try {
+                val outputStream = context.contentResolver.openOutputStream(uri)
+                    ?: throw IllegalStateException("Unable to open destination file")
+
+                outputStream.use { stream ->
+                    stream.write(jsonData.toByteArray(StandardCharsets.UTF_8))
+                    stream.flush()
                 }
-            } ?: onClearPendingBackupRequest()
+
+                analyticsManager.logEvent("backup_file_saved")
+                onBackupFileSaved()
+            } catch (error: Exception) {
+                val params = Bundle().apply {
+                    putString("error_message", error.message?.take(100) ?: "unknown")
+                }
+                analyticsManager.logEvent("backup_file_save_error", params)
+                onBackupFileSaveError(error.message ?: SettingsDataConstants.UNKNOWN_ERROR)
+            }
         }
 
     LaunchedEffect(state.pendingBackupFileName) {
@@ -144,16 +157,23 @@ internal fun SettingsDataContent(
         if (isPreview || registryOwner == null) null else rememberLauncherForActivityResult(
             contract = ActivityResultContracts.OpenDocument(),
         ) { uri ->
-            uri?.let {
-                try {
-                    val jsonString =
-                        context.contentResolver.openInputStream(uri)?.use { inputStream ->
-                            inputStream.bufferedReader().readText()
-                        }
-                    jsonString?.let(onRestoreBackup)
-                } catch (error: Exception) {
-                    onRestoreFileReadError(error.message ?: "Unknown error")
+            if (uri == null) return@rememberLauncherForActivityResult
+
+            try {
+                val inputStream = context.contentResolver.openInputStream(uri)
+                    ?: throw IllegalStateException("Unable to open selected backup file")
+
+                val payload = inputStream.bufferedReader(StandardCharsets.UTF_8).use { reader ->
+                    reader.readText()
                 }
+
+                if (payload.isBlank()) {
+                    throw IllegalArgumentException("Selected backup file is empty")
+                }
+
+                onRestoreBackup(payload)
+            } catch (error: Exception) {
+                onRestoreFileReadError(error.message ?: SettingsDataConstants.UNKNOWN_ERROR)
             }
         }
 
@@ -194,7 +214,7 @@ internal fun SettingsDataContent(
                         iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
                         iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
                         onClick = {
-                            analyticsManager?.logEvent("backup_create_requested")
+                            analyticsManager.logEvent("backup_create_requested")
                             onCreateBackup()
                         },
                     )
@@ -204,7 +224,11 @@ internal fun SettingsDataContent(
                         leadingIcon = Icons.Default.RestorePage,
                         iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
                         iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
-                        onClick = { restoreLauncher?.launch(arrayOf("application/json")) },
+                        onClick = {
+                            restoreLauncher?.launch(
+                                arrayOf("application/json", "text/json", "text/plain"),
+                            )
+                        },
                     )
                     AppCard(
                         title = stringResource(R.string.settings_reset_preferences),

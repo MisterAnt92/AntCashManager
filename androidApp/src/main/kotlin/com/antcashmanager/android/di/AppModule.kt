@@ -23,6 +23,7 @@ import com.antcashmanager.data.security.LocalDataCipherImpl
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
+import com.antcashmanager.domain.service.ReceiptOcrService
 import com.antcashmanager.domain.security.LocalDataCipher
 import com.antcashmanager.domain.usecase.ShareTransactionUseCase
 import com.antcashmanager.domain.usecase.category.DeleteCategoryUseCase
@@ -88,7 +89,7 @@ val dataModule = module {
             categoryRepository = get(),
         )
     }
-    factory { MlKitReceiptOcrService() }
+    factory<ReceiptOcrService> { MlKitReceiptOcrService() }
 }
 
 val useCaseModule = module {
