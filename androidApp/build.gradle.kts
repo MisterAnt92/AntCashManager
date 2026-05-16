@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.plugin.serialization)
@@ -20,12 +21,17 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
+    }
+    firebaseCrashlytics {
+        // Upload automatico del mapping file per deobfuscation stacktrace release.
+        mappingFileUploadEnabled = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -39,6 +45,7 @@ android {
         buildConfig = true
     }
 }
+
 
 dependencies {
     implementation(project(":shared"))
@@ -59,6 +66,7 @@ dependencies {
     implementation(libs.kermit)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
     implementation(libs.mlkit.text.recognition)
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
