@@ -1,55 +1,82 @@
-# PiggyBank Pro to AntCashManager Data Conversion
+# PiggyBank Pro -> AntCashManager Data Conversion
 
-## Overview
-This script converts PiggyBank Pro JSON data format to AntCashManager's debug_initial_data format.
+## Scopo
+Questa guida descrive la conversione dei dati esportati da PiggyBank Pro nel formato
+`debug_initial_data.json` usato da AntCashManager.
 
-## Usage
+## Informazioni Progetto
+
+| Campo | Valore |
+|---|---|
+| App | `AntCashManager` |
+| Versione | `1.4.6` |
+| Package name (`applicationId`) | `com.sformica.ant_cashmanager` |
+| Script ufficiale | `scripts/convert_to_debug_data.py` |
+
+## Prerequisiti
+
+- Python 3.8+
+- File input JSON disponibile
+- Repository locale in `/opt/src/GIT/app/AntCashManager`
+
+## Uso Rapido
+
 ```bash
 cd /opt/src/GIT/app/AntCashManager
-python3 scripts/convert_piggybankpro_to_debug.py
+python3 scripts/convert_to_debug_data.py
 ```
 
-## Input Format
-- **File**: `androidApp/src/main/assets/piggybankpro_data.json`
-- **Structure**: PiggyBank Pro export format with `records` and `categories` arrays
+Comportamento di default:
+- legge: `androidApp/src/main/assets/piggybankpro_data.json`
+- scrive: `androidApp/src/main/assets/debug_initial_data.json`
 
-## Output Format  
-- **File**: `androidApp/src/main/assets/debug_initial_data.json`
-- **Structure**: AntCashManager debug format with `transactions` and `categories` arrays
+Uso con input personalizzato:
 
-## Conversion Details
+```bash
+cd /opt/src/GIT/app/AntCashManager
+python3 scripts/convert_to_debug_data.py /path/to/input.json
+```
+
+## Mapping Dati
 
 ### Transactions
-- **Title**: Null titles converted to "Senza titolo"
-- **Amount**: Preserves original values (negative for expenses, positive for income)
-- **Type**: Determined by `category_type` field (0=EXPENSE, 1=INCOME)
-- **Category**: Uses `category_name` field
-- **Notes**: Maps from `description` field
+- `title`: fallback a `"Senza titolo"` se nullo/vuoto
+- `amount`: mantiene segno e valore originali
+- `type`: da `category_type` (`0=EXPENSE`, `1=INCOME`) con fallback sul segno importo
+- `category`: da `category_name`
+- `notes`: da `description`
+- campi extra supportati: `payee`, `location`, `tags`, `isRecurring`, `recurrenceInterval`, `paymentType`
 
 ### Categories
-- **Type**: 0=EXPENSE, 1=INCOME
-- **Color**: Converts from "255:129:199:132" format to "#FF81C784" hex format
-- **Icon**: Preserves icon ID numbers
-- **Archive Status**: Converts `is_archived` field to boolean
+- `type`: `0=EXPENSE`, `1=INCOME`
+- `color`: conversione da formato `A:R:G:B` (es. `255:129:199:132`) a valore colore compatibile app
+- `icon`: preservata
+- `is_archived`: normalizzato a boolean
 
-## Features
-- ✅ Handles null values gracefully
-- ✅ Preserves transaction amounts with correct signs
-- ✅ Converts color format from ARGB to hex
-- ✅ Maps all essential transaction fields
-- ✅ Maintains data integrity
+## Output
 
-## Conversion Results
-- **357 transactions** converted successfully
-- **8 categories** with proper color conversion
-- **79 income** and **286 expense** transactions
-- All data validated and app compiles successfully
+- File output: `androidApp/src/main/assets/debug_initial_data.json`
+- Struttura: oggetto con array `transactions` e `categories`
+- File sovrascritto a ogni esecuzione (operazione idempotente lato struttura)
 
-## Script Location
-- **Main script**: `scripts/convert_piggybankpro_to_debug.py`
-- **Backup script**: `scripts/convert_backup_to_debug.py` (for different format)
+## Verifica Rapida
 
-## Notes
-- The script can be run multiple times safely (overwrites output file)
-- Original PiggyBank Pro data is preserved
-- Output format is compatible with AntCashManager app database structure
+1. Esegui script.
+2. Verifica presenza file output.
+3. Avvia compilazione Android per controllo integrazione assets:
+
+```bash
+cd /opt/src/GIT/app/AntCashManager
+./gradlew :androidApp:mergeDebugAssets :androidApp:compileDebugKotlin --no-daemon
+```
+
+## Troubleshooting
+
+- **Input non trovato**: verifica path e permessi.
+- **JSON non valido**: valida il file input con un JSON validator.
+- **Campi mancanti**: lo script applica fallback; controlla comunque la qualità del dataset sorgente.
+
+## Riferimenti
+
+- Guida script dettagliata: `wiki/SCRIPT_CONVERSION_README.md`
+- Architettura progetto: `wiki/ARCHITECTURE_GUIDELINES.md`

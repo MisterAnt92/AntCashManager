@@ -1,26 +1,49 @@
 # Script di Conversione Dati - AntCashManager
-## Overview
-Script unificato per convertire dati di backup o PiggyBank Pro nel formato `debug_initial_data.json` compatibile con l'ultima versione di AntCashManager.
-## Localizzazione
-```
-scripts/convert_to_debug_data.py
-```
+
+## Panoramica
+Script unificato per convertire dati di backup/PiggyBank Pro nel formato
+`debug_initial_data.json` compatibile con AntCashManager.
+
+## Informazioni Progetto
+
+| Campo | Valore |
+|---|---|
+| App | `AntCashManager` |
+| Versione | `1.4.6` |
+| Package name (`applicationId`) | `com.sformica.ant_cashmanager` |
+| Script | `scripts/convert_to_debug_data.py` |
+
+## Prerequisiti
+
+- Python 3.8+
+- File JSON di input valido
+- Repository locale disponibile
+
 ## Utilizzo
-### Modo Semplice (PiggyBank Pro)
+
+### Modalità standard (input di default)
+
 ```bash
 cd /opt/src/GIT/app/AntCashManager
 python3 scripts/convert_to_debug_data.py
 ```
-Legge da: `androidApp/src/main/assets/piggybankpro_data.json`
-Scrive a: `androidApp/src/main/assets/debug_initial_data.json`
-### Modo Personalizzato
+
+- Input: `androidApp/src/main/assets/piggybankpro_data.json`
+- Output: `androidApp/src/main/assets/debug_initial_data.json`
+
+### Modalità custom (input esplicito)
+
 ```bash
+cd /opt/src/GIT/app/AntCashManager
 python3 scripts/convert_to_debug_data.py /path/to/input.json
 ```
-Scrive sempre a: `androidApp/src/main/assets/debug_initial_data.json`
+
+- Output sempre: `androidApp/src/main/assets/debug_initial_data.json`
+
 ## Formato Supportato
+
 ### Input
-Lo script supporta file JSON con la seguente struttura:
+Lo script supporta JSON con struttura simile a:
 ```json
 {
   "records": [
@@ -52,7 +75,7 @@ Lo script supporta file JSON con la seguente struttura:
   ]
 }
 ```
-### Output (Transaction Entity)
+### Output (Transaction)
 ```kotlin
 data class Transaction(
     val id: Long,
@@ -72,31 +95,40 @@ data class Transaction(
     val categoryColor: Long = 0xFF90A4AE,
 )
 ```
+
 ## Caratteristiche Principali
-### 1. **Gestione Tag**
+
+### 1) Gestione Tag
 - Input: lista array, stringa comma-separated, null
 - Output: stringa comma-separated pulita
 - Esempio: `"tags": "food,dinner,friends"`
-### 2. **Gestione Null/Vuoti**
+
+### 2) Gestione Null/Vuoti
 - Non inserisce stringhe letterali `"null"`
 - Campi opzionali rimangono vuoti `""`
 - Fallback intelligenti (es. titolo → "Senza titolo")
-### 3. **PaymentType**
+
+### 3) PaymentType
 - Se presente e valido: utilizza il valore
 - Se mancante o invalido: assegna random (50% ELECTRONIC, 30% CASH, 20% MEAL_VOUCHERS)
-- Seed fisso (42) per conversioni reproducibili
-### 4. **Lookup Categorie**
+- Seed fisso (42) per conversioni riproducibili
+
+### 4) Lookup Categorie
 - Associa automaticamente `categoryIcon` e `categoryColor` dalle categorie
 - Se categoria non trovata: colore di default (grigio 0xFF90A4AE)
-### 5. **Conversione Colori**
+
+### 5) Conversione Colori
 - Input: formato PiggyBank `"255:129:199:132"` (A:R:G:B)
 - Output: Long hex `0xAARRGGBB` (es. `4294929259` → `0xFFFF6B6B`)
 - Default se mancante: `0xFF90A4AE`
-### 6. **Tipo Transazione**
+
+### 6) Tipo Transazione
 - Determinato da `category_type`: 0 = EXPENSE, 1 = INCOME
 - Fallback: segno dell'importo (negativo = EXPENSE, positivo = INCOME)
+
 ## Esempi Output
-### Transazione Completa (con tutti i dati)
+
+### Transazione completa
 ```json
 {
   "id": 1,
@@ -116,7 +148,8 @@ data class Transaction(
   "categoryColor": 4294929259
 }
 ```
-### Transazione Minima (solo campi obbligatori)
+
+### Transazione minima
 ```json
 {
   "id": 2,
@@ -136,13 +169,16 @@ data class Transaction(
   "categoryColor": 4283549286
 }
 ```
-## Validazione
+
+## Validazioni Eseguite
 Lo script effettua le seguenti validazioni:
+
 1. ✅ File di input esiste
 2. ✅ JSON è valido
 3. ✅ Transazioni senza valore vengono saltate
 4. ✅ Categorie vengono normalizzate
 5. ✅ Campi opzionali sono puliti da null/vuoti
+
 ## Output Log
 Esempio di output di esecuzione:
 ```
@@ -158,14 +194,20 @@ Esempio di output di esecuzione:
    - paymentType (ELECTRONIC|CASH|MEAL_VOUCHERS)
    - categoryIcon, categoryColor
 ```
+
 ## Codici Errore
+
 | Codice | Significato |
 |--------|------------|
 | 0 | ✅ Conversione completata con successo |
-| 1 | ❌ File di input non trovato o errore nella lettura |
-| 1 | ❌ Errore nella scrittura del file di output |
+| 1 | ❌ Errore di input/output o parsing |
+
 ## Tecnologie
+
 - Python 3.6+
 - Standard library: json, sys, pathlib, time, random
-## Sviluppatore
-Script ottimizzato per AntCashManager v1.0+
+
+## Note Finali
+
+- Lo script è pensato per essere rieseguito in sicurezza (sovrascrive l'output).
+- Per dettagli funzionali rapidi usa anche `wiki/CONVERSION_GUIDE.md`.

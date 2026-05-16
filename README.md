@@ -1,226 +1,159 @@
-# 🐜 AntCashManager
+# AntCashManager
 
-**AntCashManager** is a personal finance management app for Android, built with **Kotlin
-Multiplatform (KMP)** and **Jetpack Compose**. Track your income and expenses like a diligent ant —
-one step at a time!
+AntCashManager is an Android personal finance app built with Kotlin Multiplatform and Jetpack Compose.
+It helps you track income and expenses with a clean UI, multi-language support, and privacy-first local storage.
 
----
+## App Info
 
-## ✨ Features
+| Field | Value |
+|---|---|
+| App name | `AntCashManager` |
+| Version | `1.4.6` |
+| Package name (`applicationId`) | `com.sformica.ant_cashmanager` |
+| Android namespace | `com.antcashmanager.android` |
+| Min SDK | `26` |
+| Target SDK | `36` |
 
-### 💰 Transaction Management
+## Table of Contents
 
-- Add, edit, and delete income & expense transactions
-- Categorise every transaction with custom or default categories
-- Add optional notes, payee, location, and tags to each entry
-- Mark transactions as recurring
+- [Features](#features)
+- [Architecture](#architecture)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Localization](#localization)
+- [Getting Started](#getting-started)
+- [Testing](#testing)
+- [Analytics](#analytics)
+- [License](#license)
+- [Contributing](#contributing)
 
-### 📊 Charts & Reports
+## Features
 
-- Interactive **pie chart** for expense breakdown by category
-- **Bar chart** with monthly income vs expense overview
-- Flexible date-range presets (7 days, 1 / 3 / 6 / 12 months, all time) and custom date pickers
-- Toggle chart visibility from Settings
+### Transactions
+- Add, edit, and delete income/expense transactions
+- Optional details: notes, payee, location, tags, recurring flag
+- Fast filtering and date-range selection
 
-### 🗂️ Categories
+### Charts and Insights
+- Expense breakdown by category (pie chart)
+- Income vs expense trend (bar chart)
+- Configurable chart visibility from Settings
 
-- Pre-seeded **10 expense** and **6 income** default categories with Material Icons
-- Expense / Income tab-based view
-- Add custom categories with name, icon, and colour
-- Default categories are protected from deletion
+### Categories
+- Built-in default categories for expense and income
+- Custom categories with icon and color
+- Protection against deletion of default categories
 
-### ⚙️ Settings
+### Settings
+- Appearance: Light, Dark, System
+- Language: English, Italian, French, German, Spanish
+- Accessibility: high contrast, larger text, reduced motion
+- Data management: backup, restore, delete all data, reset preferences
+- Support: feedback and privacy policy
 
-- **Appearance** — Light / Dark / System theme
-- **Language** — English, Italiano, Français, Deutsch, Español (runtime switch, no restart)
-- **Display** — Show or hide Charts tab in navigation
-- **Accessibility** — High Contrast mode, Large Text, Reduce Motion
-- **Data Management** — Delete all data, Backup & Restore (coming soon)
-- **Support** — Send Feedback, Privacy Policy
-- **About** — App version
+## Architecture
 
-### ♿ Accessibility
+The app follows Clean Architecture with a feature-oriented structure.
 
-- High-contrast colour scheme for better readability
-- Scalable typography (1.25× increase) for visually impaired users
-- Reduce-motion toggle for animation-sensitive users
+- Presentation layer (`androidApp`): Compose screens + ViewModels
+- Domain layer (`shared/commonMain`): use cases, models, interfaces
+- Data layer (`shared/androidMain`): repository implementations, Room, DataStore
 
-### 🐜 Ant Mascot
+### Patterns in use
 
-- Friendly vector ant mascot shown in empty states across all screens
-- Custom adaptive launcher icon featuring the ant with a gold coin
+| Pattern | Implementation |
+|---|---|
+| Clean Architecture | Presentation -> Domain -> Data |
+| MVVM | ViewModel + immutable UI State (`StateFlow`) |
+| Use Case per feature | Business logic isolated in dedicated use cases |
+| Repository pattern | Domain interfaces + data implementations |
+| Dependency Injection | Koin modules (`dataModule`, `useCaseModule`, `presentationModule`) |
 
----
+## Tech Stack
 
-## 🏗️ Architecture
+| Area | Tools |
+|---|---|
+| Language | Kotlin |
+| UI | Jetpack Compose + Material 3 |
+| Navigation | Navigation Compose |
+| Local DB | Room |
+| Preferences | DataStore |
+| Async | Coroutines + Flow |
+| Logging | Kermit |
+| DI | Koin |
+| Build | Gradle + Version Catalog |
 
-```
+## Project Structure
+
+```text
 AntCashManager/
-├── shared/                    # Kotlin Multiplatform module
-│   ├── commonMain/            # Domain models, repository interfaces, use cases
-│   ├── androidMain/           # Room database, DAOs, entities, mappers, DataStore
-│   └── test/                  # Unit tests for use cases
-├── androidApp/                # Android application module
-│   ├── navigation/            # NavGraph, BottomNavItem
-│   ├── ui/                    # Compose screens (Home, Charts, Transactions, Categories, Settings)
-│   │   ├── theme/             # Color, Typography, Theme (with accessibility support)
-│   │   └── components/        # Reusable UI components (AppCard)
-│   └── test/                  # ViewModel unit tests
-└── gradle/                    # Version catalog (libs.versions.toml)
+|- androidApp/                 # Android app module (UI, navigation, DI)
+|- shared/                     # KMP shared module (domain + data)
+|  |- src/commonMain/          # Domain layer
+|  |- src/androidMain/         # Android data layer
+|- wiki/                       # Project guidelines and docs
+|- gradle/                     # Version catalog and wrapper config
 ```
 
-### Key Patterns
+## Localization
 
-| Pattern                  | Implementation                                              |
-|--------------------------|-------------------------------------------------------------|
-| **Clean Architecture**   | Domain → Data → Presentation layers                         |
-| **MVVM**                 | ViewModels + StateFlow for reactive UI                      |
-| **Repository**           | Interface in `commonMain`, implementation in `androidMain`  |
-| **Use Cases**            | Single-responsibility interactors for each operation        |
-| **Room + AutoMigration** | Version 3 schema with `@ColumnInfo(defaultValue = ...)`     |
-| **DataStore**            | Preferences for theme, language, and accessibility settings |
-| **Dependency Injection** | Manual DI via `Application` class (Hilt-ready)              |
+Supported languages:
 
----
+- English (`en`)
+- Italian (`it`)
+- French (`fr`)
+- German (`de`)
+- Spanish (`es`)
 
-## 🛠️ Tech Stack
+Language switching is available at runtime.
 
-| Category    | Technology                      |
-|-------------|---------------------------------|
-| Language    | Kotlin 2.1+                     |
-| UI          | Jetpack Compose + Material 3    |
-| Navigation  | Compose Navigation              |
-| Database    | Room (KSP) with AutoMigration   |
-| Preferences | DataStore                       |
-| Logging     | Kermit (multiplatform)          |
-| Build       | Gradle 8.x with Version Catalog |
-| Min SDK     | 26 (Android 8.0)                |
-| Target SDK  | 35                              |
-
----
-
-## 🌍 Localisation
-
-Full translation support for 5 languages:
-
-| Language      | Code | Status     |
-|---------------|------|------------|
-| 🇬🇧 English  | `en` | ✅ Complete |
-| 🇮🇹 Italiano | `it` | ✅ Complete |
-| 🇫🇷 Français | `fr` | ✅ Complete |
-| 🇩🇪 Deutsch  | `de` | ✅ Complete |
-| 🇪🇸 Español  | `es` | ✅ Complete |
-
-Language can be switched at runtime without restarting the app.
-
----
-
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
-
-- Android Studio Ladybug or later
+- Android Studio (recent stable version)
 - JDK 17+
-- Android SDK 35
+- Android SDK 36
 
-### Build & Run
+### Build and Run
 
 ```bash
-# Clone the repository
 git clone https://github.com/your-username/AntCashManager.git
 cd AntCashManager
-
-# Build debug APK
 ./gradlew assembleDebug
-
-# Run unit tests
-./gradlew :shared:test :androidApp:testDebugUnitTest
-
-# Install on connected device
 ./gradlew installDebug
 ```
 
----
+## Testing
 
-## 🧪 Testing
+```bash
+./gradlew :shared:test
+./gradlew :androidApp:testDebugUnitTest
+```
 
-- **Unit tests** for ViewModels and Use Cases using JUnit + Coroutines Test
-- **Fake repositories** for isolated testing without database
-- Run all tests: `./gradlew test`
+For instrumentation tests (connected device/emulator):
 
----
+```bash
+./gradlew :androidApp:connectedDebugAndroidTest
+```
 
-## 📈 Firebase Analytics
+## Analytics
 
-The app integrates Firebase Analytics (`firebase-analytics-ktx`) and tracks both navigation and key actions.
+Firebase Analytics is integrated for core navigation and feature events.
 
-### Tracked Events
+Examples:
+- `screen_view`
+- `transaction_submit_success`
+- `transactions_filter_applied`
+- `backup_create_requested`
+- `backup_file_saved`
 
-- `screen_view` (automatic on route change from `NavGraph`)
-- `transaction_submit_success` (after successful add/update in `AddTransactionScreen`)
-- `transactions_filter_applied` (when user confirms filters in `TransactionsScreen`)
-- `transactions_filter_cleared` (when user clears filters in `TransactionsScreen`)
-- `backup_create_requested` (when backup generation starts)
-- `backup_create_success` / `backup_create_failed` (backup payload generation result)
-- `backup_file_saved` / `backup_file_save_error` (file export result)
+## License
 
-### Naming Convention
+This project is distributed under the terms in [LICENSE](LICENSE).
 
-- Use lowercase snake_case for custom event names.
-- Keep event names concise and action-oriented (`<feature>_<action>_<result>`).
-- Keep parameter keys lowercase snake_case and values short/sanitized.
-- Reuse existing event names when extending tracking to avoid dashboard fragmentation.
-
----
-
-## 📁 Default Categories
-
-### Expense
-
-| Icon | Category                       |
-|------|--------------------------------|
-| 🏠   | Casa (Home)                    |
-| 🚗   | Trasporti (Transport)          |
-| 🍕   | Cibo (Food)                    |
-| 📄   | Bollette (Bills)               |
-| 🍽️  | Pranzi/Cene fuori (Dining Out) |
-| 🎭   | Divertimento (Entertainment)   |
-| 🏥   | Salute (Health)                |
-| 🛍️  | Shopping                       |
-| 🎓   | Istruzione (Education)         |
-| •••  | Altro (Other)                  |
-
-### Income
-
-| Icon | Category                   |
-|------|----------------------------|
-| 💳   | Stipendio (Salary)         |
-| 💰   | Paghetta (Allowance)       |
-| 💱   | Rimborso (Refund)          |
-| 📈   | Investimenti (Investments) |
-| 💼   | Freelance                  |
-| •••  | Altro (Other)              |
-
----
-
-## 📄 License
-
-This project is licensed under the terms specified in the [LICENSE](LICENSE) file.
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please:
+## Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
----
-
-<p align="center">
-  Built with ❤️ and 🐜 diligence
-</p>
+2. Create a branch (`git checkout -b feature/your-feature`)
+3. Commit your changes
+4. Push and open a Pull Request

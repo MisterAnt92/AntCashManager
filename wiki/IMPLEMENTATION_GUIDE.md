@@ -1,14 +1,37 @@
-# 🚀 Guida all'Implementazione Skeleton Loading + Form Migliorato
+# Guida Implementativa - Skeleton Loading e Form Transazioni
 
-## Sommario delle Modifiche
+## Scopo
 
-Questo documento descrive tutte le modifiche implementate per:
+Questo documento descrive una specifica milestone di implementazione relativa a:
 
 1. ✨ Aggiungere animazioni skeleton loading alle transazioni
 2. 🎨 Migliorare il form di aggiunta transazioni con campi arrotondati
 3. 📝 Aggiungere campi mancanti (note, payee, location, tags, ricorrenza)
 
-**Build Status**: ✅ BUILD SUCCESSFUL
+## Informazioni Progetto
+
+| Campo | Valore |
+|---|---|
+| App | `AntCashManager` |
+| Versione riferimento | `1.4.6` |
+| Package name (`applicationId`) | `com.sformica.ant_cashmanager` |
+| Ambito | `androidApp` (UI + ViewModel) |
+
+## Indice Rapido
+
+- [File Modificati](#-file-modificati)
+- [Flusso Dati](#-flusso-di-dati)
+- [UI Layout](#-ui-layout)
+- [Test Checklist](#-test-checklist)
+- [Configurazione](#-configurazione)
+- [Design Decisions](#-design-decisions)
+- [Deploy Checklist](#-deploy-checklist)
+
+## Note di Contesto
+
+- Questa guida documenta una milestone specifica, non l'intera architettura progetto.
+- Per le regole architetturali aggiornate fare riferimento a `wiki/ARCHITECTURE_GUIDELINES.md`.
+- Lo stato build indicato qui è storico rispetto al momento della milestone.
 
 ---
 

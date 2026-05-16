@@ -3,6 +3,30 @@
 ## Panoramica
 Questo documento definisce le linee guida architetturali per lo sviluppo dell'app **AntCashManager**, garantendo codice pulito, manutenibile e testabile seguendo i principi di Clean Architecture.
 
+## Aggiornamenti Critici (allineamento corrente)
+
+Questa guida contiene esempi storici: applicare sempre questi aggiornamenti come fonte prioritaria.
+
+### Metadati Progetto
+
+| Campo | Valore |
+|---|---|
+| Versione riferimento | `1.4.6` |
+| Package name (`applicationId`) | `com.sformica.ant_cashmanager` |
+| Namespace Android | `com.antcashmanager.android` |
+
+### Correzioni operative
+
+- Dependency Injection: usare **Koin** (non manual DI via container in Activity).
+- UseCase: estendere le base class (`BaseUseCase`, `FlowUseCase`, ecc.) e implementare `execute()`.
+- UseCase output: usare `Result<T>` con eccezioni dominio in `shared/commonMain/domain/exception/`.
+- ViewModel: consumare `Result` con `onSuccess`/`onFailure`, rilanciando `CancellationException`.
+- Testing: preferire fake repository a Mockito nelle aree KMP.
+
+Per dettagli aggiornati su script e conversioni dati consultare:
+- `wiki/CONVERSION_GUIDE.md`
+- `wiki/SCRIPT_CONVERSION_README.md`
+
 ---
 
 ## 1. Clean Architecture - Struttura a Layer
@@ -1543,7 +1567,7 @@ exit 0
 
 ---
 
-**Last Updated**: April 2026  
-**Version**: 1.0  
+**Last Updated**: May 2026  
+**Version**: 1.1  
 **Maintainer**: AntCashManager Team
 
