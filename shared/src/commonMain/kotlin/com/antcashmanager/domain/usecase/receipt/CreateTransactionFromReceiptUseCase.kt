@@ -47,6 +47,11 @@ class CreateTransactionFromReceiptUseCase(
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : BaseUseCase<CreateTransactionFromReceiptParams, Result<Long>>(dispatcher) {
 
+    companion object {
+        private const val DEFAULT_RECEIPT_TITLE = "Scontrino"
+        private const val VAT_LABEL = "IVA"
+    }
+
     /**
      * Crea e persiste la transazione di uscita.
      *
@@ -64,15 +69,23 @@ class CreateTransactionFromReceiptUseCase(
 
             // Il tipo di pagamento viene dall'utente (se ha fatto override) o dall'OCR
             val resolvedPaymentType = params.paymentType ?: receipt.paymentType
+            val resolvedTitle = params.title.ifBlank {
+                receipt.payee.ifBlank { DEFAULT_RECEIPT_TITLE }
+            }
+            val resolvedNotes = buildReceiptNotes(
+                existingNotes = params.notes,
+                vatRate = receipt.vatRate,
+                vatAmount = receipt.vatAmount,
+            )
 
             val transaction = Transaction(
-                title = params.title.ifBlank { receipt.payee.ifBlank { "Spesa" } },
+                title = resolvedTitle,
                 amount = receipt.totalAmount,
                 category = params.categoryName,
                 type = TransactionType.EXPENSE,       // scontrini = SEMPRE uscite
                 paymentType = resolvedPaymentType,    // cash / buoni pasto / elettronico
                 timestamp = params.timestamp,
-                notes = params.notes,
+                notes = resolvedNotes,
                 payee = receipt.payee,
                 location = receipt.location,
                 categoryIcon = params.categoryIcon,
@@ -81,5 +94,30 @@ class CreateTransactionFromReceiptUseCase(
 
             transactionRepository.insertTransaction(transaction)
         }
+
+    private fun buildReceiptNotes(
+        existingNotes: String,
+        vatRate: Double,
+        vatAmount: Double,
+    ): String {
+        val vatNote = buildString {
+            if (vatRate > 0.0 || vatAmount > 0.0) {
+                append(VAT_LABEL)
+                if (vatRate > 0.0) {
+                    append(" ")
+                    append(vatRate.toInt())
+                    append("%")
+                }
+                if (vatAmount > 0.0) {
+                    append(": ")
+                    append(vatAmount)
+                }
+            }
+        }
+
+        return listOf(vatNote, existingNotes)
+            .filter { it.isNotBlank() }
+            .joinToString(separator = "\n\n")
+    }
 }
 

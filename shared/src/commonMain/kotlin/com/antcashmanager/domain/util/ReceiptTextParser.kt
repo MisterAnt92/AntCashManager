@@ -166,9 +166,10 @@ object ReceiptTextParser {
     private fun extractPayee(lines: List<String>): String {
         // 1. Cerca nomi di market noti nelle prime righe
         for (i in 0 until minOf(5, lines.size)) {
-            val line = lines[i].uppercase()
-            val market = MARKET_KEYWORDS.find { line.contains(it) }
-            if (market != null) return market
+            val originalLine = lines[i]
+            val normalizedLine = originalLine.uppercase()
+            val hasKnownMarket = MARKET_KEYWORDS.any { normalizedLine.contains(it) }
+            if (hasKnownMarket) return originalLine
         }
 
         // 2. Fallback: prima riga non numerica

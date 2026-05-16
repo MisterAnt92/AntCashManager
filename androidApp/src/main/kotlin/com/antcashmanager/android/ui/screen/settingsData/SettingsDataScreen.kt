@@ -26,7 +26,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -40,39 +39,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.antcashmanager.android.AntCashManagerApp
 import com.antcashmanager.android.R
+import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.AppSwitch
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
+import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
-import com.antcashmanager.domain.repository.CategoryRepository
-import com.antcashmanager.domain.repository.SettingsRepository
-import com.antcashmanager.domain.repository.TransactionRepository
+import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsDataScreen(
-    settingsRepository: SettingsRepository,
-    transactionRepository: TransactionRepository,
-    categoryRepository: CategoryRepository,
     navController: NavController,
 ) {
-    val viewModel: SettingsDataViewModel = viewModel(
-        factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                SettingsDataViewModel(
-                    settingsRepository = settingsRepository,
-                    transactionRepository = transactionRepository,
-                    categoryRepository = categoryRepository,
-                ) as T
-        },
-    )
+    val viewModel: SettingsDataViewModel = koinViewModel()
 
     val state by viewModel.state.collectAsState()
 
@@ -127,28 +110,29 @@ internal fun SettingsDataContent(
     val context = LocalContext.current
     val isPreview = LocalInspectionMode.current
     val registryOwner = LocalActivityResultRegistryOwner.current
-    val analyticsManager = (context.applicationContext as? AntCashManagerApp)?.analyticsManager
-    val backupLauncher = if (isPreview || registryOwner == null) null else rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.CreateDocument("application/json"),
-    ) { uri ->
-        uri?.let {
-            state.pendingBackupData?.let { jsonData ->
-                try {
-                    context.contentResolver.openOutputStream(uri)?.use { outputStream ->
-                        outputStream.write(jsonData.toByteArray())
+    val analyticsManager: AnalyticsManager = koinInject()
+    val backupLauncher =
+        if (isPreview || registryOwner == null) null else rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.CreateDocument("application/json"),
+        ) { uri ->
+            uri?.let {
+                state.pendingBackupData?.let { jsonData ->
+                    try {
+                        context.contentResolver.openOutputStream(uri)?.use { outputStream ->
+                            outputStream.write(jsonData.toByteArray())
+                        }
+                        analyticsManager?.logEvent("backup_file_saved")
+                        onBackupFileSaved()
+                    } catch (error: Exception) {
+                        val params = Bundle().apply {
+                            putString("error_message", error.message?.take(100) ?: "unknown")
+                        }
+                        analyticsManager?.logEvent("backup_file_save_error", params)
+                        onBackupFileSaveError(error.message ?: "Unknown error")
                     }
-                    analyticsManager?.logEvent("backup_file_saved")
-                    onBackupFileSaved()
-                } catch (error: Exception) {
-                    val params = Bundle().apply {
-                        putString("error_message", error.message?.take(100) ?: "unknown")
-                    }
-                    analyticsManager?.logEvent("backup_file_save_error", params)
-                    onBackupFileSaveError(error.message ?: "Unknown error")
                 }
-            }
-        } ?: onClearPendingBackupRequest()
-    }
+            } ?: onClearPendingBackupRequest()
+        }
 
     LaunchedEffect(state.pendingBackupFileName) {
         state.pendingBackupFileName?.let { fileName ->
@@ -156,26 +140,28 @@ internal fun SettingsDataContent(
         }
     }
 
-    val restoreLauncher = if (isPreview || registryOwner == null) null else rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.OpenDocument(),
-    ) { uri ->
-        uri?.let {
-            try {
-                val jsonString = context.contentResolver.openInputStream(uri)?.use { inputStream ->
-                    inputStream.bufferedReader().readText()
+    val restoreLauncher =
+        if (isPreview || registryOwner == null) null else rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.OpenDocument(),
+        ) { uri ->
+            uri?.let {
+                try {
+                    val jsonString =
+                        context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                            inputStream.bufferedReader().readText()
+                        }
+                    jsonString?.let(onRestoreBackup)
+                } catch (error: Exception) {
+                    onRestoreFileReadError(error.message ?: "Unknown error")
                 }
-                jsonString?.let(onRestoreBackup)
-            } catch (error: Exception) {
-                onRestoreFileReadError(error.message ?: "Unknown error")
             }
         }
-    }
 
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.settings_data_management)) },
+                title = { AppText(stringResource(R.string.settings_data_management)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
@@ -270,15 +256,15 @@ internal fun SettingsDataContent(
                     tint = MaterialTheme.colorScheme.error,
                 )
             },
-            title = { Text(stringResource(R.string.dialog_delete_all_title)) },
-            text = { Text(stringResource(R.string.dialog_delete_all_message)) },
+            title = { AppText(stringResource(R.string.dialog_delete_all_title)) },
+            text = { AppText(stringResource(R.string.dialog_delete_all_message)) },
             confirmButton = {
                 TextButton(
                     onClick = {
                         onDeleteAllData()
                     },
                 ) {
-                    Text(
+                    AppText(
                         stringResource(R.string.dialog_delete),
                         color = MaterialTheme.colorScheme.error,
                     )
@@ -286,7 +272,7 @@ internal fun SettingsDataContent(
             },
             dismissButton = {
                 TextButton(onClick = onDismissDeleteConfirmDialog) {
-                    Text(stringResource(R.string.dialog_cancel))
+                    AppText(stringResource(R.string.dialog_cancel))
                 }
             },
         )
@@ -295,11 +281,11 @@ internal fun SettingsDataContent(
     if (state.showDeleteSuccessDialog) {
         AlertDialog(
             onDismissRequest = onDismissDeleteSuccessDialog,
-            title = { Text(stringResource(R.string.dialog_data_deleted)) },
-            text = { Text(stringResource(R.string.dialog_data_deleted_message)) },
+            title = { AppText(stringResource(R.string.dialog_data_deleted)) },
+            text = { AppText(stringResource(R.string.dialog_data_deleted_message)) },
             confirmButton = {
                 TextButton(onClick = onDismissDeleteSuccessDialog) {
-                    Text(stringResource(R.string.dialog_ok))
+                    AppText(stringResource(R.string.dialog_ok))
                 }
             },
         )
@@ -308,11 +294,11 @@ internal fun SettingsDataContent(
     if (state.showBackupSuccessDialog) {
         AlertDialog(
             onDismissRequest = onDismissBackupSuccessDialog,
-            title = { Text(stringResource(R.string.backup_success_title)) },
-            text = { Text(stringResource(R.string.backup_success_message)) },
+            title = { AppText(stringResource(R.string.backup_success_title)) },
+            text = { AppText(stringResource(R.string.backup_success_message)) },
             confirmButton = {
                 TextButton(onClick = onDismissBackupSuccessDialog) {
-                    Text(stringResource(R.string.dialog_ok))
+                    AppText(stringResource(R.string.dialog_ok))
                 }
             },
         )
@@ -321,9 +307,9 @@ internal fun SettingsDataContent(
     if (state.showBackupErrorDialog) {
         AlertDialog(
             onDismissRequest = onDismissBackupErrorDialog,
-            title = { Text(stringResource(R.string.backup_error_title)) },
+            title = { AppText(stringResource(R.string.backup_error_title)) },
             text = {
-                Text(
+                AppText(
                     stringResource(
                         R.string.backup_error_message,
                         state.backupErrorMessage,
@@ -332,7 +318,7 @@ internal fun SettingsDataContent(
             },
             confirmButton = {
                 TextButton(onClick = onDismissBackupErrorDialog) {
-                    Text(stringResource(R.string.dialog_ok))
+                    AppText(stringResource(R.string.dialog_ok))
                 }
             },
         )
@@ -341,10 +327,10 @@ internal fun SettingsDataContent(
     if (state.showRestoreSuccessDialog) {
         AlertDialog(
             onDismissRequest = onDismissRestoreSuccessDialog,
-            title = { Text(stringResource(R.string.restore_success_title)) },
+            title = { AppText(stringResource(R.string.restore_success_title)) },
             text = {
                 state.restoreSuccessInfo?.let { info ->
-                    Text(
+                    AppText(
                         stringResource(
                             R.string.restore_success_message,
                             info.transactions,
@@ -355,7 +341,7 @@ internal fun SettingsDataContent(
             },
             confirmButton = {
                 TextButton(onClick = onDismissRestoreSuccessDialog) {
-                    Text(stringResource(R.string.dialog_ok))
+                    AppText(stringResource(R.string.dialog_ok))
                 }
             },
         )
@@ -364,9 +350,9 @@ internal fun SettingsDataContent(
     if (state.showRestoreErrorDialog) {
         AlertDialog(
             onDismissRequest = onDismissRestoreErrorDialog,
-            title = { Text(stringResource(R.string.restore_error_title)) },
+            title = { AppText(stringResource(R.string.restore_error_title)) },
             text = {
-                Text(
+                AppText(
                     stringResource(
                         R.string.restore_error_message,
                         state.restoreErrorMessage,
@@ -375,7 +361,7 @@ internal fun SettingsDataContent(
             },
             confirmButton = {
                 TextButton(onClick = onDismissRestoreErrorDialog) {
-                    Text(stringResource(R.string.dialog_ok))
+                    AppText(stringResource(R.string.dialog_ok))
                 }
             },
         )
@@ -391,9 +377,9 @@ internal fun SettingsDataContent(
                     tint = MaterialTheme.colorScheme.error,
                 )
             },
-            title = { Text(stringResource(R.string.dialog_reset_preferences_title)) },
+            title = { AppText(stringResource(R.string.dialog_reset_preferences_title)) },
             text = {
-                Text(
+                AppText(
                     stringResource(R.string.dialog_reset_preferences_message),
                     style = MaterialTheme.typography.bodyMedium,
                 )
@@ -402,7 +388,7 @@ internal fun SettingsDataContent(
                 TextButton(onClick = {
                     onResetAllPreferences()
                 }) {
-                    Text(
+                    AppText(
                         stringResource(R.string.dialog_reset),
                         color = MaterialTheme.colorScheme.error,
                     )
@@ -410,7 +396,7 @@ internal fun SettingsDataContent(
             },
             dismissButton = {
                 TextButton(onClick = onDismissResetPreferencesDialog) {
-                    Text(stringResource(R.string.dialog_cancel))
+                    AppText(stringResource(R.string.dialog_cancel))
                 }
             },
         )

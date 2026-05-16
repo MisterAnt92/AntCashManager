@@ -15,6 +15,8 @@ import com.antcashmanager.domain.usecase.settings.GetChartsDateFilterStateUseCas
 import com.antcashmanager.domain.usecase.settings.SetChartsDateFilterStateUseCase
 import com.antcashmanager.domain.usecase.transaction.DateRange
 import com.antcashmanager.domain.usecase.transaction.GetTransactionsByDateRangeUseCase
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -29,14 +31,27 @@ import java.util.Calendar
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ChartsViewModel(
-    transactionRepository: TransactionRepository,
-    settingsRepository: SettingsRepository,
+    private val getTransactionsByDateRangeUseCase: GetTransactionsByDateRangeUseCase,
+    private val getChartsDateFilterStateUseCase: GetChartsDateFilterStateUseCase,
+    private val setChartsDateFilterStateUseCase: SetChartsDateFilterStateUseCase,
 ) : ViewModel() {
 
-    private val getTransactionsByDateRangeUseCase =
-        GetTransactionsByDateRangeUseCase(transactionRepository)
-    private val getChartsDateFilterStateUseCase = GetChartsDateFilterStateUseCase(settingsRepository)
-    private val setChartsDateFilterStateUseCase = SetChartsDateFilterStateUseCase(settingsRepository)
+    constructor(
+        transactionRepository: TransactionRepository,
+        settingsRepository: SettingsRepository,
+        dispatcher: CoroutineDispatcher = Dispatchers.Default,
+    ) : this(
+        getTransactionsByDateRangeUseCase = GetTransactionsByDateRangeUseCase(
+            transactionRepository = transactionRepository,
+            dispatcher = dispatcher,
+        ),
+        getChartsDateFilterStateUseCase = GetChartsDateFilterStateUseCase(settingsRepository),
+        setChartsDateFilterStateUseCase = SetChartsDateFilterStateUseCase(
+            settingsRepository = settingsRepository,
+            dispatcher = dispatcher,
+        ),
+    )
+
 
     private val _dateRange = MutableStateFlow(getDefaultDateRange())
     val dateRange: StateFlow<DateRange> = _dateRange.asStateFlow()

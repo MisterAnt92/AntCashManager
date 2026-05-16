@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.LocalReduceMotion
 
@@ -78,7 +79,7 @@ fun AntEmptyState(
                 modifier = Modifier.size(mascotSize),
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Text(
+            AppText(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -86,7 +87,7 @@ fun AntEmptyState(
             )
             if (subtitle != null) {
                 Spacer(modifier = Modifier.height(6.dp))
-                Text(
+                AppText(
                     text = subtitle,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
@@ -145,7 +146,7 @@ fun AntErrorState(
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
-            Text(
+            AppText(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.error,
@@ -153,7 +154,7 @@ fun AntErrorState(
             )
             if (subtitle != null) {
                 Spacer(modifier = Modifier.height(6.dp))
-                Text(
+                AppText(
                     text = subtitle,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -163,7 +164,7 @@ fun AntErrorState(
             if (retryLabel != null && onRetry != null) {
                 Spacer(modifier = Modifier.height(16.dp))
                 OutlinedButton(onClick = onRetry) {
-                    Text(retryLabel)
+                    AppText(retryLabel)
                 }
             }
         }

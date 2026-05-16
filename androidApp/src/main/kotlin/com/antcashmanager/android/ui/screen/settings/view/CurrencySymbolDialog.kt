@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AppListItem
 import com.antcashmanager.android.ui.components.AppRadioButton
+import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.domain.model.CurrencyFormat
 
 /**
@@ -34,7 +35,7 @@ fun CurrencySymbolDialog(
                 contentDescription = null,
             )
         },
-        title = { Text(stringResource(R.string.dialog_choose_currency)) },
+        title = { AppText(stringResource(R.string.dialog_choose_currency)) },
         text = {
             Column(
                 modifier = Modifier
@@ -42,7 +43,7 @@ fun CurrencySymbolDialog(
             ) {
                 CurrencyFormat.SUPPORTED_CURRENCIES.forEach { (symbol, label) ->
                     AppListItem(
-                        headlineContent = { Text(label) },
+                        headlineContent = { AppText(label) },
                         leadingContent = {
                             AppRadioButton(
                                 selected = symbol == currentSymbol,
@@ -54,7 +55,7 @@ fun CurrencySymbolDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.dialog_cancel)) }
+            TextButton(onClick = onDismiss) { AppText(stringResource(R.string.dialog_cancel)) }
         },
     )
 }

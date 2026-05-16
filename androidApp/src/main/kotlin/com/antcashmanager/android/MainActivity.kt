@@ -15,42 +15,31 @@ import com.antcashmanager.android.ui.theme.AppThemeProvider
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.usecase.settings.GetLanguageUseCase
 import java.util.Locale
+import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
+
+    private val getLanguageUseCase: GetLanguageUseCase by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val app = application as AntCashManagerApp
-        val getLanguageUseCase = GetLanguageUseCase(app.settingsRepository)
 
         setContent {
             val languageResult by getLanguageUseCase().collectAsState(
-                initial = Result.success(
-                    AppLanguage.SYSTEM
-                )
+                initial = Result.success(AppLanguage.SYSTEM)
             )
             val language = languageResult.getOrElse { AppLanguage.SYSTEM }
 
             WithAppLocale(language = language) {
-                // Centralized theme provider reads theme & accessibility preferences
-                AppThemeProvider(settingsRepository = app.settingsRepository) {
-                    AntCashManagerNavHost(
-                        analyticsManager = app.analyticsManager,
-                        transactionRepository = app.transactionRepository,
-                        settingsRepository = app.settingsRepository,
-                        categoryRepository = app.categoryRepository,
-                    )
+                AppThemeProvider {
+                    AntCashManagerNavHost()
                 }
             }
         }
     }
 }
 
-/**
- * Wraps content with a localized context so that [stringResource] calls
- * resolve to the correct language-specific strings.xml.
- */
 @Composable
 fun WithAppLocale(language: AppLanguage, content: @Composable () -> Unit) {
     if (language == AppLanguage.SYSTEM) {

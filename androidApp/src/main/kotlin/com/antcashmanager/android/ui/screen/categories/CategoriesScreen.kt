@@ -75,8 +75,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
@@ -88,7 +86,7 @@ import com.antcashmanager.android.ui.screen.categories.view.HelpDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.translateCategory
 import com.antcashmanager.domain.model.Category
-import com.antcashmanager.domain.repository.CategoryRepository
+import org.koin.androidx.compose.koinViewModel
 
 /** Map icon key names to Material Icons. */
 val categoryIconMap: Map<String, ImageVector> = mapOf(
@@ -117,15 +115,8 @@ val categoryColors = listOf(
 )
 
 @Composable
-fun CategoriesScreen(categoryRepository: CategoryRepository) {
-    Logger.d("CategoriesScreen") { "Displaying CategoriesScreen" }
-    val viewModel: CategoriesViewModel = viewModel(
-        factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                CategoriesViewModel(categoryRepository) as T
-        },
-    )
+fun CategoriesScreen() {
+    val viewModel: CategoriesViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
     CategoriesContent(
         state = state,
@@ -198,7 +189,7 @@ internal fun CategoriesContent(
                     Tab(
                         selected = selectedTab == index,
                         onClick = { selectedTab = index },
-                        text = { Text(title, fontWeight = FontWeight.SemiBold) },
+                        text = { AppText(title, fontWeight = FontWeight.SemiBold) },
                     )
                 }
             }
@@ -244,9 +235,9 @@ internal fun CategoriesContent(
     categoryToDelete?.let { category ->
         AlertDialog(
             onDismissRequest = { categoryToDelete = null },
-            title = { Text(stringResource(R.string.categories_delete_title)) },
+            title = { AppText(stringResource(R.string.categories_delete_title)) },
             text = {
-                Text(stringResource(R.string.categories_delete_message, translateCategory(category.name)))
+                AppText(stringResource(R.string.categories_delete_message, translateCategory(category.name)))
             },
             confirmButton = {
                 TextButton(
@@ -255,7 +246,7 @@ internal fun CategoriesContent(
                         categoryToDelete = null
                     },
                 ) {
-                    Text(
+                    AppText(
                         stringResource(R.string.dialog_delete),
                         color = MaterialTheme.colorScheme.error
                     )
@@ -263,7 +254,7 @@ internal fun CategoriesContent(
             },
             dismissButton = {
                 TextButton(onClick = { categoryToDelete = null }) {
-                    Text(stringResource(R.string.dialog_cancel))
+                    AppText(stringResource(R.string.dialog_cancel))
                 }
             },
         )
@@ -355,7 +346,7 @@ private fun AddCategoryDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.categories_add)) },
+        title = { AppText(stringResource(R.string.categories_add)) },
         text = {
             Column(
                 modifier = Modifier
@@ -366,7 +357,7 @@ private fun AddCategoryDialog(
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text(stringResource(R.string.categories_name_label)) },
+                    label = { AppText(stringResource(R.string.categories_name_label)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -478,11 +469,11 @@ private fun AddCategoryDialog(
                 },
                 enabled = name.isNotBlank(),
             ) {
-                Text(stringResource(R.string.dialog_add))
+                AppText(stringResource(R.string.dialog_add))
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.dialog_cancel)) }
+            TextButton(onClick = onDismiss) { AppText(stringResource(R.string.dialog_cancel)) }
         },
     )
 }

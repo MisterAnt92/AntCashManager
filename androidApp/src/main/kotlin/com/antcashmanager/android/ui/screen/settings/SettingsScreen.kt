@@ -63,8 +63,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
@@ -90,28 +88,16 @@ import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.CurrencyFormat
-import com.antcashmanager.domain.repository.SettingsRepository
-import com.antcashmanager.domain.repository.TransactionRepository
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SettingsScreen(
-    settingsRepository: SettingsRepository,
-    transactionRepository: TransactionRepository,
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
     Logger.d("SettingsScreen") { "Displaying SettingsScreen" }
     val context = LocalContext.current
-    val viewModel: SettingsViewModel = viewModel(
-        factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                SettingsViewModel(
-                    settingsRepository,
-                    transactionRepository,
-                ) as T
-        },
-    )
+    val viewModel: SettingsViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
 
     SettingsContent(
@@ -517,7 +503,7 @@ private fun CurrencySymbolDialog(
                 tint = MaterialTheme.colorScheme.primary,
             )
         },
-        title = { Text(stringResource(R.string.dialog_choose_currency)) },
+        title = { AppText(stringResource(R.string.dialog_choose_currency)) },
         text = {
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
@@ -525,7 +511,7 @@ private fun CurrencySymbolDialog(
             ) {
                 CurrencyFormat.SUPPORTED_CURRENCIES.forEach { (symbol, label) ->
                     AppListItem(
-                        headlineContent = { Text(label) },
+                        headlineContent = { AppText(label) },
                         leadingContent = {
                             AppRadioButton(
                                 selected = symbol == currentSymbol,
@@ -537,7 +523,7 @@ private fun CurrencySymbolDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.dialog_cancel)) }
+            TextButton(onClick = onDismiss) { AppText(stringResource(R.string.dialog_cancel)) }
         },
     )
 }
@@ -580,12 +566,12 @@ private fun DonationCard(context: Context) {
                 }
                 Spacer(modifier = Modifier.width(16.dp))
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
+                    AppText(
                         text = stringResource(R.string.settings_buy_coffee),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
-                    Text(
+                    AppText(
                         text = stringResource(R.string.settings_buy_coffee_subtitle),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -625,12 +611,12 @@ private fun DonationCard(context: Context) {
                 }
                 Spacer(modifier = Modifier.width(14.dp))
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
+                    AppText(
                         text = stringResource(R.string.settings_donate_paypal_title),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
-                    Text(
+                    AppText(
                         text = stringResource(R.string.settings_donate_paypal_subtitle),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -675,12 +661,12 @@ private fun DonationCard(context: Context) {
                 }
                 Spacer(modifier = Modifier.width(14.dp))
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
+                    AppText(
                         text = stringResource(R.string.settings_donate_bmc_title),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
-                    Text(
+                    AppText(
                         text = stringResource(R.string.settings_donate_bmc_subtitle),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,

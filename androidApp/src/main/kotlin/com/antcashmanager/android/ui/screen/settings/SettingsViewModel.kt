@@ -33,20 +33,33 @@ import org.json.JSONObject
 class SettingsViewModel(
     private val settingsRepository: SettingsRepository,
     private val transactionRepository: TransactionRepository,
-    private val useCaseDispatcher: CoroutineDispatcher = Dispatchers.Default,
+    private val getThemeUseCase: GetThemeUseCase,
+    private val setThemeUseCase: SetThemeUseCase,
+    private val getLanguageUseCase: GetLanguageUseCase,
+    private val setLanguageUseCase: SetLanguageUseCase,
+    private val sendFeedbackEmailUseCase: SendFeedbackEmailUseCase,
 ) : ViewModel() {
 
-    private val getThemeUseCase = GetThemeUseCase(settingsRepository)
-    private val setThemeUseCase = SetThemeUseCase(
+    constructor(
+        settingsRepository: SettingsRepository,
+        transactionRepository: TransactionRepository,
+        useCaseDispatcher: CoroutineDispatcher = Dispatchers.Default,
+    ) : this(
         settingsRepository = settingsRepository,
-        dispatcher = useCaseDispatcher,
+        transactionRepository = transactionRepository,
+        getThemeUseCase = GetThemeUseCase(settingsRepository),
+        setThemeUseCase = SetThemeUseCase(
+            settingsRepository = settingsRepository,
+            dispatcher = useCaseDispatcher,
+        ),
+        getLanguageUseCase = GetLanguageUseCase(settingsRepository),
+        setLanguageUseCase = SetLanguageUseCase(
+            settingsRepository = settingsRepository,
+            dispatcher = useCaseDispatcher,
+        ),
+        sendFeedbackEmailUseCase = SendFeedbackEmailUseCase(),
     )
-    private val getLanguageUseCase = GetLanguageUseCase(settingsRepository)
-    private val setLanguageUseCase = SetLanguageUseCase(
-        settingsRepository = settingsRepository,
-        dispatcher = useCaseDispatcher,
-    )
-    private val sendFeedbackEmailUseCase = SendFeedbackEmailUseCase()
+
 
     /**
      * Import debug data from asset `debug_initial_data.json`.

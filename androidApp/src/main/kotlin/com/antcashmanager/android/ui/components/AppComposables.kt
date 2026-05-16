@@ -107,7 +107,7 @@ fun AppRadioButton(
 
 /**
  * AppListItem - wrapper per ListItem di Material3 con tema trasparente
- * Utilizzo: AppListItem(headlineContent = { Text("Title") })
+ * Utilizzo: AppListItem(headlineContent = { AppText("Title") })
  */
 @Composable
 fun AppListItem(
@@ -154,15 +154,15 @@ private fun AppComposablesPreviewLight() {
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            ScreenHeader(title = "Header", actions = { Text("Action") })
+            ScreenHeader(title = "Header", actions = { AppText("Action") })
             AppListItem(
-                headlineContent = { Text("List item") },
-                supportingContent = { Text("Support text") },
+                headlineContent = { AppText("List item") },
+                supportingContent = { AppText("Support text") },
                 trailingContent = { AppSwitch(checked = true, onCheckedChange = {}) },
             )
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
                 AppRadioButton(selected = true, onClick = {})
-                Text("Radio")
+                AppText("Radio")
             }
             AppDivider()
         }

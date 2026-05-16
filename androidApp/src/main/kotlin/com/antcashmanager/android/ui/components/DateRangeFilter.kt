@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -156,7 +157,7 @@ fun DateRangeFilter(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Text(
+                AppText(
                     text = getRangeDisplayText(
                         selectedPresetIndex = selectedPresetIndex,
                         dateRangeFrom = dateRangeFrom,
@@ -196,7 +197,7 @@ fun DateRangeFilter(
                                 selected = selectedPresetIndex == index,
                                 onClick = { onPresetSelected(index) },
                                 label = {
-                                    Text(
+                                    AppText(
                                         text = stringResource(labelRes),
                                         style = MaterialTheme.typography.labelSmall,
                                         maxLines = 1,
@@ -220,7 +221,7 @@ fun DateRangeFilter(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        Text(
+                        AppText(
                             text = stringResource(
                                 R.string.charts_from,
                                 dateFormat.format(Date(dateRangeFrom))
@@ -249,7 +250,7 @@ fun DateRangeFilter(
                             )
                         }
 
-                        Text(
+                        AppText(
                             text = stringResource(
                                 R.string.charts_to,
                                 dateFormat.format(Date(dateRangeTo))

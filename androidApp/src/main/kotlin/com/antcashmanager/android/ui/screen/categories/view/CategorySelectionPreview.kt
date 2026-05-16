@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AppCategoryListItem
+import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.Category
 
@@ -41,7 +42,7 @@ fun CategoryListPreview() {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Select Category - New UI") }
+                    title = { AppText("Select Category - New UI") }
                 )
             }
         ) { paddingValues ->
@@ -50,7 +51,7 @@ fun CategoryListPreview() {
                     .padding(paddingValues)
                     .padding(16.dp)
             ) {
-                Text(
+                AppText(
                     text = stringResource(R.string.categories_selection_hint),
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(bottom = 16.dp)

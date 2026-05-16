@@ -77,31 +77,57 @@ sealed interface TransactionsEvent {
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class TransactionsViewModel(
-    transactionRepository: TransactionRepository,
-    categoryRepository: CategoryRepository,
-    settingsRepository: SettingsRepository,
-    dispatcher: CoroutineDispatcher = Dispatchers.Default,
+    private val getTransactionsUseCase: GetTransactionsUseCase,
+    private val insertTransactionUseCase: InsertTransactionUseCase,
+    private val updateTransactionUseCase: UpdateTransactionUseCase,
+    private val deleteTransactionUseCase: DeleteTransactionUseCase,
+    private val getCategoriesUseCase: GetCategoriesUseCase,
+    private val filterTransactionsUseCase: FilterTransactionsUseCase,
+    private val getTransactionSuggestionsUseCase: GetTransactionSuggestionsUseCase,
+    private val getTransactionsDateFilterStateUseCase: GetTransactionsDateFilterStateUseCase,
+    private val setTransactionsDateFilterStateUseCase: SetTransactionsDateFilterStateUseCase,
 ) : ViewModel() {
 
-    // ── UseCases ──
-    private val getTransactionsUseCase = GetTransactionsUseCase(transactionRepository, dispatcher)
-    private val insertTransactionUseCase =
-        InsertTransactionUseCase(transactionRepository, dispatcher)
-    private val updateTransactionUseCase =
-        UpdateTransactionUseCase(transactionRepository, dispatcher)
-    private val deleteTransactionUseCase =
-        DeleteTransactionUseCase(transactionRepository, dispatcher)
-    private val getCategoriesUseCase = GetCategoriesUseCase(categoryRepository, dispatcher)
-    private val filterTransactionsUseCase = FilterTransactionsUseCase()
-    private val getTransactionSuggestionsUseCase =
-        GetTransactionSuggestionsUseCase(transactionRepository, dispatcher)
-    private val getTransactionsDateFilterStateUseCase = GetTransactionsDateFilterStateUseCase(
-        settingsRepository = settingsRepository,
+    constructor(
+        transactionRepository: TransactionRepository,
+        categoryRepository: CategoryRepository,
+        settingsRepository: SettingsRepository,
+        dispatcher: CoroutineDispatcher = Dispatchers.Default,
+    ) : this(
+        getTransactionsUseCase = GetTransactionsUseCase(
+            transactionRepository = transactionRepository,
+            dispatcher = dispatcher,
+        ),
+        insertTransactionUseCase = InsertTransactionUseCase(
+            transactionRepository = transactionRepository,
+            dispatcher = dispatcher,
+        ),
+        updateTransactionUseCase = UpdateTransactionUseCase(
+            transactionRepository = transactionRepository,
+            dispatcher = dispatcher,
+        ),
+        deleteTransactionUseCase = DeleteTransactionUseCase(
+            transactionRepository = transactionRepository,
+            dispatcher = dispatcher,
+        ),
+        getCategoriesUseCase = GetCategoriesUseCase(
+            categoryRepository = categoryRepository,
+            dispatcher = dispatcher,
+        ),
+        filterTransactionsUseCase = FilterTransactionsUseCase(),
+        getTransactionSuggestionsUseCase = GetTransactionSuggestionsUseCase(
+            repository = transactionRepository,
+            dispatcher = dispatcher,
+        ),
+        getTransactionsDateFilterStateUseCase = GetTransactionsDateFilterStateUseCase(
+            settingsRepository = settingsRepository,
+        ),
+        setTransactionsDateFilterStateUseCase = SetTransactionsDateFilterStateUseCase(
+            settingsRepository = settingsRepository,
+            dispatcher = dispatcher,
+        ),
     )
-    private val setTransactionsDateFilterStateUseCase = SetTransactionsDateFilterStateUseCase(
-        settingsRepository = settingsRepository,
-        dispatcher = dispatcher,
-    )
+
 
     // ── Internal filter state ──
     private val _filterState = MutableStateFlow(FilterState())

@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 /**
@@ -67,10 +68,10 @@ private fun AntScreenScaffoldPreviewLight() {
         AntScreenScaffold(
             showTopBar = true,
             topBarTitle = "Screen Title",
-            bottomBar = { Text("Bottom Bar", modifier = Modifier.padding(8.dp)) },
-            floatingActionButton = { Text("FAB", color = MaterialTheme.colorScheme.primary) },
+            bottomBar = { AppText("Bottom Bar", modifier = Modifier.padding(8.dp)) },
+            floatingActionButton = { AppText("FAB", color = MaterialTheme.colorScheme.primary) },
         ) {
-            Text("Screen content", modifier = Modifier.padding(16.dp))
+            AppText("Screen content", modifier = Modifier.padding(16.dp))
         }
     }
 }

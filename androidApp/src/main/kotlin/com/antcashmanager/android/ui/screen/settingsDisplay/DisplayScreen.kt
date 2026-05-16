@@ -41,8 +41,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.antcashmanager.android.R
@@ -59,10 +57,10 @@ import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.formatAmount
 import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.model.TransactionDisplayType
-import com.antcashmanager.domain.repository.SettingsRepository
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import org.koin.androidx.compose.koinViewModel
 
 /**
  * Screen wrapper per la schermata "Visualizzazione".
@@ -75,16 +73,9 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DisplayScreen(
-    settingsRepository: SettingsRepository,
     navController: NavController,
 ) {
-    val viewModel: DisplayViewModel = viewModel(
-        factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                DisplayViewModel(settingsRepository) as T
-        },
-    )
+    val viewModel: DisplayViewModel = koinViewModel()
 
     val currencySymbol by viewModel.currencySymbol.collectAsState()
     val decimalDigits by viewModel.decimalDigits.collectAsState()

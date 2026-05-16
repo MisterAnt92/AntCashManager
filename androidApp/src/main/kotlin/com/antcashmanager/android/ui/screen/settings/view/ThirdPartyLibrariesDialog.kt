@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AppListItem
+import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.settings.model.thirdPartyLibraries
 
 @Composable
@@ -36,13 +37,13 @@ fun ThirdPartyLibrariesDialog(
                 tint = MaterialTheme.colorScheme.primary,
             )
         },
-        title = { Text(stringResource(R.string.settings_third_party_libraries)) },
+        title = { AppText(stringResource(R.string.settings_third_party_libraries)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 thirdPartyLibraries.forEach { lib ->
                     AppListItem(
                         headlineContent = {
-                            Text(
+                            AppText(
                                 text = lib.name,
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.Medium,
@@ -57,7 +58,7 @@ fun ThirdPartyLibrariesDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.dialog_close)) }
+            TextButton(onClick = onDismiss) { AppText(stringResource(R.string.dialog_close)) }
         },
     )
 }

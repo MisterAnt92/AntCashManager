@@ -51,6 +51,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.charts.MonthlyAmount
 import com.antcashmanager.android.ui.screen.charts.YearlyAmount
 import com.antcashmanager.android.ui.theme.LocalReduceMotion
@@ -222,13 +223,13 @@ internal fun PieLegend(data: Map<String, Double>) {
                 Spacer(modifier = Modifier.width(12.dp))
 
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
+                    AppText(
                         text = translateCategory(category),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
-                    Text(
+                    AppText(
                         text = stringResource(
                             R.string.charts_legend_item_subtitle,
                             formatAmount(value, fmt),
@@ -315,7 +316,7 @@ internal fun BarChartLegend() {
             }
 
             Spacer(modifier = Modifier.width(8.dp))
-            Text(
+            AppText(
                 text = stringResource(R.string.charts_income),
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.SemiBold,
@@ -363,7 +364,7 @@ internal fun BarChartLegend() {
             }
 
             Spacer(modifier = Modifier.width(8.dp))
-            Text(
+            AppText(
                 text = stringResource(R.string.charts_expenses),
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.SemiBold,

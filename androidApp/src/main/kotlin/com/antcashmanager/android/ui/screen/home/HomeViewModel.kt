@@ -8,8 +8,10 @@ import com.antcashmanager.android.util.calculateTotalExpense
 import com.antcashmanager.android.util.calculateTotalIncome
 import com.antcashmanager.android.util.withCorrectAmounts
 import com.antcashmanager.domain.model.SavedDateFilter
+import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
+import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.settings.GetHomeDateFilterStateUseCase
 import com.antcashmanager.domain.usecase.settings.SetHomeDateFilterStateUseCase
 import com.antcashmanager.domain.usecase.transaction.FilterTransactionsUseCase
@@ -60,33 +62,47 @@ sealed interface HomeEvent {
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class HomeViewModel(
-    transactionRepository: TransactionRepository,
-    settingsRepository: SettingsRepository,
-    categoryRepository: com.antcashmanager.domain.repository.CategoryRepository,
-    dispatcher: CoroutineDispatcher = Dispatchers.Default,
+    private val getTransactionsUseCase: GetTransactionsUseCase,
+    private val filterTransactionsUseCase: FilterTransactionsUseCase,
+    private val getTransactionSuggestionsUseCase: GetTransactionSuggestionsUseCase,
+    private val getHomeDateFilterStateUseCase: GetHomeDateFilterStateUseCase,
+    private val setHomeDateFilterStateUseCase: SetHomeDateFilterStateUseCase,
+    private val getCategoriesUseCase: GetCategoriesUseCase,
     searchDebounceMs: Long = 300L,
 ) : ViewModel() {
 
-    // ── UseCases ──
-    private val getTransactionsUseCase = GetTransactionsUseCase(
-        transactionRepository = transactionRepository,
-        dispatcher = dispatcher,
-    )
-    private val filterTransactionsUseCase = FilterTransactionsUseCase()
-    private val getTransactionSuggestionsUseCase = GetTransactionSuggestionsUseCase(
-        repository = transactionRepository,
-        dispatcher = dispatcher,
-    )
-    private val getHomeDateFilterStateUseCase = GetHomeDateFilterStateUseCase(settingsRepository)
-    private val setHomeDateFilterStateUseCase = SetHomeDateFilterStateUseCase(
-        settingsRepository = settingsRepository,
-        dispatcher = dispatcher,
+    constructor(
+        transactionRepository: TransactionRepository,
+        settingsRepository: SettingsRepository,
+        categoryRepository: CategoryRepository,
+        dispatcher: CoroutineDispatcher = Dispatchers.Default,
+        searchDebounceMs: Long = 300L,
+    ) : this(
+        getTransactionsUseCase = GetTransactionsUseCase(
+            transactionRepository = transactionRepository,
+            dispatcher = dispatcher,
+        ),
+        filterTransactionsUseCase = FilterTransactionsUseCase(),
+        getTransactionSuggestionsUseCase = GetTransactionSuggestionsUseCase(
+            repository = transactionRepository,
+            dispatcher = dispatcher,
+        ),
+        getHomeDateFilterStateUseCase = GetHomeDateFilterStateUseCase(settingsRepository),
+        setHomeDateFilterStateUseCase = SetHomeDateFilterStateUseCase(
+            settingsRepository = settingsRepository,
+            dispatcher = dispatcher,
+        ),
+        getCategoriesUseCase = GetCategoriesUseCase(
+            categoryRepository = categoryRepository,
+            dispatcher = dispatcher,
+        ),
+        searchDebounceMs = searchDebounceMs,
     )
 
     // ── Categories cache for enriching transactions ──
     private val categoriesCache: StateFlow<Map<String, com.antcashmanager.domain.model.Category>> =
-        categoryRepository.getAllCategories()
-            .map { categories -> categories.associateBy { it.name } }
+        getCategoriesUseCase()
+            .map { result -> result.getOrElse { emptyList() }.associateBy { it.name } }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000),

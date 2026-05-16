@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -55,8 +56,8 @@ fun SearchComponent(
                 value = searchQuery,
                 onValueChange = onSearchQueryChange,
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text(label) },
-                placeholder = { Text(placeholder) },
+                label = { AppText(label) },
+                placeholder = { AppText(placeholder) },
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 leadingIcon = {
@@ -90,7 +91,7 @@ fun SearchComponent(
                         SuggestionChip(
                             onClick = { onSearchQueryChange(suggestion) },
                             label = {
-                                Text(
+                                AppText(
                                     text = suggestion,
                                     style = MaterialTheme.typography.labelMedium,
                                     maxLines = 1,

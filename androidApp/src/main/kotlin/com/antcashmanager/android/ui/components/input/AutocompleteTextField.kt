@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 /**
@@ -63,7 +64,7 @@ fun AutocompleteTextField(
                 onValueChange(it)
                 expanded = filteredSuggestions.isNotEmpty()
             },
-            label = { Text(label) },
+            label = { AppText(label) },
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier
                 .fillMaxWidth()
@@ -86,7 +87,7 @@ fun AutocompleteTextField(
                     .padding(vertical = 4.dp)
             ) {
                 items(filteredSuggestions) { suggestion ->
-                    Text(
+                    AppText(
                         text = suggestion,
                         modifier = Modifier
                             .fillMaxWidth()

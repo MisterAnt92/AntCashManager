@@ -159,8 +159,8 @@ fun PreviewAppTextField() {
     AppTextField(
         value = "Sample Text",
         onValueChange = {},
-        label = { androidx.compose.material3.Text("Label") },
-        placeholder = { androidx.compose.material3.Text("Placeholder") }
+        label = { AppText("Label") },
+        placeholder = { AppText("Placeholder") }
     )
 }
 
@@ -170,7 +170,7 @@ fun PreviewAppTextFieldPassword() {
     AppTextField(
         value = "password123",
         onValueChange = {},
-        label = { androidx.compose.material3.Text("Password") },
+        label = { AppText("Password") },
         isPassword = true
     )
 }
@@ -181,7 +181,7 @@ fun PreviewAppTextFieldWithStyle() {
     AppTextField(
         value = "Styled Text",
         onValueChange = {},
-        label = { androidx.compose.material3.Text("Styled Label") },
+        label = { AppText("Styled Label") },
         textStyle = MaterialTheme.typography.bodyLarge,
         fontWeight = FontWeight.Bold
     )
@@ -198,8 +198,8 @@ private fun previewAppTextFieldDark() {
         AppTextField(
             value = "Sample Text",
             onValueChange = {},
-            label = { androidx.compose.material3.Text("Label") },
-            placeholder = { androidx.compose.material3.Text("Placeholder") },
+            label = { AppText("Label") },
+            placeholder = { AppText("Placeholder") },
         )
     }
 }

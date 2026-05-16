@@ -58,18 +58,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
-import com.antcashmanager.android.AntCashManagerApp
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AnimatedCard
 import com.antcashmanager.android.ui.components.AnimatedListItem
@@ -95,13 +91,13 @@ import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.model.TransactionType
-import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
-import com.antcashmanager.domain.repository.TransactionRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
+import org.koin.compose.koinInject
+import org.koin.androidx.compose.koinViewModel
 import java.util.Locale
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -110,27 +106,14 @@ import java.util.Locale
 
 @Composable
 fun TransactionsScreen(
-    transactionRepository: TransactionRepository,
-    categoryRepository: CategoryRepository,
-    settingsRepository: SettingsRepository,
     navController: NavController? = null,
     modifier: Modifier = Modifier,
 ) {
     Logger.d("TransactionsScreen") { "Displaying TransactionsScreen" }
-    val analyticsManager =
-        (LocalContext.current.applicationContext as AntCashManagerApp).analyticsManager
+    val analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager = koinInject()
 
-    val viewModel: TransactionsViewModel = viewModel(
-        factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                TransactionsViewModel(
-                    transactionRepository = transactionRepository,
-                    categoryRepository = categoryRepository,
-                    settingsRepository = settingsRepository,
-                ) as T
-        },
-    )
+    val viewModel: TransactionsViewModel = koinViewModel()
+    val settingsRepository: SettingsRepository = koinInject()
 
     val state by viewModel.state.collectAsState()
     val transactionDisplayType by settingsRepository.getTransactionsTransactionDisplayType()
@@ -215,12 +198,12 @@ internal fun TransactionsContent(
                     }
                     showFromDatePicker = false
                 }) {
-                    Text(stringResource(R.string.common_confirm))
+                    AppText(stringResource(R.string.common_confirm))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showFromDatePicker = false }) {
-                    Text(stringResource(R.string.common_cancel))
+                    AppText(stringResource(R.string.common_cancel))
                 }
             }
         ) {
@@ -241,12 +224,12 @@ internal fun TransactionsContent(
                     }
                     showToDatePicker = false
                 }) {
-                    Text(stringResource(R.string.common_confirm))
+                    AppText(stringResource(R.string.common_confirm))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showToDatePicker = false }) {
-                    Text(stringResource(R.string.common_cancel))
+                    AppText(stringResource(R.string.common_cancel))
                 }
             }
         ) {
@@ -609,7 +592,7 @@ private fun FilterCard(
                     FilterChip(
                         selected = selectedTransactionType == null,
                         onClick = { onTransactionTypeSelected(null) },
-                        label = { Text(stringResource(R.string.common_all), maxLines = 1) },
+                        label = { AppText(stringResource(R.string.common_all), maxLines = 1) },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
                         ),
@@ -623,7 +606,7 @@ private fun FilterCard(
                             )
                         },
                         label = {
-                            Text(
+                            AppText(
                                 stringResource(R.string.transaction_type_income),
                                 maxLines = 1
                             )
@@ -649,7 +632,7 @@ private fun FilterCard(
                             )
                         },
                         label = {
-                            Text(
+                            AppText(
                                 stringResource(R.string.transaction_type_expense),
                                 maxLines = 1
                             )
@@ -684,7 +667,7 @@ private fun FilterCard(
                     FilterChip(
                         selected = selectedPaymentType == null,
                         onClick = { onPaymentTypeSelected(null) },
-                        label = { Text(stringResource(R.string.common_all), maxLines = 1) },
+                        label = { AppText(stringResource(R.string.common_all), maxLines = 1) },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
                         ),
@@ -698,7 +681,7 @@ private fun FilterCard(
                                 )
                             },
                             label = {
-                                Text(
+                                AppText(
                                     text = when (paymentType) {
                                         PaymentType.ELECTRONIC -> stringResource(R.string.payment_type_electronic)
                                         PaymentType.CASH -> stringResource(R.string.payment_type_cash)
@@ -731,7 +714,7 @@ private fun FilterCard(
                         FilterChip(
                             selected = selectedCategory == null,
                             onClick = { onCategorySelected(null) },
-                            label = { Text(stringResource(R.string.common_all), maxLines = 1) },
+                            label = { AppText(stringResource(R.string.common_all), maxLines = 1) },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
                             ),
@@ -744,7 +727,7 @@ private fun FilterCard(
                                         if (selectedCategory == category.name) null else category.name
                                     )
                                 },
-                                label = { Text(category.name, maxLines = 1) },
+                                label = { AppText(category.name, maxLines = 1) },
                                 colors = FilterChipDefaults.filterChipColors(
                                     selectedContainerColor = MaterialTheme.colorScheme.tertiaryContainer,
                                 ),
@@ -768,7 +751,7 @@ private fun FilterCard(
                             .weight(1f)
                             .height(40.dp),
                     ) {
-                        Text(
+                        AppText(
                             text = stringResource(R.string.common_cancel),
                             style = MaterialTheme.typography.labelMedium,
                         )
@@ -779,7 +762,7 @@ private fun FilterCard(
                             .weight(1f)
                             .height(40.dp),
                     ) {
-                        Text(
+                        AppText(
                             text = stringResource(R.string.common_confirm),
                             style = MaterialTheme.typography.labelMedium,
                         )
@@ -814,7 +797,7 @@ private fun ActiveFiltersRow(
                     selected = true,
                     onClick = { },
                     label = {
-                        Text(
+                        AppText(
                             text = stringResource(
                                 R.string.transactions_search_query_preview,
                                 searchQuery
@@ -831,7 +814,7 @@ private fun ActiveFiltersRow(
                     selected = true,
                     onClick = { },
                     label = {
-                        Text(
+                        AppText(
                             text = when (type) {
                                 TransactionType.INCOME -> stringResource(R.string.transaction_type_income)
                                 TransactionType.EXPENSE -> stringResource(R.string.transaction_type_expense)
@@ -847,7 +830,7 @@ private fun ActiveFiltersRow(
                     selected = true,
                     onClick = { },
                     label = {
-                        Text(
+                        AppText(
                             text = when (payment) {
                                 PaymentType.ELECTRONIC -> stringResource(R.string.payment_type_electronic)
                                 PaymentType.CASH -> stringResource(R.string.payment_type_cash)
@@ -863,7 +846,7 @@ private fun ActiveFiltersRow(
                 FilterChip(
                     selected = true,
                     onClick = { },
-                    label = { Text(category, maxLines = 1) },
+                    label = { AppText(category, maxLines = 1) },
                     modifier = Modifier.height(28.dp),
                 )
             }

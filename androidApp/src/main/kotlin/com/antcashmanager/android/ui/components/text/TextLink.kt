@@ -45,7 +45,7 @@ fun TextLink(
         }
     }
 
-    Text(
+    AppText(
         text = annotatedString,
         maxLines = 1,
         modifier = modifier.padding(

@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AppListItem
 import com.antcashmanager.android.ui.components.AppRadioButton
+import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.domain.model.TransactionDisplayType
 
 @Composable
@@ -41,7 +42,7 @@ fun TransactionIconDisplayDialog(
                 tint = MaterialTheme.colorScheme.primary,
             )
         },
-        title = { Text(stringResource(R.string.dialog_choose_transaction_icon_display)) },
+        title = { AppText(stringResource(R.string.dialog_choose_transaction_icon_display)) },
         text = {
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
@@ -49,7 +50,7 @@ fun TransactionIconDisplayDialog(
             ) {
                 options.forEach { (displayType, label) ->
                     AppListItem(
-                        headlineContent = { Text(label) },
+                        headlineContent = { AppText(label) },
                         leadingContent = {
                             AppRadioButton(
                                 selected = displayType == currentDisplayType,
@@ -61,7 +62,7 @@ fun TransactionIconDisplayDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.dialog_cancel)) }
+            TextButton(onClick = onDismiss) { AppText(stringResource(R.string.dialog_cancel)) }
         },
     )
 }

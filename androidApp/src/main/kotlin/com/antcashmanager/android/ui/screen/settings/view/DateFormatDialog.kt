@@ -10,8 +10,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.components.AppIcon
 import com.antcashmanager.android.ui.components.AppListItem
 import com.antcashmanager.android.ui.components.AppRadioButton
+import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.domain.model.DateFormatType
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -32,8 +34,8 @@ fun DateFormatDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        icon = { Icon(imageVector = Icons.Default.CalendarMonth, contentDescription = null) },
-        title = { Text(stringResource(R.string.dialog_choose_date_format)) },
+        icon = { AppIcon(imageVector = Icons.Default.CalendarMonth, contentDescription = null) },
+        title = { AppText(stringResource(R.string.dialog_choose_date_format)) },
         text = {
             Column {
                 formats.forEach { (pattern, label) ->
@@ -42,8 +44,8 @@ fun DateFormatDialog(
                     }.getOrElse { pattern }
 
                     AppListItem(
-                        headlineContent = { Text(label) },
-                        supportingContent = { Text(exampleDate) },
+                        headlineContent = { AppText(label) },
+                        supportingContent = { AppText(exampleDate) },
                         leadingContent = {
                             AppRadioButton(
                                 selected = pattern == currentFormat,
@@ -53,7 +55,7 @@ fun DateFormatDialog(
                 }
             }
         },
-        confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.dialog_cancel)) } },
+        confirmButton = { TextButton(onClick = onDismiss) { AppText(stringResource(R.string.dialog_cancel)) } },
     )
 }
 

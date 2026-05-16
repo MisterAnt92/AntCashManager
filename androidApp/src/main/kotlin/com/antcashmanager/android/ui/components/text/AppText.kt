@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -133,6 +134,32 @@ fun AppText(
             overflow = overflow
         )
     }
+}
+
+@Composable
+fun AppText(
+    text: AnnotatedString,
+    modifier: Modifier = Modifier,
+    style: TextStyle = MaterialTheme.typography.bodyMedium,
+    color: Color? = null,
+    fontWeight: FontWeight? = null,
+    textAlign: TextAlign? = null,
+    maxLines: Int = Int.MAX_VALUE,
+    overflow: TextOverflow = TextOverflow.Clip,
+    onClick: (() -> Unit)? = null,
+) {
+    val finalStyle = if (fontWeight != null) style.copy(fontWeight = fontWeight) else style
+    val finalColor = color ?: LocalContentColor.current
+
+    Text(
+        text = text,
+        modifier = modifier.then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
+        style = finalStyle,
+        color = finalColor,
+        textAlign = textAlign,
+        maxLines = maxLines,
+        overflow = overflow,
+    )
 }
 
 

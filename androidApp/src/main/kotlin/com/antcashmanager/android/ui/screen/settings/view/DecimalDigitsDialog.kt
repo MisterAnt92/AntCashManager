@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AppListItem
 import com.antcashmanager.android.ui.components.AppRadioButton
+import com.antcashmanager.android.ui.components.text.AppText
 
 @Composable
 fun DecimalDigitsDialog(
@@ -29,13 +30,13 @@ fun DecimalDigitsDialog(
                 tint = MaterialTheme.colorScheme.primary,
             )
         },
-        title = { Text(stringResource(R.string.dialog_choose_decimal_digits)) },
+        title = { AppText(stringResource(R.string.dialog_choose_decimal_digits)) },
         text = {
             Column {
                 (0..4).forEach { digits ->
                     AppListItem(
                         headlineContent = {
-                            Text(stringResource(R.string.settings_decimal_digits_subtitle, digits))
+                            AppText(stringResource(R.string.settings_decimal_digits_subtitle, digits))
                         },
                         leadingContent = {
                             AppRadioButton(
@@ -48,7 +49,7 @@ fun DecimalDigitsDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.dialog_cancel)) }
+            TextButton(onClick = onDismiss) { AppText(stringResource(R.string.dialog_cancel)) }
         },
     )
 }

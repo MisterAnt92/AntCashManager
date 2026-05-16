@@ -64,7 +64,7 @@ fun MoneyText(
         updated
     }
 
-    Text(
+    AppText(
         text = formattedAmount,
         modifier = modifier,
         style = finalStyle,
@@ -241,19 +241,19 @@ private fun AllMoneyTextPreviewDark() {
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Text("MoneyText (Positive):")
+            AppText("MoneyText (Positive):")
             MoneyText(amount = 1234.56)
 
-            Text("MoneyText (Negative):")
+            AppText("MoneyText (Negative):")
             MoneyText(amount = -1234.56)
 
-            Text("BalanceText:")
+            AppText("BalanceText:")
             BalanceText(amount = 5432.10)
 
-            Text("TransactionAmountText:")
+            AppText("TransactionAmountText:")
             TransactionAmountText(amount = 2500.00)
 
-            Text("CompactMoneyText:")
+            AppText("CompactMoneyText:")
             CompactMoneyText(amount = 12345.67)
         }
     }

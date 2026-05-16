@@ -53,8 +53,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
@@ -73,26 +71,20 @@ import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.android.util.formatAmount
 import com.antcashmanager.domain.model.CurrencyFormat
-import com.antcashmanager.domain.repository.TransactionRepository
+import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.usecase.transaction.DateRange
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import kotlin.math.abs
+import org.koin.compose.koinInject
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun ChartsScreen(
-    transactionRepository: TransactionRepository,
-    settingsRepository: com.antcashmanager.domain.repository.SettingsRepository,
-) {
+fun ChartsScreen() {
     Logger.d("ChartsScreen") { "Displaying ChartsScreen" }
-    val viewModel: ChartsViewModel = viewModel(
-        factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                ChartsViewModel(transactionRepository, settingsRepository) as T
-        },
-    )
+    val viewModel: ChartsViewModel = koinViewModel()
+    val settingsRepository: SettingsRepository = koinInject()
     val chartData by viewModel.chartData.collectAsState()
     val dateRange by viewModel.dateRange.collectAsState()
     val selectedPresetIndex by viewModel.selectedPresetIndex.collectAsState()
@@ -191,7 +183,7 @@ internal fun ChartsContent(
                                     onPresetSelected(preset)
                                 },
                                 label = {
-                                    Text(
+                                    AppText(
                                         text = stringResource(preset.labelResId),
                                         style = MaterialTheme.typography.labelSmall,
                                         maxLines = 1,
@@ -206,7 +198,7 @@ internal fun ChartsContent(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        Text(
+                        AppText(
                             text = stringResource(
                                 R.string.charts_from,
                                 dateFormat.format(Date(dateRange.from))
@@ -224,7 +216,7 @@ internal fun ChartsContent(
                                 modifier = Modifier.size(20.dp)
                             )
                         }
-                        Text(
+                        AppText(
                             text = stringResource(
                                 R.string.charts_to,
                                 dateFormat.format(Date(dateRange.to))
@@ -585,12 +577,12 @@ internal fun ChartsContent(
                     state.selectedDateMillis?.let { onDateRangeChanged(it, dateRange.to) }
                     selectedPreset = -1
                     showFromPicker = false
-                }) { Text(stringResource(R.string.dialog_ok)) }
+                }) { AppText(stringResource(R.string.dialog_ok)) }
             },
             dismissButton = {
                 TextButton(onClick = {
                     showFromPicker = false
-                }) { Text(stringResource(R.string.dialog_cancel)) }
+                }) { AppText(stringResource(R.string.dialog_cancel)) }
             },
         ) { DatePicker(state = state) }
     }
@@ -603,12 +595,12 @@ internal fun ChartsContent(
                     state.selectedDateMillis?.let { onDateRangeChanged(dateRange.from, it) }
                     selectedPreset = -1
                     showToPicker = false
-                }) { Text(stringResource(R.string.dialog_ok)) }
+                }) { AppText(stringResource(R.string.dialog_ok)) }
             },
             dismissButton = {
                 TextButton(onClick = {
                     showToPicker = false
-                }) { Text(stringResource(R.string.dialog_cancel)) }
+                }) { AppText(stringResource(R.string.dialog_cancel)) }
             },
         ) { DatePicker(state = state) }
     }
@@ -632,7 +624,7 @@ private fun SummaryCard(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text(
+            AppText(
                 text = state.label,
                 style = MaterialTheme.typography.labelSmall,
                 color = state.contentColor.copy(alpha = 0.8f),
@@ -640,7 +632,7 @@ private fun SummaryCard(
                 maxLines = 1
             )
             Spacer(modifier = Modifier.height(4.dp))
-            Text(
+            AppText(
                 text = formatAmount(abs(state.amount), state.fmt),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,

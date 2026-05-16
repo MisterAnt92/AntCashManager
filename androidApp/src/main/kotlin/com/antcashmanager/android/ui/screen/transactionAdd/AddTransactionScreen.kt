@@ -10,18 +10,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Logger
-import com.antcashmanager.android.AntCashManagerApp
+import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.screen.transactionAdd.view.CategorySelectionStep
 import com.antcashmanager.android.ui.screen.transactionAdd.view.DetailsStep
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.TransactionType
-import com.antcashmanager.domain.repository.CategoryRepository
-import com.antcashmanager.domain.repository.TransactionRepository
+import org.koin.compose.koinInject
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 // ══════════════════════════════════════════════════════════════════════════════
 // SCREEN
@@ -29,29 +26,16 @@ import com.antcashmanager.domain.repository.TransactionRepository
 
 @Composable
 fun AddTransactionScreen(
-    transactionRepository: TransactionRepository,
-    categoryRepository: CategoryRepository,
     transactionId: Long? = null,
     onNavigateBack: () -> Unit,
     onTransactionAdded: () -> Unit,
 ) {
     Logger.d("AddTransactionScreen") { "Displaying AddTransactionScreen" }
 
-    val viewModel: AddTransactionViewModel = viewModel(
-        factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                AddTransactionViewModel(
-                    transactionRepository,
-                    categoryRepository,
-                    transactionId,
-                ) as T
-        },
-    )
+    val viewModel: AddTransactionViewModel = koinViewModel { parametersOf(transactionId) }
+    val analyticsManager: AnalyticsManager = koinInject()
 
     val state by viewModel.state.collectAsState()
-    val analyticsManager =
-        (LocalContext.current.applicationContext as AntCashManagerApp).analyticsManager
 
     // Naviga indietro quando la transazione è stata salvata con successo
     LaunchedEffect(state.isTransactionSaved) {

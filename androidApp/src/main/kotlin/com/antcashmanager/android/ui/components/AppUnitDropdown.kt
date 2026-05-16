@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,7 +41,7 @@ fun AppUnitDropdown(
             value = selectedValue,
             onValueChange = {},
             readOnly = true,
-            label = { Text(label) },
+            label = { AppText(label) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             shape = shape,
             modifier = modifier
@@ -52,7 +53,7 @@ fun AppUnitDropdown(
         ) {
             menuItems.forEach { unit ->
                 DropdownMenuItem(
-                    text = { Text(unit) },
+                    text = { AppText(unit) },
                     onClick = {
                         onValueChange(unit)
                     }

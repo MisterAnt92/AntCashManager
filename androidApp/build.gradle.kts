@@ -60,6 +60,9 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.firebase.analytics)
     implementation(libs.mlkit.text.recognition)
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
+    implementation(libs.koin.compose)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 

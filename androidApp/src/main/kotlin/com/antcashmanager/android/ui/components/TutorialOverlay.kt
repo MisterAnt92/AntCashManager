@@ -1,6 +1,10 @@
 package com.antcashmanager.android.ui.components
 
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,13 +17,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -84,6 +91,9 @@ fun TutorialOverlay(
         ),
     )
 
+    var welcomeVisible by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) { welcomeVisible = true }
+
     val step = steps[currentStep]
     val isLastStep = currentStep == steps.lastIndex
     val isWelcomeStep = currentStep == 0
@@ -106,31 +116,44 @@ fun TutorialOverlay(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 24.dp, ),
+                .padding(horizontal = 16.dp, vertical = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            AppText(
-                text = stringResource(step.titleRes),
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth(0.96f)
-                    .semantics { heading() },
-            )
+            // Animazione fade + slide-up solo per il primo step (welcome)
+            val contentVisible = !isWelcomeStep || welcomeVisible
+            val enterTransition = if (isWelcomeStep) {
+                fadeIn(tween(durationMillis = 600)) +
+                    slideInVertically(tween(durationMillis = 600)) { it / 4 }
+            } else {
+                fadeIn(tween(durationMillis = 0))
+            }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            AnimatedVisibility(visible = contentVisible, enter = enterTransition) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    AppText(
+                        text = stringResource(step.titleRes),
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth(0.96f)
+                            .semantics { heading() },
+                    )
 
-            AppText(
-                text = stringResource(step.descRes),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(0.90f),
-            )
+                    Spacer(modifier = Modifier.height(12.dp))
 
-            Spacer(modifier = Modifier.height(20.dp))
+                    AppText(
+                        text = stringResource(step.descRes),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(0.90f),
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
+            }
 
             if (step.imageRes != null) {
                 Box(
@@ -152,6 +175,11 @@ fun TutorialOverlay(
                     )
                 }
             } else if (isWelcomeStep) {
+                AnimatedVisibility(
+                    visible = welcomeVisible,
+                    enter = fadeIn(tween(durationMillis = 700, delayMillis = 300)) +
+                        slideInVertically(tween(durationMillis = 700, delayMillis = 300)) { it / 3 },
+                ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth(0.96f)
@@ -160,19 +188,60 @@ fun TutorialOverlay(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    welcomeHighlights.forEachIndexed { index, textRes ->
-                        AppText(
-                            text = "• ${stringResource(textRes)}",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth(0.9f),
-                        )
-                        if (index < welcomeHighlights.lastIndex) {
-                            Spacer(modifier = Modifier.height(8.dp))
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(24.dp),
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        tonalElevation = 3.dp,
+                        shadowElevation = 2.dp,
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(10.dp),
+                        ) {
+                            welcomeHighlights.forEachIndexed { index, textRes ->
+                                Surface(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shape = RoundedCornerShape(14.dp),
+                                    color = MaterialTheme.colorScheme.surfaceVariant,
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 12.dp, vertical = 10.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(28.dp)
+                                                .clip(CircleShape)
+                                                .background(MaterialTheme.colorScheme.primary),
+                                            contentAlignment = Alignment.Center,
+                                        ) {
+                                            AppText(
+                                                text = "${index + 1}",
+                                                style = MaterialTheme.typography.labelLarge,
+                                                color = MaterialTheme.colorScheme.onPrimary,
+                                                fontWeight = FontWeight.Bold,
+                                            )
+                                        }
+                                        AppText(
+                                            text = stringResource(textRes),
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            color = MaterialTheme.colorScheme.onSurface,
+                                            textAlign = TextAlign.Start,
+                                            modifier = Modifier.weight(1f),
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }
+                } // end AnimatedVisibility welcome highlights
             }
 
             Row(

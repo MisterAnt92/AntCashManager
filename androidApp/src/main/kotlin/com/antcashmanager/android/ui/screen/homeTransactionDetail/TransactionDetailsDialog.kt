@@ -24,7 +24,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.home.view.getRecurrenceIntervalLabel
@@ -37,6 +36,7 @@ import com.antcashmanager.domain.model.TransactionType
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import org.koin.androidx.compose.koinViewModel
 
 private val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
 private val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
@@ -47,8 +47,23 @@ fun TransactionDetailsDialog(
     transaction: Transaction,
     onDismiss: () -> Unit,
 ) {
+    val viewModel: TransactionDetailsViewModel = koinViewModel()
+
+    TransactionDetailsDialogContent(
+        transaction = transaction,
+        onDismiss = onDismiss,
+        onShareTransaction = viewModel::shareTransaction,
+    )
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun TransactionDetailsDialogContent(
+    transaction: Transaction,
+    onDismiss: () -> Unit,
+    onShareTransaction: (Transaction, android.content.Context) -> Unit,
+) {
     val context = LocalContext.current
-    val viewModel: TransactionDetailsViewModel = viewModel()
     val isIncome = transaction.type == TransactionType.INCOME
 
     AlertDialog(
@@ -218,7 +233,7 @@ fun TransactionDetailsDialog(
         dismissButton = {
             TextButton(
                 onClick = {
-                    viewModel.shareTransaction(transaction, context)
+                    onShareTransaction(transaction, context)
                 }
             ) {
                 AppText(
@@ -235,7 +250,7 @@ fun TransactionDetailsDialog(
 @Composable
 private fun TransactionDetailsDialogIncomePreview() {
     AntCashManagerTheme(dynamicColor = false) {
-        TransactionDetailsDialog(
+        TransactionDetailsDialogContent(
             transaction = Transaction(
                 id = 1,
                 title = "Salary Payment",
@@ -252,6 +267,7 @@ private fun TransactionDetailsDialogIncomePreview() {
                 paymentType = PaymentType.ELECTRONIC,
             ),
             onDismiss = {},
+            onShareTransaction = { _, _ -> },
         )
     }
 }
@@ -260,7 +276,7 @@ private fun TransactionDetailsDialogIncomePreview() {
 @Composable
 private fun TransactionDetailsDialogExpensePreview() {
     AntCashManagerTheme(dynamicColor = false) {
-        TransactionDetailsDialog(
+        TransactionDetailsDialogContent(
             transaction = Transaction(
                 id = 2,
                 title = "Groceries",
@@ -273,6 +289,7 @@ private fun TransactionDetailsDialogExpensePreview() {
                 paymentType = PaymentType.CASH,
             ),
             onDismiss = {},
+            onShareTransaction = { _, _ -> },
         )
     }
 }

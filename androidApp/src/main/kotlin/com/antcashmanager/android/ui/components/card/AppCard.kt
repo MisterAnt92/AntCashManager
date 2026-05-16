@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 /**
@@ -101,7 +102,7 @@ fun AppCard(
                     Spacer(modifier = Modifier.width(16.dp))
                 }
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
+                    AppText(
                         text = title,
                         style = MaterialTheme.typography.titleMedium,
                         color = if (enabled) {
@@ -113,7 +114,7 @@ fun AppCard(
                         overflow = TextOverflow.Ellipsis,
                     )
                     if (subtitle != null) {
-                        Text(
+                        AppText(
                             text = subtitle,
                             style = MaterialTheme.typography.bodyMedium,
                             color = if (enabled) {
@@ -150,7 +151,7 @@ fun AppCardSectionHeader(
     title: String,
     modifier: Modifier = Modifier,
 ) {
-    Text(
+    AppText(
         text = title,
         style = MaterialTheme.typography.labelLarge,
         color = MaterialTheme.colorScheme.primary,

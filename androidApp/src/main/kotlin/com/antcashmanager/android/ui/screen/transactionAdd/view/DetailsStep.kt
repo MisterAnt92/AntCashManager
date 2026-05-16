@@ -108,12 +108,12 @@ internal fun DetailsStep(
                         onEvent(AddTransactionEvent.DismissDatePicker)
                     },
                 ) {
-                    Text(stringResource(R.string.common_confirm))
+                    AppText(stringResource(R.string.common_confirm))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { onEvent(AddTransactionEvent.DismissDatePicker) }) {
-                    Text(stringResource(R.string.common_cancel))
+                    AppText(stringResource(R.string.common_cancel))
                 }
             },
         ) {
@@ -151,7 +151,7 @@ internal fun DetailsStep(
                 TextButton(
                     onClick = { onEvent(AddTransactionEvent.ConfirmDelete) }
                 ) {
-                    Text(
+                    AppText(
                         stringResource(R.string.dialog_delete),
                         color = MaterialTheme.colorScheme.error
                     )
@@ -159,7 +159,7 @@ internal fun DetailsStep(
             },
             dismissButton = {
                 TextButton(onClick = { onEvent(AddTransactionEvent.DismissDeleteConfirmDialog) }) {
-                    Text(stringResource(R.string.dialog_cancel))
+                    AppText(stringResource(R.string.dialog_cancel))
                 }
             },
         )
@@ -276,8 +276,8 @@ internal fun DetailsStep(
 
                     onEvent(AddTransactionEvent.UpdateAmount(finalValue))
                 },
-                label = { Text(stringResource(R.string.add_transaction_amount_required)) },
-                placeholder = { Text("0.00") },
+                label = { AppText(stringResource(R.string.add_transaction_amount_required)) },
+                placeholder = { AppText("0.00") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier.fillMaxWidth(),
@@ -457,7 +457,7 @@ private fun TagSelector(
         OutlinedTextField(
             value = tagInput,
             onValueChange = { tagInput = it },
-            label = { Text(stringResource(R.string.add_transaction_tags_placeholder)) },
+            label = { AppText(stringResource(R.string.add_transaction_tags_placeholder)) },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
             trailingIcon = {
@@ -488,7 +488,7 @@ private fun TagSelector(
                     InputChip(
                         selected = true,
                         onClick = { },
-                        label = { Text(tag) },
+                        label = { AppText(tag) },
                         trailingIcon = {
                             Icon(
                                 Icons.Default.Close,
@@ -537,7 +537,7 @@ private fun TagSelector(
                             onTagsChange(newTags)
                             tagInput = ""
                         },
-                        label = { Text(suggestion, style = MaterialTheme.typography.labelSmall) },
+                        label = { AppText(suggestion, style = MaterialTheme.typography.labelSmall) },
                         shape = RoundedCornerShape(12.dp)
                     )
                 }

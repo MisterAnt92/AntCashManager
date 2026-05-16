@@ -7,7 +7,6 @@ import com.antcashmanager.android.data.backup.BackupService
 import com.antcashmanager.android.security.BackupPayloadCipher
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
-import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,12 +23,10 @@ import java.util.Locale
  */
 class SettingsDataViewModel(
     settingsRepository: SettingsRepository,
-    transactionRepository: TransactionRepository,
     private val categoryRepository: CategoryRepository,
+    private val deleteAllTransactionsUseCase: DeleteAllTransactionsUseCase,
+    private val backupService: BackupService,
 ) : ViewModel() {
-
-    private val deleteAllTransactionsUseCase = DeleteAllTransactionsUseCase(transactionRepository)
-    private val backupService = BackupService(transactionRepository, categoryRepository)
     private val settingsRepositoryRef = settingsRepository
 
     private val _state = MutableStateFlow(SettingsDataState())

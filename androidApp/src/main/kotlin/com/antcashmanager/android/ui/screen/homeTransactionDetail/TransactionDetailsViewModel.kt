@@ -3,6 +3,7 @@ package com.antcashmanager.android.ui.screen.homeTransactionDetail
 import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.ViewModel
+import com.antcashmanager.android.R
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.usecase.ShareTransactionUseCase
@@ -12,8 +13,9 @@ import com.antcashmanager.domain.usecase.ShareTransactionUseCase
  * Gestisce la logica di condivisione utilizzando lo use case
  * Segue la Clean Architecture Pattern
  */
-class TransactionDetailsViewModel : ViewModel() {
-    private val shareTransactionUseCase = ShareTransactionUseCase()
+class TransactionDetailsViewModel(
+    private val shareTransactionUseCase: ShareTransactionUseCase,
+) : ViewModel() {
 
     /**
      * Condivide i dati della transazione usando lo use case
@@ -38,7 +40,7 @@ class TransactionDetailsViewModel : ViewModel() {
         }
         // Avvia il chooser
         context.startActivity(
-            Intent.createChooser(shareIntent, "Share Transaction")
+            Intent.createChooser(shareIntent, context.getString(R.string.transaction_details_share))
         )
     }
 }

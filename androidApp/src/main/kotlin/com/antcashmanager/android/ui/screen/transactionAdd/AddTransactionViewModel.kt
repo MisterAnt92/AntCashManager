@@ -78,17 +78,28 @@ sealed interface AddTransactionEvent {
 
 class AddTransactionViewModel(
     private val transactionRepository: TransactionRepository,
-    private val categoryRepository: CategoryRepository,
+    private val getCategoriesUseCase: GetCategoriesUseCase,
+    private val insertTransactionUseCase: InsertTransactionUseCase,
+    private val updateTransactionUseCase: UpdateTransactionUseCase,
+    private val deleteTransactionUseCase: DeleteTransactionUseCase,
+    private val getTransactionSuggestionsUseCase: GetTransactionSuggestionsUseCase,
     private val transactionId: Long? = null,
 ) : ViewModel() {
 
-    // ── UseCases ──
-    private val insertTransactionUseCase = InsertTransactionUseCase(transactionRepository)
-    private val updateTransactionUseCase = UpdateTransactionUseCase(transactionRepository)
-    private val getCategoriesUseCase = GetCategoriesUseCase(categoryRepository)
-    private val deleteTransactionUseCase = DeleteTransactionUseCase(transactionRepository)
-    private val getTransactionSuggestionsUseCase =
-        GetTransactionSuggestionsUseCase(transactionRepository)
+    constructor(
+        transactionRepository: TransactionRepository,
+        categoryRepository: CategoryRepository,
+        transactionId: Long? = null,
+    ) : this(
+        transactionRepository = transactionRepository,
+        getCategoriesUseCase = GetCategoriesUseCase(categoryRepository),
+        insertTransactionUseCase = InsertTransactionUseCase(transactionRepository),
+        updateTransactionUseCase = UpdateTransactionUseCase(transactionRepository),
+        deleteTransactionUseCase = DeleteTransactionUseCase(transactionRepository),
+        getTransactionSuggestionsUseCase = GetTransactionSuggestionsUseCase(transactionRepository),
+        transactionId = transactionId,
+    )
+
 
     // ── State ──
     private val _state = MutableStateFlow(AddTransactionState())

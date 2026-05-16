@@ -49,8 +49,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
@@ -73,8 +71,9 @@ import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.SettingsRepository
-import com.antcashmanager.domain.repository.TransactionRepository
 import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
+import org.koin.androidx.compose.koinViewModel
 
 // ══════════════════════════════════════════════════════════════════════════════
 // SCREEN
@@ -82,20 +81,13 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(
-    transactionRepository: TransactionRepository,
-    settingsRepository: SettingsRepository,
-    categoryRepository: com.antcashmanager.domain.repository.CategoryRepository,
+    navController: androidx.navigation.NavController,
     modifier: Modifier = Modifier,
 ) {
     Logger.d("HomeScreen") { "Displaying HomeScreen" }
 
-    val viewModel: HomeViewModel = viewModel(
-        factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                HomeViewModel(transactionRepository, settingsRepository, categoryRepository) as T
-        },
-    )
+    val viewModel: HomeViewModel = koinViewModel()
+    val settingsRepository: SettingsRepository = koinInject()
 
     val state by viewModel.state.collectAsState()
 
@@ -173,12 +165,12 @@ internal fun HomeContent(
                         showFromDatePicker = false
                     },
                 ) {
-                    Text(stringResource(R.string.common_confirm))
+                    AppText(stringResource(R.string.common_confirm))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showFromDatePicker = false }) {
-                    Text(stringResource(R.string.common_cancel))
+                    AppText(stringResource(R.string.common_cancel))
                 }
             },
         ) {
@@ -200,12 +192,12 @@ internal fun HomeContent(
                         showToDatePicker = false
                     },
                 ) {
-                    Text(stringResource(R.string.common_confirm))
+                    AppText(stringResource(R.string.common_confirm))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showToDatePicker = false }) {
-                    Text(stringResource(R.string.common_cancel))
+                    AppText(stringResource(R.string.common_cancel))
                 }
             },
         ) {

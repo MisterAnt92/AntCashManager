@@ -6,11 +6,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.antcashmanager.domain.model.AppTheme
-import com.antcashmanager.domain.repository.SettingsRepository
+import org.koin.androidx.compose.koinViewModel
 
 /**
  * CompositionLocal che espone il ThemeViewModel (opzionale) per chi vuole
@@ -20,25 +17,16 @@ val LocalThemeViewModel = staticCompositionLocalOf<ThemeViewModel?> { null }
 
 /**
  * Provider composable che centralizza la gestione del tema.
- * Avvolge l'app con `AntCashManagerTheme` usando le preferenze lette dal
- * `SettingsRepository` (via `ThemeViewModel`).
+ * Il [ThemeViewModel] viene ottenuto tramite Koin (nessun parametro repository necessario).
  *
- * Usage:
- * AppThemeProvider(settingsRepository = repo) { AppContent() }
+ * Usage: AppThemeProvider { AppContent() }
  */
 @Composable
 fun AppThemeProvider(
-    settingsRepository: SettingsRepository,
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit,
 ) {
-    val viewModel: ThemeViewModel = viewModel(
-        factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                ThemeViewModel(settingsRepository) as T
-        }
-    )
+    val viewModel: ThemeViewModel = koinViewModel()
 
     val appTheme by viewModel.appTheme.collectAsState(initial = AppTheme.SYSTEM)
     val highContrast by viewModel.highContrast.collectAsState(initial = false)
@@ -64,4 +52,3 @@ fun AppThemeProvider(
         }
     }
 }
-

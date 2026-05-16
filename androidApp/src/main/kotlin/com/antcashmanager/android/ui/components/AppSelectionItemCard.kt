@@ -91,7 +91,7 @@ fun AppSelectionItemCard(
         Column(
             modifier = Modifier.weight(1f),
         ) {
-            Text(
+            AppText(
                 text = label,
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,

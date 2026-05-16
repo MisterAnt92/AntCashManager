@@ -12,7 +12,10 @@ import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.receipt.CreateTransactionFromReceiptParams
 import com.antcashmanager.domain.usecase.receipt.CreateTransactionFromReceiptUseCase
 import com.antcashmanager.domain.usecase.receipt.ScanReceiptUseCase
+import com.antcashmanager.domain.usecase.transaction.GetTransactionSuggestionsUseCase
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,21 +30,40 @@ import kotlinx.coroutines.launch
  * - Scansione OCR tramite [ScanReceiptUseCase] (iniettato, mockabile nei test)
  * - Caricamento categorie EXPENSE tramite [GetCategoriesUseCase]
  * - Creazione transazione tramite [CreateTransactionFromReceiptUseCase]
+ * - Suggerimenti storici tramite [GetTransactionSuggestionsUseCase]
  *
  * @param scanReceiptUseCase UseCase per OCR + parsing. Iniettato per testabilità.
- * @param transactionRepository Repository transazioni.
- * @param categoryRepository Repository categorie.
+ * @param createTransactionUseCase UseCase per salvare la transazione generata.
+ * @param getCategoriesUseCase UseCase per caricare le categorie disponibili.
+ * @param getTransactionSuggestionsUseCase UseCase per arricchire titolo e luogo da storico.
  */
 class ReceiptScanViewModel(
     private val scanReceiptUseCase: ScanReceiptUseCase,
-    private val transactionRepository: TransactionRepository,
-    private val categoryRepository: CategoryRepository,
+    private val createTransactionUseCase: CreateTransactionFromReceiptUseCase,
+    private val getCategoriesUseCase: GetCategoriesUseCase,
+    private val getTransactionSuggestionsUseCase: GetTransactionSuggestionsUseCase,
 ) : ViewModel() {
 
-    // ── UseCases ──────────────────────────────────────────────────────────────
-    private val createTransactionUseCase =
-        CreateTransactionFromReceiptUseCase(transactionRepository)
-    private val getCategoriesUseCase = GetCategoriesUseCase(categoryRepository)
+    constructor(
+        scanReceiptUseCase: ScanReceiptUseCase,
+        transactionRepository: TransactionRepository,
+        categoryRepository: CategoryRepository,
+        dispatcher: CoroutineDispatcher = Dispatchers.Default,
+    ) : this(
+        scanReceiptUseCase = scanReceiptUseCase,
+        createTransactionUseCase = CreateTransactionFromReceiptUseCase(
+            transactionRepository = transactionRepository,
+            dispatcher = dispatcher,
+        ),
+        getCategoriesUseCase = GetCategoriesUseCase(
+            categoryRepository = categoryRepository,
+            dispatcher = dispatcher,
+        ),
+        getTransactionSuggestionsUseCase = GetTransactionSuggestionsUseCase(
+            repository = transactionRepository,
+            dispatcher = dispatcher,
+        ),
+    )
 
     // ── State ─────────────────────────────────────────────────────────────────
     private val _state = MutableStateFlow(ReceiptScanState())
@@ -236,13 +258,9 @@ class ReceiptScanViewModel(
 
     private fun loadSuggestions() {
         viewModelScope.launch {
-            transactionRepository.getDistinctTitles().collect { titles ->
-                distinctTitles = titles
-            }
-        }
-        viewModelScope.launch {
-            transactionRepository.getDistinctLocations().collect { locations ->
-                distinctLocations = locations
+            getTransactionSuggestionsUseCase().collect { suggestions ->
+                distinctTitles = suggestions.titles
+                distinctLocations = suggestions.locations
             }
         }
     }

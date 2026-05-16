@@ -15,13 +15,18 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class CategoriesViewModel(
-    private val categoryRepository: CategoryRepository,
+    private val getCategoriesUseCase: GetCategoriesUseCase,
+    private val insertCategoryUseCase: InsertCategoryUseCase,
+    private val updateCategoryUseCase: UpdateCategoryUseCase,
+    private val deleteCategoryUseCase: DeleteCategoryUseCase,
 ) : ViewModel() {
 
-    private val getCategoriesUseCase = GetCategoriesUseCase(categoryRepository)
-    private val insertCategoryUseCase = InsertCategoryUseCase(categoryRepository)
-    private val updateCategoryUseCase = UpdateCategoryUseCase(categoryRepository)
-    private val deleteCategoryUseCase = DeleteCategoryUseCase(categoryRepository)
+    constructor(categoryRepository: CategoryRepository) : this(
+        getCategoriesUseCase = GetCategoriesUseCase(categoryRepository),
+        insertCategoryUseCase = InsertCategoryUseCase(categoryRepository),
+        updateCategoryUseCase = UpdateCategoryUseCase(categoryRepository),
+        deleteCategoryUseCase = DeleteCategoryUseCase(categoryRepository),
+    )
 
     private val _state = MutableStateFlow(CategoriesState())
     val state: StateFlow<CategoriesState> = _state
@@ -30,7 +35,13 @@ class CategoriesViewModel(
         viewModelScope.launch {
             getCategoriesUseCase().collect { result ->
                 result.onSuccess { cats ->
-                    _state.update { it.copy(categories = cats) }
+                    _state.update {
+                        it.copy(
+                            categories = cats,
+                            expenseCategories = cats.filter { category -> category.type == "EXPENSE" },
+                            incomeCategories = cats.filter { category -> category.type == "INCOME" },
+                        )
+                    }
                 }.onFailure { error ->
                     if (error is kotlinx.coroutines.CancellationException) throw error
                     Logger.e(
@@ -38,16 +49,6 @@ class CategoriesViewModel(
                         error
                     ) { "Error loading categories: ${error.message}" }
                 }
-            }
-        }
-        viewModelScope.launch {
-            categoryRepository.getCategoriesByType("EXPENSE").collect { cats ->
-                _state.update { it.copy(expenseCategories = cats) }
-            }
-        }
-        viewModelScope.launch {
-            categoryRepository.getCategoriesByType("INCOME").collect { cats ->
-                _state.update { it.copy(incomeCategories = cats) }
             }
         }
     }

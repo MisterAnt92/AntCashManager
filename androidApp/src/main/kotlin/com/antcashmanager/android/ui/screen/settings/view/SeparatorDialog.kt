@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AppListItem
 import com.antcashmanager.android.ui.components.AppRadioButton
+import com.antcashmanager.android.ui.components.text.AppText
 
 @Composable
 fun SeparatorDialog(
@@ -31,12 +32,12 @@ fun SeparatorDialog(
                 tint = MaterialTheme.colorScheme.primary,
             )
         },
-        title = { Text(title) },
+        title = { AppText(title) },
         text = {
             Column {
                 options.forEach { (value, label) ->
                     AppListItem(
-                        headlineContent = { Text(label) },
+                        headlineContent = { AppText(label) },
                         leadingContent = {
                             AppRadioButton(
                                 selected = value == currentValue,
@@ -48,7 +49,7 @@ fun SeparatorDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.dialog_cancel)) }
+            TextButton(onClick = onDismiss) { AppText(stringResource(R.string.dialog_cancel)) }
         },
     )
 }

@@ -47,23 +47,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.antcashmanager.android.R
-import com.antcashmanager.android.data.receipt.MlKitReceiptOcrService
 import com.antcashmanager.android.ui.components.AppSelectionItemCard
 import com.antcashmanager.android.ui.components.button.AppButton
+import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.transactionAdd.view.CategorySelectionDialog
 import com.antcashmanager.android.ui.screen.transactionAdd.view.PaymentTypeSelectionDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
-import com.antcashmanager.domain.repository.CategoryRepository
-import com.antcashmanager.domain.repository.TransactionRepository
-import com.antcashmanager.domain.usecase.receipt.ScanReceiptUseCase
 import kotlinx.coroutines.launch
 import java.io.File
+import org.koin.androidx.compose.koinViewModel
 
 // ══════════════════════════════════════════════════════════════════════════════
 // SCREEN ENTRY POINT
@@ -75,26 +71,11 @@ import java.io.File
  */
 @Composable
 fun ReceiptScanScreen(
-    transactionRepository: TransactionRepository,
-    categoryRepository: CategoryRepository,
     onNavigateBack: () -> Unit,
     onTransactionSaved: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val viewModel: ReceiptScanViewModel = viewModel(
-        factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                val ocrService = MlKitReceiptOcrService()
-                val scanUseCase = ScanReceiptUseCase(ocrService)
-                return ReceiptScanViewModel(
-                    scanUseCase,
-                    transactionRepository,
-                    categoryRepository
-                ) as T
-            }
-        },
-    )
+    val viewModel: ReceiptScanViewModel = koinViewModel()
 
     val state by viewModel.state.collectAsState()
 
@@ -161,7 +142,7 @@ internal fun ReceiptScanContent(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.receipt_scan_title)) },
+                title = { AppText(stringResource(R.string.receipt_scan_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
@@ -278,7 +259,7 @@ private fun CaptureStep(
             tint = MaterialTheme.colorScheme.primary,
         )
         Spacer(modifier = Modifier.height(24.dp))
-        Text(
+        AppText(
             text = stringResource(R.string.receipt_scan_capture_hint),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
@@ -314,7 +295,7 @@ private fun ProcessingStep(modifier: Modifier = Modifier) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             CircularProgressIndicator()
             Spacer(modifier = Modifier.height(16.dp))
-            Text(
+            AppText(
                 text = stringResource(R.string.receipt_scan_processing),
                 style = MaterialTheme.typography.bodyLarge,
             )
@@ -382,7 +363,7 @@ private fun ReviewStep(
         OutlinedTextField(
             value = state.title,
             onValueChange = onUpdateTitle,
-            label = { Text(stringResource(R.string.receipt_scan_title_label)) },
+            label = { AppText(stringResource(R.string.receipt_scan_title_label)) },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
             singleLine = true,
@@ -392,7 +373,7 @@ private fun ReviewStep(
         OutlinedTextField(
             value = state.payee,
             onValueChange = onUpdatePayee,
-            label = { Text(stringResource(R.string.receipt_scan_payee_label)) },
+            label = { AppText(stringResource(R.string.receipt_scan_payee_label)) },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
             singleLine = true,
@@ -402,7 +383,7 @@ private fun ReviewStep(
         OutlinedTextField(
             value = state.location,
             onValueChange = onUpdateLocation,
-            label = { Text(stringResource(R.string.receipt_scan_location_label)) },
+            label = { AppText(stringResource(R.string.receipt_scan_location_label)) },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
             singleLine = true,
@@ -412,7 +393,7 @@ private fun ReviewStep(
         OutlinedTextField(
             value = state.notes,
             onValueChange = onUpdateNotes,
-            label = { Text(stringResource(R.string.add_transaction_notes_label)) },
+            label = { AppText(stringResource(R.string.add_transaction_notes_label)) },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
             minLines = 3,
@@ -453,19 +434,19 @@ private fun ReceiptAmountCard(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(
+        AppText(
             text = stringResource(R.string.receipt_scan_total_label),
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
         )
-        Text(
+        AppText(
             text = stringResource(R.string.settings_format_preview, "€ %.2f".format(amount)),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
         )
         if (vatNote.isNotBlank()) {
-            Text(
+            AppText(
                 text = vatNote,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,

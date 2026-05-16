@@ -72,7 +72,7 @@ internal fun CategorySelectionDialog(
         confirmButton = {},
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.add_transaction_cancel))
+                AppText(stringResource(R.string.add_transaction_cancel))
             }
         },
     )
@@ -107,7 +107,7 @@ internal fun TypeSelectionDialog(
         confirmButton = {},
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.add_transaction_cancel))
+                AppText(stringResource(R.string.add_transaction_cancel))
             }
         },
     )
@@ -174,7 +174,7 @@ internal fun PaymentTypeSelectionDialog(
         confirmButton = {},
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.add_transaction_cancel))
+                AppText(stringResource(R.string.add_transaction_cancel))
             }
         },
     )
