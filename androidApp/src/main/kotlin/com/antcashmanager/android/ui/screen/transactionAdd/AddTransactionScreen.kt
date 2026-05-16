@@ -37,6 +37,13 @@ fun AddTransactionScreen(
 
     val state by viewModel.state.collectAsState()
 
+    LaunchedEffect(transactionId) {
+        val params = Bundle().apply {
+            putString("mode", if (transactionId != null) "update" else "create")
+        }
+        analyticsManager.logEvent("transaction_form_opened", params)
+    }
+
     // Naviga indietro quando la transazione è stata salvata con successo
     LaunchedEffect(state.isTransactionSaved) {
         if (state.isTransactionSaved) {
@@ -52,7 +59,10 @@ fun AddTransactionScreen(
     AddTransactionContent(
         state = state,
         onEvent = { event -> viewModel.onEvent(event) },
-        onNavigateBack = onNavigateBack,
+        onNavigateBack = {
+            analyticsManager.logEvent("transaction_form_cancelled")
+            onNavigateBack()
+        },
     )
 }
 

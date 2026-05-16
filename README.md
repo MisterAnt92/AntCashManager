@@ -147,6 +147,44 @@ Examples:
 - `backup_create_requested`
 - `backup_file_saved`
 
+## Privacy and Usage-Only Analytics
+
+AntCashManager tracks only app usage signals and does not intentionally send personal user content
+through custom analytics events.
+
+Allowed custom events:
+
+- `transactions_filter_applied`
+- `transactions_filter_cleared`
+- `transaction_add_opened`
+- `receipt_scan_opened`
+- `transaction_form_opened`
+- `transaction_form_cancelled`
+- `transaction_submit_success`
+- `backup_create_requested`
+- `backup_file_saved`
+- `backup_file_save_error`
+- `restore_open_requested`
+- `restore_file_selected`
+- `delete_all_data_confirmed`
+- `reset_preferences_confirmed`
+
+In addition, Firebase standard `screen_view` is emitted for navigation statistics.
+
+Blocked from custom analytics by policy:
+
+- free-text fields (notes, search text, titles)
+- payee/location/tags and similar user-entered content
+- raw error messages and exception details
+- email or any direct personal identifier
+
+Full privacy policy page (English reference): [`wiki/privacy-policy.html`](wiki/privacy-policy.html)
+
+Localized versions:
+- German: [`wiki/privacy-policy-de.html`](wiki/privacy-policy-de.html)
+- French: [`wiki/privacy-policy-fr.html`](wiki/privacy-policy-fr.html)
+- Spanish: [`wiki/privacy-policy-es.html`](wiki/privacy-policy-es.html)
+
 ## License
 
 This project is distributed under the terms in [LICENSE](LICENSE).

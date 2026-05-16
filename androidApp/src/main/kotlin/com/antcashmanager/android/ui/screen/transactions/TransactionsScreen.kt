@@ -126,8 +126,14 @@ fun TransactionsScreen(
                 when (event) {
                     is TransactionsEvent.ApplyFilters -> {
                         val params = Bundle().apply {
-                            putString("search_query", state.pendingSearchQuery.take(40))
-                            putString("category", state.pendingCategory ?: "all")
+                            putString(
+                                "has_search_query",
+                                if (state.pendingSearchQuery.isNotBlank()) "yes" else "no",
+                            )
+                            putString(
+                                "has_category_filter",
+                                if (state.pendingCategory != null) "yes" else "no",
+                            )
                             putString(
                                 "transaction_type",
                                 state.pendingTransactionType?.name ?: "all"
@@ -162,6 +168,7 @@ fun TransactionsScreen(
 internal fun TransactionsContent(
     params: TransactionsContentParams,
 ) {
+    val analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager = koinInject()
     val state = params.state
     val onEvent = params.onEvent
     val settingsRepository = params.settingsRepository
@@ -463,7 +470,10 @@ internal fun TransactionsContent(
             ) {
                 // FloatingActionButton scan receipt (sempre visibile)
                 FloatingActionButton(
-                    onClick = { navController?.navigate("receipt_scan") },
+                    onClick = {
+                        analyticsManager.logEvent("receipt_scan_opened")
+                        navController?.navigate("receipt_scan")
+                    },
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                 ) {
                     Icon(
@@ -475,7 +485,10 @@ internal fun TransactionsContent(
 
                 // FloatingActionButton add transaction (sempre visibile)
                 FloatingActionButton(
-                    onClick = { navController?.navigate("add_transaction") },
+                    onClick = {
+                        analyticsManager.logEvent("transaction_add_opened")
+                        navController?.navigate("add_transaction")
+                    },
                     containerColor = MaterialTheme.colorScheme.primary,
                 ) {
                     Icon(

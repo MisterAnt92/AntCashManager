@@ -380,6 +380,11 @@ internal fun SettingsContent(
                 subtitle = versionName,
                 leadingIcon = Icons.Default.Info,
                 showChevron = false,
+                onClick = {
+                    if (BuildConfig.DEBUG) {
+                        throw RuntimeException("Test Crashlytics")
+                    }
+                },
             )
 
             // ── Third-party Libraries Section ──

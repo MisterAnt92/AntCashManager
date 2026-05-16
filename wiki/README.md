@@ -34,6 +34,12 @@ Documentazione tecnica e operativa del progetto.
 - Contiene: schema input/output, validazioni, esempi log, codici errore.
 - Quando usarlo: manutenzione o estensione script Python.
 
+### 5) Privacy Policy (HTML)
+- File: `wiki/privacy-policy.html`
+- Contiene: policy privacy ufficiale con focus usage-only analytics (riferimento inglese).
+- Quando usarlo: riferimento da README/app store/documentazione esterna.
+- Localizzazioni: `wiki/privacy-policy-de.html`, `wiki/privacy-policy-fr.html`, `wiki/privacy-policy-es.html`.
+
 ## Flusso Consigliato
 
 1. Parti da `wiki/ARCHITECTURE_GUIDELINES.md` per verificare i vincoli architetturali.
@@ -46,4 +52,36 @@ Documentazione tecnica e operativa del progetto.
 - Mantieni allineati versione e package con `androidApp/build.gradle.kts`.
 - Se cambi script di conversione, aggiorna sia `wiki/CONVERSION_GUIDE.md` sia `wiki/SCRIPT_CONVERSION_README.md`.
 - Se cambi pattern architetturali, aggiorna prima `wiki/ARCHITECTURE_GUIDELINES.md`.
+
+## Privacy - Usage-Only Analytics
+
+Gli analytics custom devono tracciare solo utilizzo dell'app (no contenuti personali).
+
+Eventi consentiti:
+
+- `transactions_filter_applied`
+- `transactions_filter_cleared`
+- `transaction_add_opened`
+- `receipt_scan_opened`
+- `transaction_form_opened`
+- `transaction_form_cancelled`
+- `transaction_submit_success`
+- `backup_create_requested`
+- `backup_file_saved`
+- `backup_file_save_error`
+- `restore_open_requested`
+- `restore_file_selected`
+- `delete_all_data_confirmed`
+- `reset_preferences_confirmed`
+
+Evento standard Firebase consentito:
+
+- `screen_view`
+
+Non consentito inviare in analytics:
+
+- testo libero utente (query, note, titoli)
+- dati transazione dettagliati (importo descrittivo, payee, location, tags)
+- email/identificatori personali
+- messaggi errore raw o stacktrace
 

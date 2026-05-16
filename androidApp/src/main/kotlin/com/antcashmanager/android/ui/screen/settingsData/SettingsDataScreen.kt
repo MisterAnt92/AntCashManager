@@ -2,7 +2,6 @@ package com.antcashmanager.android.ui.screen.settingsData
 
 import android.app.Activity
 import android.content.ContextWrapper
-import android.os.Bundle
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -143,10 +142,7 @@ internal fun SettingsDataContent(
                 analyticsManager.logEvent("backup_file_saved")
                 onBackupFileSaved()
             } catch (error: Exception) {
-                val params = Bundle().apply {
-                    putString("error_message", error.message?.take(100) ?: "unknown")
-                }
-                analyticsManager.logEvent("backup_file_save_error", params)
+                analyticsManager.logEvent("backup_file_save_error")
                 onBackupFileSaveError(error.message ?: SettingsDataConstants.UNKNOWN_ERROR)
             }
         }
@@ -166,6 +162,7 @@ internal fun SettingsDataContent(
             contract = ActivityResultContracts.OpenDocument(),
         ) { uri ->
             if (uri == null) return@rememberLauncherForActivityResult
+            analyticsManager.logEvent("restore_file_selected")
 
             try {
                 val inputStream = context.contentResolver.openInputStream(uri)
@@ -234,6 +231,7 @@ internal fun SettingsDataContent(
                         iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
                         onClick = {
                             if (restoreLauncher != null) {
+                                analyticsManager.logEvent("restore_open_requested")
                                 restoreLauncher.launch(
                                     arrayOf("application/json", "text/json", "text/plain"),
                                 )
@@ -297,6 +295,7 @@ internal fun SettingsDataContent(
             confirmButton = {
                 TextButton(
                     onClick = {
+                        analyticsManager.logEvent("delete_all_data_confirmed")
                         onDeleteAllData()
                     },
                 ) {
@@ -422,6 +421,7 @@ internal fun SettingsDataContent(
             },
             confirmButton = {
                 TextButton(onClick = {
+                    analyticsManager.logEvent("reset_preferences_confirmed")
                     onResetAllPreferences()
                 }) {
                     AppText(
