@@ -2,6 +2,22 @@
 
 Documentazione tecnica e operativa del progetto.
 
+## Accesso rapido come risorse esterne
+
+La wiki è pubblicata anche come insieme di risorse statiche tramite GitHub Pages, così i file possono essere aperti direttamente da browser senza passare dalla vista repository.
+
+### Indice esterno
+- `docs/wiki/index.html`
+- URL pubblico atteso: `https://misterant92.github.io/AntCashManager/wiki/`
+
+### Privacy Policy pubbliche
+- Inglese: `https://misterant92.github.io/AntCashManager/wiki/privacy-policy.html`
+- Tedesco: `https://misterant92.github.io/AntCashManager/wiki/privacy-policy-de.html`
+- Francese: `https://misterant92.github.io/AntCashManager/wiki/privacy-policy-fr.html`
+- Spagnolo: `https://misterant92.github.io/AntCashManager/wiki/privacy-policy-es.html`
+
+> Nota: per rendere i file effettivamente raggiungibili dall'esterno, GitHub Pages deve essere abilitato sul branch `develop` con cartella `/docs`.
+
 ## Informazioni Progetto
 
 | Campo | Valore |
@@ -52,6 +68,7 @@ Documentazione tecnica e operativa del progetto.
 - Mantieni allineati versione e package con `androidApp/build.gradle.kts`.
 - Se cambi script di conversione, aggiorna sia `wiki/CONVERSION_GUIDE.md` sia `wiki/SCRIPT_CONVERSION_README.md`.
 - Se cambi pattern architetturali, aggiorna prima `wiki/ARCHITECTURE_GUIDELINES.md`.
+- Se aggiungi nuove pagine HTML pubbliche, copia anche il file corrispondente dentro `docs/wiki/`.
 
 ## Privacy - Usage-Only Analytics
 
@@ -84,4 +101,3 @@ Non consentito inviare in analytics:
 - dati transazione dettagliati (importo descrittivo, payee, location, tags)
 - email/identificatori personali
 - messaggi errore raw o stacktrace
-
