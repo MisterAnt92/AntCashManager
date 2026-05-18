@@ -1,158 +1,160 @@
 # AntCashManager
 
-AntCashManager is an Android personal finance app built with Kotlin Multiplatform and Jetpack Compose.
-It helps you track income and expenses with a clean UI, multi-language support, and privacy-first local storage.
+AntCashManager e una app Android open source per la gestione delle finanze personali.
+
+L'obiettivo del progetto e aiutare a registrare entrate/uscite, analizzare l'andamento delle spese
+e mantenere il controllo dei dati in locale, con un approccio privacy-first e senza raccolta di dati sensibili.
 
 ## App Info
 
-| Field | Value |
+| Campo | Valore |
 |---|---|
 | App name | `AntCashManager` |
-| Version | `1.4.6` |
-| Package name (`applicationId`) | `com.sformica.ant_cashmanager` |
+| Versione | `1.4.6` |
+| Application ID | `com.sformica.ant_cashmanager` |
 | Android namespace | `com.antcashmanager.android` |
 | Min SDK | `26` |
 | Target SDK | `36` |
 
-## Table of Contents
+## Cosa Fa l'App
 
-- [Features](#features)
-- [Architecture](#architecture)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Localization](#localization)
-- [Getting Started](#getting-started)
-- [Testing](#testing)
-- [Analytics](#analytics)
-- [License](#license)
-- [Contributing](#contributing)
+- Gestione transazioni di entrata e uscita
+- Categorie predefinite e personalizzabili
+- Grafici e insight per analisi spese/entrate
+- Backup e restore dei dati
+- Supporto multilingua (EN, IT, FR, DE, ES)
+- UI moderna con Jetpack Compose
 
-## Features
+## Perche e Open Source
 
-### Transactions
-- Add, edit, and delete income/expense transactions
-- Optional details: notes, payee, location, tags, recurring flag
-- Fast filtering and date-range selection
+- Trasparenza sulle scelte tecniche e sulla gestione dei dati
+- Facilita di audit su privacy, analytics e sicurezza
+- Possibilita di contributi dalla community (bugfix, feature, documentazione)
 
-### Charts and Insights
-- Expense breakdown by category (pie chart)
-- Income vs expense trend (bar chart)
-- Configurable chart visibility from Settings
+## Privacy, Sicurezza e Dati Sensibili
 
-### Categories
-- Built-in default categories for expense and income
-- Custom categories with icon and color
-- Protection against deletion of default categories
+Questa repository non deve contenere dati personali utente, token o credenziali private.
 
-### Settings
-- Appearance: Light, Dark, System
-- Language: English, Italian, French, German, Spanish
-- Accessibility: high contrast, larger text, reduced motion
-- Data management: backup, restore, delete all data, reset preferences
-- Support: feedback and privacy policy
+- I dati utente applicativi sono gestiti localmente sul dispositivo
+- Gli analytics custom sono usage-only (no contenuti testuali utente)
+- Non vengono inviati in analytics: note, query, email, payee, location, tags, stacktrace raw
+- La policy privacy ufficiale e in:
+  - `wiki/privacy-policy.html` (riferimento inglese)
+  - `wiki/privacy-policy-de.html`
+  - `wiki/privacy-policy-fr.html`
+  - `wiki/privacy-policy-es.html`
 
-## Architecture
+Nota: e presente anche una copia statica della privacy policy in `docs/wiki/` per pubblicazione esterna.
 
-The app follows Clean Architecture with a feature-oriented structure.
+## Architettura
 
-- Presentation layer (`androidApp`): Compose screens + ViewModels
-- Domain layer (`shared/commonMain`): use cases, models, interfaces
-- Data layer (`shared/androidMain`): repository implementations, Room, DataStore
+Il progetto segue Clean Architecture con organizzazione per feature:
 
-### Patterns in use
+- Presentation (`androidApp`) -> Compose + ViewModel
+- Domain (`shared/commonMain`) -> modelli, use case, interfacce
+- Data (`shared/androidMain`) -> repository implementation, persistenza
 
-| Pattern | Implementation |
-|---|---|
-| Clean Architecture | Presentation -> Domain -> Data |
-| MVVM | ViewModel + immutable UI State (`StateFlow`) |
-| Use Case per feature | Business logic isolated in dedicated use cases |
-| Repository pattern | Domain interfaces + data implementations |
-| Dependency Injection | Koin modules (`dataModule`, `useCaseModule`, `presentationModule`) |
+Pattern principali:
+
+- MVVM + `StateFlow`
+- UseCase per feature
+- Repository pattern
+- Dependency Injection con Koin
 
 ## Tech Stack
 
-| Area | Tools |
+| Area | Tecnologie |
 |---|---|
 | Language | Kotlin |
 | UI | Jetpack Compose + Material 3 |
 | Navigation | Navigation Compose |
-| Local DB | Room |
-| Preferences | DataStore |
+| Storage | Room + DataStore |
 | Async | Coroutines + Flow |
-| Logging | Kermit |
 | DI | Koin |
+| Logging | Kermit |
+| Analytics/Crash | Firebase Analytics + Crashlytics |
 | Build | Gradle + Version Catalog |
 
-## Project Structure
+## Struttura Progetto
 
 ```text
 AntCashManager/
-|- androidApp/                 # Android app module (UI, navigation, DI)
-|- shared/                     # KMP shared module (domain + data)
-|  |- src/commonMain/          # Domain layer
-|  |- src/androidMain/         # Android data layer
-|- wiki/                       # Project guidelines and docs
-|- gradle/                     # Version catalog and wrapper config
+|- androidApp/                 # App Android (UI, navigazione, DI)
+|- shared/                     # Modulo KMP (domain + data)
+|  |- src/commonMain/          # Domain
+|  |- src/androidMain/         # Data Android
+|- wiki/                       # Documentazione progetto (Markdown + privacy HTML)
+|- docs/wiki/                  # Copia statica wiki per pubblicazione web
+|- gradle/
 ```
 
-## Localization
+## Wiki e Documentazione (Link Verificati)
 
-Supported languages:
+Documentazione locale (repository):
 
-- English (`en`)
-- Italian (`it`)
-- French (`fr`)
-- German (`de`)
-- Spanish (`es`)
+- Indice wiki: [`wiki/README.md`](wiki/README.md)
+- Indice centrale: [`wiki/INDEX.md`](wiki/INDEX.md)
+- Guida lettura: [`wiki/GUIDA_LETTURA.md`](wiki/GUIDA_LETTURA.md)
+- Quick start wiki: [`wiki/QUICK_START.md`](wiki/QUICK_START.md)
+- Linee architetturali: [`wiki/ARCHITECTURE_GUIDELINES.md`](wiki/ARCHITECTURE_GUIDELINES.md)
+- Guida implementazione: [`wiki/IMPLEMENTATION_GUIDE.md`](wiki/IMPLEMENTATION_GUIDE.md)
+- Guida conversione: [`wiki/CONVERSION_GUIDE.md`](wiki/CONVERSION_GUIDE.md)
+- Privacy policy (EN): [`wiki/privacy-policy.html`](wiki/privacy-policy.html)
 
-Language switching is available at runtime.
+Versione statica per consultazione web:
 
-## Getting Started
+- `docs/wiki/index.html`
+- `docs/wiki/privacy-policy.html`
+- `docs/wiki/privacy-policy-de.html`
+- `docs/wiki/privacy-policy-fr.html`
+- `docs/wiki/privacy-policy-es.html`
 
-### Prerequisites
-- Android Studio (recent stable version)
+## Setup e Avvio
+
+Prerequisiti minimi:
+
+- Android Studio (stable recente)
 - JDK 17+
 - Android SDK 36
 
-### Build and Run
+Build debug:
 
 ```bash
 git clone https://github.com/your-username/AntCashManager.git
 cd AntCashManager
-./gradlew assembleDebug
-./gradlew installDebug
+./gradlew :androidApp:assembleDebug
+./gradlew :androidApp:installDebug
 ```
 
-## Testing
+## Test
+
+Unit test:
 
 ```bash
 ./gradlew :shared:test
 ./gradlew :androidApp:testDebugUnitTest
 ```
 
-For instrumentation tests (connected device/emulator):
+Instrumentation test (device/emulatore connesso):
 
 ```bash
 ./gradlew :androidApp:connectedDebugAndroidTest
 ```
 
-## Analytics
+## Checklist Rilascio Android (Open Source Safe)
 
-Firebase Analytics is integrated for core navigation and feature events.
+- [ ] Versione (`versionCode`/`versionName`) aggiornata in `androidApp/build.gradle.kts`
+- [ ] Build release ok: `./gradlew :androidApp:assembleRelease`
+- [ ] Test principali eseguiti (unit + instrumentation se disponibili)
+- [ ] Nessun secret nel codice/repository (`API key`, token, credenziali)
+- [ ] Privacy policy aggiornata e linkata in store listing
+- [ ] Screenshot/store assets aggiornati (vedi `extra/icons/`)
+- [ ] Crashlytics mapping upload configurato per release
+- [ ] Changelog/release notes preparate
 
-Examples:
-- `screen_view`
-- `transaction_submit_success`
-- `transactions_filter_applied`
-- `backup_create_requested`
-- `backup_file_saved`
+## Analytics Usage-Only
 
-## Privacy and Usage-Only Analytics
-
-AntCashManager tracks only app usage signals and does not intentionally send personal user content
-through custom analytics events.
-
-Allowed custom events:
+Eventi custom consentiti (uso app):
 
 - `transactions_filter_applied`
 - `transactions_filter_cleared`
@@ -169,29 +171,15 @@ Allowed custom events:
 - `delete_all_data_confirmed`
 - `reset_preferences_confirmed`
 
-In addition, Firebase standard `screen_view` is emitted for navigation statistics.
+Evento Firebase standard usato: `screen_view`.
 
-Blocked from custom analytics by policy:
+## Come Contribuire
 
-- free-text fields (notes, search text, titles)
-- payee/location/tags and similar user-entered content
-- raw error messages and exception details
-- email or any direct personal identifier
+1. Fork del repository
+2. Crea branch feature/fix
+3. Mantieni allineamento con linee guida in `wiki/ARCHITECTURE_GUIDELINES.md`
+4. Apri Pull Request con descrizione chiara e test eseguiti
 
-Full privacy policy page (English reference): [`wiki/privacy-policy.html`](wiki/privacy-policy.html)
+## Licenza
 
-Localized versions:
-- German: [`wiki/privacy-policy-de.html`](wiki/privacy-policy-de.html)
-- French: [`wiki/privacy-policy-fr.html`](wiki/privacy-policy-fr.html)
-- Spanish: [`wiki/privacy-policy-es.html`](wiki/privacy-policy-es.html)
-
-## License
-
-This project is distributed under the terms in [LICENSE](LICENSE).
-
-## Contributing
-
-1. Fork the repository
-2. Create a branch (`git checkout -b feature/your-feature`)
-3. Commit your changes
-4. Push and open a Pull Request
+Il progetto e distribuito secondo i termini del file [`LICENSE`](LICENSE).
