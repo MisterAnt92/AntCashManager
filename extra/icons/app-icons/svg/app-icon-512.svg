@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="512"
+     height="512"
+     viewBox="0 0 512 512">
+
+  <defs>
+    <linearGradient id="gradientBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFE0E6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFD0DB;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background circle with gradient -->
+  <circle cx="256" cy="256" r="256" fill="url(#gradientBg)"/>
+
+  <!-- Subtle gradient overlay -->
+  <circle cx="256" cy="256" r="213" fill="#FFF0F3" opacity="0.4"/>
+
+  <!-- Piggy Bank Body -->
+  <ellipse cx="256" cy="277" rx="128" ry="91" fill="#FFB3BA" stroke="#FF8A95" stroke-width="8"/>
+
+  <!-- Snout -->
+  <ellipse cx="256" cy="245" rx="35" ry="24" fill="#FF8A95"/>
+
+  <!-- Nostrils -->
+  <circle cx="240" cy="245" r="7" fill="#E91E63"/>
+  <circle cx="272" cy="245" r="7" fill="#E91E63"/>
+
+  <!-- Eyes -->
+  <circle cx="213" cy="219" r="17" fill="#FFFFFF"/>
+  <circle cx="299" cy="219" r="17" fill="#FFFFFF"/>
+
+  <!-- Pupils -->
+  <circle cx="213" cy="219" r="8.5" fill="#2E2E2E"/>
+  <circle cx="299" cy="219" r="8.5" fill="#2E2E2E"/>
+
+  <!-- Eye highlights -->
+  <circle cx="216" cy="214" r="3" fill="#FFFFFF"/>
+  <circle cx="302" cy="214" r="3" fill="#FFFFFF"/>
+
+  <!-- Ears -->
+  <path d="M182,197 Q160,160 182,139 Q198,160 182,197Z" fill="#FFB3BA"/>
+  <path d="M330,197 Q347,160 330,139 Q315,160 330,197Z" fill="#FFB3BA"/>
+
+  <!-- Inner ears -->
+  <path d="M182,187 Q171,171 182,155 Q190,171 182,187Z" fill="#FF8A95"/>
+  <path d="M330,187 Q341,171 330,155 Q323,171 330,187Z" fill="#FF8A95"/>
+
+  <!-- Legs -->
+  <ellipse cx="192" cy="343" rx="19" ry="32" fill="#FF8A95"/>
+  <ellipse cx="320" cy="343" rx="19" ry="32" fill="#FF8A95"/>
+
+  <!-- Tail -->
+  <path d="M373,277 Q400,256 400,213 Q385,192 363,213 Q373,235 373,277"
+        fill="none" stroke="#FF8A95" stroke-width="13" stroke-linecap="round"/>
+
+  <!-- Coin slot -->
+  <rect x="248" y="177" width="16" height="32" rx="8" fill="#E91E63"/>
+
+  <!-- Coin -->
+  <circle cx="256" cy="128" r="24" fill="#FFD54F"/>
+  <circle cx="256" cy="128" r="16" fill="#FFC107"/>
+
+  <!-- Euro sign on coin -->
+  <path d="M261,112 Q256,107 251,112 Q249,128 251,144 Q256,149 261,144 M245,123 L267,123 M245,133 L267,133"
+        fill="none" stroke="#FF6F00" stroke-width="2.5"/>
+
+  <!-- Small sparkle -->
+  <path d="M330,96 L333.6,104 L343.2,101 L333.6,110 L330,118 L326.4,110 L316.8,101 L326.4,104 Z"
+        fill="#FFD54F"/>
+
+  <!-- Additional shine for depth -->
+  <ellipse cx="300" cy="260" rx="40" ry="30" fill="#FFFFFF" opacity="0.15"/>
+
+</svg>
+

@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AntCashManager - App Store Resources</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #FFE0E6 0%, #FFD0DB 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(255, 138, 149, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #FF8A95 0%, #E91E63 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            color: #FF8A95;
+            border-bottom: 3px solid #FFB3BA;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: #FFF5F7;
+            border: 2px solid #FFE0E6;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: #FF8A95;
+            box-shadow: 0 5px 20px rgba(255, 138, 149, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .card h3 {
+            color: #E91E63;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .card p {
+            color: #666;
+            font-size: 0.95em;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .card .label {
+            display: inline-block;
+            background: #FFB3BA;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-right: 8px;
+            margin-top: 5px;
+        }
+
+        .icon-preview {
+            text-align: center;
+            padding: 30px 0;
+            background: white;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .icon-preview svg {
+            max-width: 100%;
+            max-height: 200px;
+            filter: drop-shadow(0 4px 12px rgba(255, 138, 149, 0.2));
+        }
+
+        .language-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        .language-badge {
+            background: #FFF;
+            border: 2px solid #FFB3BA;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            color: #FF8A95;
+        }
+
+        .language-badge:hover {
+            background: #FFF5F7;
+            border-color: #FF8A95;
+        }
+
+        .checklist {
+            background: #FFF5F7;
+            border-left: 4px solid #FFB3BA;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .checklist ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            padding: 8px 0;
+            color: #666;
+        }
+
+        .checklist li:before {
+            content: "✓ ";
+            color: #FF8A95;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .button {
+            display: inline-block;
+            background: linear-gradient(135deg, #FF8A95 0%, #E91E63 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            margin: 5px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .button:hover {
+            box-shadow: 0 5px 20px rgba(233, 30, 99, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .code {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 12px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+
+        .footer {
+            background: #f9f9f9;
+            padding: 20px;
+            text-align: center;
+            color: #999;
+            border-top: 1px solid #eee;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #FFE0E6 0%, #FFF0F3 100%);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 2.5em;
+            color: #FF8A95;
+            font-weight: bold;
+        }
+
+        .stat-card .label {
+            color: #666;
+            margin-top: 5px;
+            font-size: 0.95em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐷 AntCashManager</h1>
+            <p>App Store Resources - Risorse Grafiche Multilingue</p>
+        </div>
+
+        <div class="content">
+            <!-- Stats Section -->
+            <div class="section">
+                <h2>📊 Statistiche</h2>
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="number">5</div>
+                        <div class="label">Lingue Supportate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">40+</div>
+                        <div class="label">File di Risorse</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">8</div>
+                        <div class="label">Screenshot per Lingua</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">3</div>
+                        <div class="label">Script Automazione</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Icons Section -->
+            <div class="section">
+                <h2>🎨 App Icons</h2>
+                <div class="grid">
+                    <div class="card">
+                        <h3>App Icon 192px</h3>
+                        <p>Icona per Android e store legacy</p>
+                        <p><code>app-icons/svg/app-icon-192.svg</code></p>
+                        <p><code>app-icons/png/app-icon-192.png</code></p>
+                        <div class="label">SVG</div>
+                        <div class="label">PNG</div>
+                    </div>
+
+                    <div class="card">
+                        <h3>App Icon 512px</h3>
+                        <p>Icona principale per Google Play Store</p>
+                        <p><code>app-icons/svg/app-icon-512.svg</code></p>
+                        <p><code>app-icons/png/app-icon-512.png</code></p>
+                        <div class="label">SVG</div>
+                        <div class="label">PNG</div>
+                        <div class="label">OBBLIGATORIO</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature Graphics Section -->
+            <div class="section">
+                <h2>📱 Feature Graphics</h2>
+                <div class="grid">
+                    <div class="card">
+                        <h3>Feature Graphic (1024x500)</h3>
+                        <p>Immagine principale nella pagina Play Store</p>
+                        <p><code>store-assets/feature-graphics/feature-graphic.svg</code></p>
+                        <p><code>store-assets/feature-graphics/feature-graphic-1024x500.png</code></p>
+                        <div class="label">1024x500 px</div>
+                        <div class="label">OBBLIGATORIO</div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Promo Graphic (180x120)</h3>
+                        <p>Grafica promozionale store</p>
+                        <p><code>store-assets/promo-graphics/promo-180x120.svg</code></p>
+                        <p><code>store-assets/promo-graphics/promo-180x120.png</code></p>
+                        <div class="label">180x120 px</div>
+                        <div class="label">Consigliato</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Languages Section -->
+            <div class="section">
+                <h2>🌍 Lingue Supportate</h2>
+                <p>L'app è disponibile in 5 lingue. Gli screenshot devono essere catturati in ogni lingua:</p>
+                <div class="language-grid">
+                    <div class="language-badge">🇮🇹<br>Italiano<br><small>it</small></div>
+                    <div class="language-badge">🇬🇧<br>English<br><small>en</small></div>
+                    <div class="language-badge">🇩🇪<br>Deutsch<br><small>de</small></div>
+                    <div class="language-badge">🇫🇷<br>Français<br><small>fr</small></div>
+                    <div class="language-badge">🇪🇸<br>Español<br><small>es</small></div>
+                </div>
+            </div>
+
+            <!-- Screenshots Section -->
+            <div class="section">
+                <h2>📸 Screenshot Multilingue</h2>
+                <p>Per ogni lingua, cattura <strong>8 screenshot</strong> della sequenza:</p>
+                <div class="checklist">
+                    <ul>
+                        <li>Dashboard - Riepilogo transazioni</li>
+                        <li>Aggiungi Transazione - Form di input</li>
+                        <li>Categorie - Breakdown spese</li>
+                        <li>Grafici - Analisi e trend</li>
+                        <li>Scansione Ricevute - OCR feature</li>
+                        <li>Impostazioni - Preferenze</li>
+                        <li>Backup/Restore - Data management</li>
+                        <li>Dark Mode - Theme alternativo</li>
+                    </ul>
+                </div>
+
+                <p style="margin-top: 20px;"><strong>Struttura:</strong></p>
+                <div class="code">
+store-assets/screenshots/
+├── it/phone/ (01-08_*.png)
+├── en/phone/ (01-08_*.png)
+├── de/phone/ (01-08_*.png)
+├── fr/phone/ (01-08_*.png)
+└── es/phone/ (01-08_*.png)
+                </div>
+            </div>
+
+            <!-- Scripts Section -->
+            <div class="section">
+                <h2>⚙️ Script Automazione</h2>
+                <div class="grid">
+                    <div class="card">
+                        <h3>convert_icons.sh</h3>
+                        <p>Converte SVG in PNG per tutte le risoluzioni</p>
+                        <div class="code">bash convert_icons.sh</div>
+                        <div class="label">SVG → PNG</div>
+                    </div>
+
+                    <div class="card">
+                        <h3>capture_screenshots.sh</h3>
+                        <p>Cattura screenshot per una o tutte le lingue</p>
+                        <div class="code">bash store-assets/capture_screenshots.sh it</div>
+                        <div class="code">bash store-assets/capture_screenshots.sh --all</div>
+                        <div class="label">Multilingue</div>
+                    </div>
+
+                    <div class="card">
+                        <h3>optimize_screenshots.sh</h3>
+                        <p>Ottimizza/comprime gli screenshot</p>
+                        <div class="code">bash store-assets/optimize_screenshots.sh</div>
+                        <div class="label">Compressione</div>
+                    </div>
+
+                    <div class="card">
+                        <h3>verify_screenshots.sh</h3>
+                        <p>Verifica che tutti gli screenshot siano presenti</p>
+                        <div class="code">bash store-assets/verify_screenshots.sh</div>
+                        <div class="label">Verifica</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documentation Section -->
+            <div class="section">
+                <h2>📚 Documentazione</h2>
+                <div class="grid">
+                    <div class="card">
+                        <h3>README.md</h3>
+                        <p>Guida principale - Struttura, requisiti, linee guida</p>
+                        <a href="README.md" class="button">Leggi →</a>
+                    </div>
+
+                    <div class="card">
+                        <h3>QUICK_START.md</h3>
+                        <p>Quick start - Inizia in 3 step</p>
+                        <a href="QUICK_START.md" class="button">Leggi →</a>
+                    </div>
+
+                    <div class="card">
+                        <h3>GOOGLE_PLAY_PUBLICATION_GUIDE.md</h3>
+                        <p>Guida completa per pubblicazione su Play Store</p>
+                        <a href="GOOGLE_PLAY_PUBLICATION_GUIDE.md" class="button">Leggi →</a>
+                    </div>
+
+                    <div class="card">
+                        <h3>store-assets/SCREENSHOTS_MULTILINGUAL.md</h3>
+                        <p>Guida screenshot multilingue</p>
+                        <a href="store-assets/SCREENSHOTS_MULTILINGUAL.md" class="button">Leggi →</a>
+                    </div>
+
+                    <div class="card">
+                        <h3>SUMMARY.md</h3>
+                        <p>Riepilogo completo di tutte le risorse create</p>
+                        <a href="SUMMARY.md" class="button">Leggi →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Workflow Section -->
+            <div class="section">
+                <h2>🚀 Quick Workflow</h2>
+
+                <h3 style="color: #FF8A95; margin: 20px 0 15px 0;">Fase 1: Generare Icone</h3>
+                <div class="code">
+cd extra/icons/
+bash convert_icons.sh
+# Output: app-icons/png/*.png pronti per Play Store
+                </div>
+
+                <h3 style="color: #FF8A95; margin: 20px 0 15px 0;">Fase 2: Catturare Screenshot</h3>
+                <div class="code">
+# Per una lingua
+bash store-assets/capture_screenshots.sh it
+
+# Per tutte le lingue
+bash store-assets/capture_screenshots.sh --all
+                </div>
+
+                <h3 style="color: #FF8A95; margin: 20px 0 15px 0;">Fase 3: Ottimizzare</h3>
+                <div class="code">
+bash store-assets/optimize_screenshots.sh
+bash store-assets/verify_screenshots.sh
+                </div>
+
+                <h3 style="color: #FF8A95; margin: 20px 0 15px 0;">Fase 4: Upload Play Store</h3>
+                <p>
+                    1. Accedi: <a href="https://play.google.com/console" target="_blank" style="color: #FF8A95;">https://play.google.com/console</a><br>
+                    2. Store Listing → Graphic Assets<br>
+                    3. Carica icone, feature graphic, screenshot per ogni lingua<br>
+                    4. Verifica anteprima → Pubblica
+                </p>
+            </div>
+
+            <!-- Checklist Section -->
+            <div class="section">
+                <h2>✅ Checklist Pre-Pubblicazione</h2>
+                <div class="checklist">
+                    <ul>
+                        <li>App Icon 512x512 px generato</li>
+                        <li>Feature Graphic 1024x500 px generato</li>
+                        <li>Screenshot catturati per TUTTE le 5 lingue</li>
+                        <li>8 screenshot per lingua (phone: 1080x1920 px)</li>
+                        <li>Screenshot ottimizzati e compressi</li>
+                        <li>Verifica completamento eseguita</li>
+                        <li>Play Console: Store Listing completato</li>
+                        <li>Tutti gli asset caricati (per ogni lingua)</li>
+                        <li>Anteprima verificata su Play Console</li>
+                        <li>Content rating completato</li>
+                        <li>Privacy Policy linkato</li>
+                        <li>Pronto per pubblicazione</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>AntCashManager</strong> v1.4.6 | Package: com.sformica.ant_cashmanager | May 2026</p>
+            <p>All graphic resources created and documented | Multilingual support for 5 languages</p>
+        </div>
+    </div>
+</body>
+</html>
+
