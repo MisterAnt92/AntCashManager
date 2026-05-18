@@ -1,5 +1,9 @@
 # Guida Implementativa - Skeleton Loading e Form Transazioni
 
+> 🔗 **[← Torna all'Indice Principale](./INDEX.md)** | **[README.md](./README.md)**
+
+---
+
 ## Scopo
 
 Questo documento descrive una specifica milestone di implementazione relativa a:

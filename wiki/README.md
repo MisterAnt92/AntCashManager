@@ -1,87 +1,172 @@
 # Wiki - AntCashManager
 
-Documentazione tecnica e operativa del progetto.
+Documentazione tecnica e operativa del progetto AntCashManager.
 
-## Informazioni Progetto
+> 👋 **[→ GUIDA LETTURA - Nuovo qui? Inizia da qui](./GUIDA_LETTURA.md)**  
+> ⚡ **[→ QUICK START - 5 minuti per iniziare](./QUICK_START.md)**  
+> 📖 **[→ INDICE CENTRALE - Clicca qui per navigare tutta la documentazione](./INDEX.md)**  
+> 🗺️ **[→ MAPPA DI NAVIGAZIONE - Preferisci una guida visuale per ruolo?](./NAVIGATION.md)**
+
+---
+
+## 🎯 Accesso Rapido
+
+Scegli il tuo profilo per accedere subito alla documentazione rilevante:
+
+| Profilo | Task | Documento |
+|---------|------|-----------|
+| 👨‍💻 **Sviluppatore** | Nuova feature / Modifiche architettura | [ARCHITECTURE_GUIDELINES.md](./ARCHITECTURE_GUIDELINES.md) |
+| 🎨 **UI/UX Developer** | Modifiche transazioni / Form | [IMPLEMENTATION_GUIDE.md](./IMPLEMENTATION_GUIDE.md) |
+| 🗄️ **Data Engineer** | Conversione dati PiggyBank (uso) | [CONVERSION_GUIDE.md](./CONVERSION_GUIDE.md) |
+| 🔧 **Script Maintainer** | Manutenzione/estensione script | [SCRIPT_CONVERSION_README.md](./SCRIPT_CONVERSION_README.md) |
+| ⚖️ **Legal** | Privacy policy e compliance | [privacy-policy.html](./privacy-policy.html) |
+
+---
+
+## 📊 Informazioni Progetto
 
 | Campo | Valore |
 |---|---|
-| App name | `AntCashManager` |
-| Versione corrente | `1.4.6` |
-| Package name (`applicationId`) | `com.sformica.ant_cashmanager` |
-| Namespace Android | `com.antcashmanager.android` |
-| Moduli principali | `androidApp`, `shared` |
+| **App name** | `AntCashManager` |
+| **Versione corrente** | `1.4.6` |
+| **Package name** (`applicationId`) | `com.sformica.ant_cashmanager` |
+| **Namespace Android** | `com.antcashmanager.android` |
+| **Moduli principali** | `androidApp`, `shared` (Kotlin Multiplatform) |
+| **Tech Stack** | Jetpack Compose, Kotlin, Room, Koin |
 
-## Indice Documenti
+---
 
-### 1) Architettura
-- File: `wiki/ARCHITECTURE_GUIDELINES.md`
-- Contiene: Clean Architecture, pattern UseCase/ViewModel/State/Screen, checklist e anti-pattern.
-- Quando usarlo: prima di modifiche strutturali o refactor.
+## 📚 Documenti Disponibili
 
-### 2) Guida Implementativa (storico feature)
-- File: `wiki/IMPLEMENTATION_GUIDE.md`
-- Contiene: dettagli implementazione di skeleton loading e form transazioni esteso.
-- Quando usarlo: per capire decisioni UI/UX introdotte in quella milestone.
+### 🏗️ Architettura & Sviluppo
+**[ARCHITECTURE_GUIDELINES.md](./ARCHITECTURE_GUIDELINES.md)**
+- ✅ Definisce Clean Architecture a 3 layer (Presentation/Domain/Data)
+- ✅ Pattern UseCase/ViewModel/State/Screen con esempi completi
+- ✅ Rules per testing, dispatcher injection, Result pattern
+- ✅ Anti-pattern da evitare e Pre-Commit Checklist
+- ✅ **Fonte ufficiale** per decisioni architetturali
 
-### 3) Conversione dati PiggyBank Pro -> Debug
-- File: `wiki/CONVERSION_GUIDE.md`
-- Contiene: flusso rapido di conversione dati e mapping campi.
-- Script ufficiale: `scripts/convert_to_debug_data.py`.
+**Quando usarlo**: Sempre prima di scrivere codice, per verifiche strutturali, PR review.
 
-### 4) Script Conversione (dettaglio tecnico)
-- File: `wiki/SCRIPT_CONVERSION_README.md`
-- Contiene: schema input/output, validazioni, esempi log, codici errore.
-- Quando usarlo: manutenzione o estensione script Python.
+### 📝 Guide Implementative
+**[IMPLEMENTATION_GUIDE.md](./IMPLEMENTATION_GUIDE.md)**
+- ✅ Milestone: skeleton loading + form transazioni esteso
+- ✅ Dettagli implementazione UI (note, payee, location, tags, ricorrenza)
+- ✅ Flusso dati e pattern layout
+- ✅ Test checklist e design decisions
 
-### 5) Privacy Policy (HTML)
-- File: `wiki/privacy-policy.html`
-- Contiene: policy privacy ufficiale con focus usage-only analytics (riferimento inglese).
-- Quando usarlo: riferimento da README/app store/documentazione esterna.
-- Localizzazioni: `wiki/privacy-policy-de.html`, `wiki/privacy-policy-fr.html`, `wiki/privacy-policy-es.html`.
+**Quando usarlo**: Quando modifichi transazioni, form o skeleton loading.
 
-## Flusso Consigliato
+### 🔄 Conversione Dati
+**[CONVERSION_GUIDE.md](./CONVERSION_GUIDE.md)** *(Guida esecutiva)*
+- ✅ Flusso rapido conversione PiggyBank Pro → AntCashManager
+- ✅ Mapping campi e prerequisiti
+- ✅ Uso script e parametri default
+- ✅ Per **chi usa lo script**
 
-1. Parti da `wiki/ARCHITECTURE_GUIDELINES.md` per verificare i vincoli architetturali.
-2. Usa `wiki/CONVERSION_GUIDE.md` per conversioni rapide dati.
-3. Consulta `wiki/SCRIPT_CONVERSION_README.md` per dettagli avanzati dello script.
-4. Leggi `wiki/IMPLEMENTATION_GUIDE.md` solo se stai toccando l'area transazioni/skeleton descritta.
+**[SCRIPT_CONVERSION_README.md](./SCRIPT_CONVERSION_README.md)** *(Dettagli tecnici)*
+- ✅ Schema input/output JSON
+- ✅ Validazioni e regole di conversione
+- ✅ Codici errore e esempi log
+- ✅ Per **chi mantiene il script Python**
 
-## Note di Manutenzione Wiki
+**Quando usarlo**: Conversione dati esportati da PiggyBank Pro.
 
-- Mantieni allineati versione e package con `androidApp/build.gradle.kts`.
-- Se cambi script di conversione, aggiorna sia `wiki/CONVERSION_GUIDE.md` sia `wiki/SCRIPT_CONVERSION_README.md`.
-- Se cambi pattern architetturali, aggiorna prima `wiki/ARCHITECTURE_GUIDELINES.md`.
+### 🔐 Privacy & Policy
+**[privacy-policy.html](./privacy-policy.html)** - Inglese  
+**[privacy-policy-de.html](./privacy-policy-de.html)** - Tedesco  
+**[privacy-policy-es.html](./privacy-policy-es.html)** - Spagnolo  
+**[privacy-policy-fr.html](./privacy-policy-fr.html)** - Francese
 
-## Privacy - Usage-Only Analytics
+- ✅ Policy privacy ufficiale
+- ✅ Focus analytics usage-only (no dati personali)
+- ✅ Eventi consentiti e proibiti
 
-Gli analytics custom devono tracciare solo utilizzo dell'app (no contenuti personali).
+**Quando usarlo**: Riferimento legale, app store, documentazione esterna.
 
-Eventi consentiti:
+---
 
-- `transactions_filter_applied`
-- `transactions_filter_cleared`
-- `transaction_add_opened`
-- `receipt_scan_opened`
-- `transaction_form_opened`
-- `transaction_form_cancelled`
-- `transaction_submit_success`
-- `backup_create_requested`
-- `backup_file_saved`
-- `backup_file_save_error`
-- `restore_open_requested`
-- `restore_file_selected`
-- `delete_all_data_confirmed`
-- `reset_preferences_confirmed`
+## ⚡ Flusso Consigliato
 
-Evento standard Firebase consentito:
+```
+1. NON SEI ANCORA QUI? → Leggi INDEX.md per capire struttura
+   ↓
+2. NUOVA FEATURE? → ARCHITECTURE_GUIDELINES.md
+   ↓
+3. MODIFICHE TRANSAZIONI? → IMPLEMENTATION_GUIDE.md
+   ↓
+4. CONVERSIONE DATI? → CONVERSION_GUIDE.md (uso) o SCRIPT_CONVERSION_README.md (mantenimet)
+   ↓
+5. PRIMA DI COMMIT → Pre-Commit Checklist (in ARCHITECTURE_GUIDELINES.md)
+```
 
-- `screen_view`
+---
 
-Non consentito inviare in analytics:
+## 🛠️ Note di Manutenzione Wiki
 
-- testo libero utente (query, note, titoli)
-- dati transazione dettagliati (importo descrittivo, payee, location, tags)
-- email/identificatori personali
-- messaggi errore raw o stacktrace
+**Allineamento con il codice:**
+- Mantieni versione e package allineati con `androidApp/build.gradle.kts`
+- Aggiorna `ARCHITECTURE_GUIDELINES.md` se cambi i pattern architetturali
+- Se modifichi il script di conversione, aggiorna sia `CONVERSION_GUIDE.md` sia `SCRIPT_CONVERSION_README.md`
+- Se aggiungi una feature storica, documenta in `IMPLEMENTATION_GUIDE.md`
 
+**Localizzazioni:**
+- Se aggiungi stringhe privacy in altre lingue, crea `privacy-policy-XX.html` corrispondente
+- Mantieni le 5 lingue standard: EN, IT, FR, DE, ES
+
+**Versioning:**
+- Wiki version segue versione app (es. v1.4.6 app → wiki v1.4.6)
+
+---
+
+## 🔐 Privacy & Analytics - Usage-Only Policy
+
+La policy di analytics segue il principio **usage-only**: tracciamo SOLO l'utilizzo dell'app, NON i dati personali dell'utente.
+
+### ✅ Eventi Consentiti
+
+**Utilizzo funzionalità:**
+- `transactions_filter_applied` - filtro applicato
+- `transactions_filter_cleared` - filtro rimosso
+- `transaction_add_opened` - apertura form aggiunta
+- `receipt_scan_opened` - apertura scanner ricevute
+- `transaction_form_opened` - apertura form transazione
+- `transaction_form_cancelled` - cancellazione form
+- `transaction_submit_success` - invio transazione riuscito
+- `backup_create_requested` - richiesta backup
+- `backup_file_saved` - backup salvato
+- `backup_file_save_error` - errore salvataggio backup
+- `restore_open_requested` - richiesta restore
+- `restore_file_selected` - file restore selezionato
+- `delete_all_data_confirmed` - cancellazione dati confermata
+- `reset_preferences_confirmed` - reset preferenze confermato
+
+**Firebase Standard (consentito):**
+- `screen_view` - visualizzazione screen
+
+### ❌ Dati NON Consentiti
+
+**Mai inviare in analytics:**
+- ❌ Testo libero utente (query, note, titoli, descrizioni)
+- ❌ Dati transazione dettagliati (importo descrittivo, payee, location, tags, categoria specifica)
+- ❌ Email, telefono o identificatori personali
+- ❌ Messaggi errore raw o stacktrace
+- ❌ Coordinate geografiche o dati sensibili
+
+**Linea guida:**  
+Se contiene info che identificherebbe o riguarderebbe direttamente un utente → **VIETATO**.
+
+---
+
+## 📞 Supporto & Contatti
+
+Per domande sulla documentazione:
+- 📧 Wiki Maintainer: Team AntCashManager
+- 🐛 Issue/Bug: Vedi repository GitHub
+- 📋 Aggiornamenti: Verifica "Note di Manutenzione Wiki" sopra
+
+---
+
+**Ultima Modifica**: Maggio 2026  
+**Versione Wiki**: 1.0  
+**Status**: ✅ Documentazione Completa

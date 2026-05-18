@@ -1,7 +1,13 @@
 # AntCashManager - Architecture Guidelines
 
+> 🔗 **[← Torna all'Indice Principale](./INDEX.md)** | **[README.md](./README.md)**
+
+---
+
 ## Panoramica
-Questo documento definisce le linee guida architetturali per lo sviluppo dell'app **AntCashManager**, garantendo codice pulito, manutenibile e testabile seguendo i principi di Clean Architecture.
+Questo documento è la **fonte ufficiale** per le linee guida architetturali dello sviluppo dell'app **AntCashManager**. Garantisce codice pulito, manutenibile e testabile seguendo i principi di Clean Architecture.
+
+**Applicazione**: Obbligatorio per ogni feature, refactor e PR review.
 
 ## Aggiornamenti Critici (allineamento corrente)
 

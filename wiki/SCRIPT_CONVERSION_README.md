@@ -1,8 +1,14 @@
 # Script di Conversione Dati - AntCashManager
 
+> 🔗 **[← Torna all'Indice Principale](./INDEX.md)** | **[README.md](./README.md)** | **[CONVERSION_GUIDE.md](./CONVERSION_GUIDE.md)**
+
+---
+
 ## Panoramica
 Script unificato per convertire dati di backup/PiggyBank Pro nel formato
 `debug_initial_data.json` compatibile con AntCashManager.
+
+**Questo documento**: Dettagli tecnici per **manutenzione e estensione** dello script Python.
 
 ## Informazioni Progetto
 
