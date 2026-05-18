@@ -13,6 +13,23 @@ Documentazione tecnica e operativa del progetto AntCashManager.
 
 Scegli il tuo profilo per accedere subito alla documentazione rilevante:
 
+## Accesso rapido come risorse esterne
+
+La wiki è pubblicata anche come insieme di risorse statiche tramite GitHub Pages, così i file possono essere aperti direttamente da browser senza passare dalla vista repository.
+
+### Indice esterno
+- `docs/wiki/index.html`
+- URL pubblico atteso: `https://misterant92.github.io/AntCashManager/wiki/`
+
+### Privacy Policy pubbliche
+- Inglese: `https://misterant92.github.io/AntCashManager/wiki/privacy-policy.html`
+- Tedesco: `https://misterant92.github.io/AntCashManager/wiki/privacy-policy-de.html`
+- Francese: `https://misterant92.github.io/AntCashManager/wiki/privacy-policy-fr.html`
+- Spagnolo: `https://misterant92.github.io/AntCashManager/wiki/privacy-policy-es.html`
+
+> Nota: per rendere i file effettivamente raggiungibili dall'esterno, GitHub Pages deve essere abilitato sul branch `develop` con cartella `/docs`.
+
+## Informazioni Progetto
 | Profilo | Task | Documento |
 |---------|------|-----------|
 | 👨‍💻 **Sviluppatore** | Nuova feature / Modifiche architettura | [ARCHITECTURE_GUIDELINES.md](./ARCHITECTURE_GUIDELINES.md) |
