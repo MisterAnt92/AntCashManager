@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- HelpDialog (Dashboard) -->
+    <string name="help_dashboard_title">Dashboard</string>
+    <string name="help_dashboard_desc">Visualizza il saldo totale, entrate e uscite nel periodo selezionato.</string>
+    <string name="help_features_label">Caratteristiche:</string>
+    <string name="common_help">Aiuto</string>
+
+    <!-- Home Help Dialog -->
+    <string name="help_home_title">Guida Home</string>
+    <string name="help_home_desc">Benvenuto nella Home! Qui puoi visualizzare il riepilogo finanziario e le transazioni recenti.</string>
+    <string name="help_home_feature_date_filters_title">Filtri Intervallo Date</string>
+    <string name="help_home_feature_date_filters_desc">Filtra le transazioni per date specifiche o usa i preset disponibili.</string>
+    <string name="help_home_feature_recent_transactions_title">Transazioni Recenti</string>
+    <string name="help_home_feature_recent_transactions_desc">Visualizza le ultime transazioni con dettagli e categoria.</string>
+
+    <!-- Charts Help Dialog -->
+    <string name="help_charts_title">Guida Grafici</string>
+    <string name="help_charts_desc">Visualizza grafici e analisi dei tuoi dati finanziari.</string>
+    <string name="help_charts_feature_visualization_title">Visualizzazione Grafici</string>
+    <string name="help_charts_feature_visualization_desc">Vedi i tuoi dati finanziari in formato grafico con pie chart per categoria.</string>
+    <string name="help_charts_feature_filters_title">Filtri Temporali</string>
+    <string name="help_charts_feature_filters_desc">Seleziona periodi predefiniti o personalizzati per analizzare i tuoi dati.</string>
+    <string name="help_charts_feature_analysis_title">Analisi Dettagliata</string>
+    <string name="help_charts_feature_analysis_desc">Visualizza riepilogo mensile e analisi per categoria.</string>
+
+    <!-- Transactions Help Dialog -->
+    <string name="help_transactions_title">Guida Transazioni</string>
+    <string name="help_transactions_desc">Gestisci tutte le tue transazioni. Puoi visualizzare, cercare e filtrare le operazioni finanziarie.</string>
+    <string name="help_transactions_feature_view_title">Visualizza Transazioni</string>
+    <string name="help_transactions_feature_view_desc">Vedi tutte le transazioni di entrata e uscita con dettagli completi.</string>
+    <string name="help_transactions_feature_filters_title">Filtri Data</string>
+    <string name="help_transactions_feature_filters_desc">Filtra le transazioni per intervallo di date o usa i preset predefiniti.</string>
+    <string name="help_transactions_feature_search_title">Cerca Transazioni</string>
+    <string name="help_transactions_feature_search_desc">Cerca transazioni per titolo, importo, categoria o altre proprieta.</string>
+
+    <!-- Settings Help Dialog -->
+    <string name="help_settings_title">Guida Impostazioni</string>
+    <string name="help_settings_desc">Personalizza app secondo le tue preferenze.</string>
+    <string name="help_settings_feature_theme_title">Tema Chiaro/Scuro</string>
+    <string name="help_settings_feature_theme_desc">Personalizza aspetto app secondo le tue preferenze.</string>
+    <string name="help_settings_feature_currency_title">Valuta</string>
+    <string name="help_settings_feature_currency_desc">Seleziona la valuta preferita per visualizzare gli importi.</string>
+    <string name="help_settings_feature_language_title">Lingua</string>
+    <string name="help_settings_feature_language_desc">Scegli la lingua dell interfaccia.</string>
+
+    <!-- Categories Help Dialog -->
+    <string name="help_categories_title">Guida Categorie</string>
+    <string name="help_categories_desc">Gestisci le tue categorie di spesa ed entrata.</string>
+    <string name="help_categories_feature_management_title">Gestione Categorie</string>
+    <string name="help_categories_feature_management_desc">Crea e personalizza categorie per organizzare le tue transazioni.</string>
+    <string name="help_categories_feature_income_expense_title">Entrate e Uscite</string>
+    <string name="help_categories_feature_income_expense_desc">Categorizza le transazioni come entrate o uscite.</string>
+    <string name="help_categories_feature_delete_title">Elimina Categorie</string>
+    <string name="help_categories_feature_delete_desc">Rimuovi categorie personalizzate quando non sono piu necessarie.</string>
+    <string name="app_name">AntCashManager</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_charts">Grafici</string>
+    <string name="nav_transactions">Transazioni</string>
+    <string name="nav_categories">Categorie</string>
+    <string name="nav_settings">Impostazioni</string>
+
+    <!-- Home Screen -->
+    <string name="home_dashboard">Riepilogo</string>
+    <string name="home_total_balance">Saldo Totale</string>
+    <string name="home_income">Entrate</string>
+    <string name="home_expenses">Uscite</string>
+    <string name="home_recent_transactions">Transazioni Recenti</string>
+    <string name="home_no_transactions">Nessuna transazione.\nAggiungi la tua prima transazione!</string>
+    <string name="home_empty_ant">La nostra formichina aspetta la tua prima transazione! 🐜</string>
+    <string name="home_balance_positive">📈 Positivo</string>
+    <string name="home_balance_negative">📉 Negativo</string>
+    <string name="home_transaction_item_subtitle">%1$s • %2$s</string>
+    <!-- Transactions Screen -->
+    <string name="transactions_title">Transazioni</string>
+    <string name="transactions_empty">Nessuna transazione</string>
+    <string name="transactions_empty_subtitle">Le tue transazioni appariranno qui</string>
+    <string name="transactions_add">Aggiungi Transazione</string>
+    <string name="transactions_edit">Modifica Transazione</string>
+    <string name="transactions_title_label">Titolo</string>
+    <string name="transactions_amount_label">Importo</string>
+    <string name="transactions_category_label">Categoria</string>
+    <string name="transactions_type_label">Tipo</string>
+    <string name="transactions_type_income">Entrata</string>
+    <string name="transactions_type_expense">Uscita</string>
+    <string name="transactions_date_label">Data</string>
+    <string name="transactions_delete_title">Eliminare la transazione?</string>
+    <string name="transactions_delete_message">Sei sicuro di voler eliminare \"%s\"?</string>
+    <string name="transactions_add_content_desc">Aggiungi Transazione</string>
+    <string name="transactions_no_categories">Nessuna categoria disponibile. Aggiungi prima una categoria.</string>
+    <string name="transactions_pick_date">Seleziona data</string>
+    <string name="transactions_notes_label">Note</string>
+    <string name="transactions_payee_label">Beneficiario</string>
+    <string name="transactions_location_label">Luogo</string>
+    <string name="transactions_recurring">Ricorrente</string>
+    <string name="transactions_tags_label">Tag</string>
+    <string name="transactions_empty_ant">Il salvadanaio della formichina \u00e8 vuoto! Inizia a risparmiare! 🐜🐷</string>
+    <string name="transactions_recurrence_interval">Intervallo di ricorrenza</string>
+    <string name="transactions_interval_daily">Giornaliero</string>
+    <string name="transactions_interval_weekly">Settimanale</string>
+    <string name="transactions_interval_monthly">Mensile</string>
+    <string name="transactions_interval_yearly">Annuale</string>
+    <!-- Transactions Filters -->
+    <string name="transactions_search">Cerca</string>
+    <string name="transactions_filter">Filtri</string>
+    <string name="transactions_search_label">Cerca transazioni</string>
+    <string name="transactions_search_placeholder">Nome o importo…</string>
+    <string name="transactions_advanced_filters">Filtri avanzati</string>
+    <string name="transactions_clear_filters">Cancella</string>
+    <string name="transactions_filter_type">Tipo transazione</string>
+    <string name="transactions_filter_payment">Tipo pagamento</string>
+    <string name="transactions_filter_category">Categoria</string>
+    <string name="transactions_results_count">Risultati: %1$d</string>
+    <string name="common_all">Tutti</string>
+    <string name="common_clear">Cancella</string>
+    <string name="transaction_type_income">Entrata</string>
+    <string name="transaction_type_expense">Uscita</string>
+
+    <!-- Categories Screen -->
+    <string name="categories_title">Categorie</string>
+    <string name="categories_empty">Nessuna categoria</string>
+    <string name="categories_empty_subtitle">Tocca + per aggiungere la prima categoria</string>
+    <string name="categories_add">Aggiungi Categoria</string>
+    <string name="categories_name_label">Nome Categoria</string>
+    <string name="categories_color_label">Colore</string>
+    <string name="categories_delete_title">Eliminare la categoria?</string>
+    <string name="categories_delete_message">Sei sicuro di voler eliminare \"%s\"?</string>
+    <string name="categories_add_content_desc">Aggiungi Categoria</string>
+    <string name="categories_selected">Selezionato</string>
+    <string name="categories_tab_expense">Uscite</string>
+    <string name="categories_tab_income">Entrate</string>
+    <string name="categories_default_badge">Predefinita</string>
+    <string name="categories_cannot_delete_default">Le categorie predefinite non possono essere eliminate</string>
+    <string name="categories_icon_label">Icona</string>
+
+    <!-- Charts Screen -->
+    <string name="charts_title">Grafici</string>
+    <string name="charts_period">Periodo</string>
+    <string name="charts_from">Dal: %s</string>
+    <string name="charts_to">Al: %s</string>
+    <string name="charts_income">Entrate</string>
+    <string name="charts_expenses">Uscite</string>
+    <string name="charts_balance">Bilancio</string>
+    <string name="charts_income_by_category">Entrate per Categoria</string>
+    <string name="charts_expense_by_category">Uscite per Categoria</string>
+    <string name="charts_monthly_overview">Panoramica Mensile</string>
+    <string name="charts_yearly_overview">Panoramica Annuale</string>
+    <string name="charts_no_data">Nessun dato per il periodo selezionato</string>
+    <string name="charts_pick_start_date">Seleziona data inizio</string>
+    <string name="charts_pick_end_date">Seleziona data fine</string>
+    <string name="charts_empty_ant">Nessun dato da mostrare! La formichina sta lavorando sodo! 🐜📊</string>
+    <string name="share">Condividi</string>
+    <string name="share_categories_subject">AntCashManager - Uscite per Categoria</string>
+    <string name="share_monthly_subject">AntCashManager - Panoramica Mensile</string>
+    <string name="share_yearly_subject">AntCashManager - Panoramica Annuale</string>
+    <string name="share_category_title">Uscite per Categoria</string>
+    <string name="share_monthly_title">Panoramica Mensile</string>
+    <string name="share_yearly_title">Panoramica Annuale</string>
+    <string name="share_total">Totale</string>
+    <string name="share_income">Entrate</string>
+    <string name="share_expense">Uscite</string>
+    <string name="share_balance">Saldo</string>
+    <string name="share_total_income">Totale Entrate</string>
+    <string name="share_total_expense">Totale Uscite</string>
+    <string name="share_final_balance">Bilancio Finale</string>
+
+    <!-- Range Presets -->
+    <string name="range_week">7 giorni</string>
+    <string name="range_month">1 mese</string>
+    <string name="range_three_months">3 mesi</string>
+    <string name="range_six_months">6 mesi</string>
+    <string name="range_year">1 anno</string>
+    <string name="range_all">Tutto</string>
+
+    <!-- Range Labels (for collapsed filter) -->
+    <string name="range_label_today">Oggi</string>
+    <string name="range_label_this_week">7 giorni</string>
+    <string name="range_label_this_month">Mese</string>
+    <string name="range_label_this_year">Anno</string>
+    <string name="range_label_custom">Da %1$s a %2$s</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Impostazioni</string>
+    <string name="settings_appearance">Aspetto</string>
+    <string name="settings_theme">Tema</string>
+    <string name="settings_theme_light">Chiaro</string>
+    <string name="settings_theme_dark">Scuro</string>
+    <string name="settings_theme_system">Predefinito di sistema</string>
+    <string name="settings_language">Lingua</string>
+    <string name="settings_language_subtitle">Scegli la lingua dell\'app</string>
+    <string name="settings_display">Visualizzazione</string>
+    <string name="settings_display_subtitle">Personalizza valuta, decimali e formattazione</string>
+    <string name="settings_display_home">Home</string>
+    <string name="settings_show_charts">Mostra Grafici</string>
+    <string name="settings_show_charts_subtitle">Mostra la sezione grafici nella navigazione</string>
+    <string name="settings_show_charts_section">Mostra sezione grafici</string>
+    <string name="settings_show_charts_section_visible">Sezione grafici visibile nella navigazione</string>
+    <string name="settings_show_charts_section_hidden">Sezione grafici nascosta dalla navigazione</string>
+    <string name="settings_currency_symbol">Simbolo Valuta</string>
+    <string name="settings_decimal_digits">Cifre Decimali</string>
+    <string name="settings_decimal_digits_subtitle">%d cifre decimali</string>
+    <string name="settings_decimal_separator">Separatore Decimali</string>
+    <string name="settings_thousands_separator">Separatore Migliaia</string>
+    <string name="settings_format_preview">Anteprima: %s</string>
+    <string name="settings_separator_comma">Virgola (,)</string>
+    <string name="settings_separator_period">Punto (.)</string>
+    <string name="settings_separator_space">Spazio</string>
+    <string name="settings_separator_none">Nessuno</string>
+    <string name="settings_date_format">Formato Data</string>
+    <string name="settings_date_format_subtitle">%s</string>
+    <string name="settings_section_currency">Valuta</string>
+    <string name="settings_section_charts">Grafici</string>
+    <string name="settings_section_dates">Date</string>
+    <string name="settings_section_other">Altro</string>
+    <string name="settings_reset_preferences">Ripristina Tutte le Preferenze</string>
+    <string name="settings_reset_preferences_subtitle">Ripristina tutte le impostazioni ai valori predefiniti</string>
+    <string name="date_format_ddmmyyyy">GG/MM/AAAA</string>
+    <string name="date_format_mmddyyyy">MM/GG/AAAA</string>
+    <string name="date_format_yyyymmdd">AAAA-MM-GG</string>
+    <string name="date_format_ddmmmyyyy">GG MMM AAAA</string>
+    <string name="dialog_choose_date_format">Scegli Formato Data</string>
+    <string name="settings_accessibility">Accessibilit\u00e0</string>
+    <string name="settings_accessibility_subtitle">Personalizza l\'aspetto e il comportamento dell\'app per una migliore usabilit\u00e0</string>
+    <string name="settings_high_contrast">Contrasto Elevato</string>
+    <string name="settings_high_contrast_subtitle">Aumenta il contrasto per una migliore leggibilit\u00e0. Usa colori pi\u00f9 decisi e bordi pi\u00f9 marcati.</string>
+    <string name="settings_large_text">Testo Grande</string>
+    <string name="settings_large_text_subtitle">Aumenta la dimensione del testo in tutta l\'app per facilitare la lettura.</string>
+    <string name="settings_reduce_motion">Riduci Movimento</string>
+    <string name="settings_reduce_motion_subtitle">Minimizza animazioni e transizioni. Utile per chi \u00e8 sensibile al movimento.</string>
+    <string name="settings_data_management">Gestione Dati</string>
+    <string name="settings_security">Sicurezza</string>
+    <string name="settings_security_data_encryption">Dati in sicurezza - Crittografia</string>
+    <string name="settings_security_data_encryption_subtitle">Cripta e protegge i dati locali dell\'app</string>
+    <string name="settings_delete_all">Elimina tutti i dati</string>
+    <string name="settings_delete_all_subtitle">Rimuovi permanentemente tutte le transazioni e categorie</string>
+    <string name="settings_backup">Backup Dati</string>
+    <string name="settings_backup_subtitle">Esporta i tuoi dati per sicurezza</string>
+    <string name="settings_restore">Ripristina Dati</string>
+    <string name="settings_restore_subtitle">Importa dati da un file di backup</string>
+    <string name="settings_support">Supporto</string>
+    <string name="settings_send_feedback">Invia Feedback</string>
+    <string name="settings_send_feedback_subtitle">Aiutaci a migliorare l\'app</string>
+    <string name="settings_privacy_policy">Informativa sulla Privacy</string>
+    <string name="settings_privacy_policy_subtitle">Come gestiamo i tuoi dati</string>
+    <string name="settings_buy_coffee">Offrimi un caff\u00e8 ☕</string>
+    <string name="settings_buy_coffee_subtitle">Sostieni lo sviluppo con una piccola donazione</string>
+    <string name="settings_donate_paypal_subtitle">Dona tramite PayPal</string>
+    <string name="settings_donate_bmc_subtitle">Dona su buymeacoffee.com</string>
+    <string name="settings_about">Informazioni</string>
+    <string name="settings_app_version">Versione App</string>
+    <string name="settings_third_party">Terze parti</string>
+    <string name="settings_third_party_libraries">Librerie Open-source</string>
+    <string name="settings_third_party_subtitle">Visualizza le librerie open-source utilizzate in questa app</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_choose_theme">Scegli Tema</string>
+    <string name="dialog_choose_language">Scegli Lingua</string>
+    <string name="dialog_choose_currency">Simbolo Valuta</string>
+    <string name="dialog_choose_decimal_digits">Cifre Decimali</string>
+    <string name="dialog_choose_decimal_separator">Separatore Decimali</string>
+    <string name="dialog_choose_thousands_separator">Separatore Migliaia</string>
+    <string name="dialog_cancel">Annulla</string>
+    <string name="dialog_close">Chiudi</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_delete">Elimina</string>
+    <string name="dialog_add">Aggiungi</string>
+
+    <!-- Common Actions -->
+    <string name="common_confirm">Conferma</string>
+    <string name="common_cancel">Annulla</string>
+    <string name="common_collapse">Comprimi</string>
+    <string name="common_expand">Espandi</string>
+
+    <!-- Backup/Restore -->
+    <string name="backup_success_title">Backup Completato</string>
+    <string name="backup_success_message">I tuoi dati sono stati esportati con successo.</string>
+    <string name="backup_error_title">Backup Fallito</string>
+    <string name="backup_error_message">Impossibile creare il backup: %s</string>
+    <string name="settings_data_file_picker_unavailable">Selettore file non disponibile su questo dispositivo.</string>
+    <string name="restore_success_title">Ripristino Completato</string>
+    <string name="restore_success_message">Ripristinate con successo %1$d transazioni e %2$d categorie.</string>
+    <string name="restore_error_title">Ripristino Fallito</string>
+    <string name="restore_error_message">Impossibile ripristinare il backup: %s</string>
+    <string name="dialog_delete_all_title">Eliminare tutti i dati?</string>
+    <string name="dialog_delete_all_message">Questa azione eliminer\u00e0 permanentemente tutte le transazioni e le categorie. Non \u00e8 possibile annullare.</string>
+    <string name="dialog_data_deleted">Dati Eliminati</string>
+    <string name="dialog_data_deleted_message">Tutti i dati sono stati eliminati con successo.</string>
+    <string name="dialog_reset_preferences_title">Ripristina Preferenze</string>
+    <string name="dialog_reset_preferences_message">Questa operazione ripristiner\u00e0 tutte le impostazioni ai valori predefiniti. Continuare?</string>
+    <string name="dialog_reset">Ripristina</string>
+
+    <!-- Privacy Policy -->
+    <string name="privacy_policy_title">Informativa sulla Privacy</string>
+    <string name="privacy_policy_content">AntCashManager si impegna a proteggere la tua privacy. Questa applicazione non raccoglie n\u00e9 condivide dati personali con terze parti. Tutti i dati finanziari sono memorizzati localmente sul tuo dispositivo e non vengono mai trasmessi a server esterni.\n\nI tuoi dati rimangono interamente sul tuo dispositivo e sotto il tuo controllo. Non utilizziamo pubblicit\u00e0.\n\nPer qualsiasi domanda sulla privacy, contattaci attraverso la pagina dello store.</string>
+
+    <!-- Languages -->
+    <string name="language_system">Predefinito di sistema</string>
+    <string name="language_english">English</string>
+    <string name="language_italian">Italiano</string>
+    <string name="language_french">Fran\u00e7ais</string>
+    <string name="language_german">Deutsch</string>
+    <string name="language_spanish">Español</string>
+    <string name="debug_import_started">Importazione debug avviata</string>
+    <string name="back">Indietro</string>
+
+    <!-- Add Transaction Screen -->
+    <string name="add_transaction">Aggiungi Transazione</string>
+    <string name="transaction_title">Titolo Transazione</string>
+    <string name="transaction_amount">Importo</string>
+    <string name="transaction_type">Tipo di Transazione</string>
+    <string name="transaction_category">Categoria</string>
+    <string name="transaction_date">Data</string>
+
+    <!-- Add Transaction Steps -->
+    <string name="add_transaction_select_category">Seleziona Categoria</string>
+    <string name="add_transaction_choose_category">Scegli una categoria per la transazione</string>
+    <string name="add_transaction_no_categories_available">Nessuna categoria disponibile</string>
+    <string name="add_transaction_cancel">Annulla</string>
+    <string name="add_transaction_next">Avanti</string>
+    <string name="add_transaction_previous">Indietro</string>
+    <string name="add_transaction_select_type">Seleziona Tipo</string>
+    <string name="add_transaction_selected_category">Categoria: %s</string>
+    <string name="add_transaction_choose_type">Scegli il tipo di transazione</string>
+    <string name="add_transaction_income_label">Entrata</string>
+    <string name="add_transaction_expense_label">Uscita</string>
+    <string name="add_transaction_details">Dettagli Transazione</string>
+    <string name="add_transaction_category_type">Categoria: %1$s | Tipo: %2$s</string>
+    <string name="add_transaction_title_required">Titolo *</string>
+    <string name="add_transaction_amount_required">Importo *</string>
+    <string name="add_transaction_date_label">Data: %s</string>
+    <string name="add_transaction_notes_label">Note</string>
+    <string name="add_transaction_payee_label">Beneficiario</string>
+    <string name="add_transaction_location_label">Luogo</string>
+    <string name="add_transaction_confirmation">Conferma</string>
+    <string name="add_transaction_summary">Riepilogo Transazione</string>
+    <string name="add_transaction_field_category">Categoria</string>
+    <string name="add_transaction_field_type">Tipo</string>
+    <string name="add_transaction_field_title">Titolo</string>
+    <string name="add_transaction_field_amount">Importo</string>
+    <string name="add_transaction_field_date">Data</string>
+    <string name="add_transaction_field_notes">Note</string>
+    <string name="add_transaction_field_payee">Beneficiario</string>
+    <string name="add_transaction_field_location">Luogo</string>
+    <string name="add_transaction_save">Salva</string>
+    <string name="add_transaction_update">Modifica</string>
+    <string name="edit_transaction_title">Modifica Transazione</string>
+    <string name="add_transaction_back">Indietro</string>
+    <string name="add_transaction_none">Nessuno</string>
+    <string name="add_transaction_category">Categoria</string>
+    <string name="add_transaction_type">Tipo</string>
+    <string name="add_transaction_tags_label">Tag</string>
+    <string name="add_transaction_tags_placeholder">Aggiungi tag separati da virgole</string>
+    <string name="add_transaction_recurring_label">Transazione Ricorrente</string>
+    <string name="add_transaction_field_tags">Tag</string>
+    <string name="add_transaction_field_recurrence">Ricorrenza</string>
+
+    <!-- Recurrence intervals -->
+    <string name="recurrence_interval_label">Intervallo di Ricorrenza</string>
+    <string name="recurrence_interval_daily">Giornaliera</string>
+    <string name="recurrence_interval_weekly">Settimanale</string>
+    <string name="recurrence_interval_monthly">Mensile</string>
+    <string name="recurrence_interval_yearly">Annuale</string>
+
+    <!-- Transaction Details Dialog -->
+    <string name="transaction_details_title">Dettagli Transazione</string>
+    <string name="transaction_details_id">ID Transazione</string>
+    <string name="transaction_details_title_label">Titolo</string>
+    <string name="transaction_details_category">Categoria</string>
+    <string name="transaction_details_type">Tipo</string>
+    <string name="transaction_details_payment_type">Tipo di Pagamento</string>
+    <string name="transaction_details_amount">Importo</string>
+    <string name="transaction_details_date">Data</string>
+    <string name="transaction_details_time">Ora</string>
+    <string name="transaction_details_notes">Note</string>
+    <string name="transaction_details_payee">Beneficiario</string>
+    <string name="transaction_details_location">Luogo</string>
+    <string name="transaction_details_recurrence">Ricorrenza</string>
+     <string name="transaction_details_tags">Tag</string>
+     <string name="transaction_details_share">Condividi Transazione</string>
+    <string name="transaction_details_close">Chiudi</string>
+
+    <!-- Transaction Share -->
+    <string name="transaction_share_button">Condividi Transazione</string>
+    <string name="transaction_share_via">Condiviso tramite</string>
+
+    <!-- Payment Type -->
+    <string name="payment_type_label">Tipo di Pagamento</string>
+    <string name="payment_type_electronic">Pagamento Elettronico</string>
+    <string name="payment_type_cash">Contante</string>
+    <string name="payment_type_meal_vouchers">Buoni Pasto</string>
+
+    <!-- Add Transaction Payment Type -->
+    <string name="add_transaction_payment_type">Tipo di Pagamento</string>
+    <string name="add_transaction_select_payment_type">Seleziona Tipo di Pagamento</string>
+    <string name="add_transaction_payment_type_electronic">Elettronico</string>
+    <string name="add_transaction_payment_type_cash">Contante</string>
+    <string name="add_transaction_payment_type_meal_vouchers">Buoni Pasto</string>
+
+    <!-- Empty State -->
+    <string name="empty_state_no_transactions">Nessuna transazione presente</string>
+    <string name="empty_state_no_transactions_subtitle">Il salvadanaio ti sta aspettando!</string>
+
+    <!-- Payment Breakdown -->
+    <string name="settings_show_payment_breakdown">Mostra saldo per tipo di pagamento</string>
+    <string name="settings_show_payment_breakdown_desc">Visualizza il saldo suddiviso per metodo di pagamento nella schermata Home</string>
+    <string name="payment_breakdown_label">Saldo per Tipo di Pagamento</string>
+    <string name="payment_breakdown_item_desc">Saldo con %1$s: %2$.2f</string>
+
+    <!-- Transaction Display Type -->
+    <string name="settings_transaction_display">Visualizzazione Icone Transazioni</string>
+    <string name="settings_transaction_display_trend">Andamento</string>
+    <string name="settings_transaction_display_category">Categoria</string>
+    <string name="settings_transaction_display_none">Nessuna</string>
+    <string name="dialog_choose_transaction_display">Scegli visualizzazione</string>
+
+    <!-- Feedback Email Bodies -->
+    <string name="feedback_email_body_italian">Ciao team di AntCashManager,\n\nVorrei condividere alcuni feedback sull\'app:\n\n[Per favore descrivi il tuo feedback qui]\n\nGrazie!</string>
+    <string name="feedback_email_body_english">Hi AntCashManager Team,\n\nI would like to share some feedback about the app:\n\n[Please describe your feedback here]\n\nThank you!</string>
+    <string name="feedback_email_body_french">Bonjour à l\'équipe d\'AntCashManager,\n\nJ\'aimerais partager des commentaires sur l\'application:\n\n[Veuillez décrire vos commentaires ici]\n\nMerci!</string>
+    <string name="feedback_email_body_german">Hallo AntCashManager-Team,\n\nIch möchte gerne Feedback zur App geben:\n\n[Bitte beschreiben Sie Ihr Feedback hier]\n\nDanke!</string>
+    <string name="feedback_email_body_spanish">Hola equipo de AntCashManager,\n\nMe gustaría compartir comentarios sobre la aplicación:\n\n[Por favor describe tu retroalimentación aquí]\n\n¡Gracias!</string>
+
+    <!-- Feedback Error Messages -->
+    <string name="no_email_app_installed">Nessuna app email disponibile</string>
+
+    <!-- Transaction Display Section -->
+    <string name="settings_display_charts">Grafici</string>
+    <string name="settings_charts_zoom">Abilita Zoom Grafici</string>
+    <string name="settings_charts_zoom_desc">Permette di ingrandire i grafici con il pinch-to-zoom</string>
+
+    <string name="settings_transaction_display_section">Transazioni</string>
+    <string name="settings_show_transaction_notes">Mostra Note Transazioni</string>
+    <string name="settings_show_transaction_notes_subtitle_enabled">Note visibili negli item transazioni</string>
+    <string name="settings_show_transaction_notes_subtitle_disabled">Note nascoste</string>
+    <string name="settings_transaction_icon_display_subtitle">Scegli come visualizzare le icone</string>
+    <string name="settings_transaction_icon_display_trend">Frecce Andamento</string>
+    <string name="settings_transaction_icon_display_category">Categoria</string>
+    <string name="settings_transaction_icon_display_none">Nessuna</string>
+    <string name="dialog_choose_transaction_icon_display">Scegli il tipo di visualizzazione</string>
+
+    <!-- Tutorial -->
+    <string name="settings_tutorial">Tutorial</string>
+    <string name="settings_show_tutorial">Mostra Tutorial</string>
+    <string name="settings_show_tutorial_subtitle">Riguarda il tutorial iniziale dell\'app</string>
+    <string name="tutorial_welcome_title">Benvenuto su AntCashManager! 🐜</string>
+    <string name="tutorial_welcome_desc">Facciamo un breve tour per vedere come la nostra formichina ti aiuta a gestire i tuoi soldi.</string>
+    <string name="tutorial_welcome_point_track">Traccia entrate e uscite in pochi secondi.</string>
+    <string name="tutorial_welcome_point_insights">Controlla saldo e trend a colpo d\'occhio.</string>
+    <string name="tutorial_welcome_point_categories">Organizza le spese con categorie intelligenti.</string>
+    <string name="tutorial_welcome_point_customize">Personalizza lingua, tema e formati.</string>
+    <string name="tutorial_dashboard_title">Dashboard</string>
+    <string name="tutorial_dashboard_desc">Qui puoi vedere il tuo saldo totale, le entrate e le uscite mensili a colpo d\'occhio.</string>
+    <string name="tutorial_transactions_title">Transazioni</string>
+    <string name="tutorial_transactions_desc">Gestisci tutti i tuoi movimenti qui. Puoi cercare, filtrare e aggiungere nuove voci facilmente.</string>
+    <string name="tutorial_charts_title">Grafici e Analisi</string>
+    <string name="tutorial_charts_desc">Visualizza le tue abitudini di spesa con grafici interattivi. Guarda dove vanno a finire i tuoi soldi!</string>
+    <string name="tutorial_categories_title">Categorie</string>
+    <string name="tutorial_categories_desc">Organizza le tue transazioni con categorie personalizzate, icone e colori.</string>
+    <string name="tutorial_settings_title">Personalizzazione</string>
+    <string name="tutorial_settings_desc">Adatta l\'app alle tue esigenze: valuta, formati data, accessibilit\u00e0 e temi.</string>
+    <string name="tutorial_finish_title">Sei pronto!</string>
+    <string name="tutorial_finish_desc">Inizia oggi il tuo viaggio finanziario con AntCashManager. Buon risparmio!</string>
+    <string name="tutorial_next">Avanti</string>
+    <string name="tutorial_skip">Salta</string>
+    <string name="tutorial_finish">Capito!</string>
+    <string name="tutorial_progress_cd">Passo tutorial %1$d di %2$d</string>
+
+    <!-- Category Translations (Keys) -->
+    <string name="category_uncategorized">Non categorizzato</string>
+    <string name="category_home">Casa</string>
+    <string name="category_transport">Trasporti</string>
+    <string name="category_food">Cibo</string>
+    <string name="category_bills">Bollette</string>
+    <string name="category_dining">Pranzi/Cene fuori</string>
+    <string name="category_entertainment">Divertimento</string>
+    <string name="category_health">Salute</string>
+    <string name="category_shopping">Shopping</string>
+    <string name="category_education">Istruzione</string>
+    <string name="category_other">Altro</string>
+    <string name="category_salary">Stipendio</string>
+    <string name="category_allowance">Paghetta</string>
+    <string name="category_reimbursement">Rimborso</string>
+    <string name="category_investments">Investimenti</string>
+    <string name="category_freelance">Freelance</string>
+
+    <!-- Receipt Scan Screen -->
+    <string name="receipt_scan_title">Scansiona Scontrino</string>
+    <string name="receipt_scan_capture_hint">Scatta una foto allo scontrino o scegline una dalla galleria per estrarre automaticamente importo, IVA, beneficiario e luogo.</string>
+    <string name="receipt_scan_take_photo">Scatta Foto</string>
+    <string name="receipt_scan_pick_gallery">Scegli dalla Galleria</string>
+    <string name="receipt_scan_processing">Analisi scontrino in corso…</string>
+    <string name="receipt_scan_total_label">Totale Estratto</string>
+    <string name="receipt_scan_title_label">Titolo Transazione</string>
+    <string name="receipt_scan_payee_label">Beneficiario / Esercente</string>
+    <string name="receipt_scan_location_label">Luogo</string>
+    <string name="receipt_scan_select_category">Seleziona Categoria</string>
+    <string name="receipt_scan_category_subtitle">Categoria di spesa per questa transazione</string>
+    <string name="receipt_scan_no_categories">Nessuna categoria di spesa disponibile. Aggiungi prima una categoria.</string>
+    <string name="receipt_scan_save">Salva Transazione</string>
+    <string name="receipt_scan_retry">Effettua nuova scansione</string>
+    <string name="receipt_scan_nav_label">Scansiona Scontrino</string>
+     <string name="receipt_scan_payment_type_subtitle">Metodo di pagamento — rilevato automaticamente, tocca per modificare</string>
+     <string name="receipt_scan_select_payment_type">Seleziona Tipo Pagamento</string>
+
+</resources>

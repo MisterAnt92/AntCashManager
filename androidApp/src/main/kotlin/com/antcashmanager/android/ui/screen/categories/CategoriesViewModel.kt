@@ -1,0 +1,99 @@
+package com.antcashmanager.android.ui.screen.categories
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import co.touchlab.kermit.Logger
+import com.antcashmanager.domain.model.Category
+import com.antcashmanager.domain.repository.CategoryRepository
+import com.antcashmanager.domain.usecase.category.DeleteCategoryUseCase
+import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
+import com.antcashmanager.domain.usecase.category.InsertCategoryUseCase
+import com.antcashmanager.domain.usecase.category.UpdateCategoryUseCase
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+
+class CategoriesViewModel(
+    private val getCategoriesUseCase: GetCategoriesUseCase,
+    private val insertCategoryUseCase: InsertCategoryUseCase,
+    private val updateCategoryUseCase: UpdateCategoryUseCase,
+    private val deleteCategoryUseCase: DeleteCategoryUseCase,
+) : ViewModel() {
+
+    constructor(categoryRepository: CategoryRepository) : this(
+        getCategoriesUseCase = GetCategoriesUseCase(categoryRepository),
+        insertCategoryUseCase = InsertCategoryUseCase(categoryRepository),
+        updateCategoryUseCase = UpdateCategoryUseCase(categoryRepository),
+        deleteCategoryUseCase = DeleteCategoryUseCase(categoryRepository),
+    )
+
+    private val _state = MutableStateFlow(CategoriesState())
+    val state: StateFlow<CategoriesState> = _state
+
+    init {
+        viewModelScope.launch {
+            getCategoriesUseCase().collect { result ->
+                result.onSuccess { cats ->
+                    _state.update {
+                        it.copy(
+                            categories = cats,
+                            expenseCategories = cats.filter { category -> category.type == "EXPENSE" },
+                            incomeCategories = cats.filter { category -> category.type == "INCOME" },
+                        )
+                    }
+                }.onFailure { error ->
+                    if (error is kotlinx.coroutines.CancellationException) throw error
+                    Logger.e(
+                        "CategoriesViewModel",
+                        error
+                    ) { "Error loading categories: ${error.message}" }
+                }
+            }
+        }
+    }
+
+    fun addCategory(name: String, icon: String, color: Long, type: String = "EXPENSE") {
+        Logger.d("CategoriesViewModel") { "Adding category: $name ($type)" }
+        viewModelScope.launch {
+            val result = insertCategoryUseCase(
+                Category(name = name, icon = icon, color = color, type = type),
+            )
+            result.onFailure { error ->
+                if (error is kotlinx.coroutines.CancellationException) throw error
+                Logger.e(
+                    "CategoriesViewModel",
+                    error
+                ) { "Failed to insert category: ${error.message}" }
+            }
+        }
+    }
+
+    fun updateCategory(category: Category) {
+        Logger.d("CategoriesViewModel") { "Updating category: ${category.name}" }
+        viewModelScope.launch {
+            val result = updateCategoryUseCase(category)
+            result.onFailure { error ->
+                if (error is kotlinx.coroutines.CancellationException) throw error
+                Logger.e(
+                    "CategoriesViewModel",
+                    error
+                ) { "Failed to update category: ${error.message}" }
+            }
+        }
+    }
+
+    fun deleteCategory(category: Category) {
+        Logger.d("CategoriesViewModel") { "Deleting category: ${category.name}" }
+        viewModelScope.launch {
+            val result = deleteCategoryUseCase(category)
+            result.onFailure { error ->
+                if (error is kotlinx.coroutines.CancellationException) throw error
+                Logger.e(
+                    "CategoriesViewModel",
+                    error
+                ) { "Failed to delete category: ${error.message}" }
+            }
+        }
+    }
+}

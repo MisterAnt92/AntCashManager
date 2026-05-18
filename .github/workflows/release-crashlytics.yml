@@ -1,0 +1,28 @@
+name: Release Crashlytics Mapping
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-release-and-upload-mapping:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build release + upload Crashlytics mapping
+        run: ./gradlew :androidApp:assembleRelease :androidApp:uploadCrashlyticsMappingFileRelease --no-daemon
+
