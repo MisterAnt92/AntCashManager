@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1024"
+     height="500"
+     viewBox="0 0 1024 500">
+
+  <defs>
+    <linearGradient id="gradientBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFE0E6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFD0DB;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="gradientAccent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF8A95;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E91E63;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1024" height="500" fill="url(#gradientBg)"/>
+
+  <!-- Left side: App Title and Tagline -->
+  <g>
+    <!-- Title background shape -->
+    <path d="M 20 50 L 480 50 Q 500 50 500 70 L 500 450 Q 500 470 480 470 L 20 470 Q 0 470 0 450 L 0 70 Q 0 50 20 50 Z"
+          fill="#FFFFFF" opacity="0.95"/>
+
+    <!-- App Name -->
+    <text x="50" y="140" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="#FF8A95">
+      AntCash
+    </text>
+    <text x="50" y="210" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="#E91E63">
+      Manager
+    </text>
+
+    <!-- Tagline -->
+    <text x="50" y="280" font-family="Arial, sans-serif" font-size="28" fill="#666666">
+      Gestion Financiera
+    </text>
+    <text x="50" y="320" font-family="Arial, sans-serif" font-size="28" fill="#666666">
+      Inteligente
+    </text>
+
+    <!-- Subtitle -->
+    <text x="50" y="400" font-family="Arial, sans-serif" font-size="18" fill="#999999">
+      Controla tus gastos con estilo
+    </text>
+    <text x="50" y="430" font-family="Arial, sans-serif" font-size="18" fill="#999999">
+      Copia segura • Graficos intuitivos • Siempre contigo
+    </text>
+  </g>
+
+  <!-- Right side: App Icon and Features -->
+  <g>
+    <!-- Main app icon -->
+    <g transform="translate(700, 120) scale(0.8)">
+      <!-- Background circle with gradient -->
+      <circle cx="128" cy="128" r="128" fill="url(#gradientAccent)" opacity="0.9"/>
+
+      <!-- Piggy Bank Body -->
+      <ellipse cx="128" cy="145" rx="80" ry="57" fill="#FFB3BA" stroke="#FF8A95" stroke-width="5"/>
+
+      <!-- Snout -->
+      <ellipse cx="128" cy="117" rx="22" ry="15" fill="#FF8A95"/>
+
+      <!-- Nostrils -->
+      <circle cx="116" cy="117" r="4.5" fill="#E91E63"/>
+      <circle cx="140" cy="117" r="4.5" fill="#E91E63"/>
+
+      <!-- Eyes -->
+      <circle cx="104" cy="97" r="10.5" fill="#FFFFFF"/>
+      <circle cx="152" cy="97" r="10.5" fill="#FFFFFF"/>
+
+      <!-- Pupils -->
+      <circle cx="104" cy="97" r="5.2" fill="#2E2E2E"/>
+      <circle cx="152" cy="97" r="5.2" fill="#2E2E2E"/>
+
+      <!-- Eye highlights -->
+      <circle cx="106" cy="94" r="1.8" fill="#FFFFFF"/>
+      <circle cx="154" cy="94" r="1.8" fill="#FFFFFF"/>
+
+      <!-- Ears -->
+      <path d="M90,90 Q75,65 90,52 Q100,65 90,90Z" fill="#FFB3BA"/>
+      <path d="M166,90 Q181,65 166,52 Q156,65 166,90Z" fill="#FFB3BA"/>
+
+      <!-- Legs -->
+      <ellipse cx="100" cy="163" rx="11" ry="19" fill="#FF8A95"/>
+      <ellipse cx="156" cy="163" rx="11" ry="19" fill="#FF8A95"/>
+
+      <!-- Coin slot -->
+      <rect x="122" y="82" width="10" height="20" rx="5" fill="#E91E63"/>
+
+      <!-- Coin -->
+      <circle cx="128" cy="64" r="15" fill="#FFD54F"/>
+      <circle cx="128" cy="64" r="10" fill="#FFC107"/>
+    </g>
+
+    <!-- Feature icons and text -->
+    <g id="features">
+      <!-- Feature 1: Security -->
+      <g transform="translate(650, 360)">
+        <circle cx="0" cy="0" r="24" fill="#E91E63" opacity="0.2"/>
+        <text x="35" y="8" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#FF8A95">Copia segura</text>
+      </g>
+
+      <!-- Feature 2: Analytics -->
+      <g transform="translate(650, 410)">
+        <circle cx="0" cy="0" r="24" fill="#FF8A95" opacity="0.2"/>
+        <text x="35" y="8" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#FF8A95">Graficos intuitivos</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Decorative elements -->
+  <g opacity="0.1">
+    <circle cx="100" cy="480" r="80" fill="#FFD54F"/>
+    <circle cx="950" cy="30" r="60" fill="#FFD54F"/>
+  </g>
+
+</svg>
+
