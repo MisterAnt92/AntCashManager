@@ -48,7 +48,7 @@ FEATURES=(
 
 # Package e activity dell'app
 APP_PACKAGE="com.sformica.ant_cashmanager"
-APP_ACTIVITY="$APP_PACKAGE.MainActivity"
+APP_ACTIVITY="com.antcashmanager.android.MainActivity"
 
 echo -e "${BLUE}╔════════════════════════════════════════════════════════╗${NC}"
 echo -e "${BLUE}║ AntCashManager - Screenshot Capture Script (Multilang) ║${NC}"
@@ -142,7 +142,7 @@ capture_screenshot() {
 # Funzione per avviare l'app
 launch_app() {
     echo -e "${YELLOW}  Launching app...${NC}"
-    adb -s "$DEVICE" shell am start -n "$APP_ACTIVITY" 2>/dev/null || {
+    adb -s "$DEVICE" shell am start -n "$APP_PACKAGE/$APP_ACTIVITY" 2>/dev/null || {
         echo -e "${RED}    ✗ Failed to launch app${NC}"
         return 1
     }

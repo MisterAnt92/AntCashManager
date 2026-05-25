@@ -146,3 +146,41 @@ Ottimizza l'efficienza, la qualità e la manutenibilità del codice seguendo Cle
 ## 10. Riferimenti
 - Consulta i file in `wiki/` e le implementazioni di esempio (DisplayScreen, SettingsScreen, HomeScreen) per dubbi architetturali.
 - In caso di incertezza, preferisci codice pulito, testabile e manutenibile.
+
+---
+
+## 11. Esclusione File da Gitignore (OBBLIGATORIO)
+
+**REGOLA CRITICA**: Quando analizzi o lavori con il codice, **ESCLUDERE SEMPRE i file elencati nel `.gitignore` del progetto**.
+
+### Perché
+- Il `.gitignore` è una definizione versionata di cosa NON deve essere analizzato/committato
+- I file esclusi sono generati, temporanei o contengono dati sensibili e NON devono MAI essere modificati
+- Analizzare file esclusi spreca token e introduce suggerimenti scorretti
+
+### Come Applicare
+1. **Leggi sempre `.gitignore`** prima di analizzare un percorso di file
+2. **Non suggerire mai modifiche** a file che corrispondono a pattern `.gitignore`
+3. **Non generare suggerimenti** da dentro directory escluse (es. `build/`, `.gradle/`, `.idea/`)
+4. **Se un percorso corrisponde a un'esclusione**, informare l'utente: *"Questo file corrisponde a esclusioni in `.gitignore` e NON deve essere modificato."*
+
+### Categorie Comunemente Escluse (vedi `.gitignore` completo per la lista intera)
+- **Build output**: `build/`, `.gradle/`, `out/`
+- **Configurazioni IDE**: `.idea/`, `.vscode/`, `*.iml`
+- **Codice generato**: `build/generated/`, `buildSrc/`
+- **File di sicurezza**: `*.jks`, `*.keystore`, `google-services.json`, `local.properties`
+- **File OS-specifici**: `.DS_Store`, `Thumbs.db`
+- **Log file**: `*.log`, `logcat.txt`
+- **File temporanei**: `*.tmp`, `*.bak`, `node_modules/`
+- **Kotlin Multiplatform**: `.kotlin/`, `.konan/`, `*.klib`, `*.kexe`
+- **Android NDK**: `*.so`, `obj/`
+- **Firebase/Crashlytics**: `crashlytics.properties`, `fabric.properties`
+- **Dati sensibili**: `.env`, `.env.local`, `secrets.properties`
+
+### Implementazione nel Flusso di Lavoro
+1. Quando suggerisci modifiche a file, verifica che il percorso NON sia in `.gitignore`
+2. Se l'utente chiede di modificare un file escluso, rifiuta polidamente e spiega il motivo
+3. Se durante l'analisi trovi riferimenti a percorsi esclusi, ignora quei percorsi
+4. Mantieni questa esclusione in mente durante **analisi**, **refactor**, **testing**, **import cleanup**
+
+
