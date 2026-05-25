@@ -1,35 +1,223 @@
-# Gradle files
+# ============================================================================
+# Gradle Build System
+# ============================================================================
 .gradle/
+.gradle
 build/
+out/
+*.jar
+*.war
+*.rar
+*.zip
 
-# Local configuration file (sdk path, etc)
-local.properties
+# ============================================================================
+# Kotlin Multiplatform (KMP) Specific
+# ============================================================================
+.kotlin/
+.konan/
+kotlinx-coroutines-core/**/.gradle
+kotlinx-coroutines-core/**/build/
+.mp/
+*.klib
+*.kexe
+*.exe
+*.dll
 
-# Log/OS Files
-*.log
+# ============================================================================
+# IDE: IntelliJ IDEA / Android Studio
+# ============================================================================
+.idea/
+*.iml
+*.iws
+*.ipr
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+.classpath
+.c9/
+*.launch
+.settings/
+.vscode/
+misc.xml
+deploymentTargetDropDown.xml
+render.experimental.xml
+workspace.xml
+usage.statistics.xml
+shelf/
 
-# Android Studio generated files and folders
+# ============================================================================
+# IDE: VS Code
+# ============================================================================
+.vscode/
+.vscode-test/
+.history/
+*.vsix
+
+# ============================================================================
+# IDE: Other
+# ============================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ============================================================================
+# Android Studio & Gradle
+# ============================================================================
 captures/
 .externalNativeBuild/
 .cxx/
 *.aab
 *.apk
+*.apks
+*.aabundle
 output-metadata.json
+lint-baseline.xml
 
-# IntelliJ
-*.iml
-.idea/
-misc.xml
-deploymentTargetDropDown.xml
-render.experimental.xml
+# ============================================================================
+# Android Profiling & Debugging
+# ============================================================================
+*.hprof
+*.trace
+.android/
+cpu-info.log
 
-# Keystore files
+# ============================================================================
+# Local Configuration Files
+# ============================================================================
+local.properties
+key.properties
+signing.properties
+gradle.properties.local
+
+# ============================================================================
+# Security: Private Keys & Keystores
+# ============================================================================
 *.jks
 *.keystore
+*.p12
+*.pfx
+*.pem
+*.key
+*.asc
+secrets.properties
+*.gpg
 
-# Google Services (e.g. APIs or Firebase)
+# ============================================================================
+# Google Services & Firebase
+# ============================================================================
 google-services.json
+GoogleService-Info.plist
+serviceAccountKey.json
 
-# Android Profiling
-*.hprof
-/.kotlin/
+# ============================================================================
+# Log Files
+# ============================================================================
+*.log
+*.log.*
+logs/
+logcat.txt
+
+# ============================================================================
+# OS-Specific Files
+# ============================================================================
+.DS_Store
+.DS_Store?
+._*
+.AppleDouble
+.LSOverride
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+
+# ============================================================================
+# Environment Variables & Local Settings
+# ============================================================================
+.env
+.env.local
+.env.*.local
+.venv/
+venv/
+ENV/
+
+# ============================================================================
+# Build Artifacts & Temporary Files
+# ============================================================================
+*.o
+*.a
+*.so
+*.dylib
+dist/
+target/
+release/
+debug/
+*.class
+*.pyc
+*.pyo
+__pycache__/
+node_modules/
+*.egg-info/
+.pytest_cache/
+.coverage
+
+# ============================================================================
+# Gradle Wrapper
+# ============================================================================
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+
+# ============================================================================
+# Room Database Schemas
+# ============================================================================
+schemas/
+
+# ============================================================================
+# Firebase & Crashlytics
+# ============================================================================
+/androidApp/google-services.json
+fabric.properties
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+
+# ============================================================================
+# Android NDK
+# ============================================================================
+.ndk/
+*.so
+*.o
+obj/
+libs/
+
+# ============================================================================
+# Miscellaneous
+# ============================================================================
+.DS_Store
+.classpath
+.project
+.c9/
+*.launch
+.settings/
+.sublime-project
+.sublime-workspace
+.vscode/
+
+# ============================================================================
+# Test Coverage
+# ============================================================================
+coverage/
+jacoco/
+*.ec
+*.exec
