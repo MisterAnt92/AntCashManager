@@ -76,6 +76,7 @@ dependencies {
 
     // Test dependencies
     testImplementation(libs.junit)
+    testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
     // Forza la versione di kotlinx-coroutines-test per evitare conflitti
     configurations.all {
@@ -86,4 +87,5 @@ dependencies {
     androidTestImplementation(libs.androidx.junit.ext)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation(libs.mockk.android)
 }

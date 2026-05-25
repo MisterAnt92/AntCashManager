@@ -14,8 +14,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-// import kotlinx.coroutines.test.StandardTestDispatcher
-// import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -23,12 +23,13 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModelTest {
-    private val testDispatcher = Dispatchers.Default
+    private lateinit var testDispatcher: TestDispatcher
     private lateinit var fakeRepo: FakeTransactionRepository
     private lateinit var fakeCategoryRepo: FakeCategoryRepository
     private lateinit var fakeSettingsRepository: FakeSettingsRepository
@@ -36,6 +37,7 @@ class HomeViewModelTest {
 
     @Before
     fun setup() {
+        testDispatcher = StandardTestDispatcher()
         Dispatchers.setMain(testDispatcher)
         fakeRepo = FakeTransactionRepository()
         fakeCategoryRepo = FakeCategoryRepository()
@@ -108,21 +110,23 @@ class HomeViewModelTest {
 
     @Test
     fun `transactions update when repository changes`() = runTest(testDispatcher) {
+        fun awaitTransactionsSize(expected: Int) {
+            repeat(10) {
+                advanceUntilIdle()
+                if (viewModel.state.value.transactions.size == expected) {
+                    return
+                }
+            }
+            fail("Expected transactions size=$expected but was ${viewModel.state.value.transactions.size}")
+        }
+
         val collectJob = launch {
-            viewModel.transactions.collect {}
+            viewModel.state.collect {}
         }
         advanceUntilIdle()
-        assertTrue(viewModel.transactions.value.isEmpty())
+        assertTrue(viewModel.state.value.transactions.isEmpty())
 
-        viewModel.onEvent(
-            com.antcashmanager.android.ui.screen.home.HomeEvent.SetDateRange(
-                0L,
-                Long.MAX_VALUE
-            )
-        )
-        advanceUntilIdle()
-
-        val now = System.currentTimeMillis()
+        val now = fakeSettingsRepository.homeDateFilterState.value.to - 1L
         fakeRepo.transactions.value = listOf(
             Transaction(
                 id = 1,
@@ -133,15 +137,21 @@ class HomeViewModelTest {
                 timestamp = now,
             ),
         )
-        advanceUntilIdle()
+        awaitTransactionsSize(1)
 
-        assertEquals(1, viewModel.transactions.value.size)
-        assertEquals("Bonus", viewModel.transactions.value.first().title)
+        assertEquals(1, viewModel.state.value.transactions.size)
+        assertEquals("Bonus", viewModel.state.value.transactions.first().title)
         collectJob.cancel()
     }
 
     @Test
     fun `transactions contain correct types`() = runTest(testDispatcher) {
+        fakeSettingsRepository.homeDateFilterState.value = SavedDateFilter(
+            presetIndex = SavedDateFilter.CUSTOM_PRESET_INDEX,
+            from = 0L,
+            to = Long.MAX_VALUE,
+        )
+
         val now = System.currentTimeMillis()
         fakeRepo.transactions.value = listOf(
             Transaction(
@@ -401,7 +411,7 @@ class HomeViewModelTest {
 
     @Test
     fun `totals and balance are calculated correctly for home cards`() = runTest(testDispatcher) {
-        val now = System.currentTimeMillis()
+        val now = System.currentTimeMillis() - 1_000L
         fakeRepo.transactions.value = listOf(
             Transaction(
                 id = 1,
@@ -440,14 +450,6 @@ class HomeViewModelTest {
         val collectJob = launch {
             viewModel.state.collect {}
         }
-        advanceUntilIdle()
-
-        viewModel.onEvent(
-            com.antcashmanager.android.ui.screen.home.HomeEvent.SetDateRange(
-                0L,
-                Long.MAX_VALUE
-            )
-        )
         advanceUntilIdle()
 
         val uiState = viewModel.state.value

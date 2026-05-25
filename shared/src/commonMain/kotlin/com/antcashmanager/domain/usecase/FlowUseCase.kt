@@ -29,5 +29,5 @@ abstract class FlowUseCase<in Params, out Result>(
      * Restituisce il Flow con [flowOn] applicato al dispatcher configurato.
      * Il Flow è cancellabile: la cancellazione del collector cancella la produzione.
      */
-    operator fun invoke(params: Params): Flow<Result> = execute(params).flowOn(dispatcher)
+    open operator fun invoke(params: Params): Flow<Result> = execute(params).flowOn(dispatcher)
 }

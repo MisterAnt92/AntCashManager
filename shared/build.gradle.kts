@@ -29,10 +29,13 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.mockk)
         }
         val androidUnitTest by getting {
             dependencies {
                 implementation(libs.junit)
+                implementation(libs.mockk)
                 implementation(libs.kotlinx.coroutines.test)
             }
         }
@@ -52,6 +55,7 @@ android {
 }
 
 dependencies {
+    testImplementation(libs.mockk)
     add("kspAndroid", libs.room.compiler)
 }
 

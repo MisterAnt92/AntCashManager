@@ -47,12 +47,18 @@ class SettingsViewModel(
     ) : this(
         settingsRepository = settingsRepository,
         transactionRepository = transactionRepository,
-        getThemeUseCase = GetThemeUseCase(settingsRepository),
+        getThemeUseCase = GetThemeUseCase(
+            settingsRepository = settingsRepository,
+            dispatcher = useCaseDispatcher,
+        ),
         setThemeUseCase = SetThemeUseCase(
             settingsRepository = settingsRepository,
             dispatcher = useCaseDispatcher,
         ),
-        getLanguageUseCase = GetLanguageUseCase(settingsRepository),
+        getLanguageUseCase = GetLanguageUseCase(
+            settingsRepository = settingsRepository,
+            dispatcher = useCaseDispatcher,
+        ),
         setLanguageUseCase = SetLanguageUseCase(
             settingsRepository = settingsRepository,
             dispatcher = useCaseDispatcher,

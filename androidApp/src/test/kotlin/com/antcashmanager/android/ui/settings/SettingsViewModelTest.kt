@@ -15,26 +15,28 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-// import kotlinx.coroutines.test.StandardTestDispatcher
-// import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsViewModelTest {
-    private val testDispatcher = Dispatchers.Default
+    private lateinit var testDispatcher: TestDispatcher
     private lateinit var fakeSettingsRepo: FakeSettingsRepository
     private lateinit var fakeTransactionRepo: FakeTransactionRepository
     private lateinit var viewModel: SettingsViewModel
 
     @Before
     fun setup() {
+        testDispatcher = StandardTestDispatcher()
         Dispatchers.setMain(testDispatcher)
         fakeSettingsRepo = FakeSettingsRepository()
         fakeTransactionRepo = FakeTransactionRepository()
@@ -90,25 +92,33 @@ class SettingsViewModelTest {
 
     @Test
     fun `setTheme can switch between themes`() = runTest(testDispatcher) {
+        fun awaitTheme(expected: AppTheme) {
+            repeat(5) {
+                advanceUntilIdle()
+                if (viewModel.state.value.theme == expected) {
+                    return
+                }
+            }
+            fail("Expected theme=$expected but was ${viewModel.state.value.theme}")
+        }
+
         val collectJob = launch {
             viewModel.state.collect {}
         }
         advanceUntilIdle()
 
         viewModel.setTheme(AppTheme.DARK)
-        advanceUntilIdle()
-        assertEquals(AppTheme.DARK, viewModel.state.value.theme)
+        awaitTheme(AppTheme.DARK)
 
         viewModel.setTheme(AppTheme.LIGHT)
-        advanceUntilIdle()
-        assertEquals(AppTheme.LIGHT, viewModel.state.value.theme)
+        awaitTheme(AppTheme.LIGHT)
 
         viewModel.setTheme(AppTheme.SYSTEM)
-        advanceUntilIdle()
-        assertEquals(AppTheme.SYSTEM, viewModel.state.value.theme)
+        awaitTheme(AppTheme.SYSTEM)
 
         collectJob.cancel()
     }
+
 
 }
 
