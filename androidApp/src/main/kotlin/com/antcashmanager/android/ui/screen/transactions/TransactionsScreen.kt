@@ -74,6 +74,7 @@ import com.antcashmanager.android.ui.components.DateRangeFilter
 import com.antcashmanager.android.ui.components.HelpButton
 import com.antcashmanager.android.ui.components.ScreenHeader
 import com.antcashmanager.android.ui.components.SearchComponent
+import com.antcashmanager.android.ui.components.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.dialog.AppHelpDialog
 import com.antcashmanager.android.ui.components.dialog.HelpDialogFeatureSpec
 import com.antcashmanager.android.ui.components.SkeletonLoader
@@ -185,6 +186,7 @@ internal fun TransactionsContent(
     val dateFilterExpanded by settingsRepository.getDateFilterExpanded()
         .collectAsState(initial = true)
     val coroutineScope = rememberCoroutineScope()
+    val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
 
     val listState = rememberLazyListState()
     val showScrollToTop by remember {
@@ -252,7 +254,10 @@ internal fun TransactionsContent(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+                .padding(
+                    horizontal = adaptiveLayoutInfo.horizontalPadding,
+                    vertical = if (adaptiveLayoutInfo.isExpanded) 16.dp else 12.dp,
+                ),
             state = listState,
             verticalArrangement = Arrangement.spacedBy(TransactionsScreenDefaults.CardSpacing),
             contentPadding = PaddingValues(bottom = TransactionsScreenDefaults.ListBottomSpacer)

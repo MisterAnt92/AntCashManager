@@ -1,11 +1,16 @@
 package com.antcashmanager.android.navigation
 
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -24,6 +29,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.AntScreenScaffold
+import com.antcashmanager.android.ui.components.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.categories.CategoriesScreen
 import com.antcashmanager.android.ui.screen.charts.ChartsScreen
@@ -64,6 +70,8 @@ fun AntCashManagerNavHost() {
     )
 
     CompositionLocalProvider(LocalCurrencyFormat provides currencyFormat) {
+        val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
+
         val visibleNavItems = buildList {
             add(BottomNavItem.Home)
             if (showCharts) add(BottomNavItem.Charts)
@@ -82,7 +90,7 @@ fun AntCashManagerNavHost() {
         AntScreenScaffold(
             showTopBar = false,
             bottomBar = {
-                if (isTutorialCompleted) {
+                if (isTutorialCompleted && adaptiveLayoutInfo.isCompact) {
                     Surface(
                         color = MaterialTheme.colorScheme.surface,
                         tonalElevation = 6.dp,
@@ -125,55 +133,109 @@ fun AntCashManagerNavHost() {
                 }
             },
         ) { innerPadding ->
-            NavHost(
-                navController = navController,
-                startDestination = BottomNavItem.Home.route,
-                modifier = Modifier.padding(innerPadding),
-            ) {
-                composable(BottomNavItem.Home.route) {
-                    HomeScreen(navController = navController)
+            val navHostContent: @Composable (Modifier) -> Unit = { navModifier ->
+                NavHost(
+                    navController = navController,
+                    startDestination = BottomNavItem.Home.route,
+                    modifier = navModifier,
+                ) {
+                    composable(BottomNavItem.Home.route) {
+                        HomeScreen(navController = navController)
+                    }
+                    composable(BottomNavItem.Charts.route) {
+                        ChartsScreen()
+                    }
+                    composable(BottomNavItem.Transactions.route) {
+                        TransactionsScreen(navController = navController)
+                    }
+                    composable(BottomNavItem.Categories.route) {
+                        CategoriesScreen()
+                    }
+                    composable(BottomNavItem.Settings.route) {
+                        SettingsScreen(navController = navController)
+                    }
+                    composable("display") {
+                        DisplayScreen(navController = navController)
+                    }
+                    composable("settings_data") {
+                        SettingsDataScreen(navController = navController)
+                    }
+                    composable(
+                        route = "add_transaction?transactionId={transactionId}",
+                        arguments = listOf(
+                            androidx.navigation.navArgument("transactionId") {
+                                type = androidx.navigation.NavType.LongType
+                                defaultValue = -1L
+                            }
+                        )
+                    ) { backStackEntry ->
+                        val transactionId =
+                            backStackEntry.arguments?.getLong("transactionId")?.takeIf { it != -1L }
+                        AddTransactionScreen(
+                            transactionId = transactionId,
+                            onNavigateBack = { navController.popBackStack() },
+                            onTransactionAdded = { navController.popBackStack() },
+                        )
+                    }
+                    composable("receipt_scan") {
+                        ReceiptScanScreen(
+                            onNavigateBack = { navController.popBackStack() },
+                            onTransactionSaved = { navController.popBackStack() },
+                        )
+                    }
                 }
-                composable(BottomNavItem.Charts.route) {
-                    ChartsScreen()
-                }
-                composable(BottomNavItem.Transactions.route) {
-                    TransactionsScreen(navController = navController)
-                }
-                composable(BottomNavItem.Categories.route) {
-                    CategoriesScreen()
-                }
-                composable(BottomNavItem.Settings.route) {
-                    SettingsScreen(navController = navController)
-                }
-                composable("display") {
-                    DisplayScreen(navController = navController)
-                }
-                composable("settings_data") {
-                    SettingsDataScreen(navController = navController)
-                }
-                composable(
-                    route = "add_transaction?transactionId={transactionId}",
-                    arguments = listOf(
-                        androidx.navigation.navArgument("transactionId") {
-                            type = androidx.navigation.NavType.LongType
-                            defaultValue = -1L
+            }
+
+            if (isTutorialCompleted && !adaptiveLayoutInfo.isCompact) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                ) {
+                    Surface(
+                        tonalElevation = 3.dp,
+                        shadowElevation = 2.dp,
+                        color = MaterialTheme.colorScheme.surface,
+                        modifier = Modifier.width(88.dp),
+                    ) {
+                        NavigationRail(
+                            containerColor = MaterialTheme.colorScheme.surface,
+                        ) {
+                            visibleNavItems.forEach { item ->
+                                NavigationRailItem(
+                                    selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
+                                    onClick = {
+                                        navController.navigate(item.route) {
+                                            popUpTo(navController.graph.findStartDestination().id) {
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
+                                    },
+                                    icon = {
+                                        Icon(
+                                            imageVector = item.icon,
+                                            contentDescription = stringResource(item.titleResId),
+                                        )
+                                    },
+                                    label = {
+                                        AppText(
+                                            text = stringResource(item.titleResId),
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
+                                        )
+                                    },
+                                    alwaysShowLabel = true,
+                                )
+                            }
                         }
-                    )
-                ) { backStackEntry ->
-                    val transactionId =
-                        backStackEntry.arguments?.getLong("transactionId")?.takeIf { it != -1L }
-                    AddTransactionScreen(
-                        transactionId = transactionId,
-                        onNavigateBack = { navController.popBackStack() },
-                        onTransactionAdded = { navController.popBackStack() },
-                    )
+                    }
+
+                    navHostContent(Modifier.weight(1f))
                 }
-                composable("receipt_scan") {
-                    ReceiptScanScreen(
-                        onNavigateBack = { navController.popBackStack() },
-                        onTransactionSaved = { navController.popBackStack() },
-                    )
-                }
+            } else {
+                navHostContent(Modifier.padding(innerPadding))
             }
         }
     }

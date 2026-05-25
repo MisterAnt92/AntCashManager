@@ -57,6 +57,7 @@ import com.antcashmanager.android.ui.components.DateRangeFilter
 import com.antcashmanager.android.ui.components.HelpButton
 import com.antcashmanager.android.ui.components.SearchComponent
 import com.antcashmanager.android.ui.components.TutorialOverlay
+import com.antcashmanager.android.ui.components.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.home.view.BalanceCard
 import com.antcashmanager.android.ui.screen.home.view.HelpDialog
@@ -132,6 +133,7 @@ internal fun HomeContent(
         .collectAsState(initial = true)
 
     val coroutineScope = rememberCoroutineScope()
+    val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
 
     val listState = rememberLazyListState()
     val showScrollToTop by remember {
@@ -254,7 +256,10 @@ internal fun HomeContent(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding)
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                        .padding(
+                            horizontal = adaptiveLayoutInfo.horizontalPadding,
+                            vertical = if (adaptiveLayoutInfo.isExpanded) 16.dp else 12.dp,
+                        ),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     // Header with Help Button
