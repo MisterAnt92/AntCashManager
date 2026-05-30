@@ -191,6 +191,9 @@
     <string name="dialog_ok">OK</string>
     <string name="dialog_delete">Delete</string>
     <string name="dialog_add">Add</string>
+    <string name="exit_app_title">Exit app?</string>
+    <string name="exit_app_message">Do you want to close AntCashManager?</string>
+    <string name="exit_app_confirm">Exit</string>
 
     <!-- Common Actions -->
     <string name="common_confirm">Confirm</string>
@@ -462,5 +465,4 @@
     <string name="settings_donate_paypal_title">PayPal</string>
     <string name="settings_donate_bmc_title">Buy Me a Coffee</string>
 </resources>
-
 

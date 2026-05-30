@@ -1,5 +1,9 @@
 package com.antcashmanager.android.navigation
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -17,7 +21,11 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -30,6 +38,7 @@ import androidx.navigation.compose.rememberNavController
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.AntScreenScaffold
 import com.antcashmanager.android.ui.components.rememberAdaptiveLayoutInfo
+import com.antcashmanager.android.ui.components.dialog.AppExitConfirmationDialog
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.categories.CategoriesScreen
 import com.antcashmanager.android.ui.screen.charts.ChartsScreen
@@ -80,12 +89,25 @@ fun AntCashManagerNavHost() {
             add(BottomNavItem.Settings)
         }
 
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentDestination = navBackStackEntry?.destination
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+    val context = LocalContext.current
+    var showExitDialog by rememberSaveable { mutableStateOf(false) }
+    val isOnTopLevelRoute = currentDestination?.route?.let { currentRoute ->
+        visibleNavItems.any { item -> item.route == currentRoute }
+    } == true
 
-        LaunchedEffect(currentDestination?.route) {
-            currentDestination?.route?.let(analyticsManager::logScreenView)
+    BackHandler {
+        when {
+            showExitDialog -> showExitDialog = false
+            isOnTopLevelRoute -> showExitDialog = true
+            !navController.popBackStack() -> showExitDialog = true
         }
+    }
+
+    LaunchedEffect(currentDestination?.route) {
+        currentDestination?.route?.let(analyticsManager::logScreenView)
+    }
 
         AntScreenScaffold(
             showTopBar = false,
@@ -238,6 +260,20 @@ fun AntCashManagerNavHost() {
                 navHostContent(Modifier.padding(innerPadding))
             }
         }
+
+        AppExitConfirmationDialog(
+            isVisible = showExitDialog,
+            onDismiss = { showExitDialog = false },
+            onConfirmExit = {
+                showExitDialog = false
+                context.findActivity()?.finish()
+            },
+        )
     }
 }
 
+private tailrec fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
+}

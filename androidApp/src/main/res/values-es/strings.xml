@@ -170,6 +170,9 @@
     <string name="dialog_ok">OK</string>
     <string name="dialog_delete">Eliminar</string>
     <string name="dialog_add">A\u00f1adir</string>
+    <string name="exit_app_title">¿Salir de la aplicación?</string>
+    <string name="exit_app_message">¿Quieres cerrar AntCashManager?</string>
+    <string name="exit_app_confirm">Salir</string>
 
     <!-- Common Actions -->
     <string name="common_confirm">Confirmar</string>

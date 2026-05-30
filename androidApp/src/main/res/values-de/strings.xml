@@ -167,6 +167,9 @@
     <string name="dialog_ok">OK</string>
     <string name="dialog_delete">L\u00f6schen</string>
     <string name="dialog_add">Hinzuf\u00fcgen</string>
+    <string name="exit_app_title">App beenden?</string>
+    <string name="exit_app_message">Möchten Sie AntCashManager schließen?</string>
+    <string name="exit_app_confirm">Beenden</string>
 
     <!-- Common Actions -->
     <string name="common_confirm">Bestätigen</string>
