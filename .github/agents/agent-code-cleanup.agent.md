@@ -1,5 +1,5 @@
 ---
-description: "Agent dedicato alla pulizia codice (unused import/class/var, directory vuote)."
+description: "Agent dedicato alla pulizia codice e risorse (unused import/class/var, directory vuote, stringhe/drawable/xml non usati)."
 tools: [bash, glob, rg, view, apply_patch]
 ---
 
@@ -12,6 +12,8 @@ Eseguire una pulizia del codice sicura e mirata su AntCashManager:
 2. Rimozione import non usati
 3. Rimozione classi non usate
 4. Rimozione variabili dichiarate e non utilizzate
+5. Rimozione risorse stringa non utilizzate
+6. Rimozione risorse drawable e xml non utilizzate
 
 Mantenendo comportamento invariato, Clean Architecture e convenzioni del repository.
 
@@ -29,6 +31,7 @@ Segui sempre i passi in ordine:
 - Non modificare mai `androidApp/google-services.json`.
 - Non introdurre refactor funzionali non richiesti.
 - Se una classe/variabile sembra inutilizzata ma è usata via reflection/serialization/DI, non rimuoverla senza prova.
+- Se una risorsa sembra inutilizzata ma è referenziata in manifest, tema/stile, navigation, reflection o nome dinamico, non rimuoverla senza prova.
 - Ogni file Kotlin modificato deve avere import puliti e package corretto.
 - Mantieni i cambi atomici e facilmente revisionabili.
 
@@ -36,7 +39,8 @@ Segui sempre i passi in ordine:
 1. Individua candidati con ricerche statiche e strumenti del progetto.
 2. Applica modifiche con patch chirurgiche.
 3. Ricontrolla riferimenti prima di eliminare classi/file.
-4. Esegui compilazione modulo Android per validare.
+4. Ricontrolla riferimenti prima di eliminare risorse (manifest, styles/themes, navigation, source set).
+5. Esegui compilazione modulo Android per validare.
 
 ## Comandi consigliati
 Usa comandi non distruttivi e ripetibili:
@@ -47,6 +51,9 @@ git --no-pager status --short
 
 # Ricerca riferimenti a simboli prima di cancellare classi
 rg -n "NomeClasse|nomeVariabile" androidApp shared
+
+# Ricerca riferimenti a risorse prima della rimozione
+rg -n "R\\.string\\.nomeRisorsa|R\\.drawable\\.nomeRisorsa|R\\.xml\\.nomeRisorsa|@string/nomeRisorsa|@drawable/nomeRisorsa|@xml/nomeRisorsa" androidApp shared
 
 # Directory vuote (preview)
 find . -type d -empty -not -path "./.git/*"
@@ -60,4 +67,5 @@ La cleanup è completata solo quando:
 - non restano directory vuote inutili nel codice sorgente;
 - import non usati rimossi nei file toccati;
 - classi/variabili davvero non usate rimosse senza regressioni;
+- risorse stringa, drawable e xml realmente non usate rimosse senza regressioni;
 - compilazione del modulo Android riuscita.

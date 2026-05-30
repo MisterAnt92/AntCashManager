@@ -68,36 +68,13 @@
     <string name="home_income">Entrate</string>
     <string name="home_expenses">Uscite</string>
     <string name="home_recent_transactions">Transazioni Recenti</string>
-    <string name="home_no_transactions">Nessuna transazione.\nAggiungi la tua prima transazione!</string>
-    <string name="home_empty_ant">La nostra formichina aspetta la tua prima transazione! 🐜</string>
     <string name="home_balance_positive">📈 Positivo</string>
-    <string name="home_balance_negative">📉 Negativo</string>
     <string name="home_transaction_item_subtitle">%1$s • %2$s</string>
     <!-- Transactions Screen -->
-    <string name="transactions_title">Transazioni</string>
-    <string name="transactions_empty">Nessuna transazione</string>
-    <string name="transactions_empty_subtitle">Le tue transazioni appariranno qui</string>
     <string name="transactions_add">Aggiungi Transazione</string>
-    <string name="transactions_edit">Modifica Transazione</string>
-    <string name="transactions_title_label">Titolo</string>
-    <string name="transactions_amount_label">Importo</string>
-    <string name="transactions_category_label">Categoria</string>
-    <string name="transactions_type_label">Tipo</string>
     <string name="transactions_type_income">Entrata</string>
     <string name="transactions_type_expense">Uscita</string>
-    <string name="transactions_date_label">Data</string>
-    <string name="transactions_delete_title">Eliminare la transazione?</string>
-    <string name="transactions_delete_message">Sei sicuro di voler eliminare \"%s\"?</string>
-    <string name="transactions_add_content_desc">Aggiungi Transazione</string>
-    <string name="transactions_no_categories">Nessuna categoria disponibile. Aggiungi prima una categoria.</string>
-    <string name="transactions_pick_date">Seleziona data</string>
-    <string name="transactions_notes_label">Note</string>
-    <string name="transactions_payee_label">Beneficiario</string>
-    <string name="transactions_location_label">Luogo</string>
     <string name="transactions_recurring">Ricorrente</string>
-    <string name="transactions_tags_label">Tag</string>
-    <string name="transactions_empty_ant">Il salvadanaio della formichina \u00e8 vuoto! Inizia a risparmiare! 🐜🐷</string>
-    <string name="transactions_recurrence_interval">Intervallo di ricorrenza</string>
     <string name="transactions_interval_daily">Giornaliero</string>
     <string name="transactions_interval_weekly">Settimanale</string>
     <string name="transactions_interval_monthly">Mensile</string>
@@ -132,7 +109,6 @@
     <string name="categories_tab_expense">Uscite</string>
     <string name="categories_tab_income">Entrate</string>
     <string name="categories_default_badge">Predefinita</string>
-    <string name="categories_cannot_delete_default">Le categorie predefinite non possono essere eliminate</string>
     <string name="categories_icon_label">Icona</string>
 
     <!-- Charts Screen -->
@@ -142,7 +118,6 @@
     <string name="charts_to">Al: %s</string>
     <string name="charts_income">Entrate</string>
     <string name="charts_expenses">Uscite</string>
-    <string name="charts_balance">Bilancio</string>
     <string name="charts_income_by_category">Entrate per Categoria</string>
     <string name="charts_expense_by_category">Uscite per Categoria</string>
     <string name="charts_monthly_overview">Panoramica Mensile</string>
@@ -189,12 +164,9 @@
     <string name="settings_theme_dark">Scuro</string>
     <string name="settings_theme_system">Predefinito di sistema</string>
     <string name="settings_language">Lingua</string>
-    <string name="settings_language_subtitle">Scegli la lingua dell\'app</string>
     <string name="settings_display">Visualizzazione</string>
     <string name="settings_display_subtitle">Personalizza valuta, decimali e formattazione</string>
     <string name="settings_display_home">Home</string>
-    <string name="settings_show_charts">Mostra Grafici</string>
-    <string name="settings_show_charts_subtitle">Mostra la sezione grafici nella navigazione</string>
     <string name="settings_show_charts_section">Mostra sezione grafici</string>
     <string name="settings_show_charts_section_visible">Sezione grafici visibile nella navigazione</string>
     <string name="settings_show_charts_section_hidden">Sezione grafici nascosta dalla navigazione</string>
@@ -211,7 +183,6 @@
     <string name="settings_date_format">Formato Data</string>
     <string name="settings_date_format_subtitle">%s</string>
     <string name="settings_section_currency">Valuta</string>
-    <string name="settings_section_charts">Grafici</string>
     <string name="settings_section_dates">Date</string>
     <string name="settings_section_other">Altro</string>
     <string name="settings_reset_preferences">Ripristina Tutte le Preferenze</string>
@@ -222,7 +193,6 @@
     <string name="date_format_ddmmmyyyy">GG MMM AAAA</string>
     <string name="dialog_choose_date_format">Scegli Formato Data</string>
     <string name="settings_accessibility">Accessibilit\u00e0</string>
-    <string name="settings_accessibility_subtitle">Personalizza l\'aspetto e il comportamento dell\'app per una migliore usabilit\u00e0</string>
     <string name="settings_high_contrast">Contrasto Elevato</string>
     <string name="settings_high_contrast_subtitle">Aumenta il contrasto per una migliore leggibilit\u00e0. Usa colori pi\u00f9 decisi e bordi pi\u00f9 marcati.</string>
     <string name="settings_large_text">Testo Grande</string>
@@ -307,42 +277,24 @@
 
     <!-- Add Transaction Screen -->
     <string name="add_transaction">Aggiungi Transazione</string>
-    <string name="transaction_title">Titolo Transazione</string>
-    <string name="transaction_amount">Importo</string>
     <string name="transaction_type">Tipo di Transazione</string>
-    <string name="transaction_category">Categoria</string>
-    <string name="transaction_date">Data</string>
 
     <!-- Add Transaction Steps -->
     <string name="add_transaction_select_category">Seleziona Categoria</string>
     <string name="add_transaction_choose_category">Scegli una categoria per la transazione</string>
     <string name="add_transaction_no_categories_available">Nessuna categoria disponibile</string>
     <string name="add_transaction_cancel">Annulla</string>
-    <string name="add_transaction_next">Avanti</string>
     <string name="add_transaction_previous">Indietro</string>
     <string name="add_transaction_select_type">Seleziona Tipo</string>
-    <string name="add_transaction_selected_category">Categoria: %s</string>
-    <string name="add_transaction_choose_type">Scegli il tipo di transazione</string>
     <string name="add_transaction_income_label">Entrata</string>
     <string name="add_transaction_expense_label">Uscita</string>
     <string name="add_transaction_details">Dettagli Transazione</string>
-    <string name="add_transaction_category_type">Categoria: %1$s | Tipo: %2$s</string>
     <string name="add_transaction_title_required">Titolo *</string>
     <string name="add_transaction_amount_required">Importo *</string>
-    <string name="add_transaction_date_label">Data: %s</string>
     <string name="add_transaction_notes_label">Note</string>
     <string name="add_transaction_payee_label">Beneficiario</string>
     <string name="add_transaction_location_label">Luogo</string>
-    <string name="add_transaction_confirmation">Conferma</string>
-    <string name="add_transaction_summary">Riepilogo Transazione</string>
-    <string name="add_transaction_field_category">Categoria</string>
-    <string name="add_transaction_field_type">Tipo</string>
-    <string name="add_transaction_field_title">Titolo</string>
-    <string name="add_transaction_field_amount">Importo</string>
     <string name="add_transaction_field_date">Data</string>
-    <string name="add_transaction_field_notes">Note</string>
-    <string name="add_transaction_field_payee">Beneficiario</string>
-    <string name="add_transaction_field_location">Luogo</string>
     <string name="add_transaction_save">Salva</string>
     <string name="add_transaction_update">Modifica</string>
     <string name="edit_transaction_title">Modifica Transazione</string>
@@ -353,8 +305,6 @@
     <string name="add_transaction_tags_label">Tag</string>
     <string name="add_transaction_tags_placeholder">Aggiungi tag separati da virgole</string>
     <string name="add_transaction_recurring_label">Transazione Ricorrente</string>
-    <string name="add_transaction_field_tags">Tag</string>
-    <string name="add_transaction_field_recurrence">Ricorrenza</string>
 
     <!-- Recurrence intervals -->
     <string name="recurrence_interval_label">Intervallo di Ricorrenza</string>
@@ -365,8 +315,6 @@
 
     <!-- Transaction Details Dialog -->
     <string name="transaction_details_title">Dettagli Transazione</string>
-    <string name="transaction_details_id">ID Transazione</string>
-    <string name="transaction_details_title_label">Titolo</string>
     <string name="transaction_details_category">Categoria</string>
     <string name="transaction_details_type">Tipo</string>
     <string name="transaction_details_payment_type">Tipo di Pagamento</string>
@@ -382,11 +330,8 @@
     <string name="transaction_details_close">Chiudi</string>
 
     <!-- Transaction Share -->
-    <string name="transaction_share_button">Condividi Transazione</string>
-    <string name="transaction_share_via">Condiviso tramite</string>
 
     <!-- Payment Type -->
-    <string name="payment_type_label">Tipo di Pagamento</string>
     <string name="payment_type_electronic">Pagamento Elettronico</string>
     <string name="payment_type_cash">Contante</string>
     <string name="payment_type_meal_vouchers">Buoni Pasto</string>
@@ -434,7 +379,6 @@
     <string name="settings_show_transaction_notes">Mostra Note Transazioni</string>
     <string name="settings_show_transaction_notes_subtitle_enabled">Note visibili negli item transazioni</string>
     <string name="settings_show_transaction_notes_subtitle_disabled">Note nascoste</string>
-    <string name="settings_transaction_icon_display_subtitle">Scegli come visualizzare le icone</string>
     <string name="settings_transaction_icon_display_trend">Frecce Andamento</string>
     <string name="settings_transaction_icon_display_category">Categoria</string>
     <string name="settings_transaction_icon_display_none">Nessuna</string>
@@ -496,12 +440,13 @@
     <string name="receipt_scan_payee_label">Beneficiario / Esercente</string>
     <string name="receipt_scan_location_label">Luogo</string>
     <string name="receipt_scan_select_category">Seleziona Categoria</string>
-    <string name="receipt_scan_category_subtitle">Categoria di spesa per questa transazione</string>
-    <string name="receipt_scan_no_categories">Nessuna categoria di spesa disponibile. Aggiungi prima una categoria.</string>
     <string name="receipt_scan_save">Salva Transazione</string>
     <string name="receipt_scan_retry">Effettua nuova scansione</string>
     <string name="receipt_scan_nav_label">Scansiona Scontrino</string>
-     <string name="receipt_scan_payment_type_subtitle">Metodo di pagamento — rilevato automaticamente, tocca per modificare</string>
      <string name="receipt_scan_select_payment_type">Seleziona Tipo Pagamento</string>
+    <string name="home_balance_negative">📉 Negativo</string>
+    <string name="transactions_title">Transazioni</string>
+    <string name="settings_donate_paypal_title">PayPal</string>
+    <string name="settings_donate_bmc_title">Buy Me a Coffee</string>
 
 </resources>
