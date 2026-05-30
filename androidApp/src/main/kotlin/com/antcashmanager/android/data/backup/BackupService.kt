@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import java.util.Locale
 
 /**
  * Service responsible for backup and restore operations.
@@ -73,10 +74,22 @@ class BackupService(
                 categoryRepository.deleteAllCategories()
 
                 // Restore categories first (transactions reference them)
+                val existingCategoryKeys = categoryRepository.getAllCategories()
+                    .first()
+                    .mapTo(mutableSetOf()) { category ->
+                        toCategoryKey(category.name, category.type)
+                    }
                 var categoriesRestored = 0
                 for (categoryBackup in backupData.categories) {
+                    val categoryKey = toCategoryKey(categoryBackup.name, categoryBackup.type)
+                    if (categoryKey in existingCategoryKeys) {
+                        categoriesRestored++
+                        continue
+                    }
+
                     try {
                         categoryRepository.insertCategory(categoryBackup.toCategory())
+                        existingCategoryKeys.add(categoryKey)
                         categoriesRestored++
                     } catch (e: Exception) {
                         Logger.w("BackupService") { "Failed to restore category: ${categoryBackup.name}" }
@@ -158,6 +171,9 @@ class BackupService(
         type = type,
         isDefault = isDefault,
     )
+
+    private fun toCategoryKey(name: String, type: String): String =
+        "${name.trim().lowercase(Locale.ROOT)}|${type.trim().uppercase(Locale.ROOT)}"
 }
 
 /**
@@ -167,4 +183,3 @@ data class RestoreResult(
     val transactionsRestored: Int,
     val categoriesRestored: Int,
 )
-

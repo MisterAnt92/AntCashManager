@@ -193,7 +193,7 @@ fun PreviewAppTextFieldWithStyle() {
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 @Composable
-private fun previewAppTextFieldDark() {
+private fun PreviewAppTextFieldDark() {
     AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
         AppTextField(
             value = "Sample Text",
@@ -206,6 +206,6 @@ private fun previewAppTextFieldDark() {
 
 @Preview(name = "AppTextField - Accessibility", showBackground = true, fontScale = 1.5f)
 @Composable
-private fun previewAppTextFieldAccessibility() {
+private fun PreviewAppTextFieldAccessibility() {
     PreviewAppTextField()
 }

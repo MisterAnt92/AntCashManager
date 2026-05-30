@@ -6,6 +6,7 @@ Overview
 Questo repository contiene il file principale di istruzioni per l'AI agent in:
 
 - `.github/agent-android-clean-architecture.md` (source-of-truth)
+- `.github/agents/agent-code-cleanup.agent.md` (agent dedicato alla pulizia codice)
 
 Il file `.github/ai-assistant.yml` punta a quel Markdown e fornisce un punto di riferimento standard per gli strumenti.
 
@@ -53,4 +54,3 @@ Notes
 -----
 - Se la tua installazione di Copilot/AI assistant richiede un file con nome diverso (es. `.github/copilot.yml` o `.copilot/instructions.md`), aggiungi un file con quel nome che punti allo stesso contenuto.
 - Per enforcement condiviso, considera l'aggiunta di un job CI (GitHub Actions) che esegue i controlli su PR.
-
