@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
@@ -62,6 +63,13 @@ fun AppCard(
     enabled: Boolean = true,
     onClick: (() -> Unit)? = null,
 ) {
+    val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
+    val contentPadding = if (adaptiveLayoutInfo.isCompact) 16.dp else 20.dp
+    val iconContainerSize = if (adaptiveLayoutInfo.isExpanded) 48.dp else 44.dp
+    val iconSize = if (adaptiveLayoutInfo.isExpanded) 24.dp else 22.dp
+    val titleMaxLines = if (adaptiveLayoutInfo.isCompact) 1 else 2
+    val subtitleMaxLines = if (adaptiveLayoutInfo.isCompact) 2 else 3
+
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -76,7 +84,7 @@ fun AppCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(contentPadding),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
@@ -87,7 +95,7 @@ fun AppCard(
                 if (leadingIcon != null) {
                     Box(
                         modifier = Modifier
-                            .size(40.dp)
+                            .size(iconContainerSize)
                             .clip(CircleShape)
                             .background(iconBackgroundColor),
                         contentAlignment = Alignment.Center,
@@ -96,7 +104,7 @@ fun AppCard(
                             imageVector = leadingIcon,
                             contentDescription = null,
                             tint = iconTint,
-                            modifier = Modifier.size(22.dp),
+                            modifier = Modifier.size(iconSize),
                         )
                     }
                     Spacer(modifier = Modifier.width(16.dp))
@@ -110,7 +118,7 @@ fun AppCard(
                         } else {
                             MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                         },
-                        maxLines = 1,
+                        maxLines = titleMaxLines,
                         overflow = TextOverflow.Ellipsis,
                     )
                     if (subtitle != null) {
@@ -122,7 +130,7 @@ fun AppCard(
                             } else {
                                 MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                             },
-                            maxLines = 2,
+                            maxLines = subtitleMaxLines,
                             overflow = TextOverflow.Ellipsis,
                         )
                     }
@@ -151,11 +159,16 @@ fun AppCardSectionHeader(
     title: String,
     modifier: Modifier = Modifier,
 ) {
+    val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
+    val topPadding = if (adaptiveLayoutInfo.isCompact) 16.dp else 20.dp
+    val bottomPadding = if (adaptiveLayoutInfo.isCompact) 8.dp else 10.dp
+    val startPadding = if (adaptiveLayoutInfo.isCompact) 4.dp else 6.dp
+
     AppText(
         text = title,
         style = MaterialTheme.typography.labelLarge,
         color = MaterialTheme.colorScheme.primary,
-        modifier = modifier.padding(start = 4.dp, top = 16.dp, bottom = 8.dp),
+        modifier = modifier.padding(start = startPadding, top = topPadding, bottom = bottomPadding),
     )
 }
 

@@ -27,5 +27,9 @@ object DisplayConstant {
         CurrencyFormat.DECIMAL_SEPARATORS.map { it.first }.toSet()
     val SUPPORTED_THOUSANDS_SEPARATORS: Set<String> =
         CurrencyFormat.THOUSANDS_SEPARATORS.map { it.first }.toSet()
-}
 
+    const val CONTENT_HORIZONTAL_PADDING_DP = 16
+    const val CONTENT_TOP_PADDING_DP = 12
+    const val CONTENT_BOTTOM_PADDING_DP = 24
+    const val TABLET_COLUMNS_SPACING_DP = 16
+}
