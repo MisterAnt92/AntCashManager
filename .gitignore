@@ -1,103 +1,85 @@
 # ============================================================================
-# Gradle Build System
+# Gradle / Build outputs
 # ============================================================================
 .gradle/
-.gradle
-build/
+**/build/
 out/
-*.jar
-*.war
-*.rar
-*.zip
+dist/
+target/
+release/
+debug/
 
 # ============================================================================
-# Kotlin Multiplatform (KMP) Specific
+# Kotlin / KMP outputs and caches
 # ============================================================================
 .kotlin/
 .konan/
-kotlinx-coroutines-core/**/.gradle
-kotlinx-coroutines-core/**/build/
 .mp/
 *.klib
 *.kexe
-*.exe
-*.dll
+**/kotlin-js-store/
+**/compose_compiler/
+**/.kotlin/
 
 # ============================================================================
-# IDE: IntelliJ IDEA / Android Studio
-# ============================================================================
-.idea/
-*.iml
-*.iws
-*.ipr
-*.swp
-*.swo
-*~
-*.sublime-project
-*.sublime-workspace
-.classpath
-.c9/
-*.launch
-.settings/
-.vscode/
-misc.xml
-deploymentTargetDropDown.xml
-render.experimental.xml
-workspace.xml
-usage.statistics.xml
-shelf/
-
-# ============================================================================
-# IDE: VS Code
-# ============================================================================
-.vscode/
-.vscode-test/
-.history/
-*.vsix
-
-# ============================================================================
-# IDE: Other
-# ============================================================================
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# ============================================================================
-# Android Studio & Gradle
+# Android build artifacts
 # ============================================================================
 captures/
 .externalNativeBuild/
 .cxx/
-*.aab
 *.apk
 *.apks
+*.aab
 *.aabundle
+*.hprof
+*.trace
 output-metadata.json
 lint-baseline.xml
 
 # ============================================================================
-# Android Profiling & Debugging
+# Native / iOS artifacts (KMP)
 # ============================================================================
-*.hprof
-*.trace
-.android/
-cpu-info.log
+*.framework
+*.dSYM/
+Pods/
+iosApp/Pods/
+iosApp/build/
+*.xcworkspace
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
 
 # ============================================================================
-# Local Configuration Files
+# IDE files
+# ============================================================================
+.idea/
+.vscode/
+.vscode-test/
+.history/
+*.iml
+*.iws
+*.ipr
+workspace.xml
+misc.xml
+deploymentTargetDropDown.xml
+render.experimental.xml
+usage.statistics.xml
+shelf/
+
+# ============================================================================
+# Local config / secrets
 # ============================================================================
 local.properties
 key.properties
 signing.properties
 gradle.properties.local
-
-# ============================================================================
-# Security: Private Keys & Keystores
-# ============================================================================
+secrets.properties
+.env
+.env.local
+.env.*.local
+google-services.json
+/androidApp/google-services.json
+GoogleService-Info.plist
+serviceAccountKey.json
 *.jks
 *.keystore
 *.p12
@@ -105,26 +87,28 @@ gradle.properties.local
 *.pem
 *.key
 *.asc
-secrets.properties
 *.gpg
+fabric.properties
+crashlytics.properties
+crashlytics-build.properties
+com_crashlytics_export_strings.xml
 
 # ============================================================================
-# Google Services & Firebase
-# ============================================================================
-google-services.json
-GoogleService-Info.plist
-serviceAccountKey.json
-
-# ============================================================================
-# Log Files
+# Logs / coverage / temporary
 # ============================================================================
 *.log
 *.log.*
 logs/
 logcat.txt
+coverage/
+jacoco/
+*.ec
+*.exec
+*.tmp
+*.bak
 
 # ============================================================================
-# OS-Specific Files
+# OS / editor noise
 # ============================================================================
 .DS_Store
 .DS_Store?
@@ -133,91 +117,43 @@ logcat.txt
 .LSOverride
 .Spotlight-V100
 .Trashes
-ehthumbs.db
 Thumbs.db
+ehthumbs.db
 Desktop.ini
-*.tmp
-*.bak
 *.swp
 *.swo
 *~
+.classpath
+.project
+.settings/
+.c9/
+*.launch
+*.sublime-project
+*.sublime-workspace
 
 # ============================================================================
-# Environment Variables & Local Settings
-# ============================================================================
-.env
-.env.local
-.env.*.local
-.venv/
-venv/
-ENV/
-
-# ============================================================================
-# Build Artifacts & Temporary Files
+# Other generated artifacts
 # ============================================================================
 *.o
 *.a
 *.so
+*.dll
+*.exe
 *.dylib
-dist/
-target/
-release/
-debug/
 *.class
+node_modules/
+__pycache__/
 *.pyc
 *.pyo
-__pycache__/
-node_modules/
 *.egg-info/
 .pytest_cache/
 .coverage
-
-# ============================================================================
-# Gradle Wrapper
-# ============================================================================
-!gradle/wrapper/gradle-wrapper.jar
-!gradle/wrapper/gradle-wrapper.properties
-
-# ============================================================================
-# Room Database Schemas
-# ============================================================================
-schemas/
-
-# ============================================================================
-# Firebase & Crashlytics
-# ============================================================================
-/androidApp/google-services.json
-fabric.properties
-com_crashlytics_export_strings.xml
-crashlytics.properties
-crashlytics-build.properties
-
-# ============================================================================
-# Android NDK
-# ============================================================================
 .ndk/
-*.so
-*.o
 obj/
 libs/
 
 # ============================================================================
-# Miscellaneous
+# Keep Gradle wrapper tracked
 # ============================================================================
-.DS_Store
-.classpath
-.project
-.c9/
-*.launch
-.settings/
-.sublime-project
-.sublime-workspace
-.vscode/
-
-# ============================================================================
-# Test Coverage
-# ============================================================================
-coverage/
-jacoco/
-*.ec
-*.exec
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
