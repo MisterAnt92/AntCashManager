@@ -129,3 +129,8 @@ private fun AutocompleteTextFieldPreviewDark() {
     AutocompleteTextFieldPreviewLight()
 }
 
+@Preview(name = "AutocompleteTextField - Accessibility", showBackground = true, fontScale = 1.5f)
+@Composable
+private fun AutocompleteTextFieldPreviewAccessibility() {
+    AutocompleteTextFieldPreviewLight()
+}

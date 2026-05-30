@@ -244,3 +244,8 @@ private fun AppCardDarkPreview() {
     }
 }
 
+@Preview(name = "AppCard - Accessibility", showBackground = true, fontScale = 1.5f)
+@Composable
+private fun AppCardAccessibilityPreview() {
+    AppCardBasicPreview()
+}

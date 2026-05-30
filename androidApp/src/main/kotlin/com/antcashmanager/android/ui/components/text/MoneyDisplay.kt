@@ -259,3 +259,8 @@ private fun AllMoneyTextPreviewDark() {
     }
 }
 
+@Preview(name = "MoneyDisplay - Accessibility", showBackground = true, fontScale = 1.5f)
+@Composable
+private fun MoneyDisplayPreviewAccessibility() {
+    MoneyTextPositivePreview()
+}

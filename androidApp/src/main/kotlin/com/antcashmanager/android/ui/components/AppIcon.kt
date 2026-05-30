@@ -71,3 +71,9 @@ private fun AppIconPreviewWithPainter() {
         contentDescription = "Search Icon from Painter"
     )
 }
+
+@Preview(name = "AppIcon - Accessibility", showBackground = true, fontScale = 1.5f)
+@Composable
+private fun AppIconPreviewAccessibility() {
+    AppIconPreviewLight()
+}

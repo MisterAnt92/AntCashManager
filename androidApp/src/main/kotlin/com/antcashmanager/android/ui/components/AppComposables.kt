@@ -179,3 +179,8 @@ private fun AppComposablesPreviewDark() {
     AppComposablesPreviewLight()
 }
 
+@Preview(name = "AppComposables - Accessibility", showBackground = true, fontScale = 1.5f)
+@Composable
+private fun AppComposablesPreviewAccessibility() {
+    AppComposablesPreviewLight()
+}

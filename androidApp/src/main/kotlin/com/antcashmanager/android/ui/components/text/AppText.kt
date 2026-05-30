@@ -208,4 +208,9 @@ private fun AppTextPreviewAllCaps() {
     )
 }
 
+@Preview(name = "AppText - Accessibility", showBackground = true, fontScale = 1.5f)
+@Composable
+private fun AppTextPreviewAccessibility() {
+    AppTextPreviewLight()
+}
 

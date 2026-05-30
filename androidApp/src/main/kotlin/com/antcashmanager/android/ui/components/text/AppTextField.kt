@@ -204,3 +204,8 @@ private fun previewAppTextFieldDark() {
     }
 }
 
+@Preview(name = "AppTextField - Accessibility", showBackground = true, fontScale = 1.5f)
+@Composable
+private fun previewAppTextFieldAccessibility() {
+    PreviewAppTextField()
+}

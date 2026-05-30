@@ -575,3 +575,8 @@ private fun AnimatedComponentsPreviewDark() {
     AnimatedComponentsPreviewLight()
 }
 
+@Preview(name = "AnimatedComponents - Accessibility", showBackground = true, fontScale = 1.5f)
+@Composable
+private fun AnimatedComponentsPreviewAccessibility() {
+    AnimatedComponentsPreviewLight()
+}

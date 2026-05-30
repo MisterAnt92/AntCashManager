@@ -175,3 +175,8 @@ private fun AppSelectionItemCardPreviewDark() {
     }
 }
 
+@Preview(name = "AppSelectionItemCard - Accessibility", showBackground = true, fontScale = 1.5f)
+@Composable
+private fun AppSelectionItemCardPreviewAccessibility() {
+    AppSelectionItemCardPreviewEditable()
+}

@@ -192,3 +192,8 @@ private fun AppCategoryCardPreviewDark() {
     }
 }
 
+@Preview(name = "AppCategoryCard - Accessibility", showBackground = true, fontScale = 1.5f)
+@Composable
+private fun AppCategoryCardPreviewAccessibility() {
+    AppCategoryCardPreviewNonSelected()
+}

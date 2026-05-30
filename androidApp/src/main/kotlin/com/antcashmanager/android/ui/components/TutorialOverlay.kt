@@ -320,3 +320,8 @@ private fun TutorialOverlayPreviewDark() {
     TutorialOverlayPreviewLight()
 }
 
+@Preview(name = "TutorialOverlay - Accessibility", showBackground = true, fontScale = 1.5f)
+@Composable
+private fun TutorialOverlayPreviewAccessibility() {
+    TutorialOverlayPreviewLight()
+}

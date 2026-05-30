@@ -77,3 +77,9 @@ private fun TextLinkPreviewLight() {
 private fun TextLinkPreviewDark() {
     TextLinkPreviewLight()
 }
+
+@Preview(name = "TextLink - Accessibility", showBackground = true, fontScale = 1.5f)
+@Composable
+private fun TextLinkPreviewAccessibility() {
+    TextLinkPreviewLight()
+}

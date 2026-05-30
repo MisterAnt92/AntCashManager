@@ -97,3 +97,8 @@ private fun AntScreenScaffoldPreviewDark() {
     AntScreenScaffoldPreviewLight()
 }
 
+@Preview(name = "AntScreenScaffold - Accessibility", showBackground = true, fontScale = 1.5f)
+@Composable
+private fun AntScreenScaffoldPreviewAccessibility() {
+    AntScreenScaffoldPreviewLight()
+}
