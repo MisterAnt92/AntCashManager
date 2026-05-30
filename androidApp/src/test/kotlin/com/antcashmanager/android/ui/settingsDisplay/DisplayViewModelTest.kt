@@ -183,7 +183,7 @@ private class FakeSettingsRepository : SettingsRepository {
     private val showPaymentTypeBreakdownFlow = MutableStateFlow(true)
     private val transactionDisplayTypeFlow = MutableStateFlow(TransactionDisplayType.TREND)
     private val dateFilterExpandedFlow = MutableStateFlow(false)
-    private val chartsZoomEnabledFlow = MutableStateFlow(true)
+    private val chartsZoomEnabledFlow = MutableStateFlow(false)
     private val isTutorialCompletedFlow = MutableStateFlow(false)
 
     override fun getTheme() = throw UnsupportedOperationException()
@@ -303,9 +303,8 @@ private class FakeSettingsRepository : SettingsRepository {
         showPaymentTypeBreakdownFlow.value = true
         transactionDisplayTypeFlow.value = TransactionDisplayType.TREND
         dateFilterExpandedFlow.value = false
-        chartsZoomEnabledFlow.value = true
+        chartsZoomEnabledFlow.value = false
         isTutorialCompletedFlow.value = false
         dataEncryptionEnabledFlow.value = false
     }
 }
-

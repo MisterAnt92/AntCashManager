@@ -91,7 +91,7 @@ fun ChartsScreen() {
     val selectedPresetIndex by viewModel.selectedPresetIndex.collectAsState()
 
     val chartsZoomEnabled by settingsRepository.getChartsZoomEnabled()
-        .collectAsState(initial = true)
+        .collectAsState(initial = false)
 
     ChartsContent(
         chartData = chartData,
@@ -109,7 +109,7 @@ internal fun ChartsContent(
     chartData: ChartData,
     dateRange: DateRange,
     initialPresetIndex: Int = 1,
-    zoomEnabled: Boolean = true,
+    zoomEnabled: Boolean = false,
     onDateRangeChanged: (Long, Long) -> Unit = { _, _ -> },
     onPresetSelected: (RangePreset) -> Unit = {},
 ) {

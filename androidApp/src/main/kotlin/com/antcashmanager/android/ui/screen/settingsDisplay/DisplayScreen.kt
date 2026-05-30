@@ -735,7 +735,7 @@ private fun DisplayContentPreview() {
             onShowTransactionNotesChanged = {},
             showChartsSection = true,
             onShowChartsSectionChanged = {},
-            chartsZoomEnabled = true,
+            chartsZoomEnabled = false,
             onChartsZoomEnabledChanged = {},
             dateFormat = "dd/MM/yyyy",
             onDateFormatSelected = {},

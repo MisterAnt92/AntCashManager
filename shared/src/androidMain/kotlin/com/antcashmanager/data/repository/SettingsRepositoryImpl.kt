@@ -285,7 +285,7 @@ class SettingsRepositoryImpl(
     }
 
     override fun getChartsZoomEnabled(): Flow<Boolean> =
-        context.dataStore.data.map { it[chartsZoomEnabledKey] ?: true }
+        context.dataStore.data.map { it[chartsZoomEnabledKey] ?: false }
 
     override suspend fun setChartsZoomEnabled(enabled: Boolean) {
         context.dataStore.edit { it[chartsZoomEnabledKey] = enabled }
@@ -390,7 +390,7 @@ class SettingsRepositoryImpl(
             prefs[chartsDateFilterPresetKey] = defaultChartsFilter.presetIndex
             prefs[chartsDateFilterFromKey] = defaultChartsFilter.from
             prefs[chartsDateFilterToKey] = defaultChartsFilter.to
-            prefs[chartsZoomEnabledKey] = true
+            prefs[chartsZoomEnabledKey] = false
             prefs[showPaymentTypeBreakdownKey] = false
             prefs[showQuickInsightsCardKey] = false
             prefs[transactionDisplayTypeKey] = TransactionDisplayType.TREND.name
