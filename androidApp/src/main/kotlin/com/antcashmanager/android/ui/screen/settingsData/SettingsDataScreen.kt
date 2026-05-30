@@ -2,6 +2,7 @@ package com.antcashmanager.android.ui.screen.settingsData
 
 import android.app.Activity
 import android.content.ContextWrapper
+import androidx.activity.compose.LocalActivityResultRegistryOwner
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -110,13 +111,14 @@ internal fun SettingsDataContent(
 ) {
     val context = LocalContext.current
     val isPreview = LocalInspectionMode.current
+    val registryOwner = LocalActivityResultRegistryOwner.current
     val hasActivityHost = generateSequence(context) { current ->
         (current as? ContextWrapper)?.baseContext
     }.any { it is Activity }
     val filePickerUnavailableMessage = stringResource(R.string.settings_data_file_picker_unavailable)
     val analyticsManager: AnalyticsManager = koinInject()
     val backupLauncher =
-        if (isPreview || !hasActivityHost) null else rememberLauncherForActivityResult(
+        if (isPreview || !hasActivityHost || registryOwner == null) null else rememberLauncherForActivityResult(
             contract = ActivityResultContracts.CreateDocument("application/json"),
         ) { uri ->
             if (uri == null) {
@@ -158,7 +160,7 @@ internal fun SettingsDataContent(
     }
 
     val restoreLauncher =
-        if (isPreview || !hasActivityHost) null else rememberLauncherForActivityResult(
+        if (isPreview || !hasActivityHost || registryOwner == null) null else rememberLauncherForActivityResult(
             contract = ActivityResultContracts.OpenDocument(),
         ) { uri ->
             if (uri == null) return@rememberLauncherForActivityResult
@@ -446,4 +448,3 @@ private fun SettingsDataContentPreview() {
         SettingsDataContent()
     }
 }
-
