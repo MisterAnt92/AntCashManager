@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -215,13 +216,20 @@ fun AntCashManagerNavHost() {
                         .padding(innerPadding),
                 ) {
                     Surface(
-                        tonalElevation = 3.dp,
-                        shadowElevation = 2.dp,
-                        color = MaterialTheme.colorScheme.surface,
-                        modifier = Modifier.width(88.dp),
+                        tonalElevation = 4.dp,
+                        shadowElevation = 6.dp,
+                        shape = RoundedCornerShape(24.dp),
+                        color = MaterialTheme.colorScheme.surfaceContainerLow,
+                        modifier = Modifier
+                            .padding(start = 12.dp, top = 12.dp, end = 8.dp, bottom = 12.dp)
+                            .width(92.dp)
+                            .fillMaxHeight(),
                     ) {
                         NavigationRail(
-                            containerColor = MaterialTheme.colorScheme.surface,
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .padding(vertical = 8.dp),
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                         ) {
                             visibleNavItems.forEach { item ->
                                 NavigationRailItem(
