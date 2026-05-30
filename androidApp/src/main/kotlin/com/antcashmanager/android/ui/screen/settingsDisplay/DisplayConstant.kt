@@ -6,7 +6,7 @@ import com.antcashmanager.domain.model.TransactionDisplayType
 /**
  * Shared constants for the Display settings feature.
  */
-object DisplayConstants {
+object DisplayConstant {
     const val TAG = "DisplayViewModel"
     const val SHARING_TIMEOUT = 5_000L
 

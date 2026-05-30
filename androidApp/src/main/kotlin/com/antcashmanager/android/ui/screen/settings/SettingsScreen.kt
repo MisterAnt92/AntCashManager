@@ -690,6 +690,8 @@ private fun DonationCard(context: Context) {
 // ── Previews ──
 
 @Preview(showBackground = true, name = "SettingsScreen - Light")
+@Preview(showBackground = true, name = "SettingsScreen - 7 inch", widthDp = 600, heightDp = 960)
+@Preview(showBackground = true, name = "SettingsScreen - 10 inch", widthDp = 840, heightDp = 1280)
 @Composable
 private fun SettingsContentLightPreview() {
     AntCashManagerTheme(dynamicColor = false) {

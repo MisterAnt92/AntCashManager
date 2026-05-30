@@ -480,6 +480,8 @@ private fun ReceiptAmountCard(
 // ══════════════════════════════════════════════════════════════════════════════
 
 @Preview(showBackground = true)
+@Preview(showBackground = true, name = "ReceiptScanScreen - 7 inch", widthDp = 600, heightDp = 960)
+@Preview(showBackground = true, name = "ReceiptScanScreen - 10 inch", widthDp = 840, heightDp = 1280)
 @Composable
 fun ReceiptScanCapturePreview() {
     AntCashManagerTheme {

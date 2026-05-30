@@ -17,8 +17,8 @@ data class HomeState(
     val isLoading: Boolean = false,
     val isSyncingCategories: Boolean = false,
     val error: String? = null,
-    val selectedPresetIndex: Int = HomeConstants.DEFAULT_PRESET_INDEX,
-    val dateRangeFrom: Long = System.currentTimeMillis() - HomeConstants.ONE_WEEK_MS,
+    val selectedPresetIndex: Int = HomeConstant.DEFAULT_PRESET_INDEX,
+    val dateRangeFrom: Long = System.currentTimeMillis() - HomeConstant.ONE_WEEK_MS,
     val dateRangeTo: Long = System.currentTimeMillis(),
     val selectedTransaction: Transaction? = null,
     val searchQuery: String = "",
@@ -26,14 +26,14 @@ data class HomeState(
     val searchSuggestions: List<String> = emptyList(),
 ) {
     companion object {
-        val PRESETS = HomeConstants.PRESETS
+        val PRESETS = HomeConstant.PRESETS
 
         fun getDateFromForPreset(index: Int): Long = when (index) {
-            0 -> System.currentTimeMillis() - HomeConstants.ONE_DAY_MS
-            1 -> System.currentTimeMillis() - HomeConstants.ONE_WEEK_MS
-            2 -> System.currentTimeMillis() - HomeConstants.THIRTY_DAYS_MS
-            3 -> System.currentTimeMillis() - HomeConstants.ONE_YEAR_MS
-            else -> System.currentTimeMillis() - HomeConstants.ONE_WEEK_MS
+            0 -> System.currentTimeMillis() - HomeConstant.ONE_DAY_MS
+            1 -> System.currentTimeMillis() - HomeConstant.ONE_WEEK_MS
+            2 -> System.currentTimeMillis() - HomeConstant.THIRTY_DAYS_MS
+            3 -> System.currentTimeMillis() - HomeConstant.ONE_YEAR_MS
+            else -> System.currentTimeMillis() - HomeConstant.ONE_WEEK_MS
         }
     }
 }

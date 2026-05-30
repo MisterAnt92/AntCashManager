@@ -62,6 +62,9 @@ import java.util.Date                       // unused import!
   exception di dominio, nel rispetto della Clean Architecture
 - ✅ Se una `data class` e lo stato di Screen/ViewModel (`<Feature>State`), deve rimanere nel file
   `State` della feature: NON creare classi aggiuntive o `typealias` per quel contratto di stato
+- ✅ Le costanti usate all'interno di un modulo screen devono stare in un file dedicato
+  `<Screen>Constant` alla root del modulo screen (es. `CategoriaScreen` →
+  `CategoriaConstant.kt` in `ui/screen/categoria/`)
 - ❌ **NON modificare MAI `androidApp/google-services.json`**: e un file generato lato server,
   usato direttamente dal codice, con chiavi/valori fissi
 
@@ -275,7 +278,8 @@ class YourFeatureViewModel(
 - `MutableStateFlow` privato per update interni
 - Kermit Logger per logging (`import co.touchlab.kermit.Logger`)
 - Consuma `Result<T>` con `onSuccess`/`onFailure` (no try-catch diretto su UseCase)
-- Costanti in `companion object`
+- Costanti condivise del modulo screen in `<Screen>Constant` alla root dello screen;
+  `companion object` solo per costanti private alla singola classe
 - Max 300 righe
 - NO business logic (delegare a UseCase)
 - MAI hold Context reference (passarlo come parametro metodo)

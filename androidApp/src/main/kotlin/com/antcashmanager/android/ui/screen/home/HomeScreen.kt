@@ -521,6 +521,8 @@ private val sampleTransactions = listOf(
 )
 
 @Preview(showBackground = true, name = "HomeScreen - With Transactions")
+@Preview(showBackground = true, name = "HomeScreen - 7 inch", widthDp = 600, heightDp = 960)
+@Preview(showBackground = true, name = "HomeScreen - 10 inch", widthDp = 840, heightDp = 1280)
 @Composable
 private fun HomeContentPreview() {
     AntCashManagerTheme(dynamicColor = false) {

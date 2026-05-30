@@ -26,8 +26,8 @@ class DisplayViewModel(
         .map(::sanitizeCurrencySymbol)
         .stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(DisplayConstants.SHARING_TIMEOUT),
-            DisplayConstants.DEFAULT_CURRENCY_SYMBOL,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_CURRENCY_SYMBOL,
         )
 
     // Espone il numero di cifre decimali
@@ -35,8 +35,8 @@ class DisplayViewModel(
         .map(::sanitizeDecimalDigits)
         .stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(DisplayConstants.SHARING_TIMEOUT),
-            DisplayConstants.DEFAULT_DECIMAL_DIGITS,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_DECIMAL_DIGITS,
         )
 
     // Espone il separatore decimale
@@ -44,8 +44,8 @@ class DisplayViewModel(
         .map(::sanitizeDecimalSeparator)
         .stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(DisplayConstants.SHARING_TIMEOUT),
-            DisplayConstants.DEFAULT_DECIMAL_SEPARATOR,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_DECIMAL_SEPARATOR,
         )
 
     // Espone il separatore delle migliaia
@@ -57,8 +57,8 @@ class DisplayViewModel(
     }
         .stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(DisplayConstants.SHARING_TIMEOUT),
-            DisplayConstants.DEFAULT_THOUSANDS_SEPARATOR,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_THOUSANDS_SEPARATOR,
         )
 
 
@@ -66,48 +66,48 @@ class DisplayViewModel(
     val showChartsSection = settingsRepository.getShowCharts()
         .stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(DisplayConstants.SHARING_TIMEOUT),
-            DisplayConstants.DEFAULT_SHOW_CHARTS_SECTION,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_SHOW_CHARTS_SECTION,
         )
 
     // Espone la preferenza per lo zoom nei grafici
     val chartsZoomEnabled = settingsRepository.getChartsZoomEnabled()
         .stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(DisplayConstants.SHARING_TIMEOUT),
-            DisplayConstants.DEFAULT_SHOW_CHARTS_ZOOM,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_SHOW_CHARTS_ZOOM,
         )
 
     // Espone il formato data
     val dateFormat = settingsRepository.getDateFormat()
         .stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(DisplayConstants.SHARING_TIMEOUT),
-            DisplayConstants.DEFAULT_DATE_FORMAT,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_DATE_FORMAT,
         )
 
     // Espone la preferenza per mostrare le note delle transazioni
     val showTransactionNotes = settingsRepository.getShowTransactionNotes()
         .stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(DisplayConstants.SHARING_TIMEOUT),
-            DisplayConstants.DEFAULT_SHOW_TRANSACTION_NOTES,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_SHOW_TRANSACTION_NOTES,
         )
 
     // Espone la preferenza per mostrare il breakdown dei pagamenti
     val showPaymentTypeBreakdown = settingsRepository.getShowPaymentTypeBreakdown()
         .stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(DisplayConstants.SHARING_TIMEOUT),
-            DisplayConstants.DEFAULT_SHOW_PAYMENT_BREAKDOWN,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_SHOW_PAYMENT_BREAKDOWN,
         )
 
     // Espone il tipo di visualizzazione delle transazioni (Home)
     val transactionDisplayType = settingsRepository.getTransactionDisplayType()
         .stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(DisplayConstants.SHARING_TIMEOUT),
-            DisplayConstants.DEFAULT_TRANSACTION_DISPLAY_TYPE,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_TRANSACTION_DISPLAY_TYPE,
         )
 
     // Espone il tipo di visualizzazione delle transazioni (Transazioni)
@@ -115,8 +115,8 @@ class DisplayViewModel(
         settingsRepository.getTransactionsTransactionDisplayType()
             .stateIn(
                 viewModelScope,
-                SharingStarted.WhileSubscribed(DisplayConstants.SHARING_TIMEOUT),
-                DisplayConstants.DEFAULT_TRANSACTION_DISPLAY_TYPE,
+                SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+                DisplayConstant.DEFAULT_TRANSACTION_DISPLAY_TYPE,
             )
 
     /**
@@ -148,7 +148,7 @@ class DisplayViewModel(
             val safeDecimal = sanitizeDecimalSeparator(separator)
             settingsRepository.setDecimalSeparator(safeDecimal)
             if (safeDecimal == thousandsSeparator.value) {
-                settingsRepository.setThousandsSeparator(DisplayConstants.DEFAULT_THOUSANDS_SEPARATOR)
+                settingsRepository.setThousandsSeparator(DisplayConstant.DEFAULT_THOUSANDS_SEPARATOR)
             }
         },
     )
@@ -159,10 +159,10 @@ class DisplayViewModel(
     fun setThousandsSeparator(separator: String) = updatePreference(
         logMsg = "Setting thousands separator: $separator",
         action = {
-            val safeThousands = if (separator in DisplayConstants.SUPPORTED_THOUSANDS_SEPARATORS) {
+            val safeThousands = if (separator in DisplayConstant.SUPPORTED_THOUSANDS_SEPARATORS) {
                 separator
             } else {
-                DisplayConstants.DEFAULT_THOUSANDS_SEPARATOR
+                DisplayConstant.DEFAULT_THOUSANDS_SEPARATOR
             }
             settingsRepository.setThousandsSeparator(safeThousands)
         },
@@ -238,35 +238,35 @@ class DisplayViewModel(
      * Funzione di utilità per loggare e lanciare l'azione in coroutine.
      */
     private fun updatePreference(logMsg: String, action: suspend () -> Unit) {
-        Logger.d(DisplayConstants.TAG) { logMsg }
+        Logger.d(DisplayConstant.TAG) { logMsg }
         viewModelScope.launch { action() }
     }
 
     private fun sanitizeCurrencySymbol(symbol: String): String =
-        if (symbol in DisplayConstants.SUPPORTED_CURRENCY_SYMBOLS) {
+        if (symbol in DisplayConstant.SUPPORTED_CURRENCY_SYMBOLS) {
             symbol
         } else {
-            DisplayConstants.DEFAULT_CURRENCY_SYMBOL
+            DisplayConstant.DEFAULT_CURRENCY_SYMBOL
         }
 
     private fun sanitizeDecimalDigits(digits: Int): Int = digits.coerceIn(0, 4)
 
     private fun sanitizeDecimalSeparator(separator: String): String =
-        if (separator in DisplayConstants.SUPPORTED_DECIMAL_SEPARATORS) {
+        if (separator in DisplayConstant.SUPPORTED_DECIMAL_SEPARATORS) {
             separator
         } else {
-            DisplayConstants.DEFAULT_DECIMAL_SEPARATOR
+            DisplayConstant.DEFAULT_DECIMAL_SEPARATOR
         }
 
     private fun sanitizeThousandsSeparator(thousands: String, decimal: String): String {
-        val normalized = if (thousands in DisplayConstants.SUPPORTED_THOUSANDS_SEPARATORS) {
+        val normalized = if (thousands in DisplayConstant.SUPPORTED_THOUSANDS_SEPARATORS) {
             thousands
         } else {
-            DisplayConstants.DEFAULT_THOUSANDS_SEPARATOR
+            DisplayConstant.DEFAULT_THOUSANDS_SEPARATOR
         }
 
         return if (normalized == decimal) {
-            DisplayConstants.DEFAULT_THOUSANDS_SEPARATOR
+            DisplayConstant.DEFAULT_THOUSANDS_SEPARATOR
         } else {
             normalized
         }

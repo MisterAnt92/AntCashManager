@@ -7,7 +7,7 @@ import com.antcashmanager.domain.model.TransactionDisplayType
 /**
  * Shared constants for the Settings feature.
  */
-object SettingsConstants {
+object SettingsConstant {
     const val TAG = "SettingsViewModel"
     const val SHARING_TIMEOUT = 5_000L
 

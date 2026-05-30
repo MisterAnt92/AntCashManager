@@ -3,7 +3,7 @@ package com.antcashmanager.android.ui.screen.settingsData
 /**
  * Shared constants for the Settings Data feature.
  */
-object SettingsDataConstants {
+object SettingsDataConstant {
     const val TAG = "SettingsDataViewModel"
     const val UNKNOWN_ERROR = "Unknown error"
     const val BACKUP_TIMESTAMP_PATTERN = "yyyyMMdd_HHmmss"

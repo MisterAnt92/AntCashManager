@@ -3,7 +3,7 @@ package com.antcashmanager.android.ui.screen.transactionAdd
 /**
  * Shared constants for Add Transaction feature.
  */
-object AddTransactionConstants {
+object AddTransactionConstant {
     const val TAG = "AddTransactionViewModel"
 
     const val ERROR_LOAD_CATEGORIES = "Errore nel caricamento delle categorie"

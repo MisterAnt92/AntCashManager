@@ -3,7 +3,7 @@ package com.antcashmanager.android.ui.screen.receiptScan
 /**
  * Shared constants for receipt scan feature.
  */
-object ReceiptScanConstants {
+object ReceiptScanConstant {
     const val TAG = "ReceiptScanViewModel"
 
     const val DEFAULT_TITLE_FALLBACK = "Spesa"

@@ -671,6 +671,8 @@ private data class SummaryCardState(
 // ══════════════════════════════════════════════════════════════════════════════
 
 @Preview(showBackground = true, name = "ChartsScreen - Default")
+@Preview(showBackground = true, name = "ChartsScreen - 7 inch", widthDp = 600, heightDp = 960)
+@Preview(showBackground = true, name = "ChartsScreen - 10 inch", widthDp = 840, heightDp = 1280)
 @Composable
 private fun ChartsContentPreviewDefault() {
     AntCashManagerTheme(dynamicColor = false) {

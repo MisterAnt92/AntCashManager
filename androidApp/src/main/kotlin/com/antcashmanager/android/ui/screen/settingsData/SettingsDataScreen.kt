@@ -128,7 +128,7 @@ internal fun SettingsDataContent(
 
             val jsonData = state.pendingBackupData
             if (jsonData.isNullOrBlank()) {
-                onBackupFileSaveError(SettingsDataConstants.UNKNOWN_ERROR)
+                onBackupFileSaveError(SettingsDataConstant.UNKNOWN_ERROR)
                 return@rememberLauncherForActivityResult
             }
 
@@ -145,7 +145,7 @@ internal fun SettingsDataContent(
                 onBackupFileSaved()
             } catch (error: Exception) {
                 analyticsManager.logEvent("backup_file_save_error")
-                onBackupFileSaveError(error.message ?: SettingsDataConstants.UNKNOWN_ERROR)
+                onBackupFileSaveError(error.message ?: SettingsDataConstant.UNKNOWN_ERROR)
             }
         }
 
@@ -180,7 +180,7 @@ internal fun SettingsDataContent(
 
                 onRestoreBackup(payload)
             } catch (error: Exception) {
-                onRestoreFileReadError(error.message ?: SettingsDataConstants.UNKNOWN_ERROR)
+                onRestoreFileReadError(error.message ?: SettingsDataConstant.UNKNOWN_ERROR)
             }
         }
 
@@ -442,6 +442,8 @@ internal fun SettingsDataContent(
 }
 
 @Preview(showBackground = true)
+@Preview(showBackground = true, name = "SettingsDataScreen - 7 inch", widthDp = 600, heightDp = 960)
+@Preview(showBackground = true, name = "SettingsDataScreen - 10 inch", widthDp = 840, heightDp = 1280)
 @Composable
 private fun SettingsDataContentPreview() {
     AntCashManagerTheme(dynamicColor = false) {

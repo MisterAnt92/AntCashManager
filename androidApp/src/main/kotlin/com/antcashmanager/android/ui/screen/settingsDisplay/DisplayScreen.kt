@@ -622,6 +622,8 @@ private fun OtherSection(
 // Dialog implementations moved to SettingsDialogs.kt
 
 @Preview(showBackground = true)
+@Preview(showBackground = true, name = "DisplayScreen - 7 inch", widthDp = 600, heightDp = 960)
+@Preview(showBackground = true, name = "DisplayScreen - 10 inch", widthDp = 840, heightDp = 1280)
 @Composable
 private fun DisplayContentPreview() {
     AntCashManagerTheme {

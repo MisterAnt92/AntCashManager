@@ -1176,6 +1176,8 @@ class MockSettingsRepository : SettingsRepository {
 }
 
 @Preview(showBackground = true, name = "TransactionsScreen - With Data")
+@Preview(showBackground = true, name = "TransactionsScreen - 7 inch", widthDp = 600, heightDp = 960)
+@Preview(showBackground = true, name = "TransactionsScreen - 10 inch", widthDp = 840, heightDp = 1280)
 @Composable
 private fun TransactionsContentPreview() {
     AntCashManagerTheme(dynamicColor = false) {

@@ -1,11 +1,11 @@
-package com.antcashmanager.android.ui.screen.transactions
+package com.antcashmanager.android.ui.screen.home
 
 import com.antcashmanager.android.R
 
 /**
- * Shared constants for Transactions feature.
+ * Shared constants for Home feature.
  */
-object TransactionsConstants {
+object HomeConstant {
     val PRESETS = listOf(
         R.string.range_label_today to "today",
         R.string.range_week to "week",

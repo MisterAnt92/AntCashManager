@@ -110,6 +110,16 @@ internal fun AddTransactionContent(
 // ══════════════════════════════════════════════════════════════════════════════
 
 @androidx.compose.ui.tooling.preview.Preview
+@androidx.compose.ui.tooling.preview.Preview(
+    name = "AddTransactionScreen - 7 inch",
+    widthDp = 600,
+    heightDp = 960,
+)
+@androidx.compose.ui.tooling.preview.Preview(
+    name = "AddTransactionScreen - 10 inch",
+    widthDp = 840,
+    heightDp = 1280,
+)
 @Composable
 fun AddTransactionScreenNewPreview() {
     MaterialTheme {
@@ -146,5 +156,4 @@ fun AddTransactionScreenEditPreview() {
         )
     }
 }
-
 

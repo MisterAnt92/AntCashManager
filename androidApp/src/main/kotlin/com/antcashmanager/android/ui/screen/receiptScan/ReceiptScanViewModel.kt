@@ -88,7 +88,7 @@ class ReceiptScanViewModel(
     fun scanReceipt(imageBytes: ByteArray) {
         activeJob?.cancel()
         activeJob = viewModelScope.launch {
-            Logger.d(ReceiptScanConstants.TAG) { "Starting receipt scan, bytes=${imageBytes.size}" }
+            Logger.d(ReceiptScanConstant.TAG) { "Starting receipt scan, bytes=${imageBytes.size}" }
             _state.update {
                 it.copy(
                     step = ReceiptScanStep.PROCESSING,
@@ -99,13 +99,13 @@ class ReceiptScanViewModel(
 
             scanReceiptUseCase(imageBytes)
                 .onSuccess { receiptData ->
-                    Logger.i(ReceiptScanConstants.TAG) {
+                    Logger.i(ReceiptScanConstant.TAG) {
                         "Scan OK: amount=${receiptData.totalAmount}, payee=${receiptData.payee}"
                     }
 
                     val refinedTitle = matchSuggestion(receiptData.payee, distinctTitles)
                         ?: matchAgainstRawText(receiptData.rawText, distinctTitles)
-                        ?: receiptData.payee.ifBlank { ReceiptScanConstants.DEFAULT_TITLE_FALLBACK }
+                        ?: receiptData.payee.ifBlank { ReceiptScanConstant.DEFAULT_TITLE_FALLBACK }
 
                     val refinedLocation = matchSuggestion(receiptData.location, distinctLocations)
                         ?: matchAgainstRawText(receiptData.rawText, distinctLocations)
@@ -127,12 +127,12 @@ class ReceiptScanViewModel(
                 }
                 .onFailure { error ->
                     if (error is CancellationException) throw error
-                    Logger.e(ReceiptScanConstants.TAG, error) { "Scan failed" }
+                    Logger.e(ReceiptScanConstant.TAG, error) { "Scan failed" }
                     _state.update {
                         it.copy(
                             step = ReceiptScanStep.CAPTURE,
                             isLoading = false,
-                            error = error.message ?: ReceiptScanConstants.ERROR_SCAN,
+                            error = error.message ?: ReceiptScanConstant.ERROR_SCAN,
                         )
                     }
                 }
@@ -161,7 +161,7 @@ class ReceiptScanViewModel(
 
     /** Seleziona una categoria e chiude il dialog. */
     fun selectCategory(category: Category) {
-        Logger.d(ReceiptScanConstants.TAG) { "Category selected: ${category.name}" }
+        Logger.d(ReceiptScanConstant.TAG) { "Category selected: ${category.name}" }
         _state.update { it.copy(selectedCategory = category, showCategoryDialog = false) }
     }
 
@@ -176,7 +176,7 @@ class ReceiptScanViewModel(
 
     /** Permette all'utente di sovrascrivere il tipo di pagamento rilevato dall'OCR. */
     fun selectPaymentType(paymentType: PaymentType) {
-        Logger.d(ReceiptScanConstants.TAG) { "Payment type selected by user: $paymentType" }
+        Logger.d(ReceiptScanConstant.TAG) { "Payment type selected by user: $paymentType" }
         _state.update { it.copy(selectedPaymentType = paymentType, showPaymentTypeDialog = false) }
     }
 
@@ -203,21 +203,21 @@ class ReceiptScanViewModel(
     fun saveTransaction() {
         val current = _state.value
         val receipt = current.receiptData ?: run {
-            _state.update { it.copy(error = ReceiptScanConstants.ERROR_NO_RECEIPT_DATA) }
+            _state.update { it.copy(error = ReceiptScanConstant.ERROR_NO_RECEIPT_DATA) }
             return
         }
         val category = current.selectedCategory ?: run {
-            _state.update { it.copy(error = ReceiptScanConstants.ERROR_SELECT_CATEGORY) }
+            _state.update { it.copy(error = ReceiptScanConstant.ERROR_SELECT_CATEGORY) }
             return
         }
         if (receipt.totalAmount <= 0.0) {
-            _state.update { it.copy(error = ReceiptScanConstants.ERROR_INVALID_AMOUNT) }
+            _state.update { it.copy(error = ReceiptScanConstant.ERROR_INVALID_AMOUNT) }
             return
         }
 
         activeJob?.cancel()
         activeJob = viewModelScope.launch {
-            Logger.d(ReceiptScanConstants.TAG) { "Saving transaction from receipt: ${current.title}" }
+            Logger.d(ReceiptScanConstant.TAG) { "Saving transaction from receipt: ${current.title}" }
             _state.update { it.copy(isLoading = true, error = null) }
 
             val params = CreateTransactionFromReceiptParams(
@@ -235,16 +235,16 @@ class ReceiptScanViewModel(
 
             createTransactionUseCase(params)
                 .onSuccess { id ->
-                    Logger.i(ReceiptScanConstants.TAG) { "Transaction saved, id=$id" }
+                    Logger.i(ReceiptScanConstant.TAG) { "Transaction saved, id=$id" }
                     _state.update { it.copy(isTransactionSaved = true, isLoading = false) }
                 }
                 .onFailure { error ->
                     if (error is CancellationException) throw error
-                    Logger.e(ReceiptScanConstants.TAG, error) { "Failed to save transaction" }
+                    Logger.e(ReceiptScanConstant.TAG, error) { "Failed to save transaction" }
                     _state.update {
                         it.copy(
                             isLoading = false,
-                            error = error.message ?: ReceiptScanConstants.ERROR_SAVE,
+                            error = error.message ?: ReceiptScanConstant.ERROR_SAVE,
                         )
                     }
                 }
@@ -284,7 +284,7 @@ class ReceiptScanViewModel(
         return buildString {
             // 1. IVA
             if (receipt.vatRate > 0.0 || receipt.vatAmount > 0.0) {
-                append(ReceiptScanConstants.LABEL_VAT)
+                append(ReceiptScanConstant.LABEL_VAT)
                 if (receipt.vatRate > 0.0) append(" ${receipt.vatRate.toInt()}%")
                 if (receipt.vatAmount > 0.0) append(": €%.2f".format(receipt.vatAmount))
                 append("\n\n")
@@ -292,7 +292,7 @@ class ReceiptScanViewModel(
 
             // 2. Elenco prodotti
             if (receipt.items.isNotEmpty()) {
-                append("${ReceiptScanConstants.LABEL_RECEIPT_DETAILS}\n")
+                append("${ReceiptScanConstant.LABEL_RECEIPT_DETAILS}\n")
                 receipt.items.forEach { item ->
                     append("- ${item.name}: €%.2f\n".format(item.price))
                 }
@@ -305,7 +305,7 @@ class ReceiptScanViewModel(
             getCategoriesUseCase().collect { result ->
                 result.onSuccess { categories ->
                     val expenseCategories = categories.filter {
-                        it.type.equals(ReceiptScanConstants.EXPENSE_TYPE, ignoreCase = true)
+                        it.type.equals(ReceiptScanConstant.EXPENSE_TYPE, ignoreCase = true)
                     }
                     _state.update { current ->
                         current.copy(
@@ -316,7 +316,7 @@ class ReceiptScanViewModel(
                     }
                 }.onFailure { error ->
                     if (error is CancellationException) throw error
-                    Logger.e(ReceiptScanConstants.TAG, error) { "Failed to load categories" }
+                    Logger.e(ReceiptScanConstant.TAG, error) { "Failed to load categories" }
                 }
             }
         }
@@ -325,7 +325,7 @@ class ReceiptScanViewModel(
     private fun buildVatNote(receipt: ReceiptData): String {
         if (receipt.vatRate <= 0.0 && receipt.vatAmount <= 0.0) return ""
         return buildString {
-            append(ReceiptScanConstants.LABEL_VAT)
+            append(ReceiptScanConstant.LABEL_VAT)
             if (receipt.vatRate > 0.0) append(" ${receipt.vatRate.toInt()}%")
             if (receipt.vatAmount > 0.0) append(": €%.2f".format(receipt.vatAmount))
         }
