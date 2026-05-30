@@ -26,9 +26,15 @@ private const val TABLET_EXPANDED_BREAKPOINT_DP = 840
 @Stable
 data class AdaptiveLayoutInfo(
     val screenWidthDp: Int,
+    val screenHeightDp: Int,
+    val smallestScreenWidthDp: Int,
     val isCompact: Boolean,
     val isMedium: Boolean,
     val isExpanded: Boolean,
+    val isLandscape: Boolean,
+    val isTabletDevice: Boolean,
+    val isFoldableDevice: Boolean,
+    val preferRailNavigation: Boolean,
     val horizontalPadding: Dp,
     val maxContentWidth: Dp,
 )
@@ -41,32 +47,56 @@ data class AdaptiveLayoutInfo(
  */
 @Composable
 fun rememberAdaptiveLayoutInfo(): AdaptiveLayoutInfo {
-    val screenWidthDp = LocalConfiguration.current.screenWidthDp
+    val configuration = LocalConfiguration.current
+    val screenWidthDp = configuration.screenWidthDp
+    val screenHeightDp = configuration.screenHeightDp
+    val smallestScreenWidthDp = configuration.smallestScreenWidthDp
+    val isLandscape = screenWidthDp > screenHeightDp
+    val isTabletDevice = smallestScreenWidthDp >= TABLET_MEDIUM_BREAKPOINT_DP
+    val isFoldableDevice = !isTabletDevice && screenWidthDp >= TABLET_MEDIUM_BREAKPOINT_DP
 
     return when {
         screenWidthDp >= TABLET_EXPANDED_BREAKPOINT_DP -> AdaptiveLayoutInfo(
             screenWidthDp = screenWidthDp,
+            screenHeightDp = screenHeightDp,
+            smallestScreenWidthDp = smallestScreenWidthDp,
             isCompact = false,
             isMedium = false,
             isExpanded = true,
+            isLandscape = isLandscape,
+            isTabletDevice = isTabletDevice,
+            isFoldableDevice = isFoldableDevice,
+            preferRailNavigation = true,
             horizontalPadding = 24.dp,
             maxContentWidth = 1200.dp,
         )
 
         screenWidthDp >= TABLET_MEDIUM_BREAKPOINT_DP -> AdaptiveLayoutInfo(
             screenWidthDp = screenWidthDp,
+            screenHeightDp = screenHeightDp,
+            smallestScreenWidthDp = smallestScreenWidthDp,
             isCompact = false,
             isMedium = true,
             isExpanded = false,
-            horizontalPadding = 20.dp,
-            maxContentWidth = 960.dp,
+            isLandscape = isLandscape,
+            isTabletDevice = isTabletDevice,
+            isFoldableDevice = isFoldableDevice,
+            preferRailNavigation = isTabletDevice || isLandscape,
+            horizontalPadding = if (isFoldableDevice && !isLandscape) 16.dp else 20.dp,
+            maxContentWidth = if (isFoldableDevice) 880.dp else 960.dp,
         )
 
         else -> AdaptiveLayoutInfo(
             screenWidthDp = screenWidthDp,
+            screenHeightDp = screenHeightDp,
+            smallestScreenWidthDp = smallestScreenWidthDp,
             isCompact = true,
             isMedium = false,
             isExpanded = false,
+            isLandscape = isLandscape,
+            isTabletDevice = isTabletDevice,
+            isFoldableDevice = false,
+            preferRailNavigation = false,
             horizontalPadding = 8.dp,
             maxContentWidth = 680.dp,
         )

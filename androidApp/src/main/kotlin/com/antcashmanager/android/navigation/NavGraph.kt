@@ -94,6 +94,9 @@ fun AntCashManagerNavHost() {
     val currentDestination = navBackStackEntry?.destination
     val context = LocalContext.current
     var showExitDialog by rememberSaveable { mutableStateOf(false) }
+    val railContainerWidth = if (adaptiveLayoutInfo.isFoldableDevice) 84.dp else 92.dp
+    val railPaddingStart = if (adaptiveLayoutInfo.isFoldableDevice) 8.dp else 12.dp
+    val railPaddingEnd = if (adaptiveLayoutInfo.isFoldableDevice) 6.dp else 8.dp
     val isOnTopLevelRoute = currentDestination?.route?.let { currentRoute ->
         visibleNavItems.any { item -> item.route == currentRoute }
     } == true
@@ -113,7 +116,7 @@ fun AntCashManagerNavHost() {
         AntScreenScaffold(
             showTopBar = false,
             bottomBar = {
-                if (isTutorialCompleted && adaptiveLayoutInfo.isCompact) {
+                if (isTutorialCompleted && !adaptiveLayoutInfo.preferRailNavigation) {
                     Surface(
                         color = MaterialTheme.colorScheme.surface,
                         tonalElevation = 6.dp,
@@ -209,7 +212,7 @@ fun AntCashManagerNavHost() {
                 }
             }
 
-            if (isTutorialCompleted && !adaptiveLayoutInfo.isCompact) {
+            if (isTutorialCompleted && adaptiveLayoutInfo.preferRailNavigation) {
                 Row(
                     modifier = Modifier
                         .fillMaxSize()
@@ -221,8 +224,13 @@ fun AntCashManagerNavHost() {
                         shape = RoundedCornerShape(24.dp),
                         color = MaterialTheme.colorScheme.surfaceContainerLow,
                         modifier = Modifier
-                            .padding(start = 12.dp, top = 12.dp, end = 8.dp, bottom = 12.dp)
-                            .width(92.dp)
+                            .padding(
+                                start = railPaddingStart,
+                                top = 12.dp,
+                                end = railPaddingEnd,
+                                bottom = 12.dp,
+                            )
+                            .width(railContainerWidth)
                             .fillMaxHeight(),
                     ) {
                         NavigationRail(

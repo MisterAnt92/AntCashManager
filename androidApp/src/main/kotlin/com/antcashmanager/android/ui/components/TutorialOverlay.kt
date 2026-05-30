@@ -109,13 +109,38 @@ fun TutorialOverlay(
         R.string.tutorial_welcome_point_categories,
         R.string.tutorial_welcome_point_customize,
     )
-    val horizontalPadding = if (adaptiveLayoutInfo.isExpanded) 36.dp else 16.dp
-    val verticalPadding = if (adaptiveLayoutInfo.isExpanded) 28.dp else 20.dp
-    val titleWidthFraction = if (adaptiveLayoutInfo.isCompact) 0.96f else 0.84f
-    val descriptionWidthFraction = if (adaptiveLayoutInfo.isExpanded) 0.78f else 0.90f
-    val imageWidthFraction = if (adaptiveLayoutInfo.isExpanded) 0.62f else 0.75f
+    val isFoldablePortrait = adaptiveLayoutInfo.isFoldableDevice && !adaptiveLayoutInfo.isLandscape
+    val horizontalPadding = when {
+        adaptiveLayoutInfo.isExpanded -> 36.dp
+        isFoldablePortrait -> 20.dp
+        else -> 16.dp
+    }
+    val verticalPadding = when {
+        adaptiveLayoutInfo.isExpanded -> 28.dp
+        isFoldablePortrait -> 24.dp
+        else -> 20.dp
+    }
+    val titleWidthFraction = when {
+        adaptiveLayoutInfo.isCompact -> 0.96f
+        isFoldablePortrait -> 0.82f
+        else -> 0.84f
+    }
+    val descriptionWidthFraction = when {
+        adaptiveLayoutInfo.isExpanded -> 0.78f
+        isFoldablePortrait -> 0.80f
+        else -> 0.90f
+    }
+    val imageWidthFraction = when {
+        adaptiveLayoutInfo.isExpanded -> 0.62f
+        isFoldablePortrait -> 0.68f
+        else -> 0.75f
+    }
     val imageFillFraction = if (adaptiveLayoutInfo.isExpanded) 0.92f else 0.85f
-    val controlsWidthFraction = if (adaptiveLayoutInfo.isExpanded) 0.82f else 0.96f
+    val controlsWidthFraction = when {
+        adaptiveLayoutInfo.isExpanded -> 0.82f
+        isFoldablePortrait -> 0.86f
+        else -> 0.96f
+    }
     val welcomeCardPadding = if (adaptiveLayoutInfo.isExpanded) 22.dp else 16.dp
 
     Surface(
