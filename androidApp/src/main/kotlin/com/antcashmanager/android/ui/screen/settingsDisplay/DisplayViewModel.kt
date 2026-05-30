@@ -102,6 +102,14 @@ class DisplayViewModel(
             DisplayConstant.DEFAULT_SHOW_PAYMENT_BREAKDOWN,
         )
 
+    // Espone la preferenza per mostrare la card Insight rapidi
+    val showQuickInsightsCard = settingsRepository.getShowQuickInsightsCard()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_SHOW_QUICK_INSIGHTS_CARD,
+        )
+
     // Espone il tipo di visualizzazione delle transazioni (Home)
     val transactionDisplayType = settingsRepository.getTransactionDisplayType()
         .stateIn(
@@ -207,6 +215,14 @@ class DisplayViewModel(
     fun setShowPaymentTypeBreakdown(show: Boolean) = updatePreference(
         logMsg = "Setting show payment type breakdown: $show",
         action = { settingsRepository.setShowPaymentTypeBreakdown(show) },
+    )
+
+    /**
+     * Aggiorna la preferenza per mostrare la card Insight rapidi in Home.
+     */
+    fun setShowQuickInsightsCard(show: Boolean) = updatePreference(
+        logMsg = "Setting show quick insights card: $show",
+        action = { settingsRepository.setShowQuickInsightsCard(show) },
     )
 
     /**

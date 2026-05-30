@@ -49,6 +49,7 @@ class SettingsRepositoryImpl(
     private val chartsDateFilterToKey = longPreferencesKey("charts_date_filter_to")
     private val chartsZoomEnabledKey = booleanPreferencesKey("charts_zoom_enabled")
     private val showPaymentTypeBreakdownKey = booleanPreferencesKey("show_payment_type_breakdown")
+    private val showQuickInsightsCardKey = booleanPreferencesKey("show_quick_insights_card")
     private val transactionDisplayTypeKey = stringPreferencesKey("transaction_display_type")
     private val transactionsTransactionDisplayTypeKey =
         stringPreferencesKey("transactions_transaction_display_type")
@@ -301,6 +302,17 @@ class SettingsRepositoryImpl(
         }
     }
 
+    override fun getShowQuickInsightsCard(): Flow<Boolean> =
+        context.dataStore.data.map { preferences ->
+            preferences[showQuickInsightsCardKey] ?: false
+        }
+
+    override suspend fun setShowQuickInsightsCard(show: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[showQuickInsightsCardKey] = show
+        }
+    }
+
     override fun getTransactionDisplayType(): Flow<TransactionDisplayType> =
         context.dataStore.data.map { preferences ->
             val typeName =
@@ -380,6 +392,7 @@ class SettingsRepositoryImpl(
             prefs[chartsDateFilterToKey] = defaultChartsFilter.to
             prefs[chartsZoomEnabledKey] = true
             prefs[showPaymentTypeBreakdownKey] = false
+            prefs[showQuickInsightsCardKey] = false
             prefs[transactionDisplayTypeKey] = TransactionDisplayType.TREND.name
             prefs[transactionsTransactionDisplayTypeKey] = TransactionDisplayType.TREND.name
             prefs[isTutorialCompletedKey] = false

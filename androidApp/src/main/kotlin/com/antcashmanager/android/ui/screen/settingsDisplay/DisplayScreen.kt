@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.Payment
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.TipsAndUpdates
 import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.AlertDialog
@@ -44,7 +45,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AppSwitch
@@ -89,6 +89,7 @@ fun DisplayScreen(
     val dateFormat by viewModel.dateFormat.collectAsState()
     val showTransactionNotes by viewModel.showTransactionNotes.collectAsState()
     val showPaymentTypeBreakdown by viewModel.showPaymentTypeBreakdown.collectAsState()
+    val showQuickInsightsCard by viewModel.showQuickInsightsCard.collectAsState()
     val transactionDisplayType by viewModel.transactionDisplayType.collectAsState()
     val transactionsTransactionDisplayType by viewModel.transactionsTransactionDisplayType.collectAsState()
     val chartsZoomEnabled by viewModel.chartsZoomEnabled.collectAsState()
@@ -112,6 +113,8 @@ fun DisplayScreen(
         onDateFormatSelected = { viewModel.setDateFormat(it) },
         showPaymentTypeBreakdown = showPaymentTypeBreakdown,
         onShowPaymentTypeBreakdownChanged = { viewModel.setShowPaymentTypeBreakdown(it) },
+        showQuickInsightsCard = showQuickInsightsCard,
+        onShowQuickInsightsCardChanged = { viewModel.setShowQuickInsightsCard(it) },
         transactionDisplayType = transactionDisplayType,
         onTransactionDisplayTypeSelected = { viewModel.setTransactionDisplayType(it) },
         transactionsTransactionDisplayType = transactionsTransactionDisplayType,
@@ -155,6 +158,8 @@ internal fun DisplayContent(
     onDateFormatSelected: (String) -> Unit,
     showPaymentTypeBreakdown: Boolean,
     onShowPaymentTypeBreakdownChanged: (Boolean) -> Unit,
+    showQuickInsightsCard: Boolean,
+    onShowQuickInsightsCardChanged: (Boolean) -> Unit,
     transactionDisplayType: TransactionDisplayType,
     onTransactionDisplayTypeSelected: (TransactionDisplayType) -> Unit,
     transactionsTransactionDisplayType: TransactionDisplayType,
@@ -234,6 +239,8 @@ internal fun DisplayContent(
                     HomeDisplaySection(
                         showPaymentTypeBreakdown = showPaymentTypeBreakdown,
                         onShowPaymentTypeBreakdownChanged = onShowPaymentTypeBreakdownChanged,
+                        showQuickInsightsCard = showQuickInsightsCard,
+                        onShowQuickInsightsCardChanged = onShowQuickInsightsCardChanged,
                         transactionDisplayType = transactionDisplayType,
                         onShowTransactionDisplayDialog = { showTransactionDisplayDialog = true },
                     )
@@ -308,6 +315,8 @@ internal fun DisplayContent(
                     HomeDisplaySection(
                         showPaymentTypeBreakdown = showPaymentTypeBreakdown,
                         onShowPaymentTypeBreakdownChanged = onShowPaymentTypeBreakdownChanged,
+                        showQuickInsightsCard = showQuickInsightsCard,
+                        onShowQuickInsightsCardChanged = onShowQuickInsightsCardChanged,
                         transactionDisplayType = transactionDisplayType,
                         onShowTransactionDisplayDialog = { showTransactionDisplayDialog = true },
                     )
@@ -600,6 +609,8 @@ private fun ChartsDisplaySection(
 private fun HomeDisplaySection(
     showPaymentTypeBreakdown: Boolean,
     onShowPaymentTypeBreakdownChanged: (Boolean) -> Unit,
+    showQuickInsightsCard: Boolean,
+    onShowQuickInsightsCardChanged: (Boolean) -> Unit,
     transactionDisplayType: TransactionDisplayType,
     onShowTransactionDisplayDialog: () -> Unit,
 ) {
@@ -618,6 +629,19 @@ private fun HomeDisplaySection(
                 )
             },
             onClick = { onShowPaymentTypeBreakdownChanged(!showPaymentTypeBreakdown) },
+        )
+
+        AppCard(
+            title = stringResource(R.string.settings_show_quick_insights_card),
+            subtitle = stringResource(R.string.settings_show_quick_insights_card_desc),
+            leadingIcon = Icons.Default.TipsAndUpdates,
+            trailingContent = {
+                AppSwitch(
+                    checked = showQuickInsightsCard,
+                    onCheckedChange = onShowQuickInsightsCardChanged,
+                )
+            },
+            onClick = { onShowQuickInsightsCardChanged(!showQuickInsightsCard) },
         )
 
         AppCard(
@@ -717,6 +741,8 @@ private fun DisplayContentPreview() {
             onDateFormatSelected = {},
             showPaymentTypeBreakdown = true,
             onShowPaymentTypeBreakdownChanged = {},
+            showQuickInsightsCard = false,
+            onShowQuickInsightsCardChanged = {},
             transactionDisplayType = TransactionDisplayType.TREND,
             onTransactionDisplayTypeSelected = {},
             transactionsTransactionDisplayType = TransactionDisplayType.TREND,

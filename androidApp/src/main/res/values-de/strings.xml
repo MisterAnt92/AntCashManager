@@ -13,7 +13,17 @@
     <string name="home_total_balance">Gesamtsaldo</string>
     <string name="home_income">Einnahmen</string>
     <string name="home_expenses">Ausgaben</string>
+    <string name="home_income_expense_card_title">Einnahmen und Ausgaben</string>
     <string name="home_recent_transactions">Letzte Transaktionen</string>
+    <string name="home_customize_top_cards_action">Obere Karten anpassen</string>
+    <string name="home_customize_top_cards_title">Obere Karten anpassen</string>
+    <string name="home_quick_insights_title">Schnelle Einblicke</string>
+    <string name="home_quick_insights_transactions_count">Transaktionen im Zeitraum</string>
+    <string name="home_quick_insights_average_amount">Durchschnittsbetrag</string>
+    <string name="home_quick_insights_savings_rate">Sparquote</string>
+    <string name="home_quick_insights_savings_rate_value">%1$.0f%%</string>
+    <string name="home_move_up">Nach oben</string>
+    <string name="home_move_down">Nach unten</string>
     <string name="home_balance_positive">📈 Positiv</string>
     <string name="transactions_add">Transaktion hinzuf\u00fcgen</string>
     <string name="transactions_type_income">Einnahme</string>
@@ -284,6 +294,8 @@
     <!-- Payment Breakdown -->
     <string name="settings_show_payment_breakdown">Saldo nach Zahlungsart anzeigen</string>
     <string name="settings_show_payment_breakdown_desc">Saldo-Aufschlüsselung nach Zahlungsmethode auf dem Startbildschirm anzeigen</string>
+    <string name="settings_show_quick_insights_card">Schnelle-Einblicke-Karte anzeigen</string>
+    <string name="settings_show_quick_insights_card_desc">Schnelle-Einblicke-Karte auf dem Startbildschirm anzeigen</string>
     <string name="payment_breakdown_label">Saldo nach Zahlungsart</string>
     <string name="payment_breakdown_item_desc">Saldo mit %1$s: %2$.2f</string>
 

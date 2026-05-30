@@ -17,7 +17,17 @@
     <string name="home_total_balance">Total Balance</string>
     <string name="home_income">Income</string>
     <string name="home_expenses">Expenses</string>
+    <string name="home_income_expense_card_title">Income &amp; Expenses</string>
     <string name="home_recent_transactions">Recent Transactions</string>
+    <string name="home_customize_top_cards_action">Customize top cards</string>
+    <string name="home_customize_top_cards_title">Customize top cards</string>
+    <string name="home_quick_insights_title">Quick insights</string>
+    <string name="home_quick_insights_transactions_count">Transactions in period</string>
+    <string name="home_quick_insights_average_amount">Average amount</string>
+    <string name="home_quick_insights_savings_rate">Savings rate</string>
+    <string name="home_quick_insights_savings_rate_value">%1$.0f%%</string>
+    <string name="home_move_up">Move up</string>
+    <string name="home_move_down">Move down</string>
     <string name="home_balance_positive">📈 Positive</string>
     <string name="home_transaction_item_subtitle">%1$s • %2$s</string>
 
@@ -310,6 +320,8 @@
     <!-- Payment Breakdown -->
     <string name="settings_show_payment_breakdown">Show balance by payment type</string>
     <string name="settings_show_payment_breakdown_desc">Display balance breakdown by payment method on the Home screen</string>
+    <string name="settings_show_quick_insights_card">Show quick insights card</string>
+    <string name="settings_show_quick_insights_card_desc">Display quick insights card on the Home screen</string>
     <string name="payment_breakdown_label">Balance by Payment Type</string>
     <string name="payment_breakdown_item_desc">Balance with %1$s: %2$.2f</string>
 
@@ -465,4 +477,3 @@
     <string name="settings_donate_paypal_title">PayPal</string>
     <string name="settings_donate_bmc_title">Buy Me a Coffee</string>
 </resources>
-

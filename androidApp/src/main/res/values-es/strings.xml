@@ -13,7 +13,17 @@
     <string name="home_total_balance">Saldo Total</string>
     <string name="home_income">Ingresos</string>
     <string name="home_expenses">Gastos</string>
+    <string name="home_income_expense_card_title">Ingresos y Gastos</string>
     <string name="home_recent_transactions">Transacciones Recientes</string>
+    <string name="home_customize_top_cards_action">Personalizar tarjetas superiores</string>
+    <string name="home_customize_top_cards_title">Personalizar tarjetas superiores</string>
+    <string name="home_quick_insights_title">Resumen r\u00e1pido</string>
+    <string name="home_quick_insights_transactions_count">Transacciones del periodo</string>
+    <string name="home_quick_insights_average_amount">Importe medio</string>
+    <string name="home_quick_insights_savings_rate">Tasa de ahorro</string>
+    <string name="home_quick_insights_savings_rate_value">%1$.0f%%</string>
+    <string name="home_move_up">Mover arriba</string>
+    <string name="home_move_down">Mover abajo</string>
     <string name="home_balance_positive">📈 Positivo</string>
     <string name="transactions_add">A\u00f1adir Transacci\u00f3n</string>
     <string name="transactions_type_income">Ingreso</string>
@@ -283,6 +293,8 @@
     <!-- Payment Breakdown -->
     <string name="settings_show_payment_breakdown">Mostrar saldo por tipo de pago</string>
     <string name="settings_show_payment_breakdown_desc">Mostrar el desglose del saldo por método de pago en la pantalla de inicio</string>
+    <string name="settings_show_quick_insights_card">Mostrar tarjeta de resumen rápido</string>
+    <string name="settings_show_quick_insights_card_desc">Mostrar la tarjeta de resumen rápido en la pantalla de inicio</string>
     <string name="payment_breakdown_label">Saldo por Tipo de Pago</string>
     <string name="payment_breakdown_item_desc">Saldo con %1$s: %2$.2f</string>
 

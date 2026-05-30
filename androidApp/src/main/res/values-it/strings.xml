@@ -67,7 +67,17 @@
     <string name="home_total_balance">Saldo Totale</string>
     <string name="home_income">Entrate</string>
     <string name="home_expenses">Uscite</string>
+    <string name="home_income_expense_card_title">Entrate e Uscite</string>
     <string name="home_recent_transactions">Transazioni Recenti</string>
+    <string name="home_customize_top_cards_action">Personalizza card iniziali</string>
+    <string name="home_customize_top_cards_title">Personalizza card iniziali</string>
+    <string name="home_quick_insights_title">Insight rapidi</string>
+    <string name="home_quick_insights_transactions_count">Transazioni nel periodo</string>
+    <string name="home_quick_insights_average_amount">Importo medio</string>
+    <string name="home_quick_insights_savings_rate">Tasso di risparmio</string>
+    <string name="home_quick_insights_savings_rate_value">%1$.0f%%</string>
+    <string name="home_move_up">Sposta su</string>
+    <string name="home_move_down">Sposta giu</string>
     <string name="home_balance_positive">📈 Positivo</string>
     <string name="home_transaction_item_subtitle">%1$s • %2$s</string>
     <!-- Transactions Screen -->
@@ -353,6 +363,8 @@
     <!-- Payment Breakdown -->
     <string name="settings_show_payment_breakdown">Mostra saldo per tipo di pagamento</string>
     <string name="settings_show_payment_breakdown_desc">Visualizza il saldo suddiviso per metodo di pagamento nella schermata Home</string>
+    <string name="settings_show_quick_insights_card">Mostra card Insight rapidi</string>
+    <string name="settings_show_quick_insights_card_desc">Visualizza la card Insight rapidi nella schermata Home</string>
     <string name="payment_breakdown_label">Saldo per Tipo di Pagamento</string>
     <string name="payment_breakdown_item_desc">Saldo con %1$s: %2$.2f</string>
 

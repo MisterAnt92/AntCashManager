@@ -18,5 +18,5 @@ object HomeConstant {
     const val THIRTY_DAYS_MS = 30L * ONE_DAY_MS
     const val ONE_YEAR_MS = 365L * ONE_DAY_MS
     const val DEFAULT_PRESET_INDEX = 1
+    const val DEFAULT_TOP_CARDS_ORDER = "balance,income_expense,quick_insights"
 }
-
