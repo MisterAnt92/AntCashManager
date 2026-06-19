@@ -15,6 +15,8 @@ import com.antcashmanager.domain.usecase.transaction.GetTransactionSuggestionsUs
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.UpdateTransactionUseCase
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -90,13 +92,14 @@ class AddTransactionViewModel(
         transactionRepository: TransactionRepository,
         categoryRepository: CategoryRepository,
         transactionId: Long? = null,
+        dispatcher: CoroutineDispatcher = Dispatchers.Default,
     ) : this(
         transactionRepository = transactionRepository,
-        getCategoriesUseCase = GetCategoriesUseCase(categoryRepository),
-        insertTransactionUseCase = InsertTransactionUseCase(transactionRepository),
-        updateTransactionUseCase = UpdateTransactionUseCase(transactionRepository),
-        deleteTransactionUseCase = DeleteTransactionUseCase(transactionRepository),
-        getTransactionSuggestionsUseCase = GetTransactionSuggestionsUseCase(transactionRepository),
+        getCategoriesUseCase = GetCategoriesUseCase(categoryRepository, dispatcher),
+        insertTransactionUseCase = InsertTransactionUseCase(transactionRepository, dispatcher),
+        updateTransactionUseCase = UpdateTransactionUseCase(transactionRepository, dispatcher),
+        deleteTransactionUseCase = DeleteTransactionUseCase(transactionRepository, dispatcher),
+        getTransactionSuggestionsUseCase = GetTransactionSuggestionsUseCase(transactionRepository, dispatcher),
         transactionId = transactionId,
     )
 

@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.transaction_add
 
+import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionEvent
 import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionStep
 import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionViewModel
@@ -8,12 +9,8 @@ import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.TransactionRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -31,13 +28,11 @@ import org.junit.Test
  * - Categoria, Tipo e Data sono sempre modificabili al tap tramite dialog.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-class AddTransactionViewModelTest {
+class AddTransactionViewModelTest : BaseUnitTest() {
 
     private lateinit var mockTransactionRepository: TransactionRepository
     private lateinit var mockCategoryRepository: CategoryRepository
     private lateinit var viewModel: AddTransactionViewModel
-
-    private val testDispatcher = StandardTestDispatcher()
 
     private val mockCategories = listOf(
         Category(1, "Food", "🍔", 0xFFFF6B6B, "EXPENSE"),
@@ -61,8 +56,6 @@ class AddTransactionViewModelTest {
 
     @Before
     fun setup() {
-        Dispatchers.setMain(testDispatcher)
-
         mockTransactionRepository = object : TransactionRepository {
             override fun getAllTransactions() = flowOf(emptyList<Transaction>())
             override suspend fun getTransactionById(id: Long) =
@@ -113,8 +106,8 @@ class AddTransactionViewModelTest {
     // ── Creazione nuova transazione ──
 
     @Test
-    fun `new transaction starts at CATEGORY_SELECTION`() = runTest {
-        viewModel = AddTransactionViewModel(mockTransactionRepository, mockCategoryRepository)
+    fun `new transaction starts at CATEGORY_SELECTION`() = runViewModelTest {
+        viewModel = createViewModel()
 
         val state = viewModel.state.value
         assertFalse("Should not be in modifying mode", state.isModifying)
@@ -126,8 +119,8 @@ class AddTransactionViewModelTest {
     }
 
     @Test
-    fun `category selection auto-advances to DETAILS in creation mode`() = runTest(testDispatcher) {
-        viewModel = AddTransactionViewModel(mockTransactionRepository, mockCategoryRepository)
+    fun `category selection auto-advances to DETAILS in creation mode`() = runViewModelTest {
+        viewModel = createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
 
         assertEquals("Categories should be loaded", 2, viewModel.state.value.categories.size)
@@ -150,8 +143,8 @@ class AddTransactionViewModelTest {
     }
 
     @Test
-    fun `income category auto-selects INCOME type`() = runTest(testDispatcher) {
-        viewModel = AddTransactionViewModel(mockTransactionRepository, mockCategoryRepository)
+    fun `income category auto-selects INCOME type`() = runViewModelTest {
+        viewModel = createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.onEvent(AddTransactionEvent.SelectCategory(mockCategories[1]))
@@ -169,12 +162,8 @@ class AddTransactionViewModelTest {
     // ── Modifica transazione esistente ──
 
     @Test
-    fun `editing transaction starts at DETAILS in modifying mode`() = runTest(testDispatcher) {
-        viewModel = AddTransactionViewModel(
-            mockTransactionRepository,
-            mockCategoryRepository,
-            transactionId = 1L,
-        )
+    fun `editing transaction starts at DETAILS in modifying mode`() = runViewModelTest {
+        viewModel = createViewModel(transactionId = 1L)
         advanceUntilLoaded()
 
         val state = viewModel.state.value
@@ -186,12 +175,8 @@ class AddTransactionViewModelTest {
     }
 
     @Test
-    fun `editing transaction loads all fields`() = runTest(testDispatcher) {
-        viewModel = AddTransactionViewModel(
-            mockTransactionRepository,
-            mockCategoryRepository,
-            transactionId = 1L,
-        )
+    fun `editing transaction loads all fields`() = runViewModelTest {
+        viewModel = createViewModel(transactionId = 1L)
         advanceUntilLoaded()
 
         val state = viewModel.state.value
@@ -205,8 +190,8 @@ class AddTransactionViewModelTest {
     // ── EditCategory: apre sempre il dialog ──
 
     @Test
-    fun `EditCategory opens category dialog`() = runTest(testDispatcher) {
-        viewModel = AddTransactionViewModel(mockTransactionRepository, mockCategoryRepository)
+    fun `EditCategory opens category dialog`() = runViewModelTest {
+        viewModel = createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.onEvent(AddTransactionEvent.EditCategory)
@@ -216,12 +201,8 @@ class AddTransactionViewModelTest {
     }
 
     @Test
-    fun `EditCategory opens dialog in modifying mode`() = runTest(testDispatcher) {
-        viewModel = AddTransactionViewModel(
-            mockTransactionRepository,
-            mockCategoryRepository,
-            transactionId = 1L,
-        )
+    fun `EditCategory opens dialog in modifying mode`() = runViewModelTest {
+        viewModel = createViewModel(transactionId = 1L)
         advanceUntilLoaded()
 
         viewModel.onEvent(AddTransactionEvent.EditCategory)
@@ -231,12 +212,8 @@ class AddTransactionViewModelTest {
     }
 
     @Test
-    fun `DismissCategoryDialog closes dialog`() = runTest(testDispatcher) {
-        viewModel = AddTransactionViewModel(
-            mockTransactionRepository,
-            mockCategoryRepository,
-            transactionId = 1L,
-        )
+    fun `DismissCategoryDialog closes dialog`() = runViewModelTest {
+        viewModel = createViewModel(transactionId = 1L)
         advanceUntilLoaded()
 
         viewModel.onEvent(AddTransactionEvent.EditCategory)
@@ -249,12 +226,8 @@ class AddTransactionViewModelTest {
     }
 
     @Test
-    fun `selecting category from dialog closes it`() = runTest(testDispatcher) {
-        viewModel = AddTransactionViewModel(
-            mockTransactionRepository,
-            mockCategoryRepository,
-            transactionId = 1L,
-        )
+    fun `selecting category from dialog closes it`() = runViewModelTest {
+        viewModel = createViewModel(transactionId = 1L)
         advanceUntilLoaded()
 
         viewModel.onEvent(AddTransactionEvent.EditCategory)
@@ -275,12 +248,8 @@ class AddTransactionViewModelTest {
     }
 
     @Test
-    fun `category selection does NOT auto-advance in modifying mode`() = runTest(testDispatcher) {
-        viewModel = AddTransactionViewModel(
-            mockTransactionRepository,
-            mockCategoryRepository,
-            transactionId = 1L,
-        )
+    fun `category selection does NOT auto-advance in modifying mode`() = runViewModelTest {
+        viewModel = createViewModel(transactionId = 1L)
         advanceUntilLoaded()
 
         assertEquals(
@@ -302,8 +271,8 @@ class AddTransactionViewModelTest {
     // ── EditType: apre sempre il dialog ──
 
     @Test
-    fun `EditType opens type dialog`() = runTest(testDispatcher) {
-        viewModel = AddTransactionViewModel(mockTransactionRepository, mockCategoryRepository)
+    fun `EditType opens type dialog`() = runViewModelTest {
+        viewModel = createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.onEvent(AddTransactionEvent.EditType)
@@ -313,12 +282,8 @@ class AddTransactionViewModelTest {
     }
 
     @Test
-    fun `EditType opens dialog in modifying mode`() = runTest(testDispatcher) {
-        viewModel = AddTransactionViewModel(
-            mockTransactionRepository,
-            mockCategoryRepository,
-            transactionId = 1L,
-        )
+    fun `EditType opens dialog in modifying mode`() = runViewModelTest {
+        viewModel = createViewModel(transactionId = 1L)
         advanceUntilLoaded()
 
         viewModel.onEvent(AddTransactionEvent.EditType)
@@ -328,12 +293,8 @@ class AddTransactionViewModelTest {
     }
 
     @Test
-    fun `selecting type from dialog closes it`() = runTest(testDispatcher) {
-        viewModel = AddTransactionViewModel(
-            mockTransactionRepository,
-            mockCategoryRepository,
-            transactionId = 1L,
-        )
+    fun `selecting type from dialog closes it`() = runViewModelTest {
+        viewModel = createViewModel(transactionId = 1L)
         advanceUntilLoaded()
 
         viewModel.onEvent(AddTransactionEvent.EditType)
@@ -351,8 +312,8 @@ class AddTransactionViewModelTest {
     // ── EditDate: apre il date picker ──
 
     @Test
-    fun `EditDate opens date picker`() = runTest(testDispatcher) {
-        viewModel = AddTransactionViewModel(mockTransactionRepository, mockCategoryRepository)
+    fun `EditDate opens date picker`() = runViewModelTest {
+        viewModel = createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.onEvent(AddTransactionEvent.EditDate)
@@ -362,8 +323,8 @@ class AddTransactionViewModelTest {
     }
 
     @Test
-    fun `DismissDatePicker closes date picker`() = runTest(testDispatcher) {
-        viewModel = AddTransactionViewModel(mockTransactionRepository, mockCategoryRepository)
+    fun `DismissDatePicker closes date picker`() = runViewModelTest {
+        viewModel = createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.onEvent(AddTransactionEvent.EditDate)
@@ -376,8 +337,8 @@ class AddTransactionViewModelTest {
     }
 
     @Test
-    fun `UpdateTimestamp updates the date`() = runTest(testDispatcher) {
-        viewModel = AddTransactionViewModel(mockTransactionRepository, mockCategoryRepository)
+    fun `UpdateTimestamp updates the date`() = runViewModelTest {
+        viewModel = createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
 
         val newTimestamp = 1700000000000L
@@ -391,8 +352,8 @@ class AddTransactionViewModelTest {
 
     @Test
     fun `PreviousStep goes back to CATEGORY_SELECTION from DETAILS in creation mode`() =
-        runTest(testDispatcher) {
-            viewModel = AddTransactionViewModel(mockTransactionRepository, mockCategoryRepository)
+        runViewModelTest {
+            viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Avanza a DETAILS selezionando una categoria
@@ -411,12 +372,8 @@ class AddTransactionViewModelTest {
         }
 
     @Test
-    fun `PreviousStep does nothing in modifying mode`() = runTest(testDispatcher) {
-        viewModel = AddTransactionViewModel(
-            mockTransactionRepository,
-            mockCategoryRepository,
-            transactionId = 1L,
-        )
+    fun `PreviousStep does nothing in modifying mode`() = runViewModelTest {
+        viewModel = createViewModel(transactionId = 1L)
         advanceUntilLoaded()
 
         viewModel.onEvent(AddTransactionEvent.PreviousStep)
@@ -432,8 +389,8 @@ class AddTransactionViewModelTest {
     // ── Aggiornamento campi ──
 
     @Test
-    fun `field updates work correctly`() = runTest(testDispatcher) {
-        viewModel = AddTransactionViewModel(mockTransactionRepository, mockCategoryRepository)
+    fun `field updates work correctly`() = runViewModelTest {
+        viewModel = createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.onEvent(AddTransactionEvent.UpdateTitle("New Title"))
@@ -460,8 +417,8 @@ class AddTransactionViewModelTest {
     // ── Submit ──
 
     @Test
-    fun `submit fails without category and type`() = runTest(testDispatcher) {
-        viewModel = AddTransactionViewModel(mockTransactionRepository, mockCategoryRepository)
+    fun `submit fails without category and type`() = runViewModelTest {
+        viewModel = createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.onEvent(AddTransactionEvent.UpdateTitle("Test"))
@@ -474,8 +431,8 @@ class AddTransactionViewModelTest {
     }
 
     @Test
-    fun `submit fails without title`() = runTest(testDispatcher) {
-        viewModel = AddTransactionViewModel(mockTransactionRepository, mockCategoryRepository)
+    fun `submit fails without title`() = runViewModelTest {
+        viewModel = createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.onEvent(AddTransactionEvent.SelectCategory(mockCategories[0]))
@@ -487,8 +444,8 @@ class AddTransactionViewModelTest {
     }
 
     @Test
-    fun `submit succeeds with all required fields`() = runTest(testDispatcher) {
-        viewModel = AddTransactionViewModel(mockTransactionRepository, mockCategoryRepository)
+    fun `submit succeeds with all required fields`() = runViewModelTest {
+        viewModel = createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.onEvent(AddTransactionEvent.SelectCategory(mockCategories[0]))
@@ -502,12 +459,8 @@ class AddTransactionViewModelTest {
     }
 
     @Test
-    fun `submit in modifying mode updates transaction`() = runTest(testDispatcher) {
-        viewModel = AddTransactionViewModel(
-            mockTransactionRepository,
-            mockCategoryRepository,
-            transactionId = 1L,
-        )
+    fun `submit in modifying mode updates transaction`() = runViewModelTest {
+        viewModel = createViewModel(transactionId = 1L)
         advanceUntilLoaded()
 
         viewModel.onEvent(AddTransactionEvent.UpdateTitle("Updated Title"))
@@ -520,8 +473,8 @@ class AddTransactionViewModelTest {
     // ── Reset ──
 
     @Test
-    fun `reset clears the state`() = runTest(testDispatcher) {
-        viewModel = AddTransactionViewModel(mockTransactionRepository, mockCategoryRepository)
+    fun `reset clears the state`() = runViewModelTest {
+        viewModel = createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.onEvent(AddTransactionEvent.UpdateTitle("Test"))
@@ -545,8 +498,8 @@ class AddTransactionViewModelTest {
     // ── Suggerimenti Transazioni ──
 
     @Test
-    fun `suggestions are loaded on initialization`() = runTest(testDispatcher) {
-        viewModel = AddTransactionViewModel(mockTransactionRepository, mockCategoryRepository)
+    fun `suggestions are loaded on initialization`() = runViewModelTest {
+        viewModel = createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
 
         val state = viewModel.state.value
@@ -561,12 +514,8 @@ class AddTransactionViewModelTest {
     }
 
     @Test
-    fun `suggestions are available when editing transaction`() = runTest(testDispatcher) {
-        viewModel = AddTransactionViewModel(
-            mockTransactionRepository,
-            mockCategoryRepository,
-            transactionId = 1L,
-        )
+    fun `suggestions are available when editing transaction`() = runViewModelTest {
+        viewModel = createViewModel(transactionId = 1L)
         advanceUntilLoaded()
 
         val state = viewModel.state.value
@@ -584,4 +533,12 @@ class AddTransactionViewModelTest {
             attempts++
         }
     }
+
+    private fun createViewModel(transactionId: Long? = null): AddTransactionViewModel =
+        AddTransactionViewModel(
+            transactionRepository = mockTransactionRepository,
+            categoryRepository = mockCategoryRepository,
+            transactionId = transactionId,
+            dispatcher = testDispatcher,
+        )
 }

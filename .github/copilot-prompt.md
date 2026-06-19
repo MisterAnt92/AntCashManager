@@ -24,7 +24,10 @@ Questo file serve come prompt locale per Copilot, ottimizzando la generazione di
 - ViewModel: StateFlow pubblico, MutableStateFlow privato, consuma Result con onSuccess/onFailure
 - Se una data class rappresenta lo stato di Screen/ViewModel (`<Feature>State`), mantienila nella classe/file State e non creare classi duplicate o `typealias`
 - Logger: usa Kermit, mai println/Log
-- Test: fake repository, mantieni scopo originale, naming chiaro
+- Test: usa **MockK** come standard, fake repository solo quando aiutano con stato/Flow/cancellazione
+- Test Android host-side: usa `com.antcashmanager.android.BaseUnitTest` come base comune e riusa `runViewModelTest`/`testDispatcher`
+- Test: mantieni lo scopo originale, naming `method_shouldExpectedBehavior_whenCondition`, **senza backtick**
+- Dai priorita ai test di `ViewModel`, helper, parser, formatter, mapper e repository con logica
 - NO hardcoded string/color/font, NO runBlocking fuori dai test
 - Pre-commit: import puliti, package corretto, checklist rispettata
 
@@ -34,6 +37,7 @@ Questo file serve come prompt locale per Copilot, ottimizzando la generazione di
 - Quando generi codice, pensa sempre a: layer corretto, riuso componenti, localizzazione, testabilità
 - Se devi scegliere tra più soluzioni, preferisci quella più pulita, idiomatica e facilmente testabile
 - Consulta i file in wiki/ e le implementazioni DisplayScreen, SettingsScreen, HomeScreen per esempi
+- Per task specializzati, consulta gli agenti in `.github/agents/`, in particolare `agent-unit-tests-mockk.agent.md` per gli unit test
 
 ---
 
@@ -43,7 +47,9 @@ Questo file serve come prompt locale per Copilot, ottimizzando la generazione di
 - State: androidApp/ui/screen/feature/NomeState.kt
 - Screen: androidApp/ui/screen/feature/NomeScreen.kt
 - Componenti UI: androidApp/ui/components/
-- Test: shared/commonTest/ o androidApp/src/test/
+- Test ViewModel: androidApp/src/test/
+- Test domain commonMain: shared/commonTest/
+- Test repository/data host-side: shared/src/test/
 
 ---
 

@@ -7,7 +7,7 @@ import org.junit.Test
 class CurrencyFormatterTest {
 
     @Test
-    fun `thousands disabled when same as decimal`() {
+    fun formatAmount_shouldDisableThousandsSeparator_whenSameAsDecimalSeparator() {
         val format = CurrencyFormat(
             currencySymbol = "€",
             decimalDigits = 2,
@@ -21,7 +21,7 @@ class CurrencyFormatterTest {
     }
 
     @Test
-    fun `thousands enabled when different separator`() {
+    fun formatAmount_shouldApplyThousandsSeparator_whenDifferentFromDecimalSeparator() {
         val format = CurrencyFormat(
             currencySymbol = "€",
             decimalDigits = 2,
@@ -34,7 +34,7 @@ class CurrencyFormatterTest {
     }
 
     @Test
-    fun `no thousands for values under thousand`() {
+    fun formatAmount_shouldNotApplyThousandsSeparator_whenValueIsUnderOneThousand() {
         val format = CurrencyFormat(
             currencySymbol = "€",
             decimalDigits = 2,
@@ -47,7 +47,7 @@ class CurrencyFormatterTest {
     }
 
     @Test
-    fun `no decimal digits outputs rounded integer and keeps thousands separator`() {
+    fun formatAmount_shouldReturnRoundedIntegerAndKeepThousandsSeparator_whenDecimalDigitsAreZero() {
         val format = CurrencyFormat(
             currencySymbol = "€",
             decimalDigits = 0,
@@ -61,7 +61,7 @@ class CurrencyFormatterTest {
     }
 
     @Test
-    fun `negative value shows minus before currency`() {
+    fun formatAmountWithNegative_shouldPrefixMinusBeforeCurrency_whenAmountIsNegative() {
         val format = CurrencyFormat(
             currencySymbol = "€",
             decimalDigits = 2,

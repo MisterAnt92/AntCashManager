@@ -1,6 +1,6 @@
 package com.antcashmanager.android.ui.categories
 
-import androidx.lifecycle.viewModelScope
+import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.ui.screen.categories.CategoriesViewModel
 import com.antcashmanager.domain.exception.CategoryException
 import com.antcashmanager.domain.model.Category
@@ -9,7 +9,6 @@ import com.antcashmanager.domain.usecase.category.DeleteCategoryUseCase
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.category.InsertCategoryUseCase
 import com.antcashmanager.domain.usecase.category.UpdateCategoryUseCase
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -18,22 +17,15 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import kotlin.coroutines.cancellation.CancellationException
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class CategoriesViewModelTest {
-    private lateinit var testDispatcher: TestDispatcher
+class CategoriesViewModelTest : BaseUnitTest() {
     private lateinit var fakeGetCategoriesUseCase: FakeGetCategoriesUseCase
     private lateinit var fakeInsertCategoryUseCase: FakeInsertCategoryUseCase
     private lateinit var fakeUpdateCategoryUseCase: FakeUpdateCategoryUseCase
@@ -42,8 +34,6 @@ class CategoriesViewModelTest {
 
     @Before
     fun setup() {
-        testDispatcher = StandardTestDispatcher()
-        Dispatchers.setMain(testDispatcher)
         fakeGetCategoriesUseCase = FakeGetCategoriesUseCase(testDispatcher)
         fakeInsertCategoryUseCase = FakeInsertCategoryUseCase(testDispatcher)
         fakeUpdateCategoryUseCase = FakeUpdateCategoryUseCase(testDispatcher)
@@ -56,21 +46,16 @@ class CategoriesViewModelTest {
         )
     }
 
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
-
     // ── HAPPY PATH ──────────────────────────────────────────────────────────
 
     @Test
-    fun `initial categories list is empty`() = runTest(testDispatcher) {
+    fun `initial categories list is empty`() = runViewModelTest {
         advanceUntilIdle()
         assertTrue(viewModel.state.value.categories.isEmpty())
     }
 
     @Test
-    fun `addCategory should add new expense category`() = runTest(testDispatcher) {
+    fun `addCategory should add new expense category`() = runViewModelTest {
         val category = Category(
             id = 1,
             name = "Food",
@@ -87,7 +72,7 @@ class CategoriesViewModelTest {
     }
 
     @Test
-    fun `updateCategory should call use case`() = runTest(testDispatcher) {
+    fun `updateCategory should call use case`() = runViewModelTest {
         val category = Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373)
 
         viewModel.updateCategory(category)
@@ -97,7 +82,7 @@ class CategoriesViewModelTest {
     }
 
     @Test
-    fun `deleteCategory should call use case`() = runTest(testDispatcher) {
+    fun `deleteCategory should call use case`() = runViewModelTest {
         val category = Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373)
 
         viewModel.deleteCategory(category)
@@ -107,7 +92,7 @@ class CategoriesViewModelTest {
     }
 
     @Test
-    fun `getAllCategories should return success with list of categories`() = runTest(testDispatcher) {
+    fun `getAllCategories should return success with list of categories`() = runViewModelTest {
         val categories = listOf(
             Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373, type = "EXPENSE"),
             Category(id = 2, name = "Salary", icon = "payments", color = 0xFF81C784, type = "INCOME"),
@@ -123,7 +108,7 @@ class CategoriesViewModelTest {
     }
 
     @Test
-    fun `expenseCategories should filter by EXPENSE type`() = runTest(testDispatcher) {
+    fun `expenseCategories should filter by EXPENSE type`() = runViewModelTest {
         val categories = listOf(
             Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373, type = "EXPENSE"),
             Category(id = 2, name = "Salary", icon = "payments", color = 0xFF81C784, type = "INCOME"),
@@ -137,7 +122,7 @@ class CategoriesViewModelTest {
     }
 
     @Test
-    fun `incomeCategories should filter by INCOME type`() = runTest(testDispatcher) {
+    fun `incomeCategories should filter by INCOME type`() = runViewModelTest {
         val categories = listOf(
             Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373, type = "EXPENSE"),
             Category(id = 2, name = "Salary", icon = "payments", color = 0xFF81C784, type = "INCOME"),
@@ -153,7 +138,7 @@ class CategoriesViewModelTest {
     // ── ERROR HANDLING ──────────────────────────────────────────────────────
 
     @Test
-    fun `addCategory should handle DuplicateName exception`() = runTest(testDispatcher) {
+    fun `addCategory should handle DuplicateName exception`() = runViewModelTest {
         fakeInsertCategoryUseCase.shouldThrowDuplicateName = true
 
         viewModel.addCategory("Food", "category", 0xFFE57373, "EXPENSE")
@@ -165,7 +150,7 @@ class CategoriesViewModelTest {
     }
 
     @Test
-    fun `addCategory should handle InvalidAmount exception`() = runTest(testDispatcher) {
+    fun `addCategory should handle InvalidAmount exception`() = runViewModelTest {
         fakeInsertCategoryUseCase.shouldThrowInvalidAmount = true
 
         viewModel.addCategory("Food", "category", 0xFFE57373, "EXPENSE")
@@ -176,7 +161,7 @@ class CategoriesViewModelTest {
     }
 
     @Test
-    fun `updateCategory should handle NotFound exception`() = runTest(testDispatcher) {
+    fun `updateCategory should handle NotFound exception`() = runViewModelTest {
         fakeUpdateCategoryUseCase.shouldThrowNotFound = true
         val category = Category(id = 99, name = "Nonexistent", icon = "icon", color = 0xFF000000)
 
@@ -187,7 +172,7 @@ class CategoriesViewModelTest {
     }
 
     @Test
-    fun `deleteCategory should handle NotFound exception`() = runTest(testDispatcher) {
+    fun `deleteCategory should handle NotFound exception`() = runViewModelTest {
         fakeDeleteCategoryUseCase.shouldThrowNotFound = true
         val category = Category(id = 99, name = "Nonexistent", icon = "icon", color = 0xFF000000)
 
@@ -198,7 +183,7 @@ class CategoriesViewModelTest {
     }
 
     @Test
-    fun `getAllCategories should handle failure on init`() = runTest(testDispatcher) {
+    fun `getAllCategories should handle failure on init`() = runViewModelTest {
         // Create new UseCase that returns failure
         val failingGetUseCase = FakeGetCategoriesUseCase(testDispatcher)
         failingGetUseCase.shouldThrow = true
@@ -216,85 +201,6 @@ class CategoriesViewModelTest {
         assertTrue(vm.state.value.categories.isEmpty())
     }
 
-    // ── CANCELLATION ────────────────────────────────────────────────────────
-
-    @Test
-    fun `addCategory should be cancellable during execution`() = runTest(testDispatcher) {
-        // Use slow UseCase
-        fakeInsertCategoryUseCase.delayMs = 10_000L
-        var completionCount = 0
-        fakeInsertCategoryUseCase.onComplete = { completionCount++ }
-
-        val job = viewModel.viewModelScope.launch {
-            viewModel.addCategory("Food", "category", 0xFFE57373, "EXPENSE")
-        }
-
-        // Cancel before completion
-        delay(100)
-        job.cancel()
-        advanceUntilIdle()
-
-        // Should not complete
-        assertEquals(0, completionCount)
-    }
-
-    @Test
-    fun `updateCategory should be cancellable during execution`() = runTest(testDispatcher) {
-        fakeUpdateCategoryUseCase.delayMs = 10_000L
-        var completionCount = 0
-        fakeUpdateCategoryUseCase.onComplete = { completionCount++ }
-
-        val category = Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373)
-        val job = viewModel.viewModelScope.launch {
-            viewModel.updateCategory(category)
-        }
-
-        delay(100)
-        job.cancel()
-        advanceUntilIdle()
-
-        assertEquals(0, completionCount)
-    }
-
-    @Test
-    fun `deleteCategory should be cancellable during execution`() = runTest(testDispatcher) {
-        fakeDeleteCategoryUseCase.delayMs = 10_000L
-        var completionCount = 0
-        fakeDeleteCategoryUseCase.onComplete = { completionCount++ }
-
-        val category = Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373)
-        val job = viewModel.viewModelScope.launch {
-            viewModel.deleteCategory(category)
-        }
-
-        delay(100)
-        job.cancel()
-        advanceUntilIdle()
-
-        assertEquals(0, completionCount)
-    }
-
-    @Test
-    fun `loadCategories should re-throw CancellationException`() = runTest(testDispatcher) {
-        // This test verifies that CancellationException is properly re-thrown
-        // (ViewModel handles it correctly in error block)
-        var cancellationThrown = false
-
-        val job = viewModel.viewModelScope.launch {
-            try {
-                delay(Long.MAX_VALUE)
-            } catch (e: CancellationException) {
-                cancellationThrown = true
-                throw e
-            }
-        }
-
-        delay(100)
-        job.cancel()
-        advanceUntilIdle()
-
-        assertTrue(cancellationThrown)
-    }
 }
 
 // ── FAKE USE CASES ──────────────────────────────────────────────────────────

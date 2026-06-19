@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.home
 
+import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.ui.screen.home.HomeEvent
 import com.antcashmanager.android.ui.screen.home.HomeViewModel
 import com.antcashmanager.domain.model.SavedDateFilter
@@ -14,24 +15,16 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import org.junit.After
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class HomeViewModelMockkTest {
-
-    private val testDispatcher = StandardTestDispatcher()
+class HomeViewModelMockkTest : BaseUnitTest() {
 
     private lateinit var getTransactionsUseCase: GetTransactionsUseCase
     private lateinit var filterTransactionsUseCase: FilterTransactionsUseCase
@@ -42,8 +35,6 @@ class HomeViewModelMockkTest {
 
     @Before
     fun setup() {
-        Dispatchers.setMain(testDispatcher)
-
         getTransactionsUseCase = mockk()
         filterTransactionsUseCase = mockk()
         getTransactionSuggestionsUseCase = mockk()
@@ -70,13 +61,8 @@ class HomeViewModelMockkTest {
         coEvery { setHomeDateFilterStateUseCase(any()) } returns Result.success(Unit)
     }
 
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
-
     @Test
-    fun onEvent_shouldPersistCustomFilter_whenSetDateRangeEventIsReceived() = runTest(testDispatcher) {
+    fun onEvent_shouldPersistCustomFilter_whenSetDateRangeEventIsReceived() = runViewModelTest {
         val viewModel = buildViewModel()
         val collectJob = launch { viewModel.state.collect {} }
 
@@ -99,7 +85,7 @@ class HomeViewModelMockkTest {
     }
 
     @Test
-    fun onEvent_shouldNormalizeRange_whenFromIsGreaterThanTo() = runTest(testDispatcher) {
+    fun onEvent_shouldNormalizeRange_whenFromIsGreaterThanTo() = runViewModelTest {
         val viewModel = buildViewModel()
         val collectJob = launch { viewModel.state.collect {} }
 
@@ -122,7 +108,7 @@ class HomeViewModelMockkTest {
     }
 
     @Test
-    fun onEvent_shouldPersistPresetFilter_whenSelectPresetEventIsReceived() = runTest(testDispatcher) {
+    fun onEvent_shouldPersistPresetFilter_whenSelectPresetEventIsReceived() = runViewModelTest {
         val viewModel = buildViewModel()
         val collectJob = launch { viewModel.state.collect {} }
 
@@ -142,7 +128,7 @@ class HomeViewModelMockkTest {
     }
 
     @Test
-    fun onEvent_shouldUpdateUiState_whenPersistDateFilterFails() = runTest(testDispatcher) {
+    fun onEvent_shouldUpdateUiState_whenPersistDateFilterFails() = runViewModelTest {
         coEvery { setHomeDateFilterStateUseCase(any()) } returns Result.failure(IllegalStateException("persist-failed"))
         val viewModel = buildViewModel()
         val collectJob = launch { viewModel.state.collect {} }

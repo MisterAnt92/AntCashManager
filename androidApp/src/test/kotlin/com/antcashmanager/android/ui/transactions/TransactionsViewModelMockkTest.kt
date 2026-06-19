@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.transactions
 
+import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.ui.screen.transactions.TransactionsEvent
 import com.antcashmanager.android.ui.screen.transactions.TransactionsViewModel
 import com.antcashmanager.domain.model.SavedDateFilter
@@ -19,22 +20,14 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class TransactionsViewModelMockkTest {
-
-    private val testDispatcher = StandardTestDispatcher()
+class TransactionsViewModelMockkTest : BaseUnitTest() {
 
     private lateinit var getTransactionsUseCase: GetTransactionsUseCase
     private lateinit var insertTransactionUseCase: InsertTransactionUseCase
@@ -48,8 +41,6 @@ class TransactionsViewModelMockkTest {
 
     @Before
     fun setup() {
-        Dispatchers.setMain(testDispatcher)
-
         getTransactionsUseCase = mockk()
         insertTransactionUseCase = mockk()
         updateTransactionUseCase = mockk(relaxed = true)
@@ -77,13 +68,8 @@ class TransactionsViewModelMockkTest {
         coEvery { deleteTransactionUseCase(any()) } returns Result.success(Unit)
     }
 
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
-
     @Test
-    fun addTransaction_shouldCallInsertUseCase_whenInputIsValid() = runTest(testDispatcher) {
+    fun addTransaction_shouldCallInsertUseCase_whenInputIsValid() = runViewModelTest {
         val viewModel = buildViewModel()
 
         viewModel.addTransaction(
@@ -112,7 +98,7 @@ class TransactionsViewModelMockkTest {
     }
 
     @Test
-    fun onEvent_shouldCallDeleteUseCase_whenDeleteTransactionEventArrives() = runTest(testDispatcher) {
+    fun onEvent_shouldCallDeleteUseCase_whenDeleteTransactionEventArrives() = runViewModelTest {
         val viewModel = buildViewModel()
         val transaction = Transaction(
             id = 44L,
