@@ -14,8 +14,8 @@ data class TransactionsState(
     val categories: List<Category> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null,
-    val selectedPresetIndex: Int = TransactionsConstants.DEFAULT_PRESET_INDEX,
-    val dateRangeFrom: Long = System.currentTimeMillis() - TransactionsConstants.ONE_WEEK_MS,
+    val selectedPresetIndex: Int = TransactionsConstant.DEFAULT_PRESET_INDEX,
+    val dateRangeFrom: Long = System.currentTimeMillis() - TransactionsConstant.ONE_WEEK_MS,
     val dateRangeTo: Long = System.currentTimeMillis(),
     val searchQuery: String = "",
     val selectedCategory: String? = null,
@@ -62,14 +62,14 @@ data class TransactionsState(
         }
 
     companion object {
-        val PRESETS = TransactionsConstants.PRESETS
+        val PRESETS = TransactionsConstant.PRESETS
 
         fun getDateFromForPreset(index: Int): Long = when (index) {
-            0 -> System.currentTimeMillis() - TransactionsConstants.ONE_DAY_MS
-            1 -> System.currentTimeMillis() - TransactionsConstants.ONE_WEEK_MS
-            2 -> System.currentTimeMillis() - TransactionsConstants.THIRTY_DAYS_MS
-            3 -> System.currentTimeMillis() - TransactionsConstants.ONE_YEAR_MS
-            else -> System.currentTimeMillis() - TransactionsConstants.ONE_WEEK_MS
+            0 -> System.currentTimeMillis() - TransactionsConstant.ONE_DAY_MS
+            1 -> System.currentTimeMillis() - TransactionsConstant.ONE_WEEK_MS
+            2 -> System.currentTimeMillis() - TransactionsConstant.THIRTY_DAYS_MS
+            3 -> System.currentTimeMillis() - TransactionsConstant.ONE_YEAR_MS
+            else -> System.currentTimeMillis() - TransactionsConstant.ONE_WEEK_MS
         }
     }
 }

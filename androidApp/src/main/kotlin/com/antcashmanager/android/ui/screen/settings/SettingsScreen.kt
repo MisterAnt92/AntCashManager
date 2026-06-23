@@ -591,11 +591,21 @@ private fun DonationCard(context: Context) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        val intent = Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse("https://www.paypal.com/paypalme/misterant92"),
-                        )
-                        context.startActivity(intent)
+                        try {
+                            val intent = Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse("https://www.paypal.com/paypalme/misterant92"),
+                            ).apply {
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
+                            context.startActivity(intent)
+                        } catch (e: Exception) {
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.error_opening_link),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
                     .padding(horizontal = 16.dp, vertical = 14.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -641,11 +651,21 @@ private fun DonationCard(context: Context) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        val intent = Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse("https://buymeacoffee.com/misterant92"),
-                        )
-                        context.startActivity(intent)
+                        try {
+                            val intent = Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse("https://buymeacoffee.com/misterant92"),
+                            ).apply {
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
+                            context.startActivity(intent)
+                        } catch (e: Exception) {
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.error_opening_link),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
                     .padding(horizontal = 16.dp, vertical = 14.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -690,6 +710,8 @@ private fun DonationCard(context: Context) {
 // ── Previews ──
 
 @Preview(showBackground = true, name = "SettingsScreen - Light")
+@Preview(showBackground = true, name = "SettingsScreen - 7 inch", widthDp = 600, heightDp = 960)
+@Preview(showBackground = true, name = "SettingsScreen - 10 inch", widthDp = 840, heightDp = 1280)
 @Composable
 private fun SettingsContentLightPreview() {
     AntCashManagerTheme(dynamicColor = false) {

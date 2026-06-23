@@ -28,7 +28,7 @@ abstract class BaseUseCase<in Params, out Result>(
      * Esegue il UseCase sul dispatcher configurato.
      * Supporta cancellazione cooperativa tramite structured concurrency.
      */
-    suspend operator fun invoke(params: Params): Result = withContext(dispatcher) {
+    open suspend operator fun invoke(params: Params): Result = withContext(dispatcher) {
         execute(params)
     }
 }

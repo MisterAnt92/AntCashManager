@@ -193,3 +193,8 @@ private fun AppCategoryListItemPreviewDark() {
     }
 }
 
+@Preview(name = "AppCategoryListItem - Accessibility", showBackground = true, fontScale = 1.5f)
+@Composable
+private fun AppCategoryListItemPreviewAccessibility() {
+    AppCategoryListItemPreviewNonSelected()
+}

@@ -2,21 +2,20 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.plugin.serialization)
 }
 
 android {
     namespace = "com.antcashmanager.android"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.sformica.ant_cashmanager"
         minSdk = 26
-        targetSdk = 36
-        versionCode = 3
-        versionName = "1.4.6"
+        targetSdk = 37
+        versionCode = 8
+        versionName = "1.5.3"
     }
 
     buildTypes {
@@ -37,12 +36,17 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+    packaging {
+        resources {
+            excludes += setOf(
+                "META-INF/LICENSE.md",
+                "META-INF/LICENSE-notice.md",
+            )
+        }
     }
 }
 
@@ -76,6 +80,7 @@ dependencies {
 
     // Test dependencies
     testImplementation(libs.junit)
+    testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
     // Forza la versione di kotlinx-coroutines-test per evitare conflitti
     configurations.all {
@@ -86,4 +91,5 @@ dependencies {
     androidTestImplementation(libs.androidx.junit.ext)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation(libs.mockk.android)
 }

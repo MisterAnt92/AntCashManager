@@ -481,6 +481,8 @@ private fun AddCategoryDialog(
 // ── Previews ──
 
 @Preview(showBackground = true, name = "CategoriesScreen - With Tabs")
+@Preview(showBackground = true, name = "CategoriesScreen - 7 inch", widthDp = 600, heightDp = 960)
+@Preview(showBackground = true, name = "CategoriesScreen - 10 inch", widthDp = 840, heightDp = 1280)
 @Composable
 private fun CategoriesContentPreview() {
     AntCashManagerTheme(dynamicColor = false) {

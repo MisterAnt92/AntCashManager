@@ -23,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,7 +32,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
@@ -42,6 +42,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -49,7 +50,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AntEmptyState
@@ -57,11 +57,15 @@ import com.antcashmanager.android.ui.components.DateRangeFilter
 import com.antcashmanager.android.ui.components.HelpButton
 import com.antcashmanager.android.ui.components.SearchComponent
 import com.antcashmanager.android.ui.components.TutorialOverlay
+import com.antcashmanager.android.ui.components.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
+import com.antcashmanager.android.ui.screen.home.model.HomeTopCardType
 import com.antcashmanager.android.ui.screen.home.view.BalanceCard
 import com.antcashmanager.android.ui.screen.home.view.HelpDialog
+import com.antcashmanager.android.ui.screen.home.view.HomeTopCardsOrderDialog
 import com.antcashmanager.android.ui.screen.home.view.IncomeExpenseRow
 import com.antcashmanager.android.ui.screen.home.view.LoadingState
+import com.antcashmanager.android.ui.screen.home.view.QuickInsightsCard
 import com.antcashmanager.android.ui.screen.home.view.RecentTransactionItem
 import com.antcashmanager.android.ui.screen.homeTransactionDetail.TransactionDetailsDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
@@ -118,11 +122,17 @@ internal fun HomeContent(
     var showFromDatePicker by remember { mutableStateOf(false) }
     var showToDatePicker by remember { mutableStateOf(false) }
     var showHelpDialog by remember { mutableStateOf(false) }
+    var showTopCardsOrderDialog by remember { mutableStateOf(false) }
+    var topCardsOrderRaw by rememberSaveable { mutableStateOf(HomeConstant.DEFAULT_TOP_CARDS_ORDER) }
+    var editingTopCardsOrder by remember { mutableStateOf(HomeTopCardType.parse(topCardsOrderRaw)) }
+    val topCardsOrder = remember(topCardsOrderRaw) { HomeTopCardType.parse(topCardsOrderRaw) }
 
     // DateRangeFilter expanded state from settings
     val dateFilterExpanded by settingsRepository.getDateFilterExpanded()
         .collectAsState(initial = true)
     val showPaymentTypeBreakdown by settingsRepository.getShowPaymentTypeBreakdown()
+        .collectAsState(initial = false)
+    val showQuickInsightsCard by settingsRepository.getShowQuickInsightsCard()
         .collectAsState(initial = false)
     val reduceMotion by settingsRepository.getReduceMotion()
         .collectAsState(initial = false)
@@ -132,10 +142,27 @@ internal fun HomeContent(
         .collectAsState(initial = true)
 
     val coroutineScope = rememberCoroutineScope()
+    val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
 
     val listState = rememberLazyListState()
     val showScrollToTop by remember {
         derivedStateOf { listState.firstVisibleItemIndex > 2 }
+    }
+
+    val editableTopCardsOrder = remember(topCardsOrder, showQuickInsightsCard) {
+        if (showQuickInsightsCard) {
+            topCardsOrder
+        } else {
+            topCardsOrder.filterNot { it == HomeTopCardType.QUICK_INSIGHTS }
+        }
+    }
+
+    val visibleTopCardsOrder = remember(topCardsOrder, showQuickInsightsCard) {
+        if (showQuickInsightsCard) {
+            topCardsOrder
+        } else {
+            topCardsOrder.filterNot { it == HomeTopCardType.QUICK_INSIGHTS }
+        }
     }
 
     // Tutorial full-screen
@@ -210,6 +237,49 @@ internal fun HomeContent(
         HelpDialog(onDismiss = { showHelpDialog = false })
     }
 
+    if (showTopCardsOrderDialog) {
+        HomeTopCardsOrderDialog(
+            order = editingTopCardsOrder,
+            onMoveUp = { index ->
+                if (index > 0) {
+                    editingTopCardsOrder = editingTopCardsOrder.toMutableList().apply {
+                        add(index - 1, removeAt(index))
+                    }
+                }
+            },
+            onMoveDown = { index ->
+                if (index < editingTopCardsOrder.lastIndex) {
+                    editingTopCardsOrder = editingTopCardsOrder.toMutableList().apply {
+                        add(index + 1, removeAt(index))
+                    }
+                }
+            },
+            onDismiss = {
+                showTopCardsOrderDialog = false
+                editingTopCardsOrder = editableTopCardsOrder
+            },
+            onConfirm = {
+                val updatedOrder = if (showQuickInsightsCard) {
+                    editingTopCardsOrder
+                } else {
+                    val lockedIndex = topCardsOrder.indexOf(HomeTopCardType.QUICK_INSIGHTS)
+                    if (lockedIndex >= 0) {
+                        editingTopCardsOrder
+                            .toMutableList()
+                            .apply {
+                                val targetIndex = lockedIndex.coerceAtMost(size)
+                                add(targetIndex, HomeTopCardType.QUICK_INSIGHTS)
+                            }
+                    } else {
+                        editingTopCardsOrder
+                    }
+                }
+                topCardsOrderRaw = HomeTopCardType.serialize(updatedOrder)
+                showTopCardsOrderDialog = false
+            },
+        )
+    }
+
     // Transaction Details Dialog
     if (state.selectedTransaction != null) {
         TransactionDetailsDialog(
@@ -254,7 +324,10 @@ internal fun HomeContent(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding)
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                        .padding(
+                            horizontal = adaptiveLayoutInfo.horizontalPadding,
+                            vertical = if (adaptiveLayoutInfo.isExpanded) 16.dp else 12.dp,
+                        ),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     // Header with Help Button
@@ -281,7 +354,22 @@ internal fun HomeContent(
                                     color = MaterialTheme.colorScheme.onBackground,
                                 )
                             }
-                            HelpButton(onHelpClick = { showHelpDialog = true })
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                IconButton(
+                                    onClick = {
+                                        editingTopCardsOrder = editableTopCardsOrder
+                                        showTopCardsOrderDialog = true
+                                    },
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Tune,
+                                        contentDescription = stringResource(
+                                            R.string.home_customize_top_cards_action,
+                                        ),
+                                    )
+                                }
+                                HelpButton(onHelpClick = { showHelpDialog = true })
+                            }
                         }
                     }
 
@@ -304,22 +392,32 @@ internal fun HomeContent(
                         )
                     }
 
-                    // Balance Card
-                    item {
-                        BalanceCard(
-                            balance = state.balance,
-                            showPaymentTypeBreakdown = showPaymentTypeBreakdown,
-                            balanceByPaymentType = state.balanceByPaymentType,
-                            reduceMotion = reduceMotion,
-                        )
-                    }
+                    visibleTopCardsOrder.forEach { topCardType ->
+                        when (topCardType) {
+                            HomeTopCardType.BALANCE -> item(key = topCardType.storageKey) {
+                                BalanceCard(
+                                    balance = state.balance,
+                                    showPaymentTypeBreakdown = showPaymentTypeBreakdown,
+                                    balanceByPaymentType = state.balanceByPaymentType,
+                                    reduceMotion = reduceMotion,
+                                )
+                            }
 
-                    // Income / Expense Row
-                    item {
-                        IncomeExpenseRow(
-                            totalIncome = state.totalIncome,
-                            totalExpense = state.totalExpense,
-                        )
+                            HomeTopCardType.INCOME_EXPENSE -> item(key = topCardType.storageKey) {
+                                IncomeExpenseRow(
+                                    totalIncome = state.totalIncome,
+                                    totalExpense = state.totalExpense,
+                                )
+                            }
+
+                            HomeTopCardType.QUICK_INSIGHTS -> item(key = topCardType.storageKey) {
+                                QuickInsightsCard(
+                                    totalIncome = state.totalIncome,
+                                    totalExpense = state.totalExpense,
+                                    transactionCount = state.filteredTransactions.size,
+                                )
+                            }
+                        }
                     }
 
                     // Recent Transactions header with Search toggle
@@ -465,6 +563,8 @@ class MockHomeSettingsRepository : SettingsRepository {
 
     override fun getShowPaymentTypeBreakdown() = kotlinx.coroutines.flow.flowOf(true)
     override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {}
+    override fun getShowQuickInsightsCard() = kotlinx.coroutines.flow.flowOf(false)
+    override suspend fun setShowQuickInsightsCard(show: Boolean) {}
     override fun getTransactionDisplayType() =
         kotlinx.coroutines.flow.flowOf(TransactionDisplayType.TREND)
 
@@ -516,6 +616,8 @@ private val sampleTransactions = listOf(
 )
 
 @Preview(showBackground = true, name = "HomeScreen - With Transactions")
+@Preview(showBackground = true, name = "HomeScreen - 7 inch", widthDp = 600, heightDp = 960)
+@Preview(showBackground = true, name = "HomeScreen - 10 inch", widthDp = 840, heightDp = 1280)
 @Composable
 private fun HomeContentPreview() {
     AntCashManagerTheme(dynamicColor = false) {

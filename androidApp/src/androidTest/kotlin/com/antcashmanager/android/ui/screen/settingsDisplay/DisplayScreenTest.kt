@@ -52,6 +52,8 @@ class DisplayScreenTest {
                     onTransactionsTransactionDisplayTypeSelected = {},
                     onResetAllPreferences = {},
                     onNavigateBack = {},
+                    showQuickInsightsCard = false,
+                    onShowQuickInsightsCardChanged = {},
                 )
             }
         }

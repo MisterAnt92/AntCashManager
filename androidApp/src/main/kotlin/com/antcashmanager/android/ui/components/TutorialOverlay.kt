@@ -52,6 +52,7 @@ import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 fun TutorialOverlay(
     onDismiss: () -> Unit,
 ) {
+    val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
     var currentStep by remember { mutableIntStateOf(0) }
     val steps = listOf(
         TutorialStep(
@@ -108,6 +109,39 @@ fun TutorialOverlay(
         R.string.tutorial_welcome_point_categories,
         R.string.tutorial_welcome_point_customize,
     )
+    val isFoldablePortrait = adaptiveLayoutInfo.isFoldableDevice && !adaptiveLayoutInfo.isLandscape
+    val horizontalPadding = when {
+        adaptiveLayoutInfo.isExpanded -> 36.dp
+        isFoldablePortrait -> 20.dp
+        else -> 16.dp
+    }
+    val verticalPadding = when {
+        adaptiveLayoutInfo.isExpanded -> 28.dp
+        isFoldablePortrait -> 24.dp
+        else -> 20.dp
+    }
+    val titleWidthFraction = when {
+        adaptiveLayoutInfo.isCompact -> 0.96f
+        isFoldablePortrait -> 0.82f
+        else -> 0.84f
+    }
+    val descriptionWidthFraction = when {
+        adaptiveLayoutInfo.isExpanded -> 0.78f
+        isFoldablePortrait -> 0.80f
+        else -> 0.90f
+    }
+    val imageWidthFraction = when {
+        adaptiveLayoutInfo.isExpanded -> 0.62f
+        isFoldablePortrait -> 0.68f
+        else -> 0.75f
+    }
+    val imageFillFraction = if (adaptiveLayoutInfo.isExpanded) 0.92f else 0.85f
+    val controlsWidthFraction = when {
+        adaptiveLayoutInfo.isExpanded -> 0.82f
+        isFoldablePortrait -> 0.86f
+        else -> 0.96f
+    }
+    val welcomeCardPadding = if (adaptiveLayoutInfo.isExpanded) 22.dp else 16.dp
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -116,7 +150,7 @@ fun TutorialOverlay(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 24.dp),
+                .padding(horizontal = horizontalPadding, vertical = verticalPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             // Animazione fade + slide-up solo per il primo step (welcome)
@@ -137,7 +171,7 @@ fun TutorialOverlay(
                         color = MaterialTheme.colorScheme.primary,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
-                            .fillMaxWidth(0.96f)
+                            .fillMaxWidth(titleWidthFraction)
                             .semantics { heading() },
                     )
 
@@ -148,7 +182,7 @@ fun TutorialOverlay(
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onBackground,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth(0.90f),
+                        modifier = Modifier.fillMaxWidth(descriptionWidthFraction),
                     )
 
                     Spacer(modifier = Modifier.height(20.dp))
@@ -158,7 +192,7 @@ fun TutorialOverlay(
             if (step.imageRes != null) {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth(0.75f)
+                        .fillMaxWidth(imageWidthFraction)
                         .weight(1f),
                     contentAlignment = Alignment.Center,
                 ) {
@@ -166,7 +200,7 @@ fun TutorialOverlay(
                         painter = painterResource(id = step.imageRes),
                         contentDescription = stringResource(step.titleRes),
                         modifier = Modifier
-                            .fillMaxSize(0.85f)
+                            .fillMaxSize(imageFillFraction)
                             .clip(RoundedCornerShape(16.dp))
                             .background(
                                 color = MaterialTheme.colorScheme.surfaceVariant,
@@ -182,7 +216,7 @@ fun TutorialOverlay(
                 ) {
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth(0.96f)
+                        .fillMaxWidth(descriptionWidthFraction)
                         .padding(vertical = 4.dp, horizontal = 4.dp)
                         .weight(1f),
                     verticalArrangement = Arrangement.Center,
@@ -198,7 +232,7 @@ fun TutorialOverlay(
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(16.dp),
+                                .padding(welcomeCardPadding),
                             verticalArrangement = Arrangement.spacedBy(10.dp),
                         ) {
                             welcomeHighlights.forEachIndexed { index, textRes ->
@@ -247,7 +281,7 @@ fun TutorialOverlay(
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
                 modifier = Modifier
-                    .fillMaxWidth(0.96f)
+                    .fillMaxWidth(controlsWidthFraction)
                     .clearAndSetSemantics {
                         contentDescription = progressDescription
                     },
@@ -271,7 +305,7 @@ fun TutorialOverlay(
             Spacer(modifier = Modifier.height(20.dp))
 
             Row(
-                modifier = Modifier.fillMaxWidth(0.96f),
+                modifier = Modifier.fillMaxWidth(controlsWidthFraction),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -320,3 +354,8 @@ private fun TutorialOverlayPreviewDark() {
     TutorialOverlayPreviewLight()
 }
 
+@Preview(name = "TutorialOverlay - Accessibility", showBackground = true, fontScale = 1.5f)
+@Composable
+private fun TutorialOverlayPreviewAccessibility() {
+    TutorialOverlayPreviewLight()
+}

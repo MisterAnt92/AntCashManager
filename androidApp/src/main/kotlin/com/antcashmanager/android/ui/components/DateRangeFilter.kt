@@ -403,3 +403,8 @@ private fun DateRangeFilterPreviewDark() {
     }
 }
 
+@Preview(name = "DateRangeFilter - Accessibility", showBackground = true, fontScale = 1.5f)
+@Composable
+private fun DateRangeFilterPreviewAccessibility() {
+    DateRangeFilterPreview()
+}

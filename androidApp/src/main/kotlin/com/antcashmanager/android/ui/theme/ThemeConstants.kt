@@ -12,5 +12,7 @@ object ThemeConstants {
     const val DEFAULT_HIGH_CONTRAST = false
     const val DEFAULT_LARGE_TEXT = false
     const val DEFAULT_REDUCE_MOTION = false
+    const val HIGH_EMPHASIS_TEXT_ALPHA = 0.92f
+    const val BALANCE_STATUS_POSITIVE_CONTAINER_ALPHA = 0.70f
+    const val BALANCE_STATUS_NEGATIVE_CONTAINER_ALPHA = 0.75f
 }
-

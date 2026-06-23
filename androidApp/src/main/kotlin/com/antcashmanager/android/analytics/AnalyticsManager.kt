@@ -13,10 +13,6 @@ open class AnalyticsManager {
 
     private val firebaseAnalytics: FirebaseAnalytics?
 
-    constructor() {
-        firebaseAnalytics = null
-    }
-
     constructor(context: Context) {
         firebaseAnalytics = FirebaseAnalytics.getInstance(context.applicationContext)
     }

@@ -8,7 +8,7 @@ import com.antcashmanager.domain.usecase.BaseUseCase
  * UseCase per recuperare una categoria dato il suo nome.
  * Se la categoria non viene trovata, restituisce una categoria di fallback "Non categorizzato".
  */
-class GetCategoryByNameUseCase(
+open class GetCategoryByNameUseCase(
     private val categoryRepository: CategoryRepository,
 ) : BaseUseCase<GetCategoryByNameUseCase.Params, Result<Category>>() {
 

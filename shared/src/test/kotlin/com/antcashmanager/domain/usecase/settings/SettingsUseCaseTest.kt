@@ -108,7 +108,7 @@ internal class FakeSettingsRepository : SettingsRepository {
     private val transactionDisplayTypeFlow = MutableStateFlow(TransactionDisplayType.TREND)
     private val transactionsTransactionDisplayTypeFlow =
         MutableStateFlow(TransactionDisplayType.TREND)
-    private val chartsZoomEnabledFlow = MutableStateFlow(true)
+    private val chartsZoomEnabledFlow = MutableStateFlow(false)
 
     override fun getTheme(): Flow<AppTheme> = themeFlow
 
@@ -242,6 +242,6 @@ internal class FakeSettingsRepository : SettingsRepository {
         showPaymentTypeBreakdownFlow.value = true
         transactionDisplayTypeFlow.value = TransactionDisplayType.TREND
         transactionsTransactionDisplayTypeFlow.value = TransactionDisplayType.TREND
-        chartsZoomEnabledFlow.value = true
+        chartsZoomEnabledFlow.value = false
     }
 }

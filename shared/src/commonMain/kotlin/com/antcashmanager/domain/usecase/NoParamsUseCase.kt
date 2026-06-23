@@ -27,5 +27,5 @@ abstract class NoParamsUseCase<out Result>(
      * Esegue il UseCase sul dispatcher configurato.
      * Supporta cancellazione cooperativa tramite structured concurrency.
      */
-    suspend operator fun invoke(): Result = withContext(dispatcher) { execute() }
+    open suspend operator fun invoke(): Result = withContext(dispatcher) { execute() }
 }

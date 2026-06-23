@@ -83,3 +83,8 @@ private fun AppHelpDialogPreviewDark() {
     AppHelpDialogPreviewLight()
 }
 
+@Preview(name = "AppHelpDialog - Accessibility", showBackground = true, fontScale = 1.5f)
+@Composable
+private fun AppHelpDialogPreviewAccessibility() {
+    AppHelpDialogPreviewLight()
+}

@@ -1,12 +1,12 @@
 package com.antcashmanager.android.ui.screen.receiptScan
 
+import android.Manifest
 import android.net.Uri
-import androidx.activity.compose.LocalActivityResultRegistryOwner
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,7 +29,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,8 +45,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AppSelectionItemCard
 import com.antcashmanager.android.ui.components.button.AppButton
@@ -214,7 +213,6 @@ private fun CaptureStep(
 ) {
     val context = LocalContext.current
     val isPreview = LocalInspectionMode.current
-    val registryOwner = LocalActivityResultRegistryOwner.current
 
     // Launcher per foto dalla fotocamera (salva in file temp)
     val tempFile = remember { File.createTempFile("receipt_", ".jpg", context.cacheDir) }
@@ -226,17 +224,27 @@ private fun CaptureStep(
         }
     }
 
-    val cameraLauncher = if (isPreview || registryOwner == null) null else rememberLauncherForActivityResult(
-        ActivityResultContracts.TakePicture()
+    val cameraLauncher = if (isPreview) null else rememberLauncherForActivityResult(
+        ActivityResultContracts.TakePicture(),
     ) { success ->
-        if (success) {
+        if (success && tempFile.exists()) {
             val bytes = tempFile.readBytes()
-            if (bytes.isNotEmpty()) onImageBytes(bytes)
+            if (bytes.isNotEmpty()) {
+                onImageBytes(bytes)
+            }
         }
     }
 
-    val galleryLauncher = if (isPreview || registryOwner == null) null else rememberLauncherForActivityResult(
-        ActivityResultContracts.GetContent()
+    val requestCameraPermissionLauncher = if (isPreview) null else rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { granted ->
+        if (granted) {
+            cameraLauncher?.launch(tempUri)
+        }
+    }
+
+    val galleryLauncher = if (isPreview) null else rememberLauncherForActivityResult(
+        ActivityResultContracts.GetContent(),
     ) { uri: Uri? ->
         uri?.let {
             val bytes = context.contentResolver.openInputStream(it)?.use { stream ->
@@ -267,7 +275,19 @@ private fun CaptureStep(
         )
         Spacer(modifier = Modifier.height(32.dp))
         AppButton(
-            onClick = { cameraLauncher?.launch(tempUri) },
+            onClick = {
+                when {
+                    cameraLauncher == null -> Unit
+                    ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.CAMERA,
+                    ) == android.content.pm.PackageManager.PERMISSION_GRANTED -> {
+                        cameraLauncher.launch(tempUri)
+                    }
+
+                    else -> requestCameraPermissionLauncher?.launch(Manifest.permission.CAMERA)
+                }
+            },
             modifier = Modifier.fillMaxWidth(),
             text = stringResource(R.string.receipt_scan_take_photo),
         )
@@ -460,6 +480,8 @@ private fun ReceiptAmountCard(
 // ══════════════════════════════════════════════════════════════════════════════
 
 @Preview(showBackground = true)
+@Preview(showBackground = true, name = "ReceiptScanScreen - 7 inch", widthDp = 600, heightDp = 960)
+@Preview(showBackground = true, name = "ReceiptScanScreen - 10 inch", widthDp = 840, heightDp = 1280)
 @Composable
 fun ReceiptScanCapturePreview() {
     AntCashManagerTheme {
@@ -529,4 +551,3 @@ fun ReceiptScanReviewPreview() {
         )
     }
 }
-

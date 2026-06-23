@@ -90,10 +90,16 @@ Ottimizza l'efficienza, la qualità e la manutenibilità del codice seguendo Cle
 
 ## 6. Testing
 - Ogni feature DEVE avere test (happy path, errori, cancellazione).
-- Usa fake repository, NON Mockito.
+- Usa **MockK** come libreria standard per mock/stub/verifiche di dipendenze; **NON Mockito**.
+- I fake repository restano ammessi quando servono per stato, Flow, cancellazione o scenari piu leggibili del mocking puro.
 - Mantieni lo scopo originale dei test quando aggiorni.
+- Nei test unitari Android in `androidApp/src/test/kotlin`, usa SEMPRE `com.antcashmanager.android.BaseUnitTest` come base comune.
+- Non duplicare piu la gestione manuale di `Dispatchers.setMain`, `Dispatchers.resetMain`, `StandardTestDispatcher()` o il boilerplate di `runTest(testDispatcher)` dentro i singoli test: riusa i helper di `BaseUnitTest`.
 - Usa `@OptIn(ExperimentalCoroutinesApi::class)` e `runTest(testDispatcher)`.
 - Test naming: `method_shouldExpectedBehavior_whenCondition`.
+- I nomi dei test **non devono usare backtick**.
+- Dai priorita ai test di `ViewModel` e alle classi con logica reale come helper, parser, formatter, mapper e repository.
+- Nei source set KMP usa il layer corretto: `androidApp/src/test/kotlin` per ViewModel, `shared/src/commonTest/kotlin` per `commonMain`, `shared/src/test/kotlin` per repository/data host-side.
 
 ---
 
@@ -146,3 +152,41 @@ Ottimizza l'efficienza, la qualità e la manutenibilità del codice seguendo Cle
 ## 10. Riferimenti
 - Consulta i file in `wiki/` e le implementazioni di esempio (DisplayScreen, SettingsScreen, HomeScreen) per dubbi architetturali.
 - In caso di incertezza, preferisci codice pulito, testabile e manutenibile.
+
+---
+
+## 11. Esclusione File da Gitignore (OBBLIGATORIO)
+
+**REGOLA CRITICA**: Quando analizzi o lavori con il codice, **ESCLUDERE SEMPRE i file elencati nel `.gitignore` del progetto**.
+
+### Perché
+- Il `.gitignore` è una definizione versionata di cosa NON deve essere analizzato/committato
+- I file esclusi sono generati, temporanei o contengono dati sensibili e NON devono MAI essere modificati
+- Analizzare file esclusi spreca token e introduce suggerimenti scorretti
+
+### Come Applicare
+1. **Leggi sempre `.gitignore`** prima di analizzare un percorso di file
+2. **Non suggerire mai modifiche** a file che corrispondono a pattern `.gitignore`
+3. **Non generare suggerimenti** da dentro directory escluse (es. `build/`, `.gradle/`, `.idea/`)
+4. **Se un percorso corrisponde a un'esclusione**, informare l'utente: *"Questo file corrisponde a esclusioni in `.gitignore` e NON deve essere modificato."*
+
+### Categorie Comunemente Escluse (vedi `.gitignore` completo per la lista intera)
+- **Build output**: `build/`, `.gradle/`, `out/`
+- **Configurazioni IDE**: `.idea/`, `.vscode/`, `*.iml`
+- **Codice generato**: `build/generated/`, `buildSrc/`
+- **File di sicurezza**: `*.jks`, `*.keystore`, `google-services.json`, `local.properties`
+- **File OS-specifici**: `.DS_Store`, `Thumbs.db`
+- **Log file**: `*.log`, `logcat.txt`
+- **File temporanei**: `*.tmp`, `*.bak`, `node_modules/`
+- **Kotlin Multiplatform**: `.kotlin/`, `.konan/`, `*.klib`, `*.kexe`
+- **Android NDK**: `*.so`, `obj/`
+- **Firebase/Crashlytics**: `crashlytics.properties`, `fabric.properties`
+- **Dati sensibili**: `.env`, `.env.local`, `secrets.properties`
+
+### Implementazione nel Flusso di Lavoro
+1. Quando suggerisci modifiche a file, verifica che il percorso NON sia in `.gitignore`
+2. Se l'utente chiede di modificare un file escluso, rifiuta polidamente e spiega il motivo
+3. Se durante l'analisi trovi riferimenti a percorsi esclusi, ignora quei percorsi
+4. Mantieni questa esclusione in mente durante **analisi**, **refactor**, **testing**, **import cleanup**
+
+

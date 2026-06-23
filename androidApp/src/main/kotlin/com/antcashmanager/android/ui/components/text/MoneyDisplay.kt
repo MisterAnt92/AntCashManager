@@ -90,8 +90,10 @@ fun BalanceText(
     style: TextStyle = MaterialTheme.typography.headlineLarge,
     fontWeight: FontWeight = FontWeight.Bold,
     fontSize: Int = 24,
+    positiveColor: Color = IncomeGreen,
+    negativeColor: Color = ExpenseRed,
 ) {
-    val color = if (amount >= 0) IncomeGreen else ExpenseRed
+    val color = if (amount >= 0) positiveColor else negativeColor
 
     MoneyText(
         amount = amount,
@@ -259,3 +261,8 @@ private fun AllMoneyTextPreviewDark() {
     }
 }
 
+@Preview(name = "MoneyDisplay - Accessibility", showBackground = true, fontScale = 1.5f)
+@Composable
+private fun MoneyDisplayPreviewAccessibility() {
+    MoneyTextPositivePreview()
+}

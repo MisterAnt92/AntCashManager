@@ -253,3 +253,9 @@ private fun AppButtonStylesPreviewDark() {
         AppButton(text = "Disabilitato", enabled = false, onClick = {})
     }
 }
+
+@Preview(name = "AppButton Styles - Accessibility", showBackground = true, widthDp = 360, fontScale = 1.5f)
+@Composable
+private fun AppButtonStylesPreviewAccessibility() {
+    AppButtonStylesPreviewLight()
+}

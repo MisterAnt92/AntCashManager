@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 /**
  * UseCase per l'aggiornamento di una categoria.
  */
-class UpdateCategoryUseCase(
+open class UpdateCategoryUseCase(
     private val categoryRepository: CategoryRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : BaseUseCase<Category, Result<Unit>>(dispatcher) {

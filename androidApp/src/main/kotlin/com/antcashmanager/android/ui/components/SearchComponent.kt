@@ -130,3 +130,8 @@ private fun SearchComponentPreviewDark() {
     SearchComponentPreviewLight()
 }
 
+@Preview(name = "SearchComponent - Accessibility", showBackground = true, fontScale = 1.5f)
+@Composable
+private fun SearchComponentPreviewAccessibility() {
+    SearchComponentPreviewLight()
+}

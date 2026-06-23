@@ -3,6 +3,7 @@ package com.antcashmanager.android
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivityResultRegistryOwner
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
@@ -46,13 +47,23 @@ fun WithAppLocale(language: AppLanguage, content: @Composable () -> Unit) {
         content()
     } else {
         val context = LocalContext.current
+        val activityResultRegistryOwner = LocalActivityResultRegistryOwner.current
         val locale = Locale(language.code)
         val config = Configuration(context.resources.configuration).apply {
             setLocale(locale)
         }
         val localizedContext = context.createConfigurationContext(config)
-        CompositionLocalProvider(LocalContext provides localizedContext) {
-            content()
+        if (activityResultRegistryOwner != null) {
+            CompositionLocalProvider(
+                LocalContext provides localizedContext,
+                LocalActivityResultRegistryOwner provides activityResultRegistryOwner,
+            ) {
+                content()
+            }
+        } else {
+            CompositionLocalProvider(LocalContext provides localizedContext) {
+                content()
+            }
         }
     }
 }

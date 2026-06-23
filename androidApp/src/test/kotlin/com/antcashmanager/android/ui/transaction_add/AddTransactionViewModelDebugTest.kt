@@ -1,18 +1,15 @@
 package com.antcashmanager.android.ui.transaction_add
 
+import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionViewModel
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.TransactionRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
@@ -21,11 +18,10 @@ import org.junit.Test
  * Test debug per capire il problema con i test del ViewModel
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-class AddTransactionViewModelDebugTest {
+class AddTransactionViewModelDebugTest : BaseUnitTest() {
 
     private lateinit var mockTransactionRepository: TransactionRepository
     private lateinit var mockCategoryRepository: CategoryRepository
-    private val testDispatcher = StandardTestDispatcher()
 
     private val mockCategories = listOf(
         Category(1, "Food", "🍔", 0xFFFF6B6B, "EXPENSE"),
@@ -49,8 +45,6 @@ class AddTransactionViewModelDebugTest {
 
     @Before
     fun setup() {
-        Dispatchers.setMain(testDispatcher)
-
         mockTransactionRepository = object : TransactionRepository {
             override fun getAllTransactions() = flowOf(emptyList<Transaction>())
             override suspend fun getTransactionById(id: Long) =
@@ -98,7 +92,7 @@ class AddTransactionViewModelDebugTest {
     }
 
     @Test
-    fun `debug test - check initial state`() = runTest(testDispatcher) {
+    fun init_shouldCheckInitialState_whenViewModelIsCreated() = runViewModelTest {
         val viewModel = AddTransactionViewModel(mockTransactionRepository, mockCategoryRepository)
 
         // Avanza il dispatcher per permettere l'inizializzazione
@@ -115,7 +109,7 @@ class AddTransactionViewModelDebugTest {
     }
 
     @Test
-    fun `debug test - check modifying mode`() = runTest(testDispatcher) {
+    fun init_shouldCheckModifyingMode_whenViewModelIsCreatedWithTransactionId() = runViewModelTest {
         val viewModel = AddTransactionViewModel(
             mockTransactionRepository,
             mockCategoryRepository,

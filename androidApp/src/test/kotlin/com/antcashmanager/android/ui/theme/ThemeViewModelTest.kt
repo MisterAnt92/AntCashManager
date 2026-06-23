@@ -1,45 +1,33 @@
 package com.antcashmanager.android.ui.theme
 
+import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.repository.SettingsRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class ThemeViewModelTest {
+class ThemeViewModelTest : BaseUnitTest() {
 
-    private val testDispatcher = StandardTestDispatcher()
     private lateinit var fakeRepo: FakeSettingsRepository
     private lateinit var viewModel: ThemeViewModel
 
     @Before
     fun setup() {
-        Dispatchers.setMain(testDispatcher)
         fakeRepo = FakeSettingsRepository()
         viewModel = ThemeViewModel(fakeRepo)
     }
 
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
-
     @Test
-    fun `default theme exposed`() = runTest(testDispatcher) {
+    fun `default theme exposed`() = runViewModelTest {
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.appTheme.collect {}
         }
@@ -51,7 +39,7 @@ class ThemeViewModelTest {
     }
 
     @Test
-    fun `setTheme updates repository`() = runTest(testDispatcher) {
+    fun `setTheme updates repository`() = runViewModelTest {
         viewModel.setTheme(AppTheme.DARK)
         advanceUntilIdle()
 

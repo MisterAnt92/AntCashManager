@@ -87,7 +87,10 @@ class HomeViewModel(
             repository = transactionRepository,
             dispatcher = dispatcher,
         ),
-        getHomeDateFilterStateUseCase = GetHomeDateFilterStateUseCase(settingsRepository),
+        getHomeDateFilterStateUseCase = GetHomeDateFilterStateUseCase(
+            settingsRepository = settingsRepository,
+            dispatcher = dispatcher,
+        ),
         setHomeDateFilterStateUseCase = SetHomeDateFilterStateUseCase(
             settingsRepository = settingsRepository,
             dispatcher = dispatcher,

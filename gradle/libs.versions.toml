@@ -1,13 +1,13 @@
 [versions]
-agp = "8.9.1"
-kotlin = "2.1.0"
-ksp = "2.1.0-1.0.29"
+agp = "9.2.0"
+kotlin = "2.3.21"
+ksp = "2.3.9"
 coreKtx = "1.18.0"
 composeBom = "2026.04.01"
 navigationCompose = "2.8.5"
 lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.13.0"
-room = "2.6.1"
+room = "2.8.4"
 kermit = "2.0.5"
 coroutines = "1.9.0"
 datastore = "1.1.1"
@@ -21,6 +21,7 @@ firebaseBom = "34.12.0"
 googleFonts = "1.7.6"
 mlkitTextRecognition = "16.0.1"
 koin = "4.0.2"
+mockk = "1.13.12"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -59,11 +60,12 @@ androidx-junit-ext = { group = "androidx.test.ext", name = "junit", version.ref 
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-android-library = { id = "com.android.library", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-plugin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

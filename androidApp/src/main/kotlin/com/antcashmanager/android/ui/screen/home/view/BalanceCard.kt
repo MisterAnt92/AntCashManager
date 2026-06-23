@@ -9,6 +9,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -50,6 +52,7 @@ import com.antcashmanager.android.ui.components.text.MoneyText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.ExpenseRed
 import com.antcashmanager.android.ui.theme.IncomeGreen
+import com.antcashmanager.android.ui.theme.ThemeConstants
 import com.antcashmanager.domain.model.PaymentType
 
 @Composable
@@ -60,10 +63,23 @@ fun BalanceCard(
     balanceByPaymentType: Map<PaymentType, Double> = emptyMap(),
     reduceMotion: Boolean = false,
 ) {
-    val balanceColor by animateColorAsState(
+    val balanceStateColor by animateColorAsState(
         targetValue = if (balance >= 0) IncomeGreen else ExpenseRed,
         animationSpec = tween(600),
         label = "balance_color",
+    )
+    val balanceStateContainerColor by animateColorAsState(
+        targetValue = if (balance >= 0) {
+            MaterialTheme.colorScheme.tertiaryContainer.copy(
+                alpha = ThemeConstants.BALANCE_STATUS_POSITIVE_CONTAINER_ALPHA,
+            )
+        } else {
+            MaterialTheme.colorScheme.errorContainer.copy(
+                alpha = ThemeConstants.BALANCE_STATUS_NEGATIVE_CONTAINER_ALPHA,
+            )
+        },
+        animationSpec = tween(600),
+        label = "balance_state_container_color",
     )
 
     FadeInOnAppear(durationMillis = 600) {
@@ -81,7 +97,9 @@ fun BalanceCard(
                 AppText(
                     text = stringResource(R.string.home_total_balance),
                     style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
+                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(
+                        alpha = ThemeConstants.HIGH_EMPHASIS_TEXT_ALPHA,
+                    ),
                     fontWeight = FontWeight.SemiBold,
                 )
                 Spacer(modifier = Modifier.height(12.dp))
@@ -89,6 +107,8 @@ fun BalanceCard(
                     amount = balance,
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     fontSize = 32,
+                    positiveColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    negativeColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
                 Box(
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
@@ -99,8 +119,12 @@ fun BalanceCard(
                         } else {
                             stringResource(R.string.home_balance_negative)
                         },
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(balanceStateContainerColor)
+                            .padding(horizontal = 8.dp, vertical = 4.dp),
                         style = MaterialTheme.typography.labelSmall,
-                        color = balanceColor,
+                        color = balanceStateColor,
                         fontWeight = FontWeight.Bold,
                     )
                 }
@@ -198,7 +222,7 @@ private fun PaymentTypeItem(
             role = Role.Button
         },
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
         ),
         shape = RoundedCornerShape(12.dp),
     ) {
@@ -212,13 +236,13 @@ private fun PaymentTypeItem(
                 imageVector = icon,
                 contentDescription = null,
                 modifier = Modifier.size(22.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = MaterialTheme.colorScheme.onSurface,
             )
             Spacer(modifier = Modifier.height(6.dp))
             AppText(
                 text = paymentTypeName,
                 style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -227,7 +251,7 @@ private fun PaymentTypeItem(
             MoneyText(
                 amount = amount,
                 fontSize = 15,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Bold,
             )
         }
@@ -391,5 +415,3 @@ private fun BalanceCardTwoTypesPreview() {
         )
     }
 }
-
-

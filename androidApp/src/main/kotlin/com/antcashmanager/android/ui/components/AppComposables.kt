@@ -44,6 +44,13 @@ fun ScreenHeader(
     modifier: Modifier = Modifier,
     actions: @Composable (() -> Unit)? = null,
 ) {
+    val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
+    val titleStyle = if (adaptiveLayoutInfo.isExpanded) {
+        MaterialTheme.typography.headlineMedium
+    } else {
+        MaterialTheme.typography.headlineSmall
+    }
+
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -51,11 +58,13 @@ fun ScreenHeader(
     ) {
         AppText(
             text = title,
-            style = MaterialTheme.typography.headlineSmall,
+            style = titleStyle,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground,
-            maxLines = 1,
-            modifier = Modifier.weight(1f),
+            maxLines = if (adaptiveLayoutInfo.isCompact) 1 else 2,
+            modifier = Modifier
+                .weight(1f)
+                .padding(end = if (actions != null) 12.dp else 0.dp),
         )
         if (actions != null) {
             actions()
@@ -179,3 +188,8 @@ private fun AppComposablesPreviewDark() {
     AppComposablesPreviewLight()
 }
 
+@Preview(name = "AppComposables - Accessibility", showBackground = true, fontScale = 1.5f)
+@Composable
+private fun AppComposablesPreviewAccessibility() {
+    AppComposablesPreviewLight()
+}

@@ -205,3 +205,8 @@ private fun AntStateViewsPreviewDark() {
     AntStateViewsPreviewLight()
 }
 
+@Preview(name = "AntStateViews - Accessibility", showBackground = true, fontScale = 1.5f)
+@Composable
+private fun AntStateViewsPreviewAccessibility() {
+    AntStateViewsPreviewLight()
+}

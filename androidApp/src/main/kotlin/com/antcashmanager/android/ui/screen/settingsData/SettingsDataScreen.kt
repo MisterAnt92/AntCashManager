@@ -1,19 +1,21 @@
 package com.antcashmanager.android.ui.screen.settingsData
 
-import android.app.Activity
-import android.content.ContextWrapper
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Backup
@@ -43,6 +45,7 @@ import androidx.navigation.NavController
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.AppSwitch
+import com.antcashmanager.android.ui.components.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
 import com.antcashmanager.android.ui.components.text.AppText
@@ -110,13 +113,11 @@ internal fun SettingsDataContent(
 ) {
     val context = LocalContext.current
     val isPreview = LocalInspectionMode.current
-    val hasActivityHost = generateSequence(context) { current ->
-        (current as? ContextWrapper)?.baseContext
-    }.any { it is Activity }
     val filePickerUnavailableMessage = stringResource(R.string.settings_data_file_picker_unavailable)
     val analyticsManager: AnalyticsManager = koinInject()
+    val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
     val backupLauncher =
-        if (isPreview || !hasActivityHost) null else rememberLauncherForActivityResult(
+        if (isPreview) null else rememberLauncherForActivityResult(
             contract = ActivityResultContracts.CreateDocument("application/json"),
         ) { uri ->
             if (uri == null) {
@@ -126,7 +127,7 @@ internal fun SettingsDataContent(
 
             val jsonData = state.pendingBackupData
             if (jsonData.isNullOrBlank()) {
-                onBackupFileSaveError(SettingsDataConstants.UNKNOWN_ERROR)
+                onBackupFileSaveError(SettingsDataConstant.UNKNOWN_ERROR)
                 return@rememberLauncherForActivityResult
             }
 
@@ -143,7 +144,7 @@ internal fun SettingsDataContent(
                 onBackupFileSaved()
             } catch (error: Exception) {
                 analyticsManager.logEvent("backup_file_save_error")
-                onBackupFileSaveError(error.message ?: SettingsDataConstants.UNKNOWN_ERROR)
+                onBackupFileSaveError(error.message ?: SettingsDataConstant.UNKNOWN_ERROR)
             }
         }
 
@@ -158,7 +159,7 @@ internal fun SettingsDataContent(
     }
 
     val restoreLauncher =
-        if (isPreview || !hasActivityHost) null else rememberLauncherForActivityResult(
+        if (isPreview) null else rememberLauncherForActivityResult(
             contract = ActivityResultContracts.OpenDocument(),
         ) { uri ->
             if (uri == null) return@rememberLauncherForActivityResult
@@ -178,7 +179,7 @@ internal fun SettingsDataContent(
 
                 onRestoreBackup(payload)
             } catch (error: Exception) {
-                onRestoreFileReadError(error.message ?: SettingsDataConstants.UNKNOWN_ERROR)
+                onRestoreFileReadError(error.message ?: SettingsDataConstant.UNKNOWN_ERROR)
             }
         }
 
@@ -198,38 +199,26 @@ internal fun SettingsDataContent(
             )
         },
     ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(
-                start = innerPadding.calculateStartPadding(LayoutDirection.Ltr) + 16.dp,
-                top = innerPadding.calculateTopPadding() + 12.dp,
-                end = innerPadding.calculateEndPadding(LayoutDirection.Ltr) + 16.dp,
-                bottom = innerPadding.calculateBottomPadding() + 24.dp,
-            ),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            item {
-                AppCardSectionHeader(title = stringResource(R.string.settings_data_management))
-                Spacer(modifier = Modifier.height(8.dp))
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    AppCard(
-                        title = stringResource(R.string.settings_backup),
-                        subtitle = stringResource(R.string.settings_backup_subtitle),
-                        leadingIcon = Icons.Default.Backup,
-                        iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
-                        onClick = {
+        if (adaptiveLayoutInfo.isCompact) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(
+                    start = innerPadding.calculateStartPadding(LayoutDirection.Ltr) +
+                        SettingsDataConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
+                    top = innerPadding.calculateTopPadding() + SettingsDataConstant.CONTENT_TOP_PADDING_DP.dp,
+                    end = innerPadding.calculateEndPadding(LayoutDirection.Ltr) +
+                        SettingsDataConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
+                    bottom = innerPadding.calculateBottomPadding() + SettingsDataConstant.CONTENT_BOTTOM_PADDING_DP.dp,
+                ),
+                verticalArrangement = Arrangement.spacedBy(SettingsDataConstant.CARD_SPACING_DP.dp),
+            ) {
+                item {
+                    DataManagementSection(
+                        onCreateBackup = {
                             analyticsManager.logEvent("backup_create_requested")
                             onCreateBackup()
                         },
-                    )
-                    AppCard(
-                        title = stringResource(R.string.settings_restore),
-                        subtitle = stringResource(R.string.settings_restore_subtitle),
-                        leadingIcon = Icons.Default.RestorePage,
-                        iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
-                        onClick = {
+                        onRestoreBackup = {
                             if (restoreLauncher != null) {
                                 analyticsManager.logEvent("restore_open_requested")
                                 restoreLauncher.launch(
@@ -239,43 +228,66 @@ internal fun SettingsDataContent(
                                 onRestoreFileReadError(filePickerUnavailableMessage)
                             }
                         },
+                        onShowResetPreferencesDialog = onShowResetPreferencesDialog,
+                        onShowDeleteConfirmDialog = onShowDeleteConfirmDialog,
                     )
-                    AppCard(
-                        title = stringResource(R.string.settings_reset_preferences),
-                        subtitle = stringResource(R.string.settings_reset_preferences_subtitle),
-                        leadingIcon = Icons.Default.Refresh,
-                        iconBackgroundColor = MaterialTheme.colorScheme.errorContainer,
-                        iconTint = MaterialTheme.colorScheme.onErrorContainer,
-                        showChevron = false,
-                        onClick = onShowResetPreferencesDialog,
-                    )
-                    AppCard(
-                        title = stringResource(R.string.settings_delete_all),
-                        subtitle = stringResource(R.string.settings_delete_all_subtitle),
-                        leadingIcon = Icons.Default.Delete,
-                        iconBackgroundColor = MaterialTheme.colorScheme.errorContainer,
-                        iconTint = MaterialTheme.colorScheme.onErrorContainer,
-                        showChevron = false,
-                        onClick = onShowDeleteConfirmDialog,
+                }
+
+                item {
+                    SecuritySection(
+                        dataEncryptionEnabled = state.dataEncryptionEnabled,
+                        onDataEncryptionEnabledChange = onDataEncryptionEnabledChange,
                     )
                 }
             }
-
-            item {
-                AppCardSectionHeader(title = stringResource(R.string.settings_security))
-                Spacer(modifier = Modifier.height(8.dp))
-                AppCard(
-                    title = stringResource(R.string.settings_security_data_encryption),
-                    subtitle = stringResource(R.string.settings_security_data_encryption_subtitle),
-                    leadingIcon = Icons.Default.Refresh,
-                    trailingContent = {
-                        AppSwitch(
-                            checked = state.dataEncryptionEnabled,
-                            onCheckedChange = onDataEncryptionEnabledChange,
-                        )
-                    },
-                    onClick = { onDataEncryptionEnabledChange(!state.dataEncryptionEnabled) },
-                )
+        } else {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(
+                        start = innerPadding.calculateStartPadding(LayoutDirection.Ltr) +
+                            SettingsDataConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
+                        top = innerPadding.calculateTopPadding() + SettingsDataConstant.CONTENT_TOP_PADDING_DP.dp,
+                        end = innerPadding.calculateEndPadding(LayoutDirection.Ltr) +
+                            SettingsDataConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
+                        bottom = innerPadding.calculateBottomPadding() +
+                            SettingsDataConstant.CONTENT_BOTTOM_PADDING_DP.dp,
+                    )
+                    .verticalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(SettingsDataConstant.TABLET_COLUMNS_SPACING_DP.dp),
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(SettingsDataConstant.CARD_SPACING_DP.dp),
+                ) {
+                    DataManagementSection(
+                        onCreateBackup = {
+                            analyticsManager.logEvent("backup_create_requested")
+                            onCreateBackup()
+                        },
+                        onRestoreBackup = {
+                            if (restoreLauncher != null) {
+                                analyticsManager.logEvent("restore_open_requested")
+                                restoreLauncher.launch(
+                                    arrayOf("application/json", "text/json", "text/plain"),
+                                )
+                            } else {
+                                onRestoreFileReadError(filePickerUnavailableMessage)
+                            }
+                        },
+                        onShowResetPreferencesDialog = onShowResetPreferencesDialog,
+                        onShowDeleteConfirmDialog = onShowDeleteConfirmDialog,
+                    )
+                }
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(SettingsDataConstant.CARD_SPACING_DP.dp),
+                ) {
+                    SecuritySection(
+                        dataEncryptionEnabled = state.dataEncryptionEnabled,
+                        onDataEncryptionEnabledChange = onDataEncryptionEnabledChange,
+                    )
+                }
             }
         }
     }
@@ -439,11 +451,80 @@ internal fun SettingsDataContent(
     }
 }
 
+@Composable
+private fun DataManagementSection(
+    onCreateBackup: () -> Unit,
+    onRestoreBackup: () -> Unit,
+    onShowResetPreferencesDialog: () -> Unit,
+    onShowDeleteConfirmDialog: () -> Unit,
+) {
+    AppCardSectionHeader(title = stringResource(R.string.settings_data_management))
+    Spacer(modifier = Modifier.height(SettingsDataConstant.CARD_SPACING_DP.dp))
+    Column(verticalArrangement = Arrangement.spacedBy(SettingsDataConstant.CARD_SPACING_DP.dp)) {
+        AppCard(
+            title = stringResource(R.string.settings_backup),
+            subtitle = stringResource(R.string.settings_backup_subtitle),
+            leadingIcon = Icons.Default.Backup,
+            iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
+            iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
+            onClick = onCreateBackup,
+        )
+        AppCard(
+            title = stringResource(R.string.settings_restore),
+            subtitle = stringResource(R.string.settings_restore_subtitle),
+            leadingIcon = Icons.Default.RestorePage,
+            iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
+            iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
+            onClick = onRestoreBackup,
+        )
+        AppCard(
+            title = stringResource(R.string.settings_reset_preferences),
+            subtitle = stringResource(R.string.settings_reset_preferences_subtitle),
+            leadingIcon = Icons.Default.Refresh,
+            iconBackgroundColor = MaterialTheme.colorScheme.errorContainer,
+            iconTint = MaterialTheme.colorScheme.onErrorContainer,
+            showChevron = false,
+            onClick = onShowResetPreferencesDialog,
+        )
+        AppCard(
+            title = stringResource(R.string.settings_delete_all),
+            subtitle = stringResource(R.string.settings_delete_all_subtitle),
+            leadingIcon = Icons.Default.Delete,
+            iconBackgroundColor = MaterialTheme.colorScheme.errorContainer,
+            iconTint = MaterialTheme.colorScheme.onErrorContainer,
+            showChevron = false,
+            onClick = onShowDeleteConfirmDialog,
+        )
+    }
+}
+
+@Composable
+private fun SecuritySection(
+    dataEncryptionEnabled: Boolean,
+    onDataEncryptionEnabledChange: (Boolean) -> Unit,
+) {
+    AppCardSectionHeader(title = stringResource(R.string.settings_security))
+    Spacer(modifier = Modifier.height(SettingsDataConstant.CARD_SPACING_DP.dp))
+    AppCard(
+        title = stringResource(R.string.settings_security_data_encryption),
+        subtitle = stringResource(R.string.settings_security_data_encryption_subtitle),
+        leadingIcon = Icons.Default.Refresh,
+        trailingContent = {
+            AppSwitch(
+                checked = dataEncryptionEnabled,
+                onCheckedChange = onDataEncryptionEnabledChange,
+            )
+        },
+        onClick = { onDataEncryptionEnabledChange(!dataEncryptionEnabled) },
+    )
+}
+
 @Preview(showBackground = true)
+@Preview(showBackground = true, name = "SettingsDataScreen - 7 inch", widthDp = 600, heightDp = 960)
+@Preview(showBackground = true, name = "SettingsDataScreen - 10 inch", widthDp = 840, heightDp = 1280)
 @Composable
 private fun SettingsDataContentPreview() {
     AntCashManagerTheme(dynamicColor = false) {
         SettingsDataContent()
     }
 }
-

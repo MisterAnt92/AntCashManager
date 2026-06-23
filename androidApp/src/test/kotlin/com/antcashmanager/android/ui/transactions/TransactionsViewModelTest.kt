@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.transactions
 
+import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.ui.screen.transactions.TransactionsViewModel
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.SavedDateFilter
@@ -8,20 +9,14 @@ import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -29,9 +24,8 @@ import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class TransactionsViewModelTest {
+class TransactionsViewModelTest : BaseUnitTest() {
 
-    private val testDispatcher = StandardTestDispatcher()
     private lateinit var fakeTransactionRepo: FakeTransactionRepository
     private lateinit var fakeCategoryRepo: FakeCategoryRepository
     private lateinit var fakeSettingsRepository: FakeSettingsRepository
@@ -39,7 +33,6 @@ class TransactionsViewModelTest {
 
     @Before
     fun setup() {
-        Dispatchers.setMain(testDispatcher)
         fakeTransactionRepo = FakeTransactionRepository()
         fakeCategoryRepo = FakeCategoryRepository()
         fakeSettingsRepository = FakeSettingsRepository()
@@ -51,13 +44,8 @@ class TransactionsViewModelTest {
         )
     }
 
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
-
     @Test
-    fun `initial transactions list is empty`() = runTest(testDispatcher) {
+    fun init_shouldHaveEmptyTransactionsList_whenViewModelIsInitialized() = runViewModelTest {
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.state.collect {}
         }
@@ -68,7 +56,7 @@ class TransactionsViewModelTest {
     }
 
     @Test
-    fun `initial categories list is empty`() = runTest(testDispatcher) {
+    fun init_shouldHaveEmptyCategoriesList_whenViewModelIsInitialized() = runViewModelTest {
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.state.collect {}
         }
@@ -79,7 +67,7 @@ class TransactionsViewModelTest {
     }
 
     @Test
-    fun `addTransaction adds a new transaction`() = runTest(testDispatcher) {
+    fun addTransaction_shouldAddNewTransaction_whenCalled() = runViewModelTest {
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.state.collect {}
         }
@@ -103,7 +91,7 @@ class TransactionsViewModelTest {
     }
 
     @Test
-    fun `deleteTransaction removes transaction`() = runTest(testDispatcher) {
+    fun deleteTransaction_shouldRemoveTransaction_whenCalled() = runViewModelTest {
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.state.collect {}
         }
@@ -130,7 +118,7 @@ class TransactionsViewModelTest {
     }
 
     @Test
-    fun `updateTransaction updates existing transaction`() = runTest(testDispatcher) {
+    fun updateTransaction_shouldUpdateExistingTransaction_whenCalled() = runViewModelTest {
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.state.collect {}
         }
@@ -159,7 +147,7 @@ class TransactionsViewModelTest {
     }
 
     @Test
-    fun `categories reflect repository data`() = runTest(testDispatcher) {
+    fun categories_shouldReflectRepositoryData_whenRepositoryEmitsCategories() = runViewModelTest {
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.state.collect {}
         }
@@ -178,7 +166,7 @@ class TransactionsViewModelTest {
     }
 
     @Test
-    fun `addTransaction with income type`() = runTest(testDispatcher) {
+    fun addTransaction_shouldAddIncomeWithPositiveAmount_whenTypeIsIncome() = runViewModelTest {
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.state.collect {}
         }
@@ -201,7 +189,7 @@ class TransactionsViewModelTest {
     }
 
     @Test
-    fun `search query filters transactions by title immediately`() = runTest(testDispatcher) {
+    fun searchQuery_shouldFilterTransactionsByTitle_whenQueryIsUpdated() = runViewModelTest {
         val now = System.currentTimeMillis()
         fakeTransactionRepo.transactions.value = listOf(
             Transaction(
@@ -249,7 +237,7 @@ class TransactionsViewModelTest {
     }
 
     @Test
-    fun `search query matches amount with comma separator`() = runTest(testDispatcher) {
+    fun searchQuery_shouldMatchAmountWithCommaSeparator_whenSearchingForAmount() = runViewModelTest {
         val now = System.currentTimeMillis()
         fakeTransactionRepo.transactions.value = listOf(
             Transaction(
@@ -295,7 +283,7 @@ class TransactionsViewModelTest {
     }
 
     @Test
-    fun `set date range persists custom transactions filter`() = runTest(testDispatcher) {
+    fun onEvent_shouldPersistCustomTransactionsFilter_whenSetDateRangeIsReceived() = runViewModelTest {
         val from = 1_710_000_000_000L
         val to = 1_710_900_000_000L
 
@@ -319,7 +307,7 @@ class TransactionsViewModelTest {
     }
 
     @Test
-    fun `new viewmodel restores saved transactions date filter`() = runTest(testDispatcher) {
+    fun init_shouldRestoreSavedTransactionsDateFilter_whenViewModelIsRecreated() = runViewModelTest {
         val from = 1_711_000_000_000L
         val to = 1_711_900_000_000L
         fakeSettingsRepository.transactionsDateFilterState.value = SavedDateFilter(
@@ -327,6 +315,7 @@ class TransactionsViewModelTest {
             from = from,
             to = to,
         )
+        advanceUntilIdle()
 
         val restoredViewModel = TransactionsViewModel(
             transactionRepository = fakeTransactionRepo,

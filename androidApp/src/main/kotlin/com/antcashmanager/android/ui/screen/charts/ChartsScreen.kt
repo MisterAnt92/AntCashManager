@@ -68,6 +68,7 @@ import com.antcashmanager.android.ui.screen.charts.view.ZoomableBarChart
 import com.antcashmanager.android.ui.screen.charts.view.ZoomablePieChart
 import com.antcashmanager.android.ui.screen.charts.view.ZoomableYearlyBarChart
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.android.ui.theme.ThemeConstants
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.android.util.formatAmount
 import com.antcashmanager.domain.model.CurrencyFormat
@@ -90,7 +91,7 @@ fun ChartsScreen() {
     val selectedPresetIndex by viewModel.selectedPresetIndex.collectAsState()
 
     val chartsZoomEnabled by settingsRepository.getChartsZoomEnabled()
-        .collectAsState(initial = true)
+        .collectAsState(initial = false)
 
     ChartsContent(
         chartData = chartData,
@@ -108,7 +109,7 @@ internal fun ChartsContent(
     chartData: ChartData,
     dateRange: DateRange,
     initialPresetIndex: Int = 1,
-    zoomEnabled: Boolean = true,
+    zoomEnabled: Boolean = false,
     onDateRangeChanged: (Long, Long) -> Unit = { _, _ -> },
     onPresetSelected: (RangePreset) -> Unit = {},
 ) {
@@ -121,6 +122,7 @@ internal fun ChartsContent(
     var showFromPicker by remember { mutableStateOf(false) }
     var showToPicker by remember { mutableStateOf(false) }
     var showHelpDialog by remember { mutableStateOf(false) }
+    val chartCardContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh
 
     // Sync selectedPreset when initialPresetIndex changes
     androidx.compose.runtime.LaunchedEffect(initialPresetIndex) {
@@ -158,7 +160,7 @@ internal fun ChartsContent(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                    containerColor = chartCardContainerColor,
                 ),
                 shape = MaterialTheme.shapes.medium,
             ) {
@@ -166,7 +168,7 @@ internal fun ChartsContent(
                     AppText(
                         text = stringResource(R.string.charts_period),
                         style = MaterialTheme.typography.titleSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(
@@ -204,6 +206,7 @@ internal fun ChartsContent(
                                 dateFormat.format(Date(dateRange.from))
                             ),
                             style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.weight(1f),
                         )
                         IconButton(
@@ -222,6 +225,7 @@ internal fun ChartsContent(
                                 dateFormat.format(Date(dateRange.to))
                             ),
                             style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.weight(1f),
                         )
                         IconButton(
@@ -292,7 +296,7 @@ internal fun ChartsContent(
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                        containerColor = chartCardContainerColor,
                     ),
                     shape = MaterialTheme.shapes.medium,
                 ) {
@@ -352,7 +356,7 @@ internal fun ChartsContent(
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                        containerColor = chartCardContainerColor,
                     ),
                     shape = MaterialTheme.shapes.medium,
                 ) {
@@ -416,7 +420,7 @@ internal fun ChartsContent(
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                        containerColor = chartCardContainerColor,
                     ),
                     shape = MaterialTheme.shapes.medium,
                 ) {
@@ -490,7 +494,7 @@ internal fun ChartsContent(
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                        containerColor = chartCardContainerColor,
                     ),
                     shape = MaterialTheme.shapes.medium,
                 ) {
@@ -627,7 +631,7 @@ private fun SummaryCard(
             AppText(
                 text = state.label,
                 style = MaterialTheme.typography.labelSmall,
-                color = state.contentColor.copy(alpha = 0.8f),
+                color = state.contentColor.copy(alpha = ThemeConstants.HIGH_EMPHASIS_TEXT_ALPHA),
                 fontWeight = FontWeight.Medium,
                 maxLines = 1
             )
@@ -671,6 +675,8 @@ private data class SummaryCardState(
 // ══════════════════════════════════════════════════════════════════════════════
 
 @Preview(showBackground = true, name = "ChartsScreen - Default")
+@Preview(showBackground = true, name = "ChartsScreen - 7 inch", widthDp = 600, heightDp = 960)
+@Preview(showBackground = true, name = "ChartsScreen - 10 inch", widthDp = 840, heightDp = 1280)
 @Composable
 private fun ChartsContentPreviewDefault() {
     AntCashManagerTheme(dynamicColor = false) {

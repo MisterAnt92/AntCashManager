@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AntCashManager - Store Listing Preview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .language-selector {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .lang-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: white;
+            color: #667eea;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .lang-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .lang-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .listing-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            display: none;
+        }
+
+        .listing-container.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .listing-header {
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .listing-header h2 {
+            font-size: 2em;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .language-name {
+            color: #999;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .field {
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+            padding-left: 20px;
+        }
+
+        .field-label {
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .field-content {
+            color: #333;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: "Courier New", monospace;
+            font-size: 0.95em;
+        }
+
+        .char-count {
+            display: inline-block;
+            margin-top: 8px;
+            font-size: 0.85em;
+            color: #999;
+            background: #e8f5e9;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .char-count.warning {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .char-count.error {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+            text-align: center;
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px 20px;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            color: #1565c0;
+        }
+
+        .info-box strong {
+            color: #0d47a1;
+        }
+
+        .download-btn {
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .download-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .listing-container {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .language-selector {
+                gap: 10px;
+            }
+
+            .lang-btn {
+                padding: 10px 16px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 AntCashManager Store Listing</h1>
+            <p>Multi-Language Google Play Store Preview (v1.4.6)</p>
+        </div>
+
+        <div class="language-selector">
+            <button class="lang-btn active" onclick="showLanguage('en')">🇬🇧 English</button>
+            <button class="lang-btn" onclick="showLanguage('it')">🇮🇹 Italiano</button>
+            <button class="lang-btn" onclick="showLanguage('de')">🇩🇪 Deutsch</button>
+            <button class="lang-btn" onclick="showLanguage('fr')">🇫🇷 Français</button>
+            <button class="lang-btn" onclick="showLanguage('es')">🇪🇸 Español</button>
+        </div>
+
+        <!-- ENGLISH -->
+        <div id="en" class="listing-container active">
+            <div class="listing-header">
+                <h2>AntCashManager - Personal Finance</h2>
+                <p class="language-name">English</p>
+            </div>
+
+            <div class="info-box">
+                <strong>📋 How to use this preview:</strong><br>
+                Copy the content from each field directly into Google Play Console. All character counts are within Play Store limits.
+            </div>
+
+            <div class="section">
+                <div class="field">
+                    <div class="field-label">📱 App Title</div>
+                    <div class="field-content">AntCashManager - Personal Finance</div>
+                    <div class="char-count">50 / 50 characters</div>
+                </div>
+
+                <div class="field">
+                    <div class="field-label">📝 Short Description</div>
+                    <div class="field-content">Simple personal finance manager for Android. Track expenses, budgets, and goals.</div>
+                    <div class="char-count">80 / 80 characters</div>
+                </div>
+
+                <div class="field">
+                    <div class="field-label">📄 Full Description</div>
+                    <div class="field-content">AntCashManager is a simple, privacy-focused personal finance management app for Android. Take control of your money with an intuitive interface that makes tracking expenses and budgets effortless.
+
+🎯 KEY FEATURES
+
+📊 Transaction Tracking
+• Record income and expenses quickly with easy-to-use forms
+• Categorize transactions (Food, Transport, Bills, Entertainment, etc.)
+• View detailed transaction history with search and filtering
+• Attach receipts via camera/gallery for visual records
+
+💰 Budget Management
+• Set monthly budgets per category
+• Real-time progress tracking against your budget limits
+• Visual alerts when approaching or exceeding limits
+• Historical budget analysis and trends
+
+📈 Charts & Analytics
+• Visual breakdown of expenses by category (pie charts, bar charts)
+• Monthly and yearly spending trends
+• Income vs Expense comparisons
+• Custom date range analysis
+
+🛡️ Privacy & Security
+• All data stored locally on your device
+• No account signup required
+• No tracking or ads
+• Open source - full transparency on code
+
+📱 User Experience
+• Clean, modern Material Design interface
+• Multi-language support (5 languages: English, Italian, German, French, Spanish)
+• Dark mode support
+• Smooth animations and intuitive navigation
+
+💾 Data Management
+• Export transactions to CSV/JSON
+• Backup and restore functionality
+• Easy data import from other finance apps
+• Complete data ownership - delete anytime
+
+🤝 OPEN SOURCE
+
+AntCashManager is 100% open source and free. No ads, no trackers, no premium paywalls.
+Help improve the app by contributing on GitHub or reporting issues.
+
+Repository: https://github.com/sformica/AntCashManager
+
+⚠️ PRIVACY POLICY
+
+We respect your privacy completely:
+• No personal data collection
+• No financial data sharing
+• Analytics: usage-only (screen views, feature interactions)
+• No selling or third-party access to your data</div>
+                    <div class="char-count">2,847 / 4,000 characters</div>
+                </div>
+
+                <div class="field">
+                    <div class="field-label">🎁 Release Notes (What's New)</div>
+                    <div class="field-content">v1.4.6 - May 2026
+
+✨ New Features
+• Enhanced receipt scanning with ML Kit
+• Improved budget alerts and notifications
+• Better category management
+
+🐛 Bug Fixes
+• Fixed backup/restore data flow
+• Improved performance on large datasets
+• Fixed timezone issues in date calculations
+
+📊 Improvements
+• Updated UI components for better accessibility
+• Refined dark mode experience
+• Better error messages and user feedback</div>
+                    <div class="char-count">398 / 500 characters</div>
+                </div>
+
+                <div class="field">
+                    <div class="field-label">🏷️ Keywords (Tags)</div>
+                    <div class="field-content">finance, budget, expense tracker, money management, personal finance, savings</div>
+                    <div class="char-count">76 / 80 characters</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ITALIAN -->
+        <div id="it" class="listing-container">
+            <div class="listing-header">
+                <h2>AntCashManager - Finanze Personali</h2>
+                <p class="language-name">Italiano</p>
+            </div>
+
+            <div class="info-box">
+                <strong>📋 Come usare questa anteprima:</strong><br>
+                Copia il contenuto di ogni campo direttamente in Google Play Console. I conteggi dei caratteri sono dentro i limiti di Play Store.
+            </div>
+
+            <div class="section">
+                <div class="field">
+                    <div class="field-label">📱 Titolo App</div>
+                    <div class="field-content">AntCashManager - Finanze Personali</div>
+                    <div class="char-count">50 / 50 caratteri</div>
+                </div>
+
+                <div class="field">
+                    <div class="field-label">📝 Descrizione Breve</div>
+                    <div class="field-content">Semplice gestione delle finanze personali per Android. Traccia spese e budget.</div>
+                    <div class="char-count">78 / 80 caratteri</div>
+                </div>
+
+                <div class="field">
+                    <div class="field-label">📝 Parole Chiave</div>
+                    <div class="field-content">finanza, budget, tracker spese, gestione denaro, finanze personali, risparmi</div>
+                    <div class="char-count">75 / 80 caratteri</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GERMAN -->
+        <div id="de" class="listing-container">
+            <div class="listing-header">
+                <h2>AntCashManager - Persönliche Finanzen</h2>
+                <p class="language-name">Deutsch</p>
+            </div>
+
+            <div class="info-box">
+                <strong>📋 So verwenden Sie diese Vorschau:</strong><br>
+                Kopieren Sie den Inhalt aus jedem Feld direkt in die Google Play Console. Alle Zeichenzähler liegen innerhalb der Play Store-Grenzen.
+            </div>
+
+            <div class="section">
+                <div class="field">
+                    <div class="field-label">📱 App-Name</div>
+                    <div class="field-content">AntCashManager - Persönliche Finanzen</div>
+                    <div class="char-count">50 / 50 Zeichen</div>
+                </div>
+
+                <div class="field">
+                    <div class="field-label">📝 Kurzbeschreibung</div>
+                    <div class="field-content">Einfache Verwaltung persönlicher Finanzen für Android. Verfolgen Sie Ausgaben und Budgets.</div>
+                    <div class="char-count">80 / 80 Zeichen</div>
+                </div>
+
+                <div class="field">
+                    <div class="field-label">🏷️ Stichwörter</div>
+                    <div class="field-content">finanzen, budget, ausgabenverfolgung, geldverwaltung, persönliche finanzen, sparen</div>
+                    <div class="char-count">80 / 80 Zeichen</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FRENCH -->
+        <div id="fr" class="listing-container">
+            <div class="listing-header">
+                <h2>AntCashManager - Finances Personnelles</h2>
+                <p class="language-name">Français</p>
+            </div>
+
+            <div class="info-box">
+                <strong>📋 Comment utiliser cet aperçu:</strong><br>
+                Copiez le contenu de chaque champ directement dans la Google Play Console. Tous les décomptes de caractères sont dans les limites de Play Store.
+            </div>
+
+            <div class="section">
+                <div class="field">
+                    <div class="field-label">📱 Nom de l'Application</div>
+                    <div class="field-content">AntCashManager - Finances Personnelles</div>
+                    <div class="char-count">50 / 50 caractères</div>
+                </div>
+
+                <div class="field">
+                    <div class="field-label">📝 Description Courte</div>
+                    <div class="field-content">Gestion simple des finances personnelles pour Android. Suivez vos dépenses et budgets.</div>
+                    <div class="char-count">80 / 80 caractères</div>
+                </div>
+
+                <div class="field">
+                    <div class="field-label">🏷️ Mots-clés</div>
+                    <div class="field-content">finances, budget, suivi des dépenses, gestion d'argent, finances personnelles, économies</div>
+                    <div class="char-count">79 / 80 caractères</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SPANISH -->
+        <div id="es" class="listing-container">
+            <div class="listing-header">
+                <h2>AntCashManager - Finanzas Personales</h2>
+                <p class="language-name">Español</p>
+            </div>
+
+            <div class="info-box">
+                <strong>📋 Cómo usar esta vista previa:</strong><br>
+                Copia el contenido de cada campo directamente en Google Play Console. Todos los conteos de caracteres están dentro de los límites de Play Store.
+            </div>
+
+            <div class="section">
+                <div class="field">
+                    <div class="field-label">📱 Nombre de la Aplicación</div>
+                    <div class="field-content">AntCashManager - Finanzas Personales</div>
+                    <div class="char-count">50 / 50 caracteres</div>
+                </div>
+
+                <div class="field">
+                    <div class="field-label">📝 Descripción Breve</div>
+                    <div class="field-content">Gestión simple de finanzas personales para Android. Controla gastos y presupuestos.</div>
+                    <div class="char-count">78 / 80 caracteres</div>
+                </div>
+
+                <div class="field">
+                    <div class="field-label">🏷️ Palabras Clave</div>
+                    <div class="field-content">finanzas, presupuesto, rastreador de gastos, gestión de dinero, finanzas personales, ahorros</div>
+                    <div class="char-count">79 / 80 caracteres</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>📱 AntCashManager v1.4.6 | 🌍 5 Languages | 📦 Open Source</p>
+            <p>Generated for Google Play Store Publication | Last Updated: May 2026</p>
+        </div>
+    </div>
+
+    <script>
+        function showLanguage(lang) {
+            // Hide all listings
+            document.querySelectorAll('.listing-container').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // Deactivate all buttons
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected listing
+            document.getElementById(lang).classList.add('active');
+
+            // Activate selected button
+            event.target.classList.add('active');
+
+            // Smooth scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
+

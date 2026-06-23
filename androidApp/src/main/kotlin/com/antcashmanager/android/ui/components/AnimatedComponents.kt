@@ -17,6 +17,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -66,6 +67,7 @@ import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 fun AnimatedCard(
     modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
+    border: BorderStroke? = null,
     borderRadius: Int = 12,
     content: @Composable () -> Unit,
 ) {
@@ -82,6 +84,7 @@ fun AnimatedCard(
             .scale(scale.value)
             .alpha(alpha.value),
         colors = CardDefaults.cardColors(containerColor = backgroundColor),
+        border = border,
         shape = RoundedCornerShape(borderRadius.dp),
     ) {
         content()
@@ -575,3 +578,8 @@ private fun AnimatedComponentsPreviewDark() {
     AnimatedComponentsPreviewLight()
 }
 
+@Preview(name = "AnimatedComponents - Accessibility", showBackground = true, fontScale = 1.5f)
+@Composable
+private fun AnimatedComponentsPreviewAccessibility() {
+    AnimatedComponentsPreviewLight()
+}

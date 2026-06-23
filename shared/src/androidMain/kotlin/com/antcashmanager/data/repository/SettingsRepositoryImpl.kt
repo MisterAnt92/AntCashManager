@@ -49,6 +49,7 @@ class SettingsRepositoryImpl(
     private val chartsDateFilterToKey = longPreferencesKey("charts_date_filter_to")
     private val chartsZoomEnabledKey = booleanPreferencesKey("charts_zoom_enabled")
     private val showPaymentTypeBreakdownKey = booleanPreferencesKey("show_payment_type_breakdown")
+    private val showQuickInsightsCardKey = booleanPreferencesKey("show_quick_insights_card")
     private val transactionDisplayTypeKey = stringPreferencesKey("transaction_display_type")
     private val transactionsTransactionDisplayTypeKey =
         stringPreferencesKey("transactions_transaction_display_type")
@@ -284,7 +285,7 @@ class SettingsRepositoryImpl(
     }
 
     override fun getChartsZoomEnabled(): Flow<Boolean> =
-        context.dataStore.data.map { it[chartsZoomEnabledKey] ?: true }
+        context.dataStore.data.map { it[chartsZoomEnabledKey] ?: false }
 
     override suspend fun setChartsZoomEnabled(enabled: Boolean) {
         context.dataStore.edit { it[chartsZoomEnabledKey] = enabled }
@@ -298,6 +299,17 @@ class SettingsRepositoryImpl(
     override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[showPaymentTypeBreakdownKey] = show
+        }
+    }
+
+    override fun getShowQuickInsightsCard(): Flow<Boolean> =
+        context.dataStore.data.map { preferences ->
+            preferences[showQuickInsightsCardKey] ?: false
+        }
+
+    override suspend fun setShowQuickInsightsCard(show: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[showQuickInsightsCardKey] = show
         }
     }
 
@@ -378,8 +390,9 @@ class SettingsRepositoryImpl(
             prefs[chartsDateFilterPresetKey] = defaultChartsFilter.presetIndex
             prefs[chartsDateFilterFromKey] = defaultChartsFilter.from
             prefs[chartsDateFilterToKey] = defaultChartsFilter.to
-            prefs[chartsZoomEnabledKey] = true
+            prefs[chartsZoomEnabledKey] = false
             prefs[showPaymentTypeBreakdownKey] = false
+            prefs[showQuickInsightsCardKey] = false
             prefs[transactionDisplayTypeKey] = TransactionDisplayType.TREND.name
             prefs[transactionsTransactionDisplayTypeKey] = TransactionDisplayType.TREND.name
             prefs[isTutorialCompletedKey] = false

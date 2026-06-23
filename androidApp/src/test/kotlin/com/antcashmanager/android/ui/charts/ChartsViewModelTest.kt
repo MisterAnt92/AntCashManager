@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.charts
 
+import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.ui.screen.charts.ChartsViewModel
 import com.antcashmanager.android.ui.screen.charts.RangePreset
 import com.antcashmanager.domain.model.SavedDateFilter
@@ -7,47 +8,38 @@ import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class ChartsViewModelTest {
-    private val testDispatcher = StandardTestDispatcher()
+class ChartsViewModelTest : BaseUnitTest() {
     private lateinit var fakeRepo: FakeTransactionRepository
     private lateinit var fakeSettingsRepository: FakeSettingsRepository
     private lateinit var viewModel: ChartsViewModel
 
     @Before
     fun setup() {
-        Dispatchers.setMain(testDispatcher)
         fakeRepo = FakeTransactionRepository()
         fakeSettingsRepository = FakeSettingsRepository()
-        viewModel = ChartsViewModel(fakeRepo, fakeSettingsRepository)
-    }
-
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain()
+        viewModel = ChartsViewModel(
+            transactionRepository = fakeRepo,
+            settingsRepository = fakeSettingsRepository,
+            dispatcher = testDispatcher,
+        )
     }
 
     @Test
-    fun `initial chart data is empty`() = runTest(testDispatcher) {
+    fun `initial chart data is empty`() = runViewModelTest {
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.chartData.collect {}
         }
@@ -58,7 +50,10 @@ class ChartsViewModelTest {
     }
 
     @Test
-    fun `chart data computes totals correctly`() = runTest(testDispatcher) {
+    fun `chart data computes totals correctly`() = runViewModelTest {
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.chartData.collect {}
+        }
         val now = System.currentTimeMillis()
         fakeRepo.transactions.value = listOf(
             Transaction(
@@ -88,9 +83,6 @@ class ChartsViewModelTest {
         )
         // Set date range to cover now
         viewModel.setDateRange(now - 86400000, now + 86400000)
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.chartData.collect {}
-        }
         advanceUntilIdle()
         assertEquals(2000.0, viewModel.chartData.value.totalIncome, 0.01)
         assertEquals(200.0, viewModel.chartData.value.totalExpense, 0.01)
@@ -99,21 +91,16 @@ class ChartsViewModelTest {
     }
 
     @Test
-    fun `setPresetRange updates date range`() = runTest(testDispatcher) {
+    fun `setPresetRange updates date range`() = runViewModelTest {
         val initialRange = viewModel.dateRange.value
         viewModel.setPresetRange(RangePreset.YEAR)
         advanceUntilIdle()
         val newRange = viewModel.dateRange.value
         assertTrue(newRange.from < initialRange.from)
-        collectJob(testScheduler)
-    }
-
-    private fun collectJob(testScheduler: Any) {
-        // Helper, no-op
     }
 
     @Test
-    fun `expense by category groups correctly`() = runTest(testDispatcher) {
+    fun `expense by category groups correctly`() = runViewModelTest {
         val now = System.currentTimeMillis()
         fakeRepo.transactions.value = listOf(
             Transaction(
@@ -153,7 +140,7 @@ class ChartsViewModelTest {
     }
 
     @Test
-    fun `custom charts date range is persisted and restored`() = runTest(testDispatcher) {
+    fun `custom charts date range is persisted and restored`() = runViewModelTest {
         val from = 1_712_000_000_000L
         val to = 1_712_800_000_000L
 
@@ -164,7 +151,11 @@ class ChartsViewModelTest {
         assertEquals(from, fakeSettingsRepository.chartsDateFilterState.value.from)
         assertEquals(to, fakeSettingsRepository.chartsDateFilterState.value.to)
 
-        val restoredViewModel = ChartsViewModel(fakeRepo, fakeSettingsRepository)
+        val restoredViewModel = ChartsViewModel(
+            transactionRepository = fakeRepo,
+            settingsRepository = fakeSettingsRepository,
+            dispatcher = testDispatcher,
+        )
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
             restoredViewModel.chartData.collect {}
         }

@@ -2,6 +2,8 @@ package com.antcashmanager.android.domain.usecase.feedback
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import co.touchlab.kermit.Logger
 
 /**
  * UseCase per inviare il feedback via email.
@@ -24,17 +26,21 @@ class SendFeedbackEmailUseCase {
         emailBody: String,
         versionName: String,
     ): Boolean {
-        val emailIntent = Intent(Intent.ACTION_SEND).apply {
-            type = "message/rfc822"
+        // Usiamo ACTION_SENDTO con mailto: per una risoluzione più precisa dell'app email su Android 16
+        val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:")
             putExtra(Intent.EXTRA_EMAIL, arrayOf("misterant.developer@gmail.com"))
             putExtra(Intent.EXTRA_SUBJECT, "AntCashManager Feedback - v$versionName")
             putExtra(Intent.EXTRA_TEXT, emailBody)
+            // Aggiungiamo NEW_TASK perché usiamo il contesto dell'applicazione
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
 
-        return if (emailIntent.resolveActivity(applicationContext.packageManager) != null) {
+        return try {
             applicationContext.startActivity(emailIntent)
             true
-        } else {
+        } catch (e: Exception) {
+            Logger.e("SendFeedbackEmailUseCase") { "Error launching email intent: ${e.message}" }
             false
         }
     }

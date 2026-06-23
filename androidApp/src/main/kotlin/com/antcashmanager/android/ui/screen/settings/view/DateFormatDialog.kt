@@ -58,4 +58,3 @@ fun DateFormatDialog(
         confirmButton = { TextButton(onClick = onDismiss) { AppText(stringResource(R.string.dialog_cancel)) } },
     )
 }
-

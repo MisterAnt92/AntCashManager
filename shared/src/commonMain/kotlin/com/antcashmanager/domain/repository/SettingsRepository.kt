@@ -5,6 +5,7 @@ import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.TransactionDisplayType
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 interface SettingsRepository {
     fun getTheme(): Flow<AppTheme>
@@ -61,6 +62,8 @@ interface SettingsRepository {
     // ── Payment Type Breakdown ──
     fun getShowPaymentTypeBreakdown(): Flow<Boolean>
     suspend fun setShowPaymentTypeBreakdown(show: Boolean)
+    fun getShowQuickInsightsCard(): Flow<Boolean> = flowOf(false)
+    suspend fun setShowQuickInsightsCard(show: Boolean) {}
 
     // ── Transaction Display Type ──
     fun getTransactionDisplayType(): Flow<TransactionDisplayType>

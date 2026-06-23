@@ -103,3 +103,8 @@ private fun AppUnitDropdownPreviewDark() {
     }
 }
 
+@Preview(name = "AppUnitDropdown - Accessibility", showBackground = true, fontScale = 1.5f)
+@Composable
+private fun AppUnitDropdownPreviewAccessibility() {
+    AppUnitDropdownPreview()
+}
