@@ -69,8 +69,3 @@ data class AddTransactionState(
                 selectedType != null
 }
 
-internal data class FilterState(
-    val selectedPresetIndex: Int = 0,
-    val dateRangeFrom: Long = System.currentTimeMillis() - (30 * 24 * 60 * 60 * 1000),
-    val dateRangeTo: Long = System.currentTimeMillis(),
-)

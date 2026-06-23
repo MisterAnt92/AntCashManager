@@ -79,13 +79,13 @@ class AddTransactionViewModelSimpleTest : BaseUnitTest() {
     }
 
     @Test
-    fun `test viewmodel creation works`() = runViewModelTest {
+    fun init_shouldCreateViewModel_whenCalledWithRepositories() = runViewModelTest {
         val viewModel = AddTransactionViewModel(mockTransactionRepository, mockCategoryRepository)
         assertNotNull("ViewModel should be created", viewModel)
     }
 
     @Test
-    fun `test viewmodel creation with transactionId works`() = runViewModelTest {
+    fun init_shouldCreateViewModel_whenCalledWithTransactionId() = runViewModelTest {
         val viewModel = AddTransactionViewModel(
             mockTransactionRepository,
             mockCategoryRepository,
@@ -95,7 +95,7 @@ class AddTransactionViewModelSimpleTest : BaseUnitTest() {
     }
 
     @Test
-    fun `test category selection event processing`() = runViewModelTest {
+    fun onEvent_shouldProcessSelectCategoryEvent_whenCategoryIsSelected() = runViewModelTest {
         val viewModel = AddTransactionViewModel(mockTransactionRepository, mockCategoryRepository)
 
         // Questa chiamata dovrebbe almeno non crashare

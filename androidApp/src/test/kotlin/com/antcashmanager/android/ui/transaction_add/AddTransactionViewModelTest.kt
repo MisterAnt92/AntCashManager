@@ -106,7 +106,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     // ── Creazione nuova transazione ──
 
     @Test
-    fun `new transaction starts at CATEGORY_SELECTION`() = runViewModelTest {
+    fun newTransaction_shouldStartAtCategorySelection_whenInitialized() = runViewModelTest {
         viewModel = createViewModel()
 
         val state = viewModel.state.value
@@ -119,7 +119,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `category selection auto-advances to DETAILS in creation mode`() = runViewModelTest {
+    fun categorySelection_shouldAutoAdvanceToDetails_whenInCreationMode() = runViewModelTest {
         viewModel = createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -143,7 +143,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `income category auto-selects INCOME type`() = runViewModelTest {
+    fun incomeCategory_shouldAutoSelectIncomeType_whenSelected() = runViewModelTest {
         viewModel = createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -162,7 +162,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     // ── Modifica transazione esistente ──
 
     @Test
-    fun `editing transaction starts at DETAILS in modifying mode`() = runViewModelTest {
+    fun editingTransaction_shouldStartAtDetails_whenInModifyingMode() = runViewModelTest {
         viewModel = createViewModel(transactionId = 1L)
         advanceUntilLoaded()
 
@@ -175,7 +175,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `editing transaction loads all fields`() = runViewModelTest {
+    fun editingTransaction_shouldLoadAllFields_whenTransactionExists() = runViewModelTest {
         viewModel = createViewModel(transactionId = 1L)
         advanceUntilLoaded()
 
@@ -190,7 +190,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     // ── EditCategory: apre sempre il dialog ──
 
     @Test
-    fun `EditCategory opens category dialog`() = runViewModelTest {
+    fun onEvent_shouldOpenCategoryDialog_whenEditCategoryEventReceived() = runViewModelTest {
         viewModel = createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -201,7 +201,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `EditCategory opens dialog in modifying mode`() = runViewModelTest {
+    fun onEvent_shouldOpenCategoryDialog_whenEditCategoryInModifyingMode() = runViewModelTest {
         viewModel = createViewModel(transactionId = 1L)
         advanceUntilLoaded()
 
@@ -212,7 +212,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `DismissCategoryDialog closes dialog`() = runViewModelTest {
+    fun onEvent_shouldCloseCategoryDialog_whenDismissCategoryDialogEventReceived() = runViewModelTest {
         viewModel = createViewModel(transactionId = 1L)
         advanceUntilLoaded()
 
@@ -226,7 +226,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `selecting category from dialog closes it`() = runViewModelTest {
+    fun onEvent_shouldCloseCategoryDialogAndSelectCategory_whenCategorySelected() = runViewModelTest {
         viewModel = createViewModel(transactionId = 1L)
         advanceUntilLoaded()
 
@@ -248,7 +248,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `category selection does NOT auto-advance in modifying mode`() = runViewModelTest {
+    fun categorySelection_shouldNotAutoAdvance_whenInModifyingMode() = runViewModelTest {
         viewModel = createViewModel(transactionId = 1L)
         advanceUntilLoaded()
 
@@ -271,7 +271,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     // ── EditType: apre sempre il dialog ──
 
     @Test
-    fun `EditType opens type dialog`() = runViewModelTest {
+    fun onEvent_shouldOpenTypeDialog_whenEditTypeEventReceived() = runViewModelTest {
         viewModel = createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -282,7 +282,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `EditType opens dialog in modifying mode`() = runViewModelTest {
+    fun onEvent_shouldOpenTypeDialog_whenEditTypeInModifyingMode() = runViewModelTest {
         viewModel = createViewModel(transactionId = 1L)
         advanceUntilLoaded()
 
@@ -293,7 +293,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `selecting type from dialog closes it`() = runViewModelTest {
+    fun onEvent_shouldCloseTypeDialogAndSelectType_whenTypeSelected() = runViewModelTest {
         viewModel = createViewModel(transactionId = 1L)
         advanceUntilLoaded()
 
@@ -312,7 +312,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     // ── EditDate: apre il date picker ──
 
     @Test
-    fun `EditDate opens date picker`() = runViewModelTest {
+    fun onEvent_shouldOpenDatePicker_whenEditDateEventReceived() = runViewModelTest {
         viewModel = createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -323,7 +323,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `DismissDatePicker closes date picker`() = runViewModelTest {
+    fun onEvent_shouldCloseDatePicker_whenDismissDatePickerEventReceived() = runViewModelTest {
         viewModel = createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -337,7 +337,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `UpdateTimestamp updates the date`() = runViewModelTest {
+    fun onEvent_shouldUpdateTimestamp_whenUpdateTimestampEventReceived() = runViewModelTest {
         viewModel = createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -351,7 +351,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     // ── Navigazione ──
 
     @Test
-    fun `PreviousStep goes back to CATEGORY_SELECTION from DETAILS in creation mode`() =
+    fun onEvent_shouldGoBackToCategorySelection_whenPreviousStepInCreationMode() =
         runViewModelTest {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
@@ -372,7 +372,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun `PreviousStep does nothing in modifying mode`() = runViewModelTest {
+    fun onEvent_shouldDoNothing_whenPreviousStepInModifyingMode() = runViewModelTest {
         viewModel = createViewModel(transactionId = 1L)
         advanceUntilLoaded()
 
@@ -389,7 +389,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     // ── Aggiornamento campi ──
 
     @Test
-    fun `field updates work correctly`() = runViewModelTest {
+    fun onEvent_shouldUpdateAllFields_whenFieldUpdateEventsReceived() = runViewModelTest {
         viewModel = createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -417,7 +417,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     // ── Submit ──
 
     @Test
-    fun `submit fails without category and type`() = runViewModelTest {
+    fun submit_shouldFail_whenCategoryAndTypeAreMissing() = runViewModelTest {
         viewModel = createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -431,7 +431,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `submit fails without title`() = runViewModelTest {
+    fun submit_shouldFail_whenTitleIsMissing() = runViewModelTest {
         viewModel = createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -444,7 +444,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `submit succeeds with all required fields`() = runViewModelTest {
+    fun submit_shouldSucceed_whenAllRequiredFieldsAreProvided() = runViewModelTest {
         viewModel = createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -459,7 +459,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `submit in modifying mode updates transaction`() = runViewModelTest {
+    fun submit_shouldUpdateTransaction_whenInModifyingMode() = runViewModelTest {
         viewModel = createViewModel(transactionId = 1L)
         advanceUntilLoaded()
 
@@ -473,7 +473,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     // ── Reset ──
 
     @Test
-    fun `reset clears the state`() = runViewModelTest {
+    fun reset_shouldClearAllFields_whenCalled() = runViewModelTest {
         viewModel = createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -498,7 +498,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     // ── Suggerimenti Transazioni ──
 
     @Test
-    fun `suggestions are loaded on initialization`() = runViewModelTest {
+    fun init_shouldLoadSuggestions_whenViewModelIsCreated() = runViewModelTest {
         viewModel = createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -514,7 +514,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `suggestions are available when editing transaction`() = runViewModelTest {
+    fun init_shouldLoadSuggestions_whenEditingTransaction() = runViewModelTest {
         viewModel = createViewModel(transactionId = 1L)
         advanceUntilLoaded()
 

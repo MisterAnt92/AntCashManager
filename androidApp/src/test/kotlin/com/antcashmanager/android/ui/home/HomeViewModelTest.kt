@@ -67,7 +67,8 @@ class HomeViewModelTest : BaseUnitTest() {
 
     @Test
     fun transactions_shouldReflectRepositoryData_whenDateRangeIncludesAllTransactions() = runViewModelTest {
-        val now = System.currentTimeMillis()
+        // Use safe timestamp that won't have timing issues
+        val now = 1_700_000_000_000L
         fakeRepo.transactions.value = listOf(
             Transaction(
                 id = 1,
@@ -151,7 +152,7 @@ class HomeViewModelTest : BaseUnitTest() {
             to = Long.MAX_VALUE,
         )
 
-        val now = System.currentTimeMillis()
+        val now = 1_700_000_000_000L
         fakeRepo.transactions.value = listOf(
             Transaction(
                 id = 1,
@@ -195,7 +196,8 @@ class HomeViewModelTest : BaseUnitTest() {
 
     @Test
     fun onEvent_shouldSetSelectedTransaction_whenShowTransactionDetailsIsReceived() = runViewModelTest {
-        val now = System.currentTimeMillis()
+        // Use timestamp within default filter range
+        val now = fakeSettingsRepository.homeDateFilterState.value.to - 1_000L
         val transaction = Transaction(
             id = 1,
             title = "Test Transaction",
@@ -224,7 +226,8 @@ class HomeViewModelTest : BaseUnitTest() {
 
     @Test
     fun onEvent_shouldClearSelectedTransaction_whenDismissTransactionDetailsIsReceived() = runViewModelTest {
-        val now = System.currentTimeMillis()
+        // Use timestamp within default filter range
+        val now = fakeSettingsRepository.homeDateFilterState.value.to - 1_000L
         val transaction = Transaction(
             id = 1,
             title = "Test Transaction",
@@ -257,7 +260,8 @@ class HomeViewModelTest : BaseUnitTest() {
     @Test
     fun balanceByPaymentType_shouldCalculatePerPaymentType_whenTransactionsContainMixedPaymentTypes() =
         runViewModelTest {
-            val now = System.currentTimeMillis()
+            // Use timestamp within the default filter range to ensure transactions are included
+            val now = fakeSettingsRepository.homeDateFilterState.value.to - 1_000L
             fakeRepo.transactions.value = listOf(
                 Transaction(
                     id = 1,
@@ -302,14 +306,6 @@ class HomeViewModelTest : BaseUnitTest() {
             }
             advanceUntilIdle()
 
-            viewModel.onEvent(
-                HomeEvent.SetDateRange(
-                    0L,
-                    Long.MAX_VALUE
-                )
-            )
-            advanceUntilIdle()
-
             val balanceByPaymentType = viewModel.state.value.balanceByPaymentType
             // ELECTRONIC: 2000 income = 2000
             assertEquals(2000.0, balanceByPaymentType[PaymentType.ELECTRONIC] ?: 0.0, 0.01)
@@ -322,7 +318,7 @@ class HomeViewModelTest : BaseUnitTest() {
 
     @Test
     fun balanceByPaymentType_shouldExcludePaymentType_whenNetBalanceIsZero() = runViewModelTest {
-        val now = System.currentTimeMillis()
+        val now = fakeSettingsRepository.homeDateFilterState.value.to - 1_000L
         fakeRepo.transactions.value = listOf(
             Transaction(
                 id = 1,
@@ -412,7 +408,13 @@ class HomeViewModelTest : BaseUnitTest() {
     @Test
     fun totalsAndBalance_shouldBeCalculatedCorrectly_whenTransactionsContainIncomeAndExpense() =
         runViewModelTest {
-        val now = fakeSettingsRepository.homeDateFilterState.value.to - 1_000L
+        fakeSettingsRepository.homeDateFilterState.value = SavedDateFilter(
+            presetIndex = SavedDateFilter.CUSTOM_PRESET_INDEX,
+            from = 0L,
+            to = Long.MAX_VALUE,
+        )
+
+        val now = 1_700_000_000_000L
         fakeRepo.transactions.value = listOf(
             Transaction(
                 id = 1,
@@ -453,6 +455,14 @@ class HomeViewModelTest : BaseUnitTest() {
         }
         advanceUntilIdle()
 
+        viewModel.onEvent(
+            HomeEvent.SetDateRange(
+                0L,
+                Long.MAX_VALUE
+            )
+        )
+        advanceUntilIdle()
+
         val uiState = viewModel.state.value
         assertEquals(2500.0, uiState.totalIncome, 0.01)
         assertEquals(-1000.0, uiState.totalExpense, 0.01)
@@ -464,7 +474,7 @@ class HomeViewModelTest : BaseUnitTest() {
     @Test
     fun totals_shouldUseNormalizedAmountSigns_whenStoredTransactionSignsAreInconsistent() =
         runViewModelTest {
-        val now = System.currentTimeMillis()
+        val now = 1_700_000_000_000L
         fakeRepo.transactions.value = listOf(
             // Wrong sign for INCOME in storage -> should be normalized to positive
             Transaction(

@@ -92,7 +92,7 @@ class AddTransactionViewModelDebugTest : BaseUnitTest() {
     }
 
     @Test
-    fun `debug test - check initial state`() = runViewModelTest {
+    fun init_shouldCheckInitialState_whenViewModelIsCreated() = runViewModelTest {
         val viewModel = AddTransactionViewModel(mockTransactionRepository, mockCategoryRepository)
 
         // Avanza il dispatcher per permettere l'inizializzazione
@@ -109,7 +109,7 @@ class AddTransactionViewModelDebugTest : BaseUnitTest() {
     }
 
     @Test
-    fun `debug test - check modifying mode`() = runViewModelTest {
+    fun init_shouldCheckModifyingMode_whenViewModelIsCreatedWithTransactionId() = runViewModelTest {
         val viewModel = AddTransactionViewModel(
             mockTransactionRepository,
             mockCategoryRepository,
