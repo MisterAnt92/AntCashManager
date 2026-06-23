@@ -90,10 +90,16 @@ Ottimizza l'efficienza, la qualità e la manutenibilità del codice seguendo Cle
 
 ## 6. Testing
 - Ogni feature DEVE avere test (happy path, errori, cancellazione).
-- Usa fake repository, NON Mockito.
+- Usa **MockK** come libreria standard per mock/stub/verifiche di dipendenze; **NON Mockito**.
+- I fake repository restano ammessi quando servono per stato, Flow, cancellazione o scenari piu leggibili del mocking puro.
 - Mantieni lo scopo originale dei test quando aggiorni.
+- Nei test unitari Android in `androidApp/src/test/kotlin`, usa SEMPRE `com.antcashmanager.android.BaseUnitTest` come base comune.
+- Non duplicare piu la gestione manuale di `Dispatchers.setMain`, `Dispatchers.resetMain`, `StandardTestDispatcher()` o il boilerplate di `runTest(testDispatcher)` dentro i singoli test: riusa i helper di `BaseUnitTest`.
 - Usa `@OptIn(ExperimentalCoroutinesApi::class)` e `runTest(testDispatcher)`.
 - Test naming: `method_shouldExpectedBehavior_whenCondition`.
+- I nomi dei test **non devono usare backtick**.
+- Dai priorita ai test di `ViewModel` e alle classi con logica reale come helper, parser, formatter, mapper e repository.
+- Nei source set KMP usa il layer corretto: `androidApp/src/test/kotlin` per ViewModel, `shared/src/commonTest/kotlin` per `commonMain`, `shared/src/test/kotlin` per repository/data host-side.
 
 ---
 

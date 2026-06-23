@@ -1,5 +1,8 @@
 package com.antcashmanager.android.ui.home
 
+import androidx.lifecycle.viewModelScope
+import com.antcashmanager.android.BaseUnitTest
+import com.antcashmanager.android.ui.screen.home.HomeEvent
 import com.antcashmanager.android.ui.screen.home.HomeViewModel
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.SavedDateFilter
@@ -7,29 +10,24 @@ import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class HomeViewModelTest {
-    private lateinit var testDispatcher: TestDispatcher
+class HomeViewModelTest : BaseUnitTest() {
     private lateinit var fakeRepo: FakeTransactionRepository
     private lateinit var fakeCategoryRepo: FakeCategoryRepository
     private lateinit var fakeSettingsRepository: FakeSettingsRepository
@@ -37,8 +35,6 @@ class HomeViewModelTest {
 
     @Before
     fun setup() {
-        testDispatcher = StandardTestDispatcher()
-        Dispatchers.setMain(testDispatcher)
         fakeRepo = FakeTransactionRepository()
         fakeCategoryRepo = FakeCategoryRepository()
         fakeSettingsRepository = FakeSettingsRepository()
@@ -53,11 +49,13 @@ class HomeViewModelTest {
 
     @After
     fun tearDown() {
-        Dispatchers.resetMain()
+        if (::viewModel.isInitialized) {
+            viewModel.viewModelScope.cancel()
+        }
     }
 
     @Test
-    fun `initial transactions list is empty`() = runTest(testDispatcher) {
+    fun transactions_shouldBeEmpty_whenViewModelIsInitialized() = runViewModelTest {
         val collectJob = launch {
             viewModel.transactions.collect {}
         }
@@ -68,8 +66,9 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `transactions reflect repository data`() = runTest(testDispatcher) {
-        val now = System.currentTimeMillis()
+    fun transactions_shouldReflectRepositoryData_whenDateRangeIncludesAllTransactions() = runViewModelTest {
+        // Use safe timestamp that won't have timing issues
+        val now = 1_700_000_000_000L
         fakeRepo.transactions.value = listOf(
             Transaction(
                 id = 1,
@@ -95,7 +94,7 @@ class HomeViewModelTest {
         advanceUntilIdle()
 
         viewModel.onEvent(
-            com.antcashmanager.android.ui.screen.home.HomeEvent.SetDateRange(
+            HomeEvent.SetDateRange(
                 0L,
                 Long.MAX_VALUE
             )
@@ -109,7 +108,7 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `transactions update when repository changes`() = runTest(testDispatcher) {
+    fun stateTransactions_shouldUpdate_whenRepositoryEmitsNewData() = runViewModelTest {
         fun awaitTransactionsSize(expected: Int) {
             repeat(10) {
                 advanceUntilIdle()
@@ -145,14 +144,15 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `transactions contain correct types`() = runTest(testDispatcher) {
+    fun transactions_shouldContainIncomeAndExpenseWithNormalizedAmounts_whenRepositoryHasMixedTypes() =
+        runViewModelTest {
         fakeSettingsRepository.homeDateFilterState.value = SavedDateFilter(
             presetIndex = SavedDateFilter.CUSTOM_PRESET_INDEX,
             from = 0L,
             to = Long.MAX_VALUE,
         )
 
-        val now = System.currentTimeMillis()
+        val now = 1_700_000_000_000L
         fakeRepo.transactions.value = listOf(
             Transaction(
                 id = 1,
@@ -178,7 +178,7 @@ class HomeViewModelTest {
         advanceUntilIdle()
 
         viewModel.onEvent(
-            com.antcashmanager.android.ui.screen.home.HomeEvent.SetDateRange(
+            HomeEvent.SetDateRange(
                 0L,
                 Long.MAX_VALUE
             )
@@ -195,8 +195,9 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `show transaction details event sets selected transaction`() = runTest(testDispatcher) {
-        val now = System.currentTimeMillis()
+    fun onEvent_shouldSetSelectedTransaction_whenShowTransactionDetailsIsReceived() = runViewModelTest {
+        // Use timestamp within default filter range
+        val now = fakeSettingsRepository.homeDateFilterState.value.to - 1_000L
         val transaction = Transaction(
             id = 1,
             title = "Test Transaction",
@@ -213,7 +214,7 @@ class HomeViewModelTest {
         advanceUntilIdle()
 
         viewModel.onEvent(
-            com.antcashmanager.android.ui.screen.home.HomeEvent.ShowTransactionDetails(
+            HomeEvent.ShowTransactionDetails(
                 transaction
             )
         )
@@ -224,8 +225,9 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `dismiss transaction details clears selected transaction`() = runTest(testDispatcher) {
-        val now = System.currentTimeMillis()
+    fun onEvent_shouldClearSelectedTransaction_whenDismissTransactionDetailsIsReceived() = runViewModelTest {
+        // Use timestamp within default filter range
+        val now = fakeSettingsRepository.homeDateFilterState.value.to - 1_000L
         val transaction = Transaction(
             id = 1,
             title = "Test Transaction",
@@ -242,23 +244,24 @@ class HomeViewModelTest {
         advanceUntilIdle()
 
         viewModel.onEvent(
-            com.antcashmanager.android.ui.screen.home.HomeEvent.ShowTransactionDetails(
+            HomeEvent.ShowTransactionDetails(
                 transaction
             )
         )
         advanceUntilIdle()
         assertEquals(transaction, viewModel.state.value.selectedTransaction)
 
-        viewModel.onEvent(com.antcashmanager.android.ui.screen.home.HomeEvent.DismissTransactionDetails)
+        viewModel.onEvent(HomeEvent.DismissTransactionDetails)
         advanceUntilIdle()
         assertEquals(null, viewModel.state.value.selectedTransaction)
         collectJob.cancel()
     }
 
     @Test
-    fun `balanceByPaymentType calculates correctly with mixed payment types`() =
-        runTest(testDispatcher) {
-            val now = System.currentTimeMillis()
+    fun balanceByPaymentType_shouldCalculatePerPaymentType_whenTransactionsContainMixedPaymentTypes() =
+        runViewModelTest {
+            // Use timestamp within the default filter range to ensure transactions are included
+            val now = fakeSettingsRepository.homeDateFilterState.value.to - 1_000L
             fakeRepo.transactions.value = listOf(
                 Transaction(
                     id = 1,
@@ -303,14 +306,6 @@ class HomeViewModelTest {
             }
             advanceUntilIdle()
 
-            viewModel.onEvent(
-                com.antcashmanager.android.ui.screen.home.HomeEvent.SetDateRange(
-                    0L,
-                    Long.MAX_VALUE
-                )
-            )
-            advanceUntilIdle()
-
             val balanceByPaymentType = viewModel.state.value.balanceByPaymentType
             // ELECTRONIC: 2000 income = 2000
             assertEquals(2000.0, balanceByPaymentType[PaymentType.ELECTRONIC] ?: 0.0, 0.01)
@@ -322,8 +317,8 @@ class HomeViewModelTest {
         }
 
     @Test
-    fun `balanceByPaymentType excludes zero values`() = runTest(testDispatcher) {
-        val now = System.currentTimeMillis()
+    fun balanceByPaymentType_shouldExcludePaymentType_whenNetBalanceIsZero() = runViewModelTest {
+        val now = fakeSettingsRepository.homeDateFilterState.value.to - 1_000L
         fakeRepo.transactions.value = listOf(
             Transaction(
                 id = 1,
@@ -352,12 +347,12 @@ class HomeViewModelTest {
 
         val balanceByPaymentType = viewModel.state.value.balanceByPaymentType
         // ELECTRONIC should be 0 (100 - 100), so it should be excluded from map
-        assertEquals(false, balanceByPaymentType.containsKey(PaymentType.ELECTRONIC))
+        assertFalse(balanceByPaymentType.containsKey(PaymentType.ELECTRONIC))
         collectJob.cancel()
     }
 
     @Test
-    fun `balanceByPaymentType is empty when no transactions`() = runTest(testDispatcher) {
+    fun balanceByPaymentType_shouldBeEmpty_whenThereAreNoTransactions() = runViewModelTest {
         fakeRepo.transactions.value = emptyList()
 
         val collectJob = launch {
@@ -371,10 +366,11 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `date filter affects balanceByPaymentType calculation`() = runTest(testDispatcher) {
-        val now = System.currentTimeMillis()
-        val yesterday = now - (24 * 60 * 60 * 1000)
-        val lastWeek = now - (7 * 24 * 60 * 60 * 1000)
+    fun balanceByPaymentType_shouldIncludeOnlyTransactionsWithinDefaultDateFilter_whenInitialized() =
+        runViewModelTest {
+        val defaultFilter = fakeSettingsRepository.homeDateFilterState.value
+        val inRangeTimestamp = defaultFilter.to - 1_000L
+        val outOfRangeTimestamp = defaultFilter.from - 1_000L
 
         fakeRepo.transactions.value = listOf(
             Transaction(
@@ -383,7 +379,7 @@ class HomeViewModelTest {
                 amount = 1000.0,
                 category = "Work",
                 type = TransactionType.INCOME,
-                timestamp = yesterday,
+                timestamp = inRangeTimestamp,
                 paymentType = PaymentType.ELECTRONIC,
             ),
             Transaction(
@@ -392,7 +388,7 @@ class HomeViewModelTest {
                 amount = 500.0,
                 category = "Work",
                 type = TransactionType.INCOME,
-                timestamp = lastWeek - (10 * 24 * 60 * 60 * 1000),
+                timestamp = outOfRangeTimestamp,
                 paymentType = PaymentType.CASH,
             ),
         )
@@ -405,13 +401,20 @@ class HomeViewModelTest {
         // Default filter is last 7 days, so only the recent transaction should be included
         val balanceByPaymentType = viewModel.state.value.balanceByPaymentType
         assertEquals(1000.0, balanceByPaymentType[PaymentType.ELECTRONIC] ?: 0.0, 0.01)
-        assertEquals(false, balanceByPaymentType.containsKey(PaymentType.CASH))
+        assertFalse(balanceByPaymentType.containsKey(PaymentType.CASH))
         collectJob.cancel()
     }
 
     @Test
-    fun `totals and balance are calculated correctly for home cards`() = runTest(testDispatcher) {
-        val now = System.currentTimeMillis() - 1_000L
+    fun totalsAndBalance_shouldBeCalculatedCorrectly_whenTransactionsContainIncomeAndExpense() =
+        runViewModelTest {
+        fakeSettingsRepository.homeDateFilterState.value = SavedDateFilter(
+            presetIndex = SavedDateFilter.CUSTOM_PRESET_INDEX,
+            from = 0L,
+            to = Long.MAX_VALUE,
+        )
+
+        val now = 1_700_000_000_000L
         fakeRepo.transactions.value = listOf(
             Transaction(
                 id = 1,
@@ -452,6 +455,14 @@ class HomeViewModelTest {
         }
         advanceUntilIdle()
 
+        viewModel.onEvent(
+            HomeEvent.SetDateRange(
+                0L,
+                Long.MAX_VALUE
+            )
+        )
+        advanceUntilIdle()
+
         val uiState = viewModel.state.value
         assertEquals(2500.0, uiState.totalIncome, 0.01)
         assertEquals(-1000.0, uiState.totalExpense, 0.01)
@@ -461,8 +472,9 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `amount signs are normalized before totals`() = runTest(testDispatcher) {
-        val now = System.currentTimeMillis()
+    fun totals_shouldUseNormalizedAmountSigns_whenStoredTransactionSignsAreInconsistent() =
+        runViewModelTest {
+        val now = 1_700_000_000_000L
         fakeRepo.transactions.value = listOf(
             // Wrong sign for INCOME in storage -> should be normalized to positive
             Transaction(
@@ -490,7 +502,7 @@ class HomeViewModelTest {
         advanceUntilIdle()
 
         viewModel.onEvent(
-            com.antcashmanager.android.ui.screen.home.HomeEvent.SetDateRange(
+            HomeEvent.SetDateRange(
                 0L,
                 Long.MAX_VALUE
             )
@@ -506,10 +518,11 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `set date range updates totals based on selected period`() = runTest(testDispatcher) {
-        val now = System.currentTimeMillis()
-        val old = now - (20L * 24 * 60 * 60 * 1000)
-        val from = now - (2L * 24 * 60 * 60 * 1000)
+    fun onEvent_shouldUpdateTotals_whenSetDateRangeIsReceived() = runViewModelTest {
+        val recentTimestamp = 1_720_000_000_000L
+        val rangeFrom = 1_719_800_000_000L
+        val rangeTo = 1_720_100_000_000L
+        val oldTimestamp = 1_718_000_000_000L
 
         fakeRepo.transactions.value = listOf(
             Transaction(
@@ -518,7 +531,7 @@ class HomeViewModelTest {
                 amount = 1000.0,
                 category = "Work",
                 type = TransactionType.INCOME,
-                timestamp = now,
+                timestamp = recentTimestamp,
             ),
             Transaction(
                 id = 2,
@@ -526,7 +539,7 @@ class HomeViewModelTest {
                 amount = 300.0,
                 category = "Food",
                 type = TransactionType.EXPENSE,
-                timestamp = now,
+                timestamp = recentTimestamp,
             ),
             Transaction(
                 id = 3,
@@ -534,7 +547,7 @@ class HomeViewModelTest {
                 amount = 900.0,
                 category = "Work",
                 type = TransactionType.INCOME,
-                timestamp = old,
+                timestamp = oldTimestamp,
             ),
         )
 
@@ -544,9 +557,9 @@ class HomeViewModelTest {
         advanceUntilIdle()
 
         viewModel.onEvent(
-            com.antcashmanager.android.ui.screen.home.HomeEvent.SetDateRange(
-                from,
-                now
+            HomeEvent.SetDateRange(
+                rangeFrom,
+                rangeTo,
             )
         )
         advanceUntilIdle()
@@ -560,7 +573,7 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `set date range persists custom filter state`() = runTest(testDispatcher) {
+    fun onEvent_shouldPersistCustomFilterState_whenSetDateRangeIsReceived() = runViewModelTest {
         val from = 1_700_000_000_000L
         val to = 1_700_100_000_000L
 
@@ -570,7 +583,7 @@ class HomeViewModelTest {
         advanceUntilIdle()
 
         viewModel.onEvent(
-            com.antcashmanager.android.ui.screen.home.HomeEvent.SetDateRange(from, to)
+            HomeEvent.SetDateRange(from, to)
         )
         advanceUntilIdle()
 
@@ -581,7 +594,7 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `new viewmodel restores previously saved custom home filter`() = runTest(testDispatcher) {
+    fun state_shouldRestoreSavedCustomHomeFilter_whenViewModelIsRecreated() = runViewModelTest {
         val from = 1_701_000_000_000L
         val to = 1_701_500_000_000L
         fakeSettingsRepository.homeDateFilterState.value = SavedDateFilter(
@@ -767,10 +780,19 @@ class HomeViewModelTest {
         override suspend fun setChartsZoomEnabled(enabled: Boolean) = Unit
         override fun getShowPaymentTypeBreakdown() = flowOf(false)
         override suspend fun setShowPaymentTypeBreakdown(show: Boolean) = Unit
-        override fun getTransactionDisplayType() = flowOf(com.antcashmanager.domain.model.TransactionDisplayType.TREND)
-        override suspend fun setTransactionDisplayType(displayType: com.antcashmanager.domain.model.TransactionDisplayType) = Unit
-        override fun getTransactionsTransactionDisplayType() = flowOf(com.antcashmanager.domain.model.TransactionDisplayType.TREND)
-        override suspend fun setTransactionsTransactionDisplayType(displayType: com.antcashmanager.domain.model.TransactionDisplayType) = Unit
+        override fun getTransactionDisplayType() =
+            flowOf(com.antcashmanager.domain.model.TransactionDisplayType.TREND)
+
+        override suspend fun setTransactionDisplayType(
+            displayType: com.antcashmanager.domain.model.TransactionDisplayType,
+        ) = Unit
+
+        override fun getTransactionsTransactionDisplayType() =
+            flowOf(com.antcashmanager.domain.model.TransactionDisplayType.TREND)
+
+        override suspend fun setTransactionsTransactionDisplayType(
+            displayType: com.antcashmanager.domain.model.TransactionDisplayType,
+        ) = Unit
         override fun getIsTutorialCompleted() = flowOf(true)
         override suspend fun setIsTutorialCompleted(completed: Boolean) = Unit
         override fun getDataEncryptionEnabled() = flowOf(false)

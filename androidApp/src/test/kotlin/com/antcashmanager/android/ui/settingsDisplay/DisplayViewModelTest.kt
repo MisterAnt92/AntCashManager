@@ -1,46 +1,34 @@
 package com.antcashmanager.android.ui.settingsDisplay
 
+import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.ui.screen.settingsDisplay.DisplayViewModel
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.SettingsRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class DisplayViewModelTest {
+class DisplayViewModelTest : BaseUnitTest() {
 
-    private val testDispatcher = StandardTestDispatcher()
     private lateinit var fakeSettingsRepo: FakeSettingsRepository
     private lateinit var viewModel: DisplayViewModel
 
     @Before
     fun setup() {
-        Dispatchers.setMain(testDispatcher)
         fakeSettingsRepo = FakeSettingsRepository()
         viewModel = DisplayViewModel(fakeSettingsRepo)
     }
 
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
-
     @Test
-    fun `defaults are exposed correctly`() = runTest(testDispatcher) {
+    fun `defaults are exposed correctly`() = runViewModelTest {
         val collectJob = launch(
             UnconfinedTestDispatcher(testScheduler)
         ) {
@@ -62,7 +50,7 @@ class DisplayViewModelTest {
     }
 
     @Test
-    fun `setCurrencySymbol updates value`() = runTest(testDispatcher) {
+    fun `setCurrencySymbol updates value`() = runViewModelTest {
         val collectJob = launch(
             UnconfinedTestDispatcher(testScheduler)
         ) { launch { viewModel.currencySymbol.collect { } } }
@@ -76,7 +64,7 @@ class DisplayViewModelTest {
     }
 
     @Test
-    fun `setDecimalDigits updates value`() = runTest(testDispatcher) {
+    fun `setDecimalDigits updates value`() = runViewModelTest {
         val collectJob = launch(
             UnconfinedTestDispatcher(testScheduler)
         ) { launch { viewModel.decimalDigits.collect { } } }
@@ -90,7 +78,7 @@ class DisplayViewModelTest {
     }
 
     @Test
-    fun `setSeparators update values and reset restores defaults`() = runTest(testDispatcher) {
+    fun `setSeparators update values and reset restores defaults`() = runViewModelTest {
         val collectJob = launch(
             UnconfinedTestDispatcher(testScheduler)
         ) {
@@ -119,7 +107,7 @@ class DisplayViewModelTest {
     }
 
     @Test
-    fun `currency inputs are sanitized`() = runTest(testDispatcher) {
+    fun `currency inputs are sanitized`() = runViewModelTest {
         val collectJob = launch(
             UnconfinedTestDispatcher(testScheduler)
         ) {
@@ -147,7 +135,7 @@ class DisplayViewModelTest {
     }
 
     @Test
-    fun `decimal and thousands separators cannot be equal`() = runTest(testDispatcher) {
+    fun `decimal and thousands separators cannot be equal`() = runViewModelTest {
         val collectJob = launch(
             UnconfinedTestDispatcher(testScheduler)
         ) {

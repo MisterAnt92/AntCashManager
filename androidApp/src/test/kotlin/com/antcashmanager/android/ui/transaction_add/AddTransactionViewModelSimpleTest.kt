@@ -1,16 +1,13 @@
 package com.antcashmanager.android.ui.transaction_add
 
+import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionEvent
 import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionViewModel
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.TransactionRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -20,11 +17,10 @@ import org.junit.Test
  * Test semplificati per le funzionalità core
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-class AddTransactionViewModelSimpleTest {
+class AddTransactionViewModelSimpleTest : BaseUnitTest() {
 
     private lateinit var mockTransactionRepository: TransactionRepository
     private lateinit var mockCategoryRepository: CategoryRepository
-    private val testDispatcher = StandardTestDispatcher()
 
     private val mockCategories = listOf(
         Category(1, "Food", "🍔", 0xFFFF6B6B, "EXPENSE"),
@@ -33,8 +29,6 @@ class AddTransactionViewModelSimpleTest {
 
     @Before
     fun setup() {
-        Dispatchers.setMain(testDispatcher)
-
         mockTransactionRepository = object : TransactionRepository {
             override fun getAllTransactions() =
                 flowOf(emptyList<com.antcashmanager.domain.model.Transaction>())
@@ -85,13 +79,13 @@ class AddTransactionViewModelSimpleTest {
     }
 
     @Test
-    fun `test viewmodel creation works`() = runTest(testDispatcher) {
+    fun init_shouldCreateViewModel_whenCalledWithRepositories() = runViewModelTest {
         val viewModel = AddTransactionViewModel(mockTransactionRepository, mockCategoryRepository)
         assertNotNull("ViewModel should be created", viewModel)
     }
 
     @Test
-    fun `test viewmodel creation with transactionId works`() = runTest(testDispatcher) {
+    fun init_shouldCreateViewModel_whenCalledWithTransactionId() = runViewModelTest {
         val viewModel = AddTransactionViewModel(
             mockTransactionRepository,
             mockCategoryRepository,
@@ -101,7 +95,7 @@ class AddTransactionViewModelSimpleTest {
     }
 
     @Test
-    fun `test category selection event processing`() = runTest(testDispatcher) {
+    fun onEvent_shouldProcessSelectCategoryEvent_whenCategoryIsSelected() = runViewModelTest {
         val viewModel = AddTransactionViewModel(mockTransactionRepository, mockCategoryRepository)
 
         // Questa chiamata dovrebbe almeno non crashare

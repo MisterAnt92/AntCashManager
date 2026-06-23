@@ -341,6 +341,7 @@
 
     <!-- Feedback Error Messages -->
     <string name="no_email_app_installed">No email app installed</string>
+    <string name="error_opening_link">Could not open the link. Please check your apps.</string>
 
     <!-- Transaction Display Section -->
     <string name="settings_display_charts">Charts</string>

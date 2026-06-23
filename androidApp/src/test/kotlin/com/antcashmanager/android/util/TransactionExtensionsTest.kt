@@ -8,7 +8,7 @@ import org.junit.Test
 class TransactionExtensionsTest {
 
     @Test
-    fun `withCorrectAmount keeps income positive`() {
+    fun withCorrectAmount_shouldReturnPositiveAmount_whenTransactionTypeIsIncome() {
         val income = Transaction(
             id = 1,
             title = "Income",
@@ -21,7 +21,7 @@ class TransactionExtensionsTest {
     }
 
     @Test
-    fun `withCorrectAmount keeps expense negative`() {
+    fun withCorrectAmount_shouldReturnNegativeAmount_whenTransactionTypeIsExpense() {
         val expense = Transaction(
             id = 2,
             title = "Expense",
@@ -34,7 +34,7 @@ class TransactionExtensionsTest {
     }
 
     @Test
-    fun `totals are coherent after sign normalization`() {
+    fun withCorrectAmounts_shouldKeepTotalsCoherent_whenSignsAreNormalized() {
         val list = listOf(
             Transaction(
                 id = 1,

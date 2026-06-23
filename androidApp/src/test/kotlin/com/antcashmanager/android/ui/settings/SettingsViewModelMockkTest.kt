@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.settings
 
+import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.domain.usecase.feedback.SendFeedbackEmailUseCase
 import com.antcashmanager.android.ui.screen.settings.SettingsViewModel
 import com.antcashmanager.domain.model.AppLanguage
@@ -15,24 +16,16 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class SettingsViewModelMockkTest {
-
-    private val testDispatcher = StandardTestDispatcher()
+class SettingsViewModelMockkTest : BaseUnitTest() {
 
     private lateinit var settingsRepository: SettingsRepository
     private lateinit var transactionRepository: TransactionRepository
@@ -44,8 +37,6 @@ class SettingsViewModelMockkTest {
 
     @Before
     fun setup() {
-        Dispatchers.setMain(testDispatcher)
-
         settingsRepository = mockk(relaxed = true)
         transactionRepository = mockk(relaxed = true)
         getThemeUseCase = mockk()
@@ -75,13 +66,8 @@ class SettingsViewModelMockkTest {
         coEvery { settingsRepository.resetAllPreferences() } returns Unit
     }
 
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
-
     @Test
-    fun setTheme_shouldDelegateToUseCase_whenThemeChanges() = runTest(testDispatcher) {
+    fun setTheme_shouldDelegateToUseCase_whenThemeChanges() = runViewModelTest {
         val viewModel = buildViewModel()
 
         viewModel.setTheme(AppTheme.LIGHT)
@@ -91,7 +77,7 @@ class SettingsViewModelMockkTest {
     }
 
     @Test
-    fun setLanguage_shouldDelegateToUseCase_whenLanguageChanges() = runTest(testDispatcher) {
+    fun setLanguage_shouldDelegateToUseCase_whenLanguageChanges() = runViewModelTest {
         val viewModel = buildViewModel()
 
         viewModel.setLanguage(AppLanguage.SPANISH)
@@ -101,7 +87,7 @@ class SettingsViewModelMockkTest {
     }
 
     @Test
-    fun setShowCharts_shouldDelegateToRepository_whenToggleChanges() = runTest(testDispatcher) {
+    fun setShowCharts_shouldDelegateToRepository_whenToggleChanges() = runViewModelTest {
         val viewModel = buildViewModel()
 
         viewModel.setShowCharts(false)
@@ -111,7 +97,7 @@ class SettingsViewModelMockkTest {
     }
 
     @Test
-    fun resetAllPreferences_shouldDelegateToRepository_whenRequested() = runTest(testDispatcher) {
+    fun resetAllPreferences_shouldDelegateToRepository_whenRequested() = runViewModelTest {
         val viewModel = buildViewModel()
 
         viewModel.resetAllPreferences()
@@ -121,7 +107,7 @@ class SettingsViewModelMockkTest {
     }
 
     @Test
-    fun state_shouldFallbackToDefaults_whenThemeAndLanguageUseCasesFail() = runTest(testDispatcher) {
+    fun state_shouldFallbackToDefaults_whenThemeAndLanguageUseCasesFail() = runViewModelTest {
         every { getThemeUseCase() } returns flowOf(Result.failure(IllegalStateException("theme-failed")))
         every { getLanguageUseCase() } returns flowOf(
             Result.failure(IllegalStateException("language-failed")),

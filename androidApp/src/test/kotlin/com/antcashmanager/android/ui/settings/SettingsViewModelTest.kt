@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.settings
 
+import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.ui.screen.settings.SettingsViewModel
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
@@ -8,36 +9,26 @@ import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class SettingsViewModelTest {
-    private lateinit var testDispatcher: TestDispatcher
+class SettingsViewModelTest : BaseUnitTest() {
     private lateinit var fakeSettingsRepo: FakeSettingsRepository
     private lateinit var fakeTransactionRepo: FakeTransactionRepository
     private lateinit var viewModel: SettingsViewModel
 
     @Before
     fun setup() {
-        testDispatcher = StandardTestDispatcher()
-        Dispatchers.setMain(testDispatcher)
         fakeSettingsRepo = FakeSettingsRepository()
         fakeTransactionRepo = FakeTransactionRepository()
         viewModel = SettingsViewModel(
@@ -47,13 +38,8 @@ class SettingsViewModelTest {
         )
     }
 
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
-
     @Test
-    fun `initial theme is SYSTEM`() = runTest(testDispatcher) {
+    fun `initial theme is SYSTEM`() = runViewModelTest {
         val collectJob = launch {
             viewModel.state.collect {}
         }
@@ -63,7 +49,7 @@ class SettingsViewModelTest {
     }
 
     @Test
-    fun `setTheme updates theme to DARK`() = runTest(testDispatcher) {
+    fun `setTheme updates theme to DARK`() = runViewModelTest {
         val collectJob = launch {
             viewModel.state.collect {}
         }
@@ -77,7 +63,7 @@ class SettingsViewModelTest {
     }
 
     @Test
-    fun `setTheme updates theme to LIGHT`() = runTest(testDispatcher) {
+    fun `setTheme updates theme to LIGHT`() = runViewModelTest {
         val collectJob = launch {
             viewModel.state.collect {}
         }
@@ -91,7 +77,7 @@ class SettingsViewModelTest {
     }
 
     @Test
-    fun `setTheme can switch between themes`() = runTest(testDispatcher) {
+    fun `setTheme can switch between themes`() = runViewModelTest {
         fun awaitTheme(expected: AppTheme) {
             repeat(5) {
                 advanceUntilIdle()

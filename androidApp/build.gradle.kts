@@ -14,8 +14,8 @@ android {
         applicationId = "com.sformica.ant_cashmanager"
         minSdk = 26
         targetSdk = 37
-        versionCode = 5
-        versionName = "1.5.0"
+        versionCode = 8
+        versionName = "1.5.3"
     }
 
     buildTypes {

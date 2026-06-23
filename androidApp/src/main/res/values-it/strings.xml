@@ -384,6 +384,7 @@
 
     <!-- Feedback Error Messages -->
     <string name="no_email_app_installed">Nessuna app email disponibile</string>
+    <string name="error_opening_link">Impossibile aprire il link. Controlla le tue app.</string>
 
     <!-- Transaction Display Section -->
     <string name="settings_display_charts">Grafici</string>
