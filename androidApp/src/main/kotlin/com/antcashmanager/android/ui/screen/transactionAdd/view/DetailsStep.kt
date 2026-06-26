@@ -429,6 +429,7 @@ internal fun DetailsStep(
                     onClick = { onEvent(AddTransactionEvent.Submit) },
                 )
             }
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

@@ -455,7 +455,6 @@
     <string name="receipt_scan_title_label">Titolo Transazione</string>
     <string name="receipt_scan_payee_label">Beneficiario / Esercente</string>
     <string name="receipt_scan_location_label">Luogo</string>
-    <string name="receipt_scan_select_category">Seleziona Categoria</string>
     <string name="receipt_scan_save">Salva Transazione</string>
     <string name="receipt_scan_retry">Effettua nuova scansione</string>
     <string name="receipt_scan_nav_label">Scansiona Scontrino</string>
