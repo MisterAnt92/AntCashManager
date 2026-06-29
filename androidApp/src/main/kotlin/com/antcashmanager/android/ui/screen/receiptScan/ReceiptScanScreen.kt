@@ -146,7 +146,7 @@ internal fun ReceiptScanContent(
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.back),
+                            contentDescription = stringResource(R.string.common_back),
                         )
                     }
                 },

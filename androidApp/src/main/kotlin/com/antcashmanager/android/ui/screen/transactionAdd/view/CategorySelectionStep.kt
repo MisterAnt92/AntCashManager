@@ -55,7 +55,7 @@ internal fun CategorySelectionStep(
                     IconButton(onClick = onCancel) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            stringResource(R.string.add_transaction_back),
+                            stringResource(R.string.common_back),
                         )
                     }
                 },

@@ -348,7 +348,7 @@ internal fun HomeContent(
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 AppText(
-                                    text = stringResource(R.string.home_dashboard),
+                                    text = stringResource(R.string.common_dashboard),
                                     style = MaterialTheme.typography.headlineSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onBackground,

@@ -38,8 +38,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.AntScreenScaffold
-import com.antcashmanager.android.ui.components.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.dialog.AppExitConfirmationDialog
+import com.antcashmanager.android.ui.components.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.categories.CategoriesScreen
 import com.antcashmanager.android.ui.screen.charts.ChartsScreen
@@ -66,11 +66,15 @@ fun AntCashManagerNavHost() {
 
     val navController = rememberNavController()
     val showCharts by settingsRepository.getShowCharts().collectAsState(initial = true)
-    val isTutorialCompleted by settingsRepository.getIsTutorialCompleted().collectAsState(initial = true)
+    val isTutorialCompleted by settingsRepository.getIsTutorialCompleted()
+        .collectAsState(initial = true)
     val currencySymbol by settingsRepository.getCurrencySymbol().collectAsState(initial = "\u20ac")
     val decimalDigits by settingsRepository.getDecimalDigits().collectAsState(initial = 2)
     val decimalSeparator by settingsRepository.getDecimalSeparator().collectAsState(initial = ",")
-    val thousandsSeparator by settingsRepository.getThousandsSeparator().collectAsState(initial = ".")
+    val thousandsSeparator by settingsRepository.getThousandsSeparator()
+        .collectAsState(initial = ".")
+
+    //var showSplash by rememberSaveable { mutableStateOf(true) }
 
     val currencyFormat = CurrencyFormat(
         currencySymbol = currencySymbol,
@@ -80,7 +84,11 @@ fun AntCashManagerNavHost() {
     )
 
     CompositionLocalProvider(LocalCurrencyFormat provides currencyFormat) {
+        /*if (showSplash) {
+            AntSplashScreen(onAnimationFinished = { showSplash = false })
+        } else {*/
         val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
+        // ... existing AntScreenScaffold code ...
 
         val visibleNavItems = buildList {
             add(BottomNavItem.Home)
@@ -90,28 +98,28 @@ fun AntCashManagerNavHost() {
             add(BottomNavItem.Settings)
         }
 
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = navBackStackEntry?.destination
-    val context = LocalContext.current
-    var showExitDialog by rememberSaveable { mutableStateOf(false) }
-    val railContainerWidth = if (adaptiveLayoutInfo.isFoldableDevice) 84.dp else 92.dp
-    val railPaddingStart = if (adaptiveLayoutInfo.isFoldableDevice) 8.dp else 12.dp
-    val railPaddingEnd = if (adaptiveLayoutInfo.isFoldableDevice) 6.dp else 8.dp
-    val isOnTopLevelRoute = currentDestination?.route?.let { currentRoute ->
-        visibleNavItems.any { item -> item.route == currentRoute }
-    } == true
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentDestination = navBackStackEntry?.destination
+        val context = LocalContext.current
+        var showExitDialog by rememberSaveable { mutableStateOf(false) }
+        val railContainerWidth = if (adaptiveLayoutInfo.isFoldableDevice) 84.dp else 92.dp
+        val railPaddingStart = if (adaptiveLayoutInfo.isFoldableDevice) 8.dp else 12.dp
+        val railPaddingEnd = if (adaptiveLayoutInfo.isFoldableDevice) 6.dp else 8.dp
+        val isOnTopLevelRoute = currentDestination?.route?.let { currentRoute ->
+            visibleNavItems.any { item -> item.route == currentRoute }
+        } == true
 
-    BackHandler {
-        when {
-            showExitDialog -> showExitDialog = false
-            isOnTopLevelRoute -> showExitDialog = true
-            !navController.popBackStack() -> showExitDialog = true
+        BackHandler {
+            when {
+                showExitDialog -> showExitDialog = false
+                isOnTopLevelRoute -> showExitDialog = true
+                !navController.popBackStack() -> showExitDialog = true
+            }
         }
-    }
 
-    LaunchedEffect(currentDestination?.route) {
-        currentDestination?.route?.let(analyticsManager::logScreenView)
-    }
+        LaunchedEffect(currentDestination?.route) {
+            currentDestination?.route?.let(analyticsManager::logScreenView)
+        }
 
         AntScreenScaffold(
             showTopBar = false,
@@ -285,6 +293,7 @@ fun AntCashManagerNavHost() {
                 context.findActivity()?.finish()
             },
         )
+        //}
     }
 }
 

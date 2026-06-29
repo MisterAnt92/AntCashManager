@@ -265,7 +265,7 @@ internal fun TransactionsContent(
             // Header
             item {
                 ScreenHeader(
-                    title = stringResource(R.string.transactions_title),
+                    title = stringResource(R.string.common_transactions),
                     actions = {
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -589,7 +589,7 @@ private fun FilterCard(
 
                 TextButton(onClick = onClearFilters) {
                     AppText(
-                        text = stringResource(R.string.transactions_clear_filters),
+                        text = stringResource(R.string.common_clear),
                         style = MaterialTheme.typography.labelSmall,
                     )
                 }
@@ -876,7 +876,7 @@ private fun ActiveFiltersRow(
         ) {
             Icon(
                 imageVector = Icons.Default.Close,
-                contentDescription = stringResource(R.string.transactions_clear_filters),
+                contentDescription = stringResource(R.string.common_clear),
                 modifier = Modifier.size(18.dp),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )

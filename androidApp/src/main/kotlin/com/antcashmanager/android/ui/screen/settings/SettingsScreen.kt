@@ -74,6 +74,7 @@ import com.antcashmanager.android.ui.components.AppListItem
 import com.antcashmanager.android.ui.components.AppRadioButton
 import com.antcashmanager.android.ui.components.AppSwitch
 import com.antcashmanager.android.ui.components.HelpButton
+import com.antcashmanager.android.ui.components.animation.AntEasterEggAnimation
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
 import com.antcashmanager.android.ui.components.text.AppText
@@ -182,6 +183,7 @@ internal fun SettingsContent(
     var showDecimalSeparatorDialog by remember { mutableStateOf(false) }
     var showThousandsSeparatorDialog by remember { mutableStateOf(false) }
     var showHelpDialog by remember { mutableStateOf(false) }
+    var showAntAnimation by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     // Help dialog
@@ -217,7 +219,7 @@ internal fun SettingsContent(
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 AppText(
-                    text = stringResource(R.string.settings_title),
+                    text = stringResource(R.string.common_settings),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground,
@@ -381,9 +383,7 @@ internal fun SettingsContent(
                 leadingIcon = Icons.Default.Info,
                 showChevron = false,
                 onClick = {
-                    if (BuildConfig.DEBUG) {
-                        throw RuntimeException("Test Crashlytics")
-                    }
+                    showAntAnimation = true
                 },
             )
 
@@ -468,6 +468,13 @@ internal fun SettingsContent(
             onDismiss = { showThousandsSeparatorDialog = false },
         )
     }
+
+    if (showAntAnimation) {
+        AntEasterEggAnimation(
+            versionName = versionName,
+            onDismiss = { showAntAnimation = false }
+        )
+    }
 }
 
 @Composable
@@ -528,7 +535,7 @@ private fun CurrencySymbolDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) { AppText(stringResource(R.string.dialog_cancel)) }
+            TextButton(onClick = onDismiss) { AppText(stringResource(R.string.common_cancel)) }
         },
     )
 }

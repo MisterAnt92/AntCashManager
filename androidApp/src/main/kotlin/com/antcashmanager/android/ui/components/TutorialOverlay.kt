@@ -111,37 +111,32 @@ fun TutorialOverlay(
     )
     val isFoldablePortrait = adaptiveLayoutInfo.isFoldableDevice && !adaptiveLayoutInfo.isLandscape
     val horizontalPadding = when {
-        adaptiveLayoutInfo.isExpanded -> 36.dp
-        isFoldablePortrait -> 20.dp
-        else -> 16.dp
+        adaptiveLayoutInfo.isExpanded -> 32.dp
+        isFoldablePortrait -> 16.dp
+        else -> 12.dp
     }
     val verticalPadding = when {
-        adaptiveLayoutInfo.isExpanded -> 28.dp
-        isFoldablePortrait -> 24.dp
-        else -> 20.dp
+        adaptiveLayoutInfo.isExpanded -> 24.dp
+        isFoldablePortrait -> 16.dp
+        else -> 12.dp
     }
     val titleWidthFraction = when {
-        adaptiveLayoutInfo.isCompact -> 0.96f
-        isFoldablePortrait -> 0.82f
-        else -> 0.84f
+        adaptiveLayoutInfo.isCompact -> 1f
+        isFoldablePortrait -> 0.9f
+        else -> 0.85f
     }
     val descriptionWidthFraction = when {
-        adaptiveLayoutInfo.isExpanded -> 0.78f
-        isFoldablePortrait -> 0.80f
-        else -> 0.90f
+        adaptiveLayoutInfo.isExpanded -> 0.85f
+        isFoldablePortrait -> 0.9f
+        else -> 1f
     }
     val imageWidthFraction = when {
-        adaptiveLayoutInfo.isExpanded -> 0.62f
-        isFoldablePortrait -> 0.68f
-        else -> 0.75f
+        adaptiveLayoutInfo.isExpanded -> 0.85f
+        isFoldablePortrait -> 0.95f
+        else -> 1f
     }
-    val imageFillFraction = if (adaptiveLayoutInfo.isExpanded) 0.92f else 0.85f
-    val controlsWidthFraction = when {
-        adaptiveLayoutInfo.isExpanded -> 0.82f
-        isFoldablePortrait -> 0.86f
-        else -> 0.96f
-    }
-    val welcomeCardPadding = if (adaptiveLayoutInfo.isExpanded) 22.dp else 16.dp
+    val controlsWidthFraction = 1f
+    val welcomeCardPadding = if (adaptiveLayoutInfo.isExpanded) 20.dp else 12.dp
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -200,12 +195,12 @@ fun TutorialOverlay(
                         painter = painterResource(id = step.imageRes),
                         contentDescription = stringResource(step.titleRes),
                         modifier = Modifier
-                            .fillMaxSize(imageFillFraction)
+                            .fillMaxSize()
                             .clip(RoundedCornerShape(16.dp))
                             .background(
                                 color = MaterialTheme.colorScheme.surfaceVariant,
                             ),
-                        contentScale = ContentScale.Crop,
+                        contentScale = ContentScale.Fit,
                     )
                 }
             } else if (isWelcomeStep) {
@@ -213,12 +208,12 @@ fun TutorialOverlay(
                     visible = welcomeVisible,
                     enter = fadeIn(tween(durationMillis = 700, delayMillis = 300)) +
                         slideInVertically(tween(durationMillis = 700, delayMillis = 300)) { it / 3 },
+                    modifier = Modifier.weight(1f)
                 ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth(descriptionWidthFraction)
-                        .padding(vertical = 4.dp, horizontal = 4.dp)
-                        .weight(1f),
+                        .padding(vertical = 4.dp, horizontal = 4.dp),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
@@ -282,6 +277,7 @@ fun TutorialOverlay(
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
                 modifier = Modifier
                     .fillMaxWidth(controlsWidthFraction)
+                    .padding(vertical = 6.dp, horizontal = 6.dp)
                     .clearAndSetSemantics {
                         contentDescription = progressDescription
                     },

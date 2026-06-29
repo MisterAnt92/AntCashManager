@@ -17,31 +17,31 @@ sealed class BottomNavItem(
 ) {
     data object Home : BottomNavItem(
         route = "home",
-        titleResId = R.string.nav_home,
+        titleResId = R.string.common_home,
         icon = Icons.Default.Home,
     )
 
     data object Charts : BottomNavItem(
         route = "charts",
-        titleResId = R.string.nav_charts,
+        titleResId = R.string.common_charts,
         icon = Icons.Default.BarChart,
     )
 
     data object Transactions : BottomNavItem(
         route = "transactions",
-        titleResId = R.string.nav_transactions,
+        titleResId = R.string.common_transactions,
         icon = Icons.AutoMirrored.Filled.List,
     )
 
     data object Categories : BottomNavItem(
         route = "categories",
-        titleResId = R.string.nav_categories,
+        titleResId = R.string.common_categories,
         icon = Icons.Default.Category,
     )
 
     data object Settings : BottomNavItem(
         route = "settings",
-        titleResId = R.string.nav_settings,
+        titleResId = R.string.common_settings,
         icon = Icons.Default.Settings,
     )
 }

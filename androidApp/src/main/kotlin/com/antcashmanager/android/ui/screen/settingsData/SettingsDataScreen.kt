@@ -192,7 +192,7 @@ internal fun SettingsDataContent(
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.back),
+                            contentDescription = stringResource(R.string.common_back),
                         )
                     }
                 },
@@ -319,7 +319,7 @@ internal fun SettingsDataContent(
             },
             dismissButton = {
                 TextButton(onClick = onDismissDeleteConfirmDialog) {
-                    AppText(stringResource(R.string.dialog_cancel))
+                    AppText(stringResource(R.string.common_cancel))
                 }
             },
         )
@@ -444,7 +444,7 @@ internal fun SettingsDataContent(
             },
             dismissButton = {
                 TextButton(onClick = onDismissResetPreferencesDialog) {
-                    AppText(stringResource(R.string.dialog_cancel))
+                    AppText(stringResource(R.string.common_cancel))
                 }
             },
         )

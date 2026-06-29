@@ -1,19 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Common Actions/Labels -->
+    <string name="common_dashboard">Dashboard</string>
+    <string name="common_home">Home</string>
+    <string name="common_charts">Charts</string>
+    <string name="common_transactions">Transactions</string>
+    <string name="common_categories">Categories</string>
+    <string name="common_settings">Settings</string>
+    <string name="common_income">Income</string>
+    <string name="common_expenses">Expenses</string>
+    <string name="common_back">Back</string>
+    <string name="common_add">Add</string>
+
     <!-- HelpDialog (Dashboard) -->
-    <string name="help_dashboard_title">Dashboard</string>
     <string name="help_dashboard_desc">View the total balance, income, and expenses for the selected period.</string>
     <string name="app_name">AntCashManager</string>
 
     <!-- Navigation -->
-    <string name="nav_home">Home</string>
-    <string name="nav_charts">Charts</string>
-    <string name="nav_transactions">Transactions</string>
-    <string name="nav_categories">Categories</string>
-    <string name="nav_settings">Settings</string>
 
     <!-- Home Screen -->
-    <string name="home_dashboard">Dashboard</string>
     <string name="home_total_balance">Total Balance</string>
     <string name="home_income">Income</string>
     <string name="home_expenses">Expenses</string>
@@ -46,7 +51,6 @@
     <string name="transactions_search_label">Search transactions</string>
     <string name="transactions_search_placeholder">Name or amount…</string>
     <string name="transactions_advanced_filters">Advanced Filters</string>
-    <string name="transactions_clear_filters">Clear</string>
     <string name="transactions_filter_type">Transaction Type</string>
     <string name="transactions_filter_payment">Payment Type</string>
     <string name="transactions_filter_category">Category</string>
@@ -58,7 +62,6 @@
     <string name="transaction_type_expense">Expense</string>
 
     <!-- Categories Screen -->
-    <string name="categories_title">Categories</string>
     <string name="categories_empty">No categories yet</string>
     <string name="categories_empty_subtitle">Tap + to add your first category</string>
     <string name="categories_add">Add Category</string>
@@ -75,7 +78,6 @@
     <string name="categories_selection_hint">Tap a category to select it (auto-advances in real app)</string>
 
     <!-- Charts Screen -->
-    <string name="charts_title">Charts</string>
     <string name="charts_period">Period</string>
     <string name="charts_from">From: %s</string>
     <string name="charts_to">To: %s</string>
@@ -121,7 +123,6 @@
     <string name="range_label_custom">From %1$s to %2$s</string>
 
     <!-- Settings Screen -->
-    <string name="settings_title">Settings</string>
     <string name="settings_appearance">Appearance</string>
     <string name="settings_theme">Theme</string>
     <string name="settings_theme_light">Light</string>
@@ -130,7 +131,6 @@
     <string name="settings_language">Language</string>
     <string name="settings_display">Display</string>
     <string name="settings_display_subtitle">Customize currency, decimals, and formatting</string>
-    <string name="settings_display_home">Home</string>
     <string name="settings_show_charts_section">Show Charts Section</string>
     <string name="settings_show_charts_section_visible">Charts section visible in navigation</string>
     <string name="settings_show_charts_section_hidden">Charts section hidden from navigation</string>
@@ -196,8 +196,6 @@
     <string name="dialog_choose_decimal_digits">Decimal Digits</string>
     <string name="dialog_choose_decimal_separator">Decimal Separator</string>
     <string name="dialog_choose_thousands_separator">Thousands Separator</string>
-    <string name="dialog_cancel">Cancel</string>
-    <string name="dialog_close">Close</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_delete">Delete</string>
     <string name="dialog_add">Add</string>
@@ -342,6 +340,7 @@
     <!-- Feedback Error Messages -->
     <string name="no_email_app_installed">No email app installed</string>
     <string name="error_opening_link">Could not open the link. Please check your apps.</string>
+    <string name="settings_easter_egg_message">🐜 Hi! Thanks for using AntCash!</string>
 
     <!-- Transaction Display Section -->
     <string name="settings_display_charts">Charts</string>
