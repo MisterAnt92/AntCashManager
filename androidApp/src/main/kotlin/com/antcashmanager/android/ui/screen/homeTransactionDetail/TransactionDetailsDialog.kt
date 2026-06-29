@@ -225,7 +225,7 @@ private fun TransactionDetailsDialogContent(
         confirmButton = {
             TextButton(onClick = onDismiss) {
                 AppText(
-                    text = stringResource(R.string.transaction_details_close),
+                    text = stringResource(R.string.common_close),
                     color = MaterialTheme.colorScheme.primary,
                 )
             }

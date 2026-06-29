@@ -151,7 +151,7 @@ internal fun ChartsContent(
                 .padding(bottom = 80.dp), // Extra space for visibility
         ) {
             ScreenHeader(
-                title = stringResource(R.string.charts_title),
+                title = stringResource(R.string.common_charts),
                 actions = { HelpButton(onHelpClick = { showHelpDialog = true }) },
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -586,7 +586,7 @@ internal fun ChartsContent(
             dismissButton = {
                 TextButton(onClick = {
                     showFromPicker = false
-                }) { AppText(stringResource(R.string.dialog_cancel)) }
+                }) { AppText(stringResource(R.string.common_cancel)) }
             },
         ) { DatePicker(state = state) }
     }
@@ -604,7 +604,7 @@ internal fun ChartsContent(
             dismissButton = {
                 TextButton(onClick = {
                     showToPicker = false
-                }) { AppText(stringResource(R.string.dialog_cancel)) }
+                }) { AppText(stringResource(R.string.common_cancel)) }
             },
         ) { DatePicker(state = state) }
     }

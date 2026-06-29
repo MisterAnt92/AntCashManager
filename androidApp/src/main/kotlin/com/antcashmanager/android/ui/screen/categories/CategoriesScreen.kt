@@ -179,7 +179,7 @@ internal fun CategoriesContent(
                 ),
         ) {
             ScreenHeader(
-                title = stringResource(R.string.categories_title),
+                title = stringResource(R.string.common_categories),
                 actions = { HelpButton(onHelpClick = { showHelpDialog = true }) },
             )
             Spacer(modifier = Modifier.height(12.dp))
@@ -254,7 +254,7 @@ internal fun CategoriesContent(
             },
             dismissButton = {
                 TextButton(onClick = { categoryToDelete = null }) {
-                    AppText(stringResource(R.string.dialog_cancel))
+                    AppText(stringResource(R.string.common_cancel))
                 }
             },
         )
@@ -473,7 +473,7 @@ private fun AddCategoryDialog(
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { AppText(stringResource(R.string.dialog_cancel)) }
+            TextButton(onClick = onDismiss) { AppText(stringResource(R.string.common_cancel)) }
         },
     )
 }

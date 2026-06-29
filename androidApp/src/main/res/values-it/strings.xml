@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Common Actions/Labels -->
+    <string name="common_dashboard">Riepilogo</string>
+    <string name="common_home">Home</string>
+    <string name="common_charts">Grafici</string>
+    <string name="common_transactions">Transazioni</string>
+    <string name="common_categories">Categorie</string>
+    <string name="common_settings">Impostazioni</string>
+    <string name="common_income">Entrate</string>
+    <string name="common_expenses">Uscite</string>
+    <string name="common_back">Indietro</string>
+    <string name="common_add">Aggiungi</string>
+
     <!-- HelpDialog (Dashboard) -->
-    <string name="help_dashboard_title">Dashboard</string>
     <string name="help_dashboard_desc">Visualizza il saldo totale, entrate e uscite nel periodo selezionato.</string>
     <string name="help_features_label">Caratteristiche:</string>
     <string name="common_help">Aiuto</string>
@@ -56,14 +67,8 @@
     <string name="app_name">AntCashManager</string>
 
     <!-- Navigation -->
-    <string name="nav_home">Home</string>
-    <string name="nav_charts">Grafici</string>
-    <string name="nav_transactions">Transazioni</string>
-    <string name="nav_categories">Categorie</string>
-    <string name="nav_settings">Impostazioni</string>
 
     <!-- Home Screen -->
-    <string name="home_dashboard">Riepilogo</string>
     <string name="home_total_balance">Saldo Totale</string>
     <string name="home_income">Entrate</string>
     <string name="home_expenses">Uscite</string>
@@ -95,7 +100,6 @@
     <string name="transactions_search_label">Cerca transazioni</string>
     <string name="transactions_search_placeholder">Nome o importo…</string>
     <string name="transactions_advanced_filters">Filtri avanzati</string>
-    <string name="transactions_clear_filters">Cancella</string>
     <string name="transactions_filter_type">Tipo transazione</string>
     <string name="transactions_filter_payment">Tipo pagamento</string>
     <string name="transactions_filter_category">Categoria</string>
@@ -106,7 +110,6 @@
     <string name="transaction_type_expense">Uscita</string>
 
     <!-- Categories Screen -->
-    <string name="categories_title">Categorie</string>
     <string name="categories_empty">Nessuna categoria</string>
     <string name="categories_empty_subtitle">Tocca + per aggiungere la prima categoria</string>
     <string name="categories_add">Aggiungi Categoria</string>
@@ -122,7 +125,6 @@
     <string name="categories_icon_label">Icona</string>
 
     <!-- Charts Screen -->
-    <string name="charts_title">Grafici</string>
     <string name="charts_period">Periodo</string>
     <string name="charts_from">Dal: %s</string>
     <string name="charts_to">Al: %s</string>
@@ -167,7 +169,6 @@
     <string name="range_label_custom">Da %1$s a %2$s</string>
 
     <!-- Settings Screen -->
-    <string name="settings_title">Impostazioni</string>
     <string name="settings_appearance">Aspetto</string>
     <string name="settings_theme">Tema</string>
     <string name="settings_theme_light">Chiaro</string>
@@ -176,7 +177,6 @@
     <string name="settings_language">Lingua</string>
     <string name="settings_display">Visualizzazione</string>
     <string name="settings_display_subtitle">Personalizza valuta, decimali e formattazione</string>
-    <string name="settings_display_home">Home</string>
     <string name="settings_show_charts_section">Mostra sezione grafici</string>
     <string name="settings_show_charts_section_visible">Sezione grafici visibile nella navigazione</string>
     <string name="settings_show_charts_section_hidden">Sezione grafici nascosta dalla navigazione</string>
@@ -241,8 +241,6 @@
     <string name="dialog_choose_decimal_digits">Cifre Decimali</string>
     <string name="dialog_choose_decimal_separator">Separatore Decimali</string>
     <string name="dialog_choose_thousands_separator">Separatore Migliaia</string>
-    <string name="dialog_cancel">Annulla</string>
-    <string name="dialog_close">Chiudi</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_delete">Elimina</string>
     <string name="dialog_add">Aggiungi</string>
@@ -455,7 +453,6 @@
     <string name="receipt_scan_title_label">Titolo Transazione</string>
     <string name="receipt_scan_payee_label">Beneficiario / Esercente</string>
     <string name="receipt_scan_location_label">Luogo</string>
-    <string name="receipt_scan_select_category">Seleziona Categoria</string>
     <string name="receipt_scan_save">Salva Transazione</string>
     <string name="receipt_scan_retry">Effettua nuova scansione</string>
     <string name="receipt_scan_nav_label">Scansiona Scontrino</string>
@@ -464,5 +461,6 @@
     <string name="transactions_title">Transazioni</string>
     <string name="settings_donate_paypal_title">PayPal</string>
     <string name="settings_donate_bmc_title">Buy Me a Coffee</string>
+    <string name="settings_easter_egg_message">🐜 Ehi! Grazie per usare AntCash!</string>
 
 </resources>

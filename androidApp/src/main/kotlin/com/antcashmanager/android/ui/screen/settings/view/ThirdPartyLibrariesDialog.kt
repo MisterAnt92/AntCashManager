@@ -58,7 +58,7 @@ fun ThirdPartyLibrariesDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) { AppText(stringResource(R.string.dialog_close)) }
+            TextButton(onClick = onDismiss) { AppText(stringResource(R.string.common_close)) }
         },
     )
 }

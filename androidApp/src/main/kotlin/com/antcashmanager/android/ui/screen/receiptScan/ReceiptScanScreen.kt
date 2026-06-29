@@ -146,7 +146,7 @@ internal fun ReceiptScanContent(
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.back),
+                            contentDescription = stringResource(R.string.common_back),
                         )
                     }
                 },
@@ -354,7 +354,7 @@ private fun ReviewStep(
 
         // Selezione categoria (AppSelectionItemCard style)
         AppSelectionItemCard(
-            label = stringResource(R.string.receipt_scan_select_category),
+            label = stringResource(R.string.add_transaction_select_category),
             value = state.selectedCategory?.name
                 ?: stringResource(R.string.add_transaction_none),
             icon = state.selectedCategory?.icon,

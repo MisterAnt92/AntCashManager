@@ -186,7 +186,7 @@ internal fun DisplayContent(
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.back),
+                            contentDescription = stringResource(R.string.common_back),
                         )
                     }
                 },
@@ -391,7 +391,7 @@ internal fun DisplayContent(
             },
             dismissButton = {
                 TextButton(onClick = { showResetPreferencesDialog = false }) {
-                    AppText(stringResource(R.string.dialog_cancel))
+                    AppText(stringResource(R.string.common_cancel))
                 }
             },
         )
@@ -577,7 +577,7 @@ private fun ChartsDisplaySection(
     chartsZoomEnabled: Boolean,
     onChartsZoomEnabledChanged: (Boolean) -> Unit,
 ) {
-    AppCardSectionHeader(title = stringResource(R.string.settings_display_charts))
+    AppCardSectionHeader(title = stringResource(R.string.common_charts))
     Spacer(modifier = Modifier.height(8.dp))
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -614,7 +614,7 @@ private fun HomeDisplaySection(
     transactionDisplayType: TransactionDisplayType,
     onShowTransactionDisplayDialog: () -> Unit,
 ) {
-    AppCardSectionHeader(title = stringResource(R.string.settings_display_home))
+    AppCardSectionHeader(title = stringResource(R.string.common_home))
     Spacer(modifier = Modifier.height(8.dp))
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -662,7 +662,7 @@ private fun TransactionsDisplaySection(
     transactionDisplayType: TransactionDisplayType,
     onShowTransactionDisplayDialog: () -> Unit,
 ) {
-    AppCardSectionHeader(title = stringResource(R.string.settings_transaction_display_section))
+    AppCardSectionHeader(title = stringResource(R.string.common_transactions))
     Spacer(modifier = Modifier.height(8.dp))
 
     AppCard(

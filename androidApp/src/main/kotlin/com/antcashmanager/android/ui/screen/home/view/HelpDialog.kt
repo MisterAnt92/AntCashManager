@@ -17,7 +17,7 @@ import com.antcashmanager.android.ui.components.dialog.HelpDialogFeatureSpec
 fun HelpDialog(onDismiss: () -> Unit) {
     val helpFeatures = listOf(
         HelpDialogFeatureSpec(
-            titleResId = R.string.help_dashboard_title,
+            titleResId = R.string.common_dashboard,
             descriptionResId = R.string.help_dashboard_desc,
             icon = Icons.AutoMirrored.Filled.TrendingUp,
         ),

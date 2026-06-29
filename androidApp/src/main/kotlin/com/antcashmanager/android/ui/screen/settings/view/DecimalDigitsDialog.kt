@@ -49,7 +49,7 @@ fun DecimalDigitsDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) { AppText(stringResource(R.string.dialog_cancel)) }
+            TextButton(onClick = onDismiss) { AppText(stringResource(R.string.common_cancel)) }
         },
     )
 }

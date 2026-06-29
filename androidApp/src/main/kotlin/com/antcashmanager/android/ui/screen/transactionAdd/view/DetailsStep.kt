@@ -159,7 +159,7 @@ internal fun DetailsStep(
             },
             dismissButton = {
                 TextButton(onClick = { onEvent(AddTransactionEvent.DismissDeleteConfirmDialog) }) {
-                    AppText(stringResource(R.string.dialog_cancel))
+                    AppText(stringResource(R.string.common_cancel))
                 }
             },
         )
@@ -182,7 +182,7 @@ internal fun DetailsStep(
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            stringResource(R.string.add_transaction_back),
+                            stringResource(R.string.common_back),
                         )
                     }
                 },
@@ -429,6 +429,7 @@ internal fun DetailsStep(
                     onClick = { onEvent(AddTransactionEvent.Submit) },
                 )
             }
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

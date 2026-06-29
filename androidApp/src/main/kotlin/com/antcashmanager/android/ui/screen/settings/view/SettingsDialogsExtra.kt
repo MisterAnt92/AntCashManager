@@ -68,7 +68,7 @@ fun ThemeSelectionDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                AppText(stringResource(R.string.dialog_close))
+                AppText(stringResource(R.string.common_close))
             }
         },
     )
@@ -118,7 +118,7 @@ fun LanguageSelectionDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                AppText(stringResource(R.string.dialog_close))
+                AppText(stringResource(R.string.common_close))
             }
         },
     )
@@ -144,7 +144,7 @@ fun PrivacyPolicyDialog(onDismiss: () -> Unit) {
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                AppText(stringResource(R.string.dialog_close))
+                AppText(stringResource(R.string.common_close))
             }
         },
     )
@@ -186,7 +186,7 @@ fun ThirdPartyLibrariesDialog(onDismiss: () -> Unit) {
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                AppText(stringResource(R.string.dialog_close))
+                AppText(stringResource(R.string.common_close))
             }
         },
     )

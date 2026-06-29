@@ -55,6 +55,6 @@ fun DateFormatDialog(
                 }
             }
         },
-        confirmButton = { TextButton(onClick = onDismiss) { AppText(stringResource(R.string.dialog_cancel)) } },
+        confirmButton = { TextButton(onClick = onDismiss) { AppText(stringResource(R.string.common_cancel)) } },
     )
 }
