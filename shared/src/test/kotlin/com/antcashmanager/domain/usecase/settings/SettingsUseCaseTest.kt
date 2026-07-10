@@ -220,6 +220,12 @@ internal class FakeSettingsRepository : SettingsRepository {
         transactionsTransactionDisplayTypeFlow.value = type
     }
 
+    private val showInitialAnimationFlow = MutableStateFlow(true)
+    override fun getShowInitialAnimation(): Flow<Boolean> = showInitialAnimationFlow
+    override suspend fun setShowInitialAnimation(show: Boolean) {
+        showInitialAnimationFlow.value = show
+    }
+
     override fun getIsTutorialCompleted(): Flow<Boolean> = flowOf(true)
     override suspend fun setIsTutorialCompleted(completed: Boolean) {}
     override fun getDataEncryptionEnabled(): Flow<Boolean> = flowOf(false)

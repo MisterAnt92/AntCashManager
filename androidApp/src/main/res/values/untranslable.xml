@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_transaction_item_subtitle" translatable="false">%1$s • %2$s</string>
+    <string name="transactions_search_query_preview" translatable="false">\"%s\"</string>
+    <string name="transaction_details_tags" translatable="false">Tag</string>
+</resources>

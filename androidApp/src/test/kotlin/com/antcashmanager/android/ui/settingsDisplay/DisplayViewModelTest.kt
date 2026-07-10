@@ -8,6 +8,7 @@ import com.antcashmanager.domain.repository.SettingsRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -266,6 +267,9 @@ private class FakeSettingsRepository : SettingsRepository {
     override suspend fun setChartsZoomEnabled(enabled: Boolean) {
         chartsZoomEnabledFlow.value = enabled
     }
+
+    override fun getShowInitialAnimation(): Flow<Boolean> = flowOf(true)
+    override suspend fun setShowInitialAnimation(show: Boolean) = Unit
 
     override fun getIsTutorialCompleted(): Flow<Boolean> = isTutorialCompletedFlow
     override suspend fun setIsTutorialCompleted(completed: Boolean) {

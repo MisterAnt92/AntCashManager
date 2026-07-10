@@ -124,6 +124,9 @@ private class FakeSettingsRepository : SettingsRepository {
     override fun getChartsZoomEnabled() = throw UnsupportedOperationException()
     override suspend fun setChartsZoomEnabled(enabled: Boolean) = Unit
 
+    override fun getShowInitialAnimation() = throw UnsupportedOperationException()
+    override suspend fun setShowInitialAnimation(show: Boolean) = Unit
+
     override fun getIsTutorialCompleted() = throw UnsupportedOperationException()
     override suspend fun setIsTutorialCompleted(completed: Boolean) = Unit
 

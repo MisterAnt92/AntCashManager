@@ -55,6 +55,7 @@ class SettingsRepositoryImpl(
         stringPreferencesKey("transactions_transaction_display_type")
     private val isTutorialCompletedKey = booleanPreferencesKey("is_tutorial_completed")
     private val dataEncryptionEnabledKey = booleanPreferencesKey("data_encryption_enabled")
+    private val showInitialAnimationKey = booleanPreferencesKey("show_initial_animation")
 
     private fun createSavedDateFilter(defaultPresetIndex: Int, defaultDurationMs: Long): SavedDateFilter {
         val now = System.currentTimeMillis()
@@ -347,6 +348,13 @@ class SettingsRepositoryImpl(
         }
     }
 
+    override fun getShowInitialAnimation(): Flow<Boolean> =
+        context.dataStore.data.map { it[showInitialAnimationKey] ?: false }
+
+    override suspend fun setShowInitialAnimation(show: Boolean) {
+        context.dataStore.edit { it[showInitialAnimationKey] = show }
+    }
+
     override fun getIsTutorialCompleted(): Flow<Boolean> =
         context.dataStore.data.map { it[isTutorialCompletedKey] ?: false }
 
@@ -397,6 +405,7 @@ class SettingsRepositoryImpl(
             prefs[transactionsTransactionDisplayTypeKey] = TransactionDisplayType.TREND.name
             prefs[isTutorialCompletedKey] = false
             prefs[dataEncryptionEnabledKey] = false
+            prefs[showInitialAnimationKey] = false
         }
         DatabaseEncryptionManager.setEncryptionDesired(context, false)
     }

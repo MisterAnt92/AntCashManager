@@ -1,8 +1,8 @@
 package com.antcashmanager.android.di
 
 import com.antcashmanager.android.analytics.AnalyticsManager
-import com.antcashmanager.android.data.receipt.MlKitReceiptOcrService
 import com.antcashmanager.android.data.backup.BackupService
+import com.antcashmanager.android.data.receipt.MlKitReceiptOcrService
 import com.antcashmanager.android.domain.usecase.feedback.SendFeedbackEmailUseCase
 import com.antcashmanager.android.ui.screen.categories.CategoriesViewModel
 import com.antcashmanager.android.ui.screen.charts.ChartsViewModel
@@ -23,8 +23,8 @@ import com.antcashmanager.data.security.LocalDataCipherImpl
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
-import com.antcashmanager.domain.service.ReceiptOcrService
 import com.antcashmanager.domain.security.LocalDataCipher
+import com.antcashmanager.domain.service.ReceiptOcrService
 import com.antcashmanager.domain.usecase.ShareTransactionUseCase
 import com.antcashmanager.domain.usecase.category.DeleteCategoryUseCase
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase

@@ -72,6 +72,9 @@ interface SettingsRepository {
     fun getTransactionsTransactionDisplayType(): Flow<TransactionDisplayType>
     suspend fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType)
 
+    fun getShowInitialAnimation(): Flow<Boolean>
+    suspend fun setShowInitialAnimation(show: Boolean)
+
     // ── Onboarding / Tutorial ──
     fun getIsTutorialCompleted(): Flow<Boolean>
     suspend fun setIsTutorialCompleted(completed: Boolean)

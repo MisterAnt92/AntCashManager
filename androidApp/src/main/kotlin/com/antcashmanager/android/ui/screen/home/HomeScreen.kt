@@ -41,8 +41,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -76,8 +76,8 @@ import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.SettingsRepository
 import kotlinx.coroutines.launch
-import org.koin.compose.koinInject
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 // ══════════════════════════════════════════════════════════════════════════════
 // SCREEN
@@ -565,6 +565,12 @@ class MockHomeSettingsRepository : SettingsRepository {
     override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {}
     override fun getShowQuickInsightsCard() = kotlinx.coroutines.flow.flowOf(false)
     override suspend fun setShowQuickInsightsCard(show: Boolean) {}
+
+    override fun getShowInitialAnimation(): kotlinx.coroutines.flow.Flow<Boolean> =
+        kotlinx.coroutines.flow.flowOf(true)
+
+    override suspend fun setShowInitialAnimation(show: Boolean) {}
+
     override fun getTransactionDisplayType() =
         kotlinx.coroutines.flow.flowOf(TransactionDisplayType.TREND)
 

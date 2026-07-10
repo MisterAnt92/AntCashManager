@@ -236,6 +236,12 @@ private class FakeSettingsRepository : SettingsRepository {
     override fun getChartsZoomEnabled(): Flow<Boolean> = flowOf(true)
     override suspend fun setChartsZoomEnabled(enabled: Boolean) {}
 
+    private val showInitialAnimationFlow = MutableStateFlow(true)
+    override fun getShowInitialAnimation(): Flow<Boolean> = showInitialAnimationFlow
+    override suspend fun setShowInitialAnimation(show: Boolean) {
+        showInitialAnimationFlow.value = show
+    }
+
     override fun getIsTutorialCompleted(): Flow<Boolean> = flowOf(true)
     override suspend fun setIsTutorialCompleted(completed: Boolean) {}
 

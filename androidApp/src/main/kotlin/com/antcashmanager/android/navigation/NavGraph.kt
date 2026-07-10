@@ -38,6 +38,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.AntScreenScaffold
+import com.antcashmanager.android.ui.components.animation.AntSplashScreen
 import com.antcashmanager.android.ui.components.dialog.AppExitConfirmationDialog
 import com.antcashmanager.android.ui.components.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
@@ -74,7 +75,13 @@ fun AntCashManagerNavHost() {
     val thousandsSeparator by settingsRepository.getThousandsSeparator()
         .collectAsState(initial = ".")
 
-    //var showSplash by rememberSaveable { mutableStateOf(true) }
+    val showInitialAnimation = false
+    var showSplash by rememberSaveable { mutableStateOf(true) }
+
+    if (showSplash && showInitialAnimation) {
+        AntSplashScreen(onAnimationFinished = { showSplash = false })
+        return
+    }
 
     val currencyFormat = CurrencyFormat(
         currencySymbol = currencySymbol,
@@ -84,9 +91,6 @@ fun AntCashManagerNavHost() {
     )
 
     CompositionLocalProvider(LocalCurrencyFormat provides currencyFormat) {
-        /*if (showSplash) {
-            AntSplashScreen(onAnimationFinished = { showSplash = false })
-        } else {*/
         val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
         // ... existing AntScreenScaffold code ...
 
@@ -293,7 +297,6 @@ fun AntCashManagerNavHost() {
                 context.findActivity()?.finish()
             },
         )
-        //}
     }
 }
 

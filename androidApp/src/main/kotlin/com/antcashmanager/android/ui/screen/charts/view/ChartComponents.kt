@@ -23,7 +23,6 @@ import androidx.compose.material.icons.filled.ZoomOutMap
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -231,7 +230,7 @@ internal fun PieLegend(data: Map<String, Double>) {
                     )
                     AppText(
                         text = stringResource(
-                            R.string.charts_legend_item_subtitle,
+                            R.string.home_transaction_item_subtitle,
                             formatAmount(value, fmt),
                             "%.1f%%".format(percentage)
                         ),
