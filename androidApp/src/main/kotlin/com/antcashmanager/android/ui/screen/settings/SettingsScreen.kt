@@ -27,7 +27,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.LibraryBooks
 import androidx.compose.material.icons.filled.Backup
-import androidx.compose.material.icons.filled.Coffee
 import androidx.compose.material.icons.filled.Contrast
 import androidx.compose.material.icons.filled.Feedback
 import androidx.compose.material.icons.filled.FormatSize
@@ -363,7 +362,6 @@ internal fun SettingsContent(
                     iconTint = MaterialTheme.colorScheme.onSecondaryContainer,
                     onClick = { showPrivacyDialog = true },
                 )
-                DonationCard(context = context)
             }
 
             // ── Tutorial Section ──
@@ -540,180 +538,6 @@ private fun CurrencySymbolDialog(
     )
 }
 
-/**
- * Card di donazione con due opzioni: PayPal e Buy Me a Coffee.
- * Ciascuna riga è cliccabile e apre il rispettivo link di donazione.
- */
-@Composable
-private fun DonationCard(context: Context) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-        ),
-        shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-    ) {
-        Column {
-            // ── Card header ──
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFFFFD54F)),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Coffee,
-                        contentDescription = null,
-                        tint = Color(0xFF5D4037),
-                        modifier = Modifier.size(22.dp),
-                    )
-                }
-                Spacer(modifier = Modifier.width(16.dp))
-                Column(modifier = Modifier.weight(1f)) {
-                    AppText(
-                        text = stringResource(R.string.settings_buy_coffee),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                    AppText(
-                        text = stringResource(R.string.settings_buy_coffee_subtitle),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            }
-
-            AppDivider(modifier = Modifier.padding(horizontal = 16.dp))
-
-            // ── PayPal row ──
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        try {
-                            val intent = Intent(
-                                Intent.ACTION_VIEW,
-                                Uri.parse("https://www.paypal.com/paypalme/misterant92"),
-                            ).apply {
-                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            }
-                            context.startActivity(intent)
-                        } catch (e: Exception) {
-                            Toast.makeText(
-                                context,
-                                context.getString(R.string.error_opening_link),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }
-                    .padding(horizontal = 16.dp, vertical = 14.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(36.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFF003087)),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Payment,
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier.size(20.dp),
-                    )
-                }
-                Spacer(modifier = Modifier.width(14.dp))
-                Column(modifier = Modifier.weight(1f)) {
-                    AppText(
-                        text = stringResource(R.string.settings_donate_paypal_title),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                    AppText(
-                        text = stringResource(R.string.settings_donate_paypal_subtitle),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-
-            AppDivider(modifier = Modifier.padding(horizontal = 16.dp))
-
-            // ── Buy Me a Coffee row ──
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        try {
-                            val intent = Intent(
-                                Intent.ACTION_VIEW,
-                                Uri.parse("https://buymeacoffee.com/misterant92"),
-                            ).apply {
-                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            }
-                            context.startActivity(intent)
-                        } catch (e: Exception) {
-                            Toast.makeText(
-                                context,
-                                context.getString(R.string.error_opening_link),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }
-                    .padding(horizontal = 16.dp, vertical = 14.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(36.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFFFFDD00)),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Coffee,
-                        contentDescription = null,
-                        tint = Color(0xFF000000),
-                        modifier = Modifier.size(20.dp),
-                    )
-                }
-                Spacer(modifier = Modifier.width(14.dp))
-                Column(modifier = Modifier.weight(1f)) {
-                    AppText(
-                        text = stringResource(R.string.settings_donate_bmc_title),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                    AppText(
-                        text = stringResource(R.string.settings_donate_bmc_subtitle),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
-    }
-}
-
 // ── Previews ──
 
 @Preview(showBackground = true, name = "SettingsScreen - Light")
@@ -763,25 +587,5 @@ private fun LanguageSelectionDialogPreview() {
             onLanguageSelected = {},
             onDismiss = {},
         )
-    }
-}
-
-@Preview(showBackground = true, name = "DonationCard - Light")
-@Composable
-private fun DonationCardLightPreview() {
-    AntCashManagerTheme(dynamicColor = false) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            DonationCard(context = LocalContext.current)
-        }
-    }
-}
-
-@Preview(showBackground = true, name = "DonationCard - Dark")
-@Composable
-private fun DonationCardDarkPreview() {
-    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            DonationCard(context = LocalContext.current)
-        }
     }
 }

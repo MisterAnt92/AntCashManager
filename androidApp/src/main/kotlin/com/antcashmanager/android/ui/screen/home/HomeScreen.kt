@@ -565,6 +565,12 @@ class MockHomeSettingsRepository : SettingsRepository {
     override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {}
     override fun getShowQuickInsightsCard() = kotlinx.coroutines.flow.flowOf(false)
     override suspend fun setShowQuickInsightsCard(show: Boolean) {}
+
+    override fun getShowInitialAnimation(): kotlinx.coroutines.flow.Flow<Boolean> =
+        kotlinx.coroutines.flow.flowOf(true)
+
+    override suspend fun setShowInitialAnimation(show: Boolean) {}
+
     override fun getTransactionDisplayType() =
         kotlinx.coroutines.flow.flowOf(TransactionDisplayType.TREND)
 

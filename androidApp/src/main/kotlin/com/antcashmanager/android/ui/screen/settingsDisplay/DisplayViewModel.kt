@@ -127,6 +127,13 @@ class DisplayViewModel(
                 DisplayConstant.DEFAULT_TRANSACTION_DISPLAY_TYPE,
             )
 
+    val showInitialAnimation = settingsRepository.getShowInitialAnimation()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            true,
+        )
+
     /**
      * Aggiorna il simbolo valuta.
      */
@@ -241,6 +248,11 @@ class DisplayViewModel(
             logMsg = "Setting transactions transaction display type: $displayType",
             action = { settingsRepository.setTransactionsTransactionDisplayType(displayType) },
         )
+
+    fun setShowInitialAnimation(show: Boolean) = updatePreference(
+        logMsg = "Setting show initial animation: $show",
+        action = { settingsRepository.setShowInitialAnimation(show) },
+    )
 
     /**
      * Ripristina tutte le preferenze ai valori di default.

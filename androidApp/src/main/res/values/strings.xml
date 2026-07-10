@@ -34,7 +34,7 @@
     <string name="home_move_up">Move up</string>
     <string name="home_move_down">Move down</string>
     <string name="home_balance_positive">📈 Positive</string>
-    <string name="home_transaction_item_subtitle">%1$s • %2$s</string>
+    <string name="home_transaction_item_subtitle" translatable="false">%1$s • %2$s</string>
 
     <!-- Transactions Screen -->
     <string name="transactions_add">Add Transaction</string>
@@ -54,7 +54,7 @@
     <string name="transactions_filter_type">Transaction Type</string>
     <string name="transactions_filter_payment">Payment Type</string>
     <string name="transactions_filter_category">Category</string>
-    <string name="transactions_search_query_preview">\"%s\"</string>
+    <string name="transactions_search_query_preview" translatable="false">\"%s\"</string>
     <string name="transactions_results_count">Results: %1$d</string>
     <string name="common_all">All</string>
     <string name="common_clear">Clear</string>
@@ -178,11 +178,6 @@
     <string name="settings_send_feedback_subtitle">Help us improve the app</string>
     <string name="settings_privacy_policy">Privacy Policy</string>
     <string name="settings_privacy_policy_subtitle">How we handle your data</string>
-    <string name="settings_buy_coffee">Buy me a coffee ☕</string>
-    <string name="settings_buy_coffee_subtitle">Support the development with a small donation</string>
-    <string name="settings_donate_paypal_subtitle">Donate via PayPal</string>
-    <string name="settings_donate_bmc_subtitle">Donate on buymeacoffee.com</string>
-    <string name="settings_about">About</string>
     <string name="settings_app_version">App Version</string>
     <string name="settings_third_party">Third-party</string>
     <string name="settings_third_party_author">by %s</string>
@@ -316,15 +311,17 @@
     <string name="empty_state_no_transactions_subtitle">The piggy bank is waiting for you!</string>
 
     <!-- Payment Breakdown -->
-    <string name="settings_show_payment_breakdown">Show balance by payment type</string>
-    <string name="settings_show_payment_breakdown_desc">Display balance breakdown by payment method on the Home screen</string>
-    <string name="settings_show_quick_insights_card">Show quick insights card</string>
-    <string name="settings_show_quick_insights_card_desc">Display quick insights card on the Home screen</string>
     <string name="payment_breakdown_label">Balance by Payment Type</string>
     <string name="payment_breakdown_item_desc">Balance with %1$s: %2$.2f</string>
+    <string name="settings_show_payment_breakdown">Show balance by payment type</string>
+    <string name="settings_show_payment_breakdown_desc">Display balance breakdown by payment method on the Home screen</string>
+    <string name="settings_show_quick_insights_card">Show Quick Insights card</string>
+    <string name="settings_show_quick_insights_card_desc">Display a summary card with quick insights on the Home screen</string>
+    <string name="settings_show_initial_animation">Show initial animation</string>
+    <string name="settings_show_initial_animation_desc">Display a brief animation when the app starts</string>
 
-    <!-- Transaction Display Type -->
-    <string name="settings_transaction_display">Transaction Icon Display</string>
+    <!-- Transaction Display -->
+    <string name="settings_transaction_display">Transaction list display</string>
     <string name="settings_transaction_display_trend">Trend Arrows</string>
     <string name="settings_transaction_display_category">Category</string>
     <string name="settings_transaction_display_none">None</string>
@@ -335,7 +332,7 @@
     <string name="feedback_email_body_italian">Ciao team di AntCashManager,\n\nVorrei condividere alcuni feedback sull\'app:\n\n[Per favore descrivi il tuo feedback qui]\n\nGrazie!</string>
     <string name="feedback_email_body_french">Bonjour à l\'équipe d\'AntCashManager,\n\nJ\'aimerais partager des commentaires sur l\'application:\n\n[Veuillez décrire vos commentaires ici]\n\nMerci!</string>
     <string name="feedback_email_body_german">Hallo AntCashManager-Team,\n\nIch möchte gerne Feedback zur App geben:\n\n[Bitte beschreiben Sie Ihr Feedback hier]\n\nDanke!</string>
-    <string name="feedback_email_body_spanish">Hola equipo de AntCashManager,\n\nMe gustaría compartir comentarios sobre la aplicación:\n\n[Por favor describe tu retroalimentación aquí]\n\n¡Gracias!</string>
+    <string name="feedback_email_body_spanish">Hola equipo de AntCashManager,\n\nMe gustaría compartir comentarios sobre la aplicación:\n\n[Por favor describe tu retroalimentación aquí]\n\n¡Grazie!</string>
 
     <!-- Feedback Error Messages -->
     <string name="no_email_app_installed">No email app installed</string>
@@ -382,6 +379,8 @@
     <string name="tutorial_skip">Skip</string>
     <string name="tutorial_finish">Got it!</string>
     <string name="tutorial_progress_cd">Tutorial step %1$d of %2$d</string>
+
+    <string name="settings_about">Settings</string>
 
     <!-- Category Translations (Keys) -->
     <string name="category_uncategorized">Uncategorized</string>
@@ -474,6 +473,10 @@
     <string name="preview_app_text_all_caps">this text is in all caps</string>
     <string name="home_balance_negative">📉 Negative</string>
     <string name="transactions_title">Transactions</string>
-    <string name="settings_donate_paypal_title">PayPal</string>
-    <string name="settings_donate_bmc_title">Buy Me a Coffee</string>
+
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_close">Close</string>
+    <string name="settings_title">Settings</string>
+    <string name="charts_title">Graphics</string>
+
 </resources>

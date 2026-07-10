@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Common Actions/Labels -->
+    <string name="common_dashboard">Dashboard</string>
+    <string name="common_home">Start</string>
+    <string name="common_charts">Diagramme</string>
+    <string name="common_transactions">Transaktionen</string>
+    <string name="common_categories">Kategorien</string>
+    <string name="common_settings">Einstellungen</string>
+    <string name="common_income">Einnahmen</string>
+    <string name="common_expenses">Ausgaben</string>
+    <string name="common_back">Zurück</string>
+    <string name="common_add">Hinzufügen</string>
+
     <!-- HelpDialog (Dashboard) -->
     <string name="help_dashboard_desc">Zeigt den Gesamtsaldo, Einnahmen und Ausgaben für den ausgewählten Zeitraum an.</string>
     <string name="app_name">AntCashManager</string>
@@ -36,6 +48,10 @@
     <string name="transactions_search_label">Transaktionen durchsuchen</string>
     <string name="transactions_search_placeholder">Name oder Betrag…</string>
     <string name="transactions_advanced_filters">Erweiterte Filter</string>
+    <string name="transactions_filter_type">Transaktionstyp</string>
+    <string name="transactions_filter_payment">Zahlungsart</string>
+    <string name="transactions_filter_category">Kategorie</string>
+    <string name="transactions_search_query_preview">\"%s\"</string>
     <string name="transactions_results_count">Ergebnisse: %1$d</string>
     <string name="common_all">Alle</string>
     <string name="common_clear">Löschen</string>
@@ -151,10 +167,6 @@
     <string name="settings_send_feedback_subtitle">Hilf uns die App zu verbessern</string>
     <string name="settings_privacy_policy">Datenschutzrichtlinie</string>
     <string name="settings_privacy_policy_subtitle">Wie wir mit deinen Daten umgehen</string>
-    <string name="settings_buy_coffee">Kauf mir einen Kaffee ☕</string>
-     <string name="settings_buy_coffee_subtitle">Unterstütze die Entwicklung mit einer kleinen Spende</string>
-     <string name="settings_donate_paypal_subtitle">Spenden über PayPal</string>
-     <string name="settings_donate_bmc_subtitle">Spenden auf buymeacoffee.com</string>
     <string name="settings_about">Über</string>
     <string name="settings_app_version">App-Version</string>
     <string name="settings_third_party">Drittanbieter</string>
@@ -237,6 +249,8 @@
     <string name="add_transaction_type">Typ</string>
     <string name="add_transaction_tags_label">Tags</string>
     <string name="add_transaction_tags_placeholder">Tags durch Kommas getrennt hinzufügen</string>
+    <string name="add_transaction_tags_suggestions">Vorschläge:</string>
+    <string name="add_transaction_delete_confirm_msg">Möchten Sie diese Transaktion wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.</string>
     <string name="add_transaction_recurring_label">Wiederkehrende Transaktion</string>
 
     <!-- Recurrence intervals -->
@@ -280,15 +294,17 @@
     <string name="empty_state_no_transactions_subtitle">Das Sparschwein wartet auf dich!</string>
 
     <!-- Payment Breakdown -->
-    <string name="settings_show_payment_breakdown">Saldo nach Zahlungsart anzeigen</string>
-    <string name="settings_show_payment_breakdown_desc">Saldo-Aufschlüsselung nach Zahlungsmethode auf dem Startbildschirm anzeigen</string>
-    <string name="settings_show_quick_insights_card">Schnelle-Einblicke-Karte anzeigen</string>
-    <string name="settings_show_quick_insights_card_desc">Schnelle-Einblicke-Karte auf dem Startbildschirm anzeigen</string>
     <string name="payment_breakdown_label">Saldo nach Zahlungsart</string>
     <string name="payment_breakdown_item_desc">Saldo mit %1$s: %2$.2f</string>
+    <string name="settings_show_payment_breakdown">Saldo nach Zahlungsart anzeigen</string>
+    <string name="settings_show_payment_breakdown_desc">Saldo-Aufschlüsselung nach Zahlungsmethode auf dem Startbildschirm anzeigen</string>
+    <string name="settings_show_quick_insights_card">Karte „Schnelle Einblicke“ anzeigen</string>
+    <string name="settings_show_quick_insights_card_desc">Zeigen Sie eine Zusammenfassung mit schnellen Einblicken auf dem Startbildschirm an</string>
+    <string name="settings_show_initial_animation">Anfängliche Animation anzeigen</string>
+    <string name="settings_show_initial_animation_desc">Zeigt eine kurze Animation beim Start der App an</string>
 
-    <!-- Transaction Display Type -->
-    <string name="settings_transaction_display">Anzeige der Transaktionssymbole</string>
+    <!-- Transaction Display -->
+    <string name="settings_transaction_display">Transaktionslistenanzeige</string>
     <string name="settings_transaction_display_trend">Trend</string>
     <string name="settings_transaction_display_category">Kategorie</string>
     <string name="settings_transaction_display_none">Keine</string>
@@ -303,6 +319,8 @@
 
     <!-- Feedback Error Messages -->
     <string name="no_email_app_installed">Keine E-Mail-App verfügbar</string>
+    <string name="error_opening_link">Link konnte nicht geöffnet werden. Bitte überprüfen Sie Ihre Apps.</string>
+    <string name="settings_easter_egg_message">🐜 Hi! Danke, dass Sie AntCash verwenden!</string>
 
     <!-- Transaction Display Section -->
     <string name="settings_display_charts">Diagramme</string>
@@ -432,7 +450,10 @@
      <string name="tutorial_progress_cd">Tutorial-Schritt %1$d von %2$d</string>
      <string name="home_balance_negative">📉 Negativ</string>
      <string name="transactions_title">Transaktionen</string>
-     <string name="settings_donate_paypal_title">PayPal</string>
-     <string name="settings_donate_bmc_title">Buy Me a Coffee</string>
-
+     <string name="common_close">Schließen</string>
+     <string name="common_click_here">Hier klicken</string>
+     <string name="preview_app_text_title">Beispieltitel</string>
+     <string name="preview_app_text_dark">Dunkler Titel</string>
+     <string name="preview_app_text_clickable">Anklickbarer Text</string>
+     <string name="preview_app_text_all_caps">dieser text ist in großbuchstaben</string>
 </resources>

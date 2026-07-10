@@ -504,6 +504,8 @@ private class FakeSettingsRepository : SettingsRepository {
         flowOf(com.antcashmanager.domain.model.TransactionDisplayType.TREND)
 
     override suspend fun setTransactionsTransactionDisplayType(displayType: com.antcashmanager.domain.model.TransactionDisplayType) = Unit
+    override fun getShowInitialAnimation() = flowOf(true)
+    override suspend fun setShowInitialAnimation(show: Boolean) = Unit
     override fun getIsTutorialCompleted() = flowOf(true)
     override suspend fun setIsTutorialCompleted(completed: Boolean) = Unit
     override fun getDataEncryptionEnabled() = flowOf(false)
