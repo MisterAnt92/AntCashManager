@@ -22,10 +22,9 @@ import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.Payment
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.TipsAndUpdates
 import androidx.compose.material.icons.filled.TextFields
+import androidx.compose.material.icons.filled.TipsAndUpdates
 import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -49,9 +48,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AppSwitch
-import com.antcashmanager.android.ui.components.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
+import com.antcashmanager.android.ui.components.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.settings.view.CurrencySymbolDialog
 import com.antcashmanager.android.ui.screen.settings.view.DateFormatDialog
@@ -62,10 +61,10 @@ import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.formatAmount
 import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.model.TransactionDisplayType
+import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import org.koin.androidx.compose.koinViewModel
 
 /**
  * Screen wrapper per la schermata "Visualizzazione".

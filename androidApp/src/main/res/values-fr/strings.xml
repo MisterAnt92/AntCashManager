@@ -17,7 +17,6 @@
     <string name="home_move_up">Monter</string>
     <string name="home_move_down">Descendre</string>
     <string name="home_balance_positive">📈 Positif</string>
-    <string name="home_transaction_item_subtitle">%1$s • %2$s</string>
     <string name="transactions_add">Ajouter une transaction</string>
     <string name="transactions_type_income">Revenu</string>
     <string name="transactions_type_expense">D\u00e9pense</string>
@@ -62,7 +61,6 @@
     <string name="charts_expense_by_category">D\u00e9penses par cat\u00e9gorie</string>
     <string name="charts_monthly_overview">Aper\u00e7u mensuel</string>
     <string name="charts_yearly_overview">Aperçu annuel</string>
-    <string name="charts_legend_item_subtitle">%1$s • %2$s</string>
     <string name="charts_no_data">Aucune donnée pour la période sélectionnée</string>
     <string name="charts_pick_start_date">Choisir la date de d\u00e9but</string>
     <string name="charts_pick_end_date">Choisir la date de fin</string>
@@ -240,7 +238,6 @@
     <string name="transaction_details_payee">Bénéficiaire</string>
     <string name="transaction_details_location">Lieu</string>
     <string name="transaction_details_recurrence">Récurrence</string>
-    <string name="transaction_details_tags">Étiquettes</string>
     <string name="transaction_details_share">Partager la transaction</string>
     <string name="transaction_details_close">Fermer</string>
     <string name="payment_type_electronic">Paiement Électronique</string>
@@ -399,7 +396,6 @@
     <string name="add_transaction_tags_suggestions">Suggestions :</string>
     <string name="add_transaction_delete_confirm_msg">Êtes-vous sûr de vouloir supprimer cette transaction ? Cette action ne peut pas être annulée.</string>
     <string name="categories_selection_hint">Appuyez sur une catégorie pour la sélectionner (avancement automatique dans l\'application réelle)</string>
-    <string name="transactions_search_query_preview">"%s"</string>
     <string name="settings_third_party_author">par %s</string>
     <string name="error_opening_link">Impossible d\'ouvrir le lien. Veuillez vérifier vos applications.</string>
     <string name="settings_easter_egg_message">🐜 Salut ! Merci d\'utiliser AntCash !</string>

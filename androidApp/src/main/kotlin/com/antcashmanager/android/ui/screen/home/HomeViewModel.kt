@@ -131,12 +131,28 @@ class HomeViewModel(
         .debounce(searchDebounceMs)
 
     // ── Filtered Transactions Flow ──
+    // Per i preset relativi (non-custom), "from" e "to" vengono ricalcolati dinamicamente
+    // ogni volta che il combine viene rieseguito (es. quando Room emette dopo un insert).
+    // Questo garantisce che le transazioni appena inserite siano immediatamente visibili
+    // senza bisogno di aggiornare manualmente il filtro.
     private val filteredTransactionsFlow = combine(
         transactionsFlow,
         debouncedSearchQuery,
         _filterState.map { it.dateRangeFrom }.distinctUntilChanged(),
         _filterState.map { it.dateRangeTo }.distinctUntilChanged(),
-    ) { transactions, query, from, to ->
+    ) { transactions, query, storedFrom, storedTo ->
+        // Per i preset relativi, ricalcola i bound dinamicamente al momento dell'esecuzione.
+        val presetIndex = _filterState.value.selectedPresetIndex
+        val from = if (presetIndex != SavedDateFilter.CUSTOM_PRESET_INDEX) {
+            HomeState.getDateFromForPreset(presetIndex)
+        } else {
+            storedFrom
+        }
+        val to = if (presetIndex != SavedDateFilter.CUSTOM_PRESET_INDEX) {
+            System.currentTimeMillis()
+        } else {
+            storedTo
+        }
         val filterParams = TransactionFilterParams(
             searchQuery = query,
             dateFrom = from,
@@ -287,11 +303,21 @@ class HomeViewModel(
                 .map { result: Result<SavedDateFilter> -> result.getOrNull() }
                 .filterNotNull()
                 .collect { savedFilter: SavedDateFilter ->
+                    // Per i preset relativi (non-custom) ricalcola sempre i bound in modo
+                    // dinamico: "to" deve essere "adesso" per includere le transazioni appena
+                    // inserite, "from" deve retrocedere dal momento corrente.
+                    // Per il range personalizzato si rispettano le date fisse salvate.
+                    val (from, to) = if (savedFilter.isCustom) {
+                        savedFilter.from to savedFilter.to
+                    } else {
+                        HomeState.getDateFromForPreset(savedFilter.presetIndex) to
+                                System.currentTimeMillis()
+                    }
                     _filterState.update {
                         it.copy(
                             selectedPresetIndex = savedFilter.presetIndex,
-                            dateRangeFrom = savedFilter.from,
-                            dateRangeTo = savedFilter.to,
+                            dateRangeFrom = from,
+                            dateRangeTo = to,
                         )
                     }
                 }

@@ -16,8 +16,8 @@ import com.antcashmanager.android.ui.screen.transactionAdd.view.CategorySelectio
 import com.antcashmanager.android.ui.screen.transactionAdd.view.DetailsStep
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.TransactionType
-import org.koin.compose.koinInject
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
 
 // ══════════════════════════════════════════════════════════════════════════════

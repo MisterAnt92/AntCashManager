@@ -15,8 +15,8 @@ import com.antcashmanager.android.navigation.AntCashManagerNavHost
 import com.antcashmanager.android.ui.theme.AppThemeProvider
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.usecase.settings.GetLanguageUseCase
-import java.util.Locale
 import org.koin.android.ext.android.inject
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
 

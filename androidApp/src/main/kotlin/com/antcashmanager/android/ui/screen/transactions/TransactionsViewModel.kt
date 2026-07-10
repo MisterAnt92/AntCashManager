@@ -7,17 +7,17 @@ package com.antcashmanager.android.ui.screen.transactions
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
-import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.android.util.withCorrectAmounts
 import com.antcashmanager.domain.model.PaymentType
+import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
+import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.settings.GetTransactionsDateFilterStateUseCase
 import com.antcashmanager.domain.usecase.settings.SetTransactionsDateFilterStateUseCase
-import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.transaction.DeleteTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.FilterTransactionsUseCase
 import com.antcashmanager.domain.usecase.transaction.GetTransactionSuggestionsUseCase
@@ -146,6 +146,10 @@ class TransactionsViewModel(
         .distinctUntilChanged()
 
     // ── Filtered Transactions Flow (updates immediately on search and filter changes) ──
+    // Per i preset relativi (non-custom), "from" e "to" vengono ricalcolati dinamicamente
+    // ogni volta che il combine viene rieseguito (es. quando Room emette dopo un insert).
+    // Questo garantisce che le transazioni appena inserite siano immediatamente visibili
+    // senza bisogno di aggiornare manualmente il filtro.
     private val filteredTransactionsFlow = combine(
         transactionsFlow,
         searchQueryFlow,
@@ -160,8 +164,23 @@ class TransactionsViewModel(
         val category = args[2] as String?
         val type = args[3] as TransactionType?
         val payment = args[4] as PaymentType?
-        val from = args[5] as Long
-        val to = args[6] as Long
+        val storedFrom = args[5] as Long
+        val storedTo = args[6] as Long
+
+        // Per i preset relativi, ricalcola i bound dinamicamente al momento dell'esecuzione.
+        // Il combine si riesegue ogni volta che transactionsFlow emette (Room insert/update),
+        // garantendo che System.currentTimeMillis() catturi sempre il momento attuale.
+        val presetIndex = _filterState.value.selectedPresetIndex
+        val from = if (presetIndex != SavedDateFilter.CUSTOM_PRESET_INDEX) {
+            TransactionsState.getDateFromForPreset(presetIndex)
+        } else {
+            storedFrom
+        }
+        val to = if (presetIndex != SavedDateFilter.CUSTOM_PRESET_INDEX) {
+            System.currentTimeMillis()
+        } else {
+            storedTo
+        }
 
         val filterParams = TransactionFilterParams(
             searchQuery = query,
@@ -303,11 +322,21 @@ class TransactionsViewModel(
                 .map { result: Result<SavedDateFilter> -> result.getOrNull() }
                 .filterNotNull()
                 .collect { savedFilter: SavedDateFilter ->
+                    // Per i preset relativi (non-custom) ricalcola sempre i bound in modo
+                    // dinamico: "to" deve essere "adesso" per includere le transazioni appena
+                    // inserite, "from" deve retrocedere dal momento corrente.
+                    // Per il range personalizzato si rispettano le date fisse salvate.
+                    val (from, to) = if (savedFilter.isCustom) {
+                        savedFilter.from to savedFilter.to
+                    } else {
+                        TransactionsState.getDateFromForPreset(savedFilter.presetIndex) to
+                                System.currentTimeMillis()
+                    }
                     _filterState.update {
                         it.copy(
                             selectedPresetIndex = savedFilter.presetIndex,
-                            dateRangeFrom = savedFilter.from,
-                            dateRangeTo = savedFilter.to,
+                            dateRangeFrom = from,
+                            dateRangeTo = to,
                         )
                     }
                 }

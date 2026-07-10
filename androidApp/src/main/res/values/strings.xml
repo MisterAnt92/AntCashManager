@@ -34,7 +34,6 @@
     <string name="home_move_up">Move up</string>
     <string name="home_move_down">Move down</string>
     <string name="home_balance_positive">📈 Positive</string>
-    <string name="home_transaction_item_subtitle" translatable="false">%1$s • %2$s</string>
 
     <!-- Transactions Screen -->
     <string name="transactions_add">Add Transaction</string>
@@ -54,7 +53,7 @@
     <string name="transactions_filter_type">Transaction Type</string>
     <string name="transactions_filter_payment">Payment Type</string>
     <string name="transactions_filter_category">Category</string>
-    <string name="transactions_search_query_preview" translatable="false">\"%s\"</string>
+
     <string name="transactions_results_count">Results: %1$d</string>
     <string name="common_all">All</string>
     <string name="common_clear">Clear</string>
@@ -87,7 +86,6 @@
     <string name="charts_expense_by_category">Expenses by Category</string>
     <string name="charts_monthly_overview">Monthly Overview</string>
     <string name="charts_yearly_overview">Yearly Overview</string>
-    <string name="charts_legend_item_subtitle">%1$s • %2$s</string>
     <string name="charts_no_data">No data for the selected period</string>
     <string name="charts_pick_start_date">Pick start date</string>
     <string name="charts_pick_end_date">Pick end date</string>
@@ -288,7 +286,6 @@
     <string name="transaction_details_payee">Payee</string>
     <string name="transaction_details_location">Location</string>
     <string name="transaction_details_recurrence">Recurrence</string>
-    <string name="transaction_details_tags">Tags</string>
     <string name="transaction_details_share">Share transaction</string>
     <string name="transaction_details_close">Close</string>
 

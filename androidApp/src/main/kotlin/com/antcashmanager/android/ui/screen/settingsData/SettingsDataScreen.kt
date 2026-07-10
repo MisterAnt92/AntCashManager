@@ -45,9 +45,9 @@ import androidx.navigation.NavController
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.AppSwitch
-import com.antcashmanager.android.ui.components.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
+import com.antcashmanager.android.ui.components.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import org.koin.androidx.compose.koinViewModel

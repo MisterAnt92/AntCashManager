@@ -45,7 +45,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
@@ -63,7 +62,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
@@ -74,11 +72,11 @@ import com.antcashmanager.android.ui.components.DateRangeFilter
 import com.antcashmanager.android.ui.components.HelpButton
 import com.antcashmanager.android.ui.components.ScreenHeader
 import com.antcashmanager.android.ui.components.SearchComponent
-import com.antcashmanager.android.ui.components.rememberAdaptiveLayoutInfo
-import com.antcashmanager.android.ui.components.dialog.AppHelpDialog
-import com.antcashmanager.android.ui.components.dialog.HelpDialogFeatureSpec
 import com.antcashmanager.android.ui.components.SkeletonLoader
 import com.antcashmanager.android.ui.components.button.AppButton
+import com.antcashmanager.android.ui.components.dialog.AppHelpDialog
+import com.antcashmanager.android.ui.components.dialog.HelpDialogFeatureSpec
+import com.antcashmanager.android.ui.components.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.text.TransactionAmountText
 import com.antcashmanager.android.ui.screen.categories.categoryIconMap
@@ -95,10 +93,10 @@ import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 import java.text.SimpleDateFormat
 import java.util.Date
-import org.koin.compose.koinInject
-import org.koin.androidx.compose.koinViewModel
 import java.util.Locale
 
 // ══════════════════════════════════════════════════════════════════════════════

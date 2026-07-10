@@ -622,6 +622,40 @@ class HomeViewModelTest : BaseUnitTest() {
         collectJob.cancel()
     }
 
+    @Test
+    fun init_shouldUseDynamicDateRangeTo_whenRestoringNonCustomPreset() = runViewModelTest {
+        // Simula un filtro salvato con preset non-custom e un "to" stantio (passato di 1 ora)
+        val staleStoredTo = System.currentTimeMillis() - (60L * 60 * 1000)
+        val staleStoredFrom = staleStoredTo - (7L * 24 * 60 * 60 * 1000)
+        fakeSettingsRepository.homeDateFilterState.value = SavedDateFilter(
+            presetIndex = 1, // "Last 7 days" preset, non-custom
+            from = staleStoredFrom,
+            to = staleStoredTo,
+        )
+
+        val restoredViewModel = HomeViewModel(
+            transactionRepository = fakeRepo,
+            settingsRepository = fakeSettingsRepository,
+            categoryRepository = fakeCategoryRepo,
+            dispatcher = testDispatcher,
+            searchDebounceMs = 0L,
+        )
+
+        val collectJob = launch {
+            restoredViewModel.state.collect {}
+        }
+        advanceUntilIdle()
+
+        // dateRangeTo deve essere >= staleStoredTo (cioè ricalcolato dinamicamente come "adesso")
+        assertTrue(
+            "dateRangeTo deve essere > staleStoredTo per i preset non-custom",
+            restoredViewModel.state.value.dateRangeTo > staleStoredTo,
+        )
+        // Il presetIndex deve essere mantenuto correttamente
+        assertEquals(1, restoredViewModel.state.value.selectedPresetIndex)
+        collectJob.cancel()
+    }
+
     private class FakeTransactionRepository : TransactionRepository {
         val transactions = MutableStateFlow<List<Transaction>>(emptyList())
 

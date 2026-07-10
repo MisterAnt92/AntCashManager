@@ -237,7 +237,6 @@
     <string name="transaction_details_payee">Beneficiario</string>
     <string name="transaction_details_location">Ubicación</string>
     <string name="transaction_details_recurrence">Recurrencia</string>
-    <string name="transaction_details_tags">Etiquetas</string>
     <string name="transaction_details_share">Compartir Transacción</string>
     <string name="transaction_details_close">Cerrar</string>
     <string name="payment_type_electronic">Pago Electrónico</string>
@@ -396,11 +395,10 @@
     <string name="add_transaction_tags_suggestions">Sugerencias:</string>
     <string name="add_transaction_delete_confirm_msg">¿Estás seguro de que quieres eliminar esta transacción? Esta acción no se puede deshacer.</string>
     <string name="categories_selection_hint">Toca una categoría para seleccionarla (avance automático en la aplicación real)</string>
-    <string name="charts_legend_item_subtitle">%1$s • %2$s</string>
-    <string name="transactions_search_query_preview">"%s"</string>
     <string name="settings_third_party_author">por %s</string>
     <string name="error_opening_link">No se pudo abrir el enlace. Por favor, compruebe sus aplicaciones.</string>
     <string name="settings_easter_egg_message">🐜 ¡Hola! ¡Gracias por usar AntCash!</string>
-    <string name="home_transaction_item_subtitle">%1$s • %2$s</string>
+    <string name="settings_title">Settings</string>
+    <string name="settings_project_by">Un proyecto hecho con amor por Formica Simone @MisterAnt92</string>
 </resources>
 

@@ -67,7 +67,6 @@
     <string name="home_move_up">Sposta su</string>
     <string name="home_move_down">Sposta giu</string>
     <string name="home_balance_positive">📈 Positivo</string>
-    <string name="home_transaction_item_subtitle">%1$s • %2$s</string>
     <string name="transactions_add">Aggiungi Transazione</string>
     <string name="transactions_type_income">Entrata</string>
     <string name="transactions_type_expense">Uscita</string>
@@ -285,7 +284,6 @@
     <string name="transaction_details_payee">Beneficiario</string>
     <string name="transaction_details_location">Luogo</string>
     <string name="transaction_details_recurrence">Ricorrenza</string>
-    <string name="transaction_details_tags">Tag</string>
     <string name="transaction_details_share">Condividi Transazione</string>
     <string name="transaction_details_close">Chiudi</string>
     <string name="payment_type_electronic">Pagamento Elettronico</string>
@@ -386,7 +384,7 @@
     <string name="receipt_scan_select_payment_type">Seleziona Tipo Pagamento</string>
     <string name="home_balance_negative">📉 Negativo</string>
     <string name="transactions_title">Transazioni</string>
-    <string name="settings_easter_egg_message">🐜 Ehi! Grazie per usare AntCash!</string>
+    <string name="settings_easter_egg_message">🐜 Ehi! Grazie per usare AntCashManager app!</string>
     <string name="common_close">Chiudi</string>
     <string name="common_click_here">Clicca qui</string>
     <string name="preview_app_text_title">Titolo di esempio</string>
@@ -396,10 +394,10 @@
     <string name="add_transaction_tags_suggestions">Suggerimenti:</string>
     <string name="add_transaction_delete_confirm_msg">Sei sicuro di voler eliminare questa transazione? L\'azione non può essere annullata.</string>
     <string name="categories_selection_hint">Tocca una categoria per selezionarla (avanzamento automatico nell\'app reale)</string>
-    <string name="charts_legend_item_subtitle">%1$s • %2$s</string>
     <string name="settings_third_party_author">di %s</string>
-    <string name="transactions_search_query_preview">"%s"</string>
     <string name="settings_title">Impostazioni</string>
     <string name="charts_title">Grafici</string>
+    <string name="dialog_cancel">Annulla</string>
+    <string name="dialog_close">Chiudi</string>
     <string name="settings_project_by">Un progetto fatto con amore da Formica Simone @MisterAnt92</string>
 </resources>

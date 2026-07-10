@@ -334,6 +334,87 @@ class TransactionsViewModelTest : BaseUnitTest() {
         assertEquals(to, restoredViewModel.state.value.dateRangeTo)
         collectJob.cancel()
     }
+
+    @Test
+    fun init_shouldUseDynamicDateRangeTo_whenRestoringNonCustomPreset() = runViewModelTest {
+        // Simula un filtro salvato con preset non-custom e un "to" stantio (passato di 1 ora)
+        val staleStoredTo = System.currentTimeMillis() - (60L * 60 * 1000)
+        val staleStoredFrom = staleStoredTo - (7L * 24 * 60 * 60 * 1000)
+        fakeSettingsRepository.transactionsDateFilterState.value = SavedDateFilter(
+            presetIndex = 1, // "Last 7 days" preset, non-custom
+            from = staleStoredFrom,
+            to = staleStoredTo,
+        )
+
+        val restoredViewModel = TransactionsViewModel(
+            transactionRepository = fakeTransactionRepo,
+            categoryRepository = fakeCategoryRepo,
+            settingsRepository = fakeSettingsRepository,
+            dispatcher = testDispatcher,
+        )
+
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            restoredViewModel.state.collect {}
+        }
+        advanceUntilIdle()
+
+        // dateRangeTo deve essere >= staleStoredTo (cioè ricalcolato dinamicamente come "adesso")
+        assertTrue(
+            "dateRangeTo deve essere > staleStoredTo per i preset non-custom",
+            restoredViewModel.state.value.dateRangeTo > staleStoredTo,
+        )
+        // Il presetIndex deve essere mantenuto correttamente
+        assertEquals(1, restoredViewModel.state.value.selectedPresetIndex)
+        collectJob.cancel()
+    }
+
+    @Test
+    fun addTransaction_shouldAppearInFilteredTransactions_whenTimestampIsAfterStoredFilterTo() =
+        runViewModelTest {
+            // Simula un "to" storato nel passato (1 ora fa) — questo è il bug originale:
+            // senza la fix, la transazione inserita "adesso" veniva esclusa dal filtro
+            // perché dateRangeTo era un timestamp fisso passato.
+            val staleStoredTo = System.currentTimeMillis() - (60L * 60 * 1000)
+            val staleStoredFrom = staleStoredTo - (7L * 24 * 60 * 60 * 1000)
+            fakeSettingsRepository.transactionsDateFilterState.value = SavedDateFilter(
+                presetIndex = 1, // "Last 7 days", non-custom
+                from = staleStoredFrom,
+                to = staleStoredTo,
+            )
+
+            // Crea un ViewModel che caricherà il filtro stantio dallo storage
+            val testViewModel = TransactionsViewModel(
+                transactionRepository = fakeTransactionRepo,
+                categoryRepository = fakeCategoryRepo,
+                settingsRepository = fakeSettingsRepository,
+                dispatcher = testDispatcher,
+            )
+
+            val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+                testViewModel.state.collect {}
+            }
+            advanceUntilIdle()
+
+            // Inserisce una transazione con timestamp = adesso (> staleStoredTo)
+            val transactionTimestamp = System.currentTimeMillis()
+            testViewModel.addTransaction(
+                title = "Caffè",
+                amount = 2.0,
+                category = "Food",
+                type = TransactionType.EXPENSE,
+                timestamp = transactionTimestamp,
+            )
+            advanceUntilIdle()
+
+            // La transazione deve comparire subito in filteredTransactions senza necessità di refresh
+            assertEquals(
+                "La transazione deve comparire subito in filteredTransactions",
+                1,
+                testViewModel.state.value.filteredTransactions.size,
+            )
+            assertEquals("Caffè", testViewModel.state.value.filteredTransactions.first().title)
+            collectJob.cancel()
+        }
 }
 
 // ── Fake Repositories ──
