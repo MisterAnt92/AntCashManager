@@ -182,6 +182,14 @@ private class FakeSettingsRepository : SettingsRepository {
         thousandsSeparatorFlow.value = separator
     }
 
+    override fun getMealVoucherValue(): Flow<Double> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun setMealVoucherValue(value: Double) {
+        TODO("Not yet implemented")
+    }
+
     private val dateFormatFlow = MutableStateFlow("dd/MM/yyyy")
     private val showPaymentTypeBreakdownFlow = MutableStateFlow(true)
     private val transactionDisplayTypeFlow = MutableStateFlow(TransactionDisplayType.TREND)

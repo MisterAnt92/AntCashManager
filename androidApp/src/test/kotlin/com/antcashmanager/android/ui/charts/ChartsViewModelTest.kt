@@ -255,6 +255,14 @@ private class FakeSettingsRepository : SettingsRepository {
     override suspend fun setDecimalSeparator(separator: String) = Unit
     override fun getThousandsSeparator() = flowOf("")
     override suspend fun setThousandsSeparator(separator: String) = Unit
+    override fun getMealVoucherValue(): Flow<Double> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun setMealVoucherValue(value: Double) {
+        TODO("Not yet implemented")
+    }
+
     override fun getDateFormat() = flowOf("dd/MM/yyyy")
     override suspend fun setDateFormat(pattern: String) = Unit
     override fun getDateFilterExpanded() = flowOf(true)

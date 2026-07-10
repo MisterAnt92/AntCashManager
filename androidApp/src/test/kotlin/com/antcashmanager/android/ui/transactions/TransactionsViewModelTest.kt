@@ -1,8 +1,10 @@
 package com.antcashmanager.android.ui.transactions
 
 import com.antcashmanager.android.BaseUnitTest
+import com.antcashmanager.android.ui.screen.transactions.TransactionsEvent
 import com.antcashmanager.android.ui.screen.transactions.TransactionsViewModel
 import com.antcashmanager.domain.model.Category
+import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
@@ -19,6 +21,7 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -46,11 +49,13 @@ class TransactionsViewModelTest : BaseUnitTest() {
 
     @Test
     fun init_shouldHaveEmptyTransactionsList_whenViewModelIsInitialized() = runViewModelTest {
+        assertTrue(viewModel.state.value.isLoading) // Initial state check
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.state.collect {}
         }
         advanceUntilIdle()
 
+        assertFalse(viewModel.state.value.isLoading)
         assertTrue(viewModel.state.value.transactions.isEmpty())
         collectJob.cancel()
     }
@@ -217,7 +222,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
 
         // Ensure date range includes all data
         viewModel.onEvent(
-            com.antcashmanager.android.ui.screen.transactions.TransactionsEvent.SetDateRange(
+            TransactionsEvent.SetDateRange(
                 0L,
                 Long.MAX_VALUE,
             )
@@ -225,7 +230,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
         advanceUntilIdle()
 
         viewModel.onEvent(
-            com.antcashmanager.android.ui.screen.transactions.TransactionsEvent.UpdateSearchQuery("salary")
+            TransactionsEvent.UpdateSearchQuery("salary")
         )
         advanceUntilIdle()
 
@@ -264,7 +269,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
         advanceUntilIdle()
 
         viewModel.onEvent(
-            com.antcashmanager.android.ui.screen.transactions.TransactionsEvent.SetDateRange(
+            TransactionsEvent.SetDateRange(
                 0L,
                 Long.MAX_VALUE,
             )
@@ -272,7 +277,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
         advanceUntilIdle()
 
         viewModel.onEvent(
-            com.antcashmanager.android.ui.screen.transactions.TransactionsEvent.UpdateSearchQuery("85,5")
+            TransactionsEvent.UpdateSearchQuery("85,5")
         )
         advanceUntilIdle()
 
@@ -415,12 +420,253 @@ class TransactionsViewModelTest : BaseUnitTest() {
             assertEquals("Caffè", testViewModel.state.value.filteredTransactions.first().title)
             collectJob.cancel()
         }
+
+    @Test
+    fun onEvent_shouldUpdatePendingFilters_whenFilterEventsAreReceived() = runViewModelTest {
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect {}
+        }
+        advanceUntilIdle()
+
+        viewModel.onEvent(TransactionsEvent.UpdateCategoryFilter("Work"))
+        viewModel.onEvent(TransactionsEvent.UpdateTransactionTypeFilter(TransactionType.INCOME))
+        viewModel.onEvent(TransactionsEvent.UpdatePaymentTypeFilter(PaymentType.CASH))
+        advanceUntilIdle()
+
+        assertEquals("Work", viewModel.state.value.pendingCategory)
+        assertEquals(TransactionType.INCOME, viewModel.state.value.pendingTransactionType)
+        assertEquals(PaymentType.CASH, viewModel.state.value.pendingPaymentType)
+        // Check that active filters are still null
+        assertNull(viewModel.state.value.selectedCategory)
+        assertNull(viewModel.state.value.selectedTransactionType)
+        assertNull(viewModel.state.value.selectedPaymentType)
+
+        collectJob.cancel()
+    }
+
+    @Test
+    fun applyFilters_shouldMakePendingFiltersActive_whenCalled() = runViewModelTest {
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect {}
+        }
+        advanceUntilIdle()
+
+        viewModel.onEvent(TransactionsEvent.UpdateCategoryFilter("Work"))
+        viewModel.onEvent(TransactionsEvent.ApplyFilters)
+        advanceUntilIdle()
+
+        assertEquals("Work", viewModel.state.value.selectedCategory)
+        collectJob.cancel()
+    }
+
+    @Test
+    fun cancelFilterChanges_shouldResetPendingToActive_whenCalled() = runViewModelTest {
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect {}
+        }
+        advanceUntilIdle()
+
+        viewModel.onEvent(TransactionsEvent.UpdateCategoryFilter("Work"))
+        assertEquals("Work", viewModel.state.value.pendingCategory)
+
+        viewModel.onEvent(TransactionsEvent.CancelFilterChanges)
+        advanceUntilIdle()
+
+        assertNull(viewModel.state.value.pendingCategory)
+        collectJob.cancel()
+    }
+
+    @Test
+    fun clearAllFilters_shouldResetAllFilters_whenCalled() = runViewModelTest {
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect {}
+        }
+        advanceUntilIdle()
+
+        viewModel.onEvent(TransactionsEvent.UpdateCategoryFilter("Work"))
+        viewModel.onEvent(TransactionsEvent.ApplyFilters)
+        viewModel.onEvent(TransactionsEvent.UpdateSearchQuery("Salary"))
+        advanceUntilIdle()
+
+        assertEquals("Work", viewModel.state.value.selectedCategory)
+        assertEquals("Salary", viewModel.state.value.searchQuery)
+
+        viewModel.onEvent(TransactionsEvent.ClearAllFilters)
+        advanceUntilIdle()
+
+        assertNull(viewModel.state.value.selectedCategory)
+        assertEquals("", viewModel.state.value.searchQuery)
+        assertNull(viewModel.state.value.pendingCategory)
+        assertEquals("", viewModel.state.value.pendingSearchQuery)
+
+        collectJob.cancel()
+    }
+
+    @Test
+    fun toggleEvents_shouldUpdateExpansionState_whenReceived() = runViewModelTest {
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect {}
+        }
+        advanceUntilIdle()
+
+        assertFalse(viewModel.state.value.isSearchExpanded)
+        viewModel.onEvent(TransactionsEvent.ToggleSearchExpanded)
+        advanceUntilIdle()
+        assertTrue(viewModel.state.value.isSearchExpanded)
+
+        assertFalse(viewModel.state.value.isFiltersExpanded)
+        viewModel.onEvent(TransactionsEvent.ToggleFiltersExpanded)
+        advanceUntilIdle()
+        assertTrue(viewModel.state.value.isFiltersExpanded)
+
+        collectJob.cancel()
+    }
+
+    @Test
+    fun selectPreset_shouldUpdateDateRange_whenCalled() = runViewModelTest {
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect {}
+        }
+        advanceUntilIdle()
+
+        // Index 0 is "Today" usually (depends on implementation in TransactionsState, let's check)
+        // For now just check it changes from the default (index 1)
+        viewModel.onEvent(TransactionsEvent.SelectPreset(0))
+        advanceUntilIdle()
+
+        assertEquals(0, viewModel.state.value.selectedPresetIndex)
+        assertEquals(0, fakeSettingsRepository.transactionsDateFilterState.value.presetIndex)
+
+        collectJob.cancel()
+    }
+
+    @Test
+    fun setDateRange_shouldNormalizeDates_whenFromIsGreaterThanTo() = runViewModelTest {
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect {}
+        }
+        advanceUntilIdle()
+
+        val from = 2000L
+        val to = 1000L
+        viewModel.onEvent(TransactionsEvent.SetDateRange(from, to))
+        advanceUntilIdle()
+
+        assertEquals(1000L, viewModel.state.value.dateRangeFrom)
+        assertEquals(2000L, viewModel.state.value.dateRangeTo)
+
+        collectJob.cancel()
+    }
+
+    @Test
+    fun filteredTransactions_shouldEnrichWithCategoryData_whenCategoryExistsInRepo() = runViewModelTest {
+        val now = System.currentTimeMillis()
+        val category = Category(id = 1, name = "Food", icon = "restaurant", color = 0xFFFF0000)
+        fakeCategoryRepo.categories.value = listOf(category)
+
+        val transaction = Transaction(
+            id = 1,
+            title = "Lunch",
+            amount = 10.0,
+            category = "Food",
+            type = TransactionType.EXPENSE,
+            timestamp = now,
+            categoryIcon = "", // Missing data
+            categoryColor = 0xFF90A4AE // Default color
+        )
+        fakeTransactionRepo.transactions.value = listOf(transaction)
+
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect {}
+        }
+        advanceUntilIdle()
+
+        val enriched = viewModel.state.value.filteredTransactions.first()
+        assertEquals("restaurant", enriched.categoryIcon)
+        assertEquals(0xFFFF0000, enriched.categoryColor)
+
+        collectJob.cancel()
+    }
+
+    @Test
+    fun searchSuggestions_shouldProvideSuggestions_whenQueryIsNotEmpty() = runViewModelTest {
+        val now = System.currentTimeMillis()
+        fakeTransactionRepo.transactions.value = listOf(
+            Transaction(id = 1, title = "Groceries", amount = 10.0, category = "Food", type = TransactionType.EXPENSE, timestamp = now),
+            Transaction(id = 2, title = "Green Tea", amount = 5.0, category = "Food", type = TransactionType.EXPENSE, timestamp = now)
+        )
+
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect {}
+        }
+        advanceUntilIdle()
+
+        viewModel.onEvent(TransactionsEvent.UpdateSearchQuery("Gr"))
+        advanceUntilIdle()
+
+        val suggestions = viewModel.state.value.searchSuggestions
+        assertTrue(suggestions.contains("Groceries"))
+        assertTrue(suggestions.contains("Green Tea"))
+        assertFalse(suggestions.contains("Gr")) // Should not contain exact match
+
+        collectJob.cancel()
+    }
+
+    @Test
+    fun searchSuggestions_shouldBeEmpty_whenQueryIsBlank() = runViewModelTest {
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect {}
+        }
+        advanceUntilIdle()
+
+        viewModel.onEvent(TransactionsEvent.UpdateSearchQuery("   "))
+        advanceUntilIdle()
+
+        assertTrue(viewModel.state.value.searchSuggestions.isEmpty())
+        collectJob.cancel()
+    }
+
+    @Test
+    fun searchSuggestions_shouldLimitHistoryTo3AndCombineWithSuggestions() = runViewModelTest {
+        val now = System.currentTimeMillis()
+        // History: 4 matching titles
+        fakeTransactionRepo.transactions.value = listOf(
+            Transaction(id = 1, title = "Apple", amount = 1.0, category = "Food", type = TransactionType.EXPENSE, timestamp = now),
+            Transaction(id = 2, title = "Apricot", amount = 1.0, category = "Food", type = TransactionType.EXPENSE, timestamp = now),
+            Transaction(id = 3, title = "Application", amount = 1.0, category = "Tech", type = TransactionType.EXPENSE, timestamp = now),
+            Transaction(id = 4, title = "Apartment", amount = 1.0, category = "Rent", type = TransactionType.EXPENSE, timestamp = now),
+        )
+        // Suggestions: 2 matching titles (one duplicate with history)
+        fakeTransactionRepo.distinctTitles.value = listOf("Apple", "Appendix")
+
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect {}
+        }
+        advanceUntilIdle()
+
+        viewModel.onEvent(TransactionsEvent.UpdateSearchQuery("Ap"))
+        advanceUntilIdle()
+
+        val suggestions = viewModel.state.value.searchSuggestions
+        // Should have 3 from history + 1 from suggestions (Appendix) = 4 total
+        // "Apartment" is the 4th in history, so it should be skipped if history is limited to 3
+        assertEquals(4, suggestions.size)
+        assertTrue(suggestions.contains("Apple"))
+        assertTrue(suggestions.contains("Apricot"))
+        assertTrue(suggestions.contains("Application"))
+        assertTrue(suggestions.contains("Appendix"))
+        assertFalse(suggestions.contains("Apartment")) // Limited to 3 from history
+
+        collectJob.cancel()
+    }
 }
 
 // ── Fake Repositories ──
 
 private class FakeTransactionRepository : TransactionRepository {
     val transactions = MutableStateFlow<List<Transaction>>(emptyList())
+    @get:JvmName("mutableDistinctTitles")
+    val distinctTitles = MutableStateFlow<List<String>>(emptyList())
 
     override fun getAllTransactions(): Flow<List<Transaction>> = transactions
 
@@ -428,7 +674,7 @@ private class FakeTransactionRepository : TransactionRepository {
         transactions.value.find { it.id == id }
 
     override suspend fun insertTransaction(transaction: Transaction): Long {
-        transactions.value = transactions.value + transaction
+        transactions.value += transaction
         return transaction.id
     }
 
@@ -456,7 +702,7 @@ private class FakeTransactionRepository : TransactionRepository {
         // No-op for test
     }
 
-    override fun getDistinctTitles() = flowOf(emptyList<String>())
+    override fun getDistinctTitles() = distinctTitles
     override fun getDistinctPayees() = flowOf(emptyList<String>())
     override fun getDistinctNotes() = flowOf(emptyList<String>())
     override fun getDistinctLocations() = flowOf(emptyList<String>())
@@ -550,6 +796,14 @@ private class FakeSettingsRepository : SettingsRepository {
     override suspend fun setDecimalSeparator(separator: String) = Unit
     override fun getThousandsSeparator() = flowOf("")
     override suspend fun setThousandsSeparator(separator: String) = Unit
+    override fun getMealVoucherValue(): Flow<Double> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun setMealVoucherValue(value: Double) {
+        TODO("Not yet implemented")
+    }
+
     override fun getDateFormat() = flowOf("dd/MM/yyyy")
     override suspend fun setDateFormat(pattern: String) = Unit
     override fun getDateFilterExpanded() = flowOf(true)
