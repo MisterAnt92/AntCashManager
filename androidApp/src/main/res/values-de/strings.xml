@@ -126,6 +126,11 @@
     <string name="settings_decimal_digits_subtitle">%d Dezimalstellen</string>
     <string name="settings_decimal_separator">Dezimaltrennzeichen</string>
     <string name="settings_thousands_separator">Tausendertrennzeichen</string>
+    <string name="settings_meal_voucher_value">Essensgutschein-Wert</string>
+    <string name="settings_meal_voucher_value_subtitle">Aktueller Wert: %s</string>
+    <string name="dialog_meal_voucher_title">Essensgutschein-Wert festlegen</string>
+    <string name="dialog_meal_voucher_message">Geben Sie den festen Wert Ihres Essensgutscheins ein.</string>
+    <string name="dialog_meal_voucher_label">Gutscheinwert</string>
     <string name="settings_format_preview">Vorschau: %s</string>
     <string name="settings_separator_comma">Komma (,)</string>
     <string name="settings_separator_period">Punkt (.)</string>

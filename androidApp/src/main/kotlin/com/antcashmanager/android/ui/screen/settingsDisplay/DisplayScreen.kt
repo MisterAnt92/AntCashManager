@@ -55,6 +55,7 @@ import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.settings.view.CurrencySymbolDialog
 import com.antcashmanager.android.ui.screen.settings.view.DateFormatDialog
 import com.antcashmanager.android.ui.screen.settings.view.DecimalDigitsDialog
+import com.antcashmanager.android.ui.screen.settings.view.MealVoucherDialog
 import com.antcashmanager.android.ui.screen.settings.view.SeparatorDialog
 import com.antcashmanager.android.ui.screen.settings.view.TransactionDisplayDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
@@ -85,6 +86,7 @@ fun DisplayScreen(
     val decimalDigits by viewModel.decimalDigits.collectAsState()
     val decimalSeparator by viewModel.decimalSeparator.collectAsState()
     val thousandsSeparator by viewModel.thousandsSeparator.collectAsState()
+    val mealVoucherValue by viewModel.mealVoucherValue.collectAsState()
     val showChartsSection by viewModel.showChartsSection.collectAsState()
     val dateFormat by viewModel.dateFormat.collectAsState()
     val showTransactionNotes by viewModel.showTransactionNotes.collectAsState()
@@ -103,6 +105,8 @@ fun DisplayScreen(
         onDecimalSeparatorSelected = { viewModel.setDecimalSeparator(it) },
         thousandsSeparator = thousandsSeparator,
         onThousandsSeparatorSelected = { viewModel.setThousandsSeparator(it) },
+        mealVoucherValue = mealVoucherValue,
+        onMealVoucherValueSelected = { viewModel.setMealVoucherValue(it) },
         showTransactionNotes = showTransactionNotes,
         onShowTransactionNotesChanged = { viewModel.setShowTransactionNotes(it) },
         showChartsSection = showChartsSection,
@@ -148,6 +152,8 @@ internal fun DisplayContent(
     onDecimalSeparatorSelected: (String) -> Unit,
     thousandsSeparator: String,
     onThousandsSeparatorSelected: (String) -> Unit,
+    mealVoucherValue: Double,
+    onMealVoucherValueSelected: (Double) -> Unit,
     showTransactionNotes: Boolean,
     onShowTransactionNotesChanged: (Boolean) -> Unit,
     showChartsSection: Boolean,
@@ -171,6 +177,7 @@ internal fun DisplayContent(
     var showDecimalDigitsDialog by remember { mutableStateOf(false) }
     var showDecimalSeparatorDialog by remember { mutableStateOf(false) }
     var showThousandsSeparatorDialog by remember { mutableStateOf(false) }
+    var showMealVoucherDialog by remember { mutableStateOf(false) }
     var showDateFormatDialog by remember { mutableStateOf(false) }
     var showResetPreferencesDialog by remember { mutableStateOf(false) }
     var showTransactionDisplayDialog by remember { mutableStateOf(false) }
@@ -212,10 +219,12 @@ internal fun DisplayContent(
                         decimalDigits = decimalDigits,
                         decimalSeparator = decimalSeparator,
                         thousandsSeparator = thousandsSeparator,
+                        mealVoucherValue = mealVoucherValue,
                         onShowCurrencyDialog = { showCurrencyDialog = true },
                         onShowDecimalDigitsDialog = { showDecimalDigitsDialog = true },
                         onShowDecimalSeparatorDialog = { showDecimalSeparatorDialog = true },
                         onShowThousandsSeparatorDialog = { showThousandsSeparatorDialog = true },
+                        onShowMealVoucherDialog = { showMealVoucherDialog = true },
                     )
                 }
 
@@ -287,10 +296,12 @@ internal fun DisplayContent(
                         decimalDigits = decimalDigits,
                         decimalSeparator = decimalSeparator,
                         thousandsSeparator = thousandsSeparator,
+                        mealVoucherValue = mealVoucherValue,
                         onShowCurrencyDialog = { showCurrencyDialog = true },
                         onShowDecimalDigitsDialog = { showDecimalDigitsDialog = true },
                         onShowDecimalSeparatorDialog = { showDecimalSeparatorDialog = true },
                         onShowThousandsSeparatorDialog = { showThousandsSeparatorDialog = true },
+                        onShowMealVoucherDialog = { showMealVoucherDialog = true },
                     )
                     DateSection(
                         dateFormat = dateFormat,
@@ -354,6 +365,12 @@ internal fun DisplayContent(
         showThousandsSeparatorDialog = false
     }
     val dismissThousandsSeparator: () -> Unit = { showThousandsSeparatorDialog = false }
+
+    val handleMealVoucherValueSelected: (Double) -> Unit = { value ->
+        onMealVoucherValueSelected(value)
+        showMealVoucherDialog = false
+    }
+    val dismissMealVoucher: () -> Unit = { showMealVoucherDialog = false }
 
     val handleDateFormatSelected: (String) -> Unit = { fmt ->
         onDateFormatSelected(fmt)
@@ -445,6 +462,14 @@ internal fun DisplayContent(
         )
     }
 
+    if (showMealVoucherDialog) {
+        MealVoucherDialog(
+            currentValue = mealVoucherValue,
+            onDismiss = dismissMealVoucher,
+            onConfirm = handleMealVoucherValueSelected,
+        )
+    }
+
     if (showDateFormatDialog) {
         DateFormatDialog(
             currentFormat = dateFormat,
@@ -489,10 +514,12 @@ private fun CurrencySection(
     decimalDigits: Int,
     decimalSeparator: String,
     thousandsSeparator: String,
+    mealVoucherValue: Double,
     onShowCurrencyDialog: () -> Unit,
     onShowDecimalDigitsDialog: () -> Unit,
     onShowDecimalSeparatorDialog: () -> Unit,
     onShowThousandsSeparatorDialog: () -> Unit,
+    onShowMealVoucherDialog: () -> Unit,
 ) {
     AppCardSectionHeader(title = stringResource(R.string.settings_section_currency))
     Spacer(modifier = Modifier.height(8.dp))
@@ -525,6 +552,24 @@ private fun CurrencySection(
             subtitle = separatorLabel(thousandsSeparator, isThou = true),
             leadingIcon = Icons.Default.MoreHoriz,
             onClick = onShowThousandsSeparatorDialog,
+        )
+
+        AppCard(
+            title = stringResource(R.string.settings_meal_voucher_value),
+            subtitle = stringResource(
+                R.string.settings_meal_voucher_value_subtitle,
+                formatAmount(
+                    mealVoucherValue,
+                    CurrencyFormat(
+                        currencySymbol = currencySymbol,
+                        decimalDigits = decimalDigits,
+                        decimalSeparator = decimalSeparator,
+                        thousandsSeparator = thousandsSeparator,
+                    ),
+                ),
+            ),
+            leadingIcon = Icons.Default.Payment,
+            onClick = onShowMealVoucherDialog,
         )
     }
 
@@ -731,6 +776,8 @@ private fun DisplayContentPreview() {
             onDecimalSeparatorSelected = {},
             thousandsSeparator = "",
             onThousandsSeparatorSelected = {},
+            mealVoucherValue = 5.29,
+            onMealVoucherValueSelected = {},
             showTransactionNotes = true,
             onShowTransactionNotesChanged = {},
             showChartsSection = true,

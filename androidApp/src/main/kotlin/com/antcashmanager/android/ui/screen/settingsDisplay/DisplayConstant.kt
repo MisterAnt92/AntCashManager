@@ -14,6 +14,7 @@ object DisplayConstant {
     val DEFAULT_DECIMAL_DIGITS: Int = CurrencyFormat.DEFAULT.decimalDigits
     val DEFAULT_DECIMAL_SEPARATOR: String = CurrencyFormat.DEFAULT.decimalSeparator
     val DEFAULT_THOUSANDS_SEPARATOR: String = CurrencyFormat.DEFAULT.thousandsSeparator
+    const val DEFAULT_MEAL_VOUCHER_VALUE = 5.29
     const val DEFAULT_DATE_FORMAT = "dd/MM/yyyy"
     const val DEFAULT_SHOW_TRANSACTION_NOTES = true
     const val DEFAULT_SHOW_CHARTS_SECTION = true

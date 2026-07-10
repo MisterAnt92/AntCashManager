@@ -32,6 +32,8 @@ interface SettingsRepository {
     suspend fun setDecimalSeparator(separator: String)
     fun getThousandsSeparator(): Flow<String>
     suspend fun setThousandsSeparator(separator: String)
+    fun getMealVoucherValue(): Flow<Double>
+    suspend fun setMealVoucherValue(value: Double)
 
     // ── Date format ──
     fun getDateFormat(): Flow<String>

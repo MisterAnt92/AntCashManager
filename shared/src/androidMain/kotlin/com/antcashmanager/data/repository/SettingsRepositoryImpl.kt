@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
@@ -35,6 +36,7 @@ class SettingsRepositoryImpl(
     private val decimalDigitsKey = intPreferencesKey("decimal_digits")
     private val decimalSeparatorKey = stringPreferencesKey("decimal_separator")
     private val thousandsSeparatorKey = stringPreferencesKey("thousands_separator")
+    private val mealVoucherValueKey = doublePreferencesKey("meal_voucher_value")
     private val dateFormatKey = stringPreferencesKey("date_format")
     private val dateFilterExpandedKey = booleanPreferencesKey("date_filter_expanded")
     private val homeDateFilterPresetKey = intPreferencesKey("home_date_filter_preset")
@@ -186,6 +188,13 @@ class SettingsRepositoryImpl(
 
     override suspend fun setThousandsSeparator(separator: String) {
         context.dataStore.edit { it[thousandsSeparatorKey] = separator }
+    }
+
+    override fun getMealVoucherValue(): Flow<Double> =
+        context.dataStore.data.map { it[mealVoucherValueKey] ?: DEFAULT_MEAL_VOUCHER_VALUE }
+
+    override suspend fun setMealVoucherValue(value: Double) {
+        context.dataStore.edit { it[mealVoucherValueKey] = value }
     }
 
     override fun getDateFormat(): Flow<String> =
@@ -387,6 +396,7 @@ class SettingsRepositoryImpl(
             prefs[decimalDigitsKey] = 2
             prefs[decimalSeparatorKey] = ","
             prefs[thousandsSeparatorKey] = ""
+            prefs[mealVoucherValueKey] = DEFAULT_MEAL_VOUCHER_VALUE
             prefs[dateFormatKey] = "dd/MM/yyyy"
             prefs[dateFilterExpandedKey] = true
             prefs[homeDateFilterPresetKey] = defaultHomeFilter.presetIndex
@@ -413,5 +423,6 @@ class SettingsRepositoryImpl(
     private companion object {
         const val WEEK_IN_MILLIS = 7L * 24 * 60 * 60 * 1000
         const val MONTH_IN_MILLIS = 30L * 24 * 60 * 60 * 1000
+        const val DEFAULT_MEAL_VOUCHER_VALUE = 5.29
     }
 }

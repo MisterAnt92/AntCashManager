@@ -5,4 +5,5 @@ data class DisplayState(
     val decimalDigits: Int = 2,
     val decimalSeparator: String = ",",
     val thousandsSeparator: String = "",
+    val mealVoucherValue: Double = 5.29,
 )

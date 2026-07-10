@@ -36,6 +36,8 @@ class DisplayScreenTest {
                     onDecimalSeparatorSelected = {},
                     thousandsSeparator = "",
                     onThousandsSeparatorSelected = {},
+                    mealVoucherValue = 5.29,
+                    onMealVoucherValueSelected = {},
                     showTransactionNotes = true,
                     onShowTransactionNotesChanged = {},
                     showChartsSection = true,

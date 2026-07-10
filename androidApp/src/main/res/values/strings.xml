@@ -137,6 +137,11 @@
     <string name="settings_decimal_digits_subtitle">%d decimal places</string>
     <string name="settings_decimal_separator">Decimal Separator</string>
     <string name="settings_thousands_separator">Thousands Separator</string>
+    <string name="settings_meal_voucher_value">Meal Voucher Value</string>
+    <string name="settings_meal_voucher_value_subtitle">Current value: %s</string>
+    <string name="dialog_meal_voucher_title">Set Meal Voucher Value</string>
+    <string name="dialog_meal_voucher_message">Enter the fixed value for your meal voucher.</string>
+    <string name="dialog_meal_voucher_label">Voucher Value</string>
     <string name="settings_format_preview">Preview: %s</string>
     <string name="settings_separator_comma">Comma (,)</string>
     <string name="settings_separator_period">Period (.)</string>

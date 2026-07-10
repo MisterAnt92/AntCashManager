@@ -155,6 +155,11 @@
     <string name="settings_decimal_digits_subtitle">%d cifre decimali</string>
     <string name="settings_decimal_separator">Separatore Decimali</string>
     <string name="settings_thousands_separator">Separatore Migliaia</string>
+    <string name="settings_meal_voucher_value">Valore Buono Pasto</string>
+    <string name="settings_meal_voucher_value_subtitle">Valore attuale: %s</string>
+    <string name="dialog_meal_voucher_title">Imposta Valore Buono Pasto</string>
+    <string name="dialog_meal_voucher_message">Inserisci il valore fisso del tuo buono pasto.</string>
+    <string name="dialog_meal_voucher_label">Valore Buono</string>
     <string name="settings_format_preview">Anteprima: %s</string>
     <string name="settings_separator_comma">Virgola (,)</string>
     <string name="settings_separator_period">Punto (.)</string>

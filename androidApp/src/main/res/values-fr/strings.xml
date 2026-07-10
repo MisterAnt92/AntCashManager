@@ -107,6 +107,11 @@
     <string name="settings_decimal_digits_subtitle">%d d\u00e9cimales</string>
     <string name="settings_decimal_separator">S\u00e9parateur d\u00e9cimal</string>
     <string name="settings_thousands_separator">S\u00e9parateur de milliers</string>
+    <string name="settings_meal_voucher_value">Valeur Titre-Restaurant</string>
+    <string name="settings_meal_voucher_value_subtitle">Valeur actuelle\u00a0: %s</string>
+    <string name="dialog_meal_voucher_title">D\u00e9finir Valeur Titre-Restaurant</string>
+    <string name="dialog_meal_voucher_message">Saisissez la valeur fixe de votre titre-restaurant.</string>
+    <string name="dialog_meal_voucher_label">Valeur du titre</string>
     <string name="settings_format_preview">Aper\u00e7u\u00a0: %s</string>
     <string name="settings_separator_comma">Virgule (,)</string>
     <string name="settings_separator_period">Point (.)</string>

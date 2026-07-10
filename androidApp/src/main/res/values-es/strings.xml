@@ -106,6 +106,11 @@
     <string name="settings_decimal_digits_subtitle">%d decimales</string>
     <string name="settings_decimal_separator">Separador decimal</string>
     <string name="settings_thousands_separator">Separador de miles</string>
+    <string name="settings_meal_voucher_value">Valor Vale de Comida</string>
+    <string name="settings_meal_voucher_value_subtitle">Valor actual: %s</string>
+    <string name="dialog_meal_voucher_title">Establecer Valor Vale de Comida</string>
+    <string name="dialog_meal_voucher_message">Ingrese el valor fijo de su vale de comida.</string>
+    <string name="dialog_meal_voucher_label">Valor del vale</string>
     <string name="settings_format_preview">Vista previa: %s</string>
     <string name="settings_separator_comma">Coma (,)</string>
     <string name="settings_separator_period">Punto (.)</string>

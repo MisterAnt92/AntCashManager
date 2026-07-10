@@ -1106,6 +1106,8 @@ class MockSettingsRepository : SettingsRepository {
     override suspend fun setDecimalSeparator(separator: String) {}
     override fun getThousandsSeparator() = kotlinx.coroutines.flow.flowOf("")
     override suspend fun setThousandsSeparator(separator: String) {}
+    override fun getMealVoucherValue() = kotlinx.coroutines.flow.flowOf(5.29)
+    override suspend fun setMealVoucherValue(value: Double) {}
     override fun getDateFormat() = kotlinx.coroutines.flow.flowOf("dd/MM/yyyy")
     override suspend fun setDateFormat(pattern: String) {}
 
