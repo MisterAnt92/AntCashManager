@@ -81,5 +81,41 @@ class CurrencyFormatterExtraTest {
         assertEquals("€1234,56", formatted)
     }
 
+    @Test
+    fun formatAmount_shouldNotProduceDotCommaSequence_whenThousandsSeparatorIsDotAndDeviceLocaleUsesCommaAsDecimal() {
+        // Regression test: on European device locales (IT/FR/DE/ES), String.format %f uses ","
+        // as decimal separator. If the formatter is not locale-aware internally, the chunking
+        // algorithm processes the comma as part of the integer digits, producing "1.234.,56"
+        // instead of the correct "€1.234,56".
+        val fmt = CurrencyFormat(
+            currencySymbol = "€",
+            decimalDigits = 2,
+            decimalSeparator = ",",
+            thousandsSeparator = ".",
+        )
+        val values = listOf(1000.0, 1234.56, 10000.0, 1000000.5)
+        values.forEach { amount ->
+            val result = formatAmount(amount, fmt)
+            assertFalse(
+                "formatAmount($amount) produced '.,': '$result'",
+                result.contains(".,"),
+            )
+        }
+    }
+
+    @Test
+    fun formatAmount_shouldReturnCorrectResult_whenThousandsSeparatorIsDotAndDecimalIsComma() {
+        val fmt = CurrencyFormat(
+            currencySymbol = "€",
+            decimalDigits = 2,
+            decimalSeparator = ",",
+            thousandsSeparator = ".",
+        )
+        assertEquals("€1.000,00", formatAmount(1000.0, fmt))
+        assertEquals("€1.234,56", formatAmount(1234.56, fmt))
+        assertEquals("€10.000,00", formatAmount(10000.0, fmt))
+        assertEquals("€1.000.000,50", formatAmount(1000000.5, fmt))
+    }
+
 }
 
