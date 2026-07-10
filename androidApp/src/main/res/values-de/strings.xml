@@ -456,4 +456,7 @@
      <string name="preview_app_text_dark">Dunkler Titel</string>
      <string name="preview_app_text_clickable">Anklickbarer Text</string>
      <string name="preview_app_text_all_caps">dieser text ist in großbuchstaben</string>
+    <string name="charts_title">Grafiken</string>
+    <string name="settings_project_by">Ein Projekt, mit Liebe gemacht von Formica Simone @MisterAnt92</string>
 </resources>
+

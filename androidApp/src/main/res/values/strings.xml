@@ -478,5 +478,6 @@
     <string name="dialog_close">Close</string>
     <string name="settings_title">Settings</string>
     <string name="charts_title">Graphics</string>
+    <string name="settings_project_by">A project made with love by Formica Simone @MisterAnt92</string>
 
 </resources>

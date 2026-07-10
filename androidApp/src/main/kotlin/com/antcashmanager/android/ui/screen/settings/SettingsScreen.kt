@@ -59,6 +59,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -392,6 +393,16 @@ internal fun SettingsContent(
                 subtitle = stringResource(R.string.settings_third_party_subtitle),
                 leadingIcon = Icons.AutoMirrored.Filled.LibraryBooks,
                 onClick = { showLibrariesDialog = true },
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            AppText(
+                text = stringResource(R.string.settings_project_by),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
             )
         }
     } // Closing Scaffold

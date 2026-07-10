@@ -399,4 +399,7 @@
     <string name="charts_legend_item_subtitle">%1$s • %2$s</string>
     <string name="settings_third_party_author">di %s</string>
     <string name="transactions_search_query_preview">"%s"</string>
+    <string name="settings_title">Impostazioni</string>
+    <string name="charts_title">Grafici</string>
+    <string name="settings_project_by">Un progetto fatto con amore da Formica Simone @MisterAnt92</string>
 </resources>

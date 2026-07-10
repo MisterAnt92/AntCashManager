@@ -403,4 +403,5 @@
     <string name="settings_third_party_author">par %s</string>
     <string name="error_opening_link">Impossible d\'ouvrir le lien. Veuillez vérifier vos applications.</string>
     <string name="settings_easter_egg_message">🐜 Salut ! Merci d\'utiliser AntCash !</string>
+    <string name="settings_project_by">Un projet fait avec amour par Formica Simone @MisterAnt92</string>
 </resources>
