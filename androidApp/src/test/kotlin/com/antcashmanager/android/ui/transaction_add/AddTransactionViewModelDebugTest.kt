@@ -6,7 +6,10 @@ import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.CategoryRepository
+import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
@@ -22,6 +25,7 @@ class AddTransactionViewModelDebugTest : BaseUnitTest() {
 
     private lateinit var mockTransactionRepository: TransactionRepository
     private lateinit var mockCategoryRepository: CategoryRepository
+    private lateinit var mockSettingsRepository: SettingsRepository
 
     private val mockCategories = listOf(
         Category(1, "Food", "🍔", 0xFFFF6B6B, "EXPENSE"),
@@ -89,11 +93,19 @@ class AddTransactionViewModelDebugTest : BaseUnitTest() {
             override suspend fun getCategoryByName(name: String): Category? =
                 mockCategories.find { it.name == name }
         }
+
+        mockSettingsRepository = mockk(relaxed = true) {
+            every { getMealVoucherValue() } returns flowOf(5.29)
+        }
     }
 
     @Test
     fun init_shouldCheckInitialState_whenViewModelIsCreated() = runViewModelTest {
-        val viewModel = AddTransactionViewModel(mockTransactionRepository, mockCategoryRepository)
+        val viewModel = AddTransactionViewModel(
+            mockTransactionRepository,
+            mockCategoryRepository,
+            mockSettingsRepository
+        )
 
         // Avanza il dispatcher per permettere l'inizializzazione
         testDispatcher.scheduler.advanceUntilIdle()
@@ -113,6 +125,7 @@ class AddTransactionViewModelDebugTest : BaseUnitTest() {
         val viewModel = AddTransactionViewModel(
             mockTransactionRepository,
             mockCategoryRepository,
+            mockSettingsRepository,
             transactionId = 1L
         )
 

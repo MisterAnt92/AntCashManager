@@ -27,6 +27,8 @@ data class TransactionEntity(
     val recurrenceInterval: String = "",
     @ColumnInfo(name = "payment_type", defaultValue = "ELECTRONIC")
     val paymentType: String = "ELECTRONIC",
+    @ColumnInfo(name = "meal_voucher_count", defaultValue = "0")
+    val mealVoucherCount: Int = 0,
     @ColumnInfo(name = "category_icon", defaultValue = "")
     val categoryIcon: String = "",
     @ColumnInfo(name = "category_color", defaultValue = "9474862")

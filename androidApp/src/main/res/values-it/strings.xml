@@ -299,6 +299,14 @@
     <string name="add_transaction_payment_type_electronic">Elettronico</string>
     <string name="add_transaction_payment_type_cash">Contante</string>
     <string name="add_transaction_payment_type_meal_vouchers">Buoni Pasto</string>
+
+    <!-- Add Transaction - Buoni Pasto -->
+    <string name="add_transaction_meal_voucher_section_title">Buoni Pasto</string>
+    <string name="add_transaction_meal_voucher_unit_value">Valore unitario: %s€</string>
+    <string name="add_transaction_meal_voucher_count">Numero di buoni</string>
+    <string name="add_transaction_meal_voucher_subtotal">Subtotale buoni: %s€</string>
+    <string name="add_transaction_total_amount">Importo Totale</string>
+
     <string name="empty_state_no_transactions">Nessuna transazione presente</string>
     <string name="empty_state_no_transactions_subtitle">Il salvadanaio ti sta aspettando!</string>
     <string name="settings_show_payment_breakdown">Mostra saldo per tipo di pagamento</string>

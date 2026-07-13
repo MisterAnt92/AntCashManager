@@ -40,6 +40,8 @@ data class AddTransactionState(
     val isRecurring: Boolean = false,
     val recurrenceInterval: String = "",
     val selectedPaymentType: PaymentType = PaymentType.ELECTRONIC,
+    val mealVoucherCount: String = "0",
+    val mealVoucherValue: Double = 5.29,
 
     // Dati disponibili
     val categories: List<Category> = emptyList(),
@@ -67,5 +69,17 @@ data class AddTransactionState(
                 amount.toDoubleOrNull() != null &&
                 selectedCategory != null &&
                 selectedType != null
+
+    val totalAmount: Double
+        get() {
+            val baseAmount = amount.toDoubleOrNull() ?: 0.0
+            val voucherCount = mealVoucherCount.toIntOrNull() ?: 0
+            val voucherTotal = if (selectedPaymentType == PaymentType.MEAL_VOUCHERS) {
+                voucherCount * mealVoucherValue
+            } else {
+                0.0
+            }
+            return baseAmount + voucherTotal
+        }
 }
 

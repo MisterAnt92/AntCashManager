@@ -252,6 +252,14 @@
     <string name="add_transaction_payment_type_electronic">Electrónico</string>
     <string name="add_transaction_payment_type_cash">Efectivo</string>
     <string name="add_transaction_payment_type_meal_vouchers">Vales de Comida</string>
+
+    <!-- Add Transaction - Vales de Comida -->
+    <string name="add_transaction_meal_voucher_section_title">Vales de Comida</string>
+    <string name="add_transaction_meal_voucher_unit_value">Valor unitario: %s€</string>
+    <string name="add_transaction_meal_voucher_count">Número de vales</string>
+    <string name="add_transaction_meal_voucher_subtotal">Subtotal vales: %s€</string>
+    <string name="add_transaction_total_amount">Importe Total</string>
+
     <string name="empty_state_no_transactions">No hay transacciones presentes</string>
     <string name="empty_state_no_transactions_subtitle">¡La alcancía te está esperando!</string>
     <string name="settings_show_payment_breakdown">Mostrar saldo por tipo de pago</string>

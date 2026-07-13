@@ -158,6 +158,7 @@ class TransactionsViewModel(
         _filterState.map { it.selectedPaymentType }.distinctUntilChanged(),
         _filterState.map { it.dateRangeFrom }.distinctUntilChanged(),
         _filterState.map { it.dateRangeTo }.distinctUntilChanged(),
+        _filterState.map { it.selectedPresetIndex }.distinctUntilChanged(),
     ) { args: Array<Any?> ->
         val transactions = args[0] as List<Transaction>
         val query = args[1] as String
@@ -166,11 +167,11 @@ class TransactionsViewModel(
         val payment = args[4] as PaymentType?
         val storedFrom = args[5] as Long
         val storedTo = args[6] as Long
+        val presetIndex = args[7] as Int
 
         // Per i preset relativi, ricalcola i bound dinamicamente al momento dell'esecuzione.
         // Il combine si riesegue ogni volta che transactionsFlow emette (Room insert/update),
         // garantendo che System.currentTimeMillis() catturi sempre il momento attuale.
-        val presetIndex = _filterState.value.selectedPresetIndex
         val from = if (presetIndex != SavedDateFilter.CUSTOM_PRESET_INDEX) {
             TransactionsState.getDateFromForPreset(presetIndex)
         } else {

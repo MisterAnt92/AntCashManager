@@ -291,6 +291,13 @@
     <string name="add_transaction_payment_type_cash">Bar</string>
     <string name="add_transaction_payment_type_meal_vouchers">Essensgutscheine</string>
 
+    <!-- Add Transaction - Essensgutscheine -->
+    <string name="add_transaction_meal_voucher_section_title">Essensgutscheine</string>
+    <string name="add_transaction_meal_voucher_unit_value">Einzelwert: %s€</string>
+    <string name="add_transaction_meal_voucher_count">Anzahl der Gutscheine</string>
+    <string name="add_transaction_meal_voucher_subtotal">Gutscheine Zwischensumme: %s€</string>
+    <string name="add_transaction_total_amount">Gesamtbetrag</string>
+
     <!-- Empty State -->
     <string name="empty_state_no_transactions">Keine Transaktionen vorhanden</string>
     <string name="empty_state_no_transactions_subtitle">Das Sparschwein wartet auf dich!</string>

@@ -253,6 +253,14 @@
     <string name="add_transaction_payment_type_electronic">Électronique</string>
     <string name="add_transaction_payment_type_cash">Espèces</string>
     <string name="add_transaction_payment_type_meal_vouchers">Tickets Repas</string>
+
+    <!-- Add Transaction - Titres-Restaurant -->
+    <string name="add_transaction_meal_voucher_section_title">Titres-Restaurant</string>
+    <string name="add_transaction_meal_voucher_unit_value">Valeur unitaire\u00a0: %s€</string>
+    <string name="add_transaction_meal_voucher_count">Nombre de titres</string>
+    <string name="add_transaction_meal_voucher_subtotal">Sous-total titres\u00a0: %s€</string>
+    <string name="add_transaction_total_amount">Montant Total</string>
+
     <string name="empty_state_no_transactions">Aucune transaction présente</string>
     <string name="empty_state_no_transactions_subtitle">La tirelire vous attend !</string>
     <string name="settings_show_payment_breakdown">Afficher le solde par type de paiement</string>

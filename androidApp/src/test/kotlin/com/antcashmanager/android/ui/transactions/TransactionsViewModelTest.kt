@@ -1,5 +1,7 @@
 package com.antcashmanager.android.ui.transactions
 
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.cancel
 import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.ui.screen.transactions.TransactionsEvent
 import com.antcashmanager.android.ui.screen.transactions.TransactionsViewModel
@@ -195,6 +197,9 @@ class TransactionsViewModelTest : BaseUnitTest() {
 
     @Test
     fun searchQuery_shouldFilterTransactionsByTitle_whenQueryIsUpdated() = runViewModelTest {
+        // Cancel shared viewModel
+        viewModel.viewModelScope.cancel()
+
         val now = System.currentTimeMillis()
         fakeTransactionRepo.transactions.value = listOf(
             Transaction(
@@ -215,13 +220,20 @@ class TransactionsViewModelTest : BaseUnitTest() {
             ),
         )
 
+        val testViewModel = TransactionsViewModel(
+            transactionRepository = fakeTransactionRepo,
+            categoryRepository = fakeCategoryRepo,
+            settingsRepository = fakeSettingsRepository,
+            dispatcher = testDispatcher,
+        )
+
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.state.collect {}
+            testViewModel.state.collect {}
         }
         advanceUntilIdle()
 
         // Ensure date range includes all data
-        viewModel.onEvent(
+        testViewModel.onEvent(
             TransactionsEvent.SetDateRange(
                 0L,
                 Long.MAX_VALUE,
@@ -229,14 +241,14 @@ class TransactionsViewModelTest : BaseUnitTest() {
         )
         advanceUntilIdle()
 
-        viewModel.onEvent(
+        testViewModel.onEvent(
             TransactionsEvent.UpdateSearchQuery("salary")
         )
         advanceUntilIdle()
 
-        assertEquals("salary", viewModel.state.value.searchQuery)
-        assertEquals(1, viewModel.state.value.filteredTransactions.size)
-        assertEquals("Salary April", viewModel.state.value.filteredTransactions.first().title)
+        assertEquals("salary", testViewModel.state.value.searchQuery)
+        assertEquals(1, testViewModel.state.value.filteredTransactions.size)
+        assertEquals("Salary April", testViewModel.state.value.filteredTransactions.first().title)
 
         collectJob.cancel()
     }
@@ -376,9 +388,10 @@ class TransactionsViewModelTest : BaseUnitTest() {
     @Test
     fun addTransaction_shouldAppearInFilteredTransactions_whenTimestampIsAfterStoredFilterTo() =
         runViewModelTest {
-            // Simula un "to" storato nel passato (1 ora fa) — questo è il bug originale:
-            // senza la fix, la transazione inserita "adesso" veniva esclusa dal filtro
-            // perché dateRangeTo era un timestamp fisso passato.
+            // Cancel shared viewModel
+            viewModel.viewModelScope.cancel()
+
+            // Simula un "to" storato nel passato (1 ora fa)
             val staleStoredTo = System.currentTimeMillis() - (60L * 60 * 1000)
             val staleStoredFrom = staleStoredTo - (7L * 24 * 60 * 60 * 1000)
             fakeSettingsRepository.transactionsDateFilterState.value = SavedDateFilter(
@@ -401,7 +414,9 @@ class TransactionsViewModelTest : BaseUnitTest() {
             advanceUntilIdle()
 
             // Inserisce una transazione con timestamp = adesso (> staleStoredTo)
-            val transactionTimestamp = System.currentTimeMillis()
+            // IMPORTANTE: Use a slightly future timestamp to ensure it's not filtered out
+            // if System.currentTimeMillis() inside ViewModel is called slightly before this.
+            val transactionTimestamp = System.currentTimeMillis() + 1000L 
             testViewModel.addTransaction(
                 title = "Caffè",
                 amount = 2.0,
@@ -423,23 +438,33 @@ class TransactionsViewModelTest : BaseUnitTest() {
 
     @Test
     fun onEvent_shouldUpdatePendingFilters_whenFilterEventsAreReceived() = runViewModelTest {
+        // Cancel shared viewModel
+        viewModel.viewModelScope.cancel()
+
+        val testViewModel = TransactionsViewModel(
+            transactionRepository = fakeTransactionRepo,
+            categoryRepository = fakeCategoryRepo,
+            settingsRepository = fakeSettingsRepository,
+            dispatcher = testDispatcher,
+        )
+
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.state.collect {}
+            testViewModel.state.collect {}
         }
         advanceUntilIdle()
 
-        viewModel.onEvent(TransactionsEvent.UpdateCategoryFilter("Work"))
-        viewModel.onEvent(TransactionsEvent.UpdateTransactionTypeFilter(TransactionType.INCOME))
-        viewModel.onEvent(TransactionsEvent.UpdatePaymentTypeFilter(PaymentType.CASH))
+        testViewModel.onEvent(TransactionsEvent.UpdateCategoryFilter("Work"))
+        testViewModel.onEvent(TransactionsEvent.UpdateTransactionTypeFilter(TransactionType.INCOME))
+        testViewModel.onEvent(TransactionsEvent.UpdatePaymentTypeFilter(PaymentType.CASH))
         advanceUntilIdle()
 
-        assertEquals("Work", viewModel.state.value.pendingCategory)
-        assertEquals(TransactionType.INCOME, viewModel.state.value.pendingTransactionType)
-        assertEquals(PaymentType.CASH, viewModel.state.value.pendingPaymentType)
+        assertEquals("Work", testViewModel.state.value.pendingCategory)
+        assertEquals(TransactionType.INCOME, testViewModel.state.value.pendingTransactionType)
+        assertEquals(PaymentType.CASH, testViewModel.state.value.pendingPaymentType)
         // Check that active filters are still null
-        assertNull(viewModel.state.value.selectedCategory)
-        assertNull(viewModel.state.value.selectedTransactionType)
-        assertNull(viewModel.state.value.selectedPaymentType)
+        assertNull(testViewModel.state.value.selectedCategory)
+        assertNull(testViewModel.state.value.selectedTransactionType)
+        assertNull(testViewModel.state.value.selectedPaymentType)
 
         collectJob.cancel()
     }
@@ -467,7 +492,9 @@ class TransactionsViewModelTest : BaseUnitTest() {
         advanceUntilIdle()
 
         viewModel.onEvent(TransactionsEvent.UpdateCategoryFilter("Work"))
+        advanceUntilIdle() // Ensure state is updated
         assertEquals("Work", viewModel.state.value.pendingCategory)
+        assertNull(viewModel.state.value.selectedCategory)
 
         viewModel.onEvent(TransactionsEvent.CancelFilterChanges)
         advanceUntilIdle()

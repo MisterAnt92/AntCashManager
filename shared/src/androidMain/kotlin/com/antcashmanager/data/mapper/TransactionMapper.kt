@@ -23,6 +23,7 @@ fun TransactionEntity.toDomain(): Transaction = Transaction(
     } catch (_: IllegalArgumentException) {
         PaymentType.ELECTRONIC
     },
+    mealVoucherCount = mealVoucherCount,
     categoryIcon = categoryIcon,
     categoryColor = categoryColor,
 )
@@ -41,6 +42,7 @@ fun Transaction.toEntity(): TransactionEntity = TransactionEntity(
     tags = tags,
     recurrenceInterval = recurrenceInterval,
     paymentType = paymentType.name,
+    mealVoucherCount = mealVoucherCount,
     categoryIcon = categoryIcon,
     categoryColor = categoryColor,
 )

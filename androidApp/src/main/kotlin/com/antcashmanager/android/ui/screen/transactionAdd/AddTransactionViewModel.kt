@@ -48,6 +48,7 @@ sealed interface AddTransactionEvent {
     data class UpdateTimestamp(val timestamp: Long) : AddTransactionEvent
     data class SetRecurring(val isRecurring: Boolean) : AddTransactionEvent
     data class UpdateRecurrenceInterval(val interval: String) : AddTransactionEvent
+    data class UpdateMealVoucherCount(val count: String) : AddTransactionEvent
 
     // ── Navigazione ──
     data object NextStep : AddTransactionEvent
@@ -80,6 +81,7 @@ sealed interface AddTransactionEvent {
 
 class AddTransactionViewModel(
     private val transactionRepository: TransactionRepository,
+    private val settingsRepository: com.antcashmanager.domain.repository.SettingsRepository,
     private val getCategoriesUseCase: GetCategoriesUseCase,
     private val insertTransactionUseCase: InsertTransactionUseCase,
     private val updateTransactionUseCase: UpdateTransactionUseCase,
@@ -91,10 +93,12 @@ class AddTransactionViewModel(
     constructor(
         transactionRepository: TransactionRepository,
         categoryRepository: CategoryRepository,
+        settingsRepository: com.antcashmanager.domain.repository.SettingsRepository,
         transactionId: Long? = null,
         dispatcher: CoroutineDispatcher = Dispatchers.Default,
     ) : this(
         transactionRepository = transactionRepository,
+        settingsRepository = settingsRepository,
         getCategoriesUseCase = GetCategoriesUseCase(categoryRepository, dispatcher),
         insertTransactionUseCase = InsertTransactionUseCase(transactionRepository, dispatcher),
         updateTransactionUseCase = UpdateTransactionUseCase(transactionRepository, dispatcher),
@@ -111,8 +115,23 @@ class AddTransactionViewModel(
     init {
         loadCategories()
         loadTransactionSuggestions()
+        loadMealVoucherValue()
         if (transactionId != null) {
             loadTransactionForEdit(transactionId)
+        }
+    }
+
+    private fun loadMealVoucherValue() {
+        viewModelScope.launch {
+            try {
+                val mealVoucherValue = settingsRepository.getMealVoucherValue().first()
+                _state.update { it.copy(mealVoucherValue = mealVoucherValue) }
+            } catch (ex: Exception) {
+                Logger.e(AddTransactionConstant.TAG) {
+                    "Error loading meal voucher value: ${ex.message}"
+                }
+                // Keep default value
+            }
         }
     }
 
@@ -203,6 +222,7 @@ class AddTransactionViewModel(
                             isRecurring = transaction.isRecurring,
                             recurrenceInterval = transaction.recurrenceInterval,
                             selectedPaymentType = transaction.paymentType,
+                            mealVoucherCount = transaction.mealVoucherCount.toString(),
                             currentStep = AddTransactionStep.DETAILS,
                             isLoading = false,
                             categories = categoryList,
@@ -250,6 +270,9 @@ class AddTransactionViewModel(
             is AddTransactionEvent.UpdatePayee -> _state.update { it.copy(payee = event.payee) }
             is AddTransactionEvent.UpdateLocation -> _state.update { it.copy(location = event.location) }
             is AddTransactionEvent.UpdateTags -> _state.update { it.copy(tags = event.tags) }
+            is AddTransactionEvent.UpdateMealVoucherCount -> {
+                _state.update { it.copy(mealVoucherCount = event.count) }
+            }
             is AddTransactionEvent.UpdateTimestamp -> _state.update { it.copy(timestamp = event.timestamp) }
             is AddTransactionEvent.SetRecurring -> _state.update { it.copy(isRecurring = event.isRecurring) }
             is AddTransactionEvent.UpdateRecurrenceInterval -> _state.update {
@@ -392,7 +415,7 @@ class AddTransactionViewModel(
                 val transaction = Transaction(
                     id = if (currentState.isModifying) transactionId ?: 0 else 0,
                     title = currentState.title,
-                    amount = amount,
+                    amount = currentState.totalAmount,
                     category = currentState.selectedCategory.name,
                     type = currentState.selectedType,
                     timestamp = currentState.timestamp,
@@ -403,6 +426,9 @@ class AddTransactionViewModel(
                     isRecurring = currentState.isRecurring,
                     recurrenceInterval = currentState.recurrenceInterval,
                     paymentType = currentState.selectedPaymentType,
+                    mealVoucherCount = currentState.mealVoucherCount.toIntOrNull() ?: 0,
+                    categoryIcon = currentState.selectedCategory.icon,
+                    categoryColor = currentState.selectedCategory.color,
                 )
 
                 if (currentState.isModifying) {

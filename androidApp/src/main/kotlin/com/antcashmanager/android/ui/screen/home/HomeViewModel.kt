@@ -140,9 +140,9 @@ class HomeViewModel(
         debouncedSearchQuery,
         _filterState.map { it.dateRangeFrom }.distinctUntilChanged(),
         _filterState.map { it.dateRangeTo }.distinctUntilChanged(),
-    ) { transactions, query, storedFrom, storedTo ->
+        _filterState.map { it.selectedPresetIndex }.distinctUntilChanged(),
+    ) { transactions, query, storedFrom, storedTo, presetIndex ->
         // Per i preset relativi, ricalcola i bound dinamicamente al momento dell'esecuzione.
-        val presetIndex = _filterState.value.selectedPresetIndex
         val from = if (presetIndex != SavedDateFilter.CUSTOM_PRESET_INDEX) {
             HomeState.getDateFromForPreset(presetIndex)
         } else {

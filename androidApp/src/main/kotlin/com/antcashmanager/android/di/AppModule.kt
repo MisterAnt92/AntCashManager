@@ -176,6 +176,7 @@ val presentationModule = module {
         AddTransactionViewModel(
             transactionId = transactionId,
             transactionRepository = get(),
+            settingsRepository = get(),
             getCategoriesUseCase = get(),
             insertTransactionUseCase = get(),
             updateTransactionUseCase = get(),

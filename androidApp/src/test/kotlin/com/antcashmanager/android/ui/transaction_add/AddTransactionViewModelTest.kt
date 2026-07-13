@@ -8,7 +8,10 @@ import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.CategoryRepository
+import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import org.junit.Assert.assertEquals
@@ -32,6 +35,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
 
     private lateinit var mockTransactionRepository: TransactionRepository
     private lateinit var mockCategoryRepository: CategoryRepository
+    private lateinit var mockSettingsRepository: SettingsRepository
     private lateinit var viewModel: AddTransactionViewModel
 
     private val mockCategories = listOf(
@@ -100,6 +104,10 @@ class AddTransactionViewModelTest : BaseUnitTest() {
 
             override suspend fun getCategoryByName(name: String): Category? =
                 mockCategories.find { it.name == name }
+        }
+
+        mockSettingsRepository = mockk(relaxed = true) {
+            every { getMealVoucherValue() } returns flowOf(5.29)
         }
     }
 
@@ -538,6 +546,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
         AddTransactionViewModel(
             transactionRepository = mockTransactionRepository,
             categoryRepository = mockCategoryRepository,
+            settingsRepository = mockSettingsRepository,
             transactionId = transactionId,
             dispatcher = testDispatcher,
         )

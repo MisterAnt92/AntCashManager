@@ -308,6 +308,13 @@
     <string name="add_transaction_payment_type_cash">Cash</string>
     <string name="add_transaction_payment_type_meal_vouchers">Meal Vouchers</string>
 
+    <!-- Add Transaction - Meal Vouchers -->
+    <string name="add_transaction_meal_voucher_section_title">Meal Vouchers</string>
+    <string name="add_transaction_meal_voucher_unit_value">Unit value: %s€</string>
+    <string name="add_transaction_meal_voucher_count">Number of vouchers</string>
+    <string name="add_transaction_meal_voucher_subtotal">Vouchers subtotal: %s€</string>
+    <string name="add_transaction_total_amount">Total Amount</string>
+
     <!-- Empty State -->
     <string name="empty_state_no_transactions">No transactions present</string>
     <string name="empty_state_no_transactions_subtitle">The piggy bank is waiting for you!</string>

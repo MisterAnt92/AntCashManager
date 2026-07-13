@@ -260,6 +260,9 @@ class HomeViewModelTest : BaseUnitTest() {
     @Test
     fun balanceByPaymentType_shouldCalculatePerPaymentType_whenTransactionsContainMixedPaymentTypes() =
         runViewModelTest {
+            // Cancel shared viewModel
+            viewModel.viewModelScope.cancel()
+
             // Use timestamp within the default filter range to ensure transactions are included
             val now = fakeSettingsRepository.homeDateFilterState.value.to - 1_000L
             fakeRepo.transactions.value = listOf(
@@ -301,12 +304,20 @@ class HomeViewModelTest : BaseUnitTest() {
                 ),
             )
 
+            val testViewModel = HomeViewModel(
+                transactionRepository = fakeRepo,
+                settingsRepository = fakeSettingsRepository,
+                categoryRepository = fakeCategoryRepo,
+                dispatcher = testDispatcher,
+                searchDebounceMs = 0L,
+            )
+
             val collectJob = launch {
-                viewModel.state.collect {}
+                testViewModel.state.collect {}
             }
             advanceUntilIdle()
 
-            val balanceByPaymentType = viewModel.state.value.balanceByPaymentType
+            val balanceByPaymentType = testViewModel.state.value.balanceByPaymentType
             // ELECTRONIC: 2000 income = 2000
             assertEquals(2000.0, balanceByPaymentType[PaymentType.ELECTRONIC] ?: 0.0, 0.01)
             // CASH: 300 income - 150 expense = 150
@@ -368,6 +379,9 @@ class HomeViewModelTest : BaseUnitTest() {
     @Test
     fun balanceByPaymentType_shouldIncludeOnlyTransactionsWithinDefaultDateFilter_whenInitialized() =
         runViewModelTest {
+        // Cancel shared viewModel
+        viewModel.viewModelScope.cancel()
+
         val defaultFilter = fakeSettingsRepository.homeDateFilterState.value
         val inRangeTimestamp = defaultFilter.to - 1_000L
         val outOfRangeTimestamp = defaultFilter.from - 1_000L
@@ -393,28 +407,33 @@ class HomeViewModelTest : BaseUnitTest() {
             ),
         )
 
+        val testViewModel = HomeViewModel(
+            transactionRepository = fakeRepo,
+            settingsRepository = fakeSettingsRepository,
+            categoryRepository = fakeCategoryRepo,
+            dispatcher = testDispatcher,
+            searchDebounceMs = 0L,
+        )
+
         val collectJob = launch {
-            viewModel.state.collect {}
+            testViewModel.state.collect {}
         }
         advanceUntilIdle()
 
         // Default filter is last 7 days, so only the recent transaction should be included
-        val balanceByPaymentType = viewModel.state.value.balanceByPaymentType
+        val balanceByPaymentType = testViewModel.state.value.balanceByPaymentType
         assertEquals(1000.0, balanceByPaymentType[PaymentType.ELECTRONIC] ?: 0.0, 0.01)
-        assertFalse(balanceByPaymentType.containsKey(PaymentType.CASH))
+        assertFalse("Old Income should be excluded by date filter", balanceByPaymentType.containsKey(PaymentType.CASH))
         collectJob.cancel()
     }
 
     @Test
     fun totalsAndBalance_shouldBeCalculatedCorrectly_whenTransactionsContainIncomeAndExpense() =
         runViewModelTest {
-        fakeSettingsRepository.homeDateFilterState.value = SavedDateFilter(
-            presetIndex = SavedDateFilter.CUSTOM_PRESET_INDEX,
-            from = 0L,
-            to = Long.MAX_VALUE,
-        )
+        // Cancel the shared viewModel
+        viewModel.viewModelScope.cancel()
 
-        val now = 1_700_000_000_000L
+        val now = System.currentTimeMillis() - 1000L
         fakeRepo.transactions.value = listOf(
             Transaction(
                 id = 1,
@@ -450,12 +469,21 @@ class HomeViewModelTest : BaseUnitTest() {
             ),
         )
 
+        val testViewModel = HomeViewModel(
+            transactionRepository = fakeRepo,
+            settingsRepository = fakeSettingsRepository,
+            categoryRepository = fakeCategoryRepo,
+            dispatcher = testDispatcher,
+            searchDebounceMs = 0L,
+        )
+
         val collectJob = launch {
-            viewModel.state.collect {}
+            testViewModel.state.collect {}
         }
         advanceUntilIdle()
 
-        viewModel.onEvent(
+        // Ensure we are using CUSTOM filter with full range for this test
+        testViewModel.onEvent(
             HomeEvent.SetDateRange(
                 0L,
                 Long.MAX_VALUE
@@ -463,7 +491,7 @@ class HomeViewModelTest : BaseUnitTest() {
         )
         advanceUntilIdle()
 
-        val uiState = viewModel.state.value
+        val uiState = testViewModel.state.value
         assertEquals(2500.0, uiState.totalIncome, 0.01)
         assertEquals(-1000.0, uiState.totalExpense, 0.01)
         assertEquals(1500.0, uiState.balance, 0.01)
@@ -501,6 +529,7 @@ class HomeViewModelTest : BaseUnitTest() {
         }
         advanceUntilIdle()
 
+        // Ensure we are using CUSTOM filter with full range for this test
         viewModel.onEvent(
             HomeEvent.SetDateRange(
                 0L,
@@ -519,6 +548,9 @@ class HomeViewModelTest : BaseUnitTest() {
 
     @Test
     fun onEvent_shouldUpdateTotals_whenSetDateRangeIsReceived() = runViewModelTest {
+        // Cancel shared viewModel
+        viewModel.viewModelScope.cancel()
+
         val recentTimestamp = 1_720_000_000_000L
         val rangeFrom = 1_719_800_000_000L
         val rangeTo = 1_720_100_000_000L
@@ -551,12 +583,20 @@ class HomeViewModelTest : BaseUnitTest() {
             ),
         )
 
+        val testViewModel = HomeViewModel(
+            transactionRepository = fakeRepo,
+            settingsRepository = fakeSettingsRepository,
+            categoryRepository = fakeCategoryRepo,
+            dispatcher = testDispatcher,
+            searchDebounceMs = 0L,
+        )
+
         val collectJob = launch {
-            viewModel.state.collect {}
+            testViewModel.state.collect {}
         }
         advanceUntilIdle()
 
-        viewModel.onEvent(
+        testViewModel.onEvent(
             HomeEvent.SetDateRange(
                 rangeFrom,
                 rangeTo,
@@ -564,7 +604,7 @@ class HomeViewModelTest : BaseUnitTest() {
         )
         advanceUntilIdle()
 
-        val uiState = viewModel.state.value
+        val uiState = testViewModel.state.value
         assertEquals(1000.0, uiState.totalIncome, 0.01)
         assertEquals(-300.0, uiState.totalExpense, 0.01)
         assertEquals(700.0, uiState.balance, 0.01)
