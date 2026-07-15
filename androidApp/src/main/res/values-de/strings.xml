@@ -239,6 +239,8 @@
     <string name="add_transaction_details">Transaktionsdetails</string>
     <string name="add_transaction_title_required">Titel *</string>
     <string name="add_transaction_amount_required">Betrag *</string>
+    <string name="add_transaction_amount_total_meal_vouchers">Gesamtbetrag der Zahlung</string>
+    <string name="add_transaction_amount_total_meal_vouchers_description">Geben Sie den vollständigen bezahlten Betrag ein: den Wert der verwendeten Essensgutscheine zuzüglich einer eventuellen mit anderen Mitteln bezahlten Differenz.</string>
     <string name="add_transaction_notes_label">Notizen</string>
     <string name="add_transaction_payee_label">Empfänger</string>
     <string name="add_transaction_location_label">Ort</string>
@@ -296,7 +298,7 @@
     <string name="add_transaction_meal_voucher_unit_value">Einzelwert: %s€</string>
     <string name="add_transaction_meal_voucher_count">Anzahl der Gutscheine</string>
     <string name="add_transaction_meal_voucher_subtotal">Gutscheine Zwischensumme: %s€</string>
-    <string name="add_transaction_total_amount">Gesamtbetrag</string>
+    <string name="add_transaction_meal_voucher_difference_paid">Bezahlte Differenz</string>
 
     <!-- Empty State -->
     <string name="empty_state_no_transactions">Keine Transaktionen vorhanden</string>

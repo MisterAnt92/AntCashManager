@@ -691,6 +691,68 @@ class AddTransactionViewModelTest : BaseUnitTest() {
         assertFalse("Should not be saved", state.isTransactionSaved)
     }
 
+    // ── Buoni Pasto ──
+
+    @Test
+    fun submit_shouldPersistEnteredAmountDirectly_whenPaymentTypeIsMealVouchers() = runViewModelTest {
+        var capturedTransaction: Transaction? = null
+        mockTransactionRepository = object : TransactionRepository by mockTransactionRepository {
+            override suspend fun insertTransaction(transaction: Transaction): Long {
+                capturedTransaction = transaction
+                return 1L
+            }
+        }
+        viewModel = createViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.onEvent(AddTransactionEvent.SelectCategory(mockCategories[0]))
+        viewModel.onEvent(AddTransactionEvent.UpdateTitle("Pranzo"))
+        viewModel.onEvent(AddTransactionEvent.UpdateAmount("20.00"))
+        viewModel.onEvent(AddTransactionEvent.SelectPaymentType(PaymentType.MEAL_VOUCHERS))
+        viewModel.onEvent(AddTransactionEvent.UpdateMealVoucherCount("3"))
+        viewModel.onEvent(AddTransactionEvent.Submit)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // L'importo persistito deve essere esattamente quello inserito (gia' il totale),
+        // senza sommare il subtotale dei buoni (3 * 5.29) sopra.
+        assertEquals(20.00, capturedTransaction?.amount ?: 0.0, 0.001)
+        assertEquals(3, capturedTransaction?.mealVoucherCount)
+    }
+
+    @Test
+    fun submit_shouldNotInflateAmount_whenResavingLoadedMealVouchersTransaction() = runViewModelTest {
+        val existingMealVoucherTransaction = mockTransaction.copy(
+            id = 2L,
+            amount = 20.0,
+            paymentType = PaymentType.MEAL_VOUCHERS,
+            mealVoucherCount = 3,
+        )
+        var capturedTransaction: Transaction? = null
+        mockTransactionRepository = object : TransactionRepository by mockTransactionRepository {
+            override suspend fun getTransactionById(id: Long) =
+                if (id == 2L) existingMealVoucherTransaction else null
+
+            override suspend fun updateTransaction(transaction: Transaction) {
+                capturedTransaction = transaction
+            }
+        }
+        viewModel = createViewModel(transactionId = 2L)
+        advanceUntilLoaded()
+
+        assertEquals(
+            "Il campo Importo deve mostrare il totale gia' salvato, non una sua parte",
+            "20.0",
+            viewModel.state.value.amount,
+        )
+
+        viewModel.onEvent(AddTransactionEvent.Submit)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Ri-salvando senza modifiche, l'importo persistito deve restare invariato:
+        // non deve essere sommato di nuovo il subtotale dei buoni (3 * 5.29).
+        assertEquals(20.0, capturedTransaction?.amount ?: 0.0, 0.001)
+    }
+
     // ── Reset ──
 
     @Test

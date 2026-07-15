@@ -212,6 +212,8 @@
     <string name="add_transaction_details">Detalles de la Transacción</string>
     <string name="add_transaction_title_required">Título *</string>
     <string name="add_transaction_amount_required">Cantidad *</string>
+    <string name="add_transaction_amount_total_meal_vouchers">Importe total del pago</string>
+    <string name="add_transaction_amount_total_meal_vouchers_description">Introduce el importe total pagado: el valor de los vales de comida utilizados más la eventual diferencia pagada por otro medio.</string>
     <string name="add_transaction_notes_label">Notas</string>
     <string name="add_transaction_payee_label">Beneficiario</string>
     <string name="add_transaction_location_label">Ubicación</string>
@@ -258,7 +260,7 @@
     <string name="add_transaction_meal_voucher_unit_value">Valor unitario: %s€</string>
     <string name="add_transaction_meal_voucher_count">Número de vales</string>
     <string name="add_transaction_meal_voucher_subtotal">Subtotal vales: %s€</string>
-    <string name="add_transaction_total_amount">Importe Total</string>
+    <string name="add_transaction_meal_voucher_difference_paid">Diferencia pagada</string>
 
     <string name="empty_state_no_transactions">No hay transacciones presentes</string>
     <string name="empty_state_no_transactions_subtitle">¡La alcancía te está esperando!</string>

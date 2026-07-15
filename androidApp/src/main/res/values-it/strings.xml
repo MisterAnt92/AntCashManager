@@ -259,6 +259,8 @@
     <string name="add_transaction_details">Dettagli Transazione</string>
     <string name="add_transaction_title_required">Titolo *</string>
     <string name="add_transaction_amount_required">Importo *</string>
+    <string name="add_transaction_amount_total_meal_vouchers">Importo totale del pagamento</string>
+    <string name="add_transaction_amount_total_meal_vouchers_description">Inserisci l\'importo totale pagato: il valore dei buoni pasto utilizzati più l\'eventuale differenza pagata con altri mezzi.</string>
     <string name="add_transaction_notes_label">Note</string>
     <string name="add_transaction_payee_label">Beneficiario</string>
     <string name="add_transaction_location_label">Luogo</string>
@@ -305,7 +307,7 @@
     <string name="add_transaction_meal_voucher_unit_value">Valore unitario: %s€</string>
     <string name="add_transaction_meal_voucher_count">Numero di buoni</string>
     <string name="add_transaction_meal_voucher_subtotal">Subtotale buoni: %s€</string>
-    <string name="add_transaction_total_amount">Importo Totale</string>
+    <string name="add_transaction_meal_voucher_difference_paid">Differenza pagata</string>
 
     <string name="empty_state_no_transactions">Nessuna transazione presente</string>
     <string name="empty_state_no_transactions_subtitle">Il salvadanaio ti sta aspettando!</string>
