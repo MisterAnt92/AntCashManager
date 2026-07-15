@@ -1,6 +1,7 @@
 package com.antcashmanager.data.mapper
 
 import com.antcashmanager.data.local.entity.TransactionEntity
+import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import org.junit.Assert.assertEquals
@@ -138,6 +139,74 @@ class TransactionMapperTest {
         val domain = entity.toDomain()
 
         assertEquals(0L, domain.id)
+    }
+
+    @Test
+    fun toDomain_shouldPreserveMealVoucherCount_whenEntityHasNonZeroValue() {
+        val entity = TransactionEntity(
+            id = 6L,
+            title = "Lunch",
+            amount = 12.0,
+            category = "Food",
+            type = "EXPENSE",
+            timestamp = 6000L,
+            mealVoucherCount = 3,
+        )
+
+        val domain = entity.toDomain()
+
+        assertEquals(3, domain.mealVoucherCount)
+    }
+
+    @Test
+    fun toEntity_shouldPreserveMealVoucherCount_whenDomainHasNonZeroValue() {
+        val domain = Transaction(
+            id = 6L,
+            title = "Lunch",
+            amount = 12.0,
+            category = "Food",
+            type = TransactionType.EXPENSE,
+            timestamp = 6000L,
+            mealVoucherCount = 3,
+        )
+
+        val entity = domain.toEntity()
+
+        assertEquals(3, entity.mealVoucherCount)
+    }
+
+    @Test
+    fun roundTrip_shouldPreserveMealVoucherCount_whenValueIsNonZero() {
+        val original = TransactionEntity(
+            id = 7L,
+            title = "Dinner",
+            amount = 20.0,
+            category = "Food",
+            type = "EXPENSE",
+            timestamp = 7000L,
+            mealVoucherCount = 2,
+        )
+
+        val roundTripped = original.toDomain().toEntity()
+
+        assertEquals(original, roundTripped)
+    }
+
+    @Test
+    fun toDomain_shouldFallbackToElectronicPaymentType_whenStoredValueIsInvalid() {
+        val entity = TransactionEntity(
+            id = 8L,
+            title = "Corrupted",
+            amount = 10.0,
+            category = "Other",
+            type = "EXPENSE",
+            timestamp = 8000L,
+            paymentType = "BOGUS",
+        )
+
+        val domain = entity.toDomain()
+
+        assertEquals(PaymentType.ELECTRONIC, domain.paymentType)
     }
 }
 

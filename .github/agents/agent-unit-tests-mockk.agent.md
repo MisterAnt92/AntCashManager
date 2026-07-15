@@ -20,7 +20,7 @@ Questo agente deve:
    - helper/formatter/util Android host-side
 2. `shared/src/commonTest/kotlin`
    - UseCase e logica `commonMain` pura KMP
-3. `shared/src/test/kotlin`
+3. `shared/src/androidHostTest/kotlin`
    - repository/data host-side
    - mapper, parser, helper e classi con logica non banale
 
@@ -135,7 +135,7 @@ Copri repository che fanno qualcosa di piu della semplice delega, ad esempio:
 ## Source set e layering
 - `androidApp/src/test/kotlin`: test di `ViewModel` e logica Android non strumentale
 - `shared/src/commonTest/kotlin`: test KMP puri per `commonMain`
-- `shared/src/test/kotlin`: repository/data test host-side e logica JVM-specific
+- `shared/src/androidHostTest/kotlin`: repository/data test host-side e logica JVM-specific
 
 Rispetta sempre la Clean Architecture:
 - test di `ViewModel` nel layer presentation
@@ -153,8 +153,8 @@ Rispetta sempre la Clean Architecture:
 - `shared/src/commonTest/kotlin/com/antcashmanager/domain/usecase/settings/TransactionsDateFilterStateUseCaseMockkTest.kt`
 
 ### Repository / helper con logica
-- `shared/src/test/kotlin/com/antcashmanager/data/repository/TransactionRepositoryImplTest.kt`
-- `shared/src/test/kotlin/com/antcashmanager/domain/util/ReceiptTextParserTest.kt`
+- `shared/src/androidHostTest/kotlin/com/antcashmanager/data/repository/TransactionRepositoryImplTest.kt`
+- `shared/src/androidHostTest/kotlin/com/antcashmanager/domain/util/ReceiptTextParserTest.kt`
 - `androidApp/src/test/kotlin/com/antcashmanager/android/util/CurrencyFormatterTest.kt`
 
 ## Nota sui test legacy

@@ -27,7 +27,7 @@ Code is organized **package-by-feature**, not by technical type. Reference scree
 ./gradlew :androidApp:assembleDebug
 
 # Run unit tests (shared domain layer)
-./gradlew :shared:test
+./gradlew :shared:testAndroidHostTest
 
 # Run unit tests (androidApp ViewModel layer)
 ./gradlew :androidApp:testDebugUnitTest
@@ -127,7 +127,7 @@ Routes are string literals defined inline in `NavGraph.kt`. `BottomNavItem` enum
 |---|---|---|
 | ViewModel | `androidApp/src/test/kotlin` | `com.antcashmanager.android.BaseUnitTest` |
 | Domain (commonMain) | `shared/src/commonTest/kotlin` | — |
-| Data/Repository | `shared/src/test/kotlin` | — |
+| Data/Repository | `shared/src/androidHostTest/kotlin` | — |
 
 - Use **MockK** for mocking; Mockito is forbidden.
 - Test naming: `method_shouldExpectedBehavior_whenCondition` (no backticks).

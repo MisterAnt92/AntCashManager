@@ -5,12 +5,17 @@ import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.SettingsRepository
+import io.mockk.coEvery
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -87,6 +92,83 @@ class SetThemeUseCaseTest {
     }
 }
 
+class GetLanguageUseCaseTest {
+
+    private lateinit var fakeRepo: FakeSettingsRepository
+    private lateinit var useCase: GetLanguageUseCase
+
+    @Before
+    fun setup() {
+        fakeRepo = FakeSettingsRepository()
+        useCase = GetLanguageUseCase(fakeRepo)
+    }
+
+    @Test
+    fun invoke_shouldReturnSystemLanguage_whenNoLanguageIsSet() = runTest {
+        val language = useCase().first().getOrThrow()
+        assertEquals(AppLanguage.SYSTEM, language)
+    }
+
+    @Test
+    fun invoke_shouldReturnItalian_whenLanguageIsSetToItalian() = runTest {
+        fakeRepo.setLanguage(AppLanguage.ITALIAN)
+
+        val language = useCase().first().getOrThrow()
+        assertEquals(AppLanguage.ITALIAN, language)
+    }
+
+    @Test
+    fun invoke_shouldReturnFailure_whenRepositoryThrows() = runTest {
+        val throwingRepo = mockk<SettingsRepository>()
+        every { throwingRepo.getLanguage() } returns flow { throw IllegalStateException("read failure") }
+
+        val result = GetLanguageUseCase(throwingRepo)().first()
+
+        assertTrue(result.isFailure)
+    }
+}
+
+class SetLanguageUseCaseTest {
+
+    private lateinit var fakeRepo: FakeSettingsRepository
+    private lateinit var setLanguageUseCase: SetLanguageUseCase
+    private lateinit var getLanguageUseCase: GetLanguageUseCase
+
+    @Before
+    fun setup() {
+        fakeRepo = FakeSettingsRepository()
+        setLanguageUseCase = SetLanguageUseCase(fakeRepo)
+        getLanguageUseCase = GetLanguageUseCase(fakeRepo)
+    }
+
+    @Test
+    fun invoke_shouldPersistFrenchLanguage_whenCalledWithFrench() = runTest {
+        setLanguageUseCase(AppLanguage.FRENCH)
+
+        val currentLanguage = getLanguageUseCase().first().getOrThrow()
+        assertEquals(AppLanguage.FRENCH, currentLanguage)
+    }
+
+    @Test
+    fun invoke_shouldChangeLanguageFromFrenchToSystem_whenCalledAgain() = runTest {
+        setLanguageUseCase(AppLanguage.FRENCH)
+        assertEquals(AppLanguage.FRENCH, getLanguageUseCase().first().getOrThrow())
+
+        setLanguageUseCase(AppLanguage.SYSTEM)
+        assertEquals(AppLanguage.SYSTEM, getLanguageUseCase().first().getOrThrow())
+    }
+
+    @Test
+    fun invoke_shouldReturnFailure_whenRepositorySetLanguageThrows() = runTest {
+        val throwingRepo = mockk<SettingsRepository>()
+        coEvery { throwingRepo.setLanguage(any()) } throws IllegalStateException("write failure")
+
+        val result = SetLanguageUseCase(throwingRepo)(AppLanguage.GERMAN)
+
+        assertTrue(result.isFailure)
+    }
+}
+
 /**
  * Fake repository per test dei settings.
  */
@@ -109,6 +191,7 @@ internal class FakeSettingsRepository : SettingsRepository {
     private val transactionsTransactionDisplayTypeFlow =
         MutableStateFlow(TransactionDisplayType.TREND)
     private val chartsZoomEnabledFlow = MutableStateFlow(false)
+    private val mealVoucherValueFlow = MutableStateFlow(5.29)
 
     override fun getTheme(): Flow<AppTheme> = themeFlow
 
@@ -230,6 +313,11 @@ internal class FakeSettingsRepository : SettingsRepository {
     override suspend fun setIsTutorialCompleted(completed: Boolean) {}
     override fun getDataEncryptionEnabled(): Flow<Boolean> = flowOf(false)
     override suspend fun setDataEncryptionEnabled(enabled: Boolean) {}
+
+    override fun getMealVoucherValue(): Flow<Double> = mealVoucherValueFlow
+    override suspend fun setMealVoucherValue(value: Double) {
+        mealVoucherValueFlow.value = value
+    }
 
     override suspend fun resetAllPreferences() {
         themeFlow.value = AppTheme.SYSTEM

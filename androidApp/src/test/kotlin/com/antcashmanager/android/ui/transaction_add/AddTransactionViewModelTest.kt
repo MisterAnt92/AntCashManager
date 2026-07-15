@@ -1,10 +1,12 @@
 package com.antcashmanager.android.ui.transaction_add
 
 import com.antcashmanager.android.BaseUnitTest
+import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionConstant
 import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionEvent
 import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionStep
 import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionViewModel
 import com.antcashmanager.domain.model.Category
+import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.CategoryRepository
@@ -476,6 +478,217 @@ class AddTransactionViewModelTest : BaseUnitTest() {
         testDispatcher.scheduler.advanceUntilIdle()
 
         assertTrue("Should be saved", viewModel.state.value.isTransactionSaved)
+    }
+
+    // ── Payment type dialog ──
+
+    @Test
+    fun onEvent_shouldOpenPaymentTypeDialog_whenShowPaymentTypeDialogEventReceived() = runViewModelTest {
+        viewModel = createViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.onEvent(AddTransactionEvent.ShowPaymentTypeDialog)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertTrue("Payment type dialog should be open", viewModel.state.value.showPaymentTypeDialog)
+    }
+
+    @Test
+    fun onEvent_shouldOpenPaymentTypeDialog_whenEditPaymentTypeEventReceived() = runViewModelTest {
+        viewModel = createViewModel(transactionId = 1L)
+        advanceUntilLoaded()
+
+        viewModel.onEvent(AddTransactionEvent.EditPaymentType)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertTrue("Payment type dialog should be open", viewModel.state.value.showPaymentTypeDialog)
+    }
+
+    @Test
+    fun onEvent_shouldClosePaymentTypeDialog_whenDismissPaymentTypeDialogEventReceived() = runViewModelTest {
+        viewModel = createViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.onEvent(AddTransactionEvent.ShowPaymentTypeDialog)
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertTrue("Dialog should be open", viewModel.state.value.showPaymentTypeDialog)
+
+        viewModel.onEvent(AddTransactionEvent.DismissPaymentTypeDialog)
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertFalse("Dialog should be closed", viewModel.state.value.showPaymentTypeDialog)
+    }
+
+    @Test
+    fun onEvent_shouldSelectPaymentTypeAndCloseDialog_whenSelectPaymentTypeEventReceived() = runViewModelTest {
+        viewModel = createViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.onEvent(AddTransactionEvent.ShowPaymentTypeDialog)
+        viewModel.onEvent(AddTransactionEvent.SelectPaymentType(PaymentType.CASH))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertEquals("Should select CASH", PaymentType.CASH, state.selectedPaymentType)
+        assertFalse("Dialog should be closed", state.showPaymentTypeDialog)
+    }
+
+    // ── Delete flow ──
+
+    @Test
+    fun onEvent_shouldOpenDeleteConfirmDialog_whenShowDeleteConfirmDialogEventReceived() = runViewModelTest {
+        viewModel = createViewModel(transactionId = 1L)
+        advanceUntilLoaded()
+
+        viewModel.onEvent(AddTransactionEvent.ShowDeleteConfirmDialog)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertTrue("Delete confirm dialog should be open", viewModel.state.value.showDeleteConfirmDialog)
+    }
+
+    @Test
+    fun onEvent_shouldCloseDeleteConfirmDialog_whenDismissDeleteConfirmDialogEventReceived() = runViewModelTest {
+        viewModel = createViewModel(transactionId = 1L)
+        advanceUntilLoaded()
+
+        viewModel.onEvent(AddTransactionEvent.ShowDeleteConfirmDialog)
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertTrue("Dialog should be open", viewModel.state.value.showDeleteConfirmDialog)
+
+        viewModel.onEvent(AddTransactionEvent.DismissDeleteConfirmDialog)
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertFalse("Dialog should be closed", viewModel.state.value.showDeleteConfirmDialog)
+    }
+
+    @Test
+    fun confirmDelete_shouldMarkTransactionSavedAndCloseDialog_whenDeleteSucceeds() = runViewModelTest {
+        viewModel = createViewModel(transactionId = 1L)
+        advanceUntilLoaded()
+
+        viewModel.onEvent(AddTransactionEvent.ConfirmDelete)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertTrue("Transaction should be marked as saved", state.isTransactionSaved)
+        assertFalse("Delete confirm dialog should be closed", state.showDeleteConfirmDialog)
+        assertNull("Should have no error", state.error)
+    }
+
+    @Test
+    fun confirmDelete_shouldSetTransactionNotFoundError_whenTransactionDoesNotExist() = runViewModelTest {
+        viewModel = createViewModel(transactionId = 999L)
+        advanceUntilLoaded()
+
+        viewModel.onEvent(AddTransactionEvent.ConfirmDelete)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertEquals(
+            AddTransactionConstant.ERROR_TRANSACTION_NOT_FOUND,
+            viewModel.state.value.error,
+        )
+    }
+
+    @Test
+    fun confirmDelete_shouldSetDeleteError_whenDeleteTransactionUseCaseFails() = runViewModelTest {
+        mockTransactionRepository = object : TransactionRepository by mockTransactionRepository {
+            override suspend fun deleteTransaction(transaction: Transaction) {
+                throw IllegalStateException("delete failed")
+            }
+        }
+        viewModel = createViewModel(transactionId = 1L)
+        advanceUntilLoaded()
+
+        viewModel.onEvent(AddTransactionEvent.ConfirmDelete)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertEquals(AddTransactionConstant.ERROR_DELETE, state.error)
+        assertFalse("Transaction should not be marked as saved", state.isTransactionSaved)
+    }
+
+    // ── Validazione importo ──
+
+    @Test
+    fun submit_shouldSetInvalidAmountError_whenAmountIsZero() = runViewModelTest {
+        viewModel = createViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.onEvent(AddTransactionEvent.SelectCategory(mockCategories[0]))
+        viewModel.onEvent(AddTransactionEvent.UpdateTitle("Pizza"))
+        viewModel.onEvent(AddTransactionEvent.UpdateAmount("0"))
+        viewModel.onEvent(AddTransactionEvent.Submit)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertEquals(AddTransactionConstant.ERROR_INVALID_AMOUNT, viewModel.state.value.error)
+    }
+
+    @Test
+    fun submit_shouldSetInvalidAmountError_whenAmountIsNegative() = runViewModelTest {
+        viewModel = createViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.onEvent(AddTransactionEvent.SelectCategory(mockCategories[0]))
+        viewModel.onEvent(AddTransactionEvent.UpdateTitle("Pizza"))
+        viewModel.onEvent(AddTransactionEvent.UpdateAmount("-5"))
+        viewModel.onEvent(AddTransactionEvent.Submit)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertEquals(AddTransactionConstant.ERROR_INVALID_AMOUNT, viewModel.state.value.error)
+    }
+
+    @Test
+    fun submit_shouldSetInvalidAmountError_whenAmountIsNotANumber() = runViewModelTest {
+        viewModel = createViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.onEvent(AddTransactionEvent.SelectCategory(mockCategories[0]))
+        viewModel.onEvent(AddTransactionEvent.UpdateTitle("Pizza"))
+        viewModel.onEvent(AddTransactionEvent.UpdateAmount("abc"))
+        viewModel.onEvent(AddTransactionEvent.Submit)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertEquals(AddTransactionConstant.ERROR_INVALID_AMOUNT, viewModel.state.value.error)
+    }
+
+    // ── Submit failure ──
+
+    @Test
+    fun submit_shouldSetSaveError_whenInsertTransactionUseCaseFails() = runViewModelTest {
+        mockTransactionRepository = object : TransactionRepository by mockTransactionRepository {
+            override suspend fun insertTransaction(transaction: Transaction): Long {
+                throw IllegalStateException("insert failed")
+            }
+        }
+        viewModel = createViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.onEvent(AddTransactionEvent.SelectCategory(mockCategories[0]))
+        viewModel.onEvent(AddTransactionEvent.UpdateTitle("Pizza"))
+        viewModel.onEvent(AddTransactionEvent.UpdateAmount("12.50"))
+        viewModel.onEvent(AddTransactionEvent.Submit)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertEquals(AddTransactionConstant.ERROR_SAVE, state.error)
+        assertFalse("Should not be saved", state.isTransactionSaved)
+    }
+
+    @Test
+    fun submit_shouldSetSaveError_whenUpdateTransactionUseCaseFails() = runViewModelTest {
+        mockTransactionRepository = object : TransactionRepository by mockTransactionRepository {
+            override suspend fun updateTransaction(transaction: Transaction) {
+                throw IllegalStateException("update failed")
+            }
+        }
+        viewModel = createViewModel(transactionId = 1L)
+        advanceUntilLoaded()
+
+        viewModel.onEvent(AddTransactionEvent.UpdateTitle("Updated Title"))
+        viewModel.onEvent(AddTransactionEvent.Submit)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertEquals(AddTransactionConstant.ERROR_SAVE, state.error)
+        assertFalse("Should not be saved", state.isTransactionSaved)
     }
 
     // ── Reset ──

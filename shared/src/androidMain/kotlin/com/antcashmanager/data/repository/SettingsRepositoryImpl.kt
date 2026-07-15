@@ -23,6 +23,7 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 
 class SettingsRepositoryImpl(
     private val context: Context,
+    private val dataStore: DataStore<Preferences> = context.dataStore,
 ) : SettingsRepository {
 
     private val themeKey = stringPreferencesKey("theme")
@@ -84,146 +85,146 @@ class SettingsRepositoryImpl(
     }
 
     override fun getTheme(): Flow<AppTheme> =
-        context.dataStore.data.map { preferences ->
+        dataStore.data.map { preferences ->
             val themeName = preferences[themeKey] ?: AppTheme.SYSTEM.name
             AppTheme.entries.find { it.name == themeName } ?: AppTheme.SYSTEM
         }
 
     override suspend fun setTheme(theme: AppTheme) {
-        context.dataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[themeKey] = theme.name
         }
     }
 
     override fun getLanguage(): Flow<AppLanguage> =
-        context.dataStore.data.map { preferences ->
+        dataStore.data.map { preferences ->
             val langName = preferences[languageKey] ?: AppLanguage.SYSTEM.name
             AppLanguage.entries.find { it.name == langName } ?: AppLanguage.SYSTEM
         }
 
     override suspend fun setLanguage(language: AppLanguage) {
-        context.dataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[languageKey] = language.name
         }
     }
 
     override fun getShowCharts(): Flow<Boolean> =
-        context.dataStore.data.map { preferences ->
+        dataStore.data.map { preferences ->
             preferences[showChartsKey] ?: true
         }
 
     override suspend fun setShowCharts(show: Boolean) {
-        context.dataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[showChartsKey] = show
         }
     }
 
     override fun getHighContrast(): Flow<Boolean> =
-        context.dataStore.data.map { preferences ->
+        dataStore.data.map { preferences ->
             preferences[highContrastKey] ?: false
         }
 
     override suspend fun setHighContrast(enabled: Boolean) {
-        context.dataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[highContrastKey] = enabled
         }
     }
 
     override fun getLargeText(): Flow<Boolean> =
-        context.dataStore.data.map { preferences ->
+        dataStore.data.map { preferences ->
             preferences[largeTextKey] ?: false
         }
 
     override suspend fun setLargeText(enabled: Boolean) {
-        context.dataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[largeTextKey] = enabled
         }
     }
 
     override fun getReduceMotion(): Flow<Boolean> =
-        context.dataStore.data.map { preferences ->
+        dataStore.data.map { preferences ->
             preferences[reduceMotionKey] ?: false
         }
 
     override suspend fun setReduceMotion(enabled: Boolean) {
-        context.dataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[reduceMotionKey] = enabled
         }
     }
 
     override fun getShowTransactionNotes(): Flow<Boolean> =
-        context.dataStore.data.map { preferences ->
+        dataStore.data.map { preferences ->
             preferences[showTransactionNotesKey] ?: true
         }
 
     override suspend fun setShowTransactionNotes(show: Boolean) {
-        context.dataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[showTransactionNotesKey] = show
         }
     }
 
     override fun getCurrencySymbol(): Flow<String> =
-        context.dataStore.data.map { it[currencySymbolKey] ?: "\u20ac" }
+        dataStore.data.map { it[currencySymbolKey] ?: "\u20ac" }
 
     override suspend fun setCurrencySymbol(symbol: String) {
-        context.dataStore.edit { it[currencySymbolKey] = symbol }
+        dataStore.edit { it[currencySymbolKey] = symbol }
     }
 
     override fun getDecimalDigits(): Flow<Int> =
-        context.dataStore.data.map { it[decimalDigitsKey] ?: 2 }
+        dataStore.data.map { it[decimalDigitsKey] ?: 2 }
 
     override suspend fun setDecimalDigits(digits: Int) {
-        context.dataStore.edit { it[decimalDigitsKey] = digits }
+        dataStore.edit { it[decimalDigitsKey] = digits }
     }
 
     override fun getDecimalSeparator(): Flow<String> =
-        context.dataStore.data.map { it[decimalSeparatorKey] ?: "," }
+        dataStore.data.map { it[decimalSeparatorKey] ?: "," }
 
     override suspend fun setDecimalSeparator(separator: String) {
-        context.dataStore.edit { it[decimalSeparatorKey] = separator }
+        dataStore.edit { it[decimalSeparatorKey] = separator }
     }
 
     override fun getThousandsSeparator(): Flow<String> =
-        context.dataStore.data.map { it[thousandsSeparatorKey] ?: "" }
+        dataStore.data.map { it[thousandsSeparatorKey] ?: "" }
 
     override suspend fun setThousandsSeparator(separator: String) {
-        context.dataStore.edit { it[thousandsSeparatorKey] = separator }
+        dataStore.edit { it[thousandsSeparatorKey] = separator }
     }
 
     override fun getMealVoucherValue(): Flow<Double> =
-        context.dataStore.data.map { it[mealVoucherValueKey] ?: DEFAULT_MEAL_VOUCHER_VALUE }
+        dataStore.data.map { it[mealVoucherValueKey] ?: DEFAULT_MEAL_VOUCHER_VALUE }
 
     override suspend fun setMealVoucherValue(value: Double) {
-        context.dataStore.edit { it[mealVoucherValueKey] = value }
+        dataStore.edit { it[mealVoucherValueKey] = value }
     }
 
     override fun getDateFormat(): Flow<String> =
-        context.dataStore.data.map { it[dateFormatKey] ?: "dd/MM/yyyy" }
+        dataStore.data.map { it[dateFormatKey] ?: "dd/MM/yyyy" }
 
     override suspend fun setDateFormat(pattern: String) {
-        context.dataStore.edit { it[dateFormatKey] = pattern }
+        dataStore.edit { it[dateFormatKey] = pattern }
     }
 
     override fun getDateFilterExpanded(): Flow<Boolean> =
-        context.dataStore.data.map { preferences ->
+        dataStore.data.map { preferences ->
             preferences[dateFilterExpandedKey] ?: true
         }
 
     override suspend fun setDateFilterExpanded(expanded: Boolean) {
-        context.dataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[dateFilterExpandedKey] = expanded
         }
     }
 
     override fun getHomeDateFilterPreset(): Flow<Int> =
-        context.dataStore.data.map { it[homeDateFilterPresetKey] ?: 1 }
+        dataStore.data.map { it[homeDateFilterPresetKey] ?: 1 }
 
     override suspend fun setHomeDateFilterPreset(index: Int) {
-        context.dataStore.edit { it[homeDateFilterPresetKey] = index }
+        dataStore.edit { it[homeDateFilterPresetKey] = index }
     }
 
     override fun getHomeDateFilterState(): Flow<SavedDateFilter> =
-        context.dataStore.data.map { preferences ->
+        dataStore.data.map { preferences ->
             val defaultFilter = defaultHomeDateFilter()
             SavedDateFilter(
                 presetIndex = preferences[homeDateFilterPresetKey] ?: defaultFilter.presetIndex,
@@ -234,7 +235,7 @@ class SettingsRepositoryImpl(
 
     override suspend fun setHomeDateFilterState(filter: SavedDateFilter) {
         val normalizedFilter = filter.normalized()
-        context.dataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[homeDateFilterPresetKey] = normalizedFilter.presetIndex
             preferences[homeDateFilterFromKey] = normalizedFilter.from
             preferences[homeDateFilterToKey] = normalizedFilter.to
@@ -242,14 +243,14 @@ class SettingsRepositoryImpl(
     }
 
     override fun getTransactionsDateFilterPreset(): Flow<Int> =
-        context.dataStore.data.map { it[transactionsDateFilterPresetKey] ?: 1 }
+        dataStore.data.map { it[transactionsDateFilterPresetKey] ?: 1 }
 
     override suspend fun setTransactionsDateFilterPreset(index: Int) {
-        context.dataStore.edit { it[transactionsDateFilterPresetKey] = index }
+        dataStore.edit { it[transactionsDateFilterPresetKey] = index }
     }
 
     override fun getTransactionsDateFilterState(): Flow<SavedDateFilter> =
-        context.dataStore.data.map { preferences ->
+        dataStore.data.map { preferences ->
             val defaultFilter = defaultTransactionsDateFilter()
             SavedDateFilter(
                 presetIndex =
@@ -261,7 +262,7 @@ class SettingsRepositoryImpl(
 
     override suspend fun setTransactionsDateFilterState(filter: SavedDateFilter) {
         val normalizedFilter = filter.normalized()
-        context.dataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[transactionsDateFilterPresetKey] = normalizedFilter.presetIndex
             preferences[transactionsDateFilterFromKey] = normalizedFilter.from
             preferences[transactionsDateFilterToKey] = normalizedFilter.to
@@ -269,14 +270,14 @@ class SettingsRepositoryImpl(
     }
 
     override fun getChartsDateFilterPreset(): Flow<Int> =
-        context.dataStore.data.map { it[chartsDateFilterPresetKey] ?: 1 }
+        dataStore.data.map { it[chartsDateFilterPresetKey] ?: 1 }
 
     override suspend fun setChartsDateFilterPreset(index: Int) {
-        context.dataStore.edit { it[chartsDateFilterPresetKey] = index }
+        dataStore.edit { it[chartsDateFilterPresetKey] = index }
     }
 
     override fun getChartsDateFilterState(): Flow<SavedDateFilter> =
-        context.dataStore.data.map { preferences ->
+        dataStore.data.map { preferences ->
             val defaultFilter = defaultChartsDateFilter()
             SavedDateFilter(
                 presetIndex = preferences[chartsDateFilterPresetKey] ?: defaultFilter.presetIndex,
@@ -287,7 +288,7 @@ class SettingsRepositoryImpl(
 
     override suspend fun setChartsDateFilterState(filter: SavedDateFilter) {
         val normalizedFilter = filter.normalized()
-        context.dataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[chartsDateFilterPresetKey] = normalizedFilter.presetIndex
             preferences[chartsDateFilterFromKey] = normalizedFilter.from
             preferences[chartsDateFilterToKey] = normalizedFilter.to
@@ -295,36 +296,36 @@ class SettingsRepositoryImpl(
     }
 
     override fun getChartsZoomEnabled(): Flow<Boolean> =
-        context.dataStore.data.map { it[chartsZoomEnabledKey] ?: false }
+        dataStore.data.map { it[chartsZoomEnabledKey] ?: false }
 
     override suspend fun setChartsZoomEnabled(enabled: Boolean) {
-        context.dataStore.edit { it[chartsZoomEnabledKey] = enabled }
+        dataStore.edit { it[chartsZoomEnabledKey] = enabled }
     }
 
     override fun getShowPaymentTypeBreakdown(): Flow<Boolean> =
-        context.dataStore.data.map { preferences ->
+        dataStore.data.map { preferences ->
             preferences[showPaymentTypeBreakdownKey] ?: false
         }
 
     override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {
-        context.dataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[showPaymentTypeBreakdownKey] = show
         }
     }
 
     override fun getShowQuickInsightsCard(): Flow<Boolean> =
-        context.dataStore.data.map { preferences ->
+        dataStore.data.map { preferences ->
             preferences[showQuickInsightsCardKey] ?: false
         }
 
     override suspend fun setShowQuickInsightsCard(show: Boolean) {
-        context.dataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[showQuickInsightsCardKey] = show
         }
     }
 
     override fun getTransactionDisplayType(): Flow<TransactionDisplayType> =
-        context.dataStore.data.map { preferences ->
+        dataStore.data.map { preferences ->
             val typeName =
                 preferences[transactionDisplayTypeKey] ?: TransactionDisplayType.TREND.name
             try {
@@ -335,13 +336,13 @@ class SettingsRepositoryImpl(
         }
 
     override suspend fun setTransactionDisplayType(displayType: TransactionDisplayType) {
-        context.dataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[transactionDisplayTypeKey] = displayType.name
         }
     }
 
     override fun getTransactionsTransactionDisplayType(): Flow<TransactionDisplayType> =
-        context.dataStore.data.map { preferences ->
+        dataStore.data.map { preferences ->
             val typeName = preferences[transactionsTransactionDisplayTypeKey]
                 ?: TransactionDisplayType.TREND.name
             try {
@@ -352,30 +353,30 @@ class SettingsRepositoryImpl(
         }
 
     override suspend fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType) {
-        context.dataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[transactionsTransactionDisplayTypeKey] = displayType.name
         }
     }
 
     override fun getShowInitialAnimation(): Flow<Boolean> =
-        context.dataStore.data.map { it[showInitialAnimationKey] ?: false }
+        dataStore.data.map { it[showInitialAnimationKey] ?: false }
 
     override suspend fun setShowInitialAnimation(show: Boolean) {
-        context.dataStore.edit { it[showInitialAnimationKey] = show }
+        dataStore.edit { it[showInitialAnimationKey] = show }
     }
 
     override fun getIsTutorialCompleted(): Flow<Boolean> =
-        context.dataStore.data.map { it[isTutorialCompletedKey] ?: false }
+        dataStore.data.map { it[isTutorialCompletedKey] ?: false }
 
     override suspend fun setIsTutorialCompleted(completed: Boolean) {
-        context.dataStore.edit { it[isTutorialCompletedKey] = completed }
+        dataStore.edit { it[isTutorialCompletedKey] = completed }
     }
 
     override fun getDataEncryptionEnabled(): Flow<Boolean> =
-        context.dataStore.data.map { it[dataEncryptionEnabledKey] ?: false }
+        dataStore.data.map { it[dataEncryptionEnabledKey] ?: false }
 
     override suspend fun setDataEncryptionEnabled(enabled: Boolean) {
-        context.dataStore.edit { it[dataEncryptionEnabledKey] = enabled }
+        dataStore.edit { it[dataEncryptionEnabledKey] = enabled }
         DatabaseEncryptionManager.setEncryptionDesired(context, enabled)
     }
 
@@ -384,7 +385,7 @@ class SettingsRepositoryImpl(
         val defaultTransactionsFilter = defaultTransactionsDateFilter()
         val defaultChartsFilter = defaultChartsDateFilter()
 
-        context.dataStore.edit { prefs ->
+        dataStore.edit { prefs ->
             prefs[themeKey] = AppTheme.SYSTEM.name
             prefs[languageKey] = AppLanguage.SYSTEM.name
             prefs[showChartsKey] = true
