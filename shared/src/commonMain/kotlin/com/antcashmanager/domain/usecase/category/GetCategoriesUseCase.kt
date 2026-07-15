@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.map
 /**
  * UseCase che fornisce la lista delle categorie come Flow di Result.
  */
-open class GetCategoriesUseCase(
+class GetCategoriesUseCase(
     private val categoryRepository: CategoryRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : NoParamsFlowUseCase<Result<List<Category>>>(dispatcher) {

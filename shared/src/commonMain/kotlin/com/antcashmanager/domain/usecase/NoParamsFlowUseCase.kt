@@ -27,6 +27,9 @@ abstract class NoParamsFlowUseCase<out Result>(
     /**
      * Restituisce il Flow con [flowOn] applicato al dispatcher configurato.
      * Il Flow è cancellabile: la cancellazione del collector cancella la produzione.
+     *
+     * `final`: le subclass implementano SOLO [execute], mai [invoke], per garantire
+     * che il dispatcher configurato sia sempre rispettato.
      */
-    open operator fun invoke(): Flow<Result> = execute().flowOn(dispatcher)
+    operator fun invoke(): Flow<Result> = execute().flowOn(dispatcher)
 }

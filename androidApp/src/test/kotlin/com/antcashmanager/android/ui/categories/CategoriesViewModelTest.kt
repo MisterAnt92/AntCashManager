@@ -4,19 +4,16 @@ import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.ui.screen.categories.CategoriesViewModel
 import com.antcashmanager.domain.exception.CategoryException
 import com.antcashmanager.domain.model.Category
-import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.usecase.category.DeleteCategoryUseCase
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.category.InsertCategoryUseCase
 import com.antcashmanager.domain.usecase.category.UpdateCategoryUseCase
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.test.TestDispatcher
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -25,80 +22,78 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class CategoriesViewModelTest : BaseUnitTest() {
-    private lateinit var fakeGetCategoriesUseCase: FakeGetCategoriesUseCase
-    private lateinit var fakeInsertCategoryUseCase: FakeInsertCategoryUseCase
-    private lateinit var fakeUpdateCategoryUseCase: FakeUpdateCategoryUseCase
-    private lateinit var fakeDeleteCategoryUseCase: FakeDeleteCategoryUseCase
-    private lateinit var viewModel: CategoriesViewModel
+
+    private lateinit var getCategoriesUseCase: GetCategoriesUseCase
+    private lateinit var insertCategoryUseCase: InsertCategoryUseCase
+    private lateinit var updateCategoryUseCase: UpdateCategoryUseCase
+    private lateinit var deleteCategoryUseCase: DeleteCategoryUseCase
 
     @Before
     fun setup() {
-        fakeGetCategoriesUseCase = FakeGetCategoriesUseCase(testDispatcher)
-        fakeInsertCategoryUseCase = FakeInsertCategoryUseCase(testDispatcher)
-        fakeUpdateCategoryUseCase = FakeUpdateCategoryUseCase(testDispatcher)
-        fakeDeleteCategoryUseCase = FakeDeleteCategoryUseCase(testDispatcher)
-        viewModel = CategoriesViewModel(
-            fakeGetCategoriesUseCase,
-            fakeInsertCategoryUseCase,
-            fakeUpdateCategoryUseCase,
-            fakeDeleteCategoryUseCase,
-        )
+        getCategoriesUseCase = mockk()
+        insertCategoryUseCase = mockk()
+        updateCategoryUseCase = mockk()
+        deleteCategoryUseCase = mockk()
+
+        every { getCategoriesUseCase() } returns flowOf(Result.success(emptyList()))
+        coEvery { insertCategoryUseCase(any()) } returns Result.success(1L)
+        coEvery { updateCategoryUseCase(any()) } returns Result.success(Unit)
+        coEvery { deleteCategoryUseCase(any()) } returns Result.success(Unit)
     }
 
     // ── HAPPY PATH ──────────────────────────────────────────────────────────
 
     @Test
-    fun `initial categories list is empty`() = runViewModelTest {
+    fun state_shouldHaveEmptyCategories_whenGetCategoriesUseCaseReturnsEmptyList() = runViewModelTest {
+        val viewModel = buildViewModel()
         advanceUntilIdle()
+
         assertTrue(viewModel.state.value.categories.isEmpty())
     }
 
     @Test
-    fun `addCategory should add new expense category`() = runViewModelTest {
-        val category = Category(
-            id = 1,
-            name = "Food",
-            icon = "category",
-            color = 0xFFE57373,
-            type = "EXPENSE"
-        )
-        fakeInsertCategoryUseCase.dataToReturn = category.id
+    fun addCategory_shouldInvokeInsertUseCase_whenAddingExpenseCategory() = runViewModelTest {
+        val viewModel = buildViewModel()
 
         viewModel.addCategory("Food", "category", 0xFFE57373, "EXPENSE")
         advanceUntilIdle()
 
-        assertTrue(fakeInsertCategoryUseCase.wasInvoked)
+        coVerify(exactly = 1) {
+            insertCategoryUseCase(match { it.name == "Food" && it.type == "EXPENSE" })
+        }
     }
 
     @Test
-    fun `updateCategory should call use case`() = runViewModelTest {
+    fun updateCategory_shouldInvokeUpdateUseCase_whenCalled() = runViewModelTest {
+        val viewModel = buildViewModel()
         val category = Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373)
 
         viewModel.updateCategory(category)
         advanceUntilIdle()
 
-        assertTrue(fakeUpdateCategoryUseCase.wasInvoked)
+        coVerify(exactly = 1) { updateCategoryUseCase(category) }
     }
 
     @Test
-    fun `deleteCategory should call use case`() = runViewModelTest {
+    fun deleteCategory_shouldInvokeDeleteUseCase_whenCalled() = runViewModelTest {
+        val viewModel = buildViewModel()
         val category = Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373)
 
         viewModel.deleteCategory(category)
         advanceUntilIdle()
 
-        assertTrue(fakeDeleteCategoryUseCase.wasInvoked)
+        coVerify(exactly = 1) { deleteCategoryUseCase(category) }
     }
 
     @Test
-    fun `getAllCategories should return success with list of categories`() = runViewModelTest {
+    fun state_shouldContainCategories_whenGetCategoriesUseCaseSucceeds() = runViewModelTest {
         val categories = listOf(
             Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373, type = "EXPENSE"),
             Category(id = 2, name = "Salary", icon = "payments", color = 0xFF81C784, type = "INCOME"),
         )
-        fakeGetCategoriesUseCase.categoriesToReturn = categories
+        every { getCategoriesUseCase() } returns flowOf(Result.success(categories))
+        val viewModel = buildViewModel()
 
-        // ViewModel should load categories on init
         advanceUntilIdle()
 
         assertEquals(2, viewModel.state.value.categories.size)
@@ -107,12 +102,13 @@ class CategoriesViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `expenseCategories should filter by EXPENSE type`() = runViewModelTest {
+    fun state_shouldFilterExpenseCategories_whenCategoriesContainMixedTypes() = runViewModelTest {
         val categories = listOf(
             Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373, type = "EXPENSE"),
             Category(id = 2, name = "Salary", icon = "payments", color = 0xFF81C784, type = "INCOME"),
         )
-        fakeGetCategoriesUseCase.categoriesToReturn = categories
+        every { getCategoriesUseCase() } returns flowOf(Result.success(categories))
+        val viewModel = buildViewModel()
 
         advanceUntilIdle()
 
@@ -121,12 +117,13 @@ class CategoriesViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `incomeCategories should filter by INCOME type`() = runViewModelTest {
+    fun state_shouldFilterIncomeCategories_whenCategoriesContainMixedTypes() = runViewModelTest {
         val categories = listOf(
             Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373, type = "EXPENSE"),
             Category(id = 2, name = "Salary", icon = "payments", color = 0xFF81C784, type = "INCOME"),
         )
-        fakeGetCategoriesUseCase.categoriesToReturn = categories
+        every { getCategoriesUseCase() } returns flowOf(Result.success(categories))
+        val viewModel = buildViewModel()
 
         advanceUntilIdle()
 
@@ -137,210 +134,72 @@ class CategoriesViewModelTest : BaseUnitTest() {
     // ── ERROR HANDLING ──────────────────────────────────────────────────────
 
     @Test
-    fun `addCategory should handle DuplicateName exception`() = runViewModelTest {
-        fakeInsertCategoryUseCase.shouldThrowDuplicateName = true
+    fun addCategory_shouldNotUpdateState_whenInsertUseCaseReturnsDuplicateNameFailure() = runViewModelTest {
+        coEvery { insertCategoryUseCase(any()) } returns
+            Result.failure(CategoryException.DuplicateName("Food"))
+        val viewModel = buildViewModel()
 
         viewModel.addCategory("Food", "category", 0xFFE57373, "EXPENSE")
         advanceUntilIdle()
 
-        assertTrue(fakeInsertCategoryUseCase.wasInvoked)
-        // State should remain unchanged on error
+        coVerify(exactly = 1) { insertCategoryUseCase(any()) }
         assertTrue(viewModel.state.value.categories.isEmpty())
     }
 
     @Test
-    fun `addCategory should handle InvalidAmount exception`() = runViewModelTest {
-        fakeInsertCategoryUseCase.shouldThrowInvalidAmount = true
+    fun addCategory_shouldNotUpdateState_whenInsertUseCaseReturnsInvalidAmountFailure() = runViewModelTest {
+        coEvery { insertCategoryUseCase(any()) } returns
+            Result.failure(IllegalArgumentException("Invalid amount"))
+        val viewModel = buildViewModel()
 
         viewModel.addCategory("Food", "category", 0xFFE57373, "EXPENSE")
         advanceUntilIdle()
 
-        assertTrue(fakeInsertCategoryUseCase.wasInvoked)
+        coVerify(exactly = 1) { insertCategoryUseCase(any()) }
         assertTrue(viewModel.state.value.categories.isEmpty())
     }
 
     @Test
-    fun `updateCategory should handle NotFound exception`() = runViewModelTest {
-        fakeUpdateCategoryUseCase.shouldThrowNotFound = true
+    fun updateCategory_shouldCompleteWithoutThrowing_whenUpdateUseCaseReturnsNotFoundFailure() = runViewModelTest {
+        coEvery { updateCategoryUseCase(any()) } returns
+            Result.failure(CategoryException.NotFound("Nonexistent"))
+        val viewModel = buildViewModel()
         val category = Category(id = 99, name = "Nonexistent", icon = "icon", color = 0xFF000000)
 
         viewModel.updateCategory(category)
         advanceUntilIdle()
 
-        assertTrue(fakeUpdateCategoryUseCase.wasInvoked)
+        coVerify(exactly = 1) { updateCategoryUseCase(category) }
     }
 
     @Test
-    fun `deleteCategory should handle NotFound exception`() = runViewModelTest {
-        fakeDeleteCategoryUseCase.shouldThrowNotFound = true
+    fun deleteCategory_shouldCompleteWithoutThrowing_whenDeleteUseCaseReturnsNotFoundFailure() = runViewModelTest {
+        coEvery { deleteCategoryUseCase(any()) } returns
+            Result.failure(CategoryException.NotFound("Nonexistent"))
+        val viewModel = buildViewModel()
         val category = Category(id = 99, name = "Nonexistent", icon = "icon", color = 0xFF000000)
 
         viewModel.deleteCategory(category)
         advanceUntilIdle()
 
-        assertTrue(fakeDeleteCategoryUseCase.wasInvoked)
+        coVerify(exactly = 1) { deleteCategoryUseCase(category) }
     }
 
     @Test
-    fun `getAllCategories should handle failure on init`() = runViewModelTest {
-        // Create new UseCase that returns failure
-        val failingGetUseCase = FakeGetCategoriesUseCase(testDispatcher)
-        failingGetUseCase.shouldThrow = true
-
-        val vm = CategoriesViewModel(
-            failingGetUseCase,
-            fakeInsertCategoryUseCase,
-            fakeUpdateCategoryUseCase,
-            fakeDeleteCategoryUseCase,
-        )
+    fun state_shouldHaveEmptyCategories_whenGetCategoriesUseCaseFails() = runViewModelTest {
+        every { getCategoriesUseCase() } returns
+            flowOf(Result.failure(RuntimeException("Failed to load categories")))
+        val viewModel = buildViewModel()
 
         advanceUntilIdle()
 
-        // State should have empty categories after failure
-        assertTrue(vm.state.value.categories.isEmpty())
+        assertTrue(viewModel.state.value.categories.isEmpty())
     }
 
+    private fun buildViewModel(): CategoriesViewModel = CategoriesViewModel(
+        getCategoriesUseCase = getCategoriesUseCase,
+        insertCategoryUseCase = insertCategoryUseCase,
+        updateCategoryUseCase = updateCategoryUseCase,
+        deleteCategoryUseCase = deleteCategoryUseCase,
+    )
 }
-
-// ── FAKE USE CASES ──────────────────────────────────────────────────────────
-
-private class FakeGetCategoriesUseCase(
-    private val testDispatcher: TestDispatcher,
-) : GetCategoriesUseCase(FakeCategoryRepository()) {
-
-    var categoriesToReturn: List<Category> = emptyList()
-    var shouldThrow = false
-
-    override fun invoke(): Flow<Result<List<Category>>> = flow {
-        if (shouldThrow) {
-            emit(Result.failure(RuntimeException("Failed to load categories")))
-        } else {
-            emit(Result.success(categoriesToReturn))
-        }
-    }.let { flowOn(it, testDispatcher) }
-
-    private fun flowOn(flow: Flow<Result<List<Category>>>, dispatcher: TestDispatcher): Flow<Result<List<Category>>> =
-        flow.flowOn(dispatcher)
-}
-
-private class FakeInsertCategoryUseCase(
-    private val testDispatcher: TestDispatcher,
-) : InsertCategoryUseCase(FakeCategoryRepository()) {
-
-    var dataToReturn: Long = 1L
-    var shouldThrowDuplicateName = false
-    var shouldThrowInvalidAmount = false
-    var delayMs: Long = 0
-    var onComplete: (() -> Unit)? = null
-    var wasInvoked = false
-
-    override suspend fun invoke(params: Category): Result<Long> {
-        wasInvoked = true
-        if (delayMs > 0) delay(delayMs)
-
-        return when {
-            shouldThrowDuplicateName -> Result.failure(
-                CategoryException.DuplicateName(params.name)
-            )
-
-            shouldThrowInvalidAmount -> Result.failure(
-                RuntimeException("Invalid amount")
-            )
-
-            else -> {
-                onComplete?.invoke()
-                Result.success(dataToReturn)
-            }
-        }
-    }
-}
-
-private class FakeUpdateCategoryUseCase(
-    private val testDispatcher: TestDispatcher,
-) : UpdateCategoryUseCase(FakeCategoryRepository()) {
-
-    var shouldThrowNotFound = false
-    var delayMs: Long = 0
-    var onComplete: (() -> Unit)? = null
-    var wasInvoked = false
-
-    override suspend fun invoke(params: Category): Result<Unit> {
-        wasInvoked = true
-        if (delayMs > 0) delay(delayMs)
-
-        return when {
-            shouldThrowNotFound -> Result.failure(
-                CategoryException.NotFound(params.name)
-            )
-
-            else -> {
-                onComplete?.invoke()
-                Result.success(Unit)
-            }
-        }
-    }
-}
-
-private class FakeDeleteCategoryUseCase(
-    private val testDispatcher: TestDispatcher,
-) : DeleteCategoryUseCase(FakeCategoryRepository()) {
-
-    var shouldThrowNotFound = false
-    var delayMs: Long = 0
-    var onComplete: (() -> Unit)? = null
-    var wasInvoked = false
-
-    override suspend fun invoke(params: Category): Result<Unit> {
-        wasInvoked = true
-        if (delayMs > 0) delay(delayMs)
-
-        return when {
-            shouldThrowNotFound -> Result.failure(
-                CategoryException.NotFound(params.name)
-            )
-
-            else -> {
-                onComplete?.invoke()
-                Result.success(Unit)
-            }
-        }
-    }
-}
-
-private class FakeCategoryRepository : CategoryRepository {
-    val categories = MutableStateFlow<List<Category>>(emptyList())
-
-    override fun getAllCategories(): Flow<List<Category>> = categories
-
-    override suspend fun getCategoryById(id: Long): Category? =
-        categories.value.find { it.id == id }
-
-    override suspend fun getCategoryByName(name: String): Category? =
-        categories.value.find { it.name == name }
-
-    override suspend fun insertCategory(category: Category): Long {
-        categories.value += category
-        return category.id
-    }
-
-    override suspend fun updateCategory(category: Category) {
-        categories.value = categories.value.map { if (it.id == category.id) category else it }
-    }
-
-    override suspend fun deleteCategory(category: Category) {
-        categories.value = categories.value.filter { it.id != category.id }
-    }
-
-    override suspend fun deleteAllCategories() {
-        categories.value = emptyList()
-    }
-
-    override fun getCategoriesByType(type: String): Flow<List<Category>> =
-        categories.map { list -> list.filter { it.type == type } }
-
-    override suspend fun getDefaultCategoryCount(): Int =
-        categories.value.count { it.isDefault }
-}
-
-
-

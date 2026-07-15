@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 /**
  * UseCase per la cancellazione di una categoria.
  */
-open class DeleteCategoryUseCase(
+class DeleteCategoryUseCase(
     private val categoryRepository: CategoryRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : BaseUseCase<Category, Result<Unit>>(dispatcher) {
