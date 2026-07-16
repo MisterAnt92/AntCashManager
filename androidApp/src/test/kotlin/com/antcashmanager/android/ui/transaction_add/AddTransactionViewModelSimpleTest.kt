@@ -50,8 +50,9 @@ class AddTransactionViewModelSimpleTest : BaseUnitTest() {
             override fun getRecurringTransactions() =
                 flowOf(emptyList<com.antcashmanager.domain.model.Transaction>())
 
-            override suspend fun updateCategoryData(
-                categoryName: String,
+            override suspend fun renameCategory(
+                oldCategoryName: String,
+                newCategoryName: String,
                 icon: String,
                 color: Long
             ) {

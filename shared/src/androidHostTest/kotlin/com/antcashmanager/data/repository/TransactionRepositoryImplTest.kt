@@ -171,10 +171,10 @@ private class FakeTransactionDao : TransactionDao {
     override fun getRecurringTransactions(): Flow<List<TransactionEntity>> =
         flowOf(transactionsFlow.value.filter { it.isRecurring })
 
-    override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) {
+    override suspend fun renameCategory(oldCategoryName: String, newCategoryName: String, icon: String, color: Long) {
         transactionsFlow.value = transactionsFlow.value.map { current ->
-            if (current.category == categoryName) {
-                current.copy(categoryIcon = icon, categoryColor = color)
+            if (current.category == oldCategoryName) {
+                current.copy(category = newCategoryName, categoryIcon = icon, categoryColor = color)
             } else {
                 current
             }

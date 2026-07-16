@@ -142,5 +142,5 @@ private class FakeSuggestionsTransactionRepository : TransactionRepository {
     override suspend fun deleteAllTransactions() {}
     override fun getTransactionsByDateRange(from: Long, to: Long) = flowOf(emptyList<Transaction>())
     override fun getRecurringTransactions() = flowOf(emptyList<Transaction>())
-    override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) {}
+    override suspend fun renameCategory(oldCategoryName: String, newCategoryName: String, icon: String, color: Long) {}
 }

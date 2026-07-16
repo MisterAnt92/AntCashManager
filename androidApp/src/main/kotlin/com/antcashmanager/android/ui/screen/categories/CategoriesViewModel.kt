@@ -5,10 +5,12 @@ import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.repository.CategoryRepository
+import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.usecase.category.DeleteCategoryUseCase
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.category.InsertCategoryUseCase
 import com.antcashmanager.domain.usecase.category.UpdateCategoryUseCase
+import com.antcashmanager.domain.usecase.transaction.SyncTransactionCategoriesUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -19,13 +21,15 @@ class CategoriesViewModel(
     private val insertCategoryUseCase: InsertCategoryUseCase,
     private val updateCategoryUseCase: UpdateCategoryUseCase,
     private val deleteCategoryUseCase: DeleteCategoryUseCase,
+    private val syncTransactionCategoriesUseCase: SyncTransactionCategoriesUseCase,
 ) : ViewModel() {
 
-    constructor(categoryRepository: CategoryRepository) : this(
+    constructor(categoryRepository: CategoryRepository, transactionRepository: TransactionRepository) : this(
         getCategoriesUseCase = GetCategoriesUseCase(categoryRepository),
         insertCategoryUseCase = InsertCategoryUseCase(categoryRepository),
         updateCategoryUseCase = UpdateCategoryUseCase(categoryRepository),
         deleteCategoryUseCase = DeleteCategoryUseCase(categoryRepository),
+        syncTransactionCategoriesUseCase = SyncTransactionCategoriesUseCase(transactionRepository),
     )
 
     private val _state = MutableStateFlow(CategoriesState())
@@ -71,9 +75,24 @@ class CategoriesViewModel(
 
     fun updateCategory(category: Category) {
         Logger.d("CategoriesViewModel") { "Updating category: ${category.name}" }
+        val oldName = _state.value.categories.find { it.id == category.id }?.name
         viewModelScope.launch {
             val result = updateCategoryUseCase(category)
-            result.onFailure { error ->
+            result.onSuccess {
+                // Propaga nome/icona/colore aggiornati alle transazioni che referenziano
+                // ancora il nome precedente, evitando categorie "orfane" nei Grafici.
+                if (oldName != null) {
+                    syncTransactionCategoriesUseCase(
+                        SyncTransactionCategoriesUseCase.Params(oldName, category),
+                    ).onFailure { error ->
+                        if (error is kotlinx.coroutines.CancellationException) throw error
+                        Logger.e(
+                            "CategoriesViewModel",
+                            error,
+                        ) { "Failed to sync transactions for renamed category: ${error.message}" }
+                    }
+                }
+            }.onFailure { error ->
                 if (error is kotlinx.coroutines.CancellationException) throw error
                 Logger.e(
                     "CategoriesViewModel",

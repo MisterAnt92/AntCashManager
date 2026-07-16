@@ -8,6 +8,7 @@ import com.antcashmanager.domain.usecase.category.DeleteCategoryUseCase
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.category.InsertCategoryUseCase
 import com.antcashmanager.domain.usecase.category.UpdateCategoryUseCase
+import com.antcashmanager.domain.usecase.transaction.SyncTransactionCategoriesUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -27,6 +28,7 @@ class CategoriesViewModelTest : BaseUnitTest() {
     private lateinit var insertCategoryUseCase: InsertCategoryUseCase
     private lateinit var updateCategoryUseCase: UpdateCategoryUseCase
     private lateinit var deleteCategoryUseCase: DeleteCategoryUseCase
+    private lateinit var syncTransactionCategoriesUseCase: SyncTransactionCategoriesUseCase
 
     @Before
     fun setup() {
@@ -34,11 +36,13 @@ class CategoriesViewModelTest : BaseUnitTest() {
         insertCategoryUseCase = mockk()
         updateCategoryUseCase = mockk()
         deleteCategoryUseCase = mockk()
+        syncTransactionCategoriesUseCase = mockk()
 
         every { getCategoriesUseCase() } returns flowOf(Result.success(emptyList()))
         coEvery { insertCategoryUseCase(any()) } returns Result.success(1L)
         coEvery { updateCategoryUseCase(any()) } returns Result.success(Unit)
         coEvery { deleteCategoryUseCase(any()) } returns Result.success(Unit)
+        coEvery { syncTransactionCategoriesUseCase(any()) } returns Result.success(Unit)
     }
 
     // ── HAPPY PATH ──────────────────────────────────────────────────────────
@@ -72,6 +76,77 @@ class CategoriesViewModelTest : BaseUnitTest() {
         advanceUntilIdle()
 
         coVerify(exactly = 1) { updateCategoryUseCase(category) }
+    }
+
+    @Test
+    fun updateCategory_shouldNotSyncTransactions_whenCategoryNotFoundInCurrentState() = runViewModelTest {
+        // Nessuna categoria caricata in stato: non è possibile risalire al nome precedente.
+        val viewModel = buildViewModel()
+        val category = Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373)
+
+        viewModel.updateCategory(category)
+        advanceUntilIdle()
+
+        coVerify(exactly = 0) { syncTransactionCategoriesUseCase(any()) }
+    }
+
+    @Test
+    fun updateCategory_shouldSyncTransactionsWithOldName_whenCategoryIsRenamed() = runViewModelTest {
+        val originalCategory = Category(
+            id = 6,
+            name = "Pranzi / Cenette fuori",
+            icon = "local_dining",
+            color = 0xFFE57373,
+            type = "EXPENSE",
+        )
+        every { getCategoriesUseCase() } returns flowOf(Result.success(listOf(originalCategory)))
+        val viewModel = buildViewModel()
+        advanceUntilIdle()
+
+        val renamedCategory = originalCategory.copy(name = "Pranzi/Cene fuori")
+        viewModel.updateCategory(renamedCategory)
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) {
+            syncTransactionCategoriesUseCase(
+                SyncTransactionCategoriesUseCase.Params("Pranzi / Cenette fuori", renamedCategory),
+            )
+        }
+    }
+
+    @Test
+    fun updateCategory_shouldSyncTransactions_whenOnlyIconOrColorChanges() = runViewModelTest {
+        // La sincronizzazione aggiorna anche icona/colore sulle transazioni esistenti,
+        // non solo il nome, anche quando il nome resta invariato.
+        val originalCategory = Category(id = 4, name = "Cibo", icon = "restaurant", color = 0xFFE57373)
+        every { getCategoriesUseCase() } returns flowOf(Result.success(listOf(originalCategory)))
+        val viewModel = buildViewModel()
+        advanceUntilIdle()
+
+        val recoloredCategory = originalCategory.copy(color = 0xFF00FF00)
+        viewModel.updateCategory(recoloredCategory)
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) {
+            syncTransactionCategoriesUseCase(
+                SyncTransactionCategoriesUseCase.Params("Cibo", recoloredCategory),
+            )
+        }
+    }
+
+    @Test
+    fun updateCategory_shouldCompleteWithoutThrowing_whenSyncTransactionCategoriesUseCaseFails() = runViewModelTest {
+        val originalCategory = Category(id = 6, name = "Old Name", icon = "local_dining", color = 0xFFE57373)
+        every { getCategoriesUseCase() } returns flowOf(Result.success(listOf(originalCategory)))
+        coEvery { syncTransactionCategoriesUseCase(any()) } returns
+            Result.failure(IllegalStateException("sync failed"))
+        val viewModel = buildViewModel()
+        advanceUntilIdle()
+
+        viewModel.updateCategory(originalCategory.copy(name = "New Name"))
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { syncTransactionCategoriesUseCase(any()) }
     }
 
     @Test
@@ -201,5 +276,6 @@ class CategoriesViewModelTest : BaseUnitTest() {
         insertCategoryUseCase = insertCategoryUseCase,
         updateCategoryUseCase = updateCategoryUseCase,
         deleteCategoryUseCase = deleteCategoryUseCase,
+        syncTransactionCategoriesUseCase = syncTransactionCategoriesUseCase,
     )
 }

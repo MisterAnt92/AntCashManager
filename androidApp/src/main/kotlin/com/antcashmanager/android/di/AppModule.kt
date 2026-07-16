@@ -49,6 +49,7 @@ import com.antcashmanager.domain.usecase.transaction.GetTransactionSuggestionsUs
 import com.antcashmanager.domain.usecase.transaction.GetTransactionsByDateRangeUseCase
 import com.antcashmanager.domain.usecase.transaction.GetTransactionsUseCase
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
+import com.antcashmanager.domain.usecase.transaction.SyncTransactionCategoriesUseCase
 import com.antcashmanager.domain.usecase.transaction.UpdateTransactionUseCase
 import org.koin.android.ext.koin.androidApplication
 import org.koin.core.module.dsl.viewModel
@@ -101,6 +102,7 @@ val useCaseModule = module {
     factory { DeleteTransactionUseCase(transactionRepository = get()) }
     factory { DeleteAllTransactionsUseCase(transactionRepository = get()) }
     factory { FilterTransactionsUseCase() }
+    factory { SyncTransactionCategoriesUseCase(transactionRepository = get()) }
 
     factory { GetCategoriesUseCase(categoryRepository = get()) }
     factory { InsertCategoryUseCase(categoryRepository = get()) }
@@ -150,6 +152,7 @@ val presentationModule = module {
             insertCategoryUseCase = get(),
             updateCategoryUseCase = get(),
             deleteCategoryUseCase = get(),
+            syncTransactionCategoriesUseCase = get(),
         )
     }
     viewModel {

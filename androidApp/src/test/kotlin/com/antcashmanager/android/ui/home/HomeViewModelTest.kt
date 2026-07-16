@@ -729,7 +729,7 @@ class HomeViewModelTest : BaseUnitTest() {
         override fun getRecurringTransactions(): Flow<List<Transaction>> =
             transactions.map { list -> list.filter { it.isRecurring } }
 
-        override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) {
+        override suspend fun renameCategory(oldCategoryName: String, newCategoryName: String, icon: String, color: Long) {
             // No-op for test
         }
 

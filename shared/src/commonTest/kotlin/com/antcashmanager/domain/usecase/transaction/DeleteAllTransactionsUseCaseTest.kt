@@ -152,7 +152,7 @@ private class FakeDeleteAllRepository : TransactionRepository {
     override suspend fun deleteTransaction(transaction: Transaction) {}
     override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> = flowOf(emptyList())
     override fun getRecurringTransactions(): Flow<List<Transaction>> = flowOf(emptyList())
-    override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) {}
+    override suspend fun renameCategory(oldCategoryName: String, newCategoryName: String, icon: String, color: Long) {}
     override fun getDistinctTitles(): Flow<List<String>> = flowOf(emptyList())
     override fun getDistinctPayees(): Flow<List<String>> = flowOf(emptyList())
     override fun getDistinctNotes(): Flow<List<String>> = flowOf(emptyList())
@@ -176,7 +176,7 @@ private class SlowDeleteAllRepository(private val delayMs: Long) : TransactionRe
     override suspend fun deleteTransaction(transaction: Transaction) {}
     override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> = flowOf(emptyList())
     override fun getRecurringTransactions(): Flow<List<Transaction>> = flowOf(emptyList())
-    override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) {}
+    override suspend fun renameCategory(oldCategoryName: String, newCategoryName: String, icon: String, color: Long) {}
     override fun getDistinctTitles(): Flow<List<String>> = flowOf(emptyList())
     override fun getDistinctPayees(): Flow<List<String>> = flowOf(emptyList())
     override fun getDistinctNotes(): Flow<List<String>> = flowOf(emptyList())
@@ -205,7 +205,7 @@ private class CancellationSwallowingRepository : TransactionRepository {
     override suspend fun deleteTransaction(transaction: Transaction) {}
     override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> = flowOf(emptyList())
     override fun getRecurringTransactions(): Flow<List<Transaction>> = flowOf(emptyList())
-    override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) {}
+    override suspend fun renameCategory(oldCategoryName: String, newCategoryName: String, icon: String, color: Long) {}
     override fun getDistinctTitles(): Flow<List<String>> = flowOf(emptyList())
     override fun getDistinctPayees(): Flow<List<String>> = flowOf(emptyList())
     override fun getDistinctNotes(): Flow<List<String>> = flowOf(emptyList())

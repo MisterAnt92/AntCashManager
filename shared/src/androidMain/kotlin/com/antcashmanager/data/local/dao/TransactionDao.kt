@@ -38,8 +38,11 @@ interface TransactionDao {
     @Query("SELECT * FROM transactions WHERE is_recurring = 1 ORDER BY timestamp DESC")
     fun getRecurringTransactions(): Flow<List<TransactionEntity>>
 
-    @Query("UPDATE transactions SET category_icon = :icon, category_color = :color WHERE category = :categoryName")
-    suspend fun updateCategoryData(categoryName: String, icon: String, color: Long)
+    @Query(
+        "UPDATE transactions SET category = :newCategoryName, category_icon = :icon, category_color = :color " +
+                "WHERE category = :oldCategoryName",
+    )
+    suspend fun renameCategory(oldCategoryName: String, newCategoryName: String, icon: String, color: Long)
 
     // Query per suggerimenti transazioni
     @Query("SELECT DISTINCT title FROM transactions WHERE title != '' ORDER BY timestamp DESC LIMIT 20")

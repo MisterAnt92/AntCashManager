@@ -12,7 +12,7 @@ interface TransactionRepository {
     suspend fun deleteAllTransactions()
     fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>>
     fun getRecurringTransactions(): Flow<List<Transaction>>
-    suspend fun updateCategoryData(categoryName: String, icon: String, color: Long)
+    suspend fun renameCategory(oldCategoryName: String, newCategoryName: String, icon: String, color: Long)
 
     // Metodi per suggerimenti transazioni
     fun getDistinctTitles(): Flow<List<String>>

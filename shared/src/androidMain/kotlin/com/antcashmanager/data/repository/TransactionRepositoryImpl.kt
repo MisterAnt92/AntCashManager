@@ -44,8 +44,8 @@ class TransactionRepositoryImpl(
             entities.map { decryptEntity(it).toDomain() }
         }
 
-    override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) =
-        transactionDao.updateCategoryData(categoryName, icon, color)
+    override suspend fun renameCategory(oldCategoryName: String, newCategoryName: String, icon: String, color: Long) =
+        transactionDao.renameCategory(oldCategoryName, newCategoryName, icon, color)
 
     // Implementazione metodi per suggerimenti
     override fun getDistinctTitles(): Flow<List<String>> =

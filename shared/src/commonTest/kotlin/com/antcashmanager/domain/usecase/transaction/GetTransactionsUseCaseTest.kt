@@ -211,7 +211,7 @@ private class FakeGetTransactionsRepository : TransactionRepository {
         flowOf(transactions.value.filter { it.timestamp in from..to })
     override fun getRecurringTransactions(): Flow<List<Transaction>> =
         flowOf(transactions.value.filter { it.isRecurring })
-    override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) {}
+    override suspend fun renameCategory(oldCategoryName: String, newCategoryName: String, icon: String, color: Long) {}
     override fun getDistinctTitles(): Flow<List<String>> = flowOf(transactions.value.map { it.title }.distinct())
     override fun getDistinctPayees(): Flow<List<String>> = flowOf(emptyList())
     override fun getDistinctNotes(): Flow<List<String>> = flowOf(emptyList())

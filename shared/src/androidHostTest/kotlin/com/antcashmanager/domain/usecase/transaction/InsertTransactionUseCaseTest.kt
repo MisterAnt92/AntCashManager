@@ -139,7 +139,7 @@ private class FakeInsertTransactionRepository : TransactionRepository {
     override fun getRecurringTransactions(): Flow<List<Transaction>> =
         flowOf(insertedTransactions.filter { it.isRecurring })
 
-    override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) {}
+    override suspend fun renameCategory(oldCategoryName: String, newCategoryName: String, icon: String, color: Long) {}
     override fun getDistinctTitles() = flowOf(emptyList<String>())
     override fun getDistinctPayees() = flowOf(emptyList<String>())
     override fun getDistinctNotes() = flowOf(emptyList<String>())
@@ -165,7 +165,7 @@ private class SlowFakeInsertRepository(private val delayMs: Long) : TransactionR
         flowOf(emptyList())
 
     override fun getRecurringTransactions(): Flow<List<Transaction>> = flowOf(emptyList())
-    override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) {}
+    override suspend fun renameCategory(oldCategoryName: String, newCategoryName: String, icon: String, color: Long) {}
     override fun getDistinctTitles() = flowOf(emptyList<String>())
     override fun getDistinctPayees() = flowOf(emptyList<String>())
     override fun getDistinctNotes() = flowOf(emptyList<String>())
