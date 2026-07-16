@@ -1,6 +1,9 @@
 package com.antcashmanager.android.ui.transaction_add
 
 import com.antcashmanager.android.BaseUnitTest
+import com.antcashmanager.android.testutil.FakeCategoryRepository
+import com.antcashmanager.android.testutil.FakeSettingsRepository
+import com.antcashmanager.android.testutil.FakeTransactionRepository
 import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionConstant
 import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionEvent
 import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionStep
@@ -9,12 +12,8 @@ import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
-import com.antcashmanager.domain.repository.CategoryRepository
-import com.antcashmanager.domain.repository.SettingsRepository
-import com.antcashmanager.domain.repository.TransactionRepository
-import io.mockk.every
-import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -35,9 +34,9 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class AddTransactionViewModelTest : BaseUnitTest() {
 
-    private lateinit var mockTransactionRepository: TransactionRepository
-    private lateinit var mockCategoryRepository: CategoryRepository
-    private lateinit var mockSettingsRepository: SettingsRepository
+    private lateinit var transactionRepository: FakeTransactionRepositoryWithCannedSuggestions
+    private lateinit var categoryRepository: FakeCategoryRepository
+    private lateinit var settingsRepository: FakeSettingsRepository
     private lateinit var viewModel: AddTransactionViewModel
 
     private val mockCategories = listOf(
@@ -62,56 +61,9 @@ class AddTransactionViewModelTest : BaseUnitTest() {
 
     @Before
     fun setup() {
-        mockTransactionRepository = object : TransactionRepository {
-            override fun getAllTransactions() = flowOf(emptyList<Transaction>())
-            override suspend fun getTransactionById(id: Long) =
-                if (id == 1L) mockTransaction else null
-
-            override suspend fun insertTransaction(transaction: Transaction) = 1L
-            override suspend fun updateTransaction(transaction: Transaction) {}
-            override suspend fun deleteTransaction(transaction: Transaction) {}
-            override suspend fun deleteAllTransactions() {}
-            override fun getTransactionsByDateRange(from: Long, to: Long) =
-                flowOf(emptyList<Transaction>())
-
-            override fun getRecurringTransactions() = flowOf(emptyList<Transaction>())
-
-            override suspend fun renameCategory(
-                oldCategoryName: String,
-                newCategoryName: String,
-                icon: String,
-                color: Long
-            ) {
-                // No-op for test
-            }
-
-            // Metodi per suggerimenti
-            override fun getDistinctTitles() = flowOf(listOf("Spesa", "Carburante", "Ristorante"))
-            override fun getDistinctPayees() = flowOf(listOf("Supermercato", "Stazione"))
-            override fun getDistinctNotes() = flowOf(listOf("Cena con amici", "Spesa mensile"))
-            override fun getDistinctLocations() = flowOf(listOf("Milano", "Roma"))
-            override fun getDistinctTags() = flowOf(listOf("Food", "Transport", "Shopping"))
-        }
-
-        mockCategoryRepository = object : CategoryRepository {
-            override fun getAllCategories() = flowOf(mockCategories)
-            override suspend fun getCategoryById(id: Long) = mockCategories.find { it.id == id }
-            override suspend fun insertCategory(category: Category) = 1L
-            override suspend fun updateCategory(category: Category) {}
-            override suspend fun deleteCategory(category: Category) {}
-            override suspend fun deleteAllCategories() {}
-            override fun getCategoriesByType(type: String) =
-                flowOf(mockCategories.filter { it.type == type })
-
-            override suspend fun getDefaultCategoryCount() = mockCategories.size
-
-            override suspend fun getCategoryByName(name: String): Category? =
-                mockCategories.find { it.name == name }
-        }
-
-        mockSettingsRepository = mockk(relaxed = true) {
-            every { getMealVoucherValue() } returns flowOf(5.29)
-        }
+        transactionRepository = FakeTransactionRepositoryWithCannedSuggestions(listOf(mockTransaction))
+        categoryRepository = FakeCategoryRepository(mockCategories)
+        settingsRepository = FakeSettingsRepository()
     }
 
     // ── Creazione nuova transazione ──
@@ -590,11 +542,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
 
     @Test
     fun confirmDelete_shouldSetDeleteError_whenDeleteTransactionUseCaseFails() = runViewModelTest {
-        mockTransactionRepository = object : TransactionRepository by mockTransactionRepository {
-            override suspend fun deleteTransaction(transaction: Transaction) {
-                throw IllegalStateException("delete failed")
-            }
-        }
+        transactionRepository.errorToThrow = IllegalStateException("delete failed")
         viewModel = createViewModel(transactionId = 1L)
         advanceUntilLoaded()
 
@@ -654,11 +602,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
 
     @Test
     fun submit_shouldSetSaveError_whenInsertTransactionUseCaseFails() = runViewModelTest {
-        mockTransactionRepository = object : TransactionRepository by mockTransactionRepository {
-            override suspend fun insertTransaction(transaction: Transaction): Long {
-                throw IllegalStateException("insert failed")
-            }
-        }
+        transactionRepository.errorToThrow = IllegalStateException("insert failed")
         viewModel = createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -675,13 +619,9 @@ class AddTransactionViewModelTest : BaseUnitTest() {
 
     @Test
     fun submit_shouldSetSaveError_whenUpdateTransactionUseCaseFails() = runViewModelTest {
-        mockTransactionRepository = object : TransactionRepository by mockTransactionRepository {
-            override suspend fun updateTransaction(transaction: Transaction) {
-                throw IllegalStateException("update failed")
-            }
-        }
         viewModel = createViewModel(transactionId = 1L)
         advanceUntilLoaded()
+        transactionRepository.errorToThrow = IllegalStateException("update failed")
 
         viewModel.onEvent(AddTransactionEvent.UpdateTitle("Updated Title"))
         viewModel.onEvent(AddTransactionEvent.Submit)
@@ -696,13 +636,6 @@ class AddTransactionViewModelTest : BaseUnitTest() {
 
     @Test
     fun submit_shouldPersistEnteredAmountDirectly_whenPaymentTypeIsMealVouchers() = runViewModelTest {
-        var capturedTransaction: Transaction? = null
-        mockTransactionRepository = object : TransactionRepository by mockTransactionRepository {
-            override suspend fun insertTransaction(transaction: Transaction): Long {
-                capturedTransaction = transaction
-                return 1L
-            }
-        }
         viewModel = createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -716,8 +649,9 @@ class AddTransactionViewModelTest : BaseUnitTest() {
 
         // L'importo persistito deve essere esattamente quello inserito (gia' il totale),
         // senza sommare il subtotale dei buoni (3 * 5.29) sopra.
-        assertEquals(20.00, capturedTransaction?.amount ?: 0.0, 0.001)
-        assertEquals(3, capturedTransaction?.mealVoucherCount)
+        val saved = transactionRepository.transactions.value.first { it.title == "Pranzo" }
+        assertEquals(20.00, saved.amount, 0.001)
+        assertEquals(3, saved.mealVoucherCount)
     }
 
     @Test
@@ -728,15 +662,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             paymentType = PaymentType.MEAL_VOUCHERS,
             mealVoucherCount = 3,
         )
-        var capturedTransaction: Transaction? = null
-        mockTransactionRepository = object : TransactionRepository by mockTransactionRepository {
-            override suspend fun getTransactionById(id: Long) =
-                if (id == 2L) existingMealVoucherTransaction else null
-
-            override suspend fun updateTransaction(transaction: Transaction) {
-                capturedTransaction = transaction
-            }
-        }
+        transactionRepository.transactions.value = transactionRepository.transactions.value + existingMealVoucherTransaction
         viewModel = createViewModel(transactionId = 2L)
         advanceUntilLoaded()
 
@@ -751,7 +677,8 @@ class AddTransactionViewModelTest : BaseUnitTest() {
 
         // Ri-salvando senza modifiche, l'importo persistito deve restare invariato:
         // non deve essere sommato di nuovo il subtotale dei buoni (3 * 5.29).
-        assertEquals(20.0, capturedTransaction?.amount ?: 0.0, 0.001)
+        val saved = transactionRepository.transactions.value.first { it.id == 2L }
+        assertEquals(20.0, saved.amount, 0.001)
     }
 
     // ── Reset ──
@@ -820,10 +747,24 @@ class AddTransactionViewModelTest : BaseUnitTest() {
 
     private fun createViewModel(transactionId: Long? = null): AddTransactionViewModel =
         AddTransactionViewModel(
-            transactionRepository = mockTransactionRepository,
-            categoryRepository = mockCategoryRepository,
-            settingsRepository = mockSettingsRepository,
+            transactionRepository = transactionRepository,
+            categoryRepository = categoryRepository,
+            settingsRepository = settingsRepository,
             transactionId = transactionId,
             dispatcher = testDispatcher,
         )
+}
+
+/**
+ * Estende il fake condiviso con suggerimenti fissi, indipendenti dal contenuto
+ * reale delle transazioni seminate nel test.
+ */
+private class FakeTransactionRepositoryWithCannedSuggestions(
+    initialTransactions: List<Transaction>,
+) : FakeTransactionRepository(initialTransactions) {
+    override fun getDistinctTitles(): Flow<List<String>> = flowOf(listOf("Spesa", "Carburante", "Ristorante"))
+    override fun getDistinctPayees(): Flow<List<String>> = flowOf(listOf("Supermercato", "Stazione"))
+    override fun getDistinctNotes(): Flow<List<String>> = flowOf(listOf("Cena con amici", "Spesa mensile"))
+    override fun getDistinctLocations(): Flow<List<String>> = flowOf(listOf("Milano", "Roma"))
+    override fun getDistinctTags(): Flow<List<String>> = flowOf(listOf("Food", "Transport", "Shopping"))
 }

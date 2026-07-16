@@ -2,6 +2,7 @@ package com.antcashmanager.domain.usecase
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 
 /**
@@ -12,17 +13,17 @@ import kotlinx.coroutines.withContext
  * In Android, usare [Dispatchers.IO] per operazioni su database/rete.
  *
  * @param Params Tipo del parametro di input
- * @param Result Tipo del risultato
+ * @param R Tipo del risultato
  * @param dispatcher Dispatcher su cui viene eseguita la logica. Default [Dispatchers.Default].
  */
-abstract class BaseUseCase<in Params, out Result>(
+abstract class BaseUseCase<in Params, out R>(
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) {
     /**
      * Implementa la logica di business del UseCase.
      * NON chiamare direttamente: usare [invoke].
      */
-    protected abstract suspend fun execute(params: Params): Result
+    protected abstract suspend fun execute(params: Params): R
 
     /**
      * Esegue il UseCase sul dispatcher configurato.
@@ -31,7 +32,8 @@ abstract class BaseUseCase<in Params, out Result>(
      * `final`: le subclass implementano SOLO [execute], mai [invoke], per garantire
      * che il dispatcher configurato sia sempre rispettato.
      */
-    suspend operator fun invoke(params: Params): Result = withContext(dispatcher) {
+    suspend operator fun invoke(params: Params): R = withContext(dispatcher) {
+        ensureActive()
         execute(params)
     }
 }

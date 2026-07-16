@@ -2,12 +2,9 @@ package com.antcashmanager.domain.usecase.transaction
 
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
-import com.antcashmanager.domain.repository.TransactionRepository
+import com.antcashmanager.testutil.FakeTransactionRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -18,11 +15,10 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
-@OptIn(ExperimentalCoroutinesApi::class)
-
 /**
  * Test per [GetTransactionsUseCase] con dispatcher injection e cancellazione.
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 class GetTransactionsUseCaseTest {
 
     private val testDispatcher = StandardTestDispatcher()
@@ -58,7 +54,7 @@ class GetTransactionsUseCaseTest {
     // ── Happy Path ───────────────────────────────────────────────────────────
 
     @Test
-    fun `invoke returns all transactions from repository`() = runTest {
+    fun invokeReturnsAllTransactionsFromRepository() = runTest {
         val result = useCase().first().getOrThrow()
 
         assertEquals(2, result.size)
@@ -67,8 +63,8 @@ class GetTransactionsUseCaseTest {
     }
 
     @Test
-    fun `invoke returns empty list when repository has no transactions`() = runTest {
-        val emptyRepo = FakeTransactionRepository(emptyList())
+    fun invokeReturnsEmptyListWhenRepositoryHasNoTransactions() = runTest {
+        val emptyRepo = FakeTransactionRepository()
         val emptyUseCase =
             GetTransactionsUseCase(emptyRepo, UnconfinedTestDispatcher(testDispatcher.scheduler))
 
@@ -78,7 +74,7 @@ class GetTransactionsUseCaseTest {
     }
 
     @Test
-    fun `returned transactions contain correct types`() = runTest {
+    fun returnedTransactionsContainCorrectTypes() = runTest {
         val result = useCase().first().getOrThrow()
 
         assertEquals(TransactionType.INCOME, result[0].type)
@@ -88,8 +84,8 @@ class GetTransactionsUseCaseTest {
     // ── Reattività ───────────────────────────────────────────────────────────
 
     @Test
-    fun `invoke reflects repository updates reactively`() = runTest(testDispatcher) {
-        val reactiveRepo = FakeReactiveTransactionRepository()
+    fun invokeReflectsRepositoryUpdatesReactively() = runTest(testDispatcher) {
+        val reactiveRepo = FakeTransactionRepository()
         val reactiveUseCase = GetTransactionsUseCase(
             reactiveRepo,
             UnconfinedTestDispatcher(testDispatcher.scheduler),
@@ -112,7 +108,7 @@ class GetTransactionsUseCaseTest {
     // ── Dispatcher Injection ─────────────────────────────────────────────────
 
     @Test
-    fun `invoke with StandardTestDispatcher requires advanceUntilIdle`() = runTest(testDispatcher) {
+    fun invokeWithStandardTestDispatcherRequiresAdvanceUntilIdle() = runTest(testDispatcher) {
         val repository = FakeTransactionRepository(sampleTransactions)
         val standardUseCase = GetTransactionsUseCase(repository, testDispatcher)
         var result: List<Transaction> = emptyList()
@@ -127,7 +123,7 @@ class GetTransactionsUseCaseTest {
     // ── Cancellazione ────────────────────────────────────────────────────────
 
     @Test
-    fun `flow collection should be cancellable`() = runTest(testDispatcher) {
+    fun flowCollection_shouldBeCancellable() = runTest(testDispatcher) {
         val repository = FakeTransactionRepository(sampleTransactions)
         val cancellableUseCase = GetTransactionsUseCase(repository, testDispatcher)
 
@@ -137,54 +133,4 @@ class GetTransactionsUseCaseTest {
 
         assertTrue(job.isCancelled)
     }
-}
-
-// ── Fake Repositories ────────────────────────────────────────────────────────
-
-private class FakeTransactionRepository(
-    private val transactions: List<Transaction>,
-) : TransactionRepository {
-    override fun getAllTransactions(): Flow<List<Transaction>> = flowOf(transactions)
-    override suspend fun getTransactionById(id: Long): Transaction? =
-        transactions.find { it.id == id }
-
-    override suspend fun insertTransaction(transaction: Transaction): Long = transaction.id
-    override suspend fun updateTransaction(transaction: Transaction) = Unit
-    override suspend fun deleteTransaction(transaction: Transaction) = Unit
-    override suspend fun deleteAllTransactions() = Unit
-    override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> =
-        flowOf(transactions.filter { it.timestamp in from..to })
-
-    override fun getRecurringTransactions(): Flow<List<Transaction>> =
-        flowOf(transactions.filter { it.isRecurring })
-
-    override suspend fun renameCategory(oldCategoryName: String, newCategoryName: String, icon: String, color: Long) {}
-    override fun getDistinctTitles() = flowOf(emptyList<String>())
-    override fun getDistinctPayees() = flowOf(emptyList<String>())
-    override fun getDistinctNotes() = flowOf(emptyList<String>())
-    override fun getDistinctLocations() = flowOf(emptyList<String>())
-    override fun getDistinctTags() = flowOf(emptyList<String>())
-}
-
-private class FakeReactiveTransactionRepository : TransactionRepository {
-    val transactions = MutableStateFlow<List<Transaction>>(emptyList())
-    override fun getAllTransactions(): Flow<List<Transaction>> = transactions
-    override suspend fun getTransactionById(id: Long): Transaction? = null
-    override suspend fun insertTransaction(transaction: Transaction): Long = 0L
-    override suspend fun updateTransaction(transaction: Transaction) {}
-    override suspend fun deleteTransaction(transaction: Transaction) {}
-    override suspend fun deleteAllTransactions() {
-        transactions.value = emptyList()
-    }
-
-    override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> =
-        flowOf(emptyList())
-
-    override fun getRecurringTransactions(): Flow<List<Transaction>> = flowOf(emptyList())
-    override suspend fun renameCategory(oldCategoryName: String, newCategoryName: String, icon: String, color: Long) {}
-    override fun getDistinctTitles() = flowOf(emptyList<String>())
-    override fun getDistinctPayees() = flowOf(emptyList<String>())
-    override fun getDistinctNotes() = flowOf(emptyList<String>())
-    override fun getDistinctLocations() = flowOf(emptyList<String>())
-    override fun getDistinctTags() = flowOf(emptyList<String>())
 }

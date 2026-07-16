@@ -1,9 +1,9 @@
 package com.antcashmanager.domain.usecase.transaction
 
-import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionSuggestions
-import com.antcashmanager.domain.repository.TransactionRepository
+import com.antcashmanager.testutil.FakeTransactionRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
@@ -17,7 +17,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
-
 class GetTransactionSuggestionsUseCaseTest {
 
     private val testDispatcher = StandardTestDispatcher()
@@ -35,7 +34,7 @@ class GetTransactionSuggestionsUseCaseTest {
     }
 
     @Test
-    fun `flow collection should be cancellable`() = runTest(testDispatcher) {
+    fun flowCollection_shouldBeCancellable() = runTest(testDispatcher) {
         // Given
         repository.titlesToReturn = listOf("Test")
         val cancellableUseCase = GetTransactionSuggestionsUseCase(
@@ -54,7 +53,7 @@ class GetTransactionSuggestionsUseCaseTest {
     }
 
     @Test
-    fun `invoke should handle partial data correctly`() = runTest(testDispatcher) {
+    fun invoke_shouldHandlePartialDataCorrectly() = runTest(testDispatcher) {
         // Given - Solo alcuni campi hanno dati
         repository.titlesToReturn = listOf("Spesa")
         repository.payeesToReturn = emptyList()
@@ -74,7 +73,7 @@ class GetTransactionSuggestionsUseCaseTest {
     }
 
     @Test
-    fun `invoke should return all suggestions from repository`() = runTest(testDispatcher) {
+    fun invoke_shouldReturnAllSuggestionsFromRepository() = runTest(testDispatcher) {
         // Given
         val expectedTitles = listOf("Spesa", "Carburante", "Ristorante")
         val expectedPayees = listOf("Supermercato", "Stazione servizio")
@@ -100,15 +99,8 @@ class GetTransactionSuggestionsUseCaseTest {
     }
 
     @Test
-    fun `invoke should return empty suggestions when no data available`() =
+    fun invoke_shouldReturnEmptySuggestions_whenNoDataAvailable() =
         runTest(testDispatcher) {
-            // Given
-            repository.titlesToReturn = emptyList()
-            repository.payeesToReturn = emptyList()
-            repository.notesToReturn = emptyList()
-            repository.locationsToReturn = emptyList()
-            repository.tagsToReturn = emptyList()
-
             // When
             val result = useCase().first()
 
@@ -118,29 +110,19 @@ class GetTransactionSuggestionsUseCaseTest {
 }
 
 /**
- * Fake implementation di TransactionRepository per i test.
+ * Estende il fake condiviso per controllare i suggerimenti in modo indipendente
+ * dal contenuto delle transazioni, con liste arbitrarie impostate dal test.
  */
-private class FakeSuggestionsTransactionRepository : TransactionRepository {
+private class FakeSuggestionsTransactionRepository : FakeTransactionRepository() {
     var titlesToReturn: List<String> = emptyList()
     var payeesToReturn: List<String> = emptyList()
     var notesToReturn: List<String> = emptyList()
     var locationsToReturn: List<String> = emptyList()
     var tagsToReturn: List<String> = emptyList()
 
-    override fun getDistinctTitles() = flowOf(titlesToReturn)
-    override fun getDistinctPayees() = flowOf(payeesToReturn)
-    override fun getDistinctNotes() = flowOf(notesToReturn)
-    override fun getDistinctLocations() = flowOf(locationsToReturn)
-    override fun getDistinctTags() = flowOf(tagsToReturn)
-
-    // Altri metodi non implementati per i test
-    override fun getAllTransactions() = flowOf(emptyList<Transaction>())
-    override suspend fun getTransactionById(id: Long) = null
-    override suspend fun insertTransaction(transaction: Transaction) = 0L
-    override suspend fun updateTransaction(transaction: Transaction) {}
-    override suspend fun deleteTransaction(transaction: Transaction) {}
-    override suspend fun deleteAllTransactions() {}
-    override fun getTransactionsByDateRange(from: Long, to: Long) = flowOf(emptyList<Transaction>())
-    override fun getRecurringTransactions() = flowOf(emptyList<Transaction>())
-    override suspend fun renameCategory(oldCategoryName: String, newCategoryName: String, icon: String, color: Long) {}
+    override fun getDistinctTitles(): Flow<List<String>> = flowOf(titlesToReturn)
+    override fun getDistinctPayees(): Flow<List<String>> = flowOf(payeesToReturn)
+    override fun getDistinctNotes(): Flow<List<String>> = flowOf(notesToReturn)
+    override fun getDistinctLocations(): Flow<List<String>> = flowOf(locationsToReturn)
+    override fun getDistinctTags(): Flow<List<String>> = flowOf(tagsToReturn)
 }

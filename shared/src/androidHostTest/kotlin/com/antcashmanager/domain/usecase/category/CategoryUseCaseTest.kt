@@ -1,11 +1,8 @@
 package com.antcashmanager.domain.usecase.category
 
 import com.antcashmanager.domain.model.Category
-import com.antcashmanager.domain.repository.CategoryRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import com.antcashmanager.testutil.FakeCategoryRepository
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -29,7 +26,7 @@ class CategoryUseCaseTest {
     }
 
     @Test
-    fun `GetCategoriesUseCase returns all categories`() = runTest {
+    fun getCategoriesUseCaseReturnsAllCategories() = runTest {
         val category = Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373)
         fakeRepo.categories.value = listOf(category)
         val result = getCategoriesUseCase().first().getOrThrow()
@@ -38,7 +35,7 @@ class CategoryUseCaseTest {
     }
 
     @Test
-    fun `InsertCategoryUseCase adds category`() = runTest {
+    fun insertCategoryUseCaseAddsCategory() = runTest {
         val category = Category(name = "Transport", icon = "bus", color = 0xFF4FC3F7)
         insertCategoryUseCase(category)
         val result = getCategoriesUseCase().first().getOrThrow()
@@ -46,7 +43,7 @@ class CategoryUseCaseTest {
     }
 
     @Test
-    fun `DeleteCategoryUseCase removes category`() = runTest {
+    fun deleteCategoryUseCaseRemovesCategory() = runTest {
         val category = Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373)
         fakeRepo.categories.value = listOf(category)
         deleteCategoryUseCase(category)
@@ -55,44 +52,11 @@ class CategoryUseCaseTest {
     }
 
     @Test
-    fun `UpdateCategoryUseCase updates category`() = runTest {
+    fun updateCategoryUseCaseUpdatesCategory() = runTest {
         val category = Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373)
         fakeRepo.categories.value = listOf(category)
         updateCategoryUseCase(category.copy(name = "Groceries"))
         val result = getCategoriesUseCase().first().getOrThrow()
         assertEquals("Groceries", result.first().name)
     }
-}
-
-private class FakeCategoryRepository : CategoryRepository {
-    val categories = MutableStateFlow<List<Category>>(emptyList())
-    override fun getAllCategories(): Flow<List<Category>> = categories
-    override suspend fun getCategoryById(id: Long): Category? =
-        categories.value.find { it.id == id }
-
-    override suspend fun getCategoryByName(name: String): Category? =
-        categories.value.find { it.name == name }
-
-    override suspend fun insertCategory(category: Category): Long {
-        categories.value = categories.value + category
-        return category.id
-    }
-
-    override suspend fun updateCategory(category: Category) {
-        categories.value = categories.value.map { if (it.id == category.id) category else it }
-    }
-
-    override suspend fun deleteCategory(category: Category) {
-        categories.value = categories.value.filter { it.id != category.id }
-    }
-
-    override suspend fun deleteAllCategories() {
-        categories.value = emptyList()
-    }
-
-    override fun getCategoriesByType(type: String): Flow<List<Category>> =
-        categories.map { list -> list.filter { it.type == type } }
-
-    override suspend fun getDefaultCategoryCount(): Int =
-        categories.value.count { it.isDefault }
 }

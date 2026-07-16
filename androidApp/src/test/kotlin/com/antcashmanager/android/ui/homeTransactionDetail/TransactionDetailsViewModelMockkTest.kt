@@ -67,7 +67,7 @@ class TransactionDetailsViewModelMockkTest : BaseUnitTest() {
     @Test
     fun shareTransaction_shouldBuildSendIntentWithFormattedText_whenTransactionIsExpense() {
         every {
-            shareTransactionUseCase.formatTransactionForShare(expenseTransaction, isIncome = false)
+            shareTransactionUseCase(ShareTransactionUseCase.Params(expenseTransaction))
         } returns "formatted expense"
 
         viewModel.shareTransaction(expenseTransaction, context)
@@ -78,20 +78,20 @@ class TransactionDetailsViewModelMockkTest : BaseUnitTest() {
     }
 
     @Test
-    fun shareTransaction_shouldPassIncomeFlagTrue_whenTransactionTypeIsIncome() {
+    fun shareTransaction_shouldDelegateWholeTransaction_whenTransactionTypeIsIncome() {
         every {
-            shareTransactionUseCase.formatTransactionForShare(incomeTransaction, isIncome = true)
+            shareTransactionUseCase(ShareTransactionUseCase.Params(incomeTransaction))
         } returns "formatted income"
 
         viewModel.shareTransaction(incomeTransaction, context)
 
-        verify { shareTransactionUseCase.formatTransactionForShare(incomeTransaction, isIncome = true) }
+        verify { shareTransactionUseCase(ShareTransactionUseCase.Params(incomeTransaction)) }
     }
 
     @Test
     fun shareTransaction_shouldStartChooserActivity_whenIntentIsBuilt() {
         every {
-            shareTransactionUseCase.formatTransactionForShare(expenseTransaction, isIncome = false)
+            shareTransactionUseCase(ShareTransactionUseCase.Params(expenseTransaction))
         } returns "formatted expense"
 
         viewModel.shareTransaction(expenseTransaction, context)

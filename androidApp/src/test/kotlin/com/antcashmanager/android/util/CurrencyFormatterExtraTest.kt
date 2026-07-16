@@ -9,7 +9,7 @@ import org.junit.Test
 class CurrencyFormatterExtraTest {
 
     @Test
-    fun `space thousands separator formatting`() {
+    fun spaceThousandsSeparatorFormatting() {
         val fmt = CurrencyFormat(
             currencySymbol = "€",
             decimalDigits = 2,
@@ -21,7 +21,7 @@ class CurrencyFormatterExtraTest {
     }
 
     @Test
-    fun `swapped separators dot decimal and comma thousands`() {
+    fun swappedSeparatorsDotDecimalAndCommaThousands() {
         val fmt = CurrencyFormat(
             currencySymbol = "$",
             decimalDigits = 2,
@@ -33,7 +33,7 @@ class CurrencyFormatterExtraTest {
     }
 
     @Test
-    fun `formatAmountWithSign positive and negative`() {
+    fun formatAmountWithSignPositiveAndNegative() {
         val fmt = CurrencyFormat(
             currencySymbol = "€",
             decimalDigits = 2,
@@ -47,7 +47,7 @@ class CurrencyFormatterExtraTest {
     }
 
     @Test
-    fun `formatTransactionAmount uses sign from value`() {
+    fun formatTransactionAmountUsesSignFromValue() {
         val fmt = CurrencyFormat(
             currencySymbol = "€",
             decimalDigits = 2,
@@ -59,7 +59,7 @@ class CurrencyFormatterExtraTest {
     }
 
     @Test
-    fun `isValidNote edge cases`() {
+    fun isValidNoteEdgeCases() {
         assertFalse((null as String?).isValidNote())
         assertFalse("".isValidNote())
         assertFalse("   ".isValidNote())
@@ -69,7 +69,7 @@ class CurrencyFormatterExtraTest {
     }
 
     @Test
-    fun `thousands disabled when equal to decimal separator`() {
+    fun thousandsDisabledWhenEqualToDecimalSeparator() {
         val fmt = CurrencyFormat(
             currencySymbol = "€",
             decimalDigits = 2,

@@ -79,7 +79,7 @@ class FilterTransactionsUseCaseTest {
     )
 
     @Test
-    fun `empty filter params returns all transactions within date range`() = runTest {
+    fun emptyFilterParamsReturnsAllTransactionsWithinDateRange() = runTest {
         val params = FilterTransactionsUseCase.Params(
             transactions = sampleTransactions,
             filterParams = TransactionFilterParams(
@@ -94,7 +94,7 @@ class FilterTransactionsUseCaseTest {
     }
 
     @Test
-    fun `filter by search query returns matching transactions`() = runTest {
+    fun filterBySearchQueryReturnsMatchingTransactions() = runTest {
         val params = FilterTransactionsUseCase.Params(
             transactions = sampleTransactions,
             filterParams = TransactionFilterParams(
@@ -111,7 +111,7 @@ class FilterTransactionsUseCaseTest {
     }
 
     @Test
-    fun `search is case insensitive`() = runTest {
+    fun searchIsCaseInsensitive() = runTest {
         val params = FilterTransactionsUseCase.Params(
             transactions = sampleTransactions,
             filterParams = TransactionFilterParams(
@@ -128,7 +128,7 @@ class FilterTransactionsUseCaseTest {
     }
 
     @Test
-    fun `search matches amount as string`() = runTest {
+    fun searchMatchesAmountAsString() = runTest {
         val params = FilterTransactionsUseCase.Params(
             transactions = sampleTransactions,
             filterParams = TransactionFilterParams(
@@ -145,7 +145,7 @@ class FilterTransactionsUseCaseTest {
     }
 
     @Test
-    fun `search matches amount when comma decimal separator is used`() = runTest {
+    fun searchMatchesAmountWhenCommaDecimalSeparatorIsUsed() = runTest {
         val params = FilterTransactionsUseCase.Params(
             transactions = sampleTransactions,
             filterParams = TransactionFilterParams(
@@ -162,7 +162,7 @@ class FilterTransactionsUseCaseTest {
     }
 
     @Test
-    fun `filter by category returns only matching category`() = runTest {
+    fun filterByCategoryReturnsOnlyMatchingCategory() = runTest {
         val params = FilterTransactionsUseCase.Params(
             transactions = sampleTransactions,
             filterParams = TransactionFilterParams(
@@ -179,7 +179,7 @@ class FilterTransactionsUseCaseTest {
     }
 
     @Test
-    fun `filter by transaction type INCOME returns only incomes`() = runTest {
+    fun filterByTransactionTypeINCOMEReturnsOnlyIncomes() = runTest {
         val params = FilterTransactionsUseCase.Params(
             transactions = sampleTransactions,
             filterParams = TransactionFilterParams(
@@ -196,7 +196,7 @@ class FilterTransactionsUseCaseTest {
     }
 
     @Test
-    fun `filter by transaction type EXPENSE returns only expenses`() = runTest {
+    fun filterByTransactionTypeEXPENSEReturnsOnlyExpenses() = runTest {
         val params = FilterTransactionsUseCase.Params(
             transactions = sampleTransactions,
             filterParams = TransactionFilterParams(
@@ -213,7 +213,7 @@ class FilterTransactionsUseCaseTest {
     }
 
     @Test
-    fun `filter by payment type returns only matching payments`() = runTest {
+    fun filterByPaymentTypeReturnsOnlyMatchingPayments() = runTest {
         val params = FilterTransactionsUseCase.Params(
             transactions = sampleTransactions,
             filterParams = TransactionFilterParams(
@@ -230,7 +230,7 @@ class FilterTransactionsUseCaseTest {
     }
 
     @Test
-    fun `filter by payment type CASH returns only cash transactions`() = runTest {
+    fun filterByPaymentTypeCASHReturnsOnlyCashTransactions() = runTest {
         val params = FilterTransactionsUseCase.Params(
             transactions = sampleTransactions,
             filterParams = TransactionFilterParams(
@@ -247,7 +247,7 @@ class FilterTransactionsUseCaseTest {
     }
 
     @Test
-    fun `filter by payment type MEAL_VOUCHERS returns only meal voucher transactions`() = runTest {
+    fun filterByPaymentTypeMEALVOUCHERSReturnsOnlyMealVoucherTransactions() = runTest {
         val params = FilterTransactionsUseCase.Params(
             transactions = sampleTransactions,
             filterParams = TransactionFilterParams(
@@ -264,7 +264,7 @@ class FilterTransactionsUseCaseTest {
     }
 
     @Test
-    fun `combined filters work correctly`() = runTest {
+    fun combinedFiltersWorkCorrectly() = runTest {
         val params = FilterTransactionsUseCase.Params(
             transactions = sampleTransactions,
             filterParams = TransactionFilterParams(
@@ -282,7 +282,7 @@ class FilterTransactionsUseCaseTest {
     }
 
     @Test
-    fun `combined filters with search and category`() = runTest {
+    fun combinedFiltersWithSearchAndCategory() = runTest {
         val params = FilterTransactionsUseCase.Params(
             transactions = sampleTransactions,
             filterParams = TransactionFilterParams(
@@ -300,7 +300,7 @@ class FilterTransactionsUseCaseTest {
     }
 
     @Test
-    fun `date range filter works correctly`() = runTest {
+    fun dateRangeFilterWorksCorrectly() = runTest {
         val params = FilterTransactionsUseCase.Params(
             transactions = sampleTransactions,
             filterParams = TransactionFilterParams(
@@ -316,7 +316,7 @@ class FilterTransactionsUseCaseTest {
     }
 
     @Test
-    fun `empty list returns empty result`() = runTest {
+    fun emptyListReturnsEmptyResult() = runTest {
         val params = FilterTransactionsUseCase.Params(
             transactions = emptyList(),
             filterParams = TransactionFilterParams(),
@@ -328,7 +328,7 @@ class FilterTransactionsUseCaseTest {
     }
 
     @Test
-    fun `no matching filters returns empty list`() = runTest {
+    fun noMatchingFiltersReturnsEmptyList() = runTest {
         val params = FilterTransactionsUseCase.Params(
             transactions = sampleTransactions,
             filterParams = TransactionFilterParams(
@@ -344,31 +344,31 @@ class FilterTransactionsUseCaseTest {
     }
 
     @Test
-    fun `hasActiveFilters returns true when search query is set`() {
+    fun hasActiveFiltersReturnsTrueWhenSearchQueryIsSet() {
         val params = TransactionFilterParams(searchQuery = "test")
         assertTrue(params.hasActiveFilters)
     }
 
     @Test
-    fun `hasActiveFilters returns true when category is set`() {
+    fun hasActiveFiltersReturnsTrueWhenCategoryIsSet() {
         val params = TransactionFilterParams(categoryName = "Food")
         assertTrue(params.hasActiveFilters)
     }
 
     @Test
-    fun `hasActiveFilters returns true when transaction type is set`() {
+    fun hasActiveFiltersReturnsTrueWhenTransactionTypeIsSet() {
         val params = TransactionFilterParams(transactionType = TransactionType.INCOME)
         assertTrue(params.hasActiveFilters)
     }
 
     @Test
-    fun `hasActiveFilters returns true when payment type is set`() {
+    fun hasActiveFiltersReturnsTrueWhenPaymentTypeIsSet() {
         val params = TransactionFilterParams(paymentType = PaymentType.CASH)
         assertTrue(params.hasActiveFilters)
     }
 
     @Test
-    fun `hasActiveFilters returns false when no filters set`() {
+    fun hasActiveFiltersReturnsFalseWhenNoFiltersSet() {
         val params = TransactionFilterParams()
         assertTrue(!params.hasActiveFilters)
     }

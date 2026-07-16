@@ -1,27 +1,27 @@
 package com.antcashmanager.domain.usecase
 
 import com.antcashmanager.domain.model.Transaction
+import com.antcashmanager.domain.model.TransactionType
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 /**
- * Use case per la formattazione dei dati di una transazione per la condivisione
- * Implementa la business logic di preparazione dei dati
+ * Use case per la formattazione dei dati di una transazione per la condivisione.
+ * Implementa la business logic di preparazione dei dati estendendo [BaseSyncUseCase].
  */
-class ShareTransactionUseCase {
+class ShareTransactionUseCase : BaseSyncUseCase<ShareTransactionUseCase.Params, String>() {
+
     private val dateFormat = SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault())
 
+    data class Params(val transaction: Transaction)
+
     /**
-     * Formatta i dati della transazione in una stringa leggibile per la condivisione
-     * @param transaction La transazione da condividere
-     * @param isIncome Se la transazione è un'entrata o un'uscita
-     * @return Stringa formattata pronta per la condivisione
+     * Formatta i dati della transazione in una stringa leggibile per la condivisione.
      */
-    fun formatTransactionForShare(
-        transaction: Transaction,
-        isIncome: Boolean,
-    ): String {
+    override fun execute(params: Params): String {
+        val transaction = params.transaction
+        val isIncome = transaction.type == TransactionType.INCOME
         val typeString = if (isIncome) "Income" else "Expense"
         val recurrenceInfo =
             if (transaction.isRecurring && transaction.recurrenceInterval.isNotBlank()) {
@@ -73,4 +73,3 @@ fun String?.isValidNote(): Boolean {
     if (this.equals("null", ignoreCase = true)) return false
     return true
 }
-

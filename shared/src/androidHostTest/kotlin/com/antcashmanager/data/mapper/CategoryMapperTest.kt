@@ -7,7 +7,7 @@ import org.junit.Test
 
 class CategoryMapperTest {
     @Test
-    fun `CategoryEntity toDomain maps correctly`() {
+    fun categoryEntityToDomainMapsCorrectly() {
         val entity = CategoryEntity(id = 1, name = "Food", icon = "restaurant", color = 0xFFE57373)
         val domain = entity.toDomain()
         assertEquals(1L, domain.id)
@@ -17,7 +17,7 @@ class CategoryMapperTest {
     }
 
     @Test
-    fun `Category toEntity maps correctly`() {
+    fun categoryToEntityMapsCorrectly() {
         val domain = Category(id = 2, name = "Transport", icon = "bus", color = 0xFF4FC3F7)
         val entity = domain.toEntity()
         assertEquals(2L, entity.id)
@@ -27,7 +27,7 @@ class CategoryMapperTest {
     }
 
     @Test
-    fun `round-trip mapping preserves data`() {
+    fun roundTripMappingPreservesData() {
         val original = Category(id = 3, name = "Entertainment", icon = "movie", color = 0xFFBA68C8)
         val roundTripped = original.toEntity().toDomain()
         assertEquals(original, roundTripped)

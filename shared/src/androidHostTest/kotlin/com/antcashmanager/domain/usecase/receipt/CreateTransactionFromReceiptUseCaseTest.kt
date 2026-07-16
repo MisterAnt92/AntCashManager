@@ -2,14 +2,10 @@ package com.antcashmanager.domain.usecase.receipt
 
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.ReceiptData
-import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
-import com.antcashmanager.domain.repository.TransactionRepository
+import com.antcashmanager.testutil.FakeTransactionRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -25,7 +21,7 @@ import org.junit.Test
 class CreateTransactionFromReceiptUseCaseTest {
 
     private val testDispatcher = StandardTestDispatcher()
-    private lateinit var fakeRepo: FakeCreateTransactionRepository
+    private lateinit var fakeRepo: FakeTransactionRepository
     private lateinit var useCase: CreateTransactionFromReceiptUseCase
 
     private val sampleReceipt = ReceiptData(
@@ -49,7 +45,7 @@ class CreateTransactionFromReceiptUseCaseTest {
 
     @Before
     fun setup() {
-        fakeRepo = FakeCreateTransactionRepository()
+        fakeRepo = FakeTransactionRepository()
         useCase = CreateTransactionFromReceiptUseCase(
             fakeRepo,
             UnconfinedTestDispatcher(testDispatcher.scheduler),
@@ -70,7 +66,7 @@ class CreateTransactionFromReceiptUseCaseTest {
     fun invoke_shouldCreateExpenseTransaction_always() = runTest(testDispatcher) {
         useCase(sampleParams)
 
-        val saved = fakeRepo.insertedTransactions.first()
+        val saved = fakeRepo.transactions.value.first()
         assertEquals(TransactionType.EXPENSE, saved.type)
     }
 
@@ -78,7 +74,7 @@ class CreateTransactionFromReceiptUseCaseTest {
     fun invoke_shouldSetAmountFromReceipt() = runTest(testDispatcher) {
         useCase(sampleParams)
 
-        val saved = fakeRepo.insertedTransactions.first()
+        val saved = fakeRepo.transactions.value.first()
         assertEquals(68.90, saved.amount, 0.001)
     }
 
@@ -86,7 +82,7 @@ class CreateTransactionFromReceiptUseCaseTest {
     fun invoke_shouldSetCategoryName() = runTest(testDispatcher) {
         useCase(sampleParams)
 
-        val saved = fakeRepo.insertedTransactions.first()
+        val saved = fakeRepo.transactions.value.first()
         assertEquals("Alimentari", saved.category)
     }
 
@@ -99,7 +95,7 @@ class CreateTransactionFromReceiptUseCaseTest {
 
         useCase(params)
 
-        val saved = fakeRepo.insertedTransactions.first()
+        val saved = fakeRepo.transactions.value.first()
         assertEquals(PaymentType.CASH, saved.paymentType)
     }
 
@@ -110,16 +106,16 @@ class CreateTransactionFromReceiptUseCaseTest {
 
         useCase(params)
 
-        val saved = fakeRepo.insertedTransactions.first()
+        val saved = fakeRepo.transactions.value.first()
         assertEquals(PaymentType.MEAL_VOUCHERS, saved.paymentType)
     }
 
     @Test
     fun invoke_shouldAlwaysBeExpense_regardlessOfPaymentType() = runTest(testDispatcher) {
         for (pt in PaymentType.entries) {
-            fakeRepo.insertedTransactions.clear()
+            fakeRepo.transactions.value = emptyList()
             useCase(sampleParams.copy(paymentType = pt))
-            assertEquals(TransactionType.EXPENSE, fakeRepo.insertedTransactions.first().type)
+            assertEquals(TransactionType.EXPENSE, fakeRepo.transactions.value.first().type)
         }
     }
 
@@ -129,7 +125,7 @@ class CreateTransactionFromReceiptUseCaseTest {
     fun invoke_shouldEncodeVatInNotes_whenVatPresent() = runTest(testDispatcher) {
         useCase(sampleParams)
 
-        val saved = fakeRepo.insertedTransactions.first()
+        val saved = fakeRepo.transactions.value.first()
         assertTrue(saved.notes.contains("IVA"))
         assertTrue(saved.notes.contains("22%"))
         assertTrue(saved.notes.contains("12"))
@@ -142,7 +138,7 @@ class CreateTransactionFromReceiptUseCaseTest {
 
         useCase(params)
 
-        val saved = fakeRepo.insertedTransactions.first()
+        val saved = fakeRepo.transactions.value.first()
         assertTrue(saved.notes.isBlank())
     }
 
@@ -154,7 +150,7 @@ class CreateTransactionFromReceiptUseCaseTest {
 
         useCase(params)
 
-        val saved = fakeRepo.insertedTransactions.first()
+        val saved = fakeRepo.transactions.value.first()
         assertEquals("Esselunga S.p.A.", saved.title)
     }
 
@@ -165,7 +161,7 @@ class CreateTransactionFromReceiptUseCaseTest {
 
         useCase(params)
 
-        val saved = fakeRepo.insertedTransactions.first()
+        val saved = fakeRepo.transactions.value.first()
         assertEquals("Scontrino", saved.title)
     }
 
@@ -173,7 +169,7 @@ class CreateTransactionFromReceiptUseCaseTest {
 
     @Test
     fun invoke_shouldReturnFailure_whenRepositoryThrows() = runTest(testDispatcher) {
-        fakeRepo.shouldThrow = true
+        fakeRepo.errorToThrow = RuntimeException("DB error")
 
         val result = useCase(sampleParams)
 
@@ -184,72 +180,14 @@ class CreateTransactionFromReceiptUseCaseTest {
 
     @Test
     fun invoke_shouldBeCancellable_beforeCompletion() = runTest(testDispatcher) {
-        val slowRepo = SlowFakeCreateTransactionRepository(delayMs = 10_000L)
-        val cancellableUseCase = CreateTransactionFromReceiptUseCase(slowRepo, testDispatcher)
+        fakeRepo.operationDelayMs = 10_000L
+        val cancellableUseCase = CreateTransactionFromReceiptUseCase(fakeRepo, testDispatcher)
 
         val job: Job = launch { cancellableUseCase(sampleParams) }
         job.cancel()
         advanceUntilIdle()
 
         assertTrue(job.isCancelled)
-        assertFalse(slowRepo.insertCalled)
+        assertTrue(fakeRepo.transactions.value.isEmpty())
     }
 }
-
-// ── Fake Repositories ────────────────────────────────────────────────────────
-
-private class FakeCreateTransactionRepository : TransactionRepository {
-    val insertedTransactions = mutableListOf<Transaction>()
-    private var nextId = 1L
-    var shouldThrow = false
-
-    override suspend fun insertTransaction(transaction: Transaction): Long {
-        if (shouldThrow) throw RuntimeException("DB error")
-        insertedTransactions.add(transaction)
-        return nextId++
-    }
-
-    override fun getAllTransactions(): Flow<List<Transaction>> = flowOf(emptyList())
-    override suspend fun getTransactionById(id: Long): Transaction? = null
-    override suspend fun updateTransaction(transaction: Transaction) {}
-    override suspend fun deleteTransaction(transaction: Transaction) {}
-    override suspend fun deleteAllTransactions() {}
-    override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> =
-        flowOf(emptyList())
-
-    override fun getRecurringTransactions(): Flow<List<Transaction>> = flowOf(emptyList())
-    override suspend fun renameCategory(oldCategoryName: String, newCategoryName: String, icon: String, color: Long) {}
-    override fun getDistinctTitles() = flowOf(emptyList<String>())
-    override fun getDistinctPayees() = flowOf(emptyList<String>())
-    override fun getDistinctNotes() = flowOf(emptyList<String>())
-    override fun getDistinctLocations() = flowOf(emptyList<String>())
-    override fun getDistinctTags() = flowOf(emptyList<String>())
-}
-
-private class SlowFakeCreateTransactionRepository(private val delayMs: Long) :
-    TransactionRepository {
-    var insertCalled = false
-
-    override suspend fun insertTransaction(transaction: Transaction): Long {
-        delay(delayMs)
-        insertCalled = true
-        return 99L
-    }
-
-    override fun getAllTransactions(): Flow<List<Transaction>> = flowOf(emptyList())
-    override suspend fun getTransactionById(id: Long): Transaction? = null
-    override suspend fun updateTransaction(transaction: Transaction) {}
-    override suspend fun deleteTransaction(transaction: Transaction) {}
-    override suspend fun deleteAllTransactions() {}
-    override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> =
-        flowOf(emptyList())
-
-    override fun getRecurringTransactions(): Flow<List<Transaction>> = flowOf(emptyList())
-    override suspend fun renameCategory(oldCategoryName: String, newCategoryName: String, icon: String, color: Long) {}
-    override fun getDistinctTitles() = flowOf(emptyList<String>())
-    override fun getDistinctPayees() = flowOf(emptyList<String>())
-    override fun getDistinctNotes() = flowOf(emptyList<String>())
-    override fun getDistinctLocations() = flowOf(emptyList<String>())
-    override fun getDistinctTags() = flowOf(emptyList<String>())
-}
-

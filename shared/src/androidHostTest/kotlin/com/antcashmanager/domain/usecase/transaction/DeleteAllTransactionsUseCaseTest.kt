@@ -1,12 +1,10 @@
 package com.antcashmanager.domain.usecase.transaction
 
 import com.antcashmanager.domain.model.Transaction
-import com.antcashmanager.domain.repository.TransactionRepository
+import com.antcashmanager.domain.model.TransactionType
+import com.antcashmanager.testutil.FakeTransactionRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -17,48 +15,56 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
-@OptIn(ExperimentalCoroutinesApi::class)
-
 /**
  * Test per [DeleteAllTransactionsUseCase] con dispatcher injection e cancellazione.
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 class DeleteAllTransactionsUseCaseTest {
 
     private val testDispatcher = StandardTestDispatcher()
-    private lateinit var fakeRepo: FakeDeleteAllRepo
+    private lateinit var fakeRepo: FakeTransactionRepository
     private lateinit var useCase: DeleteAllTransactionsUseCase
+
+    private val sampleTransaction = Transaction(
+        id = 1L,
+        title = "Spesa",
+        amount = 10.0,
+        category = "Cibo",
+        type = TransactionType.EXPENSE,
+    )
 
     @Before
     fun setup() {
-        fakeRepo = FakeDeleteAllRepo()
+        fakeRepo = FakeTransactionRepository()
         useCase = DeleteAllTransactionsUseCase(fakeRepo, testDispatcher)
     }
 
     // ── Happy Path ───────────────────────────────────────────────────────────
 
     @Test
-    fun `invoke deletes all transactions`() = runTest(testDispatcher) {
-        fakeRepo.hasData = true
+    fun invokeDeletesAllTransactions() = runTest(testDispatcher) {
+        fakeRepo.transactions.value = listOf(sampleTransaction)
 
         useCase()
 
-        assertTrue(fakeRepo.deleteAllCalled)
-        assertFalse(fakeRepo.hasData)
+        assertTrue(fakeRepo.transactions.value.isEmpty())
     }
 
     @Test
-    fun `invoke is idempotent on empty repository`() = runTest(testDispatcher) {
-        useCase()
-        useCase()
+    fun invokeIsIdempotentOnEmptyRepository() = runTest(testDispatcher) {
+        val first = useCase()
+        val second = useCase()
 
-        assertEquals(2, fakeRepo.deleteAllCallCount)
+        assertTrue(first.isSuccess)
+        assertTrue(second.isSuccess)
+        assertTrue(fakeRepo.transactions.value.isEmpty())
     }
 
     // ── Error Handling ───────────────────────────────────────────────────────
 
     @Test
-    fun `invoke returns failure Result when repository throws`() = runTest(testDispatcher) {
-        fakeRepo.shouldThrow = true
+    fun invokeReturnsFailureResultWhenRepositoryThrows() = runTest(testDispatcher) {
+        fakeRepo.errorToThrow = RuntimeException("DB error")
 
         val result = useCase()
 
@@ -69,73 +75,16 @@ class DeleteAllTransactionsUseCaseTest {
     // ── Cancellazione ────────────────────────────────────────────────────────
 
     @Test
-    fun `invoke should be cancellable`() = runTest(testDispatcher) {
-        val slowRepo = SlowDeleteRepo(delayMs = 10_000L)
-        val cancellableUseCase = DeleteAllTransactionsUseCase(slowRepo, testDispatcher)
+    fun invoke_shouldBeCancellable() = runTest(testDispatcher) {
+        fakeRepo.transactions.value = listOf(sampleTransaction)
+        fakeRepo.operationDelayMs = 10_000L
 
-        val job: Job = launch { cancellableUseCase() }
+        val job: Job = launch { useCase() }
         job.cancel()
         advanceUntilIdle()
 
         assertTrue(job.isCancelled)
-        assertFalse(slowRepo.deleteAllCalled)
+        assertEquals(1, fakeRepo.transactions.value.size)
+        assertFalse(fakeRepo.transactions.value.isEmpty())
     }
 }
-
-// ── Fake Repositories ────────────────────────────────────────────────────────
-
-private class FakeDeleteAllRepo : TransactionRepository {
-    var hasData = false
-    var shouldThrow = false
-    var deleteAllCalled = false
-    var deleteAllCallCount = 0
-
-    override suspend fun deleteAllTransactions() {
-        if (shouldThrow) throw RuntimeException("DB error")
-        deleteAllCalled = true
-        deleteAllCallCount++
-        hasData = false
-    }
-
-    override fun getAllTransactions(): Flow<List<Transaction>> = flowOf(emptyList())
-    override suspend fun getTransactionById(id: Long): Transaction? = null
-    override suspend fun insertTransaction(transaction: Transaction): Long = 0L
-    override suspend fun updateTransaction(transaction: Transaction) {}
-    override suspend fun deleteTransaction(transaction: Transaction) {}
-    override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> =
-        flowOf(emptyList())
-
-    override fun getRecurringTransactions(): Flow<List<Transaction>> = flowOf(emptyList())
-    override suspend fun renameCategory(oldCategoryName: String, newCategoryName: String, icon: String, color: Long) {}
-    override fun getDistinctTitles() = flowOf(emptyList<String>())
-    override fun getDistinctPayees() = flowOf(emptyList<String>())
-    override fun getDistinctNotes() = flowOf(emptyList<String>())
-    override fun getDistinctLocations() = flowOf(emptyList<String>())
-    override fun getDistinctTags() = flowOf(emptyList<String>())
-}
-
-private class SlowDeleteRepo(private val delayMs: Long) : TransactionRepository {
-    var deleteAllCalled = false
-
-    override suspend fun deleteAllTransactions() {
-        delay(delayMs)
-        deleteAllCalled = true
-    }
-
-    override fun getAllTransactions(): Flow<List<Transaction>> = flowOf(emptyList())
-    override suspend fun getTransactionById(id: Long): Transaction? = null
-    override suspend fun insertTransaction(transaction: Transaction): Long = 0L
-    override suspend fun updateTransaction(transaction: Transaction) {}
-    override suspend fun deleteTransaction(transaction: Transaction) {}
-    override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> =
-        flowOf(emptyList())
-
-    override fun getRecurringTransactions(): Flow<List<Transaction>> = flowOf(emptyList())
-    override suspend fun renameCategory(oldCategoryName: String, newCategoryName: String, icon: String, color: Long) {}
-    override fun getDistinctTitles() = flowOf(emptyList<String>())
-    override fun getDistinctPayees() = flowOf(emptyList<String>())
-    override fun getDistinctNotes() = flowOf(emptyList<String>())
-    override fun getDistinctLocations() = flowOf(emptyList<String>())
-    override fun getDistinctTags() = flowOf(emptyList<String>())
-}
-

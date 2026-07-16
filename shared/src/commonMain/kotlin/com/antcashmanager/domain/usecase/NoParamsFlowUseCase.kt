@@ -12,17 +12,17 @@ import kotlinx.coroutines.flow.flowOn
  * che la produzione degli elementi avvenga sul thread corretto.
  * Il dispatcher è iniettabile per garantire testabilità con [kotlinx.coroutines.test.TestDispatcher].
  *
- * @param Result Tipo degli elementi emessi dal Flow
+ * @param R Tipo degli elementi emessi dal Flow
  * @param dispatcher Dispatcher su cui viene prodotto il Flow. Default [Dispatchers.Default].
  */
-abstract class NoParamsFlowUseCase<out Result>(
+abstract class NoParamsFlowUseCase<out R>(
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) {
     /**
      * Implementa la logica di business del UseCase.
      * NON chiamare direttamente: usare [invoke].
      */
-    protected abstract fun execute(): Flow<Result>
+    protected abstract fun execute(): Flow<R>
 
     /**
      * Restituisce il Flow con [flowOn] applicato al dispatcher configurato.
@@ -31,5 +31,5 @@ abstract class NoParamsFlowUseCase<out Result>(
      * `final`: le subclass implementano SOLO [execute], mai [invoke], per garantire
      * che il dispatcher configurato sia sempre rispettato.
      */
-    operator fun invoke(): Flow<Result> = execute().flowOn(dispatcher)
+    operator fun invoke(): Flow<R> = execute().flowOn(dispatcher)
 }

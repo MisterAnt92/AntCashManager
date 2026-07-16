@@ -2,9 +2,7 @@ package com.antcashmanager.domain.usecase.transaction
 
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
-import com.antcashmanager.domain.repository.TransactionRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
+import com.antcashmanager.testutil.FakeTransactionRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -23,19 +21,17 @@ class DeleteTransactionUseCaseTest {
     )
 
     @Test
-    fun `invoke deletes transaction from repository`() = runTest {
-        val fakeRepo = FakeDeleteTransactionRepository(
-            mutableListOf(sampleTransaction),
-        )
+    fun invokeDeletesTransactionFromRepository() = runTest {
+        val fakeRepo = FakeTransactionRepository(listOf(sampleTransaction))
         val useCase = DeleteTransactionUseCase(fakeRepo)
 
         useCase(sampleTransaction)
 
-        assertTrue(fakeRepo.transactions.isEmpty())
+        assertTrue(fakeRepo.transactions.value.isEmpty())
     }
 
     @Test
-    fun `invoke deletes only the specified transaction`() = runTest {
+    fun invokeDeletesOnlyTheSpecifiedTransaction() = runTest {
         val otherTransaction = Transaction(
             id = 2L,
             title = "Salary",
@@ -44,57 +40,13 @@ class DeleteTransactionUseCaseTest {
             type = TransactionType.INCOME,
             timestamp = 2000L,
         )
-        val fakeRepo = FakeDeleteTransactionRepository(
-            mutableListOf(sampleTransaction, otherTransaction),
-        )
+        val fakeRepo = FakeTransactionRepository(listOf(sampleTransaction, otherTransaction))
         val useCase = DeleteTransactionUseCase(fakeRepo)
 
         useCase(sampleTransaction)
 
-        assertEquals(1, fakeRepo.transactions.size)
-        assertFalse(fakeRepo.transactions.contains(sampleTransaction))
-        assertTrue(fakeRepo.transactions.contains(otherTransaction))
+        assertEquals(1, fakeRepo.transactions.value.size)
+        assertFalse(fakeRepo.transactions.value.contains(sampleTransaction))
+        assertTrue(fakeRepo.transactions.value.contains(otherTransaction))
     }
-}
-
-private class FakeDeleteTransactionRepository(
-    val transactions: MutableList<Transaction>,
-) : TransactionRepository {
-
-    override fun getAllTransactions(): Flow<List<Transaction>> =
-        flowOf(transactions.toList())
-
-    override suspend fun getTransactionById(id: Long): Transaction? =
-        transactions.find { it.id == id }
-
-    override suspend fun insertTransaction(transaction: Transaction): Long {
-        transactions.add(transaction)
-        return transaction.id
-    }
-
-    override suspend fun updateTransaction(transaction: Transaction) = Unit
-
-    override suspend fun deleteTransaction(transaction: Transaction) {
-        transactions.remove(transaction)
-    }
-
-    override suspend fun deleteAllTransactions() {
-        transactions.clear()
-    }
-
-    override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> =
-        flowOf(transactions.filter { it.timestamp in from..to })
-
-    override fun getRecurringTransactions(): Flow<List<Transaction>> =
-        flowOf(transactions.filter { it.isRecurring })
-
-    override suspend fun renameCategory(oldCategoryName: String, newCategoryName: String, icon: String, color: Long) {
-        // No-op for test
-    }
-
-    override fun getDistinctTitles() = flowOf(emptyList<String>())
-    override fun getDistinctPayees() = flowOf(emptyList<String>())
-    override fun getDistinctNotes() = flowOf(emptyList<String>())
-    override fun getDistinctLocations() = flowOf(emptyList<String>())
-    override fun getDistinctTags() = flowOf(emptyList<String>())
 }

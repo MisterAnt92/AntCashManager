@@ -7,7 +7,7 @@ import org.junit.Test
 class TransactionTest {
 
     @Test
-    fun `transaction with default id is zero`() {
+    fun transactionWithDefaultIdIsZero() {
         val transaction = Transaction(
             title = "Test",
             amount = 100.0,
@@ -18,7 +18,7 @@ class TransactionTest {
     }
 
     @Test
-    fun `transactions with same data are equal`() {
+    fun transactionsWithSameDataAreEqual() {
         val t1 = Transaction(
             id = 1L,
             title = "Test",
@@ -39,7 +39,7 @@ class TransactionTest {
     }
 
     @Test
-    fun `transactions with different ids are not equal`() {
+    fun transactionsWithDifferentIdsAreNotEqual() {
         val t1 = Transaction(
             id = 1L,
             title = "Test",
@@ -53,7 +53,7 @@ class TransactionTest {
     }
 
     @Test
-    fun `copy preserves all fields`() {
+    fun copyPreservesAllFields() {
         val original = Transaction(
             id = 1L,
             title = "Original",
@@ -76,18 +76,18 @@ class TransactionTest {
 class TransactionTypeTest {
 
     @Test
-    fun `TransactionType has exactly two values`() {
+    fun transactionTypeHasExactlyTwoValues() {
         assertEquals(2, TransactionType.entries.size)
     }
 
     @Test
-    fun `TransactionType values are INCOME and EXPENSE`() {
+    fun transactionTypeValuesAreINCOMEAndEXPENSE() {
         val values = TransactionType.entries.map { it.name }
         assertEquals(listOf("INCOME", "EXPENSE"), values)
     }
 
     @Test
-    fun `valueOf returns correct enum`() {
+    fun valueOfReturnsCorrectEnum() {
         assertEquals(TransactionType.INCOME, TransactionType.valueOf("INCOME"))
         assertEquals(TransactionType.EXPENSE, TransactionType.valueOf("EXPENSE"))
     }
@@ -96,12 +96,12 @@ class TransactionTypeTest {
 class AppThemeTest {
 
     @Test
-    fun `AppTheme has exactly three values`() {
+    fun appThemeHasExactlyThreeValues() {
         assertEquals(3, AppTheme.entries.size)
     }
 
     @Test
-    fun `AppTheme values are LIGHT DARK SYSTEM`() {
+    fun appThemeValuesAreLIGHTDARKSYSTEM() {
         val values = AppTheme.entries.map { it.name }
         assertEquals(listOf("LIGHT", "DARK", "SYSTEM"), values)
     }

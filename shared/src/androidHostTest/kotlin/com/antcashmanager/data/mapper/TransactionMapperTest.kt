@@ -10,7 +10,7 @@ import org.junit.Test
 class TransactionMapperTest {
 
     @Test
-    fun `entity to domain maps correctly for INCOME`() {
+    fun entityToDomainMapsCorrectlyForINCOME() {
         val entity = TransactionEntity(
             id = 1L,
             title = "Salary",
@@ -31,7 +31,7 @@ class TransactionMapperTest {
     }
 
     @Test
-    fun `entity to domain maps correctly for EXPENSE`() {
+    fun entityToDomainMapsCorrectlyForEXPENSE() {
         val entity = TransactionEntity(
             id = 2L,
             title = "Groceries",
@@ -52,7 +52,7 @@ class TransactionMapperTest {
     }
 
     @Test
-    fun `domain to entity maps correctly for INCOME`() {
+    fun domainToEntityMapsCorrectlyForINCOME() {
         val domain = Transaction(
             id = 1L,
             title = "Salary",
@@ -73,7 +73,7 @@ class TransactionMapperTest {
     }
 
     @Test
-    fun `domain to entity maps correctly for EXPENSE`() {
+    fun domainToEntityMapsCorrectlyForEXPENSE() {
         val domain = Transaction(
             id = 2L,
             title = "Rent",
@@ -94,7 +94,7 @@ class TransactionMapperTest {
     }
 
     @Test
-    fun `round-trip entity to domain to entity preserves data`() {
+    fun roundTripEntityToDomainToEntityPreservesData() {
         val original = TransactionEntity(
             id = 5L,
             title = "Test",
@@ -110,7 +110,7 @@ class TransactionMapperTest {
     }
 
     @Test
-    fun `round-trip domain to entity to domain preserves data`() {
+    fun roundTripDomainToEntityToDomainPreservesData() {
         val original = Transaction(
             id = 5L,
             title = "Test",
@@ -126,7 +126,7 @@ class TransactionMapperTest {
     }
 
     @Test
-    fun `entity with zero id maps correctly`() {
+    fun entityWithZeroIdMapsCorrectly() {
         val entity = TransactionEntity(
             id = 0L,
             title = "New Transaction",
