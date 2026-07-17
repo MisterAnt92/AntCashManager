@@ -42,6 +42,22 @@ import java.util.Locale
 import kotlin.math.abs
 
 /**
+ * Checks whether the given range matches an "N years ago until now" preset,
+ * with a tolerance that widens with the preset length.
+ */
+private fun matchesYearsPreset(
+    currentTime: Long,
+    dateRangeFrom: Long,
+    dateRangeTo: Long,
+    dayInMillis: Long,
+    years: Int,
+): Boolean {
+    val expectedFrom = currentTime - (years * 365L * dayInMillis)
+    val tolerance = 7L * dayInMillis
+    return abs(dateRangeFrom - expectedFrom) < tolerance && abs(dateRangeTo - currentTime) < tolerance
+}
+
+/**
  * Helper function to determine the display text for the date range
  * based on the selected preset index and actual date range values
  */
@@ -74,11 +90,11 @@ private fun getRangeDisplayText(
                     abs(dateRangeTo - currentTime) < (24 * 60 * 60 * 1000)
         }
 
-        3 -> { // Year (365 days)
-            val expectedFrom = currentTime - (365L * dayInMillis)
-            abs(dateRangeFrom - expectedFrom) < (7L * 24 * 60 * 60 * 1000) && // Within 1 week tolerance
-                    abs(dateRangeTo - currentTime) < (7L * 24 * 60 * 60 * 1000)
-        }
+        3 -> matchesYearsPreset(currentTime, dateRangeFrom, dateRangeTo, dayInMillis, years = 1)
+        4 -> matchesYearsPreset(currentTime, dateRangeFrom, dateRangeTo, dayInMillis, years = 2)
+        5 -> matchesYearsPreset(currentTime, dateRangeFrom, dateRangeTo, dayInMillis, years = 3)
+        6 -> matchesYearsPreset(currentTime, dateRangeFrom, dateRangeTo, dayInMillis, years = 5)
+        7 -> matchesYearsPreset(currentTime, dateRangeFrom, dateRangeTo, dayInMillis, years = 6)
 
         else -> false
     }
@@ -89,6 +105,10 @@ private fun getRangeDisplayText(
             1 -> stringResource(R.string.range_label_this_week)
             2 -> stringResource(R.string.range_label_this_month)
             3 -> stringResource(R.string.range_label_this_year)
+            4 -> stringResource(R.string.range_two_years)
+            5 -> stringResource(R.string.range_three_years)
+            6 -> stringResource(R.string.range_five_years)
+            7 -> stringResource(R.string.range_six_years)
             else -> stringResource(R.string.charts_period)
         }
     } else {

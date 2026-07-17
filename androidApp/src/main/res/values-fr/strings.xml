@@ -84,6 +84,10 @@
     <string name="range_three_months">3 mois</string>
     <string name="range_six_months">6 mois</string>
     <string name="range_year">1 an</string>
+    <string name="range_two_years">2 ans</string>
+    <string name="range_three_years">3 ans</string>
+    <string name="range_five_years">5 ans</string>
+    <string name="range_six_years">6 ans</string>
     <string name="range_all">Tout</string>
     <string name="range_label_today">Aujourd\'hui</string>
     <string name="range_label_this_week">Cette semaine</string>

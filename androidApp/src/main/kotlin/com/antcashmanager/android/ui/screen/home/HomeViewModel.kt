@@ -82,7 +82,9 @@ class HomeViewModel(
             transactionRepository = transactionRepository,
             dispatcher = dispatcher,
         ),
-        filterTransactionsUseCase = FilterTransactionsUseCase(),
+        filterTransactionsUseCase = FilterTransactionsUseCase(
+            dispatcher = dispatcher,
+        ),
         getTransactionSuggestionsUseCase = GetTransactionSuggestionsUseCase(
             repository = transactionRepository,
             dispatcher = dispatcher,

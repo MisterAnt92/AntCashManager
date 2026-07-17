@@ -2,7 +2,7 @@ package com.antcashmanager.domain.usecase.settings
 
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.repository.SettingsRepository
-import com.antcashmanager.domain.usecase.BaseUseCase
+import com.antcashmanager.domain.usecase.BaseResultUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
@@ -12,9 +12,8 @@ import kotlinx.coroutines.Dispatchers
 class SetThemeUseCase(
     private val settingsRepository: SettingsRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : BaseUseCase<AppTheme, Result<Unit>>(dispatcher) {
+) : BaseResultUseCase<AppTheme, Unit>(dispatcher) {
 
-    override suspend fun execute(params: AppTheme): Result<Unit> = runCatching {
+    override suspend fun execute(params: AppTheme): Unit =
         settingsRepository.setTheme(params)
-    }
 }

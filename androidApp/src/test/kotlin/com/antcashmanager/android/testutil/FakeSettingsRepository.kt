@@ -18,6 +18,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
  * corrispondente, prima o dopo la creazione del ViewModel.
  */
 open class FakeSettingsRepository : SettingsRepository {
+
+    companion object {
+        private const val WEEK_IN_MILLIS = 7L * 24 * 60 * 60 * 1000
+        private const val MONTH_IN_MILLIS = 30L * 24 * 60 * 60 * 1000
+
+        private fun defaultDateFilter(durationMs: Long): SavedDateFilter {
+            val now = System.currentTimeMillis()
+            return SavedDateFilter(presetIndex = 1, from = now - durationMs, to = now)
+        }
+    }
+
     val theme = MutableStateFlow(AppTheme.SYSTEM)
     val language = MutableStateFlow(AppLanguage.SYSTEM)
     val showCharts = MutableStateFlow(true)
@@ -33,11 +44,11 @@ open class FakeSettingsRepository : SettingsRepository {
     val dateFormat = MutableStateFlow("dd/MM/yyyy")
     val dateFilterExpanded = MutableStateFlow(true)
     val homeDateFilterPreset = MutableStateFlow(1)
-    val homeDateFilterState = MutableStateFlow(SavedDateFilter(presetIndex = 1, from = 0L, to = 0L))
+    val homeDateFilterState = MutableStateFlow(defaultDateFilter(WEEK_IN_MILLIS))
     val transactionsDateFilterPreset = MutableStateFlow(1)
-    val transactionsDateFilterState = MutableStateFlow(SavedDateFilter(presetIndex = 1, from = 0L, to = 0L))
+    val transactionsDateFilterState = MutableStateFlow(defaultDateFilter(WEEK_IN_MILLIS))
     val chartsDateFilterPreset = MutableStateFlow(1)
-    val chartsDateFilterState = MutableStateFlow(SavedDateFilter(presetIndex = 1, from = 0L, to = 0L))
+    val chartsDateFilterState = MutableStateFlow(defaultDateFilter(MONTH_IN_MILLIS))
     val chartsZoomEnabled = MutableStateFlow(false)
     val showPaymentTypeBreakdown = MutableStateFlow(false)
     val showQuickInsightsCard = MutableStateFlow(false)

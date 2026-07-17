@@ -114,13 +114,16 @@ class TransactionsViewModel(
             categoryRepository = categoryRepository,
             dispatcher = dispatcher,
         ),
-        filterTransactionsUseCase = FilterTransactionsUseCase(),
+        filterTransactionsUseCase = FilterTransactionsUseCase(
+            dispatcher = dispatcher,
+        ),
         getTransactionSuggestionsUseCase = GetTransactionSuggestionsUseCase(
             repository = transactionRepository,
             dispatcher = dispatcher,
         ),
         getTransactionsDateFilterStateUseCase = GetTransactionsDateFilterStateUseCase(
             settingsRepository = settingsRepository,
+            dispatcher = dispatcher,
         ),
         setTransactionsDateFilterStateUseCase = SetTransactionsDateFilterStateUseCase(
             settingsRepository = settingsRepository,

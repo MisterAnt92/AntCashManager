@@ -96,6 +96,36 @@ class ChartsViewModelTest : BaseUnitTest() {
     }
 
     @Test
+    fun setPresetRangeUpdatesDateRange_whenMultiYearPresetsAreSelected() = runViewModelTest {
+        val multiYearPresets = listOf(
+            RangePreset.TWO_YEARS,
+            RangePreset.THREE_YEARS,
+            RangePreset.FIVE_YEARS,
+            RangePreset.SIX_YEARS,
+        )
+        var previousFrom = viewModel.dateRange.value.from
+
+        // Ogni preset viene verificato su una ViewModel dedicata: setPresetRange persiste in modo
+        // fire-and-forget, quindi selezioni multiple ravvicinate sulla stessa istanza potrebbero
+        // risolversi fuori ordine e non sono rappresentative del calcolo del range in sé.
+        multiYearPresets.forEach { preset ->
+            val presetViewModel = ChartsViewModel(
+                transactionRepository = fakeRepo,
+                settingsRepository = FakeSettingsRepository(),
+                dispatcher = testDispatcher,
+            )
+            presetViewModel.setPresetRange(preset)
+            advanceUntilIdle()
+
+            val range = presetViewModel.dateRange.value
+            assertEquals(preset.ordinal, presetViewModel.selectedPresetIndex.value)
+            // Ogni preset più lungo deve produrre un "from" più indietro nel tempo del precedente.
+            assertTrue(range.from <= previousFrom)
+            previousFrom = range.from
+        }
+    }
+
+    @Test
     fun expenseByCategoryGroupsCorrectly() = runViewModelTest {
         val now = System.currentTimeMillis()
         fakeRepo.transactions.value = listOf(

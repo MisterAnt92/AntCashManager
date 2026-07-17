@@ -5,7 +5,7 @@ import com.antcashmanager.domain.model.ReceiptData
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.TransactionRepository
-import com.antcashmanager.domain.usecase.BaseUseCase
+import com.antcashmanager.domain.usecase.BaseResultUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
@@ -45,7 +45,7 @@ data class CreateTransactionFromReceiptParams(
 class CreateTransactionFromReceiptUseCase(
     private val transactionRepository: TransactionRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : BaseUseCase<CreateTransactionFromReceiptParams, Result<Long>>(dispatcher) {
+) : BaseResultUseCase<CreateTransactionFromReceiptParams, Long>(dispatcher) {
 
     companion object {
         private const val DEFAULT_RECEIPT_TITLE = "Scontrino"
@@ -61,39 +61,38 @@ class CreateTransactionFromReceiptUseCase(
      * - L'IVA è codificata nel campo notes in formato compatto (no colonne extra su DB)
      *
      * @param params [CreateTransactionFromReceiptParams] con tutti i dati necessari.
-     * @return [Result] con l'id della transazione inserita, o eccezione di dominio.
+     * @return L'id della transazione inserita. Lancia un'eccezione in caso di errore.
      */
-    override suspend fun execute(params: CreateTransactionFromReceiptParams): Result<Long> =
-        runCatching {
-            val receipt = params.receiptData
+    override suspend fun execute(params: CreateTransactionFromReceiptParams): Long {
+        val receipt = params.receiptData
 
-            // Il tipo di pagamento viene dall'utente (se ha fatto override) o dall'OCR
-            val resolvedPaymentType = params.paymentType ?: receipt.paymentType
-            val resolvedTitle = params.title.ifBlank {
-                receipt.payee.ifBlank { DEFAULT_RECEIPT_TITLE }
-            }
-            val resolvedNotes = buildReceiptNotes(
-                existingNotes = params.notes,
-                vatRate = receipt.vatRate,
-                vatAmount = receipt.vatAmount,
-            )
-
-            val transaction = Transaction(
-                title = resolvedTitle,
-                amount = receipt.totalAmount,
-                category = params.categoryName,
-                type = TransactionType.EXPENSE,       // scontrini = SEMPRE uscite
-                paymentType = resolvedPaymentType,    // cash / buoni pasto / elettronico
-                timestamp = params.timestamp,
-                notes = resolvedNotes,
-                payee = receipt.payee,
-                location = receipt.location,
-                categoryIcon = params.categoryIcon,
-                categoryColor = params.categoryColor,
-            )
-
-            transactionRepository.insertTransaction(transaction)
+        // Il tipo di pagamento viene dall'utente (se ha fatto override) o dall'OCR
+        val resolvedPaymentType = params.paymentType ?: receipt.paymentType
+        val resolvedTitle = params.title.ifBlank {
+            receipt.payee.ifBlank { DEFAULT_RECEIPT_TITLE }
         }
+        val resolvedNotes = buildReceiptNotes(
+            existingNotes = params.notes,
+            vatRate = receipt.vatRate,
+            vatAmount = receipt.vatAmount,
+        )
+
+        val transaction = Transaction(
+            title = resolvedTitle,
+            amount = receipt.totalAmount,
+            category = params.categoryName,
+            type = TransactionType.EXPENSE,       // scontrini = SEMPRE uscite
+            paymentType = resolvedPaymentType,    // cash / buoni pasto / elettronico
+            timestamp = params.timestamp,
+            notes = resolvedNotes,
+            payee = receipt.payee,
+            location = receipt.location,
+            categoryIcon = params.categoryIcon,
+            categoryColor = params.categoryColor,
+        )
+
+        return transactionRepository.insertTransaction(transaction)
+    }
 
     private fun buildReceiptNotes(
         existingNotes: String,

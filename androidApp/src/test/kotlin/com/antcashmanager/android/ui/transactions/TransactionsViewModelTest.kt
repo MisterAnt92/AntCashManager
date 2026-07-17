@@ -412,9 +412,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
             advanceUntilIdle()
 
             // Inserisce una transazione con timestamp = adesso (> staleStoredTo)
-            // IMPORTANTE: Use a slightly future timestamp to ensure it's not filtered out
-            // if System.currentTimeMillis() inside ViewModel is called slightly before this.
-            val transactionTimestamp = System.currentTimeMillis() + 1000L 
+            val transactionTimestamp = System.currentTimeMillis()
             testViewModel.addTransaction(
                 title = "Caffè",
                 amount = 2.0,

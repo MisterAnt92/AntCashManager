@@ -3,7 +3,7 @@ package com.antcashmanager.domain.usecase.receipt
 import com.antcashmanager.domain.exception.ReceiptScanException
 import com.antcashmanager.domain.model.ReceiptData
 import com.antcashmanager.domain.service.ReceiptOcrService
-import com.antcashmanager.domain.usecase.BaseUseCase
+import com.antcashmanager.domain.usecase.BaseResultUseCase
 import com.antcashmanager.domain.util.ReceiptTextParser
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +22,7 @@ import kotlinx.coroutines.Dispatchers
 class ScanReceiptUseCase(
     private val ocrService: ReceiptOcrService,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : BaseUseCase<ByteArray, Result<ReceiptData>>(dispatcher) {
+) : BaseResultUseCase<ByteArray, ReceiptData>(dispatcher) {
 
     /**
      * Esegue la scansione OCR e il parsing del testo.
@@ -34,9 +34,9 @@ class ScanReceiptUseCase(
      * - Il tipo transazione è sempre EXPENSE (garantito da [CreateTransactionFromReceiptUseCase])
      *
      * @param params Byte dell'immagine dello scontrino (JPEG/PNG).
-     * @return [Result] con [ReceiptData] estratto e validato, o [ReceiptScanException].
+     * @return [ReceiptData] estratto e validato. Lancia [ReceiptScanException] in caso di errore.
      */
-    override suspend fun execute(params: ByteArray): Result<ReceiptData> = runCatching {
+    override suspend fun execute(params: ByteArray): ReceiptData {
         if (params.isEmpty()) throw ReceiptScanException.InvalidImage
 
         val text = ocrService.extractText(params).getOrElse { rootCause ->
@@ -50,7 +50,7 @@ class ScanReceiptUseCase(
 
         if (receiptData.totalAmount <= 0.0) throw ReceiptScanException.AmountNotFound
 
-        receiptData
+        return receiptData
     }
 }
 

@@ -27,7 +27,10 @@ abstract class BaseUseCase<in Params, out R>(
 
     /**
      * Esegue il UseCase sul dispatcher configurato.
-     * Supporta cancellazione cooperativa tramite structured concurrency.
+     * Supporta cancellazione cooperativa tramite structured concurrency: [ensureActive] verifica
+     * che il Job non sia già stato cancellato prima di avviare [execute], così un'esecuzione
+     * cancellata non svolge lavoro inutile (rilevante soprattutto per logica CPU-bound senza
+     * altri suspension point).
      *
      * `final`: le subclass implementano SOLO [execute], mai [invoke], per garantire
      * che il dispatcher configurato sia sempre rispettato.

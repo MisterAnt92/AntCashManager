@@ -101,6 +101,10 @@
     <string name="range_three_months">3 Monate</string>
     <string name="range_six_months">6 Monate</string>
     <string name="range_year">1 Jahr</string>
+    <string name="range_two_years">2 Jahre</string>
+    <string name="range_three_years">3 Jahre</string>
+    <string name="range_five_years">5 Jahre</string>
+    <string name="range_six_years">6 Jahre</string>
     <string name="range_all">Gesamt</string>
 
     <!-- Range Labels (for collapsed filter) -->

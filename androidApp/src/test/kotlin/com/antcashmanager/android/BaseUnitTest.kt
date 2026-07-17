@@ -5,7 +5,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -24,10 +25,11 @@ import org.junit.Before
 @OptIn(ExperimentalCoroutinesApi::class)
 abstract class BaseUnitTest {
 
-    protected val testDispatcher = StandardTestDispatcher()
+    protected lateinit var testDispatcher: TestDispatcher
 
     @Before
     open fun setUpDispatchers() {
+        testDispatcher = UnconfinedTestDispatcher()
         Dispatchers.setMain(testDispatcher)
     }
 

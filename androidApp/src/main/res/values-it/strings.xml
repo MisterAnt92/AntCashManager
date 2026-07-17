@@ -133,6 +133,10 @@
     <string name="range_three_months">3 mesi</string>
     <string name="range_six_months">6 mesi</string>
     <string name="range_year">1 anno</string>
+    <string name="range_two_years">2 anni</string>
+    <string name="range_three_years">3 anni</string>
+    <string name="range_five_years">5 anni</string>
+    <string name="range_six_years">6 anni</string>
     <string name="range_all">Tutto</string>
     <string name="range_label_today">Oggi</string>
     <string name="range_label_this_week">7 giorni</string>

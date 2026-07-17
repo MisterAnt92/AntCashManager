@@ -2,7 +2,7 @@ package com.antcashmanager.domain.usecase.category
 
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.repository.CategoryRepository
-import com.antcashmanager.domain.usecase.BaseUseCase
+import com.antcashmanager.domain.usecase.BaseResultUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
@@ -12,9 +12,8 @@ import kotlinx.coroutines.Dispatchers
 class InsertCategoryUseCase(
     private val categoryRepository: CategoryRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : BaseUseCase<Category, Result<Long>>(dispatcher) {
+) : BaseResultUseCase<Category, Long>(dispatcher) {
 
-    override suspend fun execute(params: Category): Result<Long> = runCatching {
+    override suspend fun execute(params: Category): Long =
         categoryRepository.insertCategory(params)
-    }
 }
