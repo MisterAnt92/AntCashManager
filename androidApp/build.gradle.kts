@@ -1,3 +1,5 @@
+import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.google.services)
@@ -14,8 +16,8 @@ android {
         applicationId = "com.sformica.ant_cashmanager"
         minSdk = 26
         targetSdk = 37
-        versionCode = 12
-        versionName = "1.5.8"
+        versionCode = 13
+        versionName = "1.5.9"
     }
 
     buildTypes {
@@ -26,11 +28,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            configure<CrashlyticsExtension> {
+                // Upload automatico del mapping file per deobfuscation stacktrace release.
+                mappingFileUploadEnabled = true
+            }
         }
-    }
-    firebaseCrashlytics {
-        // Upload automatico del mapping file per deobfuscation stacktrace release.
-        mappingFileUploadEnabled = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -89,7 +91,6 @@ dependencies {
         }
     }
     androidTestImplementation(libs.androidx.junit.ext)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     androidTestImplementation(libs.mockk.android)
 }
