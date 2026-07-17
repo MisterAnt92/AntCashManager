@@ -44,12 +44,17 @@ class HomeStateTest {
     }
 
     @Test
+    fun getDateFromForPreset_shouldReturnAllTimeAgo_whenIndexIsEight() {
+        assertApproximatelyAgo(HomeState.getDateFromForPreset(8), HomeConstant.ALL_TIME_MS)
+    }
+
+    @Test
     fun getDateFromForPreset_shouldFallBackToOneWeekAgo_whenIndexIsUnknown() {
         assertApproximatelyAgo(HomeState.getDateFromForPreset(99), HomeConstant.ONE_WEEK_MS)
     }
 
     @Test
-    fun presets_shouldIncludeMultiYearRanges() {
-        assertEquals(8, HomeState.PRESETS.size)
+    fun presets_shouldIncludeMultiYearRangesAndAllTime() {
+        assertEquals(9, HomeState.PRESETS.size)
     }
 }

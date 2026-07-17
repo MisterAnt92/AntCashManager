@@ -44,12 +44,17 @@ class TransactionsStateTest {
     }
 
     @Test
+    fun getDateFromForPreset_shouldReturnAllTimeAgo_whenIndexIsEight() {
+        assertApproximatelyAgo(TransactionsState.getDateFromForPreset(8), TransactionsConstant.ALL_TIME_MS)
+    }
+
+    @Test
     fun getDateFromForPreset_shouldFallBackToOneWeekAgo_whenIndexIsUnknown() {
         assertApproximatelyAgo(TransactionsState.getDateFromForPreset(99), TransactionsConstant.ONE_WEEK_MS)
     }
 
     @Test
-    fun presets_shouldIncludeMultiYearRanges() {
-        assertEquals(8, TransactionsState.PRESETS.size)
+    fun presets_shouldIncludeMultiYearRangesAndAllTime() {
+        assertEquals(9, TransactionsState.PRESETS.size)
     }
 }

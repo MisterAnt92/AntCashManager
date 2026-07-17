@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
@@ -95,6 +97,7 @@ private fun getRangeDisplayText(
         5 -> matchesYearsPreset(currentTime, dateRangeFrom, dateRangeTo, dayInMillis, years = 3)
         6 -> matchesYearsPreset(currentTime, dateRangeFrom, dateRangeTo, dayInMillis, years = 5)
         7 -> matchesYearsPreset(currentTime, dateRangeFrom, dateRangeTo, dayInMillis, years = 6)
+        8 -> matchesYearsPreset(currentTime, dateRangeFrom, dateRangeTo, dayInMillis, years = 50)
 
         else -> false
     }
@@ -109,6 +112,7 @@ private fun getRangeDisplayText(
             5 -> stringResource(R.string.range_three_years)
             6 -> stringResource(R.string.range_five_years)
             7 -> stringResource(R.string.range_six_years)
+            8 -> stringResource(R.string.range_all)
             else -> stringResource(R.string.charts_period)
         }
     } else {
@@ -204,10 +208,11 @@ fun DateRangeFilter(
             // Expandable content
             if (expanded) {
                 Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
-                    // Preset chips - wrappate e colorate
+                    // Preset chips - scrollabili orizzontalmente, colorate
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState())
                             .padding(bottom = 8.dp),
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
                     ) {

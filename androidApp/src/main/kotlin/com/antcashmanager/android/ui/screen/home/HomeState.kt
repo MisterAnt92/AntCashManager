@@ -37,6 +37,7 @@ data class HomeState(
             5 -> System.currentTimeMillis() - HomeConstant.THREE_YEARS_MS
             6 -> System.currentTimeMillis() - HomeConstant.FIVE_YEARS_MS
             7 -> System.currentTimeMillis() - HomeConstant.SIX_YEARS_MS
+            8 -> System.currentTimeMillis() - HomeConstant.ALL_TIME_MS
             else -> System.currentTimeMillis() - HomeConstant.ONE_WEEK_MS
         }
     }
