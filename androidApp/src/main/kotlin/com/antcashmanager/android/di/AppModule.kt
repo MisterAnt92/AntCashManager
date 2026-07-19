@@ -88,6 +88,7 @@ val dataModule = module {
         BackupService(
             transactionRepository = get(),
             categoryRepository = get(),
+            settingsRepository = get(),
         )
     }
     factory<ReceiptOcrService> { MlKitReceiptOcrService() }

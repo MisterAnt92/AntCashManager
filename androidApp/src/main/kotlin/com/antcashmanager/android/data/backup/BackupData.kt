@@ -5,6 +5,10 @@ import kotlinx.serialization.Serializable
 /**
  * Data class representing the backup structure for import/export.
  * Contains all app data that needs to be persisted.
+ *
+ * [settings] è nullable: un backup v1 non lo contiene affatto, e in fase di restore la sua
+ * assenza (`null`) significa esplicitamente "non toccare le impostazioni correnti", a
+ * differenza di un blocco presente con valori di default.
  */
 @Serializable
 data class BackupData(
@@ -12,6 +16,7 @@ data class BackupData(
     val timestamp: Long = System.currentTimeMillis(),
     val transactions: List<TransactionBackup> = emptyList(),
     val categories: List<CategoryBackup> = emptyList(),
+    val settings: SettingsBackup? = null,
 )
 
 /**
@@ -31,6 +36,10 @@ data class TransactionBackup(
     val isRecurring: Boolean = false,
     val tags: String = "",
     val recurrenceInterval: String = "",
+    val paymentType: String = "ELECTRONIC",
+    val mealVoucherCount: Int = 0,
+    val categoryIcon: String = "",
+    val categoryColor: Long = 0xFF90A4AE,
 )
 
 /**
@@ -46,3 +55,30 @@ data class CategoryBackup(
     val isDefault: Boolean = false,
 )
 
+/**
+ * Serializable representation delle impostazioni dell'app per backup purposes.
+ * Copre solo tema/lingua/accessibilità/visualizzazione: esclude deliberatamente stato dei
+ * filtri data per schermata, tutorial completato e flag di cifratura del backup stesso.
+ */
+@Serializable
+data class SettingsBackup(
+    val theme: String = "SYSTEM",
+    val language: String = "SYSTEM",
+    val highContrast: Boolean = false,
+    val largeText: Boolean = false,
+    val reduceMotion: Boolean = false,
+    val showCharts: Boolean = true,
+    val showTransactionNotes: Boolean = true,
+    val showPaymentTypeBreakdown: Boolean = false,
+    val showQuickInsightsCard: Boolean = false,
+    val showInitialAnimation: Boolean = false,
+    val transactionDisplayType: String = "TREND",
+    val transactionsTransactionDisplayType: String = "TREND",
+    val currencySymbol: String = "€",
+    val decimalDigits: Int = 2,
+    val decimalSeparator: String = ",",
+    val thousandsSeparator: String = "",
+    val mealVoucherValue: Double = 5.29,
+    val dateFormat: String = "dd/MM/yyyy",
+    val chartsZoomEnabled: Boolean = false,
+)
