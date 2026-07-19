@@ -47,6 +47,7 @@ import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.AppSwitch
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
+import com.antcashmanager.android.ui.components.dialog.BlockingProgressDialog
 import com.antcashmanager.android.ui.components.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
@@ -447,6 +448,20 @@ internal fun SettingsDataContent(
                     AppText(stringResource(R.string.common_cancel))
                 }
             },
+        )
+    }
+
+    if (state.backupResult is BackupResult.Loading) {
+        BlockingProgressDialog(
+            message = stringResource(R.string.backup_in_progress_message),
+            icon = Icons.Default.Backup,
+        )
+    }
+
+    if (state.restoreResult is RestoreOperationResult.Loading) {
+        BlockingProgressDialog(
+            message = stringResource(R.string.restore_in_progress_message),
+            icon = Icons.Default.RestorePage,
         )
     }
 }

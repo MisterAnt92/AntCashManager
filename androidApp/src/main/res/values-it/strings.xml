@@ -228,11 +228,13 @@
     <string name="backup_success_message">I tuoi dati sono stati esportati con successo.</string>
     <string name="backup_error_title">Backup Fallito</string>
     <string name="backup_error_message">Impossibile creare il backup: %s</string>
+    <string name="backup_in_progress_message">Creazione del backup in corso…</string>
     <string name="settings_data_file_picker_unavailable">Selettore file non disponibile su questo dispositivo.</string>
     <string name="restore_success_title">Ripristino Completato</string>
     <string name="restore_success_message">Ripristinate con successo %1$d transazioni e %2$d categorie.</string>
     <string name="restore_error_title">Ripristino Fallito</string>
     <string name="restore_error_message">Impossibile ripristinare il backup: %s</string>
+    <string name="restore_in_progress_message">Ripristino dei dati in corso…</string>
     <string name="dialog_delete_all_title">Eliminare tutti i dati?</string>
     <string name="dialog_delete_all_message">Questa azione eliminer\u00e0 permanentemente tutte le transazioni e le categorie. Non \u00e8 possibile annullare.</string>
     <string name="dialog_data_deleted">Dati Eliminati</string>

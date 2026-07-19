@@ -216,11 +216,13 @@
     <string name="backup_success_message">Your data has been successfully exported.</string>
     <string name="backup_error_title">Backup Failed</string>
     <string name="backup_error_message">Could not create backup: %s</string>
+    <string name="backup_in_progress_message">Creating your backup…</string>
     <string name="settings_data_file_picker_unavailable">File picker is not available on this device.</string>
     <string name="restore_success_title">Restore Complete</string>
     <string name="restore_success_message">Successfully restored %1$d transactions and %2$d categories.</string>
     <string name="restore_error_title">Restore Failed</string>
     <string name="restore_error_message">Could not restore backup: %s</string>
+    <string name="restore_in_progress_message">Restoring your data…</string>
     <string name="dialog_delete_all_title">Delete All Data?</string>
     <string name="dialog_delete_all_message">This action will permanently delete all transactions and categories. This cannot be undone.</string>
     <string name="dialog_data_deleted">Data Deleted</string>
