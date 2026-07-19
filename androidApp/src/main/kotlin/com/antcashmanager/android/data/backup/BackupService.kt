@@ -16,6 +16,13 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.decodeFromJsonElement
+import kotlinx.serialization.json.intOrNull
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.longOrNull
 import java.util.Locale
 
 /**
@@ -62,6 +69,14 @@ class BackupService(
      * Restores app data from a JSON string backup.
      * This will REPLACE all existing data.
      *
+     * Il parsing è a due livelli per massimizzare la retrocompatibilità: si tenta prima una
+     * decodifica rigorosa dell'intero payload; se fallisce (es. un singolo campo con tipo
+     * inatteso, versione futura con struttura leggermente diversa, file parzialmente
+     * corrotto) si ripiega su [parseBackupDataLeniently], che decodifica transazioni e
+     * categorie **una per una**, scartando solo le voci realmente illeggibili invece di
+     * abortire l'intero restore. Una versione superiore a quella supportata non blocca più il
+     * restore: si importa comunque tutto ciò che è strutturalmente compatibile.
+     *
      * Prima di cancellare i dati esistenti ne viene catturato uno snapshot in memoria: se il
      * ripristino fallisce con un'eccezione non recuperabile, si tenta un rollback best-effort
      * riscrivendo lo snapshot. Il rollback stesso non è atomico (nessuna transazione DB
@@ -73,15 +88,20 @@ class BackupService(
             val backupData = try {
                 json.decodeFromString<BackupData>(jsonString)
             } catch (e: Exception) {
-                Logger.e("BackupService") { "Error parsing backup: ${e.message}" }
-                return@withContext Result.failure(e)
+                Logger.w("BackupService") { "Strict backup parsing failed, falling back to lenient per-field parsing: ${e.message}" }
+                try {
+                    parseBackupDataLeniently(jsonString)
+                } catch (fallbackError: Exception) {
+                    Logger.e("BackupService") { "Lenient parsing also failed: ${fallbackError.message}" }
+                    return@withContext Result.failure(e)
+                }
             }
 
-            // Validate version
             if (backupData.version > BackupConstants.CURRENT_VERSION) {
-                return@withContext Result.failure(
-                    IllegalStateException("Backup version ${backupData.version} is not supported. Please update the app."),
-                )
+                Logger.w("BackupService") {
+                    "Backup version ${backupData.version} is newer than supported (${BackupConstants.CURRENT_VERSION}); " +
+                        "importing best-effort using only the fields this app version understands."
+                }
             }
 
             val existingTransactionsSnapshot = transactionRepository.getAllTransactions().first()
@@ -157,6 +177,48 @@ class BackupService(
                 Result.failure(e)
             }
         }
+
+    /**
+     * Parsing tollerante usato come fallback quando la decodifica rigorosa di [BackupData]
+     * fallisce. Legge la struttura campo per campo direttamente dal JSON grezzo e decodifica
+     * ogni transazione/categoria singolarmente, scartando (con log) solo le voci che non si
+     * possono interpretare — invece di perdere l'intero backup per un singolo record
+     * malformato o per un formato di versione futura leggermente diverso.
+     */
+    private fun parseBackupDataLeniently(jsonString: String): BackupData {
+        val root = json.parseToJsonElement(jsonString).jsonObject
+
+        val version = root["version"]?.jsonPrimitive?.intOrNull ?: 1
+        val timestamp = root["timestamp"]?.jsonPrimitive?.longOrNull ?: System.currentTimeMillis()
+
+        val transactions = root["transactions"]?.jsonArray.orEmpty().mapNotNull { element ->
+            runCatching { json.decodeFromJsonElement<TransactionBackup>(element) }
+                .onFailure { Logger.w("BackupService") { "Skipping unreadable transaction entry: ${it.message}" } }
+                .getOrNull()
+        }
+
+        val categories = root["categories"]?.jsonArray.orEmpty().mapNotNull { element ->
+            runCatching { json.decodeFromJsonElement<CategoryBackup>(element) }
+                .onFailure { Logger.w("BackupService") { "Skipping unreadable category entry: ${it.message}" } }
+                .getOrNull()
+        }
+
+        val settings = root["settings"]
+            ?.takeIf { it != JsonNull }
+            ?.let { element ->
+                runCatching { json.decodeFromJsonElement<SettingsBackup>(element) }
+                    .onFailure { Logger.w("BackupService") { "Skipping unreadable settings block: ${it.message}" } }
+                    .getOrNull()
+            }
+
+        return BackupData(
+            version = version,
+            timestamp = timestamp,
+            transactions = transactions,
+            categories = categories,
+            settings = settings,
+        )
+    }
 
     private suspend fun buildSettingsBackup(): SettingsBackup = SettingsBackup(
         theme = settingsRepository.getTheme().first().name,

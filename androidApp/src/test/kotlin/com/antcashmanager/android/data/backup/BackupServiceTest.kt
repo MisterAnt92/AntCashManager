@@ -186,15 +186,63 @@ class BackupServiceTest {
     }
 
     @Test
-    fun restoreBackup_shouldFail_whenVersionIsNewerThanSupported() = runTest {
+    fun restoreBackup_shouldImportKnownFieldsBestEffort_whenVersionIsNewerThanSupported() = runTest {
+        // Simula un backup creato da una versione futura dell'app: la struttura dei campi
+        // conosciuti (transactions/categories) è ancora compatibile, solo il numero di
+        // versione è più alto. Non deve più bloccare il restore.
         val futureJson = """
-            {"version": 99, "timestamp": 0, "transactions": [], "categories": []}
+            {
+              "version": 99, "timestamp": 0,
+              "transactions": [
+                {"id": 1, "title": "Dal futuro", "amount": 15.0, "category": "Varie", "type": "EXPENSE", "timestamp": 0}
+              ],
+              "categories": [{"id": 1, "name": "Varie", "color": 100}]
+            }
         """.trimIndent()
         val transactionRepo = FakeTransactionRepository()
         val categoryRepo = FakeCategoryRepository()
         val service = buildService(transactionRepo, categoryRepo)
 
-        val result = service.restoreBackup(futureJson)
+        val result = service.restoreBackup(futureJson).getOrThrow()
+
+        assertEquals(1, result.transactionsRestored)
+        assertEquals(1, result.categoriesRestored)
+        assertEquals("Dal futuro", transactionRepo.transactions.value.single().title)
+    }
+
+    @Test
+    fun restoreBackup_shouldSkipOnlyTheUnreadableTransaction_whenStrictDecodeOfWholePayloadFails() = runTest {
+        // La seconda transazione manca di campi obbligatori (amount/category/type/timestamp):
+        // una decodifica rigorosa dell'intera lista fallirebbe, perdendo anche la prima
+        // transazione, valida. Il fallback lenient deve invece importare solo quella leggibile.
+        val malformedJson = """
+            {
+              "version": 2, "timestamp": 0,
+              "transactions": [
+                {"id": 1, "title": "Valida", "amount": 10.0, "category": "Varie", "type": "EXPENSE", "timestamp": 0},
+                {"id": 2, "title": "Corrotta"}
+              ],
+              "categories": [{"id": 1, "name": "Varie", "color": 100}]
+            }
+        """.trimIndent()
+        val transactionRepo = FakeTransactionRepository()
+        val categoryRepo = FakeCategoryRepository()
+        val service = buildService(transactionRepo, categoryRepo)
+
+        val result = service.restoreBackup(malformedJson).getOrThrow()
+
+        assertEquals(1, result.transactionsRestored)
+        assertEquals(1, result.categoriesRestored)
+        assertEquals("Valida", transactionRepo.transactions.value.single().title)
+    }
+
+    @Test
+    fun restoreBackup_shouldFail_whenPayloadIsNotValidJsonAtAll() = runTest {
+        val transactionRepo = FakeTransactionRepository()
+        val categoryRepo = FakeCategoryRepository()
+        val service = buildService(transactionRepo, categoryRepo)
+
+        val result = service.restoreBackup("questo non è JSON")
 
         assertTrue(result.isFailure)
         assertTrue(transactionRepo.transactions.value.isEmpty())

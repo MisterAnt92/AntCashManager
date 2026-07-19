@@ -14,4 +14,11 @@ object SettingsDataConstant {
     const val CONTENT_BOTTOM_PADDING_DP = 24
     const val TABLET_COLUMNS_SPACING_DP = 16
     const val CARD_SPACING_DP = 8
+
+    /**
+     * Durata minima di visualizzazione della dialog di caricamento per backup/restore: se
+     * l'operazione reale è più veloce, si attende la differenza prima di chiudere la dialog,
+     * per evitare un flash troppo rapido che sembrerebbe un mancato feedback.
+     */
+    const val MIN_LOADING_DURATION_MS = 1500L
 }
