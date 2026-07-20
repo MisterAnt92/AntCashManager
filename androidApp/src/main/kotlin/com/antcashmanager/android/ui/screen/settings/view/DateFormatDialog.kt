@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.AppIcon
@@ -15,7 +16,6 @@ import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.domain.model.DateFormatType
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 
 @Composable
 fun DateFormatDialog(
@@ -35,10 +35,11 @@ fun DateFormatDialog(
         icon = { AppIcon(imageVector = Icons.Default.CalendarMonth, contentDescription = null) },
         title = { AppText(stringResource(R.string.dialog_choose_date_format)) },
         text = {
+            val locale = LocalLocale.current.platformLocale
             Column {
                 formats.forEach { (pattern, label) ->
                     val exampleDate = kotlin.runCatching {
-                        SimpleDateFormat(pattern, Locale.getDefault()).format(Date())
+                        SimpleDateFormat(pattern, locale).format(Date())
                     }.getOrElse { pattern }
 
                     AppListItem(

@@ -49,6 +49,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -67,7 +68,6 @@ import com.antcashmanager.domain.model.TransactionType
 import org.koin.compose.koinInject
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -317,7 +317,7 @@ internal fun DetailsStep(
                 label = stringResource(R.string.add_transaction_field_date),
                 value = SimpleDateFormat(
                     "dd/MM/yyyy",
-                    Locale.getDefault(),
+                    LocalLocale.current.platformLocale,
                 ).format(Date(state.timestamp)),
                 isEditable = true,
                 onClick = { onEvent(AddTransactionEvent.EditDate) },

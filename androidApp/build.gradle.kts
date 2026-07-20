@@ -16,7 +16,7 @@ android {
         applicationId = "com.sformica.ant_cashmanager"
         minSdk = 26
         targetSdk = 37
-        versionCode = 14
+        versionCode = 15
         versionName = "1.6.0"
     }
 
@@ -86,5 +86,6 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.junit.ext)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
 }

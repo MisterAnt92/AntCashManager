@@ -29,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -40,7 +41,6 @@ import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 import kotlin.math.abs
 
 /**
@@ -117,7 +117,7 @@ private fun getRangeDisplayText(
         }
     } else {
         // Custom range - format dates
-        val shortDateFormat = SimpleDateFormat("dd MMM", Locale.getDefault())
+        val shortDateFormat = SimpleDateFormat("dd MMM", LocalLocale.current.platformLocale)
         val fromDate = shortDateFormat.format(Date(dateRangeFrom))
         val toDate = shortDateFormat.format(Date(dateRangeTo))
         stringResource(R.string.range_label_custom, fromDate, toDate)
@@ -144,7 +144,7 @@ fun DateRangeFilter(
     onToDateEdit: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val dateFormat = SimpleDateFormat("dd MMM", Locale.getDefault())
+    val dateFormat = SimpleDateFormat("dd MMM", LocalLocale.current.platformLocale)
     val rotationAngle by animateFloatAsState(
         targetValue = if (expanded) 180f else 0f,
         animationSpec = tween(300),
