@@ -22,7 +22,7 @@ class AntCashManagerApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        Logger.d("AntCashManagerApp") { "Application started" }
+        Logger.d(tag = "AntCashManagerApp") { "Application started" }
 
         startKoin {
             androidLogger(Level.ERROR)
@@ -47,7 +47,7 @@ class AntCashManagerApp : Application() {
         val count = categoryRepository.getDefaultCategoryCount()
         if (count > 0) return
 
-        Logger.d("AntCashManagerApp") { "Seeding default categories" }
+        Logger.d(tag = "AntCashManagerApp") { "Seeding default categories" }
 
         val expenseCategories = listOf(
             Category(name = "Non categorizzato", icon = "more_horiz", color = 0xFF90A4AE, type = "EXPENSE", isDefault = true),
@@ -77,6 +77,6 @@ class AntCashManagerApp : Application() {
             categoryRepository.insertCategory(category)
         }
 
-        Logger.d("AntCashManagerApp") { "Default categories seeded successfully" }
+        Logger.d(tag = "AntCashManagerApp") { "Default categories seeded successfully" }
     }
 }

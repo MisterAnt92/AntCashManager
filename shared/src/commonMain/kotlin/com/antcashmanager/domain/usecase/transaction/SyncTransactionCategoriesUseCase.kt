@@ -24,7 +24,7 @@ class SyncTransactionCategoriesUseCase(
 ) : BaseResultUseCase<SyncTransactionCategoriesUseCase.Params, Unit>(dispatcher) {
 
     override suspend fun execute(params: Params) {
-        Logger.d("SyncTransactionCategoriesUseCase") {
+        Logger.d(tag = "SyncTransactionCategoriesUseCase") {
             "Syncing category data: ${params.oldCategoryName} -> ${params.category.name}"
         }
         transactionRepository.renameCategory(

@@ -88,7 +88,7 @@ fun HomeScreen(
     navController: androidx.navigation.NavController,
     modifier: Modifier = Modifier,
 ) {
-    Logger.d("HomeScreen") { "Displaying HomeScreen" }
+    Logger.d(tag = "HomeScreen") { "Displaying HomeScreen" }
 
     val viewModel: HomeViewModel = koinViewModel()
     val settingsRepository: SettingsRepository = koinInject()

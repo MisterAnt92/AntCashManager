@@ -81,7 +81,7 @@ import kotlin.math.abs
 
 @Composable
 fun ChartsScreen() {
-    Logger.d("ChartsScreen") { "Displaying ChartsScreen" }
+    Logger.d(tag = "ChartsScreen") { "Displaying ChartsScreen" }
     val viewModel: ChartsViewModel = koinViewModel()
     val settingsRepository: SettingsRepository = koinInject()
     val chartData by viewModel.chartData.collectAsState()

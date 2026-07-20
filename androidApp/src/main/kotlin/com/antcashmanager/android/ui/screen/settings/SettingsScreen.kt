@@ -82,7 +82,7 @@ fun SettingsScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
-    Logger.d("SettingsScreen") { "Displaying SettingsScreen" }
+    Logger.d(tag = "SettingsScreen") { "Displaying SettingsScreen" }
     val context = LocalContext.current
     val viewModel: SettingsViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()

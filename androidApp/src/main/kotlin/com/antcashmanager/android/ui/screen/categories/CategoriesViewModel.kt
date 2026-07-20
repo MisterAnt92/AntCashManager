@@ -48,33 +48,27 @@ class CategoriesViewModel(
                     }
                 }.onFailure { error ->
                     if (error is kotlinx.coroutines.CancellationException) throw error
-                    Logger.e(
-                        "CategoriesViewModel",
-                        error
-                    ) { "Error loading categories: ${error.message}" }
+                    Logger.e(throwable = error, tag = "CategoriesViewModel") { "Error loading categories: ${error.message}" }
                 }
             }
         }
     }
 
     fun addCategory(name: String, icon: String, color: Long, type: String = "EXPENSE") {
-        Logger.d("CategoriesViewModel") { "Adding category: $name ($type)" }
+        Logger.d(tag = "CategoriesViewModel") { "Adding category: $name ($type)" }
         viewModelScope.launch {
             val result = insertCategoryUseCase(
                 Category(name = name, icon = icon, color = color, type = type),
             )
             result.onFailure { error ->
                 if (error is kotlinx.coroutines.CancellationException) throw error
-                Logger.e(
-                    "CategoriesViewModel",
-                    error
-                ) { "Failed to insert category: ${error.message}" }
+                Logger.e(throwable = error, tag = "CategoriesViewModel") { "Failed to insert category: ${error.message}" }
             }
         }
     }
 
     fun updateCategory(category: Category) {
-        Logger.d("CategoriesViewModel") { "Updating category: ${category.name}" }
+        Logger.d(tag = "CategoriesViewModel") { "Updating category: ${category.name}" }
         val oldName = _state.value.categories.find { it.id == category.id }?.name
         viewModelScope.launch {
             val result = updateCategoryUseCase(category)
@@ -86,32 +80,23 @@ class CategoriesViewModel(
                         SyncTransactionCategoriesUseCase.Params(oldName, category),
                     ).onFailure { error ->
                         if (error is kotlinx.coroutines.CancellationException) throw error
-                        Logger.e(
-                            "CategoriesViewModel",
-                            error,
-                        ) { "Failed to sync transactions for renamed category: ${error.message}" }
+                        Logger.e(throwable = error, tag = "CategoriesViewModel") { "Failed to sync transactions for renamed category: ${error.message}" }
                     }
                 }
             }.onFailure { error ->
                 if (error is kotlinx.coroutines.CancellationException) throw error
-                Logger.e(
-                    "CategoriesViewModel",
-                    error
-                ) { "Failed to update category: ${error.message}" }
+                Logger.e(throwable = error, tag = "CategoriesViewModel") { "Failed to update category: ${error.message}" }
             }
         }
     }
 
     fun deleteCategory(category: Category) {
-        Logger.d("CategoriesViewModel") { "Deleting category: ${category.name}" }
+        Logger.d(tag = "CategoriesViewModel") { "Deleting category: ${category.name}" }
         viewModelScope.launch {
             val result = deleteCategoryUseCase(category)
             result.onFailure { error ->
                 if (error is kotlinx.coroutines.CancellationException) throw error
-                Logger.e(
-                    "CategoriesViewModel",
-                    error
-                ) { "Failed to delete category: ${error.message}" }
+                Logger.e(throwable = error, tag = "CategoriesViewModel") { "Failed to delete category: ${error.message}" }
             }
         }
     }

@@ -108,7 +108,7 @@ fun TransactionsScreen(
     navController: NavController? = null,
     modifier: Modifier = Modifier,
 ) {
-    Logger.d("TransactionsScreen") { "Displaying TransactionsScreen" }
+    Logger.d(tag = "TransactionsScreen") { "Displaying TransactionsScreen" }
     val analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager = koinInject()
 
     val viewModel: TransactionsViewModel = koinViewModel()
