@@ -132,6 +132,14 @@ internal fun SettingsDataContent(
     val filePickerUnavailableMessage = stringResource(R.string.settings_data_file_picker_unavailable)
     val analyticsManager: AnalyticsManager = koinInject()
     val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
+    val handleDataEncryptionEnabledChange: (Boolean) -> Unit = { enabled ->
+        analyticsManager.logEvent("data_encryption_toggled")
+        onDataEncryptionEnabledChange(enabled)
+    }
+    val handleSuggestionsEnabledChange: (Boolean) -> Unit = { enabled ->
+        analyticsManager.logEvent("suggestions_toggled")
+        onSuggestionsEnabledChange(enabled)
+    }
     val backupLauncher =
         if (isPreview) null else rememberLauncherForActivityResult(
             contract = ActivityResultContracts.CreateDocument("application/json"),
@@ -254,14 +262,14 @@ internal fun SettingsDataContent(
                 item {
                     SecuritySection(
                         dataEncryptionEnabled = state.dataEncryptionEnabled,
-                        onDataEncryptionEnabledChange = onDataEncryptionEnabledChange,
+                        onDataEncryptionEnabledChange = handleDataEncryptionEnabledChange,
                     )
                 }
 
                 item {
                     SuggestionsSection(
                         suggestionsEnabled = state.suggestionsEnabled,
-                        onSuggestionsEnabledChange = onSuggestionsEnabledChange,
+                        onSuggestionsEnabledChange = handleSuggestionsEnabledChange,
                         onShowDeleteSuggestionsDialog = onShowDeleteSuggestionsDialog,
                     )
                 }
@@ -313,11 +321,11 @@ internal fun SettingsDataContent(
                 ) {
                     SecuritySection(
                         dataEncryptionEnabled = state.dataEncryptionEnabled,
-                        onDataEncryptionEnabledChange = onDataEncryptionEnabledChange,
+                        onDataEncryptionEnabledChange = handleDataEncryptionEnabledChange,
                     )
                     SuggestionsSection(
                         suggestionsEnabled = state.suggestionsEnabled,
-                        onSuggestionsEnabledChange = onSuggestionsEnabledChange,
+                        onSuggestionsEnabledChange = handleSuggestionsEnabledChange,
                         onShowDeleteSuggestionsDialog = onShowDeleteSuggestionsDialog,
                     )
                 }

@@ -53,6 +53,7 @@ import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.BuildConfig
 import com.antcashmanager.android.R
+import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.navigation.BottomNavItem
 import com.antcashmanager.android.ui.components.AppListItem
 import com.antcashmanager.android.ui.components.AppRadioButton
@@ -74,13 +75,14 @@ import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.CurrencyFormat
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun SettingsScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
-    Logger.d("SettingsScreen") { "Displaying SettingsScreen" }
+    Logger.d(tag = "SettingsScreen") { "Displaying SettingsScreen" }
     val context = LocalContext.current
     val viewModel: SettingsViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
@@ -169,6 +171,19 @@ internal fun SettingsContent(
     var showHelpDialog by remember { mutableStateOf(false) }
     var showAntAnimation by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    val analyticsManager: AnalyticsManager = koinInject()
+    val handleHighContrastChanged: (Boolean) -> Unit = { enabled ->
+        analyticsManager.logEvent("settings_high_contrast_toggled")
+        onHighContrastChanged(enabled)
+    }
+    val handleLargeTextChanged: (Boolean) -> Unit = { enabled ->
+        analyticsManager.logEvent("settings_large_text_toggled")
+        onLargeTextChanged(enabled)
+    }
+    val handleReduceMotionChanged: (Boolean) -> Unit = { enabled ->
+        analyticsManager.logEvent("settings_reduce_motion_toggled")
+        onReduceMotionChanged(enabled)
+    }
 
     // Help dialog
     if (showHelpDialog) {
@@ -225,7 +240,12 @@ internal fun SettingsContent(
                             }
                         },
                 )
-                HelpButton(onHelpClick = { showHelpDialog = true })
+                HelpButton(
+                    onHelpClick = {
+                        analyticsManager.logEvent("settings_help_opened")
+                        showHelpDialog = true
+                    },
+                )
             }
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -273,10 +293,10 @@ internal fun SettingsContent(
                     trailingContent = {
                         AppSwitch(
                             checked = highContrast,
-                            onCheckedChange = onHighContrastChanged,
+                            onCheckedChange = handleHighContrastChanged,
                         )
                     },
-                    onClick = { onHighContrastChanged(!highContrast) },
+                    onClick = { handleHighContrastChanged(!highContrast) },
                 )
                 AppCard(
                     title = stringResource(R.string.settings_large_text),
@@ -285,10 +305,10 @@ internal fun SettingsContent(
                     trailingContent = {
                         AppSwitch(
                             checked = largeText,
-                            onCheckedChange = onLargeTextChanged,
+                            onCheckedChange = handleLargeTextChanged,
                         )
                     },
-                    onClick = { onLargeTextChanged(!largeText) },
+                    onClick = { handleLargeTextChanged(!largeText) },
                 )
                 AppCard(
                     title = stringResource(R.string.settings_reduce_motion),
@@ -297,10 +317,10 @@ internal fun SettingsContent(
                     trailingContent = {
                         AppSwitch(
                             checked = reduceMotion,
-                            onCheckedChange = onReduceMotionChanged,
+                            onCheckedChange = handleReduceMotionChanged,
                         )
                     },
-                    onClick = { onReduceMotionChanged(!reduceMotion) },
+                    onClick = { handleReduceMotionChanged(!reduceMotion) },
                 )
             }
 
@@ -336,6 +356,7 @@ internal fun SettingsContent(
                     iconBackgroundColor = MaterialTheme.colorScheme.secondaryContainer,
                     iconTint = MaterialTheme.colorScheme.onSecondaryContainer,
                     onClick = {
+                        analyticsManager.logEvent("feedback_email_sent")
                         onSendFeedbackEmail(feedbackEmailBody)
                     },
                 )
@@ -345,7 +366,10 @@ internal fun SettingsContent(
                     leadingIcon = Icons.Default.PrivacyTip,
                     iconBackgroundColor = MaterialTheme.colorScheme.secondaryContainer,
                     iconTint = MaterialTheme.colorScheme.onSecondaryContainer,
-                    onClick = { showPrivacyDialog = true },
+                    onClick = {
+                        analyticsManager.logEvent("settings_privacy_policy_opened")
+                        showPrivacyDialog = true
+                    },
                 )
             }
 
@@ -355,7 +379,10 @@ internal fun SettingsContent(
                 title = stringResource(R.string.settings_show_tutorial),
                 subtitle = stringResource(R.string.settings_show_tutorial_subtitle),
                 leadingIcon = Icons.Default.Info,
-                onClick = onShowTutorial,
+                onClick = {
+                    analyticsManager.logEvent("tutorial_replay_requested")
+                    onShowTutorial()
+                },
             )
 
             // ── About Section ──
@@ -376,7 +403,10 @@ internal fun SettingsContent(
                 title = stringResource(R.string.settings_third_party_libraries),
                 subtitle = stringResource(R.string.settings_third_party_subtitle),
                 leadingIcon = Icons.AutoMirrored.Filled.LibraryBooks,
-                onClick = { showLibrariesDialog = true },
+                onClick = {
+                    analyticsManager.logEvent("settings_third_party_libraries_opened")
+                    showLibrariesDialog = true
+                },
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -396,6 +426,7 @@ internal fun SettingsContent(
         ThemeSelectionDialog(
             currentTheme = currentTheme,
             onThemeSelected = { theme ->
+                analyticsManager.logEvent("theme_changed")
                 onThemeSelected(theme)
                 showThemeDialog = false
             },
@@ -407,6 +438,7 @@ internal fun SettingsContent(
         LanguageSelectionDialog(
             currentLanguage = currentLanguage,
             onLanguageSelected = { language ->
+                analyticsManager.logEvent("language_changed")
                 onLanguageSelected(language)
                 showLanguageDialog = false
             },
@@ -429,7 +461,11 @@ internal fun SettingsContent(
     if (showCurrencyDialog) {
         CurrencySymbolDialog(
             currentSymbol = currencySymbol,
-            onSymbolSelected = { onCurrencySymbolSelected(it); showCurrencyDialog = false },
+            onSymbolSelected = {
+                analyticsManager.logEvent("currency_format_changed")
+                onCurrencySymbolSelected(it)
+                showCurrencyDialog = false
+            },
             onDismiss = { showCurrencyDialog = false },
         )
     }

@@ -90,6 +90,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
+import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.AntEmptyState
 import com.antcashmanager.android.ui.components.HelpButton
 import com.antcashmanager.android.ui.components.ScreenHeader
@@ -99,6 +100,7 @@ import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.translateCategory
 import com.antcashmanager.domain.model.Category
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 /** Map icon key names to Material Icons. */
 val categoryIconMap: Map<String, ImageVector> = mapOf(
@@ -198,6 +200,7 @@ internal fun CategoriesContent(
     onDeleteCategory: (Category) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
+    val analyticsManager: AnalyticsManager = koinInject()
     var selectedTab by remember { mutableIntStateOf(0) }
     var showAddDialog by remember { mutableStateOf(false) }
     var categoryToDelete by remember { mutableStateOf<Category?>(null) }
@@ -246,7 +249,14 @@ internal fun CategoriesContent(
         ) {
             ScreenHeader(
                 title = stringResource(R.string.common_categories),
-                actions = { HelpButton(onHelpClick = { showHelpDialog = true }) },
+                actions = {
+                    HelpButton(
+                        onHelpClick = {
+                            analyticsManager.logEvent("categories_help_opened")
+                            showHelpDialog = true
+                        },
+                    )
+                },
             )
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -291,6 +301,7 @@ internal fun CategoriesContent(
         AddCategoryDialog(
             currentType = currentType,
             onConfirm = { name, icon, color ->
+                analyticsManager.logEvent("category_created")
                 onAddCategory(name, icon, color, currentType)
                 showAddDialog = false
             },
@@ -308,6 +319,7 @@ internal fun CategoriesContent(
             confirmButton = {
                 TextButton(
                     onClick = {
+                        analyticsManager.logEvent("category_deleted")
                         onDeleteCategory(category)
                         categoryToDelete = null
                     },

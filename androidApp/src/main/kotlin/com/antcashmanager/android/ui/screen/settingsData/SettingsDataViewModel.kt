@@ -57,14 +57,14 @@ class SettingsDataViewModel(
     }
 
     fun setDataEncryptionEnabled(enabled: Boolean) {
-        Logger.d(SettingsDataConstant.TAG) { "Setting data encryption enabled: $enabled" }
+        Logger.d(tag = SettingsDataConstant.TAG) { "Setting data encryption enabled: $enabled" }
         viewModelScope.launch {
             settingsRepositoryRef.setDataEncryptionEnabled(enabled)
         }
     }
 
     fun setSuggestionsEnabled(enabled: Boolean) {
-        Logger.d(SettingsDataConstant.TAG) { "Setting suggestions enabled: $enabled" }
+        Logger.d(tag = SettingsDataConstant.TAG) { "Setting suggestions enabled: $enabled" }
         viewModelScope.launch {
             settingsRepositoryRef.setSuggestionsEnabled(enabled)
         }
@@ -79,7 +79,7 @@ class SettingsDataViewModel(
     }
 
     fun deleteAllSuggestions() {
-        Logger.d(SettingsDataConstant.TAG) { "Deleting all suggestions" }
+        Logger.d(tag = SettingsDataConstant.TAG) { "Deleting all suggestions" }
         viewModelScope.launch {
             settingsRepositoryRef.setSuggestionsClearedAt(System.currentTimeMillis())
             _state.update { it.copy(showDeleteSuggestionsDialog = false) }
@@ -195,7 +195,7 @@ class SettingsDataViewModel(
     }
 
     fun deleteAllData() {
-        Logger.d(SettingsDataConstant.TAG) { "Deleting all data" }
+        Logger.d(tag = SettingsDataConstant.TAG) { "Deleting all data" }
         viewModelScope.launch {
             try {
                 deleteAllTransactionsUseCase()
@@ -211,7 +211,7 @@ class SettingsDataViewModel(
                     }
                     .onFailure { error ->
                         if (error is CancellationException) throw error
-                        Logger.e(SettingsDataConstant.TAG, error) {
+                        Logger.e(throwable = error, tag = SettingsDataConstant.TAG) {
                             "Error deleting data: ${error.message}"
                         }
                         _state.update {
@@ -226,7 +226,7 @@ class SettingsDataViewModel(
             } catch (error: CancellationException) {
                 throw error
             } catch (error: Exception) {
-                Logger.e(SettingsDataConstant.TAG, error) { "Error deleting data: ${error.message}" }
+                Logger.e(throwable = error, tag = SettingsDataConstant.TAG) { "Error deleting data: ${error.message}" }
                 _state.update {
                     it.copy(
                         deleteResult = DeleteResult.Error(
@@ -253,7 +253,7 @@ class SettingsDataViewModel(
     }
 
     fun createBackup() {
-        Logger.d(SettingsDataConstant.TAG) { "Creating backup" }
+        Logger.d(tag = SettingsDataConstant.TAG) { "Creating backup" }
         _state.update { it.copy(backupResult = BackupResult.Loading) }
         viewModelScope.launch {
             withMinimumLoadingDuration { backupService.createBackup() }
@@ -304,7 +304,7 @@ class SettingsDataViewModel(
     }
 
     fun restoreBackup(jsonString: String) {
-        Logger.d(SettingsDataConstant.TAG) { "Restoring backup" }
+        Logger.d(tag = SettingsDataConstant.TAG) { "Restoring backup" }
         _state.update { it.copy(restoreResult = RestoreOperationResult.Loading) }
 
         val payloadToRestore = if (BackupPayloadCipher.isEncryptedPayload(jsonString)) {
@@ -357,7 +357,7 @@ class SettingsDataViewModel(
     }
 
     fun resetAllPreferences() {
-        Logger.d(SettingsDataConstant.TAG) { "Resetting all preferences" }
+        Logger.d(tag = SettingsDataConstant.TAG) { "Resetting all preferences" }
         viewModelScope.launch {
             settingsRepositoryRef.resetAllPreferences()
             _state.update { it.copy(showResetPreferencesDialog = false) }

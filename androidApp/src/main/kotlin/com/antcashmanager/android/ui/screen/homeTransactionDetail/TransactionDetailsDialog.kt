@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
+import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.home.view.getRecurrenceIntervalLabel
 import com.antcashmanager.android.ui.screen.homeTransactionDetail.view.TransactionDetailRow
@@ -34,6 +35,7 @@ import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -64,6 +66,7 @@ private fun TransactionDetailsDialogContent(
     onShareTransaction: (Transaction, android.content.Context) -> Unit,
 ) {
     val context = LocalContext.current
+    val analyticsManager: AnalyticsManager = koinInject()
     val isIncome = transaction.type == TransactionType.INCOME
 
     AlertDialog(
@@ -233,6 +236,7 @@ private fun TransactionDetailsDialogContent(
         dismissButton = {
             TextButton(
                 onClick = {
+                    analyticsManager.logEvent("transaction_shared")
                     onShareTransaction(transaction, context)
                 }
             ) {

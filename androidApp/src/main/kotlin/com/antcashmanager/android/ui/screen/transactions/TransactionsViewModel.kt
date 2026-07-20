@@ -294,7 +294,7 @@ class TransactionsViewModel(
 
     // ── Event Handling ──
     fun onEvent(event: TransactionsEvent) {
-        Logger.d("TransactionsViewModel") { "Event: $event" }
+        Logger.d(tag = "TransactionsViewModel") { "Event: $event" }
         when (event) {
             // Date range events
             is TransactionsEvent.SelectPreset -> selectPreset(event.index)
@@ -391,7 +391,7 @@ class TransactionsViewModel(
             val result = setTransactionsDateFilterStateUseCase(filter)
             result.onFailure { error ->
                 if (error is kotlinx.coroutines.CancellationException) throw error
-                Logger.e("TransactionsViewModel", error) {
+                Logger.e(throwable = error, tag = "TransactionsViewModel") {
                     "Failed to persist transactions date filter: ${error.message}"
                 }
             }
@@ -480,7 +480,7 @@ class TransactionsViewModel(
         isRecurring: Boolean = false,
         recurrenceInterval: String = "",
     ) {
-        Logger.d("TransactionsViewModel") { "Adding transaction: $title" }
+        Logger.d(tag = "TransactionsViewModel") { "Adding transaction: $title" }
         viewModelScope.launch {
             val result = insertTransactionUseCase(
                 Transaction(
@@ -499,38 +499,29 @@ class TransactionsViewModel(
             )
             result.onFailure { error ->
                 if (error is kotlinx.coroutines.CancellationException) throw error
-                Logger.e(
-                    "TransactionsViewModel",
-                    error
-                ) { "Failed to insert transaction: ${error.message}" }
+                Logger.e(throwable = error, tag = "TransactionsViewModel") { "Failed to insert transaction: ${error.message}" }
             }
         }
     }
 
     fun updateTransaction(transaction: Transaction) {
-        Logger.d("TransactionsViewModel") { "Updating transaction: ${transaction.title}" }
+        Logger.d(tag = "TransactionsViewModel") { "Updating transaction: ${transaction.title}" }
         viewModelScope.launch {
             val result = updateTransactionUseCase(transaction)
             result.onFailure { error ->
                 if (error is kotlinx.coroutines.CancellationException) throw error
-                Logger.e(
-                    "TransactionsViewModel",
-                    error
-                ) { "Failed to update transaction: ${error.message}" }
+                Logger.e(throwable = error, tag = "TransactionsViewModel") { "Failed to update transaction: ${error.message}" }
             }
         }
     }
 
     fun deleteTransaction(transaction: Transaction) {
-        Logger.d("TransactionsViewModel") { "Deleting transaction: ${transaction.title}" }
+        Logger.d(tag = "TransactionsViewModel") { "Deleting transaction: ${transaction.title}" }
         viewModelScope.launch {
             val result = deleteTransactionUseCase(transaction)
             result.onFailure { error ->
                 if (error is kotlinx.coroutines.CancellationException) throw error
-                Logger.e(
-                    "TransactionsViewModel",
-                    error
-                ) { "Failed to delete transaction: ${error.message}" }
+                Logger.e(throwable = error, tag = "TransactionsViewModel") { "Failed to delete transaction: ${error.message}" }
             }
         }
     }

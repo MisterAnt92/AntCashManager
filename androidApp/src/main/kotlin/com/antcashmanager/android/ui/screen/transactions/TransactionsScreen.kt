@@ -108,7 +108,7 @@ fun TransactionsScreen(
     navController: NavController? = null,
     modifier: Modifier = Modifier,
 ) {
-    Logger.d("TransactionsScreen") { "Displaying TransactionsScreen" }
+    Logger.d(tag = "TransactionsScreen") { "Displaying TransactionsScreen" }
     val analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager = koinInject()
 
     val viewModel: TransactionsViewModel = koinViewModel()
@@ -280,7 +280,12 @@ internal fun TransactionsContent(
                                 )
                             }
                             IconButton(
-                                onClick = { onEvent(TransactionsEvent.ToggleFiltersExpanded) },
+                                onClick = {
+                                    if (!state.isFiltersExpanded) {
+                                        analyticsManager.logEvent("transactions_filter_opened")
+                                    }
+                                    onEvent(TransactionsEvent.ToggleFiltersExpanded)
+                                },
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.FilterList,
@@ -289,7 +294,12 @@ internal fun TransactionsContent(
                                     else MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             }
-                            HelpButton(onHelpClick = { showHelpDialog = true })
+                            HelpButton(
+                                onHelpClick = {
+                                    analyticsManager.logEvent("transactions_help_opened")
+                                    showHelpDialog = true
+                                },
+                            )
                         }
                     },
                 )

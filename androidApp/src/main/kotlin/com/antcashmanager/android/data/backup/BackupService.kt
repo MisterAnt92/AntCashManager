@@ -14,7 +14,6 @@ import com.antcashmanager.domain.repository.TransactionRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.decodeFromJsonElement
@@ -45,7 +44,7 @@ class BackupService(
      */
     suspend fun createBackup(): Result<String> = withContext(Dispatchers.IO) {
         try {
-            Logger.d("BackupService") { "Creating backup..." }
+            Logger.d(tag = "BackupService") { "Creating backup..." }
 
             val transactions = transactionRepository.getAllTransactions().first()
             val categories = categoryRepository.getAllCategories().first()
@@ -57,10 +56,10 @@ class BackupService(
             )
 
             val jsonString = json.encodeToString(backupData)
-            Logger.d("BackupService") { "Backup created: ${transactions.size} transactions, ${categories.size} categories" }
+            Logger.d(tag = "BackupService") { "Backup created: ${transactions.size} transactions, ${categories.size} categories" }
             Result.success(jsonString)
         } catch (e: Exception) {
-            Logger.e("BackupService") { "Error creating backup: ${e.message}" }
+            Logger.e(tag = "BackupService") { "Error creating backup: ${e.message}" }
             Result.failure(e)
         }
     }
@@ -88,17 +87,17 @@ class BackupService(
             val backupData = try {
                 json.decodeFromString<BackupData>(jsonString)
             } catch (e: Exception) {
-                Logger.w("BackupService") { "Strict backup parsing failed, falling back to lenient per-field parsing: ${e.message}" }
+                Logger.w(tag = "BackupService") { "Strict backup parsing failed, falling back to lenient per-field parsing: ${e.message}" }
                 try {
                     parseBackupDataLeniently(jsonString)
                 } catch (fallbackError: Exception) {
-                    Logger.e("BackupService") { "Lenient parsing also failed: ${fallbackError.message}" }
+                    Logger.e(tag = "BackupService") { "Lenient parsing also failed: ${fallbackError.message}" }
                     return@withContext Result.failure(e)
                 }
             }
 
             if (backupData.version > BackupConstants.CURRENT_VERSION) {
-                Logger.w("BackupService") {
+                Logger.w(tag = "BackupService") {
                     "Backup version ${backupData.version} is newer than supported (${BackupConstants.CURRENT_VERSION}); " +
                         "importing best-effort using only the fields this app version understands."
                 }
@@ -108,7 +107,7 @@ class BackupService(
             val existingCategoriesSnapshot = categoryRepository.getAllCategories().first()
 
             try {
-                Logger.d("BackupService") { "Restoring backup..." }
+                Logger.d(tag = "BackupService") { "Restoring backup..." }
 
                 // Clear existing data
                 transactionRepository.deleteAllTransactions()
@@ -135,7 +134,7 @@ class BackupService(
                         existingCategoryKeys.add(categoryKey)
                         categoriesRestored++
                     } catch (e: Exception) {
-                        Logger.w("BackupService") { "Failed to restore category: ${categoryBackup.name}" }
+                        Logger.w(tag = "BackupService") { "Failed to restore category: ${categoryBackup.name}" }
                     }
                 }
 
@@ -146,14 +145,14 @@ class BackupService(
                         transactionRepository.insertTransaction(transactionBackup.toTransaction())
                         transactionsRestored++
                     } catch (e: Exception) {
-                        Logger.w("BackupService") { "Failed to restore transaction: ${transactionBackup.title}" }
+                        Logger.w(tag = "BackupService") { "Failed to restore transaction: ${transactionBackup.title}" }
                     }
                 }
 
                 // Restore settings, se presenti (assenti in un backup v1 o se esplicitamente null)
                 backupData.settings?.let { applySettings(it) }
 
-                Logger.d("BackupService") { "Restore completed: $transactionsRestored transactions, $categoriesRestored categories" }
+                Logger.d(tag = "BackupService") { "Restore completed: $transactionsRestored transactions, $categoriesRestored categories" }
                 Result.success(
                     RestoreResult(
                         transactionsRestored = transactionsRestored,
@@ -161,7 +160,7 @@ class BackupService(
                     ),
                 )
             } catch (e: Exception) {
-                Logger.e("BackupService") { "Error restoring backup, attempting rollback: ${e.message}" }
+                Logger.e(tag = "BackupService") { "Error restoring backup, attempting rollback: ${e.message}" }
                 runCatching {
                     // deleteAllCategories() preserva le categorie isDefault: quelle sopravvivono
                     // già alla cancellazione, quindi vanno escluse dal reinserimento per non
@@ -172,7 +171,7 @@ class BackupService(
                     transactionRepository.deleteAllTransactions()
                     existingTransactionsSnapshot.forEach { transactionRepository.insertTransaction(it) }
                 }.onFailure { rollbackError ->
-                    Logger.e("BackupService") { "Rollback also failed — data may be inconsistent: ${rollbackError.message}" }
+                    Logger.e(tag = "BackupService") { "Rollback also failed — data may be inconsistent: ${rollbackError.message}" }
                 }
                 Result.failure(e)
             }
@@ -193,13 +192,13 @@ class BackupService(
 
         val transactions = root["transactions"]?.jsonArray.orEmpty().mapNotNull { element ->
             runCatching { json.decodeFromJsonElement<TransactionBackup>(element) }
-                .onFailure { Logger.w("BackupService") { "Skipping unreadable transaction entry: ${it.message}" } }
+                .onFailure { Logger.w(tag = "BackupService") { "Skipping unreadable transaction entry: ${it.message}" } }
                 .getOrNull()
         }
 
         val categories = root["categories"]?.jsonArray.orEmpty().mapNotNull { element ->
             runCatching { json.decodeFromJsonElement<CategoryBackup>(element) }
-                .onFailure { Logger.w("BackupService") { "Skipping unreadable category entry: ${it.message}" } }
+                .onFailure { Logger.w(tag = "BackupService") { "Skipping unreadable category entry: ${it.message}" } }
                 .getOrNull()
         }
 
@@ -207,7 +206,7 @@ class BackupService(
             ?.takeIf { it != JsonNull }
             ?.let { element ->
                 runCatching { json.decodeFromJsonElement<SettingsBackup>(element) }
-                    .onFailure { Logger.w("BackupService") { "Skipping unreadable settings block: ${it.message}" } }
+                    .onFailure { Logger.w(tag = "BackupService") { "Skipping unreadable settings block: ${it.message}" } }
                     .getOrNull()
             }
 

@@ -274,12 +274,12 @@ class HomeViewModel(
 
     init {
         observeSavedDateFilter()
-        Logger.d("HomeViewModel") { "HomeViewModel initialized" }
+        Logger.d(tag = "HomeViewModel") { "HomeViewModel initialized" }
     }
 
     // ── Event Handling ──
     fun onEvent(event: HomeEvent) {
-        Logger.d("HomeViewModel") { "Event: $event" }
+        Logger.d(tag = "HomeViewModel") { "Event: $event" }
         when (event) {
             is HomeEvent.SelectPreset -> selectPreset(event.index)
             is HomeEvent.SetDateRange -> setDateRange(event.from, event.to)
@@ -370,7 +370,7 @@ class HomeViewModel(
             val result = setHomeDateFilterStateUseCase(filter)
             result.onFailure { error ->
                 if (error is kotlinx.coroutines.CancellationException) throw error
-                Logger.e("HomeViewModel", error) {
+                Logger.e(throwable = error, tag = "HomeViewModel") {
                     "Failed to persist home date filter: ${error.message}"
                 }
             }

@@ -75,7 +75,7 @@ class SettingsViewModel(
      */
     fun importDebugData(context: Context) {
         if (!BuildConfig.DEBUG) return
-        Logger.d(SettingsConstant.TAG) { "Importing debug data from assets" }
+        Logger.d(tag = SettingsConstant.TAG) { "Importing debug data from assets" }
         viewModelScope.launch {
             try {
                 withContext(Dispatchers.IO) {
@@ -83,7 +83,7 @@ class SettingsViewModel(
                     val json = try {
                         context.assets.open(assetName).bufferedReader().use { it.readText() }
                     } catch (ex: Exception) {
-                        Logger.e(SettingsConstant.TAG) { "Cannot open debug asset: ${ex.message}" }
+                        Logger.e(tag = SettingsConstant.TAG) { "Cannot open debug asset: ${ex.message}" }
                         return@withContext
                     }
                     val obj = JSONObject(json)
@@ -154,7 +154,7 @@ class SettingsViewModel(
                     }
                 }
             } catch (ex: Exception) {
-                Logger.e(SettingsConstant.TAG) { "Error importing debug data: ${ex.message}" }
+                Logger.e(tag = SettingsConstant.TAG) { "Error importing debug data: ${ex.message}" }
             }
         }
     }
@@ -261,14 +261,14 @@ class SettingsViewModel(
      * Funzione di utilità per loggare e lanciare l'azione in coroutine.
      */
     private fun updatePreference(logMsg: String, action: suspend () -> Any?) {
-        Logger.d(SettingsConstant.TAG) { logMsg }
+        Logger.d(tag = SettingsConstant.TAG) { logMsg }
         viewModelScope.launch {
             try {
                 val result = action()
                 if (result is Result<*>) {
                     result.onFailure { error ->
                         if (error is CancellationException) throw error
-                        Logger.e(SettingsConstant.TAG, error) {
+                        Logger.e(throwable = error, tag = SettingsConstant.TAG) {
                             "Preference update failed: ${error.message}"
                         }
                     }
@@ -276,7 +276,7 @@ class SettingsViewModel(
             } catch (ex: CancellationException) {
                 throw ex
             } catch (ex: Exception) {
-                Logger.e(SettingsConstant.TAG, ex) { "Preference update failed: ${ex.message}" }
+                Logger.e(throwable = ex, tag = SettingsConstant.TAG) { "Preference update failed: ${ex.message}" }
             }
         }
     }
@@ -359,9 +359,9 @@ class SettingsViewModel(
             BuildConfig.VERSION_NAME
         )
         if (success) {
-            Logger.d(SettingsConstant.TAG) { "Feedback email intent launched successfully" }
+            Logger.d(tag = SettingsConstant.TAG) { "Feedback email intent launched successfully" }
         } else {
-            Logger.w(SettingsConstant.TAG) { "No email app available to send feedback" }
+            Logger.w(tag = SettingsConstant.TAG) { "No email app available to send feedback" }
         }
         return success
     }

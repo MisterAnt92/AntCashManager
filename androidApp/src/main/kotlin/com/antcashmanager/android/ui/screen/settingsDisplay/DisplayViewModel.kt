@@ -284,7 +284,7 @@ class DisplayViewModel(
      * Funzione di utilità per loggare e lanciare l'azione in coroutine.
      */
     private fun updatePreference(logMsg: String, action: suspend () -> Unit) {
-        Logger.d(DisplayConstant.TAG) { logMsg }
+        Logger.d(tag = DisplayConstant.TAG) { logMsg }
         viewModelScope.launch { action() }
     }
 

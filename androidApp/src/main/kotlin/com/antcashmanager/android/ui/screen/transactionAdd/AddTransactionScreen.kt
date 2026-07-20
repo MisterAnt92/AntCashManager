@@ -30,7 +30,7 @@ fun AddTransactionScreen(
     onNavigateBack: () -> Unit,
     onTransactionAdded: () -> Unit,
 ) {
-    Logger.d("AddTransactionScreen") { "Displaying AddTransactionScreen" }
+    Logger.d(tag = "AddTransactionScreen") { "Displaying AddTransactionScreen" }
 
     val viewModel: AddTransactionViewModel = koinViewModel { parametersOf(transactionId) }
     val analyticsManager: AnalyticsManager = koinInject()

@@ -40,7 +40,7 @@ class SendFeedbackEmailUseCase {
             applicationContext.startActivity(emailIntent)
             true
         } catch (e: Exception) {
-            Logger.e("SendFeedbackEmailUseCase") { "Error launching email intent: ${e.message}" }
+            Logger.e(tag = "SendFeedbackEmailUseCase") { "Error launching email intent: ${e.message}" }
             false
         }
     }
