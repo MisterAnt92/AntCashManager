@@ -351,6 +351,7 @@ private fun ReviewStep(
     onSave: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val analyticsManager: AnalyticsManager = koinInject()
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -441,7 +442,10 @@ private fun ReviewStep(
 
         AppButton(
             text = stringResource(R.string.receipt_scan_retry),
-            onClick = onRetry,
+            onClick = {
+                analyticsManager.logEvent("receipt_scan_retry")
+                onRetry()
+            },
             modifier = Modifier.fillMaxWidth(),
             buttonColor = MaterialTheme.colorScheme.secondary,
             textColor = MaterialTheme.colorScheme.onSecondary,

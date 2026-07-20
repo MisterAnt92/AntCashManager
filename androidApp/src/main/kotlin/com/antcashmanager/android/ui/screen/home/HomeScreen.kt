@@ -486,7 +486,10 @@ internal fun HomeContent(
                         ) { transaction ->
                             RecentTransactionItem(
                                 transaction = transaction,
-                                onClick = { onEvent(HomeEvent.ShowTransactionDetails(transaction)) },
+                                onClick = {
+                                    analyticsManager.logEvent("home_transaction_detail_opened")
+                                    onEvent(HomeEvent.ShowTransactionDetails(transaction))
+                                },
                                 displayType = transactionDisplayType,
                             )
                         }

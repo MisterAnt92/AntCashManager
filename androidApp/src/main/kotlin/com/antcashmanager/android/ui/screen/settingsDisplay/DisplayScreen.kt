@@ -190,6 +190,22 @@ internal fun DisplayContent(
         analyticsManager.logEvent("home_quick_insights_toggled")
         onShowQuickInsightsCardChanged(show)
     }
+    val handleShowChartsSectionChanged: (Boolean) -> Unit = { show ->
+        analyticsManager.logEvent("show_charts_section_toggled")
+        onShowChartsSectionChanged(show)
+    }
+    val handleChartsZoomEnabledChanged: (Boolean) -> Unit = { enabled ->
+        analyticsManager.logEvent("charts_zoom_toggled")
+        onChartsZoomEnabledChanged(enabled)
+    }
+    val handleShowPaymentTypeBreakdownChanged: (Boolean) -> Unit = { show ->
+        analyticsManager.logEvent("show_payment_breakdown_toggled")
+        onShowPaymentTypeBreakdownChanged(show)
+    }
+    val handleShowTransactionNotesChanged: (Boolean) -> Unit = { show ->
+        analyticsManager.logEvent("show_transaction_notes_toggled")
+        onShowTransactionNotesChanged(show)
+    }
 
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -245,16 +261,16 @@ internal fun DisplayContent(
                 item {
                     ChartsDisplaySection(
                         showChartsSection = showChartsSection,
-                        onShowChartsSectionChanged = onShowChartsSectionChanged,
+                        onShowChartsSectionChanged = handleShowChartsSectionChanged,
                         chartsZoomEnabled = chartsZoomEnabled,
-                        onChartsZoomEnabledChanged = onChartsZoomEnabledChanged,
+                        onChartsZoomEnabledChanged = handleChartsZoomEnabledChanged,
                     )
                 }
 
                 item {
                     HomeDisplaySection(
                         showPaymentTypeBreakdown = showPaymentTypeBreakdown,
-                        onShowPaymentTypeBreakdownChanged = onShowPaymentTypeBreakdownChanged,
+                        onShowPaymentTypeBreakdownChanged = handleShowPaymentTypeBreakdownChanged,
                         showQuickInsightsCard = showQuickInsightsCard,
                         onShowQuickInsightsCardChanged = handleShowQuickInsightsCardChanged,
                         transactionDisplayType = transactionDisplayType,
@@ -272,7 +288,7 @@ internal fun DisplayContent(
                 item {
                     OtherSection(
                         showTransactionNotes = showTransactionNotes,
-                        onShowTransactionNotesChanged = onShowTransactionNotesChanged,
+                        onShowTransactionNotesChanged = handleShowTransactionNotesChanged,
                         onShowResetPreferencesDialog = { showResetPreferencesDialog = true },
                     )
                 }
@@ -326,13 +342,13 @@ internal fun DisplayContent(
                 ) {
                     ChartsDisplaySection(
                         showChartsSection = showChartsSection,
-                        onShowChartsSectionChanged = onShowChartsSectionChanged,
+                        onShowChartsSectionChanged = handleShowChartsSectionChanged,
                         chartsZoomEnabled = chartsZoomEnabled,
-                        onChartsZoomEnabledChanged = onChartsZoomEnabledChanged,
+                        onChartsZoomEnabledChanged = handleChartsZoomEnabledChanged,
                     )
                     HomeDisplaySection(
                         showPaymentTypeBreakdown = showPaymentTypeBreakdown,
-                        onShowPaymentTypeBreakdownChanged = onShowPaymentTypeBreakdownChanged,
+                        onShowPaymentTypeBreakdownChanged = handleShowPaymentTypeBreakdownChanged,
                         showQuickInsightsCard = showQuickInsightsCard,
                         onShowQuickInsightsCardChanged = handleShowQuickInsightsCardChanged,
                         transactionDisplayType = transactionDisplayType,
@@ -340,7 +356,7 @@ internal fun DisplayContent(
                     )
                     OtherSection(
                         showTransactionNotes = showTransactionNotes,
-                        onShowTransactionNotesChanged = onShowTransactionNotesChanged,
+                        onShowTransactionNotesChanged = handleShowTransactionNotesChanged,
                         onShowResetPreferencesDialog = { showResetPreferencesDialog = true },
                     )
                 }
@@ -356,24 +372,28 @@ internal fun DisplayContent(
     val dismissCurrency: () -> Unit = { showCurrencyDialog = false }
 
     val handleDecimalDigitsSelected: (Int) -> Unit = { digits ->
+        analyticsManager.logEvent("decimal_digits_changed")
         onDecimalDigitsSelected(digits)
         showDecimalDigitsDialog = false
     }
     val dismissDecimalDigits: () -> Unit = { showDecimalDigitsDialog = false }
 
     val handleDecimalSeparatorSelected: (String) -> Unit = { value ->
+        analyticsManager.logEvent("decimal_separator_changed")
         onDecimalSeparatorSelected(value)
         showDecimalSeparatorDialog = false
     }
     val dismissDecimalSeparator: () -> Unit = { showDecimalSeparatorDialog = false }
 
     val handleThousandsSeparatorSelected: (String) -> Unit = { value ->
+        analyticsManager.logEvent("thousands_separator_changed")
         onThousandsSeparatorSelected(value)
         showThousandsSeparatorDialog = false
     }
     val dismissThousandsSeparator: () -> Unit = { showThousandsSeparatorDialog = false }
 
     val handleMealVoucherValueSelected: (Double) -> Unit = { value ->
+        analyticsManager.logEvent("meal_voucher_value_changed")
         onMealVoucherValueSelected(value)
         showMealVoucherDialog = false
     }

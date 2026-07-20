@@ -195,6 +195,26 @@ Eventi custom consentiti (uso app):
 - `currency_format_changed`
 - `feedback_email_sent`
 - `tutorial_replay_requested`
+- `decimal_digits_changed`
+- `decimal_separator_changed`
+- `thousands_separator_changed`
+- `meal_voucher_value_changed`
+- `show_charts_section_toggled`
+- `charts_zoom_toggled`
+- `show_payment_breakdown_toggled`
+- `show_transaction_notes_toggled`
+- `settings_help_opened`
+- `settings_privacy_policy_opened`
+- `settings_third_party_libraries_opened`
+- `settings_high_contrast_toggled`
+- `settings_large_text_toggled`
+- `settings_reduce_motion_toggled`
+- `transactions_filter_opened`
+- `transactions_help_opened`
+- `categories_help_opened`
+- `receipt_scan_retry`
+- `transaction_recurring_toggled`
+- `home_transaction_detail_opened`
 
 Evento Firebase standard usato: `screen_view`.
 

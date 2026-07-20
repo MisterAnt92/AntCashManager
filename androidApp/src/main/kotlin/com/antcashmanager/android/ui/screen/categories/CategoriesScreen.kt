@@ -249,7 +249,14 @@ internal fun CategoriesContent(
         ) {
             ScreenHeader(
                 title = stringResource(R.string.common_categories),
-                actions = { HelpButton(onHelpClick = { showHelpDialog = true }) },
+                actions = {
+                    HelpButton(
+                        onHelpClick = {
+                            analyticsManager.logEvent("categories_help_opened")
+                            showHelpDialog = true
+                        },
+                    )
+                },
             )
             Spacer(modifier = Modifier.height(12.dp))
 

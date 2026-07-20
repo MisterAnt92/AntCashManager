@@ -77,6 +77,10 @@ internal fun DetailsStep(
     onNavigateBack: () -> Unit,
 ) {
     val analyticsManager: AnalyticsManager = koinInject()
+    val setRecurring: (Boolean) -> Unit = { recurring ->
+        analyticsManager.logEvent("transaction_recurring_toggled")
+        onEvent(AddTransactionEvent.SetRecurring(recurring))
+    }
     // ── Dialog: Categoria ──
     if (state.showCategoryDialog) {
         CategorySelectionDialog(
@@ -473,7 +477,7 @@ internal fun DetailsStep(
                         else
                             MaterialTheme.colorScheme.surfaceVariant
                     )
-                    .clickable { onEvent(AddTransactionEvent.SetRecurring(!state.isRecurring)) }
+                    .clickable { setRecurring(!state.isRecurring) }
                     .padding(horizontal = 16.dp, vertical = 12.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
@@ -494,7 +498,7 @@ internal fun DetailsStep(
                 }
                 Checkbox(
                     checked = state.isRecurring,
-                    onCheckedChange = { onEvent(AddTransactionEvent.SetRecurring(it)) },
+                    onCheckedChange = setRecurring,
                 )
             }
 

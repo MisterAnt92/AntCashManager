@@ -172,6 +172,18 @@ internal fun SettingsContent(
     var showAntAnimation by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val analyticsManager: AnalyticsManager = koinInject()
+    val handleHighContrastChanged: (Boolean) -> Unit = { enabled ->
+        analyticsManager.logEvent("settings_high_contrast_toggled")
+        onHighContrastChanged(enabled)
+    }
+    val handleLargeTextChanged: (Boolean) -> Unit = { enabled ->
+        analyticsManager.logEvent("settings_large_text_toggled")
+        onLargeTextChanged(enabled)
+    }
+    val handleReduceMotionChanged: (Boolean) -> Unit = { enabled ->
+        analyticsManager.logEvent("settings_reduce_motion_toggled")
+        onReduceMotionChanged(enabled)
+    }
 
     // Help dialog
     if (showHelpDialog) {
@@ -228,7 +240,12 @@ internal fun SettingsContent(
                             }
                         },
                 )
-                HelpButton(onHelpClick = { showHelpDialog = true })
+                HelpButton(
+                    onHelpClick = {
+                        analyticsManager.logEvent("settings_help_opened")
+                        showHelpDialog = true
+                    },
+                )
             }
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -276,10 +293,10 @@ internal fun SettingsContent(
                     trailingContent = {
                         AppSwitch(
                             checked = highContrast,
-                            onCheckedChange = onHighContrastChanged,
+                            onCheckedChange = handleHighContrastChanged,
                         )
                     },
-                    onClick = { onHighContrastChanged(!highContrast) },
+                    onClick = { handleHighContrastChanged(!highContrast) },
                 )
                 AppCard(
                     title = stringResource(R.string.settings_large_text),
@@ -288,10 +305,10 @@ internal fun SettingsContent(
                     trailingContent = {
                         AppSwitch(
                             checked = largeText,
-                            onCheckedChange = onLargeTextChanged,
+                            onCheckedChange = handleLargeTextChanged,
                         )
                     },
-                    onClick = { onLargeTextChanged(!largeText) },
+                    onClick = { handleLargeTextChanged(!largeText) },
                 )
                 AppCard(
                     title = stringResource(R.string.settings_reduce_motion),
@@ -300,10 +317,10 @@ internal fun SettingsContent(
                     trailingContent = {
                         AppSwitch(
                             checked = reduceMotion,
-                            onCheckedChange = onReduceMotionChanged,
+                            onCheckedChange = handleReduceMotionChanged,
                         )
                     },
-                    onClick = { onReduceMotionChanged(!reduceMotion) },
+                    onClick = { handleReduceMotionChanged(!reduceMotion) },
                 )
             }
 
@@ -349,7 +366,10 @@ internal fun SettingsContent(
                     leadingIcon = Icons.Default.PrivacyTip,
                     iconBackgroundColor = MaterialTheme.colorScheme.secondaryContainer,
                     iconTint = MaterialTheme.colorScheme.onSecondaryContainer,
-                    onClick = { showPrivacyDialog = true },
+                    onClick = {
+                        analyticsManager.logEvent("settings_privacy_policy_opened")
+                        showPrivacyDialog = true
+                    },
                 )
             }
 
@@ -383,7 +403,10 @@ internal fun SettingsContent(
                 title = stringResource(R.string.settings_third_party_libraries),
                 subtitle = stringResource(R.string.settings_third_party_subtitle),
                 leadingIcon = Icons.AutoMirrored.Filled.LibraryBooks,
-                onClick = { showLibrariesDialog = true },
+                onClick = {
+                    analyticsManager.logEvent("settings_third_party_libraries_opened")
+                    showLibrariesDialog = true
+                },
             )
 
             Spacer(modifier = Modifier.height(24.dp))
