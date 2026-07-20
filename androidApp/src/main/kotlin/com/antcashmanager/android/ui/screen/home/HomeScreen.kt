@@ -593,6 +593,13 @@ class MockHomeSettingsRepository : SettingsRepository {
 
     override suspend fun setDataEncryptionEnabled(enabled: Boolean) {}
 
+    override fun getLastBackupTimestamp(): kotlinx.coroutines.flow.Flow<Long?> =
+        kotlinx.coroutines.flow.flowOf(null)
+    override suspend fun setLastBackupTimestamp(timestamp: Long) {}
+    override fun getLastRestoreTimestamp(): kotlinx.coroutines.flow.Flow<Long?> =
+        kotlinx.coroutines.flow.flowOf(null)
+    override suspend fun setLastRestoreTimestamp(timestamp: Long) {}
+
     override suspend fun resetAllPreferences() {}
 }
 

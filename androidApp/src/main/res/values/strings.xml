@@ -178,8 +178,12 @@
     <string name="settings_delete_all_subtitle">Permanently remove all transactions and categories</string>
     <string name="settings_backup">Backup Data</string>
     <string name="settings_backup_subtitle">Export your data for safekeeping</string>
+    <string name="settings_last_backup_label">Last backup: %s</string>
+    <string name="settings_last_backup_never">No backup made yet</string>
     <string name="settings_restore">Restore Data</string>
     <string name="settings_restore_subtitle">Import data from a backup file</string>
+    <string name="settings_last_restore_label">Last restore: %s</string>
+    <string name="settings_last_restore_never">No restore performed yet</string>
     <string name="settings_support">Support</string>
     <string name="settings_send_feedback">Send Feedback</string>
     <string name="settings_send_feedback_subtitle">Help us improve the app</string>
@@ -216,11 +220,13 @@
     <string name="backup_success_message">Your data has been successfully exported.</string>
     <string name="backup_error_title">Backup Failed</string>
     <string name="backup_error_message">Could not create backup: %s</string>
+    <string name="backup_in_progress_message">Creating your backup…</string>
     <string name="settings_data_file_picker_unavailable">File picker is not available on this device.</string>
     <string name="restore_success_title">Restore Complete</string>
     <string name="restore_success_message">Successfully restored %1$d transactions and %2$d categories.</string>
     <string name="restore_error_title">Restore Failed</string>
     <string name="restore_error_message">Could not restore backup: %s</string>
+    <string name="restore_in_progress_message">Restoring your data…</string>
     <string name="dialog_delete_all_title">Delete All Data?</string>
     <string name="dialog_delete_all_message">This action will permanently delete all transactions and categories. This cannot be undone.</string>
     <string name="dialog_data_deleted">Data Deleted</string>

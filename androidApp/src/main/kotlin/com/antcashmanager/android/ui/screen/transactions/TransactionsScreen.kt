@@ -1180,6 +1180,11 @@ class MockSettingsRepository : SettingsRepository {
 
     override suspend fun setDataEncryptionEnabled(enabled: Boolean) {}
 
+    override fun getLastBackupTimestamp(): Flow<Long?> = kotlinx.coroutines.flow.flowOf(null)
+    override suspend fun setLastBackupTimestamp(timestamp: Long) {}
+    override fun getLastRestoreTimestamp(): Flow<Long?> = kotlinx.coroutines.flow.flowOf(null)
+    override suspend fun setLastRestoreTimestamp(timestamp: Long) {}
+
     override suspend fun resetAllPreferences() {}
 }
 

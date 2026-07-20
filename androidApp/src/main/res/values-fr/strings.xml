@@ -148,8 +148,12 @@
     <string name="settings_delete_all_subtitle">Supprimer d\u00e9finitivement toutes les transactions et cat\u00e9gories</string>
     <string name="settings_backup">Sauvegarder les donn\u00e9es</string>
     <string name="settings_backup_subtitle">Exporter vos donn\u00e9es pour les conserver</string>
+    <string name="settings_last_backup_label">Derni\u00e8re sauvegarde\u00a0: %s</string>
+    <string name="settings_last_backup_never">Aucune sauvegarde effectu\u00e9e</string>
     <string name="settings_restore">Restaurer les donn\u00e9es</string>
     <string name="settings_restore_subtitle">Importer les donn\u00e9es depuis un fichier de sauvegarde</string>
+    <string name="settings_last_restore_label">Derni\u00e8re restauration : %s</string>
+    <string name="settings_last_restore_never">Aucune restauration effectu\u00e9e</string>
     <string name="settings_support">Assistance</string>
     <string name="settings_send_feedback">Envoyer un commentaire</string>
     <string name="settings_send_feedback_subtitle">Aidez-nous \u00e0 am\u00e9liorer l\'application</string>
@@ -182,11 +186,13 @@
     <string name="backup_success_message">Vos donn\u00e9es ont \u00e9t\u00e9 export\u00e9es avec succ\u00e8s.</string>
     <string name="backup_error_title">\u00c9chec de la Sauvegarde</string>
     <string name="backup_error_message">Impossible de cr\u00e9er la sauvegarde\u00a0: %s</string>
+    <string name="backup_in_progress_message">Cr\u00e9ation de la sauvegarde en cours\u2026</string>
     <string name="settings_data_file_picker_unavailable">Le s\u00e9lecteur de fichiers n\'est pas disponible sur cet appareil.</string>
     <string name="restore_success_title">Restauration Termin\u00e9e</string>
     <string name="restore_success_message">%1$d transactions et %2$d cat\u00e9gories ont \u00e9t\u00e9 restaur\u00e9es avec succ\u00e8s.</string>
     <string name="restore_error_title">\u00c9chec de la Restauration</string>
     <string name="restore_error_message">Impossible de restaurer la sauvegarde\u00a0: %s</string>
+    <string name="restore_in_progress_message">Restauration des donn\u00e9es en cours\u2026</string>
     <string name="dialog_delete_all_title">Supprimer toutes les donn\u00e9es ?</string>
     <string name="dialog_delete_all_message">Cette action supprimera d\u00e9finitivement toutes les transactions et cat\u00e9gories. Cette action est irr\u00e9versible.</string>
     <string name="dialog_data_deleted">Donn\u00e9es supprim\u00e9es</string>

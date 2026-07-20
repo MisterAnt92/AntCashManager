@@ -87,4 +87,10 @@ interface SettingsRepository {
 
     /** Resets every preference to its factory default. */
     suspend fun resetAllPreferences()
+
+    // ── Backup/Restore history (stato locale del device, non incluso in resetAllPreferences) ──
+    fun getLastBackupTimestamp(): Flow<Long?>
+    suspend fun setLastBackupTimestamp(timestamp: Long)
+    fun getLastRestoreTimestamp(): Flow<Long?>
+    suspend fun setLastRestoreTimestamp(timestamp: Long)
 }

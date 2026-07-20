@@ -167,8 +167,12 @@
     <string name="settings_delete_all_subtitle">Alle Transaktionen und Kategorien dauerhaft entfernen</string>
     <string name="settings_backup">Daten sichern</string>
     <string name="settings_backup_subtitle">Exportiere deine Daten zur Sicherung</string>
+    <string name="settings_last_backup_label">Letztes Backup: %s</string>
+    <string name="settings_last_backup_never">Noch kein Backup erstellt</string>
     <string name="settings_restore">Daten wiederherstellen</string>
     <string name="settings_restore_subtitle">Daten aus einer Sicherungsdatei importieren</string>
+    <string name="settings_last_restore_label">Letzte Wiederherstellung: %s</string>
+    <string name="settings_last_restore_never">Noch keine Wiederherstellung durchgeführt</string>
     <string name="settings_support">Support</string>
     <string name="settings_send_feedback">Feedback senden</string>
     <string name="settings_send_feedback_subtitle">Hilf uns die App zu verbessern</string>
@@ -199,11 +203,13 @@
     <string name="backup_success_message">Ihre Daten wurden erfolgreich exportiert.</string>
     <string name="backup_error_title">Backup Fehlgeschlagen</string>
     <string name="backup_error_message">Backup konnte nicht erstellt werden: %s</string>
+    <string name="backup_in_progress_message">Backup wird erstellt…</string>
     <string name="settings_data_file_picker_unavailable">Dateiauswahl ist auf diesem Ger\u00e4t nicht verf\u00fcgbar.</string>
     <string name="restore_success_title">Wiederherstellung Abgeschlossen</string>
     <string name="restore_success_message">Erfolgreich %1$d Transaktionen und %2$d Kategorien wiederhergestellt.</string>
     <string name="restore_error_title">Wiederherstellung Fehlgeschlagen</string>
     <string name="restore_error_message">Backup konnte nicht wiederhergestellt werden: %s</string>
+    <string name="restore_in_progress_message">Daten werden wiederhergestellt…</string>
 
     <string name="dialog_delete_all_title">Alle Daten l\u00f6schen?</string>
     <string name="dialog_delete_all_message">Diese Aktion wird alle Transaktionen und Kategorien dauerhaft l\u00f6schen. Dies kann nicht r\u00fcckg\u00e4ngig gemacht werden.</string>
