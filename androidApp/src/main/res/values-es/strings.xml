@@ -51,6 +51,38 @@
     <string name="categories_tab_income">Ingresos</string>
     <string name="categories_default_badge">Predeterminada</string>
     <string name="categories_icon_label">Icono</string>
+
+    <!-- Iconos de Categoría -->
+    <string name="icon_home">Hogar</string>
+    <string name="icon_directions_car">Transporte</string>
+    <string name="icon_restaurant">Restaurante</string>
+    <string name="icon_receipt_long">Ticket</string>
+    <string name="icon_local_dining">Comida r\u00e1pida</string>
+    <string name="icon_theater_comedy">Entretenimiento</string>
+    <string name="icon_local_hospital">Salud</string>
+    <string name="icon_shopping_bag">Compras</string>
+    <string name="icon_school">Educaci\u00f3n</string>
+    <string name="icon_more_horiz">Otros</string>
+    <string name="icon_payments">Salario</string>
+    <string name="icon_savings">Ahorros</string>
+    <string name="icon_currency_exchange">Cambio</string>
+    <string name="icon_trending_up">Inversi\u00f3n</string>
+    <string name="icon_work">Trabajo</string>
+    <string name="icon_redeem">Regalos</string>
+    <string name="icon_flight">Viajes</string>
+    <string name="icon_fitness_center">Gimnasio</string>
+    <string name="icon_pets">Mascotas</string>
+    <string name="icon_directions_bus">Transporte p\u00fablico</string>
+    <string name="icon_lightbulb">Servicios</string>
+    <string name="icon_celebration">Celebraci\u00f3n</string>
+    <string name="icon_subscriptions">Suscripciones</string>
+    <string name="icon_fastfood">Snacks</string>
+    <string name="icon_star">Favoritos</string>
+    <string name="icon_volunteer_activism">Caridad</string>
+    <string name="icon_directions_bike">Deporte</string>
+    <string name="icon_shopping_cart">Supermercado</string>
+    <string name="icon_coffee">Caf\u00e9</string>
+
     <string name="charts_title">Gr\u00e1ficos</string>
     <string name="charts_period">Per\u00edodo</string>
     <string name="charts_from">Desde: %s</string>
@@ -143,6 +175,11 @@
     <string name="settings_security">Seguridad</string>
     <string name="settings_security_data_encryption">Datos seguros - Cifrado</string>
     <string name="settings_security_data_encryption_subtitle">Cifra y protege los datos locales de la aplicaci\u00f3n</string>
+    <string name="settings_suggestions">Sugerencias</string>
+    <string name="settings_suggestions_enable">Sugerencias autom\u00e1ticas</string>
+    <string name="settings_suggestions_enable_subtitle">Sugiere t\u00edtulos, beneficiarios, notas, lugares y etiquetas del historial de transacciones</string>
+    <string name="settings_suggestions_delete_all">Eliminar todas las sugerencias</string>
+    <string name="settings_suggestions_delete_all_subtitle">Olvida las sugerencias generadas por transacciones anteriores</string>
     <string name="settings_delete_all">Eliminar todos los datos</string>
     <string name="settings_delete_all_subtitle">Eliminar permanentemente todas las transacciones y categor\u00edas</string>
     <string name="settings_backup">Copia de seguridad</string>
@@ -198,6 +235,8 @@
     <string name="dialog_data_deleted_message">Todos los datos se han eliminado correctamente.</string>
     <string name="dialog_reset_preferences_title">Restablecer preferencias</string>
     <string name="dialog_reset_preferences_message">Esto restaurar\u00e1 todos los ajustes a sus valores predeterminados. \u00bfContinuar?</string>
+    <string name="dialog_delete_suggestions_title">\u00bfEliminar todas las sugerencias?</string>
+    <string name="dialog_delete_suggestions_message">Las sugerencias generadas por tu historial de transacciones (t\u00edtulos, beneficiarios, notas, lugares, etiquetas) se olvidar\u00e1n. Se generar\u00e1n nuevas sugerencias a medida que a\u00f1adas transacciones. \u00bfContinuar?</string>
     <string name="dialog_reset">Restablecer</string>
     <string name="privacy_policy_title">Pol\u00edtica de privacidad</string>
     <string name="privacy_policy_content">AntCashManager se compromete a proteger tu privacidad. Esta aplicaci\u00f3n no recopila ni comparte datos personales con terceros. Todos los datos financieros se almacenan localmente en tu dispositivo y nunca se transmiten a servidores externos.\n\nTus datos permanecen completamente en tu dispositivo y bajo tu control. No utilizamos servicios de an\u00e1lisis, seguimiento o publicidad.\n\nPara cualquier pregunta sobre privacidad, cont\u00e1ctanos a trav\u00e9s de la p\u00e1gina de la tienda.</string>

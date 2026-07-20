@@ -59,6 +59,8 @@ open class FakeSettingsRepository : SettingsRepository {
     val dataEncryptionEnabled = MutableStateFlow(false)
     val lastBackupTimestamp = MutableStateFlow<Long?>(null)
     val lastRestoreTimestamp = MutableStateFlow<Long?>(null)
+    val suggestionsEnabled = MutableStateFlow(true)
+    val suggestionsClearedAt = MutableStateFlow<Long?>(null)
 
     override fun getTheme(): Flow<AppTheme> = theme
     override suspend fun setTheme(theme: AppTheme) {
@@ -212,6 +214,16 @@ open class FakeSettingsRepository : SettingsRepository {
         lastRestoreTimestamp.value = timestamp
     }
 
+    override fun getSuggestionsEnabled(): Flow<Boolean> = suggestionsEnabled
+    override suspend fun setSuggestionsEnabled(enabled: Boolean) {
+        suggestionsEnabled.value = enabled
+    }
+
+    override fun getSuggestionsClearedAt(): Flow<Long?> = suggestionsClearedAt
+    override suspend fun setSuggestionsClearedAt(timestamp: Long) {
+        suggestionsClearedAt.value = timestamp
+    }
+
     override suspend fun resetAllPreferences() {
         theme.value = AppTheme.SYSTEM
         language.value = AppLanguage.SYSTEM
@@ -234,5 +246,7 @@ open class FakeSettingsRepository : SettingsRepository {
         transactionsTransactionDisplayType.value = TransactionDisplayType.TREND
         showInitialAnimation.value = false
         dataEncryptionEnabled.value = false
+        suggestionsEnabled.value = true
+        suggestionsClearedAt.value = null
     }
 }

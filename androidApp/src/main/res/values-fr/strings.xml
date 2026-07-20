@@ -51,6 +51,38 @@
     <string name="categories_tab_income">Revenus</string>
     <string name="categories_default_badge">Par d\u00e9faut</string>
     <string name="categories_icon_label">Ic\u00f4ne</string>
+
+    <!-- Icônes de catégorie -->
+    <string name="icon_home">Maison</string>
+    <string name="icon_directions_car">Transport</string>
+    <string name="icon_restaurant">Restaurant</string>
+    <string name="icon_receipt_long">Re\u00e7u</string>
+    <string name="icon_local_dining">Restauration rapide</string>
+    <string name="icon_theater_comedy">Divertissement</string>
+    <string name="icon_local_hospital">Sant\u00e9</string>
+    <string name="icon_shopping_bag">Shopping</string>
+    <string name="icon_school">\u00c9ducation</string>
+    <string name="icon_more_horiz">Autre</string>
+    <string name="icon_payments">Salaire</string>
+    <string name="icon_savings">\u00c9pargne</string>
+    <string name="icon_currency_exchange">Change</string>
+    <string name="icon_trending_up">Investissement</string>
+    <string name="icon_work">Travail</string>
+    <string name="icon_redeem">Cadeaux</string>
+    <string name="icon_flight">Voyages</string>
+    <string name="icon_fitness_center">Gym</string>
+    <string name="icon_pets">Animaux</string>
+    <string name="icon_directions_bus">Transports en commun</string>
+    <string name="icon_lightbulb">Services publics</string>
+    <string name="icon_celebration">C\u00e9l\u00e9bration</string>
+    <string name="icon_subscriptions">Abonnements</string>
+    <string name="icon_fastfood">Snacks</string>
+    <string name="icon_star">Favoris</string>
+    <string name="icon_volunteer_activism">Charit\u00e9</string>
+    <string name="icon_directions_bike">Sport</string>
+    <string name="icon_shopping_cart">Courses</string>
+    <string name="icon_coffee">Caf\u00e9</string>
+
     <string name="charts_title">Graphiques</string>
     <string name="charts_period">P\u00e9riode</string>
     <string name="charts_from">Du : %s</string>
@@ -144,6 +176,11 @@
     <string name="settings_security">S\u00e9curit\u00e9</string>
     <string name="settings_security_data_encryption">Protection des donn\u00e9es - Chiffrement</string>
     <string name="settings_security_data_encryption_subtitle">Chiffre et prot\u00e8ge les donn\u00e9es locales de l\'application</string>
+    <string name="settings_suggestions">Suggestions</string>
+    <string name="settings_suggestions_enable">Suggestions automatiques</string>
+    <string name="settings_suggestions_enable_subtitle">Sugg\u00e8re titres, b\u00e9n\u00e9ficiaires, notes, lieux et tags \u00e0 partir de l\'historique des transactions</string>
+    <string name="settings_suggestions_delete_all">Supprimer toutes les suggestions</string>
+    <string name="settings_suggestions_delete_all_subtitle">Oublie les suggestions construites \u00e0 partir des transactions pass\u00e9es</string>
     <string name="settings_delete_all">Supprimer toutes les donn\u00e9es</string>
     <string name="settings_delete_all_subtitle">Supprimer d\u00e9finitivement toutes les transactions et cat\u00e9gories</string>
     <string name="settings_backup">Sauvegarder les donn\u00e9es</string>
@@ -199,6 +236,8 @@
     <string name="dialog_data_deleted_message">Toutes les donn\u00e9es ont \u00e9t\u00e9 supprim\u00e9es avec succ\u00e8s.</string>
     <string name="dialog_reset_preferences_title">R\u00e9initialiser les pr\u00e9f\u00e9rences</string>
     <string name="dialog_reset_preferences_message">Cela restaurera tous les param\u00e8tres \u00e0 leurs valeurs par d\u00e9faut. Continuer\u00a0?</string>
+    <string name="dialog_delete_suggestions_title">Supprimer toutes les suggestions\u00a0?</string>
+    <string name="dialog_delete_suggestions_message">Les suggestions construites \u00e0 partir de l\'historique des transactions (titres, b\u00e9n\u00e9ficiaires, notes, lieux, tags) seront oubli\u00e9es. De nouvelles suggestions se reconstruiront au fil des prochaines transactions. Continuer\u00a0?</string>
     <string name="dialog_reset">R\u00e9initialiser</string>
     <string name="privacy_policy_title">Politique de confidentialit\u00e9</string>
     <string name="privacy_policy_content">AntCashManager s\'engage \u00e0 prot\u00e9ger votre vie priv\u00e9e. Cette application ne collecte ni ne partage de donn\u00e9es personnelles avec des tiers. Toutes les donn\u00e9es financi\u00e8res sont stock\u00e9es localement sur votre appareil et ne sont jamais transmises \u00e0 des serveurs externes.\n\nVos donn\u00e9es restent enti\u00e8rement sur votre appareil et sous votre contr\u00f4le. Nous n\'utilisons pas de services d\'analyse, de suivi ou de publicit\u00e9.\n\nPour toute question concernant la confidentialit\u00e9, contactez-nous via la page du store.</string>

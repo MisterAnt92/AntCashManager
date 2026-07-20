@@ -47,9 +47,13 @@ class SettingsDataViewModelMockkTest : BaseUnitTest() {
         every { settingsRepository.getDataEncryptionEnabled() } returns flowOf(false)
         every { settingsRepository.getLastBackupTimestamp() } returns flowOf(null)
         every { settingsRepository.getLastRestoreTimestamp() } returns flowOf(null)
+        every { settingsRepository.getSuggestionsEnabled() } returns flowOf(true)
+        every { settingsRepository.getSuggestionsClearedAt() } returns flowOf(null)
         coEvery { settingsRepository.setDataEncryptionEnabled(any()) } returns Unit
         coEvery { settingsRepository.setLastBackupTimestamp(any()) } returns Unit
         coEvery { settingsRepository.setLastRestoreTimestamp(any()) } returns Unit
+        coEvery { settingsRepository.setSuggestionsEnabled(any()) } returns Unit
+        coEvery { settingsRepository.setSuggestionsClearedAt(any()) } returns Unit
         coEvery { settingsRepository.resetAllPreferences() } returns Unit
         coEvery { categoryRepository.deleteAllCategories() } returns Unit
 
@@ -71,6 +75,59 @@ class SettingsDataViewModelMockkTest : BaseUnitTest() {
         advanceUntilIdle()
 
         coVerify(exactly = 1) { settingsRepository.setDataEncryptionEnabled(true) }
+    }
+
+    // ── Suggestions ──
+
+    @Test
+    fun setSuggestionsEnabled_shouldDelegateToRepository_whenToggled() = runViewModelTest {
+        val viewModel = buildViewModel()
+
+        viewModel.setSuggestionsEnabled(false)
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { settingsRepository.setSuggestionsEnabled(false) }
+    }
+
+    @Test
+    fun state_shouldReflectSuggestionsEnabledFromRepository_whenCollected() = runViewModelTest {
+        every { settingsRepository.getSuggestionsEnabled() } returns flowOf(false)
+
+        val viewModel = buildViewModel()
+        advanceUntilIdle()
+
+        assertFalse(viewModel.state.value.suggestionsEnabled)
+    }
+
+    @Test
+    fun showDeleteSuggestionsDialog_shouldSetDialogVisible_whenCalled() = runViewModelTest {
+        val viewModel = buildViewModel()
+
+        viewModel.showDeleteSuggestionsDialog()
+
+        assertTrue(viewModel.state.value.showDeleteSuggestionsDialog)
+    }
+
+    @Test
+    fun dismissDeleteSuggestionsDialog_shouldHideDialog_whenCalled() = runViewModelTest {
+        val viewModel = buildViewModel()
+        viewModel.showDeleteSuggestionsDialog()
+
+        viewModel.dismissDeleteSuggestionsDialog()
+
+        assertFalse(viewModel.state.value.showDeleteSuggestionsDialog)
+    }
+
+    @Test
+    fun deleteAllSuggestions_shouldPersistClearedTimestampAndHideDialog_whenCalled() = runViewModelTest {
+        val viewModel = buildViewModel()
+        viewModel.showDeleteSuggestionsDialog()
+
+        viewModel.deleteAllSuggestions()
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { settingsRepository.setSuggestionsClearedAt(any()) }
+        assertFalse(viewModel.state.value.showDeleteSuggestionsDialog)
     }
 
     // ── Dialog show/dismiss ──

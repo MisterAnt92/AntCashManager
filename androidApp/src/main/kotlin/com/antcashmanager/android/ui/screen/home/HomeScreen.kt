@@ -600,6 +600,13 @@ class MockHomeSettingsRepository : SettingsRepository {
         kotlinx.coroutines.flow.flowOf(null)
     override suspend fun setLastRestoreTimestamp(timestamp: Long) {}
 
+    override fun getSuggestionsEnabled(): kotlinx.coroutines.flow.Flow<Boolean> =
+        kotlinx.coroutines.flow.flowOf(true)
+    override suspend fun setSuggestionsEnabled(enabled: Boolean) {}
+    override fun getSuggestionsClearedAt(): kotlinx.coroutines.flow.Flow<Long?> =
+        kotlinx.coroutines.flow.flowOf(null)
+    override suspend fun setSuggestionsClearedAt(timestamp: Long) {}
+
     override suspend fun resetAllPreferences() {}
 }
 

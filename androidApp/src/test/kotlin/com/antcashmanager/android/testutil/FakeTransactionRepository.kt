@@ -77,14 +77,16 @@ open class FakeTransactionRepository(
         }
     }
 
-    override fun getDistinctTitles(): Flow<List<String>> = distinctValuesOf { it.title }
-    override fun getDistinctPayees(): Flow<List<String>> = distinctValuesOf { it.payee }
-    override fun getDistinctNotes(): Flow<List<String>> = distinctValuesOf { it.notes }
-    override fun getDistinctLocations(): Flow<List<String>> = distinctValuesOf { it.location }
-    override fun getDistinctTags(): Flow<List<String>> = distinctValuesOf { it.tags }
+    override fun getDistinctTitles(since: Long): Flow<List<String>> = distinctValuesOf(since) { it.title }
+    override fun getDistinctPayees(since: Long): Flow<List<String>> = distinctValuesOf(since) { it.payee }
+    override fun getDistinctNotes(since: Long): Flow<List<String>> = distinctValuesOf(since) { it.notes }
+    override fun getDistinctLocations(since: Long): Flow<List<String>> = distinctValuesOf(since) { it.location }
+    override fun getDistinctTags(since: Long): Flow<List<String>> = distinctValuesOf(since) { it.tags }
 
-    private fun distinctValuesOf(selector: (Transaction) -> String): Flow<List<String>> =
-        transactions.map { list -> list.map(selector).filter { it.isNotBlank() }.distinct() }
+    private fun distinctValuesOf(since: Long, selector: (Transaction) -> String): Flow<List<String>> =
+        transactions.map { list ->
+            list.filter { it.timestamp >= since }.map(selector).filter { it.isNotBlank() }.distinct()
+        }
 
     private suspend fun applyDelayAndMaybeThrow() {
         if (operationDelayMs > 0) delay(operationDelayMs)

@@ -690,5 +690,5 @@ class TransactionsViewModelTest : BaseUnitTest() {
  */
 private class FakeTransactionRepositoryWithSuggestions : FakeTransactionRepository() {
     val distinctTitles = MutableStateFlow<List<String>>(emptyList())
-    override fun getDistinctTitles(): Flow<List<String>> = distinctTitles
+    override fun getDistinctTitles(since: Long): Flow<List<String>> = distinctTitles
 }

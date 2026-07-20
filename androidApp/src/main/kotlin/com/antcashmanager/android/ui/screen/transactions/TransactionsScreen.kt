@@ -1185,6 +1185,11 @@ class MockSettingsRepository : SettingsRepository {
     override fun getLastRestoreTimestamp(): Flow<Long?> = kotlinx.coroutines.flow.flowOf(null)
     override suspend fun setLastRestoreTimestamp(timestamp: Long) {}
 
+    override fun getSuggestionsEnabled(): Flow<Boolean> = kotlinx.coroutines.flow.flowOf(true)
+    override suspend fun setSuggestionsEnabled(enabled: Boolean) {}
+    override fun getSuggestionsClearedAt(): Flow<Long?> = kotlinx.coroutines.flow.flowOf(null)
+    override suspend fun setSuggestionsClearedAt(timestamp: Long) {}
+
     override suspend fun resetAllPreferences() {}
 }
 

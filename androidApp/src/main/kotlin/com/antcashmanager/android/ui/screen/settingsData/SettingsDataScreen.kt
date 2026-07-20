@@ -21,6 +21,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.DeleteSweep
+import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.RestorePage
 import androidx.compose.material3.AlertDialog
@@ -89,6 +91,10 @@ fun SettingsDataScreen(
         onRestoreFileReadError = viewModel::onRestoreFileReadError,
         onClearPendingBackupRequest = viewModel::clearPendingBackupRequest,
         onDataEncryptionEnabledChange = viewModel::setDataEncryptionEnabled,
+        onSuggestionsEnabledChange = viewModel::setSuggestionsEnabled,
+        onShowDeleteSuggestionsDialog = viewModel::showDeleteSuggestionsDialog,
+        onDismissDeleteSuggestionsDialog = viewModel::dismissDeleteSuggestionsDialog,
+        onDeleteAllSuggestions = viewModel::deleteAllSuggestions,
         onNavigateBack = { navController.popBackStack() },
     )
 }
@@ -115,6 +121,10 @@ internal fun SettingsDataContent(
     onRestoreFileReadError: (String) -> Unit = {},
     onClearPendingBackupRequest: () -> Unit = {},
     onDataEncryptionEnabledChange: (Boolean) -> Unit = {},
+    onSuggestionsEnabledChange: (Boolean) -> Unit = {},
+    onShowDeleteSuggestionsDialog: () -> Unit = {},
+    onDismissDeleteSuggestionsDialog: () -> Unit = {},
+    onDeleteAllSuggestions: () -> Unit = {},
     onNavigateBack: () -> Unit = {},
 ) {
     val context = LocalContext.current
@@ -247,6 +257,14 @@ internal fun SettingsDataContent(
                         onDataEncryptionEnabledChange = onDataEncryptionEnabledChange,
                     )
                 }
+
+                item {
+                    SuggestionsSection(
+                        suggestionsEnabled = state.suggestionsEnabled,
+                        onSuggestionsEnabledChange = onSuggestionsEnabledChange,
+                        onShowDeleteSuggestionsDialog = onShowDeleteSuggestionsDialog,
+                    )
+                }
             }
         } else {
             Row(
@@ -296,6 +314,11 @@ internal fun SettingsDataContent(
                     SecuritySection(
                         dataEncryptionEnabled = state.dataEncryptionEnabled,
                         onDataEncryptionEnabledChange = onDataEncryptionEnabledChange,
+                    )
+                    SuggestionsSection(
+                        suggestionsEnabled = state.suggestionsEnabled,
+                        onSuggestionsEnabledChange = onSuggestionsEnabledChange,
+                        onShowDeleteSuggestionsDialog = onShowDeleteSuggestionsDialog,
                     )
                 }
             }
@@ -460,6 +483,42 @@ internal fun SettingsDataContent(
         )
     }
 
+    if (state.showDeleteSuggestionsDialog) {
+        AlertDialog(
+            onDismissRequest = onDismissDeleteSuggestionsDialog,
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.DeleteSweep,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.error,
+                )
+            },
+            title = { AppText(stringResource(R.string.dialog_delete_suggestions_title)) },
+            text = {
+                AppText(
+                    stringResource(R.string.dialog_delete_suggestions_message),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    analyticsManager.logEvent("delete_suggestions_confirmed")
+                    onDeleteAllSuggestions()
+                }) {
+                    AppText(
+                        stringResource(R.string.dialog_delete),
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismissDeleteSuggestionsDialog) {
+                    AppText(stringResource(R.string.common_cancel))
+                }
+            },
+        )
+    }
+
     if (state.backupResult is BackupResult.Loading) {
         BlockingProgressDialog(
             message = stringResource(R.string.backup_in_progress_message),
@@ -577,6 +636,39 @@ private fun SecuritySection(
         },
         onClick = { onDataEncryptionEnabledChange(!dataEncryptionEnabled) },
     )
+}
+
+@Composable
+private fun SuggestionsSection(
+    suggestionsEnabled: Boolean,
+    onSuggestionsEnabledChange: (Boolean) -> Unit,
+    onShowDeleteSuggestionsDialog: () -> Unit,
+) {
+    AppCardSectionHeader(title = stringResource(R.string.settings_suggestions))
+    Spacer(modifier = Modifier.height(SettingsDataConstant.CARD_SPACING_DP.dp))
+    Column(verticalArrangement = Arrangement.spacedBy(SettingsDataConstant.CARD_SPACING_DP.dp)) {
+        AppCard(
+            title = stringResource(R.string.settings_suggestions_enable),
+            subtitle = stringResource(R.string.settings_suggestions_enable_subtitle),
+            leadingIcon = Icons.Default.Lightbulb,
+            trailingContent = {
+                AppSwitch(
+                    checked = suggestionsEnabled,
+                    onCheckedChange = onSuggestionsEnabledChange,
+                )
+            },
+            onClick = { onSuggestionsEnabledChange(!suggestionsEnabled) },
+        )
+        AppCard(
+            title = stringResource(R.string.settings_suggestions_delete_all),
+            subtitle = stringResource(R.string.settings_suggestions_delete_all_subtitle),
+            leadingIcon = Icons.Default.DeleteSweep,
+            iconBackgroundColor = MaterialTheme.colorScheme.errorContainer,
+            iconTint = MaterialTheme.colorScheme.onErrorContainer,
+            showChevron = false,
+            onClick = onShowDeleteSuggestionsDialog,
+        )
+    }
 }
 
 @Preview(showBackground = true)

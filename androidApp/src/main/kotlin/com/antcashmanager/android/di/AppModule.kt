@@ -97,7 +97,7 @@ val dataModule = module {
 val useCaseModule = module {
     factory { GetTransactionsUseCase(transactionRepository = get()) }
     factory { GetTransactionsByDateRangeUseCase(transactionRepository = get()) }
-    factory { GetTransactionSuggestionsUseCase(repository = get()) }
+    factory { GetTransactionSuggestionsUseCase(repository = get(), settingsRepository = get()) }
     factory { InsertTransactionUseCase(transactionRepository = get()) }
     factory { UpdateTransactionUseCase(transactionRepository = get()) }
     factory { DeleteTransactionUseCase(transactionRepository = get()) }

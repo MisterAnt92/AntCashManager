@@ -1,6 +1,7 @@
 package com.antcashmanager.domain.usecase.transaction
 
 import com.antcashmanager.domain.model.TransactionSuggestions
+import com.antcashmanager.testutil.FakeSettingsRepository
 import com.antcashmanager.testutil.FakeTransactionRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -21,14 +22,17 @@ class GetTransactionSuggestionsUseCaseTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var repository: FakeSuggestionsTransactionRepository
+    private lateinit var settingsRepository: FakeSettingsRepository
     private lateinit var useCase: GetTransactionSuggestionsUseCase
 
     @BeforeTest
     fun setup() {
         repository = FakeSuggestionsTransactionRepository()
+        settingsRepository = FakeSettingsRepository()
         // UnconfinedTestDispatcher: il Flow emette immediatamente nei test
         useCase = GetTransactionSuggestionsUseCase(
             repository,
+            settingsRepository,
             UnconfinedTestDispatcher(testDispatcher.scheduler)
         )
     }
@@ -39,6 +43,7 @@ class GetTransactionSuggestionsUseCaseTest {
         repository.titlesToReturn = listOf("Test")
         val cancellableUseCase = GetTransactionSuggestionsUseCase(
             repository,
+            settingsRepository,
             testDispatcher,
         )
         val collected = mutableListOf<TransactionSuggestions>()
@@ -107,6 +112,40 @@ class GetTransactionSuggestionsUseCaseTest {
             // Then
             assertEquals(TransactionSuggestions(), result)
         }
+
+    @Test
+    fun invoke_shouldReturnEmptySuggestions_whenSuggestionsAreDisabled() = runTest(testDispatcher) {
+        // Given
+        repository.titlesToReturn = listOf("Spesa")
+        settingsRepository.suggestionsEnabled.value = false
+
+        // When
+        val result = useCase().first()
+
+        // Then
+        assertEquals(TransactionSuggestions(), result)
+    }
+
+    @Test
+    fun invoke_shouldQuerySinceEpoch_whenSuggestionsNeverCleared() = runTest(testDispatcher) {
+        // When
+        useCase().first()
+
+        // Then
+        assertEquals(0L, repository.lastSinceRequested)
+    }
+
+    @Test
+    fun invoke_shouldQuerySinceClearedTimestamp_whenSuggestionsClearedAtIsSet() = runTest(testDispatcher) {
+        // Given
+        settingsRepository.suggestionsClearedAt.value = 5_000L
+
+        // When
+        useCase().first()
+
+        // Then
+        assertEquals(5_000L, repository.lastSinceRequested)
+    }
 }
 
 /**
@@ -119,10 +158,14 @@ private class FakeSuggestionsTransactionRepository : FakeTransactionRepository()
     var notesToReturn: List<String> = emptyList()
     var locationsToReturn: List<String> = emptyList()
     var tagsToReturn: List<String> = emptyList()
+    var lastSinceRequested: Long? = null
 
-    override fun getDistinctTitles(): Flow<List<String>> = flowOf(titlesToReturn)
-    override fun getDistinctPayees(): Flow<List<String>> = flowOf(payeesToReturn)
-    override fun getDistinctNotes(): Flow<List<String>> = flowOf(notesToReturn)
-    override fun getDistinctLocations(): Flow<List<String>> = flowOf(locationsToReturn)
-    override fun getDistinctTags(): Flow<List<String>> = flowOf(tagsToReturn)
+    override fun getDistinctTitles(since: Long): Flow<List<String>> {
+        lastSinceRequested = since
+        return flowOf(titlesToReturn)
+    }
+    override fun getDistinctPayees(since: Long): Flow<List<String>> = flowOf(payeesToReturn)
+    override fun getDistinctNotes(since: Long): Flow<List<String>> = flowOf(notesToReturn)
+    override fun getDistinctLocations(since: Long): Flow<List<String>> = flowOf(locationsToReturn)
+    override fun getDistinctTags(since: Long): Flow<List<String>> = flowOf(tagsToReturn)
 }

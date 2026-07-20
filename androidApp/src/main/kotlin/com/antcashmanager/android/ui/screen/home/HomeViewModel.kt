@@ -87,6 +87,7 @@ class HomeViewModel(
         ),
         getTransactionSuggestionsUseCase = GetTransactionSuggestionsUseCase(
             repository = transactionRepository,
+            settingsRepository = settingsRepository,
             dispatcher = dispatcher,
         ),
         getHomeDateFilterStateUseCase = GetHomeDateFilterStateUseCase(

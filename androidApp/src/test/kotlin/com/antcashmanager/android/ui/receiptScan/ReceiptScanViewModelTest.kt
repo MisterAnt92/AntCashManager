@@ -3,6 +3,7 @@ package com.antcashmanager.android.ui.receiptScan
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.testutil.FakeCategoryRepository
+import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.testutil.FakeTransactionRepository
 import com.antcashmanager.android.ui.screen.receiptScan.ReceiptScanStep
 import com.antcashmanager.android.ui.screen.receiptScan.ReceiptScanViewModel
@@ -48,6 +49,7 @@ class ReceiptScanViewModelTest : BaseUnitTest() {
             scanReceiptUseCase = scanUseCase,
             transactionRepository = fakeTxRepo,
             categoryRepository = fakeCatRepo,
+            settingsRepository = FakeSettingsRepository(),
             dispatcher = testDispatcher,
         )
     }

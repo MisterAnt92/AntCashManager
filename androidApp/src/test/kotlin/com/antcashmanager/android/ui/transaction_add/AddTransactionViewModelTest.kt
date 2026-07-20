@@ -762,9 +762,9 @@ class AddTransactionViewModelTest : BaseUnitTest() {
 private class FakeTransactionRepositoryWithCannedSuggestions(
     initialTransactions: List<Transaction>,
 ) : FakeTransactionRepository(initialTransactions) {
-    override fun getDistinctTitles(): Flow<List<String>> = flowOf(listOf("Spesa", "Carburante", "Ristorante"))
-    override fun getDistinctPayees(): Flow<List<String>> = flowOf(listOf("Supermercato", "Stazione"))
-    override fun getDistinctNotes(): Flow<List<String>> = flowOf(listOf("Cena con amici", "Spesa mensile"))
-    override fun getDistinctLocations(): Flow<List<String>> = flowOf(listOf("Milano", "Roma"))
-    override fun getDistinctTags(): Flow<List<String>> = flowOf(listOf("Food", "Transport", "Shopping"))
+    override fun getDistinctTitles(since: Long): Flow<List<String>> = flowOf(listOf("Spesa", "Carburante", "Ristorante"))
+    override fun getDistinctPayees(since: Long): Flow<List<String>> = flowOf(listOf("Supermercato", "Stazione"))
+    override fun getDistinctNotes(since: Long): Flow<List<String>> = flowOf(listOf("Cena con amici", "Spesa mensile"))
+    override fun getDistinctLocations(since: Long): Flow<List<String>> = flowOf(listOf("Milano", "Roma"))
+    override fun getDistinctTags(since: Long): Flow<List<String>> = flowOf(listOf("Food", "Transport", "Shopping"))
 }

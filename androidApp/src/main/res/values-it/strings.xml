@@ -101,6 +101,38 @@
     <string name="categories_tab_income">Entrate</string>
     <string name="categories_default_badge">Predefinita</string>
     <string name="categories_icon_label">Icona</string>
+
+    <!-- Icone Categorie -->
+    <string name="icon_home">Casa</string>
+    <string name="icon_directions_car">Trasporti</string>
+    <string name="icon_restaurant">Ristorante</string>
+    <string name="icon_receipt_long">Scontrino</string>
+    <string name="icon_local_dining">Pranzo fuori</string>
+    <string name="icon_theater_comedy">Divertimento</string>
+    <string name="icon_local_hospital">Salute</string>
+    <string name="icon_shopping_bag">Shopping</string>
+    <string name="icon_school">Istruzione</string>
+    <string name="icon_more_horiz">Altro</string>
+    <string name="icon_payments">Stipendio</string>
+    <string name="icon_savings">Risparmi</string>
+    <string name="icon_currency_exchange">Cambio</string>
+    <string name="icon_trending_up">Investimento</string>
+    <string name="icon_work">Lavoro</string>
+    <string name="icon_redeem">Regali</string>
+    <string name="icon_flight">Viaggi</string>
+    <string name="icon_fitness_center">Palestra</string>
+    <string name="icon_pets">Animali</string>
+    <string name="icon_directions_bus">Mezzi pubblici</string>
+    <string name="icon_lightbulb">Utenze</string>
+    <string name="icon_celebration">Feste</string>
+    <string name="icon_subscriptions">Abbonamenti</string>
+    <string name="icon_fastfood">Snack</string>
+    <string name="icon_star">Preferiti</string>
+    <string name="icon_volunteer_activism">Beneficenza</string>
+    <string name="icon_directions_bike">Sport</string>
+    <string name="icon_shopping_cart">Spesa</string>
+    <string name="icon_coffee">Caffè</string>
+
     <string name="charts_period">Periodo</string>
     <string name="charts_from">Dal: %s</string>
     <string name="charts_to">Al: %s</string>
@@ -192,6 +224,11 @@
     <string name="settings_security">Sicurezza</string>
     <string name="settings_security_data_encryption">Dati in sicurezza - Crittografia</string>
     <string name="settings_security_data_encryption_subtitle">Cripta e protegge i dati locali dell\'app</string>
+    <string name="settings_suggestions">Suggerimenti</string>
+    <string name="settings_suggestions_enable">Suggerimenti automatici</string>
+    <string name="settings_suggestions_enable_subtitle">Suggerisce titoli, beneficiari, note, luoghi e tag dallo storico delle transazioni</string>
+    <string name="settings_suggestions_delete_all">Elimina tutti i suggerimenti</string>
+    <string name="settings_suggestions_delete_all_subtitle">Dimentica i suggerimenti costruiti dalle transazioni passate</string>
     <string name="settings_delete_all">Elimina tutti i dati</string>
     <string name="settings_delete_all_subtitle">Rimuovi permanentemente tutte le transazioni e categorie</string>
     <string name="settings_backup">Backup Dati</string>
@@ -245,6 +282,8 @@
     <string name="dialog_data_deleted_message">Tutti i dati sono stati eliminati con successo.</string>
     <string name="dialog_reset_preferences_title">Ripristina Preferenze</string>
     <string name="dialog_reset_preferences_message">Questa operazione ripristiner\u00e0 tutte le impostazioni ai valori predefiniti. Continuare?</string>
+    <string name="dialog_delete_suggestions_title">Eliminare tutti i suggerimenti?</string>
+    <string name="dialog_delete_suggestions_message">I suggerimenti costruiti dallo storico delle transazioni (titoli, beneficiari, note, luoghi, tag) verranno dimenticati. Nuovi suggerimenti si accumuleranno di nuovo con le prossime transazioni. Continuare?</string>
     <string name="dialog_reset">Ripristina</string>
     <string name="privacy_policy_title">Informativa sulla Privacy</string>
     <string name="privacy_policy_content">AntCashManager si impegna a proteggere la tua privacy. Questa applicazione non raccoglie n\u00e9 condivide dati personali con terze parti. Tutti i dati finanziari sono memorizzati localmente sul tuo dispositivo e non vengono mai trasmessi a server esterni.\n\nI tuoi dati rimangono interamente sul tuo dispositivo e sotto il tuo controllo. Non utilizziamo pubblicit\u00e0.\n\nPer qualsiasi domanda sulla privacy, contattaci attraverso la pagina dello store.</string>

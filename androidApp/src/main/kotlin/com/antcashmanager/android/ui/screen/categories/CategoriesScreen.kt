@@ -22,26 +22,41 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Celebration
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Coffee
 import androidx.compose.material.icons.filled.CurrencyExchange
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.DirectionsBike
+import androidx.compose.material.icons.filled.DirectionsBus
 import androidx.compose.material.icons.filled.DirectionsCar
+import androidx.compose.material.icons.filled.Fastfood
+import androidx.compose.material.icons.filled.FitnessCenter
+import androidx.compose.material.icons.filled.Flight
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.LocalDining
 import androidx.compose.material.icons.filled.LocalHospital
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.Payments
+import androidx.compose.material.icons.filled.Pets
+import androidx.compose.material.icons.filled.Redeem
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Savings
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.ShoppingBag
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Subscriptions
 import androidx.compose.material.icons.filled.TheaterComedy
+import androidx.compose.material.icons.filled.VolunteerActivism
 import androidx.compose.material.icons.filled.Work
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -69,6 +84,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
@@ -101,7 +117,61 @@ val categoryIconMap: Map<String, ImageVector> = mapOf(
     "currency_exchange" to Icons.Default.CurrencyExchange,
     "trending_up" to Icons.AutoMirrored.Filled.TrendingUp,
     "work" to Icons.Default.Work,
+    "redeem" to Icons.Default.Redeem,
+    "flight" to Icons.Default.Flight,
+    "fitness_center" to Icons.Default.FitnessCenter,
+    "pets" to Icons.Default.Pets,
+    "directions_bus" to Icons.Default.DirectionsBus,
+    "lightbulb" to Icons.Default.Lightbulb,
+    "celebration" to Icons.Default.Celebration,
+    "subscriptions" to Icons.Default.Subscriptions,
+    "fastfood" to Icons.Default.Fastfood,
+    "star" to Icons.Default.Star,
+    "volunteer_activism" to Icons.Default.VolunteerActivism,
+    "directions_bike" to Icons.Default.DirectionsBike,
+    "shopping_cart" to Icons.Default.ShoppingCart,
+    "coffee" to Icons.Default.Coffee,
 )
+
+/**
+ * Returns a localized content description for a given icon key.
+ */
+@Composable
+fun getIconContentDescription(iconKey: String): String {
+    val resId = when (iconKey) {
+        "home" -> R.string.icon_home
+        "directions_car" -> R.string.icon_directions_car
+        "restaurant" -> R.string.icon_restaurant
+        "receipt_long" -> R.string.icon_receipt_long
+        "local_dining" -> R.string.icon_local_dining
+        "theater_comedy" -> R.string.icon_theater_comedy
+        "local_hospital" -> R.string.icon_local_hospital
+        "shopping_bag" -> R.string.icon_shopping_bag
+        "school" -> R.string.icon_school
+        "more_horiz" -> R.string.icon_more_horiz
+        "payments" -> R.string.icon_payments
+        "savings" -> R.string.icon_savings
+        "currency_exchange" -> R.string.icon_currency_exchange
+        "trending_up" -> R.string.icon_trending_up
+        "work" -> R.string.icon_work
+        "redeem" -> R.string.icon_redeem
+        "flight" -> R.string.icon_flight
+        "fitness_center" -> R.string.icon_fitness_center
+        "pets" -> R.string.icon_pets
+        "directions_bus" -> R.string.icon_directions_bus
+        "lightbulb" -> R.string.icon_lightbulb
+        "celebration" -> R.string.icon_celebration
+        "subscriptions" -> R.string.icon_subscriptions
+        "fastfood" -> R.string.icon_fastfood
+        "star" -> R.string.icon_star
+        "volunteer_activism" -> R.string.icon_volunteer_activism
+        "directions_bike" -> R.string.icon_directions_bike
+        "shopping_cart" -> R.string.icon_shopping_cart
+        "coffee" -> R.string.icon_coffee
+        else -> R.string.categories_icon_label
+    }
+    return stringResource(resId)
+}
 
 val categoryColors = listOf(
     0xFFE57373L, 0xFFFF8A65L, 0xFFFFB74DL, 0xFFFFD54FL,
@@ -372,18 +442,19 @@ private fun AddCategoryDialog(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     categoryIconMap.forEach { (iconKey, iconVector) ->
+                        val isSelected = iconKey == selectedIcon
                         Box(
                             modifier = Modifier
                                 .size(44.dp)
                                 .clip(CircleShape)
                                 .background(
-                                    if (iconKey == selectedIcon)
+                                    if (isSelected)
                                         MaterialTheme.colorScheme.primaryContainer
                                     else
                                         MaterialTheme.colorScheme.surfaceVariant
                                 )
                                 .then(
-                                    if (iconKey == selectedIcon) {
+                                    if (isSelected) {
                                         Modifier.border(
                                             2.dp,
                                             MaterialTheme.colorScheme.primary,
@@ -393,13 +464,17 @@ private fun AddCategoryDialog(
                                         Modifier
                                     },
                                 )
-                                .clickable { selectedIcon = iconKey },
+                                .selectable(
+                                    selected = isSelected,
+                                    onClick = { selectedIcon = iconKey },
+                                    role = Role.RadioButton,
+                                ),
                             contentAlignment = Alignment.Center,
                         ) {
                             Icon(
                                 imageVector = iconVector,
-                                contentDescription = null,
-                                tint = if (iconKey == selectedIcon)
+                                contentDescription = getIconContentDescription(iconKey),
+                                tint = if (isSelected)
                                     MaterialTheme.colorScheme.primary
                                 else
                                     MaterialTheme.colorScheme.onSurfaceVariant,

@@ -93,4 +93,17 @@ interface SettingsRepository {
     suspend fun setLastBackupTimestamp(timestamp: Long)
     fun getLastRestoreTimestamp(): Flow<Long?>
     suspend fun setLastRestoreTimestamp(timestamp: Long)
+
+    /**
+     * ── Suggerimenti (autocomplete titoli/beneficiari/note/luoghi/tag) ──
+     *
+     * [getSuggestionsClearedAt] è il timestamp dell'ultima cancellazione richiesta
+     * dall'utente: i suggerimenti vengono calcolati solo dalle transazioni successive a
+     * questo istante, senza dover toccare le transazioni stesse. `null` significa "mai
+     * cancellati".
+     */
+    fun getSuggestionsEnabled(): Flow<Boolean>
+    suspend fun setSuggestionsEnabled(enabled: Boolean)
+    fun getSuggestionsClearedAt(): Flow<Long?>
+    suspend fun setSuggestionsClearedAt(timestamp: Long)
 }

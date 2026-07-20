@@ -69,6 +69,38 @@
     <string name="categories_tab_income">Einnahmen</string>
     <string name="categories_default_badge">Standard</string>
     <string name="categories_icon_label">Symbol</string>
+
+    <!-- Kategorie-Symbole -->
+    <string name="icon_home">Zuhause</string>
+    <string name="icon_directions_car">Verkehr</string>
+    <string name="icon_restaurant">Restaurant</string>
+    <string name="icon_receipt_long">Beleg</string>
+    <string name="icon_local_dining">Fast Food</string>
+    <string name="icon_theater_comedy">Unterhaltung</string>
+    <string name="icon_local_hospital">Gesundheit</string>
+    <string name="icon_shopping_bag">Einkaufen</string>
+    <string name="icon_school">Bildung</string>
+    <string name="icon_more_horiz">Sonstiges</string>
+    <string name="icon_payments">Gehalt</string>
+    <string name="icon_savings">Ersparnisse</string>
+    <string name="icon_currency_exchange">Wechselkurs</string>
+    <string name="icon_trending_up">Investition</string>
+    <string name="icon_work">Arbeit</string>
+    <string name="icon_redeem">Geschenke</string>
+    <string name="icon_flight">Reisen</string>
+    <string name="icon_fitness_center">Fitness</string>
+    <string name="icon_pets">Haustiere</string>
+    <string name="icon_directions_bus">Öffentlicher Nahverkehr</string>
+    <string name="icon_lightbulb">Nebenkosten</string>
+    <string name="icon_celebration">Feier</string>
+    <string name="icon_subscriptions">Abos</string>
+    <string name="icon_fastfood">Snacks</string>
+    <string name="icon_star">Favoriten</string>
+    <string name="icon_volunteer_activism">Wohltätigkeit</string>
+    <string name="icon_directions_bike">Sport</string>
+    <string name="icon_shopping_cart">Lebensmittel</string>
+    <string name="icon_coffee">Kaffee</string>
+
     <string name="charts_period">Zeitraum</string>
     <string name="charts_from">Von: %s</string>
     <string name="charts_to">Bis: %s</string>
@@ -163,6 +195,11 @@
     <string name="settings_security">Sicherheit</string>
     <string name="settings_security_data_encryption">Datenschutz - Verschl\u00fcsselung</string>
     <string name="settings_security_data_encryption_subtitle">Verschl\u00fcsselt und sch\u00fctzt lokale App-Daten</string>
+    <string name="settings_suggestions">Vorschl\u00e4ge</string>
+    <string name="settings_suggestions_enable">Automatische Vorschl\u00e4ge</string>
+    <string name="settings_suggestions_enable_subtitle">Schl\u00e4gt Titel, Zahlungsempf\u00e4nger, Notizen, Orte und Tags aus dem Transaktionsverlauf vor</string>
+    <string name="settings_suggestions_delete_all">Alle Vorschl\u00e4ge l\u00f6schen</string>
+    <string name="settings_suggestions_delete_all_subtitle">Vergisst die aus fr\u00fcheren Transaktionen erstellten Vorschl\u00e4ge</string>
     <string name="settings_delete_all">Alle Daten l\u00f6schen</string>
     <string name="settings_delete_all_subtitle">Alle Transaktionen und Kategorien dauerhaft entfernen</string>
     <string name="settings_backup">Daten sichern</string>
@@ -221,6 +258,8 @@
     <string name="dialog_choose_thousands_separator">Tausendertrennzeichen</string>
     <string name="dialog_reset_preferences_title">Einstellungen zur\u00fccksetzen</string>
     <string name="dialog_reset_preferences_message">Dadurch werden alle Einstellungen auf Standardwerte zur\u00fcckgesetzt. Fortfahren?</string>
+    <string name="dialog_delete_suggestions_title">Alle Vorschl\u00e4ge l\u00f6schen?</string>
+    <string name="dialog_delete_suggestions_message">Die aus dem Transaktionsverlauf erstellten Vorschl\u00e4ge (Titel, Zahlungsempf\u00e4nger, Notizen, Orte, Tags) werden vergessen. Neue Vorschl\u00e4ge sammeln sich mit weiteren Transaktionen wieder an. Fortfahren?</string>
     <string name="dialog_reset">Zur\u00fccksetzen</string>
     <string name="privacy_policy_title">Datenschutzrichtlinie</string>
     <string name="privacy_policy_content">AntCashManager sch\u00fctzt deine Privatsph\u00e4re. Diese Anwendung sammelt oder teilt keine pers\u00f6nlichen Daten mit Dritten. Alle Finanzdaten werden lokal auf deinem Ger\u00e4t gespeichert und niemals an externe Server \u00fcbertragen.\n\nDeine Daten verbleiben vollst\u00e4ndig auf deinem Ger\u00e4t und unter deiner Kontrolle. Wir verwenden keine Analyse-, Tracking- oder Werbedienste.\n\nBei Fragen zum Datenschutz kontaktiere uns \u00fcber die Store-Seite.</string>

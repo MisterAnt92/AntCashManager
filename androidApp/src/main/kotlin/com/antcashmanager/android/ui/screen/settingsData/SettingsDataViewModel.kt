@@ -49,12 +49,40 @@ class SettingsDataViewModel(
                 _state.update { it.copy(lastRestoreTimestamp = timestamp) }
             }
         }
+        viewModelScope.launch {
+            settingsRepositoryRef.getSuggestionsEnabled().collect { enabled ->
+                _state.update { it.copy(suggestionsEnabled = enabled) }
+            }
+        }
     }
 
     fun setDataEncryptionEnabled(enabled: Boolean) {
         Logger.d(SettingsDataConstant.TAG) { "Setting data encryption enabled: $enabled" }
         viewModelScope.launch {
             settingsRepositoryRef.setDataEncryptionEnabled(enabled)
+        }
+    }
+
+    fun setSuggestionsEnabled(enabled: Boolean) {
+        Logger.d(SettingsDataConstant.TAG) { "Setting suggestions enabled: $enabled" }
+        viewModelScope.launch {
+            settingsRepositoryRef.setSuggestionsEnabled(enabled)
+        }
+    }
+
+    fun showDeleteSuggestionsDialog() {
+        _state.update { it.copy(showDeleteSuggestionsDialog = true) }
+    }
+
+    fun dismissDeleteSuggestionsDialog() {
+        _state.update { it.copy(showDeleteSuggestionsDialog = false) }
+    }
+
+    fun deleteAllSuggestions() {
+        Logger.d(SettingsDataConstant.TAG) { "Deleting all suggestions" }
+        viewModelScope.launch {
+            settingsRepositoryRef.setSuggestionsClearedAt(System.currentTimeMillis())
+            _state.update { it.copy(showDeleteSuggestionsDialog = false) }
         }
     }
 

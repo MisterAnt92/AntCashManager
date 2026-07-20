@@ -48,28 +48,28 @@ class TransactionRepositoryImpl(
         transactionDao.renameCategory(oldCategoryName, newCategoryName, icon, color)
 
     // Implementazione metodi per suggerimenti
-    override fun getDistinctTitles(): Flow<List<String>> =
-        transactionDao.getDistinctTitles().map { values ->
+    override fun getDistinctTitles(since: Long): Flow<List<String>> =
+        transactionDao.getDistinctTitles(since).map { values ->
             values.map(localDataCipher::decryptString).distinct()
         }
 
-    override fun getDistinctPayees(): Flow<List<String>> =
-        transactionDao.getDistinctPayees().map { values ->
+    override fun getDistinctPayees(since: Long): Flow<List<String>> =
+        transactionDao.getDistinctPayees(since).map { values ->
             values.map(localDataCipher::decryptString).distinct()
         }
 
-    override fun getDistinctNotes(): Flow<List<String>> =
-        transactionDao.getDistinctNotes().map { values ->
+    override fun getDistinctNotes(since: Long): Flow<List<String>> =
+        transactionDao.getDistinctNotes(since).map { values ->
             values.map(localDataCipher::decryptString).distinct()
         }
 
-    override fun getDistinctLocations(): Flow<List<String>> =
-        transactionDao.getDistinctLocations().map { values ->
+    override fun getDistinctLocations(since: Long): Flow<List<String>> =
+        transactionDao.getDistinctLocations(since).map { values ->
             values.map(localDataCipher::decryptString).distinct()
         }
 
-    override fun getDistinctTags(): Flow<List<String>> =
-        transactionDao.getDistinctTags().map { values ->
+    override fun getDistinctTags(since: Long): Flow<List<String>> =
+        transactionDao.getDistinctTags(since).map { values ->
             values.map(localDataCipher::decryptString).distinct()
         }
 

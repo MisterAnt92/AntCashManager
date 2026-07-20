@@ -22,6 +22,8 @@ data class SettingsDataState(
     val dataEncryptionEnabled: Boolean = false,
     val lastBackupTimestamp: Long? = null,
     val lastRestoreTimestamp: Long? = null,
+    val suggestionsEnabled: Boolean = true,
+    val showDeleteSuggestionsDialog: Boolean = false,
 )
 
 data class RestoreSuccessInfo(

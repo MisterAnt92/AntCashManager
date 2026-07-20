@@ -103,7 +103,11 @@ class AddTransactionViewModel(
         insertTransactionUseCase = InsertTransactionUseCase(transactionRepository, dispatcher),
         updateTransactionUseCase = UpdateTransactionUseCase(transactionRepository, dispatcher),
         deleteTransactionUseCase = DeleteTransactionUseCase(transactionRepository, dispatcher),
-        getTransactionSuggestionsUseCase = GetTransactionSuggestionsUseCase(transactionRepository, dispatcher),
+        getTransactionSuggestionsUseCase = GetTransactionSuggestionsUseCase(
+            transactionRepository,
+            settingsRepository,
+            dispatcher,
+        ),
         transactionId = transactionId,
     )
 

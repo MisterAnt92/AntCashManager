@@ -61,6 +61,8 @@ class SettingsRepositoryImpl(
     private val showInitialAnimationKey = booleanPreferencesKey("show_initial_animation")
     private val lastBackupTimestampKey = longPreferencesKey("last_backup_timestamp")
     private val lastRestoreTimestampKey = longPreferencesKey("last_restore_timestamp")
+    private val suggestionsEnabledKey = booleanPreferencesKey("suggestions_enabled")
+    private val suggestionsClearedAtKey = longPreferencesKey("suggestions_cleared_at")
 
     private fun createSavedDateFilter(defaultPresetIndex: Int, defaultDurationMs: Long): SavedDateFilter {
         val now = System.currentTimeMillis()
@@ -396,6 +398,20 @@ class SettingsRepositoryImpl(
         dataStore.edit { it[lastRestoreTimestampKey] = timestamp }
     }
 
+    override fun getSuggestionsEnabled(): Flow<Boolean> =
+        dataStore.data.map { it[suggestionsEnabledKey] ?: true }
+
+    override suspend fun setSuggestionsEnabled(enabled: Boolean) {
+        dataStore.edit { it[suggestionsEnabledKey] = enabled }
+    }
+
+    override fun getSuggestionsClearedAt(): Flow<Long?> =
+        dataStore.data.map { it[suggestionsClearedAtKey] }
+
+    override suspend fun setSuggestionsClearedAt(timestamp: Long) {
+        dataStore.edit { it[suggestionsClearedAtKey] = timestamp }
+    }
+
     override suspend fun resetAllPreferences() {
         val defaultHomeFilter = defaultHomeDateFilter()
         val defaultTransactionsFilter = defaultTransactionsDateFilter()
@@ -433,6 +449,8 @@ class SettingsRepositoryImpl(
             prefs[isTutorialCompletedKey] = false
             prefs[dataEncryptionEnabledKey] = false
             prefs[showInitialAnimationKey] = false
+            prefs[suggestionsEnabledKey] = true
+            prefs.remove(suggestionsClearedAtKey)
         }
         DatabaseEncryptionManager.setEncryptionDesired(context, false)
     }

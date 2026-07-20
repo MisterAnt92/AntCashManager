@@ -70,9 +70,17 @@ class TransactionRepositoryImplTest {
         val encrypted = fakeCipher.encryptString("Stipendio")
         fakeDao.distinctTitlesFlow.value = listOf(encrypted, encrypted)
 
-        val values = repository.getDistinctTitles().first()
+        val values = repository.getDistinctTitles(since = 0L).first()
 
         assertEquals(listOf("Stipendio"), values)
+    }
+
+    @Test
+    fun getDistinctTitles_shouldForwardSinceParameterToDao_whenCalledWithCutoff() = runTest {
+        val values = repository.getDistinctTitles(since = 5_000L).first()
+
+        assertEquals(5_000L, fakeDao.lastDistinctTitlesSince)
+        assertEquals(emptyList<String>(), values)
     }
 
     private fun sampleTransaction() = Transaction(
@@ -137,6 +145,7 @@ private class FakeTransactionDao : TransactionDao {
     val distinctTitlesFlow = MutableStateFlow<List<String>>(emptyList())
 
     var lastInserted: TransactionEntity? = null
+    var lastDistinctTitlesSince: Long? = null
 
     override fun getAllTransactions(): Flow<List<TransactionEntity>> = transactionsFlow
 
@@ -181,14 +190,17 @@ private class FakeTransactionDao : TransactionDao {
         }
     }
 
-    override fun getDistinctTitles(): Flow<List<String>> = distinctTitlesFlow
+    override fun getDistinctTitles(since: Long): Flow<List<String>> {
+        lastDistinctTitlesSince = since
+        return distinctTitlesFlow
+    }
 
-    override fun getDistinctPayees(): Flow<List<String>> = flowOf(emptyList())
+    override fun getDistinctPayees(since: Long): Flow<List<String>> = flowOf(emptyList())
 
-    override fun getDistinctNotes(): Flow<List<String>> = flowOf(emptyList())
+    override fun getDistinctNotes(since: Long): Flow<List<String>> = flowOf(emptyList())
 
-    override fun getDistinctLocations(): Flow<List<String>> = flowOf(emptyList())
+    override fun getDistinctLocations(since: Long): Flow<List<String>> = flowOf(emptyList())
 
-    override fun getDistinctTags(): Flow<List<String>> = flowOf(emptyList())
+    override fun getDistinctTags(since: Long): Flow<List<String>> = flowOf(emptyList())
 }
 

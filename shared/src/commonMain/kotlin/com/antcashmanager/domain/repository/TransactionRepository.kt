@@ -14,10 +14,12 @@ interface TransactionRepository {
     fun getRecurringTransactions(): Flow<List<Transaction>>
     suspend fun renameCategory(oldCategoryName: String, newCategoryName: String, icon: String, color: Long)
 
-    // Metodi per suggerimenti transazioni
-    fun getDistinctTitles(): Flow<List<String>>
-    fun getDistinctPayees(): Flow<List<String>>
-    fun getDistinctNotes(): Flow<List<String>>
-    fun getDistinctLocations(): Flow<List<String>>
-    fun getDistinctTags(): Flow<List<String>>
+    // Metodi per suggerimenti transazioni. [since] filtra alle transazioni con
+    // timestamp >= since (default 0 = nessun filtro), usato per "dimenticare" i
+    // suggerimenti precedenti a una cancellazione richiesta dall'utente.
+    fun getDistinctTitles(since: Long = 0L): Flow<List<String>>
+    fun getDistinctPayees(since: Long = 0L): Flow<List<String>>
+    fun getDistinctNotes(since: Long = 0L): Flow<List<String>>
+    fun getDistinctLocations(since: Long = 0L): Flow<List<String>>
+    fun getDistinctTags(since: Long = 0L): Flow<List<String>>
 }

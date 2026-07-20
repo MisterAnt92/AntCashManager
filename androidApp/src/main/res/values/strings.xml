@@ -76,6 +76,37 @@
     <string name="categories_icon_label">Icon</string>
     <string name="categories_selection_hint">Tap a category to select it (auto-advances in real app)</string>
 
+    <!-- Category Icons -->
+    <string name="icon_home">Home</string>
+    <string name="icon_directions_car">Transport</string>
+    <string name="icon_restaurant">Dining</string>
+    <string name="icon_receipt_long">Receipt</string>
+    <string name="icon_local_dining">Fast Food</string>
+    <string name="icon_theater_comedy">Entertainment</string>
+    <string name="icon_local_hospital">Health</string>
+    <string name="icon_shopping_bag">Shopping</string>
+    <string name="icon_school">Education</string>
+    <string name="icon_more_horiz">Other</string>
+    <string name="icon_payments">Salary</string>
+    <string name="icon_savings">Savings</string>
+    <string name="icon_currency_exchange">Exchange</string>
+    <string name="icon_trending_up">Investment</string>
+    <string name="icon_work">Work</string>
+    <string name="icon_redeem">Gifts</string>
+    <string name="icon_flight">Travel</string>
+    <string name="icon_fitness_center">Gym</string>
+    <string name="icon_pets">Pets</string>
+    <string name="icon_directions_bus">Public Transport</string>
+    <string name="icon_lightbulb">Utilities</string>
+    <string name="icon_celebration">Celebration</string>
+    <string name="icon_subscriptions">Subscriptions</string>
+    <string name="icon_fastfood">Snacks</string>
+    <string name="icon_star">Favorites</string>
+    <string name="icon_volunteer_activism">Charity</string>
+    <string name="icon_directions_bike">Sport</string>
+    <string name="icon_shopping_cart">Groceries</string>
+    <string name="icon_coffee">Coffee</string>
+
     <!-- Charts Screen -->
     <string name="charts_period">Period</string>
     <string name="charts_from">From: %s</string>
@@ -174,6 +205,11 @@
     <string name="settings_security">Security</string>
     <string name="settings_security_data_encryption">Data protection - Encryption</string>
     <string name="settings_security_data_encryption_subtitle">Encrypt and protect local app data</string>
+    <string name="settings_suggestions">Suggestions</string>
+    <string name="settings_suggestions_enable">Automatic suggestions</string>
+    <string name="settings_suggestions_enable_subtitle">Suggest titles, payees, notes, locations and tags from your transaction history</string>
+    <string name="settings_suggestions_delete_all">Delete all suggestions</string>
+    <string name="settings_suggestions_delete_all_subtitle">Forget suggestions built from past transactions</string>
     <string name="settings_delete_all">Delete All Data</string>
     <string name="settings_delete_all_subtitle">Permanently remove all transactions and categories</string>
     <string name="settings_backup">Backup Data</string>
@@ -233,6 +269,8 @@
     <string name="dialog_data_deleted_message">All data has been successfully deleted.</string>
     <string name="dialog_reset_preferences_title">Reset All Preferences</string>
     <string name="dialog_reset_preferences_message">This will restore all settings to their default values. Continue?</string>
+    <string name="dialog_delete_suggestions_title">Delete all suggestions?</string>
+    <string name="dialog_delete_suggestions_message">Suggestions built from your transaction history (titles, payees, notes, locations, tags) will be forgotten. New suggestions will build up again as you add transactions. Continue?</string>
     <string name="dialog_reset">Reset</string>
 
     <!-- Privacy Policy -->
