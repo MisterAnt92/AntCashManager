@@ -2,19 +2,18 @@ package com.antcashmanager.domain.usecase.category
 
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.repository.CategoryRepository
-import com.antcashmanager.domain.usecase.BaseUseCase
+import com.antcashmanager.domain.usecase.BaseResultUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
 /**
  * UseCase per l'aggiornamento di una categoria.
  */
-open class UpdateCategoryUseCase(
+class UpdateCategoryUseCase(
     private val categoryRepository: CategoryRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : BaseUseCase<Category, Result<Unit>>(dispatcher) {
+) : BaseResultUseCase<Category, Unit>(dispatcher) {
 
-    override suspend fun execute(params: Category): Result<Unit> = runCatching {
+    override suspend fun execute(params: Category): Unit =
         categoryRepository.updateCategory(params)
-    }
 }

@@ -252,7 +252,8 @@ internal fun DetailsStep(
             )
             Spacer(modifier = Modifier.height(12.dp))
 
-            // ── Importo ──
+            // ── Importo (label e descrizione cambiano con Buoni Pasto) ──
+            val isMealVouchersPayment = state.selectedPaymentType == PaymentType.MEAL_VOUCHERS
             OutlinedTextField(
                 value = state.amount,
                 onValueChange = { newValue ->
@@ -275,13 +276,30 @@ internal fun DetailsStep(
 
                     onEvent(AddTransactionEvent.UpdateAmount(finalValue))
                 },
-                label = { AppText(stringResource(R.string.add_transaction_amount_required)) },
+                label = {
+                    AppText(
+                        stringResource(
+                            if (isMealVouchersPayment)
+                                R.string.add_transaction_amount_total_meal_vouchers
+                            else
+                                R.string.add_transaction_amount_required
+                        )
+                    )
+                },
                 placeholder = { AppText("0.00") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
             )
+            if (isMealVouchersPayment) {
+                Spacer(modifier = Modifier.height(4.dp))
+                AppText(
+                    text = stringResource(R.string.add_transaction_amount_total_meal_vouchers_description),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
             Spacer(modifier = Modifier.height(12.dp))
 
             // ── Data – sempre editabile al tap ──
@@ -338,6 +356,97 @@ internal fun DetailsStep(
                 onClick = { onEvent(AddTransactionEvent.EditPaymentType) },
             )
             Spacer(modifier = Modifier.height(12.dp))
+
+            // ── Numero Buoni Pasto (visibile solo se MEAL_VOUCHERS) ──
+            if (isMealVouchersPayment) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(MaterialTheme.colorScheme.secondaryContainer)
+                        .padding(16.dp)
+                ) {
+                    AppText(
+                        text = stringResource(R.string.add_transaction_meal_voucher_section_title),
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    AppText(
+                        text = stringResource(
+                            R.string.add_transaction_meal_voucher_unit_value,
+                            String.format("%.2f", state.mealVoucherValue)
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    OutlinedTextField(
+                        value = state.mealVoucherCount,
+                        onValueChange = { newValue ->
+                            // Permetti solo numeri interi
+                            val filtered = newValue.filter { it.isDigit() }
+                            if (filtered.length <= 3) { // Max 999 buoni
+                                onEvent(AddTransactionEvent.UpdateMealVoucherCount(filtered))
+                            }
+                        },
+                        label = {
+                            AppText(stringResource(R.string.add_transaction_meal_voucher_count))
+                        },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                    )
+
+                    val voucherCount = state.mealVoucherCount.toIntOrNull() ?: 0
+                    val voucherTotal = voucherCount * state.mealVoucherValue
+
+                    if (voucherCount > 0) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        AppText(
+                            text = stringResource(
+                                R.string.add_transaction_meal_voucher_subtotal,
+                                String.format("%.2f", voucherTotal)
+                            ),
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.primary,
+                        )
+                    }
+                }
+
+                // Mostra la differenza pagata rispetto al valore coperto dai buoni (informativo)
+                val voucherCountForDifference = state.mealVoucherCount.toIntOrNull() ?: 0
+                if (voucherCountForDifference > 0) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(MaterialTheme.colorScheme.primaryContainer)
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        AppText(
+                            text = stringResource(R.string.add_transaction_meal_voucher_difference_paid),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        AppText(
+                            text = String.format("%.2f€", state.mealVoucherDifferencePaid),
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary,
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+            }
 
             // ── Tags – Improved management with chips ──
             TagSelector(

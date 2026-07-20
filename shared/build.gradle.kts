@@ -18,7 +18,7 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting {
+        getByName("commonMain") {
             dependencies {
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.kermit)
@@ -26,7 +26,7 @@ kotlin {
                 implementation(libs.kotlinx.serialization.json)
             }
         }
-        val androidMain by getting {
+        getByName("androidMain") {
             dependencies {
                 implementation(libs.kotlinx.coroutines.android)
                 implementation(libs.datastore.preferences)
@@ -34,7 +34,7 @@ kotlin {
                 implementation(libs.room.ktx)
             }
         }
-        val commonTest by getting {
+        getByName("commonTest") {
             dependencies {
                 implementation(kotlin("test"))
                 implementation(libs.kotlinx.coroutines.test)

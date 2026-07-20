@@ -69,6 +69,11 @@ data class TransactionsState(
             1 -> System.currentTimeMillis() - TransactionsConstant.ONE_WEEK_MS
             2 -> System.currentTimeMillis() - TransactionsConstant.THIRTY_DAYS_MS
             3 -> System.currentTimeMillis() - TransactionsConstant.ONE_YEAR_MS
+            4 -> System.currentTimeMillis() - TransactionsConstant.TWO_YEARS_MS
+            5 -> System.currentTimeMillis() - TransactionsConstant.THREE_YEARS_MS
+            6 -> System.currentTimeMillis() - TransactionsConstant.FIVE_YEARS_MS
+            7 -> System.currentTimeMillis() - TransactionsConstant.SIX_YEARS_MS
+            8 -> System.currentTimeMillis() - TransactionsConstant.ALL_TIME_MS
             else -> System.currentTimeMillis() - TransactionsConstant.ONE_WEEK_MS
         }
     }

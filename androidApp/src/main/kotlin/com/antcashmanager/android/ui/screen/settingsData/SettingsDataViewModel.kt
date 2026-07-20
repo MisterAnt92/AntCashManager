@@ -9,6 +9,7 @@ import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,12 +39,50 @@ class SettingsDataViewModel(
                 _state.update { it.copy(dataEncryptionEnabled = enabled) }
             }
         }
+        viewModelScope.launch {
+            settingsRepositoryRef.getLastBackupTimestamp().collect { timestamp ->
+                _state.update { it.copy(lastBackupTimestamp = timestamp) }
+            }
+        }
+        viewModelScope.launch {
+            settingsRepositoryRef.getLastRestoreTimestamp().collect { timestamp ->
+                _state.update { it.copy(lastRestoreTimestamp = timestamp) }
+            }
+        }
+        viewModelScope.launch {
+            settingsRepositoryRef.getSuggestionsEnabled().collect { enabled ->
+                _state.update { it.copy(suggestionsEnabled = enabled) }
+            }
+        }
     }
 
     fun setDataEncryptionEnabled(enabled: Boolean) {
         Logger.d(SettingsDataConstant.TAG) { "Setting data encryption enabled: $enabled" }
         viewModelScope.launch {
             settingsRepositoryRef.setDataEncryptionEnabled(enabled)
+        }
+    }
+
+    fun setSuggestionsEnabled(enabled: Boolean) {
+        Logger.d(SettingsDataConstant.TAG) { "Setting suggestions enabled: $enabled" }
+        viewModelScope.launch {
+            settingsRepositoryRef.setSuggestionsEnabled(enabled)
+        }
+    }
+
+    fun showDeleteSuggestionsDialog() {
+        _state.update { it.copy(showDeleteSuggestionsDialog = true) }
+    }
+
+    fun dismissDeleteSuggestionsDialog() {
+        _state.update { it.copy(showDeleteSuggestionsDialog = false) }
+    }
+
+    fun deleteAllSuggestions() {
+        Logger.d(SettingsDataConstant.TAG) { "Deleting all suggestions" }
+        viewModelScope.launch {
+            settingsRepositoryRef.setSuggestionsClearedAt(System.currentTimeMillis())
+            _state.update { it.copy(showDeleteSuggestionsDialog = false) }
         }
     }
 
@@ -118,6 +157,9 @@ class SettingsDataViewModel(
                 pendingBackupFileName = null,
                 showBackupSuccessDialog = true,
             )
+        }
+        viewModelScope.launch {
+            settingsRepositoryRef.setLastBackupTimestamp(System.currentTimeMillis())
         }
     }
 
@@ -197,11 +239,24 @@ class SettingsDataViewModel(
         }
     }
 
+    /**
+     * Garantisce che [block] resti "percepibile" almeno per [SettingsDataConstant.MIN_LOADING_DURATION_MS]:
+     * se l'operazione reale è più veloce, attende la differenza prima di restituire il risultato,
+     * cosicché la dialog di caricamento non lampeggi troppo velocemente per essere notata.
+     */
+    private suspend fun <T> withMinimumLoadingDuration(block: suspend () -> T): T {
+        val startTime = System.currentTimeMillis()
+        val result = block()
+        val remaining = SettingsDataConstant.MIN_LOADING_DURATION_MS - (System.currentTimeMillis() - startTime)
+        if (remaining > 0) delay(remaining)
+        return result
+    }
+
     fun createBackup() {
         Logger.d(SettingsDataConstant.TAG) { "Creating backup" }
         _state.update { it.copy(backupResult = BackupResult.Loading) }
         viewModelScope.launch {
-            backupService.createBackup()
+            withMinimumLoadingDuration { backupService.createBackup() }
                 .onSuccess { jsonString ->
                     val payloadToPersist = if (_state.value.dataEncryptionEnabled) {
                         runCatching { BackupPayloadCipher.encrypt(jsonString) }
@@ -270,7 +325,7 @@ class SettingsDataViewModel(
         }
 
         viewModelScope.launch {
-            backupService.restoreBackup(payloadToRestore)
+            withMinimumLoadingDuration { backupService.restoreBackup(payloadToRestore) }
                 .onSuccess { result ->
                     _state.update {
                         it.copy(
@@ -285,6 +340,7 @@ class SettingsDataViewModel(
                             showRestoreSuccessDialog = true,
                         )
                     }
+                    settingsRepositoryRef.setLastRestoreTimestamp(System.currentTimeMillis())
                 }
                 .onFailure { error ->
                     if (error is CancellationException) throw error

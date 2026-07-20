@@ -9,7 +9,7 @@ class ShareTransactionUseCaseTest {
     private val useCase = ShareTransactionUseCase()
 
     @Test
-    fun `formatTransactionForShare should include transaction title`() {
+    fun formatTransactionForShare_shouldIncludeTransactionTitle() {
         val transaction = Transaction(
             id = 1,
             title = "Test Transaction",
@@ -18,12 +18,12 @@ class ShareTransactionUseCaseTest {
             type = TransactionType.INCOME,
             timestamp = System.currentTimeMillis(),
         )
-        val result = useCase.formatTransactionForShare(transaction, true)
+        val result = useCase(ShareTransactionUseCase.Params(transaction))
         assertTrue(result.contains("Test Transaction"))
     }
 
     @Test
-    fun `formatTransactionForShare should show plus sign for income`() {
+    fun formatTransactionForShare_shouldShowPlusSignForIncome() {
         val transaction = Transaction(
             id = 1,
             title = "Salary",
@@ -32,12 +32,12 @@ class ShareTransactionUseCaseTest {
             type = TransactionType.INCOME,
             timestamp = System.currentTimeMillis(),
         )
-        val result = useCase.formatTransactionForShare(transaction, true)
+        val result = useCase(ShareTransactionUseCase.Params(transaction))
         assertTrue(result.contains("+"))
     }
 
     @Test
-    fun `formatTransactionForShare should include all data when complete`() {
+    fun formatTransactionForShare_shouldIncludeAllData_whenComplete() {
         val transaction = Transaction(
             id = 1,
             title = "Complete",
@@ -52,7 +52,7 @@ class ShareTransactionUseCaseTest {
             recurrenceInterval = "monthly",
             tags = "tag1",
         )
-        val result = useCase.formatTransactionForShare(transaction, false)
+        val result = useCase(ShareTransactionUseCase.Params(transaction))
         assertTrue(result.contains("Complete"))
         assertTrue(result.contains("AntCashManager"))
     }

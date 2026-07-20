@@ -49,6 +49,7 @@ import com.antcashmanager.domain.usecase.transaction.GetTransactionSuggestionsUs
 import com.antcashmanager.domain.usecase.transaction.GetTransactionsByDateRangeUseCase
 import com.antcashmanager.domain.usecase.transaction.GetTransactionsUseCase
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
+import com.antcashmanager.domain.usecase.transaction.SyncTransactionCategoriesUseCase
 import com.antcashmanager.domain.usecase.transaction.UpdateTransactionUseCase
 import org.koin.android.ext.koin.androidApplication
 import org.koin.core.module.dsl.viewModel
@@ -87,6 +88,7 @@ val dataModule = module {
         BackupService(
             transactionRepository = get(),
             categoryRepository = get(),
+            settingsRepository = get(),
         )
     }
     factory<ReceiptOcrService> { MlKitReceiptOcrService() }
@@ -95,12 +97,13 @@ val dataModule = module {
 val useCaseModule = module {
     factory { GetTransactionsUseCase(transactionRepository = get()) }
     factory { GetTransactionsByDateRangeUseCase(transactionRepository = get()) }
-    factory { GetTransactionSuggestionsUseCase(repository = get()) }
+    factory { GetTransactionSuggestionsUseCase(repository = get(), settingsRepository = get()) }
     factory { InsertTransactionUseCase(transactionRepository = get()) }
     factory { UpdateTransactionUseCase(transactionRepository = get()) }
     factory { DeleteTransactionUseCase(transactionRepository = get()) }
     factory { DeleteAllTransactionsUseCase(transactionRepository = get()) }
     factory { FilterTransactionsUseCase() }
+    factory { SyncTransactionCategoriesUseCase(transactionRepository = get()) }
 
     factory { GetCategoriesUseCase(categoryRepository = get()) }
     factory { InsertCategoryUseCase(categoryRepository = get()) }
@@ -150,6 +153,7 @@ val presentationModule = module {
             insertCategoryUseCase = get(),
             updateCategoryUseCase = get(),
             deleteCategoryUseCase = get(),
+            syncTransactionCategoriesUseCase = get(),
         )
     }
     viewModel {
@@ -176,6 +180,7 @@ val presentationModule = module {
         AddTransactionViewModel(
             transactionId = transactionId,
             transactionRepository = get(),
+            settingsRepository = get(),
             getCategoriesUseCase = get(),
             insertTransactionUseCase = get(),
             updateTransactionUseCase = get(),

@@ -73,7 +73,7 @@ fun AntCashManagerNavHost() {
     val decimalDigits by settingsRepository.getDecimalDigits().collectAsState(initial = 2)
     val decimalSeparator by settingsRepository.getDecimalSeparator().collectAsState(initial = ",")
     val thousandsSeparator by settingsRepository.getThousandsSeparator()
-        .collectAsState(initial = ".")
+        .collectAsState(initial = "")
 
     val showInitialAnimation = false
     var showSplash by rememberSaveable { mutableStateOf(true) }

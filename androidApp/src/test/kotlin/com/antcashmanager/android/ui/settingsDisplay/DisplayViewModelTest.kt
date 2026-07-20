@@ -1,18 +1,16 @@
 package com.antcashmanager.android.ui.settingsDisplay
 
 import com.antcashmanager.android.BaseUnitTest
+import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.ui.screen.settingsDisplay.DisplayViewModel
-import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.TransactionDisplayType
-import com.antcashmanager.domain.repository.SettingsRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -29,7 +27,7 @@ class DisplayViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `defaults are exposed correctly`() = runViewModelTest {
+    fun defaultsAreExposedCorrectly() = runViewModelTest {
         val collectJob = launch(
             UnconfinedTestDispatcher(testScheduler)
         ) {
@@ -51,7 +49,7 @@ class DisplayViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `setCurrencySymbol updates value`() = runViewModelTest {
+    fun setCurrencySymbolUpdatesValue() = runViewModelTest {
         val collectJob = launch(
             UnconfinedTestDispatcher(testScheduler)
         ) { launch { viewModel.currencySymbol.collect { } } }
@@ -65,7 +63,7 @@ class DisplayViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `setDecimalDigits updates value`() = runViewModelTest {
+    fun setDecimalDigitsUpdatesValue() = runViewModelTest {
         val collectJob = launch(
             UnconfinedTestDispatcher(testScheduler)
         ) { launch { viewModel.decimalDigits.collect { } } }
@@ -79,7 +77,7 @@ class DisplayViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `setSeparators update values and reset restores defaults`() = runViewModelTest {
+    fun setSeparatorsUpdateValuesAndResetRestoresDefaults() = runViewModelTest {
         val collectJob = launch(
             UnconfinedTestDispatcher(testScheduler)
         ) {
@@ -108,7 +106,7 @@ class DisplayViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `currency inputs are sanitized`() = runViewModelTest {
+    fun currencyInputsAreSanitized() = runViewModelTest {
         val collectJob = launch(
             UnconfinedTestDispatcher(testScheduler)
         ) {
@@ -136,7 +134,7 @@ class DisplayViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `decimal and thousands separators cannot be equal`() = runViewModelTest {
+    fun decimalAndThousandsSeparatorsCannotBeEqual() = runViewModelTest {
         val collectJob = launch(
             UnconfinedTestDispatcher(testScheduler)
         ) {
@@ -145,10 +143,18 @@ class DisplayViewModelTest : BaseUnitTest() {
         }
         advanceUntilIdle()
 
+        // 1. Setting thousands same as current decimal -> should result in default (empty)
+        viewModel.setThousandsSeparator(",")
+        advanceUntilIdle()
+        assertEquals(",", viewModel.decimalSeparator.value)
+        assertEquals("", viewModel.thousandsSeparator.value)
+
+        // 2. Setting thousands different -> should work
         viewModel.setThousandsSeparator(".")
         advanceUntilIdle()
         assertEquals(".", viewModel.thousandsSeparator.value)
 
+        // 3. Setting decimal same as current thousands -> should reset thousands to default (empty)
         viewModel.setDecimalSeparator(".")
         advanceUntilIdle()
 
@@ -158,145 +164,99 @@ class DisplayViewModelTest : BaseUnitTest() {
         collectJob.cancel()
     }
 
-}
+    @Test
+    fun setMealVoucherValueUpdatesValueAndHandlesNegative() = runViewModelTest {
+        val collectJob = launch(
+            UnconfinedTestDispatcher(testScheduler)
+        ) { launch { viewModel.mealVoucherValue.collect { } } }
+        advanceUntilIdle()
 
-// ── Fake repository for testing DisplayViewModel ──
-private class FakeSettingsRepository : SettingsRepository {
-    private val currencySymbolFlow = MutableStateFlow("\u20ac")
-    private val decimalDigitsFlow = MutableStateFlow(2)
-    private val decimalSeparatorFlow = MutableStateFlow(",")
-    private val thousandsSeparatorFlow = MutableStateFlow("")
-    private val showChartsFlow = MutableStateFlow(true)
-    private val showTransactionNotesFlow = MutableStateFlow(true)
-    private val dateFormatFlow = MutableStateFlow("dd/MM/yyyy")
-    private val showPaymentTypeBreakdownFlow = MutableStateFlow(true)
-    private val transactionDisplayTypeFlow = MutableStateFlow(TransactionDisplayType.TREND)
-    private val dateFilterExpandedFlow = MutableStateFlow(false)
-    private val chartsZoomEnabledFlow = MutableStateFlow(false)
-    private val isTutorialCompletedFlow = MutableStateFlow(false)
+        viewModel.setMealVoucherValue(7.5)
+        advanceUntilIdle()
+        assertEquals(7.5, viewModel.mealVoucherValue.value, 0.0)
 
-    override fun getTheme() = throw UnsupportedOperationException()
-    override suspend fun setTheme(theme: com.antcashmanager.domain.model.AppTheme) = Unit
-    override fun getLanguage() = throw UnsupportedOperationException()
-    override suspend fun setLanguage(language: com.antcashmanager.domain.model.AppLanguage) = Unit
-    override fun getShowCharts() = showChartsFlow
-    override suspend fun setShowCharts(show: Boolean) {
-        showChartsFlow.value = show
+        viewModel.setMealVoucherValue(-1.0)
+        advanceUntilIdle()
+        assertEquals(0.0, viewModel.mealVoucherValue.value, 0.0)
+
+        collectJob.cancel()
     }
 
-    override fun getHighContrast() = throw UnsupportedOperationException()
-    override suspend fun setHighContrast(enabled: Boolean) = Unit
-    override fun getLargeText() = throw UnsupportedOperationException()
-    override suspend fun setLargeText(enabled: Boolean) = Unit
-    override fun getReduceMotion() = throw UnsupportedOperationException()
-    override suspend fun setReduceMotion(enabled: Boolean) = Unit
-    override fun getShowTransactionNotes() = showTransactionNotesFlow
-    override suspend fun setShowTransactionNotes(show: Boolean) {
-        showTransactionNotesFlow.value = show
+    @Test
+    fun setDateFormatUpdatesValue() = runViewModelTest {
+        val collectJob = launch(
+            UnconfinedTestDispatcher(testScheduler)
+        ) { launch { viewModel.dateFormat.collect { } } }
+        advanceUntilIdle()
+
+        viewModel.setDateFormat("yyyy-MM-dd")
+        advanceUntilIdle()
+        assertEquals("yyyy-MM-dd", viewModel.dateFormat.value)
+
+        collectJob.cancel()
     }
 
-    override fun getCurrencySymbol(): Flow<String> = currencySymbolFlow
-    override suspend fun setCurrencySymbol(symbol: String) {
-        currencySymbolFlow.value = symbol
+    @Test
+    fun displaySwitchesUpdateValues() = runViewModelTest {
+        val collectJob = launch(
+            UnconfinedTestDispatcher(testScheduler)
+        ) {
+            launch { viewModel.showChartsSection.collect { } }
+            launch { viewModel.chartsZoomEnabled.collect { } }
+            launch { viewModel.showTransactionNotes.collect { } }
+            launch { viewModel.showPaymentTypeBreakdown.collect { } }
+            launch { viewModel.showQuickInsightsCard.collect { } }
+        }
+        advanceUntilIdle()
+
+        viewModel.setShowChartsSection(false)
+        viewModel.setChartsZoomEnabled(true)
+        viewModel.setShowTransactionNotes(false)
+        viewModel.setShowPaymentTypeBreakdown(true)
+        viewModel.setShowQuickInsightsCard(true)
+        advanceUntilIdle()
+
+        assertFalse(viewModel.showChartsSection.value)
+        assertTrue(viewModel.chartsZoomEnabled.value)
+        assertFalse(viewModel.showTransactionNotes.value)
+        assertTrue(viewModel.showPaymentTypeBreakdown.value)
+        assertTrue(viewModel.showQuickInsightsCard.value)
+
+        collectJob.cancel()
     }
 
-    override fun getDecimalDigits(): Flow<Int> = decimalDigitsFlow
-    override suspend fun setDecimalDigits(digits: Int) {
-        decimalDigitsFlow.value = digits
+    @Test
+    fun transactionDisplayTypesUpdateValues() = runViewModelTest {
+        val collectJob = launch(
+            UnconfinedTestDispatcher(testScheduler)
+        ) {
+            launch { viewModel.transactionDisplayType.collect { } }
+            launch { viewModel.transactionsTransactionDisplayType.collect { } }
+        }
+        advanceUntilIdle()
+
+        viewModel.setTransactionDisplayType(TransactionDisplayType.CATEGORY)
+        viewModel.setTransactionsTransactionDisplayType(TransactionDisplayType.CATEGORY)
+        advanceUntilIdle()
+
+        assertEquals(TransactionDisplayType.CATEGORY, viewModel.transactionDisplayType.value)
+        assertEquals(TransactionDisplayType.CATEGORY, viewModel.transactionsTransactionDisplayType.value)
+
+        collectJob.cancel()
     }
 
-    override fun getDecimalSeparator(): Flow<String> = decimalSeparatorFlow
-    override suspend fun setDecimalSeparator(separator: String) {
-        decimalSeparatorFlow.value = separator
+    @Test
+    fun setShowInitialAnimationUpdatesValue() = runViewModelTest {
+        val collectJob = launch(
+            UnconfinedTestDispatcher(testScheduler)
+        ) { launch { viewModel.showInitialAnimation.collect { } } }
+        advanceUntilIdle()
+
+        viewModel.setShowInitialAnimation(false)
+        advanceUntilIdle()
+        assertFalse(viewModel.showInitialAnimation.value)
+
+        collectJob.cancel()
     }
 
-    override fun getThousandsSeparator(): Flow<String> = thousandsSeparatorFlow
-    override suspend fun setThousandsSeparator(separator: String) {
-        thousandsSeparatorFlow.value = separator
-    }
-
-    override fun getDateFormat(): Flow<String> = dateFormatFlow
-    override suspend fun setDateFormat(pattern: String) {
-        dateFormatFlow.value = pattern
-    }
-
-    override fun getDateFilterExpanded(): Flow<Boolean> = dateFilterExpandedFlow
-    override suspend fun setDateFilterExpanded(expanded: Boolean) {
-        dateFilterExpandedFlow.value = expanded
-    }
-
-    override fun getShowPaymentTypeBreakdown(): Flow<Boolean> = showPaymentTypeBreakdownFlow
-    override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {
-        showPaymentTypeBreakdownFlow.value = show
-    }
-
-    override fun getTransactionDisplayType(): Flow<TransactionDisplayType> =
-        transactionDisplayTypeFlow
-
-    override suspend fun setTransactionDisplayType(displayType: TransactionDisplayType) {
-        transactionDisplayTypeFlow.value = displayType
-    }
-
-    override fun getTransactionsTransactionDisplayType(): Flow<TransactionDisplayType> =
-        transactionDisplayTypeFlow
-
-    override suspend fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType) {
-        transactionDisplayTypeFlow.value = displayType
-    }
-
-    override fun getTransactionsDateFilterPreset(): Flow<Int> =
-        throw UnsupportedOperationException()
-
-    override suspend fun setTransactionsDateFilterPreset(index: Int) {}
-    override fun getTransactionsDateFilterState(): Flow<SavedDateFilter> =
-        throw UnsupportedOperationException()
-
-    override suspend fun setTransactionsDateFilterState(filter: SavedDateFilter) {}
-
-    override fun getChartsDateFilterPreset(): Flow<Int> = throw UnsupportedOperationException()
-    override suspend fun setChartsDateFilterPreset(index: Int) {}
-    override fun getChartsDateFilterState(): Flow<SavedDateFilter> = throw UnsupportedOperationException()
-    override suspend fun setChartsDateFilterState(filter: SavedDateFilter) {}
-
-    override fun getHomeDateFilterPreset(): Flow<Int> = throw UnsupportedOperationException()
-    override suspend fun setHomeDateFilterPreset(index: Int) {}
-    override fun getHomeDateFilterState(): Flow<SavedDateFilter> = throw UnsupportedOperationException()
-    override suspend fun setHomeDateFilterState(filter: SavedDateFilter) {}
-
-    override fun getChartsZoomEnabled(): Flow<Boolean> = chartsZoomEnabledFlow
-    override suspend fun setChartsZoomEnabled(enabled: Boolean) {
-        chartsZoomEnabledFlow.value = enabled
-    }
-
-    override fun getShowInitialAnimation(): Flow<Boolean> = flowOf(true)
-    override suspend fun setShowInitialAnimation(show: Boolean) = Unit
-
-    override fun getIsTutorialCompleted(): Flow<Boolean> = isTutorialCompletedFlow
-    override suspend fun setIsTutorialCompleted(completed: Boolean) {
-        isTutorialCompletedFlow.value = completed
-    }
-
-    private val dataEncryptionEnabledFlow = MutableStateFlow(false)
-
-    override fun getDataEncryptionEnabled(): Flow<Boolean> = dataEncryptionEnabledFlow
-
-    override suspend fun setDataEncryptionEnabled(enabled: Boolean) {
-        dataEncryptionEnabledFlow.value = enabled
-    }
-
-    override suspend fun resetAllPreferences() {
-        currencySymbolFlow.value = "\u20ac"
-        decimalDigitsFlow.value = 2
-        decimalSeparatorFlow.value = ","
-        thousandsSeparatorFlow.value = ""
-        showChartsFlow.value = true
-        showTransactionNotesFlow.value = true
-        dateFormatFlow.value = "dd/MM/yyyy"
-        showPaymentTypeBreakdownFlow.value = true
-        transactionDisplayTypeFlow.value = TransactionDisplayType.TREND
-        dateFilterExpandedFlow.value = false
-        chartsZoomEnabledFlow.value = false
-        isTutorialCompletedFlow.value = false
-        dataEncryptionEnabledFlow.value = false
-    }
 }

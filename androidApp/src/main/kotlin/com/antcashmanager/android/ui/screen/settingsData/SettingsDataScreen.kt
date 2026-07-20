@@ -2,6 +2,7 @@ package com.antcashmanager.android.ui.screen.settingsData
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -20,6 +21,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.DeleteSweep
+import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.RestorePage
 import androidx.compose.material3.AlertDialog
@@ -34,6 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
@@ -47,12 +51,16 @@ import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.AppSwitch
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
+import com.antcashmanager.android.ui.components.dialog.BlockingProgressDialog
 import com.antcashmanager.android.ui.components.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import java.nio.charset.StandardCharsets
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -83,6 +91,10 @@ fun SettingsDataScreen(
         onRestoreFileReadError = viewModel::onRestoreFileReadError,
         onClearPendingBackupRequest = viewModel::clearPendingBackupRequest,
         onDataEncryptionEnabledChange = viewModel::setDataEncryptionEnabled,
+        onSuggestionsEnabledChange = viewModel::setSuggestionsEnabled,
+        onShowDeleteSuggestionsDialog = viewModel::showDeleteSuggestionsDialog,
+        onDismissDeleteSuggestionsDialog = viewModel::dismissDeleteSuggestionsDialog,
+        onDeleteAllSuggestions = viewModel::deleteAllSuggestions,
         onNavigateBack = { navController.popBackStack() },
     )
 }
@@ -109,6 +121,10 @@ internal fun SettingsDataContent(
     onRestoreFileReadError: (String) -> Unit = {},
     onClearPendingBackupRequest: () -> Unit = {},
     onDataEncryptionEnabledChange: (Boolean) -> Unit = {},
+    onSuggestionsEnabledChange: (Boolean) -> Unit = {},
+    onShowDeleteSuggestionsDialog: () -> Unit = {},
+    onDismissDeleteSuggestionsDialog: () -> Unit = {},
+    onDeleteAllSuggestions: () -> Unit = {},
     onNavigateBack: () -> Unit = {},
 ) {
     val context = LocalContext.current
@@ -214,6 +230,8 @@ internal fun SettingsDataContent(
             ) {
                 item {
                     DataManagementSection(
+                        lastBackupTimestamp = state.lastBackupTimestamp,
+                        lastRestoreTimestamp = state.lastRestoreTimestamp,
                         onCreateBackup = {
                             analyticsManager.logEvent("backup_create_requested")
                             onCreateBackup()
@@ -239,6 +257,14 @@ internal fun SettingsDataContent(
                         onDataEncryptionEnabledChange = onDataEncryptionEnabledChange,
                     )
                 }
+
+                item {
+                    SuggestionsSection(
+                        suggestionsEnabled = state.suggestionsEnabled,
+                        onSuggestionsEnabledChange = onSuggestionsEnabledChange,
+                        onShowDeleteSuggestionsDialog = onShowDeleteSuggestionsDialog,
+                    )
+                }
             }
         } else {
             Row(
@@ -261,6 +287,8 @@ internal fun SettingsDataContent(
                     verticalArrangement = Arrangement.spacedBy(SettingsDataConstant.CARD_SPACING_DP.dp),
                 ) {
                     DataManagementSection(
+                        lastBackupTimestamp = state.lastBackupTimestamp,
+                        lastRestoreTimestamp = state.lastRestoreTimestamp,
                         onCreateBackup = {
                             analyticsManager.logEvent("backup_create_requested")
                             onCreateBackup()
@@ -286,6 +314,11 @@ internal fun SettingsDataContent(
                     SecuritySection(
                         dataEncryptionEnabled = state.dataEncryptionEnabled,
                         onDataEncryptionEnabledChange = onDataEncryptionEnabledChange,
+                    )
+                    SuggestionsSection(
+                        suggestionsEnabled = state.suggestionsEnabled,
+                        onSuggestionsEnabledChange = onSuggestionsEnabledChange,
+                        onShowDeleteSuggestionsDialog = onShowDeleteSuggestionsDialog,
                     )
                 }
             }
@@ -449,10 +482,62 @@ internal fun SettingsDataContent(
             },
         )
     }
+
+    if (state.showDeleteSuggestionsDialog) {
+        AlertDialog(
+            onDismissRequest = onDismissDeleteSuggestionsDialog,
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.DeleteSweep,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.error,
+                )
+            },
+            title = { AppText(stringResource(R.string.dialog_delete_suggestions_title)) },
+            text = {
+                AppText(
+                    stringResource(R.string.dialog_delete_suggestions_message),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    analyticsManager.logEvent("delete_suggestions_confirmed")
+                    onDeleteAllSuggestions()
+                }) {
+                    AppText(
+                        stringResource(R.string.dialog_delete),
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismissDeleteSuggestionsDialog) {
+                    AppText(stringResource(R.string.common_cancel))
+                }
+            },
+        )
+    }
+
+    if (state.backupResult is BackupResult.Loading) {
+        BlockingProgressDialog(
+            message = stringResource(R.string.backup_in_progress_message),
+            icon = Icons.Default.Backup,
+        )
+    }
+
+    if (state.restoreResult is RestoreOperationResult.Loading) {
+        BlockingProgressDialog(
+            message = stringResource(R.string.restore_in_progress_message),
+            icon = Icons.Default.RestorePage,
+        )
+    }
 }
 
 @Composable
 private fun DataManagementSection(
+    lastBackupTimestamp: Long?,
+    lastRestoreTimestamp: Long?,
     onCreateBackup: () -> Unit,
     onRestoreBackup: () -> Unit,
     onShowResetPreferencesDialog: () -> Unit,
@@ -469,6 +554,11 @@ private fun DataManagementSection(
             iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
             onClick = onCreateBackup,
         )
+        LastOperationLabel(
+            timestamp = lastBackupTimestamp,
+            labelRes = R.string.settings_last_backup_label,
+            neverRes = R.string.settings_last_backup_never,
+        )
         AppCard(
             title = stringResource(R.string.settings_restore),
             subtitle = stringResource(R.string.settings_restore_subtitle),
@@ -476,6 +566,11 @@ private fun DataManagementSection(
             iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
             iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
             onClick = onRestoreBackup,
+        )
+        LastOperationLabel(
+            timestamp = lastRestoreTimestamp,
+            labelRes = R.string.settings_last_restore_label,
+            neverRes = R.string.settings_last_restore_never,
         )
         AppCard(
             title = stringResource(R.string.settings_reset_preferences),
@@ -498,6 +593,30 @@ private fun DataManagementSection(
     }
 }
 
+/**
+ * Piccola label mostrata sotto le card di backup/ripristino con la data dell'ultima
+ * operazione effettuata su questo device, o un messaggio "mai effettuato" se [timestamp] è null.
+ */
+@Composable
+private fun LastOperationLabel(
+    timestamp: Long?,
+    @StringRes labelRes: Int,
+    @StringRes neverRes: Int,
+) {
+    val dateFormat = remember { SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()) }
+    val text = if (timestamp != null) {
+        stringResource(labelRes, dateFormat.format(Date(timestamp)))
+    } else {
+        stringResource(neverRes)
+    }
+    AppText(
+        text = text,
+        style = MaterialTheme.typography.labelSmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.padding(start = 4.dp, top = 2.dp, bottom = 4.dp),
+    )
+}
+
 @Composable
 private fun SecuritySection(
     dataEncryptionEnabled: Boolean,
@@ -517,6 +636,39 @@ private fun SecuritySection(
         },
         onClick = { onDataEncryptionEnabledChange(!dataEncryptionEnabled) },
     )
+}
+
+@Composable
+private fun SuggestionsSection(
+    suggestionsEnabled: Boolean,
+    onSuggestionsEnabledChange: (Boolean) -> Unit,
+    onShowDeleteSuggestionsDialog: () -> Unit,
+) {
+    AppCardSectionHeader(title = stringResource(R.string.settings_suggestions))
+    Spacer(modifier = Modifier.height(SettingsDataConstant.CARD_SPACING_DP.dp))
+    Column(verticalArrangement = Arrangement.spacedBy(SettingsDataConstant.CARD_SPACING_DP.dp)) {
+        AppCard(
+            title = stringResource(R.string.settings_suggestions_enable),
+            subtitle = stringResource(R.string.settings_suggestions_enable_subtitle),
+            leadingIcon = Icons.Default.Lightbulb,
+            trailingContent = {
+                AppSwitch(
+                    checked = suggestionsEnabled,
+                    onCheckedChange = onSuggestionsEnabledChange,
+                )
+            },
+            onClick = { onSuggestionsEnabledChange(!suggestionsEnabled) },
+        )
+        AppCard(
+            title = stringResource(R.string.settings_suggestions_delete_all),
+            subtitle = stringResource(R.string.settings_suggestions_delete_all_subtitle),
+            leadingIcon = Icons.Default.DeleteSweep,
+            iconBackgroundColor = MaterialTheme.colorScheme.errorContainer,
+            iconTint = MaterialTheme.colorScheme.onErrorContainer,
+            showChevron = false,
+            onClick = onShowDeleteSuggestionsDialog,
+        )
+    }
 }
 
 @Preview(showBackground = true)

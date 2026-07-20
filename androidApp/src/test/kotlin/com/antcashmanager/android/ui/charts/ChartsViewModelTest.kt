@@ -1,18 +1,14 @@
 package com.antcashmanager.android.ui.charts
 
 import com.antcashmanager.android.BaseUnitTest
+import com.antcashmanager.android.testutil.FakeSettingsRepository
+import com.antcashmanager.android.testutil.FakeTransactionRepository
 import com.antcashmanager.android.ui.screen.charts.ChartsViewModel
 import com.antcashmanager.android.ui.screen.charts.RangePreset
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
-import com.antcashmanager.domain.repository.SettingsRepository
-import com.antcashmanager.domain.repository.TransactionRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -39,7 +35,7 @@ class ChartsViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `initial chart data is empty`() = runViewModelTest {
+    fun initialChartDataIsEmpty() = runViewModelTest {
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.chartData.collect {}
         }
@@ -50,7 +46,7 @@ class ChartsViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `chart data computes totals correctly`() = runViewModelTest {
+    fun chartDataComputesTotalsCorrectly() = runViewModelTest {
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.chartData.collect {}
         }
@@ -91,7 +87,7 @@ class ChartsViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `setPresetRange updates date range`() = runViewModelTest {
+    fun setPresetRangeUpdatesDateRange() = runViewModelTest {
         val initialRange = viewModel.dateRange.value
         viewModel.setPresetRange(RangePreset.YEAR)
         advanceUntilIdle()
@@ -100,7 +96,37 @@ class ChartsViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `expense by category groups correctly`() = runViewModelTest {
+    fun setPresetRangeUpdatesDateRange_whenMultiYearPresetsAreSelected() = runViewModelTest {
+        val multiYearPresets = listOf(
+            RangePreset.TWO_YEARS,
+            RangePreset.THREE_YEARS,
+            RangePreset.FIVE_YEARS,
+            RangePreset.SIX_YEARS,
+        )
+        var previousFrom = viewModel.dateRange.value.from
+
+        // Ogni preset viene verificato su una ViewModel dedicata: setPresetRange persiste in modo
+        // fire-and-forget, quindi selezioni multiple ravvicinate sulla stessa istanza potrebbero
+        // risolversi fuori ordine e non sono rappresentative del calcolo del range in sé.
+        multiYearPresets.forEach { preset ->
+            val presetViewModel = ChartsViewModel(
+                transactionRepository = fakeRepo,
+                settingsRepository = FakeSettingsRepository(),
+                dispatcher = testDispatcher,
+            )
+            presetViewModel.setPresetRange(preset)
+            advanceUntilIdle()
+
+            val range = presetViewModel.dateRange.value
+            assertEquals(preset.ordinal, presetViewModel.selectedPresetIndex.value)
+            // Ogni preset più lungo deve produrre un "from" più indietro nel tempo del precedente.
+            assertTrue(range.from <= previousFrom)
+            previousFrom = range.from
+        }
+    }
+
+    @Test
+    fun expenseByCategoryGroupsCorrectly() = runViewModelTest {
         val now = System.currentTimeMillis()
         fakeRepo.transactions.value = listOf(
             Transaction(
@@ -140,7 +166,7 @@ class ChartsViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `custom charts date range is persisted and restored`() = runViewModelTest {
+    fun customChartsDateRangeIsPersistedAndRestored() = runViewModelTest {
         val from = 1_712_000_000_000L
         val to = 1_712_800_000_000L
 
@@ -167,133 +193,3 @@ class ChartsViewModelTest : BaseUnitTest() {
         collectJob.cancel()
     }
 }
-
-private class FakeTransactionRepository : TransactionRepository {
-    val transactions = MutableStateFlow<List<Transaction>>(emptyList())
-    override fun getAllTransactions(): Flow<List<Transaction>> = transactions
-    override suspend fun getTransactionById(id: Long): Transaction? =
-        transactions.value.find { it.id == id }
-
-    override suspend fun insertTransaction(transaction: Transaction): Long {
-        transactions.value = transactions.value + transaction
-        return transaction.id
-    }
-
-    override suspend fun updateTransaction(transaction: Transaction) {
-        transactions.value =
-            transactions.value.map { if (it.id == transaction.id) transaction else it }
-    }
-
-    override suspend fun deleteTransaction(transaction: Transaction) {
-        transactions.value = transactions.value.filter { it.id != transaction.id }
-    }
-
-    override suspend fun deleteAllTransactions() {
-        transactions.value = emptyList()
-    }
-
-    override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> =
-        transactions.map { list -> list.filter { it.timestamp in from..to } }
-
-    override fun getRecurringTransactions(): Flow<List<Transaction>> =
-        transactions.map { list -> list.filter { it.isRecurring } }
-
-    override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) {
-        // No-op for test
-    }
-
-    override fun getDistinctTitles() = flowOf(emptyList<String>())
-    override fun getDistinctPayees() = flowOf(emptyList<String>())
-    override fun getDistinctNotes() = flowOf(emptyList<String>())
-    override fun getDistinctLocations() = flowOf(emptyList<String>())
-    override fun getDistinctTags() = flowOf(emptyList<String>())
-}
-
-private class FakeSettingsRepository : SettingsRepository {
-    private val homeDateFilterState = MutableStateFlow(
-        SavedDateFilter(
-            presetIndex = 1,
-            from = System.currentTimeMillis() - (7L * 24 * 60 * 60 * 1000),
-            to = System.currentTimeMillis(),
-        ),
-    )
-    private val transactionsDateFilterState = MutableStateFlow(
-        SavedDateFilter(
-            presetIndex = 1,
-            from = System.currentTimeMillis() - (7L * 24 * 60 * 60 * 1000),
-            to = System.currentTimeMillis(),
-        ),
-    )
-    @get:JvmName("mutableChartsDateFilterState")
-    val chartsDateFilterState = MutableStateFlow(
-        SavedDateFilter(
-            presetIndex = 1,
-            from = System.currentTimeMillis() - (30L * 24 * 60 * 60 * 1000),
-            to = System.currentTimeMillis(),
-        ),
-    )
-
-    override fun getTheme() = flowOf(com.antcashmanager.domain.model.AppTheme.SYSTEM)
-    override suspend fun setTheme(theme: com.antcashmanager.domain.model.AppTheme) = Unit
-    override fun getLanguage() = flowOf(com.antcashmanager.domain.model.AppLanguage.SYSTEM)
-    override suspend fun setLanguage(language: com.antcashmanager.domain.model.AppLanguage) = Unit
-    override fun getShowCharts() = flowOf(true)
-    override suspend fun setShowCharts(show: Boolean) = Unit
-    override fun getHighContrast() = flowOf(false)
-    override suspend fun setHighContrast(enabled: Boolean) = Unit
-    override fun getLargeText() = flowOf(false)
-    override suspend fun setLargeText(enabled: Boolean) = Unit
-    override fun getReduceMotion() = flowOf(false)
-    override suspend fun setReduceMotion(enabled: Boolean) = Unit
-    override fun getShowTransactionNotes() = flowOf(true)
-    override suspend fun setShowTransactionNotes(show: Boolean) = Unit
-    override fun getCurrencySymbol() = flowOf("€")
-    override suspend fun setCurrencySymbol(symbol: String) = Unit
-    override fun getDecimalDigits() = flowOf(2)
-    override suspend fun setDecimalDigits(digits: Int) = Unit
-    override fun getDecimalSeparator() = flowOf(",")
-    override suspend fun setDecimalSeparator(separator: String) = Unit
-    override fun getThousandsSeparator() = flowOf("")
-    override suspend fun setThousandsSeparator(separator: String) = Unit
-    override fun getDateFormat() = flowOf("dd/MM/yyyy")
-    override suspend fun setDateFormat(pattern: String) = Unit
-    override fun getDateFilterExpanded() = flowOf(true)
-    override suspend fun setDateFilterExpanded(expanded: Boolean) = Unit
-    override fun getHomeDateFilterPreset() = homeDateFilterState.map { it.presetIndex }
-    override suspend fun setHomeDateFilterPreset(index: Int) = Unit
-    override fun getHomeDateFilterState() = homeDateFilterState
-    override suspend fun setHomeDateFilterState(filter: SavedDateFilter) {
-        homeDateFilterState.value = filter
-    }
-
-    override fun getTransactionsDateFilterPreset() = transactionsDateFilterState.map { it.presetIndex }
-    override suspend fun setTransactionsDateFilterPreset(index: Int) = Unit
-    override fun getTransactionsDateFilterState() = transactionsDateFilterState
-    override suspend fun setTransactionsDateFilterState(filter: SavedDateFilter) {
-        transactionsDateFilterState.value = filter
-    }
-
-    override fun getChartsDateFilterPreset() = chartsDateFilterState.map { it.presetIndex }
-    override suspend fun setChartsDateFilterPreset(index: Int) = Unit
-    override fun getChartsDateFilterState() = chartsDateFilterState
-    override suspend fun setChartsDateFilterState(filter: SavedDateFilter) {
-        chartsDateFilterState.value = filter
-    }
-
-    override fun getChartsZoomEnabled() = flowOf(true)
-    override suspend fun setChartsZoomEnabled(enabled: Boolean) = Unit
-    override fun getShowPaymentTypeBreakdown() = flowOf(false)
-    override suspend fun setShowPaymentTypeBreakdown(show: Boolean) = Unit
-    override fun getTransactionDisplayType() = flowOf(com.antcashmanager.domain.model.TransactionDisplayType.TREND)
-    override suspend fun setTransactionDisplayType(displayType: com.antcashmanager.domain.model.TransactionDisplayType) = Unit
-    override fun getTransactionsTransactionDisplayType() = flowOf(com.antcashmanager.domain.model.TransactionDisplayType.TREND)
-    override suspend fun setTransactionsTransactionDisplayType(displayType: com.antcashmanager.domain.model.TransactionDisplayType) = Unit
-    override fun getShowInitialAnimation(): Flow<Boolean> = flowOf(true)
-    override suspend fun setShowInitialAnimation(show: Boolean) = Unit
-    override fun getIsTutorialCompleted() = flowOf(true)
-    override suspend fun setIsTutorialCompleted(completed: Boolean) = Unit
-    override fun getDataEncryptionEnabled() = flowOf(false)
-    override suspend fun setDataEncryptionEnabled(enabled: Boolean) = Unit
-    override suspend fun resetAllPreferences() = Unit
-}
-

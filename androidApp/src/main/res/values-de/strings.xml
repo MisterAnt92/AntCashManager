@@ -69,6 +69,38 @@
     <string name="categories_tab_income">Einnahmen</string>
     <string name="categories_default_badge">Standard</string>
     <string name="categories_icon_label">Symbol</string>
+
+    <!-- Kategorie-Symbole -->
+    <string name="icon_home">Zuhause</string>
+    <string name="icon_directions_car">Verkehr</string>
+    <string name="icon_restaurant">Restaurant</string>
+    <string name="icon_receipt_long">Beleg</string>
+    <string name="icon_local_dining">Fast Food</string>
+    <string name="icon_theater_comedy">Unterhaltung</string>
+    <string name="icon_local_hospital">Gesundheit</string>
+    <string name="icon_shopping_bag">Einkaufen</string>
+    <string name="icon_school">Bildung</string>
+    <string name="icon_more_horiz">Sonstiges</string>
+    <string name="icon_payments">Gehalt</string>
+    <string name="icon_savings">Ersparnisse</string>
+    <string name="icon_currency_exchange">Wechselkurs</string>
+    <string name="icon_trending_up">Investition</string>
+    <string name="icon_work">Arbeit</string>
+    <string name="icon_redeem">Geschenke</string>
+    <string name="icon_flight">Reisen</string>
+    <string name="icon_fitness_center">Fitness</string>
+    <string name="icon_pets">Haustiere</string>
+    <string name="icon_directions_bus">Öffentlicher Nahverkehr</string>
+    <string name="icon_lightbulb">Nebenkosten</string>
+    <string name="icon_celebration">Feier</string>
+    <string name="icon_subscriptions">Abos</string>
+    <string name="icon_fastfood">Snacks</string>
+    <string name="icon_star">Favoriten</string>
+    <string name="icon_volunteer_activism">Wohltätigkeit</string>
+    <string name="icon_directions_bike">Sport</string>
+    <string name="icon_shopping_cart">Lebensmittel</string>
+    <string name="icon_coffee">Kaffee</string>
+
     <string name="charts_period">Zeitraum</string>
     <string name="charts_from">Von: %s</string>
     <string name="charts_to">Bis: %s</string>
@@ -101,6 +133,10 @@
     <string name="range_three_months">3 Monate</string>
     <string name="range_six_months">6 Monate</string>
     <string name="range_year">1 Jahr</string>
+    <string name="range_two_years">2 Jahre</string>
+    <string name="range_three_years">3 Jahre</string>
+    <string name="range_five_years">5 Jahre</string>
+    <string name="range_six_years">6 Jahre</string>
     <string name="range_all">Gesamt</string>
 
     <!-- Range Labels (for collapsed filter) -->
@@ -126,6 +162,11 @@
     <string name="settings_decimal_digits_subtitle">%d Dezimalstellen</string>
     <string name="settings_decimal_separator">Dezimaltrennzeichen</string>
     <string name="settings_thousands_separator">Tausendertrennzeichen</string>
+    <string name="settings_meal_voucher_value">Essensgutschein-Wert</string>
+    <string name="settings_meal_voucher_value_subtitle">Aktueller Wert: %s</string>
+    <string name="dialog_meal_voucher_title">Essensgutschein-Wert festlegen</string>
+    <string name="dialog_meal_voucher_message">Geben Sie den festen Wert Ihres Essensgutscheins ein.</string>
+    <string name="dialog_meal_voucher_label">Gutscheinwert</string>
     <string name="settings_format_preview">Vorschau: %s</string>
     <string name="settings_separator_comma">Komma (,)</string>
     <string name="settings_separator_period">Punkt (.)</string>
@@ -154,12 +195,21 @@
     <string name="settings_security">Sicherheit</string>
     <string name="settings_security_data_encryption">Datenschutz - Verschl\u00fcsselung</string>
     <string name="settings_security_data_encryption_subtitle">Verschl\u00fcsselt und sch\u00fctzt lokale App-Daten</string>
+    <string name="settings_suggestions">Vorschl\u00e4ge</string>
+    <string name="settings_suggestions_enable">Automatische Vorschl\u00e4ge</string>
+    <string name="settings_suggestions_enable_subtitle">Schl\u00e4gt Titel, Zahlungsempf\u00e4nger, Notizen, Orte und Tags aus dem Transaktionsverlauf vor</string>
+    <string name="settings_suggestions_delete_all">Alle Vorschl\u00e4ge l\u00f6schen</string>
+    <string name="settings_suggestions_delete_all_subtitle">Vergisst die aus fr\u00fcheren Transaktionen erstellten Vorschl\u00e4ge</string>
     <string name="settings_delete_all">Alle Daten l\u00f6schen</string>
     <string name="settings_delete_all_subtitle">Alle Transaktionen und Kategorien dauerhaft entfernen</string>
     <string name="settings_backup">Daten sichern</string>
     <string name="settings_backup_subtitle">Exportiere deine Daten zur Sicherung</string>
+    <string name="settings_last_backup_label">Letztes Backup: %s</string>
+    <string name="settings_last_backup_never">Noch kein Backup erstellt</string>
     <string name="settings_restore">Daten wiederherstellen</string>
     <string name="settings_restore_subtitle">Daten aus einer Sicherungsdatei importieren</string>
+    <string name="settings_last_restore_label">Letzte Wiederherstellung: %s</string>
+    <string name="settings_last_restore_never">Noch keine Wiederherstellung durchgeführt</string>
     <string name="settings_support">Support</string>
     <string name="settings_send_feedback">Feedback senden</string>
     <string name="settings_send_feedback_subtitle">Hilf uns die App zu verbessern</string>
@@ -190,11 +240,13 @@
     <string name="backup_success_message">Ihre Daten wurden erfolgreich exportiert.</string>
     <string name="backup_error_title">Backup Fehlgeschlagen</string>
     <string name="backup_error_message">Backup konnte nicht erstellt werden: %s</string>
+    <string name="backup_in_progress_message">Backup wird erstellt…</string>
     <string name="settings_data_file_picker_unavailable">Dateiauswahl ist auf diesem Ger\u00e4t nicht verf\u00fcgbar.</string>
     <string name="restore_success_title">Wiederherstellung Abgeschlossen</string>
     <string name="restore_success_message">Erfolgreich %1$d Transaktionen und %2$d Kategorien wiederhergestellt.</string>
     <string name="restore_error_title">Wiederherstellung Fehlgeschlagen</string>
     <string name="restore_error_message">Backup konnte nicht wiederhergestellt werden: %s</string>
+    <string name="restore_in_progress_message">Daten werden wiederhergestellt…</string>
 
     <string name="dialog_delete_all_title">Alle Daten l\u00f6schen?</string>
     <string name="dialog_delete_all_message">Diese Aktion wird alle Transaktionen und Kategorien dauerhaft l\u00f6schen. Dies kann nicht r\u00fcckg\u00e4ngig gemacht werden.</string>
@@ -206,6 +258,8 @@
     <string name="dialog_choose_thousands_separator">Tausendertrennzeichen</string>
     <string name="dialog_reset_preferences_title">Einstellungen zur\u00fccksetzen</string>
     <string name="dialog_reset_preferences_message">Dadurch werden alle Einstellungen auf Standardwerte zur\u00fcckgesetzt. Fortfahren?</string>
+    <string name="dialog_delete_suggestions_title">Alle Vorschl\u00e4ge l\u00f6schen?</string>
+    <string name="dialog_delete_suggestions_message">Die aus dem Transaktionsverlauf erstellten Vorschl\u00e4ge (Titel, Zahlungsempf\u00e4nger, Notizen, Orte, Tags) werden vergessen. Neue Vorschl\u00e4ge sammeln sich mit weiteren Transaktionen wieder an. Fortfahren?</string>
     <string name="dialog_reset">Zur\u00fccksetzen</string>
     <string name="privacy_policy_title">Datenschutzrichtlinie</string>
     <string name="privacy_policy_content">AntCashManager sch\u00fctzt deine Privatsph\u00e4re. Diese Anwendung sammelt oder teilt keine pers\u00f6nlichen Daten mit Dritten. Alle Finanzdaten werden lokal auf deinem Ger\u00e4t gespeichert und niemals an externe Server \u00fcbertragen.\n\nDeine Daten verbleiben vollst\u00e4ndig auf deinem Ger\u00e4t und unter deiner Kontrolle. Wir verwenden keine Analyse-, Tracking- oder Werbedienste.\n\nBei Fragen zum Datenschutz kontaktiere uns \u00fcber die Store-Seite.</string>
@@ -234,6 +288,8 @@
     <string name="add_transaction_details">Transaktionsdetails</string>
     <string name="add_transaction_title_required">Titel *</string>
     <string name="add_transaction_amount_required">Betrag *</string>
+    <string name="add_transaction_amount_total_meal_vouchers">Gesamtbetrag der Zahlung</string>
+    <string name="add_transaction_amount_total_meal_vouchers_description">Geben Sie den vollständigen bezahlten Betrag ein: den Wert der verwendeten Essensgutscheine zuzüglich einer eventuellen mit anderen Mitteln bezahlten Differenz.</string>
     <string name="add_transaction_notes_label">Notizen</string>
     <string name="add_transaction_payee_label">Empfänger</string>
     <string name="add_transaction_location_label">Ort</string>
@@ -285,6 +341,13 @@
     <string name="add_transaction_payment_type_electronic">Elektronisch</string>
     <string name="add_transaction_payment_type_cash">Bar</string>
     <string name="add_transaction_payment_type_meal_vouchers">Essensgutscheine</string>
+
+    <!-- Add Transaction - Essensgutscheine -->
+    <string name="add_transaction_meal_voucher_section_title">Essensgutscheine</string>
+    <string name="add_transaction_meal_voucher_unit_value">Einzelwert: %s€</string>
+    <string name="add_transaction_meal_voucher_count">Anzahl der Gutscheine</string>
+    <string name="add_transaction_meal_voucher_subtotal">Gutscheine Zwischensumme: %s€</string>
+    <string name="add_transaction_meal_voucher_difference_paid">Bezahlte Differenz</string>
 
     <!-- Empty State -->
     <string name="empty_state_no_transactions">Keine Transaktionen vorhanden</string>

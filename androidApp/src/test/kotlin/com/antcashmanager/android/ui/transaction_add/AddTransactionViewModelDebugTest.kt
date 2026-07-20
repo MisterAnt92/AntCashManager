@@ -1,15 +1,15 @@
 package com.antcashmanager.android.ui.transaction_add
 
 import com.antcashmanager.android.BaseUnitTest
+import com.antcashmanager.android.testutil.FakeCategoryRepository
+import com.antcashmanager.android.testutil.FakeSettingsRepository
+import com.antcashmanager.android.testutil.FakeTransactionRepository
 import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionViewModel
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
-import com.antcashmanager.domain.repository.CategoryRepository
-import com.antcashmanager.domain.repository.TransactionRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
@@ -20,8 +20,9 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class AddTransactionViewModelDebugTest : BaseUnitTest() {
 
-    private lateinit var mockTransactionRepository: TransactionRepository
-    private lateinit var mockCategoryRepository: CategoryRepository
+    private lateinit var transactionRepository: FakeTransactionRepository
+    private lateinit var categoryRepository: FakeCategoryRepository
+    private lateinit var settingsRepository: FakeSettingsRepository
 
     private val mockCategories = listOf(
         Category(1, "Food", "🍔", 0xFFFF6B6B, "EXPENSE"),
@@ -45,55 +46,18 @@ class AddTransactionViewModelDebugTest : BaseUnitTest() {
 
     @Before
     fun setup() {
-        mockTransactionRepository = object : TransactionRepository {
-            override fun getAllTransactions() = flowOf(emptyList<Transaction>())
-            override suspend fun getTransactionById(id: Long) =
-                if (id == 1L) mockTransaction else null
-
-            override suspend fun insertTransaction(transaction: Transaction) = 1L
-            override suspend fun updateTransaction(transaction: Transaction) {}
-            override suspend fun deleteTransaction(transaction: Transaction) {}
-            override suspend fun deleteAllTransactions() {}
-            override fun getTransactionsByDateRange(from: Long, to: Long) =
-                flowOf(emptyList<Transaction>())
-
-            override fun getRecurringTransactions() = flowOf(emptyList<Transaction>())
-
-            override suspend fun updateCategoryData(
-                categoryName: String,
-                icon: String,
-                color: Long
-            ) {
-                // No-op for test
-            }
-
-            override fun getDistinctTitles() = flowOf(emptyList<String>())
-            override fun getDistinctPayees() = flowOf(emptyList<String>())
-            override fun getDistinctNotes() = flowOf(emptyList<String>())
-            override fun getDistinctLocations() = flowOf(emptyList<String>())
-            override fun getDistinctTags() = flowOf(emptyList<String>())
-        }
-
-        mockCategoryRepository = object : CategoryRepository {
-            override fun getAllCategories() = flowOf(mockCategories)
-            override suspend fun getCategoryById(id: Long) = mockCategories.find { it.id == id }
-            override suspend fun insertCategory(category: Category) = 1L
-            override suspend fun updateCategory(category: Category) {}
-            override suspend fun deleteCategory(category: Category) {}
-            override suspend fun deleteAllCategories() {}
-            override fun getCategoriesByType(type: String) =
-                flowOf(mockCategories.filter { it.type == type })
-
-            override suspend fun getDefaultCategoryCount() = mockCategories.size
-
-            override suspend fun getCategoryByName(name: String): Category? =
-                mockCategories.find { it.name == name }
-        }
+        transactionRepository = FakeTransactionRepository(listOf(mockTransaction))
+        categoryRepository = FakeCategoryRepository(mockCategories)
+        settingsRepository = FakeSettingsRepository()
     }
 
     @Test
     fun init_shouldCheckInitialState_whenViewModelIsCreated() = runViewModelTest {
-        val viewModel = AddTransactionViewModel(mockTransactionRepository, mockCategoryRepository)
+        val viewModel = AddTransactionViewModel(
+            transactionRepository,
+            categoryRepository,
+            settingsRepository
+        )
 
         // Avanza il dispatcher per permettere l'inizializzazione
         testDispatcher.scheduler.advanceUntilIdle()
@@ -111,8 +75,9 @@ class AddTransactionViewModelDebugTest : BaseUnitTest() {
     @Test
     fun init_shouldCheckModifyingMode_whenViewModelIsCreatedWithTransactionId() = runViewModelTest {
         val viewModel = AddTransactionViewModel(
-            mockTransactionRepository,
-            mockCategoryRepository,
+            transactionRepository,
+            categoryRepository,
+            settingsRepository,
             transactionId = 1L
         )
 

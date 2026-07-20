@@ -2,19 +2,17 @@ package com.antcashmanager.android.ui.receiptScan
 
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.BaseUnitTest
+import com.antcashmanager.android.testutil.FakeCategoryRepository
+import com.antcashmanager.android.testutil.FakeSettingsRepository
+import com.antcashmanager.android.testutil.FakeTransactionRepository
 import com.antcashmanager.android.ui.screen.receiptScan.ReceiptScanStep
 import com.antcashmanager.android.ui.screen.receiptScan.ReceiptScanViewModel
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
-import com.antcashmanager.domain.model.Transaction
-import com.antcashmanager.domain.repository.CategoryRepository
-import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.service.ReceiptOcrService
 import com.antcashmanager.domain.usecase.receipt.ScanReceiptUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -34,8 +32,8 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class ReceiptScanViewModelTest : BaseUnitTest() {
 
-    private lateinit var fakeTxRepo: FakeViewModelTransactionRepository
-    private lateinit var fakeCatRepo: FakeViewModelCategoryRepository
+    private lateinit var fakeTxRepo: FakeTransactionRepository
+    private lateinit var fakeCatRepo: FakeCategoryRepository
     private lateinit var viewModel: ReceiptScanViewModel
 
     private val expenseCategory = Category(id = 1L, name = "Alimentari", type = "EXPENSE")
@@ -43,14 +41,15 @@ class ReceiptScanViewModelTest : BaseUnitTest() {
 
     @Before
     fun setup() {
-        fakeTxRepo = FakeViewModelTransactionRepository()
-        fakeCatRepo = FakeViewModelCategoryRepository(listOf(expenseCategory, incomeCategory))
+        fakeTxRepo = FakeTransactionRepository()
+        fakeCatRepo = FakeCategoryRepository(listOf(expenseCategory, incomeCategory))
         val fakeOcrService = FakeTestOcrService()
         val scanUseCase = ScanReceiptUseCase(fakeOcrService)
         viewModel = ReceiptScanViewModel(
             scanReceiptUseCase = scanUseCase,
             transactionRepository = fakeTxRepo,
             categoryRepository = fakeCatRepo,
+            settingsRepository = FakeSettingsRepository(),
             dispatcher = testDispatcher,
         )
     }
@@ -223,53 +222,5 @@ class ReceiptScanViewModelTest : BaseUnitTest() {
 private class FakeTestOcrService : ReceiptOcrService {
     override suspend fun extractText(imageBytes: ByteArray): Result<String> =
         Result.success("TOTALE 68,90\nIVA 22% 12,40")
-}
-
-// ── Fake Repositories ────────────────────────────────────────────────────────
-
-private class FakeViewModelTransactionRepository : TransactionRepository {
-    val insertedTransactions = mutableListOf<Transaction>()
-    private var nextId = 1L
-    var shouldThrow = false
-
-    override suspend fun insertTransaction(transaction: Transaction): Long {
-        if (shouldThrow) throw RuntimeException("DB error")
-        insertedTransactions.add(transaction)
-        return nextId++
-    }
-
-    override fun getAllTransactions(): Flow<List<Transaction>> = flowOf(emptyList())
-    override suspend fun getTransactionById(id: Long): Transaction? = null
-    override suspend fun updateTransaction(transaction: Transaction) {}
-    override suspend fun deleteTransaction(transaction: Transaction) {}
-    override suspend fun deleteAllTransactions() {}
-    override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> =
-        flowOf(emptyList())
-
-    override fun getRecurringTransactions(): Flow<List<Transaction>> = flowOf(emptyList())
-    override suspend fun updateCategoryData(categoryName: String, icon: String, color: Long) {}
-    override fun getDistinctTitles() = flowOf(emptyList<String>())
-    override fun getDistinctPayees() = flowOf(emptyList<String>())
-    override fun getDistinctNotes() = flowOf(emptyList<String>())
-    override fun getDistinctLocations() = flowOf(emptyList<String>())
-    override fun getDistinctTags() = flowOf(emptyList<String>())
-}
-
-private class FakeViewModelCategoryRepository(
-    private val categories: List<Category> = emptyList(),
-) : CategoryRepository {
-    override fun getAllCategories(): Flow<List<Category>> = flowOf(categories)
-    override suspend fun getCategoryById(id: Long): Category? = categories.find { it.id == id }
-    override suspend fun getCategoryByName(name: String): Category? =
-        categories.find { it.name == name }
-
-    override suspend fun insertCategory(category: Category): Long = 0L
-    override suspend fun updateCategory(category: Category) {}
-    override suspend fun deleteCategory(category: Category) {}
-    override suspend fun deleteAllCategories() {}
-    override fun getCategoriesByType(type: String): Flow<List<Category>> =
-        flowOf(categories.filter { it.type.equals(type, ignoreCase = true) })
-
-    override suspend fun getDefaultCategoryCount(): Int = categories.count { it.isDefault }
 }
 

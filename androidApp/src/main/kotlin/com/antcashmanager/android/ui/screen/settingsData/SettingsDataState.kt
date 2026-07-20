@@ -20,6 +20,10 @@ data class SettingsDataState(
     val pendingBackupData: String? = null,
     val pendingBackupFileName: String? = null,
     val dataEncryptionEnabled: Boolean = false,
+    val lastBackupTimestamp: Long? = null,
+    val lastRestoreTimestamp: Long? = null,
+    val suggestionsEnabled: Boolean = true,
+    val showDeleteSuggestionsDialog: Boolean = false,
 )
 
 data class RestoreSuccessInfo(

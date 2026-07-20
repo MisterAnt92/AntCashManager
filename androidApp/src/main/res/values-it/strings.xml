@@ -101,6 +101,38 @@
     <string name="categories_tab_income">Entrate</string>
     <string name="categories_default_badge">Predefinita</string>
     <string name="categories_icon_label">Icona</string>
+
+    <!-- Icone Categorie -->
+    <string name="icon_home">Casa</string>
+    <string name="icon_directions_car">Trasporti</string>
+    <string name="icon_restaurant">Ristorante</string>
+    <string name="icon_receipt_long">Scontrino</string>
+    <string name="icon_local_dining">Pranzo fuori</string>
+    <string name="icon_theater_comedy">Divertimento</string>
+    <string name="icon_local_hospital">Salute</string>
+    <string name="icon_shopping_bag">Shopping</string>
+    <string name="icon_school">Istruzione</string>
+    <string name="icon_more_horiz">Altro</string>
+    <string name="icon_payments">Stipendio</string>
+    <string name="icon_savings">Risparmi</string>
+    <string name="icon_currency_exchange">Cambio</string>
+    <string name="icon_trending_up">Investimento</string>
+    <string name="icon_work">Lavoro</string>
+    <string name="icon_redeem">Regali</string>
+    <string name="icon_flight">Viaggi</string>
+    <string name="icon_fitness_center">Palestra</string>
+    <string name="icon_pets">Animali</string>
+    <string name="icon_directions_bus">Mezzi pubblici</string>
+    <string name="icon_lightbulb">Utenze</string>
+    <string name="icon_celebration">Feste</string>
+    <string name="icon_subscriptions">Abbonamenti</string>
+    <string name="icon_fastfood">Snack</string>
+    <string name="icon_star">Preferiti</string>
+    <string name="icon_volunteer_activism">Beneficenza</string>
+    <string name="icon_directions_bike">Sport</string>
+    <string name="icon_shopping_cart">Spesa</string>
+    <string name="icon_coffee">Caffè</string>
+
     <string name="charts_period">Periodo</string>
     <string name="charts_from">Dal: %s</string>
     <string name="charts_to">Al: %s</string>
@@ -133,6 +165,10 @@
     <string name="range_three_months">3 mesi</string>
     <string name="range_six_months">6 mesi</string>
     <string name="range_year">1 anno</string>
+    <string name="range_two_years">2 anni</string>
+    <string name="range_three_years">3 anni</string>
+    <string name="range_five_years">5 anni</string>
+    <string name="range_six_years">6 anni</string>
     <string name="range_all">Tutto</string>
     <string name="range_label_today">Oggi</string>
     <string name="range_label_this_week">7 giorni</string>
@@ -155,6 +191,11 @@
     <string name="settings_decimal_digits_subtitle">%d cifre decimali</string>
     <string name="settings_decimal_separator">Separatore Decimali</string>
     <string name="settings_thousands_separator">Separatore Migliaia</string>
+    <string name="settings_meal_voucher_value">Valore Buono Pasto</string>
+    <string name="settings_meal_voucher_value_subtitle">Valore attuale: %s</string>
+    <string name="dialog_meal_voucher_title">Imposta Valore Buono Pasto</string>
+    <string name="dialog_meal_voucher_message">Inserisci il valore fisso del tuo buono pasto.</string>
+    <string name="dialog_meal_voucher_label">Valore Buono</string>
     <string name="settings_format_preview">Anteprima: %s</string>
     <string name="settings_separator_comma">Virgola (,)</string>
     <string name="settings_separator_period">Punto (.)</string>
@@ -183,12 +224,21 @@
     <string name="settings_security">Sicurezza</string>
     <string name="settings_security_data_encryption">Dati in sicurezza - Crittografia</string>
     <string name="settings_security_data_encryption_subtitle">Cripta e protegge i dati locali dell\'app</string>
+    <string name="settings_suggestions">Suggerimenti</string>
+    <string name="settings_suggestions_enable">Suggerimenti automatici</string>
+    <string name="settings_suggestions_enable_subtitle">Suggerisce titoli, beneficiari, note, luoghi e tag dallo storico delle transazioni</string>
+    <string name="settings_suggestions_delete_all">Elimina tutti i suggerimenti</string>
+    <string name="settings_suggestions_delete_all_subtitle">Dimentica i suggerimenti costruiti dalle transazioni passate</string>
     <string name="settings_delete_all">Elimina tutti i dati</string>
     <string name="settings_delete_all_subtitle">Rimuovi permanentemente tutte le transazioni e categorie</string>
     <string name="settings_backup">Backup Dati</string>
     <string name="settings_backup_subtitle">Esporta i tuoi dati per sicurezza</string>
+    <string name="settings_last_backup_label">Ultimo backup: %s</string>
+    <string name="settings_last_backup_never">Nessun backup effettuato</string>
     <string name="settings_restore">Ripristina Dati</string>
     <string name="settings_restore_subtitle">Importa dati da un file di backup</string>
+    <string name="settings_last_restore_label">Ultimo ripristino: %s</string>
+    <string name="settings_last_restore_never">Nessun ripristino effettuato</string>
     <string name="settings_support">Supporto</string>
     <string name="settings_send_feedback">Invia Feedback</string>
     <string name="settings_send_feedback_subtitle">Aiutaci a migliorare l\'app</string>
@@ -219,17 +269,21 @@
     <string name="backup_success_message">I tuoi dati sono stati esportati con successo.</string>
     <string name="backup_error_title">Backup Fallito</string>
     <string name="backup_error_message">Impossibile creare il backup: %s</string>
+    <string name="backup_in_progress_message">Creazione del backup in corso…</string>
     <string name="settings_data_file_picker_unavailable">Selettore file non disponibile su questo dispositivo.</string>
     <string name="restore_success_title">Ripristino Completato</string>
     <string name="restore_success_message">Ripristinate con successo %1$d transazioni e %2$d categorie.</string>
     <string name="restore_error_title">Ripristino Fallito</string>
     <string name="restore_error_message">Impossibile ripristinare il backup: %s</string>
+    <string name="restore_in_progress_message">Ripristino dei dati in corso…</string>
     <string name="dialog_delete_all_title">Eliminare tutti i dati?</string>
     <string name="dialog_delete_all_message">Questa azione eliminer\u00e0 permanentemente tutte le transazioni e le categorie. Non \u00e8 possibile annullare.</string>
     <string name="dialog_data_deleted">Dati Eliminati</string>
     <string name="dialog_data_deleted_message">Tutti i dati sono stati eliminati con successo.</string>
     <string name="dialog_reset_preferences_title">Ripristina Preferenze</string>
     <string name="dialog_reset_preferences_message">Questa operazione ripristiner\u00e0 tutte le impostazioni ai valori predefiniti. Continuare?</string>
+    <string name="dialog_delete_suggestions_title">Eliminare tutti i suggerimenti?</string>
+    <string name="dialog_delete_suggestions_message">I suggerimenti costruiti dallo storico delle transazioni (titoli, beneficiari, note, luoghi, tag) verranno dimenticati. Nuovi suggerimenti si accumuleranno di nuovo con le prossime transazioni. Continuare?</string>
     <string name="dialog_reset">Ripristina</string>
     <string name="privacy_policy_title">Informativa sulla Privacy</string>
     <string name="privacy_policy_content">AntCashManager si impegna a proteggere la tua privacy. Questa applicazione non raccoglie n\u00e9 condivide dati personali con terze parti. Tutti i dati finanziari sono memorizzati localmente sul tuo dispositivo e non vengono mai trasmessi a server esterni.\n\nI tuoi dati rimangono interamente sul tuo dispositivo e sotto il tuo controllo. Non utilizziamo pubblicit\u00e0.\n\nPer qualsiasi domanda sulla privacy, contattaci attraverso la pagina dello store.</string>
@@ -254,6 +308,8 @@
     <string name="add_transaction_details">Dettagli Transazione</string>
     <string name="add_transaction_title_required">Titolo *</string>
     <string name="add_transaction_amount_required">Importo *</string>
+    <string name="add_transaction_amount_total_meal_vouchers">Importo totale del pagamento</string>
+    <string name="add_transaction_amount_total_meal_vouchers_description">Inserisci l\'importo totale pagato: il valore dei buoni pasto utilizzati più l\'eventuale differenza pagata con altri mezzi.</string>
     <string name="add_transaction_notes_label">Note</string>
     <string name="add_transaction_payee_label">Beneficiario</string>
     <string name="add_transaction_location_label">Luogo</string>
@@ -294,6 +350,14 @@
     <string name="add_transaction_payment_type_electronic">Elettronico</string>
     <string name="add_transaction_payment_type_cash">Contante</string>
     <string name="add_transaction_payment_type_meal_vouchers">Buoni Pasto</string>
+
+    <!-- Add Transaction - Buoni Pasto -->
+    <string name="add_transaction_meal_voucher_section_title">Buoni Pasto</string>
+    <string name="add_transaction_meal_voucher_unit_value">Valore unitario: %s€</string>
+    <string name="add_transaction_meal_voucher_count">Numero di buoni</string>
+    <string name="add_transaction_meal_voucher_subtotal">Subtotale buoni: %s€</string>
+    <string name="add_transaction_meal_voucher_difference_paid">Differenza pagata</string>
+
     <string name="empty_state_no_transactions">Nessuna transazione presente</string>
     <string name="empty_state_no_transactions_subtitle">Il salvadanaio ti sta aspettando!</string>
     <string name="settings_show_payment_breakdown">Mostra saldo per tipo di pagamento</string>

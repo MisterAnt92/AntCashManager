@@ -4,7 +4,6 @@ import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
-import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.TransactionRepository
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -29,12 +28,10 @@ class TransactionMaintenanceUseCasesMockkTest {
     private val dispatcher = StandardTestDispatcher()
 
     private lateinit var transactionRepository: TransactionRepository
-    private lateinit var categoryRepository: CategoryRepository
 
     @BeforeTest
     fun setup() {
         transactionRepository = mockk()
-        categoryRepository = mockk()
     }
 
     @Test
@@ -91,36 +88,35 @@ class TransactionMaintenanceUseCasesMockkTest {
     }
 
     @Test
-    fun invoke_shouldUpdateCategoryData_whenCategoryIsFound() = runTest(dispatcher) {
-        val categoryName = "Food"
+    fun invoke_shouldRenameCategoryOnTransactions_whenCategoryNameChanges() = runTest(dispatcher) {
+        val oldCategoryName = "Pranzi / Cenette fuori"
         val category = Category(
-            id = 7L,
-            name = categoryName,
-            icon = "restaurant",
+            id = 6L,
+            name = "Pranzi/Cene fuori",
+            icon = "local_dining",
             color = 0xFFE57373,
             type = "EXPENSE",
         )
         val useCase = SyncTransactionCategoriesUseCase(
             transactionRepository = transactionRepository,
-            categoryRepository = categoryRepository,
             dispatcher = dispatcher,
         )
-        coEvery { categoryRepository.getCategoryByName(categoryName) } returns category
         coEvery {
-            transactionRepository.updateCategoryData(
-                categoryName = categoryName,
+            transactionRepository.renameCategory(
+                oldCategoryName = oldCategoryName,
+                newCategoryName = category.name,
                 icon = category.icon,
                 color = category.color,
             )
         } just Runs
 
-        val result = useCase(SyncTransactionCategoriesUseCase.Params(categoryName = categoryName))
+        val result = useCase(SyncTransactionCategoriesUseCase.Params(oldCategoryName, category))
 
         assertTrue(result.isSuccess)
-        coVerify(exactly = 1) { categoryRepository.getCategoryByName(categoryName) }
         coVerify(exactly = 1) {
-            transactionRepository.updateCategoryData(
-                categoryName = categoryName,
+            transactionRepository.renameCategory(
+                oldCategoryName = oldCategoryName,
+                newCategoryName = category.name,
                 icon = category.icon,
                 color = category.color,
             )
@@ -128,20 +124,28 @@ class TransactionMaintenanceUseCasesMockkTest {
     }
 
     @Test
-    fun invoke_shouldNotUpdateCategoryData_whenCategoryIsMissing() = runTest(dispatcher) {
-        val categoryName = "Unknown"
+    fun invoke_shouldReturnFailure_whenTransactionRepositoryThrows() = runTest(dispatcher) {
+        val oldCategoryName = "Food"
+        val category = Category(
+            id = 7L,
+            name = "Food",
+            icon = "restaurant",
+            color = 0xFFE57373,
+            type = "EXPENSE",
+        )
         val useCase = SyncTransactionCategoriesUseCase(
             transactionRepository = transactionRepository,
-            categoryRepository = categoryRepository,
             dispatcher = dispatcher,
         )
-        coEvery { categoryRepository.getCategoryByName(categoryName) } returns null
+        val expectedError = IllegalStateException("rename-failed")
+        coEvery {
+            transactionRepository.renameCategory(any(), any(), any(), any())
+        } throws expectedError
 
-        val result = useCase(SyncTransactionCategoriesUseCase.Params(categoryName = categoryName))
+        val result = useCase(SyncTransactionCategoriesUseCase.Params(oldCategoryName, category))
 
-        assertTrue(result.isSuccess)
-        coVerify(exactly = 1) { categoryRepository.getCategoryByName(categoryName) }
-        coVerify(exactly = 0) { transactionRepository.updateCategoryData(any(), any(), any()) }
+        assertTrue(result.isFailure)
+        assertEquals(expectedError, result.exceptionOrNull())
     }
 
     @Test

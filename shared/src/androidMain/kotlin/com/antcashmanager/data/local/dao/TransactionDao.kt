@@ -38,22 +38,25 @@ interface TransactionDao {
     @Query("SELECT * FROM transactions WHERE is_recurring = 1 ORDER BY timestamp DESC")
     fun getRecurringTransactions(): Flow<List<TransactionEntity>>
 
-    @Query("UPDATE transactions SET category_icon = :icon, category_color = :color WHERE category = :categoryName")
-    suspend fun updateCategoryData(categoryName: String, icon: String, color: Long)
+    @Query(
+        "UPDATE transactions SET category = :newCategoryName, category_icon = :icon, category_color = :color " +
+                "WHERE category = :oldCategoryName",
+    )
+    suspend fun renameCategory(oldCategoryName: String, newCategoryName: String, icon: String, color: Long)
 
-    // Query per suggerimenti transazioni
-    @Query("SELECT DISTINCT title FROM transactions WHERE title != '' ORDER BY timestamp DESC LIMIT 20")
-    fun getDistinctTitles(): Flow<List<String>>
+    // Query per suggerimenti transazioni. :since filtra le transazioni con timestamp >= since.
+    @Query("SELECT DISTINCT title FROM transactions WHERE title != '' AND timestamp >= :since ORDER BY timestamp DESC LIMIT 20")
+    fun getDistinctTitles(since: Long): Flow<List<String>>
 
-    @Query("SELECT DISTINCT payee FROM transactions WHERE payee != '' ORDER BY timestamp DESC LIMIT 20")
-    fun getDistinctPayees(): Flow<List<String>>
+    @Query("SELECT DISTINCT payee FROM transactions WHERE payee != '' AND timestamp >= :since ORDER BY timestamp DESC LIMIT 20")
+    fun getDistinctPayees(since: Long): Flow<List<String>>
 
-    @Query("SELECT DISTINCT notes FROM transactions WHERE notes != '' ORDER BY timestamp DESC LIMIT 20")
-    fun getDistinctNotes(): Flow<List<String>>
+    @Query("SELECT DISTINCT notes FROM transactions WHERE notes != '' AND timestamp >= :since ORDER BY timestamp DESC LIMIT 20")
+    fun getDistinctNotes(since: Long): Flow<List<String>>
 
-    @Query("SELECT DISTINCT location FROM transactions WHERE location != '' ORDER BY timestamp DESC LIMIT 20")
-    fun getDistinctLocations(): Flow<List<String>>
+    @Query("SELECT DISTINCT location FROM transactions WHERE location != '' AND timestamp >= :since ORDER BY timestamp DESC LIMIT 20")
+    fun getDistinctLocations(since: Long): Flow<List<String>>
 
-    @Query("SELECT DISTINCT tags FROM transactions WHERE tags != '' ORDER BY timestamp DESC LIMIT 20")
-    fun getDistinctTags(): Flow<List<String>>
+    @Query("SELECT DISTINCT tags FROM transactions WHERE tags != '' AND timestamp >= :since ORDER BY timestamp DESC LIMIT 20")
+    fun getDistinctTags(since: Long): Flow<List<String>>
 }

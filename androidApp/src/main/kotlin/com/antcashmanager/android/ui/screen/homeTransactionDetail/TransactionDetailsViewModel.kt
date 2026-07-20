@@ -5,7 +5,6 @@ import android.content.Intent
 import androidx.lifecycle.ViewModel
 import com.antcashmanager.android.R
 import com.antcashmanager.domain.model.Transaction
-import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.usecase.ShareTransactionUseCase
 
 /**
@@ -26,11 +25,9 @@ class TransactionDetailsViewModel(
         transaction: Transaction,
         context: Context,
     ) {
-        val isIncome = transaction.type == TransactionType.INCOME
         // Usa lo use case per formattare i dati (Business Logic)
-        val shareText = shareTransactionUseCase.formatTransactionForShare(
-            transaction = transaction,
-            isIncome = isIncome,
+        val shareText = shareTransactionUseCase(
+            ShareTransactionUseCase.Params(transaction)
         )
         // Crea l'intent di condivisione (Android-specific)
         val shareIntent = Intent().apply {

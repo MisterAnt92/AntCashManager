@@ -62,6 +62,14 @@ class DisplayViewModel(
         )
 
 
+    // Espone il valore del buono pasto
+    val mealVoucherValue = settingsRepository.getMealVoucherValue()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_MEAL_VOUCHER_VALUE,
+        )
+
     // Espone la preferenza per mostrare la sezione grafici
     val showChartsSection = settingsRepository.getShowCharts()
         .stateIn(
@@ -183,6 +191,16 @@ class DisplayViewModel(
         },
     )
 
+
+    /**
+     * Aggiorna il valore del buono pasto.
+     */
+    fun setMealVoucherValue(value: Double) = updatePreference(
+        logMsg = "Setting meal voucher value: $value",
+        action = {
+            settingsRepository.setMealVoucherValue(value.coerceAtLeast(0.0))
+        },
+    )
 
     /**
      * Aggiorna la preferenza per la visualizzazione della sezione grafici.

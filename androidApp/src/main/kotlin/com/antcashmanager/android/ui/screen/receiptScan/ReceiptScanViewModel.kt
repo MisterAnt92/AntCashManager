@@ -48,6 +48,7 @@ class ReceiptScanViewModel(
         scanReceiptUseCase: ScanReceiptUseCase,
         transactionRepository: TransactionRepository,
         categoryRepository: CategoryRepository,
+        settingsRepository: com.antcashmanager.domain.repository.SettingsRepository,
         dispatcher: CoroutineDispatcher = Dispatchers.Default,
     ) : this(
         scanReceiptUseCase = scanReceiptUseCase,
@@ -61,6 +62,7 @@ class ReceiptScanViewModel(
         ),
         getTransactionSuggestionsUseCase = GetTransactionSuggestionsUseCase(
             repository = transactionRepository,
+            settingsRepository = settingsRepository,
             dispatcher = dispatcher,
         ),
     )

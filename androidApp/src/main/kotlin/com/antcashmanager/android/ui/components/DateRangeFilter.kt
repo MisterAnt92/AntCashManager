@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
@@ -40,6 +42,22 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import kotlin.math.abs
+
+/**
+ * Checks whether the given range matches an "N years ago until now" preset,
+ * with a tolerance that widens with the preset length.
+ */
+private fun matchesYearsPreset(
+    currentTime: Long,
+    dateRangeFrom: Long,
+    dateRangeTo: Long,
+    dayInMillis: Long,
+    years: Int,
+): Boolean {
+    val expectedFrom = currentTime - (years * 365L * dayInMillis)
+    val tolerance = 7L * dayInMillis
+    return abs(dateRangeFrom - expectedFrom) < tolerance && abs(dateRangeTo - currentTime) < tolerance
+}
 
 /**
  * Helper function to determine the display text for the date range
@@ -74,11 +92,12 @@ private fun getRangeDisplayText(
                     abs(dateRangeTo - currentTime) < (24 * 60 * 60 * 1000)
         }
 
-        3 -> { // Year (365 days)
-            val expectedFrom = currentTime - (365L * dayInMillis)
-            abs(dateRangeFrom - expectedFrom) < (7L * 24 * 60 * 60 * 1000) && // Within 1 week tolerance
-                    abs(dateRangeTo - currentTime) < (7L * 24 * 60 * 60 * 1000)
-        }
+        3 -> matchesYearsPreset(currentTime, dateRangeFrom, dateRangeTo, dayInMillis, years = 1)
+        4 -> matchesYearsPreset(currentTime, dateRangeFrom, dateRangeTo, dayInMillis, years = 2)
+        5 -> matchesYearsPreset(currentTime, dateRangeFrom, dateRangeTo, dayInMillis, years = 3)
+        6 -> matchesYearsPreset(currentTime, dateRangeFrom, dateRangeTo, dayInMillis, years = 5)
+        7 -> matchesYearsPreset(currentTime, dateRangeFrom, dateRangeTo, dayInMillis, years = 6)
+        8 -> matchesYearsPreset(currentTime, dateRangeFrom, dateRangeTo, dayInMillis, years = 50)
 
         else -> false
     }
@@ -89,6 +108,11 @@ private fun getRangeDisplayText(
             1 -> stringResource(R.string.range_label_this_week)
             2 -> stringResource(R.string.range_label_this_month)
             3 -> stringResource(R.string.range_label_this_year)
+            4 -> stringResource(R.string.range_two_years)
+            5 -> stringResource(R.string.range_three_years)
+            6 -> stringResource(R.string.range_five_years)
+            7 -> stringResource(R.string.range_six_years)
+            8 -> stringResource(R.string.range_all)
             else -> stringResource(R.string.charts_period)
         }
     } else {
@@ -184,10 +208,11 @@ fun DateRangeFilter(
             // Expandable content
             if (expanded) {
                 Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
-                    // Preset chips - wrappate e colorate
+                    // Preset chips - scrollabili orizzontalmente, colorate
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState())
                             .padding(bottom = 8.dp),
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
                     ) {

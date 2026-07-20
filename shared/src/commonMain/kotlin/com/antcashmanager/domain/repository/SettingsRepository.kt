@@ -32,6 +32,8 @@ interface SettingsRepository {
     suspend fun setDecimalSeparator(separator: String)
     fun getThousandsSeparator(): Flow<String>
     suspend fun setThousandsSeparator(separator: String)
+    fun getMealVoucherValue(): Flow<Double>
+    suspend fun setMealVoucherValue(value: Double)
 
     // ── Date format ──
     fun getDateFormat(): Flow<String>
@@ -85,4 +87,23 @@ interface SettingsRepository {
 
     /** Resets every preference to its factory default. */
     suspend fun resetAllPreferences()
+
+    // ── Backup/Restore history (stato locale del device, non incluso in resetAllPreferences) ──
+    fun getLastBackupTimestamp(): Flow<Long?>
+    suspend fun setLastBackupTimestamp(timestamp: Long)
+    fun getLastRestoreTimestamp(): Flow<Long?>
+    suspend fun setLastRestoreTimestamp(timestamp: Long)
+
+    /**
+     * ── Suggerimenti (autocomplete titoli/beneficiari/note/luoghi/tag) ──
+     *
+     * [getSuggestionsClearedAt] è il timestamp dell'ultima cancellazione richiesta
+     * dall'utente: i suggerimenti vengono calcolati solo dalle transazioni successive a
+     * questo istante, senza dover toccare le transazioni stesse. `null` significa "mai
+     * cancellati".
+     */
+    fun getSuggestionsEnabled(): Flow<Boolean>
+    suspend fun setSuggestionsEnabled(enabled: Boolean)
+    fun getSuggestionsClearedAt(): Flow<Long?>
+    suspend fun setSuggestionsClearedAt(timestamp: Long)
 }

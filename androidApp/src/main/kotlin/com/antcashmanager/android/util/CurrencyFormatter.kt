@@ -2,6 +2,7 @@ package com.antcashmanager.android.util
 
 import androidx.compose.runtime.compositionLocalOf
 import com.antcashmanager.domain.model.CurrencyFormat
+import java.util.Locale
 import kotlin.math.abs
 
 /** CompositionLocal that provides the current [CurrencyFormat] to the entire composable tree. */
@@ -13,7 +14,9 @@ val LocalCurrencyFormat = compositionLocalOf { CurrencyFormat.DEFAULT }
  */
 fun formatAmount(amount: Double, format: CurrencyFormat): String {
     val absAmount = abs(amount)
-    val rawFormatted = "%.${format.decimalDigits}f".format(absAmount)
+    // Use Locale.US to ensure "." is always used as the internal decimal separator,
+    // regardless of the device locale (e.g. Italian/French devices use "," which breaks parsing).
+    val rawFormatted = String.format(Locale.US, "%.${format.decimalDigits}f", absAmount)
 
     val dotIndex = rawFormatted.indexOf('.')
     val intPart = if (dotIndex >= 0) rawFormatted.substring(0, dotIndex) else rawFormatted

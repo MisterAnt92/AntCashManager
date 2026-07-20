@@ -516,6 +516,8 @@ class MockHomeSettingsRepository : SettingsRepository {
     override suspend fun setDecimalSeparator(separator: String) {}
     override fun getThousandsSeparator() = kotlinx.coroutines.flow.flowOf("")
     override suspend fun setThousandsSeparator(separator: String) {}
+    override fun getMealVoucherValue() = kotlinx.coroutines.flow.flowOf(5.29)
+    override suspend fun setMealVoucherValue(value: Double) {}
     override fun getDateFormat() = kotlinx.coroutines.flow.flowOf("dd/MM/yyyy")
     override suspend fun setDateFormat(pattern: String) {}
 
@@ -590,6 +592,20 @@ class MockHomeSettingsRepository : SettingsRepository {
         kotlinx.coroutines.flow.flowOf(false)
 
     override suspend fun setDataEncryptionEnabled(enabled: Boolean) {}
+
+    override fun getLastBackupTimestamp(): kotlinx.coroutines.flow.Flow<Long?> =
+        kotlinx.coroutines.flow.flowOf(null)
+    override suspend fun setLastBackupTimestamp(timestamp: Long) {}
+    override fun getLastRestoreTimestamp(): kotlinx.coroutines.flow.Flow<Long?> =
+        kotlinx.coroutines.flow.flowOf(null)
+    override suspend fun setLastRestoreTimestamp(timestamp: Long) {}
+
+    override fun getSuggestionsEnabled(): kotlinx.coroutines.flow.Flow<Boolean> =
+        kotlinx.coroutines.flow.flowOf(true)
+    override suspend fun setSuggestionsEnabled(enabled: Boolean) {}
+    override fun getSuggestionsClearedAt(): kotlinx.coroutines.flow.Flow<Long?> =
+        kotlinx.coroutines.flow.flowOf(null)
+    override suspend fun setSuggestionsClearedAt(timestamp: Long) {}
 
     override suspend fun resetAllPreferences() {}
 }

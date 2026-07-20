@@ -51,6 +51,38 @@
     <string name="categories_tab_income">Ingresos</string>
     <string name="categories_default_badge">Predeterminada</string>
     <string name="categories_icon_label">Icono</string>
+
+    <!-- Iconos de Categoría -->
+    <string name="icon_home">Hogar</string>
+    <string name="icon_directions_car">Transporte</string>
+    <string name="icon_restaurant">Restaurante</string>
+    <string name="icon_receipt_long">Ticket</string>
+    <string name="icon_local_dining">Comida r\u00e1pida</string>
+    <string name="icon_theater_comedy">Entretenimiento</string>
+    <string name="icon_local_hospital">Salud</string>
+    <string name="icon_shopping_bag">Compras</string>
+    <string name="icon_school">Educaci\u00f3n</string>
+    <string name="icon_more_horiz">Otros</string>
+    <string name="icon_payments">Salario</string>
+    <string name="icon_savings">Ahorros</string>
+    <string name="icon_currency_exchange">Cambio</string>
+    <string name="icon_trending_up">Inversi\u00f3n</string>
+    <string name="icon_work">Trabajo</string>
+    <string name="icon_redeem">Regalos</string>
+    <string name="icon_flight">Viajes</string>
+    <string name="icon_fitness_center">Gimnasio</string>
+    <string name="icon_pets">Mascotas</string>
+    <string name="icon_directions_bus">Transporte p\u00fablico</string>
+    <string name="icon_lightbulb">Servicios</string>
+    <string name="icon_celebration">Celebraci\u00f3n</string>
+    <string name="icon_subscriptions">Suscripciones</string>
+    <string name="icon_fastfood">Snacks</string>
+    <string name="icon_star">Favoritos</string>
+    <string name="icon_volunteer_activism">Caridad</string>
+    <string name="icon_directions_bike">Deporte</string>
+    <string name="icon_shopping_cart">Supermercado</string>
+    <string name="icon_coffee">Caf\u00e9</string>
+
     <string name="charts_title">Gr\u00e1ficos</string>
     <string name="charts_period">Per\u00edodo</string>
     <string name="charts_from">Desde: %s</string>
@@ -84,6 +116,10 @@
     <string name="range_three_months">3 meses</string>
     <string name="range_six_months">6 meses</string>
     <string name="range_year">1 año</string>
+    <string name="range_two_years">2 años</string>
+    <string name="range_three_years">3 años</string>
+    <string name="range_five_years">5 años</string>
+    <string name="range_six_years">6 años</string>
     <string name="range_all">Todo</string>
     <string name="range_label_today">Hoy</string>
     <string name="range_label_this_week">Esta semana</string>
@@ -106,6 +142,11 @@
     <string name="settings_decimal_digits_subtitle">%d decimales</string>
     <string name="settings_decimal_separator">Separador decimal</string>
     <string name="settings_thousands_separator">Separador de miles</string>
+    <string name="settings_meal_voucher_value">Valor Vale de Comida</string>
+    <string name="settings_meal_voucher_value_subtitle">Valor actual: %s</string>
+    <string name="dialog_meal_voucher_title">Establecer Valor Vale de Comida</string>
+    <string name="dialog_meal_voucher_message">Ingrese el valor fijo de su vale de comida.</string>
+    <string name="dialog_meal_voucher_label">Valor del vale</string>
     <string name="settings_format_preview">Vista previa: %s</string>
     <string name="settings_separator_comma">Coma (,)</string>
     <string name="settings_separator_period">Punto (.)</string>
@@ -134,12 +175,21 @@
     <string name="settings_security">Seguridad</string>
     <string name="settings_security_data_encryption">Datos seguros - Cifrado</string>
     <string name="settings_security_data_encryption_subtitle">Cifra y protege los datos locales de la aplicaci\u00f3n</string>
+    <string name="settings_suggestions">Sugerencias</string>
+    <string name="settings_suggestions_enable">Sugerencias autom\u00e1ticas</string>
+    <string name="settings_suggestions_enable_subtitle">Sugiere t\u00edtulos, beneficiarios, notas, lugares y etiquetas del historial de transacciones</string>
+    <string name="settings_suggestions_delete_all">Eliminar todas las sugerencias</string>
+    <string name="settings_suggestions_delete_all_subtitle">Olvida las sugerencias generadas por transacciones anteriores</string>
     <string name="settings_delete_all">Eliminar todos los datos</string>
     <string name="settings_delete_all_subtitle">Eliminar permanentemente todas las transacciones y categor\u00edas</string>
     <string name="settings_backup">Copia de seguridad</string>
     <string name="settings_backup_subtitle">Exporta tus datos para mayor seguridad</string>
+    <string name="settings_last_backup_label">Última copia de seguridad: %s</string>
+    <string name="settings_last_backup_never">Aún no se ha hecho ninguna copia de seguridad</string>
     <string name="settings_restore">Restaurar datos</string>
     <string name="settings_restore_subtitle">Importar datos desde un archivo de respaldo</string>
+    <string name="settings_last_restore_label">Última restauración: %s</string>
+    <string name="settings_last_restore_never">Aún no se ha realizado ninguna restauración</string>
     <string name="settings_support">Soporte</string>
     <string name="settings_send_feedback">Enviar comentarios</string>
     <string name="settings_send_feedback_subtitle">Ay\u00fadanos a mejorar la aplicaci\u00f3n</string>
@@ -172,17 +222,21 @@
     <string name="backup_success_message">Tus datos han sido exportados correctamente.</string>
     <string name="backup_error_title">Error en Copia de Seguridad</string>
     <string name="backup_error_message">No se pudo crear la copia de seguridad: %s</string>
+    <string name="backup_in_progress_message">Creando la copia de seguridad…</string>
     <string name="settings_data_file_picker_unavailable">El selector de archivos no est\u00e1 disponible en este dispositivo.</string>
     <string name="restore_success_title">Restauraci\u00f3n Completada</string>
     <string name="restore_success_message">Se restauraron correctamente %1$d transacciones y %2$d categor\u00edas.</string>
     <string name="restore_error_title">Error en Restauraci\u00f3n</string>
     <string name="restore_error_message">No se pudo restaurar la copia de seguridad: %s</string>
+    <string name="restore_in_progress_message">Restaurando tus datos…</string>
     <string name="dialog_delete_all_title">\u00bfEliminar todos los datos?</string>
     <string name="dialog_delete_all_message">Esta acci\u00f3n eliminar\u00e1 permanentemente todas las transacciones y categor\u00edas. No se puede deshacer.</string>
     <string name="dialog_data_deleted">Datos eliminados</string>
     <string name="dialog_data_deleted_message">Todos los datos se han eliminado correctamente.</string>
     <string name="dialog_reset_preferences_title">Restablecer preferencias</string>
     <string name="dialog_reset_preferences_message">Esto restaurar\u00e1 todos los ajustes a sus valores predeterminados. \u00bfContinuar?</string>
+    <string name="dialog_delete_suggestions_title">\u00bfEliminar todas las sugerencias?</string>
+    <string name="dialog_delete_suggestions_message">Las sugerencias generadas por tu historial de transacciones (t\u00edtulos, beneficiarios, notas, lugares, etiquetas) se olvidar\u00e1n. Se generar\u00e1n nuevas sugerencias a medida que a\u00f1adas transacciones. \u00bfContinuar?</string>
     <string name="dialog_reset">Restablecer</string>
     <string name="privacy_policy_title">Pol\u00edtica de privacidad</string>
     <string name="privacy_policy_content">AntCashManager se compromete a proteger tu privacidad. Esta aplicaci\u00f3n no recopila ni comparte datos personales con terceros. Todos los datos financieros se almacenan localmente en tu dispositivo y nunca se transmiten a servidores externos.\n\nTus datos permanecen completamente en tu dispositivo y bajo tu control. No utilizamos servicios de an\u00e1lisis, seguimiento o publicidad.\n\nPara cualquier pregunta sobre privacidad, cont\u00e1ctanos a trav\u00e9s de la p\u00e1gina de la tienda.</string>
@@ -207,6 +261,8 @@
     <string name="add_transaction_details">Detalles de la Transacción</string>
     <string name="add_transaction_title_required">Título *</string>
     <string name="add_transaction_amount_required">Cantidad *</string>
+    <string name="add_transaction_amount_total_meal_vouchers">Importe total del pago</string>
+    <string name="add_transaction_amount_total_meal_vouchers_description">Introduce el importe total pagado: el valor de los vales de comida utilizados más la eventual diferencia pagada por otro medio.</string>
     <string name="add_transaction_notes_label">Notas</string>
     <string name="add_transaction_payee_label">Beneficiario</string>
     <string name="add_transaction_location_label">Ubicación</string>
@@ -247,6 +303,14 @@
     <string name="add_transaction_payment_type_electronic">Electrónico</string>
     <string name="add_transaction_payment_type_cash">Efectivo</string>
     <string name="add_transaction_payment_type_meal_vouchers">Vales de Comida</string>
+
+    <!-- Add Transaction - Vales de Comida -->
+    <string name="add_transaction_meal_voucher_section_title">Vales de Comida</string>
+    <string name="add_transaction_meal_voucher_unit_value">Valor unitario: %s€</string>
+    <string name="add_transaction_meal_voucher_count">Número de vales</string>
+    <string name="add_transaction_meal_voucher_subtotal">Subtotal vales: %s€</string>
+    <string name="add_transaction_meal_voucher_difference_paid">Diferencia pagada</string>
+
     <string name="empty_state_no_transactions">No hay transacciones presentes</string>
     <string name="empty_state_no_transactions_subtitle">¡La alcancía te está esperando!</string>
     <string name="settings_show_payment_breakdown">Mostrar saldo por tipo de pago</string>

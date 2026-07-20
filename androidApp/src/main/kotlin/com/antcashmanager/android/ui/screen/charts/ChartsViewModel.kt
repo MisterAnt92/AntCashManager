@@ -125,6 +125,10 @@ class ChartsViewModel(
             RangePreset.THREE_MONTHS -> from.add(Calendar.MONTH, -3)
             RangePreset.SIX_MONTHS -> from.add(Calendar.MONTH, -6)
             RangePreset.YEAR -> from.add(Calendar.YEAR, -1)
+            RangePreset.TWO_YEARS -> from.add(Calendar.YEAR, -2)
+            RangePreset.THREE_YEARS -> from.add(Calendar.YEAR, -3)
+            RangePreset.FIVE_YEARS -> from.add(Calendar.YEAR, -5)
+            RangePreset.SIX_YEARS -> from.add(Calendar.YEAR, -6)
             RangePreset.ALL -> from.set(2000, 0, 1)
         }
 
@@ -264,5 +268,9 @@ enum class RangePreset(@StringRes val labelResId: Int) {
     THREE_MONTHS(R.string.range_three_months),
     SIX_MONTHS(R.string.range_six_months),
     YEAR(R.string.range_year),
+    TWO_YEARS(R.string.range_two_years),
+    THREE_YEARS(R.string.range_three_years),
+    FIVE_YEARS(R.string.range_five_years),
+    SIX_YEARS(R.string.range_six_years),
     ALL(R.string.range_all),
 }

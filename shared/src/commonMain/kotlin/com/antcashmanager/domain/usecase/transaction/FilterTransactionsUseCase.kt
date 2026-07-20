@@ -1,7 +1,9 @@
 package com.antcashmanager.domain.usecase.transaction
 
 import com.antcashmanager.domain.model.Transaction
-import com.antcashmanager.domain.usecase.BaseUseCase
+import com.antcashmanager.domain.usecase.BaseResultUseCase
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlin.math.abs
 
 /**
@@ -15,8 +17,9 @@ import kotlin.math.abs
  * - Transaction type (INCOME/EXPENSE)
  * - Payment type (ELECTRONIC/CASH/MEAL_VOUCHERS)
  */
-class FilterTransactionsUseCase :
-    BaseUseCase<FilterTransactionsUseCase.Params, Result<List<Transaction>>>() {
+class FilterTransactionsUseCase(
+    dispatcher: CoroutineDispatcher = Dispatchers.Default,
+) : BaseResultUseCase<FilterTransactionsUseCase.Params, List<Transaction>>(dispatcher) {
 
     companion object {
         private const val AMOUNT_COMPARISON_EPSILON = 0.000001
@@ -27,14 +30,14 @@ class FilterTransactionsUseCase :
         val filterParams: TransactionFilterParams,
     )
 
-    override suspend fun execute(params: Params): Result<List<Transaction>> = runCatching {
+    override suspend fun execute(params: Params): List<Transaction> {
         val (transactions, filterParams) = params
 
         // Early return for empty list
-        if (transactions.isEmpty()) return@runCatching emptyList()
+        if (transactions.isEmpty()) return emptyList()
 
         // Use sequence for lazy evaluation - avoids intermediate list allocations
-        transactions.asSequence()
+        return transactions.asSequence()
             .filter { transaction ->
                 // Date range filter (always applied, short-circuit first)
                 transaction.timestamp in filterParams.dateFrom..filterParams.dateTo

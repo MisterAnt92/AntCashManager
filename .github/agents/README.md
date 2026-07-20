@@ -48,7 +48,7 @@ Questa cartella raccoglie agenti dedicati a task ricorrenti del progetto `AntCas
 ## Source set di test da rispettare
 - `androidApp/src/test/kotlin` → `ViewModel` e logica Android host-side
 - `shared/src/commonTest/kotlin` → logica KMP `commonMain`
-- `shared/src/test/kotlin` → repository/data host-side e logica JVM-specific
+- `shared/src/androidHostTest/kotlin` → repository/data host-side e logica JVM-specific
 
 ## Regole trasversali
 - Leggi sempre `.gitignore` prima di analizzare file o directory.
@@ -61,7 +61,7 @@ Questa cartella raccoglie agenti dedicati a task ricorrenti del progetto `AntCas
 - `androidApp/src/test/kotlin/com/antcashmanager/android/ui/home/HomeViewModelMockkTest.kt`
 - `androidApp/src/test/kotlin/com/antcashmanager/android/ui/settings/SettingsViewModelMockkTest.kt`
 - `shared/src/commonTest/kotlin/com/antcashmanager/domain/usecase/settings/TransactionsDateFilterStateUseCaseMockkTest.kt`
-- `shared/src/test/kotlin/com/antcashmanager/data/repository/TransactionRepositoryImplTest.kt`
+- `shared/src/androidHostTest/kotlin/com/antcashmanager/data/repository/TransactionRepositoryImplTest.kt`
 
 ## Nota
 Se aggiungi un nuovo agente, aggiorna anche:
