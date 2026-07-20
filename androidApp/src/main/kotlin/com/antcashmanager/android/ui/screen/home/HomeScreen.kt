@@ -118,6 +118,8 @@ internal fun HomeContent(
     modifier: Modifier = Modifier,
 ) {
 
+    val analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager = koinInject()
+
     // Date picker state
     var showFromDatePicker by remember { mutableStateOf(false) }
     var showToDatePicker by remember { mutableStateOf(false) }
@@ -276,6 +278,7 @@ internal fun HomeContent(
                 }
                 topCardsOrderRaw = HomeTopCardType.serialize(updatedOrder)
                 showTopCardsOrderDialog = false
+                analyticsManager.logEvent("home_top_cards_reordered")
             },
         )
     }
@@ -368,7 +371,12 @@ internal fun HomeContent(
                                         ),
                                     )
                                 }
-                                HelpButton(onHelpClick = { showHelpDialog = true })
+                                HelpButton(
+                                    onHelpClick = {
+                                        analyticsManager.logEvent("home_help_opened")
+                                        showHelpDialog = true
+                                    },
+                                )
                             }
                         }
                     }
@@ -386,7 +394,10 @@ internal fun HomeContent(
                                     settingsRepository.setDateFilterExpanded(expanded)
                                 }
                             },
-                            onPresetSelected = { onEvent(HomeEvent.SelectPreset(it)) },
+                            onPresetSelected = {
+                                analyticsManager.logEvent("home_date_filter_changed")
+                                onEvent(HomeEvent.SelectPreset(it))
+                            },
                             onFromDateEdit = { showFromDatePicker = true },
                             onToDateEdit = { showToDatePicker = true },
                         )
@@ -433,7 +444,12 @@ internal fun HomeContent(
                                 fontWeight = FontWeight.SemiBold,
                                 color = MaterialTheme.colorScheme.onBackground,
                             )
-                            IconButton(onClick = { onEvent(HomeEvent.ToggleSearchExpanded) }) {
+                            IconButton(onClick = {
+                                if (!state.isSearchExpanded) {
+                                    analyticsManager.logEvent("home_search_opened")
+                                }
+                                onEvent(HomeEvent.ToggleSearchExpanded)
+                            }) {
                                 Icon(
                                     imageVector = if (state.isSearchExpanded) Icons.Default.Close else Icons.Default.Search,
                                     contentDescription = stringResource(R.string.transactions_search),

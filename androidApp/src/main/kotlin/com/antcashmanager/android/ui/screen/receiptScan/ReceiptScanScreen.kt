@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.antcashmanager.android.R
+import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.AppSelectionItemCard
 import com.antcashmanager.android.ui.components.button.AppButton
 import com.antcashmanager.android.ui.components.text.AppText
@@ -58,6 +59,7 @@ import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 import java.io.File
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -75,11 +77,15 @@ fun ReceiptScanScreen(
     modifier: Modifier = Modifier,
 ) {
     val viewModel: ReceiptScanViewModel = koinViewModel()
+    val analyticsManager: AnalyticsManager = koinInject()
 
     val state by viewModel.state.collectAsState()
 
     LaunchedEffect(state.isTransactionSaved) {
-        if (state.isTransactionSaved) onTransactionSaved()
+        if (state.isTransactionSaved) {
+            analyticsManager.logEvent("receipt_scan_saved")
+            onTransactionSaved()
+        }
     }
 
     ReceiptScanContent(
@@ -213,6 +219,7 @@ private fun CaptureStep(
 ) {
     val context = LocalContext.current
     val isPreview = LocalInspectionMode.current
+    val analyticsManager: AnalyticsManager = koinInject()
 
     // Launcher per foto dalla fotocamera (salva in file temp)
     val tempFile = remember { File.createTempFile("receipt_", ".jpg", context.cacheDir) }
@@ -230,6 +237,7 @@ private fun CaptureStep(
         if (success && tempFile.exists()) {
             val bytes = tempFile.readBytes()
             if (bytes.isNotEmpty()) {
+                analyticsManager.logEvent("receipt_scan_captured")
                 onImageBytes(bytes)
             }
         }
@@ -250,7 +258,10 @@ private fun CaptureStep(
             val bytes = context.contentResolver.openInputStream(it)?.use { stream ->
                 stream.readBytes()
             }
-            if (bytes != null && bytes.isNotEmpty()) onImageBytes(bytes)
+            if (bytes != null && bytes.isNotEmpty()) {
+                analyticsManager.logEvent("receipt_scan_captured")
+                onImageBytes(bytes)
+            }
         }
     }
 

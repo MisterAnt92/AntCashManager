@@ -55,6 +55,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
+import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.AppSelectionItemCard
 import com.antcashmanager.android.ui.components.button.AppButton
 import com.antcashmanager.android.ui.components.input.AutocompleteTextField
@@ -63,6 +64,7 @@ import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionEvent
 import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionState
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.TransactionType
+import org.koin.compose.koinInject
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -74,6 +76,7 @@ internal fun DetailsStep(
     onEvent: (AddTransactionEvent) -> Unit,
     onNavigateBack: () -> Unit,
 ) {
+    val analyticsManager: AnalyticsManager = koinInject()
     // ── Dialog: Categoria ──
     if (state.showCategoryDialog) {
         CategorySelectionDialog(
@@ -148,7 +151,10 @@ internal fun DetailsStep(
             },
             confirmButton = {
                 TextButton(
-                    onClick = { onEvent(AddTransactionEvent.ConfirmDelete) }
+                    onClick = {
+                        analyticsManager.logEvent("transaction_deleted")
+                        onEvent(AddTransactionEvent.ConfirmDelete)
+                    }
                 ) {
                     AppText(
                         stringResource(R.string.dialog_delete),

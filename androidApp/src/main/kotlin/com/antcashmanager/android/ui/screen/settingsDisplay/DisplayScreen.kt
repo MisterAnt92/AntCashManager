@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.antcashmanager.android.R
+import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.AppSwitch
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
@@ -63,6 +64,7 @@ import com.antcashmanager.android.util.formatAmount
 import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.model.TransactionDisplayType
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -183,6 +185,11 @@ internal fun DisplayContent(
     var showTransactionDisplayDialog by remember { mutableStateOf(false) }
     var showTransactionsDisplayDialog by remember { mutableStateOf(false) }
     val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
+    val analyticsManager: AnalyticsManager = koinInject()
+    val handleShowQuickInsightsCardChanged: (Boolean) -> Unit = { show ->
+        analyticsManager.logEvent("home_quick_insights_toggled")
+        onShowQuickInsightsCardChanged(show)
+    }
 
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -249,7 +256,7 @@ internal fun DisplayContent(
                         showPaymentTypeBreakdown = showPaymentTypeBreakdown,
                         onShowPaymentTypeBreakdownChanged = onShowPaymentTypeBreakdownChanged,
                         showQuickInsightsCard = showQuickInsightsCard,
-                        onShowQuickInsightsCardChanged = onShowQuickInsightsCardChanged,
+                        onShowQuickInsightsCardChanged = handleShowQuickInsightsCardChanged,
                         transactionDisplayType = transactionDisplayType,
                         onShowTransactionDisplayDialog = { showTransactionDisplayDialog = true },
                     )
@@ -327,7 +334,7 @@ internal fun DisplayContent(
                         showPaymentTypeBreakdown = showPaymentTypeBreakdown,
                         onShowPaymentTypeBreakdownChanged = onShowPaymentTypeBreakdownChanged,
                         showQuickInsightsCard = showQuickInsightsCard,
-                        onShowQuickInsightsCardChanged = onShowQuickInsightsCardChanged,
+                        onShowQuickInsightsCardChanged = handleShowQuickInsightsCardChanged,
                         transactionDisplayType = transactionDisplayType,
                         onShowTransactionDisplayDialog = { showTransactionDisplayDialog = true },
                     )
@@ -373,6 +380,7 @@ internal fun DisplayContent(
     val dismissMealVoucher: () -> Unit = { showMealVoucherDialog = false }
 
     val handleDateFormatSelected: (String) -> Unit = { fmt ->
+        analyticsManager.logEvent("date_format_changed")
         onDateFormatSelected(fmt)
         showDateFormatDialog = false
     }
@@ -415,12 +423,14 @@ internal fun DisplayContent(
     }
 
     val handleTransactionDisplaySelected: (TransactionDisplayType) -> Unit = { t ->
+        analyticsManager.logEvent("transaction_display_type_changed")
         onTransactionDisplayTypeSelected(t)
         showTransactionDisplayDialog = false
     }
     val dismissTransactionDisplay: () -> Unit = { showTransactionDisplayDialog = false }
 
     val handleTransactionsDisplaySelected: (TransactionDisplayType) -> Unit = { t ->
+        analyticsManager.logEvent("transaction_display_type_changed")
         onTransactionsTransactionDisplayTypeSelected(t)
         showTransactionsDisplayDialog = false
     }

@@ -112,6 +112,7 @@ internal fun ChartsContent(
     onPresetSelected: (RangePreset) -> Unit = {},
 ) {
     val context = LocalContext.current
+    val analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager = koinInject()
     val buildShareTextUseCase = remember { BuildShareTextUseCase(context) }
     val dateFormat = remember { SimpleDateFormat("dd MMM yyyy", Locale.getDefault()) }
     val fmt = LocalCurrencyFormat.current
@@ -150,7 +151,14 @@ internal fun ChartsContent(
         ) {
             ScreenHeader(
                 title = stringResource(R.string.common_charts),
-                actions = { HelpButton(onHelpClick = { showHelpDialog = true }) },
+                actions = {
+                    HelpButton(
+                        onHelpClick = {
+                            analyticsManager.logEvent("chart_help_opened")
+                            showHelpDialog = true
+                        },
+                    )
+                },
             )
             Spacer(modifier = Modifier.height(16.dp))
             // Period filter card
@@ -180,6 +188,7 @@ internal fun ChartsContent(
                                 selected = selectedPreset == index,
                                 onClick = {
                                     selectedPreset = index
+                                    analyticsManager.logEvent("chart_date_filter_changed")
                                     onPresetSelected(preset)
                                 },
                                 label = {
@@ -320,6 +329,7 @@ internal fun ChartsContent(
                                         putExtra(Intent.EXTRA_SUBJECT, incomeCategoryShareSubject)
                                         putExtra(Intent.EXTRA_TEXT, shareText)
                                     }
+                                    analyticsManager.logEvent("chart_shared")
                                     context.startActivity(Intent.createChooser(intent, shareLabel))
                                 },
                                 modifier = Modifier.size(32.dp),
@@ -383,6 +393,7 @@ internal fun ChartsContent(
                                         putExtra(Intent.EXTRA_SUBJECT, categoryShareSubject)
                                         putExtra(Intent.EXTRA_TEXT, shareText)
                                     }
+                                    analyticsManager.logEvent("chart_shared")
                                     context.startActivity(Intent.createChooser(intent, shareLabel))
                                 },
                                 modifier = Modifier.size(32.dp),
@@ -444,6 +455,7 @@ internal fun ChartsContent(
                                         putExtra(Intent.EXTRA_SUBJECT, monthlyShareSubject)
                                         putExtra(Intent.EXTRA_TEXT, shareText)
                                     }
+                                    analyticsManager.logEvent("chart_shared")
                                     context.startActivity(Intent.createChooser(intent, shareLabel))
                                 },
                                 modifier = Modifier.size(32.dp),
@@ -518,6 +530,7 @@ internal fun ChartsContent(
                                         putExtra(Intent.EXTRA_SUBJECT, yearlyShareSubject)
                                         putExtra(Intent.EXTRA_TEXT, shareText)
                                     }
+                                    analyticsManager.logEvent("chart_shared")
                                     context.startActivity(Intent.createChooser(intent, shareLabel))
                                 },
                                 modifier = Modifier.size(32.dp),
@@ -576,7 +589,10 @@ internal fun ChartsContent(
             onDismissRequest = { showFromPicker = false },
             confirmButton = {
                 TextButton(onClick = {
-                    state.selectedDateMillis?.let { onDateRangeChanged(it, dateRange.to) }
+                    state.selectedDateMillis?.let {
+                        analyticsManager.logEvent("chart_custom_date_range_set")
+                        onDateRangeChanged(it, dateRange.to)
+                    }
                     selectedPreset = -1
                     showFromPicker = false
                 }) { AppText(stringResource(R.string.dialog_ok)) }
@@ -594,7 +610,10 @@ internal fun ChartsContent(
             onDismissRequest = { showToPicker = false },
             confirmButton = {
                 TextButton(onClick = {
-                    state.selectedDateMillis?.let { onDateRangeChanged(dateRange.from, it) }
+                    state.selectedDateMillis?.let {
+                        analyticsManager.logEvent("chart_custom_date_range_set")
+                        onDateRangeChanged(dateRange.from, it)
+                    }
                     selectedPreset = -1
                     showToPicker = false
                 }) { AppText(stringResource(R.string.dialog_ok)) }

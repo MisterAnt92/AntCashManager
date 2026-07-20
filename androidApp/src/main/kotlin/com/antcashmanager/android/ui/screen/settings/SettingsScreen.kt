@@ -53,6 +53,7 @@ import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.BuildConfig
 import com.antcashmanager.android.R
+import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.navigation.BottomNavItem
 import com.antcashmanager.android.ui.components.AppListItem
 import com.antcashmanager.android.ui.components.AppRadioButton
@@ -74,6 +75,7 @@ import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.CurrencyFormat
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun SettingsScreen(
@@ -169,6 +171,7 @@ internal fun SettingsContent(
     var showHelpDialog by remember { mutableStateOf(false) }
     var showAntAnimation by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    val analyticsManager: AnalyticsManager = koinInject()
 
     // Help dialog
     if (showHelpDialog) {
@@ -336,6 +339,7 @@ internal fun SettingsContent(
                     iconBackgroundColor = MaterialTheme.colorScheme.secondaryContainer,
                     iconTint = MaterialTheme.colorScheme.onSecondaryContainer,
                     onClick = {
+                        analyticsManager.logEvent("feedback_email_sent")
                         onSendFeedbackEmail(feedbackEmailBody)
                     },
                 )
@@ -355,7 +359,10 @@ internal fun SettingsContent(
                 title = stringResource(R.string.settings_show_tutorial),
                 subtitle = stringResource(R.string.settings_show_tutorial_subtitle),
                 leadingIcon = Icons.Default.Info,
-                onClick = onShowTutorial,
+                onClick = {
+                    analyticsManager.logEvent("tutorial_replay_requested")
+                    onShowTutorial()
+                },
             )
 
             // ── About Section ──
@@ -396,6 +403,7 @@ internal fun SettingsContent(
         ThemeSelectionDialog(
             currentTheme = currentTheme,
             onThemeSelected = { theme ->
+                analyticsManager.logEvent("theme_changed")
                 onThemeSelected(theme)
                 showThemeDialog = false
             },
@@ -407,6 +415,7 @@ internal fun SettingsContent(
         LanguageSelectionDialog(
             currentLanguage = currentLanguage,
             onLanguageSelected = { language ->
+                analyticsManager.logEvent("language_changed")
                 onLanguageSelected(language)
                 showLanguageDialog = false
             },
@@ -429,7 +438,11 @@ internal fun SettingsContent(
     if (showCurrencyDialog) {
         CurrencySymbolDialog(
             currentSymbol = currencySymbol,
-            onSymbolSelected = { onCurrencySymbolSelected(it); showCurrencyDialog = false },
+            onSymbolSelected = {
+                analyticsManager.logEvent("currency_format_changed")
+                onCurrencySymbolSelected(it)
+                showCurrencyDialog = false
+            },
             onDismiss = { showCurrencyDialog = false },
         )
     }
