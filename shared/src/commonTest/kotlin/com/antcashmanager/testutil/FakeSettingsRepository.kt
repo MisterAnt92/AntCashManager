@@ -40,7 +40,7 @@ open class FakeSettingsRepository : SettingsRepository {
     val chartsDateFilterState = MutableStateFlow(SavedDateFilter(presetIndex = 1, from = 0L, to = 0L))
     val chartsZoomEnabled = MutableStateFlow(false)
     val showPaymentTypeBreakdown = MutableStateFlow(false)
-    val showQuickInsightsCard = MutableStateFlow(false)
+    val showQuickInsightsCard = MutableStateFlow(true)
     val transactionDisplayType = MutableStateFlow(TransactionDisplayType.TREND)
     val transactionsTransactionDisplayType = MutableStateFlow(TransactionDisplayType.TREND)
     val showInitialAnimation = MutableStateFlow(false)
@@ -230,7 +230,7 @@ open class FakeSettingsRepository : SettingsRepository {
         dateFilterExpanded.value = true
         chartsZoomEnabled.value = false
         showPaymentTypeBreakdown.value = false
-        showQuickInsightsCard.value = false
+        showQuickInsightsCard.value = true
         transactionDisplayType.value = TransactionDisplayType.TREND
         transactionsTransactionDisplayType.value = TransactionDisplayType.TREND
         showInitialAnimation.value = false

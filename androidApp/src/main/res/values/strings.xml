@@ -34,6 +34,11 @@
     <string name="home_move_up">Move up</string>
     <string name="home_move_down">Move down</string>
     <string name="home_balance_positive">📈 Positive</string>
+    <string name="home_recent_transactions_count">Recent Transactions · %1$d</string>
+    <string name="home_quick_insights_biggest_expense">Biggest expense</string>
+    <string name="home_scroll_to_top">Scroll to top</string>
+    <string name="home_balance_summary_cd">%1$s: %2$s, %3$s</string>
+    <string name="home_insight_row_cd">%1$s: %2$s</string>
 
     <!-- Transactions Screen -->
     <string name="transactions_add">Add Transaction</string>

@@ -20,7 +20,7 @@ object DisplayConstant {
     const val DEFAULT_SHOW_CHARTS_SECTION = true
     const val DEFAULT_SHOW_CHARTS_ZOOM = true
     const val DEFAULT_SHOW_PAYMENT_BREAKDOWN = false
-    const val DEFAULT_SHOW_QUICK_INSIGHTS_CARD = false
+    const val DEFAULT_SHOW_QUICK_INSIGHTS_CARD = true
     val DEFAULT_TRANSACTION_DISPLAY_TYPE: TransactionDisplayType = TransactionDisplayType.TREND
 
     val SUPPORTED_CURRENCY_SYMBOLS: Set<String> =

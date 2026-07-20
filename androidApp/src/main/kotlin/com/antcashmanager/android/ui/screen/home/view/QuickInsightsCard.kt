@@ -16,6 +16,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -24,6 +26,9 @@ import com.antcashmanager.android.ui.components.AnimatedCard
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.text.CompactMoneyText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.android.util.LocalCurrencyFormat
+import com.antcashmanager.android.util.formatAmount
+import com.antcashmanager.android.util.translateCategory
 import kotlin.math.abs
 
 @Composable
@@ -31,6 +36,8 @@ fun QuickInsightsCard(
     totalIncome: Double,
     totalExpense: Double,
     transactionCount: Int,
+    biggestExpenseCategory: String? = null,
+    biggestExpenseAmount: Double? = null,
     modifier: Modifier = Modifier,
 ) {
     val averageAmount = if (transactionCount > 0) {
@@ -83,6 +90,13 @@ fun QuickInsightsCard(
                 label = stringResource(R.string.home_quick_insights_savings_rate),
                 value = stringResource(R.string.home_quick_insights_savings_rate_value, savingsRate),
             )
+            if (biggestExpenseCategory != null && biggestExpenseAmount != null) {
+                InsightRow(
+                    label = stringResource(R.string.home_quick_insights_biggest_expense),
+                    value = translateCategory(biggestExpenseCategory),
+                    money = abs(biggestExpenseAmount),
+                )
+            }
         }
     }
 }
@@ -93,6 +107,10 @@ private fun InsightRow(
     value: String? = null,
     money: Double? = null,
 ) {
+    val fmt = LocalCurrencyFormat.current
+    val valueDescription = value ?: money?.let { formatAmount(it, fmt) }.orEmpty()
+    val rowDescription = stringResource(R.string.home_insight_row_cd, label, valueDescription)
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -100,7 +118,10 @@ private fun InsightRow(
                 color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.12f),
                 shape = RoundedCornerShape(10.dp),
             )
-            .padding(horizontal = 12.dp, vertical = 10.dp),
+            .padding(horizontal = 12.dp, vertical = 10.dp)
+            .semantics(mergeDescendants = true) {
+                contentDescription = rowDescription
+            },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {

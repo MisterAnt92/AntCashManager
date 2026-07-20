@@ -17,6 +17,11 @@
     <string name="home_move_up">Mover arriba</string>
     <string name="home_move_down">Mover abajo</string>
     <string name="home_balance_positive">📈 Positivo</string>
+    <string name="home_recent_transactions_count">Transacciones Recientes · %1$d</string>
+    <string name="home_quick_insights_biggest_expense">Gasto más alto</string>
+    <string name="home_scroll_to_top">Volver arriba</string>
+    <string name="home_balance_summary_cd">%1$s: %2$s, %3$s</string>
+    <string name="home_insight_row_cd">%1$s: %2$s</string>
     <string name="transactions_add">A\u00f1adir Transacci\u00f3n</string>
     <string name="transactions_type_income">Ingreso</string>
     <string name="transactions_type_expense">Gasto</string>

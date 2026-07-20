@@ -319,7 +319,7 @@ class SettingsRepositoryImpl(
 
     override fun getShowQuickInsightsCard(): Flow<Boolean> =
         dataStore.data.map { preferences ->
-            preferences[showQuickInsightsCardKey] ?: false
+            preferences[showQuickInsightsCardKey] ?: true
         }
 
     override suspend fun setShowQuickInsightsCard(show: Boolean) {
@@ -443,7 +443,7 @@ class SettingsRepositoryImpl(
             prefs[chartsDateFilterToKey] = defaultChartsFilter.to
             prefs[chartsZoomEnabledKey] = false
             prefs[showPaymentTypeBreakdownKey] = false
-            prefs[showQuickInsightsCardKey] = false
+            prefs[showQuickInsightsCardKey] = true
             prefs[transactionDisplayTypeKey] = TransactionDisplayType.TREND.name
             prefs[transactionsTransactionDisplayTypeKey] = TransactionDisplayType.TREND.name
             prefs[isTutorialCompletedKey] = false

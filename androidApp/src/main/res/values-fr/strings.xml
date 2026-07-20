@@ -17,6 +17,11 @@
     <string name="home_move_up">Monter</string>
     <string name="home_move_down">Descendre</string>
     <string name="home_balance_positive">📈 Positif</string>
+    <string name="home_recent_transactions_count">Transactions Récentes · %1$d</string>
+    <string name="home_quick_insights_biggest_expense">Dépense la plus importante</string>
+    <string name="home_scroll_to_top">Retour en haut</string>
+    <string name="home_balance_summary_cd">%1$s : %2$s, %3$s</string>
+    <string name="home_insight_row_cd">%1$s : %2$s</string>
     <string name="transactions_add">Ajouter une transaction</string>
     <string name="transactions_type_income">Revenu</string>
     <string name="transactions_type_expense">D\u00e9pense</string>
