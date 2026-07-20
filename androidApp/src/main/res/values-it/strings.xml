@@ -400,7 +400,7 @@
     <string name="tutorial_welcome_point_insights">Controlla saldo e trend a colpo d\'occhio.</string>
     <string name="tutorial_welcome_point_categories">Organizza le spese con categorie intelligenti.</string>
     <string name="tutorial_welcome_point_customize">Personalizza lingua, tema e formati.</string>
-    <string name="tutorial_dashboard_title">Dashboard</string>
+    <string name="tutorial_dashboard_title">Riepilogo</string>
     <string name="tutorial_dashboard_desc">Qui puoi vedere il tuo saldo totale, le entrate e le uscite mensili a colpo d\'occhio.</string>
     <string name="tutorial_transactions_title">Transazioni</string>
     <string name="tutorial_transactions_desc">Gestisci tutti i tuoi movimenti qui. Puoi cercare, filtrare e aggiungere nuove voci facilmente.</string>
