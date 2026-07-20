@@ -111,6 +111,12 @@
     <string name="charts_monthly_overview">Monats\u00fcbersicht</string>
      <string name="charts_yearly_overview">Jahresübersicht</string>
     <string name="charts_no_data">Keine Daten für den gewählten Zeitraum</string>
+    <string name="chart_reset_zoom">Zoom zurücksetzen</string>
+    <string name="charts_payment_breakdown_title">Aufschlüsselung nach Zahlungsart</string>
+    <string name="charts_top_income_categories">Top-Kategorien - Einnahmen</string>
+    <string name="charts_top_expense_categories">Top-Kategorien - Ausgaben</string>
+    <string name="charts_chart_summary_cd">%1$s: %2$d Kategorien, Gesamt %3$s</string>
+    <string name="charts_category_item_cd">%1$s: %2$s, %3$s Prozent des Gesamtbetrags</string>
     <string name="charts_pick_start_date">Startdatum w\u00e4hlen</string>
     <string name="charts_pick_end_date">Enddatum w\u00e4hlen</string>
     <string name="charts_empty_ant">Noch keine Daten zum Anzeigen! Die Ameise arbeitet flei\u00dfig! 🐜📊</string>

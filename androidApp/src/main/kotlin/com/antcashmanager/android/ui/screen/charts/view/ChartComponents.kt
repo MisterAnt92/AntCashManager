@@ -894,7 +894,7 @@ internal fun ZoomablePieChart(
             ) {
                 Icon(
                     imageVector = Icons.Default.ZoomOutMap,
-                    contentDescription = "Reset Zoom",
+                    contentDescription = stringResource(R.string.chart_reset_zoom),
                     modifier = Modifier.size(20.dp),
                     tint = MaterialTheme.colorScheme.onSecondaryContainer
                 )
@@ -1134,7 +1134,7 @@ internal fun ZoomableBarChart(
             ) {
                 Icon(
                     imageVector = Icons.Default.ZoomOutMap,
-                    contentDescription = "Reset Zoom",
+                    contentDescription = stringResource(R.string.chart_reset_zoom),
                     modifier = Modifier.size(20.dp),
                     tint = MaterialTheme.colorScheme.onSecondaryContainer
                 )
@@ -1431,7 +1431,7 @@ internal fun ZoomableYearlyBarChart(
             ) {
                 Icon(
                     imageVector = Icons.Default.ZoomOutMap,
-                    contentDescription = "Reset Zoom",
+                    contentDescription = stringResource(R.string.chart_reset_zoom),
                     modifier = Modifier.size(20.dp),
                     tint = MaterialTheme.colorScheme.onSecondaryContainer
                 )

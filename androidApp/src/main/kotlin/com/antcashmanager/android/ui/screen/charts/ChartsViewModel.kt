@@ -251,6 +251,12 @@ class ChartsViewModel(
 
         Logger.d(tag = "ChartsViewModel") { "Yearly data: ${yearlyData.map { "${it.label}: income=${it.income}, expense=${it.expense}" }}" }
 
+        // Ripartizione per metodo di pagamento (entrate + uscite nette, come HomeViewModel).
+        val paymentTypeBreakdown = transactions
+            .groupBy { it.paymentType }
+            .mapValues { (_, txs) -> kotlin.math.abs(txs.sumOf { it.amount }) }
+            .filterValues { it != 0.0 }
+
         return ChartData(
             incomeByCategory = incomeByCategory,
             expenseByCategory = expenseByCategory,
@@ -258,6 +264,7 @@ class ChartsViewModel(
             totalExpense = totalExpense, // Will be negative
             monthlyData = monthlyData,
             yearlyData = yearlyData,
+            paymentTypeBreakdown = paymentTypeBreakdown,
         )
     }
 }

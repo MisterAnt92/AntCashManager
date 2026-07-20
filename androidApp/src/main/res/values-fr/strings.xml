@@ -94,6 +94,12 @@
     <string name="charts_monthly_overview">Aper\u00e7u mensuel</string>
     <string name="charts_yearly_overview">Aperçu annuel</string>
     <string name="charts_no_data">Aucune donnée pour la période sélectionnée</string>
+    <string name="chart_reset_zoom">Réinitialiser le zoom</string>
+    <string name="charts_payment_breakdown_title">Répartition par Mode de Paiement</string>
+    <string name="charts_top_income_categories">Principales Catégories - Revenus</string>
+    <string name="charts_top_expense_categories">Principales Catégories - Dépenses</string>
+    <string name="charts_chart_summary_cd">%1$s : %2$d catégories, total %3$s</string>
+    <string name="charts_category_item_cd">%1$s : %2$s, %3$s pour cent du total</string>
     <string name="charts_pick_start_date">Choisir la date de d\u00e9but</string>
     <string name="charts_pick_end_date">Choisir la date de fin</string>
     <string name="charts_empty_ant">Aucune donn\u00e9e \u00e0 afficher ! La fourmi travaille dur ! 🐜📊</string>
