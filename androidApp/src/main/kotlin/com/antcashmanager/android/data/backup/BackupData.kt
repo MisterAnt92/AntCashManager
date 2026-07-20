@@ -81,4 +81,8 @@ data class SettingsBackup(
     val mealVoucherValue: Double = 5.29,
     val dateFormat: String = "dd/MM/yyyy",
     val chartsZoomEnabled: Boolean = false,
+    val suggestionsEnabled: Boolean = true,
+    val suggestionsClearedAt: Long? = null,
+    val widgetBackgroundColor: Long = 0xFFFFFFFFL,
+    val widgetOpacity: Int = 100,
 )

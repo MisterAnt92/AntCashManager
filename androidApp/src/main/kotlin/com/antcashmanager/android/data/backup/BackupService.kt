@@ -11,6 +11,8 @@ import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
+import com.antcashmanager.domain.service.NoOpWidgetUpdateNotifier
+import com.antcashmanager.domain.service.WidgetUpdateNotifier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -32,6 +34,7 @@ class BackupService(
     private val transactionRepository: TransactionRepository,
     private val categoryRepository: CategoryRepository,
     private val settingsRepository: SettingsRepository,
+    private val widgetUpdateNotifier: WidgetUpdateNotifier = NoOpWidgetUpdateNotifier,
 ) {
     private val json = Json {
         prettyPrint = true
@@ -150,7 +153,12 @@ class BackupService(
                 }
 
                 // Restore settings, se presenti (assenti in un backup v1 o se esplicitamente null)
-                backupData.settings?.let { applySettings(it) }
+                backupData.settings?.let {
+                    applySettings(it)
+                    // Assicura il refresh dei widget anche se il backup non contiene
+                    // transazioni (in quel caso insertTransaction non lo farebbe scattare).
+                    widgetUpdateNotifier.notifyTransactionsChanged()
+                }
 
                 Logger.d(tag = "BackupService") { "Restore completed: $transactionsRestored transactions, $categoriesRestored categories" }
                 Result.success(
@@ -239,6 +247,10 @@ class BackupService(
         mealVoucherValue = settingsRepository.getMealVoucherValue().first(),
         dateFormat = settingsRepository.getDateFormat().first(),
         chartsZoomEnabled = settingsRepository.getChartsZoomEnabled().first(),
+        suggestionsEnabled = settingsRepository.getSuggestionsEnabled().first(),
+        suggestionsClearedAt = settingsRepository.getSuggestionsClearedAt().first(),
+        widgetBackgroundColor = settingsRepository.getWidgetBackgroundColor().first(),
+        widgetOpacity = settingsRepository.getWidgetOpacity().first(),
     )
 
     private suspend fun applySettings(settings: SettingsBackup) {
@@ -265,6 +277,12 @@ class BackupService(
         settingsRepository.setMealVoucherValue(settings.mealVoucherValue)
         settingsRepository.setDateFormat(settings.dateFormat)
         settingsRepository.setChartsZoomEnabled(settings.chartsZoomEnabled)
+        settingsRepository.setSuggestionsEnabled(settings.suggestionsEnabled)
+        // Nessun "unset": se il backup non ha una data di cancellazione (null), quella
+        // corrente sul device resta invariata invece di essere azzerata.
+        settings.suggestionsClearedAt?.let { settingsRepository.setSuggestionsClearedAt(it) }
+        settingsRepository.setWidgetBackgroundColor(settings.widgetBackgroundColor)
+        settingsRepository.setWidgetOpacity(settings.widgetOpacity)
     }
 
     private inline fun <reified T : Enum<T>> enumValueOfOrDefault(name: String, default: T): T =

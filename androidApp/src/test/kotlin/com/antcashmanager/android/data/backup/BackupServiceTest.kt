@@ -9,6 +9,7 @@ import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
+import com.antcashmanager.domain.service.WidgetUpdateNotifier
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -22,7 +23,8 @@ class BackupServiceTest {
         transactionRepository: FakeTransactionRepository = FakeTransactionRepository(),
         categoryRepository: FakeCategoryRepository = FakeCategoryRepository(),
         settingsRepository: FakeSettingsRepository = FakeSettingsRepository(),
-    ) = BackupService(transactionRepository, categoryRepository, settingsRepository)
+        widgetUpdateNotifier: WidgetUpdateNotifier = FakeWidgetUpdateNotifier(),
+    ) = BackupService(transactionRepository, categoryRepository, settingsRepository, widgetUpdateNotifier)
 
     @Test
     fun createBackup_shouldProduceCurrentVersionWithNonNullSettings_always() = runTest {
@@ -109,12 +111,20 @@ class BackupServiceTest {
             mealVoucherValue.value = 7.5
             showPaymentTypeBreakdown.value = true
             chartsZoomEnabled.value = true
+            suggestionsEnabled.value = false
+            suggestionsClearedAt.value = 1_700_000_000_000L
+            widgetBackgroundColor.value = 0xFF212121L
+            widgetOpacity.value = 42
         }
         val sourceService = buildService(settingsRepository = sourceSettings)
         val jsonString = sourceService.createBackup().getOrThrow()
 
         val targetSettings = FakeSettingsRepository()
-        val targetService = buildService(settingsRepository = targetSettings)
+        val targetWidgetNotifier = FakeWidgetUpdateNotifier()
+        val targetService = buildService(
+            settingsRepository = targetSettings,
+            widgetUpdateNotifier = targetWidgetNotifier,
+        )
 
         targetService.restoreBackup(jsonString).getOrThrow()
 
@@ -128,6 +138,51 @@ class BackupServiceTest {
         assertEquals(7.5, targetSettings.mealVoucherValue.value, 0.0)
         assertTrue(targetSettings.showPaymentTypeBreakdown.value)
         assertTrue(targetSettings.chartsZoomEnabled.value)
+        assertFalse(targetSettings.suggestionsEnabled.value)
+        assertEquals(1_700_000_000_000L, targetSettings.suggestionsClearedAt.value)
+        assertEquals(0xFF212121L, targetSettings.widgetBackgroundColor.value)
+        assertEquals(42, targetSettings.widgetOpacity.value)
+        assertEquals(1, targetWidgetNotifier.notifyCount)
+    }
+
+    @Test
+    fun restoreBackup_shouldApplySuggestionsAndWidgetDefaults_whenBackupIsV2WithoutThoseFields() = runTest {
+        // Backup v2 "vecchio": blocco settings presente ma senza i campi aggiunti
+        // successivamente (suggerimenti, aspetto widget).
+        val legacyV2Json = """
+            {
+              "version": 2,
+              "timestamp": 0,
+              "transactions": [],
+              "categories": [],
+              "settings": {
+                "theme": "DARK",
+                "currencySymbol": "£"
+              }
+            }
+        """.trimIndent()
+
+        val targetSettings = FakeSettingsRepository().apply {
+            suggestionsEnabled.value = false
+            widgetBackgroundColor.value = 0xFF000000L
+            widgetOpacity.value = 10
+        }
+        val targetWidgetNotifier = FakeWidgetUpdateNotifier()
+        val service = buildService(
+            settingsRepository = targetSettings,
+            widgetUpdateNotifier = targetWidgetNotifier,
+        )
+
+        service.restoreBackup(legacyV2Json).getOrThrow()
+
+        assertEquals(AppTheme.DARK, targetSettings.theme.value)
+        assertEquals("£", targetSettings.currencySymbol.value)
+        // Campi assenti dal backup: applicati ai default di SettingsBackup (non lasciati invariati,
+        // coerente col comportamento di tutti gli altri campi del blocco "settings" presente).
+        assertTrue(targetSettings.suggestionsEnabled.value)
+        assertEquals(0xFFFFFFFFL, targetSettings.widgetBackgroundColor.value)
+        assertEquals(100, targetSettings.widgetOpacity.value)
+        assertEquals(1, targetWidgetNotifier.notifyCount)
     }
 
     @Test
@@ -306,6 +361,15 @@ class BackupServiceTest {
     private class ThrowingOnThemeSettingsRepository : FakeSettingsRepository() {
         override suspend fun setTheme(theme: AppTheme) {
             throw IllegalStateException("settings write failed")
+        }
+    }
+
+    private class FakeWidgetUpdateNotifier : WidgetUpdateNotifier {
+        var notifyCount = 0
+            private set
+
+        override suspend fun notifyTransactionsChanged() {
+            notifyCount++
         }
     }
 

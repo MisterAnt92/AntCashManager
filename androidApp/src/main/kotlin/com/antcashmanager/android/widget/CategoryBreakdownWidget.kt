@@ -9,11 +9,11 @@ import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.LocalContext
-import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.SizeMode
+import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
@@ -30,7 +30,6 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
-import com.antcashmanager.android.MainActivity
 import com.antcashmanager.android.R
 import com.antcashmanager.android.util.formatAmount
 import com.antcashmanager.android.util.translateCategoryPlain
@@ -105,7 +104,7 @@ private fun CategoryBreakdownContent(
             .background(palette.background)
             .cornerRadius(16.dp)
             .padding(12.dp)
-            .clickable(actionStartActivity<MainActivity>()),
+            .clickable(actionRunCallback<CategoryBreakdownWidgetTapAction>()),
     ) {
         Text(
             text = context.getString(R.string.widget_category_breakdown_title),

@@ -15,8 +15,8 @@ import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.lazy.items
+import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.provideContent
-import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.background
 import androidx.glance.unit.ColorProvider
@@ -34,7 +34,6 @@ import androidx.glance.layout.width
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
-import com.antcashmanager.android.MainActivity
 import com.antcashmanager.android.R
 import com.antcashmanager.android.util.formatAmountWithSign
 import com.antcashmanager.android.util.translateCategoryPlain
@@ -86,7 +85,7 @@ private fun RecentTransactionsContent(
             .background(palette.background)
             .cornerRadius(16.dp)
             .padding(12.dp)
-            .clickable(actionStartActivity<MainActivity>()),
+            .clickable(actionRunCallback<RecentTransactionsWidgetTapAction>()),
     ) {
         Text(
             text = context.getString(R.string.widget_recent_transactions_title),

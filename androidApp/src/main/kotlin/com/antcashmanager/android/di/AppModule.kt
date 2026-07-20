@@ -93,6 +93,7 @@ val dataModule = module {
             transactionRepository = get(),
             categoryRepository = get(),
             settingsRepository = get(),
+            widgetUpdateNotifier = get(),
         )
     }
     factory<ReceiptOcrService> { MlKitReceiptOcrService() }

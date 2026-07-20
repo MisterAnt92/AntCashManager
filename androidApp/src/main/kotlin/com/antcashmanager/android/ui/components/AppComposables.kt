@@ -1,11 +1,17 @@
 package com.antcashmanager.android.ui.components
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
@@ -115,12 +121,17 @@ fun AppRadioButton(
     )
 }
 
+private val AppSliderThumbSize = 18.dp
+private val AppSliderTrackHeight = 4.dp
+
 /**
- * AppSlider - wrapper per Slider di Material3 con i colori del tema dell'app
- * (thumb/traccia attiva sul colore primario, traccia inattiva sul primary container),
- * così ogni slider dell'app ha lo stesso aspetto invece dei colori di default M3.
+ * AppSlider - wrapper per Slider di Material3 con lo stile dell'app: thumb rotondo
+ * (un pallino pieno, non lo stadio largo di default M3) e sole due tonalità per la
+ * traccia (primario per la parte attiva, un grigio neutro per quella inattiva, senza le
+ * tacche colorate dei default M3), coerente con le altre progress-bar dell'app.
  * Utilizzo: AppSlider(value = value, onValueChange = { value = it }, valueRange = 0f..100f)
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppSlider(
     value: Float,
@@ -131,6 +142,24 @@ fun AppSlider(
     steps: Int = 0,
     enabled: Boolean = true,
 ) {
+    val activeColor = MaterialTheme.colorScheme.primary
+    val inactiveColor = MaterialTheme.colorScheme.surfaceVariant
+    val disabledColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+    val disabledInactiveColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+
+    val colors = SliderDefaults.colors(
+        thumbColor = activeColor,
+        activeTrackColor = activeColor,
+        activeTickColor = activeColor,
+        inactiveTrackColor = inactiveColor,
+        inactiveTickColor = inactiveColor,
+        disabledThumbColor = disabledColor,
+        disabledActiveTrackColor = disabledColor,
+        disabledActiveTickColor = disabledColor,
+        disabledInactiveTrackColor = disabledInactiveColor,
+        disabledInactiveTickColor = disabledInactiveColor,
+    )
+
     Slider(
         value = value,
         onValueChange = onValueChange,
@@ -139,16 +168,22 @@ fun AppSlider(
         onValueChangeFinished = onValueChangeFinished,
         valueRange = valueRange,
         steps = steps,
-        colors = SliderDefaults.colors(
-            thumbColor = MaterialTheme.colorScheme.primary,
-            activeTrackColor = MaterialTheme.colorScheme.primary,
-            activeTickColor = MaterialTheme.colorScheme.onPrimary,
-            inactiveTrackColor = MaterialTheme.colorScheme.primaryContainer,
-            inactiveTickColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            disabledThumbColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
-            disabledActiveTrackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
-            disabledInactiveTrackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
-        ),
+        colors = colors,
+        thumb = {
+            Box(
+                modifier = Modifier
+                    .size(AppSliderThumbSize)
+                    .background(if (enabled) activeColor else disabledColor, CircleShape),
+            )
+        },
+        track = { sliderState ->
+            SliderDefaults.Track(
+                sliderState = sliderState,
+                colors = colors,
+                enabled = enabled,
+                modifier = Modifier.height(AppSliderTrackHeight),
+            )
+        },
     )
 }
 

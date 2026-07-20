@@ -1,6 +1,7 @@
 package com.antcashmanager.android.widget
 
 import androidx.compose.ui.graphics.Color
+import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
@@ -16,6 +17,9 @@ internal object WidgetDependencies {
         get() = GlobalContext.get().get()
 
     val settingsRepository: SettingsRepository
+        get() = GlobalContext.get().get()
+
+    val analyticsManager: AnalyticsManager
         get() = GlobalContext.get().get()
 }
 
