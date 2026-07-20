@@ -56,6 +56,8 @@ object AnalyticsConstants {
         "charts_zoom_toggled",
         "show_payment_breakdown_toggled",
         "show_transaction_notes_toggled",
+        "widget_background_color_changed",
+        "widget_opacity_changed",
         "settings_help_opened",
         "settings_privacy_policy_opened",
         "settings_third_party_libraries_opened",

@@ -185,6 +185,14 @@
     <string name="settings_separator_none">Keines</string>
     <string name="settings_reset_preferences">Alle Einstellungen zur\u00fccksetzen</string>
     <string name="settings_reset_preferences_subtitle">Alle Einstellungen auf Standardwerte zur\u00fccksetzen</string>
+    <string name="settings_section_widgets">Widgets</string>
+    <string name="settings_widget_background_color">Hintergrundfarbe</string>
+    <string name="dialog_choose_widget_background_color">Widget-Hintergrundfarbe w\u00e4hlen</string>
+    <string name="settings_widget_opacity">Deckkraft</string>
+    <string name="settings_widget_opacity_value">%1$d%%</string>
+    <string name="settings_widget_preview_title">Vorschau</string>
+    <string name="settings_widget_preview_recent">Letzte Transaktionen</string>
+    <string name="settings_widget_preview_category">Einnahmen &amp; Ausgaben</string>
     <string name="settings_accessibility">Barrierefreiheit</string>
     <string name="settings_high_contrast">Hoher Kontrast</string>
     <string name="settings_high_contrast_subtitle">Erh\u00f6ht den Kontrast f\u00fcr bessere Lesbarkeit. Verwendet kr\u00e4ftigere Farben und st\u00e4rkere R\u00e4nder.</string>
@@ -362,6 +370,10 @@
 
     <!-- Empty State -->
     <string name="empty_state_no_transactions">Keine Transaktionen vorhanden</string>
+    <string name="widget_recent_transactions_title">Letzte Transaktionen</string>
+    <string name="widget_recent_transactions_description">Zeigt deine letzten Transaktionen, automatisch aktualisiert</string>
+    <string name="widget_category_breakdown_title">Einnahmen &amp; Ausgaben</string>
+    <string name="widget_category_breakdown_description">Zeigt Einnahmen und Ausgaben des Monats nach Kategorie, automatisch aktualisiert</string>
     <string name="empty_state_no_transactions_subtitle">Das Sparschwein wartet auf dich!</string>
 
     <!-- Payment Breakdown -->

@@ -166,6 +166,14 @@
     <string name="settings_separator_none">Aucun</string>
     <string name="settings_reset_preferences">R\u00e9initialiser les pr\u00e9f\u00e9rences</string>
     <string name="settings_reset_preferences_subtitle">Restaurer tous les param\u00e8tres \u00e0 leurs valeurs par d\u00e9faut</string>
+    <string name="settings_section_widgets">Widgets</string>
+    <string name="settings_widget_background_color">Couleur de fond</string>
+    <string name="dialog_choose_widget_background_color">Choisir la couleur de fond du widget</string>
+    <string name="settings_widget_opacity">Opacit\u00e9</string>
+    <string name="settings_widget_opacity_value">%1$d%%</string>
+    <string name="settings_widget_preview_title">Aper\u00e7u</string>
+    <string name="settings_widget_preview_recent">Transactions r\u00e9centes</string>
+    <string name="settings_widget_preview_category">Revenus et d\u00e9penses</string>
     <string name="settings_accessibility">Accessibilit\u00e9</string>
     <string name="settings_high_contrast">Contraste \u00e9lev\u00e9</string>
     <string name="settings_high_contrast_subtitle">Augmente le contraste pour une meilleure lisibilit\u00e9. Utilise des couleurs plus vives et des bordures plus marqu\u00e9es.</string>
@@ -324,6 +332,10 @@
     <string name="add_transaction_meal_voucher_difference_paid">Différence payée</string>
 
     <string name="empty_state_no_transactions">Aucune transaction présente</string>
+    <string name="widget_recent_transactions_title">Transactions récentes</string>
+    <string name="widget_recent_transactions_description">Affiche vos transactions récentes, mises à jour automatiquement</string>
+    <string name="widget_category_breakdown_title">Revenus et dépenses</string>
+    <string name="widget_category_breakdown_description">Affiche les revenus et dépenses du mois par catégorie, mis à jour automatiquement</string>
     <string name="empty_state_no_transactions_subtitle">La tirelire vous attend !</string>
     <string name="settings_show_payment_breakdown">Afficher le solde par type de paiement</string>
     <string name="settings_show_payment_breakdown_desc">Afficher la répartition du solde par méthode de paiement sur l\'écran d\'accueil</string>

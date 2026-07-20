@@ -635,6 +635,13 @@ class MockHomeSettingsRepository : SettingsRepository {
         kotlinx.coroutines.flow.flowOf(null)
     override suspend fun setSuggestionsClearedAt(timestamp: Long) {}
 
+    override fun getWidgetBackgroundColor(): kotlinx.coroutines.flow.Flow<Long> =
+        kotlinx.coroutines.flow.flowOf(0xFFFFFFFFL)
+    override suspend fun setWidgetBackgroundColor(color: Long) {}
+    override fun getWidgetOpacity(): kotlinx.coroutines.flow.Flow<Int> =
+        kotlinx.coroutines.flow.flowOf(100)
+    override suspend fun setWidgetOpacity(opacity: Int) {}
+
     override suspend fun resetAllPreferences() {}
 }
 

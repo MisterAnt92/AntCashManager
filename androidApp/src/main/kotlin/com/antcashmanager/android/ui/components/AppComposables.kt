@@ -11,6 +11,8 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -114,6 +116,43 @@ fun AppRadioButton(
 }
 
 /**
+ * AppSlider - wrapper per Slider di Material3 con i colori del tema dell'app
+ * (thumb/traccia attiva sul colore primario, traccia inattiva sul primary container),
+ * così ogni slider dell'app ha lo stesso aspetto invece dei colori di default M3.
+ * Utilizzo: AppSlider(value = value, onValueChange = { value = it }, valueRange = 0f..100f)
+ */
+@Composable
+fun AppSlider(
+    value: Float,
+    onValueChange: (Float) -> Unit,
+    modifier: Modifier = Modifier,
+    onValueChangeFinished: (() -> Unit)? = null,
+    valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
+    steps: Int = 0,
+    enabled: Boolean = true,
+) {
+    Slider(
+        value = value,
+        onValueChange = onValueChange,
+        modifier = modifier,
+        enabled = enabled,
+        onValueChangeFinished = onValueChangeFinished,
+        valueRange = valueRange,
+        steps = steps,
+        colors = SliderDefaults.colors(
+            thumbColor = MaterialTheme.colorScheme.primary,
+            activeTrackColor = MaterialTheme.colorScheme.primary,
+            activeTickColor = MaterialTheme.colorScheme.onPrimary,
+            inactiveTrackColor = MaterialTheme.colorScheme.primaryContainer,
+            inactiveTickColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            disabledThumbColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+            disabledActiveTrackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+            disabledInactiveTrackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+        ),
+    )
+}
+
+/**
  * AppListItem - wrapper per ListItem di Material3 con tema trasparente
  * Utilizzo: AppListItem(headlineContent = { AppText("Title") })
  */
@@ -172,6 +211,7 @@ private fun AppComposablesPreviewLight() {
                 AppRadioButton(selected = true, onClick = {})
                 AppText("Radio")
             }
+            AppSlider(value = 0.6f, onValueChange = {}, valueRange = 0f..1f)
             AppDivider()
         }
     }

@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.SettingsRepository
+import com.antcashmanager.domain.service.NoOpWidgetUpdateNotifier
+import com.antcashmanager.domain.service.WidgetUpdateNotifier
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -19,6 +21,7 @@ import kotlinx.coroutines.launch
  */
 class DisplayViewModel(
     private val settingsRepository: SettingsRepository,
+    private val widgetUpdateNotifier: WidgetUpdateNotifier = NoOpWidgetUpdateNotifier,
 ) : ViewModel() {
 
     // Espone il simbolo valuta attuale
@@ -140,6 +143,22 @@ class DisplayViewModel(
             viewModelScope,
             SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
             true,
+        )
+
+    // Espone il colore di sfondo dei widget della home screen
+    val widgetBackgroundColor = settingsRepository.getWidgetBackgroundColor()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_WIDGET_BACKGROUND_COLOR,
+        )
+
+    // Espone l'opacità dei widget della home screen (0-100)
+    val widgetOpacity = settingsRepository.getWidgetOpacity()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_WIDGET_OPACITY,
         )
 
     /**
@@ -270,6 +289,28 @@ class DisplayViewModel(
     fun setShowInitialAnimation(show: Boolean) = updatePreference(
         logMsg = "Setting show initial animation: $show",
         action = { settingsRepository.setShowInitialAnimation(show) },
+    )
+
+    /**
+     * Aggiorna il colore di sfondo dei widget e ne forza il refresh immediato.
+     */
+    fun setWidgetBackgroundColor(color: Long) = updatePreference(
+        logMsg = "Setting widget background color: $color",
+        action = {
+            settingsRepository.setWidgetBackgroundColor(color)
+            widgetUpdateNotifier.notifyTransactionsChanged()
+        },
+    )
+
+    /**
+     * Aggiorna l'opacità dei widget e ne forza il refresh immediato.
+     */
+    fun setWidgetOpacity(opacity: Int) = updatePreference(
+        logMsg = "Setting widget opacity: $opacity",
+        action = {
+            settingsRepository.setWidgetOpacity(opacity.coerceIn(0, 100))
+            widgetUpdateNotifier.notifyTransactionsChanged()
+        },
     )
 
     /**

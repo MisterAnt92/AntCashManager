@@ -200,6 +200,14 @@
     <string name="settings_section_other">Other</string>
     <string name="settings_reset_preferences">Reset All Preferences</string>
     <string name="settings_reset_preferences_subtitle">Restore all settings to their default values</string>
+    <string name="settings_section_widgets">Widgets</string>
+    <string name="settings_widget_background_color">Background color</string>
+    <string name="dialog_choose_widget_background_color">Choose widget background color</string>
+    <string name="settings_widget_opacity">Opacity</string>
+    <string name="settings_widget_opacity_value">%1$d%%</string>
+    <string name="settings_widget_preview_title">Preview</string>
+    <string name="settings_widget_preview_recent">Recent Transactions</string>
+    <string name="settings_widget_preview_category">Income &amp; Expenses</string>
     <string name="date_format_ddmmyyyy">DD/MM/YYYY</string>
     <string name="date_format_mmddyyyy">MM/DD/YYYY</string>
     <string name="date_format_yyyymmdd">YYYY-MM-DD</string>
@@ -378,6 +386,10 @@
 
     <!-- Empty State -->
     <string name="empty_state_no_transactions">No transactions present</string>
+    <string name="widget_recent_transactions_title">Recent Transactions</string>
+    <string name="widget_recent_transactions_description">Shows your recent transactions, updated automatically</string>
+    <string name="widget_category_breakdown_title">Income &amp; Expenses</string>
+    <string name="widget_category_breakdown_description">Shows this month\'s income and expenses by category, updated automatically</string>
     <string name="empty_state_no_transactions_subtitle">The piggy bank is waiting for you!</string>
 
     <!-- Payment Breakdown -->

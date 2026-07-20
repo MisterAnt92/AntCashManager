@@ -165,6 +165,14 @@
     <string name="settings_separator_none">Ninguno</string>
     <string name="settings_reset_preferences">Restablecer preferencias</string>
     <string name="settings_reset_preferences_subtitle">Restaurar todos los ajustes a sus valores predeterminados</string>
+    <string name="settings_section_widgets">Widgets</string>
+    <string name="settings_widget_background_color">Color de fondo</string>
+    <string name="dialog_choose_widget_background_color">Elige el color de fondo del widget</string>
+    <string name="settings_widget_opacity">Opacidad</string>
+    <string name="settings_widget_opacity_value">%1$d%%</string>
+    <string name="settings_widget_preview_title">Vista previa</string>
+    <string name="settings_widget_preview_recent">Transacciones recientes</string>
+    <string name="settings_widget_preview_category">Ingresos y gastos</string>
     <string name="settings_accessibility">Accesibilidad</string>
     <string name="settings_high_contrast">Alto contraste</string>
     <string name="settings_high_contrast_subtitle">Aumenta el contraste para una mejor legibilidad. Usa colores m\u00e1s intensos y bordes m\u00e1s marcados.</string>
@@ -323,6 +331,10 @@
     <string name="add_transaction_meal_voucher_difference_paid">Diferencia pagada</string>
 
     <string name="empty_state_no_transactions">No hay transacciones presentes</string>
+    <string name="widget_recent_transactions_title">Transacciones recientes</string>
+    <string name="widget_recent_transactions_description">Muestra tus transacciones recientes, actualizadas automáticamente</string>
+    <string name="widget_category_breakdown_title">Ingresos y gastos</string>
+    <string name="widget_category_breakdown_description">Muestra los ingresos y gastos del mes por categoría, actualizados automáticamente</string>
     <string name="empty_state_no_transactions_subtitle">¡La alcancía te está esperando!</string>
     <string name="settings_show_payment_breakdown">Mostrar saldo por tipo de pago</string>
     <string name="settings_show_payment_breakdown_desc">Mostrar el desglose del saldo por método de pago en la pantalla de inicio</string>

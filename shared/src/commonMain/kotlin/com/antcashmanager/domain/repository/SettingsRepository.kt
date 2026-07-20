@@ -106,4 +106,10 @@ interface SettingsRepository {
     suspend fun setSuggestionsEnabled(enabled: Boolean)
     fun getSuggestionsClearedAt(): Flow<Long?>
     suspend fun setSuggestionsClearedAt(timestamp: Long)
+
+    // ── Aspetto widget (Home screen) ──
+    fun getWidgetBackgroundColor(): Flow<Long>
+    suspend fun setWidgetBackgroundColor(color: Long)
+    fun getWidgetOpacity(): Flow<Int>
+    suspend fun setWidgetOpacity(opacity: Int)
 }
