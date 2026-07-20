@@ -10,7 +10,7 @@ e mantenere il controllo dei dati in locale, con un approccio privacy-first e se
 | Campo | Valore                         |
 |---|--------------------------------|
 | App name | `AntCashManager`               |
-| Versione | `1.4.7`                        |
+| Versione | `1.5.9`                        |
 | Application ID | `com.sformica.ant_cashmanager` |
 | Android namespace | `com.antcashmanager.android`   |
 | Min SDK | `26`                           |
