@@ -59,6 +59,8 @@ class SettingsRepositoryImpl(
     private val isTutorialCompletedKey = booleanPreferencesKey("is_tutorial_completed")
     private val dataEncryptionEnabledKey = booleanPreferencesKey("data_encryption_enabled")
     private val showInitialAnimationKey = booleanPreferencesKey("show_initial_animation")
+    private val lastBackupTimestampKey = longPreferencesKey("last_backup_timestamp")
+    private val lastRestoreTimestampKey = longPreferencesKey("last_restore_timestamp")
 
     private fun createSavedDateFilter(defaultPresetIndex: Int, defaultDurationMs: Long): SavedDateFilter {
         val now = System.currentTimeMillis()
@@ -378,6 +380,20 @@ class SettingsRepositoryImpl(
     override suspend fun setDataEncryptionEnabled(enabled: Boolean) {
         dataStore.edit { it[dataEncryptionEnabledKey] = enabled }
         DatabaseEncryptionManager.setEncryptionDesired(context, enabled)
+    }
+
+    override fun getLastBackupTimestamp(): Flow<Long?> =
+        dataStore.data.map { it[lastBackupTimestampKey] }
+
+    override suspend fun setLastBackupTimestamp(timestamp: Long) {
+        dataStore.edit { it[lastBackupTimestampKey] = timestamp }
+    }
+
+    override fun getLastRestoreTimestamp(): Flow<Long?> =
+        dataStore.data.map { it[lastRestoreTimestampKey] }
+
+    override suspend fun setLastRestoreTimestamp(timestamp: Long) {
+        dataStore.edit { it[lastRestoreTimestampKey] = timestamp }
     }
 
     override suspend fun resetAllPreferences() {

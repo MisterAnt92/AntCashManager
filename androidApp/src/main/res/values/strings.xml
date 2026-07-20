@@ -178,8 +178,12 @@
     <string name="settings_delete_all_subtitle">Permanently remove all transactions and categories</string>
     <string name="settings_backup">Backup Data</string>
     <string name="settings_backup_subtitle">Export your data for safekeeping</string>
+    <string name="settings_last_backup_label">Last backup: %s</string>
+    <string name="settings_last_backup_never">No backup made yet</string>
     <string name="settings_restore">Restore Data</string>
     <string name="settings_restore_subtitle">Import data from a backup file</string>
+    <string name="settings_last_restore_label">Last restore: %s</string>
+    <string name="settings_last_restore_never">No restore performed yet</string>
     <string name="settings_support">Support</string>
     <string name="settings_send_feedback">Send Feedback</string>
     <string name="settings_send_feedback_subtitle">Help us improve the app</string>

@@ -57,6 +57,8 @@ open class FakeSettingsRepository : SettingsRepository {
     val showInitialAnimation = MutableStateFlow(false)
     val isTutorialCompleted = MutableStateFlow(false)
     val dataEncryptionEnabled = MutableStateFlow(false)
+    val lastBackupTimestamp = MutableStateFlow<Long?>(null)
+    val lastRestoreTimestamp = MutableStateFlow<Long?>(null)
 
     override fun getTheme(): Flow<AppTheme> = theme
     override suspend fun setTheme(theme: AppTheme) {
@@ -198,6 +200,16 @@ open class FakeSettingsRepository : SettingsRepository {
     override fun getDataEncryptionEnabled(): Flow<Boolean> = dataEncryptionEnabled
     override suspend fun setDataEncryptionEnabled(enabled: Boolean) {
         dataEncryptionEnabled.value = enabled
+    }
+
+    override fun getLastBackupTimestamp(): Flow<Long?> = lastBackupTimestamp
+    override suspend fun setLastBackupTimestamp(timestamp: Long) {
+        lastBackupTimestamp.value = timestamp
+    }
+
+    override fun getLastRestoreTimestamp(): Flow<Long?> = lastRestoreTimestamp
+    override suspend fun setLastRestoreTimestamp(timestamp: Long) {
+        lastRestoreTimestamp.value = timestamp
     }
 
     override suspend fun resetAllPreferences() {

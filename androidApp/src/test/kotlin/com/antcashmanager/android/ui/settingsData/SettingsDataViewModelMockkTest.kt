@@ -45,7 +45,11 @@ class SettingsDataViewModelMockkTest : BaseUnitTest() {
         backupService = mockk()
 
         every { settingsRepository.getDataEncryptionEnabled() } returns flowOf(false)
+        every { settingsRepository.getLastBackupTimestamp() } returns flowOf(null)
+        every { settingsRepository.getLastRestoreTimestamp() } returns flowOf(null)
         coEvery { settingsRepository.setDataEncryptionEnabled(any()) } returns Unit
+        coEvery { settingsRepository.setLastBackupTimestamp(any()) } returns Unit
+        coEvery { settingsRepository.setLastRestoreTimestamp(any()) } returns Unit
         coEvery { settingsRepository.resetAllPreferences() } returns Unit
         coEvery { categoryRepository.deleteAllCategories() } returns Unit
 
@@ -198,6 +202,19 @@ class SettingsDataViewModelMockkTest : BaseUnitTest() {
     }
 
     @Test
+    fun onBackupFileSaved_shouldPersistLastBackupTimestamp_whenCalled() = runViewModelTest {
+        coEvery { backupService.createBackup() } returns Result.success("{}")
+        val viewModel = buildViewModel()
+        viewModel.createBackup()
+        advanceUntilIdle()
+
+        viewModel.onBackupFileSaved()
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { settingsRepository.setLastBackupTimestamp(any()) }
+    }
+
+    @Test
     fun clearPendingBackupRequest_shouldClearPendingBackupDataWithoutShowingDialog_whenCalled() = runViewModelTest {
         coEvery { backupService.createBackup() } returns Result.success("{}")
         val viewModel = buildViewModel()
@@ -346,6 +363,18 @@ class SettingsDataViewModelMockkTest : BaseUnitTest() {
     }
 
     @Test
+    fun restoreBackup_shouldPersistLastRestoreTimestamp_whenSuccessful() = runViewModelTest {
+        every { BackupPayloadCipher.isEncryptedPayload(any()) } returns false
+        coEvery { backupService.restoreBackup("{\"json\":true}") } returns Result.success(RestoreResult(3, 2))
+        val viewModel = buildViewModel()
+
+        viewModel.restoreBackup("{\"json\":true}")
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { settingsRepository.setLastRestoreTimestamp(any()) }
+    }
+
+    @Test
     fun restoreBackup_shouldDecryptPayloadBeforeDelegating_whenPayloadIsEncrypted() = runViewModelTest {
         every { BackupPayloadCipher.isEncryptedPayload("ACM_ENC_V1:encrypted") } returns true
         every { BackupPayloadCipher.decrypt("ACM_ENC_V1:encrypted") } returns "{\"json\":true}"
@@ -368,6 +397,7 @@ class SettingsDataViewModelMockkTest : BaseUnitTest() {
         advanceUntilIdle()
 
         assertTrue(viewModel.state.value.showRestoreErrorDialog)
+        coVerify(exactly = 0) { settingsRepository.setLastRestoreTimestamp(any()) }
     }
 
     @Test

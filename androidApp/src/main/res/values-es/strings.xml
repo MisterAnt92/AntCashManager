@@ -147,8 +147,12 @@
     <string name="settings_delete_all_subtitle">Eliminar permanentemente todas las transacciones y categor\u00edas</string>
     <string name="settings_backup">Copia de seguridad</string>
     <string name="settings_backup_subtitle">Exporta tus datos para mayor seguridad</string>
+    <string name="settings_last_backup_label">Última copia de seguridad: %s</string>
+    <string name="settings_last_backup_never">Aún no se ha hecho ninguna copia de seguridad</string>
     <string name="settings_restore">Restaurar datos</string>
     <string name="settings_restore_subtitle">Importar datos desde un archivo de respaldo</string>
+    <string name="settings_last_restore_label">Última restauración: %s</string>
+    <string name="settings_last_restore_never">Aún no se ha realizado ninguna restauración</string>
     <string name="settings_support">Soporte</string>
     <string name="settings_send_feedback">Enviar comentarios</string>
     <string name="settings_send_feedback_subtitle">Ay\u00fadanos a mejorar la aplicaci\u00f3n</string>

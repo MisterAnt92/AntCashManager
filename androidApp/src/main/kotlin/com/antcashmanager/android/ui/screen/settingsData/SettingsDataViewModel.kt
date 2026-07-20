@@ -39,6 +39,16 @@ class SettingsDataViewModel(
                 _state.update { it.copy(dataEncryptionEnabled = enabled) }
             }
         }
+        viewModelScope.launch {
+            settingsRepositoryRef.getLastBackupTimestamp().collect { timestamp ->
+                _state.update { it.copy(lastBackupTimestamp = timestamp) }
+            }
+        }
+        viewModelScope.launch {
+            settingsRepositoryRef.getLastRestoreTimestamp().collect { timestamp ->
+                _state.update { it.copy(lastRestoreTimestamp = timestamp) }
+            }
+        }
     }
 
     fun setDataEncryptionEnabled(enabled: Boolean) {
@@ -119,6 +129,9 @@ class SettingsDataViewModel(
                 pendingBackupFileName = null,
                 showBackupSuccessDialog = true,
             )
+        }
+        viewModelScope.launch {
+            settingsRepositoryRef.setLastBackupTimestamp(System.currentTimeMillis())
         }
     }
 
@@ -299,6 +312,7 @@ class SettingsDataViewModel(
                             showRestoreSuccessDialog = true,
                         )
                     }
+                    settingsRepositoryRef.setLastRestoreTimestamp(System.currentTimeMillis())
                 }
                 .onFailure { error ->
                     if (error is CancellationException) throw error

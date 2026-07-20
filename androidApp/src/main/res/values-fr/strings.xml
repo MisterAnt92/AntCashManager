@@ -148,8 +148,12 @@
     <string name="settings_delete_all_subtitle">Supprimer d\u00e9finitivement toutes les transactions et cat\u00e9gories</string>
     <string name="settings_backup">Sauvegarder les donn\u00e9es</string>
     <string name="settings_backup_subtitle">Exporter vos donn\u00e9es pour les conserver</string>
+    <string name="settings_last_backup_label">Derni\u00e8re sauvegarde\u00a0: %s</string>
+    <string name="settings_last_backup_never">Aucune sauvegarde effectu\u00e9e</string>
     <string name="settings_restore">Restaurer les donn\u00e9es</string>
     <string name="settings_restore_subtitle">Importer les donn\u00e9es depuis un fichier de sauvegarde</string>
+    <string name="settings_last_restore_label">Derni\u00e8re restauration : %s</string>
+    <string name="settings_last_restore_never">Aucune restauration effectu\u00e9e</string>
     <string name="settings_support">Assistance</string>
     <string name="settings_send_feedback">Envoyer un commentaire</string>
     <string name="settings_send_feedback_subtitle">Aidez-nous \u00e0 am\u00e9liorer l\'application</string>

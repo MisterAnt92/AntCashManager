@@ -167,8 +167,12 @@
     <string name="settings_delete_all_subtitle">Alle Transaktionen und Kategorien dauerhaft entfernen</string>
     <string name="settings_backup">Daten sichern</string>
     <string name="settings_backup_subtitle">Exportiere deine Daten zur Sicherung</string>
+    <string name="settings_last_backup_label">Letztes Backup: %s</string>
+    <string name="settings_last_backup_never">Noch kein Backup erstellt</string>
     <string name="settings_restore">Daten wiederherstellen</string>
     <string name="settings_restore_subtitle">Daten aus einer Sicherungsdatei importieren</string>
+    <string name="settings_last_restore_label">Letzte Wiederherstellung: %s</string>
+    <string name="settings_last_restore_never">Noch keine Wiederherstellung durchgeführt</string>
     <string name="settings_support">Support</string>
     <string name="settings_send_feedback">Feedback senden</string>
     <string name="settings_send_feedback_subtitle">Hilf uns die App zu verbessern</string>
