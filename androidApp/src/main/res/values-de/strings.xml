@@ -74,6 +74,10 @@
     <string name="categories_tab_income">Einnahmen</string>
     <string name="categories_default_badge">Standard</string>
     <string name="categories_icon_label">Symbol</string>
+    <string name="categories_hide">Kategorie ausblenden</string>
+    <string name="categories_show">Kategorie einblenden</string>
+    <string name="categories_hidden_section_title">Ausgeblendete Kategorien (%d)</string>
+    <string name="categories_reorder">Kategorien neu anordnen</string>
 
     <!-- Kategorie-Symbole -->
     <string name="icon_home">Zuhause</string>

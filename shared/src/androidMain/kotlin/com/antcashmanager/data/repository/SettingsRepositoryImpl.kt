@@ -57,6 +57,7 @@ class SettingsRepositoryImpl(
     private val transactionsTransactionDisplayTypeKey =
         stringPreferencesKey("transactions_transaction_display_type")
     private val isTutorialCompletedKey = booleanPreferencesKey("is_tutorial_completed")
+    private val categorySortOrderInitializedKey = booleanPreferencesKey("category_sort_order_initialized")
     private val dataEncryptionEnabledKey = booleanPreferencesKey("data_encryption_enabled")
     private val showInitialAnimationKey = booleanPreferencesKey("show_initial_animation")
     private val lastBackupTimestampKey = longPreferencesKey("last_backup_timestamp")
@@ -376,6 +377,13 @@ class SettingsRepositoryImpl(
 
     override suspend fun setIsTutorialCompleted(completed: Boolean) {
         dataStore.edit { it[isTutorialCompletedKey] = completed }
+    }
+
+    override fun getCategorySortOrderInitialized(): Flow<Boolean> =
+        dataStore.data.map { it[categorySortOrderInitializedKey] ?: false }
+
+    override suspend fun setCategorySortOrderInitialized(initialized: Boolean) {
+        dataStore.edit { it[categorySortOrderInitializedKey] = initialized }
     }
 
     override fun getDataEncryptionEnabled(): Flow<Boolean> =

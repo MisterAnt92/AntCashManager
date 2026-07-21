@@ -206,6 +206,77 @@ class CategoriesViewModelTest : BaseUnitTest() {
         assertEquals("Salary", viewModel.state.value.incomeCategories.first().name)
     }
 
+    // ── SORT ORDER & VISIBILITY ─────────────────────────────────────────────
+
+    @Test
+    fun state_shouldSortExpenseCategoriesBySortOrder_whenCategoriesAreOutOfOrder() = runViewModelTest {
+        val categories = listOf(
+            Category(id = 1, name = "Second", icon = "category", color = 0xFFE57373, type = "EXPENSE", sortOrder = 1),
+            Category(id = 2, name = "First", icon = "category", color = 0xFFE57373, type = "EXPENSE", sortOrder = 0),
+        )
+        every { getCategoriesUseCase() } returns flowOf(Result.success(categories))
+        val viewModel = buildViewModel()
+
+        advanceUntilIdle()
+
+        assertEquals(listOf("First", "Second"), viewModel.state.value.expenseCategories.map { it.name })
+    }
+
+    @Test
+    fun state_shouldExcludeHiddenCategories_fromVisibleLists() = runViewModelTest {
+        val categories = listOf(
+            Category(id = 1, name = "Visible", icon = "category", color = 0xFFE57373, type = "EXPENSE"),
+            Category(id = 2, name = "Hidden", icon = "category", color = 0xFFE57373, type = "EXPENSE", isHidden = true),
+        )
+        every { getCategoriesUseCase() } returns flowOf(Result.success(categories))
+        val viewModel = buildViewModel()
+
+        advanceUntilIdle()
+
+        assertEquals(listOf("Visible"), viewModel.state.value.expenseCategories.map { it.name })
+        assertEquals(listOf("Hidden"), viewModel.state.value.hiddenExpenseCategories.map { it.name })
+    }
+
+    @Test
+    fun addCategory_shouldAppendSortOrder_whenCategoriesOfSameTypeAlreadyExist() = runViewModelTest {
+        val categories = listOf(
+            Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373, type = "EXPENSE", sortOrder = 2),
+        )
+        every { getCategoriesUseCase() } returns flowOf(Result.success(categories))
+        val viewModel = buildViewModel()
+        advanceUntilIdle()
+
+        viewModel.addCategory("New", "category", 0xFFE57373, "EXPENSE")
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { insertCategoryUseCase(match { it.name == "New" && it.sortOrder == 3 }) }
+    }
+
+    @Test
+    fun setCategoryHidden_shouldCallUpdateUseCaseWithInvertedIsHidden_andNotSyncTransactions() = runViewModelTest {
+        val viewModel = buildViewModel()
+        val category = Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373, isHidden = false)
+
+        viewModel.setCategoryHidden(category, true)
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { updateCategoryUseCase(category.copy(isHidden = true)) }
+        coVerify(exactly = 0) { syncTransactionCategoriesUseCase(any()) }
+    }
+
+    @Test
+    fun reorderCategories_shouldPersistOnlyCategoriesWhoseSortOrderChanged() = runViewModelTest {
+        val viewModel = buildViewModel()
+        val unchanged = Category(id = 1, name = "First", icon = "category", color = 0xFFE57373, sortOrder = 0)
+        val changed = Category(id = 2, name = "Second", icon = "category", color = 0xFFE57373, sortOrder = 5)
+
+        viewModel.reorderCategories(listOf(unchanged, changed))
+        advanceUntilIdle()
+
+        coVerify(exactly = 0) { updateCategoryUseCase(unchanged) }
+        coVerify(exactly = 1) { updateCategoryUseCase(changed.copy(sortOrder = 1)) }
+    }
+
     // ── ERROR HANDLING ──────────────────────────────────────────────────────
 
     @Test

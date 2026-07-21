@@ -79,6 +79,10 @@
     <string name="categories_tab_income">Income</string>
     <string name="categories_default_badge">Default</string>
     <string name="categories_icon_label">Icon</string>
+    <string name="categories_hide">Hide category</string>
+    <string name="categories_show">Show category</string>
+    <string name="categories_hidden_section_title">Hidden categories (%d)</string>
+    <string name="categories_reorder">Reorder categories</string>
     <string name="categories_selection_hint">Tap a category to select it (auto-advances in real app)</string>
 
     <!-- Category Icons -->

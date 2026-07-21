@@ -143,7 +143,8 @@ class AddTransactionViewModel(
         viewModelScope.launch {
             getCategoriesUseCase().collect { result ->
                 result.onSuccess { categories ->
-                    _state.update { it.copy(categories = categories) }
+                    // Le categorie nascoste non vanno offerte per nuove transazioni.
+                    _state.update { it.copy(categories = categories.filterNot { category -> category.isHidden }) }
                 }.onFailure { error ->
                     if (error is CancellationException) throw error
                     Logger.e(throwable = error, tag = AddTransactionConstant.TAG) {
@@ -209,6 +210,15 @@ class AddTransactionViewModel(
                     Logger.d(tag = AddTransactionConstant.TAG) {
                         "Transaction loaded: ${transaction.title}, category: $selectedCat"
                     }
+                    // La categoria già assegnata alla transazione deve restare selezionabile
+                    // nel picker anche se nel frattempo è stata nascosta, altrimenti l'utente
+                    // non la vedrebbe più tra le opzioni durante la modifica.
+                    val visibleCategories = categoryList.filterNot { it.isHidden }
+                    val categoriesForPicker = if (selectedCat != null && selectedCat.isHidden) {
+                        visibleCategories + selectedCat
+                    } else {
+                        visibleCategories
+                    }
 
                     _state.update {
                         it.copy(
@@ -229,7 +239,7 @@ class AddTransactionViewModel(
                             mealVoucherCount = transaction.mealVoucherCount.toString(),
                             currentStep = AddTransactionStep.DETAILS,
                             isLoading = false,
-                            categories = categoryList,
+                            categories = categoriesForPicker,
                         )
                     }
                 } else {

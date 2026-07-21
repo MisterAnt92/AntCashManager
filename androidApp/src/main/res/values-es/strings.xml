@@ -56,6 +56,10 @@
     <string name="categories_tab_income">Ingresos</string>
     <string name="categories_default_badge">Predeterminada</string>
     <string name="categories_icon_label">Icono</string>
+    <string name="categories_hide">Ocultar categoría</string>
+    <string name="categories_show">Mostrar categoría</string>
+    <string name="categories_hidden_section_title">Categorías ocultas (%d)</string>
+    <string name="categories_reorder">Reordenar categorías</string>
 
     <!-- Iconos de Categoría -->
     <string name="icon_home">Hogar</string>

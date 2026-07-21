@@ -106,6 +106,10 @@
     <string name="categories_tab_income">Entrate</string>
     <string name="categories_default_badge">Predefinita</string>
     <string name="categories_icon_label">Icona</string>
+    <string name="categories_hide">Nascondi categoria</string>
+    <string name="categories_show">Mostra categoria</string>
+    <string name="categories_hidden_section_title">Categorie nascoste (%d)</string>
+    <string name="categories_reorder">Riordina categorie</string>
 
     <!-- Icone Categorie -->
     <string name="icon_home">Casa</string>

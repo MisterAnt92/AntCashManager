@@ -81,6 +81,14 @@ interface SettingsRepository {
     fun getIsTutorialCompleted(): Flow<Boolean>
     suspend fun setIsTutorialCompleted(completed: Boolean)
 
+    /**
+     * Flag one-shot: indica se il backfill di [com.antcashmanager.domain.model.Category.sortOrder]
+     * per le categorie già esistenti (migrazione DB) è già stato eseguito. Stato locale del
+     * device, non incluso in [resetAllPreferences] né nel backup.
+     */
+    fun getCategorySortOrderInitialized(): Flow<Boolean>
+    suspend fun setCategorySortOrderInitialized(initialized: Boolean)
+
     // ── Security ──
     fun getDataEncryptionEnabled(): Flow<Boolean>
     suspend fun setDataEncryptionEnabled(enabled: Boolean)

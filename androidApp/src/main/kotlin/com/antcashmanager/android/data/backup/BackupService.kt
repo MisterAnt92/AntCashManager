@@ -345,6 +345,8 @@ class BackupService(
         color = color,
         type = type,
         isDefault = isDefault,
+        sortOrder = sortOrder,
+        isHidden = isHidden,
     )
 
     private fun CategoryBackup.toCategory() = Category(
@@ -354,6 +356,8 @@ class BackupService(
         color = color,
         type = type,
         isDefault = isDefault,
+        sortOrder = sortOrder,
+        isHidden = isHidden,
     )
 
     private fun toCategoryKey(name: String, type: String): String =

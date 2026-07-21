@@ -56,6 +56,10 @@
     <string name="categories_tab_income">Revenus</string>
     <string name="categories_default_badge">Par d\u00e9faut</string>
     <string name="categories_icon_label">Ic\u00f4ne</string>
+    <string name="categories_hide">Masquer la cat\u00e9gorie</string>
+    <string name="categories_show">Afficher la cat\u00e9gorie</string>
+    <string name="categories_hidden_section_title">Cat\u00e9gories masqu\u00e9es (%d)</string>
+    <string name="categories_reorder">R\u00e9organiser les cat\u00e9gories</string>
 
     <!-- Icônes de catégorie -->
     <string name="icon_home">Maison</string>
