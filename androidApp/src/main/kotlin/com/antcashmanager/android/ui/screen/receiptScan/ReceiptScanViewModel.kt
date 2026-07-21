@@ -161,6 +161,11 @@ class ReceiptScanViewModel(
         _state.update { it.copy(notes = notes) }
     }
 
+    /** Aggiorna l'importo totale durante la fase REVIEW. */
+    fun updateAmount(amount: Double) {
+        _state.update { it.copy(editedAmount = amount) }
+    }
+
     /** Seleziona una categoria e chiude il dialog. */
     fun selectCategory(category: Category) {
         Logger.d(tag = ReceiptScanConstant.TAG) { "Category selected: ${category.name}" }
@@ -222,10 +227,18 @@ class ReceiptScanViewModel(
             Logger.d(tag = ReceiptScanConstant.TAG) { "Saving transaction from receipt: ${current.title}" }
             _state.update { it.copy(isLoading = true, error = null) }
 
+            val effectiveAmount = current.editedAmount ?: receipt.totalAmount
+            if (current.editedAmount != null) {
+                Logger.d(tag = ReceiptScanConstant.TAG) {
+                    "Amount edited by user: ${receipt.totalAmount} → ${current.editedAmount}"
+                }
+            }
+
             val params = CreateTransactionFromReceiptParams(
                 receiptData = receipt.copy(
                     payee = current.payee,
                     location = current.location,
+                    totalAmount = effectiveAmount,
                 ),
                 title = current.title,
                 categoryName = category.name,

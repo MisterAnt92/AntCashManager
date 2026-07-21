@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.screen.homeTransactionDetail.view
+package com.antcashmanager.android.ui.screen.home.transactionDetail.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

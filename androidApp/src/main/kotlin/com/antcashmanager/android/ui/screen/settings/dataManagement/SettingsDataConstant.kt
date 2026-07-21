@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.screen.settingsData
+package com.antcashmanager.android.ui.screen.settings.dataManagement
 
 /**
  * Shared constants for the Settings Data feature.

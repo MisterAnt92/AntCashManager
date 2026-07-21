@@ -1,6 +1,8 @@
-package com.antcashmanager.android.ui.screen.charts
+package com.antcashmanager.android.ui.screen.charts.view
 
+import android.content.Context
 import android.content.Intent
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +39,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -64,13 +67,12 @@ import com.antcashmanager.android.ui.components.HelpButton
 import com.antcashmanager.android.ui.components.ScreenHeader
 import com.antcashmanager.android.ui.components.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
-import com.antcashmanager.android.ui.screen.charts.view.AmountMaskMode
-import com.antcashmanager.android.ui.screen.charts.view.BarChartLegend
-import com.antcashmanager.android.ui.screen.charts.view.HelpDialog
-import com.antcashmanager.android.ui.screen.charts.view.PieLegend
-import com.antcashmanager.android.ui.screen.charts.view.ZoomableBarChart
-import com.antcashmanager.android.ui.screen.charts.view.ZoomablePieChart
-import com.antcashmanager.android.ui.screen.charts.view.ZoomableYearlyBarChart
+import com.antcashmanager.android.ui.screen.charts.ChartData
+import com.antcashmanager.android.ui.screen.charts.ChartsConstant
+import com.antcashmanager.android.ui.screen.charts.ChartsViewModel
+import com.antcashmanager.android.ui.screen.charts.MonthlyAmount
+import com.antcashmanager.android.ui.screen.charts.RangePreset
+import com.antcashmanager.android.ui.screen.charts.YearlyAmount
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.ThemeConstants
 import com.antcashmanager.android.util.LocalAmountsMasked
@@ -136,7 +138,7 @@ internal fun ChartsContent(
     val chartCardContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh
 
     // Sync selectedPreset when initialPresetIndex changes
-    androidx.compose.runtime.LaunchedEffect(initialPresetIndex) {
+    LaunchedEffect(initialPresetIndex) {
         selectedPreset = initialPresetIndex
     }
 
@@ -717,14 +719,14 @@ private fun CategoryPieChartCard(
     title: String,
     data: Map<String, Double>,
     translateKeys: Boolean,
-    @androidx.annotation.StringRes shareSubjectRes: Int,
+    @StringRes shareSubjectRes: Int,
     chartHeight: Dp,
     zoomEnabled: Boolean,
     chartCardContainerColor: Color,
     buildShareTextUseCase: BuildShareTextUseCase,
     fmt: CurrencyFormat,
     shareLabel: String,
-    context: android.content.Context,
+    context: Context,
     onShared: () -> Unit,
     maskMode: AmountMaskMode = AmountMaskMode.NONE,
 ) {
@@ -897,7 +899,7 @@ private fun MonthlyBarChartCard(
     buildShareTextUseCase: BuildShareTextUseCase,
     fmt: CurrencyFormat,
     shareLabel: String,
-    context: android.content.Context,
+    context: Context,
     onShared: () -> Unit,
 ) {
     val monthlyShareSubject = stringResource(R.string.share_monthly_subject)
@@ -990,7 +992,7 @@ private fun YearlyBarChartCard(
     buildShareTextUseCase: BuildShareTextUseCase,
     fmt: CurrencyFormat,
     shareLabel: String,
-    context: android.content.Context,
+    context: Context,
     onShared: () -> Unit,
 ) {
     val yearlyShareSubject = stringResource(R.string.share_yearly_subject)

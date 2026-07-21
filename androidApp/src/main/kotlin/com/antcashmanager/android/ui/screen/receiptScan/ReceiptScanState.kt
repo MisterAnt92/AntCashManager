@@ -10,6 +10,7 @@ import com.antcashmanager.domain.model.ReceiptData
 data class ReceiptScanState(
     val step: ReceiptScanStep = ReceiptScanStep.CAPTURE,
     val receiptData: ReceiptData? = null,
+    val editedAmount: Double? = null,
     val title: String = "",
     val payee: String = "",
     val location: String = "",

@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.screen.categories
+package com.antcashmanager.android.ui.screen.categories.view
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -103,8 +103,8 @@ import com.antcashmanager.android.ui.components.AntEmptyState
 import com.antcashmanager.android.ui.components.HelpButton
 import com.antcashmanager.android.ui.components.ScreenHeader
 import com.antcashmanager.android.ui.components.text.AppText
-import com.antcashmanager.android.ui.screen.categories.view.CategoriesReorderDialog
-import com.antcashmanager.android.ui.screen.categories.view.HelpDialog
+import com.antcashmanager.android.ui.screen.categories.CategoriesState
+import com.antcashmanager.android.ui.screen.categories.CategoriesViewModel
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.translateCategory
 import com.antcashmanager.domain.model.Category

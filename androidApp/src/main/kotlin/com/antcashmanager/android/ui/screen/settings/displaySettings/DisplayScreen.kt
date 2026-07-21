@@ -1,10 +1,11 @@
-package com.antcashmanager.android.ui.screen.settingsDisplay
+package com.antcashmanager.android.ui.screen.settings.displaySettings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -42,6 +43,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -55,6 +57,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -273,7 +276,7 @@ internal fun DisplayContent(
         if (adaptiveLayoutInfo.isCompact) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(
+                contentPadding = PaddingValues(
                     start = innerPadding.calculateStartPadding(LayoutDirection.Ltr) +
                         DisplayConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
                     top = innerPadding.calculateTopPadding() + DisplayConstant.CONTENT_TOP_PADDING_DP.dp,
@@ -281,7 +284,7 @@ internal fun DisplayContent(
                         DisplayConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
                     bottom = innerPadding.calculateBottomPadding() + DisplayConstant.CONTENT_BOTTOM_PADDING_DP.dp,
                 ),
-                verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 item {
                     CurrencySection(
@@ -351,7 +354,7 @@ internal fun DisplayContent(
                     )
                 }
 
-                item { androidx.compose.material3.Surface(modifier = Modifier.height(24.dp)) { } }
+                item { Surface(modifier = Modifier.height(24.dp)) { } }
             }
         } else {
             Row(
@@ -705,7 +708,7 @@ private fun DateSection(
     Spacer(modifier = Modifier.height(8.dp))
 
     val currentDateExample = remember(dateFormat) {
-        kotlin.runCatching {
+        runCatching {
             val formatter = SimpleDateFormat(dateFormat, Locale.getDefault())
             formatter.format(Date())
         }.getOrElse { dateFormat }
@@ -962,7 +965,7 @@ private fun WidgetPreviewMock(backgroundColor: Long, opacity: Int) {
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .background(
-                androidx.compose.ui.graphics.Brush.linearGradient(
+                Brush.linearGradient(
                     listOf(Color(0xFF90A4AE), Color(0xFF64B5F6)),
                 ),
             )

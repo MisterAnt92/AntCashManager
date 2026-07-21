@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.screen.settingsData
+package com.antcashmanager.android.ui.screen.settings.dataManagement
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

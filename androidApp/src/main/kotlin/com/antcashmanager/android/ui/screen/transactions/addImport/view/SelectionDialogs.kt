@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.screen.transactionAdd.view
+package com.antcashmanager.android.ui.screen.transactions.addImport.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

@@ -1,8 +1,9 @@
-package com.antcashmanager.android.ui.screen.transactionAdd
+package com.antcashmanager.android.ui.screen.transactions.addImport
 
 import android.os.Bundle
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -10,10 +11,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.analytics.AnalyticsManager
-import com.antcashmanager.android.ui.screen.transactionAdd.view.CategorySelectionStep
-import com.antcashmanager.android.ui.screen.transactionAdd.view.DetailsStep
+import com.antcashmanager.android.ui.screen.transactions.addImport.view.CategorySelectionStep
+import com.antcashmanager.android.ui.screen.transactions.addImport.view.DetailsStep
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.TransactionType
 import org.koin.androidx.compose.koinViewModel
@@ -82,7 +84,7 @@ internal fun AddTransactionContent(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center,
             ) {
-                androidx.compose.material3.CircularProgressIndicator()
+                CircularProgressIndicator()
             }
         }
 
@@ -109,13 +111,13 @@ internal fun AddTransactionContent(
 // PREVIEWS
 // ══════════════════════════════════════════════════════════════════════════════
 
-@androidx.compose.ui.tooling.preview.Preview
-@androidx.compose.ui.tooling.preview.Preview(
+@Preview
+@Preview(
     name = "AddTransactionScreen - 7 inch",
     widthDp = 600,
     heightDp = 960,
 )
-@androidx.compose.ui.tooling.preview.Preview(
+@Preview(
     name = "AddTransactionScreen - 10 inch",
     widthDp = 840,
     heightDp = 1280,
@@ -137,7 +139,7 @@ fun AddTransactionScreenNewPreview() {
     }
 }
 
-@androidx.compose.ui.tooling.preview.Preview
+@Preview
 @Composable
 fun AddTransactionScreenEditPreview() {
     MaterialTheme {

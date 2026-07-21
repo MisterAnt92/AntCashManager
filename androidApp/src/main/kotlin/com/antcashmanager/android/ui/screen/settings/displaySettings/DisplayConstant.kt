@@ -1,6 +1,6 @@
-package com.antcashmanager.android.ui.screen.settingsDisplay
+package com.antcashmanager.android.ui.screen.settings.displaySettings
 
-import com.antcashmanager.android.ui.screen.categories.categoryColors
+import com.antcashmanager.android.ui.screen.categories.view.categoryColors
 import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.model.TransactionDisplayType
 

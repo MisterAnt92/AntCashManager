@@ -4,10 +4,10 @@ import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.testutil.FakeCategoryRepository
 import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.testutil.FakeTransactionRepository
-import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionConstant
-import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionEvent
-import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionStep
-import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionViewModel
+import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionConstant
+import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionEvent
+import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionStep
+import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionViewModel
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction

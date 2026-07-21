@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.screen.settings
+package com.antcashmanager.android.ui.screen.settings.view
 
 import android.content.Context
 import android.widget.Toast
@@ -63,13 +63,7 @@ import com.antcashmanager.android.ui.components.animation.AntEasterEggAnimation
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
 import com.antcashmanager.android.ui.components.text.AppText
-import com.antcashmanager.android.ui.screen.settings.view.DecimalDigitsDialog
-import com.antcashmanager.android.ui.screen.settings.view.HelpDialog
-import com.antcashmanager.android.ui.screen.settings.view.LanguageSelectionDialog
-import com.antcashmanager.android.ui.screen.settings.view.PrivacyPolicyDialog
-import com.antcashmanager.android.ui.screen.settings.view.SeparatorDialog
-import com.antcashmanager.android.ui.screen.settings.view.ThemeSelectionDialog
-import com.antcashmanager.android.ui.screen.settings.view.ThirdPartyLibrariesDialog
+import com.antcashmanager.android.ui.screen.settings.SettingsViewModel
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
@@ -531,7 +525,7 @@ private fun separatorLabel(value: String, isThou: Boolean): String {
     }
 }
 
-@Composable
+/*@Composable
 private fun CurrencySymbolDialog(
     currentSymbol: String,
     onSymbolSelected: (String) -> Unit,
@@ -569,7 +563,7 @@ private fun CurrencySymbolDialog(
             TextButton(onClick = onDismiss) { AppText(stringResource(R.string.common_cancel)) }
         },
     )
-}
+}*/
 
 // ── Previews ──
 

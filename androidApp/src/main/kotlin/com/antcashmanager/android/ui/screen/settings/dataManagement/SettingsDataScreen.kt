@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.screen.settingsData
+package com.antcashmanager.android.ui.screen.settings.dataManagement
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts

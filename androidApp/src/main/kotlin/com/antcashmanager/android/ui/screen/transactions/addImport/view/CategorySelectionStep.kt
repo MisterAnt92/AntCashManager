@@ -1,7 +1,8 @@
-package com.antcashmanager.android.ui.screen.transactionAdd.view
+package com.antcashmanager.android.ui.screen.transactions.addImport.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -60,7 +61,7 @@ internal fun CategorySelectionStep(
             )
         },
     ) { innerPadding ->
-        androidx.compose.foundation.layout.Column(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(
