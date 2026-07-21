@@ -45,7 +45,14 @@ class AntCashManagerApp : Application() {
     private suspend fun seedDefaultCategories() {
         val categoryRepository: CategoryRepository = get()
         val count = categoryRepository.getDefaultCategoryCount()
-        if (count > 0) return
+
+        if (count > 0) {
+            // App già inizializzata in passato: non risemina tutto, ma retro-inserisce solo le
+            // categorie di default aggiunte in versioni successive dell'app, così chi ha già
+            // dati esistenti le riceve comunque con un aggiornamento.
+            backfillNewDefaultCategories(categoryRepository)
+            return
+        }
 
         Logger.d(tag = "AntCashManagerApp") { "Seeding default categories" }
 
@@ -61,7 +68,7 @@ class AntCashManagerApp : Application() {
             Category(name = "Shopping", icon = "shopping_bag", color = 0xFFDCE775, type = "EXPENSE", isDefault = true),
             Category(name = "Istruzione", icon = "school", color = 0xFF7986CB, type = "EXPENSE", isDefault = true),
             Category(name = "Altro", icon = "more_horiz", color = 0xFF90A4AE, type = "EXPENSE", isDefault = true),
-        )
+        ) + newDefaultExpenseCategories
 
         val incomeCategories = listOf(
             Category(name = "Non categorizzato", icon = "more_horiz", color = 0xFF90A4AE, type = "INCOME", isDefault = true),
@@ -78,5 +85,25 @@ class AntCashManagerApp : Application() {
         }
 
         Logger.d(tag = "AntCashManagerApp") { "Default categories seeded successfully" }
+    }
+
+    /**
+     * Categorie di default introdotte dopo il seed iniziale dell'app. Inserite in blocco al
+     * primo avvio in assoluto (vedi [seedDefaultCategories]) e retro-inserite singolarmente per
+     * chi ha già categorie esistenti (vedi [backfillNewDefaultCategories]).
+     */
+    private val newDefaultExpenseCategories = listOf(
+        Category(name = "Regali", icon = "redeem", color = 0xFFFF8A65, type = "EXPENSE", isDefault = true),
+        Category(name = "Abbonamenti", icon = "subscriptions", color = 0xFFFFD54F, type = "EXPENSE", isDefault = true),
+        Category(name = "Cura personale", icon = "spa", color = 0xFFA1887F, type = "EXPENSE", isDefault = true),
+    )
+
+    private suspend fun backfillNewDefaultCategories(categoryRepository: CategoryRepository) {
+        newDefaultExpenseCategories.forEach { category ->
+            if (categoryRepository.getCategoryByName(category.name) == null) {
+                Logger.d(tag = "AntCashManagerApp") { "Backfilling new default category: ${category.name}" }
+                categoryRepository.insertCategory(category)
+            }
+        }
     }
 }

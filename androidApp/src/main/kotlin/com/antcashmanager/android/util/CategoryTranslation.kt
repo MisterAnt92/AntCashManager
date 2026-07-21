@@ -26,6 +26,9 @@ private fun categoryResId(categoryName: String): Int? = when (categoryName) {
     "category_reimbursement" -> R.string.category_reimbursement
     "category_investments" -> R.string.category_investments
     "category_freelance" -> R.string.category_freelance
+    "category_gifts" -> R.string.category_gifts
+    "category_subscriptions" -> R.string.category_subscriptions
+    "category_personal_care" -> R.string.category_personal_care
 
     "Non categorizzato" -> R.string.category_uncategorized
     "Casa" -> R.string.category_home
@@ -44,6 +47,9 @@ private fun categoryResId(categoryName: String): Int? = when (categoryName) {
     "Rimborso" -> R.string.category_reimbursement
     "Investimenti" -> R.string.category_investments
     "Freelance" -> R.string.category_freelance
+    "Regali" -> R.string.category_gifts
+    "Abbonamenti" -> R.string.category_subscriptions
+    "Cura personale" -> R.string.category_personal_care
     // English keys (for future proofing or if they were seeded in English)
     "Uncategorized" -> R.string.category_uncategorized
     "Home" -> R.string.category_home

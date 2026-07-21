@@ -53,6 +53,7 @@ import androidx.compose.material.icons.filled.Savings
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.ShoppingBag
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.Spa
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Subscriptions
 import androidx.compose.material.icons.filled.TheaterComedy
@@ -133,6 +134,7 @@ val categoryIconMap: Map<String, ImageVector> = mapOf(
     "directions_bike" to Icons.Default.DirectionsBike,
     "shopping_cart" to Icons.Default.ShoppingCart,
     "coffee" to Icons.Default.Coffee,
+    "spa" to Icons.Default.Spa,
 )
 
 /**
@@ -170,6 +172,7 @@ fun getIconContentDescription(iconKey: String): String {
         "directions_bike" -> R.string.icon_directions_bike
         "shopping_cart" -> R.string.icon_shopping_cart
         "coffee" -> R.string.icon_coffee
+        "spa" -> R.string.icon_spa
         else -> R.string.categories_icon_label
     }
     return stringResource(resId)
