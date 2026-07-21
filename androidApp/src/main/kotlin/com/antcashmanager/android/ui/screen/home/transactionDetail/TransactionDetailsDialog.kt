@@ -1,5 +1,6 @@
-package com.antcashmanager.android.ui.screen.homeTransactionDetail
+package com.antcashmanager.android.ui.screen.home.transactionDetail
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -28,7 +29,7 @@ import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.home.view.getRecurrenceIntervalLabel
-import com.antcashmanager.android.ui.screen.homeTransactionDetail.view.TransactionDetailRow
+import com.antcashmanager.android.ui.screen.home.transactionDetail.view.TransactionDetailRow
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.isProtectedSalaryTransaction
@@ -42,6 +43,7 @@ import org.koin.compose.koinInject
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.abs
 
 private val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
 private val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
@@ -66,7 +68,7 @@ fun TransactionDetailsDialog(
 private fun TransactionDetailsDialogContent(
     transaction: Transaction,
     onDismiss: () -> Unit,
-    onShareTransaction: (Transaction, android.content.Context) -> Unit,
+    onShareTransaction: (Transaction, Context) -> Unit,
 ) {
     val context = LocalContext.current
     val analyticsManager: AnalyticsManager = koinInject()
@@ -96,7 +98,7 @@ private fun TransactionDetailsDialogContent(
                 )
 
                 // Amount
-                val amountText = "${String.format("%.2f", kotlin.math.abs(transaction.amount))}€"
+                val amountText = "${String.format("%.2f", abs(transaction.amount))}€"
                 TransactionDetailRow(
                     label = stringResource(R.string.transaction_details_amount),
                     value = if (LocalAmountsMasked.current && isProtectedSalaryTransaction(transaction)) {

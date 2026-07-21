@@ -435,6 +435,7 @@
     <string name="receipt_scan_pick_gallery">Aus Galerie wählen</string>
     <string name="receipt_scan_processing">Kassenbon wird analysiert…</string>
     <string name="receipt_scan_total_label">Extrahierter Betrag</string>
+    <string name="receipt_scan_amount_edited">Betrag bearbeitet</string>
     <string name="receipt_scan_title_label">Transaktionsbezeichnung</string>
     <string name="receipt_scan_payee_label">Empfänger / Händler</string>
     <string name="receipt_scan_location_label">Ort</string>

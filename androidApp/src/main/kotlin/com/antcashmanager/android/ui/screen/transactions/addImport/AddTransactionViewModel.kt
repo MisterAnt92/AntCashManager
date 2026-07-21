@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.screen.transactionAdd
+package com.antcashmanager.android.ui.screen.transactions.addImport
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,6 +8,7 @@ import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.CategoryRepository
+import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.transaction.DeleteTransactionUseCase
@@ -23,6 +24,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 
 // ══════════════════════════════════════════════════════════════════════════════
 // EVENTS
@@ -81,7 +83,7 @@ sealed interface AddTransactionEvent {
 
 class AddTransactionViewModel(
     private val transactionRepository: TransactionRepository,
-    private val settingsRepository: com.antcashmanager.domain.repository.SettingsRepository,
+    private val settingsRepository: SettingsRepository,
     private val getCategoriesUseCase: GetCategoriesUseCase,
     private val insertTransactionUseCase: InsertTransactionUseCase,
     private val updateTransactionUseCase: UpdateTransactionUseCase,
@@ -93,7 +95,7 @@ class AddTransactionViewModel(
     constructor(
         transactionRepository: TransactionRepository,
         categoryRepository: CategoryRepository,
-        settingsRepository: com.antcashmanager.domain.repository.SettingsRepository,
+        settingsRepository: SettingsRepository,
         transactionId: Long? = null,
         dispatcher: CoroutineDispatcher = Dispatchers.Default,
     ) : this(
@@ -227,7 +229,7 @@ class AddTransactionViewModel(
                             selectedCategory = selectedCat,
                             selectedType = transaction.type,
                             title = transaction.title,
-                            amount = kotlin.math.abs(transaction.amount).toString(),
+                            amount = abs(transaction.amount).toString(),
                             notes = transaction.notes,
                             payee = transaction.payee,
                             location = transaction.location,

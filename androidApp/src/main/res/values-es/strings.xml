@@ -381,6 +381,7 @@
     <string name="receipt_scan_pick_gallery">Elegir de la galería</string>
     <string name="receipt_scan_processing">Analizando ticket…</string>
     <string name="receipt_scan_total_label">Total extraído</string>
+    <string name="receipt_scan_amount_edited">Importe modificado</string>
     <string name="receipt_scan_title_label">Título de la transacción</string>
     <string name="receipt_scan_payee_label">Beneficiario / Comercio</string>
     <string name="receipt_scan_location_label">Ubicación</string>

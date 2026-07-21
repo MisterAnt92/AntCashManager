@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.screen.transactionAdd
+package com.antcashmanager.android.ui.screen.transactions.addImport
 
 /**
  * Shared constants for Add Transaction feature.

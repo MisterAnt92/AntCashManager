@@ -501,6 +501,7 @@
     <string name="receipt_scan_pick_gallery">Pick from Gallery</string>
     <string name="receipt_scan_processing">Analysing receipt…</string>
     <string name="receipt_scan_total_label">Extracted Total</string>
+    <string name="receipt_scan_amount_edited">Amount edited</string>
     <string name="receipt_scan_title_label">Transaction Title</string>
     <string name="receipt_scan_payee_label">Payee / Merchant</string>
     <string name="receipt_scan_location_label">Location</string>

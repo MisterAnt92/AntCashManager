@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.screen.transactionAdd.view
+package com.antcashmanager.android.ui.screen.transactions.addImport.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -65,8 +65,8 @@ import com.antcashmanager.android.ui.components.AppSelectionItemCard
 import com.antcashmanager.android.ui.components.button.AppButton
 import com.antcashmanager.android.ui.components.input.AutocompleteTextField
 import com.antcashmanager.android.ui.components.text.AppText
-import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionEvent
-import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionState
+import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionEvent
+import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionState
 import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.isProtectedSalaryCategory
 import com.antcashmanager.android.util.maskDigits
@@ -219,7 +219,7 @@ internal fun DetailsStep(
             )
         },
     ) { innerPadding ->
-        androidx.compose.foundation.layout.Column(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(

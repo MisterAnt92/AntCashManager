@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.R
-import com.antcashmanager.android.ui.screen.homeTransactionDetail.TransactionDetailsViewModel
+import com.antcashmanager.android.ui.screen.home.transactionDetail.TransactionDetailsViewModel
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.usecase.ShareTransactionUseCase

@@ -7,12 +7,12 @@ import com.antcashmanager.android.domain.usecase.feedback.SendFeedbackEmailUseCa
 import com.antcashmanager.android.ui.screen.categories.CategoriesViewModel
 import com.antcashmanager.android.ui.screen.charts.ChartsViewModel
 import com.antcashmanager.android.ui.screen.home.HomeViewModel
-import com.antcashmanager.android.ui.screen.homeTransactionDetail.TransactionDetailsViewModel
+import com.antcashmanager.android.ui.screen.home.transactionDetail.TransactionDetailsViewModel
 import com.antcashmanager.android.ui.screen.receiptScan.ReceiptScanViewModel
 import com.antcashmanager.android.ui.screen.settings.SettingsViewModel
-import com.antcashmanager.android.ui.screen.settingsData.SettingsDataViewModel
-import com.antcashmanager.android.ui.screen.settingsDisplay.DisplayViewModel
-import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionViewModel
+import com.antcashmanager.android.ui.screen.settings.dataManagement.SettingsDataViewModel
+import com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayViewModel
+import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionViewModel
 import com.antcashmanager.android.ui.screen.transactions.TransactionsViewModel
 import com.antcashmanager.android.ui.theme.ThemeViewModel
 import com.antcashmanager.android.widget.GlanceWidgetUpdateNotifier

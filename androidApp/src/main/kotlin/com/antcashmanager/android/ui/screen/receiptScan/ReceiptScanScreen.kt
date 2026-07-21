@@ -29,6 +29,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,6 +37,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -52,8 +54,8 @@ import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.AppSelectionItemCard
 import com.antcashmanager.android.ui.components.button.AppButton
 import com.antcashmanager.android.ui.components.text.AppText
-import com.antcashmanager.android.ui.screen.transactionAdd.view.CategorySelectionDialog
-import com.antcashmanager.android.ui.screen.transactionAdd.view.PaymentTypeSelectionDialog
+import com.antcashmanager.android.ui.screen.transactions.addImport.view.CategorySelectionDialog
+import com.antcashmanager.android.ui.screen.transactions.addImport.view.PaymentTypeSelectionDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
@@ -95,6 +97,7 @@ fun ReceiptScanScreen(
         onUpdatePayee = viewModel::updatePayee,
         onUpdateLocation = viewModel::updateLocation,
         onUpdateNotes = viewModel::updateNotes,
+        onUpdateAmount = viewModel::updateAmount,
         onSelectCategory = viewModel::selectCategory,
         onShowCategoryDialog = viewModel::showCategoryDialog,
         onDismissCategoryDialog = viewModel::dismissCategoryDialog,
@@ -122,6 +125,7 @@ internal fun ReceiptScanContent(
     onUpdatePayee: (String) -> Unit,
     onUpdateLocation: (String) -> Unit,
     onUpdateNotes: (String) -> Unit,
+    onUpdateAmount: (Double) -> Unit,
     onSelectCategory: (Category) -> Unit,
     onShowCategoryDialog: () -> Unit,
     onDismissCategoryDialog: () -> Unit,
@@ -181,6 +185,7 @@ internal fun ReceiptScanContent(
                     onUpdatePayee = onUpdatePayee,
                     onUpdateLocation = onUpdateLocation,
                     onUpdateNotes = onUpdateNotes,
+                    onUpdateAmount = onUpdateAmount,
                     onShowCategoryDialog = onShowCategoryDialog,
                     onShowPaymentTypeDialog = onShowPaymentTypeDialog,
                     onRetry = onRetry,
@@ -345,6 +350,7 @@ private fun ReviewStep(
     onUpdatePayee: (String) -> Unit,
     onUpdateLocation: (String) -> Unit,
     onUpdateNotes: (String) -> Unit,
+    onUpdateAmount: (Double) -> Unit,
     onShowCategoryDialog: () -> Unit,
     onShowPaymentTypeDialog: () -> Unit,
     onRetry: () -> Unit,
@@ -361,6 +367,11 @@ private fun ReviewStep(
         // Importo estratto
         ReceiptAmountCard(
             amount = state.receiptData?.totalAmount ?: 0.0,
+            editedAmount = state.editedAmount,
+            onAmountChange = { newAmount ->
+                analyticsManager.logEvent("receipt_scan_amount_edited")
+                onUpdateAmount(newAmount)
+            },
             vatNote = state.vatNote,
         )
 
@@ -456,30 +467,57 @@ private fun ReviewStep(
 @Composable
 private fun ReceiptAmountCard(
     amount: Double,
+    editedAmount: Double?,
+    onAmountChange: (Double) -> Unit,
     vatNote: String,
     modifier: Modifier = Modifier,
 ) {
+    val displayAmount = editedAmount ?: amount
+    val isEdited = editedAmount != null
+
     Column(
         modifier = modifier
             .fillMaxWidth()
             .background(
-                color = MaterialTheme.colorScheme.primaryContainer,
+                color = if (isEdited)
+                    MaterialTheme.colorScheme.secondaryContainer
+                else
+                    MaterialTheme.colorScheme.primaryContainer,
                 shape = MaterialTheme.shapes.medium,
             )
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         AppText(
             text = stringResource(R.string.receipt_scan_total_label),
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
         )
-        AppText(
-            text = stringResource(R.string.settings_format_preview, "€ %.2f".format(amount)),
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
+
+        OutlinedTextField(
+            value = "%.2f".format(displayAmount),
+            onValueChange = { newValue ->
+                newValue.replace(',', '.').toDoubleOrNull()?.let { validAmount ->
+                    if (validAmount > 0.0) {
+                        onAmountChange(validAmount)
+                    }
+                }
+            },
+            label = { AppText(stringResource(R.string.receipt_scan_total_label)) },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            supportingText = if (isEdited) {
+                { AppText(
+                    text = stringResource(R.string.receipt_scan_amount_edited),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.secondary,
+                ) }
+            } else null,
         )
+
         if (vatNote.isNotBlank()) {
             AppText(
                 text = vatNote,
@@ -507,6 +545,7 @@ fun ReceiptScanCapturePreview() {
             onUpdatePayee = {},
             onUpdateLocation = {},
             onUpdateNotes = {},
+            onUpdateAmount = {},
             onSelectCategory = {},
             onShowCategoryDialog = {},
             onDismissCategoryDialog = {},
@@ -552,6 +591,7 @@ fun ReceiptScanReviewPreview() {
             onUpdatePayee = {},
             onUpdateLocation = {},
             onUpdateNotes = {},
+            onUpdateAmount = {},
             onSelectCategory = {},
             onShowCategoryDialog = {},
             onDismissCategoryDialog = {},

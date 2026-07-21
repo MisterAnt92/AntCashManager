@@ -26,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.text.AppText
-import com.antcashmanager.android.ui.screen.settingsDisplay.DisplayConstant
+import com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayConstant
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 /**

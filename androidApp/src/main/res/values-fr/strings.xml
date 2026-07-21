@@ -382,6 +382,7 @@
     <string name="receipt_scan_pick_gallery">Choisir dans la galerie</string>
     <string name="receipt_scan_processing">Analyse du reçu…</string>
     <string name="receipt_scan_total_label">Total extrait</string>
+    <string name="receipt_scan_amount_edited">Montant modifié</string>
     <string name="receipt_scan_title_label">Titre de la transaction</string>
     <string name="receipt_scan_payee_label">Bénéficiaire / Commerçant</string>
     <string name="receipt_scan_location_label">Lieu</string>

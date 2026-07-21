@@ -32,7 +32,7 @@ import com.antcashmanager.android.ui.components.AnimatedCard
 import com.antcashmanager.android.ui.components.AnimatedListItem
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.text.TransactionAmountText
-import com.antcashmanager.android.ui.screen.categories.categoryIconMap
+import com.antcashmanager.android.ui.screen.categories.view.categoryIconMap
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.ExpenseRed
 import com.antcashmanager.android.ui.theme.IncomeGreen

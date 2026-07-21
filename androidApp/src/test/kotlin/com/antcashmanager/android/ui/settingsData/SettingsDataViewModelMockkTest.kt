@@ -4,11 +4,11 @@ import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.data.backup.BackupService
 import com.antcashmanager.android.data.backup.RestoreResult
 import com.antcashmanager.android.security.BackupPayloadCipher
-import com.antcashmanager.android.ui.screen.settingsData.BackupResult
-import com.antcashmanager.android.ui.screen.settingsData.DeleteResult
-import com.antcashmanager.android.ui.screen.settingsData.RestoreOperationResult
-import com.antcashmanager.android.ui.screen.settingsData.RestoreSuccessInfo
-import com.antcashmanager.android.ui.screen.settingsData.SettingsDataViewModel
+import com.antcashmanager.android.ui.screen.settings.dataManagement.BackupResult
+import com.antcashmanager.android.ui.screen.settings.dataManagement.DeleteResult
+import com.antcashmanager.android.ui.screen.settings.dataManagement.RestoreOperationResult
+import com.antcashmanager.android.ui.screen.settings.dataManagement.RestoreSuccessInfo
+import com.antcashmanager.android.ui.screen.settings.dataManagement.SettingsDataViewModel
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
