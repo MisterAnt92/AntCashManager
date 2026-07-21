@@ -1,7 +1,6 @@
 package com.antcashmanager.android.ui.transactions
 
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.cancel
 import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.testutil.FakeCategoryRepository
 import com.antcashmanager.android.testutil.FakeSettingsRepository
@@ -14,6 +13,7 @@ import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch

@@ -26,7 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.ui.components.text.AppText
-import com.antcashmanager.android.ui.screen.categories.categoryIconMap
+import com.antcashmanager.android.ui.screen.categories.view.categoryIconMap
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.Category
 

@@ -9,6 +9,8 @@ import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.screen.settings.dataManagement.SettingsDataContent
+import com.antcashmanager.android.ui.screen.settings.dataManagement.SettingsDataState
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import org.junit.Assert.assertEquals
 import org.junit.Rule

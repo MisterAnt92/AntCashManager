@@ -1,12 +1,20 @@
 package com.antcashmanager.android.ui.components
 
 import android.content.res.Configuration
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +25,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -31,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -95,9 +105,18 @@ fun TutorialOverlay(
     var welcomeVisible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { welcomeVisible = true }
 
-    val step = steps[currentStep]
+    // Il tasto/gesture back di sistema deve muoversi indietro nel tutorial invece di
+    // uscire dalla Home sottostante (di cui il tutorial è un overlay a schermo intero).
+    BackHandler {
+        if (currentStep > 0) {
+            currentStep -= 1
+        } else {
+            onDismiss()
+        }
+    }
+
     val isLastStep = currentStep == steps.lastIndex
-    val isWelcomeStep = currentStep == 0
+    val isFirstStep = currentStep == 0
     val progressDescription = stringResource(
         R.string.tutorial_progress_cd,
         currentStep + 1,
@@ -148,129 +167,159 @@ fun TutorialOverlay(
                 .padding(horizontal = horizontalPadding, vertical = verticalPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            // Animazione fade + slide-up solo per il primo step (welcome)
-            val contentVisible = !isWelcomeStep || welcomeVisible
-            val enterTransition = if (isWelcomeStep) {
-                fadeIn(tween(durationMillis = 600)) +
-                    slideInVertically(tween(durationMillis = 600)) { it / 4 }
-            } else {
-                fadeIn(tween(durationMillis = 0))
-            }
+            // Contenuto per-step (titolo, descrizione, immagine/highlights) con transizione
+            // slide+fade orizzontale, la cui direzione segue il verso di navigazione
+            // (avanti → scorre da destra, indietro → scorre da sinistra). Il primo step
+            // (welcome) mantiene inoltre la sua animazione di ingresso dedicata via
+            // [welcomeVisible], indipendente da questa transizione tra step.
+            AnimatedContent(
+                targetState = currentStep,
+                transitionSpec = {
+                    val forward = targetState > initialState
+                    val enter = slideInHorizontally(tween(350)) { width ->
+                        if (forward) width / 4 else -width / 4
+                    } + fadeIn(tween(350))
+                    val exit = slideOutHorizontally(tween(350)) { width ->
+                        if (forward) -width / 4 else width / 4
+                    } + fadeOut(tween(200))
+                    enter togetherWith exit
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                label = "tutorial_step_content",
+            ) { stepIndex ->
+                val animatedStep = steps[stepIndex]
+                val isAnimatedWelcomeStep = stepIndex == 0
 
-            AnimatedVisibility(visible = contentVisible, enter = enterTransition) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    AppText(
-                        text = stringResource(step.titleRes),
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxWidth(titleWidthFraction)
-                            .semantics { heading() },
-                    )
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    AppText(
-                        text = stringResource(step.descRes),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth(descriptionWidthFraction),
-                    )
-
-                    Spacer(modifier = Modifier.height(20.dp))
-                }
-            }
-
-            if (step.imageRes != null) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(imageWidthFraction)
-                        .weight(1f),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Image(
-                        painter = painterResource(id = step.imageRes),
-                        contentDescription = stringResource(step.titleRes),
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(
-                                color = MaterialTheme.colorScheme.surfaceVariant,
-                            ),
-                        contentScale = ContentScale.Fit,
-                    )
-                }
-            } else if (isWelcomeStep) {
-                AnimatedVisibility(
-                    visible = welcomeVisible,
-                    enter = fadeIn(tween(durationMillis = 700, delayMillis = 300)) +
-                        slideInVertically(tween(durationMillis = 700, delayMillis = 300)) { it / 3 },
-                    modifier = Modifier.weight(1f)
-                ) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth(descriptionWidthFraction)
-                        .padding(vertical = 4.dp, horizontal = 4.dp),
-                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    Surface(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(24.dp),
-                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                        tonalElevation = 3.dp,
-                        shadowElevation = 2.dp,
-                    ) {
+                    val contentVisible = !isAnimatedWelcomeStep || welcomeVisible
+                    val enterTransition = if (isAnimatedWelcomeStep) {
+                        fadeIn(tween(durationMillis = 600)) +
+                            slideInVertically(tween(durationMillis = 600)) { it / 4 }
+                    } else {
+                        fadeIn(tween(durationMillis = 0))
+                    }
+
+                    AnimatedVisibility(visible = contentVisible, enter = enterTransition) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            AppText(
+                                text = stringResource(animatedStep.titleRes),
+                                style = MaterialTheme.typography.headlineMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .fillMaxWidth(titleWidthFraction)
+                                    .semantics { heading() },
+                            )
+
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            AppText(
+                                text = stringResource(animatedStep.descRes),
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth(descriptionWidthFraction),
+                            )
+
+                            Spacer(modifier = Modifier.height(20.dp))
+                        }
+                    }
+
+                    if (animatedStep.imageRes != null) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth(imageWidthFraction)
+                                .weight(1f),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Image(
+                                painter = painterResource(id = animatedStep.imageRes),
+                                contentDescription = stringResource(animatedStep.titleRes),
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(
+                                        color = MaterialTheme.colorScheme.surfaceVariant,
+                                    ),
+                                contentScale = ContentScale.Fit,
+                            )
+                        }
+                    } else if (isAnimatedWelcomeStep) {
+                        AnimatedVisibility(
+                            visible = welcomeVisible,
+                            enter = fadeIn(tween(durationMillis = 700, delayMillis = 300)) +
+                                slideInVertically(tween(durationMillis = 700, delayMillis = 300)) { it / 3 },
+                            modifier = Modifier.weight(1f)
+                        ) {
                         Column(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(welcomeCardPadding),
-                            verticalArrangement = Arrangement.spacedBy(10.dp),
+                                .fillMaxWidth(descriptionWidthFraction)
+                                .padding(vertical = 4.dp, horizontal = 4.dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
-                            welcomeHighlights.forEachIndexed { index, textRes ->
-                                Surface(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    shape = RoundedCornerShape(14.dp),
-                                    color = MaterialTheme.colorScheme.surfaceVariant,
+                            Surface(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(24.dp),
+                                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                tonalElevation = 3.dp,
+                                shadowElevation = 2.dp,
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(welcomeCardPadding),
+                                    verticalArrangement = Arrangement.spacedBy(10.dp),
                                 ) {
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 12.dp, vertical = 10.dp),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                                    ) {
-                                        Box(
-                                            modifier = Modifier
-                                                .size(28.dp)
-                                                .clip(CircleShape)
-                                                .background(MaterialTheme.colorScheme.primary),
-                                            contentAlignment = Alignment.Center,
+                                    welcomeHighlights.forEachIndexed { index, textRes ->
+                                        Surface(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            shape = RoundedCornerShape(14.dp),
+                                            color = MaterialTheme.colorScheme.surfaceVariant,
                                         ) {
-                                            AppText(
-                                                text = "${index + 1}",
-                                                style = MaterialTheme.typography.labelLarge,
-                                                color = MaterialTheme.colorScheme.onPrimary,
-                                                fontWeight = FontWeight.Bold,
-                                            )
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(horizontal = 12.dp, vertical = 10.dp),
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                            ) {
+                                                Box(
+                                                    modifier = Modifier
+                                                        .size(28.dp)
+                                                        .clip(CircleShape)
+                                                        .background(MaterialTheme.colorScheme.primary),
+                                                    contentAlignment = Alignment.Center,
+                                                ) {
+                                                    AppText(
+                                                        text = "${index + 1}",
+                                                        style = MaterialTheme.typography.labelLarge,
+                                                        color = MaterialTheme.colorScheme.onPrimary,
+                                                        fontWeight = FontWeight.Bold,
+                                                    )
+                                                }
+                                                AppText(
+                                                    text = stringResource(textRes),
+                                                    style = MaterialTheme.typography.bodyLarge,
+                                                    color = MaterialTheme.colorScheme.onSurface,
+                                                    textAlign = TextAlign.Start,
+                                                    modifier = Modifier.weight(1f),
+                                                )
+                                            }
                                         }
-                                        AppText(
-                                            text = stringResource(textRes),
-                                            style = MaterialTheme.typography.bodyLarge,
-                                            color = MaterialTheme.colorScheme.onSurface,
-                                            textAlign = TextAlign.Start,
-                                            modifier = Modifier.weight(1f),
-                                        )
                                     }
                                 }
                             }
                         }
+                        } // end AnimatedVisibility welcome highlights
                     }
                 }
-                } // end AnimatedVisibility welcome highlights
             }
 
             Row(
@@ -283,17 +332,24 @@ fun TutorialOverlay(
                     },
             ) {
                 steps.forEachIndexed { index, _ ->
+                    val isActiveDot = index == currentStep
+                    val dotWidth by animateDpAsState(
+                        targetValue = if (isActiveDot) 24.dp else 8.dp,
+                        label = "tutorial_dot_width",
+                    )
                     Box(
                         modifier = Modifier
-                            .size(8.dp)
+                            .height(8.dp)
+                            .width(dotWidth)
+                            .clip(RoundedCornerShape(50))
                             .background(
-                                if (index == currentStep) {
+                                if (isActiveDot) {
                                     MaterialTheme.colorScheme.primary
                                 } else {
                                     MaterialTheme.colorScheme.outlineVariant
                                 },
-                                shape = RoundedCornerShape(50),
-                            ),
+                            )
+                            .clickable(enabled = !isActiveDot) { currentStep = index },
                     )
                 }
             }
@@ -305,19 +361,31 @@ fun TutorialOverlay(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
+                // Riservato sempre lo stesso spazio per il tasto Indietro (nascosto ma non
+                // rimosso al primo step) così Skip/Next/Finish non si spostano orizzontalmente
+                // passando da uno step all'altro.
+                TextButton(
+                    onClick = { currentStep -= 1 },
+                    enabled = !isFirstStep,
+                    modifier = Modifier.alpha(if (isFirstStep) 0f else 1f),
+                ) {
+                    AppText(text = stringResource(R.string.common_back))
+                }
+
                 if (!isLastStep) {
-                    TextButton(onClick = onDismiss) {
-                        AppText(text = stringResource(R.string.tutorial_skip))
-                    }
-                    AppButton(onClick = { currentStep += 1 }) {
-                        AppText(text = stringResource(R.string.tutorial_next))
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        TextButton(onClick = onDismiss) {
+                            AppText(text = stringResource(R.string.tutorial_skip))
+                        }
+                        AppButton(onClick = { currentStep += 1 }) {
+                            AppText(text = stringResource(R.string.tutorial_next))
+                        }
                     }
                 } else {
-                    Spacer(modifier = Modifier.weight(1f))
-                    AppButton(
-                        onClick = onDismiss,
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
+                    AppButton(onClick = onDismiss) {
                         AppText(text = stringResource(R.string.tutorial_finish))
                     }
                 }

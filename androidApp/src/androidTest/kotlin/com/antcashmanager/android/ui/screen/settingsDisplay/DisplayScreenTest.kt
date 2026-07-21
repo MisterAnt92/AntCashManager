@@ -8,6 +8,7 @@ import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayContent
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.TransactionDisplayType
 import org.junit.Ignore
@@ -58,6 +59,12 @@ class DisplayScreenTest {
                     onNavigateBack = {},
                     showQuickInsightsCard = false,
                     onShowQuickInsightsCardChanged = {},
+                    widgetBackgroundColor = 0,
+                    onWidgetBackgroundColorSelected = {},
+                    widgetOpacity = 0,
+                    onWidgetOpacityChanged = {},
+                    maskAmounts = false,
+                    onMaskAmountsChanged = {},
                 )
             }
         }

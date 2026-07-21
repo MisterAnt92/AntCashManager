@@ -4,6 +4,7 @@ import com.antcashmanager.domain.exception.ReceiptScanException
 import com.antcashmanager.domain.model.ReceiptData
 import com.antcashmanager.domain.service.ReceiptOcrService
 import com.antcashmanager.domain.usecase.BaseResultUseCase
+import com.antcashmanager.domain.util.LanguageDetectionHelper
 import com.antcashmanager.domain.util.ReceiptTextParser
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -27,6 +28,12 @@ class ScanReceiptUseCase(
     /**
      * Esegue la scansione OCR e il parsing del testo.
      *
+     * Orchestrazione:
+     * 1. Estrae testo tramite OCR
+     * 2. Rileva automaticamente la lingua del testo
+     * 3. Parsa con patterns specifici per la lingua rilevata
+     * 4. Valida che l'importo totale sia stato trovato
+     *
      * Validazioni:
      * - Immagine non vuota
      * - Testo OCR estratto non vuoto
@@ -45,8 +52,11 @@ class ScanReceiptUseCase(
 
         if (text.isBlank()) throw ReceiptScanException.NoTextExtracted
 
-        // Il parser esegue internamente la validazione della consistenza (IVA vs totale)
-        val receiptData = ReceiptTextParser.parse(text)
+        // Rileva la lingua del testo dello scontrino
+        val detectedLanguage = LanguageDetectionHelper.detectLanguage(text)
+
+        // Il parser esegue parsing con language hints + validazione della consistenza (IVA vs totale)
+        val receiptData = ReceiptTextParser.parse(text, detectedLanguage)
 
         if (receiptData.totalAmount <= 0.0) throw ReceiptScanException.AmountNotFound
 

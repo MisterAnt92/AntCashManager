@@ -53,6 +53,10 @@ import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.ExpenseRed
 import com.antcashmanager.android.ui.theme.IncomeGreen
 import com.antcashmanager.android.ui.theme.ThemeConstants
+import com.antcashmanager.android.util.LocalAmountsMasked
+import com.antcashmanager.android.util.LocalCurrencyFormat
+import com.antcashmanager.android.util.formatAmount
+import com.antcashmanager.android.util.maskDigits
 import com.antcashmanager.domain.model.PaymentType
 
 @Composable
@@ -87,51 +91,69 @@ fun BalanceCard(
             modifier = modifier.fillMaxWidth(),
             backgroundColor = MaterialTheme.colorScheme.primaryContainer,
         ) {
+            val balanceStatusText = if (balance >= 0) {
+                stringResource(R.string.home_balance_positive)
+            } else {
+                stringResource(R.string.home_balance_negative)
+            }
+            val formattedBalance = formatAmount(balance, LocalCurrencyFormat.current).let {
+                if (LocalAmountsMasked.current) maskDigits(it) else it
+            }
+            val balanceSummaryDescription = stringResource(
+                R.string.home_balance_summary_cd,
+                stringResource(R.string.home_total_balance),
+                formattedBalance,
+                balanceStatusText,
+            )
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(28.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                // Title
-                AppText(
-                    text = stringResource(R.string.home_total_balance),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(
-                        alpha = ThemeConstants.HIGH_EMPHASIS_TEXT_ALPHA,
-                    ),
-                    fontWeight = FontWeight.SemiBold,
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                BalanceText(
-                    amount = balance,
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    fontSize = 32,
-                    positiveColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    negativeColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                )
-                Box(
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                Column(
+                    modifier = Modifier.semantics(mergeDescendants = true) {
+                        contentDescription = balanceSummaryDescription
+                    },
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
+                    // Title
                     AppText(
-                        text = if (balance >= 0) {
-                            stringResource(R.string.home_balance_positive)
-                        } else {
-                            stringResource(R.string.home_balance_negative)
-                        },
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(balanceStateContainerColor)
-                            .padding(horizontal = 8.dp, vertical = 4.dp),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = balanceStateColor,
-                        fontWeight = FontWeight.Bold,
+                        text = stringResource(R.string.home_total_balance),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(
+                            alpha = ThemeConstants.HIGH_EMPHASIS_TEXT_ALPHA,
+                        ),
+                        fontWeight = FontWeight.SemiBold,
                     )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    BalanceText(
+                        amount = balance,
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        fontSize = 32,
+                        positiveColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        negativeColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    )
+                    Box(
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    ) {
+                        AppText(
+                            text = balanceStatusText,
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(balanceStateContainerColor)
+                                .padding(horizontal = 8.dp, vertical = 4.dp),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = balanceStateColor,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
-
-                // Payment Type Breakdown
+                // Payment Type Breakdown (lo Spacer sopra vive qui dentro: altrimenti
+                // occuperebbe 20dp anche quando la ripartizione è nascosta/vuota, che è
+                // il caso di default per ogni installazione nuova).
                 AnimatedVisibility(
                     visible = showPaymentTypeBreakdown && balanceByPaymentType.isNotEmpty(),
                     enter = if (reduceMotion) {
@@ -145,10 +167,13 @@ fun BalanceCard(
                         fadeOut(animationSpec = tween(400)) + shrinkVertically()
                     },
                 ) {
-                    PaymentTypeBreakdown(
-                        balanceByPaymentType = balanceByPaymentType,
-                        reduceMotion = reduceMotion,
-                    )
+                    Column {
+                        Spacer(modifier = Modifier.height(20.dp))
+                        PaymentTypeBreakdown(
+                            balanceByPaymentType = balanceByPaymentType,
+                            reduceMotion = reduceMotion,
+                        )
+                    }
                 }
             }
         }

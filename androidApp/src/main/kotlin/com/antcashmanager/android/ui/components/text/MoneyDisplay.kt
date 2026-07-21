@@ -17,9 +17,11 @@ import androidx.compose.ui.unit.sp
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.ExpenseRed
 import com.antcashmanager.android.ui.theme.IncomeGreen
+import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.android.util.formatAmountWithNegative
 import com.antcashmanager.android.util.formatTransactionAmount
+import com.antcashmanager.android.util.maskDigits
 
 /**
  * Reusable composable for displaying monetary amounts with customizable styling.
@@ -43,6 +45,7 @@ fun MoneyText(
     fontSize: Int? = null,
     showSign: Boolean = false,
     maxLines: Int = 1,
+    masked: Boolean = LocalAmountsMasked.current,
 ) {
     val fmt = LocalCurrencyFormat.current
 
@@ -50,7 +53,7 @@ fun MoneyText(
         formatTransactionAmount(amount, fmt)
     } else {
         formatAmountWithNegative(amount, fmt)
-    }
+    }.let { if (masked) maskDigits(it) else it }
 
     val finalStyle = style.let {
         var updated = it
@@ -122,6 +125,7 @@ fun TransactionAmountText(
     style: TextStyle = MaterialTheme.typography.labelMedium,
     fontWeight: FontWeight = FontWeight.ExtraBold,
     fontSize: Int = 14,
+    masked: Boolean = LocalAmountsMasked.current,
 ) {
     val color = if (amount >= 0) IncomeGreen else ExpenseRed
 
@@ -133,6 +137,7 @@ fun TransactionAmountText(
         fontWeight = fontWeight,
         fontSize = fontSize,
         showSign = true,
+        masked = masked,
     )
 }
 

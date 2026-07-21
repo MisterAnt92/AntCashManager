@@ -17,6 +17,11 @@
     <string name="home_move_up">Mover arriba</string>
     <string name="home_move_down">Mover abajo</string>
     <string name="home_balance_positive">📈 Positivo</string>
+    <string name="home_recent_transactions_count">Transacciones Recientes · %1$d</string>
+    <string name="home_quick_insights_biggest_expense">Gasto más alto</string>
+    <string name="home_scroll_to_top">Volver arriba</string>
+    <string name="home_balance_summary_cd">%1$s: %2$s, %3$s</string>
+    <string name="home_insight_row_cd">%1$s: %2$s</string>
     <string name="transactions_add">A\u00f1adir Transacci\u00f3n</string>
     <string name="transactions_type_income">Ingreso</string>
     <string name="transactions_type_expense">Gasto</string>
@@ -51,6 +56,10 @@
     <string name="categories_tab_income">Ingresos</string>
     <string name="categories_default_badge">Predeterminada</string>
     <string name="categories_icon_label">Icono</string>
+    <string name="categories_hide">Ocultar categoría</string>
+    <string name="categories_show">Mostrar categoría</string>
+    <string name="categories_hidden_section_title">Categorías ocultas (%d)</string>
+    <string name="categories_reorder">Reordenar categorías</string>
 
     <!-- Iconos de Categoría -->
     <string name="icon_home">Hogar</string>
@@ -82,6 +91,7 @@
     <string name="icon_directions_bike">Deporte</string>
     <string name="icon_shopping_cart">Supermercado</string>
     <string name="icon_coffee">Caf\u00e9</string>
+    <string name="icon_spa">Cuidado personal</string>
 
     <string name="charts_title">Gr\u00e1ficos</string>
     <string name="charts_period">Per\u00edodo</string>
@@ -94,6 +104,12 @@
     <string name="charts_monthly_overview">Resumen mensual</string>
     <string name="charts_yearly_overview">Resumen anual</string>
     <string name="charts_no_data">No hay datos para el per\u00edodo seleccionado</string>
+    <string name="chart_reset_zoom">Restablecer zoom</string>
+    <string name="charts_payment_breakdown_title">Desglose por M\u00e9todo de Pago</string>
+    <string name="charts_top_income_categories">Categor\u00edas Principales - Ingresos</string>
+    <string name="charts_top_expense_categories">Categor\u00edas Principales - Gastos</string>
+    <string name="charts_chart_summary_cd">%1$s: %2$d categor\u00edas, total %3$s</string>
+    <string name="charts_category_item_cd">%1$s: %2$s, %3$s por ciento del total</string>
     <string name="charts_pick_start_date">Seleccionar fecha de inicio</string>
     <string name="charts_pick_end_date">Seleccionar fecha de fin</string>
     <string name="charts_empty_ant">\u00a1A\u00fan no hay datos para graficar! \u00a1La hormiga est\u00e1 trabajando duro! 🐜📊</string>
@@ -154,6 +170,14 @@
     <string name="settings_separator_none">Ninguno</string>
     <string name="settings_reset_preferences">Restablecer preferencias</string>
     <string name="settings_reset_preferences_subtitle">Restaurar todos los ajustes a sus valores predeterminados</string>
+    <string name="settings_section_widgets">Widgets</string>
+    <string name="settings_widget_background_color">Color de fondo</string>
+    <string name="dialog_choose_widget_background_color">Elige el color de fondo del widget</string>
+    <string name="settings_widget_opacity">Opacidad</string>
+    <string name="settings_widget_opacity_value">%1$d%%</string>
+    <string name="settings_widget_preview_title">Vista previa</string>
+    <string name="settings_widget_preview_recent">Transacciones recientes</string>
+    <string name="settings_widget_preview_category">Ingresos y gastos</string>
     <string name="settings_accessibility">Accesibilidad</string>
     <string name="settings_high_contrast">Alto contraste</string>
     <string name="settings_high_contrast_subtitle">Aumenta el contraste para una mejor legibilidad. Usa colores m\u00e1s intensos y bordes m\u00e1s marcados.</string>
@@ -312,6 +336,10 @@
     <string name="add_transaction_meal_voucher_difference_paid">Diferencia pagada</string>
 
     <string name="empty_state_no_transactions">No hay transacciones presentes</string>
+    <string name="widget_recent_transactions_title">Transacciones recientes</string>
+    <string name="widget_recent_transactions_description">Muestra tus transacciones recientes, actualizadas automáticamente</string>
+    <string name="widget_category_breakdown_title">Ingresos y gastos</string>
+    <string name="widget_category_breakdown_description">Muestra los ingresos y gastos del mes por categoría, actualizados automáticamente</string>
     <string name="empty_state_no_transactions_subtitle">¡La alcancía te está esperando!</string>
     <string name="settings_show_payment_breakdown">Mostrar saldo por tipo de pago</string>
     <string name="settings_show_payment_breakdown_desc">Mostrar el desglose del saldo por método de pago en la pantalla de inicio</string>
@@ -339,6 +367,10 @@
     <string name="settings_show_transaction_notes">Mostrar Notas de Transacciones</string>
     <string name="settings_show_transaction_notes_subtitle_enabled">Notas visibles en los elementos de transacciones</string>
     <string name="settings_show_transaction_notes_subtitle_disabled">Notas ocultas</string>
+    <string name="settings_mask_amounts">Ocultar importes</string>
+    <string name="settings_mask_amounts_subtitle_enabled">Las cifras se enmascaran con asteriscos</string>
+    <string name="settings_mask_amounts_subtitle_disabled">Las cifras se muestran normalmente</string>
+    <string name="settings_mask_amounts_preview">Vista previa: %s</string>
     <string name="settings_transaction_icon_display_trend">Flechas de Tendencia</string>
     <string name="settings_transaction_icon_display_category">Categoría</string>
     <string name="settings_transaction_icon_display_none">Ninguna</string>
@@ -349,6 +381,7 @@
     <string name="receipt_scan_pick_gallery">Elegir de la galería</string>
     <string name="receipt_scan_processing">Analizando ticket…</string>
     <string name="receipt_scan_total_label">Total extraído</string>
+    <string name="receipt_scan_amount_edited">Importe modificado</string>
     <string name="receipt_scan_title_label">Título de la transacción</string>
     <string name="receipt_scan_payee_label">Beneficiario / Comercio</string>
     <string name="receipt_scan_location_label">Ubicación</string>
@@ -373,6 +406,9 @@
     <string name="category_reimbursement">Reembolso</string>
     <string name="category_investments">Inversiones</string>
     <string name="category_freelance">Freelance</string>
+    <string name="category_gifts">Regalos</string>
+    <string name="category_subscriptions">Suscripciones</string>
+    <string name="category_personal_care">Cuidado personal</string>
     <string name="help_features_label">Características:</string>
     <string name="common_help">Ayuda</string>
     <string name="help_home_title">Guía de Inicio</string>

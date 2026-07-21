@@ -33,6 +33,7 @@ class SettingsRepositoryImpl(
     private val largeTextKey = booleanPreferencesKey("large_text")
     private val reduceMotionKey = booleanPreferencesKey("reduce_motion")
     private val showTransactionNotesKey = booleanPreferencesKey("show_transaction_notes")
+    private val maskAmountsKey = booleanPreferencesKey("mask_amounts")
     private val currencySymbolKey = stringPreferencesKey("currency_symbol")
     private val decimalDigitsKey = intPreferencesKey("decimal_digits")
     private val decimalSeparatorKey = stringPreferencesKey("decimal_separator")
@@ -57,12 +58,15 @@ class SettingsRepositoryImpl(
     private val transactionsTransactionDisplayTypeKey =
         stringPreferencesKey("transactions_transaction_display_type")
     private val isTutorialCompletedKey = booleanPreferencesKey("is_tutorial_completed")
+    private val categorySortOrderInitializedKey = booleanPreferencesKey("category_sort_order_initialized")
     private val dataEncryptionEnabledKey = booleanPreferencesKey("data_encryption_enabled")
     private val showInitialAnimationKey = booleanPreferencesKey("show_initial_animation")
     private val lastBackupTimestampKey = longPreferencesKey("last_backup_timestamp")
     private val lastRestoreTimestampKey = longPreferencesKey("last_restore_timestamp")
     private val suggestionsEnabledKey = booleanPreferencesKey("suggestions_enabled")
     private val suggestionsClearedAtKey = longPreferencesKey("suggestions_cleared_at")
+    private val widgetBackgroundColorKey = longPreferencesKey("widget_background_color")
+    private val widgetOpacityKey = intPreferencesKey("widget_opacity")
 
     private fun createSavedDateFilter(defaultPresetIndex: Int, defaultDurationMs: Long): SavedDateFilter {
         val now = System.currentTimeMillis()
@@ -164,6 +168,17 @@ class SettingsRepositoryImpl(
     override suspend fun setShowTransactionNotes(show: Boolean) {
         dataStore.edit { preferences ->
             preferences[showTransactionNotesKey] = show
+        }
+    }
+
+    override fun getMaskAmounts(): Flow<Boolean> =
+        dataStore.data.map { preferences ->
+            preferences[maskAmountsKey] ?: false
+        }
+
+    override suspend fun setMaskAmounts(mask: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[maskAmountsKey] = mask
         }
     }
 
@@ -319,7 +334,7 @@ class SettingsRepositoryImpl(
 
     override fun getShowQuickInsightsCard(): Flow<Boolean> =
         dataStore.data.map { preferences ->
-            preferences[showQuickInsightsCardKey] ?: false
+            preferences[showQuickInsightsCardKey] ?: true
         }
 
     override suspend fun setShowQuickInsightsCard(show: Boolean) {
@@ -376,6 +391,13 @@ class SettingsRepositoryImpl(
         dataStore.edit { it[isTutorialCompletedKey] = completed }
     }
 
+    override fun getCategorySortOrderInitialized(): Flow<Boolean> =
+        dataStore.data.map { it[categorySortOrderInitializedKey] ?: false }
+
+    override suspend fun setCategorySortOrderInitialized(initialized: Boolean) {
+        dataStore.edit { it[categorySortOrderInitializedKey] = initialized }
+    }
+
     override fun getDataEncryptionEnabled(): Flow<Boolean> =
         dataStore.data.map { it[dataEncryptionEnabledKey] ?: false }
 
@@ -412,6 +434,20 @@ class SettingsRepositoryImpl(
         dataStore.edit { it[suggestionsClearedAtKey] = timestamp }
     }
 
+    override fun getWidgetBackgroundColor(): Flow<Long> =
+        dataStore.data.map { it[widgetBackgroundColorKey] ?: DEFAULT_WIDGET_BACKGROUND_COLOR }
+
+    override suspend fun setWidgetBackgroundColor(color: Long) {
+        dataStore.edit { it[widgetBackgroundColorKey] = color }
+    }
+
+    override fun getWidgetOpacity(): Flow<Int> =
+        dataStore.data.map { it[widgetOpacityKey] ?: DEFAULT_WIDGET_OPACITY }
+
+    override suspend fun setWidgetOpacity(opacity: Int) {
+        dataStore.edit { it[widgetOpacityKey] = opacity }
+    }
+
     override suspend fun resetAllPreferences() {
         val defaultHomeFilter = defaultHomeDateFilter()
         val defaultTransactionsFilter = defaultTransactionsDateFilter()
@@ -425,6 +461,7 @@ class SettingsRepositoryImpl(
             prefs[largeTextKey] = false
             prefs[reduceMotionKey] = false
             prefs[showTransactionNotesKey] = true
+            prefs[maskAmountsKey] = false
             prefs[currencySymbolKey] = "\u20ac"
             prefs[decimalDigitsKey] = 2
             prefs[decimalSeparatorKey] = ","
@@ -443,7 +480,7 @@ class SettingsRepositoryImpl(
             prefs[chartsDateFilterToKey] = defaultChartsFilter.to
             prefs[chartsZoomEnabledKey] = false
             prefs[showPaymentTypeBreakdownKey] = false
-            prefs[showQuickInsightsCardKey] = false
+            prefs[showQuickInsightsCardKey] = true
             prefs[transactionDisplayTypeKey] = TransactionDisplayType.TREND.name
             prefs[transactionsTransactionDisplayTypeKey] = TransactionDisplayType.TREND.name
             prefs[isTutorialCompletedKey] = false
@@ -451,6 +488,8 @@ class SettingsRepositoryImpl(
             prefs[showInitialAnimationKey] = false
             prefs[suggestionsEnabledKey] = true
             prefs.remove(suggestionsClearedAtKey)
+            prefs[widgetBackgroundColorKey] = DEFAULT_WIDGET_BACKGROUND_COLOR
+            prefs[widgetOpacityKey] = DEFAULT_WIDGET_OPACITY
         }
         DatabaseEncryptionManager.setEncryptionDesired(context, false)
     }
@@ -459,5 +498,7 @@ class SettingsRepositoryImpl(
         const val WEEK_IN_MILLIS = 7L * 24 * 60 * 60 * 1000
         const val MONTH_IN_MILLIS = 30L * 24 * 60 * 60 * 1000
         const val DEFAULT_MEAL_VOUCHER_VALUE = 5.29
+        const val DEFAULT_WIDGET_BACKGROUND_COLOR = 0xFFFFFFFFL
+        const val DEFAULT_WIDGET_OPACITY = 100
     }
 }

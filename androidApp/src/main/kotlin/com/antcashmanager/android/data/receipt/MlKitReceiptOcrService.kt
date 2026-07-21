@@ -39,13 +39,13 @@ class MlKitReceiptOcrService : ReceiptOcrService {
             suspendCancellableCoroutine { continuation ->
                 recognizer.process(inputImage)
                     .addOnSuccessListener { visionText ->
-                        Logger.d(ReceiptConstants.TAG) {
+                        Logger.d(tag = ReceiptConstants.TAG) {
                             "OCR success: ${visionText.text.length} chars extracted"
                         }
                         continuation.resume(Result.success(visionText.text))
                     }
                     .addOnFailureListener { exception ->
-                        Logger.e(ReceiptConstants.TAG, exception) { "OCR failed" }
+                        Logger.e(throwable = exception, tag = ReceiptConstants.TAG) { "OCR failed" }
                         continuation.resume(
                             Result.failure(ReceiptScanException.OcrFailed(exception))
                         )
@@ -56,7 +56,7 @@ class MlKitReceiptOcrService : ReceiptOcrService {
                 }
             }
         } catch (e: Exception) {
-            Logger.e(ReceiptConstants.TAG, e) { "Unexpected error during OCR" }
+            Logger.e(throwable = e, tag = ReceiptConstants.TAG) { "Unexpected error during OCR" }
             Result.failure(ReceiptScanException.OcrFailed(e))
         }
     }

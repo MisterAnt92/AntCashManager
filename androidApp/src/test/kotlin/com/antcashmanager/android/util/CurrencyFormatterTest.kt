@@ -1,7 +1,11 @@
 package com.antcashmanager.android.util
 
 import com.antcashmanager.domain.model.CurrencyFormat
+import com.antcashmanager.domain.model.Transaction
+import com.antcashmanager.domain.model.TransactionType
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class CurrencyFormatterTest {
@@ -71,6 +75,68 @@ class CurrencyFormatterTest {
 
         val formatted = formatAmountWithNegative(-1234.56, format)
         assertEquals("-€1.234,56", formatted)
+    }
+
+    @Test
+    fun maskDigits_shouldReplaceOnlyDigits_whenAmountIsPositiveWithThousandsSeparator() {
+        val masked = maskDigits("€1.234,56")
+        assertEquals("€*.***,**", masked)
+    }
+
+    @Test
+    fun maskDigits_shouldPreserveMinusSign_whenAmountIsNegative() {
+        val masked = maskDigits("-€1.234,56")
+        assertEquals("-€*.***,**", masked)
+    }
+
+    @Test
+    fun maskDigits_shouldReturnUnchangedString_whenNoDigitsPresent() {
+        val masked = maskDigits("€-,.")
+        assertEquals("€-,.", masked)
+    }
+
+    @Test
+    fun maskDigits_shouldMaskEveryDigit_whenCurrencySymbolIsMultiChar() {
+        val masked = maskDigits("USD 12,345")
+        assertEquals("USD **,***", masked)
+    }
+
+    @Test
+    fun isProtectedSalaryTransaction_shouldReturnTrue_whenIncomeCategoryIsStipendio() {
+        val transaction = Transaction(title = "Paga", amount = 1500.0, category = "Stipendio", type = TransactionType.INCOME)
+        assertTrue(isProtectedSalaryTransaction(transaction))
+    }
+
+    @Test
+    fun isProtectedSalaryTransaction_shouldReturnFalse_whenSameCategoryNameButExpense() {
+        val transaction = Transaction(title = "Rimborso stipendio", amount = 100.0, category = "Stipendio", type = TransactionType.EXPENSE)
+        assertFalse(isProtectedSalaryTransaction(transaction))
+    }
+
+    @Test
+    fun isProtectedSalaryTransaction_shouldReturnFalse_whenIncomeButDifferentCategory() {
+        val transaction = Transaction(title = "Bonus", amount = 200.0, category = "Freelance", type = TransactionType.INCOME)
+        assertFalse(isProtectedSalaryTransaction(transaction))
+    }
+
+    @Test
+    fun isProtectedSalaryCategory_shouldReturnTrue_whenIncomeCategoryIsStipendio() {
+        assertTrue(isProtectedSalaryCategory("Stipendio", TransactionType.INCOME))
+    }
+
+    @Test
+    fun isProtectedSalaryCategory_shouldReturnFalse_whenCategoryIsNull() {
+        assertFalse(isProtectedSalaryCategory(null, TransactionType.INCOME))
+    }
+
+    @Test
+    fun isProtectedSalaryCategory_shouldReturnFalse_whenTypeIsNull() {
+        assertFalse(isProtectedSalaryCategory("Stipendio", null))
+    }
+
+    @Test
+    fun isProtectedSalaryCategory_shouldReturnFalse_whenCategoryDiffersAndTypeIsIncome() {
+        assertFalse(isProtectedSalaryCategory("Freelance", TransactionType.INCOME))
     }
 }
 

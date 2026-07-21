@@ -22,6 +22,8 @@ interface SettingsRepository {
     suspend fun setReduceMotion(enabled: Boolean)
     fun getShowTransactionNotes(): Flow<Boolean>
     suspend fun setShowTransactionNotes(show: Boolean)
+    fun getMaskAmounts(): Flow<Boolean>
+    suspend fun setMaskAmounts(mask: Boolean)
 
     // ── Currency / number format ──
     fun getCurrencySymbol(): Flow<String>
@@ -81,6 +83,14 @@ interface SettingsRepository {
     fun getIsTutorialCompleted(): Flow<Boolean>
     suspend fun setIsTutorialCompleted(completed: Boolean)
 
+    /**
+     * Flag one-shot: indica se il backfill di [com.antcashmanager.domain.model.Category.sortOrder]
+     * per le categorie già esistenti (migrazione DB) è già stato eseguito. Stato locale del
+     * device, non incluso in [resetAllPreferences] né nel backup.
+     */
+    fun getCategorySortOrderInitialized(): Flow<Boolean>
+    suspend fun setCategorySortOrderInitialized(initialized: Boolean)
+
     // ── Security ──
     fun getDataEncryptionEnabled(): Flow<Boolean>
     suspend fun setDataEncryptionEnabled(enabled: Boolean)
@@ -106,4 +116,10 @@ interface SettingsRepository {
     suspend fun setSuggestionsEnabled(enabled: Boolean)
     fun getSuggestionsClearedAt(): Flow<Long?>
     suspend fun setSuggestionsClearedAt(timestamp: Long)
+
+    // ── Aspetto widget (Home screen) ──
+    fun getWidgetBackgroundColor(): Flow<Long>
+    suspend fun setWidgetBackgroundColor(color: Long)
+    fun getWidgetOpacity(): Flow<Int>
+    suspend fun setWidgetOpacity(opacity: Int)
 }

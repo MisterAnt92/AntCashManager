@@ -6,6 +6,7 @@ import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.security.LocalDataCipher
+import com.antcashmanager.domain.service.WidgetUpdateNotifier
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,13 +23,15 @@ class TransactionRepositoryImplTest {
 
     private lateinit var fakeDao: FakeTransactionDao
     private lateinit var fakeCipher: FakeLocalDataCipher
+    private lateinit var fakeWidgetUpdateNotifier: FakeWidgetUpdateNotifier
     private lateinit var repository: TransactionRepositoryImpl
 
     @Before
     fun setup() {
         fakeDao = FakeTransactionDao()
         fakeCipher = FakeLocalDataCipher()
-        repository = TransactionRepositoryImpl(fakeDao, fakeCipher)
+        fakeWidgetUpdateNotifier = FakeWidgetUpdateNotifier()
+        repository = TransactionRepositoryImpl(fakeDao, fakeCipher, fakeWidgetUpdateNotifier)
     }
 
     @Test
@@ -81,6 +84,34 @@ class TransactionRepositoryImplTest {
 
         assertEquals(5_000L, fakeDao.lastDistinctTitlesSince)
         assertEquals(emptyList<String>(), values)
+    }
+
+    @Test
+    fun insertTransaction_shouldNotifyWidgetUpdate_whenTransactionSaved() = runTest {
+        repository.insertTransaction(sampleTransaction())
+
+        assertEquals(1, fakeWidgetUpdateNotifier.notifyCount)
+    }
+
+    @Test
+    fun updateTransaction_shouldNotifyWidgetUpdate_whenTransactionModified() = runTest {
+        repository.updateTransaction(sampleTransaction())
+
+        assertEquals(1, fakeWidgetUpdateNotifier.notifyCount)
+    }
+
+    @Test
+    fun deleteTransaction_shouldNotifyWidgetUpdate_whenTransactionRemoved() = runTest {
+        repository.deleteTransaction(sampleTransaction())
+
+        assertEquals(1, fakeWidgetUpdateNotifier.notifyCount)
+    }
+
+    @Test
+    fun deleteAllTransactions_shouldNotifyWidgetUpdate_whenAllTransactionsCleared() = runTest {
+        repository.deleteAllTransactions()
+
+        assertEquals(1, fakeWidgetUpdateNotifier.notifyCount)
     }
 
     private fun sampleTransaction() = Transaction(
@@ -138,6 +169,15 @@ private class FakeLocalDataCipher : LocalDataCipher {
         if (value.startsWith(PREFIX)) value.removePrefix(PREFIX) else value
 
     override fun clearCache() = Unit
+}
+
+private class FakeWidgetUpdateNotifier : WidgetUpdateNotifier {
+    var notifyCount = 0
+        private set
+
+    override suspend fun notifyTransactionsChanged() {
+        notifyCount++
+    }
 }
 
 private class FakeTransactionDao : TransactionDao {

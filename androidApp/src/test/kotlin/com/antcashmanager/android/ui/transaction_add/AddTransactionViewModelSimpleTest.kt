@@ -4,8 +4,8 @@ import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.testutil.FakeCategoryRepository
 import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.testutil.FakeTransactionRepository
-import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionEvent
-import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionViewModel
+import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionEvent
+import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionViewModel
 import com.antcashmanager.domain.model.Category
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert.assertNotNull

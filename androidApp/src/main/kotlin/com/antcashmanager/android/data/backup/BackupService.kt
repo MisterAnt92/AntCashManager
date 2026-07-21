@@ -11,10 +11,11 @@ import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
+import com.antcashmanager.domain.service.NoOpWidgetUpdateNotifier
+import com.antcashmanager.domain.service.WidgetUpdateNotifier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.decodeFromJsonElement
@@ -33,6 +34,7 @@ class BackupService(
     private val transactionRepository: TransactionRepository,
     private val categoryRepository: CategoryRepository,
     private val settingsRepository: SettingsRepository,
+    private val widgetUpdateNotifier: WidgetUpdateNotifier = NoOpWidgetUpdateNotifier,
 ) {
     private val json = Json {
         prettyPrint = true
@@ -45,7 +47,7 @@ class BackupService(
      */
     suspend fun createBackup(): Result<String> = withContext(Dispatchers.IO) {
         try {
-            Logger.d("BackupService") { "Creating backup..." }
+            Logger.d(tag = "BackupService") { "Creating backup..." }
 
             val transactions = transactionRepository.getAllTransactions().first()
             val categories = categoryRepository.getAllCategories().first()
@@ -57,10 +59,10 @@ class BackupService(
             )
 
             val jsonString = json.encodeToString(backupData)
-            Logger.d("BackupService") { "Backup created: ${transactions.size} transactions, ${categories.size} categories" }
+            Logger.d(tag = "BackupService") { "Backup created: ${transactions.size} transactions, ${categories.size} categories" }
             Result.success(jsonString)
         } catch (e: Exception) {
-            Logger.e("BackupService") { "Error creating backup: ${e.message}" }
+            Logger.e(tag = "BackupService") { "Error creating backup: ${e.message}" }
             Result.failure(e)
         }
     }
@@ -88,17 +90,17 @@ class BackupService(
             val backupData = try {
                 json.decodeFromString<BackupData>(jsonString)
             } catch (e: Exception) {
-                Logger.w("BackupService") { "Strict backup parsing failed, falling back to lenient per-field parsing: ${e.message}" }
+                Logger.w(tag = "BackupService") { "Strict backup parsing failed, falling back to lenient per-field parsing: ${e.message}" }
                 try {
                     parseBackupDataLeniently(jsonString)
                 } catch (fallbackError: Exception) {
-                    Logger.e("BackupService") { "Lenient parsing also failed: ${fallbackError.message}" }
+                    Logger.e(tag = "BackupService") { "Lenient parsing also failed: ${fallbackError.message}" }
                     return@withContext Result.failure(e)
                 }
             }
 
             if (backupData.version > BackupConstants.CURRENT_VERSION) {
-                Logger.w("BackupService") {
+                Logger.w(tag = "BackupService") {
                     "Backup version ${backupData.version} is newer than supported (${BackupConstants.CURRENT_VERSION}); " +
                         "importing best-effort using only the fields this app version understands."
                 }
@@ -108,7 +110,7 @@ class BackupService(
             val existingCategoriesSnapshot = categoryRepository.getAllCategories().first()
 
             try {
-                Logger.d("BackupService") { "Restoring backup..." }
+                Logger.d(tag = "BackupService") { "Restoring backup..." }
 
                 // Clear existing data
                 transactionRepository.deleteAllTransactions()
@@ -135,7 +137,7 @@ class BackupService(
                         existingCategoryKeys.add(categoryKey)
                         categoriesRestored++
                     } catch (e: Exception) {
-                        Logger.w("BackupService") { "Failed to restore category: ${categoryBackup.name}" }
+                        Logger.w(tag = "BackupService") { "Failed to restore category: ${categoryBackup.name}" }
                     }
                 }
 
@@ -146,14 +148,19 @@ class BackupService(
                         transactionRepository.insertTransaction(transactionBackup.toTransaction())
                         transactionsRestored++
                     } catch (e: Exception) {
-                        Logger.w("BackupService") { "Failed to restore transaction: ${transactionBackup.title}" }
+                        Logger.w(tag = "BackupService") { "Failed to restore transaction: ${transactionBackup.title}" }
                     }
                 }
 
                 // Restore settings, se presenti (assenti in un backup v1 o se esplicitamente null)
-                backupData.settings?.let { applySettings(it) }
+                backupData.settings?.let {
+                    applySettings(it)
+                    // Assicura il refresh dei widget anche se il backup non contiene
+                    // transazioni (in quel caso insertTransaction non lo farebbe scattare).
+                    widgetUpdateNotifier.notifyTransactionsChanged()
+                }
 
-                Logger.d("BackupService") { "Restore completed: $transactionsRestored transactions, $categoriesRestored categories" }
+                Logger.d(tag = "BackupService") { "Restore completed: $transactionsRestored transactions, $categoriesRestored categories" }
                 Result.success(
                     RestoreResult(
                         transactionsRestored = transactionsRestored,
@@ -161,7 +168,7 @@ class BackupService(
                     ),
                 )
             } catch (e: Exception) {
-                Logger.e("BackupService") { "Error restoring backup, attempting rollback: ${e.message}" }
+                Logger.e(tag = "BackupService") { "Error restoring backup, attempting rollback: ${e.message}" }
                 runCatching {
                     // deleteAllCategories() preserva le categorie isDefault: quelle sopravvivono
                     // già alla cancellazione, quindi vanno escluse dal reinserimento per non
@@ -172,7 +179,7 @@ class BackupService(
                     transactionRepository.deleteAllTransactions()
                     existingTransactionsSnapshot.forEach { transactionRepository.insertTransaction(it) }
                 }.onFailure { rollbackError ->
-                    Logger.e("BackupService") { "Rollback also failed — data may be inconsistent: ${rollbackError.message}" }
+                    Logger.e(tag = "BackupService") { "Rollback also failed — data may be inconsistent: ${rollbackError.message}" }
                 }
                 Result.failure(e)
             }
@@ -193,13 +200,13 @@ class BackupService(
 
         val transactions = root["transactions"]?.jsonArray.orEmpty().mapNotNull { element ->
             runCatching { json.decodeFromJsonElement<TransactionBackup>(element) }
-                .onFailure { Logger.w("BackupService") { "Skipping unreadable transaction entry: ${it.message}" } }
+                .onFailure { Logger.w(tag = "BackupService") { "Skipping unreadable transaction entry: ${it.message}" } }
                 .getOrNull()
         }
 
         val categories = root["categories"]?.jsonArray.orEmpty().mapNotNull { element ->
             runCatching { json.decodeFromJsonElement<CategoryBackup>(element) }
-                .onFailure { Logger.w("BackupService") { "Skipping unreadable category entry: ${it.message}" } }
+                .onFailure { Logger.w(tag = "BackupService") { "Skipping unreadable category entry: ${it.message}" } }
                 .getOrNull()
         }
 
@@ -207,7 +214,7 @@ class BackupService(
             ?.takeIf { it != JsonNull }
             ?.let { element ->
                 runCatching { json.decodeFromJsonElement<SettingsBackup>(element) }
-                    .onFailure { Logger.w("BackupService") { "Skipping unreadable settings block: ${it.message}" } }
+                    .onFailure { Logger.w(tag = "BackupService") { "Skipping unreadable settings block: ${it.message}" } }
                     .getOrNull()
             }
 
@@ -228,6 +235,7 @@ class BackupService(
         reduceMotion = settingsRepository.getReduceMotion().first(),
         showCharts = settingsRepository.getShowCharts().first(),
         showTransactionNotes = settingsRepository.getShowTransactionNotes().first(),
+        maskAmounts = settingsRepository.getMaskAmounts().first(),
         showPaymentTypeBreakdown = settingsRepository.getShowPaymentTypeBreakdown().first(),
         showQuickInsightsCard = settingsRepository.getShowQuickInsightsCard().first(),
         showInitialAnimation = settingsRepository.getShowInitialAnimation().first(),
@@ -240,6 +248,10 @@ class BackupService(
         mealVoucherValue = settingsRepository.getMealVoucherValue().first(),
         dateFormat = settingsRepository.getDateFormat().first(),
         chartsZoomEnabled = settingsRepository.getChartsZoomEnabled().first(),
+        suggestionsEnabled = settingsRepository.getSuggestionsEnabled().first(),
+        suggestionsClearedAt = settingsRepository.getSuggestionsClearedAt().first(),
+        widgetBackgroundColor = settingsRepository.getWidgetBackgroundColor().first(),
+        widgetOpacity = settingsRepository.getWidgetOpacity().first(),
     )
 
     private suspend fun applySettings(settings: SettingsBackup) {
@@ -250,6 +262,7 @@ class BackupService(
         settingsRepository.setReduceMotion(settings.reduceMotion)
         settingsRepository.setShowCharts(settings.showCharts)
         settingsRepository.setShowTransactionNotes(settings.showTransactionNotes)
+        settingsRepository.setMaskAmounts(settings.maskAmounts)
         settingsRepository.setShowPaymentTypeBreakdown(settings.showPaymentTypeBreakdown)
         settingsRepository.setShowQuickInsightsCard(settings.showQuickInsightsCard)
         settingsRepository.setShowInitialAnimation(settings.showInitialAnimation)
@@ -266,6 +279,12 @@ class BackupService(
         settingsRepository.setMealVoucherValue(settings.mealVoucherValue)
         settingsRepository.setDateFormat(settings.dateFormat)
         settingsRepository.setChartsZoomEnabled(settings.chartsZoomEnabled)
+        settingsRepository.setSuggestionsEnabled(settings.suggestionsEnabled)
+        // Nessun "unset": se il backup non ha una data di cancellazione (null), quella
+        // corrente sul device resta invariata invece di essere azzerata.
+        settings.suggestionsClearedAt?.let { settingsRepository.setSuggestionsClearedAt(it) }
+        settingsRepository.setWidgetBackgroundColor(settings.widgetBackgroundColor)
+        settingsRepository.setWidgetOpacity(settings.widgetOpacity)
     }
 
     private inline fun <reified T : Enum<T>> enumValueOfOrDefault(name: String, default: T): T =
@@ -328,6 +347,8 @@ class BackupService(
         color = color,
         type = type,
         isDefault = isDefault,
+        sortOrder = sortOrder,
+        isHidden = isHidden,
     )
 
     private fun CategoryBackup.toCategory() = Category(
@@ -337,6 +358,8 @@ class BackupService(
         color = color,
         type = type,
         isDefault = isDefault,
+        sortOrder = sortOrder,
+        isHidden = isHidden,
     )
 
     private fun toCategoryKey(name: String, type: String): String =

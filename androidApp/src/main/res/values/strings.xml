@@ -34,6 +34,11 @@
     <string name="home_move_up">Move up</string>
     <string name="home_move_down">Move down</string>
     <string name="home_balance_positive">📈 Positive</string>
+    <string name="home_recent_transactions_count">Recent Transactions · %1$d</string>
+    <string name="home_quick_insights_biggest_expense">Biggest expense</string>
+    <string name="home_scroll_to_top">Scroll to top</string>
+    <string name="home_balance_summary_cd">%1$s: %2$s, %3$s</string>
+    <string name="home_insight_row_cd">%1$s: %2$s</string>
 
     <!-- Transactions Screen -->
     <string name="transactions_add">Add Transaction</string>
@@ -74,6 +79,10 @@
     <string name="categories_tab_income">Income</string>
     <string name="categories_default_badge">Default</string>
     <string name="categories_icon_label">Icon</string>
+    <string name="categories_hide">Hide category</string>
+    <string name="categories_show">Show category</string>
+    <string name="categories_hidden_section_title">Hidden categories (%d)</string>
+    <string name="categories_reorder">Reorder categories</string>
     <string name="categories_selection_hint">Tap a category to select it (auto-advances in real app)</string>
 
     <!-- Category Icons -->
@@ -106,6 +115,7 @@
     <string name="icon_directions_bike">Sport</string>
     <string name="icon_shopping_cart">Groceries</string>
     <string name="icon_coffee">Coffee</string>
+    <string name="icon_spa">Personal Care</string>
 
     <!-- Charts Screen -->
     <string name="charts_period">Period</string>
@@ -118,6 +128,12 @@
     <string name="charts_monthly_overview">Monthly Overview</string>
     <string name="charts_yearly_overview">Yearly Overview</string>
     <string name="charts_no_data">No data for the selected period</string>
+    <string name="chart_reset_zoom">Reset Zoom</string>
+    <string name="charts_payment_breakdown_title">Payment Method Breakdown</string>
+    <string name="charts_top_income_categories">Top Income Categories</string>
+    <string name="charts_top_expense_categories">Top Expense Categories</string>
+    <string name="charts_chart_summary_cd">%1$s: %2$d categories, total %3$s</string>
+    <string name="charts_category_item_cd">%1$s: %2$s, %3$s percent of total</string>
     <string name="charts_pick_start_date">Pick start date</string>
     <string name="charts_pick_end_date">Pick end date</string>
     <string name="charts_empty_ant">No data to chart yet! The ant is working hard! 🐜📊</string>
@@ -189,6 +205,14 @@
     <string name="settings_section_other">Other</string>
     <string name="settings_reset_preferences">Reset All Preferences</string>
     <string name="settings_reset_preferences_subtitle">Restore all settings to their default values</string>
+    <string name="settings_section_widgets">Widgets</string>
+    <string name="settings_widget_background_color">Background color</string>
+    <string name="dialog_choose_widget_background_color">Choose widget background color</string>
+    <string name="settings_widget_opacity">Opacity</string>
+    <string name="settings_widget_opacity_value">%1$d%%</string>
+    <string name="settings_widget_preview_title">Preview</string>
+    <string name="settings_widget_preview_recent">Recent Transactions</string>
+    <string name="settings_widget_preview_category">Income &amp; Expenses</string>
     <string name="date_format_ddmmyyyy">DD/MM/YYYY</string>
     <string name="date_format_mmddyyyy">MM/DD/YYYY</string>
     <string name="date_format_yyyymmdd">YYYY-MM-DD</string>
@@ -367,6 +391,10 @@
 
     <!-- Empty State -->
     <string name="empty_state_no_transactions">No transactions present</string>
+    <string name="widget_recent_transactions_title">Recent Transactions</string>
+    <string name="widget_recent_transactions_description">Shows your recent transactions, updated automatically</string>
+    <string name="widget_category_breakdown_title">Income &amp; Expenses</string>
+    <string name="widget_category_breakdown_description">Shows this month\'s income and expenses by category, updated automatically</string>
     <string name="empty_state_no_transactions_subtitle">The piggy bank is waiting for you!</string>
 
     <!-- Payment Breakdown -->
@@ -407,6 +435,10 @@
     <string name="settings_show_transaction_notes">Show Transaction Notes</string>
     <string name="settings_show_transaction_notes_subtitle_enabled">Notes visible in transaction items</string>
     <string name="settings_show_transaction_notes_subtitle_disabled">Notes hidden</string>
+    <string name="settings_mask_amounts">Hide amounts</string>
+    <string name="settings_mask_amounts_subtitle_enabled">Digits are masked with asterisks</string>
+    <string name="settings_mask_amounts_subtitle_disabled">Digits are shown normally</string>
+    <string name="settings_mask_amounts_preview">Preview: %s</string>
     <string name="settings_transaction_icon_display_trend">Trend Arrows</string>
     <string name="settings_transaction_icon_display_category">Category</string>
     <string name="settings_transaction_icon_display_none">None</string>
@@ -458,6 +490,9 @@
     <string name="category_reimbursement">Reimbursement</string>
     <string name="category_investments">Investments</string>
     <string name="category_freelance">Freelance</string>
+    <string name="category_gifts">Gifts</string>
+    <string name="category_subscriptions">Subscriptions</string>
+    <string name="category_personal_care">Personal Care</string>
 
     <!-- Receipt Scan Screen -->
     <string name="receipt_scan_title">Scan Receipt</string>
@@ -466,6 +501,7 @@
     <string name="receipt_scan_pick_gallery">Pick from Gallery</string>
     <string name="receipt_scan_processing">Analysing receipt…</string>
     <string name="receipt_scan_total_label">Extracted Total</string>
+    <string name="receipt_scan_amount_edited">Amount edited</string>
     <string name="receipt_scan_title_label">Transaction Title</string>
     <string name="receipt_scan_payee_label">Payee / Merchant</string>
     <string name="receipt_scan_location_label">Location</string>

@@ -42,15 +42,16 @@ import com.antcashmanager.android.ui.components.animation.AntSplashScreen
 import com.antcashmanager.android.ui.components.dialog.AppExitConfirmationDialog
 import com.antcashmanager.android.ui.components.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
-import com.antcashmanager.android.ui.screen.categories.CategoriesScreen
-import com.antcashmanager.android.ui.screen.charts.ChartsScreen
+import com.antcashmanager.android.ui.screen.categories.view.CategoriesScreen
+import com.antcashmanager.android.ui.screen.charts.view.ChartsScreen
 import com.antcashmanager.android.ui.screen.home.HomeScreen
 import com.antcashmanager.android.ui.screen.receiptScan.ReceiptScanScreen
-import com.antcashmanager.android.ui.screen.settings.SettingsScreen
-import com.antcashmanager.android.ui.screen.settingsData.SettingsDataScreen
-import com.antcashmanager.android.ui.screen.settingsDisplay.DisplayScreen
-import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionScreen
-import com.antcashmanager.android.ui.screen.transactions.TransactionsScreen
+import com.antcashmanager.android.ui.screen.settings.view.SettingsScreen
+import com.antcashmanager.android.ui.screen.settings.dataManagement.SettingsDataScreen
+import com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayScreen
+import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionScreen
+import com.antcashmanager.android.ui.screen.transactions.view.TransactionsScreen
+import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.repository.SettingsRepository
@@ -74,6 +75,7 @@ fun AntCashManagerNavHost() {
     val decimalSeparator by settingsRepository.getDecimalSeparator().collectAsState(initial = ",")
     val thousandsSeparator by settingsRepository.getThousandsSeparator()
         .collectAsState(initial = "")
+    val maskAmounts by settingsRepository.getMaskAmounts().collectAsState(initial = false)
 
     val showInitialAnimation = false
     var showSplash by rememberSaveable { mutableStateOf(true) }
@@ -90,7 +92,10 @@ fun AntCashManagerNavHost() {
         thousandsSeparator = thousandsSeparator,
     )
 
-    CompositionLocalProvider(LocalCurrencyFormat provides currencyFormat) {
+    CompositionLocalProvider(
+        LocalCurrencyFormat provides currencyFormat,
+        LocalAmountsMasked provides maskAmounts,
+    ) {
         val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
         // ... existing AntScreenScaffold code ...
 

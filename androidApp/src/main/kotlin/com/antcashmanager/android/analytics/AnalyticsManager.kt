@@ -31,7 +31,7 @@ open class AnalyticsManager {
             }
             firebaseAnalytics?.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, params)
         }.onFailure { error ->
-            Logger.e(AnalyticsConstants.TAG, error) { "Failed to log screen view for route=$route" }
+            Logger.e(throwable = error, tag = AnalyticsConstants.TAG) { "Failed to log screen view for route=$route" }
         }
     }
 
@@ -39,14 +39,14 @@ open class AnalyticsManager {
         val sanitizedName = sanitizeName(eventName)
         if (sanitizedName.isBlank()) return
         if (sanitizedName !in AnalyticsConstants.ALLOWED_USAGE_EVENTS) {
-            Logger.w(AnalyticsConstants.TAG) { "Blocked non-whitelisted analytics event=$sanitizedName" }
+            Logger.w(tag = AnalyticsConstants.TAG) { "Blocked non-whitelisted analytics event=$sanitizedName" }
             return
         }
 
         runCatching {
             firebaseAnalytics?.logEvent(sanitizedName, sanitizeParams(params))
         }.onFailure { error ->
-            Logger.e(AnalyticsConstants.TAG, error) { "Failed to log event=$sanitizedName" }
+            Logger.e(throwable = error, tag = AnalyticsConstants.TAG) { "Failed to log event=$sanitizedName" }
         }
     }
 

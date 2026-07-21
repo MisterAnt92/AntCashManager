@@ -1,6 +1,6 @@
 package com.antcashmanager.android.ui.transaction_add
 
-import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionState
+import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionState
 import com.antcashmanager.domain.model.PaymentType
 import org.junit.Assert.assertEquals
 import org.junit.Test

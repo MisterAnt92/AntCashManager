@@ -7,14 +7,15 @@ import com.antcashmanager.android.domain.usecase.feedback.SendFeedbackEmailUseCa
 import com.antcashmanager.android.ui.screen.categories.CategoriesViewModel
 import com.antcashmanager.android.ui.screen.charts.ChartsViewModel
 import com.antcashmanager.android.ui.screen.home.HomeViewModel
-import com.antcashmanager.android.ui.screen.homeTransactionDetail.TransactionDetailsViewModel
+import com.antcashmanager.android.ui.screen.home.transactionDetail.TransactionDetailsViewModel
 import com.antcashmanager.android.ui.screen.receiptScan.ReceiptScanViewModel
 import com.antcashmanager.android.ui.screen.settings.SettingsViewModel
-import com.antcashmanager.android.ui.screen.settingsData.SettingsDataViewModel
-import com.antcashmanager.android.ui.screen.settingsDisplay.DisplayViewModel
-import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionViewModel
+import com.antcashmanager.android.ui.screen.settings.dataManagement.SettingsDataViewModel
+import com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayViewModel
+import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionViewModel
 import com.antcashmanager.android.ui.screen.transactions.TransactionsViewModel
 import com.antcashmanager.android.ui.theme.ThemeViewModel
+import com.antcashmanager.android.widget.GlanceWidgetUpdateNotifier
 import com.antcashmanager.data.local.DatabaseProvider
 import com.antcashmanager.data.repository.CategoryRepositoryImpl
 import com.antcashmanager.data.repository.SettingsRepositoryImpl
@@ -25,6 +26,7 @@ import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.security.LocalDataCipher
 import com.antcashmanager.domain.service.ReceiptOcrService
+import com.antcashmanager.domain.service.WidgetUpdateNotifier
 import com.antcashmanager.domain.usecase.ShareTransactionUseCase
 import com.antcashmanager.domain.usecase.category.DeleteCategoryUseCase
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
@@ -71,10 +73,12 @@ import org.koin.dsl.module
 val dataModule = module {
     single { DatabaseProvider.getDatabase(androidApplication()) }
     single<LocalDataCipher> { LocalDataCipherImpl(androidApplication()) }
+    single<WidgetUpdateNotifier> { GlanceWidgetUpdateNotifier(androidApplication()) }
     single<TransactionRepository> {
         TransactionRepositoryImpl(
             transactionDao = get<com.antcashmanager.data.local.AppDatabase>().transactionDao(),
             localDataCipher = get(),
+            widgetUpdateNotifier = get(),
         )
     }
     single<SettingsRepository> { SettingsRepositoryImpl(androidApplication()) }
@@ -89,6 +93,7 @@ val dataModule = module {
             transactionRepository = get(),
             categoryRepository = get(),
             settingsRepository = get(),
+            widgetUpdateNotifier = get(),
         )
     }
     factory<ReceiptOcrService> { MlKitReceiptOcrService() }

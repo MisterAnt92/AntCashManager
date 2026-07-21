@@ -42,6 +42,16 @@ class CategoryRepositoryImplMockkTest {
     }
 
     @Test
+    fun getAllCategories_shouldMapSortOrderAndIsHidden_whenEntityHasNonDefaultValues() = runTest {
+        val entity = sampleEntity(id = 7L, name = "Hobby", sortOrder = 3, isHidden = true)
+        every { categoryDao.getAllCategories() } returns flowOf(listOf(entity))
+
+        val result = repository.getAllCategories().first()
+
+        assertEquals(sampleCategory(id = 7L, name = "Hobby", sortOrder = 3, isHidden = true), result.first())
+    }
+
+    @Test
     fun getCategoryByName_shouldReturnMappedCategory_whenDaoReturnsEntity() = runTest {
         val entity = sampleEntity(id = 9L, name = "Transport")
         coEvery { categoryDao.getCategoryByName("Transport") } returns entity
@@ -103,6 +113,8 @@ class CategoryRepositoryImplMockkTest {
         id: Long,
         name: String,
         isDefault: Boolean = false,
+        sortOrder: Int = 0,
+        isHidden: Boolean = false,
     ): CategoryEntity = CategoryEntity(
         id = id,
         name = name,
@@ -110,12 +122,16 @@ class CategoryRepositoryImplMockkTest {
         color = 0xFF90A4AE,
         type = "EXPENSE",
         isDefault = isDefault,
+        sortOrder = sortOrder,
+        isHidden = isHidden,
     )
 
     private fun sampleCategory(
         id: Long,
         name: String,
         isDefault: Boolean = false,
+        sortOrder: Int = 0,
+        isHidden: Boolean = false,
     ): Category = Category(
         id = id,
         name = name,
@@ -123,6 +139,8 @@ class CategoryRepositoryImplMockkTest {
         color = 0xFF90A4AE,
         type = "EXPENSE",
         isDefault = isDefault,
+        sortOrder = sortOrder,
+        isHidden = isHidden,
     )
 }
 

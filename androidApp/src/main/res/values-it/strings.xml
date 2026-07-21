@@ -67,6 +67,11 @@
     <string name="home_move_up">Sposta su</string>
     <string name="home_move_down">Sposta giu</string>
     <string name="home_balance_positive">📈 Positivo</string>
+    <string name="home_recent_transactions_count">Transazioni Recenti · %1$d</string>
+    <string name="home_quick_insights_biggest_expense">Spesa maggiore</string>
+    <string name="home_scroll_to_top">Torna in cima</string>
+    <string name="home_balance_summary_cd">%1$s: %2$s, %3$s</string>
+    <string name="home_insight_row_cd">%1$s: %2$s</string>
     <string name="transactions_add">Aggiungi Transazione</string>
     <string name="transactions_type_income">Entrata</string>
     <string name="transactions_type_expense">Uscita</string>
@@ -101,6 +106,10 @@
     <string name="categories_tab_income">Entrate</string>
     <string name="categories_default_badge">Predefinita</string>
     <string name="categories_icon_label">Icona</string>
+    <string name="categories_hide">Nascondi categoria</string>
+    <string name="categories_show">Mostra categoria</string>
+    <string name="categories_hidden_section_title">Categorie nascoste (%d)</string>
+    <string name="categories_reorder">Riordina categorie</string>
 
     <!-- Icone Categorie -->
     <string name="icon_home">Casa</string>
@@ -132,6 +141,7 @@
     <string name="icon_directions_bike">Sport</string>
     <string name="icon_shopping_cart">Spesa</string>
     <string name="icon_coffee">Caffè</string>
+    <string name="icon_spa">Cura personale</string>
 
     <string name="charts_period">Periodo</string>
     <string name="charts_from">Dal: %s</string>
@@ -143,6 +153,12 @@
     <string name="charts_monthly_overview">Panoramica Mensile</string>
     <string name="charts_yearly_overview">Panoramica Annuale</string>
     <string name="charts_no_data">Nessun dato per il periodo selezionato</string>
+    <string name="chart_reset_zoom">Azzera Zoom</string>
+    <string name="charts_payment_breakdown_title">Ripartizione per Metodo di Pagamento</string>
+    <string name="charts_top_income_categories">Categorie Principali - Entrate</string>
+    <string name="charts_top_expense_categories">Categorie Principali - Uscite</string>
+    <string name="charts_chart_summary_cd">%1$s: %2$d categorie, totale %3$s</string>
+    <string name="charts_category_item_cd">%1$s: %2$s, %3$s percento del totale</string>
     <string name="charts_pick_start_date">Seleziona data inizio</string>
     <string name="charts_pick_end_date">Seleziona data fine</string>
     <string name="charts_empty_ant">Nessun dato da mostrare! La formichina sta lavorando sodo! 🐜📊</string>
@@ -208,6 +224,14 @@
     <string name="settings_section_other">Altro</string>
     <string name="settings_reset_preferences">Ripristina Tutte le Preferenze</string>
     <string name="settings_reset_preferences_subtitle">Ripristina tutte le impostazioni ai valori predefiniti</string>
+    <string name="settings_section_widgets">Widget</string>
+    <string name="settings_widget_background_color">Colore sfondo</string>
+    <string name="dialog_choose_widget_background_color">Scegli il colore di sfondo del widget</string>
+    <string name="settings_widget_opacity">Opacità</string>
+    <string name="settings_widget_opacity_value">%1$d%%</string>
+    <string name="settings_widget_preview_title">Anteprima</string>
+    <string name="settings_widget_preview_recent">Transazioni recenti</string>
+    <string name="settings_widget_preview_category">Entrate e uscite</string>
     <string name="date_format_ddmmyyyy">GG/MM/AAAA</string>
     <string name="date_format_mmddyyyy">MM/GG/AAAA</string>
     <string name="date_format_yyyymmdd">AAAA-MM-GG</string>
@@ -359,6 +383,10 @@
     <string name="add_transaction_meal_voucher_difference_paid">Differenza pagata</string>
 
     <string name="empty_state_no_transactions">Nessuna transazione presente</string>
+    <string name="widget_recent_transactions_title">Transazioni recenti</string>
+    <string name="widget_recent_transactions_description">Mostra le transazioni recenti, aggiornate automaticamente</string>
+    <string name="widget_category_breakdown_title">Entrate e uscite</string>
+    <string name="widget_category_breakdown_description">Mostra entrate e uscite del mese per categoria, aggiornate automaticamente</string>
     <string name="empty_state_no_transactions_subtitle">Il salvadanaio ti sta aspettando!</string>
     <string name="settings_show_payment_breakdown">Mostra saldo per tipo di pagamento</string>
     <string name="settings_show_payment_breakdown_desc">Visualizza il saldo suddiviso per metodo di pagamento nella schermata Home</string>
@@ -387,6 +415,10 @@
     <string name="settings_show_transaction_notes">Mostra Note Transazioni</string>
     <string name="settings_show_transaction_notes_subtitle_enabled">Note visibili negli item transazioni</string>
     <string name="settings_show_transaction_notes_subtitle_disabled">Note nascoste</string>
+    <string name="settings_mask_amounts">Nascondi importi</string>
+    <string name="settings_mask_amounts_subtitle_enabled">Le cifre sono mascherate con asterischi</string>
+    <string name="settings_mask_amounts_subtitle_disabled">Le cifre sono visibili normalmente</string>
+    <string name="settings_mask_amounts_preview">Anteprima: %s</string>
     <string name="settings_transaction_icon_display_trend">Frecce Andamento</string>
     <string name="settings_transaction_icon_display_category">Categoria</string>
     <string name="settings_transaction_icon_display_none">Nessuna</string>
@@ -400,7 +432,7 @@
     <string name="tutorial_welcome_point_insights">Controlla saldo e trend a colpo d\'occhio.</string>
     <string name="tutorial_welcome_point_categories">Organizza le spese con categorie intelligenti.</string>
     <string name="tutorial_welcome_point_customize">Personalizza lingua, tema e formati.</string>
-    <string name="tutorial_dashboard_title">Dashboard</string>
+    <string name="tutorial_dashboard_title">Riepilogo</string>
     <string name="tutorial_dashboard_desc">Qui puoi vedere il tuo saldo totale, le entrate e le uscite mensili a colpo d\'occhio.</string>
     <string name="tutorial_transactions_title">Transazioni</string>
     <string name="tutorial_transactions_desc">Gestisci tutti i tuoi movimenti qui. Puoi cercare, filtrare e aggiungere nuove voci facilmente.</string>
@@ -432,12 +464,16 @@
     <string name="category_reimbursement">Rimborso</string>
     <string name="category_investments">Investimenti</string>
     <string name="category_freelance">Freelance</string>
+    <string name="category_gifts">Regali</string>
+    <string name="category_subscriptions">Abbonamenti</string>
+    <string name="category_personal_care">Cura personale</string>
     <string name="receipt_scan_title">Scansiona Scontrino</string>
     <string name="receipt_scan_capture_hint">Scatta una foto allo scontrino o scegline una dalla galleria per estrarre automaticamente importo, IVA, beneficiario e luogo.</string>
     <string name="receipt_scan_take_photo">Scatta Foto</string>
     <string name="receipt_scan_pick_gallery">Scegli dalla Galleria</string>
     <string name="receipt_scan_processing">Analisi scontrino in corso…</string>
     <string name="receipt_scan_total_label">Totale Estratto</string>
+    <string name="receipt_scan_amount_edited">Importo modificato</string>
     <string name="receipt_scan_title_label">Titolo Transazione</string>
     <string name="receipt_scan_payee_label">Beneficiario / Esercente</string>
     <string name="receipt_scan_location_label">Luogo</string>

@@ -7,6 +7,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -67,7 +68,7 @@ import com.antcashmanager.android.ui.screen.home.view.IncomeExpenseRow
 import com.antcashmanager.android.ui.screen.home.view.LoadingState
 import com.antcashmanager.android.ui.screen.home.view.QuickInsightsCard
 import com.antcashmanager.android.ui.screen.home.view.RecentTransactionItem
-import com.antcashmanager.android.ui.screen.homeTransactionDetail.TransactionDetailsDialog
+import com.antcashmanager.android.ui.screen.home.transactionDetail.TransactionDetailsDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.SavedDateFilter
@@ -88,7 +89,7 @@ fun HomeScreen(
     navController: androidx.navigation.NavController,
     modifier: Modifier = Modifier,
 ) {
-    Logger.d("HomeScreen") { "Displaying HomeScreen" }
+    Logger.d(tag = "HomeScreen") { "Displaying HomeScreen" }
 
     val viewModel: HomeViewModel = koinViewModel()
     val settingsRepository: SettingsRepository = koinInject()
@@ -117,6 +118,8 @@ internal fun HomeContent(
     settingsRepository: SettingsRepository,
     modifier: Modifier = Modifier,
 ) {
+
+    val analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager = koinInject()
 
     // Date picker state
     var showFromDatePicker by remember { mutableStateOf(false) }
@@ -148,15 +151,16 @@ internal fun HomeContent(
     val showScrollToTop by remember {
         derivedStateOf { listState.firstVisibleItemIndex > 2 }
     }
-
-    val editableTopCardsOrder = remember(topCardsOrder, showQuickInsightsCard) {
-        if (showQuickInsightsCard) {
-            topCardsOrder
-        } else {
-            topCardsOrder.filterNot { it == HomeTopCardType.QUICK_INSIGHTS }
-        }
+    val biggestExpense = remember(state.filteredTransactions) {
+        state.filteredTransactions
+            .filter { it.type == TransactionType.EXPENSE }
+            .maxByOrNull { kotlin.math.abs(it.amount) }
     }
 
+    // Elenco delle top card effettivamente visibili: esclude Quick Insights quando
+    // l'impostazione corrispondente è disattivata. Riusato sia per il rendering
+    // (visibleTopCardsOrder) sia come base per il dialog di riordino
+    // (editableTopCardsOrder) — prima erano due `remember` con logica identica.
     val visibleTopCardsOrder = remember(topCardsOrder, showQuickInsightsCard) {
         if (showQuickInsightsCard) {
             topCardsOrder
@@ -164,6 +168,7 @@ internal fun HomeContent(
             topCardsOrder.filterNot { it == HomeTopCardType.QUICK_INSIGHTS }
         }
     }
+    val editableTopCardsOrder = visibleTopCardsOrder
 
     // Tutorial full-screen
     if (!isTutorialCompleted) {
@@ -276,6 +281,7 @@ internal fun HomeContent(
                 }
                 topCardsOrderRaw = HomeTopCardType.serialize(updatedOrder)
                 showTopCardsOrderDialog = false
+                analyticsManager.logEvent("home_top_cards_reordered")
             },
         )
     }
@@ -312,7 +318,7 @@ internal fun HomeContent(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.ArrowUpward,
-                                contentDescription = null
+                                contentDescription = stringResource(R.string.home_scroll_to_top)
                             )
                         }
                     }
@@ -368,7 +374,12 @@ internal fun HomeContent(
                                         ),
                                     )
                                 }
-                                HelpButton(onHelpClick = { showHelpDialog = true })
+                                HelpButton(
+                                    onHelpClick = {
+                                        analyticsManager.logEvent("home_help_opened")
+                                        showHelpDialog = true
+                                    },
+                                )
                             }
                         }
                     }
@@ -386,7 +397,10 @@ internal fun HomeContent(
                                     settingsRepository.setDateFilterExpanded(expanded)
                                 }
                             },
-                            onPresetSelected = { onEvent(HomeEvent.SelectPreset(it)) },
+                            onPresetSelected = {
+                                analyticsManager.logEvent("home_date_filter_changed")
+                                onEvent(HomeEvent.SelectPreset(it))
+                            },
                             onFromDateEdit = { showFromDatePicker = true },
                             onToDateEdit = { showToDatePicker = true },
                         )
@@ -415,43 +429,54 @@ internal fun HomeContent(
                                     totalIncome = state.totalIncome,
                                     totalExpense = state.totalExpense,
                                     transactionCount = state.filteredTransactions.size,
+                                    biggestExpenseCategory = biggestExpense?.category,
+                                    biggestExpenseAmount = biggestExpense?.amount,
                                 )
                             }
                         }
                     }
 
-                    // Recent Transactions header with Search toggle
+                    // Recent Transactions header (con conteggio) + Search toggle/bar.
+                    // Un unico item: quando la ricerca è chiusa, SearchComponent collassa
+                    // a altezza zero al suo interno, evitando che lo spacedBy della
+                    // LazyColumn aggiunga comunque un gap attorno a un item vuoto.
                     item {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            AppText(
-                                text = stringResource(R.string.home_recent_transactions),
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.SemiBold,
-                                color = MaterialTheme.colorScheme.onBackground,
+                        Column {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                AppText(
+                                    text = stringResource(
+                                        R.string.home_recent_transactions_count,
+                                        state.filteredTransactions.size,
+                                    ),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                )
+                                IconButton(onClick = {
+                                    if (!state.isSearchExpanded) {
+                                        analyticsManager.logEvent("home_search_opened")
+                                    }
+                                    onEvent(HomeEvent.ToggleSearchExpanded)
+                                }) {
+                                    Icon(
+                                        imageVector = if (state.isSearchExpanded) Icons.Default.Close else Icons.Default.Search,
+                                        contentDescription = stringResource(R.string.transactions_search),
+                                        tint = if (state.searchQuery.isNotEmpty()) MaterialTheme.colorScheme.primary
+                                        else MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                }
+                            }
+                            SearchComponent(
+                                isVisible = state.isSearchExpanded,
+                                searchQuery = state.searchQuery,
+                                onSearchQueryChange = { onEvent(HomeEvent.UpdateSearchQuery(it)) },
+                                searchSuggestions = state.searchSuggestions,
                             )
-                            IconButton(onClick = { onEvent(HomeEvent.ToggleSearchExpanded) }) {
-                                Icon(
-                                    imageVector = if (state.isSearchExpanded) Icons.Default.Close else Icons.Default.Search,
-                                    contentDescription = stringResource(R.string.transactions_search),
-                                    tint = if (state.searchQuery.isNotEmpty()) MaterialTheme.colorScheme.primary
-                                    else MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                            }
                         }
-                    }
-
-                    // Search Bar
-                    item {
-                        SearchComponent(
-                            isVisible = state.isSearchExpanded,
-                            searchQuery = state.searchQuery,
-                            onSearchQueryChange = { onEvent(HomeEvent.UpdateSearchQuery(it)) },
-                            searchSuggestions = state.searchSuggestions,
-                        )
                     }
 
                     // Transactions content
@@ -470,7 +495,10 @@ internal fun HomeContent(
                         ) { transaction ->
                             RecentTransactionItem(
                                 transaction = transaction,
-                                onClick = { onEvent(HomeEvent.ShowTransactionDetails(transaction)) },
+                                onClick = {
+                                    analyticsManager.logEvent("home_transaction_detail_opened")
+                                    onEvent(HomeEvent.ShowTransactionDetails(transaction))
+                                },
                                 displayType = transactionDisplayType,
                             )
                         }
@@ -508,6 +536,8 @@ class MockHomeSettingsRepository : SettingsRepository {
     override suspend fun setReduceMotion(enabled: Boolean) {}
     override fun getShowTransactionNotes() = kotlinx.coroutines.flow.flowOf(true)
     override suspend fun setShowTransactionNotes(show: Boolean) {}
+    override fun getMaskAmounts() = kotlinx.coroutines.flow.flowOf(false)
+    override suspend fun setMaskAmounts(mask: Boolean) {}
     override fun getCurrencySymbol() = kotlinx.coroutines.flow.flowOf("€")
     override suspend fun setCurrencySymbol(symbol: String) {}
     override fun getDecimalDigits() = kotlinx.coroutines.flow.flowOf(2)
@@ -565,7 +595,7 @@ class MockHomeSettingsRepository : SettingsRepository {
 
     override fun getShowPaymentTypeBreakdown() = kotlinx.coroutines.flow.flowOf(true)
     override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {}
-    override fun getShowQuickInsightsCard() = kotlinx.coroutines.flow.flowOf(false)
+    override fun getShowQuickInsightsCard() = kotlinx.coroutines.flow.flowOf(true)
     override suspend fun setShowQuickInsightsCard(show: Boolean) {}
 
     override fun getShowInitialAnimation(): kotlinx.coroutines.flow.Flow<Boolean> =
@@ -593,6 +623,10 @@ class MockHomeSettingsRepository : SettingsRepository {
 
     override suspend fun setDataEncryptionEnabled(enabled: Boolean) {}
 
+    override fun getCategorySortOrderInitialized(): kotlinx.coroutines.flow.Flow<Boolean> =
+        kotlinx.coroutines.flow.flowOf(true)
+    override suspend fun setCategorySortOrderInitialized(initialized: Boolean) {}
+
     override fun getLastBackupTimestamp(): kotlinx.coroutines.flow.Flow<Long?> =
         kotlinx.coroutines.flow.flowOf(null)
     override suspend fun setLastBackupTimestamp(timestamp: Long) {}
@@ -606,6 +640,13 @@ class MockHomeSettingsRepository : SettingsRepository {
     override fun getSuggestionsClearedAt(): kotlinx.coroutines.flow.Flow<Long?> =
         kotlinx.coroutines.flow.flowOf(null)
     override suspend fun setSuggestionsClearedAt(timestamp: Long) {}
+
+    override fun getWidgetBackgroundColor(): kotlinx.coroutines.flow.Flow<Long> =
+        kotlinx.coroutines.flow.flowOf(0xFFFFFFFFL)
+    override suspend fun setWidgetBackgroundColor(color: Long) {}
+    override fun getWidgetOpacity(): kotlinx.coroutines.flow.Flow<Int> =
+        kotlinx.coroutines.flow.flowOf(100)
+    override suspend fun setWidgetOpacity(opacity: Int) {}
 
     override suspend fun resetAllPreferences() {}
 }

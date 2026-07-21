@@ -51,7 +51,7 @@ class ThemeViewModel(
     }
 
     private fun updatePreference(logMsg: String, action: suspend () -> Unit) {
-        Logger.d(ThemeConstants.TAG) { logMsg }
+        Logger.d(tag = ThemeConstants.TAG) { logMsg }
         viewModelScope.launch { action() }
     }
 }
