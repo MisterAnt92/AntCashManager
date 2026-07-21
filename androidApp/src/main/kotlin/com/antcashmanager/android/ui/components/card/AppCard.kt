@@ -48,6 +48,9 @@ import com.antcashmanager.android.ui.theme.AntCashManagerTheme
  * @param showChevron Whether to show a chevron arrow on the trailing side (hidden if trailingContent is set).
  * @param enabled Whether the card is enabled for interaction.
  * @param onClick Optional click handler for the card.
+ * @param bottomContent Optional composable content rendered below the title row, inside the
+ * same card container (e.g. a Slider), so extra controls stay visually consistent with the
+ * rest of the app instead of floating outside a card.
  */
 @Composable
 fun AppCard(
@@ -61,6 +64,7 @@ fun AppCard(
     showChevron: Boolean = true,
     enabled: Boolean = true,
     onClick: (() -> Unit)? = null,
+    bottomContent: (@Composable () -> Unit)? = null,
 ) {
     val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
     val contentPadding = if (adaptiveLayoutInfo.isCompact) 16.dp else 20.dp
@@ -80,71 +84,78 @@ fun AppCard(
         enabled = enabled,
         onClick = onClick ?: {},
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(contentPadding),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Row(
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f),
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                if (leadingIcon != null) {
-                    Box(
-                        modifier = Modifier
-                            .size(iconContainerSize)
-                            .clip(CircleShape)
-                            .background(iconBackgroundColor),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Icon(
-                            imageVector = leadingIcon,
-                            contentDescription = null,
-                            tint = iconTint,
-                            modifier = Modifier.size(iconSize),
-                        )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f),
+                ) {
+                    if (leadingIcon != null) {
+                        Box(
+                            modifier = Modifier
+                                .size(iconContainerSize)
+                                .clip(CircleShape)
+                                .background(iconBackgroundColor),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Icon(
+                                imageVector = leadingIcon,
+                                contentDescription = null,
+                                tint = iconTint,
+                                modifier = Modifier.size(iconSize),
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(16.dp))
                     }
-                    Spacer(modifier = Modifier.width(16.dp))
-                }
-                Column(modifier = Modifier.weight(1f)) {
-                    AppText(
-                        text = title,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = if (enabled) {
-                            MaterialTheme.colorScheme.onSurface
-                        } else {
-                            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                        },
-                        maxLines = titleMaxLines,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    if (subtitle != null) {
+                    Column(modifier = Modifier.weight(1f)) {
                         AppText(
-                            text = subtitle,
-                            style = MaterialTheme.typography.bodyMedium,
+                            text = title,
+                            style = MaterialTheme.typography.titleMedium,
                             color = if (enabled) {
-                                MaterialTheme.colorScheme.onSurfaceVariant
+                                MaterialTheme.colorScheme.onSurface
                             } else {
-                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                             },
-                            maxLines = subtitleMaxLines,
+                            maxLines = titleMaxLines,
                             overflow = TextOverflow.Ellipsis,
                         )
+                        if (subtitle != null) {
+                            AppText(
+                                text = subtitle,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = if (enabled) {
+                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                } else {
+                                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                                },
+                                maxLines = subtitleMaxLines,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
                     }
                 }
+                if (trailingContent != null) {
+                    Spacer(modifier = Modifier.width(8.dp))
+                    trailingContent()
+                } else if (showChevron && onClick != null) {
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
-            if (trailingContent != null) {
-                Spacer(modifier = Modifier.width(8.dp))
-                trailingContent()
-            } else if (showChevron && onClick != null) {
-                Spacer(modifier = Modifier.width(8.dp))
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+            if (bottomContent != null) {
+                bottomContent()
             }
         }
     }

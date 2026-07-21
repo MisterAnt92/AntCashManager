@@ -51,7 +51,7 @@ open class FakeSettingsRepository : SettingsRepository {
     val chartsDateFilterState = MutableStateFlow(defaultDateFilter(MONTH_IN_MILLIS))
     val chartsZoomEnabled = MutableStateFlow(false)
     val showPaymentTypeBreakdown = MutableStateFlow(false)
-    val showQuickInsightsCard = MutableStateFlow(false)
+    val showQuickInsightsCard = MutableStateFlow(true)
     val transactionDisplayType = MutableStateFlow(TransactionDisplayType.TREND)
     val transactionsTransactionDisplayType = MutableStateFlow(TransactionDisplayType.TREND)
     val showInitialAnimation = MutableStateFlow(false)
@@ -61,6 +61,8 @@ open class FakeSettingsRepository : SettingsRepository {
     val lastRestoreTimestamp = MutableStateFlow<Long?>(null)
     val suggestionsEnabled = MutableStateFlow(true)
     val suggestionsClearedAt = MutableStateFlow<Long?>(null)
+    val widgetBackgroundColor = MutableStateFlow(0xFFFFFFFFL)
+    val widgetOpacity = MutableStateFlow(100)
 
     override fun getTheme(): Flow<AppTheme> = theme
     override suspend fun setTheme(theme: AppTheme) {
@@ -224,6 +226,16 @@ open class FakeSettingsRepository : SettingsRepository {
         suggestionsClearedAt.value = timestamp
     }
 
+    override fun getWidgetBackgroundColor(): Flow<Long> = widgetBackgroundColor
+    override suspend fun setWidgetBackgroundColor(color: Long) {
+        widgetBackgroundColor.value = color
+    }
+
+    override fun getWidgetOpacity(): Flow<Int> = widgetOpacity
+    override suspend fun setWidgetOpacity(opacity: Int) {
+        widgetOpacity.value = opacity
+    }
+
     override suspend fun resetAllPreferences() {
         theme.value = AppTheme.SYSTEM
         language.value = AppLanguage.SYSTEM
@@ -241,12 +253,14 @@ open class FakeSettingsRepository : SettingsRepository {
         dateFilterExpanded.value = true
         chartsZoomEnabled.value = false
         showPaymentTypeBreakdown.value = false
-        showQuickInsightsCard.value = false
+        showQuickInsightsCard.value = true
         transactionDisplayType.value = TransactionDisplayType.TREND
         transactionsTransactionDisplayType.value = TransactionDisplayType.TREND
         showInitialAnimation.value = false
         dataEncryptionEnabled.value = false
         suggestionsEnabled.value = true
         suggestionsClearedAt.value = null
+        widgetBackgroundColor.value = 0xFFFFFFFFL
+        widgetOpacity.value = 100
     }
 }

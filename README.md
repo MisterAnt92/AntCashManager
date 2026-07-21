@@ -203,6 +203,10 @@ Eventi custom consentiti (uso app):
 - `charts_zoom_toggled`
 - `show_payment_breakdown_toggled`
 - `show_transaction_notes_toggled`
+- `widget_background_color_changed`
+- `widget_opacity_changed`
+- `widget_recent_transactions_opened`
+- `widget_category_breakdown_opened`
 - `settings_help_opened`
 - `settings_privacy_policy_opened`
 - `settings_third_party_libraries_opened`

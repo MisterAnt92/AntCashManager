@@ -5,6 +5,7 @@ import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.testutil.FakeTransactionRepository
 import com.antcashmanager.android.ui.screen.charts.ChartsViewModel
 import com.antcashmanager.android.ui.screen.charts.RangePreset
+import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
@@ -162,6 +163,60 @@ class ChartsViewModelTest : BaseUnitTest() {
         val expenseByCategory = viewModel.chartData.value.expenseByCategory
         assertEquals(40.0, expenseByCategory["Food"] ?: 0.0, 0.01)
         assertEquals(5.0, expenseByCategory["Transport"] ?: 0.0, 0.01)
+        collectJob.cancel()
+    }
+
+    @Test
+    fun chartDataGroupsPaymentTypeBreakdownCorrectly() = runViewModelTest {
+        val now = System.currentTimeMillis()
+        fakeRepo.transactions.value = listOf(
+            Transaction(
+                id = 1,
+                title = "Salary",
+                amount = 2000.0,
+                category = "Work",
+                type = TransactionType.INCOME,
+                timestamp = now,
+                paymentType = PaymentType.ELECTRONIC,
+            ),
+            Transaction(
+                id = 2,
+                title = "Groceries",
+                amount = 60.0,
+                category = "Food",
+                type = TransactionType.EXPENSE,
+                timestamp = now,
+                paymentType = PaymentType.CASH,
+            ),
+            Transaction(
+                id = 3,
+                title = "Lunch",
+                amount = 12.0,
+                category = "Food",
+                type = TransactionType.EXPENSE,
+                timestamp = now,
+                paymentType = PaymentType.MEAL_VOUCHERS,
+            ),
+            Transaction(
+                id = 4,
+                title = "Coffee",
+                amount = 3.0,
+                category = "Food",
+                type = TransactionType.EXPENSE,
+                timestamp = now,
+                paymentType = PaymentType.CASH,
+            ),
+        )
+        viewModel.setDateRange(now - 86400000, now + 86400000)
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.chartData.collect {}
+        }
+        advanceUntilIdle()
+
+        val breakdown = viewModel.chartData.value.paymentTypeBreakdown
+        assertEquals(2000.0, breakdown[PaymentType.ELECTRONIC] ?: 0.0, 0.01)
+        assertEquals(63.0, breakdown[PaymentType.CASH] ?: 0.0, 0.01)
+        assertEquals(12.0, breakdown[PaymentType.MEAL_VOUCHERS] ?: 0.0, 0.01)
         collectJob.cancel()
     }
 

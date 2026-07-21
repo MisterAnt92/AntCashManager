@@ -17,6 +17,11 @@
     <string name="home_move_up">Monter</string>
     <string name="home_move_down">Descendre</string>
     <string name="home_balance_positive">📈 Positif</string>
+    <string name="home_recent_transactions_count">Transactions Récentes · %1$d</string>
+    <string name="home_quick_insights_biggest_expense">Dépense la plus importante</string>
+    <string name="home_scroll_to_top">Retour en haut</string>
+    <string name="home_balance_summary_cd">%1$s : %2$s, %3$s</string>
+    <string name="home_insight_row_cd">%1$s : %2$s</string>
     <string name="transactions_add">Ajouter une transaction</string>
     <string name="transactions_type_income">Revenu</string>
     <string name="transactions_type_expense">D\u00e9pense</string>
@@ -94,6 +99,12 @@
     <string name="charts_monthly_overview">Aper\u00e7u mensuel</string>
     <string name="charts_yearly_overview">Aperçu annuel</string>
     <string name="charts_no_data">Aucune donnée pour la période sélectionnée</string>
+    <string name="chart_reset_zoom">Réinitialiser le zoom</string>
+    <string name="charts_payment_breakdown_title">Répartition par Mode de Paiement</string>
+    <string name="charts_top_income_categories">Principales Catégories - Revenus</string>
+    <string name="charts_top_expense_categories">Principales Catégories - Dépenses</string>
+    <string name="charts_chart_summary_cd">%1$s : %2$d catégories, total %3$s</string>
+    <string name="charts_category_item_cd">%1$s : %2$s, %3$s pour cent du total</string>
     <string name="charts_pick_start_date">Choisir la date de d\u00e9but</string>
     <string name="charts_pick_end_date">Choisir la date de fin</string>
     <string name="charts_empty_ant">Aucune donn\u00e9e \u00e0 afficher ! La fourmi travaille dur ! 🐜📊</string>
@@ -155,6 +166,14 @@
     <string name="settings_separator_none">Aucun</string>
     <string name="settings_reset_preferences">R\u00e9initialiser les pr\u00e9f\u00e9rences</string>
     <string name="settings_reset_preferences_subtitle">Restaurer tous les param\u00e8tres \u00e0 leurs valeurs par d\u00e9faut</string>
+    <string name="settings_section_widgets">Widgets</string>
+    <string name="settings_widget_background_color">Couleur de fond</string>
+    <string name="dialog_choose_widget_background_color">Choisir la couleur de fond du widget</string>
+    <string name="settings_widget_opacity">Opacit\u00e9</string>
+    <string name="settings_widget_opacity_value">%1$d%%</string>
+    <string name="settings_widget_preview_title">Aper\u00e7u</string>
+    <string name="settings_widget_preview_recent">Transactions r\u00e9centes</string>
+    <string name="settings_widget_preview_category">Revenus et d\u00e9penses</string>
     <string name="settings_accessibility">Accessibilit\u00e9</string>
     <string name="settings_high_contrast">Contraste \u00e9lev\u00e9</string>
     <string name="settings_high_contrast_subtitle">Augmente le contraste pour une meilleure lisibilit\u00e9. Utilise des couleurs plus vives et des bordures plus marqu\u00e9es.</string>
@@ -313,6 +332,10 @@
     <string name="add_transaction_meal_voucher_difference_paid">Différence payée</string>
 
     <string name="empty_state_no_transactions">Aucune transaction présente</string>
+    <string name="widget_recent_transactions_title">Transactions récentes</string>
+    <string name="widget_recent_transactions_description">Affiche vos transactions récentes, mises à jour automatiquement</string>
+    <string name="widget_category_breakdown_title">Revenus et dépenses</string>
+    <string name="widget_category_breakdown_description">Affiche les revenus et dépenses du mois par catégorie, mis à jour automatiquement</string>
     <string name="empty_state_no_transactions_subtitle">La tirelire vous attend !</string>
     <string name="settings_show_payment_breakdown">Afficher le solde par type de paiement</string>
     <string name="settings_show_payment_breakdown_desc">Afficher la répartition du solde par méthode de paiement sur l\'écran d\'accueil</string>

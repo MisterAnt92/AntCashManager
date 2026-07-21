@@ -1,6 +1,9 @@
 package com.antcashmanager.android.ui.screen.settingsDisplay
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,10 +11,15 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -20,6 +28,8 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Exposure
 import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material.icons.filled.Opacity
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Payment
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.TextFields
@@ -37,10 +47,14 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
@@ -48,6 +62,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
+import com.antcashmanager.android.ui.components.AppSlider
 import com.antcashmanager.android.ui.components.AppSwitch
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
@@ -59,6 +74,7 @@ import com.antcashmanager.android.ui.screen.settings.view.DecimalDigitsDialog
 import com.antcashmanager.android.ui.screen.settings.view.MealVoucherDialog
 import com.antcashmanager.android.ui.screen.settings.view.SeparatorDialog
 import com.antcashmanager.android.ui.screen.settings.view.TransactionDisplayDialog
+import com.antcashmanager.android.ui.screen.settings.view.WidgetBackgroundColorDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.formatAmount
 import com.antcashmanager.domain.model.CurrencyFormat
@@ -97,6 +113,8 @@ fun DisplayScreen(
     val transactionDisplayType by viewModel.transactionDisplayType.collectAsState()
     val transactionsTransactionDisplayType by viewModel.transactionsTransactionDisplayType.collectAsState()
     val chartsZoomEnabled by viewModel.chartsZoomEnabled.collectAsState()
+    val widgetBackgroundColor by viewModel.widgetBackgroundColor.collectAsState()
+    val widgetOpacity by viewModel.widgetOpacity.collectAsState()
 
     DisplayContent(
         currencySymbol = currencySymbol,
@@ -129,6 +147,10 @@ fun DisplayScreen(
                 it
             )
         },
+        widgetBackgroundColor = widgetBackgroundColor,
+        onWidgetBackgroundColorSelected = { viewModel.setWidgetBackgroundColor(it) },
+        widgetOpacity = widgetOpacity,
+        onWidgetOpacityChanged = { viewModel.setWidgetOpacity(it) },
         onResetAllPreferences = { viewModel.resetAllPreferences() },
         onNavigateBack = { navController.popBackStack() },
     )
@@ -172,6 +194,10 @@ internal fun DisplayContent(
     onTransactionDisplayTypeSelected: (TransactionDisplayType) -> Unit,
     transactionsTransactionDisplayType: TransactionDisplayType,
     onTransactionsTransactionDisplayTypeSelected: (TransactionDisplayType) -> Unit,
+    widgetBackgroundColor: Long,
+    onWidgetBackgroundColorSelected: (Long) -> Unit,
+    widgetOpacity: Int,
+    onWidgetOpacityChanged: (Int) -> Unit,
     onResetAllPreferences: () -> Unit,
     onNavigateBack: () -> Unit,
 ) {
@@ -184,6 +210,7 @@ internal fun DisplayContent(
     var showResetPreferencesDialog by remember { mutableStateOf(false) }
     var showTransactionDisplayDialog by remember { mutableStateOf(false) }
     var showTransactionsDisplayDialog by remember { mutableStateOf(false) }
+    var showWidgetBackgroundColorDialog by remember { mutableStateOf(false) }
     val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
     val analyticsManager: AnalyticsManager = koinInject()
     val handleShowQuickInsightsCardChanged: (Boolean) -> Unit = { show ->
@@ -205,6 +232,15 @@ internal fun DisplayContent(
     val handleShowTransactionNotesChanged: (Boolean) -> Unit = { show ->
         analyticsManager.logEvent("show_transaction_notes_toggled")
         onShowTransactionNotesChanged(show)
+    }
+    val handleWidgetBackgroundColorSelected: (Long) -> Unit = { color ->
+        analyticsManager.logEvent("widget_background_color_changed")
+        onWidgetBackgroundColorSelected(color)
+        showWidgetBackgroundColorDialog = false
+    }
+    val handleWidgetOpacityChanged: (Int) -> Unit = { opacity ->
+        analyticsManager.logEvent("widget_opacity_changed")
+        onWidgetOpacityChanged(opacity)
     }
 
     Scaffold(
@@ -293,6 +329,15 @@ internal fun DisplayContent(
                     )
                 }
 
+                item {
+                    WidgetsDisplaySection(
+                        widgetBackgroundColor = widgetBackgroundColor,
+                        onShowWidgetBackgroundColorDialog = { showWidgetBackgroundColorDialog = true },
+                        widgetOpacity = widgetOpacity,
+                        onWidgetOpacityChanged = handleWidgetOpacityChanged,
+                    )
+                }
+
                 item { androidx.compose.material3.Surface(modifier = Modifier.height(24.dp)) { } }
             }
         } else {
@@ -358,6 +403,12 @@ internal fun DisplayContent(
                         showTransactionNotes = showTransactionNotes,
                         onShowTransactionNotesChanged = handleShowTransactionNotesChanged,
                         onShowResetPreferencesDialog = { showResetPreferencesDialog = true },
+                    )
+                    WidgetsDisplaySection(
+                        widgetBackgroundColor = widgetBackgroundColor,
+                        onShowWidgetBackgroundColorDialog = { showWidgetBackgroundColorDialog = true },
+                        widgetOpacity = widgetOpacity,
+                        onWidgetOpacityChanged = handleWidgetOpacityChanged,
                     )
                 }
             }
@@ -521,6 +572,14 @@ internal fun DisplayContent(
             currentDisplayType = transactionsTransactionDisplayType,
             onDisplayTypeSelected = handleTransactionsDisplaySelected,
             onDismiss = dismissTransactionsDisplay,
+        )
+    }
+
+    if (showWidgetBackgroundColorDialog) {
+        WidgetBackgroundColorDialog(
+            currentColor = widgetBackgroundColor,
+            onColorSelected = handleWidgetBackgroundColorSelected,
+            onDismiss = { showWidgetBackgroundColorDialog = false },
         )
     }
 }
@@ -789,6 +848,169 @@ private fun OtherSection(
     }
 }
 
+@Composable
+private fun WidgetsDisplaySection(
+    widgetBackgroundColor: Long,
+    onShowWidgetBackgroundColorDialog: () -> Unit,
+    widgetOpacity: Int,
+    onWidgetOpacityChanged: (Int) -> Unit,
+) {
+    AppCardSectionHeader(title = stringResource(R.string.settings_section_widgets))
+    Spacer(modifier = Modifier.height(8.dp))
+
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        AppCard(
+            title = stringResource(R.string.settings_widget_background_color),
+            leadingIcon = Icons.Default.Palette,
+            trailingContent = {
+                Box(
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clip(CircleShape)
+                        .background(Color(widgetBackgroundColor))
+                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape),
+                )
+            },
+            onClick = onShowWidgetBackgroundColorDialog,
+        )
+
+        var sliderValue by remember(widgetOpacity) { mutableFloatStateOf(widgetOpacity.toFloat()) }
+
+        AppCard(
+            title = stringResource(R.string.settings_widget_opacity),
+            subtitle = stringResource(R.string.settings_widget_opacity_value, sliderValue.toInt()),
+            leadingIcon = Icons.Default.Opacity,
+            showChevron = false,
+            bottomContent = {
+                AppSlider(
+                    value = sliderValue,
+                    onValueChange = { sliderValue = it },
+                    onValueChangeFinished = { onWidgetOpacityChanged(sliderValue.toInt()) },
+                    valueRange = 0f..100f,
+                    steps = 99,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            },
+        )
+
+        WidgetPreviewMock(backgroundColor = widgetBackgroundColor, opacity = sliderValue.toInt())
+    }
+}
+
+@Composable
+private fun WidgetPreviewMock(backgroundColor: Long, opacity: Int) {
+    val resolvedColor = Color(backgroundColor).copy(alpha = opacity / 100f)
+    val isLight = isColorPerceptuallyLight(backgroundColor)
+    val primaryText = if (isLight) Color(0xFF212121) else Color.White
+    val secondaryText = if (isLight) Color(0xFF757575) else Color(0xFFE0E0E0)
+
+    AppText(
+        text = stringResource(R.string.settings_widget_preview_title),
+        style = MaterialTheme.typography.labelMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+    Spacer(modifier = Modifier.height(4.dp))
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(
+                androidx.compose.ui.graphics.Brush.linearGradient(
+                    listOf(Color(0xFF90A4AE), Color(0xFF64B5F6)),
+                ),
+            )
+            .padding(10.dp),
+    ) {
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(resolvedColor)
+                    .padding(10.dp),
+            ) {
+                AppText(
+                    text = stringResource(R.string.settings_widget_preview_recent),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = primaryText,
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+                MockTransactionRows.forEach { (color, label, amount) ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 2.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier
+                                    .size(8.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(color)),
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            AppText(text = label, style = MaterialTheme.typography.labelSmall, color = primaryText)
+                        }
+                        AppText(text = amount, style = MaterialTheme.typography.labelSmall, color = secondaryText)
+                    }
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(resolvedColor)
+                    .padding(10.dp),
+            ) {
+                AppText(
+                    text = stringResource(R.string.settings_widget_preview_category),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = primaryText,
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+                AppText(
+                    text = stringResource(R.string.charts_expenses),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = secondaryText,
+                )
+                MockCategoryBars.forEach { (color, fraction) ->
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(fraction)
+                            .height(4.dp)
+                            .clip(RoundedCornerShape(2.dp))
+                            .background(Color(color)),
+                    )
+                }
+            }
+        }
+    }
+}
+
+private val MockTransactionRows = listOf(
+    Triple(0xFF81C784L, "Spesa", "-45,00 €"),
+    Triple(0xFF64B5F6L, "Stipendio", "+1.200,00 €"),
+    Triple(0xFFFFB74DL, "Benzina", "-30,00 €"),
+)
+
+private val MockCategoryBars = listOf(
+    0xFFE57373L to 1f,
+    0xFFFFB74DL to 0.6f,
+)
+
+private fun isColorPerceptuallyLight(color: Long): Boolean {
+    val r = (color shr 16 and 0xFF) / 255f
+    val g = (color shr 8 and 0xFF) / 255f
+    val b = (color and 0xFF) / 255f
+    val luminance = 0.299f * r + 0.587f * g + 0.114f * b
+    return luminance >= 0.5f
+}
+
 // Dialog implementations moved to SettingsDialogs.kt
 
 @Preview(showBackground = true)
@@ -824,6 +1046,10 @@ private fun DisplayContentPreview() {
             onTransactionDisplayTypeSelected = {},
             transactionsTransactionDisplayType = TransactionDisplayType.TREND,
             onTransactionsTransactionDisplayTypeSelected = {},
+            widgetBackgroundColor = 0xFFFFFFFFL,
+            onWidgetBackgroundColorSelected = {},
+            widgetOpacity = 100,
+            onWidgetOpacityChanged = {},
             onResetAllPreferences = {},
             onNavigateBack = {},
         )

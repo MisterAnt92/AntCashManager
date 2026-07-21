@@ -1165,7 +1165,7 @@ class MockSettingsRepository : SettingsRepository {
 
     override fun getShowPaymentTypeBreakdown() = kotlinx.coroutines.flow.flowOf(false)
     override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {}
-    override fun getShowQuickInsightsCard() = kotlinx.coroutines.flow.flowOf(false)
+    override fun getShowQuickInsightsCard() = kotlinx.coroutines.flow.flowOf(true)
     override suspend fun setShowQuickInsightsCard(show: Boolean) {}
 
     override fun getShowInitialAnimation(): Flow<Boolean> =
@@ -1199,6 +1199,11 @@ class MockSettingsRepository : SettingsRepository {
     override suspend fun setSuggestionsEnabled(enabled: Boolean) {}
     override fun getSuggestionsClearedAt(): Flow<Long?> = kotlinx.coroutines.flow.flowOf(null)
     override suspend fun setSuggestionsClearedAt(timestamp: Long) {}
+
+    override fun getWidgetBackgroundColor(): Flow<Long> = kotlinx.coroutines.flow.flowOf(0xFFFFFFFFL)
+    override suspend fun setWidgetBackgroundColor(color: Long) {}
+    override fun getWidgetOpacity(): Flow<Int> = kotlinx.coroutines.flow.flowOf(100)
+    override suspend fun setWidgetOpacity(opacity: Int) {}
 
     override suspend fun resetAllPreferences() {}
 }

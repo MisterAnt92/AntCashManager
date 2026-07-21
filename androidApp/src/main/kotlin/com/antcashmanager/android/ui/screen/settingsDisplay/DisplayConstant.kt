@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.settingsDisplay
 
+import com.antcashmanager.android.ui.screen.categories.categoryColors
 import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.model.TransactionDisplayType
 
@@ -20,8 +21,13 @@ object DisplayConstant {
     const val DEFAULT_SHOW_CHARTS_SECTION = true
     const val DEFAULT_SHOW_CHARTS_ZOOM = true
     const val DEFAULT_SHOW_PAYMENT_BREAKDOWN = false
-    const val DEFAULT_SHOW_QUICK_INSIGHTS_CARD = false
+    const val DEFAULT_SHOW_QUICK_INSIGHTS_CARD = true
     val DEFAULT_TRANSACTION_DISPLAY_TYPE: TransactionDisplayType = TransactionDisplayType.TREND
+    const val DEFAULT_WIDGET_BACKGROUND_COLOR = 0xFFFFFFFFL
+    const val DEFAULT_WIDGET_OPACITY = 100
+
+    val WIDGET_BACKGROUND_COLOR_PRESETS: List<Long> =
+        listOf(0xFFFFFFFFL, 0xFF212121L) + categoryColors
 
     val SUPPORTED_CURRENCY_SYMBOLS: Set<String> =
         CurrencyFormat.SUPPORTED_CURRENCIES.map { it.first }.toSet()

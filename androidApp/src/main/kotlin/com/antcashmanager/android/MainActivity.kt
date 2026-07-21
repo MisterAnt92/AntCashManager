@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import com.antcashmanager.android.navigation.AntCashManagerNavHost
 import com.antcashmanager.android.ui.theme.AppThemeProvider
@@ -49,7 +50,7 @@ fun WithAppLocale(language: AppLanguage, content: @Composable () -> Unit) {
         val context = LocalContext.current
         val activityResultRegistryOwner = LocalActivityResultRegistryOwner.current
         val locale = Locale(language.code)
-        val config = Configuration(context.resources.configuration).apply {
+        val config = Configuration(LocalConfiguration.current).apply {
             setLocale(locale)
         }
         val localizedContext = context.createConfigurationContext(config)

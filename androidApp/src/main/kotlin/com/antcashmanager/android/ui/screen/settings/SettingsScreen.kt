@@ -84,6 +84,7 @@ fun SettingsScreen(
 ) {
     Logger.d(tag = "SettingsScreen") { "Displaying SettingsScreen" }
     val context = LocalContext.current
+    val noEmailAppInstalledMessage = stringResource(R.string.no_email_app_installed)
     val viewModel: SettingsViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
 
@@ -115,7 +116,7 @@ fun SettingsScreen(
             if (!success) {
                 Toast.makeText(
                     context,
-                    context.getString(R.string.no_email_app_installed),
+                    noEmailAppInstalledMessage,
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -210,6 +211,7 @@ internal fun SettingsContent(
             // Detect multiple taps on title to trigger debug import when in debug build
             var titleTapCount by remember { mutableStateOf(0) }
             val context = LocalContext.current
+            val debugImportStartedMessage = stringResource(R.string.debug_import_started)
 
             // Custom header with debug tap functionality
             Row(
@@ -233,7 +235,7 @@ internal fun SettingsContent(
                                     onImportDebugData(context)
                                     Toast.makeText(
                                         context,
-                                        context.getString(R.string.debug_import_started),
+                                        debugImportStartedMessage,
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 }

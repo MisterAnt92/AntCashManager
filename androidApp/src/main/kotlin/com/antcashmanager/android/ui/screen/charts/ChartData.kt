@@ -1,5 +1,7 @@
 package com.antcashmanager.android.ui.screen.charts
 
+import com.antcashmanager.domain.model.PaymentType
+
 /**
  * Stato aggregato per i grafici.
  */
@@ -10,6 +12,7 @@ data class ChartData(
     val totalExpense: Double = 0.0,
     val monthlyData: List<MonthlyAmount> = emptyList(),
     val yearlyData: List<YearlyAmount> = emptyList(),
+    val paymentTypeBreakdown: Map<PaymentType, Double> = emptyMap(),
 )
 
 data class MonthlyAmount(

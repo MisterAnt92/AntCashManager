@@ -34,6 +34,11 @@
     <string name="home_move_up">Move up</string>
     <string name="home_move_down">Move down</string>
     <string name="home_balance_positive">📈 Positive</string>
+    <string name="home_recent_transactions_count">Recent Transactions · %1$d</string>
+    <string name="home_quick_insights_biggest_expense">Biggest expense</string>
+    <string name="home_scroll_to_top">Scroll to top</string>
+    <string name="home_balance_summary_cd">%1$s: %2$s, %3$s</string>
+    <string name="home_insight_row_cd">%1$s: %2$s</string>
 
     <!-- Transactions Screen -->
     <string name="transactions_add">Add Transaction</string>
@@ -118,6 +123,12 @@
     <string name="charts_monthly_overview">Monthly Overview</string>
     <string name="charts_yearly_overview">Yearly Overview</string>
     <string name="charts_no_data">No data for the selected period</string>
+    <string name="chart_reset_zoom">Reset Zoom</string>
+    <string name="charts_payment_breakdown_title">Payment Method Breakdown</string>
+    <string name="charts_top_income_categories">Top Income Categories</string>
+    <string name="charts_top_expense_categories">Top Expense Categories</string>
+    <string name="charts_chart_summary_cd">%1$s: %2$d categories, total %3$s</string>
+    <string name="charts_category_item_cd">%1$s: %2$s, %3$s percent of total</string>
     <string name="charts_pick_start_date">Pick start date</string>
     <string name="charts_pick_end_date">Pick end date</string>
     <string name="charts_empty_ant">No data to chart yet! The ant is working hard! 🐜📊</string>
@@ -189,6 +200,14 @@
     <string name="settings_section_other">Other</string>
     <string name="settings_reset_preferences">Reset All Preferences</string>
     <string name="settings_reset_preferences_subtitle">Restore all settings to their default values</string>
+    <string name="settings_section_widgets">Widgets</string>
+    <string name="settings_widget_background_color">Background color</string>
+    <string name="dialog_choose_widget_background_color">Choose widget background color</string>
+    <string name="settings_widget_opacity">Opacity</string>
+    <string name="settings_widget_opacity_value">%1$d%%</string>
+    <string name="settings_widget_preview_title">Preview</string>
+    <string name="settings_widget_preview_recent">Recent Transactions</string>
+    <string name="settings_widget_preview_category">Income &amp; Expenses</string>
     <string name="date_format_ddmmyyyy">DD/MM/YYYY</string>
     <string name="date_format_mmddyyyy">MM/DD/YYYY</string>
     <string name="date_format_yyyymmdd">YYYY-MM-DD</string>
@@ -367,6 +386,10 @@
 
     <!-- Empty State -->
     <string name="empty_state_no_transactions">No transactions present</string>
+    <string name="widget_recent_transactions_title">Recent Transactions</string>
+    <string name="widget_recent_transactions_description">Shows your recent transactions, updated automatically</string>
+    <string name="widget_category_breakdown_title">Income &amp; Expenses</string>
+    <string name="widget_category_breakdown_description">Shows this month\'s income and expenses by category, updated automatically</string>
     <string name="empty_state_no_transactions_subtitle">The piggy bank is waiting for you!</string>
 
     <!-- Payment Breakdown -->

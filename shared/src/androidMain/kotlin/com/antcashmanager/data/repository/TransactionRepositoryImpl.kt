@@ -6,12 +6,15 @@ import com.antcashmanager.data.mapper.toEntity
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.security.LocalDataCipher
+import com.antcashmanager.domain.service.NoOpWidgetUpdateNotifier
+import com.antcashmanager.domain.service.WidgetUpdateNotifier
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class TransactionRepositoryImpl(
     private val transactionDao: TransactionDao,
     private val localDataCipher: LocalDataCipher,
+    private val widgetUpdateNotifier: WidgetUpdateNotifier = NoOpWidgetUpdateNotifier,
 ) : TransactionRepository {
 
     override fun getAllTransactions(): Flow<List<Transaction>> =
@@ -24,15 +27,22 @@ class TransactionRepositoryImpl(
 
     override suspend fun insertTransaction(transaction: Transaction): Long =
         transactionDao.insertTransaction(encryptEntity(transaction.toEntity()))
+            .also { widgetUpdateNotifier.notifyTransactionsChanged() }
 
-    override suspend fun updateTransaction(transaction: Transaction) =
+    override suspend fun updateTransaction(transaction: Transaction) {
         transactionDao.updateTransaction(encryptEntity(transaction.toEntity()))
+        widgetUpdateNotifier.notifyTransactionsChanged()
+    }
 
-    override suspend fun deleteTransaction(transaction: Transaction) =
+    override suspend fun deleteTransaction(transaction: Transaction) {
         transactionDao.deleteTransaction(encryptEntity(transaction.toEntity()))
+        widgetUpdateNotifier.notifyTransactionsChanged()
+    }
 
-    override suspend fun deleteAllTransactions() =
+    override suspend fun deleteAllTransactions() {
         transactionDao.deleteAllTransactions()
+        widgetUpdateNotifier.notifyTransactionsChanged()
+    }
 
     override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> =
         transactionDao.getTransactionsByDateRange(from, to).map { entities ->

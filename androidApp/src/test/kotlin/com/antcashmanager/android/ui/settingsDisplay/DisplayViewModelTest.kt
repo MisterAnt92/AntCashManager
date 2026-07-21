@@ -4,6 +4,7 @@ import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.ui.screen.settingsDisplay.DisplayViewModel
 import com.antcashmanager.domain.model.TransactionDisplayType
+import com.antcashmanager.domain.service.WidgetUpdateNotifier
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -18,12 +19,14 @@ import org.junit.Test
 class DisplayViewModelTest : BaseUnitTest() {
 
     private lateinit var fakeSettingsRepo: FakeSettingsRepository
+    private lateinit var fakeWidgetUpdateNotifier: FakeWidgetUpdateNotifier
     private lateinit var viewModel: DisplayViewModel
 
     @Before
     fun setup() {
         fakeSettingsRepo = FakeSettingsRepository()
-        viewModel = DisplayViewModel(fakeSettingsRepo)
+        fakeWidgetUpdateNotifier = FakeWidgetUpdateNotifier()
+        viewModel = DisplayViewModel(fakeSettingsRepo, fakeWidgetUpdateNotifier)
     }
 
     @Test
@@ -259,4 +262,79 @@ class DisplayViewModelTest : BaseUnitTest() {
         collectJob.cancel()
     }
 
+    @Test
+    fun widgetAppearanceDefaultsAreExposedCorrectly() = runViewModelTest {
+        val collectJob = launch(
+            UnconfinedTestDispatcher(testScheduler)
+        ) {
+            launch { viewModel.widgetBackgroundColor.collect { } }
+            launch { viewModel.widgetOpacity.collect { } }
+        }
+        advanceUntilIdle()
+
+        assertEquals(0xFFFFFFFFL, viewModel.widgetBackgroundColor.value)
+        assertEquals(100, viewModel.widgetOpacity.value)
+
+        collectJob.cancel()
+    }
+
+    @Test
+    fun setWidgetBackgroundColorUpdatesValueAndNotifiesWidgets() = runViewModelTest {
+        val collectJob = launch(
+            UnconfinedTestDispatcher(testScheduler)
+        ) { launch { viewModel.widgetBackgroundColor.collect { } } }
+        advanceUntilIdle()
+
+        viewModel.setWidgetBackgroundColor(0xFF212121L)
+        advanceUntilIdle()
+
+        assertEquals(0xFF212121L, viewModel.widgetBackgroundColor.value)
+        assertEquals(1, fakeWidgetUpdateNotifier.notifyCount)
+
+        collectJob.cancel()
+    }
+
+    @Test
+    fun setWidgetOpacityUpdatesValueAndNotifiesWidgets() = runViewModelTest {
+        val collectJob = launch(
+            UnconfinedTestDispatcher(testScheduler)
+        ) { launch { viewModel.widgetOpacity.collect { } } }
+        advanceUntilIdle()
+
+        viewModel.setWidgetOpacity(40)
+        advanceUntilIdle()
+
+        assertEquals(40, viewModel.widgetOpacity.value)
+        assertEquals(1, fakeWidgetUpdateNotifier.notifyCount)
+
+        collectJob.cancel()
+    }
+
+    @Test
+    fun setWidgetOpacityCoercesOutOfRangeValues() = runViewModelTest {
+        val collectJob = launch(
+            UnconfinedTestDispatcher(testScheduler)
+        ) { launch { viewModel.widgetOpacity.collect { } } }
+        advanceUntilIdle()
+
+        viewModel.setWidgetOpacity(150)
+        advanceUntilIdle()
+        assertEquals(100, viewModel.widgetOpacity.value)
+
+        viewModel.setWidgetOpacity(-20)
+        advanceUntilIdle()
+        assertEquals(0, viewModel.widgetOpacity.value)
+
+        collectJob.cancel()
+    }
+
+}
+
+private class FakeWidgetUpdateNotifier : WidgetUpdateNotifier {
+    var notifyCount = 0
+        private set
+
+    override suspend fun notifyTransactionsChanged() {
+        notifyCount++
+    }
 }
