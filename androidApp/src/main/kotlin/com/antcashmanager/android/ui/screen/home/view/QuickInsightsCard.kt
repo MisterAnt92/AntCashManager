@@ -26,8 +26,10 @@ import com.antcashmanager.android.ui.components.AnimatedCard
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.text.CompactMoneyText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.android.util.formatAmount
+import com.antcashmanager.android.util.maskDigits
 import com.antcashmanager.android.util.translateCategory
 import kotlin.math.abs
 
@@ -108,7 +110,10 @@ private fun InsightRow(
     money: Double? = null,
 ) {
     val fmt = LocalCurrencyFormat.current
-    val valueDescription = value ?: money?.let { formatAmount(it, fmt) }.orEmpty()
+    val masked = LocalAmountsMasked.current
+    val valueDescription = value ?: money?.let { formatAmount(it, fmt) }
+        ?.let { if (masked) maskDigits(it) else it }
+        .orEmpty()
     val rowDescription = stringResource(R.string.home_insight_row_cd, label, valueDescription)
 
     Row(

@@ -209,6 +209,7 @@ class DisplayViewModelTest : BaseUnitTest() {
             launch { viewModel.showTransactionNotes.collect { } }
             launch { viewModel.showPaymentTypeBreakdown.collect { } }
             launch { viewModel.showQuickInsightsCard.collect { } }
+            launch { viewModel.maskAmounts.collect { } }
         }
         advanceUntilIdle()
 
@@ -217,6 +218,7 @@ class DisplayViewModelTest : BaseUnitTest() {
         viewModel.setShowTransactionNotes(false)
         viewModel.setShowPaymentTypeBreakdown(true)
         viewModel.setShowQuickInsightsCard(true)
+        viewModel.setMaskAmounts(true)
         advanceUntilIdle()
 
         assertFalse(viewModel.showChartsSection.value)
@@ -224,6 +226,7 @@ class DisplayViewModelTest : BaseUnitTest() {
         assertFalse(viewModel.showTransactionNotes.value)
         assertTrue(viewModel.showPaymentTypeBreakdown.value)
         assertTrue(viewModel.showQuickInsightsCard.value)
+        assertTrue(viewModel.maskAmounts.value)
 
         collectJob.cancel()
     }

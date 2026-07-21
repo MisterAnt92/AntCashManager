@@ -536,6 +536,8 @@ class MockHomeSettingsRepository : SettingsRepository {
     override suspend fun setReduceMotion(enabled: Boolean) {}
     override fun getShowTransactionNotes() = kotlinx.coroutines.flow.flowOf(true)
     override suspend fun setShowTransactionNotes(show: Boolean) {}
+    override fun getMaskAmounts() = kotlinx.coroutines.flow.flowOf(false)
+    override suspend fun setMaskAmounts(mask: Boolean) {}
     override fun getCurrencySymbol() = kotlinx.coroutines.flow.flowOf("€")
     override suspend fun setCurrencySymbol(symbol: String) {}
     override fun getDecimalDigits() = kotlinx.coroutines.flow.flowOf(2)

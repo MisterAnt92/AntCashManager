@@ -51,8 +51,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
@@ -63,6 +67,9 @@ import com.antcashmanager.android.ui.components.input.AutocompleteTextField
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionEvent
 import com.antcashmanager.android.ui.screen.transactionAdd.AddTransactionState
+import com.antcashmanager.android.util.LocalAmountsMasked
+import com.antcashmanager.android.util.isProtectedSalaryCategory
+import com.antcashmanager.android.util.maskDigits
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.TransactionType
 import org.koin.compose.koinInject
@@ -301,6 +308,14 @@ internal fun DetailsStep(
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
+                visualTransformation = if (
+                    LocalAmountsMasked.current &&
+                    isProtectedSalaryCategory(state.selectedCategory?.name, state.selectedType)
+                ) {
+                    MaskDigitsVisualTransformation
+                } else {
+                    VisualTransformation.None
+                },
             )
             if (isMealVouchersPayment) {
                 Spacer(modifier = Modifier.height(4.dp))
@@ -663,4 +678,15 @@ private fun TagSelector(
             }
         }
     }
+}
+
+/**
+ * Maschera visivamente le cifre del campo importo (come un campo password) mantenendo il
+ * valore reale digitato/precaricato nello state, per lo Stipendio quando il mascheramento è
+ * attivo. [OffsetMapping.Identity] è corretto perché [maskDigits] sostituisce carattere per
+ * carattere senza cambiare la lunghezza della stringa.
+ */
+private object MaskDigitsVisualTransformation : VisualTransformation {
+    override fun filter(text: AnnotatedString): TransformedText =
+        TransformedText(AnnotatedString(maskDigits(text.text)), OffsetMapping.Identity)
 }

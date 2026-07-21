@@ -105,6 +105,14 @@ class DisplayViewModel(
             DisplayConstant.DEFAULT_SHOW_TRANSACTION_NOTES,
         )
 
+    // Espone la preferenza per mascherare gli importi con asterischi
+    val maskAmounts = settingsRepository.getMaskAmounts()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_MASK_AMOUNTS,
+        )
+
     // Espone la preferenza per mostrare il breakdown dei pagamenti
     val showPaymentTypeBreakdown = settingsRepository.getShowPaymentTypeBreakdown()
         .stateIn(
@@ -251,6 +259,14 @@ class DisplayViewModel(
     fun setShowTransactionNotes(show: Boolean) = updatePreference(
         logMsg = "Setting show transaction notes: $show",
         action = { settingsRepository.setShowTransactionNotes(show) },
+    )
+
+    /**
+     * Aggiorna la preferenza per mascherare gli importi con asterischi.
+     */
+    fun setMaskAmounts(mask: Boolean) = updatePreference(
+        logMsg = "Setting mask amounts: $mask",
+        action = { settingsRepository.setMaskAmounts(mask) },
     )
 
     /**

@@ -435,6 +435,10 @@
     <string name="settings_show_transaction_notes">Show Transaction Notes</string>
     <string name="settings_show_transaction_notes_subtitle_enabled">Notes visible in transaction items</string>
     <string name="settings_show_transaction_notes_subtitle_disabled">Notes hidden</string>
+    <string name="settings_mask_amounts">Hide amounts</string>
+    <string name="settings_mask_amounts_subtitle_enabled">Digits are masked with asterisks</string>
+    <string name="settings_mask_amounts_subtitle_disabled">Digits are shown normally</string>
+    <string name="settings_mask_amounts_preview">Preview: %s</string>
     <string name="settings_transaction_icon_display_trend">Trend Arrows</string>
     <string name="settings_transaction_icon_display_category">Category</string>
     <string name="settings_transaction_icon_display_none">None</string>

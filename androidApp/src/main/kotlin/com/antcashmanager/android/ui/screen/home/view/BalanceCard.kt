@@ -53,8 +53,10 @@ import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.ExpenseRed
 import com.antcashmanager.android.ui.theme.IncomeGreen
 import com.antcashmanager.android.ui.theme.ThemeConstants
+import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.android.util.formatAmount
+import com.antcashmanager.android.util.maskDigits
 import com.antcashmanager.domain.model.PaymentType
 
 @Composable
@@ -94,10 +96,13 @@ fun BalanceCard(
             } else {
                 stringResource(R.string.home_balance_negative)
             }
+            val formattedBalance = formatAmount(balance, LocalCurrencyFormat.current).let {
+                if (LocalAmountsMasked.current) maskDigits(it) else it
+            }
             val balanceSummaryDescription = stringResource(
                 R.string.home_balance_summary_cd,
                 stringResource(R.string.home_total_balance),
-                formatAmount(balance, LocalCurrencyFormat.current),
+                formattedBalance,
                 balanceStatusText,
             )
 

@@ -419,6 +419,10 @@
     <string name="settings_show_transaction_notes">Transaktionsnotizen anzeigen</string>
     <string name="settings_show_transaction_notes_subtitle_enabled">Notizen in Transaktionselementen sichtbar</string>
     <string name="settings_show_transaction_notes_subtitle_disabled">Notizen ausgeblendet</string>
+    <string name="settings_mask_amounts">Beträge ausblenden</string>
+    <string name="settings_mask_amounts_subtitle_enabled">Ziffern werden mit Sternchen maskiert</string>
+    <string name="settings_mask_amounts_subtitle_disabled">Ziffern werden normal angezeigt</string>
+    <string name="settings_mask_amounts_preview">Vorschau: %s</string>
     <string name="settings_transaction_icon_display_trend">Trendsymbole</string>
     <string name="settings_transaction_icon_display_category">Kategorie</string>
     <string name="settings_transaction_icon_display_none">Keine</string>

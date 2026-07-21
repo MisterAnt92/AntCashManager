@@ -33,6 +33,7 @@ class SettingsRepositoryImpl(
     private val largeTextKey = booleanPreferencesKey("large_text")
     private val reduceMotionKey = booleanPreferencesKey("reduce_motion")
     private val showTransactionNotesKey = booleanPreferencesKey("show_transaction_notes")
+    private val maskAmountsKey = booleanPreferencesKey("mask_amounts")
     private val currencySymbolKey = stringPreferencesKey("currency_symbol")
     private val decimalDigitsKey = intPreferencesKey("decimal_digits")
     private val decimalSeparatorKey = stringPreferencesKey("decimal_separator")
@@ -167,6 +168,17 @@ class SettingsRepositoryImpl(
     override suspend fun setShowTransactionNotes(show: Boolean) {
         dataStore.edit { preferences ->
             preferences[showTransactionNotesKey] = show
+        }
+    }
+
+    override fun getMaskAmounts(): Flow<Boolean> =
+        dataStore.data.map { preferences ->
+            preferences[maskAmountsKey] ?: false
+        }
+
+    override suspend fun setMaskAmounts(mask: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[maskAmountsKey] = mask
         }
     }
 
@@ -449,6 +461,7 @@ class SettingsRepositoryImpl(
             prefs[largeTextKey] = false
             prefs[reduceMotionKey] = false
             prefs[showTransactionNotesKey] = true
+            prefs[maskAmountsKey] = false
             prefs[currencySymbolKey] = "\u20ac"
             prefs[decimalDigitsKey] = 2
             prefs[decimalSeparatorKey] = ","

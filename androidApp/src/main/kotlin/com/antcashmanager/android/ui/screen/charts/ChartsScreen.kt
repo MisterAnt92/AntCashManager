@@ -64,6 +64,7 @@ import com.antcashmanager.android.ui.components.HelpButton
 import com.antcashmanager.android.ui.components.ScreenHeader
 import com.antcashmanager.android.ui.components.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
+import com.antcashmanager.android.ui.screen.charts.view.AmountMaskMode
 import com.antcashmanager.android.ui.screen.charts.view.BarChartLegend
 import com.antcashmanager.android.ui.screen.charts.view.HelpDialog
 import com.antcashmanager.android.ui.screen.charts.view.PieLegend
@@ -72,8 +73,11 @@ import com.antcashmanager.android.ui.screen.charts.view.ZoomablePieChart
 import com.antcashmanager.android.ui.screen.charts.view.ZoomableYearlyBarChart
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.ThemeConstants
+import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.LocalCurrencyFormat
+import com.antcashmanager.android.util.PROTECTED_INCOME_CATEGORY
 import com.antcashmanager.android.util.formatAmount
+import com.antcashmanager.android.util.maskDigits
 import com.antcashmanager.android.util.translateCategory
 import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.model.PaymentType
@@ -239,6 +243,7 @@ internal fun ChartsContent(
                     CategoryPieChartCard(
                         title = stringResource(R.string.charts_income_by_category),
                         data = chartData.incomeByCategory,
+                        maskMode = AmountMaskMode.PROTECT_SALARY,
                         translateKeys = true,
                         shareSubjectRes = R.string.share_categories_subject,
                         chartHeight = pieChartHeight,
@@ -256,6 +261,7 @@ internal fun ChartsContent(
                     CategoryPieChartCard(
                         title = stringResource(R.string.charts_expense_by_category),
                         data = chartData.expenseByCategory,
+                        maskMode = AmountMaskMode.NONE,
                         translateKeys = true,
                         shareSubjectRes = R.string.share_categories_subject,
                         chartHeight = pieChartHeight,
@@ -273,6 +279,7 @@ internal fun ChartsContent(
                     TopCategoriesCard(
                         title = stringResource(R.string.charts_top_income_categories),
                         entries = topIncomeCategories,
+                        maskMode = AmountMaskMode.PROTECT_SALARY,
                         fmt = fmt,
                         chartCardContainerColor = chartCardContainerColor,
                     )
@@ -282,6 +289,7 @@ internal fun ChartsContent(
                     TopCategoriesCard(
                         title = stringResource(R.string.charts_top_expense_categories),
                         entries = topExpenseCategories,
+                        maskMode = AmountMaskMode.NONE,
                         fmt = fmt,
                         chartCardContainerColor = chartCardContainerColor,
                     )
@@ -291,6 +299,7 @@ internal fun ChartsContent(
                     CategoryPieChartCard(
                         title = stringResource(R.string.charts_payment_breakdown_title),
                         data = paymentBreakdownByLabel,
+                        maskMode = AmountMaskMode.ALL,
                         translateKeys = false,
                         shareSubjectRes = R.string.share_categories_subject,
                         chartHeight = pieChartHeight,
@@ -352,6 +361,7 @@ internal fun ChartsContent(
                                     CategoryPieChartCard(
                                         title = stringResource(R.string.charts_income_by_category),
                                         data = chartData.incomeByCategory,
+                                        maskMode = AmountMaskMode.PROTECT_SALARY,
                                         translateKeys = true,
                                         shareSubjectRes = R.string.share_categories_subject,
                                         chartHeight = pieChartHeight,
@@ -368,6 +378,7 @@ internal fun ChartsContent(
                                     TopCategoriesCard(
                                         title = stringResource(R.string.charts_top_income_categories),
                                         entries = topIncomeCategories,
+                                        maskMode = AmountMaskMode.PROTECT_SALARY,
                                         fmt = fmt,
                                         chartCardContainerColor = chartCardContainerColor,
                                     )
@@ -383,6 +394,7 @@ internal fun ChartsContent(
                                     CategoryPieChartCard(
                                         title = stringResource(R.string.charts_expense_by_category),
                                         data = chartData.expenseByCategory,
+                                        maskMode = AmountMaskMode.NONE,
                                         translateKeys = true,
                                         shareSubjectRes = R.string.share_categories_subject,
                                         chartHeight = pieChartHeight,
@@ -399,6 +411,7 @@ internal fun ChartsContent(
                                     TopCategoriesCard(
                                         title = stringResource(R.string.charts_top_expense_categories),
                                         entries = topExpenseCategories,
+                                        maskMode = AmountMaskMode.NONE,
                                         fmt = fmt,
                                         chartCardContainerColor = chartCardContainerColor,
                                     )
@@ -410,6 +423,7 @@ internal fun ChartsContent(
                                 CategoryPieChartCard(
                                     title = stringResource(R.string.charts_payment_breakdown_title),
                                     data = paymentBreakdownByLabel,
+                                    maskMode = AmountMaskMode.ALL,
                                     translateKeys = false,
                                     shareSubjectRes = R.string.share_categories_subject,
                                     chartHeight = pieChartHeight,
@@ -433,6 +447,7 @@ internal fun ChartsContent(
                     CategoryPieChartCard(
                         title = stringResource(R.string.charts_payment_breakdown_title),
                         data = paymentBreakdownByLabel,
+                        maskMode = AmountMaskMode.ALL,
                         translateKeys = false,
                         shareSubjectRes = R.string.share_categories_subject,
                         chartHeight = pieChartHeight,
@@ -655,7 +670,8 @@ private fun ChartsSummaryRow(chartData: ChartData, fmt: CurrencyFormat) {
                 amount = chartData.totalIncome,
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                fmt = fmt
+                fmt = fmt,
+                includesIncome = true,
             )
         )
         SummaryCard(
@@ -665,7 +681,8 @@ private fun ChartsSummaryRow(chartData: ChartData, fmt: CurrencyFormat) {
                 amount = chartData.totalExpense,
                 containerColor = MaterialTheme.colorScheme.errorContainer,
                 contentColor = MaterialTheme.colorScheme.onErrorContainer,
-                fmt = fmt
+                fmt = fmt,
+                includesIncome = false,
             )
         )
         SummaryCard(
@@ -682,7 +699,8 @@ private fun ChartsSummaryRow(chartData: ChartData, fmt: CurrencyFormat) {
                 else
                     MaterialTheme.colorScheme.onErrorContainer,
                 fmt = fmt,
-                isBalance = true
+                isBalance = true,
+                includesIncome = true,
             )
         )
     }
@@ -708,18 +726,23 @@ private fun CategoryPieChartCard(
     shareLabel: String,
     context: android.content.Context,
     onShared: () -> Unit,
+    maskMode: AmountMaskMode = AmountMaskMode.NONE,
 ) {
     val shareSubject = stringResource(shareSubjectRes)
+    // L'aggregato totale del breakdown resta mascherato in blocco se può contenere entrate
+    // (PROTECT_SALARY/ALL), anche se le singole voci non-stipendio sotto sono mostrate in chiaro.
+    val masked = LocalAmountsMasked.current && maskMode != AmountMaskMode.NONE
     val displayData = if (translateKeys) {
         data.entries.associate { (key, value) -> translateCategory(key) to value }
     } else {
         data
     }
+    val protectedCategoryLabel = if (translateKeys) translateCategory(PROTECTED_INCOME_CATEGORY) else PROTECTED_INCOME_CATEGORY
     val chartSummaryDescription = stringResource(
         R.string.charts_chart_summary_cd,
         title,
         displayData.size,
-        formatAmount(displayData.values.sumOf { abs(it) }, fmt),
+        formatAmount(displayData.values.sumOf { abs(it) }, fmt).let { if (masked) maskDigits(it) else it },
     )
 
     Card(
@@ -774,7 +797,7 @@ private fun CategoryPieChartCard(
                     .semantics { contentDescription = chartSummaryDescription }
             )
             Spacer(modifier = Modifier.height(12.dp))
-            PieLegend(data = displayData)
+            PieLegend(data = displayData, maskMode = maskMode, protectedCategoryLabel = protectedCategoryLabel)
         }
     }
 }
@@ -790,8 +813,10 @@ private fun TopCategoriesCard(
     entries: List<Pair<String, Double>>,
     fmt: CurrencyFormat,
     chartCardContainerColor: Color,
+    maskMode: AmountMaskMode = AmountMaskMode.NONE,
 ) {
     val total = entries.sumOf { abs(it.second) }
+    val maskEnabled = LocalAmountsMasked.current
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -811,10 +836,15 @@ private fun TopCategoriesCard(
                     val categoryLabel = translateCategory(category)
                     val percent = if (total > 0) (abs(amount) / total) * 100 else 0.0
                     val percentText = "%.0f".format(percent)
+                    val masked = maskEnabled && when (maskMode) {
+                        AmountMaskMode.NONE -> false
+                        AmountMaskMode.PROTECT_SALARY -> category == PROTECTED_INCOME_CATEGORY
+                        AmountMaskMode.ALL -> true
+                    }
                     val itemDescription = stringResource(
                         R.string.charts_category_item_cd,
                         categoryLabel,
-                        formatAmount(abs(amount), fmt),
+                        formatAmount(abs(amount), fmt).let { if (masked) maskDigits(it) else it },
                         percentText,
                     )
                     Row(
@@ -846,7 +876,7 @@ private fun TopCategoriesCard(
                             modifier = Modifier.weight(1f),
                         )
                         AppText(
-                            text = formatAmount(abs(amount), fmt),
+                            text = formatAmount(abs(amount), fmt).let { if (masked) maskDigits(it) else it },
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurface,
@@ -872,11 +902,12 @@ private fun MonthlyBarChartCard(
 ) {
     val monthlyShareSubject = stringResource(R.string.share_monthly_subject)
     val title = stringResource(R.string.charts_monthly_overview)
+    val masked = LocalAmountsMasked.current
     val chartSummaryDescription = stringResource(
         R.string.charts_chart_summary_cd,
         title,
         data.size,
-        formatAmount(data.sumOf { it.income - it.expense }, fmt),
+        formatAmount(data.sumOf { it.income - it.expense }, fmt).let { if (masked) maskDigits(it) else it },
     )
 
     Card(
@@ -964,11 +995,12 @@ private fun YearlyBarChartCard(
 ) {
     val yearlyShareSubject = stringResource(R.string.share_yearly_subject)
     val title = stringResource(R.string.charts_yearly_overview)
+    val masked = LocalAmountsMasked.current
     val chartSummaryDescription = stringResource(
         R.string.charts_chart_summary_cd,
         title,
         data.size,
-        formatAmount(data.sumOf { it.income - it.expense }, fmt),
+        formatAmount(data.sumOf { it.income - it.expense }, fmt).let { if (masked) maskDigits(it) else it },
     )
 
     Card(
@@ -1069,7 +1101,8 @@ private fun SummaryCard(
             )
             Spacer(modifier = Modifier.height(4.dp))
             AppText(
-                text = formatAmount(abs(state.amount), state.fmt),
+                text = formatAmount(abs(state.amount), state.fmt)
+                    .let { if (LocalAmountsMasked.current && state.includesIncome) maskDigits(it) else it },
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = state.contentColor,
@@ -1099,7 +1132,10 @@ private data class SummaryCardState(
     val containerColor: Color,
     val contentColor: Color,
     val fmt: CurrencyFormat,
-    val isBalance: Boolean = false
+    val isBalance: Boolean = false,
+    // Le uscite pure non possono contenere lo stipendio, quindi mostrano sempre la cifra reale;
+    // saldo ed entrate restano mascherati per intero perché potrebbero includerlo.
+    val includesIncome: Boolean = false,
 )
 
 // ══════════════════════════════════════════════════════════════════════════════

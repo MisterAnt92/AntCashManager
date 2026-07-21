@@ -368,6 +368,10 @@
     <string name="settings_show_transaction_notes">Afficher les Notes de Transaction</string>
     <string name="settings_show_transaction_notes_subtitle_enabled">Notes visibles dans les éléments de transaction</string>
     <string name="settings_show_transaction_notes_subtitle_disabled">Notes masquées</string>
+    <string name="settings_mask_amounts">Masquer les montants</string>
+    <string name="settings_mask_amounts_subtitle_enabled">Les chiffres sont masqués par des astérisques</string>
+    <string name="settings_mask_amounts_subtitle_disabled">Les chiffres sont affichés normalement</string>
+    <string name="settings_mask_amounts_preview">Aperçu : %s</string>
     <string name="settings_transaction_icon_display_trend">Flèches de Tendance</string>
     <string name="settings_transaction_icon_display_category">Catégorie</string>
     <string name="settings_transaction_icon_display_none">Aucun</string>

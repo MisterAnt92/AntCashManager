@@ -18,6 +18,7 @@ object DisplayConstant {
     const val DEFAULT_MEAL_VOUCHER_VALUE = 5.29
     const val DEFAULT_DATE_FORMAT = "dd/MM/yyyy"
     const val DEFAULT_SHOW_TRANSACTION_NOTES = true
+    const val DEFAULT_MASK_AMOUNTS = false
     const val DEFAULT_SHOW_CHARTS_SECTION = true
     const val DEFAULT_SHOW_CHARTS_ZOOM = true
     const val DEFAULT_SHOW_PAYMENT_BREAKDOWN = false

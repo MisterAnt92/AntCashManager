@@ -54,12 +54,22 @@ import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.charts.MonthlyAmount
 import com.antcashmanager.android.ui.screen.charts.YearlyAmount
 import com.antcashmanager.android.ui.theme.LocalReduceMotion
+import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.android.util.formatAmount
+import com.antcashmanager.android.util.maskDigits
 import com.antcashmanager.android.util.translateCategory
 import kotlin.math.max
 import kotlin.math.min
 import androidx.compose.ui.graphics.PathEffect as ComposePathEffect
+
+/**
+ * Determina come mascherare gli importi di un breakdown a torta/lista quando lo switch
+ * "Nascondi importi" è attivo: mostrare sempre tutto ([NONE], es. uscite), mascherare solo la
+ * voce Stipendio ([PROTECT_SALARY], es. entrate per categoria) o mascherare l'intero breakdown
+ * ([ALL], per aggregati che mischiano entrate e uscite già sommate, es. metodo di pagamento).
+ */
+enum class AmountMaskMode { NONE, PROTECT_SALARY, ALL }
 
 // Utility functions for safe float operations and crash prevention
 private fun Float.safeValue(fallback: Float = 0f): Float =
@@ -184,13 +194,23 @@ internal fun PieChart(data: Map<String, Double>, modifier: Modifier = Modifier) 
 }
 
 @Composable
-internal fun PieLegend(data: Map<String, Double>) {
+internal fun PieLegend(
+    data: Map<String, Double>,
+    maskMode: AmountMaskMode = AmountMaskMode.NONE,
+    protectedCategoryLabel: String = "",
+) {
     val total = data.values.sum()
     val fmt = LocalCurrencyFormat.current
+    val maskEnabled = LocalAmountsMasked.current
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         data.entries.forEachIndexed { index, (category, value) ->
             val percentage = (value / total * 100)
+            val masked = maskEnabled && when (maskMode) {
+                AmountMaskMode.NONE -> false
+                AmountMaskMode.PROTECT_SALARY -> category == protectedCategoryLabel
+                AmountMaskMode.ALL -> true
+            }
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -231,7 +251,7 @@ internal fun PieLegend(data: Map<String, Double>) {
                     AppText(
                         text = stringResource(
                             R.string.home_transaction_item_subtitle,
-                            formatAmount(value, fmt),
+                            formatAmount(value, fmt).let { if (masked) maskDigits(it) else it },
                             "%.1f%%".format(percentage)
                         ),
                         style = MaterialTheme.typography.bodySmall,

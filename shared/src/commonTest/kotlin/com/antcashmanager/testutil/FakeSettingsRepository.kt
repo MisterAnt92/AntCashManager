@@ -25,6 +25,7 @@ open class FakeSettingsRepository : SettingsRepository {
     val largeText = MutableStateFlow(false)
     val reduceMotion = MutableStateFlow(false)
     val showTransactionNotes = MutableStateFlow(true)
+    val maskAmounts = MutableStateFlow(false)
     val currencySymbol = MutableStateFlow("€")
     val decimalDigits = MutableStateFlow(2)
     val decimalSeparator = MutableStateFlow(",")
@@ -87,6 +88,11 @@ open class FakeSettingsRepository : SettingsRepository {
     override fun getShowTransactionNotes(): Flow<Boolean> = showTransactionNotes
     override suspend fun setShowTransactionNotes(show: Boolean) {
         showTransactionNotes.value = show
+    }
+
+    override fun getMaskAmounts(): Flow<Boolean> = maskAmounts
+    override suspend fun setMaskAmounts(mask: Boolean) {
+        maskAmounts.value = mask
     }
 
     override fun getCurrencySymbol(): Flow<String> = currencySymbol
@@ -239,6 +245,7 @@ open class FakeSettingsRepository : SettingsRepository {
         largeText.value = false
         reduceMotion.value = false
         showTransactionNotes.value = true
+        maskAmounts.value = false
         currencySymbol.value = "€"
         decimalDigits.value = 2
         decimalSeparator.value = ","

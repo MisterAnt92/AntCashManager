@@ -83,6 +83,8 @@ import com.antcashmanager.android.ui.screen.categories.categoryIconMap
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.ExpenseRed
 import com.antcashmanager.android.ui.theme.IncomeGreen
+import com.antcashmanager.android.util.LocalAmountsMasked
+import com.antcashmanager.android.util.isProtectedSalaryTransaction
 import com.antcashmanager.android.util.isValidNote
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
@@ -1078,6 +1080,7 @@ private fun TransactionItem(
                 ) {
                     TransactionAmountText(
                         amount = transaction.amount, // Amount will already be negative for expenses
+                        masked = LocalAmountsMasked.current && isProtectedSalaryTransaction(transaction),
                     )
                 }
             }
@@ -1108,6 +1111,8 @@ class MockSettingsRepository : SettingsRepository {
     override suspend fun setReduceMotion(enabled: Boolean) {}
     override fun getShowTransactionNotes() = kotlinx.coroutines.flow.flowOf(true)
     override suspend fun setShowTransactionNotes(show: Boolean) {}
+    override fun getMaskAmounts() = kotlinx.coroutines.flow.flowOf(false)
+    override suspend fun setMaskAmounts(mask: Boolean) {}
     override fun getCurrencySymbol() = kotlinx.coroutines.flow.flowOf("€")
     override suspend fun setCurrencySymbol(symbol: String) {}
     override fun getDecimalDigits() = kotlinx.coroutines.flow.flowOf(2)

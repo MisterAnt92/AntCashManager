@@ -22,6 +22,8 @@ interface SettingsRepository {
     suspend fun setReduceMotion(enabled: Boolean)
     fun getShowTransactionNotes(): Flow<Boolean>
     suspend fun setShowTransactionNotes(show: Boolean)
+    fun getMaskAmounts(): Flow<Boolean>
+    suspend fun setMaskAmounts(mask: Boolean)
 
     // ── Currency / number format ──
     fun getCurrencySymbol(): Flow<String>

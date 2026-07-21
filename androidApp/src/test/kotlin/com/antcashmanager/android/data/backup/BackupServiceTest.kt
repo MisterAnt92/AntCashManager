@@ -115,6 +115,7 @@ class BackupServiceTest {
             mealVoucherValue.value = 7.5
             showPaymentTypeBreakdown.value = true
             chartsZoomEnabled.value = true
+            maskAmounts.value = true
             suggestionsEnabled.value = false
             suggestionsClearedAt.value = 1_700_000_000_000L
             widgetBackgroundColor.value = 0xFF212121L
@@ -142,6 +143,7 @@ class BackupServiceTest {
         assertEquals(7.5, targetSettings.mealVoucherValue.value, 0.0)
         assertTrue(targetSettings.showPaymentTypeBreakdown.value)
         assertTrue(targetSettings.chartsZoomEnabled.value)
+        assertTrue(targetSettings.maskAmounts.value)
         assertFalse(targetSettings.suggestionsEnabled.value)
         assertEquals(1_700_000_000_000L, targetSettings.suggestionsClearedAt.value)
         assertEquals(0xFF212121L, targetSettings.widgetBackgroundColor.value)

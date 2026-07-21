@@ -35,6 +35,7 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material.icons.filled.TipsAndUpdates
 import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -77,6 +78,7 @@ import com.antcashmanager.android.ui.screen.settings.view.TransactionDisplayDial
 import com.antcashmanager.android.ui.screen.settings.view.WidgetBackgroundColorDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.formatAmount
+import com.antcashmanager.android.util.maskDigits
 import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.model.TransactionDisplayType
 import org.koin.androidx.compose.koinViewModel
@@ -108,6 +110,7 @@ fun DisplayScreen(
     val showChartsSection by viewModel.showChartsSection.collectAsState()
     val dateFormat by viewModel.dateFormat.collectAsState()
     val showTransactionNotes by viewModel.showTransactionNotes.collectAsState()
+    val maskAmounts by viewModel.maskAmounts.collectAsState()
     val showPaymentTypeBreakdown by viewModel.showPaymentTypeBreakdown.collectAsState()
     val showQuickInsightsCard by viewModel.showQuickInsightsCard.collectAsState()
     val transactionDisplayType by viewModel.transactionDisplayType.collectAsState()
@@ -129,6 +132,8 @@ fun DisplayScreen(
         onMealVoucherValueSelected = { viewModel.setMealVoucherValue(it) },
         showTransactionNotes = showTransactionNotes,
         onShowTransactionNotesChanged = { viewModel.setShowTransactionNotes(it) },
+        maskAmounts = maskAmounts,
+        onMaskAmountsChanged = { viewModel.setMaskAmounts(it) },
         showChartsSection = showChartsSection,
         onShowChartsSectionChanged = { viewModel.setShowChartsSection(it) },
         chartsZoomEnabled = chartsZoomEnabled,
@@ -180,6 +185,8 @@ internal fun DisplayContent(
     onMealVoucherValueSelected: (Double) -> Unit,
     showTransactionNotes: Boolean,
     onShowTransactionNotesChanged: (Boolean) -> Unit,
+    maskAmounts: Boolean,
+    onMaskAmountsChanged: (Boolean) -> Unit,
     showChartsSection: Boolean,
     onShowChartsSectionChanged: (Boolean) -> Unit,
     chartsZoomEnabled: Boolean,
@@ -232,6 +239,10 @@ internal fun DisplayContent(
     val handleShowTransactionNotesChanged: (Boolean) -> Unit = { show ->
         analyticsManager.logEvent("show_transaction_notes_toggled")
         onShowTransactionNotesChanged(show)
+    }
+    val handleMaskAmountsChanged: (Boolean) -> Unit = { mask ->
+        analyticsManager.logEvent("mask_amounts_toggled")
+        onMaskAmountsChanged(mask)
     }
     val handleWidgetBackgroundColorSelected: (Long) -> Unit = { color ->
         analyticsManager.logEvent("widget_background_color_changed")
@@ -325,6 +336,8 @@ internal fun DisplayContent(
                     OtherSection(
                         showTransactionNotes = showTransactionNotes,
                         onShowTransactionNotesChanged = handleShowTransactionNotesChanged,
+                        maskAmounts = maskAmounts,
+                        onMaskAmountsChanged = handleMaskAmountsChanged,
                         onShowResetPreferencesDialog = { showResetPreferencesDialog = true },
                     )
                 }
@@ -402,6 +415,8 @@ internal fun DisplayContent(
                     OtherSection(
                         showTransactionNotes = showTransactionNotes,
                         onShowTransactionNotesChanged = handleShowTransactionNotesChanged,
+                        maskAmounts = maskAmounts,
+                        onMaskAmountsChanged = handleMaskAmountsChanged,
                         onShowResetPreferencesDialog = { showResetPreferencesDialog = true },
                     )
                     WidgetsDisplaySection(
@@ -815,6 +830,8 @@ private fun TransactionsDisplaySection(
 private fun OtherSection(
     showTransactionNotes: Boolean,
     onShowTransactionNotesChanged: (Boolean) -> Unit,
+    maskAmounts: Boolean,
+    onMaskAmountsChanged: (Boolean) -> Unit,
     onShowResetPreferencesDialog: () -> Unit,
 ) {
     AppCardSectionHeader(title = stringResource(R.string.settings_section_other))
@@ -834,6 +851,35 @@ private fun OtherSection(
                 )
             },
             onClick = { onShowTransactionNotesChanged(!showTransactionNotes) },
+        )
+
+        AppCard(
+            title = stringResource(R.string.settings_mask_amounts),
+            subtitle = if (maskAmounts) {
+                stringResource(R.string.settings_mask_amounts_subtitle_enabled)
+            } else {
+                stringResource(R.string.settings_mask_amounts_subtitle_disabled)
+            },
+            leadingIcon = Icons.Default.VisibilityOff,
+            trailingContent = {
+                Switch(
+                    checked = maskAmounts,
+                    onCheckedChange = onMaskAmountsChanged,
+                )
+            },
+            onClick = { onMaskAmountsChanged(!maskAmounts) },
+        )
+
+        AppText(
+            text = stringResource(
+                R.string.settings_mask_amounts_preview,
+                formatAmount(1234.56, CurrencyFormat.DEFAULT).let {
+                    if (maskAmounts) maskDigits(it) else it
+                },
+            ),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(start = 4.dp, top = 2.dp, bottom = 4.dp),
         )
 
         AppCard(
@@ -1032,6 +1078,8 @@ private fun DisplayContentPreview() {
             onMealVoucherValueSelected = {},
             showTransactionNotes = true,
             onShowTransactionNotesChanged = {},
+            maskAmounts = false,
+            onMaskAmountsChanged = {},
             showChartsSection = true,
             onShowChartsSectionChanged = {},
             chartsZoomEnabled = false,

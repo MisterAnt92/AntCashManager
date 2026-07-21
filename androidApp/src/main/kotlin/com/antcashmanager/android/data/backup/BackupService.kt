@@ -235,6 +235,7 @@ class BackupService(
         reduceMotion = settingsRepository.getReduceMotion().first(),
         showCharts = settingsRepository.getShowCharts().first(),
         showTransactionNotes = settingsRepository.getShowTransactionNotes().first(),
+        maskAmounts = settingsRepository.getMaskAmounts().first(),
         showPaymentTypeBreakdown = settingsRepository.getShowPaymentTypeBreakdown().first(),
         showQuickInsightsCard = settingsRepository.getShowQuickInsightsCard().first(),
         showInitialAnimation = settingsRepository.getShowInitialAnimation().first(),
@@ -261,6 +262,7 @@ class BackupService(
         settingsRepository.setReduceMotion(settings.reduceMotion)
         settingsRepository.setShowCharts(settings.showCharts)
         settingsRepository.setShowTransactionNotes(settings.showTransactionNotes)
+        settingsRepository.setMaskAmounts(settings.maskAmounts)
         settingsRepository.setShowPaymentTypeBreakdown(settings.showPaymentTypeBreakdown)
         settingsRepository.setShowQuickInsightsCard(settings.showQuickInsightsCard)
         settingsRepository.setShowInitialAnimation(settings.showInitialAnimation)

@@ -71,6 +71,7 @@ data class SettingsBackup(
     val reduceMotion: Boolean = false,
     val showCharts: Boolean = true,
     val showTransactionNotes: Boolean = true,
+    val maskAmounts: Boolean = false,
     val showPaymentTypeBreakdown: Boolean = false,
     val showQuickInsightsCard: Boolean = false,
     val showInitialAnimation: Boolean = false,

@@ -30,7 +30,10 @@ import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.home.view.getRecurrenceIntervalLabel
 import com.antcashmanager.android.ui.screen.homeTransactionDetail.view.TransactionDetailRow
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.android.util.LocalAmountsMasked
+import com.antcashmanager.android.util.isProtectedSalaryTransaction
 import com.antcashmanager.android.util.isValidNote
+import com.antcashmanager.android.util.maskDigits
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
@@ -93,9 +96,14 @@ private fun TransactionDetailsDialogContent(
                 )
 
                 // Amount
+                val amountText = "${String.format("%.2f", kotlin.math.abs(transaction.amount))}€"
                 TransactionDetailRow(
                     label = stringResource(R.string.transaction_details_amount),
-                    value = "${String.format("%.2f", kotlin.math.abs(transaction.amount))}€",
+                    value = if (LocalAmountsMasked.current && isProtectedSalaryTransaction(transaction)) {
+                        maskDigits(amountText)
+                    } else {
+                        amountText
+                    },
                 )
 
                 // Category

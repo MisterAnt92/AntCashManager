@@ -2,11 +2,35 @@ package com.antcashmanager.android.util
 
 import androidx.compose.runtime.compositionLocalOf
 import com.antcashmanager.domain.model.CurrencyFormat
+import com.antcashmanager.domain.model.Transaction
+import com.antcashmanager.domain.model.TransactionType
 import java.util.Locale
 import kotlin.math.abs
 
 /** CompositionLocal that provides the current [CurrencyFormat] to the entire composable tree. */
 val LocalCurrencyFormat = compositionLocalOf { CurrencyFormat.DEFAULT }
+
+/** CompositionLocal that indicates whether monetary amounts should be masked with asterisks. */
+val LocalAmountsMasked = compositionLocalOf { false }
+
+/**
+ * Replaces every digit in [text] with an asterisk, preserving currency symbol, sign and
+ * separators. Example: "€1.234,56" -> "€*.***,**".
+ */
+fun maskDigits(text: String): String = text.map { if (it.isDigit()) '*' else it }.joinToString("")
+
+const val PROTECTED_INCOME_CATEGORY = "Stipendio"
+
+/**
+ * Lo stipendio resta sempre mascherato anche dove il resto degli importi è mostrato in chiaro,
+ * dato che è tipicamente la cifra più sensibile da non far vedere a chi guarda lo schermo.
+ */
+fun isProtectedSalaryTransaction(transaction: Transaction): Boolean =
+    transaction.type == TransactionType.INCOME && transaction.category == PROTECTED_INCOME_CATEGORY
+
+/** Variante di [isProtectedSalaryTransaction] per gli schermi dove non è ancora disponibile una [Transaction] completa. */
+fun isProtectedSalaryCategory(categoryName: String?, type: TransactionType?): Boolean =
+    type == TransactionType.INCOME && categoryName == PROTECTED_INCOME_CATEGORY
 
 /**
  * Formats [amount] as an absolute monetary value using [format] preferences.

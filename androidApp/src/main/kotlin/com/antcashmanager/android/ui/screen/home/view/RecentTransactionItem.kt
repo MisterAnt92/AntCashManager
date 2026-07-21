@@ -36,6 +36,8 @@ import com.antcashmanager.android.ui.screen.categories.categoryIconMap
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.ExpenseRed
 import com.antcashmanager.android.ui.theme.IncomeGreen
+import com.antcashmanager.android.util.LocalAmountsMasked
+import com.antcashmanager.android.util.isProtectedSalaryTransaction
 import com.antcashmanager.android.util.isValidNote
 import com.antcashmanager.android.util.translateCategory
 import com.antcashmanager.domain.model.Transaction
@@ -212,6 +214,7 @@ fun RecentTransactionItem(
                 ) {
                     TransactionAmountText(
                         amount = transaction.amount, // Amount will already be negative for expenses
+                        masked = LocalAmountsMasked.current && isProtectedSalaryTransaction(transaction),
                     )
                 }
             }
