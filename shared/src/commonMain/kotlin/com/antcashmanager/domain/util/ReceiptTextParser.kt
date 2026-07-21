@@ -15,9 +15,33 @@ object ReceiptTextParser {
 
     // ── Regex Patterns ────────────────────────────────────────────────────────
 
-    /** Importo totale: TOTALE, TOTAL, TOT seguiti da un valore numerico */
+    /** Importo totale: TOTALE, TOTAL, TOT seguiti da un valore numerico (italiano) */
     private val TOTAL_PATTERN = Regex(
         """(?:TOTALE|TOTAL|TOT\.?|IMPORTO TOTALE|IMPORTO|AMOUNT)\s*[:\s€$]?\s*([\d]+[.,][\d]{2})""",
+        RegexOption.IGNORE_CASE,
+    )
+
+    /** Importo totale: English patterns */
+    private val EN_TOTAL_PATTERN = Regex(
+        """(?:SUBTOTAL|TOTAL|AMOUNT\s+DUE|GRAND\s+TOTAL|AMOUNT)\s*[:\s£$€]?\s*([\d]+[.,][\d]{2})""",
+        RegexOption.IGNORE_CASE,
+    )
+
+    /** Importo totale: Spanish patterns */
+    private val ES_TOTAL_PATTERN = Regex(
+        """(?:SUBTOTAL|TOTAL|CANTIDAD|MONTO|IMPORTE)\s*[:\s£$€]?\s*([\d]+[.,][\d]{2})""",
+        RegexOption.IGNORE_CASE,
+    )
+
+    /** Importo totale: German patterns */
+    private val DE_TOTAL_PATTERN = Regex(
+        """(?:ZWISCHENSUMME|GESAMTBETRAG|SUMME|BETRAG|GESAMT)\s*[:\s£$€]?\s*([\d]+[.,][\d]{2})""",
+        RegexOption.IGNORE_CASE,
+    )
+
+    /** Importo totale: French patterns */
+    private val FR_TOTAL_PATTERN = Regex(
+        """(?:SOUS-TOTAL|MONTANT|TOTAL|SOMME|MONTANT\s+TOTAL)\s*[:\s£$€]?\s*([\d]+[.,][\d]{2})""",
         RegexOption.IGNORE_CASE,
     )
 
@@ -86,6 +110,70 @@ object ReceiptTextParser {
         RegexOption.IGNORE_CASE,
     )
 
+    /** English payment type patterns */
+    private val EN_CASH_PATTERN = Regex(
+        """(?:CASH|PAYMENT|PAID|CASH\s+PAYMENT)""",
+        RegexOption.IGNORE_CASE,
+    )
+
+    private val EN_MEAL_VOUCHER_PATTERN = Regex(
+        """(?:MEAL\s+VOUCHER|LUNCHEON\s+VOUCHER|LUNCH\s+VOUCHER|FOOD\s+VOUCHER)""",
+        RegexOption.IGNORE_CASE,
+    )
+
+    private val EN_ELECTRONIC_PATTERN = Regex(
+        """(?:CARD|CREDIT\s+CARD|DEBIT\s+CARD|VISA|MASTERCARD|AMEX|ELECTRONIC\s+PAYMENT|CONTACT\s*LESS)""",
+        RegexOption.IGNORE_CASE,
+    )
+
+    /** Spanish payment type patterns */
+    private val ES_CASH_PATTERN = Regex(
+        """(?:EFECTIVO|DINERO|PAGO\s+EN\s+EFECTIVO)""",
+        RegexOption.IGNORE_CASE,
+    )
+
+    private val ES_MEAL_VOUCHER_PATTERN = Regex(
+        """(?:CHEQUE\s+RESTAURANTE|TICKET\s+COMIDA|VALE\s+COMIDA)""",
+        RegexOption.IGNORE_CASE,
+    )
+
+    private val ES_ELECTRONIC_PATTERN = Regex(
+        """(?:TARJETA|TARJETA\s+DE\s+(?:CREDITO|DÉBITO)|VISA|MASTERCARD|PAGO\s+ELECTRONICO)""",
+        RegexOption.IGNORE_CASE,
+    )
+
+    /** German payment type patterns */
+    private val DE_CASH_PATTERN = Regex(
+        """(?:BARGELD|BAR|BARZAHLUNG)""",
+        RegexOption.IGNORE_CASE,
+    )
+
+    private val DE_MEAL_VOUCHER_PATTERN = Regex(
+        """(?:ESSENSMARKEN|VERPFLEGUNGSGUTSCHEIN|LUNCHEON\s+GUTSCHEIN)""",
+        RegexOption.IGNORE_CASE,
+    )
+
+    private val DE_ELECTRONIC_PATTERN = Regex(
+        """(?:KARTE|KREDITKARTE|EC-KARTE|VISA|MASTERCARD|KONTAKTLOS|ELEKTRONISCHE\s+ZAHLUNG)""",
+        RegexOption.IGNORE_CASE,
+    )
+
+    /** French payment type patterns */
+    private val FR_CASH_PATTERN = Regex(
+        """(?:ESPÈCES|ESPECES|PAIEMENT\s+EN\s+ESPÈCES)""",
+        RegexOption.IGNORE_CASE,
+    )
+
+    private val FR_MEAL_VOUCHER_PATTERN = Regex(
+        """(?:TICKET\s+RESTAURANT|TICKET\s+REPAS|VALE\s+REFEICAO)""",
+        RegexOption.IGNORE_CASE,
+    )
+
+    private val FR_ELECTRONIC_PATTERN = Regex(
+        """(?:CARTE|CARTE\s+BANCAIRE|VISA|MASTERCARD|PAIEMENT\s+ELECTRONIQUE|SANS\s+CONTACT)""",
+        RegexOption.IGNORE_CASE,
+    )
+
     // ── Public API ────────────────────────────────────────────────────────────
 
     /**
@@ -97,12 +185,13 @@ object ReceiptTextParser {
      * - Valida la consistenza dei dati (IVA non può superare il totale)
      *
      * @param rawText Testo estratto dall'OCR.
+     * @param language Codice lingua (it, en, es, de, fr). Default: it
      * @return [ReceiptData] con i campi valorizzati e validati.
      */
-    fun parse(rawText: String): ReceiptData {
+    fun parse(rawText: String, language: String = "it"): ReceiptData {
         val lines = rawText.lines().map { it.trim() }.filter { it.isNotBlank() }
 
-        val totalAmount = extractTotal(rawText, lines)
+        val totalAmount = extractTotal(rawText, lines, language)
         val vatRate = extractVatRate(rawText)
         val rawVatAmount = extractVatAmount(rawText)
 
@@ -119,7 +208,7 @@ object ReceiptTextParser {
             vatAmount = vatAmount,
             payee = extractPayee(lines),
             location = extractLocation(lines),
-            paymentType = detectPaymentType(rawText),
+            paymentType = detectPaymentType(rawText, language),
             rawText = rawText,
             items = extractItems(lines),
         )
@@ -127,15 +216,33 @@ object ReceiptTextParser {
 
     // ── Private helpers ───────────────────────────────────────────────────────
 
-    private fun extractTotal(text: String, lines: List<String>): Double {
-        // 1. Cerca pattern esplicito TOTALE/TOTAL
-        val match = TOTAL_PATTERN.find(text)
+    private fun extractTotal(text: String, lines: List<String>, language: String = "it"): Double {
+        // Seleziona il pattern in base alla lingua
+        val pattern = when (language) {
+            "en" -> EN_TOTAL_PATTERN
+            "es" -> ES_TOTAL_PATTERN
+            "de" -> DE_TOTAL_PATTERN
+            "fr" -> FR_TOTAL_PATTERN
+            else -> TOTAL_PATTERN
+        }
+
+        // 1. Cerca pattern esplicito per la lingua
+        val match = pattern.find(text)
         if (match != null) return parseDecimal(match.groupValues[1])
 
-        // 2. Fallback: cerca il valore massimo nella riga contenente "TOTALE"
-        val totalLine = lines.firstOrNull {
-            it.contains("TOTALE", ignoreCase = true) || it.contains("TOTAL", ignoreCase = true)
+        // 2. Fallback: cerca il valore massimo nella riga contenente keyword totale
+        val totalKeyword = when (language) {
+            "en" -> listOf("TOTAL", "SUBTOTAL", "AMOUNT DUE")
+            "es" -> listOf("TOTAL", "CANTIDAD", "MONTO")
+            "de" -> listOf("GESAMT", "SUMME", "BETRAG")
+            "fr" -> listOf("TOTAL", "MONTANT", "SOUS-TOTAL")
+            else -> listOf("TOTALE", "TOTAL", "IMPORTO")
         }
+
+        val totalLine = lines.firstOrNull { line ->
+            totalKeyword.any { line.contains(it, ignoreCase = true) }
+        }
+
         if (totalLine != null) {
             val amounts = NUMERIC_PATTERN.findAll(totalLine)
                 .map { parseDecimal(it.value) }
@@ -225,11 +332,22 @@ object ReceiptTextParser {
      * La priorità dei buoni pasto è massima perché spesso i scontrini buoni pasto
      * contengono anche la parola "TOTALE" con importo, ma il metodo di pagamento
      * è distintivo e specifico.
+     *
+     * @param text Testo estratto dall'OCR
+     * @param language Codice lingua (it, en, es, de, fr). Default: it
      */
-    fun detectPaymentType(text: String): PaymentType {
-        if (MEAL_VOUCHER_PATTERN.containsMatchIn(text)) return PaymentType.MEAL_VOUCHERS
-        if (CASH_PATTERN.containsMatchIn(text)) return PaymentType.CASH
-        if (ELECTRONIC_PATTERN.containsMatchIn(text)) return PaymentType.ELECTRONIC
+    fun detectPaymentType(text: String, language: String = "it"): PaymentType {
+        val (mealPattern, cashPattern, electronicPattern) = when (language) {
+            "en" -> Triple(EN_MEAL_VOUCHER_PATTERN, EN_CASH_PATTERN, EN_ELECTRONIC_PATTERN)
+            "es" -> Triple(ES_MEAL_VOUCHER_PATTERN, ES_CASH_PATTERN, ES_ELECTRONIC_PATTERN)
+            "de" -> Triple(DE_MEAL_VOUCHER_PATTERN, DE_CASH_PATTERN, DE_ELECTRONIC_PATTERN)
+            "fr" -> Triple(FR_MEAL_VOUCHER_PATTERN, FR_CASH_PATTERN, FR_ELECTRONIC_PATTERN)
+            else -> Triple(MEAL_VOUCHER_PATTERN, CASH_PATTERN, ELECTRONIC_PATTERN)
+        }
+
+        if (mealPattern.containsMatchIn(text)) return PaymentType.MEAL_VOUCHERS
+        if (cashPattern.containsMatchIn(text)) return PaymentType.CASH
+        if (electronicPattern.containsMatchIn(text)) return PaymentType.ELECTRONIC
         // Default: ELECTRONIC (il più comune nei contesti moderni)
         return PaymentType.ELECTRONIC
     }
