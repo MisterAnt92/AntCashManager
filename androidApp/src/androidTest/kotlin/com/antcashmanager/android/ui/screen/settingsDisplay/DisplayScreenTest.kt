@@ -58,6 +58,10 @@ class DisplayScreenTest {
                     onNavigateBack = {},
                     showQuickInsightsCard = false,
                     onShowQuickInsightsCardChanged = {},
+                    widgetBackgroundColor = 0,
+                    onWidgetBackgroundColorSelected = {},
+                    widgetOpacity = 0,
+                    onWidgetOpacityChanged = {},
                 )
             }
         }
