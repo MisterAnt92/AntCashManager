@@ -63,6 +63,8 @@ class DisplayScreenTest {
                     onWidgetBackgroundColorSelected = {},
                     widgetOpacity = 0,
                     onWidgetOpacityChanged = {},
+                    maskAmounts = false,
+                    onMaskAmountsChanged = {},
                 )
             }
         }
