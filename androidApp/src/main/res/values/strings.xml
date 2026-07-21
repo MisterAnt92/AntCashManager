@@ -79,6 +79,10 @@
     <string name="categories_tab_income">Income</string>
     <string name="categories_default_badge">Default</string>
     <string name="categories_icon_label">Icon</string>
+    <string name="categories_hide">Hide category</string>
+    <string name="categories_show">Show category</string>
+    <string name="categories_hidden_section_title">Hidden categories (%d)</string>
+    <string name="categories_reorder">Reorder categories</string>
     <string name="categories_selection_hint">Tap a category to select it (auto-advances in real app)</string>
 
     <!-- Category Icons -->
@@ -111,6 +115,7 @@
     <string name="icon_directions_bike">Sport</string>
     <string name="icon_shopping_cart">Groceries</string>
     <string name="icon_coffee">Coffee</string>
+    <string name="icon_spa">Personal Care</string>
 
     <!-- Charts Screen -->
     <string name="charts_period">Period</string>
@@ -481,6 +486,9 @@
     <string name="category_reimbursement">Reimbursement</string>
     <string name="category_investments">Investments</string>
     <string name="category_freelance">Freelance</string>
+    <string name="category_gifts">Gifts</string>
+    <string name="category_subscriptions">Subscriptions</string>
+    <string name="category_personal_care">Personal Care</string>
 
     <!-- Receipt Scan Screen -->
     <string name="receipt_scan_title">Scan Receipt</string>

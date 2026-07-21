@@ -65,6 +65,8 @@ class BackupServiceTest {
             color = 0xFF00FF00,
             type = "EXPENSE",
             isDefault = false,
+            sortOrder = 4,
+            isHidden = true,
         )
         val sourceService = buildService(
             transactionRepository = FakeTransactionRepository(listOf(sourceTransaction)),
@@ -96,6 +98,8 @@ class BackupServiceTest {
         assertEquals(sourceCategory.name, restoredCategory.name)
         assertEquals(sourceCategory.icon, restoredCategory.icon)
         assertEquals(sourceCategory.color, restoredCategory.color)
+        assertEquals(sourceCategory.sortOrder, restoredCategory.sortOrder)
+        assertEquals(sourceCategory.isHidden, restoredCategory.isHidden)
     }
 
     @Test

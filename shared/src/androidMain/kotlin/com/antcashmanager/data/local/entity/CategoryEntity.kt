@@ -15,4 +15,8 @@ data class CategoryEntity(
     val type: String = "EXPENSE",
     @ColumnInfo(name = "is_default", defaultValue = "0")
     val isDefault: Boolean = false,
+    @ColumnInfo(name = "sort_order", defaultValue = "0")
+    val sortOrder: Int = 0,
+    @ColumnInfo(name = "is_hidden", defaultValue = "0")
+    val isHidden: Boolean = false,
 )

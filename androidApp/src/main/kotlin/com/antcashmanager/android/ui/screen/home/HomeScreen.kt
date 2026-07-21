@@ -621,6 +621,10 @@ class MockHomeSettingsRepository : SettingsRepository {
 
     override suspend fun setDataEncryptionEnabled(enabled: Boolean) {}
 
+    override fun getCategorySortOrderInitialized(): kotlinx.coroutines.flow.Flow<Boolean> =
+        kotlinx.coroutines.flow.flowOf(true)
+    override suspend fun setCategorySortOrderInitialized(initialized: Boolean) {}
+
     override fun getLastBackupTimestamp(): kotlinx.coroutines.flow.Flow<Long?> =
         kotlinx.coroutines.flow.flowOf(null)
     override suspend fun setLastBackupTimestamp(timestamp: Long) {}

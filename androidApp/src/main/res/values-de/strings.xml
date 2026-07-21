@@ -74,6 +74,10 @@
     <string name="categories_tab_income">Einnahmen</string>
     <string name="categories_default_badge">Standard</string>
     <string name="categories_icon_label">Symbol</string>
+    <string name="categories_hide">Kategorie ausblenden</string>
+    <string name="categories_show">Kategorie einblenden</string>
+    <string name="categories_hidden_section_title">Ausgeblendete Kategorien (%d)</string>
+    <string name="categories_reorder">Kategorien neu anordnen</string>
 
     <!-- Kategorie-Symbole -->
     <string name="icon_home">Zuhause</string>
@@ -105,6 +109,7 @@
     <string name="icon_directions_bike">Sport</string>
     <string name="icon_shopping_cart">Lebensmittel</string>
     <string name="icon_coffee">Kaffee</string>
+    <string name="icon_spa">Wellness</string>
 
     <string name="charts_period">Zeitraum</string>
     <string name="charts_from">Von: %s</string>
@@ -452,6 +457,9 @@
      <string name="category_reimbursement">Rückerstattung</string>
      <string name="category_investments">Investitionen</string>
      <string name="category_freelance">Freiberuflich</string>
+    <string name="category_gifts">Geschenke</string>
+    <string name="category_subscriptions">Abonnements</string>
+    <string name="category_personal_care">Körperpflege</string>
 
       <!-- Help Dialog -->
       <string name="help_features_label">Funktionen:</string>

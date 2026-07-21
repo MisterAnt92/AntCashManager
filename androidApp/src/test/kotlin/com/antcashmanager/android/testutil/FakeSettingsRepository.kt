@@ -56,6 +56,7 @@ open class FakeSettingsRepository : SettingsRepository {
     val transactionsTransactionDisplayType = MutableStateFlow(TransactionDisplayType.TREND)
     val showInitialAnimation = MutableStateFlow(false)
     val isTutorialCompleted = MutableStateFlow(false)
+    val categorySortOrderInitialized = MutableStateFlow(false)
     val dataEncryptionEnabled = MutableStateFlow(false)
     val lastBackupTimestamp = MutableStateFlow<Long?>(null)
     val lastRestoreTimestamp = MutableStateFlow<Long?>(null)
@@ -199,6 +200,11 @@ open class FakeSettingsRepository : SettingsRepository {
     override fun getIsTutorialCompleted(): Flow<Boolean> = isTutorialCompleted
     override suspend fun setIsTutorialCompleted(completed: Boolean) {
         isTutorialCompleted.value = completed
+    }
+
+    override fun getCategorySortOrderInitialized(): Flow<Boolean> = categorySortOrderInitialized
+    override suspend fun setCategorySortOrderInitialized(initialized: Boolean) {
+        categorySortOrderInitialized.value = initialized
     }
 
     override fun getDataEncryptionEnabled(): Flow<Boolean> = dataEncryptionEnabled

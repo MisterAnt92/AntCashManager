@@ -106,6 +106,10 @@
     <string name="categories_tab_income">Entrate</string>
     <string name="categories_default_badge">Predefinita</string>
     <string name="categories_icon_label">Icona</string>
+    <string name="categories_hide">Nascondi categoria</string>
+    <string name="categories_show">Mostra categoria</string>
+    <string name="categories_hidden_section_title">Categorie nascoste (%d)</string>
+    <string name="categories_reorder">Riordina categorie</string>
 
     <!-- Icone Categorie -->
     <string name="icon_home">Casa</string>
@@ -137,6 +141,7 @@
     <string name="icon_directions_bike">Sport</string>
     <string name="icon_shopping_cart">Spesa</string>
     <string name="icon_coffee">Caffè</string>
+    <string name="icon_spa">Cura personale</string>
 
     <string name="charts_period">Periodo</string>
     <string name="charts_from">Dal: %s</string>
@@ -455,6 +460,9 @@
     <string name="category_reimbursement">Rimborso</string>
     <string name="category_investments">Investimenti</string>
     <string name="category_freelance">Freelance</string>
+    <string name="category_gifts">Regali</string>
+    <string name="category_subscriptions">Abbonamenti</string>
+    <string name="category_personal_care">Cura personale</string>
     <string name="receipt_scan_title">Scansiona Scontrino</string>
     <string name="receipt_scan_capture_hint">Scatta una foto allo scontrino o scegline una dalla galleria per estrarre automaticamente importo, IVA, beneficiario e luogo.</string>
     <string name="receipt_scan_take_photo">Scatta Foto</string>

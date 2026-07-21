@@ -53,6 +53,8 @@ data class CategoryBackup(
     val color: Long,
     val type: String = "EXPENSE",
     val isDefault: Boolean = false,
+    val sortOrder: Int = 0,
+    val isHidden: Boolean = false,
 )
 
 /**

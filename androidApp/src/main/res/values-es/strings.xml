@@ -56,6 +56,10 @@
     <string name="categories_tab_income">Ingresos</string>
     <string name="categories_default_badge">Predeterminada</string>
     <string name="categories_icon_label">Icono</string>
+    <string name="categories_hide">Ocultar categoría</string>
+    <string name="categories_show">Mostrar categoría</string>
+    <string name="categories_hidden_section_title">Categorías ocultas (%d)</string>
+    <string name="categories_reorder">Reordenar categorías</string>
 
     <!-- Iconos de Categoría -->
     <string name="icon_home">Hogar</string>
@@ -87,6 +91,7 @@
     <string name="icon_directions_bike">Deporte</string>
     <string name="icon_shopping_cart">Supermercado</string>
     <string name="icon_coffee">Caf\u00e9</string>
+    <string name="icon_spa">Cuidado personal</string>
 
     <string name="charts_title">Gr\u00e1ficos</string>
     <string name="charts_period">Per\u00edodo</string>
@@ -396,6 +401,9 @@
     <string name="category_reimbursement">Reembolso</string>
     <string name="category_investments">Inversiones</string>
     <string name="category_freelance">Freelance</string>
+    <string name="category_gifts">Regalos</string>
+    <string name="category_subscriptions">Suscripciones</string>
+    <string name="category_personal_care">Cuidado personal</string>
     <string name="help_features_label">Características:</string>
     <string name="common_help">Ayuda</string>
     <string name="help_home_title">Guía de Inicio</string>

@@ -307,7 +307,7 @@ class ReceiptScanViewModel(
             getCategoriesUseCase().collect { result ->
                 result.onSuccess { categories ->
                     val expenseCategories = categories.filter {
-                        it.type.equals(ReceiptScanConstant.EXPENSE_TYPE, ignoreCase = true)
+                        it.type.equals(ReceiptScanConstant.EXPENSE_TYPE, ignoreCase = true) && !it.isHidden
                     }
                     _state.update { current ->
                         current.copy(

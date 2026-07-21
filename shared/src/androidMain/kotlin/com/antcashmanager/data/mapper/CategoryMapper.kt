@@ -10,6 +10,8 @@ fun CategoryEntity.toDomain(): Category = Category(
     color = color,
     type = type,
     isDefault = isDefault,
+    sortOrder = sortOrder,
+    isHidden = isHidden,
 )
 
 fun Category.toEntity(): CategoryEntity = CategoryEntity(
@@ -19,4 +21,6 @@ fun Category.toEntity(): CategoryEntity = CategoryEntity(
     color = color,
     type = type,
     isDefault = isDefault,
+    sortOrder = sortOrder,
+    isHidden = isHidden,
 )

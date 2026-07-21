@@ -1,5 +1,7 @@
 package com.antcashmanager.android.ui.screen.categories
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -41,6 +43,7 @@ import androidx.compose.material.icons.filled.Fastfood
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Flight
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.LocalDining
 import androidx.compose.material.icons.filled.LocalHospital
@@ -53,9 +56,13 @@ import androidx.compose.material.icons.filled.Savings
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.ShoppingBag
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.Spa
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Subscriptions
+import androidx.compose.material.icons.filled.SwapVert
 import androidx.compose.material.icons.filled.TheaterComedy
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.filled.VolunteerActivism
 import androidx.compose.material.icons.filled.Work
 import androidx.compose.material3.AlertDialog
@@ -82,6 +89,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -95,6 +103,7 @@ import com.antcashmanager.android.ui.components.AntEmptyState
 import com.antcashmanager.android.ui.components.HelpButton
 import com.antcashmanager.android.ui.components.ScreenHeader
 import com.antcashmanager.android.ui.components.text.AppText
+import com.antcashmanager.android.ui.screen.categories.view.CategoriesReorderDialog
 import com.antcashmanager.android.ui.screen.categories.view.HelpDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.translateCategory
@@ -133,6 +142,7 @@ val categoryIconMap: Map<String, ImageVector> = mapOf(
     "directions_bike" to Icons.Default.DirectionsBike,
     "shopping_cart" to Icons.Default.ShoppingCart,
     "coffee" to Icons.Default.Coffee,
+    "spa" to Icons.Default.Spa,
 )
 
 /**
@@ -170,6 +180,7 @@ fun getIconContentDescription(iconKey: String): String {
         "directions_bike" -> R.string.icon_directions_bike
         "shopping_cart" -> R.string.icon_shopping_cart
         "coffee" -> R.string.icon_coffee
+        "spa" -> R.string.icon_spa
         else -> R.string.categories_icon_label
     }
     return stringResource(resId)
@@ -190,6 +201,8 @@ fun CategoriesScreen() {
         state = state,
         onAddCategory = viewModel::addCategory,
         onDeleteCategory = viewModel::deleteCategory,
+        onSetCategoryHidden = viewModel::setCategoryHidden,
+        onReorderCategories = viewModel::reorderCategories,
     )
 }
 
@@ -198,6 +211,8 @@ internal fun CategoriesContent(
     state: CategoriesState,
     onAddCategory: (String, String, Long, String) -> Unit = { _, _, _, _ -> },
     onDeleteCategory: (Category) -> Unit = {},
+    onSetCategoryHidden: (Category, Boolean) -> Unit = { _, _ -> },
+    onReorderCategories: (List<Category>) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val analyticsManager: AnalyticsManager = koinInject()
@@ -205,6 +220,8 @@ internal fun CategoriesContent(
     var showAddDialog by remember { mutableStateOf(false) }
     var categoryToDelete by remember { mutableStateOf<Category?>(null) }
     var showHelpDialog by remember { mutableStateOf(false) }
+    var showReorderDialog by remember { mutableStateOf(false) }
+    var hiddenSectionExpanded by remember { mutableStateOf(false) }
 
     // Help dialog
     if (showHelpDialog) {
@@ -217,6 +234,8 @@ internal fun CategoriesContent(
     )
     val currentCategories =
         if (selectedTab == 0) state.expenseCategories else state.incomeCategories
+    val currentHiddenCategories =
+        if (selectedTab == 0) state.hiddenExpenseCategories else state.hiddenIncomeCategories
     val currentType = if (selectedTab == 0) "EXPENSE" else "INCOME"
 
     Scaffold(
@@ -250,6 +269,18 @@ internal fun CategoriesContent(
             ScreenHeader(
                 title = stringResource(R.string.common_categories),
                 actions = {
+                    IconButton(
+                        onClick = {
+                            analyticsManager.logEvent("categories_reorder_opened")
+                            showReorderDialog = true
+                        },
+                        enabled = currentCategories.size > 1,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.SwapVert,
+                            contentDescription = stringResource(R.string.categories_reorder),
+                        )
+                    }
                     HelpButton(
                         onHelpClick = {
                             analyticsManager.logEvent("categories_help_opened")
@@ -272,7 +303,7 @@ internal fun CategoriesContent(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            if (currentCategories.isEmpty()) {
+            if (currentCategories.isEmpty() && currentHiddenCategories.isEmpty()) {
                 AntEmptyState(
                     mascotRes = R.drawable.ic_ant_mascot,
                     title = stringResource(R.string.categories_empty),
@@ -289,7 +320,36 @@ internal fun CategoriesContent(
                                     categoryToDelete = category
                                 }
                             },
+                            onToggleHidden = {
+                                analyticsManager.logEvent("category_hidden")
+                                onSetCategoryHidden(category, true)
+                            },
                         )
+                    }
+                    if (currentHiddenCategories.isNotEmpty()) {
+                        item(key = "hidden_section_header") {
+                            HiddenCategoriesSectionHeader(
+                                count = currentHiddenCategories.size,
+                                expanded = hiddenSectionExpanded,
+                                onExpandedChange = { hiddenSectionExpanded = it },
+                            )
+                        }
+                        if (hiddenSectionExpanded) {
+                            items(currentHiddenCategories, key = { "hidden_${it.id}" }) { category ->
+                                CategoryItem(
+                                    category = category,
+                                    onDelete = {
+                                        if (!category.isDefault) {
+                                            categoryToDelete = category
+                                        }
+                                    },
+                                    onToggleHidden = {
+                                        analyticsManager.logEvent("category_shown")
+                                        onSetCategoryHidden(category, false)
+                                    },
+                                )
+                            }
+                        }
                     }
                     item { Spacer(modifier = Modifier.height(72.dp)) }
                 }
@@ -306,6 +366,18 @@ internal fun CategoriesContent(
                 showAddDialog = false
             },
             onDismiss = { showAddDialog = false },
+        )
+    }
+
+    if (showReorderDialog) {
+        CategoriesReorderDialog(
+            categories = currentCategories,
+            onDismiss = { showReorderDialog = false },
+            onConfirm = { reordered ->
+                analyticsManager.logEvent("categories_reordered")
+                onReorderCategories(reordered)
+                showReorderDialog = false
+            },
         )
     }
 
@@ -340,9 +412,50 @@ internal fun CategoriesContent(
 }
 
 @Composable
+private fun HiddenCategoriesSectionHeader(
+    count: Int,
+    expanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
+) {
+    val rotationAngle by animateFloatAsState(
+        targetValue = if (expanded) 180f else 0f,
+        animationSpec = tween(300),
+        label = "hidden_categories_chevron_rotation",
+    )
+    val expandCollapseLabel = if (expanded) {
+        stringResource(R.string.common_collapse)
+    } else {
+        stringResource(R.string.common_expand)
+    }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClickLabel = expandCollapseLabel) { onExpandedChange(!expanded) }
+            .padding(vertical = 12.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        AppText(
+            text = stringResource(R.string.categories_hidden_section_title, count),
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Icon(
+            imageVector = Icons.Default.KeyboardArrowDown,
+            contentDescription = expandCollapseLabel,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier
+                .graphicsLayer(rotationZ = rotationAngle)
+                .size(24.dp),
+        )
+    }
+}
+
+@Composable
 private fun CategoryItem(
     category: Category,
     onDelete: () -> Unit,
+    onToggleHidden: () -> Unit,
 ) {
     val icon = categoryIconMap[category.icon]
     val translatedName = translateCategory(category.name)
@@ -397,6 +510,17 @@ private fun CategoryItem(
                         color = MaterialTheme.colorScheme.primary,
                     )
                 }
+            }
+            IconButton(onClick = onToggleHidden) {
+                Icon(
+                    imageVector = if (category.isHidden) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                    contentDescription = if (category.isHidden) {
+                        stringResource(R.string.categories_show)
+                    } else {
+                        stringResource(R.string.categories_hide)
+                    },
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
             if (!category.isDefault) {
                 IconButton(onClick = onDelete) {
