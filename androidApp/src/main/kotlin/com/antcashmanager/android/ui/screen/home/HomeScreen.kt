@@ -392,19 +392,6 @@ internal fun HomeContent(
                                         ),
                                     )
                                 }
-                                // Settings button
-                                IconButton(
-                                    onClick = {
-                                        navController.navigate("settings") {
-                                            launchSingleTop = true
-                                        }
-                                    },
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Settings,
-                                        contentDescription = stringResource(R.string.common_settings),
-                                    )
-                                }
                                 // Help button
                                 HelpButton(
                                     onHelpClick = {
