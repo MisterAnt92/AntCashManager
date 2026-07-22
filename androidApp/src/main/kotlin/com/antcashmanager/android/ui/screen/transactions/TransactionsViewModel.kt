@@ -499,7 +499,10 @@ class TransactionsViewModel(
             )
             result.onFailure { error ->
                 if (error is kotlinx.coroutines.CancellationException) throw error
-                Logger.e(throwable = error, tag = "TransactionsViewModel") { "Failed to insert transaction: ${error.message}" }
+                Logger.e(
+                    throwable = error,
+                    tag = "TransactionsViewModel"
+                ) { "Failed to insert transaction: ${error.message}" }
             }
         }
     }
@@ -510,7 +513,10 @@ class TransactionsViewModel(
             val result = updateTransactionUseCase(transaction)
             result.onFailure { error ->
                 if (error is kotlinx.coroutines.CancellationException) throw error
-                Logger.e(throwable = error, tag = "TransactionsViewModel") { "Failed to update transaction: ${error.message}" }
+                Logger.e(
+                    throwable = error,
+                    tag = "TransactionsViewModel"
+                ) { "Failed to update transaction: ${error.message}" }
             }
         }
     }
@@ -521,7 +527,10 @@ class TransactionsViewModel(
             val result = deleteTransactionUseCase(transaction)
             result.onFailure { error ->
                 if (error is kotlinx.coroutines.CancellationException) throw error
-                Logger.e(throwable = error, tag = "TransactionsViewModel") { "Failed to delete transaction: ${error.message}" }
+                Logger.e(
+                    throwable = error,
+                    tag = "TransactionsViewModel"
+                ) { "Failed to delete transaction: ${error.message}" }
             }
         }
     }

@@ -54,7 +54,12 @@ class TransactionRepositoryImpl(
             entities.map { decryptEntity(it).toDomain() }
         }
 
-    override suspend fun renameCategory(oldCategoryName: String, newCategoryName: String, icon: String, color: Long) =
+    override suspend fun renameCategory(
+        oldCategoryName: String,
+        newCategoryName: String,
+        icon: String,
+        color: Long
+    ) =
         transactionDao.renameCategory(oldCategoryName, newCategoryName, icon, color)
 
     // Implementazione metodi per suggerimenti

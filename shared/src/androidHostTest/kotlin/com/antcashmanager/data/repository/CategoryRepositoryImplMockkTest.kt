@@ -48,7 +48,10 @@ class CategoryRepositoryImplMockkTest {
 
         val result = repository.getAllCategories().first()
 
-        assertEquals(sampleCategory(id = 7L, name = "Hobby", sortOrder = 3, isHidden = true), result.first())
+        assertEquals(
+            sampleCategory(id = 7L, name = "Hobby", sortOrder = 3, isHidden = true),
+            result.first()
+        )
     }
 
     @Test

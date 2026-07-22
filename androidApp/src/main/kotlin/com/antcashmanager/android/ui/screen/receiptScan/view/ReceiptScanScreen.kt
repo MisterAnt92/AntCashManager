@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.screen.receiptScan
+package com.antcashmanager.android.ui.screen.receiptScan.view
 
 import android.Manifest
 import android.net.Uri
@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -29,7 +30,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,13 +37,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -51,9 +50,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
-import com.antcashmanager.android.ui.components.AppSelectionItemCard
 import com.antcashmanager.android.ui.components.button.AppButton
+import com.antcashmanager.android.ui.components.selection.AppSelectionItemCard
 import com.antcashmanager.android.ui.components.text.AppText
+import com.antcashmanager.android.ui.screen.receiptScan.ReceiptScanState
+import com.antcashmanager.android.ui.screen.receiptScan.ReceiptScanStep
+import com.antcashmanager.android.ui.screen.receiptScan.ReceiptScanViewModel
 import com.antcashmanager.android.ui.screen.transactions.addImport.view.CategorySelectionDialog
 import com.antcashmanager.android.ui.screen.transactions.addImport.view.PaymentTypeSelectionDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
@@ -248,13 +250,14 @@ private fun CaptureStep(
         }
     }
 
-    val requestCameraPermissionLauncher = if (isPreview) null else rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission(),
-    ) { granted ->
-        if (granted) {
-            cameraLauncher?.launch(tempUri)
+    val requestCameraPermissionLauncher =
+        if (isPreview) null else rememberLauncherForActivityResult(
+            ActivityResultContracts.RequestPermission(),
+        ) { granted ->
+            if (granted) {
+                cameraLauncher?.launch(tempUri)
+            }
         }
-    }
 
     val galleryLauncher = if (isPreview) null else rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent(),
@@ -510,11 +513,13 @@ private fun ReceiptAmountCard(
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             supportingText = if (isEdited) {
-                { AppText(
-                    text = stringResource(R.string.receipt_scan_amount_edited),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.secondary,
-                ) }
+                {
+                    AppText(
+                        text = stringResource(R.string.receipt_scan_amount_edited),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.secondary,
+                    )
+                }
             } else null,
         )
 
@@ -534,7 +539,12 @@ private fun ReceiptAmountCard(
 
 @Preview(showBackground = true)
 @Preview(showBackground = true, name = "ReceiptScanScreen - 7 inch", widthDp = 600, heightDp = 960)
-@Preview(showBackground = true, name = "ReceiptScanScreen - 10 inch", widthDp = 840, heightDp = 1280)
+@Preview(
+    showBackground = true,
+    name = "ReceiptScanScreen - 10 inch",
+    widthDp = 840,
+    heightDp = 1280
+)
 @Composable
 fun ReceiptScanCapturePreview() {
     AntCashManagerTheme {

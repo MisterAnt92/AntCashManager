@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.components
+package com.antcashmanager.android.ui.components.common
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.size

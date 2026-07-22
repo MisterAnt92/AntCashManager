@@ -22,7 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
-import com.antcashmanager.android.ui.components.AnimatedCard
+import com.antcashmanager.android.ui.components.animation.AnimatedCard
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.text.CompactMoneyText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
@@ -90,7 +90,10 @@ fun QuickInsightsCard(
             )
             InsightRow(
                 label = stringResource(R.string.home_quick_insights_savings_rate),
-                value = stringResource(R.string.home_quick_insights_savings_rate_value, savingsRate),
+                value = stringResource(
+                    R.string.home_quick_insights_savings_rate_value,
+                    savingsRate
+                ),
             )
             if (biggestExpenseCategory != null && biggestExpenseAmount != null) {
                 InsightRow(

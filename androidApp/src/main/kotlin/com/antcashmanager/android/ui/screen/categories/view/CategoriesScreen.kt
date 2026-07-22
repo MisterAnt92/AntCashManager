@@ -99,9 +99,9 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
-import com.antcashmanager.android.ui.components.AntEmptyState
-import com.antcashmanager.android.ui.components.HelpButton
-import com.antcashmanager.android.ui.components.ScreenHeader
+import com.antcashmanager.android.ui.components.common.ScreenHeader
+import com.antcashmanager.android.ui.components.dialog.HelpButton
+import com.antcashmanager.android.ui.components.state.AntEmptyState
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.categories.CategoriesState
 import com.antcashmanager.android.ui.screen.categories.CategoriesViewModel
@@ -335,7 +335,9 @@ internal fun CategoriesContent(
                             )
                         }
                         if (hiddenSectionExpanded) {
-                            items(currentHiddenCategories, key = { "hidden_${it.id}" }) { category ->
+                            items(
+                                currentHiddenCategories,
+                                key = { "hidden_${it.id}" }) { category ->
                                 CategoryItem(
                                     category = category,
                                     onDelete = {
@@ -386,7 +388,12 @@ internal fun CategoriesContent(
             onDismissRequest = { categoryToDelete = null },
             title = { AppText(stringResource(R.string.categories_delete_title)) },
             text = {
-                AppText(stringResource(R.string.categories_delete_message, translateCategory(category.name)))
+                AppText(
+                    stringResource(
+                        R.string.categories_delete_message,
+                        translateCategory(category.name)
+                    )
+                )
             },
             confirmButton = {
                 TextButton(

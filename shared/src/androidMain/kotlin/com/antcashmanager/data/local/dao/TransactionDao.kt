@@ -42,7 +42,12 @@ interface TransactionDao {
         "UPDATE transactions SET category = :newCategoryName, category_icon = :icon, category_color = :color " +
                 "WHERE category = :oldCategoryName",
     )
-    suspend fun renameCategory(oldCategoryName: String, newCategoryName: String, icon: String, color: Long)
+    suspend fun renameCategory(
+        oldCategoryName: String,
+        newCategoryName: String,
+        icon: String,
+        color: Long
+    )
 
     // Query per suggerimenti transazioni. :since filtra le transazioni con timestamp >= since.
     @Query("SELECT DISTINCT title FROM transactions WHERE title != '' AND timestamp >= :since ORDER BY timestamp DESC LIMIT 20")

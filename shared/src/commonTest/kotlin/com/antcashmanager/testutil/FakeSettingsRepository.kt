@@ -36,9 +36,11 @@ open class FakeSettingsRepository : SettingsRepository {
     val homeDateFilterPreset = MutableStateFlow(1)
     val homeDateFilterState = MutableStateFlow(SavedDateFilter(presetIndex = 1, from = 0L, to = 0L))
     val transactionsDateFilterPreset = MutableStateFlow(1)
-    val transactionsDateFilterState = MutableStateFlow(SavedDateFilter(presetIndex = 1, from = 0L, to = 0L))
+    val transactionsDateFilterState =
+        MutableStateFlow(SavedDateFilter(presetIndex = 1, from = 0L, to = 0L))
     val chartsDateFilterPreset = MutableStateFlow(1)
-    val chartsDateFilterState = MutableStateFlow(SavedDateFilter(presetIndex = 1, from = 0L, to = 0L))
+    val chartsDateFilterState =
+        MutableStateFlow(SavedDateFilter(presetIndex = 1, from = 0L, to = 0L))
     val chartsZoomEnabled = MutableStateFlow(false)
     val showPaymentTypeBreakdown = MutableStateFlow(false)
     val showQuickInsightsCard = MutableStateFlow(true)
@@ -145,7 +147,9 @@ open class FakeSettingsRepository : SettingsRepository {
         transactionsDateFilterPreset.value = index
     }
 
-    override fun getTransactionsDateFilterState(): Flow<SavedDateFilter> = transactionsDateFilterState
+    override fun getTransactionsDateFilterState(): Flow<SavedDateFilter> =
+        transactionsDateFilterState
+
     override suspend fun setTransactionsDateFilterState(filter: SavedDateFilter) {
         transactionsDateFilterState.value = filter
     }

@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.components
+package com.antcashmanager.android.ui.components.overlay
 
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
@@ -55,6 +55,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.button.AppButton
+import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
@@ -199,7 +200,7 @@ fun TutorialOverlay(
                     val contentVisible = !isAnimatedWelcomeStep || welcomeVisible
                     val enterTransition = if (isAnimatedWelcomeStep) {
                         fadeIn(tween(durationMillis = 600)) +
-                            slideInVertically(tween(durationMillis = 600)) { it / 4 }
+                                slideInVertically(tween(durationMillis = 600)) { it / 4 }
                     } else {
                         fadeIn(tween(durationMillis = 0))
                     }
@@ -254,69 +255,77 @@ fun TutorialOverlay(
                         AnimatedVisibility(
                             visible = welcomeVisible,
                             enter = fadeIn(tween(durationMillis = 700, delayMillis = 300)) +
-                                slideInVertically(tween(durationMillis = 700, delayMillis = 300)) { it / 3 },
+                                    slideInVertically(
+                                        tween(
+                                            durationMillis = 700,
+                                            delayMillis = 300
+                                        )
+                                    ) { it / 3 },
                             modifier = Modifier.weight(1f)
                         ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth(descriptionWidthFraction)
-                                .padding(vertical = 4.dp, horizontal = 4.dp),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                        ) {
-                            Surface(
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(24.dp),
-                                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                tonalElevation = 3.dp,
-                                shadowElevation = 2.dp,
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth(descriptionWidthFraction)
+                                    .padding(vertical = 4.dp, horizontal = 4.dp),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(welcomeCardPadding),
-                                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                                Surface(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shape = RoundedCornerShape(24.dp),
+                                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                    tonalElevation = 3.dp,
+                                    shadowElevation = 2.dp,
                                 ) {
-                                    welcomeHighlights.forEachIndexed { index, textRes ->
-                                        Surface(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            shape = RoundedCornerShape(14.dp),
-                                            color = MaterialTheme.colorScheme.surfaceVariant,
-                                        ) {
-                                            Row(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(horizontal = 12.dp, vertical = 10.dp),
-                                                verticalAlignment = Alignment.CenterVertically,
-                                                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(welcomeCardPadding),
+                                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                                    ) {
+                                        welcomeHighlights.forEachIndexed { index, textRes ->
+                                            Surface(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                shape = RoundedCornerShape(14.dp),
+                                                color = MaterialTheme.colorScheme.surfaceVariant,
                                             ) {
-                                                Box(
+                                                Row(
                                                     modifier = Modifier
-                                                        .size(28.dp)
-                                                        .clip(CircleShape)
-                                                        .background(MaterialTheme.colorScheme.primary),
-                                                    contentAlignment = Alignment.Center,
+                                                        .fillMaxWidth()
+                                                        .padding(
+                                                            horizontal = 12.dp,
+                                                            vertical = 10.dp
+                                                        ),
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    horizontalArrangement = Arrangement.spacedBy(10.dp),
                                                 ) {
+                                                    Box(
+                                                        modifier = Modifier
+                                                            .size(28.dp)
+                                                            .clip(CircleShape)
+                                                            .background(MaterialTheme.colorScheme.primary),
+                                                        contentAlignment = Alignment.Center,
+                                                    ) {
+                                                        AppText(
+                                                            text = "${index + 1}",
+                                                            style = MaterialTheme.typography.labelLarge,
+                                                            color = MaterialTheme.colorScheme.onPrimary,
+                                                            fontWeight = FontWeight.Bold,
+                                                        )
+                                                    }
                                                     AppText(
-                                                        text = "${index + 1}",
-                                                        style = MaterialTheme.typography.labelLarge,
-                                                        color = MaterialTheme.colorScheme.onPrimary,
-                                                        fontWeight = FontWeight.Bold,
+                                                        text = stringResource(textRes),
+                                                        style = MaterialTheme.typography.bodyLarge,
+                                                        color = MaterialTheme.colorScheme.onSurface,
+                                                        textAlign = TextAlign.Start,
+                                                        modifier = Modifier.weight(1f),
                                                     )
                                                 }
-                                                AppText(
-                                                    text = stringResource(textRes),
-                                                    style = MaterialTheme.typography.bodyLarge,
-                                                    color = MaterialTheme.colorScheme.onSurface,
-                                                    textAlign = TextAlign.Start,
-                                                    modifier = Modifier.weight(1f),
-                                                )
                                             }
                                         }
                                     }
                                 }
                             }
-                        }
                         } // end AnimatedVisibility welcome highlights
                     }
                 }

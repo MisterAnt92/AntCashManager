@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.components
+package com.antcashmanager.android.ui.components.list
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background

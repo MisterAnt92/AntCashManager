@@ -71,10 +71,15 @@ class LocalDataCipherImpl(
             if (separatorIndex <= 0) return@runCatching value
 
             val ivBytes = Base64.decode(payload.substring(0, separatorIndex), Base64.NO_WRAP)
-            val encryptedBytes = Base64.decode(payload.substring(separatorIndex + 1), Base64.NO_WRAP)
+            val encryptedBytes =
+                Base64.decode(payload.substring(separatorIndex + 1), Base64.NO_WRAP)
 
             val cipher = Cipher.getInstance(TRANSFORMATION).apply {
-                init(Cipher.DECRYPT_MODE, getOrCreateKey(), GCMParameterSpec(GCM_TAG_LENGTH_BITS, ivBytes))
+                init(
+                    Cipher.DECRYPT_MODE,
+                    getOrCreateKey(),
+                    GCMParameterSpec(GCM_TAG_LENGTH_BITS, ivBytes)
+                )
             }
             String(cipher.doFinal(encryptedBytes), Charsets.UTF_8)
         }.getOrElse { error ->
@@ -107,7 +112,8 @@ class LocalDataCipherImpl(
                 return existing
             }
 
-            val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, KEYSTORE_PROVIDER)
+            val keyGenerator =
+                KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, KEYSTORE_PROVIDER)
             val spec = KeyGenParameterSpec.Builder(
                 KEY_ALIAS,
                 KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT,

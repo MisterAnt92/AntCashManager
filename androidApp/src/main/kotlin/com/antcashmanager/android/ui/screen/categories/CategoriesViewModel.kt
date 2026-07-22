@@ -25,7 +25,10 @@ class CategoriesViewModel(
     private val syncTransactionCategoriesUseCase: SyncTransactionCategoriesUseCase,
 ) : ViewModel() {
 
-    constructor(categoryRepository: CategoryRepository, transactionRepository: TransactionRepository) : this(
+    constructor(
+        categoryRepository: CategoryRepository,
+        transactionRepository: TransactionRepository
+    ) : this(
         getCategoriesUseCase = GetCategoriesUseCase(categoryRepository),
         insertCategoryUseCase = InsertCategoryUseCase(categoryRepository),
         updateCategoryUseCase = UpdateCategoryUseCase(categoryRepository),
@@ -53,7 +56,10 @@ class CategoriesViewModel(
                     }
                 }.onFailure { error ->
                     if (error is CancellationException) throw error
-                    Logger.e(throwable = error, tag = "CategoriesViewModel") { "Error loading categories: ${error.message}" }
+                    Logger.e(
+                        throwable = error,
+                        tag = "CategoriesViewModel"
+                    ) { "Error loading categories: ${error.message}" }
                 }
             }
         }
@@ -64,18 +70,27 @@ class CategoriesViewModel(
         // Accoda la nuova categoria in fondo all'ordine esistente per quel tipo, invece di
         // farla comparire in cima con sortOrder = 0 di default.
         val nextSortOrder = (
-            _state.value.categories
-                .filter { it.type == type }
-                .maxOfOrNull { it.sortOrder }
-                ?: -1
-            ) + 1
+                _state.value.categories
+                    .filter { it.type == type }
+                    .maxOfOrNull { it.sortOrder }
+                    ?: -1
+                ) + 1
         viewModelScope.launch {
             val result = insertCategoryUseCase(
-                Category(name = name, icon = icon, color = color, type = type, sortOrder = nextSortOrder),
+                Category(
+                    name = name,
+                    icon = icon,
+                    color = color,
+                    type = type,
+                    sortOrder = nextSortOrder
+                ),
             )
             result.onFailure { error ->
                 if (error is CancellationException) throw error
-                Logger.e(throwable = error, tag = "CategoriesViewModel") { "Failed to insert category: ${error.message}" }
+                Logger.e(
+                    throwable = error,
+                    tag = "CategoriesViewModel"
+                ) { "Failed to insert category: ${error.message}" }
             }
         }
     }
@@ -93,12 +108,18 @@ class CategoriesViewModel(
                         SyncTransactionCategoriesUseCase.Params(oldName, category),
                     ).onFailure { error ->
                         if (error is CancellationException) throw error
-                        Logger.e(throwable = error, tag = "CategoriesViewModel") { "Failed to sync transactions for renamed category: ${error.message}" }
+                        Logger.e(
+                            throwable = error,
+                            tag = "CategoriesViewModel"
+                        ) { "Failed to sync transactions for renamed category: ${error.message}" }
                     }
                 }
             }.onFailure { error ->
                 if (error is CancellationException) throw error
-                Logger.e(throwable = error, tag = "CategoriesViewModel") { "Failed to update category: ${error.message}" }
+                Logger.e(
+                    throwable = error,
+                    tag = "CategoriesViewModel"
+                ) { "Failed to update category: ${error.message}" }
             }
         }
     }
@@ -114,7 +135,10 @@ class CategoriesViewModel(
         viewModelScope.launch {
             updateCategoryUseCase(category.copy(isHidden = hidden)).onFailure { error ->
                 if (error is CancellationException) throw error
-                Logger.e(throwable = error, tag = "CategoriesViewModel") { "Failed to update category visibility: ${error.message}" }
+                Logger.e(
+                    throwable = error,
+                    tag = "CategoriesViewModel"
+                ) { "Failed to update category visibility: ${error.message}" }
             }
         }
     }
@@ -130,7 +154,10 @@ class CategoriesViewModel(
                 if (category.sortOrder != index) {
                     updateCategoryUseCase(category.copy(sortOrder = index)).onFailure { error ->
                         if (error is CancellationException) throw error
-                        Logger.e(throwable = error, tag = "CategoriesViewModel") { "Failed to persist reordered category '${category.name}': ${error.message}" }
+                        Logger.e(
+                            throwable = error,
+                            tag = "CategoriesViewModel"
+                        ) { "Failed to persist reordered category '${category.name}': ${error.message}" }
                     }
                 }
             }
@@ -143,7 +170,10 @@ class CategoriesViewModel(
             val result = deleteCategoryUseCase(category)
             result.onFailure { error ->
                 if (error is CancellationException) throw error
-                Logger.e(throwable = error, tag = "CategoriesViewModel") { "Failed to delete category: ${error.message}" }
+                Logger.e(
+                    throwable = error,
+                    tag = "CategoriesViewModel"
+                ) { "Failed to delete category: ${error.message}" }
             }
         }
     }

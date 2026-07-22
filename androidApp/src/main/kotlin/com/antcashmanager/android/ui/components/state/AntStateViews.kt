@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.components
+package com.antcashmanager.android.ui.components.state
 
 import android.content.res.Configuration
 import androidx.annotation.DrawableRes

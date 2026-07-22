@@ -48,11 +48,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
-import com.antcashmanager.android.ui.components.AppSwitch
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
+import com.antcashmanager.android.ui.components.common.AppSwitch
 import com.antcashmanager.android.ui.components.dialog.BlockingProgressDialog
-import com.antcashmanager.android.ui.components.rememberAdaptiveLayoutInfo
+import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import org.koin.androidx.compose.koinViewModel
@@ -129,7 +129,8 @@ internal fun SettingsDataContent(
 ) {
     val context = LocalContext.current
     val isPreview = LocalInspectionMode.current
-    val filePickerUnavailableMessage = stringResource(R.string.settings_data_file_picker_unavailable)
+    val filePickerUnavailableMessage =
+        stringResource(R.string.settings_data_file_picker_unavailable)
     val analyticsManager: AnalyticsManager = koinInject()
     val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
     val handleDataEncryptionEnabledChange: (Boolean) -> Unit = { enabled ->
@@ -228,10 +229,10 @@ internal fun SettingsDataContent(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(
                     start = innerPadding.calculateStartPadding(LayoutDirection.Ltr) +
-                        SettingsDataConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
+                            SettingsDataConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
                     top = innerPadding.calculateTopPadding() + SettingsDataConstant.CONTENT_TOP_PADDING_DP.dp,
                     end = innerPadding.calculateEndPadding(LayoutDirection.Ltr) +
-                        SettingsDataConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
+                            SettingsDataConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
                     bottom = innerPadding.calculateBottomPadding() + SettingsDataConstant.CONTENT_BOTTOM_PADDING_DP.dp,
                 ),
                 verticalArrangement = Arrangement.spacedBy(SettingsDataConstant.CARD_SPACING_DP.dp),
@@ -280,12 +281,12 @@ internal fun SettingsDataContent(
                     .fillMaxSize()
                     .padding(
                         start = innerPadding.calculateStartPadding(LayoutDirection.Ltr) +
-                            SettingsDataConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
+                                SettingsDataConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
                         top = innerPadding.calculateTopPadding() + SettingsDataConstant.CONTENT_TOP_PADDING_DP.dp,
                         end = innerPadding.calculateEndPadding(LayoutDirection.Ltr) +
-                            SettingsDataConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
+                                SettingsDataConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
                         bottom = innerPadding.calculateBottomPadding() +
-                            SettingsDataConstant.CONTENT_BOTTOM_PADDING_DP.dp,
+                                SettingsDataConstant.CONTENT_BOTTOM_PADDING_DP.dp,
                     )
                     .verticalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(SettingsDataConstant.TABLET_COLUMNS_SPACING_DP.dp),
@@ -681,7 +682,12 @@ private fun SuggestionsSection(
 
 @Preview(showBackground = true)
 @Preview(showBackground = true, name = "SettingsDataScreen - 7 inch", widthDp = 600, heightDp = 960)
-@Preview(showBackground = true, name = "SettingsDataScreen - 10 inch", widthDp = 840, heightDp = 1280)
+@Preview(
+    showBackground = true,
+    name = "SettingsDataScreen - 10 inch",
+    widthDp = 840,
+    heightDp = 1280
+)
 @Composable
 private fun SettingsDataContentPreview() {
     AntCashManagerTheme(dynamicColor = false) {

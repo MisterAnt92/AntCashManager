@@ -102,7 +102,7 @@ class BackupService(
             if (backupData.version > BackupConstants.CURRENT_VERSION) {
                 Logger.w(tag = "BackupService") {
                     "Backup version ${backupData.version} is newer than supported (${BackupConstants.CURRENT_VERSION}); " +
-                        "importing best-effort using only the fields this app version understands."
+                            "importing best-effort using only the fields this app version understands."
                 }
             }
 
@@ -177,7 +177,11 @@ class BackupService(
                     existingCategoriesSnapshot.filterNot { it.isDefault }
                         .forEach { categoryRepository.insertCategory(it) }
                     transactionRepository.deleteAllTransactions()
-                    existingTransactionsSnapshot.forEach { transactionRepository.insertTransaction(it) }
+                    existingTransactionsSnapshot.forEach {
+                        transactionRepository.insertTransaction(
+                            it
+                        )
+                    }
                 }.onFailure { rollbackError ->
                     Logger.e(tag = "BackupService") { "Rollback also failed — data may be inconsistent: ${rollbackError.message}" }
                 }
@@ -240,7 +244,8 @@ class BackupService(
         showQuickInsightsCard = settingsRepository.getShowQuickInsightsCard().first(),
         showInitialAnimation = settingsRepository.getShowInitialAnimation().first(),
         transactionDisplayType = settingsRepository.getTransactionDisplayType().first().name,
-        transactionsTransactionDisplayType = settingsRepository.getTransactionsTransactionDisplayType().first().name,
+        transactionsTransactionDisplayType = settingsRepository.getTransactionsTransactionDisplayType()
+            .first().name,
         currencySymbol = settingsRepository.getCurrencySymbol().first(),
         decimalDigits = settingsRepository.getDecimalDigits().first(),
         decimalSeparator = settingsRepository.getDecimalSeparator().first(),
@@ -270,7 +275,10 @@ class BackupService(
             enumValueOfOrDefault(settings.transactionDisplayType, TransactionDisplayType.TREND),
         )
         settingsRepository.setTransactionsTransactionDisplayType(
-            enumValueOfOrDefault(settings.transactionsTransactionDisplayType, TransactionDisplayType.TREND),
+            enumValueOfOrDefault(
+                settings.transactionsTransactionDisplayType,
+                TransactionDisplayType.TREND
+            ),
         )
         settingsRepository.setCurrencySymbol(settings.currencySymbol)
         settingsRepository.setDecimalDigits(settings.decimalDigits)

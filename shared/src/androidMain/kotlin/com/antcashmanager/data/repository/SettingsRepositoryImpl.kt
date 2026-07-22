@@ -58,7 +58,8 @@ class SettingsRepositoryImpl(
     private val transactionsTransactionDisplayTypeKey =
         stringPreferencesKey("transactions_transaction_display_type")
     private val isTutorialCompletedKey = booleanPreferencesKey("is_tutorial_completed")
-    private val categorySortOrderInitializedKey = booleanPreferencesKey("category_sort_order_initialized")
+    private val categorySortOrderInitializedKey =
+        booleanPreferencesKey("category_sort_order_initialized")
     private val dataEncryptionEnabledKey = booleanPreferencesKey("data_encryption_enabled")
     private val showInitialAnimationKey = booleanPreferencesKey("show_initial_animation")
     private val lastBackupTimestampKey = longPreferencesKey("last_backup_timestamp")
@@ -68,7 +69,10 @@ class SettingsRepositoryImpl(
     private val widgetBackgroundColorKey = longPreferencesKey("widget_background_color")
     private val widgetOpacityKey = intPreferencesKey("widget_opacity")
 
-    private fun createSavedDateFilter(defaultPresetIndex: Int, defaultDurationMs: Long): SavedDateFilter {
+    private fun createSavedDateFilter(
+        defaultPresetIndex: Int,
+        defaultDurationMs: Long
+    ): SavedDateFilter {
         val now = System.currentTimeMillis()
         return SavedDateFilter(
             presetIndex = defaultPresetIndex,

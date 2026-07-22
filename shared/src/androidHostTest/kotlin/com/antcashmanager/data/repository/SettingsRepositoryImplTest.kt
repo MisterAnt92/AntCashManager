@@ -105,7 +105,13 @@ class SettingsRepositoryImplTest {
 
     @Test
     fun setHomeDateFilterState_shouldNormalizeFromAndTo_whenFromIsAfterTo() = runTest {
-        repository.setHomeDateFilterState(SavedDateFilter(presetIndex = 2, from = 2000L, to = 1000L))
+        repository.setHomeDateFilterState(
+            SavedDateFilter(
+                presetIndex = 2,
+                from = 2000L,
+                to = 1000L
+            )
+        )
 
         val filter = repository.getHomeDateFilterState().first()
         assertEquals(1000L, filter.from)
@@ -135,22 +141,27 @@ class SettingsRepositoryImplTest {
     }
 
     @Test
-    fun getChartsDateFilterState_shouldReturnDefaultWithMonthDuration_whenNothingStored() = runTest {
-        val homeFilter = repository.getHomeDateFilterState().first()
-        val chartsFilter = repository.getChartsDateFilterState().first()
+    fun getChartsDateFilterState_shouldReturnDefaultWithMonthDuration_whenNothingStored() =
+        runTest {
+            val homeFilter = repository.getHomeDateFilterState().first()
+            val chartsFilter = repository.getChartsDateFilterState().first()
 
-        val homeDuration = homeFilter.to - homeFilter.from
-        val chartsDuration = chartsFilter.to - chartsFilter.from
-        assertTrue("Charts default duration should be longer than Home's", chartsDuration > homeDuration)
-    }
+            val homeDuration = homeFilter.to - homeFilter.from
+            val chartsDuration = chartsFilter.to - chartsFilter.from
+            assertTrue(
+                "Charts default duration should be longer than Home's",
+                chartsDuration > homeDuration
+            )
+        }
 
     @Test
-    fun setDataEncryptionEnabled_shouldPersistFlagAndNotifyEncryptionManager_whenEnabled() = runTest {
-        repository.setDataEncryptionEnabled(true)
+    fun setDataEncryptionEnabled_shouldPersistFlagAndNotifyEncryptionManager_whenEnabled() =
+        runTest {
+            repository.setDataEncryptionEnabled(true)
 
-        assertEquals(true, repository.getDataEncryptionEnabled().first())
-        verify(exactly = 1) { DatabaseEncryptionManager.setEncryptionDesired(context, true) }
-    }
+            assertEquals(true, repository.getDataEncryptionEnabled().first())
+            verify(exactly = 1) { DatabaseEncryptionManager.setEncryptionDesired(context, true) }
+        }
 
     @Test
     fun resetAllPreferences_shouldRestoreAllDefaultsAndDisableEncryption_whenCalled() = runTest {

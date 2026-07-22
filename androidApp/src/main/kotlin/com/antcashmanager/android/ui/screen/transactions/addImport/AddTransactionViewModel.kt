@@ -289,6 +289,7 @@ class AddTransactionViewModel(
             is AddTransactionEvent.UpdateMealVoucherCount -> {
                 _state.update { it.copy(mealVoucherCount = event.count) }
             }
+
             is AddTransactionEvent.UpdateTimestamp -> _state.update { it.copy(timestamp = event.timestamp) }
             is AddTransactionEvent.SetRecurring -> _state.update { it.copy(isRecurring = event.isRecurring) }
             is AddTransactionEvent.UpdateRecurrenceInterval -> _state.update {
@@ -454,7 +455,10 @@ class AddTransactionViewModel(
                         _state.update { it.copy(isTransactionSaved = true, isLoading = false) }
                     }.onFailure { error ->
                         if (error is CancellationException) throw error
-                        Logger.e(throwable = error, tag = AddTransactionConstant.TAG) { "Error updating transaction" }
+                        Logger.e(
+                            throwable = error,
+                            tag = AddTransactionConstant.TAG
+                        ) { "Error updating transaction" }
                         _state.update {
                             it.copy(
                                 error = AddTransactionConstant.ERROR_SAVE,
@@ -469,7 +473,10 @@ class AddTransactionViewModel(
                         _state.update { it.copy(isTransactionSaved = true, isLoading = false) }
                     }.onFailure { error ->
                         if (error is CancellationException) throw error
-                        Logger.e(throwable = error, tag = AddTransactionConstant.TAG) { "Error inserting transaction" }
+                        Logger.e(
+                            throwable = error,
+                            tag = AddTransactionConstant.TAG
+                        ) { "Error inserting transaction" }
                         _state.update {
                             it.copy(
                                 error = AddTransactionConstant.ERROR_SAVE,
@@ -514,7 +521,10 @@ class AddTransactionViewModel(
                         }
                     }.onFailure { error ->
                         if (error is CancellationException) throw error
-                        Logger.e(throwable = error, tag = AddTransactionConstant.TAG) { "Error deleting transaction" }
+                        Logger.e(
+                            throwable = error,
+                            tag = AddTransactionConstant.TAG
+                        ) { "Error deleting transaction" }
                         _state.update {
                             it.copy(
                                 error = AddTransactionConstant.ERROR_DELETE,

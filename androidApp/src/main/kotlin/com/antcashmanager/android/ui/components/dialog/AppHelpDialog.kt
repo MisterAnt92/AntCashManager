@@ -10,8 +10,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.antcashmanager.android.R
-import com.antcashmanager.android.ui.components.HelpDialogContent
-import com.antcashmanager.android.ui.components.SimpleHelpFeature
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 /**

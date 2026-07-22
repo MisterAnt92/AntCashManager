@@ -63,7 +63,8 @@ fun BlockingProgressDialog(
                     .widthIn(min = 220.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                val infiniteTransition = rememberInfiniteTransition(label = "blocking_progress_bounce")
+                val infiniteTransition =
+                    rememberInfiniteTransition(label = "blocking_progress_bounce")
                 val bounce by infiniteTransition.animateFloat(
                     initialValue = 0f,
                     targetValue = 2f * PI.toFloat(),

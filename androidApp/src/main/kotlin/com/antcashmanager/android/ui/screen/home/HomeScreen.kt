@@ -53,14 +53,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
-import com.antcashmanager.android.ui.components.AntEmptyState
-import com.antcashmanager.android.ui.components.DateRangeFilter
-import com.antcashmanager.android.ui.components.HelpButton
-import com.antcashmanager.android.ui.components.SearchComponent
-import com.antcashmanager.android.ui.components.TutorialOverlay
-import com.antcashmanager.android.ui.components.rememberAdaptiveLayoutInfo
+import com.antcashmanager.android.ui.components.dialog.HelpButton
+import com.antcashmanager.android.ui.components.filter.DateRangeFilter
+import com.antcashmanager.android.ui.components.filter.SearchComponent
+import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
+import com.antcashmanager.android.ui.components.overlay.TutorialOverlay
+import com.antcashmanager.android.ui.components.state.AntEmptyState
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.home.model.HomeTopCardType
+import com.antcashmanager.android.ui.screen.home.transactionDetail.TransactionDetailsDialog
 import com.antcashmanager.android.ui.screen.home.view.BalanceCard
 import com.antcashmanager.android.ui.screen.home.view.HelpDialog
 import com.antcashmanager.android.ui.screen.home.view.HomeTopCardsOrderDialog
@@ -68,7 +69,6 @@ import com.antcashmanager.android.ui.screen.home.view.IncomeExpenseRow
 import com.antcashmanager.android.ui.screen.home.view.LoadingState
 import com.antcashmanager.android.ui.screen.home.view.QuickInsightsCard
 import com.antcashmanager.android.ui.screen.home.view.RecentTransactionItem
-import com.antcashmanager.android.ui.screen.home.transactionDetail.TransactionDetailsDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.SavedDateFilter
@@ -625,27 +625,34 @@ class MockHomeSettingsRepository : SettingsRepository {
 
     override fun getCategorySortOrderInitialized(): kotlinx.coroutines.flow.Flow<Boolean> =
         kotlinx.coroutines.flow.flowOf(true)
+
     override suspend fun setCategorySortOrderInitialized(initialized: Boolean) {}
 
     override fun getLastBackupTimestamp(): kotlinx.coroutines.flow.Flow<Long?> =
         kotlinx.coroutines.flow.flowOf(null)
+
     override suspend fun setLastBackupTimestamp(timestamp: Long) {}
     override fun getLastRestoreTimestamp(): kotlinx.coroutines.flow.Flow<Long?> =
         kotlinx.coroutines.flow.flowOf(null)
+
     override suspend fun setLastRestoreTimestamp(timestamp: Long) {}
 
     override fun getSuggestionsEnabled(): kotlinx.coroutines.flow.Flow<Boolean> =
         kotlinx.coroutines.flow.flowOf(true)
+
     override suspend fun setSuggestionsEnabled(enabled: Boolean) {}
     override fun getSuggestionsClearedAt(): kotlinx.coroutines.flow.Flow<Long?> =
         kotlinx.coroutines.flow.flowOf(null)
+
     override suspend fun setSuggestionsClearedAt(timestamp: Long) {}
 
     override fun getWidgetBackgroundColor(): kotlinx.coroutines.flow.Flow<Long> =
         kotlinx.coroutines.flow.flowOf(0xFFFFFFFFL)
+
     override suspend fun setWidgetBackgroundColor(color: Long) {}
     override fun getWidgetOpacity(): kotlinx.coroutines.flow.Flow<Int> =
         kotlinx.coroutines.flow.flowOf(100)
+
     override suspend fun setWidgetOpacity(opacity: Int) {}
 
     override suspend fun resetAllPreferences() {}

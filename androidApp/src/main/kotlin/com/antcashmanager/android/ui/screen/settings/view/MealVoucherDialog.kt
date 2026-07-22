@@ -73,9 +73,11 @@ fun MealVoucherDialog(
                         parsed == null -> {
                             errorMessage = "Valore non valido"
                         }
+
                         parsed <= 0.0 -> {
                             errorMessage = "Il valore deve essere maggiore di 0"
                         }
+
                         else -> {
                             onConfirm(parsed)
                         }

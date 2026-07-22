@@ -66,11 +66,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
-import com.antcashmanager.android.ui.components.AppSlider
-import com.antcashmanager.android.ui.components.AppSwitch
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
-import com.antcashmanager.android.ui.components.rememberAdaptiveLayoutInfo
+import com.antcashmanager.android.ui.components.common.AppSlider
+import com.antcashmanager.android.ui.components.common.AppSwitch
+import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.settings.view.CurrencySymbolDialog
 import com.antcashmanager.android.ui.screen.settings.view.DateFormatDialog
@@ -278,10 +278,10 @@ internal fun DisplayContent(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(
                     start = innerPadding.calculateStartPadding(LayoutDirection.Ltr) +
-                        DisplayConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
+                            DisplayConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
                     top = innerPadding.calculateTopPadding() + DisplayConstant.CONTENT_TOP_PADDING_DP.dp,
                     end = innerPadding.calculateEndPadding(LayoutDirection.Ltr) +
-                        DisplayConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
+                            DisplayConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
                     bottom = innerPadding.calculateBottomPadding() + DisplayConstant.CONTENT_BOTTOM_PADDING_DP.dp,
                 ),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -348,7 +348,9 @@ internal fun DisplayContent(
                 item {
                     WidgetsDisplaySection(
                         widgetBackgroundColor = widgetBackgroundColor,
-                        onShowWidgetBackgroundColorDialog = { showWidgetBackgroundColorDialog = true },
+                        onShowWidgetBackgroundColorDialog = {
+                            showWidgetBackgroundColorDialog = true
+                        },
                         widgetOpacity = widgetOpacity,
                         onWidgetOpacityChanged = handleWidgetOpacityChanged,
                     )
@@ -362,10 +364,10 @@ internal fun DisplayContent(
                     .fillMaxSize()
                     .padding(
                         start = innerPadding.calculateStartPadding(LayoutDirection.Ltr) +
-                            DisplayConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
+                                DisplayConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
                         top = innerPadding.calculateTopPadding() + DisplayConstant.CONTENT_TOP_PADDING_DP.dp,
                         end = innerPadding.calculateEndPadding(LayoutDirection.Ltr) +
-                            DisplayConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
+                                DisplayConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
                         bottom = innerPadding.calculateBottomPadding() + DisplayConstant.CONTENT_BOTTOM_PADDING_DP.dp,
                     )
                     .verticalScroll(rememberScrollState()),
@@ -424,7 +426,9 @@ internal fun DisplayContent(
                     )
                     WidgetsDisplaySection(
                         widgetBackgroundColor = widgetBackgroundColor,
-                        onShowWidgetBackgroundColorDialog = { showWidgetBackgroundColorDialog = true },
+                        onShowWidgetBackgroundColorDialog = {
+                            showWidgetBackgroundColorDialog = true
+                        },
                         widgetOpacity = widgetOpacity,
                         onWidgetOpacityChanged = handleWidgetOpacityChanged,
                     )
@@ -1001,9 +1005,17 @@ private fun WidgetPreviewMock(backgroundColor: Long, opacity: Int) {
                                     .background(Color(color)),
                             )
                             Spacer(modifier = Modifier.width(6.dp))
-                            AppText(text = label, style = MaterialTheme.typography.labelSmall, color = primaryText)
+                            AppText(
+                                text = label,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = primaryText
+                            )
                         }
-                        AppText(text = amount, style = MaterialTheme.typography.labelSmall, color = secondaryText)
+                        AppText(
+                            text = amount,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = secondaryText
+                        )
                     }
                 }
             }

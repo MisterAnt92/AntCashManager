@@ -255,7 +255,10 @@ class ReceiptScanViewModel(
                 }
                 .onFailure { error ->
                     if (error is CancellationException) throw error
-                    Logger.e(throwable = error, tag = ReceiptScanConstant.TAG) { "Failed to save transaction" }
+                    Logger.e(
+                        throwable = error,
+                        tag = ReceiptScanConstant.TAG
+                    ) { "Failed to save transaction" }
                     _state.update {
                         it.copy(
                             isLoading = false,
@@ -320,7 +323,10 @@ class ReceiptScanViewModel(
             getCategoriesUseCase().collect { result ->
                 result.onSuccess { categories ->
                     val expenseCategories = categories.filter {
-                        it.type.equals(ReceiptScanConstant.EXPENSE_TYPE, ignoreCase = true) && !it.isHidden
+                        it.type.equals(
+                            ReceiptScanConstant.EXPENSE_TYPE,
+                            ignoreCase = true
+                        ) && !it.isHidden
                     }
                     _state.update { current ->
                         current.copy(
@@ -331,7 +337,10 @@ class ReceiptScanViewModel(
                     }
                 }.onFailure { error ->
                     if (error is CancellationException) throw error
-                    Logger.e(throwable = error, tag = ReceiptScanConstant.TAG) { "Failed to load categories" }
+                    Logger.e(
+                        throwable = error,
+                        tag = ReceiptScanConstant.TAG
+                    ) { "Failed to load categories" }
                 }
             }
         }

@@ -136,16 +136,17 @@ class GetTransactionSuggestionsUseCaseTest {
     }
 
     @Test
-    fun invoke_shouldQuerySinceClearedTimestamp_whenSuggestionsClearedAtIsSet() = runTest(testDispatcher) {
-        // Given
-        settingsRepository.suggestionsClearedAt.value = 5_000L
+    fun invoke_shouldQuerySinceClearedTimestamp_whenSuggestionsClearedAtIsSet() =
+        runTest(testDispatcher) {
+            // Given
+            settingsRepository.suggestionsClearedAt.value = 5_000L
 
-        // When
-        useCase().first()
+            // When
+            useCase().first()
 
-        // Then
-        assertEquals(5_000L, repository.lastSinceRequested)
-    }
+            // Then
+            assertEquals(5_000L, repository.lastSinceRequested)
+        }
 }
 
 /**
@@ -164,6 +165,7 @@ private class FakeSuggestionsTransactionRepository : FakeTransactionRepository()
         lastSinceRequested = since
         return flowOf(titlesToReturn)
     }
+
     override fun getDistinctPayees(since: Long): Flow<List<String>> = flowOf(payeesToReturn)
     override fun getDistinctNotes(since: Long): Flow<List<String>> = flowOf(notesToReturn)
     override fun getDistinctLocations(since: Long): Flow<List<String>> = flowOf(locationsToReturn)

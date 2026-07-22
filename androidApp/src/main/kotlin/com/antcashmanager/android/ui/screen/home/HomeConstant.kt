@@ -26,6 +26,7 @@ object HomeConstant {
     const val THREE_YEARS_MS = 3L * ONE_YEAR_MS
     const val FIVE_YEARS_MS = 5L * ONE_YEAR_MS
     const val SIX_YEARS_MS = 6L * ONE_YEAR_MS
+
     // Copre praticamente qualunque storico realistico di transazioni personali.
     const val ALL_TIME_MS = 50L * ONE_YEAR_MS
     const val DEFAULT_PRESET_INDEX = 1
