@@ -50,6 +50,8 @@ fun AntEmptyState(
     modifier: Modifier = Modifier,
     subtitle: String? = null,
     mascotSize: Dp = 96.dp,
+    actionLabel: String? = null,
+    onAction: (() -> Unit)? = null,
 ) {
     val reduceMotion = LocalReduceMotion.current
     var visible by remember { mutableStateOf(reduceMotion) }
@@ -92,6 +94,12 @@ fun AntEmptyState(
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                     textAlign = TextAlign.Center,
                 )
+            }
+            if (actionLabel != null && onAction != null) {
+                Spacer(modifier = Modifier.height(16.dp))
+                OutlinedButton(onClick = onAction) {
+                    AppText(actionLabel)
+                }
             }
         }
     }

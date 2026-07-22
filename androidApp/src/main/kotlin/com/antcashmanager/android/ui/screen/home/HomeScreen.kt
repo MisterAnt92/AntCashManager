@@ -473,7 +473,14 @@ internal fun HomeContent(
                             SearchComponent(
                                 isVisible = state.isSearchExpanded,
                                 searchQuery = state.searchQuery,
-                                onSearchQueryChange = { onEvent(HomeEvent.UpdateSearchQuery(it)) },
+                                onSearchQueryChange = { newQuery ->
+                                    if (newQuery.isNotEmpty() && state.searchQuery.isEmpty()) {
+                                        analyticsManager.logEvent("home_search_submitted")
+                                    } else if (newQuery.isEmpty() && state.searchQuery.isNotEmpty()) {
+                                        analyticsManager.logEvent("home_search_cleared")
+                                    }
+                                    onEvent(HomeEvent.UpdateSearchQuery(newQuery))
+                                },
                                 searchSuggestions = state.searchSuggestions,
                             )
                         }

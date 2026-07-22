@@ -2,7 +2,9 @@ package com.antcashmanager.android.ui.screen.receiptScan
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import android.os.Bundle
 import co.touchlab.kermit.Logger
+import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.ReceiptData
@@ -42,6 +44,7 @@ class ReceiptScanViewModel(
     private val createTransactionUseCase: CreateTransactionFromReceiptUseCase,
     private val getCategoriesUseCase: GetCategoriesUseCase,
     private val getTransactionSuggestionsUseCase: GetTransactionSuggestionsUseCase,
+    private val analyticsManager: AnalyticsManager,
 ) : ViewModel() {
 
     constructor(
@@ -49,6 +52,7 @@ class ReceiptScanViewModel(
         transactionRepository: TransactionRepository,
         categoryRepository: CategoryRepository,
         settingsRepository: com.antcashmanager.domain.repository.SettingsRepository,
+        analyticsManager: AnalyticsManager,
         dispatcher: CoroutineDispatcher = Dispatchers.Default,
     ) : this(
         scanReceiptUseCase = scanReceiptUseCase,
@@ -65,6 +69,7 @@ class ReceiptScanViewModel(
             settingsRepository = settingsRepository,
             dispatcher = dispatcher,
         ),
+        analyticsManager = analyticsManager,
     )
 
     // ── State ─────────────────────────────────────────────────────────────────
@@ -130,6 +135,9 @@ class ReceiptScanViewModel(
                 .onFailure { error ->
                     if (error is CancellationException) throw error
                     Logger.e(throwable = error, tag = ReceiptScanConstant.TAG) { "Scan failed" }
+                    analyticsManager.logEvent("receipt_scan_failed", Bundle().apply {
+                        putString("failure_reason", error.message?.take(40) ?: "unknown")
+                    })
                     _state.update {
                         it.copy(
                             step = ReceiptScanStep.CAPTURE,
@@ -232,6 +240,7 @@ class ReceiptScanViewModel(
                 Logger.d(tag = ReceiptScanConstant.TAG) {
                     "Amount edited by user: ${receipt.totalAmount} → ${current.editedAmount}"
                 }
+                analyticsManager.logEvent("receipt_scan_manual_entry")
             }
 
             val params = CreateTransactionFromReceiptParams(
