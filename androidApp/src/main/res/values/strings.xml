@@ -502,7 +502,7 @@
     <!-- Receipt Scan Screen -->
     <string name="receipt_scan_title">Scan Receipt</string>
     <string name="receipt_scan_capture_hint">Take a photo of your receipt or pick one from the gallery to automatically extract amount, VAT, payee and location.</string>
-    <string name="receipt_scan_take_photo">Take Photo</string>
+    <string name="receipt_scan_take_photo">Take a Photo</string>
     <string name="receipt_scan_pick_gallery">Pick from Gallery</string>
     <string name="receipt_scan_processing">Analysing receipt…</string>
     <string name="receipt_scan_total_label">Extracted Total</string>

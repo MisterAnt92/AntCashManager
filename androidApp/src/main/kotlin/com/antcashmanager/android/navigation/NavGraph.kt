@@ -41,6 +41,7 @@ import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.animation.AntSplashScreen
 import com.antcashmanager.android.ui.components.dialog.AppExitConfirmationDialog
 import com.antcashmanager.android.ui.components.layout.AntScreenScaffold
+import com.antcashmanager.android.ui.components.navigation.AnimatedNavigationBarItem
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.categories.view.CategoriesScreen
@@ -147,21 +148,7 @@ fun AntCashManagerNavHost() {
                         ) {
                             visibleNavItems.forEach { item ->
                                 val isSelected = currentDestination?.hierarchy?.any { it.route == item.route } == true
-                                NavigationBarItem(
-                                    icon = {
-                                        Icon(
-                                            item.icon,
-                                            contentDescription = stringResource(item.titleResId)
-                                        )
-                                    },
-                                    label = {
-                                        AppText(
-                                            stringResource(item.titleResId),
-                                            style = MaterialTheme.typography.labelSmall,
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis,
-                                        )
-                                    },
+                                AnimatedNavigationBarItem(
                                     selected = isSelected,
                                     onClick = {
                                         navController.navigate(item.route) {
@@ -172,6 +159,8 @@ fun AntCashManagerNavHost() {
                                             restoreState = true
                                         }
                                     },
+                                    icon = item.icon,
+                                    label = stringResource(item.titleResId),
                                     colors = NavigationBarItemDefaults.colors(
                                         selectedIconColor = MaterialTheme.colorScheme.primary,
                                         selectedTextColor = MaterialTheme.colorScheme.primary,
