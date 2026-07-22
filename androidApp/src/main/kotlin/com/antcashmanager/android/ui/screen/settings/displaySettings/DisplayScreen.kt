@@ -33,6 +33,7 @@ import androidx.compose.material.icons.filled.Opacity
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Payment
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material.icons.filled.TipsAndUpdates
 import androidx.compose.material.icons.filled.Visibility
@@ -60,6 +61,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -548,7 +550,7 @@ internal fun DisplayContent(
     if (showDecimalSeparatorDialog) {
         SeparatorDialog(
             title = stringResource(R.string.dialog_choose_decimal_separator),
-            options = CurrencyFormat.DECIMAL_SEPARATORS.filter { it.first != thousandsSeparator },
+            options = translateSeparatorOptions(CurrencyFormat.DECIMAL_SEPARATORS.filter { it.first != thousandsSeparator }),
             currentValue = decimalSeparator,
             onSelected = handleDecimalSeparatorSelected,
             onDismiss = dismissDecimalSeparator,
@@ -558,7 +560,7 @@ internal fun DisplayContent(
     if (showThousandsSeparatorDialog) {
         SeparatorDialog(
             title = stringResource(R.string.dialog_choose_thousands_separator),
-            options = CurrencyFormat.THOUSANDS_SEPARATORS.filter { it.first != decimalSeparator },
+            options = translateSeparatorOptions(CurrencyFormat.THOUSANDS_SEPARATORS.filter { it.first != decimalSeparator }),
             currentValue = thousandsSeparator,
             onSelected = handleThousandsSeparatorSelected,
             onDismiss = dismissThousandsSeparator,
@@ -608,13 +610,16 @@ internal fun DisplayContent(
 
 @Composable
 private fun separatorLabel(value: String, isThou: Boolean): String {
-    val options =
-        if (isThou) CurrencyFormat.THOUSANDS_SEPARATORS else CurrencyFormat.DECIMAL_SEPARATORS
-    return options.find { it.first == value }?.second ?: when (value) {
-        "," -> stringResource(R.string.settings_separator_comma)
-        "." -> stringResource(R.string.settings_separator_period)
-        " " -> stringResource(R.string.settings_separator_space)
-        "" -> stringResource(R.string.settings_separator_none)
+    val comma = stringResource(R.string.settings_separator_comma)
+    val period = stringResource(R.string.settings_separator_period)
+    val space = stringResource(R.string.settings_separator_space)
+    val none = stringResource(R.string.settings_separator_none)
+
+    return when (value) {
+        "," -> comma
+        "." -> period
+        " " -> space
+        "" -> none
         else -> value
     }
 }
@@ -664,6 +669,36 @@ private fun CurrencySection(
             leadingIcon = Icons.Default.MoreHoriz,
             onClick = onShowThousandsSeparatorDialog,
         )
+    }
+
+    Spacer(modifier = Modifier.height(8.dp))
+
+    Column(
+        modifier = Modifier.padding(horizontal = 16.dp),
+    ) {
+        AppText(
+            text = stringResource(R.string.settings_format_preview),
+            style = MaterialTheme.typography.labelSmall,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(bottom = 4.dp),
+        )
+
+        AppText(
+            text = formatAmount(
+                1234567.89,
+                CurrencyFormat(
+                    currencySymbol = currencySymbol,
+                    decimalDigits = decimalDigits,
+                    decimalSeparator = decimalSeparator,
+                    thousandsSeparator = thousandsSeparator,
+                ),
+            ),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.primary,
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         AppCard(
             title = stringResource(R.string.settings_meal_voucher_value),
@@ -683,24 +718,6 @@ private fun CurrencySection(
             onClick = onShowMealVoucherDialog,
         )
     }
-
-    AppText(
-        text = stringResource(
-            R.string.settings_format_preview,
-            formatAmount(
-                1234567.89,
-                CurrencyFormat(
-                    currencySymbol = currencySymbol,
-                    decimalDigits = decimalDigits,
-                    decimalSeparator = decimalSeparator,
-                    thousandsSeparator = thousandsSeparator,
-                ),
-            ),
-        ),
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.padding(start = 4.dp, top = 2.dp, bottom = 8.dp),
-    )
 }
 
 @Composable
@@ -802,14 +819,13 @@ private fun HomeDisplaySection(
 
         AppCard(
             title = stringResource(R.string.settings_transaction_display),
-            subtitle = when (transactionDisplayType) {
-                TransactionDisplayType.TREND -> stringResource(R.string.settings_transaction_display_trend)
-                TransactionDisplayType.CATEGORY -> stringResource(R.string.settings_transaction_display_category)
-                TransactionDisplayType.NONE -> stringResource(R.string.settings_transaction_display_none)
-            },
+            subtitle = stringResource(R.string.settings_transaction_display_desc),
             leadingIcon = Icons.Default.Visibility,
             onClick = onShowTransactionDisplayDialog,
         )
+
+        Spacer(modifier = Modifier.height(12.dp))
+        TransactionDisplayPreviewHome(transactionDisplayType)
     }
 }
 
@@ -823,14 +839,175 @@ private fun TransactionsDisplaySection(
 
     AppCard(
         title = stringResource(R.string.settings_transaction_display),
-        subtitle = when (transactionDisplayType) {
-            TransactionDisplayType.TREND -> stringResource(R.string.settings_transaction_display_trend)
-            TransactionDisplayType.CATEGORY -> stringResource(R.string.settings_transaction_display_category)
-            TransactionDisplayType.NONE -> stringResource(R.string.settings_transaction_display_none)
-        },
+        subtitle = stringResource(R.string.settings_transaction_display_desc),
         leadingIcon = Icons.Default.Visibility,
         onClick = onShowTransactionDisplayDialog,
     )
+
+    Spacer(modifier = Modifier.height(12.dp))
+    TransactionDisplayPreview(transactionDisplayType)
+}
+
+@Composable
+private fun TransactionDisplayPreviewHome(displayType: TransactionDisplayType) {
+    TransactionDisplayPreview(displayType)
+}
+
+@Composable
+private fun TransactionDisplayPreview(displayType: TransactionDisplayType) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        AppText(
+            text = stringResource(R.string.common_preview),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.primary,
+        )
+
+        when (displayType) {
+            TransactionDisplayType.TREND -> {
+                TrendPreviewCard()
+            }
+            TransactionDisplayType.CATEGORY -> {
+                CategoryPreviewCard()
+            }
+            TransactionDisplayType.NONE -> {
+                NoIconPreviewCard()
+            }
+        }
+    }
+}
+
+@Composable
+private fun TrendPreviewCard() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outlineVariant,
+                shape = RoundedCornerShape(12.dp)
+            )
+            .padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        AppText(
+            text = stringResource(R.string.settings_transaction_display_trend_desc),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontWeight = FontWeight.SemiBold,
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(32.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary),
+                contentAlignment = Alignment.Center
+            ) {
+                AppText("↑", color = MaterialTheme.colorScheme.onPrimary, style = MaterialTheme.typography.headlineSmall)
+            }
+            AppText("Income +€50,00", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(32.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.error),
+                contentAlignment = Alignment.Center
+            ) {
+                AppText("↓", color = MaterialTheme.colorScheme.onError, style = MaterialTheme.typography.headlineSmall)
+            }
+            AppText("Expense -€15,00", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
+        }
+    }
+}
+
+@Composable
+private fun CategoryPreviewCard() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outlineVariant,
+                shape = RoundedCornerShape(12.dp)
+            )
+            .padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        AppText(
+            text = stringResource(R.string.settings_transaction_display_category_desc),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontWeight = FontWeight.SemiBold,
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Icon(Icons.Default.MonetizationOn, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(32.dp))
+            AppText("Salary +€2500,00", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Icon(Icons.Default.Restaurant, contentDescription = null, tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(32.dp))
+            AppText("Restaurant -€25,00", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
+        }
+    }
+}
+
+@Composable
+private fun NoIconPreviewCard() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outlineVariant,
+                shape = RoundedCornerShape(12.dp)
+            )
+            .padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        AppText(
+            text = stringResource(R.string.settings_transaction_display_none_desc),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontWeight = FontWeight.SemiBold,
+        )
+
+        Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            AppText("Income +€2500,00", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
+            AppText("Expense -€25,00", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
+        }
+    }
 }
 
 @Composable
@@ -875,18 +1052,6 @@ private fun OtherSection(
                 )
             },
             onClick = { onMaskAmountsChanged(!maskAmounts) },
-        )
-
-        AppText(
-            text = stringResource(
-                R.string.settings_mask_amounts_preview,
-                formatAmount(1234.56, CurrencyFormat.DEFAULT).let {
-                    if (maskAmounts) maskDigits(it) else it
-                },
-            ),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(start = 4.dp, top = 2.dp, bottom = 4.dp),
         )
 
         AppCard(
@@ -1070,6 +1235,24 @@ private fun isColorPerceptuallyLight(color: Long): Boolean {
     val b = (color and 0xFF) / 255f
     val luminance = 0.299f * r + 0.587f * g + 0.114f * b
     return luminance >= 0.5f
+}
+
+@Composable
+fun translateSeparatorOptions(options: List<Pair<String, String>>): List<Pair<String, String>> {
+    val comma = stringResource(R.string.settings_separator_comma)
+    val period = stringResource(R.string.settings_separator_period)
+    val space = stringResource(R.string.settings_separator_space)
+    val none = stringResource(R.string.settings_separator_none)
+
+    return options.map { (value, label) ->
+        value to when (label) {
+            "Comma (,)" -> comma
+            "Period (.)" -> period
+            "Space" -> space
+            "None" -> none
+            else -> label
+        }
+    }
 }
 
 // Dialog implementations moved to SettingsDialogs.kt

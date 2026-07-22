@@ -10,6 +10,7 @@
     <string name="common_expenses">Uscite</string>
     <string name="common_back">Indietro</string>
     <string name="common_add">Aggiungi</string>
+    <string name="common_preview">Anteprima</string>
     <string name="help_dashboard_desc">Visualizza il saldo totale, entrate e uscite nel periodo selezionato.</string>
     <string name="help_features_label">Caratteristiche:</string>
     <string name="common_help">Aiuto</string>
@@ -212,7 +213,7 @@
     <string name="dialog_meal_voucher_title">Imposta Valore Buono Pasto</string>
     <string name="dialog_meal_voucher_message">Inserisci il valore fisso del tuo buono pasto.</string>
     <string name="dialog_meal_voucher_label">Valore Buono</string>
-    <string name="settings_format_preview">Anteprima: %s</string>
+    <string name="settings_format_preview">Anteprima:</string>
     <string name="settings_separator_comma">Virgola (,)</string>
     <string name="settings_separator_period">Punto (.)</string>
     <string name="settings_separator_space">Spazio</string>
@@ -220,7 +221,7 @@
     <string name="settings_date_format">Formato Data</string>
     <string name="settings_date_format_subtitle">%s</string>
     <string name="settings_section_currency">Valuta</string>
-    <string name="settings_section_dates">Date</string>
+    <string name="settings_section_dates">Data</string>
     <string name="settings_section_other">Altro</string>
     <string name="settings_reset_preferences">Ripristina Tutte le Preferenze</string>
     <string name="settings_reset_preferences_subtitle">Ripristina tutte le impostazioni ai valori predefiniti</string>
@@ -275,10 +276,10 @@
     <string name="settings_third_party_subtitle">Visualizza le librerie open-source utilizzate in questa app</string>
     <string name="dialog_choose_theme">Scegli Tema</string>
     <string name="dialog_choose_language">Scegli Lingua</string>
-    <string name="dialog_choose_currency">Simbolo Valuta</string>
-    <string name="dialog_choose_decimal_digits">Cifre Decimali</string>
-    <string name="dialog_choose_decimal_separator">Separatore Decimali</string>
-    <string name="dialog_choose_thousands_separator">Separatore Migliaia</string>
+    <string name="dialog_choose_currency">Scegli Simbolo Valuta</string>
+    <string name="dialog_choose_decimal_digits">Scegli Cifre Decimali</string>
+    <string name="dialog_choose_decimal_separator">Scegli Separatore Decimali</string>
+    <string name="dialog_choose_thousands_separator">Scegli Separatore Migliaia</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_delete">Elimina</string>
     <string name="dialog_add">Aggiungi</string>
@@ -396,11 +397,15 @@
     <string name="settings_show_initial_animation_desc">Mostra una breve animazione all\'avvio dell\'app</string>
     <string name="payment_breakdown_label">Saldo per Tipo di Pagamento</string>
     <string name="payment_breakdown_item_desc">Saldo con %1$s: %2$.2f</string>
-    <string name="settings_transaction_display">Visualizzazione elenco transazioni</string>
+    <string name="settings_transaction_display">Icona sulla transazione</string>
+    <string name="settings_transaction_display_desc">Scegli quale icona visualizzare per ogni transazione</string>
     <string name="settings_transaction_display_trend">Andamento</string>
+    <string name="settings_transaction_display_trend_desc">Freccia su per entrate, giù per uscite</string>
     <string name="settings_transaction_display_category">Categoria</string>
+    <string name="settings_transaction_display_category_desc">Visualizza l\'icona della categoria per ogni transazione</string>
     <string name="settings_transaction_display_none">Nessuna</string>
-    <string name="dialog_choose_transaction_display">Scegli visualizzazione</string>
+    <string name="settings_transaction_display_none_desc">Nessuna icona aggiuntiva è visualizzata</string>
+    <string name="dialog_choose_transaction_display">Scegli tipo di icona</string>
     <string name="feedback_email_body_italian">Ciao team di AntCashManager,\n\nVorrei condividere alcuni feedback sull\'app:\n\n[Per favore descrivi il tuo feedback qui]\n\nGrazie!</string>
     <string name="feedback_email_body_english">Hi AntCashManager Team,\n\nI would like to share some feedback about the app:\n\n[Please describe your feedback here]\n\nThank you!</string>
     <string name="feedback_email_body_french">Bonjour à l\'équipe d\'AntCashManager,\n\nJ\'aimerais partager des commentaires sur l\'application:\n\n[Veuillez décrire vos commentaires ici]\n\nMerci!</string>
@@ -413,7 +418,7 @@
     <string name="settings_charts_zoom_desc">Permette di ingrandire i grafici con il pinch-to-zoom</string>
     <string name="settings_transaction_display_section">Transazioni</string>
     <string name="settings_show_transaction_notes">Mostra Note Transazioni</string>
-    <string name="settings_show_transaction_notes_subtitle_enabled">Note visibili negli item transazioni</string>
+    <string name="settings_show_transaction_notes_subtitle_enabled">Note visibili negli elementi transazioni</string>
     <string name="settings_show_transaction_notes_subtitle_disabled">Note nascoste</string>
     <string name="settings_mask_amounts">Nascondi importi</string>
     <string name="settings_mask_amounts_subtitle_enabled">Le cifre sono mascherate con asterischi</string>

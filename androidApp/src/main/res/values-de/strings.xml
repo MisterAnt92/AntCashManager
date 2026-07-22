@@ -183,7 +183,7 @@
     <string name="dialog_meal_voucher_title">Essensgutschein-Wert festlegen</string>
     <string name="dialog_meal_voucher_message">Geben Sie den festen Wert Ihres Essensgutscheins ein.</string>
     <string name="dialog_meal_voucher_label">Gutscheinwert</string>
-    <string name="settings_format_preview">Vorschau: %s</string>
+    <string name="settings_format_preview">Vorschau:</string>
     <string name="settings_separator_comma">Komma (,)</string>
     <string name="settings_separator_period">Punkt (.)</string>
     <string name="settings_separator_space">Leerzeichen</string>
