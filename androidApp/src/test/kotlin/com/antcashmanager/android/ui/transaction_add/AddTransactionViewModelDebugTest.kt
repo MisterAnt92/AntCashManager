@@ -1,6 +1,7 @@
 package com.antcashmanager.android.ui.transaction_add
 
 import com.antcashmanager.android.BaseUnitTest
+import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.testutil.FakeCategoryRepository
 import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.testutil.FakeTransactionRepository
@@ -8,6 +9,7 @@ import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactio
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import org.junit.Assert.assertNotNull
@@ -23,6 +25,7 @@ class AddTransactionViewModelDebugTest : BaseUnitTest() {
     private lateinit var transactionRepository: FakeTransactionRepository
     private lateinit var categoryRepository: FakeCategoryRepository
     private lateinit var settingsRepository: FakeSettingsRepository
+    private lateinit var analyticsManager: AnalyticsManager
 
     private val mockCategories = listOf(
         Category(1, "Food", "🍔", 0xFFFF6B6B, "EXPENSE"),
@@ -49,6 +52,7 @@ class AddTransactionViewModelDebugTest : BaseUnitTest() {
         transactionRepository = FakeTransactionRepository(listOf(mockTransaction))
         categoryRepository = FakeCategoryRepository(mockCategories)
         settingsRepository = FakeSettingsRepository()
+        analyticsManager = mockk(relaxed = true)
     }
 
     @Test
@@ -56,7 +60,8 @@ class AddTransactionViewModelDebugTest : BaseUnitTest() {
         val viewModel = AddTransactionViewModel(
             transactionRepository,
             categoryRepository,
-            settingsRepository
+            settingsRepository,
+            analyticsManager
         )
 
         // Avanza il dispatcher per permettere l'inizializzazione
@@ -78,6 +83,7 @@ class AddTransactionViewModelDebugTest : BaseUnitTest() {
             transactionRepository,
             categoryRepository,
             settingsRepository,
+            analyticsManager,
             transactionId = 1L
         )
 

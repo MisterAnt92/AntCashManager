@@ -1,6 +1,7 @@
 package com.antcashmanager.android.ui.transactions
 
 import com.antcashmanager.android.BaseUnitTest
+import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.screen.transactions.TransactionsEvent
 import com.antcashmanager.android.ui.screen.transactions.TransactionsViewModel
 import com.antcashmanager.domain.model.SavedDateFilter
@@ -41,6 +42,7 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
     private lateinit var getTransactionSuggestionsUseCase: GetTransactionSuggestionsUseCase
     private lateinit var getTransactionsDateFilterStateUseCase: GetTransactionsDateFilterStateUseCase
     private lateinit var setTransactionsDateFilterStateUseCase: SetTransactionsDateFilterStateUseCase
+    private lateinit var analyticsManager: AnalyticsManager
 
     @Before
     fun setup() {
@@ -53,6 +55,7 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
         getTransactionSuggestionsUseCase = mockk()
         getTransactionsDateFilterStateUseCase = mockk()
         setTransactionsDateFilterStateUseCase = mockk(relaxed = true)
+        analyticsManager = mockk(relaxed = true)
 
         every { getTransactionsUseCase() } returns flowOf(Result.success(emptyList()))
         every { getCategoriesUseCase() } returns flowOf(Result.success(emptyList()))

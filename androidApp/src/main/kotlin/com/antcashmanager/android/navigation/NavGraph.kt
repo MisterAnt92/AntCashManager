@@ -148,20 +148,6 @@ fun AntCashManagerNavHost() {
                             visibleNavItems.forEach { item ->
                                 val isSelected = currentDestination?.hierarchy?.any { it.route == item.route } == true
                                 NavigationBarItem(
-                                    icon = {
-                                        Icon(
-                                            item.icon,
-                                            contentDescription = stringResource(item.titleResId)
-                                        )
-                                    },
-                                    label = {
-                                        AppText(
-                                            stringResource(item.titleResId),
-                                            style = MaterialTheme.typography.labelSmall,
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis,
-                                        )
-                                    },
                                     selected = isSelected,
                                     onClick = {
                                         navController.navigate(item.route) {
@@ -171,6 +157,20 @@ fun AntCashManagerNavHost() {
                                             launchSingleTop = true
                                             restoreState = true
                                         }
+                                    },
+                                    icon = {
+                                        Icon(
+                                            item.icon,
+                                            contentDescription = stringResource(item.titleResId),
+                                        )
+                                    },
+                                    label = {
+                                        AppText(
+                                            stringResource(item.titleResId),
+                                            style = MaterialTheme.typography.labelSmall,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
+                                        )
                                     },
                                     colors = NavigationBarItemDefaults.colors(
                                         selectedIconColor = MaterialTheme.colorScheme.primary,

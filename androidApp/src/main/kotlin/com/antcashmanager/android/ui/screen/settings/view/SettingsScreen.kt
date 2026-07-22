@@ -420,7 +420,12 @@ internal fun SettingsContent(
                 onThemeSelected(theme)
                 showThemeDialog = false
             },
-            onDismiss = { showThemeDialog = false },
+            onDismiss = {
+                analyticsManager.logEvent("settings_dialog_dismissed", android.os.Bundle().apply {
+                    putString("dialog_type", "theme_selection")
+                })
+                showThemeDialog = false
+            },
         )
     }
 
@@ -432,19 +437,34 @@ internal fun SettingsContent(
                 onLanguageSelected(language)
                 showLanguageDialog = false
             },
-            onDismiss = { showLanguageDialog = false },
+            onDismiss = {
+                analyticsManager.logEvent("settings_dialog_dismissed", android.os.Bundle().apply {
+                    putString("dialog_type", "language_selection")
+                })
+                showLanguageDialog = false
+            },
         )
     }
 
     if (showPrivacyDialog) {
-        PrivacyPolicyDialog(onDismiss = { showPrivacyDialog = false })
+        PrivacyPolicyDialog(onDismiss = {
+            analyticsManager.logEvent("settings_dialog_dismissed", android.os.Bundle().apply {
+                putString("dialog_type", "privacy_policy")
+            })
+            showPrivacyDialog = false
+        })
     }
 
 
     if (showLibrariesDialog) {
         ThirdPartyLibrariesDialog(
             context = context,
-            onDismiss = { showLibrariesDialog = false },
+            onDismiss = {
+                analyticsManager.logEvent("settings_dialog_dismissed", android.os.Bundle().apply {
+                    putString("dialog_type", "third_party_libraries")
+                })
+                showLibrariesDialog = false
+            },
         )
     }
 
@@ -456,7 +476,12 @@ internal fun SettingsContent(
                 onCurrencySymbolSelected(it)
                 showCurrencyDialog = false
             },
-            onDismiss = { showCurrencyDialog = false },
+            onDismiss = {
+                analyticsManager.logEvent("settings_dialog_dismissed", android.os.Bundle().apply {
+                    putString("dialog_type", "currency_symbol")
+                })
+                showCurrencyDialog = false
+            },
         )
     }
 
@@ -464,7 +489,12 @@ internal fun SettingsContent(
         DecimalDigitsDialog(
             currentDigits = decimalDigits,
             onDigitsSelected = { onDecimalDigitsSelected(it); showDecimalDigitsDialog = false },
-            onDismiss = { showDecimalDigitsDialog = false },
+            onDismiss = {
+                analyticsManager.logEvent("settings_dialog_dismissed", android.os.Bundle().apply {
+                    putString("dialog_type", "decimal_digits")
+                })
+                showDecimalDigitsDialog = false
+            },
         )
     }
 
@@ -474,7 +504,12 @@ internal fun SettingsContent(
             options = translateSeparatorOptions(CurrencyFormat.DECIMAL_SEPARATORS.filter { it.first != thousandsSeparator }),
             currentValue = decimalSeparator,
             onSelected = { onDecimalSeparatorSelected(it); showDecimalSeparatorDialog = false },
-            onDismiss = { showDecimalSeparatorDialog = false },
+            onDismiss = {
+                analyticsManager.logEvent("settings_dialog_dismissed", android.os.Bundle().apply {
+                    putString("dialog_type", "decimal_separator")
+                })
+                showDecimalSeparatorDialog = false
+            },
         )
     }
 
@@ -484,7 +519,12 @@ internal fun SettingsContent(
             options = translateSeparatorOptions(CurrencyFormat.THOUSANDS_SEPARATORS.filter { it.first != decimalSeparator }),
             currentValue = thousandsSeparator,
             onSelected = { onThousandsSeparatorSelected(it); showThousandsSeparatorDialog = false },
-            onDismiss = { showThousandsSeparatorDialog = false },
+            onDismiss = {
+                analyticsManager.logEvent("settings_dialog_dismissed", android.os.Bundle().apply {
+                    putString("dialog_type", "thousands_separator")
+                })
+                showThousandsSeparatorDialog = false
+            },
         )
     }
 

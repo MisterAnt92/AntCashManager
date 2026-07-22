@@ -2,6 +2,7 @@ package com.antcashmanager.android.ui.receiptScan
 
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.BaseUnitTest
+import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.testutil.FakeCategoryRepository
 import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.testutil.FakeTransactionRepository
@@ -11,6 +12,7 @@ import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.service.ReceiptOcrService
 import com.antcashmanager.domain.usecase.receipt.ScanReceiptUseCase
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -34,6 +36,7 @@ class ReceiptScanViewModelTest : BaseUnitTest() {
 
     private lateinit var fakeTxRepo: FakeTransactionRepository
     private lateinit var fakeCatRepo: FakeCategoryRepository
+    private lateinit var analyticsManager: AnalyticsManager
     private lateinit var viewModel: ReceiptScanViewModel
 
     private val expenseCategory = Category(id = 1L, name = "Alimentari", type = "EXPENSE")
@@ -43,6 +46,7 @@ class ReceiptScanViewModelTest : BaseUnitTest() {
     fun setup() {
         fakeTxRepo = FakeTransactionRepository()
         fakeCatRepo = FakeCategoryRepository(listOf(expenseCategory, incomeCategory))
+        analyticsManager = mockk(relaxed = true)
         val fakeOcrService = FakeTestOcrService()
         val scanUseCase = ScanReceiptUseCase(fakeOcrService)
         viewModel = ReceiptScanViewModel(
@@ -50,6 +54,7 @@ class ReceiptScanViewModelTest : BaseUnitTest() {
             transactionRepository = fakeTxRepo,
             categoryRepository = fakeCatRepo,
             settingsRepository = FakeSettingsRepository(),
+            analyticsManager = analyticsManager,
             dispatcher = testDispatcher,
         )
     }

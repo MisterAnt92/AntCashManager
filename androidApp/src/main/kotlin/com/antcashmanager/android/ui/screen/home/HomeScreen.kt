@@ -24,6 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -102,6 +103,7 @@ fun HomeScreen(
             viewModel.onEvent(event)
         },
         settingsRepository = settingsRepository,
+        navController = navController,
         modifier = modifier,
     )
 }
@@ -116,6 +118,7 @@ internal fun HomeContent(
     state: HomeState,
     onEvent: (HomeEvent) -> Unit,
     settingsRepository: SettingsRepository,
+    navController: androidx.navigation.NavController,
     modifier: Modifier = Modifier,
 ) {
 
@@ -336,7 +339,7 @@ internal fun HomeContent(
                         ),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    // Header with Help Button
+                    // Header with action buttons in order: Search, Filter, Settings, Help
                     item {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -361,6 +364,21 @@ internal fun HomeContent(
                                 )
                             }
                             Row(verticalAlignment = Alignment.CenterVertically) {
+                                // Search button
+                                IconButton(onClick = {
+                                    if (!state.isSearchExpanded) {
+                                        analyticsManager.logEvent("home_search_opened")
+                                    }
+                                    onEvent(HomeEvent.ToggleSearchExpanded)
+                                }) {
+                                    Icon(
+                                        imageVector = if (state.isSearchExpanded) Icons.Default.Close else Icons.Default.Search,
+                                        contentDescription = stringResource(R.string.transactions_search),
+                                        tint = if (state.searchQuery.isNotEmpty()) MaterialTheme.colorScheme.primary
+                                        else MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                }
+                                // Filter button (Tune icon for top cards customization)
                                 IconButton(
                                     onClick = {
                                         editingTopCardsOrder = editableTopCardsOrder
@@ -374,6 +392,7 @@ internal fun HomeContent(
                                         ),
                                     )
                                 }
+                                // Help button
                                 HelpButton(
                                     onHelpClick = {
                                         analyticsManager.logEvent("home_help_opened")
@@ -436,44 +455,30 @@ internal fun HomeContent(
                         }
                     }
 
-                    // Recent Transactions header (con conteggio) + Search toggle/bar.
-                    // Un unico item: quando la ricerca è chiusa, SearchComponent collassa
-                    // a altezza zero al suo interno, evitando che lo spacedBy della
-                    // LazyColumn aggiunga comunque un gap attorno a un item vuoto.
+                    // Recent Transactions header + Search bar
+                    // SearchComponent appare sotto il titolo quando expanded dalla top bar
                     item {
                         Column {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                AppText(
-                                    text = stringResource(
-                                        R.string.home_recent_transactions_count,
-                                        state.filteredTransactions.size,
-                                    ),
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                )
-                                IconButton(onClick = {
-                                    if (!state.isSearchExpanded) {
-                                        analyticsManager.logEvent("home_search_opened")
-                                    }
-                                    onEvent(HomeEvent.ToggleSearchExpanded)
-                                }) {
-                                    Icon(
-                                        imageVector = if (state.isSearchExpanded) Icons.Default.Close else Icons.Default.Search,
-                                        contentDescription = stringResource(R.string.transactions_search),
-                                        tint = if (state.searchQuery.isNotEmpty()) MaterialTheme.colorScheme.primary
-                                        else MaterialTheme.colorScheme.onSurfaceVariant,
-                                    )
-                                }
-                            }
+                            AppText(
+                                text = stringResource(
+                                    R.string.home_recent_transactions_count,
+                                    state.filteredTransactions.size,
+                                ),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onBackground,
+                            )
                             SearchComponent(
                                 isVisible = state.isSearchExpanded,
                                 searchQuery = state.searchQuery,
-                                onSearchQueryChange = { onEvent(HomeEvent.UpdateSearchQuery(it)) },
+                                onSearchQueryChange = { newQuery ->
+                                    if (newQuery.isNotEmpty() && state.searchQuery.isEmpty()) {
+                                        analyticsManager.logEvent("home_search_submitted")
+                                    } else if (newQuery.isEmpty() && state.searchQuery.isNotEmpty()) {
+                                        analyticsManager.logEvent("home_search_cleared")
+                                    }
+                                    onEvent(HomeEvent.UpdateSearchQuery(newQuery))
+                                },
                                 searchSuggestions = state.searchSuggestions,
                             )
                         }
@@ -691,6 +696,7 @@ private val sampleTransactions = listOf(
 @Composable
 private fun HomeContentPreview() {
     AntCashManagerTheme(dynamicColor = false) {
+        val navController = androidx.navigation.compose.rememberNavController()
         HomeContent(
             state = HomeState(
                 transactions = sampleTransactions,
@@ -706,6 +712,7 @@ private fun HomeContentPreview() {
             ),
             onEvent = {},
             settingsRepository = MockHomeSettingsRepository(),
+            navController = navController,
             modifier = Modifier,
         )
     }
@@ -715,10 +722,12 @@ private fun HomeContentPreview() {
 @Composable
 private fun HomeContentEmptyPreview() {
     AntCashManagerTheme(dynamicColor = false) {
+        val navController = androidx.navigation.compose.rememberNavController()
         HomeContent(
             state = HomeState(),
             onEvent = {},
             settingsRepository = MockHomeSettingsRepository(),
+            navController = navController,
             modifier = Modifier,
         )
     }
@@ -728,10 +737,12 @@ private fun HomeContentEmptyPreview() {
 @Composable
 private fun HomeContentLoadingPreview() {
     AntCashManagerTheme(dynamicColor = false) {
+        val navController = androidx.navigation.compose.rememberNavController()
         HomeContent(
             state = HomeState(isLoading = true),
             onEvent = {},
             settingsRepository = MockHomeSettingsRepository(),
+            navController = navController,
             modifier = Modifier,
         )
     }
@@ -741,6 +752,7 @@ private fun HomeContentLoadingPreview() {
 @Composable
 private fun HomeContentDarkPreview() {
     AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        val navController = androidx.navigation.compose.rememberNavController()
         HomeContent(
             state = HomeState(
                 transactions = sampleTransactions,
@@ -756,6 +768,7 @@ private fun HomeContentDarkPreview() {
             ),
             onEvent = {},
             settingsRepository = MockHomeSettingsRepository(),
+            navController = navController,
             modifier = Modifier,
         )
     }

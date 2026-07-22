@@ -1,12 +1,14 @@
 package com.antcashmanager.android.ui.transaction_add
 
 import com.antcashmanager.android.BaseUnitTest
+import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.testutil.FakeCategoryRepository
 import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.testutil.FakeTransactionRepository
 import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionEvent
 import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionViewModel
 import com.antcashmanager.domain.model.Category
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -22,6 +24,7 @@ class AddTransactionViewModelSimpleTest : BaseUnitTest() {
     private lateinit var transactionRepository: FakeTransactionRepository
     private lateinit var categoryRepository: FakeCategoryRepository
     private lateinit var settingsRepository: FakeSettingsRepository
+    private lateinit var analyticsManager: AnalyticsManager
 
     private val mockCategories = listOf(
         Category(1, "Food", "🍔", 0xFFFF6B6B, "EXPENSE"),
@@ -33,6 +36,7 @@ class AddTransactionViewModelSimpleTest : BaseUnitTest() {
         transactionRepository = FakeTransactionRepository()
         categoryRepository = FakeCategoryRepository(mockCategories)
         settingsRepository = FakeSettingsRepository()
+        analyticsManager = mockk(relaxed = true)
     }
 
     @Test
@@ -40,7 +44,8 @@ class AddTransactionViewModelSimpleTest : BaseUnitTest() {
         val viewModel = AddTransactionViewModel(
             transactionRepository,
             categoryRepository,
-            settingsRepository
+            settingsRepository,
+            analyticsManager
         )
         assertNotNull("ViewModel should be created", viewModel)
     }
@@ -51,6 +56,7 @@ class AddTransactionViewModelSimpleTest : BaseUnitTest() {
             transactionRepository,
             categoryRepository,
             settingsRepository,
+            analyticsManager,
             transactionId = 1L
         )
         assertNotNull("ViewModel should be created with transactionId", viewModel)
@@ -61,7 +67,8 @@ class AddTransactionViewModelSimpleTest : BaseUnitTest() {
         val viewModel = AddTransactionViewModel(
             transactionRepository,
             categoryRepository,
-            settingsRepository
+            settingsRepository,
+            analyticsManager
         )
 
         // Questa chiamata dovrebbe almeno non crashare
