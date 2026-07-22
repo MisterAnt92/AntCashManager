@@ -610,13 +610,16 @@ internal fun DisplayContent(
 
 @Composable
 private fun separatorLabel(value: String, isThou: Boolean): String {
-    val options =
-        if (isThou) CurrencyFormat.THOUSANDS_SEPARATORS else CurrencyFormat.DECIMAL_SEPARATORS
-    return options.find { it.first == value }?.second ?: when (value) {
-        "," -> stringResource(R.string.settings_separator_comma)
-        "." -> stringResource(R.string.settings_separator_period)
-        " " -> stringResource(R.string.settings_separator_space)
-        "" -> stringResource(R.string.settings_separator_none)
+    val comma = stringResource(R.string.settings_separator_comma)
+    val period = stringResource(R.string.settings_separator_period)
+    val space = stringResource(R.string.settings_separator_space)
+    val none = stringResource(R.string.settings_separator_none)
+
+    return when (value) {
+        "," -> comma
+        "." -> period
+        " " -> space
+        "" -> none
         else -> value
     }
 }
