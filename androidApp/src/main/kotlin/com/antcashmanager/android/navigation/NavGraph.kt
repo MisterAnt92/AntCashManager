@@ -14,6 +14,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Surface
@@ -145,6 +146,7 @@ fun AntCashManagerNavHost() {
                             tonalElevation = 0.dp,
                         ) {
                             visibleNavItems.forEach { item ->
+                                val isSelected = currentDestination?.hierarchy?.any { it.route == item.route } == true
                                 NavigationBarItem(
                                     icon = {
                                         Icon(
@@ -155,11 +157,12 @@ fun AntCashManagerNavHost() {
                                     label = {
                                         AppText(
                                             stringResource(item.titleResId),
+                                            style = MaterialTheme.typography.labelSmall,
                                             maxLines = 1,
                                             overflow = TextOverflow.Ellipsis,
                                         )
                                     },
-                                    selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
+                                    selected = isSelected,
                                     onClick = {
                                         navController.navigate(item.route) {
                                             popUpTo(navController.graph.findStartDestination().id) {
@@ -169,6 +172,13 @@ fun AntCashManagerNavHost() {
                                             restoreState = true
                                         }
                                     },
+                                    colors = NavigationBarItemDefaults.colors(
+                                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                                        selectedTextColor = MaterialTheme.colorScheme.primary,
+                                        indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    ),
                                 )
                             }
                         }
