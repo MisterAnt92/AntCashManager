@@ -12,10 +12,10 @@ import com.antcashmanager.android.ui.screen.receiptScan.ReceiptScanViewModel
 import com.antcashmanager.android.ui.screen.settings.SettingsViewModel
 import com.antcashmanager.android.ui.screen.settings.dataManagement.SettingsDataViewModel
 import com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayViewModel
-import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionViewModel
 import com.antcashmanager.android.ui.screen.transactions.TransactionsViewModel
+import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionViewModel
 import com.antcashmanager.android.ui.theme.ThemeViewModel
-import com.antcashmanager.android.widget.GlanceWidgetUpdateNotifier
+import com.antcashmanager.android.ui.widget.GlanceWidgetUpdateNotifier
 import com.antcashmanager.data.local.DatabaseProvider
 import com.antcashmanager.data.repository.CategoryRepositoryImpl
 import com.antcashmanager.data.repository.SettingsRepositoryImpl
@@ -185,12 +185,9 @@ val presentationModule = module {
         AddTransactionViewModel(
             transactionId = transactionId,
             transactionRepository = get(),
+            categoryRepository = get(),
             settingsRepository = get(),
-            getCategoriesUseCase = get(),
-            insertTransactionUseCase = get(),
-            updateTransactionUseCase = get(),
-            deleteTransactionUseCase = get(),
-            getTransactionSuggestionsUseCase = get(),
+            analyticsManager = get(),
         )
     }
     viewModel {
@@ -209,9 +206,10 @@ val presentationModule = module {
     viewModel {
         ReceiptScanViewModel(
             scanReceiptUseCase = get(),
-            createTransactionUseCase = get(),
-            getCategoriesUseCase = get(),
-            getTransactionSuggestionsUseCase = get(),
+            transactionRepository = get(),
+            categoryRepository = get(),
+            settingsRepository = get(),
+            analyticsManager = get(),
         )
     }
     viewModelOf(::TransactionDetailsViewModel)

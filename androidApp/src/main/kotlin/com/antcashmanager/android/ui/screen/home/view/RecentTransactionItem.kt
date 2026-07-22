@@ -28,8 +28,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
-import com.antcashmanager.android.ui.components.AnimatedCard
-import com.antcashmanager.android.ui.components.AnimatedListItem
+import com.antcashmanager.android.ui.components.animation.AnimatedCard
+import com.antcashmanager.android.ui.components.animation.AnimatedListItem
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.text.TransactionAmountText
 import com.antcashmanager.android.ui.screen.categories.view.categoryIconMap
@@ -214,7 +214,9 @@ fun RecentTransactionItem(
                 ) {
                     TransactionAmountText(
                         amount = transaction.amount, // Amount will already be negative for expenses
-                        masked = LocalAmountsMasked.current && isProtectedSalaryTransaction(transaction),
+                        masked = LocalAmountsMasked.current && isProtectedSalaryTransaction(
+                            transaction
+                        ),
                     )
                 }
             }

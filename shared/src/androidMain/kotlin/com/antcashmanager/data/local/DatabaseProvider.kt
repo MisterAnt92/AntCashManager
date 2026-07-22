@@ -18,8 +18,8 @@ object DatabaseProvider {
             )
 
                 .build().also {
-                database = it
-            }
+                    database = it
+                }
         }
     }
 }

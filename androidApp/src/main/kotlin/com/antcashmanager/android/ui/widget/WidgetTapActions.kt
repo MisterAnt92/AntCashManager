@@ -1,4 +1,4 @@
-package com.antcashmanager.android.widget
+package com.antcashmanager.android.ui.widget
 
 import android.content.Context
 import android.content.Intent
@@ -20,14 +20,22 @@ private fun openApp(context: Context) {
 }
 
 class RecentTransactionsWidgetTapAction : ActionCallback {
-    override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
+    override suspend fun onAction(
+        context: Context,
+        glanceId: GlanceId,
+        parameters: ActionParameters
+    ) {
         WidgetDependencies.analyticsManager.logEvent("widget_recent_transactions_opened")
         openApp(context)
     }
 }
 
 class CategoryBreakdownWidgetTapAction : ActionCallback {
-    override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
+    override suspend fun onAction(
+        context: Context,
+        glanceId: GlanceId,
+        parameters: ActionParameters
+    ) {
         WidgetDependencies.analyticsManager.logEvent("widget_category_breakdown_opened")
         openApp(context)
     }

@@ -44,8 +44,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
-import com.antcashmanager.android.ui.components.AnimatedCard
-import com.antcashmanager.android.ui.components.FadeInOnAppear
+import com.antcashmanager.android.ui.components.animation.AnimatedCard
+import com.antcashmanager.android.ui.components.animation.FadeInOnAppear
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.text.BalanceText
 import com.antcashmanager.android.ui.components.text.MoneyText

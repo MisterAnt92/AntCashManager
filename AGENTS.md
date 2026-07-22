@@ -114,6 +114,7 @@ Routes are string literals defined inline in `NavGraph.kt`. `BottomNavItem` enum
 ## UI / Compose Rules
 
 - All user-facing strings in `strings.xml` – **5 locales required**: `en`, `it`, `fr`, `de`, `es`. Never hardcode strings.
+- **Before adding a new string**: verify it doesn't already exist in any of the `values*/strings.xml` files using `grep`. Example: `grep -r "string_key_name" androidApp/src/main/res/values*/`.
 - Use `stringResource(R.string.*)` everywhere.
 - Reuse existing components from `androidApp/.../ui/components/` before creating new ones.
 - Every new `@Composable` **must** have at least two `@Preview`s: one light, one dark (`uiMode = Configuration.UI_MODE_NIGHT_YES`).

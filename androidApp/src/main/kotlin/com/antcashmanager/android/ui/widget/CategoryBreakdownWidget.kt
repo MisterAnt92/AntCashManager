@@ -1,4 +1,4 @@
-package com.antcashmanager.android.widget
+package com.antcashmanager.android.ui.widget
 
 import android.content.Context
 import androidx.compose.runtime.Composable
@@ -72,7 +72,8 @@ class CategoryBreakdownWidget : GlanceAppWidget() {
         val palette = loadWidgetPalette(settingsRepository)
 
         val income = aggregateByCategory(transactions.filter { it.type == TransactionType.INCOME })
-        val expenses = aggregateByCategory(transactions.filter { it.type == TransactionType.EXPENSE })
+        val expenses =
+            aggregateByCategory(transactions.filter { it.type == TransactionType.EXPENSE })
 
         provideContent {
             CategoryBreakdownContent(income, expenses, currencyFormat, palette)
@@ -86,7 +87,13 @@ class CategoryBreakdownWidgetReceiver : GlanceAppWidgetReceiver() {
 
 private fun aggregateByCategory(transactions: List<Transaction>): List<CategoryTotal> =
     transactions.groupBy { it.category }
-        .map { (category, txs) -> CategoryTotal(category, txs.sumOf { it.amount }, txs.first().categoryColor) }
+        .map { (category, txs) ->
+            CategoryTotal(
+                category,
+                txs.sumOf { it.amount },
+                txs.first().categoryColor
+            )
+        }
         .sortedByDescending { it.total }
         .take(MAX_CATEGORIES_PER_SECTION)
 
@@ -108,7 +115,11 @@ private fun CategoryBreakdownContent(
     ) {
         Text(
             text = context.getString(R.string.widget_category_breakdown_title),
-            style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Bold, color = ColorProvider(palette.primaryText)),
+            style = TextStyle(
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                color = ColorProvider(palette.primaryText)
+            ),
         )
         Spacer(modifier = GlanceModifier.height(8.dp))
 
@@ -152,7 +163,11 @@ private fun CategorySection(
     Column(modifier = GlanceModifier.fillMaxWidth()) {
         Text(
             text = title,
-            style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium, color = ColorProvider(palette.secondaryText)),
+            style = TextStyle(
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Medium,
+                color = ColorProvider(palette.secondaryText)
+            ),
         )
         categories.forEach { categoryTotal ->
             CategoryBar(
@@ -170,7 +185,13 @@ private const val BAR_MAX_WIDTH_DP = 120
 private const val BAR_MIN_WIDTH_DP = 3
 
 @Composable
-private fun CategoryBar(name: String, amountLabel: String, color: Color, fraction: Float, palette: WidgetPalette) {
+private fun CategoryBar(
+    name: String,
+    amountLabel: String,
+    color: Color,
+    fraction: Float,
+    palette: WidgetPalette
+) {
     Column(modifier = GlanceModifier.fillMaxWidth().padding(vertical = 3.dp)) {
         Row(modifier = GlanceModifier.fillMaxWidth()) {
             Text(
@@ -182,7 +203,11 @@ private fun CategoryBar(name: String, amountLabel: String, color: Color, fractio
             Text(
                 text = amountLabel,
                 maxLines = 1,
-                style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium, color = ColorProvider(palette.primaryText)),
+                style = TextStyle(
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = ColorProvider(palette.primaryText)
+                ),
             )
         }
         Spacer(modifier = GlanceModifier.height(3.dp))
@@ -195,7 +220,8 @@ private fun CategoryBar(name: String, amountLabel: String, color: Color, fractio
         ) {
             val barFraction = fraction.coerceIn(0f, 1f)
             if (barFraction > 0f) {
-                val barWidth = (BAR_MAX_WIDTH_DP * barFraction).toInt().coerceAtLeast(BAR_MIN_WIDTH_DP)
+                val barWidth =
+                    (BAR_MAX_WIDTH_DP * barFraction).toInt().coerceAtLeast(BAR_MIN_WIDTH_DP)
                 Box(
                     modifier = GlanceModifier
                         .width(barWidth.dp)

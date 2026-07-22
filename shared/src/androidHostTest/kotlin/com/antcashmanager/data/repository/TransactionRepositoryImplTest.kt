@@ -69,14 +69,15 @@ class TransactionRepositoryImplTest {
     }
 
     @Test
-    fun getDistinctTitles_shouldReturnDecryptedDistinctValues_whenDatabaseHasEncryptedDuplicates() = runTest {
-        val encrypted = fakeCipher.encryptString("Stipendio")
-        fakeDao.distinctTitlesFlow.value = listOf(encrypted, encrypted)
+    fun getDistinctTitles_shouldReturnDecryptedDistinctValues_whenDatabaseHasEncryptedDuplicates() =
+        runTest {
+            val encrypted = fakeCipher.encryptString("Stipendio")
+            fakeDao.distinctTitlesFlow.value = listOf(encrypted, encrypted)
 
-        val values = repository.getDistinctTitles(since = 0L).first()
+            val values = repository.getDistinctTitles(since = 0L).first()
 
-        assertEquals(listOf("Stipendio"), values)
-    }
+            assertEquals(listOf("Stipendio"), values)
+        }
 
     @Test
     fun getDistinctTitles_shouldForwardSinceParameterToDao_whenCalledWithCutoff() = runTest {
@@ -220,7 +221,12 @@ private class FakeTransactionDao : TransactionDao {
     override fun getRecurringTransactions(): Flow<List<TransactionEntity>> =
         flowOf(transactionsFlow.value.filter { it.isRecurring })
 
-    override suspend fun renameCategory(oldCategoryName: String, newCategoryName: String, icon: String, color: Long) {
+    override suspend fun renameCategory(
+        oldCategoryName: String,
+        newCategoryName: String,
+        icon: String,
+        color: Long
+    ) {
         transactionsFlow.value = transactionsFlow.value.map { current ->
             if (current.category == oldCategoryName) {
                 current.copy(category = newCategoryName, categoryIcon = icon, categoryColor = color)

@@ -87,7 +87,8 @@ class SettingsViewModel(
                         return@withContext
                     }
                     val obj = JSONObject(json)
-                    val transactions = obj.optJSONArray(SettingsConstant.JSON_KEY_TRANSACTIONS) ?: return@withContext
+                    val transactions = obj.optJSONArray(SettingsConstant.JSON_KEY_TRANSACTIONS)
+                        ?: return@withContext
                     // Clear existing data for demo
                     transactionRepository.deleteAllTransactions()
                     for (i in 0 until transactions.length()) {
@@ -121,7 +122,10 @@ class SettingsViewModel(
                                 notes = t.optString(SettingsConstant.JSON_KEY_NOTES, ""),
                                 payee = t.optString(SettingsConstant.JSON_KEY_PAYEE, ""),
                                 location = t.optString(SettingsConstant.JSON_KEY_LOCATION, ""),
-                                isRecurring = t.optBoolean(SettingsConstant.JSON_KEY_IS_RECURRING, false),
+                                isRecurring = t.optBoolean(
+                                    SettingsConstant.JSON_KEY_IS_RECURRING,
+                                    false
+                                ),
                                 tags = if (t.has(SettingsConstant.JSON_KEY_TAGS)) {
                                     t.optJSONArray(SettingsConstant.JSON_KEY_TAGS)?.let { arr ->
                                         val list = mutableListOf<String>()
@@ -131,7 +135,10 @@ class SettingsViewModel(
                                 } else {
                                     ""
                                 },
-                                recurrenceInterval = t.optString(SettingsConstant.JSON_KEY_RECURRENCE_RULE, ""),
+                                recurrenceInterval = t.optString(
+                                    SettingsConstant.JSON_KEY_RECURRENCE_RULE,
+                                    ""
+                                ),
                                 paymentType = try {
                                     PaymentType.valueOf(
                                         t.optString(
@@ -276,7 +283,10 @@ class SettingsViewModel(
             } catch (ex: CancellationException) {
                 throw ex
             } catch (ex: Exception) {
-                Logger.e(throwable = ex, tag = SettingsConstant.TAG) { "Preference update failed: ${ex.message}" }
+                Logger.e(
+                    throwable = ex,
+                    tag = SettingsConstant.TAG
+                ) { "Preference update failed: ${ex.message}" }
             }
         }
     }

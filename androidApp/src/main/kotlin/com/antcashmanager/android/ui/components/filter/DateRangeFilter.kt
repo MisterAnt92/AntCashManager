@@ -1,4 +1,4 @@
-package com.antcashmanager.android.ui.components
+package com.antcashmanager.android.ui.components.filter
 
 import android.content.res.Configuration
 import androidx.compose.animation.core.animateFloatAsState
@@ -103,15 +103,26 @@ private fun getRangeDisplayText(
     }
 
     return if (isMatchingPreset) {
+        // Add detailed date info to preset labels
+        val dateFormat = SimpleDateFormat("dd MMM", LocalLocale.current.platformLocale)
+        val monthYearFormat = SimpleDateFormat("MMMM yyyy", LocalLocale.current.platformLocale)
+        val yearFormat = SimpleDateFormat("yyyy", LocalLocale.current.platformLocale)
+        val toDateFormatted = dateFormat.format(Date(dateRangeTo))
+        val monthYear = monthYearFormat.format(Date(dateRangeTo))
+        val year = yearFormat.format(Date(dateRangeTo))
+
         when (selectedPresetIndex) {
-            0 -> stringResource(R.string.range_label_today)
-            1 -> stringResource(R.string.range_label_this_week)
-            2 -> stringResource(R.string.range_label_this_month)
-            3 -> stringResource(R.string.range_label_this_year)
-            4 -> stringResource(R.string.range_two_years)
-            5 -> stringResource(R.string.range_three_years)
-            6 -> stringResource(R.string.range_five_years)
-            7 -> stringResource(R.string.range_six_years)
+            0 -> "${stringResource(R.string.range_label_today)} $toDateFormatted"
+            1 -> {
+                val fromDateFormatted = dateFormat.format(Date(dateRangeFrom))
+                "${stringResource(R.string.range_label_this_week)} $fromDateFormatted-$toDateFormatted"
+            }
+            2 -> "${stringResource(R.string.range_label_this_month)} $monthYear"
+            3 -> "${stringResource(R.string.range_label_this_year)} $year"
+            4 -> "${stringResource(R.string.range_two_years)} $year"
+            5 -> "${stringResource(R.string.range_three_years)} $year"
+            6 -> "${stringResource(R.string.range_five_years)} $year"
+            7 -> "${stringResource(R.string.range_six_years)} $year"
             8 -> stringResource(R.string.range_all)
             else -> stringResource(R.string.charts_period)
         }

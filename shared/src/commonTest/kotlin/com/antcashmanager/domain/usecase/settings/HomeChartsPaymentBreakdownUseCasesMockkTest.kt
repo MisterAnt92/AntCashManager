@@ -103,15 +103,16 @@ class HomeChartsPaymentBreakdownUseCasesMockkTest {
     }
 
     @Test
-    fun invoke_shouldReturnSuccessFilter_whenChartsDateFilterStateIsEmitted() = runTest(dispatcher) {
-        every { settingsRepository.getChartsDateFilterState() } returns flowOf(chartsFilter)
-        val useCase = GetChartsDateFilterStateUseCase(settingsRepository)
+    fun invoke_shouldReturnSuccessFilter_whenChartsDateFilterStateIsEmitted() =
+        runTest(dispatcher) {
+            every { settingsRepository.getChartsDateFilterState() } returns flowOf(chartsFilter)
+            val useCase = GetChartsDateFilterStateUseCase(settingsRepository)
 
-        val result = useCase().first()
+            val result = useCase().first()
 
-        assertTrue(result.isSuccess)
-        assertEquals(chartsFilter, result.getOrThrow())
-    }
+            assertTrue(result.isSuccess)
+            assertEquals(chartsFilter, result.getOrThrow())
+        }
 
     @Test
     fun invoke_shouldPersistFilter_whenSetChartsDateFilterStateSucceeds() = runTest(dispatcher) {

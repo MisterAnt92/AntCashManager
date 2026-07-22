@@ -31,7 +31,10 @@ open class AnalyticsManager {
             }
             firebaseAnalytics?.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, params)
         }.onFailure { error ->
-            Logger.e(throwable = error, tag = AnalyticsConstants.TAG) { "Failed to log screen view for route=$route" }
+            Logger.e(
+                throwable = error,
+                tag = AnalyticsConstants.TAG
+            ) { "Failed to log screen view for route=$route" }
         }
     }
 
@@ -46,7 +49,10 @@ open class AnalyticsManager {
         runCatching {
             firebaseAnalytics?.logEvent(sanitizedName, sanitizeParams(params))
         }.onFailure { error ->
-            Logger.e(throwable = error, tag = AnalyticsConstants.TAG) { "Failed to log event=$sanitizedName" }
+            Logger.e(
+                throwable = error,
+                tag = AnalyticsConstants.TAG
+            ) { "Failed to log event=$sanitizedName" }
         }
     }
 

@@ -14,6 +14,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Surface
@@ -37,18 +38,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.antcashmanager.android.analytics.AnalyticsManager
-import com.antcashmanager.android.ui.components.AntScreenScaffold
 import com.antcashmanager.android.ui.components.animation.AntSplashScreen
 import com.antcashmanager.android.ui.components.dialog.AppExitConfirmationDialog
-import com.antcashmanager.android.ui.components.rememberAdaptiveLayoutInfo
+import com.antcashmanager.android.ui.components.layout.AntScreenScaffold
+import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.categories.view.CategoriesScreen
 import com.antcashmanager.android.ui.screen.charts.view.ChartsScreen
 import com.antcashmanager.android.ui.screen.home.HomeScreen
-import com.antcashmanager.android.ui.screen.receiptScan.ReceiptScanScreen
-import com.antcashmanager.android.ui.screen.settings.view.SettingsScreen
+import com.antcashmanager.android.ui.screen.receiptScan.view.ReceiptScanScreen
 import com.antcashmanager.android.ui.screen.settings.dataManagement.SettingsDataScreen
 import com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayScreen
+import com.antcashmanager.android.ui.screen.settings.view.SettingsScreen
 import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionScreen
 import com.antcashmanager.android.ui.screen.transactions.view.TransactionsScreen
 import com.antcashmanager.android.util.LocalAmountsMasked
@@ -145,21 +146,9 @@ fun AntCashManagerNavHost() {
                             tonalElevation = 0.dp,
                         ) {
                             visibleNavItems.forEach { item ->
+                                val isSelected = currentDestination?.hierarchy?.any { it.route == item.route } == true
                                 NavigationBarItem(
-                                    icon = {
-                                        Icon(
-                                            item.icon,
-                                            contentDescription = stringResource(item.titleResId)
-                                        )
-                                    },
-                                    label = {
-                                        AppText(
-                                            stringResource(item.titleResId),
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis,
-                                        )
-                                    },
-                                    selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
+                                    selected = isSelected,
                                     onClick = {
                                         navController.navigate(item.route) {
                                             popUpTo(navController.graph.findStartDestination().id) {
@@ -169,6 +158,27 @@ fun AntCashManagerNavHost() {
                                             restoreState = true
                                         }
                                     },
+                                    icon = {
+                                        Icon(
+                                            item.icon,
+                                            contentDescription = stringResource(item.titleResId),
+                                        )
+                                    },
+                                    label = {
+                                        AppText(
+                                            stringResource(item.titleResId),
+                                            style = MaterialTheme.typography.labelSmall,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
+                                        )
+                                    },
+                                    colors = NavigationBarItemDefaults.colors(
+                                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                                        selectedTextColor = MaterialTheme.colorScheme.primary,
+                                        indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    ),
                                 )
                             }
                         }

@@ -61,9 +61,9 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
-import com.antcashmanager.android.ui.components.AppSelectionItemCard
 import com.antcashmanager.android.ui.components.button.AppButton
 import com.antcashmanager.android.ui.components.input.AutocompleteTextField
+import com.antcashmanager.android.ui.components.selection.AppSelectionItemCard
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionEvent
 import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionState
@@ -671,7 +671,12 @@ private fun TagSelector(
                             onTagsChange(newTags)
                             tagInput = ""
                         },
-                        label = { AppText(suggestion, style = MaterialTheme.typography.labelSmall) },
+                        label = {
+                            AppText(
+                                suggestion,
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        },
                         shape = RoundedCornerShape(12.dp)
                     )
                 }

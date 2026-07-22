@@ -149,50 +149,60 @@ class TransactionMaintenanceUseCasesMockkTest {
     }
 
     @Test
-    fun invoke_shouldInsertOccurrencesAndUpdateTemplate_whenRecurringTransactionIsPastDue() = runTest(dispatcher) {
-        val dayMillis = 24L * 60 * 60 * 1000
-        val timestamp = System.currentTimeMillis() - (2 * dayMillis + 1_000)
-        val recurringTemplate = sampleTransaction(
-            id = 101L,
-            timestamp = timestamp,
-            isRecurring = true,
-            recurrenceInterval = "DAILY",
-        )
-        every { transactionRepository.getRecurringTransactions() } returns flowOf(listOf(recurringTemplate))
-        coEvery { transactionRepository.insertTransaction(any()) } returns 1L
-        coEvery { transactionRepository.updateTransaction(any()) } just Runs
-
-        ProcessRecurringTransactionsUseCase(transactionRepository).invoke()
-
-        coVerify(exactly = 2) {
-            transactionRepository.insertTransaction(
-                match { !it.isRecurring && it.recurrenceInterval.isEmpty() },
+    fun invoke_shouldInsertOccurrencesAndUpdateTemplate_whenRecurringTransactionIsPastDue() =
+        runTest(dispatcher) {
+            val dayMillis = 24L * 60 * 60 * 1000
+            val timestamp = System.currentTimeMillis() - (2 * dayMillis + 1_000)
+            val recurringTemplate = sampleTransaction(
+                id = 101L,
+                timestamp = timestamp,
+                isRecurring = true,
+                recurrenceInterval = "DAILY",
             )
-        }
-        coVerify(exactly = 1) {
-            transactionRepository.updateTransaction(
-                match {
-                    it.id == recurringTemplate.id &&
-                            it.timestamp >= recurringTemplate.timestamp + (2 * dayMillis)
-                },
+            every { transactionRepository.getRecurringTransactions() } returns flowOf(
+                listOf(
+                    recurringTemplate
+                )
             )
+            coEvery { transactionRepository.insertTransaction(any()) } returns 1L
+            coEvery { transactionRepository.updateTransaction(any()) } just Runs
+
+            ProcessRecurringTransactionsUseCase(transactionRepository).invoke()
+
+            coVerify(exactly = 2) {
+                transactionRepository.insertTransaction(
+                    match { !it.isRecurring && it.recurrenceInterval.isEmpty() },
+                )
+            }
+            coVerify(exactly = 1) {
+                transactionRepository.updateTransaction(
+                    match {
+                        it.id == recurringTemplate.id &&
+                                it.timestamp >= recurringTemplate.timestamp + (2 * dayMillis)
+                    },
+                )
+            }
         }
-    }
 
     @Test
-    fun invoke_shouldSkipRecurringTransaction_whenRecurrenceIntervalIsInvalid() = runTest(dispatcher) {
-        val recurringTemplate = sampleTransaction(
-            id = 202L,
-            isRecurring = true,
-            recurrenceInterval = "INVALID",
-        )
-        every { transactionRepository.getRecurringTransactions() } returns flowOf(listOf(recurringTemplate))
+    fun invoke_shouldSkipRecurringTransaction_whenRecurrenceIntervalIsInvalid() =
+        runTest(dispatcher) {
+            val recurringTemplate = sampleTransaction(
+                id = 202L,
+                isRecurring = true,
+                recurrenceInterval = "INVALID",
+            )
+            every { transactionRepository.getRecurringTransactions() } returns flowOf(
+                listOf(
+                    recurringTemplate
+                )
+            )
 
-        ProcessRecurringTransactionsUseCase(transactionRepository).invoke()
+            ProcessRecurringTransactionsUseCase(transactionRepository).invoke()
 
-        coVerify(exactly = 0) { transactionRepository.insertTransaction(any()) }
-        coVerify(exactly = 0) { transactionRepository.updateTransaction(any()) }
-    }
+            coVerify(exactly = 0) { transactionRepository.insertTransaction(any()) }
+            coVerify(exactly = 0) { transactionRepository.updateTransaction(any()) }
+        }
 
     private fun sampleTransaction(
         id: Long = 1L,

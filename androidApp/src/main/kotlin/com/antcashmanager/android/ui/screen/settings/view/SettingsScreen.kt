@@ -24,16 +24,12 @@ import androidx.compose.material.icons.filled.Feedback
 import androidx.compose.material.icons.filled.FormatSize
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
-import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material.icons.filled.MotionPhotosOff
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.PrivacyTip
 import androidx.compose.material.icons.filled.TextFields
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -55,13 +51,11 @@ import com.antcashmanager.android.BuildConfig
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.navigation.BottomNavItem
-import com.antcashmanager.android.ui.components.AppListItem
-import com.antcashmanager.android.ui.components.AppRadioButton
-import com.antcashmanager.android.ui.components.AppSwitch
-import com.antcashmanager.android.ui.components.HelpButton
 import com.antcashmanager.android.ui.components.animation.AntEasterEggAnimation
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
+import com.antcashmanager.android.ui.components.common.AppSwitch
+import com.antcashmanager.android.ui.components.dialog.HelpButton
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.settings.SettingsViewModel
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
@@ -426,7 +420,12 @@ internal fun SettingsContent(
                 onThemeSelected(theme)
                 showThemeDialog = false
             },
-            onDismiss = { showThemeDialog = false },
+            onDismiss = {
+                analyticsManager.logEvent("settings_dialog_dismissed", android.os.Bundle().apply {
+                    putString("dialog_type", "theme_selection")
+                })
+                showThemeDialog = false
+            },
         )
     }
 
@@ -438,19 +437,34 @@ internal fun SettingsContent(
                 onLanguageSelected(language)
                 showLanguageDialog = false
             },
-            onDismiss = { showLanguageDialog = false },
+            onDismiss = {
+                analyticsManager.logEvent("settings_dialog_dismissed", android.os.Bundle().apply {
+                    putString("dialog_type", "language_selection")
+                })
+                showLanguageDialog = false
+            },
         )
     }
 
     if (showPrivacyDialog) {
-        PrivacyPolicyDialog(onDismiss = { showPrivacyDialog = false })
+        PrivacyPolicyDialog(onDismiss = {
+            analyticsManager.logEvent("settings_dialog_dismissed", android.os.Bundle().apply {
+                putString("dialog_type", "privacy_policy")
+            })
+            showPrivacyDialog = false
+        })
     }
 
 
     if (showLibrariesDialog) {
         ThirdPartyLibrariesDialog(
             context = context,
-            onDismiss = { showLibrariesDialog = false },
+            onDismiss = {
+                analyticsManager.logEvent("settings_dialog_dismissed", android.os.Bundle().apply {
+                    putString("dialog_type", "third_party_libraries")
+                })
+                showLibrariesDialog = false
+            },
         )
     }
 
@@ -462,7 +476,12 @@ internal fun SettingsContent(
                 onCurrencySymbolSelected(it)
                 showCurrencyDialog = false
             },
-            onDismiss = { showCurrencyDialog = false },
+            onDismiss = {
+                analyticsManager.logEvent("settings_dialog_dismissed", android.os.Bundle().apply {
+                    putString("dialog_type", "currency_symbol")
+                })
+                showCurrencyDialog = false
+            },
         )
     }
 
@@ -470,27 +489,42 @@ internal fun SettingsContent(
         DecimalDigitsDialog(
             currentDigits = decimalDigits,
             onDigitsSelected = { onDecimalDigitsSelected(it); showDecimalDigitsDialog = false },
-            onDismiss = { showDecimalDigitsDialog = false },
+            onDismiss = {
+                analyticsManager.logEvent("settings_dialog_dismissed", android.os.Bundle().apply {
+                    putString("dialog_type", "decimal_digits")
+                })
+                showDecimalDigitsDialog = false
+            },
         )
     }
 
     if (showDecimalSeparatorDialog) {
         SeparatorDialog(
             title = stringResource(R.string.dialog_choose_decimal_separator),
-            options = CurrencyFormat.DECIMAL_SEPARATORS.filter { it.first != thousandsSeparator },
+            options = translateSeparatorOptions(CurrencyFormat.DECIMAL_SEPARATORS.filter { it.first != thousandsSeparator }),
             currentValue = decimalSeparator,
             onSelected = { onDecimalSeparatorSelected(it); showDecimalSeparatorDialog = false },
-            onDismiss = { showDecimalSeparatorDialog = false },
+            onDismiss = {
+                analyticsManager.logEvent("settings_dialog_dismissed", android.os.Bundle().apply {
+                    putString("dialog_type", "decimal_separator")
+                })
+                showDecimalSeparatorDialog = false
+            },
         )
     }
 
     if (showThousandsSeparatorDialog) {
         SeparatorDialog(
             title = stringResource(R.string.dialog_choose_thousands_separator),
-            options = CurrencyFormat.THOUSANDS_SEPARATORS.filter { it.first != decimalSeparator },
+            options = translateSeparatorOptions(CurrencyFormat.THOUSANDS_SEPARATORS.filter { it.first != decimalSeparator }),
             currentValue = thousandsSeparator,
             onSelected = { onThousandsSeparatorSelected(it); showThousandsSeparatorDialog = false },
-            onDismiss = { showThousandsSeparatorDialog = false },
+            onDismiss = {
+                analyticsManager.logEvent("settings_dialog_dismissed", android.os.Bundle().apply {
+                    putString("dialog_type", "thousands_separator")
+                })
+                showThousandsSeparatorDialog = false
+            },
         )
     }
 
@@ -513,57 +547,22 @@ private fun languageDisplayName(language: AppLanguage): String = when (language)
 }
 
 @Composable
-private fun separatorLabel(value: String, isThou: Boolean): String {
-    val options =
-        if (isThou) CurrencyFormat.THOUSANDS_SEPARATORS else CurrencyFormat.DECIMAL_SEPARATORS
-    return options.find { it.first == value }?.second ?: when (value) {
-        "," -> stringResource(R.string.settings_separator_comma)
-        "." -> stringResource(R.string.settings_separator_period)
-        " " -> stringResource(R.string.settings_separator_space)
-        "" -> stringResource(R.string.settings_separator_none)
-        else -> value
+fun translateSeparatorOptions(options: List<Pair<String, String>>): List<Pair<String, String>> {
+    val comma = stringResource(R.string.settings_separator_comma)
+    val period = stringResource(R.string.settings_separator_period)
+    val space = stringResource(R.string.settings_separator_space)
+    val none = stringResource(R.string.settings_separator_none)
+
+    return options.map { (value, label) ->
+        value to when (label) {
+            "Comma (,)" -> comma
+            "Period (.)" -> period
+            "Space" -> space
+            "None" -> none
+            else -> label
+        }
     }
 }
-
-/*@Composable
-private fun CurrencySymbolDialog(
-    currentSymbol: String,
-    onSymbolSelected: (String) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        icon = {
-            Icon(
-                imageVector = Icons.Default.MonetizationOn,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-            )
-        },
-        title = { AppText(stringResource(R.string.dialog_choose_currency)) },
-        text = {
-            Column(
-                modifier = Modifier.verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(0.dp),
-            ) {
-                CurrencyFormat.SUPPORTED_CURRENCIES.forEach { (symbol, label) ->
-                    AppListItem(
-                        headlineContent = { AppText(label) },
-                        leadingContent = {
-                            AppRadioButton(
-                                selected = symbol == currentSymbol,
-                                onClick = { onSymbolSelected(symbol) },
-                            )
-                        },
-                    )
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) { AppText(stringResource(R.string.common_cancel)) }
-        },
-    )
-}*/
 
 // ── Previews ──
 

@@ -132,9 +132,30 @@ private fun CategoriesReorderDialogPreviewLight() {
     AntCashManagerTheme(dynamicColor = false) {
         CategoriesReorderDialog(
             categories = listOf(
-                Category(id = 1, name = "Casa", icon = "home", color = 0xFF4FC3F7, type = "EXPENSE", sortOrder = 0),
-                Category(id = 2, name = "Cibo", icon = "restaurant", color = 0xFFE57373, type = "EXPENSE", sortOrder = 1),
-                Category(id = 3, name = "Shopping", icon = "shopping_bag", color = 0xFFDCE775, type = "EXPENSE", sortOrder = 2),
+                Category(
+                    id = 1,
+                    name = "Casa",
+                    icon = "home",
+                    color = 0xFF4FC3F7,
+                    type = "EXPENSE",
+                    sortOrder = 0
+                ),
+                Category(
+                    id = 2,
+                    name = "Cibo",
+                    icon = "restaurant",
+                    color = 0xFFE57373,
+                    type = "EXPENSE",
+                    sortOrder = 1
+                ),
+                Category(
+                    id = 3,
+                    name = "Shopping",
+                    icon = "shopping_bag",
+                    color = 0xFFDCE775,
+                    type = "EXPENSE",
+                    sortOrder = 2
+                ),
             ),
             onDismiss = {},
             onConfirm = {},

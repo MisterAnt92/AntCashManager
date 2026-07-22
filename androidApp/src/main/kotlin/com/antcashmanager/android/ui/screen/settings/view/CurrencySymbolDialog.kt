@@ -12,8 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.antcashmanager.android.R
-import com.antcashmanager.android.ui.components.AppListItem
-import com.antcashmanager.android.ui.components.AppRadioButton
+import com.antcashmanager.android.ui.components.common.AppListItem
+import com.antcashmanager.android.ui.components.common.AppRadioButton
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.domain.model.CurrencyFormat
 

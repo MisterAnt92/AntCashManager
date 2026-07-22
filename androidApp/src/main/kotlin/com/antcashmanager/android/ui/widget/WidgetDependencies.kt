@@ -1,4 +1,4 @@
-package com.antcashmanager.android.widget
+package com.antcashmanager.android.ui.widget
 
 import androidx.compose.ui.graphics.Color
 import com.antcashmanager.android.analytics.AnalyticsManager

@@ -18,7 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
-import com.antcashmanager.android.ui.components.AppListItem
+import com.antcashmanager.android.ui.components.common.AppListItem
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.settings.model.thirdPartyLibraries
 

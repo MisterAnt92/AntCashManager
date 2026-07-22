@@ -64,7 +64,11 @@ fun WidgetBackgroundColorDialog(
                             .background(Color(color))
                             .then(
                                 if (isSelected) {
-                                    Modifier.border(3.dp, MaterialTheme.colorScheme.primary, CircleShape)
+                                    Modifier.border(
+                                        3.dp,
+                                        MaterialTheme.colorScheme.primary,
+                                        CircleShape
+                                    )
                                 } else {
                                     Modifier
                                 },

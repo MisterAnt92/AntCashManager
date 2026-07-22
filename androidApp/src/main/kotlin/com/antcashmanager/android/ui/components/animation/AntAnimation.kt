@@ -45,7 +45,8 @@ fun AntSplashScreen(
     val accessibilityManager = remember {
         context.getSystemService(android.content.Context.ACCESSIBILITY_SERVICE) as android.view.accessibility.AccessibilityManager
     }
-    val isAccessibilityEnabled = accessibilityManager.isEnabled && accessibilityManager.isTouchExplorationEnabled
+    val isAccessibilityEnabled =
+        accessibilityManager.isEnabled && accessibilityManager.isTouchExplorationEnabled
 
     Box(
         modifier = modifier
@@ -58,9 +59,9 @@ fun AntSplashScreen(
             verticalArrangement = Arrangement.Center
         ) {
             BouncingAnt(modifier = Modifier.size(180.dp))
-            
+
             Spacer(modifier = Modifier.height(32.dp))
-            
+
             AppText(
                 text = stringResource(R.string.app_name),
                 style = MaterialTheme.typography.headlineMedium,
@@ -89,7 +90,7 @@ fun AntSplashScreen(
 @Composable
 fun BouncingAnt(modifier: Modifier = Modifier) {
     val infiniteTransition = rememberInfiniteTransition(label = "AntBounce")
-    
+
     val scale by infiniteTransition.animateFloat(
         initialValue = 1f,
         targetValue = 1.1f,
@@ -99,7 +100,7 @@ fun BouncingAnt(modifier: Modifier = Modifier) {
         ),
         label = "Scale"
     )
-    
+
     val translationY by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = -20f,
@@ -160,7 +161,7 @@ fun AntEasterEggAnimation(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                
+
                 Spacer(modifier = Modifier.height(48.dp))
                 AppText(
                     text = stringResource(R.string.common_close),

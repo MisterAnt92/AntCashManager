@@ -12,7 +12,12 @@ interface TransactionRepository {
     suspend fun deleteAllTransactions()
     fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>>
     fun getRecurringTransactions(): Flow<List<Transaction>>
-    suspend fun renameCategory(oldCategoryName: String, newCategoryName: String, icon: String, color: Long)
+    suspend fun renameCategory(
+        oldCategoryName: String,
+        newCategoryName: String,
+        icon: String,
+        color: Long
+    )
 
     // Metodi per suggerimenti transazioni. [since] filtra alle transazioni con
     // timestamp >= since (default 0 = nessun filtro), usato per "dimenticare" i

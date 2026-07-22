@@ -226,7 +226,10 @@ class SettingsDataViewModel(
             } catch (error: CancellationException) {
                 throw error
             } catch (error: Exception) {
-                Logger.e(throwable = error, tag = SettingsDataConstant.TAG) { "Error deleting data: ${error.message}" }
+                Logger.e(
+                    throwable = error,
+                    tag = SettingsDataConstant.TAG
+                ) { "Error deleting data: ${error.message}" }
                 _state.update {
                     it.copy(
                         deleteResult = DeleteResult.Error(
@@ -247,7 +250,8 @@ class SettingsDataViewModel(
     private suspend fun <T> withMinimumLoadingDuration(block: suspend () -> T): T {
         val startTime = System.currentTimeMillis()
         val result = block()
-        val remaining = SettingsDataConstant.MIN_LOADING_DURATION_MS - (System.currentTimeMillis() - startTime)
+        val remaining =
+            SettingsDataConstant.MIN_LOADING_DURATION_MS - (System.currentTimeMillis() - startTime)
         if (remaining > 0) delay(remaining)
         return result
     }

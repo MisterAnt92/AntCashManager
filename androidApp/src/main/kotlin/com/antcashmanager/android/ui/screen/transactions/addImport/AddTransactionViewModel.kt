@@ -2,7 +2,9 @@ package com.antcashmanager.android.ui.screen.transactions.addImport
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import android.os.Bundle
 import co.touchlab.kermit.Logger
+import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
@@ -89,6 +91,7 @@ class AddTransactionViewModel(
     private val updateTransactionUseCase: UpdateTransactionUseCase,
     private val deleteTransactionUseCase: DeleteTransactionUseCase,
     private val getTransactionSuggestionsUseCase: GetTransactionSuggestionsUseCase,
+    private val analyticsManager: AnalyticsManager,
     private val transactionId: Long? = null,
 ) : ViewModel() {
 
@@ -96,6 +99,7 @@ class AddTransactionViewModel(
         transactionRepository: TransactionRepository,
         categoryRepository: CategoryRepository,
         settingsRepository: SettingsRepository,
+        analyticsManager: AnalyticsManager,
         transactionId: Long? = null,
         dispatcher: CoroutineDispatcher = Dispatchers.Default,
     ) : this(
@@ -110,6 +114,7 @@ class AddTransactionViewModel(
             settingsRepository,
             dispatcher,
         ),
+        analyticsManager = analyticsManager,
         transactionId = transactionId,
     )
 
@@ -146,7 +151,9 @@ class AddTransactionViewModel(
             getCategoriesUseCase().collect { result ->
                 result.onSuccess { categories ->
                     // Le categorie nascoste non vanno offerte per nuove transazioni.
-                    _state.update { it.copy(categories = categories.filterNot { category -> category.isHidden }) }
+                    // Mantieni ordine consistente tramite sortOrder dal database.
+                    val sorted = categories.filterNot { category -> category.isHidden }.sortedBy { it.sortOrder }
+                    _state.update { it.copy(categories = sorted) }
                 }.onFailure { error ->
                     if (error is CancellationException) throw error
                     Logger.e(throwable = error, tag = AddTransactionConstant.TAG) {
@@ -289,6 +296,7 @@ class AddTransactionViewModel(
             is AddTransactionEvent.UpdateMealVoucherCount -> {
                 _state.update { it.copy(mealVoucherCount = event.count) }
             }
+
             is AddTransactionEvent.UpdateTimestamp -> _state.update { it.copy(timestamp = event.timestamp) }
             is AddTransactionEvent.SetRecurring -> _state.update { it.copy(isRecurring = event.isRecurring) }
             is AddTransactionEvent.UpdateRecurrenceInterval -> _state.update {
@@ -412,15 +420,24 @@ class AddTransactionViewModel(
 
         if (currentState.selectedCategory == null || currentState.selectedType == null) {
             _state.update { it.copy(error = AddTransactionConstant.ERROR_REQUIRED_CATEGORY_TYPE) }
+            analyticsManager.logEvent("transaction_form_validation_failed", Bundle().apply {
+                putString("error_type", "missing_category_or_type")
+            })
             return
         }
         if (currentState.title.isBlank() || currentState.amount.isBlank()) {
             _state.update { it.copy(error = AddTransactionConstant.ERROR_REQUIRED_TITLE_AMOUNT) }
+            analyticsManager.logEvent("transaction_form_validation_failed", Bundle().apply {
+                putString("error_type", if (currentState.title.isBlank()) "missing_title" else "missing_amount")
+            })
             return
         }
         val amount = currentState.amount.toDoubleOrNull()
         if (amount == null || amount <= 0) {
             _state.update { it.copy(error = AddTransactionConstant.ERROR_INVALID_AMOUNT) }
+            analyticsManager.logEvent("transaction_form_validation_failed", Bundle().apply {
+                putString("error_type", "invalid_amount")
+            })
             return
         }
 
@@ -454,7 +471,10 @@ class AddTransactionViewModel(
                         _state.update { it.copy(isTransactionSaved = true, isLoading = false) }
                     }.onFailure { error ->
                         if (error is CancellationException) throw error
-                        Logger.e(throwable = error, tag = AddTransactionConstant.TAG) { "Error updating transaction" }
+                        Logger.e(
+                            throwable = error,
+                            tag = AddTransactionConstant.TAG
+                        ) { "Error updating transaction" }
                         _state.update {
                             it.copy(
                                 error = AddTransactionConstant.ERROR_SAVE,
@@ -469,7 +489,10 @@ class AddTransactionViewModel(
                         _state.update { it.copy(isTransactionSaved = true, isLoading = false) }
                     }.onFailure { error ->
                         if (error is CancellationException) throw error
-                        Logger.e(throwable = error, tag = AddTransactionConstant.TAG) { "Error inserting transaction" }
+                        Logger.e(
+                            throwable = error,
+                            tag = AddTransactionConstant.TAG
+                        ) { "Error inserting transaction" }
                         _state.update {
                             it.copy(
                                 error = AddTransactionConstant.ERROR_SAVE,
@@ -514,7 +537,10 @@ class AddTransactionViewModel(
                         }
                     }.onFailure { error ->
                         if (error is CancellationException) throw error
-                        Logger.e(throwable = error, tag = AddTransactionConstant.TAG) { "Error deleting transaction" }
+                        Logger.e(
+                            throwable = error,
+                            tag = AddTransactionConstant.TAG
+                        ) { "Error deleting transaction" }
                         _state.update {
                             it.copy(
                                 error = AddTransactionConstant.ERROR_DELETE,

@@ -27,7 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
-import com.antcashmanager.android.ui.components.AppCategoryListItem
+import com.antcashmanager.android.ui.components.list.AppCategoryListItem
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.domain.model.Category
 import java.util.Locale

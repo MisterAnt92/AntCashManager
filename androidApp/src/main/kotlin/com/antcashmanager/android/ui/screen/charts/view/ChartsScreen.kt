@@ -62,10 +62,10 @@ import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.domain.usecase.share.BuildShareTextUseCase
-import com.antcashmanager.android.ui.components.AntEmptyState
-import com.antcashmanager.android.ui.components.HelpButton
-import com.antcashmanager.android.ui.components.ScreenHeader
-import com.antcashmanager.android.ui.components.rememberAdaptiveLayoutInfo
+import com.antcashmanager.android.ui.components.common.ScreenHeader
+import com.antcashmanager.android.ui.components.dialog.HelpButton
+import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
+import com.antcashmanager.android.ui.components.state.AntEmptyState
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.charts.ChartData
 import com.antcashmanager.android.ui.screen.charts.ChartsConstant
@@ -142,6 +142,18 @@ internal fun ChartsContent(
         selectedPreset = initialPresetIndex
     }
 
+    // Track chart loading completion
+    LaunchedEffect(chartData) {
+        if (chartData.incomeByCategory.isNotEmpty() || chartData.expenseByCategory.isNotEmpty()) {
+            val totalDataPoints = (chartData.incomeByCategory.size + chartData.expenseByCategory.size +
+                    chartData.monthlyData.size + chartData.yearlyData.size)
+            val params = android.os.Bundle().apply {
+                putInt("data_points", totalDataPoints)
+            }
+            analyticsManager.logEvent("chart_loading_completed", params)
+        }
+    }
+
     // Help dialog
     if (showHelpDialog) {
         HelpDialog(onDismiss = { showHelpDialog = false })
@@ -152,15 +164,16 @@ internal fun ChartsContent(
     val electronicLabel = stringResource(R.string.payment_type_electronic)
     val cashLabel = stringResource(R.string.payment_type_cash)
     val mealVouchersLabel = stringResource(R.string.payment_type_meal_vouchers)
-    val paymentBreakdownByLabel = remember(chartData.paymentTypeBreakdown, electronicLabel, cashLabel, mealVouchersLabel) {
-        chartData.paymentTypeBreakdown.mapKeys { (type, _) ->
-            when (type) {
-                PaymentType.ELECTRONIC -> electronicLabel
-                PaymentType.CASH -> cashLabel
-                PaymentType.MEAL_VOUCHERS -> mealVouchersLabel
+    val paymentBreakdownByLabel =
+        remember(chartData.paymentTypeBreakdown, electronicLabel, cashLabel, mealVouchersLabel) {
+            chartData.paymentTypeBreakdown.mapKeys { (type, _) ->
+                when (type) {
+                    PaymentType.ELECTRONIC -> electronicLabel
+                    PaymentType.CASH -> cashLabel
+                    PaymentType.MEAL_VOUCHERS -> mealVouchersLabel
+                }
             }
         }
-    }
 
     // Categorie principali per importo assoluto, calcolate qui (nessun dato nuovo dal ViewModel).
     val topIncomeCategories = remember(chartData.incomeByCategory) {
@@ -345,9 +358,12 @@ internal fun ChartsContent(
             } else {
                 // Tablet (isMedium 600-839dp, isExpanded >=840dp): più dati visibili
                 // affiancando le sezioni invece di impilarle.
-                val showPaymentColumn = adaptiveLayoutInfo.isExpanded && paymentBreakdownByLabel.isNotEmpty()
-                val hasIncomeColumn = chartData.incomeByCategory.isNotEmpty() || topIncomeCategories.isNotEmpty()
-                val hasExpenseColumn = chartData.expenseByCategory.isNotEmpty() || topExpenseCategories.isNotEmpty()
+                val showPaymentColumn =
+                    adaptiveLayoutInfo.isExpanded && paymentBreakdownByLabel.isNotEmpty()
+                val hasIncomeColumn =
+                    chartData.incomeByCategory.isNotEmpty() || topIncomeCategories.isNotEmpty()
+                val hasExpenseColumn =
+                    chartData.expenseByCategory.isNotEmpty() || topExpenseCategories.isNotEmpty()
 
                 if (hasIncomeColumn || hasExpenseColumn || showPaymentColumn) {
                     Row(
@@ -739,12 +755,16 @@ private fun CategoryPieChartCard(
     } else {
         data
     }
-    val protectedCategoryLabel = if (translateKeys) translateCategory(PROTECTED_INCOME_CATEGORY) else PROTECTED_INCOME_CATEGORY
+    val protectedCategoryLabel =
+        if (translateKeys) translateCategory(PROTECTED_INCOME_CATEGORY) else PROTECTED_INCOME_CATEGORY
     val chartSummaryDescription = stringResource(
         R.string.charts_chart_summary_cd,
         title,
         displayData.size,
-        formatAmount(displayData.values.sumOf { abs(it) }, fmt).let { if (masked) maskDigits(it) else it },
+        formatAmount(
+            displayData.values.sumOf { abs(it) },
+            fmt
+        ).let { if (masked) maskDigits(it) else it },
     )
 
     Card(
@@ -799,7 +819,11 @@ private fun CategoryPieChartCard(
                     .semantics { contentDescription = chartSummaryDescription }
             )
             Spacer(modifier = Modifier.height(12.dp))
-            PieLegend(data = displayData, maskMode = maskMode, protectedCategoryLabel = protectedCategoryLabel)
+            PieLegend(
+                data = displayData,
+                maskMode = maskMode,
+                protectedCategoryLabel = protectedCategoryLabel
+            )
         }
     }
 }
@@ -861,7 +885,10 @@ private fun TopCategoriesCard(
                         Box(
                             modifier = Modifier
                                 .size(24.dp)
-                                .background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
+                                .background(
+                                    MaterialTheme.colorScheme.primaryContainer,
+                                    CircleShape
+                                ),
                             contentAlignment = Alignment.Center,
                         ) {
                             AppText(
@@ -878,7 +905,10 @@ private fun TopCategoriesCard(
                             modifier = Modifier.weight(1f),
                         )
                         AppText(
-                            text = formatAmount(abs(amount), fmt).let { if (masked) maskDigits(it) else it },
+                            text = formatAmount(
+                                abs(amount),
+                                fmt
+                            ).let { if (masked) maskDigits(it) else it },
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurface,
@@ -909,7 +939,10 @@ private fun MonthlyBarChartCard(
         R.string.charts_chart_summary_cd,
         title,
         data.size,
-        formatAmount(data.sumOf { it.income - it.expense }, fmt).let { if (masked) maskDigits(it) else it },
+        formatAmount(
+            data.sumOf { it.income - it.expense },
+            fmt
+        ).let { if (masked) maskDigits(it) else it },
     )
 
     Card(
@@ -1002,7 +1035,10 @@ private fun YearlyBarChartCard(
         R.string.charts_chart_summary_cd,
         title,
         data.size,
-        formatAmount(data.sumOf { it.income - it.expense }, fmt).let { if (masked) maskDigits(it) else it },
+        formatAmount(
+            data.sumOf { it.income - it.expense },
+            fmt
+        ).let { if (masked) maskDigits(it) else it },
     )
 
     Card(
@@ -1201,8 +1237,18 @@ private fun ChartsContentPreviewDark() {
 // ══════════════════════════════════════════════════════════════════════════════
 
 @Preview(showBackground = true, name = "ChartsScreen - With Data")
-@Preview(showBackground = true, name = "ChartsScreen - With Data - 7 inch", widthDp = 600, heightDp = 960)
-@Preview(showBackground = true, name = "ChartsScreen - With Data - 10 inch", widthDp = 840, heightDp = 1280)
+@Preview(
+    showBackground = true,
+    name = "ChartsScreen - With Data - 7 inch",
+    widthDp = 600,
+    heightDp = 960
+)
+@Preview(
+    showBackground = true,
+    name = "ChartsScreen - With Data - 10 inch",
+    widthDp = 840,
+    heightDp = 1280
+)
 @Composable
 private fun ChartsContentPreview() {
     AntCashManagerTheme(dynamicColor = false) {

@@ -1,4 +1,4 @@
-package com.antcashmanager.android.widget
+package com.antcashmanager.android.ui.widget
 
 import android.content.Context
 import androidx.compose.runtime.Composable
@@ -9,17 +9,16 @@ import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.LocalContext
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.SizeMode
+import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.lazy.items
-import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.provideContent
-import androidx.glance.action.clickable
 import androidx.glance.background
-import androidx.glance.unit.ColorProvider
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
@@ -34,6 +33,7 @@ import androidx.glance.layout.width
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
+import androidx.glance.unit.ColorProvider
 import com.antcashmanager.android.R
 import com.antcashmanager.android.util.formatAmountWithSign
 import com.antcashmanager.android.util.translateCategoryPlain
@@ -89,7 +89,11 @@ private fun RecentTransactionsContent(
     ) {
         Text(
             text = context.getString(R.string.widget_recent_transactions_title),
-            style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Bold, color = ColorProvider(palette.primaryText)),
+            style = TextStyle(
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                color = ColorProvider(palette.primaryText)
+            ),
         )
         Spacer(modifier = GlanceModifier.height(8.dp))
         if (transactions.isEmpty()) {
@@ -108,7 +112,11 @@ private fun RecentTransactionsContent(
 }
 
 @Composable
-private fun TransactionRow(transaction: Transaction, currencyFormat: CurrencyFormat, palette: WidgetPalette) {
+private fun TransactionRow(
+    transaction: Transaction,
+    currencyFormat: CurrencyFormat,
+    palette: WidgetPalette
+) {
     val context = LocalContext.current
     val isIncome = transaction.type == TransactionType.INCOME
     val amountColor = if (isIncome) Color(0xFF2E7D32) else Color(0xFFC62828)
@@ -126,7 +134,12 @@ private fun TransactionRow(transaction: Transaction, currencyFormat: CurrencyFor
         Spacer(modifier = GlanceModifier.width(8.dp))
         Column(modifier = GlanceModifier.defaultWeight()) {
             Text(
-                text = transaction.title.ifBlank { translateCategoryPlain(context, transaction.category) },
+                text = transaction.title.ifBlank {
+                    translateCategoryPlain(
+                        context,
+                        transaction.category
+                    )
+                },
                 maxLines = 1,
                 style = TextStyle(fontSize = 13.sp, color = ColorProvider(palette.primaryText)),
             )
@@ -139,7 +152,11 @@ private fun TransactionRow(transaction: Transaction, currencyFormat: CurrencyFor
         Text(
             text = formatAmountWithSign(transaction.amount, currencyFormat, isIncome),
             maxLines = 1,
-            style = TextStyle(fontSize = 13.sp, fontWeight = FontWeight.Medium, color = ColorProvider(amountColor)),
+            style = TextStyle(
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Medium,
+                color = ColorProvider(amountColor)
+            ),
         )
     }
 }
