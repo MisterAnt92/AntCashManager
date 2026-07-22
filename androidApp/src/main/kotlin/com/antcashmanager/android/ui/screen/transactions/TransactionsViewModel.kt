@@ -175,14 +175,21 @@ class TransactionsViewModel(
 
         // Per i preset relativi, ricalcola i bound dinamicamente al momento dell'esecuzione.
         // Il combine si riesegue ogni volta che transactionsFlow emette (Room insert/update),
-        // garantendo che System.currentTimeMillis() catturi sempre il momento attuale.
+        // garantendo che il range sia sempre corretto per i preset relativi.
         val from = if (presetIndex != SavedDateFilter.CUSTOM_PRESET_INDEX) {
             TransactionsState.getDateFromForPreset(presetIndex)
         } else {
             storedFrom
         }
         val to = if (presetIndex != SavedDateFilter.CUSTOM_PRESET_INDEX) {
-            System.currentTimeMillis()
+            // End of current day (23:59:59.999)
+            val calendar = java.util.Calendar.getInstance()
+            calendar.timeInMillis = System.currentTimeMillis()
+            calendar.set(java.util.Calendar.HOUR_OF_DAY, 23)
+            calendar.set(java.util.Calendar.MINUTE, 59)
+            calendar.set(java.util.Calendar.SECOND, 59)
+            calendar.set(java.util.Calendar.MILLISECOND, 999)
+            calendar.timeInMillis
         } else {
             storedTo
         }

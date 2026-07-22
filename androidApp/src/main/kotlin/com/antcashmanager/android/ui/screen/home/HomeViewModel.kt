@@ -152,7 +152,14 @@ class HomeViewModel(
             storedFrom
         }
         val to = if (presetIndex != SavedDateFilter.CUSTOM_PRESET_INDEX) {
-            System.currentTimeMillis()
+            // End of current day (start of next day at 00:00:00)
+            val calendar = java.util.Calendar.getInstance()
+            calendar.timeInMillis = System.currentTimeMillis()
+            calendar.set(java.util.Calendar.HOUR_OF_DAY, 23)
+            calendar.set(java.util.Calendar.MINUTE, 59)
+            calendar.set(java.util.Calendar.SECOND, 59)
+            calendar.set(java.util.Calendar.MILLISECOND, 999)
+            calendar.timeInMillis
         } else {
             storedTo
         }
