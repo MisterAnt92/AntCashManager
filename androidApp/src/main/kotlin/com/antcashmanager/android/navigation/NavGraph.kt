@@ -37,16 +37,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.size
-import androidx.compose.ui.unit.sp
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.animation.AntSplashScreen
 import com.antcashmanager.android.ui.components.dialog.AppExitConfirmationDialog
 import com.antcashmanager.android.ui.components.layout.AntScreenScaffold
-import com.antcashmanager.android.ui.theme.LocalReduceMotion
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.categories.view.CategoriesScreen
@@ -153,21 +147,6 @@ fun AntCashManagerNavHost() {
                         ) {
                             visibleNavItems.forEach { item ->
                                 val isSelected = currentDestination?.hierarchy?.any { it.route == item.route } == true
-                                val reduceMotion = LocalReduceMotion.current
-                                val animDuration = if (reduceMotion) 0 else 300
-
-                                val iconSize by animateDpAsState(
-                                    targetValue = if (isSelected) 32.dp else 20.dp,
-                                    animationSpec = tween(durationMillis = animDuration, easing = FastOutSlowInEasing),
-                                    label = "nav_icon_size_${item.route}",
-                                )
-
-                                val fontSize by animateDpAsState(
-                                    targetValue = if (isSelected) 14.dp else 10.dp,
-                                    animationSpec = tween(durationMillis = animDuration, easing = FastOutSlowInEasing),
-                                    label = "nav_font_size_${item.route}",
-                                )
-
                                 NavigationBarItem(
                                     selected = isSelected,
                                     onClick = {
@@ -183,15 +162,12 @@ fun AntCashManagerNavHost() {
                                         Icon(
                                             item.icon,
                                             contentDescription = stringResource(item.titleResId),
-                                            modifier = Modifier.size(iconSize),
                                         )
                                     },
                                     label = {
                                         AppText(
                                             stringResource(item.titleResId),
-                                            style = MaterialTheme.typography.labelSmall.copy(
-                                                fontSize = fontSize.value.sp,
-                                            ),
+                                            style = MaterialTheme.typography.labelSmall,
                                             maxLines = 1,
                                             overflow = TextOverflow.Ellipsis,
                                         )
