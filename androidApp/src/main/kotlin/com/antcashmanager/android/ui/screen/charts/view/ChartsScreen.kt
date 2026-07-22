@@ -142,6 +142,19 @@ internal fun ChartsContent(
         selectedPreset = initialPresetIndex
     }
 
+    // Track chart loading completion
+    LaunchedEffect(chartData) {
+        if (chartData.incomeByCategory.isNotEmpty() || chartData.expenseByCategory.isNotEmpty()) {
+            val totalDataPoints = (chartData.incomeByCategory.size + chartData.expenseByCategory.size +
+                    chartData.incomeByMonth.size + chartData.expenseByMonth.size +
+                    chartData.incomeByYear.size + chartData.expenseByYear.size)
+            val params = android.os.Bundle().apply {
+                putInt("data_points", totalDataPoints)
+            }
+            analyticsManager.logEvent("chart_loading_completed", params)
+        }
+    }
+
     // Help dialog
     if (showHelpDialog) {
         HelpDialog(onDismiss = { showHelpDialog = false })
