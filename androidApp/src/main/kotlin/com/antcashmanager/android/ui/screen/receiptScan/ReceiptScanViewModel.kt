@@ -336,7 +336,7 @@ class ReceiptScanViewModel(
                             ReceiptScanConstant.EXPENSE_TYPE,
                             ignoreCase = true
                         ) && !it.isHidden
-                    }
+                    }.sortedBy { it.sortOrder }
                     _state.update { current ->
                         current.copy(
                             categories = expenseCategories,

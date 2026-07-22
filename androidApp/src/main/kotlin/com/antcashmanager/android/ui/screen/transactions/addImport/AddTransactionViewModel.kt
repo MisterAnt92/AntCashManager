@@ -151,7 +151,9 @@ class AddTransactionViewModel(
             getCategoriesUseCase().collect { result ->
                 result.onSuccess { categories ->
                     // Le categorie nascoste non vanno offerte per nuove transazioni.
-                    _state.update { it.copy(categories = categories.filterNot { category -> category.isHidden }) }
+                    // Mantieni ordine consistente tramite sortOrder dal database.
+                    val sorted = categories.filterNot { category -> category.isHidden }.sortedBy { it.sortOrder }
+                    _state.update { it.copy(categories = sorted) }
                 }.onFailure { error ->
                     if (error is CancellationException) throw error
                     Logger.e(throwable = error, tag = AddTransactionConstant.TAG) {
