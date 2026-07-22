@@ -890,18 +890,6 @@ private fun OtherSection(
             onClick = { onMaskAmountsChanged(!maskAmounts) },
         )
 
-        AppText(
-            text = stringResource(
-                R.string.settings_mask_amounts_preview,
-                formatAmount(1234.56, CurrencyFormat.DEFAULT).let {
-                    if (maskAmounts) maskDigits(it) else it
-                },
-            ),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(start = 4.dp, top = 2.dp, bottom = 4.dp),
-        )
-
         AppCard(
             title = stringResource(R.string.settings_reset_preferences),
             subtitle = stringResource(R.string.settings_reset_preferences_subtitle),

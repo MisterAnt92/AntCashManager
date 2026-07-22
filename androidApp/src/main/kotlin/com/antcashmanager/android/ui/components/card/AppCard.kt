@@ -70,8 +70,8 @@ fun AppCard(
     val contentPadding = if (adaptiveLayoutInfo.isCompact) 16.dp else 20.dp
     val iconContainerSize = if (adaptiveLayoutInfo.isExpanded) 48.dp else 44.dp
     val iconSize = if (adaptiveLayoutInfo.isExpanded) 24.dp else 22.dp
-    val titleMaxLines = if (adaptiveLayoutInfo.isCompact) 1 else 2
-    val subtitleMaxLines = if (adaptiveLayoutInfo.isCompact) 2 else 3
+    val titleMaxLines = 2
+    val subtitleMaxLines = 5
 
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -267,8 +267,44 @@ private fun AppCardDarkPreview() {
     }
 }
 
+@Preview(name = "AppCard - Long Text")
+@Composable
+private fun AppCardLongTextPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            AppCard(
+                title = "This is a very long title that spans multiple lines to test wrapping behavior",
+                subtitle = "This is a very long subtitle that demonstrates how the card handles multiple lines of text. It should wrap gracefully across up to four lines while maintaining good readability and accessibility.",
+                leadingIcon = Icons.Default.Settings,
+                onClick = {},
+            )
+        }
+    }
+}
+
 @Preview(name = "AppCard - Accessibility", showBackground = true, fontScale = 1.5f)
 @Composable
 private fun AppCardAccessibilityPreview() {
-    AppCardBasicPreview()
+    AntCashManagerTheme(dynamicColor = false) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            AppCard(
+                title = "Theme Settings",
+                subtitle = "Customize your appearance preferences",
+                leadingIcon = Icons.Default.Palette,
+                onClick = {},
+            )
+            AppCard(
+                title = "Two Line Title That Wraps Gracefully On Larger Displays",
+                subtitle = "Longer description text that can span multiple lines for comprehensive information",
+                leadingIcon = Icons.Default.Settings,
+                onClick = {},
+            )
+        }
+    }
 }
