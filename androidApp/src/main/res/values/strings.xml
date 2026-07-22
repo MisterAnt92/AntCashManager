@@ -193,7 +193,7 @@
     <string name="dialog_meal_voucher_title">Set Meal Voucher Value</string>
     <string name="dialog_meal_voucher_message">Enter the fixed value for your meal voucher.</string>
     <string name="dialog_meal_voucher_label">Voucher Value</string>
-    <string name="settings_format_preview">Preview: %s</string>
+    <string name="settings_format_preview">Preview:</string>
     <string name="settings_separator_comma">Comma (,)</string>
     <string name="settings_separator_period">Period (.)</string>
     <string name="settings_separator_space">Space</string>
@@ -258,10 +258,10 @@
     <!-- Dialogs -->
     <string name="dialog_choose_theme">Choose Theme</string>
     <string name="dialog_choose_language">Choose Language</string>
-    <string name="dialog_choose_currency">Currency Symbol</string>
-    <string name="dialog_choose_decimal_digits">Decimal Digits</string>
-    <string name="dialog_choose_decimal_separator">Decimal Separator</string>
-    <string name="dialog_choose_thousands_separator">Thousands Separator</string>
+    <string name="dialog_choose_currency">Choose Currency Symbol</string>
+    <string name="dialog_choose_decimal_digits">Choose Decimal Digits</string>
+    <string name="dialog_choose_decimal_separator">Choose Decimal Separator</string>
+    <string name="dialog_choose_thousands_separator">Choose Thousands Separator</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_delete">Delete</string>
     <string name="dialog_add">Add</string>

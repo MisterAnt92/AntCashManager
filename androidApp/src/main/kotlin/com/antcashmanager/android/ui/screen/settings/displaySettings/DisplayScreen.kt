@@ -60,6 +60,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -548,7 +549,7 @@ internal fun DisplayContent(
     if (showDecimalSeparatorDialog) {
         SeparatorDialog(
             title = stringResource(R.string.dialog_choose_decimal_separator),
-            options = CurrencyFormat.DECIMAL_SEPARATORS.filter { it.first != thousandsSeparator },
+            options = translateSeparatorOptions(CurrencyFormat.DECIMAL_SEPARATORS.filter { it.first != thousandsSeparator }),
             currentValue = decimalSeparator,
             onSelected = handleDecimalSeparatorSelected,
             onDismiss = dismissDecimalSeparator,
@@ -558,7 +559,7 @@ internal fun DisplayContent(
     if (showThousandsSeparatorDialog) {
         SeparatorDialog(
             title = stringResource(R.string.dialog_choose_thousands_separator),
-            options = CurrencyFormat.THOUSANDS_SEPARATORS.filter { it.first != decimalSeparator },
+            options = translateSeparatorOptions(CurrencyFormat.THOUSANDS_SEPARATORS.filter { it.first != decimalSeparator }),
             currentValue = thousandsSeparator,
             onSelected = handleThousandsSeparatorSelected,
             onDismiss = dismissThousandsSeparator,
@@ -664,6 +665,36 @@ private fun CurrencySection(
             leadingIcon = Icons.Default.MoreHoriz,
             onClick = onShowThousandsSeparatorDialog,
         )
+    }
+
+    Spacer(modifier = Modifier.height(8.dp))
+
+    Column(
+        modifier = Modifier.padding(horizontal = 16.dp),
+    ) {
+        AppText(
+            text = stringResource(R.string.settings_format_preview),
+            style = MaterialTheme.typography.labelSmall,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(bottom = 4.dp),
+        )
+
+        AppText(
+            text = formatAmount(
+                1234567.89,
+                CurrencyFormat(
+                    currencySymbol = currencySymbol,
+                    decimalDigits = decimalDigits,
+                    decimalSeparator = decimalSeparator,
+                    thousandsSeparator = thousandsSeparator,
+                ),
+            ),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.primary,
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         AppCard(
             title = stringResource(R.string.settings_meal_voucher_value),
@@ -683,24 +714,6 @@ private fun CurrencySection(
             onClick = onShowMealVoucherDialog,
         )
     }
-
-    AppText(
-        text = stringResource(
-            R.string.settings_format_preview,
-            formatAmount(
-                1234567.89,
-                CurrencyFormat(
-                    currencySymbol = currencySymbol,
-                    decimalDigits = decimalDigits,
-                    decimalSeparator = decimalSeparator,
-                    thousandsSeparator = thousandsSeparator,
-                ),
-            ),
-        ),
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.padding(start = 4.dp, top = 2.dp, bottom = 8.dp),
-    )
 }
 
 @Composable
@@ -1070,6 +1083,24 @@ private fun isColorPerceptuallyLight(color: Long): Boolean {
     val b = (color and 0xFF) / 255f
     val luminance = 0.299f * r + 0.587f * g + 0.114f * b
     return luminance >= 0.5f
+}
+
+@Composable
+fun translateSeparatorOptions(options: List<Pair<String, String>>): List<Pair<String, String>> {
+    val comma = stringResource(R.string.settings_separator_comma)
+    val period = stringResource(R.string.settings_separator_period)
+    val space = stringResource(R.string.settings_separator_space)
+    val none = stringResource(R.string.settings_separator_none)
+
+    return options.map { (value, label) ->
+        value to when (label) {
+            "Comma (,)" -> comma
+            "Period (.)" -> period
+            "Space" -> space
+            "None" -> none
+            else -> label
+        }
+    }
 }
 
 // Dialog implementations moved to SettingsDialogs.kt

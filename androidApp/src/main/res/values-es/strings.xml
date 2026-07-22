@@ -163,7 +163,7 @@
     <string name="dialog_meal_voucher_title">Establecer Valor Vale de Comida</string>
     <string name="dialog_meal_voucher_message">Ingrese el valor fijo de su vale de comida.</string>
     <string name="dialog_meal_voucher_label">Valor del vale</string>
-    <string name="settings_format_preview">Vista previa: %s</string>
+    <string name="settings_format_preview">Vista previa:</string>
     <string name="settings_separator_comma">Coma (,)</string>
     <string name="settings_separator_period">Punto (.)</string>
     <string name="settings_separator_space">Espacio</string>

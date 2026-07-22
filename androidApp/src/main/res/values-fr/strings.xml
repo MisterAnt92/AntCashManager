@@ -164,7 +164,7 @@
     <string name="dialog_meal_voucher_title">D\u00e9finir Valeur Titre-Restaurant</string>
     <string name="dialog_meal_voucher_message">Saisissez la valeur fixe de votre titre-restaurant.</string>
     <string name="dialog_meal_voucher_label">Valeur du titre</string>
-    <string name="settings_format_preview">Aper\u00e7u\u00a0: %s</string>
+    <string name="settings_format_preview">Aper\u00e7u\u00a0:</string>
     <string name="settings_separator_comma">Virgule (,)</string>
     <string name="settings_separator_period">Point (.)</string>
     <string name="settings_separator_space">Espace</string>
@@ -227,10 +227,10 @@
     <string name="settings_third_party_subtitle">Voir les biblioth\u00e8ques open-source utilis\u00e9es dans cette app</string>
     <string name="dialog_choose_theme">Choisir le th\u00e8me</string>
     <string name="dialog_choose_language">Choisir la langue</string>
-    <string name="dialog_choose_currency">Symbole de devise</string>
-    <string name="dialog_choose_decimal_digits">Chiffres d\u00e9cimaux</string>
-    <string name="dialog_choose_decimal_separator">S\u00e9parateur d\u00e9cimal</string>
-    <string name="dialog_choose_thousands_separator">S\u00e9parateur de milliers</string>
+    <string name="dialog_choose_currency">Choisir le symbole de devise</string>
+    <string name="dialog_choose_decimal_digits">Choisir les chiffres d\u00e9cimaux</string>
+    <string name="dialog_choose_decimal_separator">Choisir le s\u00e9parateur d\u00e9cimal</string>
+    <string name="dialog_choose_thousands_separator">Choisir le s\u00e9parateur de milliers</string>
     <string name="dialog_cancel">Annuler</string>
     <string name="dialog_close">Fermer</string>
     <string name="dialog_ok">OK</string>

@@ -212,7 +212,7 @@
     <string name="dialog_meal_voucher_title">Imposta Valore Buono Pasto</string>
     <string name="dialog_meal_voucher_message">Inserisci il valore fisso del tuo buono pasto.</string>
     <string name="dialog_meal_voucher_label">Valore Buono</string>
-    <string name="settings_format_preview">Anteprima: %s</string>
+    <string name="settings_format_preview">Anteprima:</string>
     <string name="settings_separator_comma">Virgola (,)</string>
     <string name="settings_separator_period">Punto (.)</string>
     <string name="settings_separator_space">Spazio</string>
@@ -220,7 +220,7 @@
     <string name="settings_date_format">Formato Data</string>
     <string name="settings_date_format_subtitle">%s</string>
     <string name="settings_section_currency">Valuta</string>
-    <string name="settings_section_dates">Date</string>
+    <string name="settings_section_dates">Data</string>
     <string name="settings_section_other">Altro</string>
     <string name="settings_reset_preferences">Ripristina Tutte le Preferenze</string>
     <string name="settings_reset_preferences_subtitle">Ripristina tutte le impostazioni ai valori predefiniti</string>
@@ -275,10 +275,10 @@
     <string name="settings_third_party_subtitle">Visualizza le librerie open-source utilizzate in questa app</string>
     <string name="dialog_choose_theme">Scegli Tema</string>
     <string name="dialog_choose_language">Scegli Lingua</string>
-    <string name="dialog_choose_currency">Simbolo Valuta</string>
-    <string name="dialog_choose_decimal_digits">Cifre Decimali</string>
-    <string name="dialog_choose_decimal_separator">Separatore Decimali</string>
-    <string name="dialog_choose_thousands_separator">Separatore Migliaia</string>
+    <string name="dialog_choose_currency">Scegli Simbolo Valuta</string>
+    <string name="dialog_choose_decimal_digits">Scegli Cifre Decimali</string>
+    <string name="dialog_choose_decimal_separator">Scegli Separatore Decimali</string>
+    <string name="dialog_choose_thousands_separator">Scegli Separatore Migliaia</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_delete">Elimina</string>
     <string name="dialog_add">Aggiungi</string>
