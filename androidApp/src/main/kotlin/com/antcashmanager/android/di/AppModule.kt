@@ -185,12 +185,9 @@ val presentationModule = module {
         AddTransactionViewModel(
             transactionId = transactionId,
             transactionRepository = get(),
+            categoryRepository = get(),
             settingsRepository = get(),
-            getCategoriesUseCase = get(),
-            insertTransactionUseCase = get(),
-            updateTransactionUseCase = get(),
-            deleteTransactionUseCase = get(),
-            getTransactionSuggestionsUseCase = get(),
+            analyticsManager = get(),
         )
     }
     viewModel {
@@ -209,9 +206,10 @@ val presentationModule = module {
     viewModel {
         ReceiptScanViewModel(
             scanReceiptUseCase = get(),
-            createTransactionUseCase = get(),
-            getCategoriesUseCase = get(),
-            getTransactionSuggestionsUseCase = get(),
+            transactionRepository = get(),
+            categoryRepository = get(),
+            settingsRepository = get(),
+            analyticsManager = get(),
         )
     }
     viewModelOf(::TransactionDetailsViewModel)

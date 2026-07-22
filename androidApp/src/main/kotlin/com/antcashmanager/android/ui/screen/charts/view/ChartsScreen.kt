@@ -146,8 +146,7 @@ internal fun ChartsContent(
     LaunchedEffect(chartData) {
         if (chartData.incomeByCategory.isNotEmpty() || chartData.expenseByCategory.isNotEmpty()) {
             val totalDataPoints = (chartData.incomeByCategory.size + chartData.expenseByCategory.size +
-                    chartData.incomeByMonth.size + chartData.expenseByMonth.size +
-                    chartData.incomeByYear.size + chartData.expenseByYear.size)
+                    chartData.monthlyData.size + chartData.yearlyData.size)
             val params = android.os.Bundle().apply {
                 putInt("data_points", totalDataPoints)
             }
