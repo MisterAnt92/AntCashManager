@@ -1,4 +1,4 @@
-package com.antcashmanager.android.widget
+package com.antcashmanager.android.ui.widget
 
 import android.content.Context
 import android.content.Intent
