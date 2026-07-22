@@ -33,6 +33,7 @@ import androidx.compose.material.icons.filled.Opacity
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Payment
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material.icons.filled.TipsAndUpdates
 import androidx.compose.material.icons.filled.Visibility
@@ -815,14 +816,13 @@ private fun HomeDisplaySection(
 
         AppCard(
             title = stringResource(R.string.settings_transaction_display),
-            subtitle = when (transactionDisplayType) {
-                TransactionDisplayType.TREND -> stringResource(R.string.settings_transaction_display_trend)
-                TransactionDisplayType.CATEGORY -> stringResource(R.string.settings_transaction_display_category)
-                TransactionDisplayType.NONE -> stringResource(R.string.settings_transaction_display_none)
-            },
+            subtitle = stringResource(R.string.settings_transaction_display_desc),
             leadingIcon = Icons.Default.Visibility,
             onClick = onShowTransactionDisplayDialog,
         )
+
+        Spacer(modifier = Modifier.height(12.dp))
+        TransactionDisplayPreviewHome(transactionDisplayType)
     }
 }
 
@@ -836,16 +836,175 @@ private fun TransactionsDisplaySection(
 
     AppCard(
         title = stringResource(R.string.settings_transaction_display),
-        subtitle = when (transactionDisplayType) {
-            TransactionDisplayType.TREND -> stringResource(R.string.settings_transaction_display_trend)
-            TransactionDisplayType.CATEGORY -> stringResource(R.string.settings_transaction_display_category)
-            TransactionDisplayType.NONE -> stringResource(R.string.settings_transaction_display_none)
-        },
+        subtitle = stringResource(R.string.settings_transaction_display_desc),
         leadingIcon = Icons.Default.Visibility,
         onClick = onShowTransactionDisplayDialog,
     )
 
     Spacer(modifier = Modifier.height(12.dp))
+    TransactionDisplayPreview(transactionDisplayType)
+}
+
+@Composable
+private fun TransactionDisplayPreviewHome(displayType: TransactionDisplayType) {
+    TransactionDisplayPreview(displayType)
+}
+
+@Composable
+private fun TransactionDisplayPreview(displayType: TransactionDisplayType) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        AppText(
+            text = stringResource(R.string.common_preview),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.primary,
+        )
+
+        when (displayType) {
+            TransactionDisplayType.TREND -> {
+                TrendPreviewCard()
+            }
+            TransactionDisplayType.CATEGORY -> {
+                CategoryPreviewCard()
+            }
+            TransactionDisplayType.NONE -> {
+                NoIconPreviewCard()
+            }
+        }
+    }
+}
+
+@Composable
+private fun TrendPreviewCard() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outlineVariant,
+                shape = RoundedCornerShape(12.dp)
+            )
+            .padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        AppText(
+            text = stringResource(R.string.settings_transaction_display_trend_desc),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontWeight = FontWeight.SemiBold,
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(32.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary),
+                contentAlignment = Alignment.Center
+            ) {
+                AppText("↑", color = MaterialTheme.colorScheme.onPrimary, style = MaterialTheme.typography.headlineSmall)
+            }
+            AppText("Income +€50,00", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(32.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.error),
+                contentAlignment = Alignment.Center
+            ) {
+                AppText("↓", color = MaterialTheme.colorScheme.onError, style = MaterialTheme.typography.headlineSmall)
+            }
+            AppText("Expense -€15,00", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
+        }
+    }
+}
+
+@Composable
+private fun CategoryPreviewCard() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outlineVariant,
+                shape = RoundedCornerShape(12.dp)
+            )
+            .padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        AppText(
+            text = stringResource(R.string.settings_transaction_display_category_desc),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontWeight = FontWeight.SemiBold,
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Icon(Icons.Default.MonetizationOn, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(32.dp))
+            AppText("Salary +€2500,00", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Icon(Icons.Default.Restaurant, contentDescription = null, tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(32.dp))
+            AppText("Restaurant -€25,00", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
+        }
+    }
+}
+
+@Composable
+private fun NoIconPreviewCard() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outlineVariant,
+                shape = RoundedCornerShape(12.dp)
+            )
+            .padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        AppText(
+            text = stringResource(R.string.settings_transaction_display_none_desc),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontWeight = FontWeight.SemiBold,
+        )
+
+        Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            AppText("Income +€2500,00", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
+            AppText("Expense -€25,00", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
+        }
+    }
 }
 
 @Composable

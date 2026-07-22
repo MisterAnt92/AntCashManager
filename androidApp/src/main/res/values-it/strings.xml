@@ -397,11 +397,15 @@
     <string name="settings_show_initial_animation_desc">Mostra una breve animazione all\'avvio dell\'app</string>
     <string name="payment_breakdown_label">Saldo per Tipo di Pagamento</string>
     <string name="payment_breakdown_item_desc">Saldo con %1$s: %2$.2f</string>
-    <string name="settings_transaction_display">Visualizzazione elenco transazioni</string>
+    <string name="settings_transaction_display">Icona sulla transazione</string>
+    <string name="settings_transaction_display_desc">Scegli quale icona visualizzare per ogni transazione</string>
     <string name="settings_transaction_display_trend">Andamento</string>
+    <string name="settings_transaction_display_trend_desc">Freccia su per entrate, giù per uscite</string>
     <string name="settings_transaction_display_category">Categoria</string>
+    <string name="settings_transaction_display_category_desc">Visualizza l\'icona della categoria per ogni transazione</string>
     <string name="settings_transaction_display_none">Nessuna</string>
-    <string name="dialog_choose_transaction_display">Scegli visualizzazione</string>
+    <string name="settings_transaction_display_none_desc">Nessuna icona aggiuntiva è visualizzata</string>
+    <string name="dialog_choose_transaction_display">Scegli tipo di icona</string>
     <string name="feedback_email_body_italian">Ciao team di AntCashManager,\n\nVorrei condividere alcuni feedback sull\'app:\n\n[Per favore descrivi il tuo feedback qui]\n\nGrazie!</string>
     <string name="feedback_email_body_english">Hi AntCashManager Team,\n\nI would like to share some feedback about the app:\n\n[Please describe your feedback here]\n\nThank you!</string>
     <string name="feedback_email_body_french">Bonjour à l\'équipe d\'AntCashManager,\n\nJ\'aimerais partager des commentaires sur l\'application:\n\n[Veuillez décrire vos commentaires ici]\n\nMerci!</string>

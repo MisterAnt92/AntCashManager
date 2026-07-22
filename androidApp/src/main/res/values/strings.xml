@@ -409,11 +409,15 @@
     <string name="settings_show_initial_animation_desc">Display a brief animation when the app starts</string>
 
     <!-- Transaction Display -->
-    <string name="settings_transaction_display">Transaction list display</string>
+    <string name="settings_transaction_display">Icon on transactions</string>
+    <string name="settings_transaction_display_desc">Choose which icon to display for each transaction</string>
     <string name="settings_transaction_display_trend">Trend Arrows</string>
-    <string name="settings_transaction_display_category">Category</string>
-    <string name="settings_transaction_display_none">None</string>
-    <string name="dialog_choose_transaction_display">Choose display type</string>
+    <string name="settings_transaction_display_trend_desc">Displays arrow up for income, down for expenses</string>
+    <string name="settings_transaction_display_category">Category Icon</string>
+    <string name="settings_transaction_display_category_desc">Displays the category icon for each transaction</string>
+    <string name="settings_transaction_display_none">No Icon</string>
+    <string name="settings_transaction_display_none_desc">No additional icon is shown</string>
+    <string name="dialog_choose_transaction_display">Choose icon type</string>
 
     <!-- Feedback Email Bodies -->
     <string name="feedback_email_body_english">Hi AntCashManager Team,\n\nI would like to share some feedback about the app:\n\n[Please describe your feedback here]\n\nThank you!</string>
