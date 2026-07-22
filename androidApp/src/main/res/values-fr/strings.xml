@@ -493,6 +493,7 @@
     <string name="common_expenses">Dépenses</string>
     <string name="common_back">Retour</string>
     <string name="common_add">Ajouter</string>
+    <string name="common_preview">Aperçu</string>
     <string name="add_transaction_tags_suggestions">Suggestions :</string>
     <string name="add_transaction_delete_confirm_msg">Êtes-vous sûr de vouloir supprimer cette transaction ? Cette action ne peut pas être annulée.</string>
     <string name="categories_selection_hint">Appuyez sur une catégorie pour la sélectionner (avancement automatique dans l\'application réelle)</string>

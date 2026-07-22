@@ -844,6 +844,105 @@ private fun TransactionsDisplaySection(
         leadingIcon = Icons.Default.Visibility,
         onClick = onShowTransactionDisplayDialog,
     )
+
+    Spacer(modifier = Modifier.height(12.dp))
+    TransactionDisplayPreview()
+}
+
+@Composable
+private fun TransactionDisplayPreview() {
+    val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        AppText(
+            text = stringResource(R.string.common_preview),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.primary,
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            TransactionDisplayPreviewCard(
+                modifier = Modifier.weight(1f),
+                title = stringResource(R.string.settings_transaction_display_trend),
+                headerText = "Oggi",
+                items = listOf(
+                    "Spesa - €15,00",
+                    "Alimentari - €8,50"
+                )
+            )
+
+            TransactionDisplayPreviewCard(
+                modifier = Modifier.weight(1f),
+                title = stringResource(R.string.settings_transaction_display_category),
+                headerText = "Alimentari",
+                items = listOf(
+                    "Supermercato - €15,00",
+                    "Pane - €2,50"
+                )
+            )
+        }
+    }
+}
+
+@Composable
+private fun TransactionDisplayPreviewCard(
+    title: String,
+    headerText: String,
+    items: List<String>,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outlineVariant,
+                shape = RoundedCornerShape(12.dp)
+            )
+            .padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        AppText(
+            text = title,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontWeight = FontWeight.SemiBold,
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(8.dp))
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(8.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            AppText(
+                text = headerText,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.SemiBold,
+            )
+
+            items.forEach { item ->
+                AppText(
+                    text = item,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(start = 4.dp)
+                )
+            }
+        }
+    }
 }
 
 @Composable

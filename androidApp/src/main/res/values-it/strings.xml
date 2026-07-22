@@ -10,6 +10,7 @@
     <string name="common_expenses">Uscite</string>
     <string name="common_back">Indietro</string>
     <string name="common_add">Aggiungi</string>
+    <string name="common_preview">Anteprima</string>
     <string name="help_dashboard_desc">Visualizza il saldo totale, entrate e uscite nel periodo selezionato.</string>
     <string name="help_features_label">Caratteristiche:</string>
     <string name="common_help">Aiuto</string>

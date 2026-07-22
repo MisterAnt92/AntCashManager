@@ -11,6 +11,7 @@
     <string name="common_expenses">Expenses</string>
     <string name="common_back">Back</string>
     <string name="common_add">Add</string>
+    <string name="common_preview">Preview</string>
 
     <!-- HelpDialog (Dashboard) -->
     <string name="help_dashboard_desc">View the total balance, income, and expenses for the selected period.</string>
