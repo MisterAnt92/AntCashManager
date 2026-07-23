@@ -12,6 +12,7 @@ class GetChartsDateFilterStateUseCase(
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : NoParamsObservableUseCase<SavedDateFilter>(dispatcher) {
 
-    override fun execute(params: Unit): Flow<SavedDateFilter> = settingsRepository.getChartsDateFilterState()
+    override fun execute(params: Unit): Flow<SavedDateFilter> =
+        settingsRepository.getChartsDateFilterState()
 }
 

@@ -9,5 +9,6 @@ class GetTransactionDisplayTypeUseCase(
     private val settingsRepository: SettingsRepository,
 ) : NoParamsObservableUseCase<TransactionDisplayType>() {
 
-    override fun execute(params: Unit): Flow<TransactionDisplayType> = settingsRepository.getTransactionDisplayType()
+    override fun execute(params: Unit): Flow<TransactionDisplayType> =
+        settingsRepository.getTransactionDisplayType()
 }

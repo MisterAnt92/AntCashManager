@@ -74,13 +74,15 @@ interface TransactionDao {
     fun getDistinctTags(since: Long): Flow<List<String>>
 
     // Unified suggestions query: fetch all distinct fields in single query
-    @Query("""
+    @Query(
+        """
         SELECT DISTINCT title, payee, notes, location, tags
         FROM transactions
         WHERE timestamp >= :since AND (title != '' OR payee != '' OR notes != '' OR location != '' OR tags != '')
         ORDER BY timestamp DESC
         LIMIT 100
-    """)
+    """
+    )
     suspend fun getSuggestions(since: Long): List<SuggestionRow>
 }
 

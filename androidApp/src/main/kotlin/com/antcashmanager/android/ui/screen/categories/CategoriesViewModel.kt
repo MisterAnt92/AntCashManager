@@ -1,9 +1,9 @@
 package com.antcashmanager.android.ui.screen.categories
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.touchlab.kermit.Logger
+import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.domain.model.Category
+import com.antcashmanager.domain.model.None
 import com.antcashmanager.domain.usecase.category.DeleteCategoryUseCase
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.category.InsertCategoryUseCase
@@ -21,7 +21,7 @@ class CategoriesViewModel(
     private val updateCategoryUseCase: UpdateCategoryUseCase,
     private val deleteCategoryUseCase: DeleteCategoryUseCase,
     private val syncTransactionCategoriesUseCase: SyncTransactionCategoriesUseCase,
-) : ViewModel() {
+) : BaseViewModel<None>() {
 
     private val _state = MutableStateFlow(CategoriesState())
     val state: StateFlow<CategoriesState> = _state
@@ -43,17 +43,14 @@ class CategoriesViewModel(
                     }
                 }.onFailure { error ->
                     if (error is CancellationException) throw error
-                    Logger.e(
-                        throwable = error,
-                        tag = "CategoriesViewModel"
-                    ) { "Error loading categories: ${error.message}" }
+                    logError("Error loading categories: ${error.message}", error)
                 }
             }
         }
     }
 
     fun addCategory(name: String, icon: String, color: Long, type: String = "EXPENSE") {
-        Logger.d(tag = "CategoriesViewModel") { "Adding category: $name ($type)" }
+        logDebug("Adding category: $name ($type)")
         // Accoda la nuova categoria in fondo all'ordine esistente per quel tipo, invece di
         // farla comparire in cima con sortOrder = 0 di default.
         val nextSortOrder = (
@@ -74,16 +71,13 @@ class CategoriesViewModel(
             )
             result.onFailure { error ->
                 if (error is CancellationException) throw error
-                Logger.e(
-                    throwable = error,
-                    tag = "CategoriesViewModel"
-                ) { "Failed to insert category: ${error.message}" }
+                logError("Failed to insert category: ${error.message}", error)
             }
         }
     }
 
     fun updateCategory(category: Category) {
-        Logger.d(tag = "CategoriesViewModel") { "Updating category: ${category.name}" }
+        logDebug("Updating category: ${category.name}")
         val oldName = _state.value.categories.find { it.id == category.id }?.name
         viewModelScope.launch {
             val result = updateCategoryUseCase(category)
@@ -95,18 +89,12 @@ class CategoriesViewModel(
                         SyncTransactionCategoriesUseCase.Params(oldName, category),
                     ).onFailure { error ->
                         if (error is CancellationException) throw error
-                        Logger.e(
-                            throwable = error,
-                            tag = "CategoriesViewModel"
-                        ) { "Failed to sync transactions for renamed category: ${error.message}" }
+                        logError("Failed to sync transactions for renamed category: ${error.message}", error)
                     }
                 }
             }.onFailure { error ->
                 if (error is CancellationException) throw error
-                Logger.e(
-                    throwable = error,
-                    tag = "CategoriesViewModel"
-                ) { "Failed to update category: ${error.message}" }
+                logError("Failed to update category: ${error.message}", error)
             }
         }
     }
@@ -118,14 +106,11 @@ class CategoriesViewModel(
      * corrispondenti.
      */
     fun setCategoryHidden(category: Category, hidden: Boolean) {
-        Logger.d(tag = "CategoriesViewModel") { "Setting category '${category.name}' hidden=$hidden" }
+        logDebug("Setting category '${category.name}' hidden=$hidden")
         viewModelScope.launch {
             updateCategoryUseCase(category.copy(isHidden = hidden)).onFailure { error ->
                 if (error is CancellationException) throw error
-                Logger.e(
-                    throwable = error,
-                    tag = "CategoriesViewModel"
-                ) { "Failed to update category visibility: ${error.message}" }
+                logError("Failed to update category visibility: ${error.message}", error)
             }
         }
     }
@@ -135,16 +120,13 @@ class CategoriesViewModel(
      * nella lista. Aggiorna solo le categorie il cui `sortOrder` è effettivamente cambiato.
      */
     fun reorderCategories(reordered: List<Category>) {
-        Logger.d(tag = "CategoriesViewModel") { "Reordering ${reordered.size} categories" }
+        logDebug("Reordering ${reordered.size} categories")
         viewModelScope.launch {
             reordered.forEachIndexed { index, category ->
                 if (category.sortOrder != index) {
                     updateCategoryUseCase(category.copy(sortOrder = index)).onFailure { error ->
                         if (error is CancellationException) throw error
-                        Logger.e(
-                            throwable = error,
-                            tag = "CategoriesViewModel"
-                        ) { "Failed to persist reordered category '${category.name}': ${error.message}" }
+                        logError("Failed to persist reordered category '${category.name}': ${error.message}", error)
                     }
                 }
             }
@@ -152,15 +134,12 @@ class CategoriesViewModel(
     }
 
     fun deleteCategory(category: Category) {
-        Logger.d(tag = "CategoriesViewModel") { "Deleting category: ${category.name}" }
+        logDebug("Deleting category: ${category.name}")
         viewModelScope.launch {
             val result = deleteCategoryUseCase(category)
             result.onFailure { error ->
                 if (error is CancellationException) throw error
-                Logger.e(
-                    throwable = error,
-                    tag = "CategoriesViewModel"
-                ) { "Failed to delete category: ${error.message}" }
+                logError("Failed to delete category: ${error.message}", error)
             }
         }
     }

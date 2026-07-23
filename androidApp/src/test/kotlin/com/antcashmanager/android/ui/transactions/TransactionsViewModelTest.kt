@@ -5,7 +5,7 @@ import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.testutil.FakeCategoryRepository
 import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.testutil.FakeTransactionRepository
-import com.antcashmanager.android.ui.screen.transactions.TransactionsEvent
+import com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
 import com.antcashmanager.android.ui.screen.transactions.TransactionsViewModel
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
@@ -15,7 +15,6 @@ import com.antcashmanager.domain.model.TransactionSuggestions
 import com.antcashmanager.domain.model.TransactionType
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -311,7 +310,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
             advanceUntilIdle()
 
             viewModel.onEvent(
-                com.antcashmanager.android.ui.screen.transactions.TransactionsEvent.SetDateRange(
+                com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.SetDateRange(
                     from = from,
                     to = to,
                 )

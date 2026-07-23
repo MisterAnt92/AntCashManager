@@ -1,11 +1,11 @@
 package com.antcashmanager.android.ui.screen.charts
 
 import androidx.annotation.StringRes
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.touchlab.kermit.Logger
+import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.android.R
 import com.antcashmanager.android.util.withCorrectAmounts
+import com.antcashmanager.domain.model.None
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
@@ -34,7 +34,8 @@ class ChartsViewModel(
     private val getTransactionsByDateRangeUseCase: GetTransactionsByDateRangeUseCase,
     private val getChartsDateFilterStateUseCase: GetChartsDateFilterStateUseCase,
     private val setChartsDateFilterStateUseCase: SetChartsDateFilterStateUseCase,
-) : ViewModel() {
+    dispatcher: CoroutineDispatcher = Dispatchers.Default,
+) : BaseViewModel<None>(dispatcher) {
 
     constructor(
         transactionRepository: TransactionRepository,
@@ -50,6 +51,7 @@ class ChartsViewModel(
             settingsRepository = settingsRepository,
             dispatcher = dispatcher,
         ),
+        dispatcher = dispatcher,
     )
 
     private val _dateRange = MutableStateFlow(getDefaultDateRange())
@@ -77,7 +79,7 @@ class ChartsViewModel(
     fun setDateRange(from: Long, to: Long) {
         val normalizedFrom = minOf(from, to)
         val normalizedTo = maxOf(from, to)
-        Logger.d(tag = "ChartsViewModel") { "Setting date range: $normalizedFrom - $normalizedTo" }
+        logDebug("Setting date range: $normalizedFrom - $normalizedTo")
         _selectedPresetIndex.value = SavedDateFilter.CUSTOM_PRESET_INDEX
         _dateRange.value = DateRange(normalizedFrom, normalizedTo)
         persistDateFilter(
@@ -147,9 +149,7 @@ class ChartsViewModel(
             val result = setChartsDateFilterStateUseCase(filter)
             result.onFailure { error ->
                 if (error is kotlinx.coroutines.CancellationException) throw error
-                Logger.e(throwable = error, tag = "ChartsViewModel") {
-                    "Failed to persist charts date filter: ${error.message}"
-                }
+                logError("Failed to persist charts date filter: ${error.message}", error)
             }
         }
     }
@@ -170,12 +170,12 @@ class ChartsViewModel(
     }
 
     private fun buildChartData(transactions: List<Transaction>): ChartData {
-        Logger.d(tag = "ChartsViewModel") { "Building chart data from ${transactions.size} transactions" }
+        logDebug("Building chart data from ${transactions.size} transactions")
 
         val incomeTransactions = transactions.filter { it.type == TransactionType.INCOME }
         val expenseTransactions = transactions.filter { it.type == TransactionType.EXPENSE }
 
-        Logger.d(tag = "ChartsViewModel") { "Income transactions: ${incomeTransactions.size}, Expense transactions: ${expenseTransactions.size}" }
+        logDebug("Income transactions: ${incomeTransactions.size}, Expense transactions: ${expenseTransactions.size}")
 
         val incomeByCategory = incomeTransactions
             .groupBy { it.category }
@@ -189,7 +189,7 @@ class ChartsViewModel(
         val totalExpense =
             expenseByCategory.values.sum() // Use absolute value (already absolute from map)
 
-        Logger.d(tag = "ChartsViewModel") { "Total Income: $totalIncome, Total Expense: $totalExpense" }
+        logDebug("Total Income: $totalIncome, Total Expense: $totalExpense")
 
         // Build monthly aggregation
         val cal = Calendar.getInstance()
@@ -220,7 +220,7 @@ class ChartsViewModel(
                 MonthlyAmount(label, amounts.first, amounts.second) // Both are positive
             }
 
-        Logger.d(tag = "ChartsViewModel") { "Monthly data: ${monthlyData.map { "${it.label}: income=${it.income}, expense=${it.expense}" }}" }
+        logDebug("Monthly data: ${monthlyData.map { "${it.label}: income=${it.income}, expense=${it.expense}" }}")
 
         // Build yearly aggregation
         val yearlyMap = mutableMapOf<Int, Pair<Double, Double>>()
@@ -246,7 +246,7 @@ class ChartsViewModel(
                 )
             }
 
-        Logger.d(tag = "ChartsViewModel") { "Yearly data: ${yearlyData.map { "${it.label}: income=${it.income}, expense=${it.expense}" }}" }
+        logDebug("Yearly data: ${yearlyData.map { "${it.label}: income=${it.income}, expense=${it.expense}" }}")
 
         // Ripartizione per metodo di pagamento (entrate + uscite nette, come HomeViewModel).
         val paymentTypeBreakdown = transactions

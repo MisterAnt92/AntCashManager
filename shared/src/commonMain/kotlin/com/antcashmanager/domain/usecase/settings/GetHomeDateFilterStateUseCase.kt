@@ -12,6 +12,7 @@ class GetHomeDateFilterStateUseCase(
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : NoParamsObservableUseCase<SavedDateFilter>(dispatcher) {
 
-    override fun execute(params: Unit): Flow<SavedDateFilter> = settingsRepository.getHomeDateFilterState()
+    override fun execute(params: Unit): Flow<SavedDateFilter> =
+        settingsRepository.getHomeDateFilterState()
 }
 

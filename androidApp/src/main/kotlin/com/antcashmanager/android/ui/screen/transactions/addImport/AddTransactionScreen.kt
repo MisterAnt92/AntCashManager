@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.analytics.AnalyticsManager
+import com.antcashmanager.android.ui.screen.transactions.addImport.event.AddTransactionEvent
 import com.antcashmanager.android.ui.screen.transactions.addImport.view.CategorySelectionStep
 import com.antcashmanager.android.ui.screen.transactions.addImport.view.DetailsStep
 import com.antcashmanager.domain.model.Category

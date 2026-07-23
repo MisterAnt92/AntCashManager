@@ -222,7 +222,9 @@ class SettingsPreferencesUseCasesMockkTest {
 
     @Test
     fun getTransactionDisplayTypeUseCase_shouldDelegateToRepository() = runTest {
-        every { settingsRepository.getTransactionDisplayType() } returns flowOf(TransactionDisplayType.TREND)
+        every { settingsRepository.getTransactionDisplayType() } returns flowOf(
+            TransactionDisplayType.TREND
+        )
         val useCase = GetTransactionDisplayTypeUseCase(settingsRepository)
 
         useCase().collect { }

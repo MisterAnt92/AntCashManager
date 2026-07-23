@@ -27,10 +27,8 @@ import com.antcashmanager.domain.usecase.settings.SetLanguageUseCase
 import com.antcashmanager.domain.usecase.settings.SetLargeTextUseCase
 import com.antcashmanager.domain.usecase.settings.SetReduceMotionUseCase
 import com.antcashmanager.domain.usecase.settings.SetShowChartsUseCase
-import com.antcashmanager.domain.usecase.settings.SetShowTransactionNotesUseCase
 import com.antcashmanager.domain.usecase.settings.SetThemeUseCase
 import com.antcashmanager.domain.usecase.settings.SetThousandsSeparatorUseCase
-import com.antcashmanager.domain.usecase.settings.SetTransactionDisplayTypeUseCase
 import com.antcashmanager.domain.usecase.settings.SetTutorialCompletedUseCase
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
@@ -72,9 +70,7 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
     private lateinit var getThousandsSeparatorUseCase: GetThousandsSeparatorUseCase
     private lateinit var setThousandsSeparatorUseCase: SetThousandsSeparatorUseCase
     private lateinit var getShowTransactionNotesUseCase: GetShowTransactionNotesUseCase
-    private lateinit var setShowTransactionNotesUseCase: SetShowTransactionNotesUseCase
     private lateinit var getTransactionDisplayTypeUseCase: GetTransactionDisplayTypeUseCase
-    private lateinit var setTransactionDisplayTypeUseCase: SetTransactionDisplayTypeUseCase
     private lateinit var setTutorialCompletedUseCase: SetTutorialCompletedUseCase
     private lateinit var resetAllPreferencesUseCase: ResetAllPreferencesUseCase
     private lateinit var deleteAllTransactionsUseCase: DeleteAllTransactionsUseCase
@@ -94,7 +90,6 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
         setHighContrastUseCase = mockk()
         setLargeTextUseCase = mockk()
         setReduceMotionUseCase = mockk()
-        setShowTransactionNotesUseCase = mockk()
 
         // String getters
         getCurrencySymbolUseCase = mockk()
@@ -110,9 +105,8 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
         getDecimalDigitsUseCase = mockk()
         setDecimalDigitsUseCase = mockk()
 
-        // Enum getter/setter
+        // Enum getter
         getTransactionDisplayTypeUseCase = mockk()
-        setTransactionDisplayTypeUseCase = mockk()
 
         // Theme & Language (already tested in previous versions)
         getThemeUseCase = mockk()
@@ -155,8 +149,6 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
         coEvery { setDecimalDigitsUseCase(any()) } returns Result.success(Unit)
         coEvery { setDecimalSeparatorUseCase(any()) } returns Result.success(Unit)
         coEvery { setThousandsSeparatorUseCase(any()) } returns Result.success(Unit)
-        coEvery { setShowTransactionNotesUseCase(any()) } returns Result.success(Unit)
-        coEvery { setTransactionDisplayTypeUseCase(any()) } returns Result.success(Unit)
         coEvery { setTutorialCompletedUseCase(any()) } returns Result.success(Unit)
         coEvery { resetAllPreferencesUseCase() } returns Result.success(Unit)
         coEvery { deleteAllTransactionsUseCase() } returns Result.success(Unit)
@@ -258,9 +250,7 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
         getThousandsSeparatorUseCase = getThousandsSeparatorUseCase,
         setThousandsSeparatorUseCase = setThousandsSeparatorUseCase,
         getShowTransactionNotesUseCase = getShowTransactionNotesUseCase,
-        setShowTransactionNotesUseCase = setShowTransactionNotesUseCase,
         getTransactionDisplayTypeUseCase = getTransactionDisplayTypeUseCase,
-        setTransactionDisplayTypeUseCase = setTransactionDisplayTypeUseCase,
         setTutorialCompletedUseCase = setTutorialCompletedUseCase,
         resetAllPreferencesUseCase = resetAllPreferencesUseCase,
         deleteAllTransactionsUseCase = deleteAllTransactionsUseCase,

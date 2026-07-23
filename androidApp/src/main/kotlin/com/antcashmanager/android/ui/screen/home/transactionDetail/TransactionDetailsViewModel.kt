@@ -2,10 +2,10 @@ package com.antcashmanager.android.ui.screen.home.transactionDetail
 
 import android.content.Context
 import android.content.Intent
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.base.BaseViewModel
+import com.antcashmanager.domain.model.None
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.usecase.ShareTransactionUseCase
 import kotlinx.coroutines.launch
@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
  */
 class TransactionDetailsViewModel(
     private val shareTransactionUseCase: ShareTransactionUseCase,
-) : ViewModel() {
+) : BaseViewModel<None>() {
 
     /**
      * Condivide i dati della transazione usando lo use case
@@ -49,7 +49,7 @@ class TransactionDetailsViewModel(
                     )
                 }
                 .onFailure { error ->
-                    Logger.e(throwable = error) { "Failed to format share text" }
+                    logError("Failed to format share text", error)
                 }
         }
     }

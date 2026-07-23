@@ -5,8 +5,8 @@ package com.antcashmanager.android.ui.screen.transactions
 // ══════════════════════════════════════════════════════════════════════════════
 
 import androidx.lifecycle.viewModelScope
-import co.touchlab.kermit.Logger
 import com.antcashmanager.android.ui.base.BaseViewModel
+import com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
 import com.antcashmanager.android.util.withCorrectAmounts
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.SavedDateFilter
@@ -43,34 +43,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-// ══════════════════════════════════════════════════════════════════════════════
-// EVENTS
-// ══════════════════════════════════════════════════════════════════════════════
-
-/**
- * UI Events for Transactions screen.
- */
-sealed interface TransactionsEvent {
-    // Date range events
-    data class SelectPreset(val index: Int) : TransactionsEvent
-    data class SetDateRange(val from: Long, val to: Long) : TransactionsEvent
-
-    // Search & Filter events
-    data class UpdateSearchQuery(val query: String) : TransactionsEvent
-    data class UpdateCategoryFilter(val category: String?) : TransactionsEvent
-    data class UpdateTransactionTypeFilter(val type: TransactionType?) : TransactionsEvent
-    data class UpdatePaymentTypeFilter(val paymentType: PaymentType?) : TransactionsEvent
-    data object ToggleSearchExpanded : TransactionsEvent
-    data object ToggleFiltersExpanded : TransactionsEvent
-    data object ApplyFilters : TransactionsEvent
-    data object CancelFilterChanges : TransactionsEvent
-    data object ClearAllFilters : TransactionsEvent
-
-    // Transaction CRUD events
-    data object AddTransactionClicked : TransactionsEvent
-    data class DeleteTransaction(val transaction: Transaction) : TransactionsEvent
-    data class UpdateTransaction(val transaction: Transaction) : TransactionsEvent
-}
 
 // ══════════════════════════════════════════════════════════════════════════════
 // VIEWMODEL
@@ -87,7 +59,8 @@ class TransactionsViewModel(
     private val getTransactionSuggestionsUseCase: GetTransactionSuggestionsUseCase,
     private val getTransactionsDateFilterStateUseCase: GetTransactionsDateFilterStateUseCase,
     private val setTransactionsDateFilterStateUseCase: SetTransactionsDateFilterStateUseCase,
-) : BaseViewModel() {
+    dispatcher: CoroutineDispatcher = Dispatchers.Default,
+) : BaseViewModel<TransactionsEvent>(dispatcher) {
 
     constructor(
         transactionRepository: TransactionRepository,
@@ -131,6 +104,7 @@ class TransactionsViewModel(
             settingsRepository = settingsRepository,
             dispatcher = dispatcher,
         ),
+        dispatcher = dispatcher,
     )
 
 
@@ -301,8 +275,8 @@ class TransactionsViewModel(
     }
 
     // ── Event Handling ──
-    fun onEvent(event: TransactionsEvent) {
-        Logger.d(tag = "TransactionsViewModel") { "Event: $event" }
+    override fun onEvent(event: TransactionsEvent) {
+        logDebug("Event: $event")
         when (event) {
             // Date range events
             is TransactionsEvent.SelectPreset -> selectPreset(event.index)
@@ -399,9 +373,10 @@ class TransactionsViewModel(
             val result = setTransactionsDateFilterStateUseCase(filter)
             result.onFailure { error ->
                 if (error is kotlinx.coroutines.CancellationException) throw error
-                Logger.e(throwable = error, tag = "TransactionsViewModel") {
-                    "Failed to persist transactions date filter: ${error.message}"
-                }
+                logError(
+                    message = "Failed to persist transactions date filter: ${error.message}",
+                    throwable = error
+                )
             }
         }
     }
@@ -488,7 +463,7 @@ class TransactionsViewModel(
         isRecurring: Boolean = false,
         recurrenceInterval: String = "",
     ) {
-        Logger.d(tag = "TransactionsViewModel") { "Adding transaction: $title" }
+        logDebug("Adding transaction: $title")
         viewModelScope.launch {
             val result = insertTransactionUseCase(
                 Transaction(
@@ -507,38 +482,38 @@ class TransactionsViewModel(
             )
             result.onFailure { error ->
                 if (error is kotlinx.coroutines.CancellationException) throw error
-                Logger.e(
-                    throwable = error,
-                    tag = "TransactionsViewModel"
-                ) { "Failed to insert transaction: ${error.message}" }
+                logError(
+                    message = "Failed to insert transaction: ${error.message}",
+                    throwable = error
+                )
             }
         }
     }
 
     fun updateTransaction(transaction: Transaction) {
-        Logger.d(tag = "TransactionsViewModel") { "Updating transaction: ${transaction.title}" }
+        logDebug("Updating transaction: ${transaction.title}")
         viewModelScope.launch {
             val result = updateTransactionUseCase(transaction)
             result.onFailure { error ->
                 if (error is kotlinx.coroutines.CancellationException) throw error
-                Logger.e(
-                    throwable = error,
-                    tag = "TransactionsViewModel"
-                ) { "Failed to update transaction: ${error.message}" }
+                logError(
+                    message = "Failed to update transaction: ${error.message}",
+                    throwable = error
+                )
             }
         }
     }
 
     fun deleteTransaction(transaction: Transaction) {
-        Logger.d(tag = "TransactionsViewModel") { "Deleting transaction: ${transaction.title}" }
+        logDebug("Deleting transaction: ${transaction.title}")
         viewModelScope.launch {
             val result = deleteTransactionUseCase(transaction)
             result.onFailure { error ->
                 if (error is kotlinx.coroutines.CancellationException) throw error
-                Logger.e(
-                    throwable = error,
-                    tag = "TransactionsViewModel"
-                ) { "Failed to delete transaction: ${error.message}" }
+                logError(
+                    message = "Failed to delete transaction: ${error.message}",
+                    throwable = error
+                )
             }
         }
     }

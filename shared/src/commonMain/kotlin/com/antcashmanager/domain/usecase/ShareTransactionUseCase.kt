@@ -2,11 +2,10 @@ package com.antcashmanager.domain.usecase
 
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
+import com.antcashmanager.domain.usecase.base.UseCase
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-
-import com.antcashmanager.domain.usecase.base.UseCase
 
 /**
  * Use case per la formattazione dei dati di una transazione per la condivisione.

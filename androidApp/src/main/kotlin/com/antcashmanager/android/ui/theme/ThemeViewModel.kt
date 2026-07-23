@@ -1,9 +1,9 @@
 package com.antcashmanager.android.ui.theme
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.touchlab.kermit.Logger
+import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.domain.model.AppTheme
+import com.antcashmanager.domain.model.None
 import com.antcashmanager.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
  */
 class ThemeViewModel(
     private val settingsRepository: SettingsRepository,
-) : ViewModel() {
+) : BaseViewModel<None>() {
 
     val appTheme = settingsRepository.getTheme()
         .stateIn(
@@ -51,7 +51,7 @@ class ThemeViewModel(
     }
 
     private fun updatePreference(logMsg: String, action: suspend () -> Unit) {
-        Logger.d(tag = ThemeConstants.TAG) { logMsg }
+        logDebug(logMsg)
         viewModelScope.launch { action() }
     }
 }

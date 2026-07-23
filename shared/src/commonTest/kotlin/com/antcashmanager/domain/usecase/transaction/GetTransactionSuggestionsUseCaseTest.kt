@@ -4,9 +4,7 @@ import com.antcashmanager.domain.model.TransactionSuggestions
 import com.antcashmanager.testutil.FakeSettingsRepository
 import com.antcashmanager.testutil.FakeTransactionRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -49,7 +47,8 @@ class GetTransactionSuggestionsUseCaseTest {
         val collected = mutableListOf<TransactionSuggestions>()
 
         // When - avvio collector e cancello subito
-        val job = launch { cancellableUseCase().collect { result -> result.onSuccess { collected.add(it) } } }
+        val job =
+            launch { cancellableUseCase().collect { result -> result.onSuccess { collected.add(it) } } }
         job.cancel()
         advanceUntilIdle()
 

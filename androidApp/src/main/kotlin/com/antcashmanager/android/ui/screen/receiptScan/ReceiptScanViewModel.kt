@@ -1,11 +1,11 @@
 package com.antcashmanager.android.ui.screen.receiptScan
 
 import android.os.Bundle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.touchlab.kermit.Logger
+import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.domain.model.Category
+import com.antcashmanager.domain.model.None
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.ReceiptData
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
@@ -41,7 +41,7 @@ class ReceiptScanViewModel(
     private val getCategoriesUseCase: GetCategoriesUseCase,
     private val getTransactionSuggestionsUseCase: GetTransactionSuggestionsUseCase,
     private val analyticsManager: AnalyticsManager,
-) : ViewModel() {
+) : BaseViewModel<None>() {
 
     // ── State ─────────────────────────────────────────────────────────────────
     private val _state = MutableStateFlow(ReceiptScanState())
@@ -66,7 +66,7 @@ class ReceiptScanViewModel(
     fun scanReceipt(imageBytes: ByteArray) {
         activeJob?.cancel()
         activeJob = viewModelScope.launch {
-            Logger.d(tag = ReceiptScanConstant.TAG) { "Starting receipt scan, bytes=${imageBytes.size}" }
+            logDebug("Starting receipt scan, bytes=${imageBytes.size}")
             _state.update {
                 it.copy(
                     step = ReceiptScanStep.PROCESSING,
@@ -77,9 +77,7 @@ class ReceiptScanViewModel(
 
             scanReceiptUseCase(imageBytes)
                 .onSuccess { receiptData ->
-                    Logger.i(tag = ReceiptScanConstant.TAG) {
-                        "Scan OK: amount=${receiptData.totalAmount}, payee=${receiptData.payee}"
-                    }
+                    logInfo("Scan OK: amount=${receiptData.totalAmount}, payee=${receiptData.payee}")
 
                     val refinedTitle = matchSuggestion(receiptData.payee, distinctTitles)
                         ?: matchAgainstRawText(receiptData.rawText, distinctTitles)
@@ -105,7 +103,7 @@ class ReceiptScanViewModel(
                 }
                 .onFailure { error ->
                     if (error is CancellationException) throw error
-                    Logger.e(throwable = error, tag = ReceiptScanConstant.TAG) { "Scan failed" }
+                    logError("Scan failed", error)
                     analyticsManager.logEvent("receipt_scan_failed", Bundle().apply {
                         putString("failure_reason", error.message?.take(40) ?: "unknown")
                     })
@@ -147,7 +145,7 @@ class ReceiptScanViewModel(
 
     /** Seleziona una categoria e chiude il dialog. */
     fun selectCategory(category: Category) {
-        Logger.d(tag = ReceiptScanConstant.TAG) { "Category selected: ${category.name}" }
+        logDebug("Category selected: ${category.name}")
         _state.update { it.copy(selectedCategory = category, showCategoryDialog = false) }
     }
 
@@ -162,7 +160,7 @@ class ReceiptScanViewModel(
 
     /** Permette all'utente di sovrascrivere il tipo di pagamento rilevato dall'OCR. */
     fun selectPaymentType(paymentType: PaymentType) {
-        Logger.d(tag = ReceiptScanConstant.TAG) { "Payment type selected by user: $paymentType" }
+        logDebug("Payment type selected by user: $paymentType")
         _state.update { it.copy(selectedPaymentType = paymentType, showPaymentTypeDialog = false) }
     }
 
@@ -203,14 +201,12 @@ class ReceiptScanViewModel(
 
         activeJob?.cancel()
         activeJob = viewModelScope.launch {
-            Logger.d(tag = ReceiptScanConstant.TAG) { "Saving transaction from receipt: ${current.title}" }
+            logDebug("Saving transaction from receipt: ${current.title}")
             _state.update { it.copy(isLoading = true, error = null) }
 
             val effectiveAmount = current.editedAmount ?: receipt.totalAmount
             if (current.editedAmount != null) {
-                Logger.d(tag = ReceiptScanConstant.TAG) {
-                    "Amount edited by user: ${receipt.totalAmount} → ${current.editedAmount}"
-                }
+                logDebug("Amount edited by user: ${receipt.totalAmount} → ${current.editedAmount}")
                 analyticsManager.logEvent("receipt_scan_manual_entry")
             }
 
@@ -230,15 +226,12 @@ class ReceiptScanViewModel(
 
             createTransactionUseCase(params)
                 .onSuccess { id ->
-                    Logger.i(tag = ReceiptScanConstant.TAG) { "Transaction saved, id=$id" }
+                    logInfo("Transaction saved, id=$id")
                     _state.update { it.copy(isTransactionSaved = true, isLoading = false) }
                 }
                 .onFailure { error ->
                     if (error is CancellationException) throw error
-                    Logger.e(
-                        throwable = error,
-                        tag = ReceiptScanConstant.TAG
-                    ) { "Failed to save transaction" }
+                    logError("Failed to save transaction", error)
                     _state.update {
                         it.copy(
                             isLoading = false,
@@ -319,10 +312,7 @@ class ReceiptScanViewModel(
                     }
                 }.onFailure { error ->
                     if (error is CancellationException) throw error
-                    Logger.e(
-                        throwable = error,
-                        tag = ReceiptScanConstant.TAG
-                    ) { "Failed to load categories" }
+                    logError("Failed to load categories", error)
                 }
             }
         }

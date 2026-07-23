@@ -1,13 +1,13 @@
 package com.antcashmanager.android.ui.screen.settings
 
 import android.content.Context
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.touchlab.kermit.Logger
+import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.android.BuildConfig
 import com.antcashmanager.android.data.feedback.FeedbackEmailHelper
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
+import com.antcashmanager.domain.model.None
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
@@ -32,10 +32,8 @@ import com.antcashmanager.domain.usecase.settings.SetLanguageUseCase
 import com.antcashmanager.domain.usecase.settings.SetLargeTextUseCase
 import com.antcashmanager.domain.usecase.settings.SetReduceMotionUseCase
 import com.antcashmanager.domain.usecase.settings.SetShowChartsUseCase
-import com.antcashmanager.domain.usecase.settings.SetShowTransactionNotesUseCase
 import com.antcashmanager.domain.usecase.settings.SetThemeUseCase
 import com.antcashmanager.domain.usecase.settings.SetThousandsSeparatorUseCase
-import com.antcashmanager.domain.usecase.settings.SetTransactionDisplayTypeUseCase
 import com.antcashmanager.domain.usecase.settings.SetTutorialCompletedUseCase
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
@@ -54,35 +52,33 @@ import org.json.JSONObject
 
 
 class SettingsViewModel(
-    private val getThemeUseCase: GetThemeUseCase,
+    getThemeUseCase: GetThemeUseCase,
     private val setThemeUseCase: SetThemeUseCase,
-    private val getLanguageUseCase: GetLanguageUseCase,
+    getLanguageUseCase: GetLanguageUseCase,
     private val setLanguageUseCase: SetLanguageUseCase,
-    private val getShowChartsUseCase: GetShowChartsUseCase,
+    getShowChartsUseCase: GetShowChartsUseCase,
     private val setShowChartsUseCase: SetShowChartsUseCase,
-    private val getHighContrastUseCase: GetHighContrastUseCase,
+    getHighContrastUseCase: GetHighContrastUseCase,
     private val setHighContrastUseCase: SetHighContrastUseCase,
-    private val getLargeTextUseCase: GetLargeTextUseCase,
+    getLargeTextUseCase: GetLargeTextUseCase,
     private val setLargeTextUseCase: SetLargeTextUseCase,
-    private val getReduceMotionUseCase: GetReduceMotionUseCase,
+    getReduceMotionUseCase: GetReduceMotionUseCase,
     private val setReduceMotionUseCase: SetReduceMotionUseCase,
-    private val getCurrencySymbolUseCase: GetCurrencySymbolUseCase,
+    getCurrencySymbolUseCase: GetCurrencySymbolUseCase,
     private val setCurrencySymbolUseCase: SetCurrencySymbolUseCase,
-    private val getDecimalDigitsUseCase: GetDecimalDigitsUseCase,
+    getDecimalDigitsUseCase: GetDecimalDigitsUseCase,
     private val setDecimalDigitsUseCase: SetDecimalDigitsUseCase,
-    private val getDecimalSeparatorUseCase: GetDecimalSeparatorUseCase,
+    getDecimalSeparatorUseCase: GetDecimalSeparatorUseCase,
     private val setDecimalSeparatorUseCase: SetDecimalSeparatorUseCase,
-    private val getThousandsSeparatorUseCase: GetThousandsSeparatorUseCase,
+    getThousandsSeparatorUseCase: GetThousandsSeparatorUseCase,
     private val setThousandsSeparatorUseCase: SetThousandsSeparatorUseCase,
-    private val getShowTransactionNotesUseCase: GetShowTransactionNotesUseCase,
-    private val setShowTransactionNotesUseCase: SetShowTransactionNotesUseCase,
-    private val getTransactionDisplayTypeUseCase: GetTransactionDisplayTypeUseCase,
-    private val setTransactionDisplayTypeUseCase: SetTransactionDisplayTypeUseCase,
+    getShowTransactionNotesUseCase: GetShowTransactionNotesUseCase,
+    getTransactionDisplayTypeUseCase: GetTransactionDisplayTypeUseCase,
     private val setTutorialCompletedUseCase: SetTutorialCompletedUseCase,
     private val resetAllPreferencesUseCase: ResetAllPreferencesUseCase,
     private val deleteAllTransactionsUseCase: DeleteAllTransactionsUseCase,
     private val insertTransactionUseCase: InsertTransactionUseCase,
-) : ViewModel() {
+) : BaseViewModel<None>() {
 
     private var setThemeJob: Job? = null
     private var setLanguageJob: Job? = null
@@ -95,7 +91,7 @@ class SettingsViewModel(
      */
     fun importDebugData(context: Context) {
         if (!BuildConfig.DEBUG) return
-        Logger.d(tag = SettingsConstant.TAG) { "Importing debug data from assets" }
+        logDebug("Importing debug data from assets")
         viewModelScope.launch {
             try {
                 withContext(Dispatchers.IO) {
@@ -103,7 +99,7 @@ class SettingsViewModel(
                     val json = try {
                         context.assets.open(assetName).bufferedReader().use { it.readText() }
                     } catch (ex: Exception) {
-                        Logger.e(tag = SettingsConstant.TAG) { "Cannot open debug asset: ${ex.message}" }
+                        logError("Cannot open debug asset: ${ex.message}")
                         return@withContext
                     }
                     val obj = JSONObject(json)
@@ -181,7 +177,7 @@ class SettingsViewModel(
                     }
                 }
             } catch (ex: Exception) {
-                Logger.e(tag = SettingsConstant.TAG) { "Error importing debug data: ${ex.message}" }
+                logError("Error importing debug data: ${ex.message}")
             }
         }
     }
@@ -298,25 +294,20 @@ class SettingsViewModel(
      * Funzione di utilità per loggare e lanciare l'azione in coroutine.
      */
     private fun updatePreference(logMsg: String, action: suspend () -> Any?) {
-        Logger.d(tag = SettingsConstant.TAG) { logMsg }
+        logDebug(logMsg)
         viewModelScope.launch {
             try {
                 val result = action()
                 if (result is Result<*>) {
                     result.onFailure { error ->
                         if (error is CancellationException) throw error
-                        Logger.e(throwable = error, tag = SettingsConstant.TAG) {
-                            "Preference update failed: ${error.message}"
-                        }
+                        logError("Preference update failed: ${error.message}", error)
                     }
                 }
             } catch (ex: CancellationException) {
                 throw ex
             } catch (ex: Exception) {
-                Logger.e(
-                    throwable = ex,
-                    tag = SettingsConstant.TAG
-                ) { "Preference update failed: ${ex.message}" }
+                logError("Preference update failed: ${ex.message}", ex)
             }
         }
     }
@@ -402,9 +393,9 @@ class SettingsViewModel(
             BuildConfig.VERSION_NAME
         )
         if (success) {
-            Logger.d(tag = SettingsConstant.TAG) { "Feedback email intent launched successfully" }
+            logDebug("Feedback email intent launched successfully")
         } else {
-            Logger.w(tag = SettingsConstant.TAG) { "No email app available to send feedback" }
+            logWarn("No email app available to send feedback")
         }
         return success
     }

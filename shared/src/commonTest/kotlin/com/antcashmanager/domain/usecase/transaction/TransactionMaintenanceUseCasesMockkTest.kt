@@ -168,7 +168,11 @@ class TransactionMaintenanceUseCasesMockkTest {
             coEvery { transactionRepository.insertTransactions(any()) } returns listOf(1L, 2L)
             coEvery { transactionRepository.updateTransactions(any()) } just Runs
 
-            ProcessRecurringTransactionsUseCase(transactionRepository, Clock.System, dispatcher).invoke()
+            ProcessRecurringTransactionsUseCase(
+                transactionRepository,
+                Clock.System,
+                dispatcher
+            ).invoke()
 
             coVerify(exactly = 1) {
                 transactionRepository.insertTransactions(
