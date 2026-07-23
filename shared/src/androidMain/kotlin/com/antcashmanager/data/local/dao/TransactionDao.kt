@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.antcashmanager.data.local.entity.TransactionEntity
 import kotlinx.coroutines.flow.Flow
@@ -23,8 +24,14 @@ interface TransactionDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTransaction(transaction: TransactionEntity): Long
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTransactions(transactions: List<TransactionEntity>): List<Long>
+
     @Update
     suspend fun updateTransaction(transaction: TransactionEntity)
+
+    @Update
+    suspend fun updateTransactions(transactions: List<TransactionEntity>)
 
     @Delete
     suspend fun deleteTransaction(transaction: TransactionEntity)
@@ -38,6 +45,7 @@ interface TransactionDao {
     @Query("SELECT * FROM transactions WHERE is_recurring = 1 ORDER BY timestamp DESC")
     fun getRecurringTransactions(): Flow<List<TransactionEntity>>
 
+    @Transaction
     @Query(
         "UPDATE transactions SET category = :newCategoryName, category_icon = :icon, category_color = :color " +
                 "WHERE category = :oldCategoryName",
@@ -64,4 +72,22 @@ interface TransactionDao {
 
     @Query("SELECT DISTINCT tags FROM transactions WHERE tags != '' AND timestamp >= :since ORDER BY timestamp DESC LIMIT 20")
     fun getDistinctTags(since: Long): Flow<List<String>>
+
+    // Unified suggestions query: fetch all distinct fields in single query
+    @Query("""
+        SELECT DISTINCT title, payee, notes, location, tags
+        FROM transactions
+        WHERE timestamp >= :since AND (title != '' OR payee != '' OR notes != '' OR location != '' OR tags != '')
+        ORDER BY timestamp DESC
+        LIMIT 100
+    """)
+    suspend fun getSuggestions(since: Long): List<SuggestionRow>
 }
+
+data class SuggestionRow(
+    val title: String,
+    val payee: String,
+    val notes: String,
+    val location: String,
+    val tags: String
+)

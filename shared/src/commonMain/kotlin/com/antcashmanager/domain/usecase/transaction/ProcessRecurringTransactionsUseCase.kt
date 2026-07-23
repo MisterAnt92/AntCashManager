@@ -23,6 +23,9 @@ class ProcessRecurringTransactionsUseCase(
         val recurring = transactionRepository.getRecurringTransactions().first()
         val now = clock.now().toEpochMilliseconds()
 
+        val toInsert = mutableListOf<com.antcashmanager.domain.model.Transaction>()
+        val toUpdate = mutableListOf<com.antcashmanager.domain.model.Transaction>()
+
         for (transaction in recurring) {
             val interval = try {
                 RecurrenceInterval.valueOf(transaction.recurrenceInterval)
@@ -39,23 +42,31 @@ class ProcessRecurringTransactionsUseCase(
                     val newTimestamp = transaction.timestamp + intervalMs * i
                     // Avoid inserting duplicates for already-generated future dates
                     if (newTimestamp <= now) {
-                        transactionRepository.insertTransaction(
+                        toInsert.add(
                             transaction.copy(
                                 id = 0,
                                 timestamp = newTimestamp,
                                 isRecurring = false,
                                 recurrenceInterval = "",
-                            ),
+                            )
                         )
                     }
                 }
 
                 // Update the recurring template's timestamp to the latest period
                 val latestTimestamp = transaction.timestamp + intervalMs * periods
-                transactionRepository.updateTransaction(
-                    transaction.copy(timestamp = latestTimestamp),
-                )
+                toUpdate.add(transaction.copy(timestamp = latestTimestamp))
             }
+        }
+
+        // Batch insert all new recurring instances
+        if (toInsert.isNotEmpty()) {
+            transactionRepository.insertTransactions(toInsert)
+        }
+
+        // Batch update all recurring templates
+        if (toUpdate.isNotEmpty()) {
+            transactionRepository.updateTransactions(toUpdate)
         }
     }
 

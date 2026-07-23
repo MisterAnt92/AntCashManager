@@ -11,7 +11,6 @@ import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
-import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.usecase.settings.GetCurrencySymbolUseCase
 import com.antcashmanager.domain.usecase.settings.GetDecimalDigitsUseCase
 import com.antcashmanager.domain.usecase.settings.GetDecimalSeparatorUseCase
@@ -41,7 +40,6 @@ import com.antcashmanager.domain.usecase.settings.SetTutorialCompletedUseCase
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -376,17 +374,6 @@ class SettingsViewModel(
         logMsg = "Setting thousands separator: $separator",
         action = { setThousandsSeparatorUseCase(separator) },
     )
-
-    fun setShowTransactionNotes(show: Boolean) = updatePreference(
-        logMsg = "Setting show transaction notes: $show",
-        action = { setShowTransactionNotesUseCase(show) },
-    )
-
-    fun setTransactionDisplayType(displayType: TransactionDisplayType) =
-        updatePreference(
-            logMsg = "Setting transaction display type: $displayType",
-            action = { setTransactionDisplayTypeUseCase(displayType) },
-        )
 
     fun setIsTutorialCompleted(completed: Boolean) = updatePreference(
         logMsg = "Setting tutorial completed: $completed",

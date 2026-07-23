@@ -1,6 +1,7 @@
 package com.antcashmanager.android.testutil
 
 import com.antcashmanager.domain.model.Transaction
+import com.antcashmanager.domain.model.TransactionSuggestions
 import com.antcashmanager.domain.repository.TransactionRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -44,9 +45,26 @@ open class FakeTransactionRepository(
         return id
     }
 
+    override suspend fun insertTransactions(transactions: List<Transaction>): List<Long> {
+        applyDelayAndMaybeThrow()
+        val ids = transactions.map { if (it.id != 0L) it.id else nextId++ }
+        val withIds = transactions.zip(ids).map { (t, id) -> t.copy(id = id) }
+        this.transactions.update { it + withIds }
+        return ids
+    }
+
     override suspend fun updateTransaction(transaction: Transaction) {
         applyDelayAndMaybeThrow()
         transactions.update { list -> list.map { if (it.id == transaction.id) transaction else it } }
+    }
+
+    override suspend fun updateTransactions(transactions: List<Transaction>) {
+        applyDelayAndMaybeThrow()
+        this.transactions.update { list ->
+            list.map { existing ->
+                transactions.find { it.id == existing.id } ?: existing
+            }
+        }
     }
 
     override suspend fun deleteTransaction(transaction: Transaction) {
@@ -100,6 +118,18 @@ open class FakeTransactionRepository(
 
     override fun getDistinctTags(since: Long): Flow<List<String>> =
         distinctValuesOf(since) { it.tags }
+
+    override suspend fun getSuggestions(since: Long): TransactionSuggestions {
+        applyDelayAndMaybeThrow()
+        val filtered = transactions.value.filter { it.timestamp >= since }
+        return TransactionSuggestions(
+            titles = filtered.map { it.title }.filter { it.isNotBlank() }.distinct(),
+            payees = filtered.map { it.payee }.filter { it.isNotBlank() }.distinct(),
+            notes = filtered.map { it.notes }.filter { it.isNotBlank() }.distinct(),
+            locations = filtered.map { it.location }.filter { it.isNotBlank() }.distinct(),
+            tags = filtered.map { it.tags }.filter { it.isNotBlank() }.distinct()
+        )
+    }
 
     private fun distinctValuesOf(
         since: Long,

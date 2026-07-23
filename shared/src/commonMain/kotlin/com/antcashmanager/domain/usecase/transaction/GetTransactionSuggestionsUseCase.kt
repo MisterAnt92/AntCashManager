@@ -10,6 +10,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 
 /**
@@ -52,20 +53,9 @@ class GetTransactionSuggestionsUseCase(
                 flowOf(TransactionSuggestions())
             } else {
                 val since = clearedAt ?: 0L
-                combine(
-                    repository.getDistinctTitles(since),
-                    repository.getDistinctPayees(since),
-                    repository.getDistinctNotes(since),
-                    repository.getDistinctLocations(since),
-                    repository.getDistinctTags(since),
-                ) { titles, payees, notes, locations, tags ->
-                    TransactionSuggestions(
-                        titles = titles,
-                        payees = payees,
-                        notes = notes,
-                        locations = locations,
-                        tags = tags,
-                    )
+                // Use unified query: 1 query instead of 5 separate queries
+                flow {
+                    emit(repository.getSuggestions(since))
                 }
             }
         }

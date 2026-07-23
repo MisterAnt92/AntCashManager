@@ -2,9 +2,16 @@ package com.antcashmanager.data.local.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "categories")
+@Entity(
+    tableName = "categories",
+    indices = [
+        Index("type"),  // WHERE type = :type in getCategoriesByType
+        Index("name")   // Potential unique constraint
+    ]
+)
 data class CategoryEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,

@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -51,7 +52,6 @@ class ChartsViewModel(
             dispatcher = dispatcher,
         ),
     )
-
 
     private val _dateRange = MutableStateFlow(getDefaultDateRange())
     val dateRange: StateFlow<DateRange> = _dateRange.asStateFlow()
@@ -105,9 +105,7 @@ class ChartsViewModel(
 
     private fun observeSavedDateFilter() {
         viewModelScope.launch {
-            getChartsDateFilterStateUseCase()
-                .map { result: Result<SavedDateFilter> -> result.getOrNull() }
-                .filterNotNull()
+            getChartsDateFilterStateUseCase().mapNotNull { result: Result<SavedDateFilter> -> result.getOrNull() }
                 .collect { savedFilter: SavedDateFilter ->
                     _selectedPresetIndex.value = savedFilter.presetIndex
                     _dateRange.value = DateRange(savedFilter.from, savedFilter.to)
