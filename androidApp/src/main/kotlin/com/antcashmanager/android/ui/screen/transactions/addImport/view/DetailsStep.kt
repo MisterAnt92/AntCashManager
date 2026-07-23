@@ -65,7 +65,7 @@ import com.antcashmanager.android.ui.components.button.AppButton
 import com.antcashmanager.android.ui.components.input.AutocompleteTextField
 import com.antcashmanager.android.ui.components.selection.AppSelectionItemCard
 import com.antcashmanager.android.ui.components.text.AppText
-import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionEvent
+import com.antcashmanager.android.ui.screen.transactions.addImport.event.AddTransactionEvent
 import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionState
 import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.isProtectedSalaryCategory

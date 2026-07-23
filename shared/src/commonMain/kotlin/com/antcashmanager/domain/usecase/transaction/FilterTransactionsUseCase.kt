@@ -1,7 +1,7 @@
 package com.antcashmanager.domain.usecase.transaction
 
 import com.antcashmanager.domain.model.Transaction
-import com.antcashmanager.domain.usecase.BaseResultUseCase
+import com.antcashmanager.domain.usecase.base.UseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlin.math.abs
@@ -19,7 +19,7 @@ import kotlin.math.abs
  */
 class FilterTransactionsUseCase(
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : BaseResultUseCase<FilterTransactionsUseCase.Params, List<Transaction>>(dispatcher) {
+) : UseCase<FilterTransactionsUseCase.Params, List<Transaction>>(dispatcher) {
 
     companion object {
         private const val AMOUNT_COMPARISON_EPSILON = 0.000001

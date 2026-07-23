@@ -83,7 +83,6 @@ import com.antcashmanager.android.ui.screen.settings.view.TransactionDisplayDial
 import com.antcashmanager.android.ui.screen.settings.view.WidgetBackgroundColorDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.formatAmount
-import com.antcashmanager.android.util.maskDigits
 import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.model.TransactionDisplayType
 import org.koin.androidx.compose.koinViewModel
@@ -871,9 +870,11 @@ private fun TransactionDisplayPreview(displayType: TransactionDisplayType) {
             TransactionDisplayType.TREND -> {
                 TrendPreviewCard()
             }
+
             TransactionDisplayType.CATEGORY -> {
                 CategoryPreviewCard()
             }
+
             TransactionDisplayType.NONE -> {
                 NoIconPreviewCard()
             }
@@ -915,9 +916,17 @@ private fun TrendPreviewCard() {
                     .background(MaterialTheme.colorScheme.primary),
                 contentAlignment = Alignment.Center
             ) {
-                AppText("↑", color = MaterialTheme.colorScheme.onPrimary, style = MaterialTheme.typography.headlineSmall)
+                AppText(
+                    "↑",
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    style = MaterialTheme.typography.headlineSmall
+                )
             }
-            AppText("Income +€50,00", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
+            AppText(
+                "Income +€50,00",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface
+            )
         }
 
         Row(
@@ -932,9 +941,17 @@ private fun TrendPreviewCard() {
                     .background(MaterialTheme.colorScheme.error),
                 contentAlignment = Alignment.Center
             ) {
-                AppText("↓", color = MaterialTheme.colorScheme.onError, style = MaterialTheme.typography.headlineSmall)
+                AppText(
+                    "↓",
+                    color = MaterialTheme.colorScheme.onError,
+                    style = MaterialTheme.typography.headlineSmall
+                )
             }
-            AppText("Expense -€15,00", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
+            AppText(
+                "Expense -€15,00",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface
+            )
         }
     }
 }
@@ -966,8 +983,17 @@ private fun CategoryPreviewCard() {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Icon(Icons.Default.MonetizationOn, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(32.dp))
-            AppText("Salary +€2500,00", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
+            Icon(
+                Icons.Default.MonetizationOn,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(32.dp)
+            )
+            AppText(
+                "Salary +€2500,00",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface
+            )
         }
 
         Row(
@@ -975,8 +1001,17 @@ private fun CategoryPreviewCard() {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Icon(Icons.Default.Restaurant, contentDescription = null, tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(32.dp))
-            AppText("Restaurant -€25,00", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
+            Icon(
+                Icons.Default.Restaurant,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.error,
+                modifier = Modifier.size(32.dp)
+            )
+            AppText(
+                "Restaurant -€25,00",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface
+            )
         }
     }
 }
@@ -1003,9 +1038,20 @@ private fun NoIconPreviewCard() {
             fontWeight = FontWeight.SemiBold,
         )
 
-        Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            AppText("Income +€2500,00", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
-            AppText("Expense -€25,00", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            AppText(
+                "Income +€2500,00",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            AppText(
+                "Expense -€25,00",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface
+            )
         }
     }
 }

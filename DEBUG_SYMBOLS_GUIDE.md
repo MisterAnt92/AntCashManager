@@ -2,25 +2,32 @@
 
 **Data:** May 25, 2026  
 **App:** AntCashManager  
-**Native Code:** ML Kit Text Recognition v16.0.1  
+**Native Code:** ML Kit Text Recognition v16.0.1
 
 ## Problema
 
 Google Play Console mostra l'avvertimento:
-> "Questo App Bundle contiene codice nativo e non hai caricato simboli di debug. Ti consigliamo di caricare un file di simboli per poter eseguire più facilmente l'analisi e il debug degli arresti anomali e degli errori ANR."
+> "Questo App Bundle contiene codice nativo e non hai caricato simboli di debug. Ti consigliamo di
+> caricare un file di simboli per poter eseguire più facilmente l'analisi e il debug degli arresti
+> anomali e degli errori ANR."
 
 ## Causa
 
-L'app utilizza **ML Kit Text Recognition** che include librerie native (`.so` files). Play Console richiede i debug symbols per:
+L'app utilizza **ML Kit Text Recognition** che include librerie native (`.so` files). Play Console
+richiede i debug symbols per:
+
 - Decodificare stack trace di crash dalle app in production
 - Analizzare ANR (Application Not Responding)
 - Correlate automaticamente errori simili
 
 ## Soluzione
 
-I debug symbols per ML Kit sono distribuiti automaticamente via Maven e impacchettati nel bundle Android App (.aab). Quando carichi il bundle su Google Play Console, estrae e gestisce automaticamente i debug symbols senza richiedere azioni manuali.
+I debug symbols per ML Kit sono distribuiti automaticamente via Maven e impacchettati nel bundle
+Android App (.aab). Quando carichi il bundle su Google Play Console, estrae e gestisce
+automaticamente i debug symbols senza richiedere azioni manuali.
 
 La configurazione Firebase Crashlytics nel build.gradle.kts è già corretta:
+
 ```kotlin
 firebaseCrashlytics {
     // Upload automatico del mapping file per deobfuscation stacktrace release.
@@ -29,6 +36,7 @@ firebaseCrashlytics {
 ```
 
 Questo consente:
+
 - Upload automatico di ProGuard mapping file (per Java/Kotlin code)
 - Decodifica automatica di native crash stack trace da Play Console
 
@@ -50,8 +58,8 @@ Output: `androidApp/build/outputs/bundle/release/app-release.aab`
 3. Vai a **Release** → **Create New Release** (oppure modifica una release esistente)
 4. Upload `app-release.aab`
 5. **IMPORTANTE**: La sezione "Debug Symbols and Mapping" dovrebbe mostrarsi automaticamente
-   - Se non vedi l'opzione, significa che il sistema ha già rilevato i simboli automaticamente
-   - Google Play Console estrae i simboli dal `.aab` in background
+    - Se non vedi l'opzione, significa che il sistema ha già rilevato i simboli automaticamente
+    - Google Play Console estrae i simboli dal `.aab` in background
 
 ### Step 3 (Manuale - se necessario): Upload esplicito di Debug Symbols
 
@@ -81,9 +89,9 @@ Se Play Console non carica i simboli automaticamente:
    ```
 
 3. In Play Console → **Release** → **Debug Symbols**:
-   - Upload il file `symbols.zip`
-   - Seleziona App Bundle corrispondente
-   - Submit
+    - Upload il file `symbols.zip`
+    - Seleziona App Bundle corrispondente
+    - Submit
 
 ## Verifica
 
@@ -94,6 +102,7 @@ Se Play Console non carica i simboli automaticamente:
 3. **Stack trace dovrebbe contenere simboli decodificati**, non indirizzi raw (`0x12ab34cd`)
 
 Esempio di stack trace corretto (con simboli):
+
 ```
 java.lang.ExceptionInInitializerError
     at com.google.mlkit.vision.text.TextRecognition.getClient(...)
@@ -101,6 +110,7 @@ java.lang.ExceptionInInitializerError
 ```
 
 Esempio di stack trace NON decodificato (senza simboli):
+
 ```
 at 0x12ab34cd
 at 0x45ef67ab
@@ -119,9 +129,9 @@ bundletool inspect-bundle \
 
 ## Dipendenze Native Correnti
 
-| Libreria | Versione | Origine | Note |
-|---|---|---|---|
-| `com.google.mlkit:text-recognition` | 16.0.1 | Maven | Contiene `libtflite_jni.so` e altri `.so` per OCR |
+| Libreria                            | Versione | Origine | Note                                              |
+|-------------------------------------|----------|---------|---------------------------------------------------|
+| `com.google.mlkit:text-recognition` | 16.0.1   | Maven   | Contiene `libtflite_jni.so` e altri `.so` per OCR |
 
 ## Automazione (Build.gradle.kts)
 
@@ -135,16 +145,17 @@ firebaseCrashlytics {
 ```
 
 Questo assicura che:
+
 - I debug symbols Java/Kotlin siano caricati automaticamente tramite Firebase Crashlytics
 - I debug symbols nativi (`.so`) siano inclusi nel bundle ed estratti da Play Console
 
 ## Troubleshooting
 
-| Problema | Soluzione |
-|---|---|
-| "Debug symbols not found" in Play Console | Verifica che l'AAB sia stato uploadato correttamente, attendi 5-10 minuti per l'elaborazione |
-| Stack trace ancora con indirizzi raw | Ripeti l'upload dei simboli, verifica il mapping.txt sia presente |
-| Simboli non appaiono per una release antica | Google Play Console conserva simboli solo per ultimi 90 giorni |
+| Problema                                    | Soluzione                                                                                    |
+|---------------------------------------------|----------------------------------------------------------------------------------------------|
+| "Debug symbols not found" in Play Console   | Verifica che l'AAB sia stato uploadato correttamente, attendi 5-10 minuti per l'elaborazione |
+| Stack trace ancora con indirizzi raw        | Ripeti l'upload dei simboli, verifica il mapping.txt sia presente                            |
+| Simboli non appaiono per una release antica | Google Play Console conserva simboli solo per ultimi 90 giorni                               |
 
 ## Riferimenti
 
@@ -155,7 +166,9 @@ Questo assicura che:
 ---
 
 **Prossimi step:**
+
 - Build e upload `bundleRelease` a Play Console (internal testing track)
 - Verifica che l'avvertimento scompaia
-- Monitora crash su Play Console → **Quality** → **Crashes and ANRs** per confermare decodifica corretta
+- Monitora crash su Play Console → **Quality** → **Crashes and ANRs** per confermare decodifica
+  corretta
 

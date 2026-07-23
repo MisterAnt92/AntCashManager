@@ -8,7 +8,6 @@ import com.antcashmanager.domain.model.TransactionDisplayType
  * Shared constants for the Display settings feature.
  */
 object DisplayConstant {
-    const val TAG = "DisplayViewModel"
     const val SHARING_TIMEOUT = 5_000L
 
     val DEFAULT_CURRENCY_SYMBOL: String = CurrencyFormat.DEFAULT.currencySymbol

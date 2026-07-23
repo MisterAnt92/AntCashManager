@@ -3,7 +3,6 @@ package com.antcashmanager.android.di
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.data.backup.BackupService
 import com.antcashmanager.android.data.receipt.MlKitReceiptOcrService
-import com.antcashmanager.android.domain.usecase.feedback.SendFeedbackEmailUseCase
 import com.antcashmanager.android.ui.screen.categories.CategoriesViewModel
 import com.antcashmanager.android.ui.screen.charts.ChartsViewModel
 import com.antcashmanager.android.ui.screen.home.HomeViewModel
@@ -35,18 +34,42 @@ import com.antcashmanager.domain.usecase.category.UpdateCategoryUseCase
 import com.antcashmanager.domain.usecase.receipt.CreateTransactionFromReceiptUseCase
 import com.antcashmanager.domain.usecase.receipt.ScanReceiptUseCase
 import com.antcashmanager.domain.usecase.settings.GetChartsDateFilterStateUseCase
+import com.antcashmanager.domain.usecase.settings.GetCurrencySymbolUseCase
+import com.antcashmanager.domain.usecase.settings.GetDecimalDigitsUseCase
+import com.antcashmanager.domain.usecase.settings.GetDecimalSeparatorUseCase
+import com.antcashmanager.domain.usecase.settings.GetHighContrastUseCase
 import com.antcashmanager.domain.usecase.settings.GetHomeDateFilterStateUseCase
 import com.antcashmanager.domain.usecase.settings.GetLanguageUseCase
+import com.antcashmanager.domain.usecase.settings.GetLargeTextUseCase
+import com.antcashmanager.domain.usecase.settings.GetMealVoucherValueUseCase
+import com.antcashmanager.domain.usecase.settings.GetReduceMotionUseCase
+import com.antcashmanager.domain.usecase.settings.GetShowChartsUseCase
+import com.antcashmanager.domain.usecase.settings.GetShowTransactionNotesUseCase
 import com.antcashmanager.domain.usecase.settings.GetThemeUseCase
+import com.antcashmanager.domain.usecase.settings.GetThousandsSeparatorUseCase
+import com.antcashmanager.domain.usecase.settings.GetTransactionDisplayTypeUseCase
 import com.antcashmanager.domain.usecase.settings.GetTransactionsDateFilterStateUseCase
+import com.antcashmanager.domain.usecase.settings.ResetAllPreferencesUseCase
 import com.antcashmanager.domain.usecase.settings.SetChartsDateFilterStateUseCase
+import com.antcashmanager.domain.usecase.settings.SetCurrencySymbolUseCase
+import com.antcashmanager.domain.usecase.settings.SetDecimalDigitsUseCase
+import com.antcashmanager.domain.usecase.settings.SetDecimalSeparatorUseCase
+import com.antcashmanager.domain.usecase.settings.SetHighContrastUseCase
 import com.antcashmanager.domain.usecase.settings.SetHomeDateFilterStateUseCase
 import com.antcashmanager.domain.usecase.settings.SetLanguageUseCase
+import com.antcashmanager.domain.usecase.settings.SetLargeTextUseCase
+import com.antcashmanager.domain.usecase.settings.SetReduceMotionUseCase
+import com.antcashmanager.domain.usecase.settings.SetShowChartsUseCase
+import com.antcashmanager.domain.usecase.settings.SetShowTransactionNotesUseCase
 import com.antcashmanager.domain.usecase.settings.SetThemeUseCase
+import com.antcashmanager.domain.usecase.settings.SetThousandsSeparatorUseCase
+import com.antcashmanager.domain.usecase.settings.SetTransactionDisplayTypeUseCase
 import com.antcashmanager.domain.usecase.settings.SetTransactionsDateFilterStateUseCase
+import com.antcashmanager.domain.usecase.settings.SetTutorialCompletedUseCase
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
 import com.antcashmanager.domain.usecase.transaction.DeleteTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.FilterTransactionsUseCase
+import com.antcashmanager.domain.usecase.transaction.GetTransactionByIdUseCase
 import com.antcashmanager.domain.usecase.transaction.GetTransactionSuggestionsUseCase
 import com.antcashmanager.domain.usecase.transaction.GetTransactionsByDateRangeUseCase
 import com.antcashmanager.domain.usecase.transaction.GetTransactionsUseCase
@@ -109,6 +132,7 @@ val useCaseModule = module {
     factory { DeleteAllTransactionsUseCase(transactionRepository = get()) }
     factory { FilterTransactionsUseCase() }
     factory { SyncTransactionCategoriesUseCase(transactionRepository = get()) }
+    factory { GetTransactionByIdUseCase(transactionRepository = get()) }
 
     factory { GetCategoriesUseCase(categoryRepository = get()) }
     factory { InsertCategoryUseCase(categoryRepository = get()) }
@@ -127,9 +151,33 @@ val useCaseModule = module {
     factory { GetTransactionsDateFilterStateUseCase(settingsRepository = get()) }
     factory { SetTransactionsDateFilterStateUseCase(settingsRepository = get()) }
 
+    // Settings preferences (granular use cases)
+    factory { GetShowChartsUseCase(settingsRepository = get()) }
+    factory { SetShowChartsUseCase(settingsRepository = get()) }
+    factory { GetHighContrastUseCase(settingsRepository = get()) }
+    factory { SetHighContrastUseCase(settingsRepository = get()) }
+    factory { GetLargeTextUseCase(settingsRepository = get()) }
+    factory { SetLargeTextUseCase(settingsRepository = get()) }
+    factory { GetReduceMotionUseCase(settingsRepository = get()) }
+    factory { SetReduceMotionUseCase(settingsRepository = get()) }
+    factory { GetShowTransactionNotesUseCase(settingsRepository = get()) }
+    factory { SetShowTransactionNotesUseCase(settingsRepository = get()) }
+    factory { GetCurrencySymbolUseCase(settingsRepository = get()) }
+    factory { SetCurrencySymbolUseCase(settingsRepository = get()) }
+    factory { GetDecimalSeparatorUseCase(settingsRepository = get()) }
+    factory { SetDecimalSeparatorUseCase(settingsRepository = get()) }
+    factory { GetThousandsSeparatorUseCase(settingsRepository = get()) }
+    factory { SetThousandsSeparatorUseCase(settingsRepository = get()) }
+    factory { GetDecimalDigitsUseCase(settingsRepository = get()) }
+    factory { SetDecimalDigitsUseCase(settingsRepository = get()) }
+    factory { GetTransactionDisplayTypeUseCase(settingsRepository = get()) }
+    factory { SetTransactionDisplayTypeUseCase(settingsRepository = get()) }
+    factory { GetMealVoucherValueUseCase(settingsRepository = get()) }
+    factory { SetTutorialCompletedUseCase(settingsRepository = get()) }
+    factory { ResetAllPreferencesUseCase(settingsRepository = get()) }
+
     factory { CreateTransactionFromReceiptUseCase(transactionRepository = get()) }
     factory { ShareTransactionUseCase() }
-    factory { SendFeedbackEmailUseCase() }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -183,22 +231,45 @@ val presentationModule = module {
     }
     viewModel { (transactionId: Long?) ->
         AddTransactionViewModel(
-            transactionId = transactionId,
-            transactionRepository = get(),
-            categoryRepository = get(),
-            settingsRepository = get(),
+            getCategoriesUseCase = get(),
+            getMealVoucherValueUseCase = get(),
+            getTransactionByIdUseCase = get(),
+            insertTransactionUseCase = get(),
+            updateTransactionUseCase = get(),
+            deleteTransactionUseCase = get(),
+            getTransactionSuggestionsUseCase = get(),
             analyticsManager = get(),
+            transactionId = transactionId,
         )
     }
     viewModel {
         SettingsViewModel(
-            settingsRepository = get(),
-            transactionRepository = get(),
             getThemeUseCase = get(),
             setThemeUseCase = get(),
             getLanguageUseCase = get(),
             setLanguageUseCase = get(),
-            sendFeedbackEmailUseCase = get(),
+            getShowChartsUseCase = get(),
+            setShowChartsUseCase = get(),
+            getHighContrastUseCase = get(),
+            setHighContrastUseCase = get(),
+            getLargeTextUseCase = get(),
+            setLargeTextUseCase = get(),
+            getReduceMotionUseCase = get(),
+            setReduceMotionUseCase = get(),
+            getCurrencySymbolUseCase = get(),
+            setCurrencySymbolUseCase = get(),
+            getDecimalDigitsUseCase = get(),
+            setDecimalDigitsUseCase = get(),
+            getDecimalSeparatorUseCase = get(),
+            setDecimalSeparatorUseCase = get(),
+            getThousandsSeparatorUseCase = get(),
+            setThousandsSeparatorUseCase = get(),
+            getShowTransactionNotesUseCase = get(),
+            getTransactionDisplayTypeUseCase = get(),
+            setTutorialCompletedUseCase = get(),
+            resetAllPreferencesUseCase = get(),
+            deleteAllTransactionsUseCase = get(),
+            insertTransactionUseCase = get(),
         )
     }
     viewModelOf(::DisplayViewModel)
@@ -206,9 +277,9 @@ val presentationModule = module {
     viewModel {
         ReceiptScanViewModel(
             scanReceiptUseCase = get(),
-            transactionRepository = get(),
-            categoryRepository = get(),
-            settingsRepository = get(),
+            createTransactionUseCase = get(),
+            getCategoriesUseCase = get(),
+            getTransactionSuggestionsUseCase = get(),
             analyticsManager = get(),
         )
     }

@@ -1,7 +1,7 @@
 package com.antcashmanager.domain.usecase.transaction
 
 import com.antcashmanager.domain.repository.TransactionRepository
-import com.antcashmanager.domain.usecase.NoParamsResultUseCase
+import com.antcashmanager.domain.usecase.base.NoParamsUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 class DeleteAllTransactionsUseCase(
     private val transactionRepository: TransactionRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : NoParamsResultUseCase<Unit>(dispatcher) {
+) : NoParamsUseCase<Unit>(dispatcher) {
 
-    override suspend fun execute(): Unit = transactionRepository.deleteAllTransactions()
+    override suspend fun execute(params: Unit): Unit = transactionRepository.deleteAllTransactions()
 }

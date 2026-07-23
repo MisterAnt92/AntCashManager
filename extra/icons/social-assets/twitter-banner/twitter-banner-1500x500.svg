@@ -1,94 +1,106 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg"
-     width="1500"
-     height="500"
-     viewBox="0 0 1500 500">
+<svg height="500" viewBox="0 0 1500 500" width="1500" xmlns="http://www.w3.org/2000/svg">
 
-  <defs>
-    <linearGradient id="gradientBg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#FFE0E6;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#FFD0DB;stop-opacity:1" />
-    </linearGradient>
-  </defs>
+    <defs>
+        <linearGradient id="gradientBg" x1="0%" x2="100%" y1="0%" y2="100%">
+            <stop style="stop-color:#FFE0E6;stop-opacity:1" offset="0%" />
+            <stop style="stop-color:#FFD0DB;stop-opacity:1" offset="100%" />
+        </linearGradient>
+    </defs>
 
-  <!-- Background -->
-  <rect width="1500" height="500" fill="url(#gradientBg)"/>
+    <!-- Background -->
+    <rect fill="url(#gradientBg)" height="500" width="1500" />
 
-  <!-- Left section: App branding -->
-  <g>
-    <!-- Background shape -->
-    <rect x="0" y="0" width="700" height="500" fill="#FFFFFF" opacity="0.95"/>
+    <!-- Left section: App branding -->
+    <g>
+        <!-- Background shape -->
+        <rect fill="#FFFFFF" height="500" opacity="0.95" width="700" x="0" y="0" />
 
-    <!-- App Icon -->
-    <g transform="translate(150, 80) scale(1.2)">
-      <!-- Background circle -->
-      <circle cx="64" cy="64" r="64" fill="#FFB3BA"/>
+        <!-- App Icon -->
+        <g transform="translate(150, 80) scale(1.2)">
+            <!-- Background circle -->
+            <circle cx="64" cy="64" fill="#FFB3BA" r="64" />
 
-      <!-- Piggy Bank Body -->
-      <ellipse cx="64" cy="72" rx="40" ry="27" fill="#FFB3BA" stroke="#FF8A95" stroke-width="2.5"/>
+            <!-- Piggy Bank Body -->
+            <ellipse cx="64" cy="72" fill="#FFB3BA" rx="40" ry="27" stroke="#FF8A95"
+                stroke-width="2.5" />
 
-      <!-- Snout -->
-      <ellipse cx="64" cy="58" rx="11" ry="7.5" fill="#FF8A95"/>
+            <!-- Snout -->
+            <ellipse cx="64" cy="58" fill="#FF8A95" rx="11" ry="7.5" />
 
-      <!-- Eyes -->
-      <circle cx="52" cy="50" r="5" fill="#FFFFFF"/>
-      <circle cx="76" cy="50" r="5" fill="#FFFFFF"/>
-      <circle cx="52" cy="50" r="2.5" fill="#2E2E2E"/>
-      <circle cx="76" cy="50" r="2.5" fill="#2E2E2E"/>
+            <!-- Eyes -->
+            <circle cx="52" cy="50" fill="#FFFFFF" r="5" />
+            <circle cx="76" cy="50" fill="#FFFFFF" r="5" />
+            <circle cx="52" cy="50" fill="#2E2E2E" r="2.5" />
+            <circle cx="76" cy="50" fill="#2E2E2E" r="2.5" />
 
-      <!-- Coin -->
-      <circle cx="64" cy="32" r="6" fill="#FFD54F"/>
+            <!-- Coin -->
+            <circle cx="64" cy="32" fill="#FFD54F" r="6" />
+        </g>
+
+        <!-- Text -->
+        <text fill="#FF8A95" font-family="Arial, sans-serif" font-size="72" font-weight="bold" x="420"
+            y="180">
+            AntCash
+        </text>
+        <text fill="#E91E63" font-family="Arial, sans-serif" font-size="72" font-weight="bold" x="420"
+            y="250">
+            Manager
+        </text>
+
+        <text fill="#666666" font-family="Arial, sans-serif" font-size="32" x="420" y="330">
+            Finanze intelligenti
+        </text>
+
+        <text fill="#999999" font-family="Arial, sans-serif" font-size="24" x="420" y="420">
+            Scarica ora su Google Play
+        </text>
     </g>
 
-    <!-- Text -->
-    <text x="420" y="180" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="#FF8A95">
-      AntCash
-    </text>
-    <text x="420" y="250" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="#E91E63">
-      Manager
-    </text>
+    <!-- Right section: Features -->
+    <g transform="translate(750, 0)">
+        <rect fill="#FFF0F3" height="500" opacity="0.5" width="750" />
 
-    <text x="420" y="330" font-family="Arial, sans-serif" font-size="32" fill="#666666">
-      Finanze intelligenti
-    </text>
+        <!-- Feature icons and text -->
+        <g transform="translate(50, 50)">
+            <text fill="#FF8A95" font-family="Arial, sans-serif" font-size="32" font-weight="bold">
+                Funzionalità
+            </text>
 
-    <text x="420" y="420" font-family="Arial, sans-serif" font-size="24" fill="#999999">
-      Scarica ora su Google Play
-    </text>
-  </g>
+            <!-- Feature 1 -->
+            <g transform="translate(0, 80)">
+                <circle cx="0" cy="0" fill="#FFB3BA" opacity="0.3" r="30" />
+                <text fill="#FF8A95" font-family="Arial, sans-serif" font-size="24" font-weight="bold"
+                    x="60" y="10">Transazioni
+                </text>
+                <text fill="#666666" font-family="Arial, sans-serif" font-size="16" x="60" y="40">
+                    Gestisci entrate e uscite
+                </text>
+            </g>
 
-  <!-- Right section: Features -->
-  <g transform="translate(750, 0)">
-    <rect width="750" height="500" fill="#FFF0F3" opacity="0.5"/>
+            <!-- Feature 2 -->
+            <g transform="translate(0, 180)">
+                <circle cx="0" cy="0" fill="#FFB3BA" opacity="0.3" r="30" />
+                <text fill="#FF8A95" font-family="Arial, sans-serif" font-size="24" font-weight="bold"
+                    x="60" y="10">Grafici
+                </text>
+                <text fill="#666666" font-family="Arial, sans-serif" font-size="16" x="60" y="40">
+                    Analizza le tue spese
+                </text>
+            </g>
 
-    <!-- Feature icons and text -->
-    <g transform="translate(50, 50)">
-      <text font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#FF8A95">
-        Funzionalità
-      </text>
-
-      <!-- Feature 1 -->
-      <g transform="translate(0, 80)">
-        <circle cx="0" cy="0" r="30" fill="#FFB3BA" opacity="0.3"/>
-        <text x="60" y="10" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#FF8A95">Transazioni</text>
-        <text x="60" y="40" font-family="Arial, sans-serif" font-size="16" fill="#666666">Gestisci entrate e uscite</text>
-      </g>
-
-      <!-- Feature 2 -->
-      <g transform="translate(0, 180)">
-        <circle cx="0" cy="0" r="30" fill="#FFB3BA" opacity="0.3"/>
-        <text x="60" y="10" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#FF8A95">Grafici</text>
-        <text x="60" y="40" font-family="Arial, sans-serif" font-size="16" fill="#666666">Analizza le tue spese</text>
-      </g>
-
-      <!-- Feature 3 -->
-      <g transform="translate(0, 280)">
-        <circle cx="0" cy="0" r="30" fill="#FFB3BA" opacity="0.3"/>
-        <text x="60" y="10" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#FF8A95">Backup</text>
-        <text x="60" y="40" font-family="Arial, sans-serif" font-size="16" fill="#666666">Dati sempre al sicuro</text>
-      </g>
+            <!-- Feature 3 -->
+            <g transform="translate(0, 280)">
+                <circle cx="0" cy="0" fill="#FFB3BA" opacity="0.3" r="30" />
+                <text fill="#FF8A95" font-family="Arial, sans-serif" font-size="24" font-weight="bold"
+                    x="60" y="10">Backup
+                </text>
+                <text fill="#666666" font-family="Arial, sans-serif" font-size="16" x="60" y="40">
+                    Dati sempre al sicuro
+                </text>
+            </g>
+        </g>
     </g>
-  </g>
 
 </svg>
 

@@ -7,7 +7,9 @@ interface TransactionRepository {
     fun getAllTransactions(): Flow<List<Transaction>>
     suspend fun getTransactionById(id: Long): Transaction?
     suspend fun insertTransaction(transaction: Transaction): Long
+    suspend fun insertTransactions(transactions: List<Transaction>): List<Long>
     suspend fun updateTransaction(transaction: Transaction)
+    suspend fun updateTransactions(transactions: List<Transaction>)
     suspend fun deleteTransaction(transaction: Transaction)
     suspend fun deleteAllTransactions()
     fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>>
@@ -27,4 +29,7 @@ interface TransactionRepository {
     fun getDistinctNotes(since: Long = 0L): Flow<List<String>>
     fun getDistinctLocations(since: Long = 0L): Flow<List<String>>
     fun getDistinctTags(since: Long = 0L): Flow<List<String>>
+
+    // Unified suggestions in a single query (optimized)
+    suspend fun getSuggestions(since: Long = 0L): com.antcashmanager.domain.model.TransactionSuggestions
 }

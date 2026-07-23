@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
+import kotlinx.datetime.Clock
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -81,7 +82,7 @@ class TransactionMaintenanceUseCasesMockkTest {
             flowOf(expected)
         }
 
-        val result = useCase(DateRange(from = from, to = to)).take(1).toList().single()
+        val result = useCase(DateRange(from = from, to = to)).take(1).toList().single().getOrThrow()
 
         assertEquals(expected, result)
         assertTrue(isRepositoryCalled)
@@ -152,7 +153,7 @@ class TransactionMaintenanceUseCasesMockkTest {
     fun invoke_shouldInsertOccurrencesAndUpdateTemplate_whenRecurringTransactionIsPastDue() =
         runTest(dispatcher) {
             val dayMillis = 24L * 60 * 60 * 1000
-            val timestamp = System.currentTimeMillis() - (2 * dayMillis + 1_000)
+            val timestamp = Clock.System.now().toEpochMilliseconds() - (2 * dayMillis + 1_000)
             val recurringTemplate = sampleTransaction(
                 id = 101L,
                 timestamp = timestamp,
@@ -164,22 +165,28 @@ class TransactionMaintenanceUseCasesMockkTest {
                     recurringTemplate
                 )
             )
-            coEvery { transactionRepository.insertTransaction(any()) } returns 1L
-            coEvery { transactionRepository.updateTransaction(any()) } just Runs
+            coEvery { transactionRepository.insertTransactions(any()) } returns listOf(1L, 2L)
+            coEvery { transactionRepository.updateTransactions(any()) } just Runs
 
-            ProcessRecurringTransactionsUseCase(transactionRepository).invoke()
+            ProcessRecurringTransactionsUseCase(
+                transactionRepository,
+                Clock.System,
+                dispatcher
+            ).invoke()
 
-            coVerify(exactly = 2) {
-                transactionRepository.insertTransaction(
-                    match { !it.isRecurring && it.recurrenceInterval.isEmpty() },
+            coVerify(exactly = 1) {
+                transactionRepository.insertTransactions(
+                    match { list ->
+                        list.size == 2 && list.all { !it.isRecurring && it.recurrenceInterval.isEmpty() }
+                    }
                 )
             }
             coVerify(exactly = 1) {
-                transactionRepository.updateTransaction(
-                    match {
-                        it.id == recurringTemplate.id &&
-                                it.timestamp >= recurringTemplate.timestamp + (2 * dayMillis)
-                    },
+                transactionRepository.updateTransactions(
+                    match { list ->
+                        list.size == 1 && list[0].id == recurringTemplate.id &&
+                                list[0].timestamp >= recurringTemplate.timestamp + (2 * dayMillis)
+                    }
                 )
             }
         }

@@ -1,8 +1,8 @@
 package com.antcashmanager.android.ui.screen.settings.displaySettings
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.touchlab.kermit.Logger
+import com.antcashmanager.android.ui.base.BaseViewModel
+import com.antcashmanager.domain.model.None
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.service.NoOpWidgetUpdateNotifier
@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 class DisplayViewModel(
     private val settingsRepository: SettingsRepository,
     private val widgetUpdateNotifier: WidgetUpdateNotifier = NoOpWidgetUpdateNotifier,
-) : ViewModel() {
+) : BaseViewModel<None>() {
 
     // Espone il simbolo valuta attuale
     val currencySymbol = settingsRepository.getCurrencySymbol()
@@ -341,7 +341,7 @@ class DisplayViewModel(
      * Funzione di utilità per loggare e lanciare l'azione in coroutine.
      */
     private fun updatePreference(logMsg: String, action: suspend () -> Unit) {
-        Logger.d(tag = DisplayConstant.TAG) { logMsg }
+        logDebug(logMsg)
         viewModelScope.launch { action() }
     }
 

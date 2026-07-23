@@ -2,7 +2,7 @@ package com.antcashmanager.domain.usecase.settings
 
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.repository.SettingsRepository
-import com.antcashmanager.domain.usecase.NoParamsResultFlowUseCase
+import com.antcashmanager.domain.usecase.base.NoParamsObservableUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -10,9 +10,9 @@ import kotlinx.coroutines.flow.Flow
 class GetTransactionsDateFilterStateUseCase(
     private val settingsRepository: SettingsRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : NoParamsResultFlowUseCase<SavedDateFilter>(dispatcher) {
+) : NoParamsObservableUseCase<SavedDateFilter>(dispatcher) {
 
-    override fun execute(): Flow<SavedDateFilter> =
+    override fun execute(params: Unit): Flow<SavedDateFilter> =
         settingsRepository.getTransactionsDateFilterState()
 }
 

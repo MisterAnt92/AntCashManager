@@ -156,7 +156,9 @@ open class FakeSettingsRepository : SettingsRepository {
         transactionsDateFilterPreset.value = index
     }
 
-    override fun getTransactionsDateFilterState(): Flow<SavedDateFilter> = transactionsDateFilterState
+    override fun getTransactionsDateFilterState(): Flow<SavedDateFilter> =
+        transactionsDateFilterState
+
     override suspend fun setTransactionsDateFilterState(filter: SavedDateFilter) {
         transactionsDateFilterState.value = filter
     }

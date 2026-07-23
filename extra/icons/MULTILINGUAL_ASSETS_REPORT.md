@@ -19,6 +19,7 @@ Total localized files generated: **45**
 ## Paths
 
 ### Feature graphic
+
 - `extra/icons/store-assets/feature-graphics/localized/it/feature-graphic-1024x500.png`
 - `extra/icons/store-assets/feature-graphics/localized/en/feature-graphic-1024x500.png`
 - `extra/icons/store-assets/feature-graphics/localized/de/feature-graphic-1024x500.png`
@@ -26,6 +27,7 @@ Total localized files generated: **45**
 - `extra/icons/store-assets/feature-graphics/localized/es/feature-graphic-1024x500.png`
 
 ### Promo graphic
+
 - `extra/icons/store-assets/promo-graphics/localized/it/promo-180x120.png`
 - `extra/icons/store-assets/promo-graphics/localized/en/promo-180x120.png`
 - `extra/icons/store-assets/promo-graphics/localized/de/promo-180x120.png`
@@ -33,6 +35,7 @@ Total localized files generated: **45**
 - `extra/icons/store-assets/promo-graphics/localized/es/promo-180x120.png`
 
 ### Twitter banner
+
 - `extra/icons/social-assets/twitter-banner/localized/it/twitter-banner-1500x500.png`
 - `extra/icons/social-assets/twitter-banner/localized/en/twitter-banner-1500x500.png`
 - `extra/icons/social-assets/twitter-banner/localized/de/twitter-banner-1500x500.png`
@@ -50,5 +53,6 @@ All localized PNG/JPG outputs were verified with `identify`:
 ## Notes
 
 - App icons (`app-icon-192`, `app-icon-512`) are language-neutral and remain shared.
-- Device screenshots are not auto-generated here because they depend on emulator/device state and app navigation.
+- Device screenshots are not auto-generated here because they depend on emulator/device state and
+  app navigation.
 

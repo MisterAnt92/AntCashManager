@@ -37,13 +37,13 @@ store-assets/
 
 ## 🌍 Languages Supported
 
-| Language | File | Code | Target Market |
-|----------|------|------|----------------|
-| English | `en/STORE_LISTING.md` | `en` | USA, UK, Australia, Canada |
-| Italian | `it/STORE_LISTING.md` | `it` | Italy |
-| German | `de/STORE_LISTING.md` | `de` | Germany, Austria, Switzerland |
-| French | `fr/STORE_LISTING.md` | `fr` | France, Belgium, Switzerland, Canada (FR) |
-| Spanish | `es/STORE_LISTING.md` | `es` | Spain, Latin America |
+| Language | File                  | Code | Target Market                             |
+|----------|-----------------------|------|-------------------------------------------|
+| English  | `en/STORE_LISTING.md` | `en` | USA, UK, Australia, Canada                |
+| Italian  | `it/STORE_LISTING.md` | `it` | Italy                                     |
+| German   | `de/STORE_LISTING.md` | `de` | Germany, Austria, Switzerland             |
+| French   | `fr/STORE_LISTING.md` | `fr` | France, Belgium, Switzerland, Canada (FR) |
+| Spanish  | `es/STORE_LISTING.md` | `es` | Spain, Latin America                      |
 
 ---
 
@@ -52,6 +52,7 @@ store-assets/
 ### Step 1: Choose Your Language
 
 Navigate to the folder matching your target language:
+
 - English → `en/STORE_LISTING.md`
 - Italiano → `it/STORE_LISTING.md`
 - Deutsch → `de/STORE_LISTING.md`
@@ -65,28 +66,32 @@ Navigate to the folder matching your target language:
 3. **Select Language** dropdown: Choose the language (e.g., "English", "Italiano", etc.)
 4. **Fill in fields** by copying from corresponding `STORE_LISTING.md`:
 
-| Field Name | Source in Markdown |
-|-----------|-------------------|
-| **Title** | "App Name (Display Name)" |
-| **Short description** | "Short Description" |
-| **Full description** | "Full Description" |
-| **What's new** | "Release Notes / What's New" |
-| **Keywords** | "Keywords / Tags" |
+| Field Name            | Source in Markdown           |
+|-----------------------|------------------------------|
+| **Title**             | "App Name (Display Name)"    |
+| **Short description** | "Short Description"          |
+| **Full description**  | "Full Description"           |
+| **What's new**        | "Release Notes / What's New" |
+| **Keywords**          | "Keywords / Tags"            |
 
 ### Step 3: Add Graphics & Screenshots
 
 **Feature Graphic** (1024×500 px):
+
 - Source: `feature-graphics/feature-graphic.svg`
 - Upload to: **Feature graphic** field
 
 **Promo Graphic** (180×120 px, optional):
+
 - Source: `promo-graphics/promo-180x120.svg`
 - Upload to: **Promo graphic** field (optional)
 
 **Screenshots** (up to 8 per language):
+
 - Source: `screenshots/{language}/*.png`
 - Upload to: **Screenshots** section
-- ⚠️ **Note**: Generate screenshots using `capture_screenshots.sh` (see `SCREENSHOTS_MULTILINGUAL.md`)
+- ⚠️ **Note**: Generate screenshots using `capture_screenshots.sh` (see
+  `SCREENSHOTS_MULTILINGUAL.md`)
 
 ---
 
@@ -95,6 +100,7 @@ Navigate to the folder matching your target language:
 ### Update App Version
 
 If releasing a new version (e.g., 1.4.7), update:
+
 1. All `STORE_LISTING.md` files: Change `"Version": 1.4.6` → `"Version": 1.4.7`
 2. Release Notes section with new features/fixes
 3. Last Updated date
@@ -102,6 +108,7 @@ If releasing a new version (e.g., 1.4.7), update:
 ### Update Features List
 
 Edit the **KEY FEATURES** section in each `STORE_LISTING.md`:
+
 - Add/remove feature bullets (🎯 marker)
 - Keep 5-8 main features for clarity
 - Ensure consistency across all languages
@@ -109,6 +116,7 @@ Edit the **KEY FEATURES** section in each `STORE_LISTING.md`:
 ### Update Keywords
 
 Modify the **Keywords / Tags** section:
+
 - Keep 5-7 relevant keywords
 - Separate by commas
 - Stay under 80 characters
@@ -121,13 +129,13 @@ If you modify English content, ensure it's translated to all 4 other languages f
 
 ## 📊 Content Length Limits
 
-| Field | Max Characters | Tips |
-|-------|-----------------|------|
-| **Title** | 50 | Keep short, include app name + main feature |
-| **Short Description** | 80 | Hook users in 1-2 sentences |
-| **Full Description** | 4000 | Use emojis, bullet points, clear sections |
-| **Release Notes** | 500 | Focus on new features + bug fixes |
-| **Keywords** | 80 total | Comma-separated, no spaces around commas |
+| Field                 | Max Characters | Tips                                        |
+|-----------------------|----------------|---------------------------------------------|
+| **Title**             | 50             | Keep short, include app name + main feature |
+| **Short Description** | 80             | Hook users in 1-2 sentences                 |
+| **Full Description**  | 4000           | Use emojis, bullet points, clear sections   |
+| **Release Notes**     | 500            | Focus on new features + bug fixes           |
+| **Keywords**          | 80 total       | Comma-separated, no spaces around commas    |
 
 ---
 
@@ -137,30 +145,30 @@ If you modify English content, ensure it's translated to all 4 other languages f
 
 - **What it is**: Banner displayed at top of store listing
 - **Design tips**:
-  - Include app name clearly
-  - Show key visual element (piggy bank, money, etc.)
-  - Use brand colors (AntCashManager green)
-  - Minimal text (max 10 words)
-  - Include app version number
+    - Include app name clearly
+    - Show key visual element (piggy bank, money, etc.)
+    - Use brand colors (AntCashManager green)
+    - Minimal text (max 10 words)
+    - Include app version number
 
 ### Screenshots (1080×1920 px, 9:16 aspect ratio)
 
 - **Recommended count**: 4-8 per language
 - **Best practice flow**:
-  1. Home screen (transactions overview)
-  2. Add/Edit transaction
-  3. Budget tracking
-  4. Charts & analytics
-  5. Settings
-  6. Data management
-  7. Features highlight
-  8. Call-to-action (star/review prompt)
+    1. Home screen (transactions overview)
+    2. Add/Edit transaction
+    3. Budget tracking
+    4. Charts & analytics
+    5. Settings
+    6. Data management
+    7. Features highlight
+    8. Call-to-action (star/review prompt)
 
 - **Design tips**:
-  - Use actual app UI (not mockups)
-  - Add captions/highlights for key features
-  - Show dark mode variant (if space allows)
-  - Include localized text in screenshots (strings from app resources)
+    - Use actual app UI (not mockups)
+    - Add captions/highlights for key features
+    - Show dark mode variant (if space allows)
+    - Include localized text in screenshots (strings from app resources)
 
 ---
 
@@ -229,6 +237,7 @@ If you modify English content, ensure it's translated to all 4 other languages f
 ## 📞 Support
 
 For questions or translations:
+
 1. **Check `STORE_LISTING.md`** for your language
 2. **Review `SCREENSHOTS_MULTILINGUAL.md`** for screenshot guide
 3. **Consult `README.md`** for app context

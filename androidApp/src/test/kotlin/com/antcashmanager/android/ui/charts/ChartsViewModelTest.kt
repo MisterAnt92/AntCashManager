@@ -242,7 +242,10 @@ class ChartsViewModelTest : BaseUnitTest() {
         }
         advanceUntilIdle()
 
-        assertEquals(SavedDateFilter.CUSTOM_PRESET_INDEX, restoredViewModel.selectedPresetIndex.value)
+        assertEquals(
+            SavedDateFilter.CUSTOM_PRESET_INDEX,
+            restoredViewModel.selectedPresetIndex.value
+        )
         assertEquals(from, restoredViewModel.dateRange.value.from)
         assertEquals(to, restoredViewModel.dateRange.value.to)
         collectJob.cancel()

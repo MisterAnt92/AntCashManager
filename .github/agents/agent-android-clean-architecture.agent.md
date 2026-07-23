@@ -1208,7 +1208,8 @@ Prima di generare/committare codice:
 - [ ] `CancellationException` mai inghiottita senza re-throw
 - [ ] NO `runBlocking` fuori dai test
 - [ ] State immutabile
-- [ ] La `data class` di stato (`<Feature>State`) resta nel file `State` senza classi duplicate o `typealias`
+- [ ] La `data class` di stato (`<Feature>State`) resta nel file `State` senza classi duplicate o
+  `typealias`
 - [ ] Screen SOLO UI, NO logic
 - [ ] TUTTE stringhe in `strings.xml` (5 lingue)
 - [ ] NO hardcoded colors/typography
@@ -1222,7 +1223,8 @@ Prima di generare/committare codice:
 - [ ] KDoc per public API
 - [ ] `@Preview` per Composables
 - [ ] Spacing consistente (8.dp tra card)
-- [ ] NON ho modificato `androidApp/google-services.json` (file generato lato server con valori fissi)
+- [ ] NON ho modificato `androidApp/google-services.json` (file generato lato server con valori
+  fissi)
 
 ---
 
@@ -1318,6 +1320,7 @@ come esempi di architettura corretta.
 # - Se esiste già `help_dashboard_title`, NON creare `home_dashboard_title`.
 
 # - Se trovi sia `help_dashboard_title` che `home_dashboard_title`, scegli la più coerente (es.
+
 `help_dashboard_title`), elimina l'altra e aggiorna i riferimenti.
 
 #

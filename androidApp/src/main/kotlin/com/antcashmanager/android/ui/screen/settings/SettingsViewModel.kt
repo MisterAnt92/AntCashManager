@@ -1,25 +1,46 @@
 package com.antcashmanager.android.ui.screen.settings
 
 import android.content.Context
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.touchlab.kermit.Logger
+import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.android.BuildConfig
-import com.antcashmanager.android.domain.usecase.feedback.SendFeedbackEmailUseCase
+import com.antcashmanager.android.data.feedback.FeedbackEmailHelper
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
+import com.antcashmanager.domain.model.None
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
-import com.antcashmanager.domain.repository.SettingsRepository
-import com.antcashmanager.domain.repository.TransactionRepository
+import com.antcashmanager.domain.usecase.settings.GetCurrencySymbolUseCase
+import com.antcashmanager.domain.usecase.settings.GetDecimalDigitsUseCase
+import com.antcashmanager.domain.usecase.settings.GetDecimalSeparatorUseCase
+import com.antcashmanager.domain.usecase.settings.GetHighContrastUseCase
 import com.antcashmanager.domain.usecase.settings.GetLanguageUseCase
+import com.antcashmanager.domain.usecase.settings.GetLargeTextUseCase
+import com.antcashmanager.domain.usecase.settings.GetReduceMotionUseCase
+import com.antcashmanager.domain.usecase.settings.GetShowChartsUseCase
+import com.antcashmanager.domain.usecase.settings.GetShowTransactionNotesUseCase
 import com.antcashmanager.domain.usecase.settings.GetThemeUseCase
+import com.antcashmanager.domain.usecase.settings.GetThousandsSeparatorUseCase
+import com.antcashmanager.domain.usecase.settings.GetTransactionDisplayTypeUseCase
+import com.antcashmanager.domain.usecase.settings.ResetAllPreferencesUseCase
+import com.antcashmanager.domain.usecase.settings.SetCurrencySymbolUseCase
+import com.antcashmanager.domain.usecase.settings.SetDecimalDigitsUseCase
+import com.antcashmanager.domain.usecase.settings.SetDecimalSeparatorUseCase
+import com.antcashmanager.domain.usecase.settings.SetHighContrastUseCase
 import com.antcashmanager.domain.usecase.settings.SetLanguageUseCase
+import com.antcashmanager.domain.usecase.settings.SetLargeTextUseCase
+import com.antcashmanager.domain.usecase.settings.SetReduceMotionUseCase
+import com.antcashmanager.domain.usecase.settings.SetShowChartsUseCase
 import com.antcashmanager.domain.usecase.settings.SetThemeUseCase
+import com.antcashmanager.domain.usecase.settings.SetThousandsSeparatorUseCase
+import com.antcashmanager.domain.usecase.settings.SetTutorialCompletedUseCase
+import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
+import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -31,51 +52,46 @@ import org.json.JSONObject
 
 
 class SettingsViewModel(
-    private val settingsRepository: SettingsRepository,
-    private val transactionRepository: TransactionRepository,
-    private val getThemeUseCase: GetThemeUseCase,
+    getThemeUseCase: GetThemeUseCase,
     private val setThemeUseCase: SetThemeUseCase,
-    private val getLanguageUseCase: GetLanguageUseCase,
+    getLanguageUseCase: GetLanguageUseCase,
     private val setLanguageUseCase: SetLanguageUseCase,
-    private val sendFeedbackEmailUseCase: SendFeedbackEmailUseCase,
-) : ViewModel() {
+    getShowChartsUseCase: GetShowChartsUseCase,
+    private val setShowChartsUseCase: SetShowChartsUseCase,
+    getHighContrastUseCase: GetHighContrastUseCase,
+    private val setHighContrastUseCase: SetHighContrastUseCase,
+    getLargeTextUseCase: GetLargeTextUseCase,
+    private val setLargeTextUseCase: SetLargeTextUseCase,
+    getReduceMotionUseCase: GetReduceMotionUseCase,
+    private val setReduceMotionUseCase: SetReduceMotionUseCase,
+    getCurrencySymbolUseCase: GetCurrencySymbolUseCase,
+    private val setCurrencySymbolUseCase: SetCurrencySymbolUseCase,
+    getDecimalDigitsUseCase: GetDecimalDigitsUseCase,
+    private val setDecimalDigitsUseCase: SetDecimalDigitsUseCase,
+    getDecimalSeparatorUseCase: GetDecimalSeparatorUseCase,
+    private val setDecimalSeparatorUseCase: SetDecimalSeparatorUseCase,
+    getThousandsSeparatorUseCase: GetThousandsSeparatorUseCase,
+    private val setThousandsSeparatorUseCase: SetThousandsSeparatorUseCase,
+    getShowTransactionNotesUseCase: GetShowTransactionNotesUseCase,
+    getTransactionDisplayTypeUseCase: GetTransactionDisplayTypeUseCase,
+    private val setTutorialCompletedUseCase: SetTutorialCompletedUseCase,
+    private val resetAllPreferencesUseCase: ResetAllPreferencesUseCase,
+    private val deleteAllTransactionsUseCase: DeleteAllTransactionsUseCase,
+    private val insertTransactionUseCase: InsertTransactionUseCase,
+) : BaseViewModel<None>() {
 
-    constructor(
-        settingsRepository: SettingsRepository,
-        transactionRepository: TransactionRepository,
-        useCaseDispatcher: CoroutineDispatcher = Dispatchers.Default,
-    ) : this(
-        settingsRepository = settingsRepository,
-        transactionRepository = transactionRepository,
-        getThemeUseCase = GetThemeUseCase(
-            settingsRepository = settingsRepository,
-            dispatcher = useCaseDispatcher,
-        ),
-        setThemeUseCase = SetThemeUseCase(
-            settingsRepository = settingsRepository,
-            dispatcher = useCaseDispatcher,
-        ),
-        getLanguageUseCase = GetLanguageUseCase(
-            settingsRepository = settingsRepository,
-            dispatcher = useCaseDispatcher,
-        ),
-        setLanguageUseCase = SetLanguageUseCase(
-            settingsRepository = settingsRepository,
-            dispatcher = useCaseDispatcher,
-        ),
-        sendFeedbackEmailUseCase = SendFeedbackEmailUseCase(),
-    )
-
+    private var setThemeJob: Job? = null
+    private var setLanguageJob: Job? = null
 
     /**
      * Import debug data from asset `debug_initial_data.json`.
      * This runs only when the app is built in DEBUG. It reads the asset and inserts
-     * transactions using the provided TransactionRepository. Errors are logged and
+     * transactions using the provided UseCase. Errors are logged and
      * ignored to keep this safe for debug usage.
      */
     fun importDebugData(context: Context) {
         if (!BuildConfig.DEBUG) return
-        Logger.d(tag = SettingsConstant.TAG) { "Importing debug data from assets" }
+        logDebug("Importing debug data from assets")
         viewModelScope.launch {
             try {
                 withContext(Dispatchers.IO) {
@@ -83,14 +99,14 @@ class SettingsViewModel(
                     val json = try {
                         context.assets.open(assetName).bufferedReader().use { it.readText() }
                     } catch (ex: Exception) {
-                        Logger.e(tag = SettingsConstant.TAG) { "Cannot open debug asset: ${ex.message}" }
+                        logError("Cannot open debug asset: ${ex.message}")
                         return@withContext
                     }
                     val obj = JSONObject(json)
                     val transactions = obj.optJSONArray(SettingsConstant.JSON_KEY_TRANSACTIONS)
                         ?: return@withContext
                     // Clear existing data for demo
-                    transactionRepository.deleteAllTransactions()
+                    deleteAllTransactionsUseCase()
                     for (i in 0 until transactions.length()) {
                         try {
                             val t = transactions.getJSONObject(i)
@@ -151,7 +167,7 @@ class SettingsViewModel(
                                 },
                             )
                             try {
-                                transactionRepository.insertTransaction(transaction)
+                                insertTransactionUseCase(transaction)
                             } catch (_: Exception) {
                                 // ignore individual insert failures in debug import
                             }
@@ -161,7 +177,7 @@ class SettingsViewModel(
                     }
                 }
             } catch (ex: Exception) {
-                Logger.e(tag = SettingsConstant.TAG) { "Error importing debug data: ${ex.message}" }
+                logError("Error importing debug data: ${ex.message}")
             }
         }
     }
@@ -180,50 +196,58 @@ class SettingsViewModel(
                 SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
                 SettingsConstant.DEFAULT_LANGUAGE,
             ),
-            settingsRepository.getShowCharts().stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-                SettingsConstant.DEFAULT_SHOW_CHARTS,
-            ),
-            settingsRepository.getHighContrast().stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-                SettingsConstant.DEFAULT_HIGH_CONTRAST,
-            ),
-            settingsRepository.getLargeText().stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-                SettingsConstant.DEFAULT_LARGE_TEXT,
-            ),
+            getShowChartsUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_SHOW_CHARTS } }
+                .stateIn(
+                    viewModelScope,
+                    SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+                    SettingsConstant.DEFAULT_SHOW_CHARTS,
+                ),
+            getHighContrastUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_HIGH_CONTRAST } }
+                .stateIn(
+                    viewModelScope,
+                    SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+                    SettingsConstant.DEFAULT_HIGH_CONTRAST,
+                ),
+            getLargeTextUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_LARGE_TEXT } }
+                .stateIn(
+                    viewModelScope,
+                    SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+                    SettingsConstant.DEFAULT_LARGE_TEXT,
+                ),
         ) { theme, language, showCharts, highContrast, largeText ->
             SettingsPreferences1(theme, language, showCharts, highContrast, largeText)
         },
         combine(
-            settingsRepository.getReduceMotion().stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-                SettingsConstant.DEFAULT_REDUCE_MOTION,
-            ),
-            settingsRepository.getCurrencySymbol().stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-                SettingsConstant.DEFAULT_CURRENCY_SYMBOL,
-            ),
-            settingsRepository.getDecimalDigits().stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-                SettingsConstant.DEFAULT_DECIMAL_DIGITS,
-            ),
-            settingsRepository.getDecimalSeparator().stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-                SettingsConstant.DEFAULT_DECIMAL_SEPARATOR,
-            ),
-            settingsRepository.getThousandsSeparator().stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-                SettingsConstant.DEFAULT_THOUSANDS_SEPARATOR,
-            ),
+            getReduceMotionUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_REDUCE_MOTION } }
+                .stateIn(
+                    viewModelScope,
+                    SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+                    SettingsConstant.DEFAULT_REDUCE_MOTION,
+                ),
+            getCurrencySymbolUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_CURRENCY_SYMBOL } }
+                .stateIn(
+                    viewModelScope,
+                    SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+                    SettingsConstant.DEFAULT_CURRENCY_SYMBOL,
+                ),
+            getDecimalDigitsUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_DECIMAL_DIGITS } }
+                .stateIn(
+                    viewModelScope,
+                    SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+                    SettingsConstant.DEFAULT_DECIMAL_DIGITS,
+                ),
+            getDecimalSeparatorUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_DECIMAL_SEPARATOR } }
+                .stateIn(
+                    viewModelScope,
+                    SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+                    SettingsConstant.DEFAULT_DECIMAL_SEPARATOR,
+                ),
+            getThousandsSeparatorUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_THOUSANDS_SEPARATOR } }
+                .stateIn(
+                    viewModelScope,
+                    SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+                    SettingsConstant.DEFAULT_THOUSANDS_SEPARATOR,
+                ),
         ) { reduceMotion, currencySymbol, decimalDigits, decimalSeparator, thousandsSeparator ->
             SettingsPreferences2(
                 reduceMotion,
@@ -233,16 +257,18 @@ class SettingsViewModel(
                 thousandsSeparator
             )
         },
-        settingsRepository.getShowTransactionNotes().stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-            SettingsConstant.DEFAULT_SHOW_TRANSACTION_NOTES,
-        ),
-        settingsRepository.getTransactionDisplayType().stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-            SettingsConstant.DEFAULT_TRANSACTION_DISPLAY_TYPE,
-        ),
+        getShowTransactionNotesUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_SHOW_TRANSACTION_NOTES } }
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+                SettingsConstant.DEFAULT_SHOW_TRANSACTION_NOTES,
+            ),
+        getTransactionDisplayTypeUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_TRANSACTION_DISPLAY_TYPE } }
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+                SettingsConstant.DEFAULT_TRANSACTION_DISPLAY_TYPE,
+            ),
     ) { prefs1, prefs2, showTransactionNotes, transactionDisplayType ->
         SettingsState(
             theme = prefs1.theme,
@@ -268,110 +294,108 @@ class SettingsViewModel(
      * Funzione di utilità per loggare e lanciare l'azione in coroutine.
      */
     private fun updatePreference(logMsg: String, action: suspend () -> Any?) {
-        Logger.d(tag = SettingsConstant.TAG) { logMsg }
+        logDebug(logMsg)
         viewModelScope.launch {
             try {
                 val result = action()
                 if (result is Result<*>) {
                     result.onFailure { error ->
                         if (error is CancellationException) throw error
-                        Logger.e(throwable = error, tag = SettingsConstant.TAG) {
-                            "Preference update failed: ${error.message}"
-                        }
+                        logError("Preference update failed: ${error.message}", error)
                     }
                 }
             } catch (ex: CancellationException) {
                 throw ex
             } catch (ex: Exception) {
-                Logger.e(
-                    throwable = ex,
-                    tag = SettingsConstant.TAG
-                ) { "Preference update failed: ${ex.message}" }
+                logError("Preference update failed: ${ex.message}", ex)
             }
         }
     }
 
-    fun setTheme(theme: AppTheme) = updatePreference(
-        logMsg = "Setting theme to: $theme",
-        action = { setThemeUseCase(theme) },
-    )
+    fun setTheme(theme: AppTheme) {
+        // Debounce: cancel previous job and schedule new one with 300ms delay
+        setThemeJob?.cancel()
+        setThemeJob = viewModelScope.launch {
+            delay(300)
+            updatePreference(
+                logMsg = "Setting theme to: $theme",
+                action = { setThemeUseCase(theme) },
+            )
+        }
+    }
 
-    fun setLanguage(language: AppLanguage) = updatePreference(
-        logMsg = "Setting language to: $language",
-        action = { setLanguageUseCase(language) },
-    )
+    fun setLanguage(language: AppLanguage) {
+        // Debounce: cancel previous job and schedule new one with 300ms delay
+        setLanguageJob?.cancel()
+        setLanguageJob = viewModelScope.launch {
+            delay(300)
+            updatePreference(
+                logMsg = "Setting language to: $language",
+                action = { setLanguageUseCase(language) },
+            )
+        }
+    }
 
     fun setShowCharts(show: Boolean) = updatePreference(
         logMsg = "Setting show charts: $show",
-        action = { settingsRepository.setShowCharts(show) },
+        action = { setShowChartsUseCase(show) },
     )
 
     fun setHighContrast(enabled: Boolean) = updatePreference(
         logMsg = "Setting high contrast: $enabled",
-        action = { settingsRepository.setHighContrast(enabled) },
+        action = { setHighContrastUseCase(enabled) },
     )
 
     fun setLargeText(enabled: Boolean) = updatePreference(
         logMsg = "Setting large text: $enabled",
-        action = { settingsRepository.setLargeText(enabled) },
+        action = { setLargeTextUseCase(enabled) },
     )
 
     fun setReduceMotion(enabled: Boolean) = updatePreference(
         logMsg = "Setting reduce motion: $enabled",
-        action = { settingsRepository.setReduceMotion(enabled) },
+        action = { setReduceMotionUseCase(enabled) },
     )
 
     fun setCurrencySymbol(symbol: String) = updatePreference(
         logMsg = "Setting currency symbol: $symbol",
-        action = { settingsRepository.setCurrencySymbol(symbol) },
+        action = { setCurrencySymbolUseCase(symbol) },
     )
 
     fun setDecimalDigits(digits: Int) = updatePreference(
         logMsg = "Setting decimal digits: $digits",
-        action = { settingsRepository.setDecimalDigits(digits) },
+        action = { setDecimalDigitsUseCase(digits) },
     )
 
     fun setDecimalSeparator(separator: String) = updatePreference(
         logMsg = "Setting decimal separator: $separator",
-        action = { settingsRepository.setDecimalSeparator(separator) },
+        action = { setDecimalSeparatorUseCase(separator) },
     )
 
     fun setThousandsSeparator(separator: String) = updatePreference(
         logMsg = "Setting thousands separator: $separator",
-        action = { settingsRepository.setThousandsSeparator(separator) },
+        action = { setThousandsSeparatorUseCase(separator) },
     )
-
-    fun setShowTransactionNotes(show: Boolean) = updatePreference(
-        logMsg = "Setting show transaction notes: $show",
-        action = { settingsRepository.setShowTransactionNotes(show) },
-    )
-
-    fun setTransactionDisplayType(displayType: com.antcashmanager.domain.model.TransactionDisplayType) =
-        updatePreference(
-            logMsg = "Setting transaction display type: $displayType",
-            action = { settingsRepository.setTransactionDisplayType(displayType) },
-        )
 
     fun setIsTutorialCompleted(completed: Boolean) = updatePreference(
         logMsg = "Setting tutorial completed: $completed",
-        action = { settingsRepository.setIsTutorialCompleted(completed) },
+        action = { setTutorialCompletedUseCase(completed) },
     )
 
     fun resetAllPreferences() = updatePreference(
         logMsg = "Resetting all preferences",
-        action = { settingsRepository.resetAllPreferences() },
+        action = { resetAllPreferencesUseCase() },
     )
 
     fun sendFeedbackEmail(emailBody: String, applicationContext: Context): Boolean {
-        val success = sendFeedbackEmailUseCase.sendFeedbackEmail(
+        val success = FeedbackEmailHelper.sendFeedbackEmail(
             applicationContext,
             emailBody,
             BuildConfig.VERSION_NAME
         )
         if (success) {
-            Logger.d(tag = SettingsConstant.TAG) { "Feedback email intent launched successfully" }
+            logDebug("Feedback email intent launched successfully")
         } else {
-            Logger.w(tag = SettingsConstant.TAG) { "No email app available to send feedback" }
+            logWarn("No email app available to send feedback")
         }
         return success
     }

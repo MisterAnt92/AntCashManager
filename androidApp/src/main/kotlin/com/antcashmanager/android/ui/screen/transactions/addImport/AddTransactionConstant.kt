@@ -4,8 +4,6 @@ package com.antcashmanager.android.ui.screen.transactions.addImport
  * Shared constants for Add Transaction feature.
  */
 object AddTransactionConstant {
-    const val TAG = "AddTransactionViewModel"
-
     const val ERROR_LOAD_CATEGORIES = "Errore nel caricamento delle categorie"
     const val ERROR_LOAD_TRANSACTION = "Errore nel caricamento della transazione"
     const val ERROR_TRANSACTION_NOT_FOUND = "Transazione non trovata"

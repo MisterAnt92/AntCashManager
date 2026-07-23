@@ -4,6 +4,20 @@ Guide for AI coding agents working in this codebase. Read before making any chan
 
 ---
 
+## ⚠️ CRITICAL: Never Commit Changes
+
+**AGENTS (AI assistants) MUST NEVER create git commits or push changes to the repository.**
+
+- Write code, edit files, create new files as needed for the task.
+- Run tests and verify changes locally.
+- **STOP before `git add`, `git commit`, or `git push`.**
+- Present all changes for **human review and approval** before committing.
+- Only the human user can authorize and execute commits.
+
+This ensures human oversight on all code changes and maintains repository integrity.
+
+---
+
 ## Architecture Overview
 
 3-layer **Clean Architecture** with strict dependency direction:
@@ -73,6 +87,10 @@ class InsertTransactionUseCase(
 - Use **Kermit** for logging (`co.touchlab:kermit`) – never use `Log` or `println`.
 - No `Context` references, no business logic.
 - Use `activeJob?.cancel()` pattern for cancellable operations.
+- **IMPORTANT**: ViewModel constructor accepts **UseCase instances only**, never Repository or other data-layer classes directly.
+  - ViewModel receives fully-formed, testable UseCase dependencies via DI (Koin).
+  - If you need data access in ViewModel, create a corresponding UseCase and inject it.
+  - This ensures Clean Architecture separation: presentation layer depends on domain (UseCase), not on data layer.
 
 ---
 
