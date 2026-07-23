@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
+import kotlinx.datetime.Clock
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -152,7 +153,7 @@ class TransactionMaintenanceUseCasesMockkTest {
     fun invoke_shouldInsertOccurrencesAndUpdateTemplate_whenRecurringTransactionIsPastDue() =
         runTest(dispatcher) {
             val dayMillis = 24L * 60 * 60 * 1000
-            val timestamp = System.currentTimeMillis() - (2 * dayMillis + 1_000)
+            val timestamp = Clock.System.now().toEpochMilliseconds() - (2 * dayMillis + 1_000)
             val recurringTemplate = sampleTransaction(
                 id = 101L,
                 timestamp = timestamp,
@@ -167,7 +168,7 @@ class TransactionMaintenanceUseCasesMockkTest {
             coEvery { transactionRepository.insertTransaction(any()) } returns 1L
             coEvery { transactionRepository.updateTransaction(any()) } just Runs
 
-            ProcessRecurringTransactionsUseCase(transactionRepository).invoke()
+            ProcessRecurringTransactionsUseCase(transactionRepository, Clock.System, dispatcher).invoke()
 
             coVerify(exactly = 2) {
                 transactionRepository.insertTransaction(

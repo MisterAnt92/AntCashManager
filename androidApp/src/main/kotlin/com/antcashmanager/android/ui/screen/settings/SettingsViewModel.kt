@@ -43,6 +43,8 @@ import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -83,6 +85,9 @@ class SettingsViewModel(
     private val deleteAllTransactionsUseCase: DeleteAllTransactionsUseCase,
     private val insertTransactionUseCase: InsertTransactionUseCase,
 ) : ViewModel() {
+
+    private var setThemeJob: Job? = null
+    private var setLanguageJob: Job? = null
 
     /**
      * Import debug data from asset `debug_initial_data.json`.
@@ -308,15 +313,29 @@ class SettingsViewModel(
         }
     }
 
-    fun setTheme(theme: AppTheme) = updatePreference(
-        logMsg = "Setting theme to: $theme",
-        action = { setThemeUseCase(theme) },
-    )
+    fun setTheme(theme: AppTheme) {
+        // Debounce: cancel previous job and schedule new one with 300ms delay
+        setThemeJob?.cancel()
+        setThemeJob = viewModelScope.launch {
+            delay(300)
+            updatePreference(
+                logMsg = "Setting theme to: $theme",
+                action = { setThemeUseCase(theme) },
+            )
+        }
+    }
 
-    fun setLanguage(language: AppLanguage) = updatePreference(
-        logMsg = "Setting language to: $language",
-        action = { setLanguageUseCase(language) },
-    )
+    fun setLanguage(language: AppLanguage) {
+        // Debounce: cancel previous job and schedule new one with 300ms delay
+        setLanguageJob?.cancel()
+        setLanguageJob = viewModelScope.launch {
+            delay(300)
+            updatePreference(
+                logMsg = "Setting language to: $language",
+                action = { setLanguageUseCase(language) },
+            )
+        }
+    }
 
     fun setShowCharts(show: Boolean) = updatePreference(
         logMsg = "Setting show charts: $show",

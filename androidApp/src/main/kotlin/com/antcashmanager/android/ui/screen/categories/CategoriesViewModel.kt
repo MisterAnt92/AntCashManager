@@ -4,8 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.antcashmanager.domain.model.Category
-import com.antcashmanager.domain.repository.CategoryRepository
-import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.usecase.category.DeleteCategoryUseCase
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.category.InsertCategoryUseCase
@@ -24,17 +22,6 @@ class CategoriesViewModel(
     private val deleteCategoryUseCase: DeleteCategoryUseCase,
     private val syncTransactionCategoriesUseCase: SyncTransactionCategoriesUseCase,
 ) : ViewModel() {
-
-    constructor(
-        categoryRepository: CategoryRepository,
-        transactionRepository: TransactionRepository
-    ) : this(
-        getCategoriesUseCase = GetCategoriesUseCase(categoryRepository),
-        insertCategoryUseCase = InsertCategoryUseCase(categoryRepository),
-        updateCategoryUseCase = UpdateCategoryUseCase(categoryRepository),
-        deleteCategoryUseCase = DeleteCategoryUseCase(categoryRepository),
-        syncTransactionCategoriesUseCase = SyncTransactionCategoriesUseCase(transactionRepository),
-    )
 
     private val _state = MutableStateFlow(CategoriesState())
     val state: StateFlow<CategoriesState> = _state

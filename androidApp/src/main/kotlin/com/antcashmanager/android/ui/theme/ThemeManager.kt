@@ -6,6 +6,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.staticCompositionLocalOf
+import co.touchlab.kermit.Logger
 import com.antcashmanager.domain.model.AppTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -24,20 +25,30 @@ val LocalThemeViewModel = staticCompositionLocalOf<ThemeViewModel?> { null }
 @Composable
 fun AppThemeProvider(
     dynamicColor: Boolean = true,
+    currentTheme: AppTheme = AppTheme.SYSTEM,
     content: @Composable () -> Unit,
 ) {
     val viewModel: ThemeViewModel = koinViewModel()
 
-    val appTheme by viewModel.appTheme.collectAsState(initial = AppTheme.SYSTEM)
+    val appTheme by viewModel.appTheme.collectAsState(initial = currentTheme)
     val highContrast by viewModel.highContrast.collectAsState(initial = false)
     val largeText by viewModel.largeText.collectAsState(initial = false)
     val reduceMotion by viewModel.reduceMotion.collectAsState(initial = false)
 
     val darkTheme = when (appTheme) {
-        AppTheme.DARK -> true
-        AppTheme.LIGHT -> false
-        AppTheme.SYSTEM -> isSystemInDarkTheme()
-        else -> isSystemInDarkTheme()
+        AppTheme.DARK -> {
+            Logger.d(tag = "Theme") { "AppThemeProvider applying: DARK" }
+            true
+        }
+        AppTheme.LIGHT -> {
+            Logger.d(tag = "Theme") { "AppThemeProvider applying: LIGHT" }
+            false
+        }
+        AppTheme.SYSTEM -> {
+            val isDark = isSystemInDarkTheme()
+            Logger.d(tag = "Theme") { "AppThemeProvider applying: SYSTEM (isDark=$isDark)" }
+            isDark
+        }
     }
 
     CompositionLocalProvider(LocalThemeViewModel provides viewModel) {

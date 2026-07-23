@@ -2,7 +2,11 @@ package com.antcashmanager.domain.usecase.transaction
 
 import com.antcashmanager.domain.model.RecurrenceInterval
 import com.antcashmanager.domain.repository.TransactionRepository
+import com.antcashmanager.domain.usecase.base.NoParamsUseCase
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
+import kotlinx.datetime.Clock
 
 /**
  * Processes recurring transactions by checking each one and generating
@@ -11,11 +15,13 @@ import kotlinx.coroutines.flow.first
  */
 class ProcessRecurringTransactionsUseCase(
     private val transactionRepository: TransactionRepository,
-) {
+    private val clock: Clock = Clock.System,
+    dispatcher: CoroutineDispatcher = Dispatchers.Default,
+) : NoParamsUseCase<Unit>(dispatcher) {
 
-    suspend operator fun invoke() {
+    override suspend fun execute(params: Unit) {
         val recurring = transactionRepository.getRecurringTransactions().first()
-        val now = System.currentTimeMillis()
+        val now = clock.now().toEpochMilliseconds()
 
         for (transaction in recurring) {
             val interval = try {
