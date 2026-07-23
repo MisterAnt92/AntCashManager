@@ -61,7 +61,7 @@ class ShareTransactionUseCase : BaseSyncUseCase<ShareTransactionUseCase.Params, 
     }
 
     private fun formatDateForShare(timestampMillis: Long): String {
-        val instant = Instant.fromEpochMillis(timestampMillis)
+        val instant = Instant.fromEpochMilliseconds(timestampMillis)
         val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
         val day = localDateTime.dayOfMonth.toString().padStart(2, '0')
         val month = localDateTime.month.toString().take(3)

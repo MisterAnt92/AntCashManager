@@ -23,7 +23,7 @@ googleFonts = "1.11.4"
 mlkitTextRecognition = "16.0.1"
 koin = "4.2.2"
 mockk = "1.14.11"
-kotlinxDatetime = "0.9.1"
+kotlinxDatetime = "0.6.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
