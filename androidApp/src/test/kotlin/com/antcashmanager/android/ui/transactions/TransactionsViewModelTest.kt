@@ -252,103 +252,112 @@ class TransactionsViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun searchQuery_shouldMatchAmountWithCommaSeparator_whenSearchingForAmount() = runViewModelTest {
-        val now = System.currentTimeMillis()
-        fakeTransactionRepo.transactions.value = listOf(
-            Transaction(
-                id = 1,
-                title = "Groceries",
-                amount = 85.50,
-                category = "Food",
-                type = TransactionType.EXPENSE,
-                timestamp = now,
-            ),
-            Transaction(
-                id = 2,
-                title = "Salary",
-                amount = 2500.0,
-                category = "Work",
-                type = TransactionType.INCOME,
-                timestamp = now,
-            ),
-        )
-
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.state.collect {}
-        }
-        advanceUntilIdle()
-
-        viewModel.onEvent(
-            TransactionsEvent.SetDateRange(
-                0L,
-                Long.MAX_VALUE,
+    fun searchQuery_shouldMatchAmountWithCommaSeparator_whenSearchingForAmount() =
+        runViewModelTest {
+            val now = System.currentTimeMillis()
+            fakeTransactionRepo.transactions.value = listOf(
+                Transaction(
+                    id = 1,
+                    title = "Groceries",
+                    amount = 85.50,
+                    category = "Food",
+                    type = TransactionType.EXPENSE,
+                    timestamp = now,
+                ),
+                Transaction(
+                    id = 2,
+                    title = "Salary",
+                    amount = 2500.0,
+                    category = "Work",
+                    type = TransactionType.INCOME,
+                    timestamp = now,
+                ),
             )
-        )
-        advanceUntilIdle()
 
-        viewModel.onEvent(
-            TransactionsEvent.UpdateSearchQuery("85,5")
-        )
-        advanceUntilIdle()
+            val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.state.collect {}
+            }
+            advanceUntilIdle()
 
-        assertFalse(viewModel.state.value.filteredTransactions.isEmpty())
-        assertEquals("Groceries", viewModel.state.value.filteredTransactions.first().title)
+            viewModel.onEvent(
+                TransactionsEvent.SetDateRange(
+                    0L,
+                    Long.MAX_VALUE,
+                )
+            )
+            advanceUntilIdle()
 
-        collectJob.cancel()
-    }
+            viewModel.onEvent(
+                TransactionsEvent.UpdateSearchQuery("85,5")
+            )
+            advanceUntilIdle()
+
+            assertFalse(viewModel.state.value.filteredTransactions.isEmpty())
+            assertEquals("Groceries", viewModel.state.value.filteredTransactions.first().title)
+
+            collectJob.cancel()
+        }
 
     @Test
-    fun onEvent_shouldPersistCustomTransactionsFilter_whenSetDateRangeIsReceived() = runViewModelTest {
-        val from = 1_710_000_000_000L
-        val to = 1_710_900_000_000L
+    fun onEvent_shouldPersistCustomTransactionsFilter_whenSetDateRangeIsReceived() =
+        runViewModelTest {
+            val from = 1_710_000_000_000L
+            val to = 1_710_900_000_000L
 
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.state.collect {}
+            val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.state.collect {}
+            }
+            advanceUntilIdle()
+
+            viewModel.onEvent(
+                com.antcashmanager.android.ui.screen.transactions.TransactionsEvent.SetDateRange(
+                    from = from,
+                    to = to,
+                )
+            )
+            advanceUntilIdle()
+
+            assertEquals(
+                SavedDateFilter.CUSTOM_PRESET_INDEX,
+                viewModel.state.value.selectedPresetIndex
+            )
+            assertEquals(from, fakeSettingsRepository.transactionsDateFilterState.value.from)
+            assertEquals(to, fakeSettingsRepository.transactionsDateFilterState.value.to)
+            collectJob.cancel()
         }
-        advanceUntilIdle()
 
-        viewModel.onEvent(
-            com.antcashmanager.android.ui.screen.transactions.TransactionsEvent.SetDateRange(
+    @Test
+    fun init_shouldRestoreSavedTransactionsDateFilter_whenViewModelIsRecreated() =
+        runViewModelTest {
+            val from = 1_711_000_000_000L
+            val to = 1_711_900_000_000L
+            fakeSettingsRepository.transactionsDateFilterState.value = SavedDateFilter(
+                presetIndex = SavedDateFilter.CUSTOM_PRESET_INDEX,
                 from = from,
                 to = to,
             )
-        )
-        advanceUntilIdle()
+            advanceUntilIdle()
 
-        assertEquals(SavedDateFilter.CUSTOM_PRESET_INDEX, viewModel.state.value.selectedPresetIndex)
-        assertEquals(from, fakeSettingsRepository.transactionsDateFilterState.value.from)
-        assertEquals(to, fakeSettingsRepository.transactionsDateFilterState.value.to)
-        collectJob.cancel()
-    }
+            val restoredViewModel = TransactionsViewModel(
+                transactionRepository = fakeTransactionRepo,
+                categoryRepository = fakeCategoryRepo,
+                settingsRepository = fakeSettingsRepository,
+                dispatcher = testDispatcher,
+            )
 
-    @Test
-    fun init_shouldRestoreSavedTransactionsDateFilter_whenViewModelIsRecreated() = runViewModelTest {
-        val from = 1_711_000_000_000L
-        val to = 1_711_900_000_000L
-        fakeSettingsRepository.transactionsDateFilterState.value = SavedDateFilter(
-            presetIndex = SavedDateFilter.CUSTOM_PRESET_INDEX,
-            from = from,
-            to = to,
-        )
-        advanceUntilIdle()
+            val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+                restoredViewModel.state.collect {}
+            }
+            advanceUntilIdle()
 
-        val restoredViewModel = TransactionsViewModel(
-            transactionRepository = fakeTransactionRepo,
-            categoryRepository = fakeCategoryRepo,
-            settingsRepository = fakeSettingsRepository,
-            dispatcher = testDispatcher,
-        )
-
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            restoredViewModel.state.collect {}
+            assertEquals(
+                SavedDateFilter.CUSTOM_PRESET_INDEX,
+                restoredViewModel.state.value.selectedPresetIndex
+            )
+            assertEquals(from, restoredViewModel.state.value.dateRangeFrom)
+            assertEquals(to, restoredViewModel.state.value.dateRangeTo)
+            collectJob.cancel()
         }
-        advanceUntilIdle()
-
-        assertEquals(SavedDateFilter.CUSTOM_PRESET_INDEX, restoredViewModel.state.value.selectedPresetIndex)
-        assertEquals(from, restoredViewModel.state.value.dateRangeFrom)
-        assertEquals(to, restoredViewModel.state.value.dateRangeTo)
-        collectJob.cancel()
-    }
 
     @Test
     fun init_shouldUseDynamicDateRangeTo_whenRestoringNonCustomPreset() = runViewModelTest {
@@ -582,41 +591,56 @@ class TransactionsViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun filteredTransactions_shouldEnrichWithCategoryData_whenCategoryExistsInRepo() = runViewModelTest {
-        val now = System.currentTimeMillis()
-        val category = Category(id = 1, name = "Food", icon = "restaurant", color = 0xFFFF0000)
-        fakeCategoryRepo.categories.value = listOf(category)
+    fun filteredTransactions_shouldEnrichWithCategoryData_whenCategoryExistsInRepo() =
+        runViewModelTest {
+            val now = System.currentTimeMillis()
+            val category = Category(id = 1, name = "Food", icon = "restaurant", color = 0xFFFF0000)
+            fakeCategoryRepo.categories.value = listOf(category)
 
-        val transaction = Transaction(
-            id = 1,
-            title = "Lunch",
-            amount = 10.0,
-            category = "Food",
-            type = TransactionType.EXPENSE,
-            timestamp = now,
-            categoryIcon = "", // Missing data
-            categoryColor = 0xFF90A4AE // Default color
-        )
-        fakeTransactionRepo.transactions.value = listOf(transaction)
+            val transaction = Transaction(
+                id = 1,
+                title = "Lunch",
+                amount = 10.0,
+                category = "Food",
+                type = TransactionType.EXPENSE,
+                timestamp = now,
+                categoryIcon = "", // Missing data
+                categoryColor = 0xFF90A4AE // Default color
+            )
+            fakeTransactionRepo.transactions.value = listOf(transaction)
 
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.state.collect {}
+            val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.state.collect {}
+            }
+            advanceUntilIdle()
+
+            val enriched = viewModel.state.value.filteredTransactions.first()
+            assertEquals("restaurant", enriched.categoryIcon)
+            assertEquals(0xFFFF0000, enriched.categoryColor)
+
+            collectJob.cancel()
         }
-        advanceUntilIdle()
-
-        val enriched = viewModel.state.value.filteredTransactions.first()
-        assertEquals("restaurant", enriched.categoryIcon)
-        assertEquals(0xFFFF0000, enriched.categoryColor)
-
-        collectJob.cancel()
-    }
 
     @Test
     fun searchSuggestions_shouldProvideSuggestions_whenQueryIsNotEmpty() = runViewModelTest {
         val now = System.currentTimeMillis()
         fakeTransactionRepo.transactions.value = listOf(
-            Transaction(id = 1, title = "Groceries", amount = 10.0, category = "Food", type = TransactionType.EXPENSE, timestamp = now),
-            Transaction(id = 2, title = "Green Tea", amount = 5.0, category = "Food", type = TransactionType.EXPENSE, timestamp = now)
+            Transaction(
+                id = 1,
+                title = "Groceries",
+                amount = 10.0,
+                category = "Food",
+                type = TransactionType.EXPENSE,
+                timestamp = now
+            ),
+            Transaction(
+                id = 2,
+                title = "Green Tea",
+                amount = 5.0,
+                category = "Food",
+                type = TransactionType.EXPENSE,
+                timestamp = now
+            )
         )
 
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
@@ -654,10 +678,38 @@ class TransactionsViewModelTest : BaseUnitTest() {
         val now = System.currentTimeMillis()
         // History: 4 matching titles
         fakeTransactionRepo.transactions.value = listOf(
-            Transaction(id = 1, title = "Apple", amount = 1.0, category = "Food", type = TransactionType.EXPENSE, timestamp = now),
-            Transaction(id = 2, title = "Apricot", amount = 1.0, category = "Food", type = TransactionType.EXPENSE, timestamp = now),
-            Transaction(id = 3, title = "Application", amount = 1.0, category = "Tech", type = TransactionType.EXPENSE, timestamp = now),
-            Transaction(id = 4, title = "Apartment", amount = 1.0, category = "Rent", type = TransactionType.EXPENSE, timestamp = now),
+            Transaction(
+                id = 1,
+                title = "Apple",
+                amount = 1.0,
+                category = "Food",
+                type = TransactionType.EXPENSE,
+                timestamp = now
+            ),
+            Transaction(
+                id = 2,
+                title = "Apricot",
+                amount = 1.0,
+                category = "Food",
+                type = TransactionType.EXPENSE,
+                timestamp = now
+            ),
+            Transaction(
+                id = 3,
+                title = "Application",
+                amount = 1.0,
+                category = "Tech",
+                type = TransactionType.EXPENSE,
+                timestamp = now
+            ),
+            Transaction(
+                id = 4,
+                title = "Apartment",
+                amount = 1.0,
+                category = "Rent",
+                type = TransactionType.EXPENSE,
+                timestamp = now
+            ),
         )
         // Suggestions: 2 matching titles (one duplicate with history)
         fakeTransactionRepo.distinctTitles.value = listOf("Apple", "Appendix")

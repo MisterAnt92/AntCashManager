@@ -47,31 +47,6 @@ class ReceiptScanViewModel(
     private val analyticsManager: AnalyticsManager,
 ) : ViewModel() {
 
-    constructor(
-        scanReceiptUseCase: ScanReceiptUseCase,
-        transactionRepository: TransactionRepository,
-        categoryRepository: CategoryRepository,
-        settingsRepository: com.antcashmanager.domain.repository.SettingsRepository,
-        analyticsManager: AnalyticsManager,
-        dispatcher: CoroutineDispatcher = Dispatchers.Default,
-    ) : this(
-        scanReceiptUseCase = scanReceiptUseCase,
-        createTransactionUseCase = CreateTransactionFromReceiptUseCase(
-            transactionRepository = transactionRepository,
-            dispatcher = dispatcher,
-        ),
-        getCategoriesUseCase = GetCategoriesUseCase(
-            categoryRepository = categoryRepository,
-            dispatcher = dispatcher,
-        ),
-        getTransactionSuggestionsUseCase = GetTransactionSuggestionsUseCase(
-            repository = transactionRepository,
-            settingsRepository = settingsRepository,
-            dispatcher = dispatcher,
-        ),
-        analyticsManager = analyticsManager,
-    )
-
     // ── State ─────────────────────────────────────────────────────────────────
     private val _state = MutableStateFlow(ReceiptScanState())
     val state: StateFlow<ReceiptScanState> = _state.asStateFlow()

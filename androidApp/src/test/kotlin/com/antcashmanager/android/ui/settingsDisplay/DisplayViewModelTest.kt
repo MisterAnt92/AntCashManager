@@ -246,7 +246,10 @@ class DisplayViewModelTest : BaseUnitTest() {
         advanceUntilIdle()
 
         assertEquals(TransactionDisplayType.CATEGORY, viewModel.transactionDisplayType.value)
-        assertEquals(TransactionDisplayType.CATEGORY, viewModel.transactionsTransactionDisplayType.value)
+        assertEquals(
+            TransactionDisplayType.CATEGORY,
+            viewModel.transactionsTransactionDisplayType.value
+        )
 
         collectJob.cancel()
     }

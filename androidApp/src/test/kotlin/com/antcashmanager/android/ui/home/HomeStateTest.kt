@@ -8,7 +8,11 @@ import org.junit.Test
 
 class HomeStateTest {
 
-    private fun assertApproximatelyAgo(actualFrom: Long, expectedDurationMs: Long, toleranceMs: Long = 5_000) {
+    private fun assertApproximatelyAgo(
+        actualFrom: Long,
+        expectedDurationMs: Long,
+        toleranceMs: Long = 5_000
+    ) {
         val expectedFrom = System.currentTimeMillis() - expectedDurationMs
         assertTrue(Math.abs(actualFrom - expectedFrom) < toleranceMs)
     }

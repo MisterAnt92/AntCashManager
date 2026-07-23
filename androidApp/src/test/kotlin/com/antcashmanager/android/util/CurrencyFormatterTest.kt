@@ -103,19 +103,34 @@ class CurrencyFormatterTest {
 
     @Test
     fun isProtectedSalaryTransaction_shouldReturnTrue_whenIncomeCategoryIsStipendio() {
-        val transaction = Transaction(title = "Paga", amount = 1500.0, category = "Stipendio", type = TransactionType.INCOME)
+        val transaction = Transaction(
+            title = "Paga",
+            amount = 1500.0,
+            category = "Stipendio",
+            type = TransactionType.INCOME
+        )
         assertTrue(isProtectedSalaryTransaction(transaction))
     }
 
     @Test
     fun isProtectedSalaryTransaction_shouldReturnFalse_whenSameCategoryNameButExpense() {
-        val transaction = Transaction(title = "Rimborso stipendio", amount = 100.0, category = "Stipendio", type = TransactionType.EXPENSE)
+        val transaction = Transaction(
+            title = "Rimborso stipendio",
+            amount = 100.0,
+            category = "Stipendio",
+            type = TransactionType.EXPENSE
+        )
         assertFalse(isProtectedSalaryTransaction(transaction))
     }
 
     @Test
     fun isProtectedSalaryTransaction_shouldReturnFalse_whenIncomeButDifferentCategory() {
-        val transaction = Transaction(title = "Bonus", amount = 200.0, category = "Freelance", type = TransactionType.INCOME)
+        val transaction = Transaction(
+            title = "Bonus",
+            amount = 200.0,
+            category = "Freelance",
+            type = TransactionType.INCOME
+        )
         assertFalse(isProtectedSalaryTransaction(transaction))
     }
 

@@ -7,9 +7,13 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -79,6 +83,18 @@ class InsertTransactionUseCaseMockkTest {
                 },
             )
         }
+    }
+
+    @Test
+    fun invokeWithStandardTestDispatcherNeedsAdvanceUntilIdle() = runTest(testDispatcher) {
+        coEvery { transactionRepository.insertTransaction(any()) } returns 1L
+        var resultId = 0L
+
+        val job = launch { resultId = useCase(sampleTransaction).getOrThrow() }
+        advanceUntilIdle()
+
+        assertEquals(1L, resultId)
+        job.join()
     }
 }
 

@@ -65,11 +65,20 @@ open class FakeTransactionRepository(
     override fun getRecurringTransactions(): Flow<List<Transaction>> =
         transactions.map { list -> list.filter { it.isRecurring } }
 
-    override suspend fun renameCategory(oldCategoryName: String, newCategoryName: String, icon: String, color: Long) {
+    override suspend fun renameCategory(
+        oldCategoryName: String,
+        newCategoryName: String,
+        icon: String,
+        color: Long
+    ) {
         transactions.update { list ->
             list.map { current ->
                 if (current.category == oldCategoryName) {
-                    current.copy(category = newCategoryName, categoryIcon = icon, categoryColor = color)
+                    current.copy(
+                        category = newCategoryName,
+                        categoryIcon = icon,
+                        categoryColor = color
+                    )
                 } else {
                     current
                 }
@@ -77,15 +86,28 @@ open class FakeTransactionRepository(
         }
     }
 
-    override fun getDistinctTitles(since: Long): Flow<List<String>> = distinctValuesOf(since) { it.title }
-    override fun getDistinctPayees(since: Long): Flow<List<String>> = distinctValuesOf(since) { it.payee }
-    override fun getDistinctNotes(since: Long): Flow<List<String>> = distinctValuesOf(since) { it.notes }
-    override fun getDistinctLocations(since: Long): Flow<List<String>> = distinctValuesOf(since) { it.location }
-    override fun getDistinctTags(since: Long): Flow<List<String>> = distinctValuesOf(since) { it.tags }
+    override fun getDistinctTitles(since: Long): Flow<List<String>> =
+        distinctValuesOf(since) { it.title }
 
-    private fun distinctValuesOf(since: Long, selector: (Transaction) -> String): Flow<List<String>> =
+    override fun getDistinctPayees(since: Long): Flow<List<String>> =
+        distinctValuesOf(since) { it.payee }
+
+    override fun getDistinctNotes(since: Long): Flow<List<String>> =
+        distinctValuesOf(since) { it.notes }
+
+    override fun getDistinctLocations(since: Long): Flow<List<String>> =
+        distinctValuesOf(since) { it.location }
+
+    override fun getDistinctTags(since: Long): Flow<List<String>> =
+        distinctValuesOf(since) { it.tags }
+
+    private fun distinctValuesOf(
+        since: Long,
+        selector: (Transaction) -> String
+    ): Flow<List<String>> =
         transactions.map { list ->
-            list.filter { it.timestamp >= since }.map(selector).filter { it.isNotBlank() }.distinct()
+            list.filter { it.timestamp >= since }.map(selector).filter { it.isNotBlank() }
+                .distinct()
         }
 
     private suspend fun applyDelayAndMaybeThrow() {

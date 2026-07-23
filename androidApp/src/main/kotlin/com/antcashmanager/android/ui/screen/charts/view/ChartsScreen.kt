@@ -61,7 +61,7 @@ import androidx.compose.ui.unit.dp
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
-import com.antcashmanager.android.domain.usecase.share.BuildShareTextUseCase
+import com.antcashmanager.android.data.formatter.ShareTextFormatter
 import com.antcashmanager.android.ui.components.common.ScreenHeader
 import com.antcashmanager.android.ui.components.dialog.HelpButton
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
@@ -127,7 +127,6 @@ internal fun ChartsContent(
     val context = LocalContext.current
     val analyticsManager: AnalyticsManager = koinInject()
     val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
-    val buildShareTextUseCase = remember { BuildShareTextUseCase(context) }
     val dateFormat = remember { SimpleDateFormat("dd MMM yyyy", Locale.getDefault()) }
     val fmt = LocalCurrencyFormat.current
     val shareLabel = stringResource(R.string.share)
@@ -264,7 +263,6 @@ internal fun ChartsContent(
                         chartHeight = pieChartHeight,
                         zoomEnabled = zoomEnabled,
                         chartCardContainerColor = chartCardContainerColor,
-                        buildShareTextUseCase = buildShareTextUseCase,
                         fmt = fmt,
                         shareLabel = shareLabel,
                         context = context,
@@ -282,7 +280,6 @@ internal fun ChartsContent(
                         chartHeight = pieChartHeight,
                         zoomEnabled = zoomEnabled,
                         chartCardContainerColor = chartCardContainerColor,
-                        buildShareTextUseCase = buildShareTextUseCase,
                         fmt = fmt,
                         shareLabel = shareLabel,
                         context = context,
@@ -320,7 +317,6 @@ internal fun ChartsContent(
                         chartHeight = pieChartHeight,
                         zoomEnabled = zoomEnabled,
                         chartCardContainerColor = chartCardContainerColor,
-                        buildShareTextUseCase = buildShareTextUseCase,
                         fmt = fmt,
                         shareLabel = shareLabel,
                         context = context,
@@ -334,7 +330,6 @@ internal fun ChartsContent(
                         chartHeight = monthlyBarChartHeight,
                         zoomEnabled = zoomEnabled,
                         chartCardContainerColor = chartCardContainerColor,
-                        buildShareTextUseCase = buildShareTextUseCase,
                         fmt = fmt,
                         shareLabel = shareLabel,
                         context = context,
@@ -348,7 +343,6 @@ internal fun ChartsContent(
                         chartHeight = yearlyBarChartHeight,
                         zoomEnabled = zoomEnabled,
                         chartCardContainerColor = chartCardContainerColor,
-                        buildShareTextUseCase = buildShareTextUseCase,
                         fmt = fmt,
                         shareLabel = shareLabel,
                         context = context,
@@ -385,8 +379,7 @@ internal fun ChartsContent(
                                         chartHeight = pieChartHeight,
                                         zoomEnabled = zoomEnabled,
                                         chartCardContainerColor = chartCardContainerColor,
-                                        buildShareTextUseCase = buildShareTextUseCase,
-                                        fmt = fmt,
+                                                        fmt = fmt,
                                         shareLabel = shareLabel,
                                         context = context,
                                         onShared = { analyticsManager.logEvent("chart_shared") },
@@ -418,8 +411,7 @@ internal fun ChartsContent(
                                         chartHeight = pieChartHeight,
                                         zoomEnabled = zoomEnabled,
                                         chartCardContainerColor = chartCardContainerColor,
-                                        buildShareTextUseCase = buildShareTextUseCase,
-                                        fmt = fmt,
+                                                        fmt = fmt,
                                         shareLabel = shareLabel,
                                         context = context,
                                         onShared = { analyticsManager.logEvent("chart_shared") },
@@ -447,8 +439,7 @@ internal fun ChartsContent(
                                     chartHeight = pieChartHeight,
                                     zoomEnabled = zoomEnabled,
                                     chartCardContainerColor = chartCardContainerColor,
-                                    buildShareTextUseCase = buildShareTextUseCase,
-                                    fmt = fmt,
+                                                fmt = fmt,
                                     shareLabel = shareLabel,
                                     context = context,
                                     onShared = { analyticsManager.logEvent("chart_shared") },
@@ -471,7 +462,6 @@ internal fun ChartsContent(
                         chartHeight = pieChartHeight,
                         zoomEnabled = zoomEnabled,
                         chartCardContainerColor = chartCardContainerColor,
-                        buildShareTextUseCase = buildShareTextUseCase,
                         fmt = fmt,
                         shareLabel = shareLabel,
                         context = context,
@@ -492,8 +482,7 @@ internal fun ChartsContent(
                                     chartHeight = monthlyBarChartHeight,
                                     zoomEnabled = zoomEnabled,
                                     chartCardContainerColor = chartCardContainerColor,
-                                    buildShareTextUseCase = buildShareTextUseCase,
-                                    fmt = fmt,
+                                                fmt = fmt,
                                     shareLabel = shareLabel,
                                     context = context,
                                     onShared = { analyticsManager.logEvent("chart_shared") },
@@ -507,8 +496,7 @@ internal fun ChartsContent(
                                     chartHeight = yearlyBarChartHeight,
                                     zoomEnabled = zoomEnabled,
                                     chartCardContainerColor = chartCardContainerColor,
-                                    buildShareTextUseCase = buildShareTextUseCase,
-                                    fmt = fmt,
+                                                fmt = fmt,
                                     shareLabel = shareLabel,
                                     context = context,
                                     onShared = { analyticsManager.logEvent("chart_shared") },
@@ -739,7 +727,6 @@ private fun CategoryPieChartCard(
     chartHeight: Dp,
     zoomEnabled: Boolean,
     chartCardContainerColor: Color,
-    buildShareTextUseCase: BuildShareTextUseCase,
     fmt: CurrencyFormat,
     shareLabel: String,
     context: Context,
@@ -787,7 +774,8 @@ private fun CategoryPieChartCard(
                 )
                 IconButton(
                     onClick = {
-                        val shareText = buildShareTextUseCase.buildCategoryShareText(
+                        val shareText = ShareTextFormatter.buildCategoryShareText(
+                            context = context,
                             data = displayData,
                             fmt = fmt,
                         )
@@ -926,7 +914,6 @@ private fun MonthlyBarChartCard(
     chartHeight: Dp,
     zoomEnabled: Boolean,
     chartCardContainerColor: Color,
-    buildShareTextUseCase: BuildShareTextUseCase,
     fmt: CurrencyFormat,
     shareLabel: String,
     context: Context,
@@ -965,7 +952,8 @@ private fun MonthlyBarChartCard(
                 )
                 IconButton(
                     onClick = {
-                        val shareText = buildShareTextUseCase.buildMonthlyShareText(
+                        val shareText = ShareTextFormatter.buildMonthlyShareText(
+                            context = context,
                             data = data,
                             fmt = fmt,
                         )
@@ -1022,7 +1010,6 @@ private fun YearlyBarChartCard(
     chartHeight: Dp,
     zoomEnabled: Boolean,
     chartCardContainerColor: Color,
-    buildShareTextUseCase: BuildShareTextUseCase,
     fmt: CurrencyFormat,
     shareLabel: String,
     context: Context,
@@ -1061,7 +1048,8 @@ private fun YearlyBarChartCard(
                 )
                 IconButton(
                     onClick = {
-                        val shareText = buildShareTextUseCase.buildYearlyShareText(
+                        val shareText = ShareTextFormatter.buildYearlyShareText(
+                            context = context,
                             data = data,
                             fmt = fmt,
                         )

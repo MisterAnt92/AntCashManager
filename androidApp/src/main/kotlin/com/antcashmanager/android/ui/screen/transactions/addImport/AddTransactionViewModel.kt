@@ -9,11 +9,10 @@ import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
-import com.antcashmanager.domain.repository.CategoryRepository
-import com.antcashmanager.domain.repository.SettingsRepository
-import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
+import com.antcashmanager.domain.usecase.settings.GetMealVoucherValueUseCase
 import com.antcashmanager.domain.usecase.transaction.DeleteTransactionUseCase
+import com.antcashmanager.domain.usecase.transaction.GetTransactionByIdUseCase
 import com.antcashmanager.domain.usecase.transaction.GetTransactionSuggestionsUseCase
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.UpdateTransactionUseCase
@@ -84,9 +83,9 @@ sealed interface AddTransactionEvent {
 // ══════════════════════════════════════════════════════════════════════════════
 
 class AddTransactionViewModel(
-    private val transactionRepository: TransactionRepository,
-    private val settingsRepository: SettingsRepository,
     private val getCategoriesUseCase: GetCategoriesUseCase,
+    private val getMealVoucherValueUseCase: GetMealVoucherValueUseCase,
+    private val getTransactionByIdUseCase: GetTransactionByIdUseCase,
     private val insertTransactionUseCase: InsertTransactionUseCase,
     private val updateTransactionUseCase: UpdateTransactionUseCase,
     private val deleteTransactionUseCase: DeleteTransactionUseCase,
@@ -94,30 +93,6 @@ class AddTransactionViewModel(
     private val analyticsManager: AnalyticsManager,
     private val transactionId: Long? = null,
 ) : ViewModel() {
-
-    constructor(
-        transactionRepository: TransactionRepository,
-        categoryRepository: CategoryRepository,
-        settingsRepository: SettingsRepository,
-        analyticsManager: AnalyticsManager,
-        transactionId: Long? = null,
-        dispatcher: CoroutineDispatcher = Dispatchers.Default,
-    ) : this(
-        transactionRepository = transactionRepository,
-        settingsRepository = settingsRepository,
-        getCategoriesUseCase = GetCategoriesUseCase(categoryRepository, dispatcher),
-        insertTransactionUseCase = InsertTransactionUseCase(transactionRepository, dispatcher),
-        updateTransactionUseCase = UpdateTransactionUseCase(transactionRepository, dispatcher),
-        deleteTransactionUseCase = DeleteTransactionUseCase(transactionRepository, dispatcher),
-        getTransactionSuggestionsUseCase = GetTransactionSuggestionsUseCase(
-            transactionRepository,
-            settingsRepository,
-            dispatcher,
-        ),
-        analyticsManager = analyticsManager,
-        transactionId = transactionId,
-    )
-
 
     // ── State ──
     private val _state = MutableStateFlow(AddTransactionState())
@@ -135,7 +110,7 @@ class AddTransactionViewModel(
     private fun loadMealVoucherValue() {
         viewModelScope.launch {
             try {
-                val mealVoucherValue = settingsRepository.getMealVoucherValue().first()
+                val mealVoucherValue = getMealVoucherValueUseCase().first()
                 _state.update { it.copy(mealVoucherValue = mealVoucherValue) }
             } catch (ex: Exception) {
                 Logger.e(tag = AddTransactionConstant.TAG) {
@@ -195,7 +170,7 @@ class AddTransactionViewModel(
                 _state.update { it.copy(isLoading = true) }
                 Logger.d(tag = AddTransactionConstant.TAG) { "Loading transaction with id: $id" }
 
-                val transaction = transactionRepository.getTransactionById(id)
+                val transaction = getTransactionByIdUseCase(id)
                 val categoryResult = getCategoriesUseCase().first()
                 val categoryList = try {
                     categoryResult.getOrThrow()
@@ -523,7 +498,7 @@ class AddTransactionViewModel(
                 _state.update { it.copy(isLoading = true) }
                 Logger.d(tag = AddTransactionConstant.TAG) { "Deleting transaction with id: $transactionId" }
 
-                val transaction = transactionRepository.getTransactionById(transactionId!!)
+                val transaction = getTransactionByIdUseCase(transactionId!!)
                 if (transaction != null) {
                     val result = deleteTransactionUseCase(transaction)
                     result.onSuccess {

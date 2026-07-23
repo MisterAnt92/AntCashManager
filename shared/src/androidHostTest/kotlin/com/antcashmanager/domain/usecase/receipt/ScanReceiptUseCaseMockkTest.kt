@@ -6,9 +6,13 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -74,4 +78,27 @@ class ScanReceiptUseCaseMockkTest {
         assertIs<ReceiptScanException.NoTextExtracted>(result.exceptionOrNull())
         coVerify(exactly = 1) { ocrService.extractText(sampleImageBytes) }
     }
+
+    @Test
+    fun invoke_shouldPreserveRawText_whenOcrSucceeds() = runTest(testDispatcher) {
+        val rawText = "SUPERMARKET\nTOTAL EUR 42,50\nVAT 22% 7,66"
+        coEvery { ocrService.extractText(sampleImageBytes) } returns Result.success(rawText)
+
+        val result = useCase(sampleImageBytes)
+
+        assertTrue(result.isSuccess)
+        assertEquals(rawText, result.getOrThrow().rawText)
+    }
+
+    @Test
+    fun invoke_shouldReturnAmountNotFound_whenNoNumericValueInText() = runTest(testDispatcher) {
+        coEvery { ocrService.extractText(sampleImageBytes) } returns Result.success("SOLO TESTO SENZA NUMERI")
+
+        val result = useCase(sampleImageBytes)
+
+        assertTrue(result.isFailure)
+        assertIs<ReceiptScanException.AmountNotFound>(result.exceptionOrNull())
+        coVerify(exactly = 1) { ocrService.extractText(sampleImageBytes) }
+    }
+
 }

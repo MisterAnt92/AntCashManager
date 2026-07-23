@@ -49,7 +49,9 @@ class TransactionDetailsViewModelMockkTest : BaseUnitTest() {
         mockkStatic(Intent::class)
 
         every { anyConstructed<Intent>().setAction(any()) } returns mockk(relaxed = true)
-        every { anyConstructed<Intent>().putExtra(any<String>(), any<String>()) } returns mockk(relaxed = true)
+        every { anyConstructed<Intent>().putExtra(any<String>(), any<String>()) } returns mockk(
+            relaxed = true
+        )
         every { anyConstructed<Intent>().setType(any()) } returns mockk(relaxed = true)
         every { context.getString(R.string.transaction_details_share) } returns "Share transaction"
         every { context.startActivity(any()) } just Runs

@@ -4,7 +4,9 @@ import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.ui.screen.home.HomeEvent
 import com.antcashmanager.android.ui.screen.home.HomeViewModel
 import com.antcashmanager.domain.model.SavedDateFilter
+import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionSuggestions
+import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.settings.GetHomeDateFilterStateUseCase
 import com.antcashmanager.domain.usecase.settings.SetHomeDateFilterStateUseCase
@@ -19,6 +21,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -129,7 +132,9 @@ class HomeViewModelMockkTest : BaseUnitTest() {
 
     @Test
     fun onEvent_shouldUpdateUiState_whenPersistDateFilterFails() = runViewModelTest {
-        coEvery { setHomeDateFilterStateUseCase(any()) } returns Result.failure(IllegalStateException("persist-failed"))
+        coEvery { setHomeDateFilterStateUseCase(any()) } returns Result.failure(
+            IllegalStateException("persist-failed")
+        )
         val viewModel = buildViewModel()
         val collectJob = launch { viewModel.state.collect {} }
 
@@ -152,6 +157,109 @@ class HomeViewModelMockkTest : BaseUnitTest() {
 
         collectJob.cancel()
     }
+
+    @Test
+    fun totalsAndBalance_shouldBeCalculatedCorrectly_whenTransactionsContainIncomeAndExpense() =
+        runViewModelTest {
+            val now = 1_700_000_000_000L
+            val transactions = listOf(
+                Transaction(
+                    id = 1,
+                    title = "Salary",
+                    amount = 2000.0,
+                    category = "Work",
+                    type = TransactionType.INCOME,
+                    timestamp = now,
+                ),
+                Transaction(
+                    id = 2,
+                    title = "Freelance",
+                    amount = 500.0,
+                    category = "Work",
+                    type = TransactionType.INCOME,
+                    timestamp = now,
+                ),
+                Transaction(
+                    id = 3,
+                    title = "Rent",
+                    amount = 800.0,
+                    category = "Home",
+                    type = TransactionType.EXPENSE,
+                    timestamp = now,
+                ),
+                Transaction(
+                    id = 4,
+                    title = "Groceries",
+                    amount = 200.0,
+                    category = "Food",
+                    type = TransactionType.EXPENSE,
+                    timestamp = now,
+                ),
+            )
+
+            every { getTransactionsUseCase() } returns flowOf(Result.success(transactions))
+            coEvery { filterTransactionsUseCase(any()) } answers {
+                Result.success(firstArg<FilterTransactionsUseCase.Params>().transactions)
+            }
+
+            val viewModel = buildViewModel()
+            val collectJob = launch { viewModel.state.collect {} }
+            advanceUntilIdle()
+
+            viewModel.onEvent(HomeEvent.SetDateRange(0L, Long.MAX_VALUE))
+            advanceUntilIdle()
+
+            val uiState = viewModel.state.value
+            assertEquals(2500.0, uiState.totalIncome, 0.01)
+            assertEquals(-1000.0, uiState.totalExpense, 0.01)
+            assertEquals(1500.0, uiState.balance, 0.01)
+
+            collectJob.cancel()
+        }
+
+    @Test
+    fun totals_shouldUseNormalizedAmountSigns_whenStoredTransactionSignsAreInconsistent() =
+        runViewModelTest {
+            val now = 1_700_000_000_000L
+            val transactions = listOf(
+                Transaction(
+                    id = 1,
+                    title = "Refund",
+                    amount = -120.0,
+                    category = "Other",
+                    type = TransactionType.INCOME,
+                    timestamp = now,
+                ),
+                Transaction(
+                    id = 2,
+                    title = "Coffee",
+                    amount = 20.0,
+                    category = "Food",
+                    type = TransactionType.EXPENSE,
+                    timestamp = now,
+                ),
+            )
+
+            every { getTransactionsUseCase() } returns flowOf(Result.success(transactions))
+            coEvery { filterTransactionsUseCase(any()) } answers {
+                Result.success(firstArg<FilterTransactionsUseCase.Params>().transactions)
+            }
+
+            val viewModel = buildViewModel()
+            val collectJob = launch { viewModel.state.collect {} }
+            advanceUntilIdle()
+
+            viewModel.onEvent(HomeEvent.SetDateRange(0L, Long.MAX_VALUE))
+            advanceUntilIdle()
+
+            val uiState = viewModel.state.value
+            assertEquals(120.0, uiState.totalIncome, 0.01)
+            assertEquals(-20.0, uiState.totalExpense, 0.01)
+            assertEquals(100.0, uiState.balance, 0.01)
+
+            collectJob.cancel()
+        }
+
 
     private fun buildViewModel(): HomeViewModel = HomeViewModel(
         getTransactionsUseCase = getTransactionsUseCase,
