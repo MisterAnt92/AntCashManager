@@ -8,6 +8,7 @@ import com.antcashmanager.android.util.calculateTotalExpense
 import com.antcashmanager.android.util.calculateTotalIncome
 import com.antcashmanager.android.util.withCorrectAmounts
 import com.antcashmanager.domain.model.SavedDateFilter
+import com.antcashmanager.domain.model.TransactionSuggestions
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
@@ -183,7 +184,7 @@ class HomeViewModel(
             } else {
                 combine(
                     transactionsFlow,
-                    getTransactionSuggestionsUseCase()
+                    getTransactionSuggestionsUseCase().map { it.getOrDefault(TransactionSuggestions()) }
                 ) { transactions, suggestions ->
                     val matchingFromHistory = transactions
                         .asSequence()

@@ -2,7 +2,7 @@ package com.antcashmanager.domain.usecase.transaction
 
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.repository.TransactionRepository
-import com.antcashmanager.domain.usecase.BaseResultUseCase
+import com.antcashmanager.domain.usecase.base.UseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
@@ -12,7 +12,7 @@ import kotlinx.coroutines.Dispatchers
 class DeleteTransactionUseCase(
     private val transactionRepository: TransactionRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : BaseResultUseCase<Transaction, Unit>(dispatcher) {
+) : UseCase<Transaction, Unit>(dispatcher) {
 
     override suspend fun execute(params: Transaction): Unit =
         transactionRepository.deleteTransaction(params)

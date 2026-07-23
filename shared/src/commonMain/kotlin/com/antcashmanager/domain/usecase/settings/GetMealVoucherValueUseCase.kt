@@ -1,7 +1,7 @@
 package com.antcashmanager.domain.usecase.settings
 
 import com.antcashmanager.domain.repository.SettingsRepository
-import com.antcashmanager.domain.usecase.NoParamsFlowUseCase
+import com.antcashmanager.domain.usecase.base.NoParamsObservableUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -9,6 +9,6 @@ import kotlinx.coroutines.flow.Flow
 class GetMealVoucherValueUseCase(
     private val settingsRepository: SettingsRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : NoParamsFlowUseCase<Double>(dispatcher) {
-    override fun execute(): Flow<Double> = settingsRepository.getMealVoucherValue()
+) : NoParamsObservableUseCase<Double>(dispatcher) {
+    override fun execute(params: Unit): Flow<Double> = settingsRepository.getMealVoucherValue()
 }

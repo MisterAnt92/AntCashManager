@@ -260,9 +260,11 @@ class ReceiptScanViewModel(
 
     private fun loadSuggestions() {
         viewModelScope.launch {
-            getTransactionSuggestionsUseCase().collect { suggestions ->
-                distinctTitles = suggestions.titles
-                distinctLocations = suggestions.locations
+            getTransactionSuggestionsUseCase().collect { result ->
+                result.onSuccess { suggestions ->
+                    distinctTitles = suggestions.titles
+                    distinctLocations = suggestions.locations
+                }
             }
         }
     }

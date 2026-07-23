@@ -1,12 +1,12 @@
 package com.antcashmanager.domain.usecase.settings
 
 import com.antcashmanager.domain.repository.SettingsRepository
-import com.antcashmanager.domain.usecase.NoParamsResultFlowUseCase
+import com.antcashmanager.domain.usecase.base.NoParamsObservableUseCase
 import kotlinx.coroutines.flow.Flow
 
 class GetShowTransactionNotesUseCase(
     private val settingsRepository: SettingsRepository,
-) : NoParamsResultFlowUseCase<Boolean>() {
+) : NoParamsObservableUseCase<Boolean>() {
 
-    override fun execute(): Flow<Boolean> = settingsRepository.getShowTransactionNotes()
+    override fun execute(params: Unit): Flow<Boolean> = settingsRepository.getShowTransactionNotes()
 }

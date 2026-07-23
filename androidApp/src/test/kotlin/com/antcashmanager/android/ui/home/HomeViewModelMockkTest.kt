@@ -50,7 +50,7 @@ class HomeViewModelMockkTest : BaseUnitTest() {
             val params = firstArg<FilterTransactionsUseCase.Params>()
             Result.success(params.transactions)
         }
-        every { getTransactionSuggestionsUseCase() } returns flowOf(TransactionSuggestions())
+        every { getTransactionSuggestionsUseCase() } returns flowOf(Result.success(TransactionSuggestions()))
         every { getHomeDateFilterStateUseCase() } returns flowOf(
             Result.success(
                 SavedDateFilter(

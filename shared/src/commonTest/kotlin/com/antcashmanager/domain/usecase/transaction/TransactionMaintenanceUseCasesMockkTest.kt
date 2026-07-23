@@ -81,7 +81,7 @@ class TransactionMaintenanceUseCasesMockkTest {
             flowOf(expected)
         }
 
-        val result = useCase(DateRange(from = from, to = to)).take(1).toList().single()
+        val result = useCase(DateRange(from = from, to = to)).take(1).toList().single().getOrThrow()
 
         assertEquals(expected, result)
         assertTrue(isRepositoryCalled)

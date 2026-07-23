@@ -3,7 +3,7 @@ package com.antcashmanager.domain.usecase.transaction
 import co.touchlab.kermit.Logger
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.repository.TransactionRepository
-import com.antcashmanager.domain.usecase.BaseResultUseCase
+import com.antcashmanager.domain.usecase.base.UseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
@@ -21,7 +21,7 @@ import kotlinx.coroutines.Dispatchers
 class SyncTransactionCategoriesUseCase(
     private val transactionRepository: TransactionRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : BaseResultUseCase<SyncTransactionCategoriesUseCase.Params, Unit>(dispatcher) {
+) : UseCase<SyncTransactionCategoriesUseCase.Params, Unit>(dispatcher) {
 
     override suspend fun execute(params: Params) {
         Logger.d(tag = "SyncTransactionCategoriesUseCase") {

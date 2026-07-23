@@ -60,9 +60,9 @@ class ChartsViewModel(
 
     val chartData: StateFlow<ChartData> = _dateRange
         .flatMapLatest { range ->
-            getTransactionsByDateRangeUseCase(range).map { transactions ->
+            getTransactionsByDateRangeUseCase(range).map { result ->
                 // Apply amount correction for EXPENSE transactions
-                buildChartData(transactions.withCorrectAmounts())
+                buildChartData(result.getOrElse { emptyList() }.withCorrectAmounts())
             }
         }
         .stateIn(

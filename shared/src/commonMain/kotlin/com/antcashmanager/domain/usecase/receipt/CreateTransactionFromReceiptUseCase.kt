@@ -5,7 +5,7 @@ import com.antcashmanager.domain.model.ReceiptData
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.TransactionRepository
-import com.antcashmanager.domain.usecase.BaseResultUseCase
+import com.antcashmanager.domain.usecase.base.UseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
@@ -45,7 +45,7 @@ data class CreateTransactionFromReceiptParams(
 class CreateTransactionFromReceiptUseCase(
     private val transactionRepository: TransactionRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : BaseResultUseCase<CreateTransactionFromReceiptParams, Long>(dispatcher) {
+) : UseCase<CreateTransactionFromReceiptParams, Long>(dispatcher) {
 
     companion object {
         private const val DEFAULT_RECEIPT_TITLE = "Scontrino"

@@ -49,7 +49,7 @@ class GetTransactionSuggestionsUseCaseTest {
         val collected = mutableListOf<TransactionSuggestions>()
 
         // When - avvio collector e cancello subito
-        val job = launch { cancellableUseCase().collect { collected.add(it) } }
+        val job = launch { cancellableUseCase().collect { result -> result.onSuccess { collected.add(it) } } }
         job.cancel()
         advanceUntilIdle()
 
@@ -67,7 +67,7 @@ class GetTransactionSuggestionsUseCaseTest {
         repository.tagsToReturn = listOf("Tag1", "Tag2")
 
         // When
-        val result = useCase().first()
+        val result = useCase().first().getOrThrow()
 
         // Then
         assertEquals(listOf("Spesa"), result.titles)
@@ -93,7 +93,7 @@ class GetTransactionSuggestionsUseCaseTest {
         repository.tagsToReturn = expectedTags
 
         // When
-        val result = useCase().first()
+        val result = useCase().first().getOrThrow()
 
         // Then
         assertEquals(expectedTitles, result.titles)
@@ -107,7 +107,7 @@ class GetTransactionSuggestionsUseCaseTest {
     fun invoke_shouldReturnEmptySuggestions_whenNoDataAvailable() =
         runTest(testDispatcher) {
             // When
-            val result = useCase().first()
+            val result = useCase().first().getOrThrow()
 
             // Then
             assertEquals(TransactionSuggestions(), result)
@@ -120,7 +120,7 @@ class GetTransactionSuggestionsUseCaseTest {
         settingsRepository.suggestionsEnabled.value = false
 
         // When
-        val result = useCase().first()
+        val result = useCase().first().getOrThrow()
 
         // Then
         assertEquals(TransactionSuggestions(), result)

@@ -6,18 +6,20 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
+import com.antcashmanager.domain.usecase.base.UseCase
+
 /**
  * Use case per la formattazione dei dati di una transazione per la condivisione.
- * Implementa la business logic di preparazione dei dati estendendo [BaseSyncUseCase].
+ * Implementa la business logic di preparazione dei dati estendendo [UseCase].
  */
-class ShareTransactionUseCase : BaseSyncUseCase<ShareTransactionUseCase.Params, String>() {
+class ShareTransactionUseCase : UseCase<ShareTransactionUseCase.Params, String>() {
 
     data class Params(val transaction: Transaction)
 
     /**
      * Formatta i dati della transazione in una stringa leggibile per la condivisione.
      */
-    override fun execute(params: Params): String {
+    override suspend fun execute(params: Params): String {
         val transaction = params.transaction
         val isIncome = transaction.type == TransactionType.INCOME
         val typeString = if (isIncome) "Income" else "Expense"

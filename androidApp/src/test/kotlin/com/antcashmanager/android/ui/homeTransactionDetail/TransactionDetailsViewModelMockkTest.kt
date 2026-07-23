@@ -9,6 +9,8 @@ import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.usecase.ShareTransactionUseCase
 import io.mockk.Runs
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -17,6 +19,7 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkConstructor
 import io.mockk.unmockkStatic
 import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -67,10 +70,10 @@ class TransactionDetailsViewModelMockkTest : BaseUnitTest() {
     }
 
     @Test
-    fun shareTransaction_shouldBuildSendIntentWithFormattedText_whenTransactionIsExpense() {
-        every {
+    fun shareTransaction_shouldBuildSendIntentWithFormattedText_whenTransactionIsExpense() = runTest {
+        coEvery {
             shareTransactionUseCase(ShareTransactionUseCase.Params(expenseTransaction))
-        } returns "formatted expense"
+        } returns Result.success("formatted expense")
 
         viewModel.shareTransaction(expenseTransaction, context)
 
@@ -80,21 +83,21 @@ class TransactionDetailsViewModelMockkTest : BaseUnitTest() {
     }
 
     @Test
-    fun shareTransaction_shouldDelegateWholeTransaction_whenTransactionTypeIsIncome() {
-        every {
+    fun shareTransaction_shouldDelegateWholeTransaction_whenTransactionTypeIsIncome() = runTest {
+        coEvery {
             shareTransactionUseCase(ShareTransactionUseCase.Params(incomeTransaction))
-        } returns "formatted income"
+        } returns Result.success("formatted income")
 
         viewModel.shareTransaction(incomeTransaction, context)
 
-        verify { shareTransactionUseCase(ShareTransactionUseCase.Params(incomeTransaction)) }
+        coVerify { shareTransactionUseCase(ShareTransactionUseCase.Params(incomeTransaction)) }
     }
 
     @Test
-    fun shareTransaction_shouldStartChooserActivity_whenIntentIsBuilt() {
-        every {
+    fun shareTransaction_shouldStartChooserActivity_whenIntentIsBuilt() = runTest {
+        coEvery {
             shareTransactionUseCase(ShareTransactionUseCase.Params(expenseTransaction))
-        } returns "formatted expense"
+        } returns Result.success("formatted expense")
 
         viewModel.shareTransaction(expenseTransaction, context)
 

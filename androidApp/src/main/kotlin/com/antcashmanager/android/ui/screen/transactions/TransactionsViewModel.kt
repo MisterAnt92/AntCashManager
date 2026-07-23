@@ -11,6 +11,7 @@ import com.antcashmanager.android.util.withCorrectAmounts
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
+import com.antcashmanager.domain.model.TransactionSuggestions
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
@@ -217,7 +218,7 @@ class TransactionsViewModel(
             } else {
                 combine(
                     transactionsFlow,
-                    getTransactionSuggestionsUseCase()
+                    getTransactionSuggestionsUseCase().map { it.getOrDefault(TransactionSuggestions()) }
                 ) { transactions, suggestions ->
                     val matchingFromHistory = transactions
                         .asSequence()

@@ -110,7 +110,7 @@ class AddTransactionViewModel(
     private fun loadMealVoucherValue() {
         viewModelScope.launch {
             try {
-                val mealVoucherValue = getMealVoucherValueUseCase().first()
+                val mealVoucherValue = getMealVoucherValueUseCase().first().getOrDefault(0.0)
                 _state.update { it.copy(mealVoucherValue = mealVoucherValue) }
             } catch (ex: Exception) {
                 Logger.e(tag = AddTransactionConstant.TAG) {
@@ -143,22 +143,24 @@ class AddTransactionViewModel(
     private fun loadTransactionSuggestions() {
         Logger.d(tag = AddTransactionConstant.TAG) { "Loading transaction suggestions" }
         viewModelScope.launch {
-            getTransactionSuggestionsUseCase().collect { suggestions ->
-                Logger.d(tag = AddTransactionConstant.TAG) {
-                    "Suggestions loaded - titles: ${suggestions.titles.size}, " +
-                            "payees: ${suggestions.payees.size}, " +
-                            "notes: ${suggestions.notes.size}, " +
-                            "locations: ${suggestions.locations.size}, " +
-                            "tags: ${suggestions.tags.size}"
-                }
-                _state.update {
-                    it.copy(
-                        titleSuggestions = suggestions.titles,
-                        payeeSuggestions = suggestions.payees,
-                        notesSuggestions = suggestions.notes,
-                        locationSuggestions = suggestions.locations,
-                        tagsSuggestions = suggestions.tags,
-                    )
+            getTransactionSuggestionsUseCase().collect { result ->
+                result.onSuccess { suggestions ->
+                    Logger.d(tag = AddTransactionConstant.TAG) {
+                        "Suggestions loaded - titles: ${suggestions.titles.size}, " +
+                                "payees: ${suggestions.payees.size}, " +
+                                "notes: ${suggestions.notes.size}, " +
+                                "locations: ${suggestions.locations.size}, " +
+                                "tags: ${suggestions.tags.size}"
+                    }
+                    _state.update {
+                        it.copy(
+                            titleSuggestions = suggestions.titles,
+                            payeeSuggestions = suggestions.payees,
+                            notesSuggestions = suggestions.notes,
+                            locationSuggestions = suggestions.locations,
+                            tagsSuggestions = suggestions.tags,
+                        )
+                    }
                 }
             }
         }
@@ -170,7 +172,7 @@ class AddTransactionViewModel(
                 _state.update { it.copy(isLoading = true) }
                 Logger.d(tag = AddTransactionConstant.TAG) { "Loading transaction with id: $id" }
 
-                val transaction = getTransactionByIdUseCase(id)
+                val transaction = getTransactionByIdUseCase(id).getOrThrow()
                 val categoryResult = getCategoriesUseCase().first()
                 val categoryList = try {
                     categoryResult.getOrThrow()
@@ -498,7 +500,7 @@ class AddTransactionViewModel(
                 _state.update { it.copy(isLoading = true) }
                 Logger.d(tag = AddTransactionConstant.TAG) { "Deleting transaction with id: $transactionId" }
 
-                val transaction = getTransactionByIdUseCase(transactionId!!)
+                val transaction = getTransactionByIdUseCase(transactionId!!).getOrThrow()
                 if (transaction != null) {
                     val result = deleteTransactionUseCase(transaction)
                     result.onSuccess {

@@ -1,12 +1,12 @@
 package com.antcashmanager.domain.usecase.settings
 
 import com.antcashmanager.domain.repository.SettingsRepository
-import com.antcashmanager.domain.usecase.NoParamsResultFlowUseCase
+import com.antcashmanager.domain.usecase.base.NoParamsObservableUseCase
 import kotlinx.coroutines.flow.Flow
 
 class GetCurrencySymbolUseCase(
     private val settingsRepository: SettingsRepository,
-) : NoParamsResultFlowUseCase<String>() {
+) : NoParamsObservableUseCase<String>() {
 
-    override fun execute(): Flow<String> = settingsRepository.getCurrencySymbol()
+    override fun execute(params: Unit): Flow<String> = settingsRepository.getCurrencySymbol()
 }

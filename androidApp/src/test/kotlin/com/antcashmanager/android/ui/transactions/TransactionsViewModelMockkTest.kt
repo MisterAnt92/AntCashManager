@@ -60,7 +60,7 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
         every { getTransactionsUseCase() } returns flowOf(Result.success(emptyList()))
         every { getCategoriesUseCase() } returns flowOf(Result.success(emptyList()))
         coEvery { filterTransactionsUseCase(any()) } returns Result.success(emptyList())
-        every { getTransactionSuggestionsUseCase() } returns flowOf(TransactionSuggestions())
+        every { getTransactionSuggestionsUseCase() } returns flowOf(Result.success(TransactionSuggestions()))
         every { getTransactionsDateFilterStateUseCase() } returns flowOf(
             Result.success(
                 SavedDateFilter(

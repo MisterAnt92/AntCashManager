@@ -2,7 +2,7 @@ package com.antcashmanager.domain.usecase.category
 
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.repository.CategoryRepository
-import com.antcashmanager.domain.usecase.BaseResultUseCase
+import com.antcashmanager.domain.usecase.base.UseCase
 
 /**
  * UseCase per recuperare una categoria dato il suo nome.
@@ -10,7 +10,7 @@ import com.antcashmanager.domain.usecase.BaseResultUseCase
  */
 class GetCategoryByNameUseCase(
     private val categoryRepository: CategoryRepository,
-) : BaseResultUseCase<GetCategoryByNameUseCase.Params, Category>() {
+) : UseCase<GetCategoryByNameUseCase.Params, Category>() {
 
     override suspend fun execute(params: Params): Category {
         val category = categoryRepository.getCategoryByName(params.name)
