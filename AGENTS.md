@@ -142,6 +142,54 @@ Only log the usage events listed in `README.md`. Never include user content (not
 
 ---
 
+## R8 Minification & PlayStore Release
+
+### Configuration
+- **R8 enabled** with `proguard-android-optimize.txt` (most aggressive preset)
+- **Resource shrinking enabled** – removes unused XML, drawable, layout resources
+- **ProGuard rules:** `androidApp/proguard-rules.pro` (comprehensive coverage: Kotlin, Room, Firebase, Koin, Compose, ML Kit, security)
+- **Crashlytics mapping upload** – automatic via Firebase (stack trace deobfuscation in production)
+
+### Pre-Release Checklist
+
+Before submitting to PlayStore:
+
+```bash
+# 1. Run all tests
+./gradlew test connectedAndroidTest
+
+# 2. Build release bundle
+./gradlew clean :androidApp:bundleRelease
+
+# 3. Test on real device/emulator
+# Deploy the AAB to a physical device and verify:
+# - App launches without crash
+# - Koin DI resolves all dependencies
+# - Room database queries work correctly
+# - ML Kit OCR functions properly
+# - Serialization deserializes JSON payloads
+# - No unexpected crashes in Crashlytics console
+```
+
+### PlayStore Upload
+1. **Google Play Console** → App → **Release** → **Create New Release**
+2. Upload `androidApp/build/outputs/bundle/release/app-release.aab`
+3. Verify **App Signing** (Google Play manages keys)
+4. Add **Release Notes** and review content policies
+5. Submit for review or internal testing first
+
+### Post-Release Monitoring
+- Check **Crashlytics** console for deobfuscated stack traces (should resolve within 24h)
+- Monitor **Play Console** → **Quality** → **Crashes and ANRs** for production issues
+- Watch user reviews for crashes in first 48 hours
+
+### Size Optimization Tips
+- `proguard-rules.pro` includes log stripping (`Log.d/v/i` removed in release)
+- If size still > 100 MB, check for unused dependencies using `./gradlew :androidApp:dependencies`
+- Use `bundletool` to analyze bundle: `bundletool inspect-bundle --bundle=app-release.aab --mode=summary`
+
+---
+
 ## Files to Ignore
 
 Never modify files matching `.gitignore` patterns: `build/`, `.gradle/`, `.idea/`, `*.jks`, `google-services.json`, `local.properties`, `secrets.properties`.
