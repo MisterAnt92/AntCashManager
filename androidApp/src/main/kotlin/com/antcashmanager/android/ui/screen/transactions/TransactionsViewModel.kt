@@ -4,9 +4,9 @@ package com.antcashmanager.android.ui.screen.transactions
 // STATE
 // ══════════════════════════════════════════════════════════════════════════════
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
+import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.android.util.withCorrectAmounts
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.SavedDateFilter
@@ -87,7 +87,7 @@ class TransactionsViewModel(
     private val getTransactionSuggestionsUseCase: GetTransactionSuggestionsUseCase,
     private val getTransactionsDateFilterStateUseCase: GetTransactionsDateFilterStateUseCase,
     private val setTransactionsDateFilterStateUseCase: SetTransactionsDateFilterStateUseCase,
-) : ViewModel() {
+) : BaseViewModel() {
 
     constructor(
         transactionRepository: TransactionRepository,
@@ -566,38 +566,5 @@ private data class FilterState(
     val isSearchExpanded: Boolean = false,
     val isFiltersExpanded: Boolean = false,
 ) {
-    /**
-     * Check if pending filters differ from confirmed filters
-     */
-    val hasFilterChanges: Boolean
-        get() = pendingSearchQuery != searchQuery ||
-                pendingCategory != selectedCategory ||
-                pendingTransactionType != selectedTransactionType ||
-                pendingPaymentType != selectedPaymentType
 
-    /**
-     * Get number of active (confirmed) filters
-     */
-    val activeFilterCount: Int
-        get() {
-            var count = 0
-            if (searchQuery.isNotBlank()) count++
-            if (selectedCategory != null) count++
-            if (selectedTransactionType != null) count++
-            if (selectedPaymentType != null) count++
-            return count
-        }
-
-    /**
-     * Get number of pending filters
-     */
-    val pendingFilterCount: Int
-        get() {
-            var count = 0
-            if (pendingSearchQuery.isNotBlank()) count++
-            if (pendingCategory != null) count++
-            if (pendingTransactionType != null) count++
-            if (pendingPaymentType != null) count++
-            return count
-        }
 }

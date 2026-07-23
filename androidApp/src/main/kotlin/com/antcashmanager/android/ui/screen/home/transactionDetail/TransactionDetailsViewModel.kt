@@ -42,7 +42,10 @@ class TransactionDetailsViewModel(
                     }
                     // Avvia il chooser
                     context.startActivity(
-                        Intent.createChooser(shareIntent, context.getString(R.string.transaction_details_share))
+                        Intent.createChooser(
+                            shareIntent,
+                            context.getString(R.string.transaction_details_share)
+                        )
                     )
                 }
                 .onFailure { error ->

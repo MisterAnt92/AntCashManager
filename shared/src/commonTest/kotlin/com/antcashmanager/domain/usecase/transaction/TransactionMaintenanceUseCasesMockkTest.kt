@@ -165,22 +165,24 @@ class TransactionMaintenanceUseCasesMockkTest {
                     recurringTemplate
                 )
             )
-            coEvery { transactionRepository.insertTransaction(any()) } returns 1L
-            coEvery { transactionRepository.updateTransaction(any()) } just Runs
+            coEvery { transactionRepository.insertTransactions(any()) } returns listOf(1L, 2L)
+            coEvery { transactionRepository.updateTransactions(any()) } just Runs
 
             ProcessRecurringTransactionsUseCase(transactionRepository, Clock.System, dispatcher).invoke()
 
-            coVerify(exactly = 2) {
-                transactionRepository.insertTransaction(
-                    match { !it.isRecurring && it.recurrenceInterval.isEmpty() },
+            coVerify(exactly = 1) {
+                transactionRepository.insertTransactions(
+                    match { list ->
+                        list.size == 2 && list.all { !it.isRecurring && it.recurrenceInterval.isEmpty() }
+                    }
                 )
             }
             coVerify(exactly = 1) {
-                transactionRepository.updateTransaction(
-                    match {
-                        it.id == recurringTemplate.id &&
-                                it.timestamp >= recurringTemplate.timestamp + (2 * dayMillis)
-                    },
+                transactionRepository.updateTransactions(
+                    match { list ->
+                        list.size == 1 && list[0].id == recurringTemplate.id &&
+                                list[0].timestamp >= recurringTemplate.timestamp + (2 * dayMillis)
+                    }
                 )
             }
         }

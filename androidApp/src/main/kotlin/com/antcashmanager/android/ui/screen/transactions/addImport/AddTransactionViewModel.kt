@@ -1,8 +1,8 @@
 package com.antcashmanager.android.ui.screen.transactions.addImport
 
+import android.os.Bundle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import android.os.Bundle
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.domain.model.Category
@@ -17,8 +17,6 @@ import com.antcashmanager.domain.usecase.transaction.GetTransactionSuggestionsUs
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.UpdateTransactionUseCase
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -127,7 +125,8 @@ class AddTransactionViewModel(
                 result.onSuccess { categories ->
                     // Le categorie nascoste non vanno offerte per nuove transazioni.
                     // Mantieni ordine consistente tramite sortOrder dal database.
-                    val sorted = categories.filterNot { category -> category.isHidden }.sortedBy { it.sortOrder }
+                    val sorted = categories.filterNot { category -> category.isHidden }
+                        .sortedBy { it.sortOrder }
                     _state.update { it.copy(categories = sorted) }
                 }.onFailure { error ->
                     if (error is CancellationException) throw error
@@ -405,7 +404,10 @@ class AddTransactionViewModel(
         if (currentState.title.isBlank() || currentState.amount.isBlank()) {
             _state.update { it.copy(error = AddTransactionConstant.ERROR_REQUIRED_TITLE_AMOUNT) }
             analyticsManager.logEvent("transaction_form_validation_failed", Bundle().apply {
-                putString("error_type", if (currentState.title.isBlank()) "missing_title" else "missing_amount")
+                putString(
+                    "error_type",
+                    if (currentState.title.isBlank()) "missing_title" else "missing_amount"
+                )
             })
             return
         }

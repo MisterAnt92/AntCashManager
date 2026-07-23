@@ -40,10 +40,12 @@ fun AppThemeProvider(
             Logger.d(tag = "Theme") { "AppThemeProvider applying: DARK" }
             true
         }
+
         AppTheme.LIGHT -> {
             Logger.d(tag = "Theme") { "AppThemeProvider applying: LIGHT" }
             false
         }
+
         AppTheme.SYSTEM -> {
             val isDark = isSystemInDarkTheme()
             Logger.d(tag = "Theme") { "AppThemeProvider applying: SYSTEM (isDark=$isDark)" }

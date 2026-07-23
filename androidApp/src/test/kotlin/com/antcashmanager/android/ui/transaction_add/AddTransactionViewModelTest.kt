@@ -12,6 +12,7 @@ import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactio
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
+import com.antcashmanager.domain.model.TransactionSuggestions
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.settings.GetMealVoucherValueUseCase
@@ -824,18 +825,12 @@ class AddTransactionViewModelTest : BaseUnitTest() {
 private class FakeTransactionRepositoryWithCannedSuggestions(
     initialTransactions: List<Transaction>,
 ) : FakeTransactionRepository(initialTransactions) {
-    override fun getDistinctTitles(since: Long): Flow<List<String>> =
-        flowOf(listOf("Spesa", "Carburante", "Ristorante"))
-
-    override fun getDistinctPayees(since: Long): Flow<List<String>> =
-        flowOf(listOf("Supermercato", "Stazione"))
-
-    override fun getDistinctNotes(since: Long): Flow<List<String>> =
-        flowOf(listOf("Cena con amici", "Spesa mensile"))
-
-    override fun getDistinctLocations(since: Long): Flow<List<String>> =
-        flowOf(listOf("Milano", "Roma"))
-
-    override fun getDistinctTags(since: Long): Flow<List<String>> =
-        flowOf(listOf("Food", "Transport", "Shopping"))
+    override suspend fun getSuggestions(since: Long): TransactionSuggestions =
+        TransactionSuggestions(
+            titles = listOf("Spesa", "Carburante", "Ristorante"),
+            payees = listOf("Supermercato", "Stazione"),
+            notes = listOf("Cena con amici", "Spesa mensile"),
+            locations = listOf("Milano", "Roma"),
+            tags = listOf("Food", "Transport", "Shopping")
+        )
 }

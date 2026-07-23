@@ -200,50 +200,58 @@ class SettingsViewModel(
                 SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
                 SettingsConstant.DEFAULT_LANGUAGE,
             ),
-            getShowChartsUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_SHOW_CHARTS } }.stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-                SettingsConstant.DEFAULT_SHOW_CHARTS,
-            ),
-            getHighContrastUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_HIGH_CONTRAST } }.stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-                SettingsConstant.DEFAULT_HIGH_CONTRAST,
-            ),
-            getLargeTextUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_LARGE_TEXT } }.stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-                SettingsConstant.DEFAULT_LARGE_TEXT,
-            ),
+            getShowChartsUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_SHOW_CHARTS } }
+                .stateIn(
+                    viewModelScope,
+                    SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+                    SettingsConstant.DEFAULT_SHOW_CHARTS,
+                ),
+            getHighContrastUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_HIGH_CONTRAST } }
+                .stateIn(
+                    viewModelScope,
+                    SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+                    SettingsConstant.DEFAULT_HIGH_CONTRAST,
+                ),
+            getLargeTextUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_LARGE_TEXT } }
+                .stateIn(
+                    viewModelScope,
+                    SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+                    SettingsConstant.DEFAULT_LARGE_TEXT,
+                ),
         ) { theme, language, showCharts, highContrast, largeText ->
             SettingsPreferences1(theme, language, showCharts, highContrast, largeText)
         },
         combine(
-            getReduceMotionUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_REDUCE_MOTION } }.stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-                SettingsConstant.DEFAULT_REDUCE_MOTION,
-            ),
-            getCurrencySymbolUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_CURRENCY_SYMBOL } }.stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-                SettingsConstant.DEFAULT_CURRENCY_SYMBOL,
-            ),
-            getDecimalDigitsUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_DECIMAL_DIGITS } }.stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-                SettingsConstant.DEFAULT_DECIMAL_DIGITS,
-            ),
-            getDecimalSeparatorUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_DECIMAL_SEPARATOR } }.stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-                SettingsConstant.DEFAULT_DECIMAL_SEPARATOR,
-            ),
-            getThousandsSeparatorUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_THOUSANDS_SEPARATOR } }.stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-                SettingsConstant.DEFAULT_THOUSANDS_SEPARATOR,
-            ),
+            getReduceMotionUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_REDUCE_MOTION } }
+                .stateIn(
+                    viewModelScope,
+                    SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+                    SettingsConstant.DEFAULT_REDUCE_MOTION,
+                ),
+            getCurrencySymbolUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_CURRENCY_SYMBOL } }
+                .stateIn(
+                    viewModelScope,
+                    SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+                    SettingsConstant.DEFAULT_CURRENCY_SYMBOL,
+                ),
+            getDecimalDigitsUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_DECIMAL_DIGITS } }
+                .stateIn(
+                    viewModelScope,
+                    SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+                    SettingsConstant.DEFAULT_DECIMAL_DIGITS,
+                ),
+            getDecimalSeparatorUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_DECIMAL_SEPARATOR } }
+                .stateIn(
+                    viewModelScope,
+                    SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+                    SettingsConstant.DEFAULT_DECIMAL_SEPARATOR,
+                ),
+            getThousandsSeparatorUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_THOUSANDS_SEPARATOR } }
+                .stateIn(
+                    viewModelScope,
+                    SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+                    SettingsConstant.DEFAULT_THOUSANDS_SEPARATOR,
+                ),
         ) { reduceMotion, currencySymbol, decimalDigits, decimalSeparator, thousandsSeparator ->
             SettingsPreferences2(
                 reduceMotion,
@@ -253,16 +261,18 @@ class SettingsViewModel(
                 thousandsSeparator
             )
         },
-        getShowTransactionNotesUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_SHOW_TRANSACTION_NOTES } }.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-            SettingsConstant.DEFAULT_SHOW_TRANSACTION_NOTES,
-        ),
-        getTransactionDisplayTypeUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_TRANSACTION_DISPLAY_TYPE } }.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-            SettingsConstant.DEFAULT_TRANSACTION_DISPLAY_TYPE,
-        ),
+        getShowTransactionNotesUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_SHOW_TRANSACTION_NOTES } }
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+                SettingsConstant.DEFAULT_SHOW_TRANSACTION_NOTES,
+            ),
+        getTransactionDisplayTypeUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_TRANSACTION_DISPLAY_TYPE } }
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+                SettingsConstant.DEFAULT_TRANSACTION_DISPLAY_TYPE,
+            ),
     ) { prefs1, prefs2, showTransactionNotes, transactionDisplayType ->
         SettingsState(
             theme = prefs1.theme,

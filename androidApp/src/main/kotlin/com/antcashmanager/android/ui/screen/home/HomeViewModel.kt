@@ -1,8 +1,7 @@
 package com.antcashmanager.android.ui.screen.home
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.touchlab.kermit.Logger
+import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.android.util.calculateBalance
 import com.antcashmanager.android.util.calculateTotalExpense
 import com.antcashmanager.android.util.calculateTotalIncome
@@ -70,7 +69,7 @@ class HomeViewModel(
     private val setHomeDateFilterStateUseCase: SetHomeDateFilterStateUseCase,
     private val getCategoriesUseCase: GetCategoriesUseCase,
     searchDebounceMs: Long = 300L,
-) : ViewModel() {
+) : BaseViewModel() {
 
     constructor(
         transactionRepository: TransactionRepository,
@@ -282,12 +281,12 @@ class HomeViewModel(
 
     init {
         observeSavedDateFilter()
-        Logger.d(tag = "HomeViewModel") { "HomeViewModel initialized" }
+        logDebug("HomeViewModel initialized")
     }
 
     // ── Event Handling ──
     fun onEvent(event: HomeEvent) {
-        Logger.d(tag = "HomeViewModel") { "Event: $event" }
+        logDebug("Event: $event")
         when (event) {
             is HomeEvent.SelectPreset -> selectPreset(event.index)
             is HomeEvent.SetDateRange -> setDateRange(event.from, event.to)
@@ -378,9 +377,7 @@ class HomeViewModel(
             val result = setHomeDateFilterStateUseCase(filter)
             result.onFailure { error ->
                 if (error is kotlinx.coroutines.CancellationException) throw error
-                Logger.e(throwable = error, tag = "HomeViewModel") {
-                    "Failed to persist home date filter: ${error.message}"
-                }
+                logError("Failed to persist home date filter: ${error.message}", throwable = error)
             }
         }
     }

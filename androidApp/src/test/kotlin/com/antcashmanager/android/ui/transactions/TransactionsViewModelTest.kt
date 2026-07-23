@@ -11,6 +11,7 @@ import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
+import com.antcashmanager.domain.model.TransactionSuggestions
 import com.antcashmanager.domain.model.TransactionType
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
@@ -742,5 +743,12 @@ class TransactionsViewModelTest : BaseUnitTest() {
  */
 private class FakeTransactionRepositoryWithSuggestions : FakeTransactionRepository() {
     val distinctTitles = MutableStateFlow<List<String>>(emptyList())
-    override fun getDistinctTitles(since: Long): Flow<List<String>> = distinctTitles
+    override suspend fun getSuggestions(since: Long): TransactionSuggestions =
+        TransactionSuggestions(
+            titles = distinctTitles.value,
+            payees = emptyList(),
+            notes = emptyList(),
+            locations = emptyList(),
+            tags = emptyList()
+        )
 }

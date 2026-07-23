@@ -17,7 +17,6 @@ import co.touchlab.kermit.Logger
 import com.antcashmanager.android.navigation.AntCashManagerNavHost
 import com.antcashmanager.android.ui.LocalLocale
 import com.antcashmanager.android.ui.theme.AppThemeProvider
-import com.antcashmanager.android.ui.theme.LocalThemeViewModel
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.usecase.settings.GetLanguageUseCase

@@ -144,8 +144,9 @@ internal fun ChartsContent(
     // Track chart loading completion
     LaunchedEffect(chartData) {
         if (chartData.incomeByCategory.isNotEmpty() || chartData.expenseByCategory.isNotEmpty()) {
-            val totalDataPoints = (chartData.incomeByCategory.size + chartData.expenseByCategory.size +
-                    chartData.monthlyData.size + chartData.yearlyData.size)
+            val totalDataPoints =
+                (chartData.incomeByCategory.size + chartData.expenseByCategory.size +
+                        chartData.monthlyData.size + chartData.yearlyData.size)
             val params = android.os.Bundle().apply {
                 putInt("data_points", totalDataPoints)
             }
@@ -379,7 +380,7 @@ internal fun ChartsContent(
                                         chartHeight = pieChartHeight,
                                         zoomEnabled = zoomEnabled,
                                         chartCardContainerColor = chartCardContainerColor,
-                                                        fmt = fmt,
+                                        fmt = fmt,
                                         shareLabel = shareLabel,
                                         context = context,
                                         onShared = { analyticsManager.logEvent("chart_shared") },
@@ -411,7 +412,7 @@ internal fun ChartsContent(
                                         chartHeight = pieChartHeight,
                                         zoomEnabled = zoomEnabled,
                                         chartCardContainerColor = chartCardContainerColor,
-                                                        fmt = fmt,
+                                        fmt = fmt,
                                         shareLabel = shareLabel,
                                         context = context,
                                         onShared = { analyticsManager.logEvent("chart_shared") },
@@ -439,7 +440,7 @@ internal fun ChartsContent(
                                     chartHeight = pieChartHeight,
                                     zoomEnabled = zoomEnabled,
                                     chartCardContainerColor = chartCardContainerColor,
-                                                fmt = fmt,
+                                    fmt = fmt,
                                     shareLabel = shareLabel,
                                     context = context,
                                     onShared = { analyticsManager.logEvent("chart_shared") },
@@ -482,7 +483,7 @@ internal fun ChartsContent(
                                     chartHeight = monthlyBarChartHeight,
                                     zoomEnabled = zoomEnabled,
                                     chartCardContainerColor = chartCardContainerColor,
-                                                fmt = fmt,
+                                    fmt = fmt,
                                     shareLabel = shareLabel,
                                     context = context,
                                     onShared = { analyticsManager.logEvent("chart_shared") },
@@ -496,7 +497,7 @@ internal fun ChartsContent(
                                     chartHeight = yearlyBarChartHeight,
                                     zoomEnabled = zoomEnabled,
                                     chartCardContainerColor = chartCardContainerColor,
-                                                fmt = fmt,
+                                    fmt = fmt,
                                     shareLabel = shareLabel,
                                     context = context,
                                     onShared = { analyticsManager.logEvent("chart_shared") },

@@ -161,13 +161,14 @@ private class FakeSuggestionsTransactionRepository : FakeTransactionRepository()
     var tagsToReturn: List<String> = emptyList()
     var lastSinceRequested: Long? = null
 
-    override fun getDistinctTitles(since: Long): Flow<List<String>> {
+    override suspend fun getSuggestions(since: Long): TransactionSuggestions {
         lastSinceRequested = since
-        return flowOf(titlesToReturn)
+        return TransactionSuggestions(
+            titles = titlesToReturn,
+            payees = payeesToReturn,
+            notes = notesToReturn,
+            locations = locationsToReturn,
+            tags = tagsToReturn
+        )
     }
-
-    override fun getDistinctPayees(since: Long): Flow<List<String>> = flowOf(payeesToReturn)
-    override fun getDistinctNotes(since: Long): Flow<List<String>> = flowOf(notesToReturn)
-    override fun getDistinctLocations(since: Long): Flow<List<String>> = flowOf(locationsToReturn)
-    override fun getDistinctTags(since: Long): Flow<List<String>> = flowOf(tagsToReturn)
 }
