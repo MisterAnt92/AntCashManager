@@ -14,12 +14,12 @@ Questo documento descrive una specifica milestone di implementazione relativa a:
 
 ## Informazioni Progetto
 
-| Campo | Valore |
-|---|---|
-| App | `AntCashManager` |
-| Versione riferimento | `1.4.6` |
+| Campo                          | Valore                         |
+|--------------------------------|--------------------------------|
+| App                            | `AntCashManager`               |
+| Versione riferimento           | `1.4.6`                        |
 | Package name (`applicationId`) | `com.sformica.ant_cashmanager` |
-| Ambito | `androidApp` (UI + ViewModel) |
+| Ambito                         | `androidApp` (UI + ViewModel)  |
 
 ## Indice Rapido
 

@@ -83,20 +83,20 @@ wiki/
 
 ## 📊 Metadati File
 
-| File | Tipo | Linee | Versione | Scopo |
-|------|------|-------|---------|--------|
-| README.md | Markdown | ~180 | 1.0 | Entry point con overview |
-| INDEX.md | Markdown | ~180 | 1.0 | Indice centrale strutturato |
-| QUICK_START.md | Markdown | ~200 | 1.0 | Accesso veloce (5 min) |
-| NAVIGATION.md | Markdown | ~350 | 1.0 | Mappa visuale per ruolo |
-| ARCHITECTURE_GUIDELINES.md | Markdown | 1574 | 1.4.6 | Guida architettura ufficiale |
-| IMPLEMENTATION_GUIDE.md | Markdown | 419 | 1.4.6 | Guide implementative feature |
-| CONVERSION_GUIDE.md | Markdown | 83 | 1.4.6 | Conversione dati rapida |
-| SCRIPT_CONVERSION_README.md | Markdown | 214 | 1.4.6 | Dettagli script Python |
-| privacy-policy.html | HTML | ~100 | 1.4.6 | Privacy policy (EN) |
-| privacy-policy-de.html | HTML | ~100 | 1.4.6 | Privacy policy (DE) |
-| privacy-policy-es.html | HTML | ~100 | 1.4.6 | Privacy policy (ES) |
-| privacy-policy-fr.html | HTML | ~100 | 1.4.6 | Privacy policy (FR) |
+| File                        | Tipo     | Linee | Versione | Scopo                        |
+|-----------------------------|----------|-------|----------|------------------------------|
+| README.md                   | Markdown | ~180  | 1.0      | Entry point con overview     |
+| INDEX.md                    | Markdown | ~180  | 1.0      | Indice centrale strutturato  |
+| QUICK_START.md              | Markdown | ~200  | 1.0      | Accesso veloce (5 min)       |
+| NAVIGATION.md               | Markdown | ~350  | 1.0      | Mappa visuale per ruolo      |
+| ARCHITECTURE_GUIDELINES.md  | Markdown | 1574  | 1.4.6    | Guida architettura ufficiale |
+| IMPLEMENTATION_GUIDE.md     | Markdown | 419   | 1.4.6    | Guide implementative feature |
+| CONVERSION_GUIDE.md         | Markdown | 83    | 1.4.6    | Conversione dati rapida      |
+| SCRIPT_CONVERSION_README.md | Markdown | 214   | 1.4.6    | Dettagli script Python       |
+| privacy-policy.html         | HTML     | ~100  | 1.4.6    | Privacy policy (EN)          |
+| privacy-policy-de.html      | HTML     | ~100  | 1.4.6    | Privacy policy (DE)          |
+| privacy-policy-es.html      | HTML     | ~100  | 1.4.6    | Privacy policy (ES)          |
+| privacy-policy-fr.html      | HTML     | ~100  | 1.4.6    | Privacy policy (FR)          |
 
 ---
 
@@ -152,6 +152,7 @@ SCRIPT_CONVERSION_README.md
 ## 🎯 Come Navigare per Necessità
 
 ### Scenario 1: Sono nuovo, dove inizio?
+
 ```
 1️⃣  README.md (leggi header)
 2️⃣  QUICK_START.md (scegli il tuo profilo)
@@ -159,6 +160,7 @@ SCRIPT_CONVERSION_README.md
 ```
 
 ### Scenario 2: Devo scrivere una nuova feature
+
 ```
 1️⃣  QUICK_START.md sezione "Sviluppatore"
 2️⃣  ARCHITECTURE_GUIDELINES.md sezione "Clean Architecture"
@@ -168,6 +170,7 @@ SCRIPT_CONVERSION_README.md
 ```
 
 ### Scenario 3: Devo modificare il form transazioni
+
 ```
 1️⃣  QUICK_START.md sezione "UI Developer"
 2️⃣  IMPLEMENTATION_GUIDE.md sezione "UI Layout"
@@ -177,6 +180,7 @@ SCRIPT_CONVERSION_README.md
 ```
 
 ### Scenario 4: Devo convertire dati
+
 ```
 1️⃣  QUICK_START.md sezione "Data Engineer"
 2️⃣  CONVERSION_GUIDE.md sezione "Uso Rapido"
@@ -185,6 +189,7 @@ SCRIPT_CONVERSION_README.md
 ```
 
 ### Scenario 5: Non so da dove iniziare
+
 ```
 1️⃣  README.md (overview)
 2️⃣  NAVIGATION.md (mappa per ruolo)
@@ -197,15 +202,15 @@ SCRIPT_CONVERSION_README.md
 
 ### Quando Aggiornare
 
-| Evento | File da aggiornare | Priorità |
-|--------|-------------------|----------|
-| Cambio pattern architetturale | ARCHITECTURE_GUIDELINES.md | 🔴 CRITICA |
-| Nuova feature UI storica | IMPLEMENTATION_GUIDE.md | 🟡 Alta |
-| Modifica script conversione | CONVERSION_GUIDE.md + SCRIPT_CONVERSION_README.md | 🟡 Alta |
-| Aggiornamento versione app | Tutti (near top di ogni file) | 🟡 Alta |
-| Nuova localizzazione privacy | privacy-policy-XX.html | 🟡 Alta |
-| Aggiunta documento nuovo | INDEX.md, NAVIGATION.md, QUICK_START.md | 🟡 Alta |
-| Miglioramento navigazione | INDEX.md, NAVIGATION.md, QUICK_START.md | 🟢 Bassa |
+| Evento                        | File da aggiornare                                | Priorità   |
+|-------------------------------|---------------------------------------------------|------------|
+| Cambio pattern architetturale | ARCHITECTURE_GUIDELINES.md                        | 🔴 CRITICA |
+| Nuova feature UI storica      | IMPLEMENTATION_GUIDE.md                           | 🟡 Alta    |
+| Modifica script conversione   | CONVERSION_GUIDE.md + SCRIPT_CONVERSION_README.md | 🟡 Alta    |
+| Aggiornamento versione app    | Tutti (near top di ogni file)                     | 🟡 Alta    |
+| Nuova localizzazione privacy  | privacy-policy-XX.html                            | 🟡 Alta    |
+| Aggiunta documento nuovo      | INDEX.md, NAVIGATION.md, QUICK_START.md           | 🟡 Alta    |
+| Miglioramento navigazione     | INDEX.md, NAVIGATION.md, QUICK_START.md           | 🟢 Bassa   |
 
 ### Versionamento
 
@@ -240,16 +245,16 @@ File correlati (fuori da wiki):
 
 ## 📈 Statistiche Wiki
 
-| Metrica | Valore |
-|---------|--------|
-| **Documenti totali** | 12 (8 Markdown + 4 HTML privacy) |
-| **Linee total** | ~2,500+ |
-| **Lingue supportate** | 5 (EN, IT, FR, DE, ES) |
-| **Sezioni principali** | 4 (Architettura, Implementazione, Conversione, Privacy) |
-| **Versione wiki** | 1.0 (allineata a app v1.4.6) |
-| **Ultimo update** | Maggio 2026 |
-| **Tempo lettura completo** | ~2-3 ore |
-| **Accesso rapido (QUICK_START)** | 5 minuti |
+| Metrica                          | Valore                                                  |
+|----------------------------------|---------------------------------------------------------|
+| **Documenti totali**             | 12 (8 Markdown + 4 HTML privacy)                        |
+| **Linee total**                  | ~2,500+                                                 |
+| **Lingue supportate**            | 5 (EN, IT, FR, DE, ES)                                  |
+| **Sezioni principali**           | 4 (Architettura, Implementazione, Conversione, Privacy) |
+| **Versione wiki**                | 1.0 (allineata a app v1.4.6)                            |
+| **Ultimo update**                | Maggio 2026                                             |
+| **Tempo lettura completo**       | ~2-3 ore                                                |
+| **Accesso rapido (QUICK_START)** | 5 minuti                                                |
 
 ---
 
@@ -283,6 +288,7 @@ Se scopri qualcosa di nuovo o vedi spazi da migliorare:
 7. **Commit** con messaggio chiaro
 
 **Linee guida per contributi:**
+
 - Mantieni tone professionale ma accessibile
 - Usa markdown coerente con style del progetto
 - Incluди esempi di codice quando pertinente
@@ -296,6 +302,7 @@ Se scopri qualcosa di nuovo o vedi spazi da migliorare:
 Usa il browser Ctrl+F (Cmd+F su Mac) per cercare:
 
 **Pattern**
+
 - "UseCase" → ARCHITECTURE_GUIDELINES.md
 - "ViewModel" → ARCHITECTURE_GUIDELINES.md
 - "Screen" → ARCHITECTURE_GUIDELINES.md

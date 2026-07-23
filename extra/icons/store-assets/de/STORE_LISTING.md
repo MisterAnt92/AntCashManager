@@ -1,6 +1,7 @@
 # Google Play Store - App-Listing (Deutsch)
 
 ## App-Name (Anzeigename)
+
 **Max 50 Zeichen**
 
 ```
@@ -10,6 +11,7 @@ AntCashManager - Persönliche Finanzen
 ---
 
 ## Kurzbeschreibung
+
 **Max 80 Zeichen**
 
 ```
@@ -19,6 +21,7 @@ Einfache Verwaltung persönlicher Finanzen für Android. Verfolgen Sie Ausgaben 
 ---
 
 ## Vollständige Beschreibung
+
 **Max 4000 Zeichen**
 
 ```
@@ -126,6 +129,7 @@ Lieben Sie die App? Hinterlassen Sie eine Bewertung!
 ---
 
 ## Versionshinweise / Was ist neu
+
 **Max 500 Zeichen**
 
 ```
@@ -150,6 +154,7 @@ v1.4.6 - Mai 2026
 ---
 
 ## Stichwörter / Tags
+
 **Max 80 Zeichen insgesamt (durch Kommas getrennt)**
 
 ```
@@ -176,11 +181,11 @@ finanzen, budget, ausgabenverfolgung, geldverwaltung, persönliche finanzen, spa
 
 1. Gehen Sie zu **Google Play Console** → Ihre App → **Store-Listing**
 2. Kopieren Sie den Inhalt aus den obigen Abschnitten in die entsprechenden Felder:
-   - **Titel** → App-Name
-   - **Kurzbeschreibung** → Kurzbeschreibung
-   - **Vollständige Beschreibung** → Vollständige Beschreibung
-   - **Neue Funktionen** → Versionshinweise
-   - **Stichwörter** → Stichwörter/Tags
+    - **Titel** → App-Name
+    - **Kurzbeschreibung** → Kurzbeschreibung
+    - **Vollständige Beschreibung** → Vollständige Beschreibung
+    - **Neue Funktionen** → Versionshinweise
+    - **Stichwörter** → Stichwörter/Tags
 3. Fügen Sie Screenshots und Feature-Grafiken aus `/extra/icons/store-assets/` hinzu
 4. Überprüfen Sie und veröffentlichen Sie
 
@@ -193,6 +198,7 @@ finanzen, budget, ausgabenverfolgung, geldverwaltung, persönliche finanzen, spa
 - Datenschutzrichtlinie konform mit Google Play-Richtlinien
 - Keine irreführenden Behauptungen oder Funktionalitäten
 - Genaue Versionsinformationen
+
 ```
 
 ---

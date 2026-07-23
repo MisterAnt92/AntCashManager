@@ -5,6 +5,7 @@
 ### 1. Struttura e Documentazione
 
 ✅ **README.md** - Guida principale
+
 - Descrizione struttura cartelle
 - Requisiti Google Play Store
 - Formati disponibili (SVG, PNG)
@@ -12,11 +13,13 @@
 - Checklist pre-pubblicazione
 
 ✅ **QUICK_START.md** - Guida rapida
+
 - 3 step per iniziare
 - Troubleshooting base
 - Prossimi passi
 
 ✅ **GOOGLE_PLAY_PUBLICATION_GUIDE.md** - Guida completa
+
 - Setup e preparazione risorse
 - Configurazione Google Play Console
 - Upload dettagliato di ogni asset
@@ -25,6 +28,7 @@
 - Checklist pre-pubblicazione
 
 ✅ **store-assets/SCREENSHOTS_MULTILINGUAL.md** - Gestione screenshot multilingue
+
 - Panoramica lingue supportate (5: IT, EN, DE, FR, ES)
 - Struttura cartelle per screenshot
 - Come configurare lingua su device
@@ -35,33 +39,40 @@
 ### 2. Icone e Graphic Assets (SVG)
 
 ✅ **app-icons/svg/app-icon-192.svg** - Icona 192px
+
 - Versione ridotta, base
 
 ✅ **app-icons/svg/app-icon-512.svg** - Icona 512px
+
 - Versione grande, con gradient
 - Per Google Play Store
 
 ✅ **store-assets/feature-graphics/feature-graphic.svg** - Feature graphic
+
 - 1024x500 px (aspect ratio 2.048:1)
 - Con titolo app, tagline, feature icons
 
 ✅ **store-assets/promo-graphics/promo-180x120.svg** - Promo graphic
+
 - 180x120 px
 - Versione miniaturizzata
 
 ✅ **social-assets/twitter-banner/twitter-banner-1500x500.svg** - Twitter banner
+
 - 1500x500 px
 - Template per social media
 
 ### 3. Script di Automazione
 
 ✅ **convert_icons.sh** - Conversione SVG → PNG
+
 - Converte tutti gli SVG in PNG
 - Genera multiple risoluzioni per Android
 - Crea versioni JPEG compresse
 - Output: PNG e JPEG in cartelle dedicate
 
 ✅ **store-assets/capture_screenshots.sh** - Cattura screenshot multilingue
+
 - Automatizza cattura screenshot per device
 - Supporta una singola lingua o tutte (--all)
 - Cambia lingua automaticamente
@@ -69,18 +80,21 @@
 - 8 screenshot per lingua
 
 ✅ **store-assets/optimize_screenshots.sh** - Ottimizzazione
+
 - Ridimensiona screenshot se troppo grandi
 - Comprime JPEG (quality 85)
 - Crea backup originali
 - Crea versioni thumbnail
 
 ✅ **store-assets/verify_screenshots.sh** - Verifica completamento
+
 - Controlla che tutti gli 8 screenshot siano presenti per ogni lingua
 - Organizza struttura cartelle
 - Mostra statistiche dettagliate
 - Fornisce suggerimenti next steps
 
 ✅ **install_android_icons.sh** - Installazione in Android
+
 - Copia PNG nelle cartelle Android mipmap
 - Crea adaptive icon XML
 - Supporta multiple densità DPI
@@ -92,13 +106,13 @@
 
 L'app supporta **5 lingue** e ogni risorsa screenshot deve essere localizzata:
 
-| 🌍 | Lingua | Codice | Cartella |
-|----|--------|--------|----------|
-| 🇮🇹 | Italiano | it | screenshots/it/ |
-| 🇬🇧 | English | en | screenshots/en/ |
-| 🇩🇪 | Deutsch | de | screenshots/de/ |
-| 🇫🇷 | Français | fr | screenshots/fr/ |
-| 🇪🇸 | Español | es | screenshots/es/ |
+| 🌍   | Lingua   | Codice | Cartella        |
+|------|----------|--------|-----------------|
+| 🇮🇹 | Italiano | it     | screenshots/it/ |
+| 🇬🇧 | English  | en     | screenshots/en/ |
+| 🇩🇪 | Deutsch  | de     | screenshots/de/ |
+| 🇫🇷 | Français | fr     | screenshots/fr/ |
+| 🇪🇸 | Español  | es     | screenshots/es/ |
 
 ---
 
@@ -136,7 +150,8 @@ bash store-assets/capture_screenshots.sh --all
 # Lo script guida automaticamente
 ```
 
-**Output**: 
+**Output**:
+
 - Italiano: 8 screenshot in `screenshots/it/phone/`
 - English: 8 screenshot in `screenshots/en/phone/`
 - (Repeat per altre lingue)
@@ -236,6 +251,7 @@ extra/icons/
 ## ✅ Checklist di Completamento
 
 ### Icone e Graphics
+
 - [x] SVG app icons creati (192px, 512px)
 - [x] SVG feature graphic creato (1024x500)
 - [x] SVG promo graphic creato (180x120)
@@ -244,6 +260,7 @@ extra/icons/
 - [x] Script di installazione Android creato
 
 ### Screenshot Multilingue
+
 - [x] Documentazione multilingue creata
 - [x] Struttura cartelle per 5 lingue
 - [x] Script cattura screenshot creato
@@ -252,6 +269,7 @@ extra/icons/
 - [x] Supporto per phone + tablet
 
 ### Documentazione
+
 - [x] README principale
 - [x] Quick start guide
 - [x] Google Play publication guide completa
