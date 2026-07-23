@@ -24,6 +24,7 @@ kotlin {
                 implementation(libs.kermit)
                 implementation(libs.datastore.preferences.core)
                 implementation(libs.kotlinx.serialization.json)
+                implementation(libs.kotlinx.datetime)
             }
         }
         getByName("androidMain") {

@@ -2,17 +2,15 @@ package com.antcashmanager.domain.usecase
 
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 /**
  * Use case per la formattazione dei dati di una transazione per la condivisione.
  * Implementa la business logic di preparazione dei dati estendendo [BaseSyncUseCase].
  */
 class ShareTransactionUseCase : BaseSyncUseCase<ShareTransactionUseCase.Params, String>() {
-
-    private val dateFormat = SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault())
 
     data class Params(val transaction: Transaction)
 
@@ -49,15 +47,40 @@ class ShareTransactionUseCase : BaseSyncUseCase<ShareTransactionUseCase.Params, 
         } else {
             ""
         }
+        val formattedDate = formatDateForShare(transaction.timestamp)
+        val formattedAmount = formatAmountForShare(transaction.amount)
         return """
             Transaction Details
             Title: ${transaction.title}
             Category: ${transaction.category}
             Type: $typeString
-            Amount: ${if (isIncome) "+" else "-"}${'$'}${String.format("%.2f", transaction.amount)}
-            Date: ${dateFormat.format(Date(transaction.timestamp))}$notesInfo$payeeInfo$locationInfo$recurrenceInfo$tagsInfo
+            Amount: ${if (isIncome) "+" else "-"}${'$'}$formattedAmount
+            Date: $formattedDate$notesInfo$payeeInfo$locationInfo$recurrenceInfo$tagsInfo
             Shared via AntCashManager
         """.trimIndent()
+    }
+
+    private fun formatDateForShare(timestampMillis: Long): String {
+        val instant = Instant.fromEpochMillis(timestampMillis)
+        val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+        val day = localDateTime.dayOfMonth.toString().padStart(2, '0')
+        val month = localDateTime.month.toString().take(3)
+        val year = localDateTime.year
+        val hour = localDateTime.hour.toString().padStart(2, '0')
+        val minute = localDateTime.minute.toString().padStart(2, '0')
+        return "$day $month $year $hour:$minute"
+    }
+
+    private fun formatAmountForShare(amount: Double): String {
+        val cents = (amount * 100).toLong()
+        val euros = cents / 100
+        val centRemainder = cents % 100
+        return if (centRemainder == 0L) {
+            euros.toString()
+        } else {
+            val paddedCents = centRemainder.toString().padStart(2, '0')
+            "$euros.$paddedCents"
+        }
     }
 }
 
