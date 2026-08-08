@@ -2,6 +2,7 @@ package com.antcashmanager.domain.usecase
 
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
+import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -9,7 +10,7 @@ class ShareTransactionUseCaseTest {
     private val useCase = ShareTransactionUseCase()
 
     @Test
-    fun formatTransactionForShare_shouldIncludeTransactionTitle() {
+    fun formatTransactionForShare_shouldIncludeTransactionTitle() = runTest {
         val transaction = Transaction(
             id = 1,
             title = "Test Transaction",
@@ -18,12 +19,12 @@ class ShareTransactionUseCaseTest {
             type = TransactionType.INCOME,
             timestamp = System.currentTimeMillis(),
         )
-        val result = useCase(ShareTransactionUseCase.Params(transaction))
+        val result = useCase(ShareTransactionUseCase.Params(transaction)).getOrThrow()
         assertTrue(result.contains("Test Transaction"))
     }
 
     @Test
-    fun formatTransactionForShare_shouldShowPlusSignForIncome() {
+    fun formatTransactionForShare_shouldShowPlusSignForIncome() = runTest {
         val transaction = Transaction(
             id = 1,
             title = "Salary",
@@ -32,12 +33,12 @@ class ShareTransactionUseCaseTest {
             type = TransactionType.INCOME,
             timestamp = System.currentTimeMillis(),
         )
-        val result = useCase(ShareTransactionUseCase.Params(transaction))
+        val result = useCase(ShareTransactionUseCase.Params(transaction)).getOrThrow()
         assertTrue(result.contains("+"))
     }
 
     @Test
-    fun formatTransactionForShare_shouldIncludeAllData_whenComplete() {
+    fun formatTransactionForShare_shouldIncludeAllData_whenComplete() = runTest {
         val transaction = Transaction(
             id = 1,
             title = "Complete",
@@ -52,7 +53,7 @@ class ShareTransactionUseCaseTest {
             recurrenceInterval = "monthly",
             tags = "tag1",
         )
-        val result = useCase(ShareTransactionUseCase.Params(transaction))
+        val result = useCase(ShareTransactionUseCase.Params(transaction)).getOrThrow()
         assertTrue(result.contains("Complete"))
         assertTrue(result.contains("AntCashManager"))
     }

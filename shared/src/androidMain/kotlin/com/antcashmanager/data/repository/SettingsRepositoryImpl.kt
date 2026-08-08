@@ -10,6 +10,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import co.touchlab.kermit.Logger
 import com.antcashmanager.data.local.DatabaseEncryptionManager
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
@@ -99,25 +100,33 @@ class SettingsRepositoryImpl(
     override fun getTheme(): Flow<AppTheme> =
         dataStore.data.map { preferences ->
             val themeName = preferences[themeKey] ?: AppTheme.SYSTEM.name
-            AppTheme.entries.find { it.name == themeName } ?: AppTheme.SYSTEM
+            val theme = AppTheme.entries.find { it.name == themeName } ?: AppTheme.SYSTEM
+            Logger.d(tag = "SettingsRepo") { "Loaded theme from DataStore: $theme" }
+            theme
         }
 
     override suspend fun setTheme(theme: AppTheme) {
+        Logger.d(tag = "SettingsRepo") { "Saving theme to DataStore: $theme" }
         dataStore.edit { preferences ->
             preferences[themeKey] = theme.name
         }
+        Logger.d(tag = "SettingsRepo") { "Theme saved successfully" }
     }
 
     override fun getLanguage(): Flow<AppLanguage> =
         dataStore.data.map { preferences ->
             val langName = preferences[languageKey] ?: AppLanguage.SYSTEM.name
-            AppLanguage.entries.find { it.name == langName } ?: AppLanguage.SYSTEM
+            val language = AppLanguage.entries.find { it.name == langName } ?: AppLanguage.SYSTEM
+            Logger.d(tag = "SettingsRepo") { "Loaded language from DataStore: $language" }
+            language
         }
 
     override suspend fun setLanguage(language: AppLanguage) {
+        Logger.d(tag = "SettingsRepo") { "Saving language to DataStore: $language" }
         dataStore.edit { preferences ->
             preferences[languageKey] = language.name
         }
+        Logger.d(tag = "SettingsRepo") { "Language saved successfully" }
     }
 
     override fun getShowCharts(): Flow<Boolean> =

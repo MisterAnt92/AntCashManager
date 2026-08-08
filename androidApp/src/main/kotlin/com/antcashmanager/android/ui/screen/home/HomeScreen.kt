@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,7 +25,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -57,10 +57,12 @@ import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.dialog.HelpButton
 import com.antcashmanager.android.ui.components.filter.DateRangeFilter
 import com.antcashmanager.android.ui.components.filter.SearchComponent
+import com.antcashmanager.android.ui.components.animation.AntEasterEggAnimation
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.overlay.TutorialOverlay
 import com.antcashmanager.android.ui.components.state.AntEmptyState
 import com.antcashmanager.android.ui.components.text.AppText
+import com.antcashmanager.android.ui.screen.home.event.HomeEvent
 import com.antcashmanager.android.ui.screen.home.model.HomeTopCardType
 import com.antcashmanager.android.ui.screen.home.transactionDetail.TransactionDetailsDialog
 import com.antcashmanager.android.ui.screen.home.view.BalanceCard
@@ -129,6 +131,7 @@ internal fun HomeContent(
     var showToDatePicker by remember { mutableStateOf(false) }
     var showHelpDialog by remember { mutableStateOf(false) }
     var showTopCardsOrderDialog by remember { mutableStateOf(false) }
+    var showVersionDialog by remember { mutableStateOf(false) }
     var topCardsOrderRaw by rememberSaveable { mutableStateOf(HomeConstant.DEFAULT_TOP_CARDS_ORDER) }
     var editingTopCardsOrder by remember { mutableStateOf(HomeTopCardType.parse(topCardsOrderRaw)) }
     val topCardsOrder = remember(topCardsOrderRaw) { HomeTopCardType.parse(topCardsOrderRaw) }
@@ -297,6 +300,14 @@ internal fun HomeContent(
         )
     }
 
+    // Version Dialog
+    if (showVersionDialog) {
+        AntEasterEggAnimation(
+            versionName = com.antcashmanager.android.BuildConfig.VERSION_NAME,
+            onDismiss = { showVersionDialog = false }
+        )
+    }
+
     when {
         state.isLoading -> LoadingState()
         else -> {
@@ -353,7 +364,9 @@ internal fun HomeContent(
                                 Image(
                                     painter = painterResource(id = R.drawable.ic_ant_mascot),
                                     contentDescription = null,
-                                    modifier = Modifier.size(40.dp)
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .clickable { showVersionDialog = true }
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 AppText(

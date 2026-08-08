@@ -2,10 +2,12 @@ package com.antcashmanager.android.ui.components.animation
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.rememberTransition
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
@@ -22,7 +25,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -128,46 +133,82 @@ fun AntEasterEggAnimation(
     versionName: String,
     onDismiss: () -> Unit
 ) {
+    var isRunning by remember { mutableStateOf(false) }
+    var offsetX by remember { mutableStateOf(0.dp) }
+    var offsetY by remember { mutableStateOf(0.dp) }
+
+    LaunchedEffect(isRunning) {
+        if (isRunning) {
+            // Animate ant moving around for 2 seconds
+            val startTime = System.currentTimeMillis()
+            while (System.currentTimeMillis() - startTime < 2000) {
+                offsetX = ((-100..100).random()).dp
+                offsetY = ((-100..100).random()).dp
+                delay(200)
+            }
+            offsetX = 0.dp
+            offsetY = 0.dp
+            isRunning = false
+        }
+    }
+
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(
             usePlatformDefaultWidth = false,
-            decorFitsSystemWindows = false
+            decorFitsSystemWindows = false,
+            dismissOnBackPress = false,
+            dismissOnClickOutside = false
         )
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .clickable(onClick = onDismiss),
+                .background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(32.dp)
+                verticalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(32.dp)
             ) {
-                BouncingAnt(modifier = Modifier.size(160.dp))
-                Spacer(modifier = Modifier.height(24.dp))
-                AppText(
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                    text = stringResource(R.string.settings_easter_egg_message),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                AppText(
-                    text = "v$versionName",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                // Content area with clickable ant and text
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    BouncingAnt(
+                        modifier = Modifier
+                            .size(160.dp)
+                            .offset(offsetX, offsetY)
+                            .clickable { isRunning = true }
+                    )
+                    Spacer(modifier = Modifier.height(24.dp))
+                    AppText(
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                        text = stringResource(R.string.settings_easter_egg_message),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.clickable { isRunning = true }
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    AppText(
+                        text = "v$versionName",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
 
-                Spacer(modifier = Modifier.height(48.dp))
-                AppText(
-                    text = stringResource(R.string.common_close),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.outline
-                )
+                // Chiudi button at bottom center
+                TextButton(onClick = onDismiss) {
+                    AppText(
+                        text = stringResource(R.string.common_close),
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                }
             }
         }
     }

@@ -146,7 +146,8 @@ fun AntCashManagerNavHost() {
                             tonalElevation = 0.dp,
                         ) {
                             visibleNavItems.forEach { item ->
-                                val isSelected = currentDestination?.hierarchy?.any { it.route == item.route } == true
+                                val isSelected =
+                                    currentDestination?.hierarchy?.any { it.route == item.route } == true
                                 NavigationBarItem(
                                     selected = isSelected,
                                     onClick = {

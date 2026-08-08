@@ -4,9 +4,7 @@ import com.antcashmanager.domain.model.TransactionSuggestions
 import com.antcashmanager.testutil.FakeSettingsRepository
 import com.antcashmanager.testutil.FakeTransactionRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -49,7 +47,8 @@ class GetTransactionSuggestionsUseCaseTest {
         val collected = mutableListOf<TransactionSuggestions>()
 
         // When - avvio collector e cancello subito
-        val job = launch { cancellableUseCase().collect { collected.add(it) } }
+        val job =
+            launch { cancellableUseCase().collect { result -> result.onSuccess { collected.add(it) } } }
         job.cancel()
         advanceUntilIdle()
 
@@ -67,7 +66,7 @@ class GetTransactionSuggestionsUseCaseTest {
         repository.tagsToReturn = listOf("Tag1", "Tag2")
 
         // When
-        val result = useCase().first()
+        val result = useCase().first().getOrThrow()
 
         // Then
         assertEquals(listOf("Spesa"), result.titles)
@@ -93,7 +92,7 @@ class GetTransactionSuggestionsUseCaseTest {
         repository.tagsToReturn = expectedTags
 
         // When
-        val result = useCase().first()
+        val result = useCase().first().getOrThrow()
 
         // Then
         assertEquals(expectedTitles, result.titles)
@@ -107,7 +106,7 @@ class GetTransactionSuggestionsUseCaseTest {
     fun invoke_shouldReturnEmptySuggestions_whenNoDataAvailable() =
         runTest(testDispatcher) {
             // When
-            val result = useCase().first()
+            val result = useCase().first().getOrThrow()
 
             // Then
             assertEquals(TransactionSuggestions(), result)
@@ -120,7 +119,7 @@ class GetTransactionSuggestionsUseCaseTest {
         settingsRepository.suggestionsEnabled.value = false
 
         // When
-        val result = useCase().first()
+        val result = useCase().first().getOrThrow()
 
         // Then
         assertEquals(TransactionSuggestions(), result)
@@ -161,13 +160,14 @@ private class FakeSuggestionsTransactionRepository : FakeTransactionRepository()
     var tagsToReturn: List<String> = emptyList()
     var lastSinceRequested: Long? = null
 
-    override fun getDistinctTitles(since: Long): Flow<List<String>> {
+    override suspend fun getSuggestions(since: Long): TransactionSuggestions {
         lastSinceRequested = since
-        return flowOf(titlesToReturn)
+        return TransactionSuggestions(
+            titles = titlesToReturn,
+            payees = payeesToReturn,
+            notes = notesToReturn,
+            locations = locationsToReturn,
+            tags = tagsToReturn
+        )
     }
-
-    override fun getDistinctPayees(since: Long): Flow<List<String>> = flowOf(payeesToReturn)
-    override fun getDistinctNotes(since: Long): Flow<List<String>> = flowOf(notesToReturn)
-    override fun getDistinctLocations(since: Long): Flow<List<String>> = flowOf(locationsToReturn)
-    override fun getDistinctTags(since: Long): Flow<List<String>> = flowOf(tagsToReturn)
 }

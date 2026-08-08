@@ -1,5 +1,6 @@
 package com.antcashmanager.data.repository
 
+import com.antcashmanager.data.local.dao.SuggestionRow
 import com.antcashmanager.data.local.dao.TransactionDao
 import com.antcashmanager.data.local.entity.TransactionEntity
 import com.antcashmanager.domain.model.PaymentType
@@ -248,5 +249,24 @@ private class FakeTransactionDao : TransactionDao {
     override fun getDistinctLocations(since: Long): Flow<List<String>> = flowOf(emptyList())
 
     override fun getDistinctTags(since: Long): Flow<List<String>> = flowOf(emptyList())
+
+    override suspend fun insertTransactions(transactions: List<TransactionEntity>): List<Long> {
+        transactionsFlow.value = transactionsFlow.value + transactions
+        return transactions.map { it.id }
+    }
+
+    override suspend fun updateTransactions(transactions: List<TransactionEntity>) {
+        transactionsFlow.value = transactionsFlow.value.map { current ->
+            transactions.firstOrNull { it.id == current.id } ?: current
+        }
+    }
+
+    override suspend fun getSuggestions(since: Long): List<SuggestionRow> {
+        return transactionsFlow.value
+            .filter { it.timestamp >= since }
+            .filter { it.title.isNotEmpty() || it.payee.isNotEmpty() || it.notes.isNotEmpty() || it.location.isNotEmpty() || it.tags.isNotEmpty() }
+            .distinctBy { it.title + it.payee + it.notes + it.location + it.tags }
+            .map { SuggestionRow(it.title, it.payee, it.notes, it.location, it.tags) }
+    }
 }
 

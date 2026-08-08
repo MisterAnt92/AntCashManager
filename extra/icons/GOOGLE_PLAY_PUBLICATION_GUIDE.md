@@ -1,6 +1,7 @@
 # Google Play Store Publication Guide - AntCashManager
 
-Questa guida ti accompagna passo dopo passo nel processo di pubblicazione di AntCashManager su Google Play Store, utilizzando le risorse grafiche fornite nella cartella `extra/icons/`.
+Questa guida ti accompagna passo dopo passo nel processo di pubblicazione di AntCashManager su
+Google Play Store, utilizzando le risorse grafiche fornite nella cartella `extra/icons/`.
 
 ## Indice
 
@@ -18,7 +19,8 @@ Questa guida ti accompagna passo dopo passo nel processo di pubblicazione di Ant
 
 ### Step 1: Generare i PNG dai SVG
 
-Le icone sono fornite in formato SVG (vettoriale, modificabile). Per caricarle su Google Play Store, devi convertirle in PNG.
+Le icone sono fornite in formato SVG (vettoriale, modificabile). Per caricarle su Google Play Store,
+devi convertirle in PNG.
 
 #### Opzione A: Script Automatico (Consigliato)
 
@@ -28,6 +30,7 @@ bash convert_icons.sh
 ```
 
 Questo script:
+
 - Converte tutti gli SVG in PNG alle dimensioni corrette
 - Crea versioni per diverse risoluzioni Android
 - Genera anche versioni JPEG compresse
@@ -119,8 +122,8 @@ cd /opt/src/GIT/app/AntCashManager
 2. Clicca **Create new release**
 3. Upload il file `app-release.aab`
 4. Compila:
-   - **Release name**: `1.4.6` (versione attuale)
-   - **Release notes**: Note della versione (vedi sezione "Release Notes")
+    - **Release name**: `1.4.6` (versione attuale)
+    - **Release notes**: Note della versione (vedi sezione "Release Notes")
 5. Salva come **Draft** (NON pubblicare ancora)
 
 ---
@@ -156,16 +159,16 @@ cd /opt/src/GIT/app/AntCashManager
 Aggiungi screenshot della tua app in azione:
 
 1. **Phone Screenshots** (1080x1920 px, Portrait)
-   - Dashboard con transazioni
-   - Aggiungi transazione
-   - Categorie e statistiche
-   - Grafici e analisi
-   - Dark mode (se supportato)
-   - Impostazioni
-   - Backup/Restore
+    - Dashboard con transazioni
+    - Aggiungi transazione
+    - Categorie e statistiche
+    - Grafici e analisi
+    - Dark mode (se supportato)
+    - Impostazioni
+    - Backup/Restore
 
 2. **Tablet Screenshots** (1280x720 px, Landscape) - Opzionale
-   - Screenshot tablet della tua app
+    - Screenshot tablet della tua app
 
 **Come catturare gli screenshot**:
 
@@ -176,10 +179,12 @@ adb pull /sdcard/screenshot.png ./screenshot.png
 ```
 
 Oppure usa lo strumento built-in Android Studio:
+
 - **Device Manager** → seleziona device
 - **Snapshot** dal Virtual Device Configuration
 
 **Upload su Play Console**:
+
 1. Clicca **Add screenshots**
 2. Upload fino a 8 screenshot per device type (phone, tablet, wear, etc.)
 3. Organizza in ordine logico (workflow utente)
@@ -266,6 +271,7 @@ Finanza
 ### Valutazione Contenuti
 
 Seleziona:
+
 - **Violenza**: No content
 - **Contenuto sessuale**: No content
 - **Uso di alcol/tabacco**: No content
@@ -284,6 +290,7 @@ o il tuo email personale
 ### URL Sito Web
 
 Lascia vuoto se non disponibile, oppure:
+
 ```
 https://github.com/tuo-username/AntCashManager
 ```
@@ -291,6 +298,7 @@ https://github.com/tuo-username/AntCashManager
 ### URL Privacy Policy
 
 Se disponibile online:
+
 ```
 https://github.com/tuo-username/AntCashManager/wiki/privacy-policy.html
 ```
@@ -308,6 +316,7 @@ https://github.com/tuo-username/AntCashManager/wiki/privacy-policy.html
 ```
 
 Verifica:
+
 - ✓ Icona visibile nella home screen
 - ✓ Icona nitida alle diverse risoluzioni
 - ✓ App si avvia senza crash
@@ -332,11 +341,11 @@ Verifica:
 1. Vai a **Store Listing** → **Preview**
 2. Seleziona device (Pixel 6a, Tablet, etc.)
 3. Verifica:
-   - ✓ Icona visibile e nitida
-   - ✓ Screenshot ben allineati
-   - ✓ Testo descrizioni leggibile
-   - ✓ Feature graphic proporzionato
-   - ✓ Nessun overflow di testo
+    - ✓ Icona visibile e nitida
+    - ✓ Screenshot ben allineati
+    - ✓ Testo descrizioni leggibile
+    - ✓ Feature graphic proporzionato
+    - ✓ Nessun overflow di testo
 
 ### Step 3: Compliance Check
 
@@ -355,9 +364,9 @@ Nella console, vai a **Release** → **Internal Testing** e controlla:
 
 1. Vai a **App content** → **Content rating**
 2. Completa il questionario IARC
-   - Seleziona categoria principale: **Finanza**
-   - Rispondi alle domande di conformità
-   - Submit
+    - Seleziona categoria principale: **Finanza**
+    - Rispondi alle domande di conformità
+    - Submit
 
 ### Step 2: Preparare il Release
 
@@ -365,35 +374,35 @@ Nella console, vai a **Release** → **Internal Testing** e controlla:
 2. Clicca **Create new release**
 3. Seleziona il bundle di release: `app-release.aab`
 4. Compila:
-   - **Release name**: `v1.4.6`
-   - **Release notes**: 
-     ```
-     Versione 1.4.6 - Maggio 2026
-     
-     Nuove Funzionalità:
-     - Miglioramento OCR per scansione ricevute
-     - Dark mode completo
-     - Backup e restore dati
-     
-     Bugfix:
-     - Correzione crash in navigazione
-     - Miglioramento stabilità
-     
-     Miglioramenti:
-     - Ottimizzazione performance
-     - UI migliorata
-     - Support per 5 lingue (IT, EN, DE, FR, ES)
-     ```
+    - **Release name**: `v1.4.6`
+    - **Release notes**:
+      ```
+      Versione 1.4.6 - Maggio 2026
+      
+      Nuove Funzionalità:
+      - Miglioramento OCR per scansione ricevute
+      - Dark mode completo
+      - Backup e restore dati
+      
+      Bugfix:
+      - Correzione crash in navigazione
+      - Miglioramento stabilità
+      
+      Miglioramenti:
+      - Ottimizzazione performance
+      - UI migliorata
+      - Support per 5 lingue (IT, EN, DE, FR, ES)
+      ```
 
 ### Step 3: Rivedi e Pubblica
 
 1. Verifica tutte le informazioni:
-   - ✓ Store Listing completata
-   - ✓ Content Rating presente
-   - ✓ Privacy Policy linkato
-   - ✓ Release notes compilate
-   - ✓ App signing OK
-   - ✓ Nessun warning critico
+    - ✓ Store Listing completata
+    - ✓ Content Rating presente
+    - ✓ Privacy Policy linkato
+    - ✓ Release notes compilate
+    - ✓ App signing OK
+    - ✓ Nessun warning critico
 
 2. Clicca **Review release**
 3. Se tutto OK, clicca **Start rollout to Production**
@@ -407,6 +416,7 @@ Nella console, vai a **Release** → **Internal Testing** e controlla:
 ### Step 5: Live!
 
 Una volta approvato, l'app sarà disponibile su Google Play Store a:
+
 ```
 https://play.google.com/store/apps/details?id=com.sformica.ant_cashmanager
 ```
@@ -418,15 +428,15 @@ https://play.google.com/store/apps/details?id=com.sformica.ant_cashmanager
 ### Monitorare l'App
 
 1. **Analytics**: Vai a **Statsitcs** per visualizzare:
-   - Download e uninstall
-   - Rating e review
-   - Crash e ANR (Application Not Responding)
-   - Device breakdown
+    - Download e uninstall
+    - Rating e review
+    - Crash e ANR (Application Not Responding)
+    - Device breakdown
 
-2. **Firebase Console**: 
-   - Monitora Crashlytics
-   - Performance monitoring
-   - Analytics events
+2. **Firebase Console**:
+    - Monitora Crashlytics
+    - Performance monitoring
+    - Analytics events
 
 3. **Review**: Leggi regolarmente le review per feedback utente
 

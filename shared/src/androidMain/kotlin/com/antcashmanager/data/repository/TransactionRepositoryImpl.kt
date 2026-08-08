@@ -8,7 +8,9 @@ import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.security.LocalDataCipher
 import com.antcashmanager.domain.service.NoOpWidgetUpdateNotifier
 import com.antcashmanager.domain.service.WidgetUpdateNotifier
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
 class TransactionRepositoryImpl(
@@ -18,9 +20,11 @@ class TransactionRepositoryImpl(
 ) : TransactionRepository {
 
     override fun getAllTransactions(): Flow<List<Transaction>> =
-        transactionDao.getAllTransactions().map { entities ->
-            entities.map { decryptEntity(it).toDomain() }
-        }
+        transactionDao.getAllTransactions()
+            .flowOn(Dispatchers.Default)
+            .map { entities ->
+                entities.map { decryptEntity(it).toDomain() }
+            }
 
     override suspend fun getTransactionById(id: Long): Transaction? =
         transactionDao.getTransactionById(id)?.let { decryptEntity(it).toDomain() }
@@ -29,8 +33,17 @@ class TransactionRepositoryImpl(
         transactionDao.insertTransaction(encryptEntity(transaction.toEntity()))
             .also { widgetUpdateNotifier.notifyTransactionsChanged() }
 
+    override suspend fun insertTransactions(transactions: List<Transaction>): List<Long> =
+        transactionDao.insertTransactions(transactions.map { encryptEntity(it.toEntity()) })
+            .also { widgetUpdateNotifier.notifyTransactionsChanged() }
+
     override suspend fun updateTransaction(transaction: Transaction) {
         transactionDao.updateTransaction(encryptEntity(transaction.toEntity()))
+        widgetUpdateNotifier.notifyTransactionsChanged()
+    }
+
+    override suspend fun updateTransactions(transactions: List<Transaction>) {
+        transactionDao.updateTransactions(transactions.map { encryptEntity(it.toEntity()) })
         widgetUpdateNotifier.notifyTransactionsChanged()
     }
 
@@ -45,14 +58,18 @@ class TransactionRepositoryImpl(
     }
 
     override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> =
-        transactionDao.getTransactionsByDateRange(from, to).map { entities ->
-            entities.map { decryptEntity(it).toDomain() }
-        }
+        transactionDao.getTransactionsByDateRange(from, to)
+            .flowOn(Dispatchers.Default)
+            .map { entities ->
+                entities.map { decryptEntity(it).toDomain() }
+            }
 
     override fun getRecurringTransactions(): Flow<List<Transaction>> =
-        transactionDao.getRecurringTransactions().map { entities ->
-            entities.map { decryptEntity(it).toDomain() }
-        }
+        transactionDao.getRecurringTransactions()
+            .flowOn(Dispatchers.Default)
+            .map { entities ->
+                entities.map { decryptEntity(it).toDomain() }
+            }
 
     override suspend fun renameCategory(
         oldCategoryName: String,
@@ -64,29 +81,58 @@ class TransactionRepositoryImpl(
 
     // Implementazione metodi per suggerimenti
     override fun getDistinctTitles(since: Long): Flow<List<String>> =
-        transactionDao.getDistinctTitles(since).map { values ->
-            values.map(localDataCipher::decryptString).distinct()
-        }
+        transactionDao.getDistinctTitles(since)
+            .flowOn(Dispatchers.Default)
+            .map { values ->
+                values.map(localDataCipher::decryptString).distinct()
+            }
 
     override fun getDistinctPayees(since: Long): Flow<List<String>> =
-        transactionDao.getDistinctPayees(since).map { values ->
-            values.map(localDataCipher::decryptString).distinct()
-        }
+        transactionDao.getDistinctPayees(since)
+            .flowOn(Dispatchers.Default)
+            .map { values ->
+                values.map(localDataCipher::decryptString).distinct()
+            }
 
     override fun getDistinctNotes(since: Long): Flow<List<String>> =
-        transactionDao.getDistinctNotes(since).map { values ->
-            values.map(localDataCipher::decryptString).distinct()
-        }
+        transactionDao.getDistinctNotes(since)
+            .flowOn(Dispatchers.Default)
+            .map { values ->
+                values.map(localDataCipher::decryptString).distinct()
+            }
 
     override fun getDistinctLocations(since: Long): Flow<List<String>> =
-        transactionDao.getDistinctLocations(since).map { values ->
-            values.map(localDataCipher::decryptString).distinct()
-        }
+        transactionDao.getDistinctLocations(since)
+            .flowOn(Dispatchers.Default)
+            .map { values ->
+                values.map(localDataCipher::decryptString).distinct()
+            }
 
     override fun getDistinctTags(since: Long): Flow<List<String>> =
         transactionDao.getDistinctTags(since).map { values ->
             values.map(localDataCipher::decryptString).distinct()
         }
+
+    override suspend fun getSuggestions(since: Long): com.antcashmanager.domain.model.TransactionSuggestions {
+        val rows = transactionDao.getSuggestions(since)
+        return com.antcashmanager.domain.model.TransactionSuggestions(
+            titles = rows.mapNotNull { row ->
+                localDataCipher.decryptString(row.title).takeIf { it.isNotEmpty() }
+            }.distinct(),
+            payees = rows.mapNotNull { row ->
+                localDataCipher.decryptString(row.payee).takeIf { it.isNotEmpty() }
+            }.distinct(),
+            notes = rows.mapNotNull { row ->
+                localDataCipher.decryptString(row.notes).takeIf { it.isNotEmpty() }
+            }.distinct(),
+            locations = rows.mapNotNull { row ->
+                localDataCipher.decryptString(row.location).takeIf { it.isNotEmpty() }
+            }.distinct(),
+            tags = rows.mapNotNull { row ->
+                localDataCipher.decryptString(row.tags).takeIf { it.isNotEmpty() }
+            }.distinct()
+        )
+    }
 
     private fun encryptEntity(entity: com.antcashmanager.data.local.entity.TransactionEntity) =
         entity.copy(

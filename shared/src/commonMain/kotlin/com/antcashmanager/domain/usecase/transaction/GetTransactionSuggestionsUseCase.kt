@@ -3,14 +3,15 @@ package com.antcashmanager.domain.usecase.transaction
 import com.antcashmanager.domain.model.TransactionSuggestions
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
+import com.antcashmanager.domain.usecase.base.NoParamsObservableUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.flowOn
 
 /**
  * UseCase per ottenere suggerimenti per i campi transazione basati sullo storico.
@@ -34,15 +35,16 @@ import kotlinx.coroutines.flow.flowOn
 class GetTransactionSuggestionsUseCase(
     private val repository: TransactionRepository,
     private val settingsRepository: SettingsRepository,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) {
+    dispatcher: CoroutineDispatcher = Dispatchers.Default,
+) : NoParamsObservableUseCase<TransactionSuggestions>(dispatcher) {
     /**
      * Recupera i suggerimenti per tutti i campi transazione.
      * Il Flow è cancellabile: la cancellazione del collector cancella la produzione.
+     * La wrappatura in [Result] è gestita dalla base class [NoParamsObservableUseCase].
      *
      * @return Flow contenente [TransactionSuggestions] con tutti i suggerimenti disponibili
      */
-    operator fun invoke(): Flow<TransactionSuggestions> = combine(
+    override fun execute(params: Unit): Flow<TransactionSuggestions> = combine(
         settingsRepository.getSuggestionsEnabled(),
         settingsRepository.getSuggestionsClearedAt(),
     ) { enabled, clearedAt -> enabled to clearedAt }
@@ -51,22 +53,10 @@ class GetTransactionSuggestionsUseCase(
                 flowOf(TransactionSuggestions())
             } else {
                 val since = clearedAt ?: 0L
-                combine(
-                    repository.getDistinctTitles(since),
-                    repository.getDistinctPayees(since),
-                    repository.getDistinctNotes(since),
-                    repository.getDistinctLocations(since),
-                    repository.getDistinctTags(since),
-                ) { titles, payees, notes, locations, tags ->
-                    TransactionSuggestions(
-                        titles = titles,
-                        payees = payees,
-                        notes = notes,
-                        locations = locations,
-                        tags = tags,
-                    )
+                // Use unified query: 1 query instead of 5 separate queries
+                flow {
+                    emit(repository.getSuggestions(since))
                 }
             }
         }
-        .flowOn(dispatcher)
 }

@@ -11,7 +11,10 @@ import com.antcashmanager.android.ui.screen.receiptScan.ReceiptScanViewModel
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.service.ReceiptOcrService
+import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
+import com.antcashmanager.domain.usecase.receipt.CreateTransactionFromReceiptUseCase
 import com.antcashmanager.domain.usecase.receipt.ScanReceiptUseCase
+import com.antcashmanager.domain.usecase.transaction.GetTransactionSuggestionsUseCase
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
@@ -51,11 +54,17 @@ class ReceiptScanViewModelTest : BaseUnitTest() {
         val scanUseCase = ScanReceiptUseCase(fakeOcrService)
         viewModel = ReceiptScanViewModel(
             scanReceiptUseCase = scanUseCase,
-            transactionRepository = fakeTxRepo,
-            categoryRepository = fakeCatRepo,
-            settingsRepository = FakeSettingsRepository(),
+            createTransactionUseCase = CreateTransactionFromReceiptUseCase(
+                fakeTxRepo,
+                testDispatcher
+            ),
+            getCategoriesUseCase = GetCategoriesUseCase(fakeCatRepo, testDispatcher),
+            getTransactionSuggestionsUseCase = GetTransactionSuggestionsUseCase(
+                fakeTxRepo,
+                FakeSettingsRepository(),
+                testDispatcher
+            ),
             analyticsManager = analyticsManager,
-            dispatcher = testDispatcher,
         )
     }
 

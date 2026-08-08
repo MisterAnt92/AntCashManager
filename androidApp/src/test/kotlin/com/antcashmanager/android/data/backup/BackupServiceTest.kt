@@ -24,7 +24,12 @@ class BackupServiceTest {
         categoryRepository: FakeCategoryRepository = FakeCategoryRepository(),
         settingsRepository: FakeSettingsRepository = FakeSettingsRepository(),
         widgetUpdateNotifier: WidgetUpdateNotifier = FakeWidgetUpdateNotifier(),
-    ) = BackupService(transactionRepository, categoryRepository, settingsRepository, widgetUpdateNotifier)
+    ) = BackupService(
+        transactionRepository,
+        categoryRepository,
+        settingsRepository,
+        widgetUpdateNotifier
+    )
 
     @Test
     fun createBackup_shouldProduceCurrentVersionWithNonNullSettings_always() = runTest {
@@ -39,68 +44,69 @@ class BackupServiceTest {
     }
 
     @Test
-    fun createBackupThenRestoreBackup_shouldPreserveAllTransactionAndCategoryFields_whenRoundTripped() = runTest {
-        val sourceTransaction = Transaction(
-            id = 1,
-            title = "Spesa",
-            amount = 42.5,
-            category = "Alimentari",
-            type = TransactionType.EXPENSE,
-            timestamp = 1_700_000_000_000L,
-            notes = "note",
-            payee = "Coop",
-            location = "Milano",
-            isRecurring = true,
-            tags = "casa,cibo",
-            recurrenceInterval = "MONTHLY",
-            paymentType = PaymentType.MEAL_VOUCHERS,
-            mealVoucherCount = 3,
-            categoryIcon = "fastfood",
-            categoryColor = 0xFF00FF00,
-        )
-        val sourceCategory = Category(
-            id = 1,
-            name = "Alimentari",
-            icon = "fastfood",
-            color = 0xFF00FF00,
-            type = "EXPENSE",
-            isDefault = false,
-            sortOrder = 4,
-            isHidden = true,
-        )
-        val sourceService = buildService(
-            transactionRepository = FakeTransactionRepository(listOf(sourceTransaction)),
-            categoryRepository = FakeCategoryRepository(listOf(sourceCategory)),
-        )
-        val jsonString = sourceService.createBackup().getOrThrow()
+    fun createBackupThenRestoreBackup_shouldPreserveAllTransactionAndCategoryFields_whenRoundTripped() =
+        runTest {
+            val sourceTransaction = Transaction(
+                id = 1,
+                title = "Spesa",
+                amount = 42.5,
+                category = "Alimentari",
+                type = TransactionType.EXPENSE,
+                timestamp = 1_700_000_000_000L,
+                notes = "note",
+                payee = "Coop",
+                location = "Milano",
+                isRecurring = true,
+                tags = "casa,cibo",
+                recurrenceInterval = "MONTHLY",
+                paymentType = PaymentType.MEAL_VOUCHERS,
+                mealVoucherCount = 3,
+                categoryIcon = "fastfood",
+                categoryColor = 0xFF00FF00,
+            )
+            val sourceCategory = Category(
+                id = 1,
+                name = "Alimentari",
+                icon = "fastfood",
+                color = 0xFF00FF00,
+                type = "EXPENSE",
+                isDefault = false,
+                sortOrder = 4,
+                isHidden = true,
+            )
+            val sourceService = buildService(
+                transactionRepository = FakeTransactionRepository(listOf(sourceTransaction)),
+                categoryRepository = FakeCategoryRepository(listOf(sourceCategory)),
+            )
+            val jsonString = sourceService.createBackup().getOrThrow()
 
-        val targetTransactionRepo = FakeTransactionRepository()
-        val targetCategoryRepo = FakeCategoryRepository()
-        val targetService = buildService(
-            transactionRepository = targetTransactionRepo,
-            categoryRepository = targetCategoryRepo,
-        )
+            val targetTransactionRepo = FakeTransactionRepository()
+            val targetCategoryRepo = FakeCategoryRepository()
+            val targetService = buildService(
+                transactionRepository = targetTransactionRepo,
+                categoryRepository = targetCategoryRepo,
+            )
 
-        val result = targetService.restoreBackup(jsonString).getOrThrow()
+            val result = targetService.restoreBackup(jsonString).getOrThrow()
 
-        assertEquals(1, result.transactionsRestored)
-        assertEquals(1, result.categoriesRestored)
+            assertEquals(1, result.transactionsRestored)
+            assertEquals(1, result.categoriesRestored)
 
-        val restoredTransaction = targetTransactionRepo.transactions.value.single()
-        assertEquals(sourceTransaction.title, restoredTransaction.title)
-        assertEquals(sourceTransaction.amount, restoredTransaction.amount, 0.0)
-        assertEquals(sourceTransaction.paymentType, restoredTransaction.paymentType)
-        assertEquals(sourceTransaction.mealVoucherCount, restoredTransaction.mealVoucherCount)
-        assertEquals(sourceTransaction.categoryIcon, restoredTransaction.categoryIcon)
-        assertEquals(sourceTransaction.categoryColor, restoredTransaction.categoryColor)
+            val restoredTransaction = targetTransactionRepo.transactions.value.single()
+            assertEquals(sourceTransaction.title, restoredTransaction.title)
+            assertEquals(sourceTransaction.amount, restoredTransaction.amount, 0.0)
+            assertEquals(sourceTransaction.paymentType, restoredTransaction.paymentType)
+            assertEquals(sourceTransaction.mealVoucherCount, restoredTransaction.mealVoucherCount)
+            assertEquals(sourceTransaction.categoryIcon, restoredTransaction.categoryIcon)
+            assertEquals(sourceTransaction.categoryColor, restoredTransaction.categoryColor)
 
-        val restoredCategory = targetCategoryRepo.categories.value.single()
-        assertEquals(sourceCategory.name, restoredCategory.name)
-        assertEquals(sourceCategory.icon, restoredCategory.icon)
-        assertEquals(sourceCategory.color, restoredCategory.color)
-        assertEquals(sourceCategory.sortOrder, restoredCategory.sortOrder)
-        assertEquals(sourceCategory.isHidden, restoredCategory.isHidden)
-    }
+            val restoredCategory = targetCategoryRepo.categories.value.single()
+            assertEquals(sourceCategory.name, restoredCategory.name)
+            assertEquals(sourceCategory.icon, restoredCategory.icon)
+            assertEquals(sourceCategory.color, restoredCategory.color)
+            assertEquals(sourceCategory.sortOrder, restoredCategory.sortOrder)
+            assertEquals(sourceCategory.isHidden, restoredCategory.isHidden)
+        }
 
     @Test
     fun createBackupThenRestoreBackup_shouldPreserveSettings_whenRoundTripped() = runTest {
@@ -152,10 +158,11 @@ class BackupServiceTest {
     }
 
     @Test
-    fun restoreBackup_shouldApplySuggestionsAndWidgetDefaults_whenBackupIsV2WithoutThoseFields() = runTest {
-        // Backup v2 "vecchio": blocco settings presente ma senza i campi aggiunti
-        // successivamente (suggerimenti, aspetto widget).
-        val legacyV2Json = """
+    fun restoreBackup_shouldApplySuggestionsAndWidgetDefaults_whenBackupIsV2WithoutThoseFields() =
+        runTest {
+            // Backup v2 "vecchio": blocco settings presente ma senza i campi aggiunti
+            // successivamente (suggerimenti, aspetto widget).
+            val legacyV2Json = """
             {
               "version": 2,
               "timestamp": 0,
@@ -168,28 +175,28 @@ class BackupServiceTest {
             }
         """.trimIndent()
 
-        val targetSettings = FakeSettingsRepository().apply {
-            suggestionsEnabled.value = false
-            widgetBackgroundColor.value = 0xFF000000L
-            widgetOpacity.value = 10
+            val targetSettings = FakeSettingsRepository().apply {
+                suggestionsEnabled.value = false
+                widgetBackgroundColor.value = 0xFF000000L
+                widgetOpacity.value = 10
+            }
+            val targetWidgetNotifier = FakeWidgetUpdateNotifier()
+            val service = buildService(
+                settingsRepository = targetSettings,
+                widgetUpdateNotifier = targetWidgetNotifier,
+            )
+
+            service.restoreBackup(legacyV2Json).getOrThrow()
+
+            assertEquals(AppTheme.DARK, targetSettings.theme.value)
+            assertEquals("£", targetSettings.currencySymbol.value)
+            // Campi assenti dal backup: applicati ai default di SettingsBackup (non lasciati invariati,
+            // coerente col comportamento di tutti gli altri campi del blocco "settings" presente).
+            assertTrue(targetSettings.suggestionsEnabled.value)
+            assertEquals(0xFFFFFFFFL, targetSettings.widgetBackgroundColor.value)
+            assertEquals(100, targetSettings.widgetOpacity.value)
+            assertEquals(1, targetWidgetNotifier.notifyCount)
         }
-        val targetWidgetNotifier = FakeWidgetUpdateNotifier()
-        val service = buildService(
-            settingsRepository = targetSettings,
-            widgetUpdateNotifier = targetWidgetNotifier,
-        )
-
-        service.restoreBackup(legacyV2Json).getOrThrow()
-
-        assertEquals(AppTheme.DARK, targetSettings.theme.value)
-        assertEquals("£", targetSettings.currencySymbol.value)
-        // Campi assenti dal backup: applicati ai default di SettingsBackup (non lasciati invariati,
-        // coerente col comportamento di tutti gli altri campi del blocco "settings" presente).
-        assertTrue(targetSettings.suggestionsEnabled.value)
-        assertEquals(0xFFFFFFFFL, targetSettings.widgetBackgroundColor.value)
-        assertEquals(100, targetSettings.widgetOpacity.value)
-        assertEquals(1, targetWidgetNotifier.notifyCount)
-    }
 
     @Test
     fun restoreBackup_shouldApplyDefaultsAndLeaveSettingsUnchanged_whenBackupIsLegacyV1WithoutNewFieldsOrSettings() =
@@ -247,11 +254,12 @@ class BackupServiceTest {
     }
 
     @Test
-    fun restoreBackup_shouldImportKnownFieldsBestEffort_whenVersionIsNewerThanSupported() = runTest {
-        // Simula un backup creato da una versione futura dell'app: la struttura dei campi
-        // conosciuti (transactions/categories) è ancora compatibile, solo il numero di
-        // versione è più alto. Non deve più bloccare il restore.
-        val futureJson = """
+    fun restoreBackup_shouldImportKnownFieldsBestEffort_whenVersionIsNewerThanSupported() =
+        runTest {
+            // Simula un backup creato da una versione futura dell'app: la struttura dei campi
+            // conosciuti (transactions/categories) è ancora compatibile, solo il numero di
+            // versione è più alto. Non deve più bloccare il restore.
+            val futureJson = """
             {
               "version": 99, "timestamp": 0,
               "transactions": [
@@ -260,23 +268,24 @@ class BackupServiceTest {
               "categories": [{"id": 1, "name": "Varie", "color": 100}]
             }
         """.trimIndent()
-        val transactionRepo = FakeTransactionRepository()
-        val categoryRepo = FakeCategoryRepository()
-        val service = buildService(transactionRepo, categoryRepo)
+            val transactionRepo = FakeTransactionRepository()
+            val categoryRepo = FakeCategoryRepository()
+            val service = buildService(transactionRepo, categoryRepo)
 
-        val result = service.restoreBackup(futureJson).getOrThrow()
+            val result = service.restoreBackup(futureJson).getOrThrow()
 
-        assertEquals(1, result.transactionsRestored)
-        assertEquals(1, result.categoriesRestored)
-        assertEquals("Dal futuro", transactionRepo.transactions.value.single().title)
-    }
+            assertEquals(1, result.transactionsRestored)
+            assertEquals(1, result.categoriesRestored)
+            assertEquals("Dal futuro", transactionRepo.transactions.value.single().title)
+        }
 
     @Test
-    fun restoreBackup_shouldSkipOnlyTheUnreadableTransaction_whenStrictDecodeOfWholePayloadFails() = runTest {
-        // La seconda transazione manca di campi obbligatori (amount/category/type/timestamp):
-        // una decodifica rigorosa dell'intera lista fallirebbe, perdendo anche la prima
-        // transazione, valida. Il fallback lenient deve invece importare solo quella leggibile.
-        val malformedJson = """
+    fun restoreBackup_shouldSkipOnlyTheUnreadableTransaction_whenStrictDecodeOfWholePayloadFails() =
+        runTest {
+            // La seconda transazione manca di campi obbligatori (amount/category/type/timestamp):
+            // una decodifica rigorosa dell'intera lista fallirebbe, perdendo anche la prima
+            // transazione, valida. Il fallback lenient deve invece importare solo quella leggibile.
+            val malformedJson = """
             {
               "version": 2, "timestamp": 0,
               "transactions": [
@@ -286,16 +295,16 @@ class BackupServiceTest {
               "categories": [{"id": 1, "name": "Varie", "color": 100}]
             }
         """.trimIndent()
-        val transactionRepo = FakeTransactionRepository()
-        val categoryRepo = FakeCategoryRepository()
-        val service = buildService(transactionRepo, categoryRepo)
+            val transactionRepo = FakeTransactionRepository()
+            val categoryRepo = FakeCategoryRepository()
+            val service = buildService(transactionRepo, categoryRepo)
 
-        val result = service.restoreBackup(malformedJson).getOrThrow()
+            val result = service.restoreBackup(malformedJson).getOrThrow()
 
-        assertEquals(1, result.transactionsRestored)
-        assertEquals(1, result.categoriesRestored)
-        assertEquals("Valida", transactionRepo.transactions.value.single().title)
-    }
+            assertEquals(1, result.transactionsRestored)
+            assertEquals(1, result.categoriesRestored)
+            assertEquals("Valida", transactionRepo.transactions.value.single().title)
+        }
 
     @Test
     fun restoreBackup_shouldFail_whenPayloadIsNotValidJsonAtAll() = runTest {
@@ -311,31 +320,32 @@ class BackupServiceTest {
     }
 
     @Test
-    fun restoreBackup_shouldDeduplicateCategoriesCaseInsensitively_whenCategoryAlreadyExistsAsDefault() = runTest {
-        val existingDefault = Category(
-            id = 1,
-            name = "Cibo",
-            icon = "food",
-            color = 0xFF112233,
-            type = "EXPENSE",
-            isDefault = true,
-        )
-        val categoryRepo = FakeCategoryRepository(listOf(existingDefault))
-        val service = buildService(categoryRepository = categoryRepo)
+    fun restoreBackup_shouldDeduplicateCategoriesCaseInsensitively_whenCategoryAlreadyExistsAsDefault() =
+        runTest {
+            val existingDefault = Category(
+                id = 1,
+                name = "Cibo",
+                icon = "food",
+                color = 0xFF112233,
+                type = "EXPENSE",
+                isDefault = true,
+            )
+            val categoryRepo = FakeCategoryRepository(listOf(existingDefault))
+            val service = buildService(categoryRepository = categoryRepo)
 
-        val backupJson = """
+            val backupJson = """
             {
               "version": 2, "timestamp": 0, "transactions": [],
               "categories": [{"id": 5, "name": "cibo ", "icon": "x", "color": 100, "type": "expense", "isDefault": false}]
             }
         """.trimIndent()
 
-        val result = service.restoreBackup(backupJson).getOrThrow()
+            val result = service.restoreBackup(backupJson).getOrThrow()
 
-        assertEquals(1, result.categoriesRestored)
-        assertEquals(1, categoryRepo.categories.value.size)
-        assertEquals("Cibo", categoryRepo.categories.value.single().name)
-    }
+            assertEquals(1, result.categoriesRestored)
+            assertEquals(1, categoryRepo.categories.value.size)
+            assertEquals("Cibo", categoryRepo.categories.value.single().name)
+        }
 
     private class SelectivelyFailingTransactionRepository(
         private val failingTitle: String,
@@ -347,22 +357,36 @@ class BackupServiceTest {
     }
 
     @Test
-    fun restoreBackup_shouldSkipFailingRecordAndContinue_whenSingleTransactionInsertFails() = runTest {
-        val good = Transaction(id = 1, title = "Good", amount = 10.0, category = "Food", type = TransactionType.EXPENSE)
-        val bad = Transaction(id = 2, title = "Bad", amount = 20.0, category = "Food", type = TransactionType.EXPENSE)
-        val sourceService = buildService(
-            transactionRepository = FakeTransactionRepository(listOf(good, bad)),
-        )
-        val jsonString = sourceService.createBackup().getOrThrow()
+    fun restoreBackup_shouldSkipFailingRecordAndContinue_whenSingleTransactionInsertFails() =
+        runTest {
+            val good = Transaction(
+                id = 1,
+                title = "Good",
+                amount = 10.0,
+                category = "Food",
+                type = TransactionType.EXPENSE
+            )
+            val bad = Transaction(
+                id = 2,
+                title = "Bad",
+                amount = 20.0,
+                category = "Food",
+                type = TransactionType.EXPENSE
+            )
+            val sourceService = buildService(
+                transactionRepository = FakeTransactionRepository(listOf(good, bad)),
+            )
+            val jsonString = sourceService.createBackup().getOrThrow()
 
-        val targetTransactionRepo = SelectivelyFailingTransactionRepository(failingTitle = "Bad")
-        val targetService = buildService(transactionRepository = targetTransactionRepo)
+            val targetTransactionRepo =
+                SelectivelyFailingTransactionRepository(failingTitle = "Bad")
+            val targetService = buildService(transactionRepository = targetTransactionRepo)
 
-        val result = targetService.restoreBackup(jsonString).getOrThrow()
+            val result = targetService.restoreBackup(jsonString).getOrThrow()
 
-        assertEquals(1, result.transactionsRestored)
-        assertEquals("Good", targetTransactionRepo.transactions.value.single().title)
-    }
+            assertEquals(1, result.transactionsRestored)
+            assertEquals("Good", targetTransactionRepo.transactions.value.single().title)
+        }
 
     private class ThrowingOnThemeSettingsRepository : FakeSettingsRepository() {
         override suspend fun setTheme(theme: AppTheme) {
@@ -380,44 +404,82 @@ class BackupServiceTest {
     }
 
     @Test
-    fun restoreBackup_shouldRollbackToOriginalData_whenApplyingSettingsFailsAfterDataWasReplaced() = runTest {
-        val existingTransaction = Transaction(id = 1, title = "Esistente", amount = 5.0, category = "Varie", type = TransactionType.EXPENSE)
-        val existingCategory = Category(id = 1, name = "Varie", color = 0xFF000000, isDefault = true)
+    fun restoreBackup_shouldRollbackToOriginalData_whenApplyingSettingsFailsAfterDataWasReplaced() =
+        runTest {
+            val existingTransaction = Transaction(
+                id = 1,
+                title = "Esistente",
+                amount = 5.0,
+                category = "Varie",
+                type = TransactionType.EXPENSE
+            )
+            val existingCategory =
+                Category(id = 1, name = "Varie", color = 0xFF000000, isDefault = true)
 
-        val sourceService = buildService(
-            transactionRepository = FakeTransactionRepository(
-                listOf(Transaction(id = 1, title = "Nuova", amount = 1.0, category = "Varie", type = TransactionType.EXPENSE)),
-            ),
-        )
-        val jsonString = sourceService.createBackup().getOrThrow()
+            val sourceService = buildService(
+                transactionRepository = FakeTransactionRepository(
+                    listOf(
+                        Transaction(
+                            id = 1,
+                            title = "Nuova",
+                            amount = 1.0,
+                            category = "Varie",
+                            type = TransactionType.EXPENSE
+                        )
+                    ),
+                ),
+            )
+            val jsonString = sourceService.createBackup().getOrThrow()
 
-        val targetTransactionRepo = FakeTransactionRepository(listOf(existingTransaction))
-        val targetCategoryRepo = FakeCategoryRepository(listOf(existingCategory))
-        val targetSettingsRepo = ThrowingOnThemeSettingsRepository()
-        val targetService = buildService(targetTransactionRepo, targetCategoryRepo, targetSettingsRepo)
+            val targetTransactionRepo = FakeTransactionRepository(listOf(existingTransaction))
+            val targetCategoryRepo = FakeCategoryRepository(listOf(existingCategory))
+            val targetSettingsRepo = ThrowingOnThemeSettingsRepository()
+            val targetService =
+                buildService(targetTransactionRepo, targetCategoryRepo, targetSettingsRepo)
 
-        val result = targetService.restoreBackup(jsonString)
+            val result = targetService.restoreBackup(jsonString)
 
-        assertTrue(result.isFailure)
-        assertEquals(listOf(existingTransaction), targetTransactionRepo.transactions.value)
-        assertEquals(listOf(existingCategory), targetCategoryRepo.categories.value)
-    }
+            assertTrue(result.isFailure)
+            assertEquals(listOf(existingTransaction), targetTransactionRepo.transactions.value)
+            assertEquals(listOf(existingCategory), targetCategoryRepo.categories.value)
+        }
 
     @Test
-    fun createBackupThenRestoreBackup_shouldRegenerateSuggestionsFromRestoredTransactions_always() = runTest {
-        val sourceTransactions = listOf(
-            Transaction(id = 1, title = "Spesa", amount = 10.0, category = "Cibo", type = TransactionType.EXPENSE, payee = "Coop", tags = "casa"),
-            Transaction(id = 2, title = "Benzina", amount = 20.0, category = "Trasporti", type = TransactionType.EXPENSE, location = "Stazione"),
-        )
-        val sourceService = buildService(transactionRepository = FakeTransactionRepository(sourceTransactions))
-        val expectedTitles = FakeTransactionRepository(sourceTransactions).getDistinctTitles().first()
-        val jsonString = sourceService.createBackup().getOrThrow()
+    fun createBackupThenRestoreBackup_shouldRegenerateSuggestionsFromRestoredTransactions_always() =
+        runTest {
+            val sourceTransactions = listOf(
+                Transaction(
+                    id = 1,
+                    title = "Spesa",
+                    amount = 10.0,
+                    category = "Cibo",
+                    type = TransactionType.EXPENSE,
+                    payee = "Coop",
+                    tags = "casa"
+                ),
+                Transaction(
+                    id = 2,
+                    title = "Benzina",
+                    amount = 20.0,
+                    category = "Trasporti",
+                    type = TransactionType.EXPENSE,
+                    location = "Stazione"
+                ),
+            )
+            val sourceService =
+                buildService(transactionRepository = FakeTransactionRepository(sourceTransactions))
+            val expectedTitles =
+                FakeTransactionRepository(sourceTransactions).getDistinctTitles().first()
+            val jsonString = sourceService.createBackup().getOrThrow()
 
-        val targetTransactionRepo = FakeTransactionRepository()
-        val targetService = buildService(transactionRepository = targetTransactionRepo)
-        targetService.restoreBackup(jsonString).getOrThrow()
+            val targetTransactionRepo = FakeTransactionRepository()
+            val targetService = buildService(transactionRepository = targetTransactionRepo)
+            targetService.restoreBackup(jsonString).getOrThrow()
 
-        assertEquals(expectedTitles.toSet(), targetTransactionRepo.getDistinctTitles().first().toSet())
-        assertFalse(targetTransactionRepo.getDistinctTitles().first().isEmpty())
-    }
+            assertEquals(
+                expectedTitles.toSet(),
+                targetTransactionRepo.getDistinctTitles().first().toSet()
+            )
+            assertFalse(targetTransactionRepo.getDistinctTitles().first().isEmpty())
+        }
 }

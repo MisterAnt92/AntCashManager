@@ -1,10 +1,10 @@
 package com.antcashmanager.android.ui.screen.settings.dataManagement
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.touchlab.kermit.Logger
+import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.android.data.backup.BackupService
 import com.antcashmanager.android.security.BackupPayloadCipher
+import com.antcashmanager.domain.model.None
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
@@ -27,7 +27,7 @@ class SettingsDataViewModel(
     private val categoryRepository: CategoryRepository,
     private val deleteAllTransactionsUseCase: DeleteAllTransactionsUseCase,
     private val backupService: BackupService,
-) : ViewModel() {
+) : BaseViewModel<None>() {
     private val settingsRepositoryRef = settingsRepository
 
     private val _state = MutableStateFlow(SettingsDataState())
@@ -57,14 +57,14 @@ class SettingsDataViewModel(
     }
 
     fun setDataEncryptionEnabled(enabled: Boolean) {
-        Logger.d(tag = SettingsDataConstant.TAG) { "Setting data encryption enabled: $enabled" }
+        logDebug("Setting data encryption enabled: $enabled")
         viewModelScope.launch {
             settingsRepositoryRef.setDataEncryptionEnabled(enabled)
         }
     }
 
     fun setSuggestionsEnabled(enabled: Boolean) {
-        Logger.d(tag = SettingsDataConstant.TAG) { "Setting suggestions enabled: $enabled" }
+        logDebug("Setting suggestions enabled: $enabled")
         viewModelScope.launch {
             settingsRepositoryRef.setSuggestionsEnabled(enabled)
         }
@@ -79,7 +79,7 @@ class SettingsDataViewModel(
     }
 
     fun deleteAllSuggestions() {
-        Logger.d(tag = SettingsDataConstant.TAG) { "Deleting all suggestions" }
+        logDebug("Deleting all suggestions")
         viewModelScope.launch {
             settingsRepositoryRef.setSuggestionsClearedAt(System.currentTimeMillis())
             _state.update { it.copy(showDeleteSuggestionsDialog = false) }
@@ -195,7 +195,7 @@ class SettingsDataViewModel(
     }
 
     fun deleteAllData() {
-        Logger.d(tag = SettingsDataConstant.TAG) { "Deleting all data" }
+        logDebug("Deleting all data")
         viewModelScope.launch {
             try {
                 deleteAllTransactionsUseCase()
@@ -211,9 +211,7 @@ class SettingsDataViewModel(
                     }
                     .onFailure { error ->
                         if (error is CancellationException) throw error
-                        Logger.e(throwable = error, tag = SettingsDataConstant.TAG) {
-                            "Error deleting data: ${error.message}"
-                        }
+                        logError("Error deleting data: ${error.message}", error)
                         _state.update {
                             it.copy(
                                 deleteResult = DeleteResult.Error(
@@ -226,10 +224,7 @@ class SettingsDataViewModel(
             } catch (error: CancellationException) {
                 throw error
             } catch (error: Exception) {
-                Logger.e(
-                    throwable = error,
-                    tag = SettingsDataConstant.TAG
-                ) { "Error deleting data: ${error.message}" }
+                logError("Error deleting data: ${error.message}", error)
                 _state.update {
                     it.copy(
                         deleteResult = DeleteResult.Error(
@@ -257,7 +252,7 @@ class SettingsDataViewModel(
     }
 
     fun createBackup() {
-        Logger.d(tag = SettingsDataConstant.TAG) { "Creating backup" }
+        logDebug("Creating backup")
         _state.update { it.copy(backupResult = BackupResult.Loading) }
         viewModelScope.launch {
             withMinimumLoadingDuration { backupService.createBackup() }
@@ -308,7 +303,7 @@ class SettingsDataViewModel(
     }
 
     fun restoreBackup(jsonString: String) {
-        Logger.d(tag = SettingsDataConstant.TAG) { "Restoring backup" }
+        logDebug("Restoring backup")
         _state.update { it.copy(restoreResult = RestoreOperationResult.Loading) }
 
         val payloadToRestore = if (BackupPayloadCipher.isEncryptedPayload(jsonString)) {
@@ -361,7 +356,7 @@ class SettingsDataViewModel(
     }
 
     fun resetAllPreferences() {
-        Logger.d(tag = SettingsDataConstant.TAG) { "Resetting all preferences" }
+        logDebug("Resetting all preferences")
         viewModelScope.launch {
             settingsRepositoryRef.resetAllPreferences()
             _state.update { it.copy(showResetPreferencesDialog = false) }

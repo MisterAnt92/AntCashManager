@@ -4,8 +4,6 @@ package com.antcashmanager.android.ui.screen.receiptScan
  * Shared constants for receipt scan feature.
  */
 object ReceiptScanConstant {
-    const val TAG = "ReceiptScanViewModel"
-
     const val DEFAULT_TITLE_FALLBACK = "Spesa"
     const val ERROR_SCAN = "Errore durante la scansione"
     const val ERROR_NO_RECEIPT_DATA = "Nessun dato scontrino disponibile"

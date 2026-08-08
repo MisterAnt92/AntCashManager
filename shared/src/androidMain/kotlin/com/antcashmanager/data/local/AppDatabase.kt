@@ -10,7 +10,7 @@ import com.antcashmanager.data.local.entity.TransactionEntity
 
 @Database(
     entities = [TransactionEntity::class, CategoryEntity::class],
-    version = 8,
+    version = 9,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(from = 1, to = 2),

@@ -3,7 +3,7 @@ package com.antcashmanager.domain.usecase.receipt
 import com.antcashmanager.domain.exception.ReceiptScanException
 import com.antcashmanager.domain.model.ReceiptData
 import com.antcashmanager.domain.service.ReceiptOcrService
-import com.antcashmanager.domain.usecase.BaseResultUseCase
+import com.antcashmanager.domain.usecase.base.UseCase
 import com.antcashmanager.domain.util.LanguageDetectionHelper
 import com.antcashmanager.domain.util.ReceiptTextParser
 import kotlinx.coroutines.CoroutineDispatcher
@@ -23,7 +23,7 @@ import kotlinx.coroutines.Dispatchers
 class ScanReceiptUseCase(
     private val ocrService: ReceiptOcrService,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : BaseResultUseCase<ByteArray, ReceiptData>(dispatcher) {
+) : UseCase<ByteArray, ReceiptData>(dispatcher) {
 
     /**
      * Esegue la scansione OCR e il parsing del testo.

@@ -117,6 +117,7 @@ private fun getRangeDisplayText(
                 val fromDateFormatted = dateFormat.format(Date(dateRangeFrom))
                 "${stringResource(R.string.range_label_this_week)} $fromDateFormatted-$toDateFormatted"
             }
+
             2 -> "${stringResource(R.string.range_label_this_month)} $monthYear"
             3 -> "${stringResource(R.string.range_label_this_year)} $year"
             4 -> "${stringResource(R.string.range_two_years)} $year"

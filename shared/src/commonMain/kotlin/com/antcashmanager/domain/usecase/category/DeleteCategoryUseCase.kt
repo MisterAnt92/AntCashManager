@@ -2,7 +2,7 @@ package com.antcashmanager.domain.usecase.category
 
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.repository.CategoryRepository
-import com.antcashmanager.domain.usecase.BaseResultUseCase
+import com.antcashmanager.domain.usecase.base.UseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
@@ -12,7 +12,7 @@ import kotlinx.coroutines.Dispatchers
 class DeleteCategoryUseCase(
     private val categoryRepository: CategoryRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : BaseResultUseCase<Category, Unit>(dispatcher) {
+) : UseCase<Category, Unit>(dispatcher) {
 
     override suspend fun execute(params: Category): Unit =
         categoryRepository.deleteCategory(params)
