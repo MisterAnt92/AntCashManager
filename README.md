@@ -10,20 +10,24 @@ e mantenere il controllo dei dati in locale, con un approccio privacy-first e se
 | Campo | Valore                         |
 |---|--------------------------------|
 | App name | `AntCashManager`               |
-| Versione | `1.5.9`                        |
+| Versione | `1.6.3` (versionCode: 18)      |
 | Application ID | `com.sformica.ant_cashmanager` |
 | Android namespace | `com.antcashmanager.android`   |
 | Min SDK | `26`                           |
-| Target SDK | `36`                           |
+| Target SDK | `37`                           |
 
 ## Cosa Fa l'App
 
 - Gestione transazioni di entrata e uscita
 - Categorie predefinite e personalizzabili
 - Grafici e insight per analisi spese/entrate
+- Scansione scontrini con OCR (ML Kit) per creazione rapida transazioni
+- Widget home screen (Glance API) per transazioni recenti e breakdown categorie
 - Backup e restore dei dati
+- Crittografia opzionale dei dati sensibili
 - Supporto multilingua (EN, IT, FR, DE, ES)
-- UI moderna con Jetpack Compose
+- UI moderna con Jetpack Compose e Material 3
+- Navigazione adattiva (bottom bar per phone, navigation rail per tablet/foldable)
 
 ## Perche e Open Source
 
@@ -50,16 +54,23 @@ Nota: e presente anche una copia statica della privacy policy in `docs/wiki/` pe
 
 Il progetto segue Clean Architecture con organizzazione per feature:
 
-- Presentation (`androidApp`) -> Compose + ViewModel
-- Domain (`shared/commonMain`) -> modelli, use case, interfacce
-- Data (`shared/androidMain`) -> repository implementation, persistenza
+- **Presentation** (`androidApp`) → Compose + ViewModel + Widget Glance + Navigation adattiva
+- **Domain** (`shared/commonMain`) → modelli, use case, interfacce repository e servizi
+- **Data** (`shared/androidMain`) → repository implementation, Room DB, DataStore, cifratura
 
 Pattern principali:
 
 - MVVM + `StateFlow`
-- UseCase per feature
+- UseCase per feature (con `Result<T>` pattern)
 - Repository pattern
 - Dependency Injection con Koin
+- Service layer (es. `ReceiptOcrService` per ML Kit)
+
+Moduli chiave:
+- `ui/screen/` → feature screen (home, transactions, charts, categories, settings, receipt scan)
+- `ui/widget/` → Glance widgets (recent transactions, category breakdown)
+- `data/receipt/` → implementazione OCR con ML Kit
+- `data/backup/` → backup/restore service
 
 ## Tech Stack
 
@@ -67,11 +78,14 @@ Pattern principali:
 |---|---|
 | Language | Kotlin |
 | UI | Jetpack Compose + Material 3 |
+| Widgets | Glance API |
 | Navigation | Navigation Compose |
 | Storage | Room + DataStore |
+| Security | EncryptedSharedPreferences |
 | Async | Coroutines + Flow |
 | DI | Koin |
 | Logging | Kermit |
+| OCR | Google ML Kit Text Recognition v2 |
 | Analytics/Crash | Firebase Analytics + Crashlytics |
 | Build | Gradle + Version Catalog |
 
@@ -92,6 +106,7 @@ AntCashManager/
 
 Documentazione locale (repository):
 
+- **Guida AI Agents**: [`AGENTS.md`](AGENTS.md) – guida tecnica per AI coding agents
 - Indice wiki: [`wiki/README.md`](wiki/README.md)
 - Indice centrale: [`wiki/INDEX.md`](wiki/INDEX.md)
 - Guida lettura: [`wiki/GUIDA_LETTURA.md`](wiki/GUIDA_LETTURA.md)
@@ -113,9 +128,9 @@ Versione statica per consultazione web:
 
 Prerequisiti minimi:
 
-- Android Studio (stable recente)
+- Android Studio (stable recente, consigliato Ladybug o superiore)
 - JDK 17+
-- Android SDK 36
+- Android SDK 37
 
 Build debug:
 
