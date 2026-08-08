@@ -48,6 +48,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
@@ -270,8 +271,9 @@ internal fun DetailsStep(
             Spacer(modifier = Modifier.height(12.dp))
 
             // ── Importo (label e descrizione cambiano con Buoni Pasto) ──
-            val isMealVouchersPayment = state.selectedPaymentType == PaymentType.MEAL_VOUCHERS
-            OutlinedTextField(
+            val isMealVouchersPayment = state.isMealVouchersPayment
+            if (!isMealVouchersPayment) {
+                OutlinedTextField(
                 value = state.amount,
                 onValueChange = { newValue ->
                     // Permetti solo numeri e un singolo separatore decimale (punto o virgola)
@@ -317,7 +319,8 @@ internal fun DetailsStep(
                     VisualTransformation.None
                 },
             )
-            if (isMealVouchersPayment) {
+            }
+            if (!isMealVouchersPayment) {
                 Spacer(modifier = Modifier.height(4.dp))
                 AppText(
                     text = stringResource(R.string.add_transaction_amount_total_meal_vouchers_description),
@@ -427,6 +430,25 @@ internal fun DetailsStep(
                         shape = RoundedCornerShape(16.dp),
                     )
 
+                    // FIX: Mostra l'importo calcolato in read-only
+                    if (isMealVouchersPayment && state.amount.isNotBlank()) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        OutlinedTextField(
+                            value = state.amount,
+                            onValueChange = {}, // Read-only
+                            label = {
+                                AppText(stringResource(R.string.add_transaction_amount_total_meal_vouchers))
+                            },
+                            placeholder = { AppText("0.00") },
+                            enabled = false,
+                            singleLine = true,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .alpha(0.7f), // Rendi più trasparente per indicare disabilitato
+                            shape = RoundedCornerShape(16.dp),
+                        )
+                    }
+
                     val voucherCount = state.mealVoucherCount.toIntOrNull() ?: 0
                     val voucherTotal = voucherCount * state.mealVoucherValue
 
@@ -445,8 +467,13 @@ internal fun DetailsStep(
                 }
 
                 // Mostra la differenza pagata rispetto al valore coperto dai buoni (informativo)
+                // Ma NON la mostrare se è un'entrata di tipo "Buoni pasto"
                 val voucherCountForDifference = state.mealVoucherCount.toIntOrNull() ?: 0
-                if (voucherCountForDifference > 0) {
+                val shouldShowMealVoucherDifference =
+                    voucherCountForDifference > 0 &&
+                    !(state.selectedType == TransactionType.INCOME && state.selectedCategory?.name == "Buoni pasto")
+
+                if (shouldShowMealVoucherDifference) {
                     Spacer(modifier = Modifier.height(12.dp))
                     Row(
                         modifier = Modifier

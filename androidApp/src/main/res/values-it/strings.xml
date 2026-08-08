@@ -143,6 +143,7 @@
     <string name="icon_shopping_cart">Spesa</string>
     <string name="icon_coffee">Caffè</string>
     <string name="icon_spa">Cura personale</string>
+    <string name="icon_card_giftcard">Buoni Pasto</string>
 
     <string name="charts_period">Periodo</string>
     <string name="charts_from">Dal: %s</string>

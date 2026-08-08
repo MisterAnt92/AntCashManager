@@ -110,6 +110,7 @@
     <string name="icon_shopping_cart">Lebensmittel</string>
     <string name="icon_coffee">Kaffee</string>
     <string name="icon_spa">Wellness</string>
+    <string name="icon_card_giftcard">Essensmarken</string>
 
     <string name="charts_period">Zeitraum</string>
     <string name="charts_from">Von: %s</string>

@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.math.abs
+import java.util.Locale
 
 // ══════════════════════════════════════════════════════════════════════════════
 // VIEWMODEL
@@ -209,7 +210,25 @@ class AddTransactionViewModel(
             is AddTransactionEvent.UpdateLocation -> _state.update { it.copy(location = event.location) }
             is AddTransactionEvent.UpdateTags -> _state.update { it.copy(tags = event.tags) }
             is AddTransactionEvent.UpdateMealVoucherCount -> {
-                _state.update { it.copy(mealVoucherCount = event.count) }
+                _state.update { currentState ->
+                    val newCount = event.count
+                    // Auto-calculate amount when meal voucher count changes (only for new transactions)
+                    val newAmount = if (currentState.selectedPaymentType == PaymentType.MEAL_VOUCHERS && !currentState.isModifying) {
+                        val voucherCount = newCount.toIntOrNull() ?: 0
+                        if (voucherCount > 0) {
+                            // Calcola importo totale da numero voucher
+                            val calculatedAmount = voucherCount * currentState.mealVoucherValue
+                            // FIX: Usa Locale.US per garantire formato coerente (punto decimale, non virgola)
+                            String.format(Locale.US, "%.2f", calculatedAmount)
+                        } else {
+                            "" // Se 0 voucher, pulisci l'importo
+                        }
+                    } else {
+                        currentState.amount // Non cambiare se non è MEAL_VOUCHERS o se si sta modificando una transazione salvata
+                    }
+                    logDebug("Meal voucher count updated to: $newCount, calculated amount: $newAmount")
+                    currentState.copy(mealVoucherCount = newCount, amount = newAmount)
+                }
             }
 
             is AddTransactionEvent.UpdateTimestamp -> _state.update { it.copy(timestamp = event.timestamp) }
@@ -279,10 +298,19 @@ class AddTransactionViewModel(
         val currentStep = _state.value.currentStep
         val isModifying = _state.value.isModifying
 
+        // Auto-select payment type per categoria "Buoni pasto"
+        val selectedPaymentType = if (category.name == "Buoni pasto") {
+            logDebug("Auto-selecting MEAL_VOUCHERS payment type for Buoni pasto category")
+            PaymentType.MEAL_VOUCHERS
+        } else {
+            _state.value.selectedPaymentType // Mantieni il precedente per altre categorie
+        }
+
         _state.update {
             it.copy(
                 selectedCategory = category,
                 selectedType = transactionType,
+                selectedPaymentType = selectedPaymentType,
                 showCategoryDialog = false,
             )
         }
@@ -338,23 +366,43 @@ class AddTransactionViewModel(
             })
             return
         }
-        if (currentState.title.isBlank() || currentState.amount.isBlank()) {
+        // FIX: Titolo sempre obbligatorio
+        if (currentState.title.isBlank()) {
             _state.update { it.copy(error = AddTransactionConstant.ERROR_REQUIRED_TITLE_AMOUNT) }
             analyticsManager.logEvent("transaction_form_validation_failed", Bundle().apply {
-                putString(
-                    "error_type",
-                    if (currentState.title.isBlank()) "missing_title" else "missing_amount"
-                )
+                putString("error_type", "missing_title")
             })
             return
         }
-        val amount = currentState.amount.toDoubleOrNull()
-        if (amount == null || amount <= 0) {
-            _state.update { it.copy(error = AddTransactionConstant.ERROR_INVALID_AMOUNT) }
-            analyticsManager.logEvent("transaction_form_validation_failed", Bundle().apply {
-                putString("error_type", "invalid_amount")
-            })
-            return
+
+        // FIX: Validazione differenziata per MEAL_VOUCHERS
+        if (currentState.selectedPaymentType == PaymentType.MEAL_VOUCHERS) {
+            // Per MEAL_VOUCHERS: validare solo mealVoucherCount (amount viene calcolato automaticamente)
+            val voucherCount = currentState.mealVoucherCount.toIntOrNull()
+            if (voucherCount == null || voucherCount <= 0) {
+                _state.update { it.copy(error = "Numero buoni pasto non valido") }
+                analyticsManager.logEvent("transaction_form_validation_failed", Bundle().apply {
+                    putString("error_type", "invalid_meal_voucher_count")
+                })
+                return
+            }
+        } else {
+            // Per altre transazioni: validare amount totale
+            if (currentState.amount.isBlank()) {
+                _state.update { it.copy(error = AddTransactionConstant.ERROR_REQUIRED_TITLE_AMOUNT) }
+                analyticsManager.logEvent("transaction_form_validation_failed", Bundle().apply {
+                    putString("error_type", "missing_amount")
+                })
+                return
+            }
+            val amount = currentState.amount.toDoubleOrNull()
+            if (amount == null || amount <= 0) {
+                _state.update { it.copy(error = AddTransactionConstant.ERROR_INVALID_AMOUNT) }
+                analyticsManager.logEvent("transaction_form_validation_failed", Bundle().apply {
+                    putString("error_type", "invalid_amount")
+                })
+                return
+            }
         }
 
         viewModelScope.launch {

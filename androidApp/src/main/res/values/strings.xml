@@ -117,6 +117,7 @@
     <string name="icon_shopping_cart">Groceries</string>
     <string name="icon_coffee">Coffee</string>
     <string name="icon_spa">Personal Care</string>
+    <string name="icon_card_giftcard">Meal Vouchers</string>
 
     <!-- Charts Screen -->
     <string name="charts_period">Period</string>

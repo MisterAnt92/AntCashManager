@@ -63,12 +63,20 @@ data class AddTransactionState(
     val showDeleteConfirmDialog: Boolean = false,
     val showPaymentTypeDialog: Boolean = false,
 ) {
+    val isMealVouchersPayment: Boolean
+        get() = selectedPaymentType == PaymentType.MEAL_VOUCHERS
+
     val isFormValid: Boolean
         get() = title.isNotBlank() &&
-                amount.isNotBlank() &&
-                amount.toDoubleOrNull() != null &&
                 selectedCategory != null &&
-                selectedType != null
+                selectedType != null &&
+                // Per buoni pasto: numero voucher obbligatorio, nessun importo manuale
+                if (isMealVouchersPayment) {
+                    mealVoucherCount.toIntOrNull() != null && mealVoucherCount.toIntOrNull()!! > 0
+                } else {
+                    // Per altre transazioni: importo totale obbligatorio
+                    amount.isNotBlank() && amount.toDoubleOrNull() != null && amount.toDoubleOrNull()!! > 0
+                }
 
     /**
      * Importo da persistere sulla transazione. Con pagamento in Buoni Pasto, [amount]
