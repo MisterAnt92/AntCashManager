@@ -26,11 +26,16 @@ This ensures human oversight on all code changes and maintains repository integr
 Presentation (androidApp)  →  Domain (shared/commonMain)  →  Data (shared/androidMain)
 ```
 
-- **`androidApp/`** – Compose UI, ViewModels, Navigation, DI wiring (Koin), Android-specific utilities.
+- **`androidApp/`** – Compose UI, ViewModels, Navigation, DI wiring (Koin), Android-specific utilities, Glance Widgets.
 - **`shared/src/commonMain/`** – Pure Kotlin domain: models, use case base classes, repository interfaces, domain exceptions.
 - **`shared/src/androidMain/`** – Android data layer: Room DB, DataStore, repository implementations.
 
-Code is organized **package-by-feature**, not by technical type. Reference screens: `HomeScreen`, `SettingsScreen`, `DisplayScreen`.
+Code is organized **package-by-feature**, not by technical type. Reference screens: `HomeScreen`, `SettingsScreen`, `DisplayScreen`, `ReceiptScanScreen`.
+
+**Widget Layer** (`androidApp/.../ui/widget/`): Glance API home screen widgets:
+- `RecentTransactionsWidget` – displays latest transactions
+- `CategoryBreakdownWidget` – displays category spending breakdown
+- `GlanceWidgetUpdateNotifier` – implementation of domain's `WidgetUpdateNotifier` interface
 
 ---
 
@@ -59,23 +64,29 @@ Build **only after all changes are complete** – avoid incremental builds durin
 
 ## UseCase Pattern
 
-All use cases extend one of these base classes from `shared/commonMain/domain/usecase/`:
-- `BaseUseCase<Params, Result>` – single suspend call
-- `FlowUseCase`, `NoParamsFlowUseCase`, `NoParamsUseCase` – variants for flows and parameterless cases
+All use cases extend one of these base classes from `shared/commonMain/domain/usecase/base/`:
+- `UseCase<P, R>` – single suspend call, returns `Result<R>` via `invoke()`
+- `ObservableUseCase<P, R>` – Flow-based, emits `Flow<Result<R>>` via `invoke()`
+- `NoParamsUseCase<R>` – parameterless variant of `UseCase`
+- `NoParamsObservableUseCase<R>` – parameterless variant of `ObservableUseCase`
 
 **Rules:**
 - Implement `execute()`, never override `invoke()`.
 - Always inject a `CoroutineDispatcher` (default: `Dispatchers.Default`).
-- Always return `Result<T>` – never throw domain exceptions directly.
+- `execute()` returns the raw value type `R`; `invoke()` wraps it in `Result<R>`.
+- Never throw domain exceptions directly from `execute()` – they're caught by `invoke()` and wrapped in `Result.failure`.
 - Custom exceptions live **only** in `shared/commonMain/domain/exception/`.
+- Use `runSuspendCatching` utility (in `domain/util/`) which preserves `CancellationException` propagation.
 
 ```kotlin
 class InsertTransactionUseCase(
     private val transactionRepository: TransactionRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : BaseUseCase<Transaction, Result<Unit>>(dispatcher) {
-    override suspend fun execute(params: Transaction): Result<Unit> = ...
+) : UseCase<Transaction, Unit>(dispatcher) {
+    override suspend fun execute(params: Transaction): Unit = 
+        transactionRepository.insert(params)
 }
+// Consumer calls: insertUseCase(transaction).onSuccess { }.onFailure { }
 ```
 
 ---
@@ -115,17 +126,44 @@ ui/screen/<feature>/
 ## Dependency Injection (Koin)
 
 All DI is wired in `androidApp/.../di/AppModule.kt` with three modules aggregated as `appModules`:
-- `dataModule` – Room DB, repositories, services
+- `dataModule` – Room DB, repositories, services (`BackupService`, `MlKitReceiptOcrService`), `GlanceWidgetUpdateNotifier`
 - `useCaseModule` – use case factories
 - `presentationModule` – ViewModel registrations
 
-`AddTransactionViewModel` uses `parametersOf(transactionId)` for optional parameter injection.
+**ViewModel registration patterns**:
+- Standard: `viewModel { ClassName(...) }` – explicit constructor with injected dependencies
+- Shorthand: `viewModelOf(::ClassName)` – for ViewModels with no extra parameters (e.g., `DisplayViewModel`, `ThemeViewModel`)
+- Parameterized: `viewModel { (param: Type?) -> ... }` – `AddTransactionViewModel` uses `parametersOf(transactionId)` for optional parameter injection
 
 ---
 
 ## Navigation
 
-Routes are string literals defined inline in `NavGraph.kt`. `BottomNavItem` enumerates the top-level destinations. Sub-routes use query parameters (e.g., `"add_transaction?transactionId={transactionId}"`).
+Routes are string literals defined inline in `NavGraph.kt`. `BottomNavItem` is a `sealed class` (not enum) with `data object` instances for each top-level tab (Home, Charts, Transactions, Categories, Settings). 
+
+Sub-routes use query parameters:
+- `"add_transaction?transactionId={transactionId}"` – create new or edit existing transaction
+- `"display"` – display settings screen
+- `"settings_data"` – data management (backup/restore)
+- `"receipt_scan"` – ML Kit OCR receipt scanning
+
+**Adaptive Navigation**: `NavGraph.kt` uses `rememberAdaptiveLayoutInfo()` to switch between bottom bar (phones) and navigation rail (tablets/foldables) based on screen size and form factor.
+
+**Special case**: The root composable (`AntCashManagerNavHost`) directly injects `SettingsRepository` via Koin to read reactive display preferences – this is an intentional exception to the "ViewModels-only consume UseCases" rule for composition-level configuration.
+
+---
+
+## Receipt Scanning (ML Kit OCR)
+
+The app includes receipt scanning via Google ML Kit Text Recognition v2:
+- **Feature screen**: `ReceiptScanScreen` (route: `"receipt_scan"`)
+- **Domain service interface**: `ReceiptOcrService` in `shared/commonMain/domain/service/`
+- **Implementation**: `MlKitReceiptOcrService` in `androidApp/.../data/receipt/`
+- **Use cases**:
+  - `ScanReceiptUseCase` – extracts text from image bitmap
+  - `CreateTransactionFromReceiptUseCase` – parses OCR result into transaction data
+- **ViewModel**: `ReceiptScanViewModel` orchestrates camera capture → OCR → transaction creation flow
+- **ProGuard**: ML Kit rules included in `androidApp/proguard-rules.pro` for R8 compatibility
 
 ---
 
@@ -150,7 +188,12 @@ Routes are string literals defined inline in `NavGraph.kt`. `BottomNavItem` enum
 
 - Use **MockK** for mocking; Mockito is forbidden.
 - Test naming: `method_shouldExpectedBehavior_whenCondition` (no backticks).
-- `BaseUnitTest` handles `Dispatchers.setMain`/`resetMain` and `StandardTestDispatcher` – don't duplicate this setup.
+- `BaseUnitTest` provides:
+  - `testDispatcher: TestDispatcher` (auto-setup as `Dispatchers.Main`)
+  - `runUnitTest { }` – shorthand for `runTest(testDispatcher) { }` (use this instead of raw `runTest`)
+  - `runViewModelTest { }` – alias of `runUnitTest` for semantic clarity
+  - `launchInBackground { }` – launches coroutines in `backgroundScope` for Flow collectors/long-running jobs in tests
+- Don't duplicate `Dispatchers.setMain`/`resetMain` or `StandardTestDispatcher()` setup – `BaseUnitTest` handles it.
 
 ---
 
