@@ -9,6 +9,9 @@ import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactio
 import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionStep
 import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionViewModel
 import com.antcashmanager.android.ui.screen.transactions.addImport.event.AddTransactionEvent
+import com.antcashmanager.android.ui.screen.transactions.addImport.manager.TransactionLoadManager
+import com.antcashmanager.android.ui.screen.transactions.addImport.manager.TransactionSubmitManager
+import com.antcashmanager.android.ui.screen.transactions.addImport.manager.SuggestionsManager
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
@@ -1163,37 +1166,44 @@ class AddTransactionViewModelTest : BaseUnitTest() {
         }
     }
 
-    private fun createViewModel(transactionId: Long? = null): AddTransactionViewModel =
-        AddTransactionViewModel(
-            getCategoriesUseCase = GetCategoriesUseCase(categoryRepository, testDispatcher),
-            getMealVoucherValueUseCase = GetMealVoucherValueUseCase(
-                settingsRepository,
-                testDispatcher
-            ),
-            getTransactionByIdUseCase = GetTransactionByIdUseCase(
-                transactionRepository,
-                testDispatcher
-            ),
-            insertTransactionUseCase = InsertTransactionUseCase(
-                transactionRepository,
-                testDispatcher
-            ),
-            updateTransactionUseCase = UpdateTransactionUseCase(
-                transactionRepository,
-                testDispatcher
-            ),
-            deleteTransactionUseCase = DeleteTransactionUseCase(
-                transactionRepository,
-                testDispatcher
-            ),
-            getTransactionSuggestionsUseCase = GetTransactionSuggestionsUseCase(
-                transactionRepository,
-                settingsRepository,
-                testDispatcher,
-            ),
+    private fun createViewModel(transactionId: Long? = null): AddTransactionViewModel {
+        val getCategoriesUC = GetCategoriesUseCase(categoryRepository, testDispatcher)
+        val getMealVoucherValueUC = GetMealVoucherValueUseCase(settingsRepository, testDispatcher)
+        val getTransactionByIdUC = GetTransactionByIdUseCase(transactionRepository, testDispatcher)
+        val insertTransactionUC = InsertTransactionUseCase(transactionRepository, testDispatcher)
+        val updateTransactionUC = UpdateTransactionUseCase(transactionRepository, testDispatcher)
+        val deleteTransactionUC = DeleteTransactionUseCase(transactionRepository, testDispatcher)
+        val getTransactionSuggestionsUC = GetTransactionSuggestionsUseCase(
+            transactionRepository,
+            settingsRepository,
+            testDispatcher,
+        )
+
+        val loadManager = TransactionLoadManager(
+            getTransactionByIdUseCase = getTransactionByIdUC,
+            getCategoriesUseCase = getCategoriesUC,
+            getMealVoucherValueUseCase = getMealVoucherValueUC,
+        )
+
+        val submitManager = TransactionSubmitManager(
+            insertTransactionUseCase = insertTransactionUC,
+            updateTransactionUseCase = updateTransactionUC,
+        )
+
+        val suggestionsManager = SuggestionsManager(
+            getTransactionSuggestionsUseCase = getTransactionSuggestionsUC,
+        )
+
+        return AddTransactionViewModel(
+            loadManager = loadManager,
+            submitManager = submitManager,
+            suggestionsManager = suggestionsManager,
+            deleteTransactionUseCase = deleteTransactionUC,
+            getTransactionByIdUseCase = getTransactionByIdUC,
             analyticsManager = analyticsManager,
             transactionId = transactionId,
         )
+    }
 }
 
 /**
