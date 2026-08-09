@@ -69,6 +69,7 @@ import com.antcashmanager.android.ui.screen.transactions.addImport.view.DetailsA
 import com.antcashmanager.android.ui.screen.transactions.addImport.view.DetailsMealVoucherSection
 import com.antcashmanager.android.ui.screen.transactions.addImport.view.DetailsRecurrenceSection
 import com.antcashmanager.android.ui.screen.transactions.addImport.view.DetailsOptionalFieldsSection
+import com.antcashmanager.android.ui.screen.transactions.addImport.view.DetailsTagsSection
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.TransactionType
 import org.koin.compose.koinInject
@@ -293,7 +294,7 @@ internal fun DetailsStep(
             }
 
             // ── Tags – Improved management with chips ──
-            TagSelector(
+            DetailsTagsSection(
                 tags = state.tags,
                 onTagsChange = { onEvent(AddTransactionEvent.UpdateTags(it)) },
                 suggestions = state.tagsSuggestions
@@ -346,124 +347,6 @@ internal fun DetailsStep(
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
-        }
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
-@Composable
-private fun TagSelector(
-    tags: String,
-    onTagsChange: (String) -> Unit,
-    suggestions: List<String>
-) {
-    var tagInput by remember { mutableStateOf("") }
-    val currentTags = remember(tags) {
-        tags.split(",").map { it.trim() }.filter { it.isNotBlank() }
-    }
-
-    Column(modifier = Modifier.fillMaxWidth()) {
-        AppText(
-            text = stringResource(R.string.add_transaction_tags_label),
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-
-        // Tag Input
-        OutlinedTextField(
-            value = tagInput,
-            onValueChange = { tagInput = it },
-            label = { AppText(stringResource(R.string.add_transaction_tags_placeholder)) },
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            trailingIcon = {
-                if (tagInput.isNotBlank()) {
-                    IconButton(onClick = {
-                        if (!currentTags.contains(tagInput.trim())) {
-                            val newTags = (currentTags + tagInput.trim()).joinToString(", ")
-                            onTagsChange(newTags)
-                        }
-                        tagInput = ""
-                    }) {
-                        Icon(Icons.Default.Add, contentDescription = "Add Tag")
-                    }
-                }
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-            singleLine = true
-        )
-
-        if (currentTags.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(8.dp))
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                currentTags.forEach { tag ->
-                    InputChip(
-                        selected = true,
-                        onClick = { },
-                        label = { AppText(tag) },
-                        trailingIcon = {
-                            Icon(
-                                Icons.Default.Close,
-                                contentDescription = "Remove",
-                                modifier = Modifier
-                                    .size(16.dp)
-                                    .clickable {
-                                        val newTags = currentTags
-                                            .filter { it != tag }
-                                            .joinToString(", ")
-                                        onTagsChange(newTags)
-                                    }
-                            )
-                        },
-                        colors = InputChipDefaults.inputChipColors(
-                            selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                            selectedLabelColor = MaterialTheme.colorScheme.onSecondaryContainer
-                        ),
-                        shape = RoundedCornerShape(16.dp),
-                        border = null
-                    )
-                }
-            }
-        }
-
-        // Suggestions
-        val filteredSuggestions = suggestions.filter {
-            it.contains(tagInput, ignoreCase = true) && !currentTags.contains(it)
-        }.take(5)
-
-        if (tagInput.isNotBlank() && filteredSuggestions.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(8.dp))
-            AppText(
-                text = stringResource(R.string.add_transaction_tags_suggestions),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                filteredSuggestions.forEach { suggestion ->
-                    AssistChip(
-                        onClick = {
-                            val newTags = (currentTags + suggestion).joinToString(", ")
-                            onTagsChange(newTags)
-                            tagInput = ""
-                        },
-                        label = {
-                            AppText(
-                                suggestion,
-                                style = MaterialTheme.typography.labelSmall
-                            )
-                        },
-                        shape = RoundedCornerShape(12.dp)
-                    )
-                }
-            }
         }
     }
 }
