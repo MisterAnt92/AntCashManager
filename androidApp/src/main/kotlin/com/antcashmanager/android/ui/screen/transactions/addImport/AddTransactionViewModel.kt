@@ -135,11 +135,24 @@ class AddTransactionViewModel(
                 if (transaction != null) {
                     val selectedCat = categoryList.find { it.name == transaction.category }
                     logDebug("Transaction loaded: ${transaction.title}, category: $selectedCat")
+
+                    // FASE 2: Verifica se la categoria è stata cancellata
+                    if (selectedCat == null) {
+                        logWarn("Category '${transaction.category}' not found for transaction ${transaction.id}")
+                        _state.update {
+                            it.copy(
+                                isLoading = false,
+                                error = "Categoria non trovata: ${transaction.category}",
+                            )
+                        }
+                        return@launch
+                    }
+
                     // La categoria già assegnata alla transazione deve restare selezionabile
                     // nel picker anche se nel frattempo è stata nascosta, altrimenti l'utente
                     // non la vedrebbe più tra le opzioni durante la modifica.
                     val visibleCategories = categoryList.filterNot { it.isHidden }
-                    val categoriesForPicker = if (selectedCat != null && selectedCat.isHidden) {
+                    val categoriesForPicker = if (selectedCat.isHidden) {
                         visibleCategories + selectedCat
                     } else {
                         visibleCategories
@@ -211,23 +224,17 @@ class AddTransactionViewModel(
             is AddTransactionEvent.UpdateTags -> _state.update { it.copy(tags = event.tags) }
             is AddTransactionEvent.UpdateMealVoucherCount -> {
                 _state.update { currentState ->
-                    val newCount = event.count
-                    // Auto-calculate amount when meal voucher count changes (only for new transactions)
-                    val newAmount = if (currentState.selectedPaymentType == PaymentType.MEAL_VOUCHERS && !currentState.isModifying) {
-                        val voucherCount = newCount.toIntOrNull() ?: 0
-                        if (voucherCount > 0) {
-                            // Calcola importo totale da numero voucher
-                            val calculatedAmount = voucherCount * currentState.mealVoucherValue
-                            // FIX: Usa Locale.US per garantire formato coerente (punto decimale, non virgola)
-                            String.format(Locale.US, "%.2f", calculatedAmount)
-                        } else {
-                            "" // Se 0 voucher, pulisci l'importo
-                        }
-                    } else {
-                        currentState.amount // Non cambiare se non è MEAL_VOUCHERS o se si sta modificando una transazione salvata
-                    }
-                    logDebug("Meal voucher count updated to: $newCount, calculated amount: $newAmount")
-                    currentState.copy(mealVoucherCount = newCount, amount = newAmount)
+                    // Calcola l'importo automaticamente basato sul numero di voucher
+                    val calculatedAmount = event.count.toIntOrNull()?.let { count ->
+                        // Importo = numero voucher * valore unitario
+                        val total = count * currentState.mealVoucherValue
+                        String.format(java.util.Locale.US, "%.2f", total)
+                    } ?: ""
+
+                    currentState.copy(
+                        mealVoucherCount = event.count,
+                        amount = calculatedAmount,
+                    )
                 }
             }
 
@@ -331,8 +338,17 @@ class AddTransactionViewModel(
 
     private fun selectPaymentType(paymentType: PaymentType) {
         logDebug("Payment type selected: $paymentType")
-        _state.update {
-            it.copy(selectedPaymentType = paymentType, showPaymentTypeDialog = false)
+        _state.update { currentState ->
+            // Se cambi DA MEAL_VOUCHERS a un altro tipo: resetta voucher e amount calcolato
+            val resetMealVouchers = currentState.selectedPaymentType == PaymentType.MEAL_VOUCHERS &&
+                                    paymentType != PaymentType.MEAL_VOUCHERS
+
+            currentState.copy(
+                selectedPaymentType = paymentType,
+                showPaymentTypeDialog = false,
+                mealVoucherCount = if (resetMealVouchers) "0" else currentState.mealVoucherCount,
+                amount = if (resetMealVouchers) "" else currentState.amount
+            )
         }
     }
 
@@ -366,6 +382,16 @@ class AddTransactionViewModel(
             })
             return
         }
+
+        // FASE 1: Validare che la categoria esista ancora nella lista disponibile
+        if (!currentState.categories.any { it.id == currentState.selectedCategory?.id }) {
+            _state.update { it.copy(error = "Categoria non più disponibile") }
+            analyticsManager.logEvent("transaction_form_validation_failed", Bundle().apply {
+                putString("error_type", "category_not_found")
+            })
+            return
+        }
+
         // FIX: Titolo sempre obbligatorio
         if (currentState.title.isBlank()) {
             _state.update { it.copy(error = AddTransactionConstant.ERROR_REQUIRED_TITLE_AMOUNT) }
@@ -409,10 +435,19 @@ class AddTransactionViewModel(
             try {
                 _state.update { it.copy(isLoading = true) }
 
+                // Calcola l'importo finale: positivo per INCOME, negativo per EXPENSE
+                val finalAmount = currentState.totalAmount.let { amount ->
+                    if (currentState.selectedType == TransactionType.EXPENSE) {
+                        -amount // Nega per le spese
+                    } else {
+                        amount // Mantieni positivo per le entrate
+                    }
+                }
+
                 val transaction = Transaction(
                     id = if (currentState.isModifying) transactionId ?: 0 else 0,
                     title = currentState.title,
-                    amount = currentState.totalAmount,
+                    amount = finalAmount,
                     category = currentState.selectedCategory.name,
                     type = currentState.selectedType,
                     timestamp = currentState.timestamp,

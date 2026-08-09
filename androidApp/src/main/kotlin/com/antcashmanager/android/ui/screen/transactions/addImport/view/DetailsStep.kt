@@ -52,12 +52,8 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
@@ -68,9 +64,11 @@ import com.antcashmanager.android.ui.components.selection.AppSelectionItemCard
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.transactions.addImport.event.AddTransactionEvent
 import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionState
-import com.antcashmanager.android.util.LocalAmountsMasked
-import com.antcashmanager.android.util.isProtectedSalaryCategory
-import com.antcashmanager.android.util.maskDigits
+import com.antcashmanager.android.ui.screen.transactions.addImport.view.DetailsCategoryTypeSection
+import com.antcashmanager.android.ui.screen.transactions.addImport.view.DetailsAmountField
+import com.antcashmanager.android.ui.screen.transactions.addImport.view.DetailsMealVoucherSection
+import com.antcashmanager.android.ui.screen.transactions.addImport.view.DetailsRecurrenceSection
+import com.antcashmanager.android.ui.screen.transactions.addImport.view.DetailsOptionalFieldsSection
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.TransactionType
 import org.koin.compose.koinInject
@@ -89,6 +87,8 @@ internal fun DetailsStep(
         analyticsManager.logEvent("transaction_recurring_toggled")
         onEvent(AddTransactionEvent.SetRecurring(recurring))
     }
+    val isMealVouchersPayment = state.isMealVouchersPayment
+
     // ── Dialog: Categoria ──
     if (state.showCategoryDialog) {
         CategorySelectionDialog(
@@ -231,34 +231,17 @@ internal fun DetailsStep(
                 )
                 .verticalScroll(rememberScrollState()),
         ) {
-            // ── Categoria – sempre editabile al tap ──
-            AppSelectionItemCard(
-                label = stringResource(R.string.add_transaction_category),
-                value = state.selectedCategory?.name
-                    ?: stringResource(R.string.add_transaction_none),
-                icon = state.selectedCategory?.icon,
-                isEditable = true,
-                onClick = { onEvent(AddTransactionEvent.EditCategory) },
+            // ── Categoria, Tipo, Data, Payment Type ──
+            DetailsCategoryTypeSection(
+                selectedCategory = state.selectedCategory,
+                selectedType = state.selectedType,
+                selectedPaymentType = state.selectedPaymentType,
+                timestamp = state.timestamp,
+                onEditCategory = { onEvent(AddTransactionEvent.EditCategory) },
+                onEditType = { onEvent(AddTransactionEvent.EditType) },
+                onEditDate = { onEvent(AddTransactionEvent.EditDate) },
+                onEditPaymentType = { onEvent(AddTransactionEvent.EditPaymentType) },
             )
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // ── Tipo – sempre editabile al tap ──
-            AppSelectionItemCard(
-                label = stringResource(R.string.add_transaction_type),
-                value = when (state.selectedType) {
-                    TransactionType.INCOME -> stringResource(R.string.add_transaction_income_label)
-                    TransactionType.EXPENSE -> stringResource(R.string.add_transaction_expense_label)
-                    null -> stringResource(R.string.add_transaction_none)
-                },
-                icon = when (state.selectedType) {
-                    TransactionType.INCOME -> "💰"
-                    TransactionType.EXPENSE -> "💸"
-                    null -> null
-                },
-                isEditable = true,
-                onClick = { onEvent(AddTransactionEvent.EditType) },
-            )
-            Spacer(modifier = Modifier.height(12.dp))
 
             // ── Titolo ──
             AutocompleteTextField(
@@ -270,233 +253,42 @@ internal fun DetailsStep(
             )
             Spacer(modifier = Modifier.height(12.dp))
 
-            // ── Importo (label e descrizione cambiano con Buoni Pasto) ──
-            val isMealVouchersPayment = state.isMealVouchersPayment
-            if (!isMealVouchersPayment) {
-                OutlinedTextField(
-                value = state.amount,
-                onValueChange = { newValue ->
-                    // Permetti solo numeri e un singolo separatore decimale (punto o virgola)
-                    val filtered = newValue.filter { it.isDigit() || it == '.' || it == ',' }
-
-                    // Normalizza: sostituisci virgola con punto
-                    val normalized = filtered.replace(',', '.')
-
-                    // Previeni multipli punti decimali
-                    val dotCount = normalized.count { it == '.' }
-                    val finalValue = if (dotCount <= 1) {
-                        normalized
-                    } else {
-                        // Mantieni solo il primo punto
-                        val firstDotIndex = normalized.indexOf('.')
-                        normalized.substring(0, firstDotIndex + 1) +
-                                normalized.substring(firstDotIndex + 1).replace(".", "")
-                    }
-
-                    onEvent(AddTransactionEvent.UpdateAmount(finalValue))
-                },
-                label = {
-                    AppText(
-                        stringResource(
-                            if (isMealVouchersPayment)
-                                R.string.add_transaction_amount_total_meal_vouchers
-                            else
-                                R.string.add_transaction_amount_required
-                        )
-                    )
-                },
-                placeholder = { AppText("0.00") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                shape = RoundedCornerShape(16.dp),
+            // ── Importo ──
+            DetailsAmountField(
+                amount = state.amount,
+                onAmountChanged = { onEvent(AddTransactionEvent.UpdateAmount(it)) },
+                isMealVouchersPayment = state.isMealVouchersPayment,
+                selectedCategoryName = state.selectedCategory?.name,
+                selectedType = state.selectedType,
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                visualTransformation = if (
-                    LocalAmountsMasked.current &&
-                    isProtectedSalaryCategory(state.selectedCategory?.name, state.selectedType)
-                ) {
-                    MaskDigitsVisualTransformation
-                } else {
-                    VisualTransformation.None
-                },
             )
+            if (!state.isMealVouchersPayment) {
+                Spacer(modifier = Modifier.height(12.dp))
             }
-            if (!isMealVouchersPayment) {
-                Spacer(modifier = Modifier.height(4.dp))
-                AppText(
-                    text = stringResource(R.string.add_transaction_amount_total_meal_vouchers_description),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            Spacer(modifier = Modifier.height(12.dp))
 
-            // ── Data – sempre editabile al tap ──
-            AppSelectionItemCard(
-                label = stringResource(R.string.add_transaction_field_date),
-                value = SimpleDateFormat(
-                    "dd/MM/yyyy",
-                    LocalLocale.current.platformLocale,
-                ).format(Date(state.timestamp)),
-                isEditable = true,
-                onClick = { onEvent(AddTransactionEvent.EditDate) },
+            // ── Note, Payee, Location ──
+            DetailsOptionalFieldsSection(
+                notes = state.notes,
+                payee = state.payee,
+                location = state.location,
+                notesSuggestions = state.notesSuggestions,
+                payeeSuggestions = state.payeeSuggestions,
+                locationSuggestions = state.locationSuggestions,
+                onNotesChanged = { onEvent(AddTransactionEvent.UpdateNotes(it)) },
+                onPayeeChanged = { onEvent(AddTransactionEvent.UpdatePayee(it)) },
+                onLocationChanged = { onEvent(AddTransactionEvent.UpdateLocation(it)) },
             )
             Spacer(modifier = Modifier.height(12.dp))
 
-            // ── Note ──
-            AutocompleteTextField(
-                value = state.notes,
-                onValueChange = { onEvent(AddTransactionEvent.UpdateNotes(it)) },
-                suggestions = state.notesSuggestions,
-                label = stringResource(R.string.add_transaction_notes_label),
-                modifier = Modifier.fillMaxWidth(),
+            // ── Buoni Pasto ──
+            DetailsMealVoucherSection(
+                mealVoucherCount = state.mealVoucherCount,
+                mealVoucherValue = state.mealVoucherValue,
+                totalAmount = state.amount,
+                onMealVoucherCountChanged = { onEvent(AddTransactionEvent.UpdateMealVoucherCount(it)) },
+                isMealVouchersPayment = isMealVouchersPayment,
             )
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // ── Beneficiario ──
-            AutocompleteTextField(
-                value = state.payee,
-                onValueChange = { onEvent(AddTransactionEvent.UpdatePayee(it)) },
-                suggestions = state.payeeSuggestions,
-                label = stringResource(R.string.add_transaction_payee_label),
-                modifier = Modifier.fillMaxWidth(),
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // ── Luogo ──
-            AutocompleteTextField(
-                value = state.location,
-                onValueChange = { onEvent(AddTransactionEvent.UpdateLocation(it)) },
-                suggestions = state.locationSuggestions,
-                label = stringResource(R.string.add_transaction_location_label),
-                modifier = Modifier.fillMaxWidth(),
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // ── Tipo di Pagamento – sempre editabile al tap ──
-            AppSelectionItemCard(
-                label = stringResource(R.string.add_transaction_payment_type),
-                value = when (state.selectedPaymentType) {
-                    PaymentType.ELECTRONIC -> stringResource(R.string.add_transaction_payment_type_electronic)
-                    PaymentType.CASH -> stringResource(R.string.add_transaction_payment_type_cash)
-                    PaymentType.MEAL_VOUCHERS -> stringResource(R.string.add_transaction_payment_type_meal_vouchers)
-                },
-                isEditable = true,
-                onClick = { onEvent(AddTransactionEvent.EditPaymentType) },
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // ── Numero Buoni Pasto (visibile solo se MEAL_VOUCHERS) ──
             if (isMealVouchersPayment) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(MaterialTheme.colorScheme.secondaryContainer)
-                        .padding(16.dp)
-                ) {
-                    AppText(
-                        text = stringResource(R.string.add_transaction_meal_voucher_section_title),
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    AppText(
-                        text = stringResource(
-                            R.string.add_transaction_meal_voucher_unit_value,
-                            String.format("%.2f", state.mealVoucherValue)
-                        ),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    OutlinedTextField(
-                        value = state.mealVoucherCount,
-                        onValueChange = { newValue ->
-                            // Permetti solo numeri interi
-                            val filtered = newValue.filter { it.isDigit() }
-                            if (filtered.length <= 3) { // Max 999 buoni
-                                onEvent(AddTransactionEvent.UpdateMealVoucherCount(filtered))
-                            }
-                        },
-                        label = {
-                            AppText(stringResource(R.string.add_transaction_meal_voucher_count))
-                        },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(16.dp),
-                    )
-
-                    // FIX: Mostra l'importo calcolato in read-only
-                    if (isMealVouchersPayment && state.amount.isNotBlank()) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        OutlinedTextField(
-                            value = state.amount,
-                            onValueChange = {}, // Read-only
-                            label = {
-                                AppText(stringResource(R.string.add_transaction_amount_total_meal_vouchers))
-                            },
-                            placeholder = { AppText("0.00") },
-                            enabled = false,
-                            singleLine = true,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .alpha(0.7f), // Rendi più trasparente per indicare disabilitato
-                            shape = RoundedCornerShape(16.dp),
-                        )
-                    }
-
-                    val voucherCount = state.mealVoucherCount.toIntOrNull() ?: 0
-                    val voucherTotal = voucherCount * state.mealVoucherValue
-
-                    if (voucherCount > 0) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        AppText(
-                            text = stringResource(
-                                R.string.add_transaction_meal_voucher_subtotal,
-                                String.format("%.2f", voucherTotal)
-                            ),
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.primary,
-                        )
-                    }
-                }
-
-                // Mostra la differenza pagata rispetto al valore coperto dai buoni (informativo)
-                // Ma NON la mostrare se è un'entrata di tipo "Buoni pasto"
-                val voucherCountForDifference = state.mealVoucherCount.toIntOrNull() ?: 0
-                val shouldShowMealVoucherDifference =
-                    voucherCountForDifference > 0 &&
-                    !(state.selectedType == TransactionType.INCOME && state.selectedCategory?.name == "Buoni pasto")
-
-                if (shouldShowMealVoucherDifference) {
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(MaterialTheme.colorScheme.primaryContainer)
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        AppText(
-                            text = stringResource(R.string.add_transaction_meal_voucher_difference_paid),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                        )
-                        AppText(
-                            text = String.format("%.2f€", state.mealVoucherDifferencePaid),
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary,
-                        )
-                    }
-                }
                 Spacer(modifier = Modifier.height(12.dp))
             }
 
@@ -508,49 +300,13 @@ internal fun DetailsStep(
             )
             Spacer(modifier = Modifier.height(12.dp))
 
-            // ── Ricorrente ──
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(
-                        if (state.isRecurring)
-                            MaterialTheme.colorScheme.primaryContainer
-                        else
-                            MaterialTheme.colorScheme.surfaceVariant
-                    )
-                    .clickable { setRecurring(!state.isRecurring) }
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    AppText(
-                        stringResource(R.string.add_transaction_recurring_label),
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                    if (state.isRecurring) {
-                        AppText(
-                            text = stringResource(R.string.recurrence_interval_label),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                }
-                Checkbox(
-                    checked = state.isRecurring,
-                    onCheckedChange = setRecurring,
-                )
-            }
-
-            if (state.isRecurring) {
-                Spacer(modifier = Modifier.height(12.dp))
-                RecurrenceIntervalDropdown(
-                    selectedInterval = state.recurrenceInterval,
-                    onIntervalChange = { onEvent(AddTransactionEvent.UpdateRecurrenceInterval(it)) },
-                )
-            }
+            // ── Ricorrenza ──
+            DetailsRecurrenceSection(
+                isRecurring = state.isRecurring,
+                recurrenceInterval = state.recurrenceInterval,
+                onRecurringChanged = setRecurring,
+                onIntervalChanged = { onEvent(AddTransactionEvent.UpdateRecurrenceInterval(it)) },
+            )
 
             // ── Errore ──
             if (state.error != null) {
@@ -712,13 +468,3 @@ private fun TagSelector(
     }
 }
 
-/**
- * Maschera visivamente le cifre del campo importo (come un campo password) mantenendo il
- * valore reale digitato/precaricato nello state, per lo Stipendio quando il mascheramento è
- * attivo. [OffsetMapping.Identity] è corretto perché [maskDigits] sostituisce carattere per
- * carattere senza cambiare la lunghezza della stringa.
- */
-private object MaskDigitsVisualTransformation : VisualTransformation {
-    override fun filter(text: AnnotatedString): TransformedText =
-        TransformedText(AnnotatedString(maskDigits(text.text)), OffsetMapping.Identity)
-}

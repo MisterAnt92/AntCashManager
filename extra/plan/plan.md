@@ -1,0 +1,1 @@
+Prossimo step: FASE 5.3 Refactoring ViewModel (estrarre TransactionLoadManager, TransactionSubmitManager, SuggestionsManager) oppure continuare con altri compiti della backlog.
