@@ -91,11 +91,20 @@ class TransactionSubmitManager(
      * @param state Lo stato della transazione
      * @param transactionId L'ID della transazione (0 per nuove, >0 per modifica)
      * @return Transaction pronta per il salvataggio
+     * @throws IllegalStateException Se selectedCategory o selectedType sono null
+     *                               (dovrebbero essere validati in validateTransactionState())
      */
     fun buildTransaction(state: AddTransactionState, transactionId: Long?): Transaction {
+        // Validate che categoria e tipo siano non-null
+        // (dovrebbero già essere validati in validateTransactionState, ma controlliamo qui per safety)
+        val selectedCategory = state.selectedCategory
+            ?: throw IllegalStateException("selectedCategory must not be null")
+        val selectedType = state.selectedType
+            ?: throw IllegalStateException("selectedType must not be null")
+
         // Calcola l'importo finale con il segno corretto
         val finalAmount = state.totalAmount.let { amount ->
-            if (state.selectedType == TransactionType.EXPENSE) {
+            if (selectedType == TransactionType.EXPENSE) {
                 -amount // Negativo per le spese
             } else {
                 amount // Positivo per le entrate
@@ -106,8 +115,8 @@ class TransactionSubmitManager(
             id = if (state.isModifying) transactionId ?: 0 else 0,
             title = state.title,
             amount = finalAmount,
-            category = state.selectedCategory!!.name,
-            type = state.selectedType!!,
+            category = selectedCategory.name,
+            type = selectedType,
             timestamp = state.timestamp,
             notes = state.notes,
             payee = state.payee,
@@ -117,8 +126,8 @@ class TransactionSubmitManager(
             recurrenceInterval = state.recurrenceInterval,
             paymentType = state.selectedPaymentType,
             mealVoucherCount = state.mealVoucherCount.toIntOrNull() ?: 0,
-            categoryIcon = state.selectedCategory!!.icon,
-            categoryColor = state.selectedCategory!!.color,
+            categoryIcon = selectedCategory.icon,
+            categoryColor = selectedCategory.color,
         )
     }
 
