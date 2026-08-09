@@ -61,10 +61,10 @@
     <string name="home_customize_top_cards_action">Personalizza card iniziali</string>
     <string name="home_customize_top_cards_title">Personalizza card iniziali</string>
     <string name="home_quick_insights_title">Insight rapidi</string>
+    <string name="home_quick_insights_net_balance">Bilancio netto</string>
     <string name="home_quick_insights_transactions_count">Transazioni nel periodo</string>
     <string name="home_quick_insights_average_amount">Importo medio</string>
-    <string name="home_quick_insights_savings_rate">Tasso di risparmio</string>
-    <string name="home_quick_insights_savings_rate_value">%1$.0f%%</string>
+    <string name="home_quick_insights_daily_average_expense">Media giornaliera</string>
     <string name="home_move_up">Sposta su</string>
     <string name="home_move_down">Sposta giu</string>
     <string name="home_balance_positive">📈 Positivo</string>

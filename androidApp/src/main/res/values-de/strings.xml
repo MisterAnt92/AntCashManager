@@ -27,10 +27,10 @@
     <string name="home_customize_top_cards_action">Obere Karten anpassen</string>
     <string name="home_customize_top_cards_title">Obere Karten anpassen</string>
     <string name="home_quick_insights_title">Schnelle Einblicke</string>
+    <string name="home_quick_insights_net_balance">Nettobilanzen</string>
     <string name="home_quick_insights_transactions_count">Transaktionen im Zeitraum</string>
     <string name="home_quick_insights_average_amount">Durchschnittsbetrag</string>
-    <string name="home_quick_insights_savings_rate">Sparquote</string>
-    <string name="home_quick_insights_savings_rate_value">%1$.0f%%</string>
+    <string name="home_quick_insights_daily_average_expense">Täglicher Durchschnitt</string>
     <string name="home_move_up">Nach oben</string>
     <string name="home_move_down">Nach unten</string>
     <string name="home_balance_positive">📈 Positiv</string>

@@ -35,13 +35,6 @@ import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
-data class HelpFeature(
-    val title: String,
-    val description: String,
-    val icon: ImageVector,
-    val iconTint: Color = Color.Unspecified,
-)
-
 data class SimpleHelpFeature(
     val title: String,
     val description: String,

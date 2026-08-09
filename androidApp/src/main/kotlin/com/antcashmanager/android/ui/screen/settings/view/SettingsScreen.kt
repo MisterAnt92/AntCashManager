@@ -109,12 +109,6 @@ fun SettingsScreen(
                 ).show()
             }
         },
-        onShowTutorial = {
-            viewModel.setIsTutorialCompleted(false)
-            navController.navigate(BottomNavItem.Home.route) {
-                launchSingleTop = true
-            }
-        },
         navController = navController,
         modifier = modifier,
     )
@@ -145,7 +139,6 @@ internal fun SettingsContent(
     onThousandsSeparatorSelected: (String) -> Unit = {},
     onImportDebugData: (Context) -> Unit = {},
     onSendFeedbackEmail: (String) -> Unit = {},
-    onShowTutorial: () -> Unit = {},
     navController: NavController? = null,
     modifier: Modifier = Modifier,
 ) {
@@ -362,18 +355,6 @@ internal fun SettingsContent(
                     },
                 )
             }
-
-            // ── Tutorial Section ──
-            AppCardSectionHeader(title = stringResource(R.string.settings_tutorial))
-            AppCard(
-                title = stringResource(R.string.settings_show_tutorial),
-                subtitle = stringResource(R.string.settings_show_tutorial_subtitle),
-                leadingIcon = Icons.Default.Info,
-                onClick = {
-                    analyticsManager.logEvent("tutorial_replay_requested")
-                    onShowTutorial()
-                },
-            )
 
             // ── About Section ──
             AppCardSectionHeader(title = stringResource(R.string.settings_about))

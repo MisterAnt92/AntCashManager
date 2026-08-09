@@ -57,8 +57,6 @@ fun AntScreenScaffold(
                 .padding(
                     start = adaptiveLayoutInfo.horizontalPadding,
                     end = adaptiveLayoutInfo.horizontalPadding,
-                    top = 2.dp,
-                    bottom = 2.dp,
                 ),
             contentAlignment = Alignment.TopCenter,
         ) {

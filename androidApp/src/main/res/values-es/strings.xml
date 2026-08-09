@@ -10,10 +10,10 @@
     <string name="home_customize_top_cards_action">Personalizar tarjetas superiores</string>
     <string name="home_customize_top_cards_title">Personalizar tarjetas superiores</string>
     <string name="home_quick_insights_title">Resumen r\u00e1pido</string>
+    <string name="home_quick_insights_net_balance">Saldo neto</string>
     <string name="home_quick_insights_transactions_count">Transacciones del periodo</string>
     <string name="home_quick_insights_average_amount">Importe medio</string>
-    <string name="home_quick_insights_savings_rate">Tasa de ahorro</string>
-    <string name="home_quick_insights_savings_rate_value">%1$.0f%%</string>
+    <string name="home_quick_insights_daily_average_expense">Promedio diario</string>
     <string name="home_move_up">Mover arriba</string>
     <string name="home_move_down">Mover abajo</string>
     <string name="home_balance_positive">📈 Positivo</string>

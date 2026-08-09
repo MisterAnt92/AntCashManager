@@ -28,10 +28,10 @@
     <string name="home_customize_top_cards_action">Customize top cards</string>
     <string name="home_customize_top_cards_title">Customize top cards</string>
     <string name="home_quick_insights_title">Quick insights</string>
+    <string name="home_quick_insights_net_balance">Net balance</string>
     <string name="home_quick_insights_transactions_count">Transactions in period</string>
     <string name="home_quick_insights_average_amount">Average amount</string>
-    <string name="home_quick_insights_savings_rate">Savings rate</string>
-    <string name="home_quick_insights_savings_rate_value">%1$.0f%%</string>
+    <string name="home_quick_insights_daily_average_expense">Daily average</string>
     <string name="home_move_up">Move up</string>
     <string name="home_move_down">Move down</string>
     <string name="home_balance_positive">📈 Positive</string>

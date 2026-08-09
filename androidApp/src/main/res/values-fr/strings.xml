@@ -10,10 +10,10 @@
     <string name="home_customize_top_cards_action">Personnaliser les cartes du haut</string>
     <string name="home_customize_top_cards_title">Personnaliser les cartes du haut</string>
     <string name="home_quick_insights_title">Aper\u00e7us rapides</string>
+    <string name="home_quick_insights_net_balance">Solde net</string>
     <string name="home_quick_insights_transactions_count">Transactions sur la p\u00e9riode</string>
     <string name="home_quick_insights_average_amount">Montant moyen</string>
-    <string name="home_quick_insights_savings_rate">Taux d\'\u00e9pargne</string>
-    <string name="home_quick_insights_savings_rate_value">%1$.0f%%</string>
+    <string name="home_quick_insights_daily_average_expense">Moyenne quotidienne</string>
     <string name="home_move_up">Monter</string>
     <string name="home_move_down">Descendre</string>
     <string name="home_balance_positive">📈 Positif</string>

@@ -163,6 +163,19 @@ internal fun HomeContent(
             .maxByOrNull { kotlin.math.abs(it.amount) }
     }
 
+    // Calcoli per Quick Insights Card
+    val netBalance = remember(state.totalIncome, state.totalExpense) {
+        state.totalIncome - state.totalExpense
+    }
+    val dailyAverageExpense = remember(state.totalExpense, state.dateRangeFrom, state.dateRangeTo) {
+        val daysInPeriod = (state.dateRangeTo - state.dateRangeFrom) / 86400000.0 // Convert ms to days
+        if (daysInPeriod > 0) {
+            kotlin.math.abs(state.totalExpense) / daysInPeriod
+        } else {
+            0.0
+        }
+    }
+
     // Elenco delle top card effettivamente visibili: esclude Quick Insights quando
     // l'impostazione corrispondente è disattivata. Riusato sia per il rendering
     // (visibleTopCardsOrder) sia come base per il dialog di riordino
@@ -461,6 +474,8 @@ internal fun HomeContent(
                                     totalIncome = state.totalIncome,
                                     totalExpense = state.totalExpense,
                                     transactionCount = state.filteredTransactions.size,
+                                    netBalance = netBalance,
+                                    dailyAverageExpense = dailyAverageExpense,
                                     biggestExpenseCategory = biggestExpense?.category,
                                     biggestExpenseAmount = biggestExpense?.amount,
                                 )
