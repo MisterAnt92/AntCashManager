@@ -5,9 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.screen.transactions.addImport.event.AddTransactionEvent
+import com.antcashmanager.android.ui.screen.transactions.addImport.manager.TransactionLoadManager
+import com.antcashmanager.android.ui.screen.transactions.addImport.manager.TransactionSubmitManager
+import com.antcashmanager.android.ui.screen.transactions.addImport.manager.SuggestionsManager
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
-import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.settings.GetMealVoucherValueUseCase
@@ -23,21 +25,17 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.math.abs
-import java.util.Locale
 
 // ══════════════════════════════════════════════════════════════════════════════
 // VIEWMODEL
 // ══════════════════════════════════════════════════════════════════════════════
 
 class AddTransactionViewModel(
-    private val getCategoriesUseCase: GetCategoriesUseCase,
-    private val getMealVoucherValueUseCase: GetMealVoucherValueUseCase,
-    private val getTransactionByIdUseCase: GetTransactionByIdUseCase,
-    private val insertTransactionUseCase: InsertTransactionUseCase,
-    private val updateTransactionUseCase: UpdateTransactionUseCase,
+    private val loadManager: TransactionLoadManager,
+    private val submitManager: TransactionSubmitManager,
+    private val suggestionsManager: SuggestionsManager,
     private val deleteTransactionUseCase: DeleteTransactionUseCase,
-    private val getTransactionSuggestionsUseCase: GetTransactionSuggestionsUseCase,
+    private val getTransactionByIdUseCase: GetTransactionByIdUseCase,
     private val analyticsManager: AnalyticsManager,
     private val transactionId: Long? = null,
 ) : BaseViewModel<AddTransactionEvent>() {
@@ -57,38 +55,35 @@ class AddTransactionViewModel(
 
     private fun loadMealVoucherValue() {
         viewModelScope.launch {
-            try {
-                val mealVoucherValue = getMealVoucherValueUseCase().first().getOrDefault(0.0)
-                _state.update { it.copy(mealVoucherValue = mealVoucherValue) }
-            } catch (ex: Exception) {
-                logError("Error loading meal voucher value: ${ex.message}")
-                // Keep default value
-            }
+            loadManager.loadMealVoucherValue()
+                .onSuccess { mealVoucherValue ->
+                    _state.update { it.copy(mealVoucherValue = mealVoucherValue) }
+                }
+                .onFailure { error ->
+                    if (error is CancellationException) throw error
+                    logError("Error loading meal voucher value: ${error.message}", error)
+                }
         }
     }
 
     private fun loadCategories() {
         viewModelScope.launch {
-            getCategoriesUseCase().collect { result ->
-                result.onSuccess { categories ->
-                    // Le categorie nascoste non vanno offerte per nuove transazioni.
-                    // Mantieni ordine consistente tramite sortOrder dal database.
-                    val sorted = categories.filterNot { category -> category.isHidden }
-                        .sortedBy { it.sortOrder }
-                    _state.update { it.copy(categories = sorted) }
-                }.onFailure { error ->
+            loadManager.loadCategories()
+                .onSuccess { categories ->
+                    _state.update { it.copy(categories = categories) }
+                }
+                .onFailure { error ->
                     if (error is CancellationException) throw error
                     logError("Error loading categories: ${error.message}", error)
                     _state.update { it.copy(error = AddTransactionConstant.ERROR_LOAD_CATEGORIES) }
                 }
-            }
         }
     }
 
     private fun loadTransactionSuggestions() {
         logDebug("Loading transaction suggestions")
         viewModelScope.launch {
-            getTransactionSuggestionsUseCase().collect { result ->
+            suggestionsManager.getSuggestions().collect { result ->
                 result.onSuccess { suggestions ->
                     logDebug("Suggestions loaded - titles: ${suggestions.titles.size}, " +
                                 "payees: ${suggestions.payees.size}, " +
@@ -115,80 +110,25 @@ class AddTransactionViewModel(
                 _state.update { it.copy(isLoading = true) }
                 logDebug("Loading transaction with id: $id")
 
-                val transaction = getTransactionByIdUseCase(id).getOrThrow()
-                val categoryResult = getCategoriesUseCase().first()
-                val categoryList = try {
-                    categoryResult.getOrThrow()
-                } catch (e: CancellationException) {
-                    throw e
-                } catch (e: Exception) {
-                    logError("Error loading categories for edit: ${e.message}")
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            error = AddTransactionConstant.ERROR_LOAD_CATEGORIES,
-                        )
+                loadManager.prepareEditState(id, _state.value)
+                    .onSuccess { newState ->
+                        _state.value = newState.copy(currentStep = AddTransactionStep.DETAILS)
+                        logDebug("Transaction loaded: ${newState.title}, category: ${newState.selectedCategory?.name}")
                     }
-                    emptyList()
-                }
-
-                if (transaction != null) {
-                    val selectedCat = categoryList.find { it.name == transaction.category }
-                    logDebug("Transaction loaded: ${transaction.title}, category: $selectedCat")
-
-                    // FASE 2: Verifica se la categoria è stata cancellata
-                    if (selectedCat == null) {
-                        logWarn("Category '${transaction.category}' not found for transaction ${transaction.id}")
+                    .onFailure { error ->
+                        if (error is CancellationException) throw error
+                        logError("Error loading transaction: ${error.message}")
+                        val errorMessage = when (error) {
+                            is IllegalArgumentException -> error.message ?: AddTransactionConstant.ERROR_LOAD_TRANSACTION
+                            else -> AddTransactionConstant.ERROR_LOAD_TRANSACTION
+                        }
                         _state.update {
                             it.copy(
                                 isLoading = false,
-                                error = "Categoria non trovata: ${transaction.category}",
+                                error = errorMessage,
                             )
                         }
-                        return@launch
                     }
-
-                    // La categoria già assegnata alla transazione deve restare selezionabile
-                    // nel picker anche se nel frattempo è stata nascosta, altrimenti l'utente
-                    // non la vedrebbe più tra le opzioni durante la modifica.
-                    val visibleCategories = categoryList.filterNot { it.isHidden }
-                    val categoriesForPicker = if (selectedCat.isHidden) {
-                        visibleCategories + selectedCat
-                    } else {
-                        visibleCategories
-                    }
-
-                    _state.update {
-                        it.copy(
-                            isModifying = true,
-                            transactionId = id,
-                            selectedCategory = selectedCat,
-                            selectedType = transaction.type,
-                            title = transaction.title,
-                            amount = abs(transaction.amount).toString(),
-                            notes = transaction.notes,
-                            payee = transaction.payee,
-                            location = transaction.location,
-                            tags = transaction.tags,
-                            timestamp = transaction.timestamp,
-                            isRecurring = transaction.isRecurring,
-                            recurrenceInterval = transaction.recurrenceInterval,
-                            selectedPaymentType = transaction.paymentType,
-                            mealVoucherCount = transaction.mealVoucherCount.toString(),
-                            currentStep = AddTransactionStep.DETAILS,
-                            isLoading = false,
-                            categories = categoriesForPicker,
-                        )
-                    }
-                } else {
-                    logWarn("Transaction with id $id not found")
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            error = AddTransactionConstant.ERROR_TRANSACTION_NOT_FOUND,
-                        )
-                    }
-                }
             } catch (ex: CancellationException) {
                 throw ex
             } catch (ex: Exception) {
@@ -375,102 +315,40 @@ class AddTransactionViewModel(
     private fun submitTransaction() {
         val currentState = _state.value
 
-        if (currentState.selectedCategory == null || currentState.selectedType == null) {
-            _state.update { it.copy(error = AddTransactionConstant.ERROR_REQUIRED_CATEGORY_TYPE) }
+        // Valida lo stato usando il manager
+        val validationError = submitManager.validateTransactionState(currentState)
+        if (validationError != null) {
+            _state.update { it.copy(error = validationError) }
+            val errorType = when (validationError) {
+                AddTransactionConstant.ERROR_REQUIRED_CATEGORY_TYPE -> "missing_category_or_type"
+                AddTransactionConstant.ERROR_REQUIRED_TITLE_AMOUNT -> "missing_title_or_amount"
+                AddTransactionConstant.ERROR_INVALID_AMOUNT -> "invalid_amount"
+                "Categoria non più disponibile" -> "category_not_found"
+                "Numero buoni pasto non valido" -> "invalid_meal_voucher_count"
+                else -> "unknown"
+            }
             analyticsManager.logEvent("transaction_form_validation_failed", Bundle().apply {
-                putString("error_type", "missing_category_or_type")
+                putString("error_type", errorType)
             })
             return
-        }
-
-        // FASE 1: Validare che la categoria esista ancora nella lista disponibile
-        if (!currentState.categories.any { it.id == currentState.selectedCategory?.id }) {
-            _state.update { it.copy(error = "Categoria non più disponibile") }
-            analyticsManager.logEvent("transaction_form_validation_failed", Bundle().apply {
-                putString("error_type", "category_not_found")
-            })
-            return
-        }
-
-        // FIX: Titolo sempre obbligatorio
-        if (currentState.title.isBlank()) {
-            _state.update { it.copy(error = AddTransactionConstant.ERROR_REQUIRED_TITLE_AMOUNT) }
-            analyticsManager.logEvent("transaction_form_validation_failed", Bundle().apply {
-                putString("error_type", "missing_title")
-            })
-            return
-        }
-
-        // FIX: Validazione differenziata per MEAL_VOUCHERS
-        if (currentState.selectedPaymentType == PaymentType.MEAL_VOUCHERS) {
-            // Per MEAL_VOUCHERS: validare solo mealVoucherCount (amount viene calcolato automaticamente)
-            val voucherCount = currentState.mealVoucherCount.toIntOrNull()
-            if (voucherCount == null || voucherCount <= 0) {
-                _state.update { it.copy(error = "Numero buoni pasto non valido") }
-                analyticsManager.logEvent("transaction_form_validation_failed", Bundle().apply {
-                    putString("error_type", "invalid_meal_voucher_count")
-                })
-                return
-            }
-        } else {
-            // Per altre transazioni: validare amount totale
-            if (currentState.amount.isBlank()) {
-                _state.update { it.copy(error = AddTransactionConstant.ERROR_REQUIRED_TITLE_AMOUNT) }
-                analyticsManager.logEvent("transaction_form_validation_failed", Bundle().apply {
-                    putString("error_type", "missing_amount")
-                })
-                return
-            }
-            val amount = currentState.amount.toDoubleOrNull()
-            if (amount == null || amount <= 0) {
-                _state.update { it.copy(error = AddTransactionConstant.ERROR_INVALID_AMOUNT) }
-                analyticsManager.logEvent("transaction_form_validation_failed", Bundle().apply {
-                    putString("error_type", "invalid_amount")
-                })
-                return
-            }
         }
 
         viewModelScope.launch {
             try {
                 _state.update { it.copy(isLoading = true) }
 
-                // Calcola l'importo finale: positivo per INCOME, negativo per EXPENSE
-                val finalAmount = currentState.totalAmount.let { amount ->
-                    if (currentState.selectedType == TransactionType.EXPENSE) {
-                        -amount // Nega per le spese
-                    } else {
-                        amount // Mantieni positivo per le entrate
-                    }
-                }
+                // Costruisce il Transaction usando il manager
+                val transaction = submitManager.buildTransaction(currentState, transactionId)
 
-                val transaction = Transaction(
-                    id = if (currentState.isModifying) transactionId ?: 0 else 0,
-                    title = currentState.title,
-                    amount = finalAmount,
-                    category = currentState.selectedCategory.name,
-                    type = currentState.selectedType,
-                    timestamp = currentState.timestamp,
-                    notes = currentState.notes,
-                    payee = currentState.payee,
-                    location = currentState.location,
-                    tags = currentState.tags,
-                    isRecurring = currentState.isRecurring,
-                    recurrenceInterval = currentState.recurrenceInterval,
-                    paymentType = currentState.selectedPaymentType,
-                    mealVoucherCount = currentState.mealVoucherCount.toIntOrNull() ?: 0,
-                    categoryIcon = currentState.selectedCategory.icon,
-                    categoryColor = currentState.selectedCategory.color,
-                )
-
-                if (currentState.isModifying) {
-                    val result = updateTransactionUseCase(transaction)
-                    result.onSuccess {
-                        logDebug("Transaction updated successfully")
+                // Salva il Transaction usando il manager
+                submitManager.saveTransaction(transaction, currentState.isModifying)
+                    .onSuccess {
+                        logDebug("Transaction ${if (currentState.isModifying) "updated" else "inserted"} successfully")
                         _state.update { it.copy(isTransactionSaved = true, isLoading = false) }
-                    }.onFailure { error ->
+                    }
+                    .onFailure { error ->
                         if (error is CancellationException) throw error
-                        logError("Error updating transaction", error)
+                        logError("Error saving transaction", error)
                         _state.update {
                             it.copy(
                                 error = AddTransactionConstant.ERROR_SAVE,
@@ -478,22 +356,6 @@ class AddTransactionViewModel(
                             )
                         }
                     }
-                } else {
-                    val result = insertTransactionUseCase(transaction)
-                    result.onSuccess {
-                        logDebug("Transaction inserted successfully")
-                        _state.update { it.copy(isTransactionSaved = true, isLoading = false) }
-                    }.onFailure { error ->
-                        if (error is CancellationException) throw error
-                        logError("Error inserting transaction", error)
-                        _state.update {
-                            it.copy(
-                                error = AddTransactionConstant.ERROR_SAVE,
-                                isLoading = false
-                            )
-                        }
-                    }
-                }
             } catch (ex: CancellationException) {
                 throw ex
             } catch (ex: Exception) {
