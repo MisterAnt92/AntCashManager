@@ -62,9 +62,10 @@ import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.data.formatter.ShareTextFormatter
-import com.antcashmanager.android.ui.components.common.ScreenHeader
 import com.antcashmanager.android.ui.components.dialog.HelpButton
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
+import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
+import com.antcashmanager.android.navigation.ScreenHeaderConfig
 import com.antcashmanager.android.ui.components.state.AntEmptyState
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.charts.ChartData
@@ -73,6 +74,11 @@ import com.antcashmanager.android.ui.screen.charts.ChartsViewModel
 import com.antcashmanager.android.ui.screen.charts.MonthlyAmount
 import com.antcashmanager.android.ui.screen.charts.RangePreset
 import com.antcashmanager.android.ui.screen.charts.YearlyAmount
+import com.antcashmanager.android.ui.screen.charts.view.DailyExpenseLineChartCard
+import com.antcashmanager.android.ui.screen.charts.view.QuickStatsCard
+import com.antcashmanager.android.ui.screen.charts.view.SavingsRateCard
+import com.antcashmanager.android.ui.screen.charts.view.SpendingForecastCard
+import com.antcashmanager.android.ui.screen.charts.view.WeekdayExpenseCard
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.ThemeConstants
 import com.antcashmanager.android.util.LocalAmountsMasked
@@ -159,6 +165,25 @@ internal fun ChartsContent(
         HelpDialog(onDismiss = { showHelpDialog = false })
     }
 
+    // Configure screen header with actions
+    val headerConfigCallback = LocalScreenHeaderConfigCallback.current
+    val chartsTitle = stringResource(R.string.common_charts)
+    LaunchedEffect(Unit) {
+        headerConfigCallback?.invoke(
+            ScreenHeaderConfig(
+                title = chartsTitle,
+                actions = {
+                    HelpButton(
+                        onHelpClick = {
+                            analyticsManager.logEvent("chart_help_opened")
+                            showHelpDialog = true
+                        },
+                    )
+                },
+            )
+        )
+    }
+
     // Ripartizione per metodo di pagamento con etichette tradotte, pronta per essere
     // renderizzata dallo stesso CategoryPieChartCard usato per entrate/uscite.
     val electronicLabel = stringResource(R.string.payment_type_electronic)
@@ -221,18 +246,6 @@ internal fun ChartsContent(
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = 80.dp), // Extra space for visibility
         ) {
-            ScreenHeader(
-                title = stringResource(R.string.common_charts),
-                actions = {
-                    HelpButton(
-                        onHelpClick = {
-                            analyticsManager.logEvent("chart_help_opened")
-                            showHelpDialog = true
-                        },
-                    )
-                },
-            )
-            Spacer(modifier = Modifier.height(16.dp))
 
             PeriodFilterCard(
                 chartCardContainerColor = chartCardContainerColor,
@@ -251,6 +264,10 @@ internal fun ChartsContent(
 
             ChartsSummaryRow(chartData = chartData, fmt = fmt)
             Spacer(modifier = Modifier.height(20.dp))
+
+            // New Visualizations Section
+            NewVisualizationsSection(chartData = chartData, adaptiveLayoutInfo = adaptiveLayoutInfo)
+            Spacer(modifier = Modifier.height(24.dp))
 
             if (adaptiveLayoutInfo.isCompact) {
                 // Telefono: colonna singola, ordine invariato + nuove sezioni in coda.
@@ -658,6 +675,41 @@ private fun PeriodFilterCard(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun NewVisualizationsSection(
+    chartData: ChartData,
+    adaptiveLayoutInfo: com.antcashmanager.android.ui.components.layout.AdaptiveLayoutInfo,
+) {
+    if (adaptiveLayoutInfo.isCompact) {
+        // Phone: single column
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            SavingsRateCard(chartData = chartData)
+            SpendingForecastCard(chartData = chartData)
+            QuickStatsCard(chartData = chartData)
+            DailyExpenseLineChartCard(chartData = chartData)
+            WeekdayExpenseCard(chartData = chartData)
+        }
+    } else {
+        // Tablet: 2 columns for first 4 cards, full width for weekday
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    SavingsRateCard(chartData = chartData)
+                    QuickStatsCard(chartData = chartData)
+                }
+                Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    SpendingForecastCard(chartData = chartData)
+                    DailyExpenseLineChartCard(chartData = chartData)
+                }
+            }
+            WeekdayExpenseCard(chartData = chartData)
         }
     }
 }
