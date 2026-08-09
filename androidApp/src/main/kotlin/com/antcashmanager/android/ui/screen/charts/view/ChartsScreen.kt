@@ -26,6 +26,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DatePicker
@@ -140,6 +142,7 @@ internal fun ChartsContent(
     var showFromPicker by remember { mutableStateOf(false) }
     var showToPicker by remember { mutableStateOf(false) }
     var showHelpDialog by remember { mutableStateOf(false) }
+    var isVisualizationsSectionExpanded by remember { mutableStateOf(true) }
     val chartCardContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh
 
     // Sync selectedPreset when initialPresetIndex changes
@@ -265,8 +268,37 @@ internal fun ChartsContent(
             ChartsSummaryRow(chartData = chartData, fmt = fmt)
             Spacer(modifier = Modifier.height(20.dp))
 
-            // New Visualizations Section
-            NewVisualizationsSection(chartData = chartData, adaptiveLayoutInfo = adaptiveLayoutInfo)
+            // Collapsable New Visualizations Section
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AppText(
+                    text = stringResource(R.string.charts_period),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+                IconButton(
+                    onClick = { isVisualizationsSectionExpanded = !isVisualizationsSectionExpanded },
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Icon(
+                        imageVector = if (isVisualizationsSectionExpanded)
+                            Icons.Default.KeyboardArrowUp
+                        else
+                            Icons.Default.CalendarMonth,
+                        contentDescription = stringResource(R.string.common_close),
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
+
+            if (isVisualizationsSectionExpanded) {
+                NewVisualizationsSection(chartData = chartData, adaptiveLayoutInfo = adaptiveLayoutInfo)
+            }
             Spacer(modifier = Modifier.height(24.dp))
 
             if (adaptiveLayoutInfo.isCompact) {
@@ -686,16 +718,61 @@ private fun NewVisualizationsSection(
 ) {
     if (adaptiveLayoutInfo.isCompact) {
         // Phone: single column
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             SavingsRateCard(chartData = chartData)
             SpendingForecastCard(chartData = chartData)
             QuickStatsCard(chartData = chartData)
             DailyExpenseLineChartCard(chartData = chartData)
             WeekdayExpenseCard(chartData = chartData)
         }
+    } else if (adaptiveLayoutInfo.isExpanded) {
+        // Tablet 10"+: 3-column layout for maximum screen utilization
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    SavingsRateCard(chartData = chartData)
+                }
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    SpendingForecastCard(chartData = chartData)
+                }
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    QuickStatsCard(chartData = chartData)
+                }
+            }
+            // Full width charts
+            DailyExpenseLineChartCard(chartData = chartData)
+            WeekdayExpenseCard(chartData = chartData)
+        }
     } else {
-        // Tablet: 2 columns for first 4 cards, full width for weekday
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        // Tablet 7" (medium): 2-column layout
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
