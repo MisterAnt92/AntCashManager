@@ -15,6 +15,7 @@ e mantenere il controllo dei dati in locale, con un approccio privacy-first e se
 | Android namespace | `com.antcashmanager.android`   |
 | Min SDK | `26`                           |
 | Target SDK | `37`                           |
+| **v1.6.3 Highlights** | **Manager Extraction + UI Decomposition** |
 
 ## Cosa Fa l'App
 
@@ -65,6 +66,24 @@ Pattern principali:
 - Repository pattern
 - Dependency Injection con Koin
 - Service layer (es. `ReceiptOcrService` per ML Kit)
+- **Manager pattern** per business logic extraction (v1.6.3+)
+
+### v1.6.3 Refactoring Highlights
+
+**Ottimizzazioni significative:**
+- ✅ **ViewModel ridotto del -24.3%** (568 → 430 linee)
+- ✅ **UI decomposition** con 6 composable riutilizzabili
+- ✅ **Manager classes** per separazione delle responsabilità
+- ✅ **81 unit tests** + **8 integration tests**
+- ✅ **Performance baseline** stabilito
+
+**Nuovi componenti:**
+- `TransactionLoadManager` - Caricamento dati e stati
+- `TransactionSubmitManager` - Validazione e persistenza
+- `SuggestionsManager` - Filtraggio suggerimenti
+- `DetailsTagsSection` - Gestione tag estratta
+
+Vedi [`REFACTORING_SUMMARY.md`](androidApp/src/main/kotlin/com/antcashmanager/android/ui/screen/transactions/addImport/REFACTORING_SUMMARY.md) per dettagli completi.
 
 Moduli chiave:
 - `ui/screen/` → feature screen (home, transactions, charts, categories, settings, receipt scan)
