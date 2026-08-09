@@ -1319,6 +1319,27 @@ private fun ChartsContentPreview() {
                     PaymentType.CASH to 150.0,
                     PaymentType.MEAL_VOUCHERS to 100.0,
                 ),
+                // New data for visualization cards
+                dailyTimeline = listOf(
+                    com.antcashmanager.android.ui.screen.charts.DailyAmount("2026-08-01", 45.50),
+                    com.antcashmanager.android.ui.screen.charts.DailyAmount("2026-08-02", 62.30),
+                    com.antcashmanager.android.ui.screen.charts.DailyAmount("2026-08-03", 38.90),
+                    com.antcashmanager.android.ui.screen.charts.DailyAmount("2026-08-04", 72.15),
+                    com.antcashmanager.android.ui.screen.charts.DailyAmount("2026-08-05", 55.00),
+                    com.antcashmanager.android.ui.screen.charts.DailyAmount("2026-08-06", 68.45),
+                    com.antcashmanager.android.ui.screen.charts.DailyAmount("2026-08-07", 41.80),
+                    com.antcashmanager.android.ui.screen.charts.DailyAmount("2026-08-08", 85.20),
+                    com.antcashmanager.android.ui.screen.charts.DailyAmount("2026-08-09", 52.60),
+                ),
+                expenseByWeekday = mapOf(
+                    1 to 48.5,  // Monday
+                    2 to 65.3,  // Tuesday
+                    3 to 42.1,  // Wednesday
+                    4 to 58.9,  // Thursday
+                    5 to 72.4,  // Friday
+                    6 to 35.2,  // Saturday
+                    7 to 39.8   // Sunday
+                ),
             ),
             dateRange = DateRange(
                 System.currentTimeMillis() - 30L * 24 * 60 * 60 * 1000,

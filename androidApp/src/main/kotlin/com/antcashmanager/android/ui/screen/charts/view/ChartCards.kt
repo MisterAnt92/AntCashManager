@@ -56,10 +56,12 @@ internal fun SavingsRateCard(
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
+            SavingsRateGauge(savingsRatePercent = savingsRate, modifier = Modifier.fillMaxWidth())
+            Spacer(modifier = Modifier.height(12.dp))
             Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-                AppText(text = "${stringResource(id = R.string.chart_savings_percentage)}: $savingsRate%")
-                AppText(text = formatAmount(chartData.totalIncome, format))
+                AppText(text = "${stringResource(id = R.string.chart_savings_percentage)}: $savingsRate%", style = MaterialTheme.typography.bodySmall)
+                AppText(text = formatAmount(chartData.totalIncome, format), style = MaterialTheme.typography.bodySmall)
             }
         }
     }
@@ -177,10 +179,15 @@ internal fun DailyExpenseLineChartCard(
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
+            ExpenseLineChart(
+                dailyExpenses = displayData.map { it.expense },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(12.dp))
             Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-                AppText(text = stringResource(id = R.string.chart_last_14_days))
-                AppText(text = "${stringResource(id = R.string.chart_average)}: ${formatAmount(avgExpense, format)}")
+                AppText(text = stringResource(id = R.string.chart_last_14_days), style = MaterialTheme.typography.bodySmall)
+                AppText(text = "${stringResource(id = R.string.chart_average)}: ${formatAmount(avgExpense, format)}", style = MaterialTheme.typography.bodySmall)
             }
         }
     }
@@ -194,7 +201,6 @@ internal fun WeekdayExpenseCard(
     if (chartData.expenseByWeekday.isEmpty()) return
 
     val weekdayLabels = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
-    val maxExpense = chartData.expenseByWeekday.values.maxOrNull() ?: 1.0
     val format = LocalCurrencyFormat.current
 
     Card(
@@ -209,12 +215,24 @@ internal fun WeekdayExpenseCard(
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            (1..7).forEach { day ->
-                val expense = chartData.expenseByWeekday[day] ?: 0.0
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    AppText(text = weekdayLabels.getOrNull(day - 1) ?: "?", style = MaterialTheme.typography.bodySmall)
-                    AppText(text = formatAmount(expense, format), style = MaterialTheme.typography.bodySmall)
+            Spacer(modifier = Modifier.height(12.dp))
+            WeekdayBarChart(
+                expenseByWeekday = chartData.expenseByWeekday,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                (1..7).forEach { day ->
+                    val expense = chartData.expenseByWeekday[day] ?: 0.0
+                    Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+                        AppText(text = weekdayLabels.getOrNull(day - 1) ?: "?", style = MaterialTheme.typography.labelSmall)
+                        if (expense > 0.0) {
+                            AppText(text = formatAmount(expense, format), style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
+                        }
+                    }
                 }
             }
         }
