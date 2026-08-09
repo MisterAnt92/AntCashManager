@@ -580,5 +580,21 @@
     <string name="settings_title">Settings</string>
     <string name="charts_title">Graphics</string>
     <string name="settings_project_by">A project made with love by Formica Simone @MisterAnt92</string>
+    <!-- Chart Cards - New Visualizations -->
+    <string name="chart_savings_rate_title">Savings Rate</string>
+    <string name="chart_total_income">Total Income</string>
+    <string name="chart_savings_percentage">% Saved</string>
+    <string name="chart_spending_forecast_title">Spending Forecast</string>
+    <string name="chart_avg_monthly">Monthly Average</string>
+    <string name="chart_period">Period</string>
+    <string name="chart_last_3_months">Last 3 months</string>
+    <string name="chart_quick_stats_title">Quick Stats</string>
+    <string name="chart_days_tracked">Days Tracked</string>
+    <string name="chart_max_daily">Max Daily</string>
+    <string name="chart_avg_daily">Daily Average</string>
+    <string name="chart_daily_expenses_title">Daily Expenses</string>
+    <string name="chart_last_14_days">Last 14 days</string>
+    <string name="chart_average">Average</string>
+    <string name="chart_weekday_distribution_title">Weekday Distribution</string>
 
 </resources>

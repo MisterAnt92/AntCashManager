@@ -254,6 +254,37 @@ class ChartsViewModel(
             .mapValues { (_, txs) -> kotlin.math.abs(txs.sumOf { it.amount }) }
             .filterValues { it != 0.0 }
 
+        // Calculate expense by weekday (1=Mon...7=Sun per EU convention)
+        val expenseByWeekday = expenseTransactions
+            .groupBy { tx ->
+                cal.timeInMillis = tx.timestamp
+                // Calendar.DAY_OF_WEEK: 1=Sun, 2=Mon, ..., 7=Sat
+                // Convert to EU convention: 1=Mon, 2=Tue, ..., 7=Sun
+                val calendarDayOfWeek = cal.get(Calendar.DAY_OF_WEEK)
+                if (calendarDayOfWeek == 1) 7 else calendarDayOfWeek - 1
+            }
+            .mapValues { (_, txs) ->
+                if (txs.isNotEmpty()) {
+                    kotlin.math.abs(txs.sumOf { it.amount }) / txs.size
+                } else 0.0
+            }
+
+        // Calculate daily timeline (sorted by date, only expenses)
+        val dateFormat = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)
+        val dailyMap = mutableMapOf<String, Double>()
+        expenseTransactions.forEach { tx ->
+            cal.timeInMillis = tx.timestamp
+            val dateLabel = dateFormat.format(cal.time)
+            val current = dailyMap.getOrDefault(dateLabel, 0.0)
+            dailyMap[dateLabel] = current + kotlin.math.abs(tx.amount)
+        }
+
+        val dailyTimeline = dailyMap.entries
+            .sortedBy { it.key }
+            .map { (dateLabel, expense) ->
+                DailyAmount(dateLabel = dateLabel, expense = expense)
+            }
+
         return ChartData(
             incomeByCategory = incomeByCategory,
             expenseByCategory = expenseByCategory,
@@ -262,6 +293,8 @@ class ChartsViewModel(
             monthlyData = monthlyData,
             yearlyData = yearlyData,
             paymentTypeBreakdown = paymentTypeBreakdown,
+            dailyTimeline = dailyTimeline,
+            expenseByWeekday = expenseByWeekday,
         )
     }
 }

@@ -506,4 +506,20 @@
     <string name="dialog_cancel">Annulla</string>
     <string name="dialog_close">Chiudi</string>
     <string name="settings_project_by">Un progetto fatto con amore da Formica Simone @MisterAnt92</string>
+    <!-- Chart Cards - New Visualizations -->
+    <string name="chart_savings_rate_title">Tasso di Risparmio</string>
+    <string name="chart_total_income">Entrate Totali</string>
+    <string name="chart_savings_percentage">% Risparmiato</string>
+    <string name="chart_spending_forecast_title">Previsione Spesa</string>
+    <string name="chart_avg_monthly">Media Mensile</string>
+    <string name="chart_period">Periodo</string>
+    <string name="chart_last_3_months">Ultimi 3 mesi</string>
+    <string name="chart_quick_stats_title">Statistiche Rapide</string>
+    <string name="chart_days_tracked">Giorni Tracciati</string>
+    <string name="chart_max_daily">Massimo Giornaliero</string>
+    <string name="chart_avg_daily">Media Giornaliera</string>
+    <string name="chart_daily_expenses_title">Uscite Giornaliere</string>
+    <string name="chart_last_14_days">Ultimi 14 giorni</string>
+    <string name="chart_average">Media</string>
+    <string name="chart_weekday_distribution_title">Distribuzione per Giorno</string>
 </resources>

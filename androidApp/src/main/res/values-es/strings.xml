@@ -501,5 +501,21 @@
     <string name="settings_easter_egg_message">🐜 ¡Hola! ¡Gracias por usar AntCash!</string>
     <string name="settings_title">Settings</string>
     <string name="settings_project_by">Un proyecto hecho con amor por Formica Simone @MisterAnt92</string>
+    <!-- Chart Cards - New Visualizations -->
+    <string name="chart_savings_rate_title">Tasa de Ahorro</string>
+    <string name="chart_total_income">Ingresos Totales</string>
+    <string name="chart_savings_percentage">% Ahorrado</string>
+    <string name="chart_spending_forecast_title">Previsión de Gastos</string>
+    <string name="chart_avg_monthly">Promedio Mensual</string>
+    <string name="chart_period">Período</string>
+    <string name="chart_last_3_months">Últimos 3 meses</string>
+    <string name="chart_quick_stats_title">Estadísticas Rápidas</string>
+    <string name="chart_days_tracked">Días Registrados</string>
+    <string name="chart_max_daily">Máximo Diario</string>
+    <string name="chart_avg_daily">Promedio Diario</string>
+    <string name="chart_daily_expenses_title">Gastos Diarios</string>
+    <string name="chart_last_14_days">Últimos 14 días</string>
+    <string name="chart_average">Promedio</string>
+    <string name="chart_weekday_distribution_title">Distribución por Día</string>
 </resources>
 
