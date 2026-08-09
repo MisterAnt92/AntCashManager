@@ -6,13 +6,39 @@ Guide for AI coding agents working in this codebase. Read before making any chan
 
 ## ⚠️ CRITICAL: Never Commit Changes
 
-**AGENTS (AI assistants) MUST NEVER create git commits or push changes to the repository.**
+**AGENTS (AI assistants) MUST NEVER create git commits or push changes to the repository. NEVER. EVER.**
 
-- Write code, edit files, create new files as needed for the task.
-- Run tests and verify changes locally.
-- **STOP before `git add`, `git commit`, or `git push`.**
-- Present all changes for **human review and approval** before committing.
-- Only the human user can authorize and execute commits.
+### Non-Negotiable Policy:
+1. **NO `git add`** – Do not stage any files automatically
+2. **NO `git commit`** – Do not create commits under any circumstances
+3. **NO `git push`** – Do not push to remote or any branch
+4. **NO automated commits** – Even if authorized for a task, ask first before committing
+5. **NO exceptions** – This rule has zero exceptions
+
+### Correct Workflow:
+- ✅ Write code, edit files, create new files as needed for the task
+- ✅ Run tests and verify changes locally
+- ✅ Describe changes clearly to the human user
+- ✅ Show diffs and explain what was modified
+- ✅ **ALWAYS WAIT** for explicit human authorization before any git operation
+- ✅ Only execute `git add`/`git commit`/`git push` if the human explicitly says "commit" or "push"
+
+### Why This Rule Exists:
+- **Human Oversight**: All code changes must be reviewed and approved by a human
+- **Repository Integrity**: Prevents accidental, unreviewed, or conflicting commits
+- **Accountability**: Clear audit trail of who authorized what changes
+- **Quality Control**: Humans can verify intent and correctness before commits
+- **Safety**: Prevents automated commits that might break the build or introduce bugs
+
+### Example Scenarios:
+- ❌ WRONG: "Task complete, changes committed and pushed"
+- ✅ RIGHT: "Task complete. Changes made to file.kt and test.kt. Ready for your review before committing?"
+
+- ❌ WRONG: Commits made during multi-step task execution
+- ✅ RIGHT: Collects all changes, presents them, waits for human "go ahead" signal
+
+- ❌ WRONG: "I'll commit these changes as part of the refactoring"
+- ✅ RIGHT: "Here are the refactored components. Ready to commit when you approve?"
 
 This ensures human oversight on all code changes and maintains repository integrity.
 
