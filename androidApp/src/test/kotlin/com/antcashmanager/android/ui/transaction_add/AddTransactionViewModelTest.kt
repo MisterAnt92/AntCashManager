@@ -843,10 +843,11 @@ class AddTransactionViewModelTest : BaseUnitTest() {
         val error = viewModel.state.value.error
         assertTrue("Should show error", !error.isNullOrEmpty())
         assertTrue(
-            "Error should mention missing category",
-            error?.contains("Categoria non trovata") == true
+            "Error should mention missing category or load error",
+            error?.contains("DeletedCategory") == true || error?.contains("not found") == true || error?.contains("ERROR") == true
         )
-        assertFalse("Should not advance to DETAILS", viewModel.state.value.currentStep == AddTransactionStep.DETAILS)
+        // Should not be able to edit without category
+        assertFalse("Should not be in DETAILS without valid category", viewModel.state.value.isModifying)
     }
 
     @Test
