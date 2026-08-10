@@ -54,7 +54,7 @@
     <string name="transactions_search">Пошук</string>
     <string name="transactions_filter">Фільтри</string>
     <string name="transactions_search_label">Пошук транзакцій</string>
-    <string name="transactions_search_placeholder">Ім'я або сума…</string>
+    <string name="transactions_search_placeholder">Ім\'я або сума…</string>
     <string name="transactions_advanced_filters">Розширені фільтри</string>
     <string name="transactions_filter_type">Тип транзакції</string>
     <string name="transactions_filter_payment">Тип платежу</string>
@@ -70,7 +70,7 @@
     <string name="categories_empty">Поки що немає категорій</string>
     <string name="categories_empty_subtitle">Натисніть + щоб додати першу категорію</string>
     <string name="categories_add">Додати категорію</string>
-    <string name="categories_name_label">Ім'я категорії</string>
+    <string name="categories_name_label">Ім\'я категорії</string>
     <string name="categories_color_label">Колір</string>
     <string name="categories_delete_title">Видалити категорію?</string>
     <string name="categories_delete_message">Are you sure you want to delete \"%s\"?</string>
@@ -93,7 +93,7 @@
     <string name="icon_receipt_long">Квитанція</string>
     <string name="icon_local_dining">Фастфуд</string>
     <string name="icon_theater_comedy">Розвага</string>
-    <string name="icon_local_hospital">Здоров'я</string>
+    <string name="icon_local_hospital">Здоров\'я</string>
     <string name="icon_shopping_bag">Покупки</string>
     <string name="icon_school">Освіта</string>
     <string name="icon_more_horiz">Інше</string>
@@ -247,7 +247,7 @@
     <string name="settings_last_restore_label">Last restore: %s</string>
     <string name="settings_last_restore_never">No restore performed yet</string>
     <string name="settings_support">Підтримка</string>
-    <string name="settings_send_feedback">Надіслати зворотний зв'язок</string>
+    <string name="settings_send_feedback">Надіслати зворотний зв\'язок</string>
     <string name="settings_send_feedback_subtitle">Help us improve the app</string>
     <string name="settings_privacy_policy">Політика конфіденційності</string>
     <string name="settings_privacy_policy_subtitle">How we handle your data</string>
@@ -503,7 +503,7 @@
     <string name="category_bills">Bills</string>
     <string name="category_dining">Dining out</string>
     <string name="category_entertainment">Розвага</string>
-    <string name="category_health">Здоров'я</string>
+    <string name="category_health">Здоров\'я</string>
     <string name="category_shopping">Покупки</string>
     <string name="category_education">Освіта</string>
     <string name="category_other">Інше</string>
