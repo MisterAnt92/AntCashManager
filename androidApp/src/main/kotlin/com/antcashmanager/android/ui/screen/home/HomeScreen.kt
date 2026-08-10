@@ -23,7 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -227,7 +227,7 @@ internal fun HomeContent(
                             modifier = Modifier.size(40.dp),
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Tune,
+                                imageVector = Icons.Default.Sort,
                                 contentDescription = stringResource(R.string.home_customize_top_cards_action),
                                 tint = MaterialTheme.colorScheme.primary,
                             )
