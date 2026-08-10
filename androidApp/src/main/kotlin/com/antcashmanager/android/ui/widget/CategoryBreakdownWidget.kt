@@ -210,7 +210,7 @@ private fun CategoryBar(
                 ),
             )
         }
-        Spacer(modifier = GlanceModifier.height(3.dp))
+        Spacer(modifier = GlanceModifier.height(4.dp))
         Box(
             modifier = GlanceModifier
                 .width(BAR_MAX_WIDTH_DP.dp)

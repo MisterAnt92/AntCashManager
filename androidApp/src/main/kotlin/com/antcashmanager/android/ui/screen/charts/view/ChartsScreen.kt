@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -1240,7 +1239,7 @@ private fun SummaryCard(
                 )
             } else {
                 // Spacer to maintain same height across all cards
-                Spacer(modifier = Modifier.height(10.dp))
+                VerticalSpacer(SpacingSize.SM)
             }
         }
     }
