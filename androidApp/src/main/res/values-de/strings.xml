@@ -560,9 +560,6 @@
     <string name="categories_selection_hint">Tippen Sie auf eine Kategorie, um sie auszuwählen (in der eigentlichen App erfolgt der Wechsel automatisch).</string>
     <string name="settings_project_by">Ein Projekt, mit Liebe gemacht von Formica Simone @MisterAnt92</string>
     <!-- Chart Cards - New Visualizations -->
-    <string name="chart_savings_rate_title">Sparquote</string>
-    <string name="chart_total_income">Gesamteinkommen</string>
-    <string name="chart_savings_percentage">% Gespart</string>
     <string name="chart_spending_forecast_title">Ausgabenprognose</string>
     <string name="chart_avg_monthly">Monatlicher Durchschnitt</string>
     <string name="chart_period">Zeitraum</string>

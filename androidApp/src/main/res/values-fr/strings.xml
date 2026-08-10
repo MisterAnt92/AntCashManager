@@ -507,9 +507,6 @@
     <string name="settings_easter_egg_message">🐜 Salut ! Merci d\'utiliser AntCash !</string>
     <string name="settings_project_by">Un projet fait avec amour par Formica Simone @MisterAnt92</string>
     <!-- Chart Cards - New Visualizations -->
-    <string name="chart_savings_rate_title">Taux d\'Épargne</string>
-    <string name="chart_total_income">Revenu Total</string>
-    <string name="chart_savings_percentage">% Économisé</string>
     <string name="chart_spending_forecast_title">Prévision de Dépenses</string>
     <string name="chart_avg_monthly">Moyenne Mensuelle</string>
     <string name="chart_period">Période</string>

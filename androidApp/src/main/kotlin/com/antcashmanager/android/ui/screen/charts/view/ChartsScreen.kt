@@ -82,7 +82,6 @@ import com.antcashmanager.android.ui.screen.charts.view.ChartDetailsData
 import com.antcashmanager.android.ui.screen.charts.view.DailyExpenseLineChartCard
 import com.antcashmanager.android.ui.screen.charts.view.InteractivePieChart
 import com.antcashmanager.android.ui.screen.charts.view.QuickStatsCard
-import com.antcashmanager.android.ui.screen.charts.view.SavingsRateCard
 import com.antcashmanager.android.ui.screen.charts.view.SpendingForecastCard
 import com.antcashmanager.android.ui.screen.charts.view.TrendDirection
 import com.antcashmanager.android.ui.screen.charts.view.WeekdayExpenseCard
@@ -767,7 +766,6 @@ private fun NewVisualizationsSection(
                 .padding(vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            SavingsRateCard(chartData = chartData)
             SpendingForecastCard(chartData = chartData)
             QuickStatsCard(chartData = chartData)
             DailyExpenseLineChartCard(chartData = chartData)
@@ -785,12 +783,6 @@ private fun NewVisualizationsSection(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    SavingsRateCard(chartData = chartData)
-                }
                 Column(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -821,7 +813,6 @@ private fun NewVisualizationsSection(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    SavingsRateCard(chartData = chartData)
                     QuickStatsCard(chartData = chartData)
                 }
                 Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(12.dp)) {

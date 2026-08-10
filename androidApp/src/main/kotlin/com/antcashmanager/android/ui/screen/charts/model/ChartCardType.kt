@@ -13,7 +13,6 @@ enum class ChartCardType(
     val titleResId: Int,
 ) {
     // New Visualizations Section (Part 1)
-    SAVINGS_RATE_CARD("savings_rate", R.string.chart_savings_rate_title),
     SPENDING_FORECAST_CARD("spending_forecast", R.string.chart_spending_forecast_title),
     QUICK_STATS_CARD("quick_stats", R.string.chart_quick_stats_title),
     DAILY_EXPENSE_CHART_CARD("daily_expense_chart", R.string.chart_daily_expenses_title),
@@ -42,7 +41,6 @@ enum class ChartCardType(
          * 8. Yearly chart
          */
         val defaultOrder = listOf(
-            SAVINGS_RATE_CARD,
             SPENDING_FORECAST_CARD,
             QUICK_STATS_CARD,
             DAILY_EXPENSE_CHART_CARD,

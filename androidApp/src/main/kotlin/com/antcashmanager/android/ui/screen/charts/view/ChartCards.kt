@@ -22,51 +22,6 @@ import com.antcashmanager.android.ui.screen.charts.ChartData
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.android.util.formatAmount
 
-/**
- * Placeholder card structure for new chart visualizations.
- * These will be fully implemented with Canvas components in Step 4.
- */
-@Composable
-internal fun SavingsRateCard(
-    chartData: ChartData,
-    modifier: Modifier = Modifier,
-) {
-    if (chartData.totalIncome <= 0.0 || chartData.totalExpense <= 0.0) {
-        return
-    }
-
-    val savingsRate = if (chartData.totalIncome > 0) {
-        ((chartData.totalIncome - chartData.totalExpense) / chartData.totalIncome * 100).toInt()
-            .coerceIn(0, 100)
-    } else {
-        0
-    }
-
-    val format = LocalCurrencyFormat.current
-
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            AppText(
-                text = stringResource(id = R.string.chart_savings_rate_title),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            SavingsRateGauge(savingsRatePercent = savingsRate, modifier = Modifier.fillMaxWidth())
-            Spacer(modifier = Modifier.height(12.dp))
-            Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-                AppText(text = "${stringResource(id = R.string.chart_savings_percentage)}: $savingsRate%", style = MaterialTheme.typography.bodySmall)
-                AppText(text = formatAmount(chartData.totalIncome, format), style = MaterialTheme.typography.bodySmall)
-            }
-        }
-    }
-}
-
 @Composable
 internal fun SpendingForecastCard(
     chartData: ChartData,

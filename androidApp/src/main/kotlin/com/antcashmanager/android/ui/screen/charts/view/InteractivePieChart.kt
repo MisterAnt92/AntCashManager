@@ -89,43 +89,68 @@ internal fun InteractivePieChart(
         }
     }) {
         Canvas(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
-            val radius = minOf(size.width, size.height) * 0.38f
+            val outerRadius = minOf(size.width, size.height) * 0.38f
+            val innerRadius = outerRadius * 0.5f  // Creates donut effect (hole in center)
             val center = Offset(size.width / 2f, size.height / 2f)
 
             // Shadow layer
-            val shadowRadius = radius + 8f
+            val shadowRadius = outerRadius + 8f
             drawCircle(
                 color = Color.Black.copy(alpha = 0.1f),
                 radius = shadowRadius,
                 center = center.copy(x = center.x + 4f, y = center.y + 6f)
             )
 
-            // Draw each slice (classic pie chart style)
+            // Draw each slice (donut chart style - no divisor lines)
             sliceInfo.forEachIndexed { _, slice ->
                 val baseColor = pieColors[slice.colorIndex % pieColors.size]
                 val sweep = slice.sweepAngle * animatedProgress
 
-                // Draw filled pie slice
-                drawArc(
-                    color = baseColor,
-                    startAngle = slice.startAngle,
-                    sweepAngle = sweep,
-                    useCenter = true,
-                    topLeft = Offset(center.x - radius, center.y - radius),
-                    size = Size(radius * 2, radius * 2)
+                // Draw outer arc with gradient for visual depth
+                val arcBrush = Brush.radialGradient(
+                    colors = listOf(
+                        baseColor.copy(alpha = 0.9f),
+                        baseColor.copy(alpha = 0.7f),
+                        baseColor.copy(alpha = 0.8f)
+                    ),
+                    center = center,
+                    radius = outerRadius
                 )
 
-                // Subtle border on each slice
                 drawArc(
-                    color = Color.White.copy(alpha = 0.5f),
+                    brush = arcBrush,
                     startAngle = slice.startAngle,
                     sweepAngle = sweep,
-                    useCenter = true,
-                    topLeft = Offset(center.x - radius, center.y - radius),
-                    size = Size(radius * 2, radius * 2),
-                    style = Stroke(width = 1f)
+                    useCenter = false,
+                    topLeft = Offset(center.x - outerRadius, center.y - outerRadius),
+                    size = Size(outerRadius * 2, outerRadius * 2),
+                    style = Stroke(width = outerRadius - innerRadius)
                 )
             }
+
+            // Center circle (hole in donut) with gradient
+            val centerBrush = Brush.radialGradient(
+                colors = listOf(
+                    Color.White.copy(alpha = 0.95f),
+                    Color.White.copy(alpha = 0.8f),
+                    Color.Gray.copy(alpha = 0.1f)
+                ),
+                center = center,
+                radius = innerRadius
+            )
+            drawCircle(
+                brush = centerBrush,
+                radius = innerRadius,
+                center = center
+            )
+
+            // Center circle border
+            drawCircle(
+                color = Color.Gray.copy(alpha = 0.2f),
+                radius = innerRadius,
+                center = center,
+                style = Stroke(width = 1f)
+            )
         }
     }
 }

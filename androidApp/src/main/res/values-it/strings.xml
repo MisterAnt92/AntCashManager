@@ -507,9 +507,6 @@
     <string name="dialog_close">Chiudi</string>
     <string name="settings_project_by">Un progetto fatto con amore da Formica Simone @MisterAnt92</string>
     <!-- Chart Cards - New Visualizations -->
-    <string name="chart_savings_rate_title">Tasso di Risparmio</string>
-    <string name="chart_total_income">Entrate Totali</string>
-    <string name="chart_savings_percentage">% Risparmiato</string>
     <string name="chart_spending_forecast_title">Previsione Spesa</string>
     <string name="chart_avg_monthly">Media Mensile</string>
     <string name="chart_period">Periodo</string>

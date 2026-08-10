@@ -502,9 +502,6 @@
     <string name="settings_title">Settings</string>
     <string name="settings_project_by">Un proyecto hecho con amor por Formica Simone @MisterAnt92</string>
     <!-- Chart Cards - New Visualizations -->
-    <string name="chart_savings_rate_title">Tasa de Ahorro</string>
-    <string name="chart_total_income">Ingresos Totales</string>
-    <string name="chart_savings_percentage">% Ahorrado</string>
     <string name="chart_spending_forecast_title">Previsión de Gastos</string>
     <string name="chart_avg_monthly">Promedio Mensual</string>
     <string name="chart_period">Período</string>

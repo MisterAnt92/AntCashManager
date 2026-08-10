@@ -17,68 +17,6 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 /**
- * Arc-based gauge showing savings rate (0-100%) with color coding.
- * Green for good savings, orange for moderate, red for low.
- */
-@Composable
-internal fun SavingsRateGauge(
-    savingsRatePercent: Int,
-    modifier: Modifier = Modifier,
-) {
-    val gaugeColor = MaterialTheme.colorScheme.primary
-    val backgroundColor = MaterialTheme.colorScheme.surfaceVariant
-    val strokeWidth = ChartsConstant.SAVINGS_GAUGE_STROKE_DP.dp
-
-    Box(modifier = modifier.fillMaxWidth()) {
-        Canvas(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(120.dp)
-        ) {
-            val centerX = size.width / 2f
-            val centerY = size.height * 0.6f
-            val radius = minOf(size.width, size.height * 1.5f) * 0.35f
-
-            // Background arc (0-180 degrees)
-            drawArc(
-                color = backgroundColor,
-                startAngle = 180f,
-                sweepAngle = 180f,
-                useCenter = false,
-                topLeft = Offset(centerX - radius, centerY - radius),
-                size = androidx.compose.ui.geometry.Size(radius * 2, radius * 2),
-                style = Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Round)
-            )
-
-            // Foreground arc (0 to percentage)
-            val sweepAngle = (savingsRatePercent / 100f) * 180f
-            val arcColor = when {
-                savingsRatePercent >= 20 -> Color(0xFF4CAF50)  // Green
-                savingsRatePercent >= 10 -> Color(0xFFFFA726)  // Orange
-                else -> Color(0xFFF44336)  // Red
-            }
-
-            drawArc(
-                color = arcColor,
-                startAngle = 180f,
-                sweepAngle = sweepAngle,
-                useCenter = false,
-                topLeft = Offset(centerX - radius, centerY - radius),
-                size = androidx.compose.ui.geometry.Size(radius * 2, radius * 2),
-                style = Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Round)
-            )
-
-            // Center indicator dot
-            drawCircle(
-                color = gaugeColor,
-                radius = 6.dp.toPx(),
-                center = Offset(centerX, centerY)
-            )
-        }
-    }
-}
-
-/**
  * Line chart with points showing daily expense trends.
  * Uses simplified rendering for better performance.
  */

@@ -581,9 +581,6 @@
     <string name="charts_title">Graphics</string>
     <string name="settings_project_by">A project made with love by Formica Simone @MisterAnt92</string>
     <!-- Chart Cards - New Visualizations -->
-    <string name="chart_savings_rate_title">Savings Rate</string>
-    <string name="chart_total_income">Total Income</string>
-    <string name="chart_savings_percentage">% Saved</string>
     <string name="chart_spending_forecast_title">Spending Forecast</string>
     <string name="chart_avg_monthly">Monthly Average</string>
     <string name="chart_period">Period</string>
