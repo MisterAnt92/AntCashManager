@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
+import kotlinx.coroutines.flow.first
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.animation.AntEasterEggAnimation
@@ -138,6 +139,14 @@ internal fun HomeContent(
     var topCardsOrderRaw by rememberSaveable { mutableStateOf(HomeConstant.DEFAULT_TOP_CARDS_ORDER) }
     var editingTopCardsOrder by remember { mutableStateOf(HomeTopCardType.parse(topCardsOrderRaw)) }
     val topCardsOrder = remember(topCardsOrderRaw) { HomeTopCardType.parse(topCardsOrderRaw) }
+
+    // Load persisted card order on composition
+    LaunchedEffect(Unit) {
+        val savedOrder = settingsRepository.getHomeTopCardsOrder().first()
+        if (savedOrder.isNotEmpty()) {
+            topCardsOrderRaw = savedOrder
+        }
+    }
 
     // DateRangeFilter expanded state from settings
     val dateFilterExpanded by settingsRepository.getDateFilterExpanded()
@@ -353,6 +362,10 @@ internal fun HomeContent(
                     }
                 }
                 topCardsOrderRaw = HomeTopCardType.serialize(updatedOrder)
+                // Persist card order to settings for backup/restore
+                coroutineScope.launch {
+                    settingsRepository.setHomeTopCardsOrder(HomeTopCardType.serialize(updatedOrder))
+                }
                 showTopCardsOrderDialog = false
                 analyticsManager.logEvent("home_top_cards_reordered")
             },
@@ -675,6 +688,15 @@ class MockHomeSettingsRepository : SettingsRepository {
         kotlinx.coroutines.flow.flowOf(100)
 
     override suspend fun setWidgetOpacity(opacity: Int) {}
+
+    override fun getChartCardsOrder(): kotlinx.coroutines.flow.Flow<String> =
+        kotlinx.coroutines.flow.flowOf("")
+
+    override suspend fun setChartCardsOrder(order: String) {}
+    override fun getHomeTopCardsOrder(): kotlinx.coroutines.flow.Flow<String> =
+        kotlinx.coroutines.flow.flowOf("")
+
+    override suspend fun setHomeTopCardsOrder(order: String) {}
 
     override suspend fun resetAllPreferences() {}
 }

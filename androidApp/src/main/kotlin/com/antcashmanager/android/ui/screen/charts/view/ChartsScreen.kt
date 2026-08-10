@@ -51,6 +51,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,6 +65,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
@@ -99,6 +102,8 @@ import com.antcashmanager.android.util.translateCategory
 import com.antcashmanager.android.util.translateCategoryPlain
 import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.model.PaymentType
+import com.antcashmanager.domain.model.SavedDateFilter
+import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.usecase.transaction.DateRange
 import org.koin.androidx.compose.koinViewModel
@@ -125,6 +130,7 @@ fun ChartsScreen() {
         dateRange = dateRange,
         initialPresetIndex = selectedPresetIndex,
         zoomEnabled = chartsZoomEnabled,
+        settingsRepository = settingsRepository,
         onDateRangeChanged = { from, to -> viewModel.setDateRange(from, to) },
         onPresetSelected = viewModel::setPresetRange,
     )
@@ -137,11 +143,13 @@ internal fun ChartsContent(
     dateRange: DateRange,
     initialPresetIndex: Int = 1,
     zoomEnabled: Boolean = false,
+    settingsRepository: SettingsRepository,
     onDateRangeChanged: (Long, Long) -> Unit = { _, _ -> },
     onPresetSelected: (RangePreset) -> Unit = {},
 ) {
     val context = LocalContext.current
     val analyticsManager: AnalyticsManager = koinInject()
+    val scope = rememberCoroutineScope()
     val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
     val dateFormat = remember { SimpleDateFormat("dd MMM yyyy", Locale.getDefault()) }
     val fmt = LocalCurrencyFormat.current
@@ -153,7 +161,7 @@ internal fun ChartsContent(
     var isVisualizationsSectionExpanded by remember { mutableStateOf(true) }
     var selectedChartDetails by remember { mutableStateOf<ChartDetailsData?>(null) }
 
-    // Charts card ordering state - persists across session
+    // Charts card ordering state - persists across session and restores from settings
     var chartsCardOrderRaw by remember {
         mutableStateOf(ChartsConstant.DEFAULT_CHARTS_CARDS_ORDER)
     }
@@ -161,6 +169,14 @@ internal fun ChartsContent(
         com.antcashmanager.android.ui.screen.charts.model.ChartCardType.parse(chartsCardOrderRaw)
     }
     var showChartsCardsOrderDialog by remember { mutableStateOf(false) }
+
+    // Load persisted card order on composition
+    LaunchedEffect(Unit) {
+        val savedOrder = settingsRepository.getChartCardsOrder().first()
+        if (savedOrder.isNotEmpty()) {
+            chartsCardOrderRaw = savedOrder
+        }
+    }
 
     val chartCardContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh
 
@@ -248,7 +264,13 @@ internal fun ChartsContent(
                 }
             },
             onDismiss = { showChartsCardsOrderDialog = false },
-            onConfirm = { showChartsCardsOrderDialog = false }
+            onConfirm = {
+                // Persist card order to settings for backup/restore
+                scope.launch {
+                    settingsRepository.setChartCardsOrder(chartsCardOrderRaw)
+                }
+                showChartsCardsOrderDialog = false
+            }
         )
     }
 
@@ -1261,6 +1283,89 @@ private data class SummaryCardState(
 // PREVIEWS
 // ══════════════════════════════════════════════════════════════════════════════
 
+private class MockChartsSettingsRepository : SettingsRepository {
+    override fun getTheme() = kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.AppTheme.SYSTEM)
+    override suspend fun setTheme(theme: com.antcashmanager.domain.model.AppTheme) {}
+    override fun getLanguage() = kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.AppLanguage.SYSTEM)
+    override suspend fun setLanguage(language: com.antcashmanager.domain.model.AppLanguage) {}
+    override fun getShowCharts() = kotlinx.coroutines.flow.flowOf(true)
+    override suspend fun setShowCharts(show: Boolean) {}
+    override fun getHighContrast() = kotlinx.coroutines.flow.flowOf(false)
+    override suspend fun setHighContrast(enabled: Boolean) {}
+    override fun getLargeText() = kotlinx.coroutines.flow.flowOf(false)
+    override suspend fun setLargeText(enabled: Boolean) {}
+    override fun getReduceMotion() = kotlinx.coroutines.flow.flowOf(false)
+    override suspend fun setReduceMotion(enabled: Boolean) {}
+    override fun getShowTransactionNotes() = kotlinx.coroutines.flow.flowOf(true)
+    override suspend fun setShowTransactionNotes(show: Boolean) {}
+    override fun getMaskAmounts() = kotlinx.coroutines.flow.flowOf(false)
+    override suspend fun setMaskAmounts(mask: Boolean) {}
+    override fun getCurrencySymbol() = kotlinx.coroutines.flow.flowOf("€")
+    override suspend fun setCurrencySymbol(symbol: String) {}
+    override fun getDecimalDigits() = kotlinx.coroutines.flow.flowOf(2)
+    override suspend fun setDecimalDigits(digits: Int) {}
+    override fun getDecimalSeparator() = kotlinx.coroutines.flow.flowOf(",")
+    override suspend fun setDecimalSeparator(separator: String) {}
+    override fun getThousandsSeparator() = kotlinx.coroutines.flow.flowOf("")
+    override suspend fun setThousandsSeparator(separator: String) {}
+    override fun getMealVoucherValue() = kotlinx.coroutines.flow.flowOf(5.29)
+    override suspend fun setMealVoucherValue(value: Double) {}
+    override fun getDateFormat() = kotlinx.coroutines.flow.flowOf("dd/MM/yyyy")
+    override suspend fun setDateFormat(pattern: String) {}
+    override fun getDateFilterExpanded() = kotlinx.coroutines.flow.flowOf(true)
+    override suspend fun setDateFilterExpanded(expanded: Boolean) {}
+    override fun getHomeDateFilterPreset() = kotlinx.coroutines.flow.flowOf(1)
+    override suspend fun setHomeDateFilterPreset(index: Int) {}
+    override fun getHomeDateFilterState(): kotlinx.coroutines.flow.Flow<com.antcashmanager.domain.model.SavedDateFilter> =
+        kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.SavedDateFilter(1, 0, 0))
+    override suspend fun setHomeDateFilterState(filter: com.antcashmanager.domain.model.SavedDateFilter) {}
+    override fun getTransactionsDateFilterPreset() = kotlinx.coroutines.flow.flowOf(1)
+    override suspend fun setTransactionsDateFilterPreset(index: Int) {}
+    override fun getTransactionsDateFilterState(): kotlinx.coroutines.flow.Flow<com.antcashmanager.domain.model.SavedDateFilter> =
+        kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.SavedDateFilter(1, 0, 0))
+    override suspend fun setTransactionsDateFilterState(filter: SavedDateFilter) {}
+    override fun getChartsDateFilterPreset() = kotlinx.coroutines.flow.flowOf(1)
+    override suspend fun setChartsDateFilterPreset(index: Int) {}
+    override fun getChartsDateFilterState(): kotlinx.coroutines.flow.Flow<com.antcashmanager.domain.model.SavedDateFilter> =
+        kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.SavedDateFilter(1, 0, 0))
+    override suspend fun setChartsDateFilterState(filter: com.antcashmanager.domain.model.SavedDateFilter) {}
+    override fun getChartsZoomEnabled() = kotlinx.coroutines.flow.flowOf(false)
+    override suspend fun setChartsZoomEnabled(enabled: Boolean) {}
+    override fun getShowPaymentTypeBreakdown() = kotlinx.coroutines.flow.flowOf(false)
+    override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {}
+    override fun getShowQuickInsightsCard() = kotlinx.coroutines.flow.flowOf(false)
+    override suspend fun setShowQuickInsightsCard(show: Boolean) {}
+    override fun getShowInitialAnimation() = kotlinx.coroutines.flow.flowOf(false)
+    override suspend fun setShowInitialAnimation(show: Boolean) {}
+    override fun getTransactionDisplayType() = kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.TransactionDisplayType.TREND)
+    override suspend fun setTransactionDisplayType(displayType: TransactionDisplayType) {}
+    override fun getTransactionsTransactionDisplayType() = kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.TransactionDisplayType.TREND)
+    override suspend fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType) {}
+    override fun getIsTutorialCompleted() = kotlinx.coroutines.flow.flowOf(true)
+    override suspend fun setIsTutorialCompleted(completed: Boolean) {}
+    override fun getDataEncryptionEnabled() = kotlinx.coroutines.flow.flowOf(false)
+    override suspend fun setDataEncryptionEnabled(enabled: Boolean) {}
+    override fun getCategorySortOrderInitialized() = kotlinx.coroutines.flow.flowOf(true)
+    override suspend fun setCategorySortOrderInitialized(initialized: Boolean) {}
+    override fun getLastBackupTimestamp() = kotlinx.coroutines.flow.flowOf(null)
+    override suspend fun setLastBackupTimestamp(timestamp: Long) {}
+    override fun getLastRestoreTimestamp() = kotlinx.coroutines.flow.flowOf(null)
+    override suspend fun setLastRestoreTimestamp(timestamp: Long) {}
+    override fun getSuggestionsEnabled() = kotlinx.coroutines.flow.flowOf(true)
+    override suspend fun setSuggestionsEnabled(enabled: Boolean) {}
+    override fun getSuggestionsClearedAt() = kotlinx.coroutines.flow.flowOf(null)
+    override suspend fun setSuggestionsClearedAt(timestamp: Long) {}
+    override fun getWidgetBackgroundColor() = kotlinx.coroutines.flow.flowOf(0xFFFFFFFFL)
+    override suspend fun setWidgetBackgroundColor(color: Long) {}
+    override fun getWidgetOpacity() = kotlinx.coroutines.flow.flowOf(100)
+    override suspend fun setWidgetOpacity(opacity: Int) {}
+    override fun getChartCardsOrder() = kotlinx.coroutines.flow.flowOf("")
+    override suspend fun setChartCardsOrder(order: String) {}
+    override fun getHomeTopCardsOrder() = kotlinx.coroutines.flow.flowOf("")
+    override suspend fun setHomeTopCardsOrder(order: String) {}
+    override suspend fun resetAllPreferences() {}
+}
+
 @Preview(showBackground = true, name = "ChartsScreen - Default")
 @Preview(showBackground = true, name = "ChartsScreen - 7 inch", widthDp = 600, heightDp = 960)
 @Preview(showBackground = true, name = "ChartsScreen - 10 inch", widthDp = 840, heightDp = 1280)
@@ -1278,6 +1383,7 @@ private fun ChartsContentPreviewDefault() {
                 System.currentTimeMillis() - 30L * 24 * 60 * 60 * 1000,
                 System.currentTimeMillis()
             ),
+            settingsRepository = MockChartsSettingsRepository(),
         )
     }
 }
@@ -1289,6 +1395,7 @@ private fun ChartsContentPreviewEmpty() {
         ChartsContent(
             chartData = ChartData(),
             dateRange = DateRange(System.currentTimeMillis(), System.currentTimeMillis()),
+            settingsRepository = MockChartsSettingsRepository(),
         )
     }
 }
@@ -1308,6 +1415,7 @@ private fun ChartsContentPreviewDark() {
                 System.currentTimeMillis() - 30L * 24 * 60 * 60 * 1000,
                 System.currentTimeMillis()
             ),
+            settingsRepository = MockChartsSettingsRepository(),
         )
     }
 }
@@ -1385,6 +1493,7 @@ private fun ChartsContentPreview() {
                 System.currentTimeMillis() - 30L * 24 * 60 * 60 * 1000,
                 System.currentTimeMillis()
             ),
+            settingsRepository = MockChartsSettingsRepository(),
         )
     }
 }

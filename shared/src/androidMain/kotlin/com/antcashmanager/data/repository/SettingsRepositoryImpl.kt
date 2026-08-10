@@ -69,6 +69,9 @@ class SettingsRepositoryImpl(
     private val suggestionsClearedAtKey = longPreferencesKey("suggestions_cleared_at")
     private val widgetBackgroundColorKey = longPreferencesKey("widget_background_color")
     private val widgetOpacityKey = intPreferencesKey("widget_opacity")
+    // ── Card Customization (v3+) ──
+    private val chartCardsOrderKey = stringPreferencesKey("chart_cards_order")
+    private val homeTopCardsOrderKey = stringPreferencesKey("home_top_cards_order")
 
     private fun createSavedDateFilter(
         defaultPresetIndex: Int,
@@ -461,6 +464,21 @@ class SettingsRepositoryImpl(
         dataStore.edit { it[widgetOpacityKey] = opacity }
     }
 
+    // ── Card Customization (v3+) ──
+    override fun getChartCardsOrder(): Flow<String> =
+        dataStore.data.map { it[chartCardsOrderKey] ?: "" }
+
+    override suspend fun setChartCardsOrder(order: String) {
+        dataStore.edit { it[chartCardsOrderKey] = order }
+    }
+
+    override fun getHomeTopCardsOrder(): Flow<String> =
+        dataStore.data.map { it[homeTopCardsOrderKey] ?: "" }
+
+    override suspend fun setHomeTopCardsOrder(order: String) {
+        dataStore.edit { it[homeTopCardsOrderKey] = order }
+    }
+
     override suspend fun resetAllPreferences() {
         val defaultHomeFilter = defaultHomeDateFilter()
         val defaultTransactionsFilter = defaultTransactionsDateFilter()
@@ -503,6 +521,8 @@ class SettingsRepositoryImpl(
             prefs.remove(suggestionsClearedAtKey)
             prefs[widgetBackgroundColorKey] = DEFAULT_WIDGET_BACKGROUND_COLOR
             prefs[widgetOpacityKey] = DEFAULT_WIDGET_OPACITY
+            prefs[chartCardsOrderKey] = ""
+            prefs[homeTopCardsOrderKey] = ""
         }
         DatabaseEncryptionManager.setEncryptionDesired(context, false)
     }

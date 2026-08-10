@@ -1266,6 +1266,11 @@ class MockSettingsRepository : SettingsRepository {
     override fun getWidgetOpacity(): Flow<Int> = kotlinx.coroutines.flow.flowOf(100)
     override suspend fun setWidgetOpacity(opacity: Int) {}
 
+    override fun getChartCardsOrder(): Flow<String> = kotlinx.coroutines.flow.flowOf("")
+    override suspend fun setChartCardsOrder(order: String) {}
+    override fun getHomeTopCardsOrder(): Flow<String> = kotlinx.coroutines.flow.flowOf("")
+    override suspend fun setHomeTopCardsOrder(order: String) {}
+
     override suspend fun resetAllPreferences() {}
 }
 

@@ -13,7 +13,11 @@ object BackupConstants {
      * Il blocco `settings` è stato esteso in seguito (suggerimenti, aspetto widget) senza
      * bisogno di bump di versione: ogni nuovo campo ha un default, quindi un backup v2
      * "vecchio" (senza quei campi) resta leggibile e li applica ai valori di default.
+     *
+     * v3: aggiunge card customization (chartCardsOrder, homeTopCardsOrder) e security flag
+     * (dataEncryptionEnabled). Nuovo backup v3 è retrocompatibile: v2 backup resta leggibile
+     * (nuovi campi usano default). Parsing lenient permette import di future versioni.
      */
-    const val CURRENT_VERSION = 2
+    const val CURRENT_VERSION = 3
 }
 

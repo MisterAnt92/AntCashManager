@@ -257,6 +257,10 @@ class BackupService(
         suggestionsClearedAt = settingsRepository.getSuggestionsClearedAt().first(),
         widgetBackgroundColor = settingsRepository.getWidgetBackgroundColor().first(),
         widgetOpacity = settingsRepository.getWidgetOpacity().first(),
+        // ── v3+ fields ──
+        chartCardsOrder = settingsRepository.getChartCardsOrder().first(),
+        homeTopCardsOrder = settingsRepository.getHomeTopCardsOrder().first(),
+        dataEncryptionEnabled = settingsRepository.getDataEncryptionEnabled().first(),
     )
 
     private suspend fun applySettings(settings: SettingsBackup) {
@@ -293,6 +297,17 @@ class BackupService(
         settings.suggestionsClearedAt?.let { settingsRepository.setSuggestionsClearedAt(it) }
         settingsRepository.setWidgetBackgroundColor(settings.widgetBackgroundColor)
         settingsRepository.setWidgetOpacity(settings.widgetOpacity)
+
+        // ── v3+ fields ──
+        // Card customization (empty string means use default order)
+        if (settings.chartCardsOrder.isNotEmpty()) {
+            settingsRepository.setChartCardsOrder(settings.chartCardsOrder)
+        }
+        if (settings.homeTopCardsOrder.isNotEmpty()) {
+            settingsRepository.setHomeTopCardsOrder(settings.homeTopCardsOrder)
+        }
+        // CRITICAL: Encryption status must be preserved
+        settingsRepository.setDataEncryptionEnabled(settings.dataEncryptionEnabled)
     }
 
     private inline fun <reified T : Enum<T>> enumValueOfOrDefault(name: String, default: T): T =
