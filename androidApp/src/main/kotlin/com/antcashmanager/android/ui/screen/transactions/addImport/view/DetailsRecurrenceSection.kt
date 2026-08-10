@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,6 +18,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.text.AppText
 
@@ -84,7 +86,7 @@ internal fun DetailsRecurrenceSection(
 
     // ── Dropdown Intervallo (mostrare solo se ricorrente) ──
     if (isRecurring) {
-        Spacer(modifier = Modifier.height(12.dp))
+        VerticalSpacer(SpacingSize.SM)
         RecurrenceIntervalDropdown(
             selectedInterval = recurrenceInterval,
             onIntervalChange = onIntervalChanged,

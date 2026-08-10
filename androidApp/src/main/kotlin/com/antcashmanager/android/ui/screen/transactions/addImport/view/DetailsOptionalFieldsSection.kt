@@ -1,12 +1,14 @@
 package com.antcashmanager.android.ui.screen.transactions.addImport.view
 
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.input.AutocompleteTextField
 
@@ -54,7 +56,7 @@ internal fun DetailsOptionalFieldsSection(
         label = stringResource(R.string.add_transaction_notes_label),
         modifier = Modifier.fillMaxWidth(),
     )
-    Spacer(modifier = Modifier.height(12.dp))
+    VerticalSpacer(SpacingSize.SM)
 
     // ── Beneficiario/Payee ──
     AutocompleteTextField(
@@ -64,7 +66,7 @@ internal fun DetailsOptionalFieldsSection(
         label = stringResource(R.string.add_transaction_payee_label),
         modifier = Modifier.fillMaxWidth(),
     )
-    Spacer(modifier = Modifier.height(12.dp))
+    VerticalSpacer(SpacingSize.SM)
 
     // ── Luogo/Location ──
     AutocompleteTextField(

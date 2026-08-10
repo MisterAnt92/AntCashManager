@@ -1,7 +1,6 @@
 package com.antcashmanager.android.ui.screen.transactions.addImport.view
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,6 +17,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.transactions.addImport.validator.TransactionValidator
@@ -73,7 +75,7 @@ internal fun DetailsMealVoucherSection(
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            VerticalSpacer(SpacingSize.XS)
 
             // Valore unitario del voucher
             AppText(
@@ -84,7 +86,7 @@ internal fun DetailsMealVoucherSection(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            VerticalSpacer(SpacingSize.SM)
 
             // Campo numero voucher
             OutlinedTextField(
@@ -106,7 +108,7 @@ internal fun DetailsMealVoucherSection(
 
             // Campo importo totale (read-only)
             if (totalAmount.isNotBlank()) {
-                Spacer(modifier = Modifier.height(8.dp))
+                VerticalSpacer(SpacingSize.XS)
                 OutlinedTextField(
                     value = totalAmount,
                     onValueChange = {}, // Read-only
@@ -128,7 +130,7 @@ internal fun DetailsMealVoucherSection(
             val voucherTotal = voucherCount * mealVoucherValue
 
             if (voucherCount > 0) {
-                Spacer(modifier = Modifier.height(8.dp))
+                VerticalSpacer(SpacingSize.XS)
                 AppText(
                     text = stringResource(
                         R.string.add_transaction_meal_voucher_subtotal,
@@ -143,7 +145,7 @@ internal fun DetailsMealVoucherSection(
                 val totalAmountDouble = totalAmount.toDoubleOrNull() ?: 0.0
                 val differencePaid = totalAmountDouble - voucherTotal
                 if (differencePaid > 0) {
-                    Spacer(modifier = Modifier.height(4.dp))
+                    VerticalSpacer(SpacingSize.XXXS)
                     AppText(
                         text = stringResource(
                             R.string.add_transaction_meal_voucher_difference_paid

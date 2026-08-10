@@ -29,6 +29,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.R
 import com.antcashmanager.android.navigation.BottomNavItem
 import com.antcashmanager.android.ui.components.text.AppText
@@ -121,7 +124,7 @@ private fun SidebarHeader(onHeaderClick: () -> Unit = {}) {
             modifier = Modifier.size(64.dp),
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        VerticalSpacer(SpacingSize.SM)
 
         // App Name
         AppText(
@@ -251,7 +254,7 @@ private fun SidebarFooter() {
             color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
         ) {}
 
-        Spacer(modifier = Modifier.height(16.dp))
+        VerticalSpacer(SpacingSize.MD)
 
         // Version badge (transparent)
         AppText(

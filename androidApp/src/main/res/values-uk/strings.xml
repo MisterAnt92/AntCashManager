@@ -1,195 +1,195 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Common Actions/Labels -->
-    <string name="common_dashboard">Dashboard</string>
-    <string name="common_home">Home</string>
-    <string name="common_charts">Charts</string>
-    <string name="common_transactions">Transactions</string>
-    <string name="common_categories">Categories</string>
-    <string name="common_settings">Settings</string>
-    <string name="common_income">Income</string>
-    <string name="common_expenses">Expenses</string>
-    <string name="common_back">Back</string>
-    <string name="common_add">Add</string>
-    <string name="common_preview">Preview</string>
+    <string name="common_dashboard">Панель керування</string>
+    <string name="common_home">Головна</string>
+    <string name="common_charts">Графіки</string>
+    <string name="common_transactions">Транзакції</string>
+    <string name="common_categories">Категорії</string>
+    <string name="common_settings">Параметри</string>
+    <string name="common_income">Дохід</string>
+    <string name="common_expenses">Видатки</string>
+    <string name="common_back">Назад</string>
+    <string name="common_add">Додати</string>
+    <string name="common_preview">Попередній перегляд</string>
 
     <!-- HelpDialog (Dashboard) -->
-    <string name="help_dashboard_desc">View the total balance, income, and expenses for the selected period.</string>
+    <string name="help_dashboard_desc">Перегляньте загальний залишок, дохід та видатки за вибраний період.</string>
     <string name="app_name">AntCashManager</string>
 
     <!-- Navigation -->
 
     <!-- Home Screen -->
-    <string name="home_total_balance">Total Balance</string>
-    <string name="home_income">Income</string>
-    <string name="home_expenses">Expenses</string>
-    <string name="home_income_expense_card_title">Income &amp; Expenses</string>
-    <string name="home_recent_transactions">Recent Transactions</string>
-    <string name="home_customize_top_cards_action">Customize top cards</string>
-    <string name="home_customize_top_cards_title">Customize top cards</string>
-    <string name="home_quick_insights_title">Quick insights</string>
-    <string name="home_quick_insights_net_balance">Net balance</string>
-    <string name="home_quick_insights_transactions_count">Transactions in period</string>
-    <string name="home_quick_insights_average_amount">Average amount</string>
-    <string name="home_quick_insights_daily_average_expense">Daily average</string>
-    <string name="home_move_up">Move up</string>
-    <string name="home_move_down">Move down</string>
-    <string name="home_balance_positive">📈 Positive</string>
+    <string name="home_total_balance">Загальний залишок</string>
+    <string name="home_income">Дохід</string>
+    <string name="home_expenses">Видатки</string>
+    <string name="home_income_expense_card_title">Дохід і видатки</string>
+    <string name="home_recent_transactions">Недавні транзакції</string>
+    <string name="home_customize_top_cards_action">Налаштувати верхні карти</string>
+    <string name="home_customize_top_cards_title">Налаштувати верхні карти</string>
+    <string name="home_quick_insights_title">Швидкі висновки</string>
+    <string name="home_quick_insights_net_balance">Чистий залишок</string>
+    <string name="home_quick_insights_transactions_count">Транзакції за період</string>
+    <string name="home_quick_insights_average_amount">Середня сума</string>
+    <string name="home_quick_insights_daily_average_expense">Середнє за день</string>
+    <string name="home_move_up">Перемістити вгору</string>
+    <string name="home_move_down">Перемістити вниз</string>
+    <string name="home_balance_positive">📈 Позитивно</string>
     <string name="home_recent_transactions_count">Recent Transactions · %1$d</string>
-    <string name="home_quick_insights_biggest_expense">Biggest expense</string>
-    <string name="home_scroll_to_top">Scroll to top</string>
+    <string name="home_quick_insights_biggest_expense">Найбільший видаток</string>
+    <string name="home_scroll_to_top">Прокрутити вверх</string>
     <string name="home_balance_summary_cd">%1$s: %2$s, %3$s</string>
     <string name="home_insight_row_cd">%1$s: %2$s</string>
 
     <!-- Transactions Screen -->
-    <string name="transactions_add">Add Transaction</string>
-    <string name="transactions_type_income">Income</string>
-    <string name="transactions_type_expense">Expense</string>
-    <string name="transactions_recurring">Recurring</string>
-    <string name="transactions_interval_daily">Daily</string>
-    <string name="transactions_interval_weekly">Weekly</string>
-    <string name="transactions_interval_monthly">Monthly</string>
-    <string name="transactions_interval_yearly">Yearly</string>
+    <string name="transactions_add">Додати транзакцію</string>
+    <string name="transactions_type_income">Дохід</string>
+    <string name="transactions_type_expense">Видаток</string>
+    <string name="transactions_recurring">Повторюване</string>
+    <string name="transactions_interval_daily">Щодня</string>
+    <string name="transactions_interval_weekly">Щотижня</string>
+    <string name="transactions_interval_monthly">Щомісяця</string>
+    <string name="transactions_interval_yearly">Щорічно</string>
     <!-- Transactions Filters -->
-    <string name="transactions_search">Search</string>
-    <string name="transactions_filter">Filters</string>
-    <string name="transactions_search_label">Search transactions</string>
-    <string name="transactions_search_placeholder">Name or amount…</string>
-    <string name="transactions_advanced_filters">Advanced Filters</string>
-    <string name="transactions_filter_type">Transaction Type</string>
-    <string name="transactions_filter_payment">Payment Type</string>
-    <string name="transactions_filter_category">Category</string>
+    <string name="transactions_search">Пошук</string>
+    <string name="transactions_filter">Фільтри</string>
+    <string name="transactions_search_label">Пошук транзакцій</string>
+    <string name="transactions_search_placeholder">Ім'я або сума…</string>
+    <string name="transactions_advanced_filters">Розширені фільтри</string>
+    <string name="transactions_filter_type">Тип транзакції</string>
+    <string name="transactions_filter_payment">Тип платежу</string>
+    <string name="transactions_filter_category">Категорія</string>
 
-    <string name="transactions_results_count">Results: %1$d</string>
-    <string name="common_all">All</string>
-    <string name="common_clear">Clear</string>
-    <string name="transaction_type_income">Income</string>
-    <string name="transaction_type_expense">Expense</string>
+    <string name="transactions_results_count">Результати: %1$d</string>
+    <string name="common_all">Все</string>
+    <string name="common_clear">Очистити</string>
+    <string name="transaction_type_income">Дохід</string>
+    <string name="transaction_type_expense">Видаток</string>
 
     <!-- Categories Screen -->
-    <string name="categories_empty">No categories yet</string>
-    <string name="categories_empty_subtitle">Tap + to add your first category</string>
-    <string name="categories_add">Add Category</string>
-    <string name="categories_name_label">Category Name</string>
-    <string name="categories_color_label">Color</string>
-    <string name="categories_delete_title">Delete Category?</string>
+    <string name="categories_empty">Поки що немає категорій</string>
+    <string name="categories_empty_subtitle">Натисніть + щоб додати першу категорію</string>
+    <string name="categories_add">Додати категорію</string>
+    <string name="categories_name_label">Ім'я категорії</string>
+    <string name="categories_color_label">Колір</string>
+    <string name="categories_delete_title">Видалити категорію?</string>
     <string name="categories_delete_message">Are you sure you want to delete \"%s\"?</string>
-    <string name="categories_add_content_desc">Add Category</string>
-    <string name="categories_selected">Selected</string>
-    <string name="categories_tab_expense">Expense</string>
-    <string name="categories_tab_income">Income</string>
-    <string name="categories_default_badge">Default</string>
-    <string name="categories_icon_label">Icon</string>
-    <string name="categories_hide">Hide category</string>
-    <string name="categories_show">Show category</string>
-    <string name="categories_hidden_section_title">Hidden categories (%d)</string>
-    <string name="categories_reorder">Reorder categories</string>
-    <string name="categories_selection_hint">Tap a category to select it (auto-advances in real app)</string>
+    <string name="categories_add_content_desc">Додати категорію</string>
+    <string name="categories_selected">Вибрано</string>
+    <string name="categories_tab_expense">Видаток</string>
+    <string name="categories_tab_income">Дохід</string>
+    <string name="categories_default_badge">За замовчуванням</string>
+    <string name="categories_icon_label">Значок</string>
+    <string name="categories_hide">Приховати категорію</string>
+    <string name="categories_show">Показати категорію</string>
+    <string name="categories_hidden_section_title">Приховані категорії (%d)</string>
+    <string name="categories_reorder">Переупорядкувати категорії</string>
+    <string name="categories_selection_hint">Натисніть на категорію, щоб вибрати (автоматично переходить у реальній програмі)</string>
 
     <!-- Category Icons -->
-    <string name="icon_home">Home</string>
-    <string name="icon_directions_car">Transport</string>
-    <string name="icon_restaurant">Dining</string>
-    <string name="icon_receipt_long">Receipt</string>
-    <string name="icon_local_dining">Fast Food</string>
-    <string name="icon_theater_comedy">Entertainment</string>
-    <string name="icon_local_hospital">Health</string>
-    <string name="icon_shopping_bag">Shopping</string>
-    <string name="icon_school">Education</string>
-    <string name="icon_more_horiz">Other</string>
-    <string name="icon_payments">Salary</string>
-    <string name="icon_savings">Savings</string>
-    <string name="icon_currency_exchange">Exchange</string>
-    <string name="icon_trending_up">Investment</string>
-    <string name="icon_work">Work</string>
-    <string name="icon_redeem">Gifts</string>
-    <string name="icon_flight">Travel</string>
-    <string name="icon_fitness_center">Gym</string>
-    <string name="icon_pets">Pets</string>
-    <string name="icon_directions_bus">Public Transport</string>
-    <string name="icon_lightbulb">Utilities</string>
-    <string name="icon_celebration">Celebration</string>
-    <string name="icon_subscriptions">Subscriptions</string>
-    <string name="icon_fastfood">Snacks</string>
-    <string name="icon_star">Favorites</string>
-    <string name="icon_volunteer_activism">Charity</string>
-    <string name="icon_directions_bike">Sport</string>
-    <string name="icon_shopping_cart">Groceries</string>
-    <string name="icon_coffee">Coffee</string>
-    <string name="icon_spa">Personal Care</string>
-    <string name="icon_card_giftcard">Meal Vouchers</string>
+    <string name="icon_home">Головна</string>
+    <string name="icon_directions_car">Транспорт</string>
+    <string name="icon_restaurant">Харчування</string>
+    <string name="icon_receipt_long">Квитанція</string>
+    <string name="icon_local_dining">Фастфуд</string>
+    <string name="icon_theater_comedy">Розвага</string>
+    <string name="icon_local_hospital">Здоров'я</string>
+    <string name="icon_shopping_bag">Покупки</string>
+    <string name="icon_school">Освіта</string>
+    <string name="icon_more_horiz">Інше</string>
+    <string name="icon_payments">Зарплата</string>
+    <string name="icon_savings">Заощадження</string>
+    <string name="icon_currency_exchange">Обмін</string>
+    <string name="icon_trending_up">Інвестиція</string>
+    <string name="icon_work">Робота</string>
+    <string name="icon_redeem">Подарунки</string>
+    <string name="icon_flight">Подорож</string>
+    <string name="icon_fitness_center">Спортзал</string>
+    <string name="icon_pets">Домашні тварини</string>
+    <string name="icon_directions_bus">Громадський транспорт</string>
+    <string name="icon_lightbulb">Комунальні послуги</string>
+    <string name="icon_celebration">Святкування</string>
+    <string name="icon_subscriptions">Підписки</string>
+    <string name="icon_fastfood">Закуски</string>
+    <string name="icon_star">Улюблені</string>
+    <string name="icon_volunteer_activism">Благодійність</string>
+    <string name="icon_directions_bike">Спорт</string>
+    <string name="icon_shopping_cart">Продукти</string>
+    <string name="icon_coffee">Кава</string>
+    <string name="icon_spa">Особистий догляд</string>
+    <string name="icon_card_giftcard">Ваучери на їжу</string>
 
     <!-- Charts Screen -->
-    <string name="charts_period">Period</string>
-    <string name="charts_from">From: %s</string>
-    <string name="charts_to">To: %s</string>
-    <string name="charts_income">Income</string>
-    <string name="charts_expenses">Expenses</string>
-    <string name="charts_income_by_category">Income by Category</string>
-    <string name="charts_expense_by_category">Expenses by Category</string>
-    <string name="charts_monthly_overview">Monthly Overview</string>
-    <string name="charts_yearly_overview">Yearly Overview</string>
-    <string name="charts_no_data">No data for the selected period</string>
-    <string name="chart_reset_zoom">Reset Zoom</string>
-    <string name="charts_payment_breakdown_title">Payment Method Breakdown</string>
-    <string name="charts_top_income_categories">Top Income Categories</string>
-    <string name="charts_top_expense_categories">Top Expense Categories</string>
+    <string name="charts_period">Період</string>
+    <string name="charts_from">Від: %s</string>
+    <string name="charts_to">До: %s</string>
+    <string name="charts_income">Дохід</string>
+    <string name="charts_expenses">Видатки</string>
+    <string name="charts_income_by_category">Дохід за категоріями</string>
+    <string name="charts_expense_by_category">Видатки за категоріями</string>
+    <string name="charts_monthly_overview">Огляд місяця</string>
+    <string name="charts_yearly_overview">Огляд року</string>
+    <string name="charts_no_data">Немає даних за вибраний період</string>
+    <string name="chart_reset_zoom">Скинути масштаб</string>
+    <string name="charts_payment_breakdown_title">Розбір способів оплати</string>
+    <string name="charts_top_income_categories">Основні категорії доходів</string>
+    <string name="charts_top_expense_categories">Основні категорії видатків</string>
     <string name="charts_chart_summary_cd">%1$s: %2$d categories, total %3$s</string>
     <string name="charts_category_item_cd">%1$s: %2$s, %3$s percent of total</string>
-    <string name="charts_pick_start_date">Pick start date</string>
-    <string name="charts_pick_end_date">Pick end date</string>
+    <string name="charts_pick_start_date">Виберіть дату початку</string>
+    <string name="charts_pick_end_date">Виберіть дату закінчення</string>
     <string name="charts_empty_ant">No data to chart yet! The ant is working hard! 🐜📊</string>
-    <string name="share">Share</string>
+    <string name="share">Поділитися</string>
     <string name="share_categories_subject">AntCashManager - Expenses by Category</string>
     <string name="share_monthly_subject">AntCashManager - Monthly Overview</string>
     <string name="share_yearly_subject">AntCashManager - Yearly Overview</string>
-    <string name="share_category_title">Expenses by Category</string>
-    <string name="share_monthly_title">Monthly Overview</string>
-    <string name="share_yearly_title">Yearly Overview</string>
+    <string name="share_category_title">Видатки за категоріями</string>
+    <string name="share_monthly_title">Огляд місяця</string>
+    <string name="share_yearly_title">Огляд року</string>
     <string name="share_total">Total</string>
-    <string name="share_income">Income</string>
-    <string name="share_expense">Expenses</string>
+    <string name="share_income">Дохід</string>
+    <string name="share_expense">Видатки</string>
     <string name="share_balance">Balance</string>
     <string name="share_total_income">Total Income</string>
     <string name="share_total_expense">Total Expenses</string>
     <string name="share_final_balance">Final Balance</string>
 
     <!-- Range Presets -->
-    <string name="range_week">7 days</string>
-    <string name="range_month">1 month</string>
-    <string name="range_three_months">3 months</string>
-    <string name="range_six_months">6 months</string>
-    <string name="range_year">1 year</string>
-    <string name="range_two_years">2 years</string>
-    <string name="range_three_years">3 years</string>
-    <string name="range_five_years">5 years</string>
-    <string name="range_six_years">6 years</string>
-    <string name="range_all">All time</string>
+    <string name="range_week">7 днів</string>
+    <string name="range_month">1 місяць</string>
+    <string name="range_three_months">3 місяці</string>
+    <string name="range_six_months">6 місяців</string>
+    <string name="range_year">1 рік</string>
+    <string name="range_two_years">2 роки</string>
+    <string name="range_three_years">3 роки</string>
+    <string name="range_five_years">5 років</string>
+    <string name="range_six_years">6 років</string>
+    <string name="range_all">Весь час</string>
 
     <!-- Range Labels (for collapsed filter) -->
-    <string name="range_label_today">Today</string>
-    <string name="range_label_this_week">This Week</string>
-    <string name="range_label_this_month">This Month</string>
-    <string name="range_label_this_year">This Year</string>
+    <string name="range_label_today">Сьогодні</string>
+    <string name="range_label_this_week">На цьому тижні</string>
+    <string name="range_label_this_month">Цього місяця</string>
+    <string name="range_label_this_year">Цього року</string>
     <string name="range_label_custom">From %1$s to %2$s</string>
 
     <!-- Settings Screen -->
-    <string name="settings_appearance">Appearance</string>
-    <string name="settings_theme">Theme</string>
-    <string name="settings_theme_light">Light</string>
-    <string name="settings_theme_dark">Dark</string>
-    <string name="settings_theme_system">System Default</string>
-    <string name="settings_language">Language</string>
-    <string name="settings_display">Display</string>
+    <string name="settings_appearance">Зовнішній вигляд</string>
+    <string name="settings_theme">Тема</string>
+    <string name="settings_theme_light">Світла</string>
+    <string name="settings_theme_dark">Темна</string>
+    <string name="settings_theme_system">Системна за замовчуванням</string>
+    <string name="settings_language">Мова</string>
+    <string name="settings_display">Дисплей</string>
     <string name="settings_display_subtitle">Customize currency, decimals, and formatting</string>
     <string name="settings_show_charts_section">Show Charts Section</string>
     <string name="settings_show_charts_section_visible">Charts section visible in navigation</string>
     <string name="settings_show_charts_section_hidden">Charts section hidden from navigation</string>
-    <string name="settings_currency_symbol">Currency Symbol</string>
-    <string name="settings_decimal_digits">Decimal Digits</string>
+    <string name="settings_currency_symbol">Символ валюти</string>
+    <string name="settings_decimal_digits">Десяткові цифри</string>
     <string name="settings_decimal_digits_subtitle">%d decimal places</string>
-    <string name="settings_decimal_separator">Decimal Separator</string>
-    <string name="settings_thousands_separator">Thousands Separator</string>
+    <string name="settings_decimal_separator">Розділювач дробової частини</string>
+    <string name="settings_thousands_separator">Розділювач тисяч</string>
     <string name="settings_meal_voucher_value">Meal Voucher Value</string>
     <string name="settings_meal_voucher_value_subtitle">Current value: %s</string>
     <string name="dialog_meal_voucher_title">Set Meal Voucher Value</string>
@@ -204,7 +204,7 @@
     <string name="settings_date_format_subtitle">%s</string>
     <string name="settings_section_currency">Currency</string>
     <string name="settings_section_dates">Dates</string>
-    <string name="settings_section_other">Other</string>
+    <string name="settings_section_other">Інше</string>
     <string name="settings_reset_preferences">Reset All Preferences</string>
     <string name="settings_reset_preferences_subtitle">Restore all settings to their default values</string>
     <string name="settings_section_widgets">Widgets</string>
@@ -212,9 +212,9 @@
     <string name="dialog_choose_widget_background_color">Choose widget background color</string>
     <string name="settings_widget_opacity">Opacity</string>
     <string name="settings_widget_opacity_value">%1$d%%</string>
-    <string name="settings_widget_preview_title">Preview</string>
-    <string name="settings_widget_preview_recent">Recent Transactions</string>
-    <string name="settings_widget_preview_category">Income &amp; Expenses</string>
+    <string name="settings_widget_preview_title">Попередній перегляд</string>
+    <string name="settings_widget_preview_recent">Недавні транзакції</string>
+    <string name="settings_widget_preview_category">Дохід і видатки</string>
     <string name="date_format_ddmmyyyy">DD/MM/YYYY</string>
     <string name="date_format_mmddyyyy">MM/DD/YYYY</string>
     <string name="date_format_yyyymmdd">YYYY-MM-DD</string>
@@ -246,12 +246,12 @@
     <string name="settings_restore_subtitle">Import data from a backup file</string>
     <string name="settings_last_restore_label">Last restore: %s</string>
     <string name="settings_last_restore_never">No restore performed yet</string>
-    <string name="settings_support">Support</string>
-    <string name="settings_send_feedback">Send Feedback</string>
+    <string name="settings_support">Підтримка</string>
+    <string name="settings_send_feedback">Надіслати зворотний зв'язок</string>
     <string name="settings_send_feedback_subtitle">Help us improve the app</string>
-    <string name="settings_privacy_policy">Privacy Policy</string>
+    <string name="settings_privacy_policy">Політика конфіденційності</string>
     <string name="settings_privacy_policy_subtitle">How we handle your data</string>
-    <string name="settings_app_version">App Version</string>
+    <string name="settings_app_version">Версія програми</string>
     <string name="settings_third_party">Third-party</string>
     <string name="settings_third_party_author">by %s</string>
     <string name="settings_third_party_libraries">Open-source Libraries</string>
@@ -266,14 +266,14 @@
     <string name="dialog_choose_thousands_separator">Choose Thousands Separator</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_delete">Delete</string>
-    <string name="dialog_add">Add</string>
+    <string name="dialog_add">Додати</string>
     <string name="exit_app_title">Exit app?</string>
     <string name="exit_app_message">Do you want to close AntCashManager?</string>
     <string name="exit_app_confirm">Exit</string>
 
     <!-- Common Actions -->
-    <string name="common_confirm">Confirm</string>
-    <string name="common_cancel">Cancel</string>
+    <string name="common_confirm">Підтвердити</string>
+    <string name="common_cancel">Скасувати</string>
     <string name="common_collapse">Collapse</string>
     <string name="common_expand">Expand</string>
 
@@ -300,11 +300,11 @@
     <string name="dialog_reset">Reset</string>
 
     <!-- Privacy Policy -->
-    <string name="privacy_policy_title">Privacy Policy</string>
+    <string name="privacy_policy_title">Політика конфіденційності</string>
     <string name="privacy_policy_content">AntCashManager is committed to protecting your privacy. This application does not collect or share personal data with third parties. All financial data is stored locally on your device and is never transmitted to external servers.\n\nYour data remains entirely on your device and under your control. We do not use analytics, tracking, or advertising services.\n\nFor any questions about privacy, please contact us through the app store listing.</string>
 
     <!-- Languages -->
-    <string name="language_system">System Default</string>
+    <string name="language_system">Системна за замовчуванням</string>
     <string name="language_english">English</string>
     <string name="language_italian">Italiano</string>
     <string name="language_french">Français</string>
@@ -319,21 +319,21 @@
     <string name="language_ukrainian">Українська (Ukrainian)</string>
     <string name="language_korean">한국어 (Korean)</string>
     <string name="debug_import_started">Debug import started</string>
-    <string name="back">Back</string>
+    <string name="back">Назад</string>
 
     <!-- Add Transaction Screen -->
-    <string name="add_transaction">Add Transaction</string>
-    <string name="transaction_type">Transaction Type</string>
+    <string name="add_transaction">Додати транзакцію</string>
+    <string name="transaction_type">Тип транзакції</string>
 
     <!-- Add Transaction Steps -->
     <string name="add_transaction_select_category">Select Category</string>
     <string name="add_transaction_choose_category">Choose a category for the transaction</string>
     <string name="add_transaction_no_categories_available">No categories available</string>
-    <string name="add_transaction_cancel">Cancel</string>
+    <string name="add_transaction_cancel">Скасувати</string>
     <string name="add_transaction_previous">Previous</string>
     <string name="add_transaction_select_type">Select Type</string>
-    <string name="add_transaction_income_label">Income</string>
-    <string name="add_transaction_expense_label">Expense</string>
+    <string name="add_transaction_income_label">Дохід</string>
+    <string name="add_transaction_expense_label">Видаток</string>
     <string name="add_transaction_details">Transaction Details</string>
     <string name="add_transaction_title_required">Title *</string>
     <string name="add_transaction_amount_required">Amount *</string>
@@ -346,9 +346,9 @@
     <string name="add_transaction_save">Save</string>
     <string name="add_transaction_update">Update</string>
     <string name="edit_transaction_title">Edit Transaction</string>
-    <string name="add_transaction_back">Back</string>
+    <string name="add_transaction_back">Назад</string>
     <string name="add_transaction_none">None</string>
-    <string name="add_transaction_category">Category</string>
+    <string name="add_transaction_category">Категорія</string>
     <string name="add_transaction_type">Type</string>
     <string name="add_transaction_tags_label">Tags</string>
     <string name="add_transaction_tags_placeholder">Add tags separated by commas</string>
@@ -358,16 +358,16 @@
 
     <!-- Recurrence intervals -->
     <string name="recurrence_interval_label">Recurrence Interval</string>
-    <string name="recurrence_interval_daily">Daily</string>
-    <string name="recurrence_interval_weekly">Weekly</string>
-    <string name="recurrence_interval_monthly">Monthly</string>
-    <string name="recurrence_interval_yearly">Yearly</string>
+    <string name="recurrence_interval_daily">Щодня</string>
+    <string name="recurrence_interval_weekly">Щотижня</string>
+    <string name="recurrence_interval_monthly">Щомісяця</string>
+    <string name="recurrence_interval_yearly">Щорічно</string>
 
     <!-- Transaction Details Dialog -->
     <string name="transaction_details_title">Transaction Details</string>
-    <string name="transaction_details_category">Category</string>
+    <string name="transaction_details_category">Категорія</string>
     <string name="transaction_details_type">Type</string>
-    <string name="transaction_details_payment_type">Payment Type</string>
+    <string name="transaction_details_payment_type">Тип платежу</string>
     <string name="transaction_details_amount">Amount</string>
     <string name="transaction_details_date">Date</string>
     <string name="transaction_details_time">Time</string>
@@ -383,17 +383,17 @@
     <!-- Payment Type -->
     <string name="payment_type_electronic">Electronic Payment</string>
     <string name="payment_type_cash">Cash</string>
-    <string name="payment_type_meal_vouchers">Meal Vouchers</string>
+    <string name="payment_type_meal_vouchers">Ваучери на їжу</string>
 
     <!-- Add Transaction Payment Type -->
-    <string name="add_transaction_payment_type">Payment Type</string>
+    <string name="add_transaction_payment_type">Тип платежу</string>
     <string name="add_transaction_select_payment_type">Select Payment Type</string>
     <string name="add_transaction_payment_type_electronic">Electronic</string>
     <string name="add_transaction_payment_type_cash">Cash</string>
-    <string name="add_transaction_payment_type_meal_vouchers">Meal Vouchers</string>
+    <string name="add_transaction_payment_type_meal_vouchers">Ваучери на їжу</string>
 
     <!-- Add Transaction - Meal Vouchers -->
-    <string name="add_transaction_meal_voucher_section_title">Meal Vouchers</string>
+    <string name="add_transaction_meal_voucher_section_title">Ваучери на їжу</string>
     <string name="add_transaction_meal_voucher_unit_value">Unit value: %s€</string>
     <string name="add_transaction_meal_voucher_count">Number of vouchers</string>
     <string name="add_transaction_meal_voucher_subtotal">Vouchers subtotal: %s€</string>
@@ -401,9 +401,9 @@
 
     <!-- Empty State -->
     <string name="empty_state_no_transactions">No transactions present</string>
-    <string name="widget_recent_transactions_title">Recent Transactions</string>
+    <string name="widget_recent_transactions_title">Недавні транзакції</string>
     <string name="widget_recent_transactions_description">Shows your recent transactions, updated automatically</string>
-    <string name="widget_category_breakdown_title">Income &amp; Expenses</string>
+    <string name="widget_category_breakdown_title">Дохід і видатки</string>
     <string name="widget_category_breakdown_description">Shows this month\'s income and expenses by category, updated automatically</string>
     <string name="empty_state_no_transactions_subtitle">The piggy bank is waiting for you!</string>
 
@@ -449,11 +449,11 @@
     <string name="settings_easter_egg_message">🐜 Hi! Thanks for using AntCash!</string>
 
     <!-- Transaction Display Section -->
-    <string name="settings_display_charts">Charts</string>
+    <string name="settings_display_charts">Графіки</string>
     <string name="settings_charts_zoom">Enable Charts Zoom</string>
     <string name="settings_charts_zoom_desc">Allows to zoom in charts with pinch-to-zoom</string>
 
-    <string name="settings_transaction_display_section">Transactions</string>
+    <string name="settings_transaction_display_section">Транзакції</string>
     <string name="settings_show_transaction_notes">Show Transaction Notes</string>
     <string name="settings_show_transaction_notes_subtitle_enabled">Notes visible in transaction items</string>
     <string name="settings_show_transaction_notes_subtitle_disabled">Notes hidden</string>
@@ -462,7 +462,7 @@
     <string name="settings_mask_amounts_subtitle_disabled">Digits are shown normally</string>
     <string name="settings_mask_amounts_preview">Preview: %s</string>
     <string name="settings_transaction_icon_display_trend">Trend Arrows</string>
-    <string name="settings_transaction_icon_display_category">Category</string>
+    <string name="settings_transaction_icon_display_category">Категорія</string>
     <string name="settings_transaction_icon_display_none">None</string>
     <string name="dialog_choose_transaction_icon_display">Choose icon display type</string>
 
@@ -476,13 +476,13 @@
     <string name="tutorial_welcome_point_insights">See balances and trends at a glance.</string>
     <string name="tutorial_welcome_point_categories">Organize spending with smart categories.</string>
     <string name="tutorial_welcome_point_customize">Customize language, theme, and formats.</string>
-    <string name="tutorial_dashboard_title">Dashboard</string>
+    <string name="tutorial_dashboard_title">Панель керування</string>
     <string name="tutorial_dashboard_desc">Here you can see your total balance, monthly income and expenses at a glance.</string>
-    <string name="tutorial_transactions_title">Transactions</string>
+    <string name="tutorial_transactions_title">Транзакції</string>
     <string name="tutorial_transactions_desc">Manage all your movements here. You can search, filter, and add new entries easily.</string>
     <string name="tutorial_charts_title">Charts &amp; Insights</string>
     <string name="tutorial_charts_desc">Visualize your spending habits with interactive charts. See where your money goes!</string>
-    <string name="tutorial_categories_title">Categories</string>
+    <string name="tutorial_categories_title">Категорії</string>
     <string name="tutorial_categories_desc">Organize your transactions with custom categories, icons, and colors.</string>
     <string name="tutorial_settings_title">Customization</string>
     <string name="tutorial_settings_desc">Tailor the app to your needs: currency, date formats, accessibility, and themes.</string>
@@ -493,28 +493,28 @@
     <string name="tutorial_finish">Got it!</string>
     <string name="tutorial_progress_cd">Tutorial step %1$d of %2$d</string>
 
-    <string name="settings_about">Settings</string>
+    <string name="settings_about">Параметри</string>
 
     <!-- Category Translations (Keys) -->
     <string name="category_uncategorized">Uncategorized</string>
-    <string name="category_home">Home</string>
-    <string name="category_transport">Transport</string>
+    <string name="category_home">Головна</string>
+    <string name="category_transport">Транспорт</string>
     <string name="category_food">Food</string>
     <string name="category_bills">Bills</string>
     <string name="category_dining">Dining out</string>
-    <string name="category_entertainment">Entertainment</string>
-    <string name="category_health">Health</string>
-    <string name="category_shopping">Shopping</string>
-    <string name="category_education">Education</string>
-    <string name="category_other">Other</string>
-    <string name="category_salary">Salary</string>
+    <string name="category_entertainment">Розвага</string>
+    <string name="category_health">Здоров'я</string>
+    <string name="category_shopping">Покупки</string>
+    <string name="category_education">Освіта</string>
+    <string name="category_other">Інше</string>
+    <string name="category_salary">Зарплата</string>
     <string name="category_allowance">Allowance</string>
     <string name="category_reimbursement">Reimbursement</string>
     <string name="category_investments">Investments</string>
     <string name="category_freelance">Freelance</string>
-    <string name="category_gifts">Gifts</string>
-    <string name="category_subscriptions">Subscriptions</string>
-    <string name="category_personal_care">Personal Care</string>
+    <string name="category_gifts">Подарунки</string>
+    <string name="category_subscriptions">Підписки</string>
+    <string name="category_personal_care">Особистий догляд</string>
 
     <!-- Receipt Scan Screen -->
     <string name="receipt_scan_title">Scan Receipt</string>
@@ -540,7 +540,7 @@
     <string name="help_home_desc">Welcome to Home! Here you can view your financial summary and recent transactions.</string>
     <string name="help_home_feature_date_filters_title">Date Range Filters</string>
     <string name="help_home_feature_date_filters_desc">Filter transactions by specific dates or use available presets.</string>
-    <string name="help_home_feature_recent_transactions_title">Recent Transactions</string>
+    <string name="help_home_feature_recent_transactions_title">Недавні транзакції</string>
     <string name="help_home_feature_recent_transactions_desc">View your latest transactions with details and category.</string>
 
     <!-- Charts Help Dialog -->
@@ -570,7 +570,7 @@
     <string name="help_settings_feature_theme_desc">Customize the app appearance according to your preferences.</string>
     <string name="help_settings_feature_currency_title">Currency</string>
     <string name="help_settings_feature_currency_desc">Select your preferred currency to display amounts.</string>
-    <string name="help_settings_feature_language_title">Language</string>
+    <string name="help_settings_feature_language_title">Мова</string>
     <string name="help_settings_feature_language_desc">Choose the interface language.</string>
 
     <!-- Categories Help Dialog -->
@@ -589,11 +589,11 @@
     <string name="preview_app_text_clickable">Clickable Text</string>
     <string name="preview_app_text_all_caps">this text is in all caps</string>
     <string name="home_balance_negative">📉 Negative</string>
-    <string name="transactions_title">Transactions</string>
+    <string name="transactions_title">Транзакції</string>
 
-    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_cancel">Скасувати</string>
     <string name="dialog_close">Close</string>
-    <string name="settings_title">Settings</string>
+    <string name="settings_title">Параметри</string>
     <string name="charts_title">Graphics</string>
     <string name="chart_customize_order">Customize chart cards order</string>
     <string name="chart_cards_order_dialog_title">Reorder chart cards</string>
@@ -602,7 +602,7 @@
     <!-- Chart Cards - New Visualizations -->
     <string name="chart_spending_forecast_title">Spending Forecast</string>
     <string name="chart_avg_monthly">Monthly Average</string>
-    <string name="chart_period">Period</string>
+    <string name="chart_period">Період</string>
     <string name="chart_last_3_months">Last 3 months</string>
     <string name="chart_quick_stats_title">Quick Stats</string>
     <string name="chart_days_tracked">Days Tracked</string>
@@ -621,7 +621,7 @@
     <string name="chart_details_title">Details</string>
     <string name="chart_details_percentage">%d%% of total</string>
     <string name="chart_details_amount">Amount</string>
-    <string name="chart_details_transactions">Transactions</string>
+    <string name="chart_details_transactions">Транзакції</string>
     <string name="chart_details_info_title">Category Information</string>
     <string name="chart_details_info_description">Tap on any chart slice to view more details about that category</string>
     <string name="chart_trend_increasing">Spending trend: Increasing</string>

@@ -1,154 +1,154 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Common Actions/Labels -->
-    <string name="common_dashboard">Dashboard</string>
-    <string name="common_home">Home</string>
-    <string name="common_charts">Charts</string>
-    <string name="common_transactions">Transactions</string>
-    <string name="common_categories">Categories</string>
-    <string name="common_settings">Settings</string>
-    <string name="common_income">Income</string>
-    <string name="common_expenses">Expenses</string>
-    <string name="common_back">Back</string>
-    <string name="common_add">Add</string>
-    <string name="common_preview">Preview</string>
+    <string name="common_dashboard">Pulpit</string>
+    <string name="common_home">Strona główna</string>
+    <string name="common_charts">Wykresy</string>
+    <string name="common_transactions">Transakcje</string>
+    <string name="common_categories">Kategorie</string>
+    <string name="common_settings">Ustawienia</string>
+    <string name="common_income">Przychód</string>
+    <string name="common_expenses">Wydatki</string>
+    <string name="common_back">Wstecz</string>
+    <string name="common_add">Dodaj</string>
+    <string name="common_preview">Podgląd</string>
 
     <!-- HelpDialog (Dashboard) -->
-    <string name="help_dashboard_desc">View the total balance, income, and expenses for the selected period.</string>
+    <string name="help_dashboard_desc">Wyświetl całkowity bilans, przychody i wydatki za wybrany okres.</string>
     <string name="app_name">AntCashManager</string>
 
     <!-- Navigation -->
 
     <!-- Home Screen -->
-    <string name="home_total_balance">Total Balance</string>
-    <string name="home_income">Income</string>
-    <string name="home_expenses">Expenses</string>
-    <string name="home_income_expense_card_title">Income &amp; Expenses</string>
-    <string name="home_recent_transactions">Recent Transactions</string>
-    <string name="home_customize_top_cards_action">Customize top cards</string>
-    <string name="home_customize_top_cards_title">Customize top cards</string>
-    <string name="home_quick_insights_title">Quick insights</string>
-    <string name="home_quick_insights_net_balance">Net balance</string>
-    <string name="home_quick_insights_transactions_count">Transactions in period</string>
-    <string name="home_quick_insights_average_amount">Average amount</string>
-    <string name="home_quick_insights_daily_average_expense">Daily average</string>
-    <string name="home_move_up">Move up</string>
-    <string name="home_move_down">Move down</string>
-    <string name="home_balance_positive">📈 Positive</string>
-    <string name="home_recent_transactions_count">Recent Transactions · %1$d</string>
-    <string name="home_quick_insights_biggest_expense">Biggest expense</string>
-    <string name="home_scroll_to_top">Scroll to top</string>
+    <string name="home_total_balance">Całkowity bilans</string>
+    <string name="home_income">Przychód</string>
+    <string name="home_expenses">Wydatki</string>
+    <string name="home_income_expense_card_title">Przychody i wydatki</string>
+    <string name="home_recent_transactions">Ostatnie transakcje</string>
+    <string name="home_customize_top_cards_action">Dostosuj karty</string>
+    <string name="home_customize_top_cards_title">Dostosuj karty górne</string>
+    <string name="home_quick_insights_title">Szybkie wglądy</string>
+    <string name="home_quick_insights_net_balance">Bilans netto</string>
+    <string name="home_quick_insights_transactions_count">Transakcje w okresie</string>
+    <string name="home_quick_insights_average_amount">Średnia kwota</string>
+    <string name="home_quick_insights_daily_average_expense">Średnia dzienna</string>
+    <string name="home_move_up">Przesuń w górę</string>
+    <string name="home_move_down">Przesuń w dół</string>
+    <string name="home_balance_positive">📈 Dodatni</string>
+    <string name="home_recent_transactions_count">Ostatnie transakcje · %1$d</string>
+    <string name="home_quick_insights_biggest_expense">Największy wydatek</string>
+    <string name="home_scroll_to_top">Przewiń do góry</string>
     <string name="home_balance_summary_cd">%1$s: %2$s, %3$s</string>
     <string name="home_insight_row_cd">%1$s: %2$s</string>
 
     <!-- Transactions Screen -->
-    <string name="transactions_add">Add Transaction</string>
-    <string name="transactions_type_income">Income</string>
-    <string name="transactions_type_expense">Expense</string>
-    <string name="transactions_recurring">Recurring</string>
-    <string name="transactions_interval_daily">Daily</string>
-    <string name="transactions_interval_weekly">Weekly</string>
-    <string name="transactions_interval_monthly">Monthly</string>
-    <string name="transactions_interval_yearly">Yearly</string>
+    <string name="transactions_add">Dodaj transakcję</string>
+    <string name="transactions_type_income">Przychód</string>
+    <string name="transactions_type_expense">Wydatek</string>
+    <string name="transactions_recurring">Powtarzające się</string>
+    <string name="transactions_interval_daily">Dziennie</string>
+    <string name="transactions_interval_weekly">Tygodniowo</string>
+    <string name="transactions_interval_monthly">Miesięcznie</string>
+    <string name="transactions_interval_yearly">Rocznie</string>
     <!-- Transactions Filters -->
-    <string name="transactions_search">Search</string>
-    <string name="transactions_filter">Filters</string>
-    <string name="transactions_search_label">Search transactions</string>
-    <string name="transactions_search_placeholder">Name or amount…</string>
-    <string name="transactions_advanced_filters">Advanced Filters</string>
-    <string name="transactions_filter_type">Transaction Type</string>
-    <string name="transactions_filter_payment">Payment Type</string>
-    <string name="transactions_filter_category">Category</string>
+    <string name="transactions_search">Szukaj</string>
+    <string name="transactions_filter">Filtry</string>
+    <string name="transactions_search_label">Szukaj transakcji</string>
+    <string name="transactions_search_placeholder">Nazwa lub kwota…</string>
+    <string name="transactions_advanced_filters">Filtry zaawansowane</string>
+    <string name="transactions_filter_type">Typ transakcji</string>
+    <string name="transactions_filter_payment">Typ płatności</string>
+    <string name="transactions_filter_category">Kategoria</string>
 
-    <string name="transactions_results_count">Results: %1$d</string>
-    <string name="common_all">All</string>
-    <string name="common_clear">Clear</string>
-    <string name="transaction_type_income">Income</string>
-    <string name="transaction_type_expense">Expense</string>
+    <string name="transactions_results_count">Wyniki: %1$d</string>
+    <string name="common_all">Wszystko</string>
+    <string name="common_clear">Wyczyść</string>
+    <string name="transaction_type_income">Przychód</string>
+    <string name="transaction_type_expense">Wydatek</string>
 
     <!-- Categories Screen -->
-    <string name="categories_empty">No categories yet</string>
-    <string name="categories_empty_subtitle">Tap + to add your first category</string>
-    <string name="categories_add">Add Category</string>
-    <string name="categories_name_label">Category Name</string>
-    <string name="categories_color_label">Color</string>
-    <string name="categories_delete_title">Delete Category?</string>
-    <string name="categories_delete_message">Are you sure you want to delete \"%s\"?</string>
-    <string name="categories_add_content_desc">Add Category</string>
-    <string name="categories_selected">Selected</string>
-    <string name="categories_tab_expense">Expense</string>
-    <string name="categories_tab_income">Income</string>
-    <string name="categories_default_badge">Default</string>
-    <string name="categories_icon_label">Icon</string>
-    <string name="categories_hide">Hide category</string>
-    <string name="categories_show">Show category</string>
-    <string name="categories_hidden_section_title">Hidden categories (%d)</string>
-    <string name="categories_reorder">Reorder categories</string>
-    <string name="categories_selection_hint">Tap a category to select it (auto-advances in real app)</string>
+    <string name="categories_empty">Brak kategorii</string>
+    <string name="categories_empty_subtitle">Dotknij + aby dodać pierwszą kategorię</string>
+    <string name="categories_add">Dodaj kategorię</string>
+    <string name="categories_name_label">Nazwa kategorii</string>
+    <string name="categories_color_label">Kolor</string>
+    <string name="categories_delete_title">Usunąć kategorię?</string>
+    <string name="categories_delete_message">Czy na pewno chcesz usunąć \"%s\"?</string>
+    <string name="categories_add_content_desc">Dodaj kategorię</string>
+    <string name="categories_selected">Wybrane</string>
+    <string name="categories_tab_expense">Wydatek</string>
+    <string name="categories_tab_income">Przychód</string>
+    <string name="categories_default_badge">Domyślna</string>
+    <string name="categories_icon_label">Ikona</string>
+    <string name="categories_hide">Ukryj kategorię</string>
+    <string name="categories_show">Pokaż kategorię</string>
+    <string name="categories_hidden_section_title">Ukryte kategorie (%d)</string>
+    <string name="categories_reorder">Zmień kolejność kategorii</string>
+    <string name="categories_selection_hint">Dotknij kategorię aby ją wybrać (auto-przechodzi w rzeczywistej aplikacji)</string>
 
     <!-- Category Icons -->
-    <string name="icon_home">Home</string>
+    <string name="icon_home">Strona</string>
     <string name="icon_directions_car">Transport</string>
-    <string name="icon_restaurant">Dining</string>
-    <string name="icon_receipt_long">Receipt</string>
+    <string name="icon_restaurant">Jedzenie</string>
+    <string name="icon_receipt_long">Paragon</string>
     <string name="icon_local_dining">Fast Food</string>
-    <string name="icon_theater_comedy">Entertainment</string>
-    <string name="icon_local_hospital">Health</string>
-    <string name="icon_shopping_bag">Shopping</string>
-    <string name="icon_school">Education</string>
-    <string name="icon_more_horiz">Other</string>
-    <string name="icon_payments">Salary</string>
-    <string name="icon_savings">Savings</string>
-    <string name="icon_currency_exchange">Exchange</string>
-    <string name="icon_trending_up">Investment</string>
-    <string name="icon_work">Work</string>
-    <string name="icon_redeem">Gifts</string>
-    <string name="icon_flight">Travel</string>
-    <string name="icon_fitness_center">Gym</string>
-    <string name="icon_pets">Pets</string>
-    <string name="icon_directions_bus">Public Transport</string>
-    <string name="icon_lightbulb">Utilities</string>
-    <string name="icon_celebration">Celebration</string>
-    <string name="icon_subscriptions">Subscriptions</string>
-    <string name="icon_fastfood">Snacks</string>
-    <string name="icon_star">Favorites</string>
-    <string name="icon_volunteer_activism">Charity</string>
+    <string name="icon_theater_comedy">Rozrywka</string>
+    <string name="icon_local_hospital">Zdrowie</string>
+    <string name="icon_shopping_bag">Zakupy</string>
+    <string name="icon_school">Edukacja</string>
+    <string name="icon_more_horiz">Inne</string>
+    <string name="icon_payments">Pensja</string>
+    <string name="icon_savings">Oszczędności</string>
+    <string name="icon_currency_exchange">Wymiana</string>
+    <string name="icon_trending_up">Inwestycja</string>
+    <string name="icon_work">Praca</string>
+    <string name="icon_redeem">Prezenty</string>
+    <string name="icon_flight">Podróż</string>
+    <string name="icon_fitness_center">Siłownia</string>
+    <string name="icon_pets">Zwierzęta</string>
+    <string name="icon_directions_bus">Transport publiczny</string>
+    <string name="icon_lightbulb">Media</string>
+    <string name="icon_celebration">Obchody</string>
+    <string name="icon_subscriptions">Subskrypcje</string>
+    <string name="icon_fastfood">Przekąski</string>
+    <string name="icon_star">Ulubione</string>
+    <string name="icon_volunteer_activism">Charytatywność</string>
     <string name="icon_directions_bike">Sport</string>
-    <string name="icon_shopping_cart">Groceries</string>
-    <string name="icon_coffee">Coffee</string>
-    <string name="icon_spa">Personal Care</string>
-    <string name="icon_card_giftcard">Meal Vouchers</string>
+    <string name="icon_shopping_cart">Artykuły spożywcze</string>
+    <string name="icon_coffee">Kawa</string>
+    <string name="icon_spa">Opieka osobista</string>
+    <string name="icon_card_giftcard">Vouchery posiłkowe</string>
 
     <!-- Charts Screen -->
-    <string name="charts_period">Period</string>
-    <string name="charts_from">From: %s</string>
-    <string name="charts_to">To: %s</string>
-    <string name="charts_income">Income</string>
-    <string name="charts_expenses">Expenses</string>
-    <string name="charts_income_by_category">Income by Category</string>
-    <string name="charts_expense_by_category">Expenses by Category</string>
-    <string name="charts_monthly_overview">Monthly Overview</string>
-    <string name="charts_yearly_overview">Yearly Overview</string>
-    <string name="charts_no_data">No data for the selected period</string>
-    <string name="chart_reset_zoom">Reset Zoom</string>
-    <string name="charts_payment_breakdown_title">Payment Method Breakdown</string>
-    <string name="charts_top_income_categories">Top Income Categories</string>
-    <string name="charts_top_expense_categories">Top Expense Categories</string>
+    <string name="charts_period">Okres</string>
+    <string name="charts_from">Od: %s</string>
+    <string name="charts_to">Do: %s</string>
+    <string name="charts_income">Przychód</string>
+    <string name="charts_expenses">Wydatki</string>
+    <string name="charts_income_by_category">Przychód wg kategorii</string>
+    <string name="charts_expense_by_category">Wydatki wg kategorii</string>
+    <string name="charts_monthly_overview">Przegląd miesięczny</string>
+    <string name="charts_yearly_overview">Przegląd roczny</string>
+    <string name="charts_no_data">Brak danych dla wybranego okresu</string>
+    <string name="chart_reset_zoom">Resetuj zoom</string>
+    <string name="charts_payment_breakdown_title">Podział metod płatności</string>
+    <string name="charts_top_income_categories">Główne kategorie przychodu</string>
+    <string name="charts_top_expense_categories">Główne kategorie wydatków</string>
     <string name="charts_chart_summary_cd">%1$s: %2$d categories, total %3$s</string>
     <string name="charts_category_item_cd">%1$s: %2$s, %3$s percent of total</string>
-    <string name="charts_pick_start_date">Pick start date</string>
-    <string name="charts_pick_end_date">Pick end date</string>
+    <string name="charts_pick_start_date">Wybierz datę początkową</string>
+    <string name="charts_pick_end_date">Wybierz datę końcową</string>
     <string name="charts_empty_ant">No data to chart yet! The ant is working hard! 🐜📊</string>
-    <string name="share">Share</string>
+    <string name="share">Udostępnij</string>
     <string name="share_categories_subject">AntCashManager - Expenses by Category</string>
     <string name="share_monthly_subject">AntCashManager - Monthly Overview</string>
     <string name="share_yearly_subject">AntCashManager - Yearly Overview</string>
-    <string name="share_category_title">Expenses by Category</string>
-    <string name="share_monthly_title">Monthly Overview</string>
-    <string name="share_yearly_title">Yearly Overview</string>
+    <string name="share_category_title">Wydatki wg kategorii</string>
+    <string name="share_monthly_title">Przegląd miesięczny</string>
+    <string name="share_yearly_title">Przegląd roczny</string>
     <string name="share_total">Total</string>
-    <string name="share_income">Income</string>
-    <string name="share_expense">Expenses</string>
+    <string name="share_income">Przychód</string>
+    <string name="share_expense">Wydatki</string>
     <string name="share_balance">Balance</string>
     <string name="share_total_income">Total Income</string>
     <string name="share_total_expense">Total Expenses</string>
@@ -258,22 +258,22 @@
     <string name="settings_third_party_subtitle">View the open-source libraries used in this app</string>
 
     <!-- Dialogs -->
-    <string name="dialog_choose_theme">Choose Theme</string>
-    <string name="dialog_choose_language">Choose Language</string>
-    <string name="dialog_choose_currency">Choose Currency Symbol</string>
-    <string name="dialog_choose_decimal_digits">Choose Decimal Digits</string>
-    <string name="dialog_choose_decimal_separator">Choose Decimal Separator</string>
-    <string name="dialog_choose_thousands_separator">Choose Thousands Separator</string>
+    <string name="dialog_choose_theme">Wybierz motyw</string>
+    <string name="dialog_choose_language">Wybierz język</string>
+    <string name="dialog_choose_currency">Wybierz symbol waluty</string>
+    <string name="dialog_choose_decimal_digits">Wybierz miejsca dziesiętne</string>
+    <string name="dialog_choose_decimal_separator">Wybierz separator dziesiętny</string>
+    <string name="dialog_choose_thousands_separator">Wybierz separator tysięcy</string>
     <string name="dialog_ok">OK</string>
-    <string name="dialog_delete">Delete</string>
-    <string name="dialog_add">Add</string>
+    <string name="dialog_delete">Usuń</string>
+    <string name="dialog_add">Dodaj</string>
     <string name="exit_app_title">Exit app?</string>
     <string name="exit_app_message">Do you want to close AntCashManager?</string>
     <string name="exit_app_confirm">Exit</string>
 
     <!-- Common Actions -->
-    <string name="common_confirm">Confirm</string>
-    <string name="common_cancel">Cancel</string>
+    <string name="common_confirm">Potwierdź</string>
+    <string name="common_cancel">Anuluj</string>
     <string name="common_collapse">Collapse</string>
     <string name="common_expand">Expand</string>
 
@@ -304,20 +304,20 @@
     <string name="privacy_policy_content">AntCashManager is committed to protecting your privacy. This application does not collect or share personal data with third parties. All financial data is stored locally on your device and is never transmitted to external servers.\n\nYour data remains entirely on your device and under your control. We do not use analytics, tracking, or advertising services.\n\nFor any questions about privacy, please contact us through the app store listing.</string>
 
     <!-- Languages -->
-    <string name="language_system">System Default</string>
+    <string name="language_system">Domyślny system</string>
     <string name="language_english">English</string>
     <string name="language_italian">Italiano</string>
     <string name="language_french">Français</string>
     <string name="language_german">Deutsch</string>
     <string name="language_spanish">Español</string>
-    <string name="language_chinese_simplified">Chinese (Mandarin)</string>
-    <string name="language_chinese_traditional">Chinese (Traditional)</string>
-    <string name="language_japanese">Japanese</string>
+    <string name="language_chinese_simplified">中文（简体）</string>
+    <string name="language_chinese_traditional">中文（繁體）</string>
+    <string name="language_japanese">日本語</string>
     <string name="language_polish">Polski</string>
-    <string name="language_hindi">हिन्दी (Hindi)</string>
-    <string name="language_russian">Русский (Russian)</string>
-    <string name="language_ukrainian">Українська (Ukrainian)</string>
-    <string name="language_korean">한국어 (Korean)</string>
+    <string name="language_hindi">हिन्दी</string>
+    <string name="language_russian">Русский</string>
+    <string name="language_ukrainian">Українська</string>
+    <string name="language_korean">한국어</string>
     <string name="debug_import_started">Debug import started</string>
     <string name="back">Back</string>
 
@@ -332,7 +332,7 @@
     <string name="add_transaction_cancel">Cancel</string>
     <string name="add_transaction_previous">Previous</string>
     <string name="add_transaction_select_type">Select Type</string>
-    <string name="add_transaction_income_label">Income</string>
+    <string name="add_transaction_income_label">Przychód</string>
     <string name="add_transaction_expense_label">Expense</string>
     <string name="add_transaction_details">Transaction Details</string>
     <string name="add_transaction_title_required">Title *</string>
@@ -383,17 +383,17 @@
     <!-- Payment Type -->
     <string name="payment_type_electronic">Electronic Payment</string>
     <string name="payment_type_cash">Cash</string>
-    <string name="payment_type_meal_vouchers">Meal Vouchers</string>
+    <string name="payment_type_meal_vouchers">Vouchery posiłkowe</string>
 
     <!-- Add Transaction Payment Type -->
     <string name="add_transaction_payment_type">Payment Type</string>
     <string name="add_transaction_select_payment_type">Select Payment Type</string>
     <string name="add_transaction_payment_type_electronic">Electronic</string>
     <string name="add_transaction_payment_type_cash">Cash</string>
-    <string name="add_transaction_payment_type_meal_vouchers">Meal Vouchers</string>
+    <string name="add_transaction_payment_type_meal_vouchers">Vouchery posiłkowe</string>
 
     <!-- Add Transaction - Meal Vouchers -->
-    <string name="add_transaction_meal_voucher_section_title">Meal Vouchers</string>
+    <string name="add_transaction_meal_voucher_section_title">Vouchery posiłkowe</string>
     <string name="add_transaction_meal_voucher_unit_value">Unit value: %s€</string>
     <string name="add_transaction_meal_voucher_count">Number of vouchers</string>
     <string name="add_transaction_meal_voucher_subtotal">Vouchers subtotal: %s€</string>
@@ -507,14 +507,14 @@
     <string name="category_shopping">Shopping</string>
     <string name="category_education">Education</string>
     <string name="category_other">Other</string>
-    <string name="category_salary">Salary</string>
+    <string name="category_salary">Pensja</string>
     <string name="category_allowance">Allowance</string>
     <string name="category_reimbursement">Reimbursement</string>
     <string name="category_investments">Investments</string>
     <string name="category_freelance">Freelance</string>
-    <string name="category_gifts">Gifts</string>
-    <string name="category_subscriptions">Subscriptions</string>
-    <string name="category_personal_care">Personal Care</string>
+    <string name="category_gifts">Prezenty</string>
+    <string name="category_subscriptions">Subskrypcje</string>
+    <string name="category_personal_care">Opieka osobista</string>
 
     <!-- Receipt Scan Screen -->
     <string name="receipt_scan_title">Scan Receipt</string>
@@ -602,7 +602,7 @@
     <!-- Chart Cards - New Visualizations -->
     <string name="chart_spending_forecast_title">Spending Forecast</string>
     <string name="chart_avg_monthly">Monthly Average</string>
-    <string name="chart_period">Period</string>
+    <string name="chart_period">Okres</string>
     <string name="chart_last_3_months">Last 3 months</string>
     <string name="chart_quick_stats_title">Quick Stats</string>
     <string name="chart_days_tracked">Days Tracked</string>

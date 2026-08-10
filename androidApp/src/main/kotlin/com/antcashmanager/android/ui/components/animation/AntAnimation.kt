@@ -12,7 +12,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -35,6 +34,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.text.AppText
 import kotlinx.coroutines.delay
@@ -63,7 +65,7 @@ fun AntSplashScreen(
         ) {
             BouncingAnt(modifier = Modifier.size(180.dp))
 
-            Spacer(modifier = Modifier.height(32.dp))
+            VerticalSpacer(SpacingSize.XL)
 
             AppText(
                 text = stringResource(R.string.app_name),
@@ -184,7 +186,7 @@ fun AntEasterEggAnimation(
                             .offset(offsetX, offsetY)
                             .clickable { isRunning = true }
                     )
-                    Spacer(modifier = Modifier.height(24.dp))
+                    VerticalSpacer(SpacingSize.LG)
                     AppText(
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                         text = stringResource(R.string.settings_easter_egg_message),
@@ -192,7 +194,7 @@ fun AntEasterEggAnimation(
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.clickable { isRunning = true }
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    VerticalSpacer(SpacingSize.XS)
                     AppText(
                         text = "v$versionName",
                         style = MaterialTheme.typography.bodyMedium,

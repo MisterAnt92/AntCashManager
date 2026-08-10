@@ -25,6 +25,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.categories.view.categoryIconMap
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
@@ -100,7 +103,7 @@ fun AppCategoryCard(
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        VerticalSpacer(SpacingSize.XS)
 
         // Nome della categoria
         AppText(
@@ -123,7 +126,7 @@ fun AppCategoryCard(
 
         // Indicatore di selezione
         if (isSelected) {
-            Spacer(modifier = Modifier.height(4.dp))
+            VerticalSpacer(SpacingSize.XXXS)
             Icon(
                 imageVector = Icons.Default.Check,
                 contentDescription = null,

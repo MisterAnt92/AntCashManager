@@ -1,12 +1,14 @@
 package com.antcashmanager.android.ui.screen.transactions.addImport.view
 
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.selection.AppSelectionItemCard
 import com.antcashmanager.domain.model.Category
@@ -60,7 +62,7 @@ internal fun DetailsCategoryTypeSection(
         isEditable = true,
         onClick = onEditCategory,
     )
-    Spacer(modifier = Modifier.height(12.dp))
+    VerticalSpacer(SpacingSize.SM)
 
     // ── Tipo Transazione – sempre editabile al tap ──
     AppSelectionItemCard(
@@ -78,7 +80,7 @@ internal fun DetailsCategoryTypeSection(
         isEditable = true,
         onClick = onEditType,
     )
-    Spacer(modifier = Modifier.height(12.dp))
+    VerticalSpacer(SpacingSize.SM)
 
     // ── Data – sempre editabile al tap ──
     AppSelectionItemCard(
@@ -90,7 +92,7 @@ internal fun DetailsCategoryTypeSection(
         isEditable = true,
         onClick = onEditDate,
     )
-    Spacer(modifier = Modifier.height(12.dp))
+    VerticalSpacer(SpacingSize.SM)
 
     // ── Tipo di Pagamento – sempre editabile al tap ──
     AppSelectionItemCard(
@@ -103,5 +105,5 @@ internal fun DetailsCategoryTypeSection(
         isEditable = true,
         onClick = onEditPaymentType,
     )
-    Spacer(modifier = Modifier.height(12.dp))
+    VerticalSpacer(SpacingSize.SM)
 }

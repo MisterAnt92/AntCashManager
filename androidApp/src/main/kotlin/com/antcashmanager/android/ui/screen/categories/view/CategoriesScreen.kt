@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -98,6 +97,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.dialog.HelpButton
@@ -315,7 +317,7 @@ internal fun CategoriesContent(
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            VerticalSpacer(SpacingSize.SM)
 
             if (currentCategories.isEmpty() && currentHiddenCategories.isEmpty()) {
                 AntEmptyState(
@@ -367,7 +369,7 @@ internal fun CategoriesContent(
                             }
                         }
                     }
-                    item { Spacer(modifier = Modifier.height(72.dp)) }
+                    item { VerticalSpacer(SpacingSize.XXXL) }
                 }
             }
         }
@@ -518,7 +520,7 @@ private fun CategoryItem(
                     )
                 }
             }
-            Spacer(modifier = Modifier.width(16.dp))
+            HorizontalSpacer(SpacingSize.MD)
             Column(modifier = Modifier.weight(1f)) {
                 AppText(
                     text = translatedName,
@@ -584,7 +586,7 @@ private fun AddCategoryDialog(
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
-                Spacer(modifier = Modifier.height(16.dp))
+                VerticalSpacer(SpacingSize.MD)
 
                 // Icon Selection
                 AppText(
@@ -592,7 +594,7 @@ private fun AddCategoryDialog(
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                VerticalSpacer(SpacingSize.XS)
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -640,7 +642,7 @@ private fun AddCategoryDialog(
                         }
                     }
                 }
-                Spacer(modifier = Modifier.height(16.dp))
+                VerticalSpacer(SpacingSize.MD)
 
                 // Color Selection
                 AppText(
@@ -648,7 +650,7 @@ private fun AddCategoryDialog(
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                VerticalSpacer(SpacingSize.XS)
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),

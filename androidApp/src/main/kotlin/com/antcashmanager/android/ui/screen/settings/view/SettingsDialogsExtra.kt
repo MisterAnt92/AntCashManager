@@ -84,8 +84,10 @@ fun LanguageSelectionDialog(
         title = { AppText(stringResource(R.string.dialog_choose_language)) },
         text = {
             Column(
-                modifier = Modifier.padding(top = 12.dp),
-                verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp)
+                modifier = Modifier
+                    .padding(top = 12.dp)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(10.dp)
             ) {
                 AppLanguage.entries.forEach { language ->
                     Row(
@@ -93,6 +95,7 @@ fun LanguageSelectionDialog(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable { onLanguageSelected(language) }
+                            .padding(vertical = 4.dp)
                     ) {
                         RadioButton(
                             selected = currentLanguage == language,
@@ -110,9 +113,15 @@ fun LanguageSelectionDialog(
                                     AppLanguage.CHINESE_SIMPLIFIED -> R.string.language_chinese_simplified
                                     AppLanguage.CHINESE_TRADITIONAL -> R.string.language_chinese_traditional
                                     AppLanguage.JAPANESE -> R.string.language_japanese
+                                    AppLanguage.POLISH -> R.string.language_polish
+                                    AppLanguage.HINDI -> R.string.language_hindi
+                                    AppLanguage.RUSSIAN -> R.string.language_russian
+                                    AppLanguage.UKRAINIAN -> R.string.language_ukrainian
+                                    AppLanguage.KOREAN -> R.string.language_korean
                                 }
                             ),
-                            modifier = Modifier.padding(start = 8.dp)
+                            modifier = Modifier.padding(start = 8.dp),
+                            maxLines = 1
                         )
                     }
                 }

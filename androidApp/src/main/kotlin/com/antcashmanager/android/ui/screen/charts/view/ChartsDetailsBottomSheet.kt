@@ -4,12 +4,14 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -33,6 +35,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.util.LocalCurrencyFormat
@@ -136,7 +141,7 @@ private fun ChartsDetailsContent(
             }
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        VerticalSpacer(SpacingSize.SM)
 
         // Category header with color indicator
         Row(
@@ -152,7 +157,7 @@ private fun ChartsDetailsContent(
                 targetValue = indicatorColor,
                 label = "colorIndicatorAnimation"
             )
-            Spacer(
+            Box(
                 modifier = Modifier
                     .size(16.dp)
                     .clip(CircleShape)
@@ -165,7 +170,7 @@ private fun ChartsDetailsContent(
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.SemiBold,
                 )
-                Spacer(modifier = Modifier.height(4.dp))
+                VerticalSpacer(SpacingSize.XXXS)
                 AppText(
                     text = stringResource(
                         R.string.chart_details_percentage,
@@ -177,7 +182,7 @@ private fun ChartsDetailsContent(
             }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        VerticalSpacer(SpacingSize.ML)
 
         // Amount section with animation
         DetailsMetricCard(
@@ -187,7 +192,7 @@ private fun ChartsDetailsContent(
             icon = null,
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        VerticalSpacer(SpacingSize.SM)
 
         // Transaction count
         DetailsMetricCard(
@@ -197,18 +202,18 @@ private fun ChartsDetailsContent(
             icon = null,
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        VerticalSpacer(SpacingSize.SM)
 
         // Trend indicator
         if (details.trend != TrendDirection.NEUTRAL) {
             TrendIndicator(direction = details.trend)
-            Spacer(modifier = Modifier.height(12.dp))
+            VerticalSpacer(SpacingSize.SM)
         }
 
         // Additional info section
         InfoSection()
 
-        Spacer(modifier = Modifier.height(24.dp))
+        VerticalSpacer(SpacingSize.LG)
     }
 }
 
@@ -244,7 +249,7 @@ private fun DetailsMetricCard(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.Medium,
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            VerticalSpacer(SpacingSize.XS)
             AppText(
                 text = displayValue,
                 style = MaterialTheme.typography.headlineSmall,
@@ -308,7 +313,7 @@ private fun InfoSection() {
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.SemiBold,
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        VerticalSpacer(SpacingSize.XS)
         AppText(
             text = stringResource(R.string.chart_details_info_description),
             style = MaterialTheme.typography.bodySmall,

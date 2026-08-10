@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -34,6 +33,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.button.AppButton
@@ -219,7 +221,7 @@ internal fun DetailsStep(
                 label = stringResource(R.string.add_transaction_title_required),
                 modifier = Modifier.fillMaxWidth(),
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            VerticalSpacer(SpacingSize.SM)
 
             // ── Importo ──
             DetailsAmountField(
@@ -231,7 +233,7 @@ internal fun DetailsStep(
                 modifier = Modifier.fillMaxWidth(),
             )
             if (!state.isMealVouchersPayment) {
-                Spacer(modifier = Modifier.height(12.dp))
+                VerticalSpacer(SpacingSize.SM)
             }
 
             // ── Note, Payee, Location ──
@@ -246,7 +248,7 @@ internal fun DetailsStep(
                 onPayeeChanged = { onEvent(AddTransactionEvent.UpdatePayee(it)) },
                 onLocationChanged = { onEvent(AddTransactionEvent.UpdateLocation(it)) },
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            VerticalSpacer(SpacingSize.SM)
 
             // ── Buoni Pasto ──
             DetailsMealVoucherSection(
@@ -257,7 +259,7 @@ internal fun DetailsStep(
                 isMealVouchersPayment = isMealVouchersPayment,
             )
             if (isMealVouchersPayment) {
-                Spacer(modifier = Modifier.height(12.dp))
+                VerticalSpacer(SpacingSize.SM)
             }
 
             // ── Tags – Improved management with chips ──
@@ -266,7 +268,7 @@ internal fun DetailsStep(
                 onTagsChange = { onEvent(AddTransactionEvent.UpdateTags(it)) },
                 suggestions = state.tagsSuggestions
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            VerticalSpacer(SpacingSize.SM)
 
             // ── Ricorrenza ──
             DetailsRecurrenceSection(
@@ -278,7 +280,7 @@ internal fun DetailsStep(
 
             // ── Errore ──
             if (state.error != null) {
-                Spacer(modifier = Modifier.height(8.dp))
+                VerticalSpacer(SpacingSize.XS)
                 AppText(
                     text = state.error,
                     style = MaterialTheme.typography.bodySmall,
@@ -286,7 +288,7 @@ internal fun DetailsStep(
                 )
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            VerticalSpacer(SpacingSize.XL)
 
             // ── Pulsanti azione ──
             Row(
@@ -313,7 +315,7 @@ internal fun DetailsStep(
                     onClick = { onEvent(AddTransactionEvent.Submit) },
                 )
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            VerticalSpacer(SpacingSize.MD)
         }
     }
 }

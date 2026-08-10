@@ -3,7 +3,6 @@ package com.antcashmanager.android.ui.screen.charts.view
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,6 +18,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.charts.ChartData
@@ -51,7 +53,7 @@ internal fun SpendingForecastCard(
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            VerticalSpacer(SpacingSize.XS)
             Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
                 AppText(text = stringResource(id = R.string.chart_avg_monthly))
                 AppText(text = formatAmount(averageMonthlyExpense, format))
@@ -87,7 +89,7 @@ internal fun QuickStatsCard(
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            VerticalSpacer(SpacingSize.SM)
             Row(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxWidth(),
@@ -108,7 +110,7 @@ internal fun QuickStatsCard(
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
                     )
-                    Spacer(modifier = Modifier.height(6.dp))
+                    VerticalSpacer(SpacingSize.XXS)
                     AppText(
                         text = totalDays.toString(),
                         style = MaterialTheme.typography.titleMedium,
@@ -131,7 +133,7 @@ internal fun QuickStatsCard(
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
                     )
-                    Spacer(modifier = Modifier.height(6.dp))
+                    VerticalSpacer(SpacingSize.XXS)
                     AppText(
                         text = formatAmount(maxDailyExpense, format),
                         style = MaterialTheme.typography.labelMedium,
@@ -156,7 +158,7 @@ internal fun QuickStatsCard(
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
                     )
-                    Spacer(modifier = Modifier.height(6.dp))
+                    VerticalSpacer(SpacingSize.XXS)
                     AppText(
                         text = formatAmount(avgDailyExpense, format),
                         style = MaterialTheme.typography.labelMedium,
@@ -191,12 +193,12 @@ internal fun DailyExpenseLineChartCard(
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            VerticalSpacer(SpacingSize.SM)
             ExpenseLineChart(
                 dailyExpenses = displayData.map { it.expense },
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            VerticalSpacer(SpacingSize.SM)
             Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
                 AppText(text = stringResource(id = R.string.chart_last_14_days), style = MaterialTheme.typography.bodySmall)
                 AppText(text = "${stringResource(id = R.string.chart_average)}: ${formatAmount(avgExpense, format)}", style = MaterialTheme.typography.bodySmall)
@@ -225,12 +227,12 @@ internal fun WeekdayExpenseCard(
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            VerticalSpacer(SpacingSize.SM)
             WeekdayBarChart(
                 expenseByWeekday = chartData.expenseByWeekday,
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            VerticalSpacer(SpacingSize.SM)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
@@ -253,7 +255,7 @@ internal fun WeekdayExpenseCard(
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.SemiBold
                         )
-                        Spacer(modifier = Modifier.height(4.dp))
+                        VerticalSpacer(SpacingSize.XXXS)
                         AppText(
                             text = amountFormatted,
                             style = MaterialTheme.typography.labelSmall,

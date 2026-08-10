@@ -322,6 +322,11 @@
     <string name="language_chinese_simplified">Cinese (Mandarino)</string>
     <string name="language_chinese_traditional">Cinese (Tradizionale)</string>
     <string name="language_japanese">Giapponese</string>
+    <string name="language_polish">Polacco</string>
+    <string name="language_hindi">हिन्दी (Hindi)</string>
+    <string name="language_russian">Русский (Russo)</string>
+    <string name="language_ukrainian">Українська (Ucraino)</string>
+    <string name="language_korean">한국어 (Coreano)</string>
     <string name="debug_import_started">Importazione debug avviata</string>
     <string name="back">Indietro</string>
     <string name="add_transaction">Aggiungi Transazione</string>

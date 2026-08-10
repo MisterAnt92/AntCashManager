@@ -271,6 +271,14 @@
     <string name="language_french">Français</string>
     <string name="language_german">Deutsch</string>
     <string name="language_spanish">Español</string>
+    <string name="language_chinese_simplified">Chino (Mandarín)</string>
+    <string name="language_chinese_traditional">Chino (Tradicional)</string>
+    <string name="language_japanese">Japonés</string>
+    <string name="language_polish">Polaco</string>
+    <string name="language_hindi">हिन्दी (Hindi)</string>
+    <string name="language_russian">Русский (Ruso)</string>
+    <string name="language_ukrainian">Український (Ucraniano)</string>
+    <string name="language_korean">한국어 (Coreano)</string>
     <string name="debug_import_started">Importación de depuración iniciada</string>
     <string name="back">Atrás</string>
     <string name="add_transaction">Añadir Transacción</string>
@@ -360,6 +368,9 @@
     <string name="feedback_email_body_french">Bonjour à l\'équipe d\'AntCashManager,\n\nJ\'aimerais partager des commentaires sur l\'application:\n\n[Veuillez décrire vos commentaires ici]\n\nMerci!</string>
     <string name="feedback_email_body_german">Hallo AntCashManager-Team,\n\nIch möchte gerne Feedback zur App geben:\n\n[Bitte beschreiben Sie Ihr Feedback hier]\n\nDanke!</string>
     <string name="feedback_email_body_spanish">Hola equipo de AntCashManager,\n\nMe gustaría compartir comentarios sobre la aplicación:\n\n[Por favor describe tu retroalimentación aquí]\n\n¡Gracias!</string>
+    <string name="feedback_email_body_chinese_simplified">AntCashManager 团队您好，\n\n我想分享一些关于该应用的反馈：\n\n[请在此描述您的反馈]\n\n谢谢！</string>
+    <string name="feedback_email_body_chinese_traditional">AntCashManager 團隊您好，\n\n我想分享一些關於該應用的回饋：\n\n[請在此描述您的回饋]\n\n謝謝！</string>
+    <string name="feedback_email_body_japanese">AntCashManager チームの皆様、\n\nアプリについてフィードバックを共有したいと思います：\n\n[ここにフィードバックを記入してください]\n\nありがとうございます！</string>
     <string name="no_email_app_installed">No hay aplicación de correo disponible</string>
     <string name="settings_display_charts">Gráficos</string>
     <string name="settings_charts_zoom">Activar Zoom de Gráficos</string>

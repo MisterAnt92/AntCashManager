@@ -7,8 +7,8 @@
     <string name="common_transactions">Transactions</string>
     <string name="common_categories">Categories</string>
     <string name="common_settings">Settings</string>
-    <string name="common_income">Income</string>
-    <string name="common_expenses">Expenses</string>
+    <string name="common_income">수입</string>
+    <string name="common_expenses">지출</string>
     <string name="common_back">Back</string>
     <string name="common_add">Add</string>
     <string name="common_preview">Preview</string>
@@ -21,8 +21,8 @@
 
     <!-- Home Screen -->
     <string name="home_total_balance">Total Balance</string>
-    <string name="home_income">Income</string>
-    <string name="home_expenses">Expenses</string>
+    <string name="home_income">수입</string>
+    <string name="home_expenses">지출</string>
     <string name="home_income_expense_card_title">Income &amp; Expenses</string>
     <string name="home_recent_transactions">Recent Transactions</string>
     <string name="home_customize_top_cards_action">Customize top cards</string>
@@ -43,7 +43,7 @@
 
     <!-- Transactions Screen -->
     <string name="transactions_add">Add Transaction</string>
-    <string name="transactions_type_income">Income</string>
+    <string name="transactions_type_income">수입</string>
     <string name="transactions_type_expense">Expense</string>
     <string name="transactions_recurring">Recurring</string>
     <string name="transactions_interval_daily">Daily</string>
@@ -63,7 +63,7 @@
     <string name="transactions_results_count">Results: %1$d</string>
     <string name="common_all">All</string>
     <string name="common_clear">Clear</string>
-    <string name="transaction_type_income">Income</string>
+    <string name="transaction_type_income">수입</string>
     <string name="transaction_type_expense">Expense</string>
 
     <!-- Categories Screen -->
@@ -77,7 +77,7 @@
     <string name="categories_add_content_desc">Add Category</string>
     <string name="categories_selected">Selected</string>
     <string name="categories_tab_expense">Expense</string>
-    <string name="categories_tab_income">Income</string>
+    <string name="categories_tab_income">수입</string>
     <string name="categories_default_badge">Default</string>
     <string name="categories_icon_label">Icon</string>
     <string name="categories_hide">Hide category</string>
@@ -97,58 +97,58 @@
     <string name="icon_shopping_bag">Shopping</string>
     <string name="icon_school">Education</string>
     <string name="icon_more_horiz">Other</string>
-    <string name="icon_payments">Salary</string>
-    <string name="icon_savings">Savings</string>
-    <string name="icon_currency_exchange">Exchange</string>
-    <string name="icon_trending_up">Investment</string>
-    <string name="icon_work">Work</string>
-    <string name="icon_redeem">Gifts</string>
-    <string name="icon_flight">Travel</string>
-    <string name="icon_fitness_center">Gym</string>
-    <string name="icon_pets">Pets</string>
-    <string name="icon_directions_bus">Public Transport</string>
-    <string name="icon_lightbulb">Utilities</string>
-    <string name="icon_celebration">Celebration</string>
-    <string name="icon_subscriptions">Subscriptions</string>
-    <string name="icon_fastfood">Snacks</string>
-    <string name="icon_star">Favorites</string>
-    <string name="icon_volunteer_activism">Charity</string>
-    <string name="icon_directions_bike">Sport</string>
-    <string name="icon_shopping_cart">Groceries</string>
-    <string name="icon_coffee">Coffee</string>
-    <string name="icon_spa">Personal Care</string>
-    <string name="icon_card_giftcard">Meal Vouchers</string>
+    <string name="icon_payments">급여</string>
+    <string name="icon_savings">저축</string>
+    <string name="icon_currency_exchange">환전</string>
+    <string name="icon_trending_up">투자</string>
+    <string name="icon_work">업무</string>
+    <string name="icon_redeem">선물</string>
+    <string name="icon_flight">여행</string>
+    <string name="icon_fitness_center">체육관</string>
+    <string name="icon_pets">반려동물</string>
+    <string name="icon_directions_bus">대중교통</string>
+    <string name="icon_lightbulb">공과금</string>
+    <string name="icon_celebration">축제</string>
+    <string name="icon_subscriptions">구독</string>
+    <string name="icon_fastfood">간식</string>
+    <string name="icon_star">즐겨찾기</string>
+    <string name="icon_volunteer_activism">기부</string>
+    <string name="icon_directions_bike">스포츠</string>
+    <string name="icon_shopping_cart">식료품</string>
+    <string name="icon_coffee">커피</string>
+    <string name="icon_spa">개인 관리</string>
+    <string name="icon_card_giftcard">식사 바우처</string>
 
     <!-- Charts Screen -->
-    <string name="charts_period">Period</string>
-    <string name="charts_from">From: %s</string>
-    <string name="charts_to">To: %s</string>
-    <string name="charts_income">Income</string>
-    <string name="charts_expenses">Expenses</string>
-    <string name="charts_income_by_category">Income by Category</string>
-    <string name="charts_expense_by_category">Expenses by Category</string>
-    <string name="charts_monthly_overview">Monthly Overview</string>
-    <string name="charts_yearly_overview">Yearly Overview</string>
-    <string name="charts_no_data">No data for the selected period</string>
-    <string name="chart_reset_zoom">Reset Zoom</string>
-    <string name="charts_payment_breakdown_title">Payment Method Breakdown</string>
-    <string name="charts_top_income_categories">Top Income Categories</string>
-    <string name="charts_top_expense_categories">Top Expense Categories</string>
+    <string name="charts_period">기간</string>
+    <string name="charts_from">시작: %s</string>
+    <string name="charts_to">종료: %s</string>
+    <string name="charts_income">수입</string>
+    <string name="charts_expenses">지출</string>
+    <string name="charts_income_by_category">카테고리별 수입</string>
+    <string name="charts_expense_by_category">카테고리별 지출</string>
+    <string name="charts_monthly_overview">월간 개요</string>
+    <string name="charts_yearly_overview">연간 개요</string>
+    <string name="charts_no_data">선택한 기간에 대한 데이터 없음</string>
+    <string name="chart_reset_zoom">줌 재설정</string>
+    <string name="charts_payment_breakdown_title">결제 방법 분석</string>
+    <string name="charts_top_income_categories">상위 수입 카테고리</string>
+    <string name="charts_top_expense_categories">상위 지출 카테고리</string>
     <string name="charts_chart_summary_cd">%1$s: %2$d categories, total %3$s</string>
     <string name="charts_category_item_cd">%1$s: %2$s, %3$s percent of total</string>
-    <string name="charts_pick_start_date">Pick start date</string>
-    <string name="charts_pick_end_date">Pick end date</string>
+    <string name="charts_pick_start_date">시작 날짜 선택</string>
+    <string name="charts_pick_end_date">종료 날짜 선택</string>
     <string name="charts_empty_ant">No data to chart yet! The ant is working hard! 🐜📊</string>
-    <string name="share">Share</string>
+    <string name="share">공유</string>
     <string name="share_categories_subject">AntCashManager - Expenses by Category</string>
     <string name="share_monthly_subject">AntCashManager - Monthly Overview</string>
     <string name="share_yearly_subject">AntCashManager - Yearly Overview</string>
-    <string name="share_category_title">Expenses by Category</string>
-    <string name="share_monthly_title">Monthly Overview</string>
-    <string name="share_yearly_title">Yearly Overview</string>
+    <string name="share_category_title">카테고리별 지출</string>
+    <string name="share_monthly_title">월간 개요</string>
+    <string name="share_yearly_title">연간 개요</string>
     <string name="share_total">Total</string>
-    <string name="share_income">Income</string>
-    <string name="share_expense">Expenses</string>
+    <string name="share_income">수입</string>
+    <string name="share_expense">지출</string>
     <string name="share_balance">Balance</string>
     <string name="share_total_income">Total Income</string>
     <string name="share_total_expense">Total Expenses</string>
@@ -332,7 +332,7 @@
     <string name="add_transaction_cancel">Cancel</string>
     <string name="add_transaction_previous">Previous</string>
     <string name="add_transaction_select_type">Select Type</string>
-    <string name="add_transaction_income_label">Income</string>
+    <string name="add_transaction_income_label">수입</string>
     <string name="add_transaction_expense_label">Expense</string>
     <string name="add_transaction_details">Transaction Details</string>
     <string name="add_transaction_title_required">Title *</string>
@@ -383,17 +383,17 @@
     <!-- Payment Type -->
     <string name="payment_type_electronic">Electronic Payment</string>
     <string name="payment_type_cash">Cash</string>
-    <string name="payment_type_meal_vouchers">Meal Vouchers</string>
+    <string name="payment_type_meal_vouchers">식사 바우처</string>
 
     <!-- Add Transaction Payment Type -->
     <string name="add_transaction_payment_type">Payment Type</string>
     <string name="add_transaction_select_payment_type">Select Payment Type</string>
     <string name="add_transaction_payment_type_electronic">Electronic</string>
     <string name="add_transaction_payment_type_cash">Cash</string>
-    <string name="add_transaction_payment_type_meal_vouchers">Meal Vouchers</string>
+    <string name="add_transaction_payment_type_meal_vouchers">식사 바우처</string>
 
     <!-- Add Transaction - Meal Vouchers -->
-    <string name="add_transaction_meal_voucher_section_title">Meal Vouchers</string>
+    <string name="add_transaction_meal_voucher_section_title">식사 바우처</string>
     <string name="add_transaction_meal_voucher_unit_value">Unit value: %s€</string>
     <string name="add_transaction_meal_voucher_count">Number of vouchers</string>
     <string name="add_transaction_meal_voucher_subtotal">Vouchers subtotal: %s€</string>
@@ -507,14 +507,14 @@
     <string name="category_shopping">Shopping</string>
     <string name="category_education">Education</string>
     <string name="category_other">Other</string>
-    <string name="category_salary">Salary</string>
+    <string name="category_salary">급여</string>
     <string name="category_allowance">Allowance</string>
     <string name="category_reimbursement">Reimbursement</string>
     <string name="category_investments">Investments</string>
     <string name="category_freelance">Freelance</string>
-    <string name="category_gifts">Gifts</string>
-    <string name="category_subscriptions">Subscriptions</string>
-    <string name="category_personal_care">Personal Care</string>
+    <string name="category_gifts">선물</string>
+    <string name="category_subscriptions">구독</string>
+    <string name="category_personal_care">개인 관리</string>
 
     <!-- Receipt Scan Screen -->
     <string name="receipt_scan_title">Scan Receipt</string>
@@ -602,7 +602,7 @@
     <!-- Chart Cards - New Visualizations -->
     <string name="chart_spending_forecast_title">Spending Forecast</string>
     <string name="chart_avg_monthly">Monthly Average</string>
-    <string name="chart_period">Period</string>
+    <string name="chart_period">기간</string>
     <string name="chart_last_3_months">Last 3 months</string>
     <string name="chart_quick_stats_title">Quick Stats</string>
     <string name="chart_days_tracked">Days Tracked</string>

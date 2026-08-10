@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -30,6 +29,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.text.AppText
 
@@ -96,7 +98,7 @@ internal fun DetailsTagsSection(
         )
 
         if (currentTags.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(8.dp))
+            VerticalSpacer(SpacingSize.XS)
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -138,7 +140,7 @@ internal fun DetailsTagsSection(
         }.take(5)
 
         if (tagInput.isNotBlank() && filteredSuggestions.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(8.dp))
+            VerticalSpacer(SpacingSize.XS)
             AppText(
                 text = stringResource(R.string.add_transaction_tags_suggestions),
                 style = MaterialTheme.typography.labelSmall,

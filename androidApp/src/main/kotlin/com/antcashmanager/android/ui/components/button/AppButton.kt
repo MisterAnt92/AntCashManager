@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -34,6 +33,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.ui.components.text.AppText
 
 /**
@@ -145,7 +147,7 @@ fun AppButtonPreviews() {
         // Default button
         AppButton(text = "Default Button", onClick = {})
 
-        Spacer(modifier = Modifier.height(8.dp))
+        VerticalSpacer(SpacingSize.XS)
 
         // Button with icon (assuming icon resource exists, e.g., android.R.drawable.ic_menu_add)
         AppButton(
@@ -153,12 +155,12 @@ fun AppButtonPreviews() {
             icon = android.R.drawable.ic_menu_add,
             onClick = {})
 
-        Spacer(modifier = Modifier.height(8.dp))
+        VerticalSpacer(SpacingSize.XS)
 
         // Disabled button
         AppButton(text = "Disabled", enabled = false, onClick = {})
 
-        Spacer(modifier = Modifier.height(8.dp))
+        VerticalSpacer(SpacingSize.XS)
 
         // Custom colors
         AppButton(
@@ -168,7 +170,7 @@ fun AppButtonPreviews() {
             onClick = {}
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        VerticalSpacer(SpacingSize.XS)
 
         // Text only, no default size
         AppButton(
@@ -176,7 +178,7 @@ fun AppButtonPreviews() {
             useDefaultSize = false,
             onClick = {})
 
-        Spacer(modifier = Modifier.height(8.dp))
+        VerticalSpacer(SpacingSize.XS)
 
         // With custom content
         AppButton(onClick = {}) {

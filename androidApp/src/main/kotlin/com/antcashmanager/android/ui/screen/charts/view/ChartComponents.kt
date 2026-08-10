@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -49,6 +48,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.charts.MonthlyAmount
@@ -239,7 +241,7 @@ internal fun PieLegend(
                     )
                 }
 
-                Spacer(modifier = Modifier.width(12.dp))
+                HorizontalSpacer(SpacingSize.SM)
 
                 Column(modifier = Modifier.weight(1f)) {
                     AppText(
@@ -334,7 +336,7 @@ internal fun BarChartLegend() {
                 )
             }
 
-            Spacer(modifier = Modifier.width(8.dp))
+            HorizontalSpacer(SpacingSize.XS)
             AppText(
                 text = stringResource(R.string.charts_income),
                 style = MaterialTheme.typography.labelMedium,
@@ -343,7 +345,7 @@ internal fun BarChartLegend() {
             )
         }
 
-        Spacer(modifier = Modifier.width(24.dp))
+        HorizontalSpacer(SpacingSize.LG)
 
         // Expense legend
         Row(
@@ -382,7 +384,7 @@ internal fun BarChartLegend() {
                 )
             }
 
-            Spacer(modifier = Modifier.width(8.dp))
+            HorizontalSpacer(SpacingSize.XS)
             AppText(
                 text = stringResource(R.string.charts_expenses),
                 style = MaterialTheme.typography.labelMedium,

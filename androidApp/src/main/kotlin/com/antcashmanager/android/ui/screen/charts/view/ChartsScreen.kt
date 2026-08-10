@@ -34,6 +34,9 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import androidx.activity.compose.BackHandler
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -302,19 +305,19 @@ internal fun ChartsContent(
         when (cardType) {
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.SPENDING_FORECAST_CARD -> {
                 SpendingForecastCard(chartData = chartData)
-                Spacer(modifier = Modifier.height(16.dp))
+                VerticalSpacer(SpacingSize.MD)
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.QUICK_STATS_CARD -> {
                 QuickStatsCard(chartData = chartData)
-                Spacer(modifier = Modifier.height(16.dp))
+                VerticalSpacer(SpacingSize.MD)
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.DAILY_EXPENSE_CHART_CARD -> {
                 DailyExpenseLineChartCard(chartData = chartData)
-                Spacer(modifier = Modifier.height(16.dp))
+                VerticalSpacer(SpacingSize.MD)
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.WEEKDAY_DISTRIBUTION_CARD -> {
                 WeekdayExpenseCard(chartData = chartData)
-                Spacer(modifier = Modifier.height(16.dp))
+                VerticalSpacer(SpacingSize.MD)
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.INCOME_CATEGORY_PIE_CHART -> {
                 if (chartData.incomeByCategory.isNotEmpty()) {
@@ -344,7 +347,7 @@ internal fun ChartsContent(
                             )
                         },
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
+                    VerticalSpacer(SpacingSize.MD)
                 }
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.EXPENSE_CATEGORY_PIE_CHART -> {
@@ -375,7 +378,7 @@ internal fun ChartsContent(
                             )
                         },
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
+                    VerticalSpacer(SpacingSize.MD)
                 }
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.TOP_INCOME_CATEGORIES -> {
@@ -387,7 +390,7 @@ internal fun ChartsContent(
                         fmt = fmt,
                         chartCardContainerColor = chartCardContainerColor,
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
+                    VerticalSpacer(SpacingSize.MD)
                 }
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.TOP_EXPENSE_CATEGORIES -> {
@@ -399,7 +402,7 @@ internal fun ChartsContent(
                         fmt = fmt,
                         chartCardContainerColor = chartCardContainerColor,
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
+                    VerticalSpacer(SpacingSize.MD)
                 }
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.PAYMENT_TYPE_BREAKDOWN -> {
@@ -428,7 +431,7 @@ internal fun ChartsContent(
                             )
                         },
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
+                    VerticalSpacer(SpacingSize.MD)
                 }
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.MONTHLY_BAR_CHART -> {
@@ -443,7 +446,7 @@ internal fun ChartsContent(
                         context = context,
                         onShared = { analyticsManager.logEvent("chart_shared") },
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
+                    VerticalSpacer(SpacingSize.MD)
                 }
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.YEARLY_BAR_CHART -> {
@@ -458,7 +461,7 @@ internal fun ChartsContent(
                         context = context,
                         onShared = { analyticsManager.logEvent("chart_shared") },
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
+                    VerticalSpacer(SpacingSize.MD)
                 }
             }
         }
@@ -493,10 +496,10 @@ internal fun ChartsContent(
                 onShowFromPicker = { showFromPicker = true },
                 onShowToPicker = { showToPicker = true },
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            VerticalSpacer(SpacingSize.MD)
 
             ChartsSummaryRow(chartData = chartData, fmt = fmt)
-            Spacer(modifier = Modifier.height(16.dp))
+            VerticalSpacer(SpacingSize.MD)
 
             // Render all charts cards in custom order
             chartsCardOrder.forEach { cardType ->
@@ -505,7 +508,7 @@ internal fun ChartsContent(
 
             // Empty state - shown when no data is available
             if (chartData.expenseByCategory.isEmpty() && chartData.monthlyData.isEmpty() && chartData.incomeByCategory.isEmpty()) {
-                Spacer(modifier = Modifier.height(48.dp))
+                VerticalSpacer(SpacingSize.XXL)
                 AntEmptyState(
                     mascotRes = R.drawable.ic_ant_mascot,
                     title = stringResource(R.string.charts_no_data),
@@ -594,7 +597,7 @@ private fun PeriodFilterCard(
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSurface,
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            VerticalSpacer(SpacingSize.XS)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -616,7 +619,7 @@ private fun PeriodFilterCard(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(8.dp))
+            VerticalSpacer(SpacingSize.XS)
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -875,7 +878,7 @@ private fun CategoryPieChartCard(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(12.dp))
+            VerticalSpacer(SpacingSize.SM)
 
             // Interactive pie chart with tap-to-details
             InteractivePieChart(
@@ -897,7 +900,7 @@ private fun CategoryPieChartCard(
                     .semantics { contentDescription = chartSummaryDescription }
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            VerticalSpacer(SpacingSize.SM)
             PieLegend(
                 data = displayData,
                 maskMode = maskMode,
@@ -935,7 +938,7 @@ private fun TopCategoriesCard(
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            VerticalSpacer(SpacingSize.SM)
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 entries.forEachIndexed { index, (category, amount) ->
                     val categoryLabel = translateCategory(category)
@@ -1066,12 +1069,12 @@ private fun MonthlyBarChartCard(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(12.dp))
+            VerticalSpacer(SpacingSize.SM)
 
             // Legend at top
             BarChartLegend()
 
-            Spacer(modifier = Modifier.height(8.dp))
+            VerticalSpacer(SpacingSize.XS)
 
             // Scrollable bar chart for many months
             val chartWidth = (data.size * 80).coerceAtLeast(300)
@@ -1090,7 +1093,7 @@ private fun MonthlyBarChartCard(
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            VerticalSpacer(SpacingSize.XS)
         }
     }
 }
@@ -1162,12 +1165,12 @@ private fun YearlyBarChartCard(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(12.dp))
+            VerticalSpacer(SpacingSize.SM)
 
             // Legend at top
             BarChartLegend()
 
-            Spacer(modifier = Modifier.height(8.dp))
+            VerticalSpacer(SpacingSize.XS)
 
             // Scrollable bar chart for years
             val yearlyChartWidth = (data.size * 100).coerceAtLeast(300)
@@ -1186,7 +1189,7 @@ private fun YearlyBarChartCard(
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            VerticalSpacer(SpacingSize.XS)
         }
     }
 }
@@ -1216,7 +1219,7 @@ private fun SummaryCard(
                 fontWeight = FontWeight.Medium,
                 maxLines = 1
             )
-            Spacer(modifier = Modifier.height(4.dp))
+            VerticalSpacer(SpacingSize.XXXS)
             AppText(
                 text = formatAmount(abs(state.amount), state.fmt)
                     .let { if (LocalAmountsMasked.current && state.includesIncome) maskDigits(it) else it },

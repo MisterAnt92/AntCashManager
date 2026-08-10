@@ -8,7 +8,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -46,6 +45,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.antcashmanager.android.R
@@ -285,14 +287,14 @@ private fun CaptureStep(
             modifier = Modifier.size(80.dp),
             tint = MaterialTheme.colorScheme.primary,
         )
-        Spacer(modifier = Modifier.height(24.dp))
+        VerticalSpacer(SpacingSize.LG)
         AppText(
             text = stringResource(R.string.receipt_scan_capture_hint),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        Spacer(modifier = Modifier.height(32.dp))
+        VerticalSpacer(SpacingSize.XL)
         AppButton(
             onClick = {
                 when {
@@ -310,7 +312,7 @@ private fun CaptureStep(
             modifier = Modifier.fillMaxWidth(),
             text = stringResource(R.string.receipt_scan_take_photo),
         )
-        Spacer(modifier = Modifier.height(12.dp))
+        VerticalSpacer(SpacingSize.SM)
         AppButton(
             onClick = { galleryLauncher?.launch("image/*") },
             modifier = Modifier.fillMaxWidth(),
@@ -333,7 +335,7 @@ private fun ProcessingStep(modifier: Modifier = Modifier) {
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             CircularProgressIndicator()
-            Spacer(modifier = Modifier.height(16.dp))
+            VerticalSpacer(SpacingSize.MD)
             AppText(
                 text = stringResource(R.string.receipt_scan_processing),
                 style = MaterialTheme.typography.bodyLarge,
@@ -445,7 +447,7 @@ private fun ReviewStep(
             minLines = 3,
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        VerticalSpacer(SpacingSize.SM)
 
         AppButton(
             text = stringResource(R.string.receipt_scan_save),

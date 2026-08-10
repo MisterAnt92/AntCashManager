@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -65,6 +64,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import androidx.navigation.NavController
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
@@ -637,7 +639,7 @@ private fun CurrencySection(
     onShowMealVoucherDialog: () -> Unit,
 ) {
     AppCardSectionHeader(title = stringResource(R.string.settings_section_currency))
-    Spacer(modifier = Modifier.height(8.dp))
+    VerticalSpacer(SpacingSize.XS)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         AppCard(
@@ -670,7 +672,7 @@ private fun CurrencySection(
         )
     }
 
-    Spacer(modifier = Modifier.height(8.dp))
+    VerticalSpacer(SpacingSize.XS)
 
     Column(
         modifier = Modifier.padding(horizontal = 16.dp),
@@ -697,7 +699,7 @@ private fun CurrencySection(
             color = MaterialTheme.colorScheme.primary,
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        VerticalSpacer(SpacingSize.XS)
 
         AppCard(
             title = stringResource(R.string.settings_meal_voucher_value),
@@ -725,7 +727,7 @@ private fun DateSection(
     onShowDateFormatDialog: () -> Unit,
 ) {
     AppCardSectionHeader(title = stringResource(R.string.settings_section_dates))
-    Spacer(modifier = Modifier.height(8.dp))
+    VerticalSpacer(SpacingSize.XS)
 
     val currentDateExample = remember(dateFormat) {
         runCatching {
@@ -750,7 +752,7 @@ private fun ChartsDisplaySection(
     onChartsZoomEnabledChanged: (Boolean) -> Unit,
 ) {
     AppCardSectionHeader(title = stringResource(R.string.common_charts))
-    Spacer(modifier = Modifier.height(8.dp))
+    VerticalSpacer(SpacingSize.XS)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         AppCard(
@@ -787,7 +789,7 @@ private fun HomeDisplaySection(
     onShowTransactionDisplayDialog: () -> Unit,
 ) {
     AppCardSectionHeader(title = stringResource(R.string.common_home))
-    Spacer(modifier = Modifier.height(8.dp))
+    VerticalSpacer(SpacingSize.XS)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         AppCard(
@@ -823,7 +825,7 @@ private fun HomeDisplaySection(
             onClick = onShowTransactionDisplayDialog,
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        VerticalSpacer(SpacingSize.SM)
         TransactionDisplayPreviewHome(transactionDisplayType)
     }
 }
@@ -834,7 +836,7 @@ private fun TransactionsDisplaySection(
     onShowTransactionDisplayDialog: () -> Unit,
 ) {
     AppCardSectionHeader(title = stringResource(R.string.common_transactions))
-    Spacer(modifier = Modifier.height(8.dp))
+    VerticalSpacer(SpacingSize.XS)
 
     AppCard(
         title = stringResource(R.string.settings_transaction_display),
@@ -843,7 +845,7 @@ private fun TransactionsDisplaySection(
         onClick = onShowTransactionDisplayDialog,
     )
 
-    Spacer(modifier = Modifier.height(12.dp))
+    VerticalSpacer(SpacingSize.SM)
     TransactionDisplayPreview(transactionDisplayType)
 }
 
@@ -1065,7 +1067,7 @@ private fun OtherSection(
     onShowResetPreferencesDialog: () -> Unit,
 ) {
     AppCardSectionHeader(title = stringResource(R.string.settings_section_other))
-    Spacer(modifier = Modifier.height(8.dp))
+    VerticalSpacer(SpacingSize.XS)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         AppCard(
@@ -1120,7 +1122,7 @@ private fun WidgetsDisplaySection(
     onWidgetOpacityChanged: (Int) -> Unit,
 ) {
     AppCardSectionHeader(title = stringResource(R.string.settings_section_widgets))
-    Spacer(modifier = Modifier.height(8.dp))
+    VerticalSpacer(SpacingSize.XS)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         AppCard(
@@ -1173,7 +1175,7 @@ private fun WidgetPreviewMock(backgroundColor: Long, opacity: Int) {
         style = MaterialTheme.typography.labelMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
-    Spacer(modifier = Modifier.height(4.dp))
+    VerticalSpacer(SpacingSize.XXXS)
 
     Box(
         modifier = Modifier
@@ -1199,7 +1201,7 @@ private fun WidgetPreviewMock(backgroundColor: Long, opacity: Int) {
                     style = MaterialTheme.typography.labelSmall,
                     color = primaryText,
                 )
-                Spacer(modifier = Modifier.height(6.dp))
+                VerticalSpacer(SpacingSize.XXS)
                 MockTransactionRows.forEach { (color, label, amount) ->
                     Row(
                         modifier = Modifier
@@ -1215,7 +1217,7 @@ private fun WidgetPreviewMock(backgroundColor: Long, opacity: Int) {
                                     .clip(CircleShape)
                                     .background(Color(color)),
                             )
-                            Spacer(modifier = Modifier.width(6.dp))
+                            HorizontalSpacer(SpacingSize.XXS)
                             AppText(
                                 text = label,
                                 style = MaterialTheme.typography.labelSmall,
@@ -1243,14 +1245,14 @@ private fun WidgetPreviewMock(backgroundColor: Long, opacity: Int) {
                     style = MaterialTheme.typography.labelSmall,
                     color = primaryText,
                 )
-                Spacer(modifier = Modifier.height(6.dp))
+                VerticalSpacer(SpacingSize.XXS)
                 AppText(
                     text = stringResource(R.string.charts_expenses),
                     style = MaterialTheme.typography.labelSmall,
                     color = secondaryText,
                 )
                 MockCategoryBars.forEach { (color, fraction) ->
-                    Spacer(modifier = Modifier.height(4.dp))
+                    VerticalSpacer(SpacingSize.XXXS)
                     Box(
                         modifier = Modifier
                             .fillMaxWidth(fraction)

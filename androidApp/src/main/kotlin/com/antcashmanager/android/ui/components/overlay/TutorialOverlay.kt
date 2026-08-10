@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -53,6 +52,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.button.AppButton
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
@@ -218,7 +220,7 @@ fun TutorialOverlay(
                                     .semantics { heading() },
                             )
 
-                            Spacer(modifier = Modifier.height(12.dp))
+                            VerticalSpacer(SpacingSize.SM)
 
                             AppText(
                                 text = stringResource(animatedStep.descRes),
@@ -228,7 +230,7 @@ fun TutorialOverlay(
                                 modifier = Modifier.fillMaxWidth(descriptionWidthFraction),
                             )
 
-                            Spacer(modifier = Modifier.height(20.dp))
+                            VerticalSpacer(SpacingSize.ML)
                         }
                     }
 
@@ -363,7 +365,7 @@ fun TutorialOverlay(
                 }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            VerticalSpacer(SpacingSize.ML)
 
             Row(
                 modifier = Modifier.fillMaxWidth(controlsWidthFraction),

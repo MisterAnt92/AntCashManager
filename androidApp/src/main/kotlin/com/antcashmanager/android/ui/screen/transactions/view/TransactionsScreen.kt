@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -63,6 +62,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
@@ -344,7 +346,7 @@ internal fun TransactionsContent(
             }
             // Filters
             if (state.isFiltersExpanded) {
-                item { Spacer(modifier = Modifier.height(12.dp)) }
+                item { VerticalSpacer(SpacingSize.SM) }
                 item {
                     FilterCard(
                         categories = state.categories,
@@ -384,7 +386,7 @@ internal fun TransactionsContent(
             }
             // Active filters indicator (compact)
             if (state.hasActiveFilters && !state.isFiltersExpanded) {
-                item { Spacer(modifier = Modifier.height(8.dp)) }
+                item { VerticalSpacer(SpacingSize.XS) }
                 item {
                     ActiveFiltersRow(
                         searchQuery = state.searchQuery,
@@ -395,7 +397,7 @@ internal fun TransactionsContent(
                     )
                 }
             }
-            item { Spacer(modifier = Modifier.height(12.dp)) }
+            item { VerticalSpacer(SpacingSize.SM) }
             // Date Range Filter
             item {
                 DateRangeFilter(
@@ -420,7 +422,7 @@ internal fun TransactionsContent(
                     onToDateEdit = { showToDatePicker = true },
                 )
             }
-            item { Spacer(modifier = Modifier.height(12.dp)) }
+            item { VerticalSpacer(SpacingSize.SM) }
             // Results count
             if (state.hasActiveFilters) {
                 item {
@@ -433,7 +435,7 @@ internal fun TransactionsContent(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
-                item { Spacer(modifier = Modifier.height(8.dp)) }
+                item { VerticalSpacer(SpacingSize.XS) }
             }
             // Content based on state
             when {
@@ -445,7 +447,7 @@ internal fun TransactionsContent(
                                 .padding(horizontal = 4.dp),
                         ) {
                             SkeletonLoader(height = 16.dp, cornerRadius = 8)
-                            Spacer(modifier = Modifier.height(8.dp))
+                            VerticalSpacer(SpacingSize.XS)
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
@@ -462,11 +464,11 @@ internal fun TransactionsContent(
                                     cornerRadius = 6,
                                 )
                             }
-                            Spacer(modifier = Modifier.height(8.dp))
+                            VerticalSpacer(SpacingSize.XS)
                             SkeletonLoader(height = 20.dp, cornerRadius = 8)
                         }
                     }
-                    item { Spacer(modifier = Modifier.height(80.dp)) }
+                    item { VerticalSpacer(SpacingSize.XXXL) }
                 }
 
                 state.filteredTransactions.isEmpty() -> {
@@ -657,7 +659,7 @@ private fun FilterCard(
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                Spacer(modifier = Modifier.height(6.dp))
+                VerticalSpacer(SpacingSize.XXS)
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -732,7 +734,7 @@ private fun FilterCard(
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                Spacer(modifier = Modifier.height(6.dp))
+                VerticalSpacer(SpacingSize.XXS)
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -779,7 +781,7 @@ private fun FilterCard(
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
-                    Spacer(modifier = Modifier.height(6.dp))
+                    VerticalSpacer(SpacingSize.XXS)
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -812,7 +814,7 @@ private fun FilterCard(
 
             // Action buttons footer
             if (hasFilterChanges) {
-                Spacer(modifier = Modifier.height(8.dp))
+                VerticalSpacer(SpacingSize.XS)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -1002,7 +1004,7 @@ private fun TransactionItem(
                                 modifier = Modifier.size(20.dp),
                             )
                         }
-                        Spacer(modifier = Modifier.width(12.dp))
+                        HorizontalSpacer(SpacingSize.SM)
                     }
 
                     TransactionDisplayType.CATEGORY -> {
@@ -1032,7 +1034,7 @@ private fun TransactionItem(
                                 )
                             }
                         }
-                        Spacer(modifier = Modifier.width(12.dp))
+                        HorizontalSpacer(SpacingSize.SM)
                     }
 
                     TransactionDisplayType.NONE -> {
@@ -1103,7 +1105,7 @@ private fun TransactionItem(
                                 modifier = Modifier.size(12.dp),
                                 tint = MaterialTheme.colorScheme.tertiary,
                             )
-                            Spacer(modifier = Modifier.width(4.dp))
+                            HorizontalSpacer(SpacingSize.XXXS)
                             AppText(
                                 text = if (transaction.recurrenceInterval.isNotBlank()) {
                                     getRecurrenceIntervalLabel(transaction.recurrenceInterval)

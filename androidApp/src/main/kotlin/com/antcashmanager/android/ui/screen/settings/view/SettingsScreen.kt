@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -46,6 +45,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.BuildConfig
@@ -309,6 +311,11 @@ internal fun SettingsContent(
                     AppLanguage.CHINESE_SIMPLIFIED -> R.string.feedback_email_body_english
                     AppLanguage.CHINESE_TRADITIONAL -> R.string.feedback_email_body_english
                     AppLanguage.JAPANESE -> R.string.feedback_email_body_english
+                    AppLanguage.POLISH -> R.string.feedback_email_body_english
+                    AppLanguage.HINDI -> R.string.feedback_email_body_english
+                    AppLanguage.RUSSIAN -> R.string.feedback_email_body_english
+                    AppLanguage.UKRAINIAN -> R.string.feedback_email_body_english
+                    AppLanguage.KOREAN -> R.string.feedback_email_body_english
                     AppLanguage.SYSTEM -> R.string.feedback_email_body_english
                 }
             )
@@ -361,7 +368,7 @@ internal fun SettingsContent(
                 },
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            VerticalSpacer(SpacingSize.LG)
 
             AppText(
                 text = stringResource(R.string.settings_project_by),
@@ -509,6 +516,11 @@ private fun languageDisplayName(language: AppLanguage): String = when (language)
     AppLanguage.CHINESE_SIMPLIFIED -> stringResource(R.string.language_system)
     AppLanguage.CHINESE_TRADITIONAL -> stringResource(R.string.language_system)
     AppLanguage.JAPANESE -> stringResource(R.string.language_system)
+    AppLanguage.POLISH -> stringResource(R.string.language_system)
+    AppLanguage.HINDI -> stringResource(R.string.language_system)
+    AppLanguage.RUSSIAN -> stringResource(R.string.language_system)
+    AppLanguage.UKRAINIAN -> stringResource(R.string.language_system)
+    AppLanguage.KOREAN -> stringResource(R.string.language_system)
 }
 
 @Composable
