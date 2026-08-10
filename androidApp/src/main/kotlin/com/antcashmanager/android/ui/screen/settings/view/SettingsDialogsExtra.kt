@@ -107,6 +107,9 @@ fun LanguageSelectionDialog(
                                     AppLanguage.FRENCH -> R.string.language_french
                                     AppLanguage.GERMAN -> R.string.language_german
                                     AppLanguage.SPANISH -> R.string.language_spanish
+                                    AppLanguage.CHINESE_SIMPLIFIED -> R.string.language_chinese_simplified
+                                    AppLanguage.CHINESE_TRADITIONAL -> R.string.language_chinese_traditional
+                                    AppLanguage.JAPANESE -> R.string.language_japanese
                                 }
                             ),
                             modifier = Modifier.padding(start = 8.dp)

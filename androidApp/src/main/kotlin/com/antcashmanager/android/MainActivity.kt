@@ -92,7 +92,7 @@ fun WithAppLocale(language: AppLanguage, content: @Composable () -> Unit) {
     } else {
         val context = LocalContext.current
         val activityResultRegistryOwner = LocalActivityResultRegistryOwner.current
-        val locale = Locale(language.code)
+        val locale = Locale.forLanguageTag(language.code)
         Logger.d(tag = "Language") { "WithAppLocale: applying locale ${language.code} (${locale.displayName})" }
         val config = Configuration(LocalConfiguration.current).apply {
             setLocale(locale)

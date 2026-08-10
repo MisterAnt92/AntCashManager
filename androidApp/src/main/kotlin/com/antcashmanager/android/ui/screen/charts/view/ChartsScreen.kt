@@ -27,6 +27,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -149,6 +150,16 @@ internal fun ChartsContent(
     var showHelpDialog by remember { mutableStateOf(false) }
     var isVisualizationsSectionExpanded by remember { mutableStateOf(true) }
     var selectedChartDetails by remember { mutableStateOf<ChartDetailsData?>(null) }
+
+    // Charts card ordering state - persists across session
+    var chartsCardOrderRaw by remember {
+        mutableStateOf(ChartsConstant.DEFAULT_CHARTS_CARDS_ORDER)
+    }
+    val chartsCardOrder = remember(chartsCardOrderRaw) {
+        com.antcashmanager.android.ui.screen.charts.model.ChartCardType.parse(chartsCardOrderRaw)
+    }
+    var showChartsCardsOrderDialog by remember { mutableStateOf(false) }
+
     val chartCardContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh
 
     // Handle back press when details sheet is open
@@ -187,6 +198,20 @@ internal fun ChartsContent(
             ScreenHeaderConfig(
                 title = chartsTitle,
                 actions = {
+                    val customizeOrderDesc = stringResource(R.string.chart_customize_order)
+                    // Customize charts order button
+                    IconButton(
+                        onClick = { showChartsCardsOrderDialog = true },
+                        modifier = Modifier.semantics {
+                            contentDescription = customizeOrderDesc
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Sort,
+                            contentDescription = customizeOrderDesc,
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
                     HelpButton(
                         onHelpClick = {
                             analyticsManager.logEvent("chart_help_opened")
@@ -195,6 +220,33 @@ internal fun ChartsContent(
                     )
                 },
             )
+        )
+    }
+
+    // Charts cards order dialog
+    if (showChartsCardsOrderDialog) {
+        ChartsCardsOrderDialog(
+            order = chartsCardOrder,
+            onMoveUp = { index ->
+                if (index > 0) {
+                    val mutableOrder = chartsCardOrder.toMutableList()
+                    val temp = mutableOrder[index]
+                    mutableOrder[index] = mutableOrder[index - 1]
+                    mutableOrder[index - 1] = temp
+                    chartsCardOrderRaw = com.antcashmanager.android.ui.screen.charts.model.ChartCardType.serialize(mutableOrder)
+                }
+            },
+            onMoveDown = { index ->
+                if (index < chartsCardOrder.size - 1) {
+                    val mutableOrder = chartsCardOrder.toMutableList()
+                    val temp = mutableOrder[index]
+                    mutableOrder[index] = mutableOrder[index + 1]
+                    mutableOrder[index + 1] = temp
+                    chartsCardOrderRaw = com.antcashmanager.android.ui.screen.charts.model.ChartCardType.serialize(mutableOrder)
+                }
+            },
+            onDismiss = { showChartsCardsOrderDialog = false },
+            onConfirm = { showChartsCardsOrderDialog = false }
         )
     }
 
@@ -244,76 +296,27 @@ internal fun ChartsContent(
         ChartsConstant.YEARLY_BAR_CHART_HEIGHT_TABLET_DP.dp
     }
 
-    Scaffold(
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    start = padding.calculateStartPadding(LayoutDirection.Ltr) + 16.dp,
-                    top = 0.dp,
-                    end = padding.calculateEndPadding(LayoutDirection.Ltr) + 16.dp,
-                    bottom = padding.calculateBottomPadding(),
-                )
-                .padding(vertical = 12.dp)
-                .verticalScroll(rememberScrollState())
-                .padding(bottom = 80.dp), // Extra space for visibility
-        ) {
-
-            PeriodFilterCard(
-                chartCardContainerColor = chartCardContainerColor,
-                selectedPreset = selectedPreset,
-                dateRange = dateRange,
-                dateFormat = dateFormat,
-                onPresetSelected = { index, preset ->
-                    selectedPreset = index
-                    analyticsManager.logEvent("chart_date_filter_changed")
-                    onPresetSelected(preset)
-                },
-                onShowFromPicker = { showFromPicker = true },
-                onShowToPicker = { showToPicker = true },
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            ChartsSummaryRow(chartData = chartData, fmt = fmt)
-            Spacer(modifier = Modifier.height(20.dp))
-
-            // Collapsable New Visualizations Section
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                AppText(
-                    text = stringResource(R.string.charts_period),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
-                )
-                IconButton(
-                    onClick = { isVisualizationsSectionExpanded = !isVisualizationsSectionExpanded },
-                    modifier = Modifier.size(32.dp)
-                ) {
-                    Icon(
-                        imageVector = if (isVisualizationsSectionExpanded)
-                            Icons.Default.KeyboardArrowUp
-                        else
-                            Icons.Default.CalendarMonth,
-                        contentDescription = stringResource(R.string.common_close),
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
+    // Function to render a single chart card based on type
+    @Composable
+    fun RenderChartCard(cardType: com.antcashmanager.android.ui.screen.charts.model.ChartCardType) {
+        when (cardType) {
+            com.antcashmanager.android.ui.screen.charts.model.ChartCardType.SPENDING_FORECAST_CARD -> {
+                SpendingForecastCard(chartData = chartData)
+                Spacer(modifier = Modifier.height(16.dp))
             }
-
-            if (isVisualizationsSectionExpanded) {
-                NewVisualizationsSection(chartData = chartData, adaptiveLayoutInfo = adaptiveLayoutInfo)
+            com.antcashmanager.android.ui.screen.charts.model.ChartCardType.QUICK_STATS_CARD -> {
+                QuickStatsCard(chartData = chartData)
+                Spacer(modifier = Modifier.height(16.dp))
             }
-            Spacer(modifier = Modifier.height(24.dp))
-
-            if (adaptiveLayoutInfo.isCompact) {
-                // Telefono: colonna singola, ordine invariato + nuove sezioni in coda.
+            com.antcashmanager.android.ui.screen.charts.model.ChartCardType.DAILY_EXPENSE_CHART_CARD -> {
+                DailyExpenseLineChartCard(chartData = chartData)
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+            com.antcashmanager.android.ui.screen.charts.model.ChartCardType.WEEKDAY_DISTRIBUTION_CARD -> {
+                WeekdayExpenseCard(chartData = chartData)
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+            com.antcashmanager.android.ui.screen.charts.model.ChartCardType.INCOME_CATEGORY_PIE_CHART -> {
                 if (chartData.incomeByCategory.isNotEmpty()) {
                     CategoryPieChartCard(
                         title = stringResource(R.string.charts_income_by_category),
@@ -343,6 +346,8 @@ internal fun ChartsContent(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                 }
+            }
+            com.antcashmanager.android.ui.screen.charts.model.ChartCardType.EXPENSE_CATEGORY_PIE_CHART -> {
                 if (chartData.expenseByCategory.isNotEmpty()) {
                     CategoryPieChartCard(
                         title = stringResource(R.string.charts_expense_by_category),
@@ -372,6 +377,8 @@ internal fun ChartsContent(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                 }
+            }
+            com.antcashmanager.android.ui.screen.charts.model.ChartCardType.TOP_INCOME_CATEGORIES -> {
                 if (topIncomeCategories.isNotEmpty()) {
                     TopCategoriesCard(
                         title = stringResource(R.string.charts_top_income_categories),
@@ -382,6 +389,8 @@ internal fun ChartsContent(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                 }
+            }
+            com.antcashmanager.android.ui.screen.charts.model.ChartCardType.TOP_EXPENSE_CATEGORIES -> {
                 if (topExpenseCategories.isNotEmpty()) {
                     TopCategoriesCard(
                         title = stringResource(R.string.charts_top_expense_categories),
@@ -392,11 +401,13 @@ internal fun ChartsContent(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                 }
+            }
+            com.antcashmanager.android.ui.screen.charts.model.ChartCardType.PAYMENT_TYPE_BREAKDOWN -> {
                 if (paymentBreakdownByLabel.isNotEmpty()) {
                     CategoryPieChartCard(
                         title = stringResource(R.string.charts_payment_breakdown_title),
                         data = paymentBreakdownByLabel,
-                        maskMode = AmountMaskMode.ALL,
+                        maskMode = AmountMaskMode.NONE,
                         translateKeys = false,
                         shareSubjectRes = R.string.share_categories_subject,
                         chartHeight = pieChartHeight,
@@ -406,9 +417,21 @@ internal fun ChartsContent(
                         shareLabel = shareLabel,
                         context = context,
                         onShared = { analyticsManager.logEvent("chart_shared") },
+                        onCategorySelected = { paymentLabel, amount, color ->
+                            selectedChartDetails = ChartDetailsData(
+                                categoryName = paymentLabel,
+                                amount = amount,
+                                percentage = 0,
+                                colorHex = color,
+                                transactionCount = 0,
+                                trend = TrendDirection.NEUTRAL,
+                            )
+                        },
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                 }
+            }
+            com.antcashmanager.android.ui.screen.charts.model.ChartCardType.MONTHLY_BAR_CHART -> {
                 if (chartData.monthlyData.isNotEmpty()) {
                     MonthlyBarChartCard(
                         data = chartData.monthlyData,
@@ -422,6 +445,8 @@ internal fun ChartsContent(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                 }
+            }
+            com.antcashmanager.android.ui.screen.charts.model.ChartCardType.YEARLY_BAR_CHART -> {
                 if (chartData.yearlyData.isNotEmpty()) {
                     YearlyBarChartCard(
                         data = chartData.yearlyData,
@@ -433,167 +458,53 @@ internal fun ChartsContent(
                         context = context,
                         onShared = { analyticsManager.logEvent("chart_shared") },
                     )
-                }
-            } else {
-                // Tablet (isMedium 600-839dp, isExpanded >=840dp): più dati visibili
-                // affiancando le sezioni invece di impilarle.
-                val showPaymentColumn =
-                    adaptiveLayoutInfo.isExpanded && paymentBreakdownByLabel.isNotEmpty()
-                val hasIncomeColumn =
-                    chartData.incomeByCategory.isNotEmpty() || topIncomeCategories.isNotEmpty()
-                val hasExpenseColumn =
-                    chartData.expenseByCategory.isNotEmpty() || topExpenseCategories.isNotEmpty()
-
-                if (hasIncomeColumn || hasExpenseColumn || showPaymentColumn) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(ChartsConstant.TABLET_COLUMNS_SPACING_DP.dp),
-                    ) {
-                        if (hasIncomeColumn) {
-                            Column(
-                                modifier = Modifier.weight(1f),
-                                verticalArrangement = Arrangement.spacedBy(16.dp),
-                            ) {
-                                if (chartData.incomeByCategory.isNotEmpty()) {
-                                    CategoryPieChartCard(
-                                        title = stringResource(R.string.charts_income_by_category),
-                                        data = chartData.incomeByCategory,
-                                        maskMode = AmountMaskMode.PROTECT_SALARY,
-                                        translateKeys = true,
-                                        shareSubjectRes = R.string.share_categories_subject,
-                                        chartHeight = pieChartHeight,
-                                        zoomEnabled = zoomEnabled,
-                                        chartCardContainerColor = chartCardContainerColor,
-                                        fmt = fmt,
-                                        shareLabel = shareLabel,
-                                        context = context,
-                                        onShared = { analyticsManager.logEvent("chart_shared") },
-                                    )
-                                }
-                                if (topIncomeCategories.isNotEmpty()) {
-                                    TopCategoriesCard(
-                                        title = stringResource(R.string.charts_top_income_categories),
-                                        entries = topIncomeCategories,
-                                        maskMode = AmountMaskMode.PROTECT_SALARY,
-                                        fmt = fmt,
-                                        chartCardContainerColor = chartCardContainerColor,
-                                    )
-                                }
-                            }
-                        }
-                        if (hasExpenseColumn) {
-                            Column(
-                                modifier = Modifier.weight(1f),
-                                verticalArrangement = Arrangement.spacedBy(16.dp),
-                            ) {
-                                if (chartData.expenseByCategory.isNotEmpty()) {
-                                    CategoryPieChartCard(
-                                        title = stringResource(R.string.charts_expense_by_category),
-                                        data = chartData.expenseByCategory,
-                                        maskMode = AmountMaskMode.NONE,
-                                        translateKeys = true,
-                                        shareSubjectRes = R.string.share_categories_subject,
-                                        chartHeight = pieChartHeight,
-                                        zoomEnabled = zoomEnabled,
-                                        chartCardContainerColor = chartCardContainerColor,
-                                        fmt = fmt,
-                                        shareLabel = shareLabel,
-                                        context = context,
-                                        onShared = { analyticsManager.logEvent("chart_shared") },
-                                    )
-                                }
-                                if (topExpenseCategories.isNotEmpty()) {
-                                    TopCategoriesCard(
-                                        title = stringResource(R.string.charts_top_expense_categories),
-                                        entries = topExpenseCategories,
-                                        maskMode = AmountMaskMode.NONE,
-                                        fmt = fmt,
-                                        chartCardContainerColor = chartCardContainerColor,
-                                    )
-                                }
-                            }
-                        }
-                        if (showPaymentColumn) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                CategoryPieChartCard(
-                                    title = stringResource(R.string.charts_payment_breakdown_title),
-                                    data = paymentBreakdownByLabel,
-                                    maskMode = AmountMaskMode.ALL,
-                                    translateKeys = false,
-                                    shareSubjectRes = R.string.share_categories_subject,
-                                    chartHeight = pieChartHeight,
-                                    zoomEnabled = zoomEnabled,
-                                    chartCardContainerColor = chartCardContainerColor,
-                                    fmt = fmt,
-                                    shareLabel = shareLabel,
-                                    context = context,
-                                    onShared = { analyticsManager.logEvent("chart_shared") },
-                                )
-                            }
-                        }
-                    }
                     Spacer(modifier = Modifier.height(16.dp))
-                }
-
-                // Su isMedium la ripartizione pagamenti non entra come terza colonna:
-                // la mostriamo a piena larghezza sotto le prime due.
-                if (paymentBreakdownByLabel.isNotEmpty() && !showPaymentColumn) {
-                    CategoryPieChartCard(
-                        title = stringResource(R.string.charts_payment_breakdown_title),
-                        data = paymentBreakdownByLabel,
-                        maskMode = AmountMaskMode.ALL,
-                        translateKeys = false,
-                        shareSubjectRes = R.string.share_categories_subject,
-                        chartHeight = pieChartHeight,
-                        zoomEnabled = zoomEnabled,
-                        chartCardContainerColor = chartCardContainerColor,
-                        fmt = fmt,
-                        shareLabel = shareLabel,
-                        context = context,
-                        onShared = { analyticsManager.logEvent("chart_shared") },
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-
-                if (chartData.monthlyData.isNotEmpty() || chartData.yearlyData.isNotEmpty()) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(ChartsConstant.TABLET_COLUMNS_SPACING_DP.dp),
-                    ) {
-                        if (chartData.monthlyData.isNotEmpty()) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                MonthlyBarChartCard(
-                                    data = chartData.monthlyData,
-                                    chartHeight = monthlyBarChartHeight,
-                                    zoomEnabled = zoomEnabled,
-                                    chartCardContainerColor = chartCardContainerColor,
-                                    fmt = fmt,
-                                    shareLabel = shareLabel,
-                                    context = context,
-                                    onShared = { analyticsManager.logEvent("chart_shared") },
-                                )
-                            }
-                        }
-                        if (chartData.yearlyData.isNotEmpty()) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                YearlyBarChartCard(
-                                    data = chartData.yearlyData,
-                                    chartHeight = yearlyBarChartHeight,
-                                    zoomEnabled = zoomEnabled,
-                                    chartCardContainerColor = chartCardContainerColor,
-                                    fmt = fmt,
-                                    shareLabel = shareLabel,
-                                    context = context,
-                                    onShared = { analyticsManager.logEvent("chart_shared") },
-                                )
-                            }
-                        }
-                    }
                 }
             }
+        }
+    }
 
-            // Empty state
-            if (chartData.expenseByCategory.isEmpty() && chartData.monthlyData.isEmpty()) {
+    Scaffold(
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    start = padding.calculateStartPadding(LayoutDirection.Ltr) + 16.dp,
+                    top = 12.dp,
+                    end = padding.calculateEndPadding(LayoutDirection.Ltr) + 16.dp,
+                    bottom = padding.calculateBottomPadding(),
+                )
+                .verticalScroll(rememberScrollState())
+                .padding(bottom = 80.dp), // Extra space for visibility
+        ) {
+
+            PeriodFilterCard(
+                chartCardContainerColor = chartCardContainerColor,
+                selectedPreset = selectedPreset,
+                dateRange = dateRange,
+                dateFormat = dateFormat,
+                onPresetSelected = { index, preset ->
+                    selectedPreset = index
+                    analyticsManager.logEvent("chart_date_filter_changed")
+                    onPresetSelected(preset)
+                },
+                onShowFromPicker = { showFromPicker = true },
+                onShowToPicker = { showToPicker = true },
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            ChartsSummaryRow(chartData = chartData, fmt = fmt)
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Render all charts cards in custom order
+            chartsCardOrder.forEach { cardType ->
+                RenderChartCard(cardType)
+            }
+
+            // Empty state - shown when no data is available
+            if (chartData.expenseByCategory.isEmpty() && chartData.monthlyData.isEmpty() && chartData.incomeByCategory.isEmpty()) {
                 Spacer(modifier = Modifier.height(48.dp))
                 AntEmptyState(
                     mascotRes = R.drawable.ic_ant_mascot,

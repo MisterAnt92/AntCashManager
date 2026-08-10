@@ -310,6 +310,9 @@
     <string name="language_french">Français</string>
     <string name="language_german">Deutsch</string>
     <string name="language_spanish">Español</string>
+    <string name="language_chinese_simplified">Chinese (Mandarin)</string>
+    <string name="language_chinese_traditional">Chinese (Traditional)</string>
+    <string name="language_japanese">Japanese</string>
     <string name="debug_import_started">Debug import started</string>
     <string name="back">Back</string>
 
@@ -426,6 +429,9 @@
     <string name="feedback_email_body_french">Bonjour à l\'équipe d\'AntCashManager,\n\nJ\'aimerais partager des commentaires sur l\'application:\n\n[Veuillez décrire vos commentaires ici]\n\nMerci!</string>
     <string name="feedback_email_body_german">Hallo AntCashManager-Team,\n\nIch möchte gerne Feedback zur App geben:\n\n[Bitte beschreiben Sie Ihr Feedback hier]\n\nDanke!</string>
     <string name="feedback_email_body_spanish">Hola equipo de AntCashManager,\n\nMe gustaría compartir comentarios sobre la aplicación:\n\n[Por favor describe tu retroalimentación aquí]\n\n¡Grazie!</string>
+    <string name="feedback_email_body_chinese_simplified">AntCashManager 团队您好，\n\n我想分享一些关于该应用的反馈：\n\n[请在此描述您的反馈]\n\n谢谢！</string>
+    <string name="feedback_email_body_chinese_traditional">AntCashManager 團隊您好，\n\n我想分享一些關於該應用的回饋：\n\n[請在此描述您的回饋]\n\n謝謝！</string>
+    <string name="feedback_email_body_japanese">AntCashManager チームの皆様、\n\nアプリについてフィードバックを共有したいと思います：\n\n[ここにフィードバックを記入してください]\n\nありがとうございます！</string>
 
     <!-- Feedback Error Messages -->
     <string name="no_email_app_installed">No email app installed</string>
@@ -579,6 +585,9 @@
     <string name="dialog_close">Close</string>
     <string name="settings_title">Settings</string>
     <string name="charts_title">Graphics</string>
+    <string name="chart_customize_order">Customize chart cards order</string>
+    <string name="chart_cards_order_dialog_title">Reorder chart cards</string>
+    <string name="chart_cards_order_dialog_description">Drag up and down to reorder cards. Note: Period filter and summary row are fixed.</string>
     <string name="settings_project_by">A project made with love by Formica Simone @MisterAnt92</string>
     <!-- Chart Cards - New Visualizations -->
     <string name="chart_spending_forecast_title">Spending Forecast</string>

@@ -1,9 +1,11 @@
 package com.antcashmanager.android.ui.screen.charts
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithText
 import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.ui.screen.charts.view.ChartsDetailsBottomSheet
 import com.antcashmanager.android.ui.screen.charts.view.ChartDetailsData
@@ -35,6 +37,7 @@ class ChartsDetailsBottomSheetTest : BaseUnitTest() {
         trend = TrendDirection.UP,
     )
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Test
     fun bottomSheet_displaysWithValidData() {
         composeTestRule.setContent {
@@ -53,6 +56,7 @@ class ChartsDetailsBottomSheetTest : BaseUnitTest() {
         composeTestRule.onNodeWithText("Food").assertExists()
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Test
     fun bottomSheet_displaysPercentage() {
         composeTestRule.setContent {
@@ -70,6 +74,7 @@ class ChartsDetailsBottomSheetTest : BaseUnitTest() {
         composeTestRule.onNodeWithText("35% of total").assertExists()
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Test
     fun bottomSheet_displaysTransactionCount() {
         composeTestRule.setContent {
@@ -87,6 +92,7 @@ class ChartsDetailsBottomSheetTest : BaseUnitTest() {
         composeTestRule.onNodeWithText("12").assertExists()
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Test
     fun bottomSheet_displaysTrendIndicator() {
         composeTestRule.setContent {
@@ -104,6 +110,7 @@ class ChartsDetailsBottomSheetTest : BaseUnitTest() {
         composeTestRule.onNodeWithText("Spending trend: Increasing").assertExists()
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Test
     fun bottomSheet_hiddenWhenDetailsIsNull() {
         var dismissCalled = false
@@ -123,6 +130,7 @@ class ChartsDetailsBottomSheetTest : BaseUnitTest() {
         composeTestRule.onNodeWithText("Details").assertDoesNotExist()
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Test
     fun bottomSheet_handlesNeutralTrend() {
         composeTestRule.setContent {
@@ -140,6 +148,7 @@ class ChartsDetailsBottomSheetTest : BaseUnitTest() {
         composeTestRule.onNodeWithText("Spending trend: Stable").assertDoesNotExist()
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Test
     fun bottomSheet_handleDecreasingTrend() {
         composeTestRule.setContent {

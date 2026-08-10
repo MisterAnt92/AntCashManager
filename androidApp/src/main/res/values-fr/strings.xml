@@ -506,6 +506,9 @@
     <string name="error_opening_link">Impossible d\'ouvrir le lien. Veuillez vérifier vos applications.</string>
     <string name="settings_easter_egg_message">🐜 Salut ! Merci d\'utiliser AntCash !</string>
     <string name="settings_project_by">Un projet fait avec amour par Formica Simone @MisterAnt92</string>
+    <string name="chart_customize_order">Personnaliser l\'ordre des cartes</string>
+    <string name="chart_cards_order_dialog_title">Réorganiser les cartes de graphiques</string>
+    <string name="chart_cards_order_dialog_description">Utilisez les flèches haut/bas pour réorganiser. Remarque: Le filtre de période et la ligne de résumé sont fixes.</string>
     <!-- Chart Cards - New Visualizations -->
     <string name="chart_spending_forecast_title">Prévision de Dépenses</string>
     <string name="chart_avg_monthly">Moyenne Mensuelle</string>

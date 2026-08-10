@@ -306,6 +306,9 @@ internal fun SettingsContent(
                     AppLanguage.FRENCH -> R.string.feedback_email_body_french
                     AppLanguage.GERMAN -> R.string.feedback_email_body_german
                     AppLanguage.SPANISH -> R.string.feedback_email_body_spanish
+                    AppLanguage.CHINESE_SIMPLIFIED -> R.string.feedback_email_body_english
+                    AppLanguage.CHINESE_TRADITIONAL -> R.string.feedback_email_body_english
+                    AppLanguage.JAPANESE -> R.string.feedback_email_body_english
                     AppLanguage.SYSTEM -> R.string.feedback_email_body_english
                 }
             )
@@ -503,6 +506,9 @@ private fun languageDisplayName(language: AppLanguage): String = when (language)
     AppLanguage.FRENCH -> stringResource(R.string.language_french)
     AppLanguage.GERMAN -> stringResource(R.string.language_german)
     AppLanguage.SPANISH -> stringResource(R.string.language_spanish)
+    AppLanguage.CHINESE_SIMPLIFIED -> stringResource(R.string.language_system)
+    AppLanguage.CHINESE_TRADITIONAL -> stringResource(R.string.language_system)
+    AppLanguage.JAPANESE -> stringResource(R.string.language_system)
 }
 
 @Composable

@@ -559,6 +559,9 @@
     <string name="settings_third_party_author">von %s</string>
     <string name="categories_selection_hint">Tippen Sie auf eine Kategorie, um sie auszuwählen (in der eigentlichen App erfolgt der Wechsel automatisch).</string>
     <string name="settings_project_by">Ein Projekt, mit Liebe gemacht von Formica Simone @MisterAnt92</string>
+    <string name="chart_customize_order">Kartensortierung anpassen</string>
+    <string name="chart_cards_order_dialog_title">Diagrammkarten neu ordnen</string>
+    <string name="chart_cards_order_dialog_description">Verwenden Sie Auf- und Abwärtspfeile zum Neuordnen. Hinweis: Zeitraumfilter und Zusammenfassungszeile sind fixiert.</string>
     <!-- Chart Cards - New Visualizations -->
     <string name="chart_spending_forecast_title">Ausgabenprognose</string>
     <string name="chart_avg_monthly">Monatlicher Durchschnitt</string>

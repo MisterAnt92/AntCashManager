@@ -501,6 +501,9 @@
     <string name="settings_easter_egg_message">🐜 ¡Hola! ¡Gracias por usar AntCash!</string>
     <string name="settings_title">Settings</string>
     <string name="settings_project_by">Un proyecto hecho con amor por Formica Simone @MisterAnt92</string>
+    <string name="chart_customize_order">Personalizar orden de tarjetas</string>
+    <string name="chart_cards_order_dialog_title">Reordenar tarjetas de gráficos</string>
+    <string name="chart_cards_order_dialog_description">Usa flechas arriba/abajo para reordenar. Nota: El filtro de período y la fila de resumen son fijos.</string>
     <!-- Chart Cards - New Visualizations -->
     <string name="chart_spending_forecast_title">Previsión de Gastos</string>
     <string name="chart_avg_monthly">Promedio Mensual</string>

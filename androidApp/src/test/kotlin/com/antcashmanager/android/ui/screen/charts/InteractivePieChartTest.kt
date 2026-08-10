@@ -4,8 +4,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
+import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.ui.screen.charts.view.InteractivePieChart
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme

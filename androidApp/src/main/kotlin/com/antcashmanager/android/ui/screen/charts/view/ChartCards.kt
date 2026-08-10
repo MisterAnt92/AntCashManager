@@ -14,7 +14,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.text.AppText
@@ -39,9 +42,7 @@ internal fun SpendingForecastCard(
     val format = LocalCurrencyFormat.current
 
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -77,9 +78,7 @@ internal fun QuickStatsCard(
     val format = LocalCurrencyFormat.current
 
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -88,23 +87,83 @@ internal fun QuickStatsCard(
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.Top
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    AppText(text = stringResource(id = R.string.chart_days_tracked), style = MaterialTheme.typography.labelSmall)
-                    AppText(text = totalDays.toString(), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+                // Days Tracked
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .semantics(mergeDescendants = true) {
+                            this.contentDescription = "Days tracked: $totalDays"
+                        },
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    AppText(
+                        text = stringResource(id = R.string.chart_days_tracked),
+                        style = MaterialTheme.typography.labelSmall,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    AppText(
+                        text = totalDays.toString(),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    AppText(text = stringResource(id = R.string.chart_max_daily), style = MaterialTheme.typography.labelSmall)
-                    AppText(text = formatAmount(maxDailyExpense, format), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+
+                // Max Daily Expense
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .semantics(mergeDescendants = true) {
+                            this.contentDescription = "Max daily: ${formatAmount(maxDailyExpense, format)}"
+                        },
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    AppText(
+                        text = stringResource(id = R.string.chart_max_daily),
+                        style = MaterialTheme.typography.labelSmall,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    AppText(
+                        text = formatAmount(maxDailyExpense, format),
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    AppText(text = stringResource(id = R.string.chart_avg_daily), style = MaterialTheme.typography.labelSmall)
-                    AppText(text = formatAmount(avgDailyExpense, format), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+
+                // Average Daily Expense
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .semantics(mergeDescendants = true) {
+                            this.contentDescription = "Average daily: ${formatAmount(avgDailyExpense, format)}"
+                        },
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    AppText(
+                        text = stringResource(id = R.string.chart_avg_daily),
+                        style = MaterialTheme.typography.labelSmall,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    AppText(
+                        text = formatAmount(avgDailyExpense, format),
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
             }
         }
@@ -123,9 +182,7 @@ internal fun DailyExpenseLineChartCard(
     val format = LocalCurrencyFormat.current
 
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -159,9 +216,7 @@ internal fun WeekdayExpenseCard(
     val format = LocalCurrencyFormat.current
 
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -178,15 +233,34 @@ internal fun WeekdayExpenseCard(
             Spacer(modifier = Modifier.height(12.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 (1..7).forEach { day ->
                     val expense = chartData.expenseByWeekday[day] ?: 0.0
-                    Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-                        AppText(text = weekdayLabels.getOrNull(day - 1) ?: "?", style = MaterialTheme.typography.labelSmall)
-                        if (expense > 0.0) {
-                            AppText(text = formatAmount(expense, format), style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
-                        }
+                    val dayLabel = weekdayLabels.getOrNull(day - 1) ?: "?"
+                    val amountFormatted = if (expense > 0.0) formatAmount(expense, format) else "—"
+
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .semantics(mergeDescendants = true) {
+                                this.contentDescription = "$dayLabel: $amountFormatted"
+                            },
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        AppText(
+                            text = dayLabel,
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        AppText(
+                            text = amountFormatted,
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = if (expense > 0.0) FontWeight.Bold else FontWeight.Normal,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
                     }
                 }
             }
