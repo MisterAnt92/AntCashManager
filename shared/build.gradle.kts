@@ -1,8 +1,16 @@
+import org.gradle.testing.jacoco.tasks.JacocoReport
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.kotlin.plugin.serialization)
     alias(libs.plugins.ksp)
+    id("jacoco")
+}
+
+// ── Jacoco Configuration ──
+jacoco {
+    toolVersion = "0.8.10"
 }
 
 kotlin {
@@ -61,4 +69,47 @@ ksp {
 // Test parallelism configuration
 tasks.withType<Test> {
     maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).takeIf { it > 0 } ?: 1
+}
+
+// ── Jacoco Coverage Report Task ──
+tasks.register("jacocoTestReport", JacocoReport::class) {
+    dependsOn("testDebugUnitTest")
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+
+    classDirectories.setFrom(
+        fileTree("${layout.buildDirectory}/classes/kotlin/android/main") {
+            exclude(
+                "**/R.class",
+                "**/R\$*.class",
+                "**/BuildConfig.*",
+                "**/Manifest*.*",
+                "**/*Test*.*"
+            )
+        }
+    )
+
+    sourceDirectories.setFrom(
+        files(
+            "src/androidMain/kotlin",
+            "src/commonMain/kotlin"
+        )
+    )
+    executionData.setFrom(
+        fileTree("${layout.buildDirectory}") {
+            include("jacoco/*.exec")
+        }
+    )
+}
+
+// Convenience task
+tasks.register("testCoverageReport") {
+    dependsOn("jacocoTestReport")
+    doLast {
+        println("\n✅ Shared module Jacoco coverage report generated:")
+        println("   📦 Report: build/reports/jacoco/jacocoTestReport/html/index.html")
+    }
 }

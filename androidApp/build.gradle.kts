@@ -1,4 +1,6 @@
 import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
+import org.gradle.testing.jacoco.plugins.JacocoPluginExtension
+import org.gradle.testing.jacoco.tasks.JacocoReport
 
 plugins {
     alias(libs.plugins.android.application)
@@ -6,6 +8,12 @@ plugins {
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.plugin.serialization)
+    id("jacoco")
+}
+
+// ── Jacoco Configuration ──
+jacoco {
+    toolVersion = "0.8.10"
 }
 
 android {
@@ -21,6 +29,10 @@ android {
     }
 
     buildTypes {
+        debug {
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
+        }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
@@ -99,4 +111,63 @@ dependencies {
 
     // Android Test Orchestrator for better test isolation and parallelism
     androidTestUtil("androidx.test:orchestrator:1.4.2")
+}
+
+// ── Jacoco Coverage Report Tasks ──
+tasks.register("jacocoTestDebugUnitTestReport", JacocoReport::class) {
+    dependsOn("testDebugUnitTest")
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+
+    classDirectories.setFrom(
+        fileTree("${layout.buildDirectory}/intermediates/javac/debug") {
+            exclude(
+                "**/R.class",
+                "**/R\$*.class",
+                "**/BuildConfig.*",
+                "**/Manifest*.*",
+                "**/*Test*.*"
+            )
+        }
+    )
+
+    sourceDirectories.setFrom(files("src/main/kotlin", "src/main/java"))
+    executionData.setFrom(files("${layout.buildDirectory}/jacoco/testDebugUnitTest.exec"))
+}
+
+tasks.register("jacocoConnectedDebugAndroidTestReport", JacocoReport::class) {
+    dependsOn("connectedDebugAndroidTest")
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+
+    classDirectories.setFrom(
+        fileTree("${layout.buildDirectory}/intermediates/javac/debug") {
+            exclude(
+                "**/R.class",
+                "**/R\$*.class",
+                "**/BuildConfig.*",
+                "**/Manifest*.*",
+                "**/*Test*.*"
+            )
+        }
+    )
+
+    sourceDirectories.setFrom(files("src/main/kotlin", "src/main/java"))
+    executionData.setFrom(files("${layout.buildDirectory}/jacoco/connectedDebugAndroidTest.exec"))
+}
+
+// Convenience task to generate all coverage reports
+tasks.register("testCoverageReport") {
+    dependsOn("jacocoTestDebugUnitTestReport", "jacocoConnectedDebugAndroidTestReport")
+    doLast {
+        println("\n✅ Jacoco coverage reports generated:")
+        println("   📊 Unit Tests: build/reports/jacoco/jacocoTestDebugUnitTestReport/html/index.html")
+        println("   📱 Instrumentation: build/reports/jacoco/jacocoConnectedDebugAndroidTestReport/html/index.html")
+    }
 }
