@@ -84,7 +84,10 @@ internal fun DetailsTagsSection(
                         }
                         tagInput = ""
                     }) {
-                        androidx.compose.material3.Icon(Icons.Default.Add, contentDescription = "Add Tag")
+                        androidx.compose.material3.Icon(
+                            Icons.Default.Add,
+                            contentDescription = "Add Tag"
+                        )
                     }
                 }
             },

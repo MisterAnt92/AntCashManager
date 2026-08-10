@@ -50,6 +50,13 @@ android {
             )
         }
     }
+
+    testOptions {
+        execution = "ANDROIDX_TEST_ORCHESTRATOR"
+        unitTests {
+            isReturnDefaultValues = true
+        }
+    }
 }
 
 
@@ -88,4 +95,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit.ext)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+
+    // Android Test Orchestrator for better test isolation and parallelism
+    androidTestUtil("androidx.test:orchestrator:1.4.2")
 }

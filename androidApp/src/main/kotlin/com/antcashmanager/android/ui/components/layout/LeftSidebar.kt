@@ -30,8 +30,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
-import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.navigation.BottomNavItem
+import com.antcashmanager.android.ui.components.text.AppText
 
 /**
  * Sidebar di navigazione laterale sinistra con UX migliorata.

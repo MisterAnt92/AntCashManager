@@ -4,13 +4,11 @@ import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.testutil.FakeTransactionRepository
 import com.antcashmanager.domain.model.Transaction
-import com.antcashmanager.domain.model.TransactionSuggestions
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.usecase.transaction.GetTransactionSuggestionsUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -86,7 +84,8 @@ class SuggestionsManagerTest : BaseUnitTest() {
     fun setup() {
         transactionRepository = FakeTransactionRepository(mockTransactions)
         settingsRepository = FakeSettingsRepository()
-        getSuggestionsUseCase = GetTransactionSuggestionsUseCase(transactionRepository, settingsRepository)
+        getSuggestionsUseCase =
+            GetTransactionSuggestionsUseCase(transactionRepository, settingsRepository)
         manager = SuggestionsManager(
             getTransactionSuggestionsUseCase = getSuggestionsUseCase,
         )
@@ -112,14 +111,22 @@ class SuggestionsManagerTest : BaseUnitTest() {
         val result = suggestionsFlow.first()
         val suggestions = result.getOrThrow()
 
-        assertTrue("Should contain 'Lunch at McDonald\\'s'",
-            suggestions.titles.contains("Lunch at McDonald's"))
-        assertTrue("Should contain 'Lunch at Subway'",
-            suggestions.titles.contains("Lunch at Subway"))
-        assertTrue("Should contain 'Dinner at Italian Restaurant'",
-            suggestions.titles.contains("Dinner at Italian Restaurant"))
-        assertTrue("Should contain 'Coffee'",
-            suggestions.titles.contains("Coffee"))
+        assertTrue(
+            "Should contain 'Lunch at McDonald\\'s'",
+            suggestions.titles.contains("Lunch at McDonald's")
+        )
+        assertTrue(
+            "Should contain 'Lunch at Subway'",
+            suggestions.titles.contains("Lunch at Subway")
+        )
+        assertTrue(
+            "Should contain 'Dinner at Italian Restaurant'",
+            suggestions.titles.contains("Dinner at Italian Restaurant")
+        )
+        assertTrue(
+            "Should contain 'Coffee'",
+            suggestions.titles.contains("Coffee")
+        )
     }
 
     @Test
@@ -128,14 +135,22 @@ class SuggestionsManagerTest : BaseUnitTest() {
         val result = suggestionsFlow.first()
         val suggestions = result.getOrThrow()
 
-        assertTrue("Should contain 'McDonald\\'s'",
-            suggestions.payees.contains("McDonald's"))
-        assertTrue("Should contain 'Subway'",
-            suggestions.payees.contains("Subway"))
-        assertTrue("Should contain 'Italian Restaurant'",
-            suggestions.payees.contains("Italian Restaurant"))
-        assertTrue("Should contain 'Starbucks'",
-            suggestions.payees.contains("Starbucks"))
+        assertTrue(
+            "Should contain 'McDonald\\'s'",
+            suggestions.payees.contains("McDonald's")
+        )
+        assertTrue(
+            "Should contain 'Subway'",
+            suggestions.payees.contains("Subway")
+        )
+        assertTrue(
+            "Should contain 'Italian Restaurant'",
+            suggestions.payees.contains("Italian Restaurant")
+        )
+        assertTrue(
+            "Should contain 'Starbucks'",
+            suggestions.payees.contains("Starbucks")
+        )
     }
 
     @Test
@@ -144,12 +159,18 @@ class SuggestionsManagerTest : BaseUnitTest() {
         val result = suggestionsFlow.first()
         val suggestions = result.getOrThrow()
 
-        assertTrue("Should contain 'Quick lunch'",
-            suggestions.notes.contains("Quick lunch"))
-        assertTrue("Should contain 'Healthy lunch'",
-            suggestions.notes.contains("Healthy lunch"))
-        assertTrue("Should contain 'Pasta night'",
-            suggestions.notes.contains("Pasta night"))
+        assertTrue(
+            "Should contain 'Quick lunch'",
+            suggestions.notes.contains("Quick lunch")
+        )
+        assertTrue(
+            "Should contain 'Healthy lunch'",
+            suggestions.notes.contains("Healthy lunch")
+        )
+        assertTrue(
+            "Should contain 'Pasta night'",
+            suggestions.notes.contains("Pasta night")
+        )
     }
 
     @Test
@@ -159,9 +180,12 @@ class SuggestionsManagerTest : BaseUnitTest() {
         val suggestions = result.getOrThrow()
 
         // Tags are returned as comma-separated strings, not split
-        assertTrue("Should contain comma-separated tags from first transaction",
-            suggestions.tags.contains("food,fast-food"))
-        assertTrue("Should contain tags from other transactions",
+        assertTrue(
+            "Should contain comma-separated tags from first transaction",
+            suggestions.tags.contains("food,fast-food")
+        )
+        assertTrue(
+            "Should contain tags from other transactions",
             suggestions.tags.any { it.contains("food") })
         // Verify we have multiple distinct tag combinations
         assertTrue("Should have multiple distinct tag strings", suggestions.tags.size >= 2)
@@ -204,8 +228,10 @@ class SuggestionsManagerTest : BaseUnitTest() {
         val result = manager.filterSuggestions(suggestions, "Lunch")
 
         assertEquals(2, result.size)
-        assertTrue("Should contain Lunch suggestions",
-            result.contains("Lunch at McDonald's") && result.contains("Lunch at Subway"))
+        assertTrue(
+            "Should contain Lunch suggestions",
+            result.contains("Lunch at McDonald's") && result.contains("Lunch at Subway")
+        )
     }
 
     @Test

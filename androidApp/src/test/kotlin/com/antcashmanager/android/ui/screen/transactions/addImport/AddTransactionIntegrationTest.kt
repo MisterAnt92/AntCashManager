@@ -1,6 +1,5 @@
 package com.antcashmanager.android.ui.screen.transactions.addImport
 
-import android.os.Bundle
 import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.testutil.FakeCategoryRepository
@@ -11,7 +10,6 @@ import com.antcashmanager.android.ui.screen.transactions.addImport.manager.Sugge
 import com.antcashmanager.android.ui.screen.transactions.addImport.manager.TransactionLoadManager
 import com.antcashmanager.android.ui.screen.transactions.addImport.manager.TransactionSubmitManager
 import com.antcashmanager.domain.model.Category
-import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
@@ -27,7 +25,6 @@ import kotlinx.coroutines.flow.first
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Ignore
@@ -212,8 +209,10 @@ class AddTransactionIntegrationTest : BaseUnitTest() {
         assertTrue("Should be in modify mode", viewModel.state.value.isModifying)
         assertEquals("Lunch", viewModel.state.value.title)
         // Amount formatting varies; check numerically
-        assertTrue("Amount should be 25.50 (absolute value)",
-            kotlin.math.abs((viewModel.state.value.amount.toDoubleOrNull() ?: 0.0) - 25.50) < 0.01)
+        assertTrue(
+            "Amount should be 25.50 (absolute value)",
+            kotlin.math.abs((viewModel.state.value.amount.toDoubleOrNull() ?: 0.0) - 25.50) < 0.01
+        )
         assertEquals("Initial notes", viewModel.state.value.notes)
         assertEquals("Restaurant", viewModel.state.value.payee)
 
@@ -232,7 +231,10 @@ class AddTransactionIntegrationTest : BaseUnitTest() {
         val updated = transactionRepository.getTransactionById(1L)
         assertNotNull("Transaction should exist", updated)
         assertEquals("Dinner", updated?.title)
-        assertTrue("Amount should be -50.00", kotlin.math.abs((updated?.amount ?: 0.0) - (-50.00)) < 0.01)
+        assertTrue(
+            "Amount should be -50.00",
+            kotlin.math.abs((updated?.amount ?: 0.0) - (-50.00)) < 0.01
+        )
         assertEquals("Updated notes", updated?.notes)
     }
 

@@ -2,7 +2,8 @@
 
 ## 📋 Panoramica
 
-Questo documento descrive il refactoring completo del flusso di aggiunta transazioni dell'app AntCashManager, implementato nella versione v1.6.3.
+Questo documento descrive il refactoring completo del flusso di aggiunta transazioni dell'app
+AntCashManager, implementato nella versione v1.6.3.
 
 **Data**: Agosto 2026  
 **Versione**: 1.6.3  
@@ -13,21 +14,26 @@ Questo documento descrive il refactoring completo del flusso di aggiunta transaz
 ## 🎯 Obiettivi Raggiunti
 
 ### 1️⃣ Unit Tests ✅
+
 - **81 test cases** creati e validati
 - Copertura completa della logica di business
-- 4 test classes: TransactionSubmitManager, TransactionLoadManager, SuggestionsManager, AddTransactionViewModel
+- 4 test classes: TransactionSubmitManager, TransactionLoadManager, SuggestionsManager,
+  AddTransactionViewModel
 
 ### 2️⃣ Integration Tests ✅
+
 - **11 scenari end-to-end** testati
 - 8/11 test passano (3 ignorati per Robolectric pending)
 - Flussi completi: creazione, modifica, validazione, persistenza
 
 ### 3️⃣ TagSelector Extraction ✅
+
 - **DetailsTagsSection** composable creato
 - DetailsStep ridotto da 467 → 353 linee (-24.4%)
 - Composable riutilizzabile per la gestione tag
 
 ### 4️⃣ Performance Profiling ✅
+
 - Baseline metrics stabiliti
 - Raccomandazioni di ottimizzazione fornite
 - Pronto per future misurazioni
@@ -65,7 +71,9 @@ Questo documento descrive il refactoring completo del flusso di aggiunta transaz
 ### Componenti Principali
 
 #### **1. TransactionLoadManager**
+
 Responsabilità:
+
 - Caricamento categorie filtrate (esclude nascoste)
 - Caricamento valore buoni pasto
 - Preparazione stato per modalità modifica
@@ -79,7 +87,9 @@ fun prepareEditState(transactionId: Long, state: AddTransactionState): Result<Ad
 ```
 
 #### **2. TransactionSubmitManager**
+
 Responsabilità:
+
 - Validazione stato transazione
 - Costruzione oggetto Transaction
 - Persistenza su database (insert/update)
@@ -93,7 +103,9 @@ fun submitTransaction(state: AddTransactionState, isNew: Boolean): Result<Long>
 ```
 
 #### **3. SuggestionsManager**
+
 Responsabilità:
+
 - Caricamento suggerimenti transazioni
 - Filtraggio case-insensitive
 - Limitazione risultati (top N)
@@ -109,6 +121,7 @@ fun getTopFilteredSuggestions(suggestions: List<String>, query: String, limit: I
 ## 🎨 Composable Architecture
 
 ### Decomposizione UI
+
 L'originale **DetailsStep** è stato scomposto in 6 composable specializzati:
 
 ```
@@ -132,12 +145,14 @@ DetailsStep (353 linee)
 **File**: `view/DetailsTagsSection.kt`  
 **Linee**: 113  
 **Responsabilità**:
+
 - Renderizzare campo input per tag
 - Gestire aggiunta/rimozione tag
 - Mostrare tag attuali con chip
 - Suggerire tag basati su ricerca
 
 **API**:
+
 ```kotlin
 @Composable
 fun DetailsTagsSection(
@@ -149,6 +164,7 @@ fun DetailsTagsSection(
 ```
 
 **Funzionamenti**:
+
 - Tag gestiti come stringhe CSV ("tag1, tag2, tag3")
 - Input filtrato per suggerimenti (case-insensitive)
 - Limite 5 suggerimenti mostrati
@@ -159,6 +175,7 @@ fun DetailsTagsSection(
 ## 📊 Metriche di Riduzione Codice
 
 ### ViewModel
+
 ```
 Prima:  568 linee (con inline business logic)
 Dopo:   430 linee (solo state management + events)
@@ -166,6 +183,7 @@ Riduzione: -138 linee (-24.3%)
 ```
 
 ### DetailsStep
+
 ```
 Prima:  467 linee (con inline TagSelector)
 Dopo:   353 linee (composable decomposed)
@@ -173,6 +191,7 @@ Riduzione: -114 linee (-24.4%)
 ```
 
 ### Benefici
+
 - ✅ Migliore leggibilità
 - ✅ Riutilizzabilità composable
 - ✅ Testing più facile
@@ -185,6 +204,7 @@ Riduzione: -114 linee (-24.4%)
 ### Unit Tests (81 totali)
 
 #### TransactionSubmitManagerTest (35)
+
 ```
 Validation Tests (10):
 ├── Category required
@@ -210,6 +230,7 @@ Flow Tests (3):
 ```
 
 #### TransactionLoadManagerTest (28)
+
 ```
 Load Categories (3):
 ├── Filtering
@@ -232,6 +253,7 @@ Prepare Edit State (8):
 ```
 
 #### SuggestionsManagerTest (18)
+
 ```
 Get Suggestions (5):
 ├── All titles
@@ -279,20 +301,21 @@ Edge Cases:
 
 ### Baseline Stabilito
 
-| Operazione | Tempo | Iterazioni |
-|---|---|---|
-| Category Loading | 2-3 ms | 100 |
-| Meal Voucher Loading | 1-2 ms | 100 |
-| Transaction Validation | 10-50 µs | 50 |
-| Suggestions Filtering | 1-5 µs | 1000 |
-| Database Insert | 5-10 ms | 50 |
-| Database Read | 50-200 µs | 100 |
-| Database Update | 5-10 ms | 50 |
+| Operazione             | Tempo     | Iterazioni |
+|------------------------|-----------|------------|
+| Category Loading       | 2-3 ms    | 100        |
+| Meal Voucher Loading   | 1-2 ms    | 100        |
+| Transaction Validation | 10-50 µs  | 50         |
+| Suggestions Filtering  | 1-5 µs    | 1000       |
+| Database Insert        | 5-10 ms   | 50         |
+| Database Read          | 50-200 µs | 100        |
+| Database Update        | 5-10 ms   | 50         |
 
 ### Test Profiling
 
 **File**: `PerformanceProfilingTest.kt`  
 **Metodi**: 6
+
 - `performance_measure_loadCategories_operation`
 - `performance_measure_loadMealVoucherValue_operation`
 - `performance_measure_transaction_validation`
@@ -372,13 +395,13 @@ val categories = result.getOrNull() ?: emptyList()
 
 ### Validation Error Messages
 
-| Scenario | Messaggio |
-|---|---|
-| Category mancante | "Category non selezionata" |
-| Type mancante | "Tipo di transazione non selezionato" |
-| Title vuoto | "Titolo obbligatorio" |
-| Amount invalido | "Importo non valido" |
-| MEAL_VOUCHERS | "Selezione buoni pasto richiesta" |
+| Scenario          | Messaggio                             |
+|-------------------|---------------------------------------|
+| Category mancante | "Category non selezionata"            |
+| Type mancante     | "Tipo di transazione non selezionato" |
+| Title vuoto       | "Titolo obbligatorio"                 |
+| Amount invalido   | "Importo non valido"                  |
+| MEAL_VOUCHERS     | "Selezione buoni pasto richiesta"     |
 
 ---
 
@@ -434,26 +457,31 @@ val categories = result.getOrNull() ?: emptyList()
 ## 🎓 Best Practices Implementate
 
 ### ✅ Separation of Concerns
+
 - UI Layer: Composable + ViewModel
 - Business Logic: Manager classes
 - Data Access: Repository + UseCase
 
 ### ✅ Single Responsibility
+
 - TransactionLoadManager: Solo caricamento
 - TransactionSubmitManager: Solo salvataggio
 - SuggestionsManager: Solo suggerimenti
 
 ### ✅ Dependency Injection
+
 - Tutte le dipendenze iniettate via Koin
 - Facile mockare in test
 - Facile sostituire implementazioni
 
 ### ✅ Error Handling
+
 - Result<T> pattern ovunque
 - Messaggi di errore localizzati
 - Graceful degradation
 
 ### ✅ Testing
+
 - Unit test per ogni manager
 - Integration test per workflow
 - Performance baseline stabilito
@@ -515,21 +543,25 @@ val filteredSuggestions = remember(tagInput, suggestions) {
 ## 🔮 Future Improvements
 
 ### Robolectric Integration
+
 - Aggiungi Robolectric al build.gradle
 - Abilita i 3 ignored integration test
 - Migliora coverage a 11/11
 
 ### Caching
+
 - Cache categorie in ViewModel
 - Cache suggerimenti con TTL
 - Ridurre database queries
 
 ### Optimizations
+
 - Lazy load suggerimenti
 - Batch database operations
 - Profile Compose recompositions
 
 ### Features
+
 - Auto-complete trasazioni
 - Bulk import CSV
 - Transaction templates
@@ -539,14 +571,17 @@ val filteredSuggestions = remember(tagInput, suggestions) {
 ## 📚 File di Riferimento
 
 ### Nuovo Manager Classes
+
 - `manager/TransactionLoadManager.kt`
 - `manager/TransactionSubmitManager.kt`
 - `manager/SuggestionsManager.kt`
 
 ### Nuovo Composable
+
 - `view/DetailsTagsSection.kt`
 
 ### Test Files
+
 - `manager/TransactionSubmitManagerTest.kt`
 - `manager/TransactionLoadManagerTest.kt`
 - `manager/SuggestionsManagerTest.kt`
@@ -554,6 +589,7 @@ val filteredSuggestions = remember(tagInput, suggestions) {
 - `PerformanceProfilingTest.kt`
 
 ### Documentazione
+
 - `REFACTORING_SUMMARY.md` (questo file)
 - `INTEGRATION_INSTRUCTIONS.md` (guida integrazione)
 
@@ -561,7 +597,8 @@ val filteredSuggestions = remember(tagInput, suggestions) {
 
 ## ✨ Conclusione
 
-Il refactoring v1.6.3 rappresenta un significativo miglioramento nella qualità architetturale dell'app:
+Il refactoring v1.6.3 rappresenta un significativo miglioramento nella qualità architetturale
+dell'app:
 
 - 🎯 **Codice**: -24% ViewModel, -24% DetailsStep
 - 🧪 **Testing**: 81 unit + 8 integration test

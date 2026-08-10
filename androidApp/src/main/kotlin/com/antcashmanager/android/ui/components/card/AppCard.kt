@@ -176,7 +176,7 @@ fun AppCardSectionHeader(
 
     AppText(
         text = title,
-        style = MaterialTheme.typography.labelLarge,
+        style = MaterialTheme.typography.labelMedium,
         color = MaterialTheme.colorScheme.primary,
         modifier = modifier.padding(start = startPadding, top = topPadding, bottom = bottomPadding),
     )

@@ -3,7 +3,6 @@ package com.antcashmanager.android.ui.screen.transactions.addImport.manager
 import com.antcashmanager.domain.model.TransactionSuggestions
 import com.antcashmanager.domain.usecase.transaction.GetTransactionSuggestionsUseCase
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
 /**
  * Manager responsabile del caricamento e della gestione dei suggerimenti.
@@ -55,7 +54,11 @@ class SuggestionsManager(
      * @param limit Il numero massimo di suggerimenti da ritornare (default: 5)
      * @return Lista di suggerimenti limitata a [limit] elementi
      */
-    fun getTopFilteredSuggestions(suggestions: List<String>, query: String, limit: Int = 5): List<String> {
+    fun getTopFilteredSuggestions(
+        suggestions: List<String>,
+        query: String,
+        limit: Int = 5
+    ): List<String> {
         return filterSuggestions(suggestions, query).take(limit)
     }
 }

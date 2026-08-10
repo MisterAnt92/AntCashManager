@@ -8,7 +8,6 @@ import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.UpdateTransactionUseCase
-import kotlinx.coroutines.CancellationException
 
 /**
  * Manager responsabile della validazione e del salvataggio delle transazioni.
@@ -140,13 +139,14 @@ class TransactionSubmitManager(
      * @param isModifying true per update, false per insert
      * @return Result<Unit> con successo o errore
      */
-    suspend fun saveTransaction(transaction: Transaction, isModifying: Boolean): Result<Unit> = runCatching {
-        if (isModifying) {
-            updateTransactionUseCase(transaction).getOrThrow()
-        } else {
-            insertTransactionUseCase(transaction).getOrThrow()
+    suspend fun saveTransaction(transaction: Transaction, isModifying: Boolean): Result<Unit> =
+        runCatching {
+            if (isModifying) {
+                updateTransactionUseCase(transaction).getOrThrow()
+            } else {
+                insertTransactionUseCase(transaction).getOrThrow()
+            }
         }
-    }
 
     /**
      * Esegue il flusso completo di submit della transazione:
@@ -158,17 +158,18 @@ class TransactionSubmitManager(
      * @param transactionId L'ID della transazione (per modifica)
      * @return Result<Unit> con successo o messaggio di errore
      */
-    suspend fun submitTransaction(state: AddTransactionState, transactionId: Long?): Result<Unit> = runCatching {
-        // 1. Valida
-        val validationError = validateTransactionState(state)
-        if (validationError != null) {
-            throw IllegalArgumentException(validationError)
+    suspend fun submitTransaction(state: AddTransactionState, transactionId: Long?): Result<Unit> =
+        runCatching {
+            // 1. Valida
+            val validationError = validateTransactionState(state)
+            if (validationError != null) {
+                throw IllegalArgumentException(validationError)
+            }
+
+            // 2. Costruisci
+            val transaction = buildTransaction(state, transactionId)
+
+            // 3. Salva
+            saveTransaction(transaction, state.isModifying).getOrThrow()
         }
-
-        // 2. Costruisci
-        val transaction = buildTransaction(state, transactionId)
-
-        // 3. Salva
-        saveTransaction(transaction, state.isModifying).getOrThrow()
-    }
 }

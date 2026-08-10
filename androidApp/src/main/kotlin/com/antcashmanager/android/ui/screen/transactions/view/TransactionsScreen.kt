@@ -48,6 +48,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -69,12 +70,13 @@ import com.antcashmanager.android.ui.components.animation.AnimatedCard
 import com.antcashmanager.android.ui.components.animation.AnimatedListItem
 import com.antcashmanager.android.ui.components.animation.SkeletonLoader
 import com.antcashmanager.android.ui.components.button.AppButton
-import com.antcashmanager.android.ui.components.common.ScreenHeader
 import com.antcashmanager.android.ui.components.dialog.AppHelpDialog
 import com.antcashmanager.android.ui.components.dialog.HelpButton
 import com.antcashmanager.android.ui.components.dialog.HelpDialogFeatureSpec
 import com.antcashmanager.android.ui.components.filter.DateRangeFilter
 import com.antcashmanager.android.ui.components.filter.SearchComponent
+import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
+import com.antcashmanager.android.navigation.ScreenHeaderConfig
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.state.AntEmptyState
 import com.antcashmanager.android.ui.components.text.AppText
@@ -262,6 +264,55 @@ internal fun TransactionsContent(
         HelpDialog(onDismiss = { showHelpDialog = false })
     }
 
+    // Configure screen header with actions
+    val headerConfigCallback = LocalScreenHeaderConfigCallback.current
+    val transactionsTitle = stringResource(R.string.common_transactions)
+    LaunchedEffect(Unit) {
+        headerConfigCallback?.invoke(
+            ScreenHeaderConfig(
+                title = transactionsTitle,
+                actions = {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        IconButton(
+                            onClick = { onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ToggleSearchExpanded) },
+                        ) {
+                            Icon(
+                                imageVector = if (state.isSearchExpanded) Icons.Default.Close else Icons.Default.Search,
+                                contentDescription = stringResource(R.string.transactions_search),
+                                tint = if (state.searchQuery.isNotEmpty()) MaterialTheme.colorScheme.primary
+                                else MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        IconButton(
+                            onClick = {
+                                if (!state.isFiltersExpanded) {
+                                    analyticsManager.logEvent("transactions_filter_opened")
+                                }
+                                onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ToggleFiltersExpanded)
+                            },
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.FilterList,
+                                contentDescription = stringResource(R.string.transactions_filter),
+                                tint = if (state.hasActiveFilters) MaterialTheme.colorScheme.primary
+                                else MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        HelpButton(
+                            onHelpClick = {
+                                analyticsManager.logEvent("transactions_help_opened")
+                                showHelpDialog = true
+                            },
+                        )
+                    }
+                }
+            )
+        )
+    }
+
     Box(modifier = modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier
@@ -274,50 +325,6 @@ internal fun TransactionsContent(
             verticalArrangement = Arrangement.spacedBy(TransactionsScreenDefaults.CardSpacing),
             contentPadding = PaddingValues(bottom = TransactionsScreenDefaults.ListBottomSpacer)
         ) {
-            // Header
-            item {
-                ScreenHeader(
-                    title = stringResource(R.string.common_transactions),
-                    actions = {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(4.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            IconButton(
-                                onClick = { onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ToggleSearchExpanded) },
-                            ) {
-                                Icon(
-                                    imageVector = if (state.isSearchExpanded) Icons.Default.Close else Icons.Default.Search,
-                                    contentDescription = stringResource(R.string.transactions_search),
-                                    tint = if (state.searchQuery.isNotEmpty()) MaterialTheme.colorScheme.primary
-                                    else MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                            }
-                            IconButton(
-                                onClick = {
-                                    if (!state.isFiltersExpanded) {
-                                        analyticsManager.logEvent("transactions_filter_opened")
-                                    }
-                                    onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ToggleFiltersExpanded)
-                                },
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.FilterList,
-                                    contentDescription = stringResource(R.string.transactions_filter),
-                                    tint = if (state.hasActiveFilters) MaterialTheme.colorScheme.primary
-                                    else MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                            }
-                            HelpButton(
-                                onHelpClick = {
-                                    analyticsManager.logEvent("transactions_help_opened")
-                                    showHelpDialog = true
-                                },
-                            )
-                        }
-                    },
-                )
-            }
             // Search bar
             if (state.isSearchExpanded) {
                 item {

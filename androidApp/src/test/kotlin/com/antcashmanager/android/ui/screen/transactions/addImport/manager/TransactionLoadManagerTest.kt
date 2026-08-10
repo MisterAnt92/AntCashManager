@@ -4,7 +4,6 @@ import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.testutil.FakeCategoryRepository
 import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.testutil.FakeTransactionRepository
-import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionConstant
 import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionState
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.Transaction
@@ -13,10 +12,8 @@ import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.settings.GetMealVoucherValueUseCase
 import com.antcashmanager.domain.usecase.transaction.GetTransactionByIdUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -155,8 +152,10 @@ class TransactionLoadManagerTest : BaseUnitTest() {
         val result = manager.loadTransactionForEdit(999L)
 
         assertTrue("Load should fail", result.isFailure)
-        assertTrue("Should have IllegalArgumentException",
-            result.exceptionOrNull() is IllegalArgumentException)
+        assertTrue(
+            "Should have IllegalArgumentException",
+            result.exceptionOrNull() is IllegalArgumentException
+        )
     }
 
     @Test
@@ -170,8 +169,10 @@ class TransactionLoadManagerTest : BaseUnitTest() {
         val result = manager.loadTransactionForEdit(2L)
 
         assertTrue("Load should fail", result.isFailure)
-        assertTrue("Should have IllegalArgumentException",
-            result.exceptionOrNull() is IllegalArgumentException)
+        assertTrue(
+            "Should have IllegalArgumentException",
+            result.exceptionOrNull() is IllegalArgumentException
+        )
     }
 
     // ── Prepare Edit State Tests ──
@@ -188,7 +189,10 @@ class TransactionLoadManagerTest : BaseUnitTest() {
         assertEquals(1L, state.transactionId)
         assertEquals("Lunch", state.title)
         // Amount should be absolute value; check numerically due to formatting variance
-        assertTrue("Amount should be 25.50", kotlin.math.abs((state.amount.toDoubleOrNull() ?: 0.0) - 25.50) < 0.01)
+        assertTrue(
+            "Amount should be 25.50",
+            kotlin.math.abs((state.amount.toDoubleOrNull() ?: 0.0) - 25.50) < 0.01
+        )
         assertEquals(TransactionType.EXPENSE, state.selectedType)
         assertEquals("Food", state.selectedCategory?.name)
         assertEquals("Test notes", state.notes)
@@ -209,7 +213,8 @@ class TransactionLoadManagerTest : BaseUnitTest() {
         val result = manager.prepareEditState(2L, AddTransactionState())
 
         val state = result.getOrThrow()
-        assertTrue("Categories should include hidden category",
+        assertTrue(
+            "Categories should include hidden category",
             state.categories.any { it.name == "Hidden" })
         assertEquals("Hidden", state.selectedCategory?.name)
     }
@@ -221,7 +226,10 @@ class TransactionLoadManagerTest : BaseUnitTest() {
 
         val state = result.getOrThrow()
         // Amount should be positive; check numerically due to formatting variance
-        assertTrue("Amount should be 25.50", kotlin.math.abs((state.amount.toDoubleOrNull() ?: 0.0) - 25.50) < 0.01)
+        assertTrue(
+            "Amount should be 25.50",
+            kotlin.math.abs((state.amount.toDoubleOrNull() ?: 0.0) - 25.50) < 0.01
+        )
     }
 
     @Test
@@ -240,8 +248,10 @@ class TransactionLoadManagerTest : BaseUnitTest() {
         val result = manager.prepareEditState(999L, AddTransactionState())
 
         assertTrue("Prepare should fail", result.isFailure)
-        assertTrue("Should have IllegalArgumentException",
-            result.exceptionOrNull() is IllegalArgumentException)
+        assertTrue(
+            "Should have IllegalArgumentException",
+            result.exceptionOrNull() is IllegalArgumentException
+        )
     }
 
     @Test

@@ -2,7 +2,8 @@
 
 ## 📌 Panoramica
 
-Questo documento descrive come utilizzare i nuovi Manager e Composable estratti nel refactoring v1.6.3.
+Questo documento descrive come utilizzare i nuovi Manager e Composable estratti nel refactoring
+v1.6.3.
 
 **Status**: ✅ Completato e testato  
 **Version**: 1.6.3  
@@ -11,11 +12,13 @@ Questo documento descrive come utilizzare i nuovi Manager e Composable estratti 
 ## ✨ Novità v1.6.3
 
 ### Manager Classes (NEW)
+
 - ✅ `TransactionLoadManager.kt` - Caricamento dati e stati
 - ✅ `TransactionSubmitManager.kt` - Validazione e salvataggio
 - ✅ `SuggestionsManager.kt` - Filtraggio suggerimenti
 
 ### Composable Estratti (COMPLETI)
+
 - ✅ `DetailsCategoryTypeSection.kt` - Categoria, Tipo, Data, Payment Type
 - ✅ `DetailsAmountField.kt` - Campo importo con masking
 - ✅ `DetailsMealVoucherSection.kt` - Sezione buoni pasto
@@ -24,11 +27,13 @@ Questo documento descrive come utilizzare i nuovi Manager e Composable estratti 
 - ✅ `DetailsTagsSection.kt` - Gestione tag (NEW)
 
 ### ViewModel Optimization
+
 - Ridotto da 568 → 430 linee (-24.3%)
 - Logica estratta nei manager
 - Maggiore separazione delle responsabilità
 
 ### DetailsStep
+
 - Ridotto da 467 → 353 linee (-24.4%)
 - Usa tutti i composable estratti
 - Pulito e focalizzato su layout
@@ -55,6 +60,7 @@ import com.antcashmanager.android.ui.screen.transactions.addImport.view.DetailsC
 #### A. DetailsCategoryTypeSection (linee 234-261 in DetailsStep.kt)
 
 **PRIMA:**
+
 ```kotlin
 // ── Categoria – sempre editabile al tap ──
 AppSelectionItemCard(
@@ -86,6 +92,7 @@ Spacer(modifier = Modifier.height(12.dp))
 ```
 
 **DOPO:**
+
 ```kotlin
 // ── Categoria, Tipo, Data, Payment Type ──
 DetailsCategoryTypeSection(
@@ -120,6 +127,7 @@ DetailsAmountField(
 #### B. DetailsMealVoucherSection (linee 390-460 in DetailsStep.kt)
 
 **PRIMA:**
+
 ```kotlin
 if (isMealVouchersPayment) {
     Column(
@@ -129,6 +137,7 @@ if (isMealVouchersPayment) {
 ```
 
 **DOPO:**
+
 ```kotlin
 DetailsMealVoucherSection(
     mealVoucherCount = state.mealVoucherCount,
@@ -142,6 +151,7 @@ DetailsMealVoucherSection(
 #### C. DetailsOptionalFieldsSection (linee 346-365 in DetailsStep.kt)
 
 **PRIMA:**
+
 ```kotlin
 // ── Note ──
 AutocompleteTextField(
@@ -165,6 +175,7 @@ AutocompleteTextField(
 ```
 
 **DOPO:**
+
 ```kotlin
 // ── Note, Payee, Location ──
 DetailsOptionalFieldsSection(
@@ -183,6 +194,7 @@ DetailsOptionalFieldsSection(
 #### D. DetailsRecurrenceSection (linee 506-551 in DetailsStep.kt)
 
 **PRIMA:**
+
 ```kotlin
 // ── Ricorrente ──
 Row(
@@ -198,6 +210,7 @@ if (state.isRecurring) {
 ```
 
 **DOPO:**
+
 ```kotlin
 // ── Ricorrenza ──
 DetailsRecurrenceSection(
@@ -211,6 +224,7 @@ DetailsRecurrenceSection(
 ### Passo 3: Pulizia di DetailsStep.kt
 
 Dopo l'integrazione:
+
 1. Rimuovere il codice inline sostituito
 2. Verificare che non ci siano import non utilizzati
 3. Eseguire `Optimize Imports` (Ctrl+Alt+O in IntelliJ)
@@ -231,6 +245,7 @@ Dopo l'integrazione:
 ### Passo 5: Screenshot Test
 
 Confrontare i screenshot prima/dopo per verificare:
+
 - ✅ Layout identico
 - ✅ Spaziatura identica
 - ✅ Colori identici
@@ -256,45 +271,53 @@ Confrontare i screenshot prima/dopo per verificare:
 
 ## Risultati Attesi Dopo l'Integrazione
 
-| Metrica | Prima | Dopo | Target |
-|---------|-------|------|--------|
-| Linee DetailsStep | 724 | ~450-500 | 300-400 |
-| Componenti | 1 monolitico | 6 modulari | ✅ |
-| Testabilità | Media | Alta | ✅ |
-| Riutilizzabilità | Bassa | Alta | ✅ |
-| Manutenibilità | Difficile | Facile | ✅ |
+| Metrica           | Prima        | Dopo       | Target  |
+|-------------------|--------------|------------|---------|
+| Linee DetailsStep | 724          | ~450-500   | 300-400 |
+| Componenti        | 1 monolitico | 6 modulari | ✅       |
+| Testabilità       | Media        | Alta       | ✅       |
+| Riutilizzabilità  | Bassa        | Alta       | ✅       |
+| Manutenibilità    | Difficile    | Facile     | ✅       |
 
 ---
 
 ## Problemi Comuni e Soluzioni
 
 ### Problema 1: "Unresolved reference: DetailsAmountField"
+
 **Causa**: Import mancante
-**Soluzione**: Aggiungere `import com.antcashmanager.android.ui.screen.transactions.addImport.view.DetailsAmountField`
+**Soluzione**: Aggiungere
+`import com.antcashmanager.android.ui.screen.transactions.addImport.view.DetailsAmountField`
 
 ### Problema 2: Build fallisce con "Type mismatch"
+
 **Causa**: Firma dei callback non corretta
 **Soluzione**: Verificare che `onEvent(AddTransactionEvent....)` sia il tipo corretto
 
 ### Problema 3: UI cambia dopo l'integrazione
+
 **Causa**: Modifier o padding diversi
 **Soluzione**: Verificare che i `Spacer(height = 12.dp)` siano presenti tra i composable
 
 ### Problema 4: Test falliscono
+
 **Causa**: Lo stato nel test non corrisponde al composable
-**Soluzione**: Verificare che il test stia settando `state.isMealVouchersPayment`, `state.isRecurring`, etc correttamente
+**Soluzione**: Verificare che il test stia settando `state.isMealVouchersPayment`,
+`state.isRecurring`, etc correttamente
 
 ---
 
 ## Note Importanti
 
 ⚠️ **Non fare queste cose:**
+
 - ❌ Modificare le signature dei callback durante l'integrazione
 - ❌ Cambiare l'ordine dei composable (rompe layout)
 - ❌ Rimuovere i Spacer tra i composable
 - ❌ Aggiungere nuovi parametri al state
 
 ✅ **Fare queste cose:**
+
 - ✅ Testare frequentemente durante l'integrazione
 - ✅ Commitare step-by-step (ogni composable integrato = 1 commit)
 - ✅ Verificare visivamente il layout
@@ -405,14 +428,14 @@ Spacer(modifier = Modifier.height(12.dp))
 
 ## 📊 Results After v1.6.3 Refactoring
 
-| Metrica | Before | After | Benefit |
-|---------|--------|-------|---------|
-| ViewModel Linee | 568 | 430 | -24.3% |
-| DetailsStep Linee | 467 | 353 | -24.4% |
-| Manager Classes | 0 | 3 | Separation |
-| Composable Sections | 5 | 6 | Modularity |
-| Unit Tests | 0 | 81 | Coverage |
-| Integration Tests | 0 | 11 | End-to-end |
+| Metrica             | Before | After | Benefit    |
+|---------------------|--------|-------|------------|
+| ViewModel Linee     | 568    | 430   | -24.3%     |
+| DetailsStep Linee   | 467    | 353   | -24.4%     |
+| Manager Classes     | 0      | 3     | Separation |
+| Composable Sections | 5      | 6     | Modularity |
+| Unit Tests          | 0      | 81    | Coverage   |
+| Integration Tests   | 0      | 11    | End-to-end |
 
 ---
 

@@ -89,7 +89,10 @@ class CategoriesViewModel(
                         SyncTransactionCategoriesUseCase.Params(oldName, category),
                     ).onFailure { error ->
                         if (error is CancellationException) throw error
-                        logError("Failed to sync transactions for renamed category: ${error.message}", error)
+                        logError(
+                            "Failed to sync transactions for renamed category: ${error.message}",
+                            error
+                        )
                     }
                 }
             }.onFailure { error ->
@@ -126,7 +129,10 @@ class CategoriesViewModel(
                 if (category.sortOrder != index) {
                     updateCategoryUseCase(category.copy(sortOrder = index)).onFailure { error ->
                         if (error is CancellationException) throw error
-                        logError("Failed to persist reordered category '${category.name}': ${error.message}", error)
+                        logError(
+                            "Failed to persist reordered category '${category.name}': ${error.message}",
+                            error
+                        )
                     }
                 }
             }

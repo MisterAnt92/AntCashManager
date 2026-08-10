@@ -2,27 +2,21 @@ package com.antcashmanager.android.ui.screen.transactions.addImport
 
 import android.os.Bundle
 import androidx.lifecycle.viewModelScope
-import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.android.analytics.AnalyticsManager
+import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.android.ui.screen.transactions.addImport.event.AddTransactionEvent
+import com.antcashmanager.android.ui.screen.transactions.addImport.manager.SuggestionsManager
 import com.antcashmanager.android.ui.screen.transactions.addImport.manager.TransactionLoadManager
 import com.antcashmanager.android.ui.screen.transactions.addImport.manager.TransactionSubmitManager
-import com.antcashmanager.android.ui.screen.transactions.addImport.manager.SuggestionsManager
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.TransactionType
-import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
-import com.antcashmanager.domain.usecase.settings.GetMealVoucherValueUseCase
 import com.antcashmanager.domain.usecase.transaction.DeleteTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.GetTransactionByIdUseCase
-import com.antcashmanager.domain.usecase.transaction.GetTransactionSuggestionsUseCase
-import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
-import com.antcashmanager.domain.usecase.transaction.UpdateTransactionUseCase
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -85,11 +79,13 @@ class AddTransactionViewModel(
         viewModelScope.launch {
             suggestionsManager.getSuggestions().collect { result ->
                 result.onSuccess { suggestions ->
-                    logDebug("Suggestions loaded - titles: ${suggestions.titles.size}, " +
+                    logDebug(
+                        "Suggestions loaded - titles: ${suggestions.titles.size}, " +
                                 "payees: ${suggestions.payees.size}, " +
                                 "notes: ${suggestions.notes.size}, " +
                                 "locations: ${suggestions.locations.size}, " +
-                                "tags: ${suggestions.tags.size}")
+                                "tags: ${suggestions.tags.size}"
+                    )
                     _state.update {
                         it.copy(
                             titleSuggestions = suggestions.titles,
@@ -119,7 +115,9 @@ class AddTransactionViewModel(
                         if (error is CancellationException) throw error
                         logError("Error loading transaction: ${error.message}")
                         val errorMessage = when (error) {
-                            is IllegalArgumentException -> error.message ?: AddTransactionConstant.ERROR_LOAD_TRANSACTION
+                            is IllegalArgumentException -> error.message
+                                ?: AddTransactionConstant.ERROR_LOAD_TRANSACTION
+
                             else -> AddTransactionConstant.ERROR_LOAD_TRANSACTION
                         }
                         _state.update {
@@ -281,7 +279,7 @@ class AddTransactionViewModel(
         _state.update { currentState ->
             // Se cambi DA MEAL_VOUCHERS a un altro tipo: resetta voucher e amount calcolato
             val resetMealVouchers = currentState.selectedPaymentType == PaymentType.MEAL_VOUCHERS &&
-                                    paymentType != PaymentType.MEAL_VOUCHERS
+                    paymentType != PaymentType.MEAL_VOUCHERS
 
             currentState.copy(
                 selectedPaymentType = paymentType,

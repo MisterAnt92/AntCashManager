@@ -2,7 +2,6 @@ package com.antcashmanager.android.ui.screen.transactions.addImport.validator
 
 import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionState
 import com.antcashmanager.domain.model.Category
-import com.antcashmanager.domain.model.PaymentType
 
 /**
  * Centralizza tutta la logica di validazione per le transazioni.

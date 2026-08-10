@@ -9,8 +9,10 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,9 +45,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
+import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -147,12 +151,15 @@ fun AntCashManagerNavHost() {
         var showExitDialog by rememberSaveable { mutableStateOf(false) }
         var isSidebarOpen by rememberSaveable { mutableStateOf(false) }
         var showAntAnimation by rememberSaveable { mutableStateOf(false) }
+        var screenHeaderConfig by remember { mutableStateOf(ScreenHeaderConfig()) }
         val railContainerWidth = if (adaptiveLayoutInfo.isFoldableDevice) 84.dp else 92.dp
         val railPaddingStart = if (adaptiveLayoutInfo.isFoldableDevice) 8.dp else 12.dp
         val railPaddingEnd = if (adaptiveLayoutInfo.isFoldableDevice) 6.dp else 8.dp
         val isOnTopLevelRoute = currentDestination?.route?.let { currentRoute ->
             visibleNavItems.any { item -> item.route == currentRoute }
         } == true
+
+        val isOnTutorial = currentDestination?.route == BottomNavItem.Tutorial.route
 
         BackHandler {
             when {
@@ -170,11 +177,12 @@ fun AntCashManagerNavHost() {
             showTopBar = false,
             bottomBar = {
                 // Bottom bar non visibile su Categories, Settings e Tutorial
-                val isOnCategoriesSettingsOrTutorial = currentDestination?.route?.let { currentRoute ->
-                    currentRoute == BottomNavItem.Categories.route ||
-                    currentRoute == BottomNavItem.Settings.route ||
-                    currentRoute == BottomNavItem.Tutorial.route
-                } == true
+                val isOnCategoriesSettingsOrTutorial =
+                    currentDestination?.route?.let { currentRoute ->
+                        currentRoute == BottomNavItem.Categories.route ||
+                                currentRoute == BottomNavItem.Settings.route ||
+                                currentRoute == BottomNavItem.Tutorial.route
+                    } == true
 
                 if (isTutorialCompleted && !adaptiveLayoutInfo.preferRailNavigation && !isSidebarOpen && !isOnCategoriesSettingsOrTutorial) {
                     Surface(
@@ -230,64 +238,70 @@ fun AntCashManagerNavHost() {
             },
         ) { innerPadding ->
             val navHostContent: @Composable (Modifier) -> Unit = { navModifier ->
-                NavHost(
-                    navController = navController,
-                    startDestination = BottomNavItem.Home.route,
-                    modifier = navModifier,
+                CompositionLocalProvider(
+                    LocalScreenHeaderConfigCallback provides { config ->
+                        screenHeaderConfig = config
+                    }
                 ) {
-                    composable(BottomNavItem.Home.route) {
-                        HomeScreen(navController = navController)
-                    }
-                    composable(BottomNavItem.Charts.route) {
-                        ChartsScreen()
-                    }
-                    composable(BottomNavItem.Transactions.route) {
-                        TransactionsScreen(navController = navController)
-                    }
-                    composable(BottomNavItem.Categories.route) {
-                        CategoriesScreen()
-                    }
-                    composable(BottomNavItem.Settings.route) {
-                        SettingsScreen(navController = navController)
-                    }
-                    composable(BottomNavItem.Tutorial.route) {
-                        TutorialScreen(
-                            onNavigateBack = { navController.popBackStack() },
-                        )
-                    }
-                    composable("display") {
-                        DisplayScreen(navController = navController)
-                    }
-                    composable("settings_data") {
-                        SettingsDataScreen(navController = navController)
-                    }
-                    composable(
-                        route = "add_transaction?transactionId={transactionId}",
-                        arguments = listOf(
-                            androidx.navigation.navArgument("transactionId") {
-                                type = androidx.navigation.NavType.LongType
-                                defaultValue = -1L
-                            }
-                        )
-                    ) { backStackEntry ->
-                        val transactionId =
-                            backStackEntry.arguments?.getLong("transactionId")?.takeIf { it != -1L }
-                        AddTransactionScreen(
-                            transactionId = transactionId,
-                            onNavigateBack = { navController.popBackStack() },
-                            onTransactionAdded = { navController.popBackStack() },
-                        )
-                    }
-                    composable("receipt_scan") {
-                        ReceiptScanScreen(
-                            onNavigateBack = { navController.popBackStack() },
-                            onTransactionSaved = { navController.popBackStack() },
-                        )
+                    NavHost(
+                        navController = navController,
+                        startDestination = BottomNavItem.Home.route,
+                        modifier = navModifier,
+                    ) {
+                        composable(BottomNavItem.Home.route) {
+                            HomeScreen(navController = navController)
+                        }
+                        composable(BottomNavItem.Charts.route) {
+                            ChartsScreen()
+                        }
+                        composable(BottomNavItem.Transactions.route) {
+                            TransactionsScreen(navController = navController)
+                        }
+                        composable(BottomNavItem.Categories.route) {
+                            CategoriesScreen()
+                        }
+                        composable(BottomNavItem.Settings.route) {
+                            SettingsScreen(navController = navController)
+                        }
+                        composable(BottomNavItem.Tutorial.route) {
+                            TutorialScreen(
+                                onNavigateBack = { navController.popBackStack() },
+                            )
+                        }
+                        composable("display") {
+                            DisplayScreen(navController = navController)
+                        }
+                        composable("settings_data") {
+                            SettingsDataScreen(navController = navController)
+                        }
+                        composable(
+                            route = "add_transaction?transactionId={transactionId}",
+                            arguments = listOf(
+                                androidx.navigation.navArgument("transactionId") {
+                                    type = androidx.navigation.NavType.LongType
+                                    defaultValue = -1L
+                                }
+                            )
+                        ) { backStackEntry ->
+                            val transactionId =
+                                backStackEntry.arguments?.getLong("transactionId")?.takeIf { it != -1L }
+                            AddTransactionScreen(
+                                transactionId = transactionId,
+                                onNavigateBack = { navController.popBackStack() },
+                                onTransactionAdded = { navController.popBackStack() },
+                            )
+                        }
+                        composable("receipt_scan") {
+                            ReceiptScanScreen(
+                                onNavigateBack = { navController.popBackStack() },
+                                onTransactionSaved = { navController.popBackStack() },
+                            )
+                        }
                     }
                 }
             }
 
-            if (isTutorialCompleted && adaptiveLayoutInfo.preferRailNavigation) {
+            if (isTutorialCompleted && adaptiveLayoutInfo.preferRailNavigation && !isOnTutorial) {
                 Row(
                     modifier = Modifier
                         .fillMaxSize()
@@ -347,34 +361,59 @@ fun AntCashManagerNavHost() {
 
                     navHostContent(Modifier.weight(1f))
                 }
-            } else if (isTutorialCompleted && !adaptiveLayoutInfo.preferRailNavigation) {
+            } else if (isTutorialCompleted) {
                 // Per dispositivi NON tablet: Sidebar scorrevole (drawer-style) + Content con BottomBar
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(innerPadding),
+                        .padding(if (isOnTutorial) PaddingValues() else innerPadding),
                 ) {
                     // Content con pulsante hamburger
                     Column(
                         modifier = Modifier.fillMaxSize(),
                     ) {
-                        // Top bar con pulsante hamburger
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            IconButton(
-                                onClick = { isSidebarOpen = !isSidebarOpen },
-                                modifier = Modifier.size(40.dp),
+                        // Top bar con hamburger menu - nascosto su Tutorial
+                        if (!isOnTutorial) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Menu,
-                                    contentDescription = "Toggle Navigation",
-                                    modifier = Modifier.size(24.dp),
-                                    tint = MaterialTheme.colorScheme.primary,
-                                )
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.weight(1f),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                ) {
+                                    // Hamburger Menu
+                                    IconButton(
+                                        onClick = { isSidebarOpen = !isSidebarOpen },
+                                        modifier = Modifier.size(40.dp),
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Menu,
+                                            contentDescription = "Toggle Navigation",
+                                            modifier = Modifier.size(24.dp),
+                                            tint = MaterialTheme.colorScheme.primary,
+                                        )
+                                    }
+
+                                    // Screen Title (dynamic)
+                                    if (screenHeaderConfig.title.isNotEmpty()) {
+                                        AppText(
+                                            text = screenHeaderConfig.title,
+                                            style = MaterialTheme.typography.headlineSmall,
+                                            fontWeight = FontWeight.Bold,
+                                            color = MaterialTheme.colorScheme.onBackground,
+                                        )
+                                    }
+                                }
+
+                                // Action Buttons (dynamic)
+                                if (screenHeaderConfig.actions != null) {
+                                    screenHeaderConfig.actions!!()
+                                }
                             }
                         }
 
@@ -420,6 +459,9 @@ fun AntCashManagerNavHost() {
                         }
                     }
                 }
+            } else if (isOnTutorial && adaptiveLayoutInfo.preferRailNavigation) {
+                // Tutorial in fullscreen su tablet
+                navHostContent(Modifier.fillMaxSize())
             } else {
                 // Caso di fallback (tutorial non completato)
                 navHostContent(Modifier.padding(innerPadding))

@@ -12,7 +12,6 @@ import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.settings.GetMealVoucherValueUseCase
-import com.antcashmanager.domain.usecase.transaction.DeleteTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.GetTransactionByIdUseCase
 import com.antcashmanager.domain.usecase.transaction.GetTransactionSuggestionsUseCase
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
@@ -57,11 +56,46 @@ class PerformanceProfilingTest : BaseUnitTest() {
     )
 
     private val mockTransactions = listOf(
-        Transaction(1, "Lunch", -25.50, "Food", TransactionType.EXPENSE, System.currentTimeMillis()),
-        Transaction(2, "Coffee", -4.50, "Food", TransactionType.EXPENSE, System.currentTimeMillis()),
-        Transaction(3, "Salary", 3000.0, "Salary", TransactionType.INCOME, System.currentTimeMillis()),
-        Transaction(4, "Taxi", -15.0, "Transport", TransactionType.EXPENSE, System.currentTimeMillis()),
-        Transaction(5, "Movie", -12.0, "Entertainment", TransactionType.EXPENSE, System.currentTimeMillis()),
+        Transaction(
+            1,
+            "Lunch",
+            -25.50,
+            "Food",
+            TransactionType.EXPENSE,
+            System.currentTimeMillis()
+        ),
+        Transaction(
+            2,
+            "Coffee",
+            -4.50,
+            "Food",
+            TransactionType.EXPENSE,
+            System.currentTimeMillis()
+        ),
+        Transaction(
+            3,
+            "Salary",
+            3000.0,
+            "Salary",
+            TransactionType.INCOME,
+            System.currentTimeMillis()
+        ),
+        Transaction(
+            4,
+            "Taxi",
+            -15.0,
+            "Transport",
+            TransactionType.EXPENSE,
+            System.currentTimeMillis()
+        ),
+        Transaction(
+            5,
+            "Movie",
+            -12.0,
+            "Entertainment",
+            TransactionType.EXPENSE,
+            System.currentTimeMillis()
+        ),
     )
 
     @Before

@@ -2,8 +2,8 @@ package com.antcashmanager.android.ui.transactions
 
 import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.analytics.AnalyticsManager
-import com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
 import com.antcashmanager.android.ui.screen.transactions.TransactionsViewModel
+import com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionSuggestions
@@ -60,7 +60,11 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
         every { getTransactionsUseCase() } returns flowOf(Result.success(emptyList()))
         every { getCategoriesUseCase() } returns flowOf(Result.success(emptyList()))
         coEvery { filterTransactionsUseCase(any()) } returns Result.success(emptyList())
-        every { getTransactionSuggestionsUseCase() } returns flowOf(Result.success(TransactionSuggestions()))
+        every { getTransactionSuggestionsUseCase() } returns flowOf(
+            Result.success(
+                TransactionSuggestions()
+            )
+        )
         every { getTransactionsDateFilterStateUseCase() } returns flowOf(
             Result.success(
                 SavedDateFilter(

@@ -33,6 +33,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.activity.compose.BackHandler
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -76,10 +77,14 @@ import com.antcashmanager.android.ui.screen.charts.ChartsViewModel
 import com.antcashmanager.android.ui.screen.charts.MonthlyAmount
 import com.antcashmanager.android.ui.screen.charts.RangePreset
 import com.antcashmanager.android.ui.screen.charts.YearlyAmount
+import com.antcashmanager.android.ui.screen.charts.view.ChartsDetailsBottomSheet
+import com.antcashmanager.android.ui.screen.charts.view.ChartDetailsData
 import com.antcashmanager.android.ui.screen.charts.view.DailyExpenseLineChartCard
+import com.antcashmanager.android.ui.screen.charts.view.InteractivePieChart
 import com.antcashmanager.android.ui.screen.charts.view.QuickStatsCard
 import com.antcashmanager.android.ui.screen.charts.view.SavingsRateCard
 import com.antcashmanager.android.ui.screen.charts.view.SpendingForecastCard
+import com.antcashmanager.android.ui.screen.charts.view.TrendDirection
 import com.antcashmanager.android.ui.screen.charts.view.WeekdayExpenseCard
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.ThemeConstants
@@ -89,6 +94,7 @@ import com.antcashmanager.android.util.PROTECTED_INCOME_CATEGORY
 import com.antcashmanager.android.util.formatAmount
 import com.antcashmanager.android.util.maskDigits
 import com.antcashmanager.android.util.translateCategory
+import com.antcashmanager.android.util.translateCategoryPlain
 import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.repository.SettingsRepository
@@ -143,7 +149,13 @@ internal fun ChartsContent(
     var showToPicker by remember { mutableStateOf(false) }
     var showHelpDialog by remember { mutableStateOf(false) }
     var isVisualizationsSectionExpanded by remember { mutableStateOf(true) }
+    var selectedChartDetails by remember { mutableStateOf<ChartDetailsData?>(null) }
     val chartCardContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+
+    // Handle back press when details sheet is open
+    BackHandler(enabled = selectedChartDetails != null) {
+        selectedChartDetails = null
+    }
 
     // Sync selectedPreset when initialPresetIndex changes
     LaunchedEffect(initialPresetIndex) {
@@ -317,6 +329,18 @@ internal fun ChartsContent(
                         shareLabel = shareLabel,
                         context = context,
                         onShared = { analyticsManager.logEvent("chart_shared") },
+                        onCategorySelected = { category, amount, color ->
+                            selectedChartDetails = ChartDetailsData(
+                                categoryName = category,
+                                amount = amount,
+                                percentage = if (chartData.totalIncome != 0.0) {
+                                    ((abs(amount) / chartData.totalIncome) * 100).toInt().coerceIn(0, 100)
+                                } else 0,
+                                colorHex = color,
+                                transactionCount = 0,
+                                trend = TrendDirection.NEUTRAL,
+                            )
+                        },
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                 }
@@ -334,6 +358,18 @@ internal fun ChartsContent(
                         shareLabel = shareLabel,
                         context = context,
                         onShared = { analyticsManager.logEvent("chart_shared") },
+                        onCategorySelected = { category, amount, color ->
+                            selectedChartDetails = ChartDetailsData(
+                                categoryName = category,
+                                amount = amount,
+                                percentage = if (chartData.totalExpense != 0.0) {
+                                    ((abs(amount) / chartData.totalExpense) * 100).toInt().coerceIn(0, 100)
+                                } else 0,
+                                colorHex = color,
+                                transactionCount = 0,
+                                trend = TrendDirection.NEUTRAL,
+                            )
+                        },
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                 }
@@ -568,6 +604,13 @@ internal fun ChartsContent(
             }
         }
     } // Closing Scaffold
+
+    // Chart details bottom sheet for tap-to-details interaction
+    ChartsDetailsBottomSheet(
+        chartDetails = selectedChartDetails,
+        onDismiss = { selectedChartDetails = null },
+    )
+
     // Date pickers
     if (showFromPicker) {
         val state = rememberDatePickerState(initialSelectedDateMillis = dateRange.from)
@@ -847,6 +890,8 @@ private fun ChartsSummaryRow(chartData: ChartData, fmt: CurrencyFormat) {
  * metodo di pagamento). [translateKeys] applica [translateCategory] alle chiavi di [data]
  * (necessario solo per le categorie, non per le etichette già localizzate del metodo di
  * pagamento).
+ *
+ * Supporta tap-to-details interaction tramite onCategorySelected callback.
  */
 @Composable
 private fun CategoryPieChartCard(
@@ -861,6 +906,7 @@ private fun CategoryPieChartCard(
     shareLabel: String,
     context: Context,
     onShared: () -> Unit,
+    onCategorySelected: (String, Double, Long) -> Unit = { _, _, _ -> },
     maskMode: AmountMaskMode = AmountMaskMode.NONE,
 ) {
     val shareSubject = stringResource(shareSubjectRes)
@@ -928,14 +974,27 @@ private fun CategoryPieChartCard(
                 }
             }
             Spacer(modifier = Modifier.height(12.dp))
-            ZoomablePieChart(
+
+            // Interactive pie chart with tap-to-details
+            InteractivePieChart(
                 data = displayData,
-                zoomEnabled = zoomEnabled,
+                onCategorySelected = { category, amount, colorHex ->
+                    // Map translated category back to original if needed
+                    val originalCategory = if (translateKeys) {
+                        data.entries.find {
+                            translateCategoryPlain(context, it.key) == category
+                        }?.key ?: category
+                    } else {
+                        category
+                    }
+                    onCategorySelected(originalCategory, amount, colorHex)
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(chartHeight)
                     .semantics { contentDescription = chartSummaryDescription }
             )
+
             Spacer(modifier = Modifier.height(12.dp))
             PieLegend(
                 data = displayData,

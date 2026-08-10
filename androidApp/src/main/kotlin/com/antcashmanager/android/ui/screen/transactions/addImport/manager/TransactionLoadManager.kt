@@ -1,12 +1,10 @@
 package com.antcashmanager.android.ui.screen.transactions.addImport.manager
 
-import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionConstant
 import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionState
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.settings.GetMealVoucherValueUseCase
 import com.antcashmanager.domain.usecase.transaction.GetTransactionByIdUseCase
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.first
 import kotlin.math.abs
 
@@ -86,7 +84,10 @@ class TransactionLoadManager(
      * @param currentState Lo stato attuale del ViewModel
      * @return Result contenente il nuovo stato con i dati della transazione
      */
-    suspend fun prepareEditState(transactionId: Long, currentState: AddTransactionState): Result<AddTransactionState> = runCatching {
+    suspend fun prepareEditState(
+        transactionId: Long,
+        currentState: AddTransactionState
+    ): Result<AddTransactionState> = runCatching {
         val transaction = getTransactionByIdUseCase(transactionId).getOrThrow()
             ?: throw IllegalArgumentException("Transaction with id $transactionId not found")
 

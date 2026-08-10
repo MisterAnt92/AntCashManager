@@ -13,9 +13,9 @@ import com.antcashmanager.android.ui.screen.settings.dataManagement.SettingsData
 import com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayViewModel
 import com.antcashmanager.android.ui.screen.transactions.TransactionsViewModel
 import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionViewModel
+import com.antcashmanager.android.ui.screen.transactions.addImport.manager.SuggestionsManager
 import com.antcashmanager.android.ui.screen.transactions.addImport.manager.TransactionLoadManager
 import com.antcashmanager.android.ui.screen.transactions.addImport.manager.TransactionSubmitManager
-import com.antcashmanager.android.ui.screen.transactions.addImport.manager.SuggestionsManager
 import com.antcashmanager.android.ui.theme.ThemeViewModel
 import com.antcashmanager.android.ui.widget.GlanceWidgetUpdateNotifier
 import com.antcashmanager.data.local.DatabaseProvider

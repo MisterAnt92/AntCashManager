@@ -597,4 +597,18 @@
     <string name="chart_average">Average</string>
     <string name="chart_weekday_distribution_title">Weekday Distribution</string>
 
+
+    <!-- Charts Customization -->
+    <string name="charts_customize_cards_title">Customize Card Order</string>
+
+    <!-- Chart Details Bottom Sheet -->
+    <string name="chart_details_title">Details</string>
+    <string name="chart_details_percentage">%d%% of total</string>
+    <string name="chart_details_amount">Amount</string>
+    <string name="chart_details_transactions">Transactions</string>
+    <string name="chart_details_info_title">Category Information</string>
+    <string name="chart_details_info_description">Tap on any chart slice to view more details about that category</string>
+    <string name="chart_trend_increasing">Spending trend: Increasing</string>
+    <string name="chart_trend_decreasing">Spending trend: Decreasing</string>
+    <string name="chart_trend_stable">Spending trend: Stable</string>
 </resources>

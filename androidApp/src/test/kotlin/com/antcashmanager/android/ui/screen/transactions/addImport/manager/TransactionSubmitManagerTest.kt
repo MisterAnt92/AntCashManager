@@ -4,16 +4,12 @@ import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.testutil.FakeTransactionRepository
 import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionConstant
 import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionState
-import com.antcashmanager.android.ui.screen.transactions.addImport.validator.TransactionValidator
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.UpdateTransactionUseCase
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import org.junit.Assert.assertEquals
@@ -330,7 +326,10 @@ class TransactionSubmitManagerTest : BaseUnitTest() {
         val result = manager.submitTransaction(invalidState, transactionId = null)
 
         assertTrue("Submit should fail", result.isFailure)
-        assertEquals(AddTransactionConstant.ERROR_REQUIRED_TITLE_AMOUNT, result.exceptionOrNull()?.message)
+        assertEquals(
+            AddTransactionConstant.ERROR_REQUIRED_TITLE_AMOUNT,
+            result.exceptionOrNull()?.message
+        )
     }
 
     @Test
