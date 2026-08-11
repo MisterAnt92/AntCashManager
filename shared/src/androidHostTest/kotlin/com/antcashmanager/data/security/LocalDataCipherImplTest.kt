@@ -1,6 +1,8 @@
 package com.antcashmanager.data.security
 
 import android.content.Context
+import android.content.SharedPreferences
+import io.mockk.every
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
@@ -15,7 +17,22 @@ class LocalDataCipherImplTest {
 
     @Before
     fun setup() {
-        mockContext = mockk()
+        mockContext = mockk(relaxed = true)
+
+        // Setup SharedPreferences mock to enable encryption by default
+        val mockPrefs = mockk<SharedPreferences>()
+        every { mockPrefs.getBoolean("desired_data_encryption", false) } returns true
+
+        // Make context.applicationContext return mockContext itself
+        every { mockContext.applicationContext } returns mockContext
+
+        every {
+            mockContext.getSharedPreferences(
+                "db_security_prefs",
+                Context.MODE_PRIVATE
+            )
+        } returns mockPrefs
+
         cipher = LocalDataCipherImpl(mockContext)
     }
 

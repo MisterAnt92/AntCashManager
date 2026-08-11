@@ -220,7 +220,7 @@ class SettingsRepositoryImpl(
     }
 
     override fun getThousandsSeparator(): Flow<String> =
-        dataStore.data.map { it[thousandsSeparatorKey] ?: "" }
+        dataStore.data.map { it[thousandsSeparatorKey] ?: "." }
 
     override suspend fun setThousandsSeparator(separator: String) {
         dataStore.edit { it[thousandsSeparatorKey] = separator }
@@ -423,7 +423,7 @@ class SettingsRepositoryImpl(
     }
 
     override fun getLastBackupTimestamp(): Flow<Long?> =
-        dataStore.data.map { it[lastBackupTimestampKey] }
+        dataStore.data.map { it[lastBackupTimestampKey] ?: 0L }
 
     override suspend fun setLastBackupTimestamp(timestamp: Long) {
         dataStore.edit { it[lastBackupTimestampKey] = timestamp }
@@ -530,8 +530,8 @@ class SettingsRepositoryImpl(
     private companion object {
         const val WEEK_IN_MILLIS = 7L * 24 * 60 * 60 * 1000
         const val MONTH_IN_MILLIS = 30L * 24 * 60 * 60 * 1000
-        const val DEFAULT_MEAL_VOUCHER_VALUE = 5.29
-        const val DEFAULT_WIDGET_BACKGROUND_COLOR = 0xFFFFFFFFL
+        const val DEFAULT_MEAL_VOUCHER_VALUE = 12.5
+        const val DEFAULT_WIDGET_BACKGROUND_COLOR = -16777216L // Black (ARGB)
         const val DEFAULT_WIDGET_OPACITY = 100
     }
 }

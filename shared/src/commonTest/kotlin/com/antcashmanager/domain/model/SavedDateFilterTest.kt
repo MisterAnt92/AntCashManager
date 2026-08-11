@@ -19,20 +19,42 @@ class SavedDateFilterTest {
 
     private fun toTimestamp(year: Int, month: Int, day: Int): Long {
         // Convert date to timestamp (milliseconds since epoch)
-        // Jan 1 2024 = 1704067200000L
-        val days = when (year) {
-            2024 -> {
-                // 2024 is a leap year
-                val daysInMonths = intArrayOf(0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
-                var totalDays = 0
-                for (i in 1 until month) {
-                    totalDays += daysInMonths[i]
-                }
-                totalDays + day - 1 // subtract 1 because we start from day 1
+        // Jan 1 2024 = 1704067200000L (baseline for calculations)
+        val baseYear = 2024
+        val baseTimestamp = 1704067200000L
+
+        val isLeapYear = (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)
+        val daysInMonths = intArrayOf(
+            0, 31,
+            if (isLeapYear) 29 else 28,
+            31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+        )
+
+        // Calculate total days from year difference
+        var totalDays = 0
+
+        // Account for years between baseYear and target year
+        if (year != baseYear) {
+            val startYear = if (year < baseYear) year else baseYear
+            val endYear = if (year < baseYear) baseYear else year
+
+            for (y in startYear until endYear) {
+                val isYearLeap = (y % 4 == 0 && y % 100 != 0) || (y % 400 == 0)
+                totalDays += if (isYearLeap) 366 else 365
             }
-            else -> throw IllegalArgumentException("Only 2024 is supported in tests")
+
+            if (year < baseYear) totalDays = -totalDays
         }
-        return 1704067200000L + (days * 24 * 60 * 60 * 1000L)
+
+        // Add days for current year up to current month
+        for (i in 1 until month) {
+            totalDays += daysInMonths[i]
+        }
+
+        // Add current day (subtract 1 because we start from day 1)
+        totalDays += day - 1
+
+        return baseTimestamp + (totalDays * 24 * 60 * 60 * 1000L)
     }
 
     @Test
