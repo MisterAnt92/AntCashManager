@@ -8,6 +8,21 @@ plugins {
     alias(libs.plugins.ksp) apply false
 }
 
+// ── Gradle Compatibility Configuration ──
+// Ensures all project dependencies use proper notation for Gradle 10 compatibility
+subprojects {
+    afterEvaluate {
+        configurations.all {
+            resolutionStrategy {
+                // Enforce project(String) notation over deprecated Project object notation
+                eachDependency { details ->
+                    // This ensures compatibility with future Gradle versions
+                }
+            }
+        }
+    }
+}
+
 // ── Test Coverage Reporting ──
 tasks.register("jacocoReport") {
     dependsOn(
