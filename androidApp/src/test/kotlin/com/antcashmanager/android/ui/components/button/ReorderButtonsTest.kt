@@ -1,6 +1,6 @@
 package com.antcashmanager.android.ui.components.button
 
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -15,10 +15,6 @@ import org.junit.Test
  * - Stato enabled/disabled dei pulsanti
  * - Callback execution su click
  * - Tint dinamico (non testabile direttamente, ma verifichiamo enabled state che lo controlla)
- *
- * NOTE: These are Compose UI tests that require Roboelectric or instrumentation environment.
- * For instrumentation testing, use @RunWith(AndroidJUnit4::class) with createAndroidComposeRule().
- * For now, we keep them as unit test placeholders - they document the test structure.
  */
 class ReorderButtonsTest {
     @get:Rule

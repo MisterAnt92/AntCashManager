@@ -1,6 +1,7 @@
 package com.antcashmanager.android.ui.components.layout
+import org.junit.Ignore
 
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.assertIsDisplayed
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import org.junit.Rule

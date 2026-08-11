@@ -97,6 +97,10 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
         }
         advanceUntilIdle()
 
+        // Set date range to load transactions
+        viewModel.setDateRange(timestamp - 86_400_000L, timestamp + 86_400_000L)
+        advanceUntilIdle()
+
         // Select Food category (100 out of 250 total = 40%)
         viewModel.selectChartCategory(
             categoryName = "Food",

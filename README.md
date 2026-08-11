@@ -29,7 +29,7 @@ e mantenere il controllo dei dati in locale, con un approccio privacy-first e se
 - UI moderna con Jetpack Compose e Material 3
 - Navigazione adattiva (bottom bar per phone, navigation rail per tablet/foldable)
 
-## Perche e Open Source
+## Perche è Open Source
 
 - Trasparenza sulle scelte tecniche e sulla gestione dei dati
 - Facilita di audit su privacy, analytics e sicurezza
