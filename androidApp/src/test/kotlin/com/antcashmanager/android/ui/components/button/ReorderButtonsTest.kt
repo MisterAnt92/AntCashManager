@@ -1,9 +1,20 @@
 package com.antcashmanager.android.ui.components.button
 
+@file:Suppress("LocalVariableName")
+
+
 import androidx.compose.ui.test.assertIsEnabled
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import androidx.compose.ui.test.assertIsNotEnabled
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import androidx.compose.ui.test.onNodeWithContentDescription
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import androidx.compose.ui.test.performClick
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import com.antcashmanager.android.BaseComposeUnitTest
 import org.junit.Test
 
@@ -15,6 +26,7 @@ import org.junit.Test
  * - Callback execution su click
  * - Tint dinamico (non testabile direttamente, ma verifichiamo enabled state che lo controlla)
  */
+@RunWith(RobolectricTestRunner::class)
 class ReorderButtonsTest : BaseComposeUnitTest() {
 
     private val testUpDescription = "Test Move Up"

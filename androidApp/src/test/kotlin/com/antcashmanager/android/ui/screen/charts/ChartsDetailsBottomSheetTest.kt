@@ -1,11 +1,24 @@
 package com.antcashmanager.android.ui.screen.charts
+
+@file:Suppress("LocalVariableName")
+
 import com.antcashmanager.android.BaseComposeUnitTest
 
 import androidx.compose.foundation.layout.fillMaxSize
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import androidx.compose.material3.ExperimentalMaterial3Api
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import androidx.compose.material3.Surface
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import androidx.compose.ui.Modifier
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import androidx.compose.ui.test.onNodeWithText
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import com.antcashmanager.android.ui.screen.charts.view.ChartsDetailsBottomSheet
 import com.antcashmanager.android.ui.screen.charts.view.ChartDetailsData
 import com.antcashmanager.android.ui.screen.charts.view.TrendDirection
@@ -24,6 +37,7 @@ import org.junit.Test
  * Uses Compose UI Test v2 framework (no BaseUnitTest - pure Compose UI test).
  */
 
+@RunWith(RobolectricTestRunner::class)
 class ChartsDetailsBottomSheetTest : BaseComposeUnitTest() {
 
 

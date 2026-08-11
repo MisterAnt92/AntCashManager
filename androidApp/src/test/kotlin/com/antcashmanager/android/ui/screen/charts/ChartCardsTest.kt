@@ -1,11 +1,24 @@
 package com.antcashmanager.android.ui.screen.charts
+
+@file:Suppress("LocalVariableName")
+
 import com.antcashmanager.android.BaseComposeUnitTest
 
 import androidx.compose.foundation.layout.fillMaxSize
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import androidx.compose.material3.Surface
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import androidx.compose.runtime.CompositionLocalProvider
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import androidx.compose.ui.Modifier
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import androidx.compose.ui.test.onNodeWithText
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import com.antcashmanager.android.ui.screen.charts.DailyAmount
 import com.antcashmanager.android.ui.screen.charts.view.QuickStatsCard
 import com.antcashmanager.android.ui.screen.charts.view.WeekdayExpenseCard
@@ -28,6 +41,7 @@ import org.junit.Test
  * with kotlinx-coroutines-test for deterministic test execution.
  */
 
+@RunWith(RobolectricTestRunner::class)
 class ChartCardsTest : BaseComposeUnitTest() {
 
 

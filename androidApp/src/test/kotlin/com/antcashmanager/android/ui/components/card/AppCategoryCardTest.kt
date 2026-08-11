@@ -1,10 +1,19 @@
 package com.antcashmanager.android.ui.components.card
+
+@file:Suppress("LocalVariableName")
+
 import com.antcashmanager.android.BaseComposeUnitTest
 import org.junit.Ignore
 
 import androidx.compose.ui.test.onNodeWithText
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import androidx.compose.ui.test.assertIsDisplayed
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import androidx.compose.ui.test.performClick
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import org.junit.Test
 
@@ -17,6 +26,7 @@ import org.junit.Test
  * - Icon e color display
  */
 
+@RunWith(RobolectricTestRunner::class)
 class AppCategoryCardTest : BaseComposeUnitTest() {
 
     @Test

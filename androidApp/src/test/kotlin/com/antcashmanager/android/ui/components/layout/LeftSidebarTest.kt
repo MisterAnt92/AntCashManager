@@ -1,8 +1,13 @@
 package com.antcashmanager.android.ui.components.layout
+
+@file:Suppress("LocalVariableName")
+
 import com.antcashmanager.android.BaseComposeUnitTest
 import org.junit.Ignore
 
 import androidx.compose.ui.test.assertIsDisplayed
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import org.junit.Test
 
@@ -16,6 +21,7 @@ import org.junit.Test
  * - Layout structure
  */
 
+@RunWith(RobolectricTestRunner::class)
 class LeftSidebarTest : BaseComposeUnitTest() {
 
     @Test

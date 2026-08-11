@@ -1,13 +1,30 @@
 package com.antcashmanager.android.ui.screen.charts
+
+@file:Suppress("LocalVariableName")
+
 import com.antcashmanager.android.BaseComposeUnitTest
 
 import androidx.compose.foundation.layout.size
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import androidx.compose.material3.Surface
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import androidx.compose.ui.Modifier
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import androidx.compose.ui.test.onRoot
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import androidx.compose.ui.test.performTouchInput
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import androidx.compose.ui.test.swipeUp
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import androidx.compose.ui.unit.dp
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import com.antcashmanager.android.ui.screen.charts.view.InteractivePieChart
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import org.junit.Test
@@ -29,6 +46,7 @@ import kotlin.math.sin
  * Uses Compose UI Test v2 framework (no BaseUnitTest - pure Compose UI test).
  */
 
+@RunWith(RobolectricTestRunner::class)
 class InteractivePieChartTest : BaseComposeUnitTest() {
 
 
@@ -148,6 +166,7 @@ class InteractivePieChartTest : BaseComposeUnitTest() {
  * algorithm without needing full Compose rendering.
  */
 
+@RunWith(RobolectricTestRunner::class)
 class PieChartSliceDetectionTest : BaseComposeUnitTest() {
 
     @Test
