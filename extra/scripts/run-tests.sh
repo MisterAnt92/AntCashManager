@@ -126,10 +126,11 @@ echo "    • shared:data:       70% (was ~15%, new: TransactionRepositoryEdgeCa
 echo ""
 echo "  📝 New Test Files (Phases 2-4):"
 echo "    • HomeViewModelComprehensiveTest (9 tests)"
+echo "    • ChartsViewModelComprehensiveTest (14 tests)"
 echo "    • FilterTransactionsUseCaseTest (11 tests)"
 echo "    • GetTransactionSuggestionsUseCaseTest (12 tests)"
 echo "    • TransactionRepositoryEdgeCaseTest (20 tests)"
-echo "    Total: ~52 new test cases"
+echo "    Total: ~66 new test cases"
 echo ""
 
 # Build status
