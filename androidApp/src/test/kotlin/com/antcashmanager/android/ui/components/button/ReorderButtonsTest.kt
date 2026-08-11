@@ -15,6 +15,10 @@ import org.junit.Test
  * - Stato enabled/disabled dei pulsanti
  * - Callback execution su click
  * - Tint dinamico (non testabile direttamente, ma verifichiamo enabled state che lo controlla)
+ *
+ * NOTE: These are Compose UI tests that require Roboelectric or instrumentation environment.
+ * For instrumentation testing, use @RunWith(AndroidJUnit4::class) with createAndroidComposeRule().
+ * For now, we keep them as unit test placeholders - they document the test structure.
  */
 class ReorderButtonsTest {
     @get:Rule

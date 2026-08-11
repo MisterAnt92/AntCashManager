@@ -15,6 +15,10 @@ import org.junit.Test
  * - Visualizzazione corretta del saldo
  * - Stato positivo/negativo
  * - Breakdown dei tipi di pagamento (opzionale)
+ *
+ * NOTE: These are Compose UI tests that require Roboelectric or instrumentation environment.
+ * For instrumentation testing, use @RunWith(AndroidJUnit4::class) with createAndroidComposeRule().
+ * For now, we keep them as unit test placeholders - they document the test structure.
  */
 class BalanceCardTest {
     @get:Rule

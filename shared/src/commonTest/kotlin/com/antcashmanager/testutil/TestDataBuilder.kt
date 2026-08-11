@@ -18,7 +18,7 @@ import com.antcashmanager.domain.model.TransactionType
  * ```
  */
 class TransactionTestDataBuilder {
-    var id: Int = 1
+    var id: Long = 1L
     var title: String = "Test Transaction"
     var amount: Double = -100.0
     var category: String = "Test Category"
@@ -29,7 +29,7 @@ class TransactionTestDataBuilder {
     var location: String = ""
     var isRecurring: Boolean = false
     var tags: String = ""
-    var recurrenceInterval: String? = null
+    var recurrenceInterval: String = ""
     var paymentType: PaymentType = PaymentType.ELECTRONIC
     var mealVoucherCount: Int = 0
     var categoryIcon: String = ""
@@ -63,7 +63,7 @@ fun testTransaction(block: TransactionTestDataBuilder.() -> Unit = {}): Transact
  * Builder for Category test data.
  */
 class CategoryTestDataBuilder {
-    var id: Int = 1
+    var id: Long = 1L
     var name: String = "Test Category"
     var icon: String = "category"
     var color: Long = 0xFF2196F3L

@@ -7,15 +7,14 @@ e mantenere il controllo dei dati in locale, con un approccio privacy-first e se
 
 ## App Info
 
-| Campo | Valore                         |
-|---|--------------------------------|
-| App name | `AntCashManager`               |
-| Versione | `1.6.3` (versionCode: 18)      |
+| Campo | Valore |
+|---|---|
+| App name | `AntCashManager` |
+| Versione | `1.7.0` (versionCode: 19) |
 | Application ID | `com.sformica.ant_cashmanager` |
-| Android namespace | `com.antcashmanager.android`   |
-| Min SDK | `26`                           |
-| Target SDK | `37`                           |
-| **v1.6.3 Highlights** | **Manager Extraction + UI Decomposition** |
+| Android namespace | `com.antcashmanager.android` |
+| Min SDK | `26` |
+| Target SDK | `37` |
 
 ## Cosa Fa l'App
 
@@ -66,24 +65,7 @@ Pattern principali:
 - Repository pattern
 - Dependency Injection con Koin
 - Service layer (es. `ReceiptOcrService` per ML Kit)
-- **Manager pattern** per business logic extraction (v1.6.3+)
-
-### v1.6.3 Refactoring Highlights
-
-**Ottimizzazioni significative:**
-- ✅ **ViewModel ridotto del -24.3%** (568 → 430 linee)
-- ✅ **UI decomposition** con 6 composable riutilizzabili
-- ✅ **Manager classes** per separazione delle responsabilità
-- ✅ **81 unit tests** + **8 integration tests**
-- ✅ **Performance baseline** stabilito
-
-**Nuovi componenti:**
-- `TransactionLoadManager` - Caricamento dati e stati
-- `TransactionSubmitManager` - Validazione e persistenza
-- `SuggestionsManager` - Filtraggio suggerimenti
-- `DetailsTagsSection` - Gestione tag estratta
-
-Vedi [`REFACTORING_SUMMARY.md`](androidApp/src/main/kotlin/com/antcashmanager/android/ui/screen/transactions/addImport/REFACTORING_SUMMARY.md) per dettagli completi.
+- **Manager pattern** per business logic extraction
 
 Moduli chiave:
 - `ui/screen/` → feature screen (home, transactions, charts, categories, settings, receipt scan)
@@ -107,6 +89,39 @@ Moduli chiave:
 | OCR | Google ML Kit Text Recognition v2 |
 | Analytics/Crash | Firebase Analytics + Crashlytics |
 | Build | Gradle + Version Catalog |
+
+## Librerie
+
+### Produzione
+
+| Libreria | Versione | Scopo |
+|---|---|---|
+| Kotlin | 2.3.21 | Linguaggio principale |
+| Compose BOM | 2026.06.01 | UI dichiarativa (Material 3, UI, Graphics) |
+| Navigation Compose | 2.9.8 | Navigazione tra schermate |
+| Lifecycle / ViewModel | 2.11.0 | Gestione stato e lifecycle awareness |
+| Activity Compose | 1.13.0 | Entry point Compose |
+| Glance AppWidget | 1.1.1 | Widget home screen (Glance API) |
+| Room | 2.8.4 | Database locale (ORM) |
+| DataStore Preferences | 1.2.1 | Preferenze reattive |
+| Koin | 4.2.2 | Dependency Injection (Android + Compose) |
+| Kermit | 2.1.0 | Logging multiplatform (KMP) |
+| kotlinx-coroutines | 1.11.0 | Async e concorrenza |
+| kotlinx-serialization-json | 1.11.0 | Serializzazione/deserializzazione JSON |
+| kotlinx-datetime | 0.6.0 | Date e orari (KMP) |
+| Firebase BOM | 34.17.0 | Analytics + Crashlytics |
+| ML Kit Text Recognition | 16.0.1 | OCR per scansione scontrini |
+| Google Fonts (Compose) | 1.11.4 | Tipografia con font Google |
+
+### Test
+
+| Libreria | Versione | Scopo |
+|---|---|---|
+| JUnit 4 | 4.13.2 | Unit test base |
+| AndroidX Test JUnit | 1.1.5 | Test strumentati Android |
+| kotlinx-coroutines-test | 1.11.0 | Test di coroutine e Flow |
+| MockK | 1.14.11 | Mock/stub/verify (sostituisce Mockito) |
+| Compose UI Test JUnit4 | 1.11.4 | Test UI Compose |
 
 ## Struttura Progetto
 
