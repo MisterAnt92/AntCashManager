@@ -34,40 +34,114 @@ echo ""
 
 BUILD_STATUS=$?
 
+# ─── Helper: aggrega i risultati da file TEST-*.xml JUnit ──────────────────────
+# Usage: parse_test_results <xml_dir> → stampa totale/passed/failed/skipped/errors
+parse_test_results() {
+    local xml_dir="$1"
+    local total=0 failures=0 errors=0 skipped=0
+
+    if [ ! -d "$xml_dir" ]; then
+        echo "n/a"
+        return
+    fi
+
+    while IFS= read -r file; do
+        t=$(grep -oP '(?<=tests=")[0-9]+' "$file" | head -1); t=${t:-0}
+        f=$(grep -oP '(?<=failures=")[0-9]+' "$file" | head -1); f=${f:-0}
+        e=$(grep -oP '(?<=errors=")[0-9]+' "$file" | head -1); e=${e:-0}
+        s=$(grep -oP '(?<=skipped=")[0-9]+' "$file" | head -1); s=${s:-0}
+        total=$(( total + t ))
+        failures=$(( failures + f ))
+        errors=$(( errors + e ))
+        skipped=$(( skipped + s ))
+    done < <(find "$xml_dir" -maxdepth 1 -name "TEST-*.xml" 2>/dev/null)
+
+    local passed=$(( total - failures - errors - skipped ))
+    echo "$total $passed $failures $errors $skipped"
+}
+
+# ─── Helper: stampa una riga di riepilogo modulo ────────────────────────────────
+print_module_summary() {
+    local label="$1"
+    local xml_dir="$2"
+    local html_report="$3"
+
+    read -r total passed failures errors skipped <<< "$(parse_test_results "$xml_dir")"
+
+    if [ "$total" = "n/a" ] || [ -z "$total" ]; then
+        printf "  %-40s  %s\n" "$label" "⚠️  nessun risultato trovato"
+        return
+    fi
+
+    local status_icon="✅"
+    if [ "$failures" -gt 0 ] || [ "$errors" -gt 0 ]; then
+        status_icon="❌"
+    fi
+
+    printf "  %s %-42s  %s tests  |  ✓ %s  ✗ %s  ↷ %s\n" \
+        "$status_icon" "$label" "$total" "$passed" "$(( failures + errors ))" "$skipped"
+
+    if [ -n "$html_report" ] && [ -f "$html_report" ]; then
+        printf "    📄 file://%s\n" "$html_report"
+    fi
+}
+
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "  📊 RESULTS"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-# Check if build succeeded
+# ─── Riepilogo per modulo ───────────────────────────────────────────────────────
+echo "  📦 Unit Tests"
+echo ""
+
+SHARED_XML_DIR="$PROJECT_ROOT/shared/build/intermediates/unit_test_results/androidMain/testAndroidHostTest"
+SHARED_HTML="$PROJECT_ROOT/shared/build/reports/tests/testAndroidHostTest/index.html"
+print_module_summary ":shared:testAndroidHostTest (Domain + Data)" "$SHARED_XML_DIR" "$SHARED_HTML"
+
+echo ""
+
+ANDROID_XML_DIR="$PROJECT_ROOT/androidApp/build/intermediates/unit_test_results/debug/testDebugUnitTest"
+ANDROID_HTML="$PROJECT_ROOT/androidApp/build/reports/tests/testDebugUnitTest/index.html"
+print_module_summary ":androidApp:testDebugUnitTest (Presentation)" "$ANDROID_XML_DIR" "$ANDROID_HTML"
+
+echo ""
+
+# ─── Instrumentation tests ─────────────────────────────────────────────────────
+INSTRUMENTATION_XML_DIR="$PROJECT_ROOT/androidApp/build/outputs/androidTest-results/connected/debug"
+INSTRUMENTATION_HTML="$PROJECT_ROOT/androidApp/build/reports/androidTests/connected/debug/index.html"
+
+if [ -d "$INSTRUMENTATION_XML_DIR" ] || [ -f "$INSTRUMENTATION_HTML" ]; then
+    echo "  📱 Instrumentation Tests"
+    echo ""
+    print_module_summary ":androidApp:connectedDebugAndroidTest" "$INSTRUMENTATION_XML_DIR" "$INSTRUMENTATION_HTML"
+    echo ""
+fi
+
+# ─── Coverage HTML reports (JaCoCo) ────────────────────────────────────────────
+JACOCO_ANDROID="$PROJECT_ROOT/androidApp/build/reports/jacoco/jacocoTestDebugUnitTestReport/html/index.html"
+JACOCO_SHARED="$PROJECT_ROOT/shared/build/reports/jacoco/testAndroidHostTestCoverage/html/index.html"
+
+if [ -f "$JACOCO_ANDROID" ] || [ -f "$JACOCO_SHARED" ]; then
+    echo "  📈 Coverage Reports (JaCoCo)"
+    echo ""
+    if [ -f "$JACOCO_ANDROID" ]; then
+        printf "    📊 androidApp  →  file://%s\n" "$JACOCO_ANDROID"
+    fi
+    if [ -f "$JACOCO_SHARED" ]; then
+        printf "    📊 shared      →  file://%s\n" "$JACOCO_SHARED"
+    fi
+    echo ""
+fi
+
+# ─── Esito finale ───────────────────────────────────────────────────────────────
 if [ $BUILD_STATUS -eq 0 ]; then
-    echo "  ✅ All tests passed"
-    echo ""
-
-    # Display coverage report locations
-    echo "📁 Coverage Reports:"
-    echo ""
-
-    if [ -f "androidApp/build/reports/jacoco/jacocoTestDebugUnitTestReport/html/index.html" ]; then
-        echo "  ✓ Android App Unit Tests"
-        echo "    file://$PROJECT_ROOT/androidApp/build/reports/jacoco/jacocoTestDebugUnitTestReport/html/index.html"
-        echo ""
-    fi
-
-    if [ -f "shared/build/reports/tests/androidHostTest/index.html" ]; then
-        echo "  ✓ Shared Library Tests"
-        echo "    file://$PROJECT_ROOT/shared/build/reports/tests/androidHostTest/index.html"
-        echo ""
-    fi
-
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo "  ✨ SUCCESS - All tests executed without errors"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo ""
 else
-    echo "  ❌ Tests failed or had compilation errors"
-    echo ""
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo "  ❌ FAILURE - Fix errors above and retry"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

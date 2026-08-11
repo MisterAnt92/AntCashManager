@@ -22,6 +22,8 @@ import androidx.lifecycle.lifecycleScope
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.navigation.AntCashManagerNavHost
 import com.antcashmanager.android.ui.LocalLocale
+import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
+import com.antcashmanager.android.ui.base.MultiPaneCoordinator
 import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
 import com.antcashmanager.android.ui.theme.AppThemeProvider
 import com.antcashmanager.domain.model.AppLanguage
@@ -85,10 +87,15 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
+                // Create multi-pane coordinator for synchronized state across panes
+                val multiPaneCoordinator = remember { MultiPaneCoordinator() }
+
                 WithAppLocale(language = settingsState.language) {
                     AppThemeProvider(currentTheme = settingsState.theme) {
                         WithDisplayFeatures(displayFeatures = displayFeatures) {
-                            AntCashManagerNavHost()
+                            WithMultiPaneCoordinator(coordinator = multiPaneCoordinator) {
+                                AntCashManagerNavHost()
+                            }
                         }
                     }
                 }
@@ -148,6 +155,20 @@ fun WithAppLocale(language: AppLanguage, content: @Composable () -> Unit) {
 @Composable
 fun WithDisplayFeatures(displayFeatures: List<DisplayFeature>, content: @Composable () -> Unit) {
     CompositionLocalProvider(LocalDisplayFeatures provides displayFeatures) {
+        content()
+    }
+}
+
+/**
+ * Provides multi-pane coordinator to all composables below.
+ * Used for synchronizing state between panes on foldable devices or tablets in split-view.
+ *
+ * @param coordinator MultiPaneCoordinator instance managing pane synchronization
+ * @param content Composable content that can access coordinator via LocalMultiPaneCoordinator
+ */
+@Composable
+fun WithMultiPaneCoordinator(coordinator: MultiPaneCoordinator, content: @Composable () -> Unit) {
+    CompositionLocalProvider(LocalMultiPaneCoordinator provides coordinator) {
         content()
     }
 }
