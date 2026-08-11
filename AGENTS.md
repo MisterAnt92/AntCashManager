@@ -239,9 +239,22 @@ The app includes receipt scanning via Google ML Kit Text Recognition v2:
 - ✅ Use **MockK** for all mocking (`io.mockk:mockk`)
 - ❌ **Mockito is forbidden** – never use Mockito
 - ❌ Never import real database libraries (Room, DataStore) in tests – use Fake repositories or MockK
-- ❌ **Roboelectric is STRICTLY for instrumentation tests** (`src/androidTest`) – NEVER in unit tests (`src/test`)
-  - Unit tests must run on JVM with MockK, no Android Framework simulation needed
-  - Only use Roboelectric in instrumentation tests when simulating Android Framework behavior without device
+- ⚠️ **Roboelectric: Hybrid Strategy**
+  - ✅ **USE in unit tests** (`src/test`) – For rapid Compose component testing + Android Framework operations (SharedPreferences, DataStore, Bundle)
+    - Roboelectric provides fast feedback (milliseconds) during development
+    - Deterministic execution (no timing races)
+    - No device/emulator required
+    - Example: Component testing, ViewModel logic, repository operations
+  - ✅ **ALSO USE in instrumentation tests** (`src/androidTest`) – When simulating Android Framework without real device
+    - Faster than device emulator (seconds vs minutes)
+    - Good for integration testing data layer with Android framework
+    - Use `@RunWith(RobolectricTestRunner::class)` with Compose UI Test v2
+  - ⚠️ **COMPLEMENT with real instrumentation tests** (`src/androidTest` on device/emulator) – For critical user flows
+    - Test actual user interactions (tap, swipe, real touch handling)
+    - GPU rendering validation
+    - Performance profiling on real hardware
+    - Accessibility testing (screen reader, contrast)
+    - Example: "Add Transaction" full flow, "Navigation" flow, "Search" flow
 - ✅ Use Fake repositories from `com.antcashmanager.testutil.Fake*` package for data layer isolation
 
 **Test Data:**
@@ -249,12 +262,29 @@ The app includes receipt scanning via Google ML Kit Text Recognition v2:
 - ✅ Create builder-style APIs: `testTransaction { title = "Lunch"; amount = -50.0 }`
 - ❌ Never hardcode complex test data directly in test methods
 
-**Compose UI Unit Tests:**
-- ✅ **MANDATORY: Use `androidx.compose.ui.test.junit4.v2.createComposeRule()`** (v2 API with StandardTestDispatcher)
-- ❌ **NEVER use deprecated v1** (`androidx.compose.ui.test.junit4.createComposeRule()`) – v1 is deprecated and outdated
-- ❌ **Do NOT use Roboelectric for Compose UI unit tests** – Roboelectric is for Android Framework simulation, not Compose testing
-- ✅ For interactive UI testing (tap, drag, verify visuals) → move to instrumentation test (`src/androidTest`) with `createAndroidComposeRule<ComponentActivity>()`
-- ❌ Never mix unit test Compose rules with Roboelectric configuration
+**Compose UI Testing Strategy:**
+
+**Unit Tests** (`src/test`):
+- ✅ **Use `androidx.compose.ui.test.junit4.v2.createComposeRule()`** (v2 API with StandardTestDispatcher)
+- ✅ **CAN use Roboelectric** for rapid component testing without device
+  - Provides MockK mocking + Compose UI Test assertion capabilities
+  - Fast feedback during development (milliseconds)
+  - Good for component state verification, callback testing, simple layouts
+- ❌ **NEVER use deprecated v1** (`androidx.compose.ui.test.junit4.createComposeRule()`)
+- ❌ Never use Roboelectric for complex touch interactions (drag, swipe, multi-touch)
+
+**Instrumentation Tests** (`src/androidTest`, real device/emulator):
+- ✅ Use `createAndroidComposeRule<ComponentActivity>()` for full interaction testing
+- ✅ Test actual user interactions: tap, drag, swipe, long-press
+- ✅ Verify visual rendering, animations, color/layout correctness
+- ✅ Test integration with Android framework (navigation, system bars, dialogs)
+- ✅ Primary use case: end-to-end user flows ("Add Transaction flow", "Navigation", "Search")
+
+**Roboelectric-based Instrumentation Tests** (`src/androidTest` with `@RunWith(RobolectricTestRunner::class)`):
+- ✅ Fast alternative to real device when full interaction testing not needed
+- ✅ Test Android Framework integration (SharedPreferences, DataStore, Bundle, Resources)
+- ✅ Test navigation flows, screen transitions
+- ⚠️ NOT suitable for: Touch events, gestures, GPU rendering, performance profiling, sensors
 
 **Test Naming:**
 - ✅ Pattern: `method_shouldExpectedBehavior_whenCondition` (no backticks)
@@ -296,12 +326,24 @@ class MyViewModelTest : BaseUnitTest() {
 }
 ```
 
-### Instrumentation Test Rules
+### Instrumentation Test Rules (Hybrid Strategy)
 
-- ✅ Use `@RunWith(AndroidJUnit4::class)` for real device/emulator tests
-- ✅ Use `createAndroidComposeRule<ComponentActivity>()` for Compose UI interaction tests
-- ✅ Can use Roboelectric (`@RunWith(RobolectricTestRunner::class)`) for Android Framework simulation without device
-- ✅ Test real database operations, file I/O, and system integration
+**For REAL Device/Emulator Testing** (`src/androidTest` on actual Android environment):
+- ✅ Use `@RunWith(AndroidJUnit4::class)` for tests running on device/emulator
+- ✅ Use `createAndroidComposeRule<ComponentActivity>()` for full Compose UI interaction testing
+- ✅ Test real database operations, file I/O, GPS, camera, sensors
+- ✅ Test actual touch events, gestures (swipe, long-press, drag)
+- ✅ Test performance on real hardware (frame rate, memory, battery impact)
+- ✅ Focus on critical user flows: "Add Transaction" → "Save" → "Verify in List", "Navigation", "Search/Filter", "Settings Changes"
+- ✅ Use for accessibility testing (screen reader, font scaling, contrast)
+
+**For Framework Simulation Testing** (Roboelectric, `src/androidTest` or `src/test`):
+- ✅ Use `@RunWith(RobolectricTestRunner::class)` for Android Framework simulation without device
+- ✅ Faster execution for integration testing (~seconds vs minutes)
+- ✅ Use `createComposeRule()` or `createAndroidComposeRule<ComponentActivity>()` for Compose UI testing
+- ✅ Good for data layer integration + Android Framework operations (SharedPreferences, DataStore, Bundle)
+- ❌ Do NOT use for testing touch events, sensors, or performance on real hardware
+- ⚠️ Remember: Roboelectric simulates SDK 34-35, app compileSdk is 37 (some SDK 37 features may not be fully simulated)
 
 ### Forbidden Imports in Tests
 - ❌ `mockito.*` – use MockK instead
