@@ -16,6 +16,7 @@ import org.junit.Test
  * - Click callback
  * - Icon e color display
  */
+
 class AppCategoryCardTest : BaseComposeUnitTest() {
 
     @Test

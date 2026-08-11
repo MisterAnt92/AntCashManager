@@ -262,6 +262,7 @@ class ChartsViewModel(
             .filterValues { it != 0.0 }
 
         // Calculate expense by weekday (1=Mon...7=Sun per EU convention)
+        // Returns total expense amount per weekday, not average
         val expenseByWeekday = expenseTransactions
             .groupBy { tx ->
                 cal.timeInMillis = tx.timestamp
@@ -272,7 +273,7 @@ class ChartsViewModel(
             }
             .mapValues { (_, txs) ->
                 if (txs.isNotEmpty()) {
-                    kotlin.math.abs(txs.sumOf { it.amount }) / txs.size
+                    kotlin.math.abs(txs.sumOf { it.amount })
                 } else 0.0
             }
 

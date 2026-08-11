@@ -201,6 +201,10 @@ fun AntCashManagerNavHost() {
                                 NavigationBarItem(
                                     selected = isSelected,
                                     onClick = {
+                                        val params = android.os.Bundle().apply {
+                                            putString("destination", item.route)
+                                        }
+                                        analyticsManager.logEvent("sidebar_navigation_clicked", params)
                                         navController.navigate(item.route) {
                                             popUpTo(navController.graph.findStartDestination().id) {
                                                 saveState = true
@@ -332,6 +336,10 @@ fun AntCashManagerNavHost() {
                                 NavigationRailItem(
                                     selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
                                     onClick = {
+                                        val params = android.os.Bundle().apply {
+                                            putString("destination", item.route)
+                                        }
+                                        analyticsManager.logEvent("sidebar_navigation_clicked", params)
                                         navController.navigate(item.route) {
                                             popUpTo(navController.graph.findStartDestination().id) {
                                                 saveState = true
@@ -388,7 +396,13 @@ fun AntCashManagerNavHost() {
                                 ) {
                                     // Hamburger Menu
                                     IconButton(
-                                        onClick = { isSidebarOpen = !isSidebarOpen },
+                                        onClick = {
+                                            val params = android.os.Bundle().apply {
+                                                putBoolean("isOpen", !isSidebarOpen)
+                                            }
+                                            analyticsManager.logEvent("sidebar_toggled", params)
+                                            isSidebarOpen = !isSidebarOpen
+                                        },
                                         modifier = Modifier.size(40.dp),
                                     ) {
                                         Icon(

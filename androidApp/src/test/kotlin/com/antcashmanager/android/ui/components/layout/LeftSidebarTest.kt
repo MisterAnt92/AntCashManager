@@ -15,6 +15,7 @@ import org.junit.Test
  * - Click callbacks
  * - Layout structure
  */
+
 class LeftSidebarTest : BaseComposeUnitTest() {
 
     @Test

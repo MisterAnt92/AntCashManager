@@ -495,6 +495,12 @@ internal fun TransactionsContent(
                         TransactionItem(
                             transaction = transaction,
                             onClick = {
+                                val params = Bundle().apply {
+                                    putInt("index", state.filteredTransactions.indexOf(transaction))
+                                    putString("type", transaction.type.name)
+                                    putString("date", SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(transaction.timestamp)))
+                                }
+                                analyticsManager.logEvent("transactions_list_item_clicked", params)
                                 // Notify multi-pane coordinator for foldable split-view sync
                                 multiPaneCoordinator?.selectTransaction(
                                     transaction = transaction,

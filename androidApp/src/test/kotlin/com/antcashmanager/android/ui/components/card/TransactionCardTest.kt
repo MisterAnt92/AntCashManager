@@ -17,6 +17,7 @@ import org.junit.Test
  * - Formatting dei numeri
  * - Color feedback (expense vs income)
  */
+
 class TransactionCardTest : BaseComposeUnitTest() {
 
     @Test

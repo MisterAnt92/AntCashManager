@@ -365,6 +365,11 @@ internal fun ChartsContent(
                         context = context,
                         onShared = { analyticsManager.logEvent("chart_shared") },
                         onCategorySelected = { category, amount, color ->
+                            val params = android.os.Bundle().apply {
+                                putString("chart_type", "pie_income")
+                                putString("category", category)
+                            }
+                            analyticsManager.logEvent("chart_item_clicked", params)
                             selectedChartDetails = ChartDetailsData(
                                 categoryName = category,
                                 amount = amount,
@@ -396,6 +401,11 @@ internal fun ChartsContent(
                         context = context,
                         onShared = { analyticsManager.logEvent("chart_shared") },
                         onCategorySelected = { category, amount, color ->
+                            val params = android.os.Bundle().apply {
+                                putString("chart_type", "pie_expense")
+                                putString("category", category)
+                            }
+                            analyticsManager.logEvent("chart_item_clicked", params)
                             selectedChartDetails = ChartDetailsData(
                                 categoryName = category,
                                 amount = amount,
@@ -451,6 +461,11 @@ internal fun ChartsContent(
                         context = context,
                         onShared = { analyticsManager.logEvent("chart_shared") },
                         onCategorySelected = { paymentLabel, amount, color ->
+                            val params = android.os.Bundle().apply {
+                                putString("chart_type", "payment_breakdown")
+                                putString("payment_type", paymentLabel)
+                            }
+                            analyticsManager.logEvent("chart_item_clicked", params)
                             selectedChartDetails = ChartDetailsData(
                                 categoryName = paymentLabel,
                                 amount = amount,

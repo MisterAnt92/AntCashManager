@@ -60,11 +60,13 @@ import com.antcashmanager.android.ui.components.button.AppButton
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import org.koin.compose.koinInject
 
 @Composable
 fun TutorialOverlay(
     onDismiss: () -> Unit,
 ) {
+    val analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager = koinInject()
     val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
     var currentStep by remember { mutableIntStateOf(0) }
     val steps = listOf(
@@ -106,7 +108,10 @@ fun TutorialOverlay(
     )
 
     var welcomeVisible by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) { welcomeVisible = true }
+    LaunchedEffect(Unit) {
+        analyticsManager.logEvent("tutorial_started")
+        welcomeVisible = true
+    }
 
     // Il tasto/gesture back di sistema deve muoversi indietro nel tutorial invece di
     // uscire dalla Home sottostante (di cui il tutorial è un overlay a schermo intero).
@@ -388,15 +393,30 @@ fun TutorialOverlay(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        TextButton(onClick = onDismiss) {
+                        TextButton(onClick = {
+                            val params = android.os.Bundle().apply {
+                                putInt("step", currentStep)
+                            }
+                            analyticsManager.logEvent("tutorial_step_skipped", params)
+                            onDismiss()
+                        }) {
                             AppText(text = stringResource(R.string.tutorial_skip))
                         }
-                        AppButton(onClick = { currentStep += 1 }) {
+                        AppButton(onClick = {
+                            val params = android.os.Bundle().apply {
+                                putInt("step", currentStep)
+                            }
+                            analyticsManager.logEvent("tutorial_step_completed", params)
+                            currentStep += 1
+                        }) {
                             AppText(text = stringResource(R.string.tutorial_next))
                         }
                     }
                 } else {
-                    AppButton(onClick = onDismiss) {
+                    AppButton(onClick = {
+                        analyticsManager.logEvent("tutorial_completed")
+                        onDismiss()
+                    }) {
                         AppText(text = stringResource(R.string.tutorial_finish))
                     }
                 }

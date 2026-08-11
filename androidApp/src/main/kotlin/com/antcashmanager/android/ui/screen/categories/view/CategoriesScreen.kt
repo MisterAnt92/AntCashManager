@@ -331,6 +331,13 @@ internal fun CategoriesContent(
                     items(currentCategories, key = { it.id }) { category ->
                         CategoryItem(
                             category = category,
+                            onClick = {
+                                val params = android.os.Bundle().apply {
+                                    putString("category_name", category.name)
+                                    putInt("index", currentCategories.indexOf(category))
+                                }
+                                analyticsManager.logEvent("categories_list_item_clicked", params)
+                            },
                             onDelete = {
                                 if (!category.isDefault) {
                                     categoryToDelete = category
@@ -479,12 +486,15 @@ private fun CategoryItem(
     category: Category,
     onDelete: () -> Unit,
     onToggleHidden: () -> Unit,
+    onClick: (() -> Unit)? = null,
 ) {
     val icon = categoryIconMap[category.icon]
     val translatedName = translateCategory(category.name)
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .let { if (onClick != null) it.clickable { onClick() } else it },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
         ),

@@ -27,6 +27,7 @@ import org.junit.Test
  * Uses Compose UI Test v2 framework (no BaseUnitTest - pure Compose UI test)
  * with kotlinx-coroutines-test for deterministic test execution.
  */
+
 class ChartCardsTest : BaseComposeUnitTest() {
 
 

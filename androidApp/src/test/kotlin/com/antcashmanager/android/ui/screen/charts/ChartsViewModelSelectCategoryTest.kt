@@ -39,7 +39,8 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
     fun setup() {
         fakeTransactionRepo = FakeTransactionRepository()
         fakeSettingsRepo = FakeSettingsRepository()
-        viewModel = ChartsViewModel(fakeTransactionRepo, fakeSettingsRepo)
+        // Pass testDispatcher to ensure ViewModel uses the same dispatcher as the test
+        viewModel = ChartsViewModel(fakeTransactionRepo, fakeSettingsRepo, dispatcher = testDispatcher)
     }
 
     @Test

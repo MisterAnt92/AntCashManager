@@ -28,6 +28,7 @@ import kotlin.math.sin
  *
  * Uses Compose UI Test v2 framework (no BaseUnitTest - pure Compose UI test).
  */
+
 class InteractivePieChartTest : BaseComposeUnitTest() {
 
 
@@ -146,6 +147,7 @@ class InteractivePieChartTest : BaseComposeUnitTest() {
  * These tests verify the mathematical correctness of the slice detection
  * algorithm without needing full Compose rendering.
  */
+
 class PieChartSliceDetectionTest : BaseComposeUnitTest() {
 
     @Test

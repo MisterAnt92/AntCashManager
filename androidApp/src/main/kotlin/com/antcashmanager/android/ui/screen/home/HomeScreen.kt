@@ -452,9 +452,12 @@ internal fun HomeContent(
                                     settingsRepository.setDateFilterExpanded(expanded)
                                 }
                             },
-                            onPresetSelected = {
-                                analyticsManager.logEvent("home_date_filter_changed")
-                                onEvent(HomeEvent.SelectPreset(it))
+                            onPresetSelected = { presetIndex ->
+                                val params = android.os.Bundle().apply {
+                                    putString("preset", presetIndex.toString())
+                                }
+                                analyticsManager.logEvent("home_date_filter_changed", params)
+                                onEvent(HomeEvent.SelectPreset(presetIndex))
                             },
                             onFromDateEdit = { showFromDatePicker = true },
                             onToDateEdit = { showToDatePicker = true },
@@ -539,6 +542,11 @@ internal fun HomeContent(
                             RecentTransactionItem(
                                 transaction = transaction,
                                 onClick = {
+                                    val params = android.os.Bundle().apply {
+                                        putInt("index", state.recentTransactions.indexOf(transaction))
+                                        putString("type", transaction.type.name)
+                                    }
+                                    analyticsManager.logEvent("home_transaction_clicked", params)
                                     analyticsManager.logEvent("home_transaction_detail_opened")
                                     // Notify multi-pane coordinator for foldable split-view sync
                                     multiPaneCoordinator?.selectTransaction(

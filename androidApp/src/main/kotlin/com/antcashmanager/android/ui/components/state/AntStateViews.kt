@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import android.os.Bundle
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
@@ -39,6 +40,7 @@ import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.LocalReduceMotion
+import org.koin.compose.koinInject
 
 /**
  * Reusable empty-state composable with ant mascot image,
@@ -54,12 +56,14 @@ fun AntEmptyState(
     mascotSize: Dp = 96.dp,
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null,
+    actionAnalyticsLabel: String? = null,
 ) {
     val reduceMotion = LocalReduceMotion.current
     var visible by remember { mutableStateOf(reduceMotion) }
     LaunchedEffect(Unit) { visible = true }
 
     val enterDuration = if (reduceMotion) 0 else 500
+    val analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager = koinInject()
 
     AnimatedVisibility(
         visible = visible,
@@ -99,7 +103,18 @@ fun AntEmptyState(
             }
             if (actionLabel != null && onAction != null) {
                 VerticalSpacer(SpacingSize.MD)
-                OutlinedButton(onClick = onAction) {
+                OutlinedButton(
+                    onClick = {
+                        // Track empty state action
+                        if (actionAnalyticsLabel != null) {
+                            val params = Bundle().apply {
+                                putString("action", actionAnalyticsLabel)
+                            }
+                            analyticsManager.logEvent("empty_state_action_taken", params)
+                        }
+                        onAction()
+                    }
+                ) {
                     AppText(actionLabel)
                 }
             }

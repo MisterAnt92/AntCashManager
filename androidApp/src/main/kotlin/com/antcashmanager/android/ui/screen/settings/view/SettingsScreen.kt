@@ -241,7 +241,13 @@ internal fun SettingsContent(
                     title = stringResource(R.string.settings_display),
                     subtitle = stringResource(R.string.settings_display_subtitle),
                     leadingIcon = Icons.Default.TextFields,
-                    onClick = { navController?.navigate("display") },
+                    onClick = {
+                        val params = android.os.Bundle().apply {
+                            putString("submenu", "display")
+                        }
+                        analyticsManager.logEvent("settings_submenu_opened", params)
+                        navController?.navigate("display")
+                    },
                 )
             }
 
@@ -295,7 +301,13 @@ internal fun SettingsContent(
                     leadingIcon = Icons.Default.Backup,
                     iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
                     iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
-                    onClick = { navController?.navigate("settings_data") },
+                    onClick = {
+                        val params = android.os.Bundle().apply {
+                            putString("submenu", "data_management")
+                        }
+                        analyticsManager.logEvent("settings_submenu_opened", params)
+                        navController?.navigate("settings_data")
+                    },
                 )
             }
 
@@ -352,6 +364,7 @@ internal fun SettingsContent(
                 leadingIcon = Icons.Default.Info,
                 showChevron = false,
                 onClick = {
+                    analyticsManager.logEvent("easter_egg_animation_opened")
                     showAntAnimation = true
                 },
             )

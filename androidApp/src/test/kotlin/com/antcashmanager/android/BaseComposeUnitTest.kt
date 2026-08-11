@@ -3,20 +3,21 @@ package com.antcashmanager.android
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Rule
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 
 /**
  * Base class per i test di Compose UI che necessitano di:
- * - Roboelectric per simulare Android framework
  * - Dispatcher setup per Coroutines (da BaseUnitTest)
- * - Compose UI test rule
+ * - Compose UI test rule (v2 - latest)
+ *
+ * IMPORTANTE: NON usare @RunWith(RobolectricTestRunner::class) nei test di unit test!
+ * Roboelectric è riservato SOLO per instrumentation test (androidTest).
+ *
+ * Regola del progetto: MockK + Fake repositories + Compose.uiTest v2 (no Roboelectric in unit tests)
  *
  * Tutti i test di Compose dovrebbero estendere questa classe.
  *
- * Esempio:
+ * Esempio corretto:
  * ```kotlin
- * @RunWith(RobolectricTestRunner::class)
  * class MyComponentTest : BaseComposeUnitTest() {
  *     @Test
  *     fun myComponentRendersCorrectly() {
@@ -29,7 +30,6 @@ import org.robolectric.RobolectricTestRunner
  * ```
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-@RunWith(RobolectricTestRunner::class)
 abstract class BaseComposeUnitTest : BaseUnitTest() {
 
     @get:Rule
