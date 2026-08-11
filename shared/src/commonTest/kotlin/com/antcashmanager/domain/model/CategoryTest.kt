@@ -115,11 +115,11 @@ class CategoryTest {
             0xFFFFD93D   // Yellow
         )
 
-        for ((index, color) in colors.withIndex()) {
+        for ((index, colorValue) in colors.withIndex()) {
             val category = testCategory {
-                color = color
+                color = colorValue
             }
-            assertEquals(color, category.color)
+            assertEquals(colorValue, category.color)
         }
     }
 

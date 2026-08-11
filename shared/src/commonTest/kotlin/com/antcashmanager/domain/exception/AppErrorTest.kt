@@ -17,71 +17,71 @@ import kotlin.test.assertTrue
 class AppErrorTest {
 
     @Test
-    fun categoryException_shouldStoreMessage() {
-        val message = "Category not found"
-        val exception = CategoryException(message)
+    fun categoryException_notFound_shouldStoreMessage() {
+        val categoryName = "Unknown"
+        val exception = CategoryException.NotFound(categoryName)
 
-        assertEquals(message, exception.message)
+        assertTrue(exception.message?.contains(categoryName) ?: false)
         assertNotNull(exception)
     }
 
     @Test
-    fun categoryException_shouldHaveCause() {
-        val cause = RuntimeException("Original error")
-        val exception = CategoryException("Category error", cause)
+    fun categoryException_duplicateName_shouldStoreMessage() {
+        val categoryName = "Food"
+        val exception = CategoryException.DuplicateName(categoryName)
 
-        assertEquals(cause, exception.cause)
-    }
-
-    @Test
-    fun receiptScanException_shouldStoreMessage() {
-        val message = "Failed to scan receipt"
-        val exception = ReceiptScanException(message)
-
-        assertEquals(message, exception.message)
+        assertTrue(exception.message?.contains(categoryName) ?: false)
         assertNotNull(exception)
     }
 
     @Test
-    fun receiptScanException_shouldHaveCause() {
-        val cause = IllegalStateException("Camera unavailable")
-        val exception = ReceiptScanException("Scan failed", cause)
+    fun receiptScanException_invalidImage_shouldBeAvailable() {
+        val exception = ReceiptScanException.InvalidImage
 
-        assertEquals(cause, exception.cause)
+        assertTrue(exception.message?.contains("Image") ?: false)
+        assertNotNull(exception)
+    }
+
+    @Test
+    fun receiptScanException_noTextExtracted_shouldBeAvailable() {
+        val exception = ReceiptScanException.NoTextExtracted
+
+        assertTrue(exception.message?.contains("text") ?: false)
+        assertNotNull(exception)
     }
 
     @Test
     fun categoryException_isThrowable() {
-        val exception = CategoryException("Test error")
+        val exception = CategoryException.NotFound("Test")
         assertTrue(exception is Throwable)
     }
 
     @Test
     fun receiptScanException_isThrowable() {
-        val exception = ReceiptScanException("Test error")
+        val exception = ReceiptScanException.InvalidImage
         assertTrue(exception is Throwable)
     }
 
     @Test
     fun exception_canBeCaught() {
         try {
-            throw CategoryException("Test exception")
+            throw CategoryException.NotFound("Test exception")
         } catch (e: CategoryException) {
-            assertEquals("Test exception", e.message)
+            assertTrue(e.message?.contains("Test exception") ?: false)
         }
     }
 
     @Test
     fun exception_stackTraceIsAvailable() {
-        val exception = CategoryException("Test")
+        val exception = CategoryException.NotFound("Test")
         val stackTrace = exception.stackTrace
         assertNotNull(stackTrace)
     }
 
     @Test
     fun exception_toStringIncludesClassName() {
-        val exception = CategoryException("Test message")
+        val exception = CategoryException.NotFound("Test message")
         val exceptionString = exception.toString()
-        assertTrue(exceptionString.contains("CategoryException"))
+        assertTrue(exceptionString.contains("CategoryException") || exceptionString.contains("NotFound"))
     }
 }

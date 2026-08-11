@@ -13,7 +13,7 @@ import kotlin.test.assertNotNull
  * - Theme conversion to string
  * - Theme parsing from string
  */
-class AppThemeTest {
+class AppThemeEnumTest {
 
     @Test
     fun appTheme_shouldHaveLightTheme() {

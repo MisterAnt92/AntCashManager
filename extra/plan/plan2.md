@@ -1,5 +1,43 @@
-🎯 Prossimi passi:
-Integrare i 5 card nella ChartsScreen UI
-Completare Step 4 (Canvas) in sessione dedicata
-Implementare Step 7 (test) con FakeRepository review
-I dati sono pronti, le stringhe sono localizzate, i card sono leggeri e compilano. La UI integration può iniziare quando vuoi! 🚀
+Procedi quando finisci poi con - Unificare Roboelectric policy in AGENTS.md
+
+
+
+
+
+Aggiungere v2 Compose Rule enforcement
+
+
+
+
+
+Documentare SettingsRepository exception
+
+
+
+
+
+Aggiungere BaseUnitTest documentation
+
+
+
+
+
+Aggiungere Dark Theme Preview Rule
+
+
+
+
+
+Ridurre agent-android-clean-architecture.agent.md (1329 righe)
+
+
+
+
+
+Consolidare MockK vs Fake rule
+
+
+
+
+
+Consolidate CancellationException policy

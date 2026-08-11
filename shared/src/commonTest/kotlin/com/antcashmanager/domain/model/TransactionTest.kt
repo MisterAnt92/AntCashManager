@@ -18,7 +18,7 @@ import kotlin.test.assertTrue
  * - Encryption field handling
  * - Equality comparison
  */
-class TransactionTest {
+class TransactionDomainModelTest {
 
     @Test
     fun transaction_shouldHandleExpenseAmountCorrectly() {
@@ -103,12 +103,12 @@ class TransactionTest {
 
     @Test
     fun transaction_shouldStoreTimestamp() {
-        val timestamp = System.currentTimeMillis()
+        val currentTime = System.currentTimeMillis()
         val transaction = testTransaction {
-            timestamp = timestamp
+            timestamp = currentTime
         }
 
-        assertEquals(timestamp, transaction.timestamp)
+        assertEquals(currentTime, transaction.timestamp)
     }
 
     @Test

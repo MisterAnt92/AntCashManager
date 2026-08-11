@@ -250,7 +250,7 @@ class TransactionRepositoryImplTest {
 
          val result = repository.getSuggestions(since = 3_000L)
 
-         assertEquals(2, result.size)
+         assertEquals(2, result.titles.size)
      }
 
      @Test
@@ -263,7 +263,7 @@ class TransactionRepositoryImplTest {
 
          val result = repository.getSuggestions(since = 3_000L)
 
-         assertEquals(1, result.size)
+         assertEquals(1, result.titles.size)
      }
 
      @Test
@@ -273,7 +273,7 @@ class TransactionRepositoryImplTest {
 
          val result = repository.getSuggestions(since = 0L)
 
-         assertEquals(0, result.size)
+         assertEquals(0, result.titles.size)
      }
 
      private fun sampleTransaction() = Transaction(
