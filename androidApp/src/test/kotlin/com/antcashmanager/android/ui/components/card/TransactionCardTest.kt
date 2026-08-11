@@ -1,12 +1,11 @@
 package com.antcashmanager.android.ui.components.card
+import com.antcashmanager.android.BaseComposeUnitTest
 import org.junit.Ignore
 
-import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.performClick
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
-import org.junit.Rule
 import org.junit.Test
 
 /**
@@ -18,9 +17,7 @@ import org.junit.Test
  * - Formatting dei numeri
  * - Color feedback (expense vs income)
  */
-class TransactionCardTest {
-    @get:Rule
-    val composeTestRule = createComposeRule()
+class TransactionCardTest : BaseComposeUnitTest() {
 
     @Test
     fun transactionCard_shouldDisplayTitle() {

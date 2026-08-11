@@ -1,11 +1,10 @@
 package com.antcashmanager.android.ui.components.button
 
-import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
-import org.junit.Rule
+import com.antcashmanager.android.BaseComposeUnitTest
 import org.junit.Test
 
 /**
@@ -16,9 +15,7 @@ import org.junit.Test
  * - Callback execution su click
  * - Tint dinamico (non testabile direttamente, ma verifichiamo enabled state che lo controlla)
  */
-class ReorderButtonsTest {
-    @get:Rule
-    val composeTestRule = createComposeRule()
+class ReorderButtonsTest : BaseComposeUnitTest() {
 
     private val testUpDescription = "Test Move Up"
     private val testDownDescription = "Test Move Down"

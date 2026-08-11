@@ -1,10 +1,9 @@
 package com.antcashmanager.android.ui.components.button
+import com.antcashmanager.android.BaseComposeUnitTest
 import org.junit.Ignore
 
-import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.performClick
-import org.junit.Rule
 import org.junit.Test
 
 /**
@@ -19,9 +18,7 @@ import org.junit.Test
  * For instrumentation testing, use @RunWith(AndroidJUnit4::class) with createAndroidComposeRule().
  * For now, we keep them as unit test placeholders - they document the test structure.
  */
-class VisibilityToggleButtonTest {
-    @get:Rule
-    val composeTestRule = createComposeRule()
+class VisibilityToggleButtonTest : BaseComposeUnitTest() {
 
     @Test
     fun whenVisible_toggleButtonShowsVisibilityOffIcon() {

@@ -1,10 +1,9 @@
 package com.antcashmanager.android.ui.components.layout
+import com.antcashmanager.android.BaseComposeUnitTest
 import org.junit.Ignore
 
-import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.assertIsDisplayed
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
-import org.junit.Rule
 import org.junit.Test
 
 /**
@@ -16,9 +15,7 @@ import org.junit.Test
  * - Click callbacks
  * - Layout structure
  */
-class LeftSidebarTest {
-    @get:Rule
-    val composeTestRule = createComposeRule()
+class LeftSidebarTest : BaseComposeUnitTest() {
 
     @Test
     fun leftSidebar_shouldDisplayNavigation() {

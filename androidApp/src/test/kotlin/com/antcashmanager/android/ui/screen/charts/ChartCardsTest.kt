@@ -1,10 +1,10 @@
 package com.antcashmanager.android.ui.screen.charts
+import com.antcashmanager.android.BaseComposeUnitTest
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.antcashmanager.android.ui.screen.charts.DailyAmount
 import com.antcashmanager.android.ui.screen.charts.view.QuickStatsCard
@@ -12,7 +12,6 @@ import com.antcashmanager.android.ui.screen.charts.view.WeekdayExpenseCard
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.domain.model.CurrencyFormat
-import org.junit.Rule
 import org.junit.Test
 
 /**
@@ -28,10 +27,8 @@ import org.junit.Test
  * Uses Compose UI Test v2 framework (no BaseUnitTest - pure Compose UI test)
  * with kotlinx-coroutines-test for deterministic test execution.
  */
-class ChartCardsTest {
+class ChartCardsTest : BaseComposeUnitTest() {
 
-    @get:Rule
-    val composeTestRule = createComposeRule()
 
     // ============== QuickStatsCard Tests ==============
 

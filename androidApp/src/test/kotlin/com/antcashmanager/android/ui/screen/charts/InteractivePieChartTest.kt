@@ -1,16 +1,15 @@
 package com.antcashmanager.android.ui.screen.charts
+import com.antcashmanager.android.BaseComposeUnitTest
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.ui.screen.charts.view.InteractivePieChart
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
-import org.junit.Rule
 import org.junit.Test
 import kotlin.math.cos
 import kotlin.math.sin
@@ -29,10 +28,8 @@ import kotlin.math.sin
  *
  * Uses Compose UI Test v2 framework (no BaseUnitTest - pure Compose UI test).
  */
-class InteractivePieChartTest {
+class InteractivePieChartTest : BaseComposeUnitTest() {
 
-    @get:Rule
-    val composeTestRule = createComposeRule()
 
     private val sampleData = mapOf(
         "Food" to 100.0,
@@ -149,7 +146,7 @@ class InteractivePieChartTest {
  * These tests verify the mathematical correctness of the slice detection
  * algorithm without needing full Compose rendering.
  */
-class PieChartSliceDetectionTest {
+class PieChartSliceDetectionTest : BaseComposeUnitTest() {
 
     @Test
     fun sliceDetection_identifiesCorrectSliceAtStartAngle() {

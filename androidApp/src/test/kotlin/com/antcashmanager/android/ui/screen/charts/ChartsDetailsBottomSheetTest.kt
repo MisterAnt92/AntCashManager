@@ -1,16 +1,15 @@
 package com.antcashmanager.android.ui.screen.charts
+import com.antcashmanager.android.BaseComposeUnitTest
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.antcashmanager.android.ui.screen.charts.view.ChartsDetailsBottomSheet
 import com.antcashmanager.android.ui.screen.charts.view.ChartDetailsData
 import com.antcashmanager.android.ui.screen.charts.view.TrendDirection
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
-import org.junit.Rule
 import org.junit.Test
 
 /**
@@ -24,10 +23,8 @@ import org.junit.Test
  *
  * Uses Compose UI Test v2 framework (no BaseUnitTest - pure Compose UI test).
  */
-class ChartsDetailsBottomSheetTest {
+class ChartsDetailsBottomSheetTest : BaseComposeUnitTest() {
 
-    @get:Rule
-    val composeTestRule = createComposeRule()
 
     private val sampleDetails = ChartDetailsData(
         categoryName = "Food",

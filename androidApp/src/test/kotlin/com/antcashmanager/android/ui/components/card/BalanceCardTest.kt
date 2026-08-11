@@ -1,12 +1,11 @@
 package com.antcashmanager.android.ui.components.card
+import com.antcashmanager.android.BaseComposeUnitTest
 import org.junit.Ignore
 
-import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.assertIsDisplayed
 import com.antcashmanager.android.ui.screen.home.view.BalanceCard
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
-import org.junit.Rule
 import org.junit.Test
 
 /**
@@ -21,9 +20,7 @@ import org.junit.Test
  * For instrumentation testing, use @RunWith(AndroidJUnit4::class) with createAndroidComposeRule().
  * For now, we keep them as unit test placeholders - they document the test structure.
  */
-class BalanceCardTest {
-    @get:Rule
-    val composeTestRule = createComposeRule()
+class BalanceCardTest : BaseComposeUnitTest() {
 
     @Test
     fun balanceCard_shouldDisplayPositiveBalance() {
