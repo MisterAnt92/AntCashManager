@@ -239,7 +239,9 @@ The app includes receipt scanning via Google ML Kit Text Recognition v2:
 - ✅ Use **MockK** for all mocking (`io.mockk:mockk`)
 - ❌ **Mockito is forbidden** – never use Mockito
 - ❌ Never import real database libraries (Room, DataStore) in tests – use Fake repositories or MockK
-- ❌ Never use Roboelectric for standard unit tests – unit tests must run on JVM with MockK
+- ❌ **Roboelectric is STRICTLY for instrumentation tests** (`src/androidTest`) – NEVER in unit tests (`src/test`)
+  - Unit tests must run on JVM with MockK, no Android Framework simulation needed
+  - Only use Roboelectric in instrumentation tests when simulating Android Framework behavior without device
 - ✅ Use Fake repositories from `com.antcashmanager.testutil.Fake*` package for data layer isolation
 
 **Test Data:**
@@ -248,7 +250,8 @@ The app includes receipt scanning via Google ML Kit Text Recognition v2:
 - ❌ Never hardcode complex test data directly in test methods
 
 **Compose UI Unit Tests:**
-- ✅ Use `androidx.compose.ui.test.junit4.v2.createComposeRule()` (v2 API with StandardTestDispatcher)
+- ✅ **MANDATORY: Use `androidx.compose.ui.test.junit4.v2.createComposeRule()`** (v2 API with StandardTestDispatcher)
+- ❌ **NEVER use deprecated v1** (`androidx.compose.ui.test.junit4.createComposeRule()`) – v1 is deprecated and outdated
 - ❌ **Do NOT use Roboelectric for Compose UI unit tests** – Roboelectric is for Android Framework simulation, not Compose testing
 - ✅ For interactive UI testing (tap, drag, verify visuals) → move to instrumentation test (`src/androidTest`) with `createAndroidComposeRule<ComponentActivity>()`
 - ❌ Never mix unit test Compose rules with Roboelectric configuration
@@ -257,13 +260,41 @@ The app includes receipt scanning via Google ML Kit Text Recognition v2:
 - ✅ Pattern: `method_shouldExpectedBehavior_whenCondition` (no backticks)
 - Example: `insertTransaction_shouldPersistAndRetrieve_whenValidDataProvided`
 
-**BaseUnitTest Utilities:**
-- `BaseUnitTest` provides:
-  - `testDispatcher: TestDispatcher` (auto-setup as `Dispatchers.Main`)
-  - `runUnitTest { }` – shorthand for `runTest(testDispatcher) { }`
-  - `runViewModelTest { }` – alias of `runUnitTest` for semantic clarity
-  - `launchInBackground { }` – launches coroutines in `backgroundScope` for Flow collectors/long-running jobs
-- ❌ Don't duplicate `Dispatchers.setMain`/`resetMain` or `StandardTestDispatcher()` setup – `BaseUnitTest` handles it
+**BaseUnitTest Utilities** (`androidApp/src/test/kotlin/com/antcashmanager/android/BaseUnitTest.kt`):
+- **Always extend `BaseUnitTest`** in `androidApp/src/test/kotlin` for ViewModel and Android host-side tests
+- `BaseUnitTest` automatically provides:
+  - `testDispatcher: TestDispatcher` – pre-configured as `Dispatchers.Main` for the test scope
+  - `runUnitTest { ... }` – shorthand for `runTest(testDispatcher) { ... }` (wraps coroutine with test dispatcher)
+  - `runViewModelTest { ... }` – semantic alias of `runUnitTest` for ViewModel-specific tests
+  - `launchInBackground { ... }` – launches coroutines in `backgroundScope` for Flow collectors, LiveData observers, or long-running background jobs that need to complete before test ends
+  - `advanceUntilIdle()` – available inside test block to advance dispatcher until all pending coroutines complete
+- **Do NOT manually set up:**
+  - ❌ `Dispatchers.setMain()` / `Dispatchers.resetMain()` – `BaseUnitTest` handles this in `setUp()`/`tearDown()`
+  - ❌ `StandardTestDispatcher()` – already created and assigned as Main dispatcher
+  - ❌ `runTest()` – use `runViewModelTest()` instead for consistency
+
+**Example:**
+```kotlin
+class MyViewModelTest : BaseUnitTest() {
+    private val repo = mockk<Repository>()
+    private lateinit var viewModel: MyViewModel
+
+    @Before
+    fun setup() {
+        viewModel = MyViewModel(repo)
+    }
+
+    @Test
+    fun loadData_shouldUpdateState() = runViewModelTest {
+        coEvery { repo.getData() } returns Result.success(listOf("item1"))
+        
+        viewModel.loadData()
+        advanceUntilIdle()
+        
+        assertEquals(listOf("item1"), viewModel.state.value)
+    }
+}
+```
 
 ### Instrumentation Test Rules
 

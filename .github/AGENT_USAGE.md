@@ -50,7 +50,7 @@ Quando usare gli agenti specializzati
 - Rispetta i source set del progetto:
   - `androidApp/src/test/kotlin` per ViewModel e logica Android host-side
   - `shared/src/commonTest/kotlin` per logica KMP `commonMain`
-  - `shared/src/test/kotlin` per repository/data test host-side
+  - `shared/src/androidHostTest/kotlin` per repository/data test host-side
 
 How to propose changes
 ----------------------
