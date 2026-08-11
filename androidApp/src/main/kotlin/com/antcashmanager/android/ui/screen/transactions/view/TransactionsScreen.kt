@@ -65,6 +65,9 @@ import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
+import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
+import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
+import androidx.window.layout.FoldingFeature
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
@@ -193,6 +196,11 @@ internal fun TransactionsContent(
         .collectAsState(initial = true)
     val coroutineScope = rememberCoroutineScope()
     val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
+
+    // Foldable device support
+    val displayFeatures = LocalDisplayFeatures.current
+    val multiPaneCoordinator = LocalMultiPaneCoordinator.current
+    val foldingFeature = displayFeatures.filterIsInstance<FoldingFeature>().firstOrNull()
 
     val listState = rememberLazyListState()
     val showScrollToTop by remember {
@@ -487,6 +495,11 @@ internal fun TransactionsContent(
                         TransactionItem(
                             transaction = transaction,
                             onClick = {
+                                // Notify multi-pane coordinator for foldable split-view sync
+                                multiPaneCoordinator?.selectTransaction(
+                                    transaction = transaction,
+                                    navigateToDetailsPane = foldingFeature?.isSeparating == true
+                                )
                                 navController?.navigate("add_transaction?transactionId=${transaction.id}")
                             },
                             displayType = transactionDisplayType,

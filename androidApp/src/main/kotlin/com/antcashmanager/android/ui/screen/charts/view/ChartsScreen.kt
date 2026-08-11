@@ -36,6 +36,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
+import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
+import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
+import androidx.window.layout.FoldingFeature
 import androidx.activity.compose.BackHandler
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -151,6 +154,12 @@ internal fun ChartsContent(
     val analyticsManager: AnalyticsManager = koinInject()
     val scope = rememberCoroutineScope()
     val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
+
+    // Foldable device support
+    val displayFeatures = LocalDisplayFeatures.current
+    val multiPaneCoordinator = LocalMultiPaneCoordinator.current
+    val foldingFeature = displayFeatures.filterIsInstance<FoldingFeature>().firstOrNull()
+
     val dateFormat = remember { SimpleDateFormat("dd MMM yyyy", Locale.getDefault()) }
     val fmt = LocalCurrencyFormat.current
     val shareLabel = stringResource(R.string.share)
