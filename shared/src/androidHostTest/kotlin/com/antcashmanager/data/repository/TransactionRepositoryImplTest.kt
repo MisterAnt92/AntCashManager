@@ -109,14 +109,174 @@ class TransactionRepositoryImplTest {
         assertEquals(1, fakeWidgetUpdateNotifier.notifyCount)
     }
 
-    @Test
-    fun deleteAllTransactions_shouldNotifyWidgetUpdate_whenAllTransactionsCleared() = runTest {
-        repository.deleteAllTransactions()
+     @Test
+     fun deleteAllTransactions_shouldNotifyWidgetUpdate_whenAllTransactionsCleared() = runTest {
+         repository.deleteAllTransactions()
 
-        assertEquals(1, fakeWidgetUpdateNotifier.notifyCount)
-    }
+         assertEquals(1, fakeWidgetUpdateNotifier.notifyCount)
+     }
 
-    private fun sampleTransaction() = Transaction(
+     @Test
+     fun getDistinctPayees_shouldReturnDecryptedDistinctValues_whenCalledWithSince() = runTest {
+         val encrypted1 = fakeCipher.encryptString("Supermarket")
+         val encrypted2 = fakeCipher.encryptString("Pharmacy")
+         fakeDao.distinctPayeesFlow.value = listOf(encrypted1, encrypted2)
+
+         val values = repository.getDistinctPayees(since = 1_000L).first()
+
+         assertEquals(listOf("Supermarket", "Pharmacy"), values)
+         assertEquals(1_000L, fakeDao.lastDistinctPayeesSince)
+     }
+
+     @Test
+     fun getDistinctNotes_shouldReturnDecryptedDistinctValues_whenCalledWithSince() = runTest {
+         val encrypted = fakeCipher.encryptString("Weekend promotion")
+         fakeDao.distinctNotesFlow.value = listOf(encrypted)
+
+         val values = repository.getDistinctNotes(since = 2_000L).first()
+
+         assertEquals(listOf("Weekend promotion"), values)
+         assertEquals(2_000L, fakeDao.lastDistinctNotesSince)
+     }
+
+     @Test
+     fun getDistinctLocations_shouldReturnDecryptedDistinctValues_whenCalledWithSince() = runTest {
+         val encrypted1 = fakeCipher.encryptString("Rome")
+         val encrypted2 = fakeCipher.encryptString("Milan")
+         fakeDao.distinctLocationsFlow.value = listOf(encrypted1, encrypted2)
+
+         val values = repository.getDistinctLocations(since = 3_000L).first()
+
+         assertEquals(listOf("Rome", "Milan"), values)
+         assertEquals(3_000L, fakeDao.lastDistinctLocationsSince)
+     }
+
+     @Test
+     fun getDistinctTags_shouldReturnDecryptedDistinctValues_whenCalledWithSince() = runTest {
+         val encrypted = fakeCipher.encryptString("food,weekend")
+         fakeDao.distinctTagsFlow.value = listOf(encrypted)
+
+         val values = repository.getDistinctTags(since = 4_000L).first()
+
+         assertEquals(listOf("food,weekend"), values)
+         assertEquals(4_000L, fakeDao.lastDistinctTagsSince)
+     }
+
+     @Test
+     fun getTransactionsByDateRange_shouldFilterByTimestampBoundaries_whenCalledWithDateRange() = runTest {
+         val from = 1_000L
+         val to = 5_000L
+         val entity1 = sampleEntity("Title1", "", "", "", "")
+             .copy(timestamp = 2_000L)
+         val entity2 = sampleEntity("Title2", "", "", "", "")
+             .copy(timestamp = 3_500L)
+         val entity3 = sampleEntity("Title3", "", "", "", "")
+             .copy(timestamp = 6_000L) // Out of range
+         fakeDao.transactionsFlow.value = listOf(entity1, entity2, entity3)
+
+         val result = repository.getTransactionsByDateRange(from, to).first()
+
+         assertEquals(2, result.size)
+         assertEquals("Title1", result[0].title)
+         assertEquals("Title2", result[1].title)
+     }
+
+     @Test
+     fun getRecurringTransactions_shouldReturnOnlyRecurringTransactions_whenQueried() = runTest {
+         val recurring = sampleEntity("Rent", "", "", "", "")
+             .copy(isRecurring = true, recurrenceInterval = "MONTHLY")
+         val nonRecurring = sampleEntity("Groceries", "", "", "", "")
+             .copy(isRecurring = false)
+         fakeDao.transactionsFlow.value = listOf(recurring, nonRecurring)
+
+         val result = repository.getRecurringTransactions().first()
+
+         assertEquals(1, result.size)
+         assertEquals("Rent", result.first().title)
+         assertEquals(true, result.first().isRecurring)
+     }
+
+     @Test
+     fun insertTransactions_shouldBatchInsertAndNotifyWidget_whenMultipleTransactionsProvided() = runTest {
+         val transactions = listOf(
+             sampleTransaction().copy(id = 1L, title = "Trans1"),
+             sampleTransaction().copy(id = 2L, title = "Trans2"),
+             sampleTransaction().copy(id = 3L, title = "Trans3"),
+         )
+
+         repository.insertTransactions(transactions)
+
+         assertEquals(3, fakeDao.lastBatchInserted?.size)
+         assertEquals(1, fakeWidgetUpdateNotifier.notifyCount)
+     }
+
+     @Test
+     fun updateTransactions_shouldBatchUpdateAndNotifyWidget_whenMultipleTransactionsProvided() = runTest {
+         val transactions = listOf(
+             sampleTransaction().copy(id = 1L, title = "Updated1"),
+             sampleTransaction().copy(id = 2L, title = "Updated2"),
+         )
+
+         repository.updateTransactions(transactions)
+
+         assertEquals(2, fakeDao.lastBatchUpdated?.size)
+         assertEquals(1, fakeWidgetUpdateNotifier.notifyCount)
+     }
+
+     @Test
+     fun renameCategory_shouldUpdateCategoryInAllTransactions_whenCategoryRenamed() = runTest {
+         val oldName = "Food"
+         val newName = "Groceries"
+         val oldEntity = sampleEntity("Lunch", "", "", "", "").copy(category = oldName)
+         val otherEntity = sampleEntity("Rent", "", "", "", "").copy(category = "Housing")
+         fakeDao.transactionsFlow.value = listOf(oldEntity, otherEntity)
+
+         repository.renameCategory(oldName, newName, "restaurant", 0xFF90A4AE)
+
+         val updatedOld = fakeDao.transactionsFlow.value.find { it.category == newName }
+         assertEquals(newName, updatedOld?.category)
+         assertEquals("restaurant", updatedOld?.categoryIcon)
+     }
+
+     @Test
+     fun getSuggestions_shouldReturnDecryptedSuggestionsWithoutDuplicates_whenTransactionsHaveSensitiveFields() = runTest {
+         val encrypted1 = fakeCipher.encryptString("Lunch")
+         val encrypted2 = fakeCipher.encryptString("Pizza")
+         val entity1 = sampleEntity(encrypted1, "", "", "", "")
+             .copy(timestamp = 5_000L)
+         val entity2 = sampleEntity(encrypted2, "", "", "", "")
+             .copy(timestamp = 6_000L)
+         fakeDao.transactionsFlow.value = listOf(entity1, entity2)
+
+         val result = repository.getSuggestions(since = 3_000L)
+
+         assertEquals(2, result.size)
+     }
+
+     @Test
+     fun getSuggestions_shouldFilterBySince_whenCalledWithTimestampCutoff() = runTest {
+         val encrypted1 = fakeCipher.encryptString("OldTitle")
+         val encrypted2 = fakeCipher.encryptString("NewTitle")
+         val entity1 = sampleEntity(encrypted1, "", "", "", "").copy(timestamp = 1_000L)
+         val entity2 = sampleEntity(encrypted2, "", "", "", "").copy(timestamp = 5_000L)
+         fakeDao.transactionsFlow.value = listOf(entity1, entity2)
+
+         val result = repository.getSuggestions(since = 3_000L)
+
+         assertEquals(1, result.size)
+     }
+
+     @Test
+     fun getSuggestions_shouldReturnEmptyList_whenAllFieldsAreEmpty() = runTest {
+         val entity = sampleEntity("", "", "", "", "")
+         fakeDao.transactionsFlow.value = listOf(entity)
+
+         val result = repository.getSuggestions(since = 0L)
+
+         assertEquals(0, result.size)
+     }
+
+     private fun sampleTransaction() = Transaction(
         id = 1L,
         title = "Spesa supermercato",
         amount = 100.5,
@@ -183,11 +343,21 @@ private class FakeWidgetUpdateNotifier : WidgetUpdateNotifier {
 }
 
 private class FakeTransactionDao : TransactionDao {
-    val transactionsFlow = MutableStateFlow<List<TransactionEntity>>(emptyList())
-    val distinctTitlesFlow = MutableStateFlow<List<String>>(emptyList())
+     val transactionsFlow = MutableStateFlow<List<TransactionEntity>>(emptyList())
+     val distinctTitlesFlow = MutableStateFlow<List<String>>(emptyList())
+     val distinctPayeesFlow = MutableStateFlow<List<String>>(emptyList())
+     val distinctNotesFlow = MutableStateFlow<List<String>>(emptyList())
+     val distinctLocationsFlow = MutableStateFlow<List<String>>(emptyList())
+     val distinctTagsFlow = MutableStateFlow<List<String>>(emptyList())
 
-    var lastInserted: TransactionEntity? = null
-    var lastDistinctTitlesSince: Long? = null
+     var lastInserted: TransactionEntity? = null
+     var lastDistinctTitlesSince: Long? = null
+     var lastDistinctPayeesSince: Long? = null
+     var lastDistinctNotesSince: Long? = null
+     var lastDistinctLocationsSince: Long? = null
+     var lastDistinctTagsSince: Long? = null
+     var lastBatchInserted: List<TransactionEntity>? = null
+     var lastBatchUpdated: List<TransactionEntity>? = null
 
     override fun getAllTransactions(): Flow<List<TransactionEntity>> = transactionsFlow
 
@@ -237,29 +407,43 @@ private class FakeTransactionDao : TransactionDao {
         }
     }
 
-    override fun getDistinctTitles(since: Long): Flow<List<String>> {
-        lastDistinctTitlesSince = since
-        return distinctTitlesFlow
-    }
+     override fun getDistinctTitles(since: Long): Flow<List<String>> {
+         lastDistinctTitlesSince = since
+         return distinctTitlesFlow
+     }
 
-    override fun getDistinctPayees(since: Long): Flow<List<String>> = flowOf(emptyList())
+     override fun getDistinctPayees(since: Long): Flow<List<String>> {
+         lastDistinctPayeesSince = since
+         return distinctPayeesFlow
+     }
 
-    override fun getDistinctNotes(since: Long): Flow<List<String>> = flowOf(emptyList())
+     override fun getDistinctNotes(since: Long): Flow<List<String>> {
+         lastDistinctNotesSince = since
+         return distinctNotesFlow
+     }
 
-    override fun getDistinctLocations(since: Long): Flow<List<String>> = flowOf(emptyList())
+     override fun getDistinctLocations(since: Long): Flow<List<String>> {
+         lastDistinctLocationsSince = since
+         return distinctLocationsFlow
+     }
 
-    override fun getDistinctTags(since: Long): Flow<List<String>> = flowOf(emptyList())
+     override fun getDistinctTags(since: Long): Flow<List<String>> {
+         lastDistinctTagsSince = since
+         return distinctTagsFlow
+     }
 
-    override suspend fun insertTransactions(transactions: List<TransactionEntity>): List<Long> {
-        transactionsFlow.value = transactionsFlow.value + transactions
-        return transactions.map { it.id }
-    }
+     override suspend fun insertTransactions(transactions: List<TransactionEntity>): List<Long> {
+         lastBatchInserted = transactions
+         transactionsFlow.value = transactionsFlow.value + transactions
+         return transactions.map { it.id }
+     }
 
-    override suspend fun updateTransactions(transactions: List<TransactionEntity>) {
-        transactionsFlow.value = transactionsFlow.value.map { current ->
-            transactions.firstOrNull { it.id == current.id } ?: current
-        }
-    }
+     override suspend fun updateTransactions(transactions: List<TransactionEntity>) {
+         lastBatchUpdated = transactions
+         transactionsFlow.value = transactionsFlow.value.map { current ->
+             transactions.firstOrNull { it.id == current.id } ?: current
+         }
+     }
 
     override suspend fun getSuggestions(since: Long): List<SuggestionRow> {
         return transactionsFlow.value
