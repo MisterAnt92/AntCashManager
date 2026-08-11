@@ -15,9 +15,8 @@ subprojects {
         configurations.all {
             resolutionStrategy {
                 // Enforce project(String) notation over deprecated Project object notation
-                eachDependency { details ->
-                    // This ensures compatibility with future Gradle versions
-                }
+                // This configuration ensures compatibility with future Gradle versions
+                // where Project object as dependency notation will no longer be supported
             }
         }
     }
