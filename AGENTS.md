@@ -206,20 +206,57 @@ The app includes receipt scanning via Google ML Kit Text Recognition v2:
 
 ## Testing
 
-| Scope | Source Set | Base Class |
-|---|---|---|
-| ViewModel | `androidApp/src/test/kotlin` | `com.antcashmanager.android.BaseUnitTest` |
-| Domain (commonMain) | `shared/src/commonTest/kotlin` | — |
-| Data/Repository | `shared/src/androidHostTest/kotlin` | — |
+| Scope | Source Set | Base Class | Framework |
+|---|---|---|---|
+| ViewModel | `androidApp/src/test/kotlin` | `com.antcashmanager.android.BaseUnitTest` | JUnit 4 + MockK + Compose UI Test |
+| Domain (commonMain) | `shared/src/commonTest/kotlin` | — | JUnit 4 + MockK |
+| Data/Repository | `shared/src/androidHostTest/kotlin` | — | JUnit 4 + MockK |
+| Instrumentation (UI) | `androidApp/src/androidTest/kotlin` | — | AndroidJUnit4 + Compose UI Test |
 
-- Use **MockK** for mocking; Mockito is forbidden.
-- Test naming: `method_shouldExpectedBehavior_whenCondition` (no backticks).
+### Unit Test Rules
+
+**Mocking & Dependencies:**
+- ✅ Use **MockK** for all mocking (`io.mockk:mockk`)
+- ❌ **Mockito is forbidden** – never use Mockito
+- ❌ Never import real database libraries (Room, DataStore) in tests – use Fake repositories or MockK
+- ❌ Never use Roboelectric for standard unit tests – unit tests must run on JVM with MockK
+- ✅ Use Fake repositories from `com.antcashmanager.testutil.Fake*` package for data layer isolation
+
+**Test Data:**
+- ✅ Use `TestDataBuilder` pattern for creating test data (`shared/src/commonTest/testutil/TestDataBuilder.kt`)
+- ✅ Create builder-style APIs: `testTransaction { title = "Lunch"; amount = -50.0 }`
+- ❌ Never hardcode complex test data directly in test methods
+
+**Compose UI Unit Tests:**
+- ✅ Use `androidx.compose.ui.test.junit4.v2.createComposeRule()` (v2 API with StandardTestDispatcher)
+- ❌ **Do NOT use Roboelectric for Compose UI unit tests** – Roboelectric is for Android Framework simulation, not Compose testing
+- ✅ For interactive UI testing (tap, drag, verify visuals) → move to instrumentation test (`src/androidTest`) with `createAndroidComposeRule<ComponentActivity>()`
+- ❌ Never mix unit test Compose rules with Roboelectric configuration
+
+**Test Naming:**
+- ✅ Pattern: `method_shouldExpectedBehavior_whenCondition` (no backticks)
+- Example: `insertTransaction_shouldPersistAndRetrieve_whenValidDataProvided`
+
+**BaseUnitTest Utilities:**
 - `BaseUnitTest` provides:
   - `testDispatcher: TestDispatcher` (auto-setup as `Dispatchers.Main`)
-  - `runUnitTest { }` – shorthand for `runTest(testDispatcher) { }` (use this instead of raw `runTest`)
+  - `runUnitTest { }` – shorthand for `runTest(testDispatcher) { }`
   - `runViewModelTest { }` – alias of `runUnitTest` for semantic clarity
-  - `launchInBackground { }` – launches coroutines in `backgroundScope` for Flow collectors/long-running jobs in tests
-- Don't duplicate `Dispatchers.setMain`/`resetMain` or `StandardTestDispatcher()` setup – `BaseUnitTest` handles it.
+  - `launchInBackground { }` – launches coroutines in `backgroundScope` for Flow collectors/long-running jobs
+- ❌ Don't duplicate `Dispatchers.setMain`/`resetMain` or `StandardTestDispatcher()` setup – `BaseUnitTest` handles it
+
+### Instrumentation Test Rules
+
+- ✅ Use `@RunWith(AndroidJUnit4::class)` for real device/emulator tests
+- ✅ Use `createAndroidComposeRule<ComponentActivity>()` for Compose UI interaction tests
+- ✅ Can use Roboelectric (`@RunWith(RobolectricTestRunner::class)`) for Android Framework simulation without device
+- ✅ Test real database operations, file I/O, and system integration
+
+### Forbidden Imports in Tests
+- ❌ `mockito.*` – use MockK instead
+- ❌ Real Room database/DataStore implementations in unit tests – use Fakes
+- ❌ Direct `Context`, `SharedPreferences`, or `File` I/O in unit tests
+- ❌ `org.robolectric.*` in unit test files – move to instrumentation tests if needed
 
 ---
 
