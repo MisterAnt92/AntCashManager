@@ -32,8 +32,8 @@ class ChartsViewModelTest : BaseUnitTest() {
 
     @Test
     fun initialChartDataIsEmpty() = runViewModelTest {
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            launch { viewModel.chartData.collect { } }
+        val collectJob = launchInBackground {
+            viewModel.chartData.collect { }
         }
         advanceUntilIdle()
 
@@ -67,8 +67,8 @@ class ChartsViewModelTest : BaseUnitTest() {
             Transaction(id = 5, title = "Snack", amount = -50.0, timestamp = jan3, category = "Food", type = TransactionType.EXPENSE, paymentType = PaymentType.CASH),
         )
 
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            launch { viewModel.chartData.collect { } }
+        val collectJob = launchInBackground {
+            viewModel.chartData.collect { }
         }
 
         viewModel.setDateRange(jan1 - 86_400_000L, jan3 + 86_400_000L)
@@ -97,8 +97,8 @@ class ChartsViewModelTest : BaseUnitTest() {
             Transaction(id = 2, title = "Monday 2", amount = -50.0, timestamp = monday, category = "Food", type = TransactionType.EXPENSE, paymentType = PaymentType.CASH),
         )
 
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            launch { viewModel.chartData.collect { } }
+        val collectJob = launchInBackground {
+            viewModel.chartData.collect { }
         }
 
         cal.set(2024, 0, 1, 0, 0, 0)
@@ -134,8 +134,8 @@ class ChartsViewModelTest : BaseUnitTest() {
             Transaction(id = 2, title = "Salary", amount = 5000.0, timestamp = monday, category = "Salary", type = TransactionType.INCOME, paymentType = PaymentType.ELECTRONIC),
         )
 
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            launch { viewModel.chartData.collect { } }
+        val collectJob = launchInBackground {
+            viewModel.chartData.collect { }
         }
 
         cal.set(2024, 0, 1, 0, 0, 0)
@@ -169,8 +169,8 @@ class ChartsViewModelTest : BaseUnitTest() {
             Transaction(id = 1, title = "Single", amount = -42.50, timestamp = date1, category = "Food", type = TransactionType.EXPENSE, paymentType = PaymentType.CASH),
         )
 
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            launch { viewModel.chartData.collect { } }
+        val collectJob = launchInBackground {
+            viewModel.chartData.collect { }
         }
 
         viewModel.setDateRange(date1 - 86_400_000L, date1 + 86_400_000L)

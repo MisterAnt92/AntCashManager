@@ -1,5 +1,4 @@
 package com.antcashmanager.android.ui.screen.charts
-import org.junit.Ignore
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -7,7 +6,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.ui.screen.charts.view.ChartsDetailsBottomSheet
 import com.antcashmanager.android.ui.screen.charts.view.ChartDetailsData
 import com.antcashmanager.android.ui.screen.charts.view.TrendDirection
@@ -23,8 +21,10 @@ import org.junit.Test
  * - Dismiss callback functionality
  * - Amount masking behavior
  * - Trend direction rendering
+ *
+ * Uses Compose UI Test v2 framework (no BaseUnitTest - pure Compose UI test).
  */
-class ChartsDetailsBottomSheetTest : BaseUnitTest() {
+class ChartsDetailsBottomSheetTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()

@@ -1,5 +1,4 @@
 package com.antcashmanager.android.ui.screen.charts
-import org.junit.Ignore
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
@@ -7,7 +6,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.ui.screen.charts.DailyAmount
 import com.antcashmanager.android.ui.screen.charts.view.QuickStatsCard
 import com.antcashmanager.android.ui.screen.charts.view.WeekdayExpenseCard
@@ -27,10 +25,10 @@ import org.junit.Test
  * - Accessibility attributes (semantics)
  * - Empty state handling
  *
- * Uses Compose UI Test v2 framework (StandardTestDispatcher-based)
+ * Uses Compose UI Test v2 framework (no BaseUnitTest - pure Compose UI test)
  * with kotlinx-coroutines-test for deterministic test execution.
  */
-class ChartCardsTest : BaseUnitTest() {
+class ChartCardsTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()

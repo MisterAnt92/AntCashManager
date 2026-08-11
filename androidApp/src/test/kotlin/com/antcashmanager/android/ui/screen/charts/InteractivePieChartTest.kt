@@ -1,5 +1,4 @@
 package com.antcashmanager.android.ui.screen.charts
-import org.junit.Ignore
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Surface
@@ -9,7 +8,6 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
 import androidx.compose.ui.unit.dp
-import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.ui.screen.charts.view.InteractivePieChart
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import org.junit.Rule
@@ -28,8 +26,10 @@ import kotlin.math.sin
  *
  * Note: Canvas-based click detection is tested through tap coordinates
  * that map to specific pie chart slices.
+ *
+ * Uses Compose UI Test v2 framework (no BaseUnitTest - pure Compose UI test).
  */
-class InteractivePieChartTest : BaseUnitTest() {
+class InteractivePieChartTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
@@ -149,7 +149,7 @@ class InteractivePieChartTest : BaseUnitTest() {
  * These tests verify the mathematical correctness of the slice detection
  * algorithm without needing full Compose rendering.
  */
-class PieChartSliceDetectionTest : BaseUnitTest() {
+class PieChartSliceDetectionTest {
 
     @Test
     fun sliceDetection_identifiesCorrectSliceAtStartAngle() {

@@ -44,8 +44,8 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
 
     @Test
     fun selectChartCategory_updatesSelectedChartDetails() = runViewModelTest {
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            launch { viewModel.selectedChartDetails.collect { } }
+        val collectJob = launchInBackground {
+            viewModel.selectedChartDetails.collect { }
         }
 
         viewModel.selectChartCategory(
@@ -118,8 +118,8 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
 
     @Test
     fun selectChartCategory_coercesPercentageBounds() = runViewModelTest {
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            launch { viewModel.selectedChartDetails.collect { } }
+        val collectJob = launchInBackground {
+            viewModel.selectedChartDetails.collect { }
         }
 
         viewModel.selectChartCategory(
@@ -162,8 +162,8 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
 
     @Test
     fun selectChartCategory_storesColorHex() = runViewModelTest {
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            launch { viewModel.selectedChartDetails.collect { } }
+        val collectJob = launchInBackground {
+            viewModel.selectedChartDetails.collect { }
         }
 
         val colorHex = 0xFFE57373L
@@ -183,8 +183,8 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
 
     @Test
     fun clearChartSelection_setsDetailsToNull() = runViewModelTest {
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            launch { viewModel.selectedChartDetails.collect { } }
+        val collectJob = launchInBackground {
+            viewModel.selectedChartDetails.collect { }
         }
 
         // First select a category
@@ -208,8 +208,8 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
 
     @Test
     fun selectChartCategory_handlesIncomeCategory() = runViewModelTest {
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            launch { viewModel.selectedChartDetails.collect { } }
+        val collectJob = launchInBackground {
+            viewModel.selectedChartDetails.collect { }
         }
 
         viewModel.selectChartCategory(
@@ -229,8 +229,8 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
 
     @Test
     fun selectChartCategory_defaultsTrendToNeutral() = runViewModelTest {
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            launch { viewModel.selectedChartDetails.collect { } }
+        val collectJob = launchInBackground {
+            viewModel.selectedChartDetails.collect { }
         }
 
         viewModel.selectChartCategory(
