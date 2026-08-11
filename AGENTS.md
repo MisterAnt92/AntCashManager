@@ -4,24 +4,44 @@ Guide for AI coding agents working in this codebase. Read before making any chan
 
 ---
 
-## ⚠️ CRITICAL: Never Commit Changes
+## ⚠️ CRITICAL: Never Commit Changes Without Asking
 
-**AGENTS (AI assistants) MUST NEVER create git commits or push changes to the repository. NEVER. EVER.**
+**AGENTS (AI assistants) MUST NEVER create git commits or push changes without explicit human authorization. NEVER. EVER.**
 
 ### Non-Negotiable Policy:
-1. **NO `git add`** – Do not stage any files automatically
-2. **NO `git commit`** – Do not create commits under any circumstances
-3. **NO `git push`** – Do not push to remote or any branch
-4. **NO automated commits** – Even if authorized for a task, ask first before committing
-5. **NO exceptions** – This rule has zero exceptions
+1. **ALWAYS ASK FIRST** – Before executing ANY git operation, ask the human for explicit permission
+   - Show what changes will be staged
+   - Show the proposed commit message
+   - Wait for clear approval (e.g., "procedi", "vai", "sì", "yes", "commit")
+   - Do NOT assume approval from unrelated prior messages
+
+2. **NO `git add`** – Do not stage any files automatically without asking
+3. **NO `git commit`** – Do not create commits under any circumstances without asking
+4. **NO `git push`** – Do not push to remote or any branch without asking
+5. **NO automated commits** – Even if authorized for a task, ask first before committing
+6. **NO exceptions** – This rule has zero exceptions, zero edge cases
 
 ### Correct Workflow:
-- ✅ Write code, edit files, create new files as needed for the task
-- ✅ Run tests and verify changes locally
-- ✅ Describe changes clearly to the human user
-- ✅ Show diffs and explain what was modified
-- ✅ **ALWAYS WAIT** for explicit human authorization before any git operation
-- ✅ Only execute `git add`/`git commit`/`git push` if the human explicitly says "commit" or "push"
+1. **WRITE & TEST** – Write code, edit files, create new files as needed for the task
+2. **VERIFY** – Run tests and verify changes locally
+3. **DESCRIBE** – Describe changes clearly to the human user with:
+   - Summary of what was changed
+   - Why each change was made
+   - Any potential side effects or risks
+4. **SHOW DIFFS** – Show `git diff` or detailed explanation of modifications
+5. **ASK FOR PERMISSION** – Before ANY git operation, explicitly ask:
+   - "Ready to commit these changes. Here's what will be staged: [list files]"
+   - "Proposed commit message: [show message]"
+   - "Should I proceed with commit? (yes/no)"
+6. **WAIT FOR CLEAR APPROVAL** – Only after explicit human approval like:
+   - "procedi" (Italian: proceed)
+   - "vai" (Italian: go)
+   - "yes" / "sì" (English/Italian: yes)
+   - "commit" / "push"
+   - "go ahead"
+7. **EXECUTE** – Only then execute `git add`/`git commit`/`git push`
+
+**IMPORTANT:** Do not assume approval from context or prior messages. If unsure, ask again.
 
 ### Why This Rule Exists:
 - **Human Oversight**: All code changes must be reviewed and approved by a human
