@@ -98,6 +98,9 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
     implementation(libs.koin.compose)
+    // Foldable device support
+    implementation(libs.androidx.window)
+    implementation(libs.androidx.window.core)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
