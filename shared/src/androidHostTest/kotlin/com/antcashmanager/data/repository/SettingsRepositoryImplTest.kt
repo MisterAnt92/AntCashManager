@@ -352,14 +352,16 @@ class SettingsRepositoryImplTest {
      }
 
      @Test
-     fun getWidgetOpacity_shouldReturnDefault1_0_whenNotStored() = runTest {
-         assertEquals(1.0f, repository.getWidgetOpacity().first(), 0.001f)
+     fun getWidgetOpacity_shouldReturnDefault100_whenNotStored() = runTest {
+         // Widget opacity is represented as Int (0-100, where 100 = fully opaque)
+         assertEquals(100, repository.getWidgetOpacity().first())
      }
 
      @Test
      fun setWidgetOpacity_shouldPersistCustomValue_whenSet() = runTest {
-         repository.setWidgetOpacity(0.8f)
+         // Set opacity to 80 (80% opaque)
+         repository.setWidgetOpacity(80)
 
-         assertEquals(0.8f, repository.getWidgetOpacity().first(), 0.001f)
+         assertEquals(80, repository.getWidgetOpacity().first())
      }
 }

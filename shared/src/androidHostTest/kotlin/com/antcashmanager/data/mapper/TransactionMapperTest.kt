@@ -414,7 +414,7 @@ class TransactionMapperTest {
              tags = "tag1,tag2,tag3",
              isRecurring = true,
              recurrenceInterval = "WEEKLY",
-             paymentType = PaymentType.CREDIT_CARD,
+             paymentType = PaymentType.ELECTRONIC,
              categoryIcon = "shopping_cart",
              categoryColor = 0xFF4CAF50,
          )
