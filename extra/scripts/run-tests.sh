@@ -7,15 +7,19 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 echo "╔════════════════════════════════════════════════════════════════╗"
-echo "║                  🧪 AntCashManager Test Suite                  ║"
+echo "║           🧪 AntCashManager Test Suite + Coverage              ║"
 echo "╚════════════════════════════════════════════════════════════════╝"
 echo ""
 echo "📁 Project: $PROJECT_ROOT"
 echo ""
+echo "This script runs comprehensive tests and generates coverage reports"
+echo "using Jacoco to track code coverage metrics."
+echo ""
 
 echo "📋 Test Modules:"
 echo "  ✓ :shared:allTests (Shared Library - Common + Android Host)"
-echo "  ✓ :androidApp:testDebugUnitTest (Android App)"
+echo "  ✓ :androidApp:testDebugUnitTest (Android App Unit Tests)"
+echo "  ✓ :androidApp:testCoverageReport (Jacoco Coverage)"
 echo ""
 
 echo "🔍 Test Classes by Module:"
@@ -51,7 +55,11 @@ cd "$PROJECT_ROOT"
 
 # Run tests and capture output
 TEST_OUTPUT=$(mktemp)
-JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 ./gradlew :shared:allTests :androidApp:testDebugUnitTest 2>&1 | tee "$TEST_OUTPUT"
+JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 ./gradlew \
+  :shared:allTests \
+  :androidApp:testDebugUnitTest \
+  :androidApp:testCoverageReport \
+  2>&1 | tee "$TEST_OUTPUT"
 BUILD_STATUS=$?
 
 # Extract test summary
@@ -106,12 +114,64 @@ if [ $BUILD_STATUS -eq 0 ]; then
     echo "📋 Test Reports:"
     [ -f "shared/build/reports/tests/allTests/index.html" ] && echo "  • Shared: file://$PROJECT_ROOT/shared/build/reports/tests/allTests/index.html"
     [ -f "androidApp/build/reports/tests/testDebugUnitTest/index.html" ] && echo "  • Android: file://$PROJECT_ROOT/androidApp/build/reports/tests/testDebugUnitTest/index.html"
+
+    # Display Coverage Reports
+    echo ""
+    echo "════════════════════════════════════════════════════════════════"
+    echo "📊 Code Coverage Report"
+    echo "════════════════════════════════════════════════════════════════"
+    echo ""
+
+    # Check for Jacoco reports
+    UNIT_COVERAGE_REPORT="androidApp/build/reports/jacoco/jacocoTestDebugUnitTestReport/html/index.html"
+
+    if [ -f "$UNIT_COVERAGE_REPORT" ]; then
+        echo "✅ Jacoco Coverage Report Generated"
+        echo ""
+        echo "📈 Coverage Details:"
+        echo "  • Unit Test Coverage: file://$PROJECT_ROOT/$UNIT_COVERAGE_REPORT"
+        echo ""
+        echo "💡 To view coverage:"
+        echo "  $ open file://$PROJECT_ROOT/$UNIT_COVERAGE_REPORT"
+        echo ""
+        echo "Target Coverage Goals:"
+        echo "  • Current: ~23% (androidApp) | ~39% (shared)"
+        echo "  • After Phase 2: ~35% (androidApp) | ~41% (shared)"
+        echo "  • Target: 60-70% (overall)"
+    else
+        echo "ℹ️  Coverage reports not yet generated"
+        echo "   Run: ./gradlew :androidApp:testCoverageReport"
+    fi
+
+    echo ""
+    echo "════════════════════════════════════════════════════════════════"
 else
     echo "❌ BUILD FAILED"
+    echo ""
+    echo "🔍 Debugging:"
+    echo "  1. Check the full output above for error details"
+    echo "  2. Run individual modules: ./gradlew :shared:allTests"
+    echo "  3. Check compilation: ./gradlew :androidApp:compileDebugKotlin"
+    echo ""
     rm -f "$TEST_OUTPUT"
     exit 1
 fi
 
 rm -f "$TEST_OUTPUT"
+echo ""
+echo "════════════════════════════════════════════════════════════════"
+echo "✨ Test Execution Complete"
+echo "════════════════════════════════════════════════════════════════"
+echo ""
+echo "🚀 Next Steps:"
+echo "  1. Review coverage reports (see links above)"
+echo "  2. Identify low-coverage areas for improvement"
+echo "  3. Add tests for uncovered code paths"
+echo "  4. Target: Reach 60-70% overall coverage"
+echo ""
+echo "📚 Resources:"
+echo "  • Test Guide: ./plans/analizza-il-progetto-kmp-witty-wilkinson.md"
+echo "  • MockK Reference: https://mockk.io/"
+echo "  • Roboelectric Setup: http://robolectric.org/"
 echo ""
 echo "════════════════════════════════════════════════════════════════"
