@@ -249,23 +249,18 @@ internal fun CategoriesContent(
         headerConfigCallback?.invoke(
             ScreenHeaderConfig(
                 title = categoriesTitle,
+                hasOrderOption = currentCategories.size > 1,
+                onOrderClick = {
+                    if (currentCategories.size > 1) {
+                        analyticsManager.logEvent("categories_reorder_opened")
+                        showReorderDialog = true
+                    }
+                },
                 actions = {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        IconButton(
-                            onClick = {
-                                analyticsManager.logEvent("categories_reorder_opened")
-                                showReorderDialog = true
-                            },
-                            enabled = currentCategories.size > 1,
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.SwapVert,
-                                contentDescription = stringResource(R.string.categories_reorder),
-                            )
-                        }
                         HelpButton(
                             onHelpClick = {
                                 analyticsManager.logEvent("categories_help_opened")

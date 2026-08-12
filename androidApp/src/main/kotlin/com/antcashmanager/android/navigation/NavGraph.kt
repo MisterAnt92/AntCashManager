@@ -21,8 +21,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -49,7 +53,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
-import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -424,6 +427,79 @@ fun AntCashManagerNavHost() {
                                     }
                                 }
 
+                                // Filter/Order/Search Icons (dynamic)
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                ) {
+                                    // Search Icon
+                                    if (screenHeaderConfig.showSearchIcon) {
+                                        IconButton(
+                                            onClick = { screenHeaderConfig.onSearchClick?.invoke() },
+                                            modifier = Modifier.size(40.dp),
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Search,
+                                                contentDescription = "Search",
+                                                modifier = Modifier.size(24.dp),
+                                                tint = MaterialTheme.colorScheme.primary,
+                                            )
+                                        }
+                                    }
+
+                                    // Filter Icon with Badge
+                                    if (screenHeaderConfig.onFilterClick != null) {
+                                        IconButton(
+                                            onClick = { screenHeaderConfig.onFilterClick!!.invoke() },
+                                            modifier = Modifier.size(40.dp),
+                                        ) {
+                                            Box {
+                                                Icon(
+                                                    imageVector = Icons.Default.FilterList,
+                                                    contentDescription = "Filtri",
+                                                    modifier = Modifier.size(24.dp),
+                                                    tint = MaterialTheme.colorScheme.primary,
+                                                )
+                                                // Badge for active filters
+                                                if (screenHeaderConfig.filterCount > 0) {
+                                                    Surface(
+                                                        shape = CircleShape,
+                                                        color = MaterialTheme.colorScheme.error,
+                                                        modifier = Modifier
+                                                            .size(18.dp)
+                                                            .align(Alignment.TopEnd)
+                                                            .padding(top = 2.dp, end = 2.dp),
+                                                    ) {
+                                                        AppText(
+                                                            text = screenHeaderConfig.filterCount.toString(),
+                                                            style = MaterialTheme.typography.labelSmall,
+                                                            color = MaterialTheme.colorScheme.onError,
+                                                            modifier = Modifier
+                                                                .padding(2.dp)
+                                                                .align(Alignment.Center),
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    // Sort/Order Icon
+                                    if (screenHeaderConfig.hasOrderOption) {
+                                        IconButton(
+                                            onClick = { screenHeaderConfig.onOrderClick?.invoke() },
+                                            modifier = Modifier.size(40.dp),
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Sort,
+                                                contentDescription = "Ordinamento",
+                                                modifier = Modifier.size(24.dp),
+                                                tint = MaterialTheme.colorScheme.primary,
+                                            )
+                                        }
+                                    }
+                                }
+
                                 // Action Buttons (dynamic)
                                 if (screenHeaderConfig.actions != null) {
                                     screenHeaderConfig.actions!!()
@@ -493,7 +569,7 @@ fun AntCashManagerNavHost() {
 
         if (showAntAnimation) {
             AntEasterEggAnimation(
-                versionName = BuildConfig.VERSION_NAME,
+                versionName = com.antcashmanager.android.BuildConfig.VERSION_NAME,
                 onDismiss = { showAntAnimation = false },
             )
         }

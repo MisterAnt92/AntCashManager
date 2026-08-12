@@ -277,10 +277,18 @@ internal fun TransactionsContent(
     // Configure screen header with actions
     val headerConfigCallback = LocalScreenHeaderConfigCallback.current
     val transactionsTitle = stringResource(R.string.common_transactions)
+
     LaunchedEffect(Unit) {
         headerConfigCallback?.invoke(
             ScreenHeaderConfig(
                 title = transactionsTitle,
+                filterCount = if (state.hasActiveFilters) 1 else 0,
+                onFilterClick = {
+                    if (!state.isFiltersExpanded) {
+                        analyticsManager.logEvent("transactions_filter_opened")
+                    }
+                    onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ToggleFiltersExpanded)
+                },
                 actions = {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -293,21 +301,6 @@ internal fun TransactionsContent(
                                 imageVector = if (state.isSearchExpanded) Icons.Default.Close else Icons.Default.Search,
                                 contentDescription = stringResource(R.string.transactions_search),
                                 tint = if (state.searchQuery.isNotEmpty()) MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                        IconButton(
-                            onClick = {
-                                if (!state.isFiltersExpanded) {
-                                    analyticsManager.logEvent("transactions_filter_opened")
-                                }
-                                onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ToggleFiltersExpanded)
-                            },
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.FilterList,
-                                contentDescription = stringResource(R.string.transactions_filter),
-                                tint = if (state.hasActiveFilters) MaterialTheme.colorScheme.primary
                                 else MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
