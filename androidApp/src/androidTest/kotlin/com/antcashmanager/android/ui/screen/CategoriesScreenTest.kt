@@ -1,6 +1,7 @@
 package com.antcashmanager.android.ui.screen
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -178,7 +179,7 @@ class CategoriesScreenTest {
 
         // Scroll down to see more categories
         composeTestRule.onNodeWithText("Categories")
-            .performScrollToNode(composeTestRule.onNodeWithText("Other"))
+            .performScrollToNode(hasText("Other"))
     }
 
     /**

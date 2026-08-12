@@ -1,7 +1,9 @@
 package com.antcashmanager.android.ui.widget
 
 import android.content.Context
+import android.content.res.Configuration
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -17,6 +19,7 @@ import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
+import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import androidx.glance.layout.Row
@@ -30,14 +33,17 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
+import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
 import com.antcashmanager.android.util.formatAmount
 import com.antcashmanager.android.util.translateCategoryPlain
+import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import kotlinx.coroutines.flow.first
 import java.util.Calendar
+import java.util.Locale
 
 private const val MAX_CATEGORIES_PER_SECTION = 4
 
@@ -54,35 +60,70 @@ class CategoryBreakdownWidget : GlanceAppWidget() {
     )
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        val transactionRepository = WidgetDependencies.transactionRepository
-        val settingsRepository = WidgetDependencies.settingsRepository
+        try {
+            val transactionRepository = WidgetDependencies.transactionRepository
+            val settingsRepository = WidgetDependencies.settingsRepository
 
-        val calendar = Calendar.getInstance().apply {
-            set(Calendar.DAY_OF_MONTH, 1)
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
-        val from = calendar.timeInMillis
-        val to = System.currentTimeMillis()
+            val calendar = Calendar.getInstance().apply {
+                set(Calendar.DAY_OF_MONTH, 1)
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }
+            val from = calendar.timeInMillis
+            val to = System.currentTimeMillis()
 
-        val transactions = transactionRepository.getTransactionsByDateRange(from, to).first()
-        val currencyFormat = loadCurrencyFormat(settingsRepository)
-        val palette = loadWidgetPalette(settingsRepository)
+            val transactions = transactionRepository.getTransactionsByDateRange(from, to).first()
+            val currencyFormat = loadCurrencyFormat(settingsRepository)
+            val palette = loadWidgetPalette(settingsRepository)
+            val language = loadLanguage(settingsRepository)
 
-        val income = aggregateByCategory(transactions.filter { it.type == TransactionType.INCOME })
-        val expenses =
-            aggregateByCategory(transactions.filter { it.type == TransactionType.EXPENSE })
+            val localizedContext = if (language != AppLanguage.SYSTEM) {
+                val locale = Locale.forLanguageTag(language.code)
+                val config = Configuration(context.resources.configuration).apply {
+                    setLocale(locale)
+                }
+                context.createConfigurationContext(config)
+            } else {
+                context
+            }
 
-        provideContent {
-            CategoryBreakdownContent(income, expenses, currencyFormat, palette)
+            val income =
+                aggregateByCategory(transactions.filter { it.type == TransactionType.INCOME })
+            val expenses =
+                aggregateByCategory(transactions.filter { it.type == TransactionType.EXPENSE })
+
+            provideContent {
+                CompositionLocalProvider(LocalContext provides localizedContext) {
+                    CategoryBreakdownContent(income, expenses, currencyFormat, palette)
+                }
+            }
+        } catch (e: Exception) {
+            Logger.e(tag = "CategoryBreakdownWidget") { "Error providing glance: ${e.message}" }
+            provideContent {
+                ErrorWidgetContent(context)
+            }
         }
     }
 }
 
 class CategoryBreakdownWidgetReceiver : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget = CategoryBreakdownWidget()
+}
+
+@Composable
+private fun ErrorWidgetContent(context: Context) {
+    Column(
+        modifier = GlanceModifier.fillMaxSize().padding(16.dp),
+        horizontalAlignment = Alignment.Horizontal.CenterHorizontally,
+        verticalAlignment = Alignment.Vertical.CenterVertically
+    ) {
+        Text(
+            text = context.getString(R.string.error_generic),
+            style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium)
+        )
+    }
 }
 
 private fun aggregateByCategory(transactions: List<Transaction>): List<CategoryTotal> =

@@ -9,17 +9,58 @@ su Clean Architecture, Android, KMP e qualità del codice.
 
 ## Agenti disponibili
 
-### `agent-android-clean-architecture.agent.md`
+### `agent-usecase-pattern.agent.md` ⭐ NUOVO
 
 **Scopo**
 
-- agente principale per implementazioni, refactor e verifiche architetturali
+- Implementazione domain UseCase con Result<T> pattern, custom exceptions, dispatcher injection
 
 **Usalo quando**
 
-- devi creare o modificare `UseCase`, `ViewModel`, `State`, `Screen`
-- devi mantenere i boundary tra Presentation, Domain e Data
-- devi allineare il codice alle convenzioni Android/KMP del progetto
+- devi creare un nuovo UseCase
+- devi testare UseCase con MockK
+- devi capire quando usare UseCase<P,R> vs NoParamsUseCase<R> vs ObservableUseCase
+
+**Token savings**: Focused on UseCase only (~200 lines, -30% token cost)
+
+### `agent-viewmodel-stateflow.agent.md` ⭐ NUOVO
+
+**Scopo**
+
+- ViewModel with StateFlow state management, Result consumption, logging with Kermit
+
+**Usalo quando**
+
+- devi creare un nuovo ViewModel
+- devi gestire reactive state with Flow/StateFlow
+- devi testare ViewModel con BaseUnitTest
+
+**Token savings**: Focused on ViewModel/State (~150 lines, -25% token cost)
+
+### `agent-compose-ui.agent.md` ⭐ NUOVO
+
+**Scopo**
+
+- Screen composables, component reuse, Material Design 3, Preview requirements, i18n
+
+**Usalo quando**
+
+- devi creare un nuovo Screen composable
+- devi capire quali componenti riutilizzare
+- devi implementare Preview correttamente
+
+**Token savings**: Focused on UI/Compose (~250 lines, -30% token cost)
+
+### `agent-android-clean-architecture.agent.md` (LEGACY - See New Agents Above)
+
+**NOTA**: Questo file è stato refactor in 3 agent specializzati (vedi sopra).  
+Consulta i 3 nuovi agent per guidance focalizzato su UseCase/ViewModel/UI.
+
+**Ancora utile quando**
+
+- devi una overview completa di tutti i pattern
+- devi capire come i 3 layer interagiscono
+- cerchi esempi di end-to-end feature implementation
 
 ### `agent-code-cleanup.agent.md`
 

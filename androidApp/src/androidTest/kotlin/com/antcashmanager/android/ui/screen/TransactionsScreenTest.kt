@@ -1,6 +1,7 @@
 package com.antcashmanager.android.ui.screen
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -190,7 +191,7 @@ class TransactionsScreenTest {
 
         // Scroll down to load more items
         composeTestRule.onNodeWithText("Transactions")
-            .performScrollToNode(composeTestRule.onNodeWithContentDescription("Load more"))
+            .performScrollToNode(hasContentDescription("Load more"))
     }
 
     /**

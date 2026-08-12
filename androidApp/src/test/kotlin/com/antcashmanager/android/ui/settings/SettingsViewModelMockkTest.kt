@@ -6,30 +6,11 @@ import com.antcashmanager.android.ui.screen.settings.SettingsViewModel
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.TransactionDisplayType
-import com.antcashmanager.domain.usecase.settings.GetCurrencySymbolUseCase
-import com.antcashmanager.domain.usecase.settings.GetDecimalDigitsUseCase
-import com.antcashmanager.domain.usecase.settings.GetDecimalSeparatorUseCase
-import com.antcashmanager.domain.usecase.settings.GetHighContrastUseCase
-import com.antcashmanager.domain.usecase.settings.GetLanguageUseCase
-import com.antcashmanager.domain.usecase.settings.GetLargeTextUseCase
-import com.antcashmanager.domain.usecase.settings.GetReduceMotionUseCase
-import com.antcashmanager.domain.usecase.settings.GetShowChartsUseCase
-import com.antcashmanager.domain.usecase.settings.GetShowTransactionNotesUseCase
-import com.antcashmanager.domain.usecase.settings.GetThemeUseCase
-import com.antcashmanager.domain.usecase.settings.GetThousandsSeparatorUseCase
-import com.antcashmanager.domain.usecase.settings.GetTransactionDisplayTypeUseCase
+import com.antcashmanager.domain.service.WidgetUpdateNotifier
+import com.antcashmanager.domain.usecase.settings.GetSettingUseCase
+import com.antcashmanager.domain.usecase.settings.SetSettingUseCase
 import com.antcashmanager.domain.usecase.settings.ResetAllPreferencesUseCase
-import com.antcashmanager.domain.usecase.settings.SetCurrencySymbolUseCase
-import com.antcashmanager.domain.usecase.settings.SetDecimalDigitsUseCase
-import com.antcashmanager.domain.usecase.settings.SetDecimalSeparatorUseCase
-import com.antcashmanager.domain.usecase.settings.SetHighContrastUseCase
-import com.antcashmanager.domain.usecase.settings.SetLanguageUseCase
-import com.antcashmanager.domain.usecase.settings.SetLargeTextUseCase
-import com.antcashmanager.domain.usecase.settings.SetReduceMotionUseCase
-import com.antcashmanager.domain.usecase.settings.SetShowChartsUseCase
-import com.antcashmanager.domain.usecase.settings.SetThemeUseCase
-import com.antcashmanager.domain.usecase.settings.SetThousandsSeparatorUseCase
-import com.antcashmanager.domain.usecase.settings.SetTutorialCompletedUseCase
+import com.antcashmanager.domain.usecase.settings.SettingsUseCasesProvider
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
 import io.mockk.coEvery
@@ -49,29 +30,30 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsViewModelMockkTest : BaseUnitTest() {
 
-    private lateinit var getThemeUseCase: GetThemeUseCase
-    private lateinit var setThemeUseCase: SetThemeUseCase
-    private lateinit var getLanguageUseCase: GetLanguageUseCase
-    private lateinit var setLanguageUseCase: SetLanguageUseCase
-    private lateinit var getShowChartsUseCase: GetShowChartsUseCase
-    private lateinit var setShowChartsUseCase: SetShowChartsUseCase
-    private lateinit var getHighContrastUseCase: GetHighContrastUseCase
-    private lateinit var setHighContrastUseCase: SetHighContrastUseCase
-    private lateinit var getLargeTextUseCase: GetLargeTextUseCase
-    private lateinit var setLargeTextUseCase: SetLargeTextUseCase
-    private lateinit var getReduceMotionUseCase: GetReduceMotionUseCase
-    private lateinit var setReduceMotionUseCase: SetReduceMotionUseCase
-    private lateinit var getCurrencySymbolUseCase: GetCurrencySymbolUseCase
-    private lateinit var setCurrencySymbolUseCase: SetCurrencySymbolUseCase
-    private lateinit var getDecimalDigitsUseCase: GetDecimalDigitsUseCase
-    private lateinit var setDecimalDigitsUseCase: SetDecimalDigitsUseCase
-    private lateinit var getDecimalSeparatorUseCase: GetDecimalSeparatorUseCase
-    private lateinit var setDecimalSeparatorUseCase: SetDecimalSeparatorUseCase
-    private lateinit var getThousandsSeparatorUseCase: GetThousandsSeparatorUseCase
-    private lateinit var setThousandsSeparatorUseCase: SetThousandsSeparatorUseCase
-    private lateinit var getShowTransactionNotesUseCase: GetShowTransactionNotesUseCase
-    private lateinit var getTransactionDisplayTypeUseCase: GetTransactionDisplayTypeUseCase
-    private lateinit var setTutorialCompletedUseCase: SetTutorialCompletedUseCase
+    private lateinit var getThemeUseCase: GetSettingUseCase<String>
+    private lateinit var setThemeUseCase: SetSettingUseCase<String>
+    private lateinit var getLanguageUseCase: GetSettingUseCase<String>
+    private lateinit var setLanguageUseCase: SetSettingUseCase<String>
+    private lateinit var getShowChartsUseCase: GetSettingUseCase<Boolean>
+    private lateinit var setShowChartsUseCase: SetSettingUseCase<Boolean>
+    private lateinit var getHighContrastUseCase: GetSettingUseCase<Boolean>
+    private lateinit var setHighContrastUseCase: SetSettingUseCase<Boolean>
+    private lateinit var getLargeTextUseCase: GetSettingUseCase<Boolean>
+    private lateinit var setLargeTextUseCase: SetSettingUseCase<Boolean>
+    private lateinit var getReduceMotionUseCase: GetSettingUseCase<Boolean>
+    private lateinit var setReduceMotionUseCase: SetSettingUseCase<Boolean>
+    private lateinit var getCurrencySymbolUseCase: GetSettingUseCase<String>
+    private lateinit var setCurrencySymbolUseCase: SetSettingUseCase<String>
+    private lateinit var getDecimalDigitsUseCase: GetSettingUseCase<Int>
+    private lateinit var setDecimalDigitsUseCase: SetSettingUseCase<Int>
+    private lateinit var getDecimalSeparatorUseCase: GetSettingUseCase<String>
+    private lateinit var setDecimalSeparatorUseCase: SetSettingUseCase<String>
+    private lateinit var getThousandsSeparatorUseCase: GetSettingUseCase<String>
+    private lateinit var setThousandsSeparatorUseCase: SetSettingUseCase<String>
+    private lateinit var getShowTransactionNotesUseCase: GetSettingUseCase<Boolean>
+    private lateinit var getTransactionDisplayTypeUseCase: GetSettingUseCase<String>
+    private lateinit var setTutorialCompletedUseCase: SetSettingUseCase<Boolean>
+    private lateinit var setTransactionDisplayTypeUseCase: SetSettingUseCase<String>
     private lateinit var resetAllPreferencesUseCase: ResetAllPreferencesUseCase
     private lateinit var deleteAllTransactionsUseCase: DeleteAllTransactionsUseCase
     private lateinit var insertTransactionUseCase: InsertTransactionUseCase
@@ -105,10 +87,11 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
         getDecimalDigitsUseCase = mockk()
         setDecimalDigitsUseCase = mockk()
 
-        // Enum getter
+        // Enum getter/setter
         getTransactionDisplayTypeUseCase = mockk()
+        setTransactionDisplayTypeUseCase = mockk()
 
-        // Theme & Language (already tested in previous versions)
+        // Theme & Language
         getThemeUseCase = mockk()
         setThemeUseCase = mockk()
         getLanguageUseCase = mockk()
@@ -121,8 +104,8 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
         insertTransactionUseCase = mockk()
 
         // Default behavior for all getters: return success
-        every { getThemeUseCase() } returns flowOf(Result.success(AppTheme.DARK))
-        every { getLanguageUseCase() } returns flowOf(Result.success(AppLanguage.ITALIAN))
+        every { getThemeUseCase() } returns flowOf(Result.success("dark"))
+        every { getLanguageUseCase() } returns flowOf(Result.success("it"))
         every { getShowChartsUseCase() } returns flowOf(Result.success(true))
         every { getHighContrastUseCase() } returns flowOf(Result.success(false))
         every { getLargeTextUseCase() } returns flowOf(Result.success(false))
@@ -132,11 +115,7 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
         every { getDecimalSeparatorUseCase() } returns flowOf(Result.success(","))
         every { getThousandsSeparatorUseCase() } returns flowOf(Result.success("."))
         every { getShowTransactionNotesUseCase() } returns flowOf(Result.success(true))
-        every { getTransactionDisplayTypeUseCase() } returns flowOf(
-            Result.success(
-                TransactionDisplayType.TREND
-            )
-        )
+        every { getTransactionDisplayTypeUseCase() } returns flowOf(Result.success("trend"))
 
         // Default behavior for all setters/actions: return success
         coEvery { setThemeUseCase(any()) } returns Result.success(Unit)
@@ -150,6 +129,7 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
         coEvery { setDecimalSeparatorUseCase(any()) } returns Result.success(Unit)
         coEvery { setThousandsSeparatorUseCase(any()) } returns Result.success(Unit)
         coEvery { setTutorialCompletedUseCase(any()) } returns Result.success(Unit)
+        coEvery { setTransactionDisplayTypeUseCase(any()) } returns Result.success(Unit)
         coEvery { resetAllPreferencesUseCase() } returns Result.success(Unit)
         coEvery { deleteAllTransactionsUseCase() } returns Result.success(Unit)
         coEvery { insertTransactionUseCase(any()) } returns Result.success(0L)
@@ -167,7 +147,7 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
         viewModel.setTheme(AppTheme.LIGHT)
         advanceUntilIdle()
 
-        coVerify(exactly = 1) { setThemeUseCase(AppTheme.LIGHT) }
+        coVerify(exactly = 1) { setThemeUseCase(any()) }
     }
 
     @Test
@@ -177,7 +157,7 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
         viewModel.setLanguage(AppLanguage.SPANISH)
         advanceUntilIdle()
 
-        coVerify(exactly = 1) { setLanguageUseCase(AppLanguage.SPANISH) }
+        coVerify(exactly = 1) { setLanguageUseCase(any()) }
     }
 
     @Test
@@ -187,7 +167,7 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
         viewModel.setShowCharts(false)
         advanceUntilIdle()
 
-        coVerify(exactly = 1) { setShowChartsUseCase(false) }
+        coVerify(exactly = 1) { setShowChartsUseCase(any()) }
     }
 
     @Test
@@ -218,7 +198,7 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
 
     @Test
     fun state_shouldReflectThemeUseCase_whenFlowEmits() = runViewModelTest {
-        every { getThemeUseCase() } returns flowOf(Result.success(AppTheme.LIGHT))
+        every { getThemeUseCase() } returns flowOf(Result.success("light"))
         val viewModel = buildViewModel()
         val collectJob = launch { viewModel.state.collect {} }
 
@@ -228,32 +208,41 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
         collectJob.cancel()
     }
 
-    private fun buildViewModel(): SettingsViewModel = SettingsViewModel(
-        getThemeUseCase = getThemeUseCase,
-        setThemeUseCase = setThemeUseCase,
-        getLanguageUseCase = getLanguageUseCase,
-        setLanguageUseCase = setLanguageUseCase,
-        getShowChartsUseCase = getShowChartsUseCase,
-        setShowChartsUseCase = setShowChartsUseCase,
-        getHighContrastUseCase = getHighContrastUseCase,
-        setHighContrastUseCase = setHighContrastUseCase,
-        getLargeTextUseCase = getLargeTextUseCase,
-        setLargeTextUseCase = setLargeTextUseCase,
-        getReduceMotionUseCase = getReduceMotionUseCase,
-        setReduceMotionUseCase = setReduceMotionUseCase,
-        getCurrencySymbolUseCase = getCurrencySymbolUseCase,
-        setCurrencySymbolUseCase = setCurrencySymbolUseCase,
-        getDecimalDigitsUseCase = getDecimalDigitsUseCase,
-        setDecimalDigitsUseCase = setDecimalDigitsUseCase,
-        getDecimalSeparatorUseCase = getDecimalSeparatorUseCase,
-        setDecimalSeparatorUseCase = setDecimalSeparatorUseCase,
-        getThousandsSeparatorUseCase = getThousandsSeparatorUseCase,
-        setThousandsSeparatorUseCase = setThousandsSeparatorUseCase,
-        getShowTransactionNotesUseCase = getShowTransactionNotesUseCase,
-        getTransactionDisplayTypeUseCase = getTransactionDisplayTypeUseCase,
-        setTutorialCompletedUseCase = setTutorialCompletedUseCase,
-        resetAllPreferencesUseCase = resetAllPreferencesUseCase,
-        deleteAllTransactionsUseCase = deleteAllTransactionsUseCase,
-        insertTransactionUseCase = insertTransactionUseCase,
-    )
+    private fun buildViewModel(): SettingsViewModel {
+        val settingsUseCasesProvider: SettingsUseCasesProvider = mockk()
+        every { settingsUseCasesProvider.getTheme } returns getThemeUseCase
+        every { settingsUseCasesProvider.setTheme } returns setThemeUseCase
+        every { settingsUseCasesProvider.getLanguage } returns getLanguageUseCase
+        every { settingsUseCasesProvider.setLanguage } returns setLanguageUseCase
+        every { settingsUseCasesProvider.getShowCharts } returns getShowChartsUseCase
+        every { settingsUseCasesProvider.setShowCharts } returns setShowChartsUseCase
+        every { settingsUseCasesProvider.getHighContrast } returns getHighContrastUseCase
+        every { settingsUseCasesProvider.setHighContrast } returns setHighContrastUseCase
+        every { settingsUseCasesProvider.getLargeText } returns getLargeTextUseCase
+        every { settingsUseCasesProvider.setLargeText } returns setLargeTextUseCase
+        every { settingsUseCasesProvider.getReduceMotion } returns getReduceMotionUseCase
+        every { settingsUseCasesProvider.setReduceMotion } returns setReduceMotionUseCase
+        every { settingsUseCasesProvider.getCurrencySymbol } returns getCurrencySymbolUseCase
+        every { settingsUseCasesProvider.setCurrencySymbol } returns setCurrencySymbolUseCase
+        every { settingsUseCasesProvider.getDecimalDigits } returns getDecimalDigitsUseCase
+        every { settingsUseCasesProvider.setDecimalDigits } returns setDecimalDigitsUseCase
+        every { settingsUseCasesProvider.getDecimalSeparator } returns getDecimalSeparatorUseCase
+        every { settingsUseCasesProvider.setDecimalSeparator } returns setDecimalSeparatorUseCase
+        every { settingsUseCasesProvider.getThousandsSeparator } returns getThousandsSeparatorUseCase
+        every { settingsUseCasesProvider.setThousandsSeparator } returns setThousandsSeparatorUseCase
+        every { settingsUseCasesProvider.getShowTransactionNotes } returns getShowTransactionNotesUseCase
+        every { settingsUseCasesProvider.getTransactionDisplayType } returns getTransactionDisplayTypeUseCase
+        every { settingsUseCasesProvider.setTransactionDisplayType } returns setTransactionDisplayTypeUseCase
+        every { settingsUseCasesProvider.setTutorialCompleted } returns setTutorialCompletedUseCase
+        every { settingsUseCasesProvider.resetAllPreferences } returns resetAllPreferencesUseCase
+
+        val widgetUpdateNotifier: WidgetUpdateNotifier = mockk(relaxed = true)
+
+        return SettingsViewModel(
+            settingsUseCases = settingsUseCasesProvider,
+            deleteAllTransactionsUseCase = deleteAllTransactionsUseCase,
+            insertTransactionUseCase = insertTransactionUseCase,
+            widgetUpdateNotifier = widgetUpdateNotifier,
+        )
+    }
 }

@@ -29,7 +29,8 @@ class ProcessRecurringTransactionsUseCase(
         for (transaction in recurring) {
             val interval = try {
                 RecurrenceInterval.valueOf(transaction.recurrenceInterval)
-            } catch (_: Exception) {
+            } catch (_: IllegalArgumentException) {
+                // Skip transaction with invalid recurrence interval
                 continue
             }
 

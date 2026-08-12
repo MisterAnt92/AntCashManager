@@ -218,39 +218,19 @@ internal fun HomeContent(
         headerConfigCallback?.invoke(
             ScreenHeaderConfig(
                 title = dashboardTitle,
+                showSearchIcon = true,
+                hasOrderOption = true,
+                onSearchClick = {
+                    onEvent(HomeEvent.ToggleSearchExpanded)
+                },
+                onOrderClick = {
+                    showTopCardsOrderDialog = true
+                },
                 actions = {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        // Search button
-                        IconButton(
-                            onClick = {
-                                onEvent(HomeEvent.ToggleSearchExpanded)
-                            },
-                            modifier = Modifier.size(40.dp),
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Search,
-                                contentDescription = stringResource(R.string.transactions_search),
-                                tint = MaterialTheme.colorScheme.primary,
-                            )
-                        }
-
-                        // Tune/Customize button
-                        IconButton(
-                            onClick = {
-                                showTopCardsOrderDialog = true
-                            },
-                            modifier = Modifier.size(40.dp),
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Sort,
-                                contentDescription = stringResource(R.string.home_customize_top_cards_action),
-                                tint = MaterialTheme.colorScheme.primary,
-                            )
-                        }
-
                         // Help button
                         HelpButton(
                             onHelpClick = { showHelpDialog = true },

@@ -5,6 +5,28 @@ import kotlinx.coroutines.flow.Flow
 
 interface TransactionRepository {
     fun getAllTransactions(): Flow<List<Transaction>>
+
+    /**
+     * Get transactions with pagination support.
+     * Recommended for large datasets (1000+ transactions).
+     * @param pageSize Number of items per page (default: 100)
+     * @param pageIndex Page index starting from 0
+     * @return Flow of transactions for the requested page
+     */
+    fun getTransactionsPaginated(pageSize: Int = 100, pageIndex: Int = 0): Flow<List<Transaction>>
+
+    /**
+     * Get transactions filtered by category (database-level filtering).
+     * CRITICAL: Pushing filtering to DB instead of client-side dramatically improves performance.
+     */
+    fun getTransactionsByCategory(category: String, pageSize: Int = 100, pageIndex: Int = 0): Flow<List<Transaction>>
+
+    /**
+     * Search transactions by query text (title/payee/notes).
+     * Database-level full-text equivalent for efficiency.
+     */
+    fun searchTransactions(query: String, pageSize: Int = 100, pageIndex: Int = 0): Flow<List<Transaction>>
+
     suspend fun getTransactionById(id: Long): Transaction?
     suspend fun insertTransaction(transaction: Transaction): Long
     suspend fun insertTransactions(transactions: List<Transaction>): List<Long>

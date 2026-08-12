@@ -533,4 +533,8 @@
     <string name="chart_last_14_days">14 derniers jours</string>
     <string name="chart_average">Moyenne</string>
     <string name="chart_weekday_distribution_title">Distribution par Jour</string>
+    <string name="error_generic">Une erreur est survenue</string>
+
+    <!-- App Description -->
+    <string name="app_description">Cette application est née du besoin de suivre les dépenses familiales gratuitement et de comparer les augmentations de prix.</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.antcashmanager.android.ui.screen
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -128,7 +129,7 @@ class SettingsScreenTest {
 
         // Scroll to data management section
         composeTestRule.onNodeWithText("Settings")
-            .performScrollToNode(composeTestRule.onNodeWithText("Data Management"))
+            .performScrollToNode(hasText("Data Management"))
 
         // Verify data management section exists
         composeTestRule.onNodeWithText("Data Management")
@@ -146,7 +147,7 @@ class SettingsScreenTest {
 
         // Scroll to data management
         composeTestRule.onNodeWithText("Settings")
-            .performScrollToNode(composeTestRule.onNodeWithText("Data Management"))
+            .performScrollToNode(hasText("Data Management"))
 
         // Click backup button
         composeTestRule.onNodeWithText("Backup")
@@ -166,7 +167,7 @@ class SettingsScreenTest {
 
         // Scroll to about section
         composeTestRule.onNodeWithText("Settings")
-            .performScrollToNode(composeTestRule.onNodeWithText("About"))
+            .performScrollToNode(hasText("About"))
 
         // Verify about section exists
         composeTestRule.onNodeWithText("About")
@@ -184,7 +185,7 @@ class SettingsScreenTest {
 
         // Scroll to bottom for version info
         composeTestRule.onNodeWithText("Settings")
-            .performScrollToNode(composeTestRule.onNodeWithText("Version"))
+            .performScrollToNode(hasText("Version"))
 
         // Verify version is displayed
         composeTestRule.onNodeWithText("Version")
@@ -232,7 +233,7 @@ class SettingsScreenTest {
 
         // Scroll down to see all settings
         composeTestRule.onNodeWithText("Settings")
-            .performScrollToNode(composeTestRule.onNodeWithText("About"))
+            .performScrollToNode(hasText("About"))
     }
 
     /**
@@ -275,7 +276,7 @@ class SettingsScreenTest {
 
         // Scroll to data management
         composeTestRule.onNodeWithText("Settings")
-            .performScrollToNode(composeTestRule.onNodeWithText("Data Management"))
+            .performScrollToNode(hasText("Data Management"))
 
         // Click clear data
         composeTestRule.onNodeWithText("Clear Data")

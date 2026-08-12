@@ -1,5 +1,15 @@
 # GitHub Copilot Instructions - AntCashManager
 
+⚠️ **NOTE**: This file has been refactored into 3 specialized agents for better token efficiency:
+- **[agent-usecase-pattern.agent.md](agent-usecase-pattern.agent.md)** - UseCase implementation patterns
+- **[agent-viewmodel-stateflow.agent.md](agent-viewmodel-stateflow.agent.md)** - ViewModel & StateFlow patterns  
+- **[agent-compose-ui.agent.md](agent-compose-ui.agent.md)** - Screen & UI patterns
+
+**For new implementations, use the specialized agents above** (smaller, faster, more focused).  
+Use this file only for complete architecture overview or cross-layer understanding.
+
+---
+
 ## Project Overview
 
 AntCashManager è un'app Android di gestione finanziaria personale costruita con Jetpack Compose,
@@ -84,6 +94,40 @@ Presentation (androidApp) → Domain (shared/commonMain) → Data (shared/androi
 - ✅ Domain è puro Kotlin (NO dipendenze Android/platform)
 - ✅ Data implementa le interfacce di Domain
 - ❌ Domain NON deve MAI dipendere da Presentation o Data
+
+### Eccezione Documentata: SettingsRepository in Root Composable
+
+**REGOLA CRITICA**: `SettingsRepository` è l'UNICA eccezione a "ViewModels dipendono solo da UseCase".
+
+**Dove è consentito**:
+- ✅ SOLO nel composable ROOT (`AntCashManagerNavHost` in `NavGraph.kt`)
+- ✅ Scopo: Leggere preferenze reactive di **configurazione ONLY** (tema, lingua, display prefs)
+- ✅ Pattern: Inject via Koin, usa `.collectAsStateWithLifecycle()`, passa valori come parametri composable
+
+**ESEMPIO CORRETTO**:
+```kotlin
+@Composable
+fun AntCashManagerNavHost() {
+    val settingsRepository: SettingsRepository = koinInject()
+    val displayPreferences by settingsRepository.displayPreferences
+        .collectAsStateWithLifecycle(DisplayPreferences.default)
+    
+    // Passa come parametro ai screen, NOT ai ViewModel
+    NavHost(...) {
+        composable("home") {
+            HomeScreen(displayMode = displayPreferences.displayMode)
+        }
+    }
+}
+```
+
+**VIETATO**:
+- ❌ SettingsRepository in ViewModel (NON è un UseCase)
+- ❌ SettingsRepository in qualunque composable diverso da ROOT
+- ❌ Usare SettingsRepository per business logic (solo config-level data)
+- ❌ Scrivere preferenze in root composable (leggi ONLY)
+
+**Rationale**: Root composable è il SOLO luogo dove configurazione globale può essere letta direttamente senza violare Clean Architecture, perché non è parte di nessun feature layer.
 
 ---
 

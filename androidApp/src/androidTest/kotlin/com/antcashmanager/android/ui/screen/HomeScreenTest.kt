@@ -1,6 +1,7 @@
 package com.antcashmanager.android.ui.screen
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -50,7 +51,7 @@ class HomeScreenTest {
     fun homeScreen_shouldDisplayTopCards() {
         // Scroll to ensure all content is visible
         composeTestRule.onNodeWithText("Home")
-            .performScrollToNode(composeTestRule.onNodeWithText("Quick Insights"))
+            .performScrollToNode(hasText("Quick Insights"))
 
         // Verify quick insights card exists
         composeTestRule.onNodeWithText("Quick Insights")
@@ -64,7 +65,7 @@ class HomeScreenTest {
     fun homeScreen_shouldDisplayRecentTransactions() {
         // Scroll down to transactions section
         composeTestRule.onNodeWithText("Home")
-            .performScrollToNode(composeTestRule.onNodeWithText("Recent"))
+            .performScrollToNode(hasText("Recent"))
 
         // Verify recent transactions section exists
         composeTestRule.onNodeWithText("Recent")
@@ -137,7 +138,7 @@ class HomeScreenTest {
         // This test assumes there's an empty state when no transactions exist
         // Scroll to check for empty state message
         composeTestRule.onNodeWithText("Home")
-            .performScrollToNode(composeTestRule.onNodeWithText("No transactions"))
+            .performScrollToNode(hasText("No transactions"))
     }
 
     /**

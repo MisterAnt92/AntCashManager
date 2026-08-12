@@ -392,6 +392,28 @@ private class FakeTransactionDao : TransactionDao {
     override fun getRecurringTransactions(): Flow<List<TransactionEntity>> =
         flowOf(transactionsFlow.value.filter { it.isRecurring })
 
+    override fun getTransactionsPaginated(limit: Int, offset: Int): Flow<List<TransactionEntity>> =
+        flowOf(transactionsFlow.value.sortedByDescending { it.timestamp }.drop(offset).take(limit))
+
+    override fun getTransactionsByCategory(category: String, limit: Int, offset: Int): Flow<List<TransactionEntity>> =
+        flowOf(transactionsFlow.value.filter { it.category == category }.sortedByDescending { it.timestamp }.drop(offset).take(limit))
+
+    override fun getTransactionsByCategoryAndDateRange(
+        category: String,
+        from: Long,
+        to: Long,
+        limit: Int,
+        offset: Int
+    ): Flow<List<TransactionEntity>> =
+        flowOf(transactionsFlow.value.filter { it.category == category && it.timestamp in from..to }.sortedByDescending { it.timestamp }.drop(offset).take(limit))
+
+    override fun searchTransactions(query: String, limit: Int, offset: Int): Flow<List<TransactionEntity>> =
+        flowOf(transactionsFlow.value.filter {
+            it.title.contains(query, ignoreCase = true) ||
+            it.payee.contains(query, ignoreCase = true) ||
+            it.notes.contains(query, ignoreCase = true)
+        }.sortedByDescending { it.timestamp }.drop(offset).take(limit))
+
     override suspend fun renameCategory(
         oldCategoryName: String,
         newCategoryName: String,

@@ -51,7 +51,7 @@
     <string name="help_categories_feature_income_expense_title">Entrate e Uscite</string>
     <string name="help_categories_feature_income_expense_desc">Categorizza le transazioni come entrate o uscite.</string>
     <string name="help_categories_feature_delete_title">Elimina Categorie</string>
-    <string name="help_categories_feature_delete_desc">Rimuovi categorie personalizzate quando non sono piu necessarie.</string>
+    <string name="help_categories_feature_delete_desc">Rimuovi le categorie personalizzate quando non sono più necessarie.</string>
     <string name="app_name">AntCashManager</string>
     <string name="home_total_balance">Saldo Totale</string>
     <string name="home_income">Entrate</string>
@@ -533,4 +533,8 @@
     <string name="chart_last_14_days">Ultimi 14 giorni</string>
     <string name="chart_average">Media</string>
     <string name="chart_weekday_distribution_title">Distribuzione per Giorno</string>
+    <string name="error_generic">Si è verificato un errore</string>
+
+    <!-- App Description -->
+    <string name="app_description">Questa app nasce dall\'esigenza di tracciare le spese familiari gratuitamente e di confrontare gli aumenti dei prezzi.</string>
 </resources>

@@ -37,7 +37,6 @@ class LocalDataCipherImplTest {
         cipher = LocalDataCipherImpl(mockContext)
     }
 
-    @Ignore("TODO: Fix MockK setup for SharedPreferences - encryption config needed")
     @Test
     fun encryptString_shouldEncryptNonEmptyValue_whenStringProvided() {
         val plaintext = "Sensitive Data"

@@ -1,15 +1,14 @@
-package com.antcashmanager.android.ui.components.layout
-
 @file:Suppress("LocalVariableName")
 
-import com.antcashmanager.android.BaseComposeUnitTest
-import org.junit.Ignore
+package com.antcashmanager.android.ui.components.layout
 
 import androidx.compose.ui.test.assertIsDisplayed
+import com.antcashmanager.android.BaseComposeUnitTest
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import org.junit.Ignore
+import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import com.antcashmanager.android.ui.theme.AntCashManagerTheme
-import org.junit.Test
 
 /**
  * Unit tests per LeftSidebar layout component.
