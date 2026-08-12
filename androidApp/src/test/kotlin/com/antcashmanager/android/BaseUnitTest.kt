@@ -17,6 +17,16 @@ import org.junit.Before
 /**
  * Classe base condivisa per i test unitari Android host-side.
  *
+ * **Design Rationale:**
+ * - Uses [UnconfinedTestDispatcher] for eager execution (tasks run immediately without delay)
+ * - This allows `backgroundScope.launch()` to execute collectors/flows before test assertions
+ * - Without Unconfined, Flow collectors might not emit values before assertions run
+ *
+ * **When to Override:**
+ * - For tests requiring deferred execution: override [testDispatcher] with [StandardTestDispatcher]
+ * - Use `advanceUntilIdle()` after launching coroutines to advance time deterministically
+ * - Example: Testing debounce/delay operators, retry logic with backoff
+ *
  * Centralizza:
  * - sostituzione di [Dispatchers.Main] con un [testDispatcher] deterministico;
  * - esecuzione dei test coroutine tramite [runUnitTest];

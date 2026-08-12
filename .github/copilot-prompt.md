@@ -1,57 +1,81 @@
-# Copilot Prompt per AntCashManager
+# Copilot Prompt Context - AntCashManager
 
-Questo file serve come prompt locale per Copilot, ottimizzando la generazione di codice e suggerimenti per il progetto AntCashManager. Segui SEMPRE queste linee guida contestuali:
+Questo file fornisce contesto locale per GitHub Copilot. **Tutte le regole dettagliate sono in [AGENTS.md](../../AGENTS.md)** - consultalo come source of truth.
+
+## Quick Reference
+
+**Project**: Android KMP app, Clean Architecture 3-layer  
+**Key Frameworks**: Jetpack Compose, Kotlin Coroutines, Room, DataStore, Koin DI  
+**Localization**: 5 languages (en, it, fr, de, es)
+
+## Architecture Reminder
+
+```
+Presentation (androidApp)  
+  ↓ depends on Domain only  
+Domain (shared/commonMain)  
+  ↓ implemented by Data  
+Data (shared/androidMain)
+```
+
+**Organization**: Package-by-feature (not by technical type)
+
+## Essential Rules (See AGENTS.md for Complete Details)
+
+### UseCase Pattern
+- Extend base class: `UseCase<P,R>`, `NoParamsUseCase<R>`, `ObservableUseCase<P,R>`, or `NoParamsObservableUseCase<R>`
+- Implement `execute()` (NOT `invoke()`)
+- Accept `dispatcher` parameter
+- Return `Result<T>` (wrapping handled by base class)
+- **See AGENTS.md lines 111-136**
+
+### ViewModel Pattern  
+- Expose: `StateFlow` (public)
+- Keep private: `MutableStateFlow`
+- Use Kermit for logging (never Log/println)
+- Accept UseCase instances ONLY (not repositories)
+- **See AGENTS.md lines 140-151**
+
+### Feature File Structure
+```
+ui/screen/<feature>/
+  <Feature>Screen.kt        # Composable
+  <Feature>ViewModel.kt     # State management
+  <Feature>State.kt         # UI state data class
+  <Feature>Constants.kt     # Feature-specific constants (if needed)
+  model/                    # Reusable feature models
+  view/                     # Sub-composables
+```
+**See AGENTS.md lines 154-168**
+
+### Testing Standards
+- **Framework**: JUnit 4 + MockK (Mockito forbidden)
+- **Base Class**: `BaseUnitTest` (ViewModel tests), `BaseUseCaseTest` (domain tests)
+- **Naming**: `method_shouldExpectedBehavior_whenCondition` (no backticks)
+- **Roboelectric**: ONLY instrumentation tests (`src/androidTest`) - NOT unit tests
+- **See AGENTS.md lines 227-354**
+
+### String Localization
+- ALL user-facing strings → `strings.xml` (5 locales: en, it, fr, de, es)
+- Use `stringResource(R.string.key)` everywhere
+- Check for duplicates: `grep -r "string_key" androidApp/src/main/res/values*/`
+- **See AGENTS.md lines 217-224**
+
+## Quick Links
+
+- **Complete Architecture Guide**: [AGENTS.md](../../AGENTS.md)
+- **Testing Agent**: [.github/agents/agent-unit-tests-mockk.agent.md](.github/agents/agent-unit-tests-mockk.agent.md)
+- **Clean Architecture Agent**: [.github/agents/agent-android-clean-architecture.agent.md](.github/agents/agent-android-clean-architecture.agent.md)
+- **Agent Index**: [.github/agents/README.md](.github/agents/README.md)
+
+## When in Doubt
+
+1. **Read AGENTS.md** - it's the source of truth
+2. **Consult relevant agent file** - for specialized guidance (testing, architecture, cleanup)
+3. **Use existing patterns** - reference `HomeScreen`, `SettingsScreen`, `DisplayScreen`, `ReceiptScanScreen`
+4. **Prioritize**: Clean code > Speed, Testability > Clever code
 
 ---
 
-## Contesto Progetto
-- App Android per gestione finanze personali
-- Architettura Clean a 3 layer: Presentation (androidApp) → Domain (shared/commonMain) → Data (shared/androidMain)
-- Kotlin Multiplatform (KMP), Jetpack Compose, nessun Hilt/Dagger (DI manuale)
-- UI moderna, localizzazione in 5 lingue, componenti riutilizzabili
-
----
-
-## Regole Chiave per Copilot
-- Rispetta la Clean Architecture: nessuna dipendenza inversa tra i layer
-- Organizza per feature, non per tipo tecnico
-- Usa Kotlin idiomatico, safe call, val dove possibile
-- NO logica di business nei composable, solo ViewModel e UseCase
-- Tutte le stringhe user-facing in strings.xml (en, it, fr, de, es)
-- Usa componenti UI esistenti in ui/components/ prima di crearne di nuovi
-- Applica MaterialTheme per colori, tipografia e spacing
-- Ogni UseCase accetta dispatcher, restituisce Result<T>, implementa solo execute()
-- ViewModel: StateFlow pubblico, MutableStateFlow privato, consuma Result con onSuccess/onFailure
-- Se una data class rappresenta lo stato di Screen/ViewModel (`<Feature>State`), mantienila nella classe/file State e non creare classi duplicate o `typealias`
-- Logger: usa Kermit, mai println/Log
-- Test: usa **MockK** come standard, fake repository solo quando aiutano con stato/Flow/cancellazione
-- Test Android host-side: usa `com.antcashmanager.android.BaseUnitTest` come base comune e riusa `runViewModelTest`/`testDispatcher`
-- Test: mantieni lo scopo originale, naming `method_shouldExpectedBehavior_whenCondition`, **senza backtick**
-- Dai priorita ai test di `ViewModel`, helper, parser, formatter, mapper e repository con logica
-- NO hardcoded string/color/font, NO runBlocking fuori dai test
-- Pre-commit: import puliti, package corretto, checklist rispettata
-
----
-
-## Suggerimenti Prompt
-- Quando generi codice, pensa sempre a: layer corretto, riuso componenti, localizzazione, testabilità
-- Se devi scegliere tra più soluzioni, preferisci quella più pulita, idiomatica e facilmente testabile
-- Consulta i file in wiki/ e le implementazioni DisplayScreen, SettingsScreen, HomeScreen per esempi
-- Per task specializzati, consulta gli agenti in `.github/agents/`, in particolare `agent-unit-tests-mockk.agent.md` per gli unit test
-
----
-
-## Esempio di struttura file
-- UseCase: shared/commonMain/domain/usecase/feature/NomeUseCase.kt
-- ViewModel: androidApp/ui/screen/feature/NomeViewModel.kt
-- State: androidApp/ui/screen/feature/NomeState.kt
-- Screen: androidApp/ui/screen/feature/NomeScreen.kt
-- Componenti UI: androidApp/ui/components/
-- Test ViewModel: androidApp/src/test/
-- Test domain commonMain: shared/commonTest/
-- Test repository/data host-side: shared/src/test/
-
----
-
-## Nota finale
-Quando in dubbio, scegli sempre la soluzione più pulita, manutenibile e testabile. La qualità del codice ha priorità sulla velocità.
+**Last Updated**: 2026-08-12  
+**Note**: This is a reference file. For complete, authoritative rules, always check AGENTS.md.

@@ -1,6 +1,11 @@
 # AGENTS.md – AntCashManager
 
-Guide for AI coding agents working in this codebase. Read before making any changes.
+**Complete guide for AI coding agents working in this codebase.**
+
+**🚀 New to the project?** Start with [ARCHITECTURE_OVERVIEW.md](.github/ARCHITECTURE_OVERVIEW.md) for a visual guide.  
+**📚 Need specialized guidance?** See [.github/agents/README.md](.github/agents/README.md) for agent selection.
+
+---
 
 ---
 
@@ -111,10 +116,19 @@ Build **only after all changes are complete** – avoid incremental builds durin
 ## UseCase Pattern
 
 All use cases extend one of these base classes from `shared/commonMain/domain/usecase/base/`:
-- `UseCase<P, R>` – single suspend call, returns `Result<R>` via `invoke()`
-- `ObservableUseCase<P, R>` – Flow-based, emits `Flow<Result<R>>` via `invoke()`
-- `NoParamsUseCase<R>` – parameterless variant of `UseCase`
-- `NoParamsObservableUseCase<R>` – parameterless variant of `ObservableUseCase`
+
+### UseCase Base Class Selection Matrix
+
+| Need Params? | Need Flow/Stream? | Base Class | Method | Example |
+|---|---|---|---|---|
+| ✅ Yes | ❌ No | `UseCase<P, R>` | `suspend fun execute(params: P): R` | Insert transaction |
+| ❌ No | ❌ No | `NoParamsUseCase<R>` | `suspend fun execute(): R` | Get current balance |
+| ✅ Yes | ✅ Yes | `ObservableUseCase<P, R>` | `fun execute(params: P): Flow<R>` | Observe filtered transactions |
+| ❌ No | ✅ Yes | `NoParamsObservableUseCase<R>` | `fun execute(): Flow<R>` | Observe all settings changes |
+
+**Quick Decision Flow**:
+1. Does it need input parameters? → YES: use Params variant, NO: use NoParams variant
+2. Does it need continuous stream (Flow)? → YES: use Observable variant, NO: use regular variant
 
 **Rules:**
 - Implement `execute()`, never override `invoke()`.
@@ -151,21 +165,55 @@ class InsertTransactionUseCase(
 
 ---
 
-## Feature File Structure
+## Feature File Structure (Consolidated)
+
+**Single source of truth for organizing features** (organized by-feature, not by-type):
 
 ```
 ui/screen/<feature>/
-    <Feature>Screen.kt        # Composable UI
-    <Feature>ViewModel.kt     # State management
-    <Feature>State.kt         # data class for UI state (stays HERE only)
-    <Feature>Constants.kt     # Shared constants for the feature
-    model/                    # Other feature-specific data classes
-    view/                     # Sub-composables
+│
+├── <Feature>Screen.kt              # Main Composable (max 400 lines)
+├── <Feature>ViewModel.kt           # State management (max 300 lines)
+├── <Feature>State.kt               # UI state data class (max 100 lines)
+├── <Feature>Constants.kt           # Feature constants (if needed)
+│
+├── model/                          # Feature-specific reusable data classes
+│   ├── <Model1>.kt
+│   └── <Model2>.kt
+│
+└── view/                           # Sub-composables (if Screen > 150 lines)
+    ├── <Component1>View.kt
+    ├── <Component2>View.kt
+    └── <Component3>View.kt
 ```
 
-- `<Feature>State` **must not** be duplicated or aliased via `typealias`.
-- Feature `data class`es that are reusable belong in the `model/` sub-package.
-- If a feature shares constants across files, create `<Feature>Constants` (e.g., `SettingsConstant.kt`).
+### Rules (CRITICAL)
+
+| Rule | Requirement | Impact |
+|------|---|---|
+| **State location** | `<Feature>State` lives in `<Feature>State.kt` ONLY | Single source of truth |
+| **No typealias** | Never alias state with `typealias` | Type safety, IDE navigation |
+| **Line limits** | Screen ≤400, ViewModel ≤300, State ≤100 | Maintainability, testability |
+| **Sub-composables** | Extract to `view/` if Screen > 150 lines | Code organization |
+| **Constants** | Create `<Feature>Constants.kt` if shared across files | Avoid string duplication |
+| **Models** | Reusable feature classes → `model/` | Modularity |
+
+### Example: TransactionsScreen Feature Structure
+
+```
+ui/screen/transactions/
+├── TransactionsScreen.kt           (175 lines)
+├── TransactionsViewModel.kt        (240 lines)
+├── TransactionsState.kt            (45 lines)
+├── TransactionsConstants.kt        (8 lines)
+├── model/
+│   ├── TransactionFilterOption.kt
+│   └── TransactionListItem.kt
+└── view/
+    ├── TransactionItemView.kt
+    ├── FilterDialogView.kt
+    └── EmptyStateView.kt
+```
 
 ---
 
@@ -222,6 +270,20 @@ The app includes receipt scanning via Google ML Kit Text Recognition v2:
 - Every new `@Composable` **must** have at least two `@Preview`s: one light, one dark (`uiMode = Configuration.UI_MODE_NIGHT_YES`).
 - Apply `MaterialTheme` for all colors, typography, and spacing (8.dp between cards).
 
+### Common Reusable Components (Check Before Creating New)
+
+| Component | Location | Use Case | Example |
+|---|---|---|---|
+| `AppCard` | `ui/components/card/` | Elevated card with consistent styling | List item container |
+| `AppButton` | `ui/components/button/` | Styled button with ripple feedback | Save/Delete actions |
+| `ScreenHeader` | `ui/components/layout/` | Screen title + navigation | Top of screen |
+| `LoadingIndicator` | `ui/components/` | Circular progress | Data loading |
+| `ErrorMessage` | `ui/components/` | Error display + retry | Failed operations |
+| `EmptyState` | `ui/components/` | Empty list placeholder | No transactions |
+| `BalanceCard` | `ui/components/card/` | Transaction/category display | Home dashboard |
+
+**RULE**: Search components directory BEFORE creating new ones. Reuse saves ~20% codebase size.
+
 ---
 
 ## Testing
@@ -239,17 +301,14 @@ The app includes receipt scanning via Google ML Kit Text Recognition v2:
 - ✅ Use **MockK** for all mocking (`io.mockk:mockk`)
 - ❌ **Mockito is forbidden** – never use Mockito
 - ❌ Never import real database libraries (Room, DataStore) in tests – use Fake repositories or MockK
-- ⚠️ **Roboelectric: Hybrid Strategy**
-  - ✅ **USE in unit tests** (`src/test`) – For rapid Compose component testing + Android Framework operations (SharedPreferences, DataStore, Bundle)
-    - Roboelectric provides fast feedback (milliseconds) during development
-    - Deterministic execution (no timing races)
-    - No device/emulator required
-    - Example: Component testing, ViewModel logic, repository operations
-  - ✅ **ALSO USE in instrumentation tests** (`src/androidTest`) – When simulating Android Framework without real device
+- ⚠️ **Roboelectric Strategy: Instrumentation Tests Only**
+  - ❌ **DO NOT use in unit tests** (`src/test`) – Use Compose UI Test v2 instead (simpler, faster)
+  - ✅ **CAN use in instrumentation tests** (`src/androidTest`) – When simulating Android Framework without real device
     - Faster than device emulator (seconds vs minutes)
     - Good for integration testing data layer with Android framework
-    - Use `@RunWith(RobolectricTestRunner::class)` with Compose UI Test v2
-  - ⚠️ **COMPLEMENT with real instrumentation tests** (`src/androidTest` on device/emulator) – For critical user flows
+    - Use `@RunWith(RobolectricTestRunner::class)` with Compose UI Test v2 for framework simulation
+    - Example: Repository tests with Room/DataStore, navigation flows, settings integration
+  - ✅ **COMPLEMENT with real instrumentation tests** (`src/androidTest` on device/emulator) – For critical user flows
     - Test actual user interactions (tap, swipe, real touch handling)
     - GPU rendering validation
     - Performance profiling on real hardware
@@ -266,10 +325,10 @@ The app includes receipt scanning via Google ML Kit Text Recognition v2:
 
 **Unit Tests** (`src/test`):
 - ✅ **Use `androidx.compose.ui.test.junit4.v2.createComposeRule()`** (v2 API with StandardTestDispatcher)
-- ✅ **CAN use Roboelectric** for rapid component testing without device
-  - Provides MockK mocking + Compose UI Test assertion capabilities
-  - Fast feedback during development (milliseconds)
-  - Good for component state verification, callback testing, simple layouts
+- ❌ **DO NOT use Roboelectric** – Use Compose UI Test v2 assertions only (simpler, faster, sufficient for unit testing)
+  - Compose UI Test v2 handles state verification, callback testing, layout assertions
+  - No Android Framework needed for unit test component verification
+  - Fast feedback (milliseconds) without Roboelectric overhead
 - ❌ **NEVER use deprecated v1** (`androidx.compose.ui.test.junit4.createComposeRule()`)
 - ❌ Never use Roboelectric for complex touch interactions (drag, swipe, multi-touch)
 
@@ -289,6 +348,56 @@ The app includes receipt scanning via Google ML Kit Text Recognition v2:
 **Test Naming:**
 - ✅ Pattern: `method_shouldExpectedBehavior_whenCondition` (no backticks)
 - Example: `insertTransaction_shouldPersistAndRetrieve_whenValidDataProvided`
+
+### Dispatcher Decision Matrix
+
+When to use which dispatcher in tests:
+
+| Scenario | Dispatcher | Use Case | Example |
+|----------|-----------|----------|---------|
+| **Default (eager execution)** | `UnconfinedTestDispatcher` | Flow collectors, background jobs, most ViewModel tests | StateFlow emission before assertions |
+| **Deferred execution** | `StandardTestDispatcher` | Debounce, delay, retry with backoff | Testing 500ms debounce operator |
+| **Override in test** | Change in test method | Special timing needs | `testDispatcher = StandardTestDispatcher()` + `advanceUntilIdle()` |
+| **Production code** | `Dispatchers.Default` | UseCase async work | Default dispatcher in UseCase constructor |
+
+**Quick Decision**: Use `BaseUnitTest` (UnconfinedTestDispatcher) by default. Only override if test needs `.advanceUntilIdle()`.
+
+### Testing Strategy Quick Reference
+
+| Test Type | Source Set | Base Class | Framework | Device? |
+|---|---|---|---|---|
+| **ViewModel** | `androidApp/src/test/` | `BaseUnitTest` | JUnit 4 + MockK + Compose v2 | ❌ |
+| **Domain UseCase** | `shared/src/commonTest/` | `BaseUseCaseTest` | JUnit 4 + MockK | ❌ |
+| **Repository** | `shared/src/androidHostTest/` | — | JUnit 4 + MockK | ❌ |
+| **UI Integration** | `androidApp/src/androidTest/` | — | AndroidJUnit4 + Compose | ✅ or Roboelectric |
+| **Full E2E** | `androidApp/src/androidTest/` | — | AndroidJUnit4 | ✅ Real device |
+
+**Key Points**:
+- ✅ Unit test: MockK only, Compose UI Test v2 (NO Roboelectric)
+- ✅ Instrumentation: Roboelectric OK for simulation OR real device for E2E
+- ✅ Naming: `method_shouldExpectedBehavior_whenCondition`
+
+### Exception Handling Quick Reference
+
+| Layer | Exception Type | Location | Pattern |
+|---|---|---|---|
+| **Domain** | Custom sealed class | `domain/exception/` | Define & throw from UseCase |
+| **Data** | Standard exceptions | Repository | Catch, map to domain exception |
+| **Presentation** | Never thrown | ViewModel | Consume Result only |
+| **Coroutines** | `CancellationException` | Any async | **ALWAYS re-throw** |
+
+**Critical Pattern**:
+```kotlin
+// ✅ CORRECT - Re-throw CancellationException
+try { repository.operation() }
+catch (e: Exception) {
+    if (e is CancellationException) throw e // RE-THROW!
+    throw DomainException.Failed(e)
+}
+
+// ❌ WRONG - Swallows CancellationException
+catch (e: Exception) { throw DomainException.Failed(e) }
+```
 
 **BaseUnitTest Utilities** (`androidApp/src/test/kotlin/com/antcashmanager/android/BaseUnitTest.kt`):
 - **Always extend `BaseUnitTest`** in `androidApp/src/test/kotlin` for ViewModel and Android host-side tests
@@ -350,6 +459,80 @@ class MyViewModelTest : BaseUnitTest() {
 - ❌ Real Room database/DataStore implementations in unit tests – use Fakes
 - ❌ Direct `Context`, `SharedPreferences`, or `File` I/O in unit tests
 - ❌ `org.robolectric.*` in unit test files – move to instrumentation tests if needed
+
+---
+
+## Quick Implementation Checklist
+
+Use this checklist when implementing a new feature. For detailed guidance, refer to relevant sections above.
+
+### 1. Feature Structure Setup
+- [ ] Create UseCase in `shared/commonMain/domain/usecase/<feature>/`
+- [ ] Create ViewModel in `androidApp/ui/screen/<feature>/`
+- [ ] Create State data class in `androidApp/ui/screen/<feature>/<Feature>State.kt`
+- [ ] Create Screen composable in `androidApp/ui/screen/<feature>/<Feature>Screen.kt`
+- [ ] Add UI components to `androidApp/ui/components/` (reusable) or `view/` sub-package (feature-specific)
+
+### 2. Clean Architecture Verification
+- [ ] UseCase: NO dependency on ViewModel or Presentation layer
+- [ ] ViewModel: Depends ONLY on UseCase(s), NOT on Repository directly
+- [ ] Domain layer: Pure Kotlin ONLY, NO Android imports
+- [ ] No reversed dependencies (Data → Domain, Presentation → Domain)
+
+### 3. UseCase Implementation
+- [ ] Extend appropriate base class (`UseCase<P,R>`, `NoParamsUseCase<R>`, `ObservableUseCase<P,R>`, or `NoParamsObservableUseCase<R>`)
+- [ ] Accept `CoroutineDispatcher` parameter (default: `Dispatchers.Default`)
+- [ ] Implement `execute()` method ONLY (NOT `invoke()`)
+- [ ] Return value directly; base class wraps in `Result<T>`
+- [ ] Add KDoc documentation
+- [ ] Keep under 250 lines
+
+### 4. ViewModel Implementation
+- [ ] Expose `StateFlow` (public)
+- [ ] Keep `MutableStateFlow` private
+- [ ] Accept UseCase instances as constructor parameters
+- [ ] Consume `Result<T>` with `.onSuccess { }` and `.onFailure { }`
+- [ ] Use Kermit for logging (never `Log.d()` or `println()`)
+- [ ] Keep under 300 lines
+- [ ] Add `viewModelScope.cancel()` cleanup in tests (if `@After` method needed)
+
+### 5. State & Screen
+- [ ] `<Feature>State` data class stays in dedicated file (`<Feature>State.kt`)
+- [ ] NO typealias or aliases for state
+- [ ] Screen composable: NO business logic, only UI composition
+- [ ] Add at least 2 `@Preview` functions (light mode + dark mode)
+- [ ] Keep Screen under 400 lines
+- [ ] Reuse components from `androidApp/ui/components/` before creating new ones
+
+### 6. Localization
+- [ ] ALL user-facing strings in `strings.xml` (NOT hardcoded)
+- [ ] Check for existing strings: `grep -r "your_key" androidApp/src/main/res/values*/`
+- [ ] Add translations to ALL 5 locale files:
+  - `values/strings.xml` (English)
+  - `values-it/strings.xml` (Italian)
+  - `values-fr/strings.xml` (French)
+  - `values-de/strings.xml` (German)
+  - `values-es/strings.xml` (Spanish)
+- [ ] Use `stringResource(R.string.key)` in Compose
+
+### 7. Testing
+- [ ] Create ViewModel test in `androidApp/src/test/kotlin/com/antcashmanager/android/ui/screen/<feature>/<Feature>ViewModelTest.kt`
+- [ ] Extend `BaseUnitTest`
+- [ ] Use test naming: `method_shouldExpectedBehavior_whenCondition` (no backticks)
+- [ ] Mock UseCase with MockK (`mockk()`, `coEvery`, `coVerify`)
+- [ ] Test both happy path AND failure scenarios
+- [ ] Create UseCase test in `shared/src/commonTest/`
+- [ ] Use `TestDataBuilder` for test data
+
+### 8. Pre-Commit Verification
+- [ ] Imports: all used, no unused imports
+- [ ] Package name: matches directory structure
+- [ ] Build succeeds: `./gradlew build`
+- [ ] Tests pass: `./gradlew test`
+- [ ] No hardcoded strings/colors/fonts
+- [ ] No `runBlocking()` outside tests
+- [ ] Code under line limits (UseCase 250, ViewModel 300, Screen 400, State 100)
+- [ ] Material Design compliance (colors from MaterialTheme, proper spacing)
 
 ---
 
