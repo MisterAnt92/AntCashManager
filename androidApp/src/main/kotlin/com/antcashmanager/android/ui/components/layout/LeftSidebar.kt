@@ -33,6 +33,7 @@ import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.R
+import com.antcashmanager.android.BuildConfig
 import com.antcashmanager.android.navigation.BottomNavItem
 import com.antcashmanager.android.ui.components.text.AppText
 
@@ -258,7 +259,7 @@ private fun SidebarFooter() {
 
         // Version badge (transparent)
         AppText(
-            text = "v1.6.3",
+            text = "v${BuildConfig.VERSION_NAME}",
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(bottom = 8.dp),
