@@ -10,18 +10,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.window.layout.DisplayFeature
+import androidx.window.layout.FoldingFeature
+import androidx.window.layout.WindowInfoTracker
+import android.graphics.Rect
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 private const val TABLET_MEDIUM_BREAKPOINT_DP = 600
 private const val TABLET_EXPANDED_BREAKPOINT_DP = 840
 
 /**
- * Describes the current window class used to adapt layouts for phones and tablets.
+ * Describes the current window class used to adapt layouts for phones, tablets, and foldable devices.
+ * Includes fold detection information for devices like Samsung Galaxy Z Fold and Z Flip.
  */
 @Stable
 data class AdaptiveLayoutInfo(
@@ -37,6 +43,12 @@ data class AdaptiveLayoutInfo(
     val preferRailNavigation: Boolean,
     val horizontalPadding: Dp,
     val maxContentWidth: Dp,
+    // Fold detection (androidx.window)
+    val foldingFeature: FoldingFeature? = null,
+    val hasFold: Boolean = false,
+    val isFoldHorizontal: Boolean = false,  // Horizontal fold (Z Flip)
+    val isFoldVertical: Boolean = false,    // Vertical fold (Z Fold)
+    val foldBounds: Rect? = null,  // Pixel coordinates of fold
 )
 
 /**
@@ -69,6 +81,11 @@ fun rememberAdaptiveLayoutInfo(): AdaptiveLayoutInfo {
             preferRailNavigation = true,
             horizontalPadding = 24.dp,
             maxContentWidth = 1200.dp,
+            foldingFeature = null,
+            hasFold = false,
+            isFoldHorizontal = false,
+            isFoldVertical = false,
+            foldBounds = null,
         )
 
         screenWidthDp >= TABLET_MEDIUM_BREAKPOINT_DP -> AdaptiveLayoutInfo(
@@ -84,6 +101,11 @@ fun rememberAdaptiveLayoutInfo(): AdaptiveLayoutInfo {
             preferRailNavigation = isTabletDevice || isLandscape,
             horizontalPadding = if (isFoldableDevice && !isLandscape) 16.dp else 20.dp,
             maxContentWidth = if (isFoldableDevice) 880.dp else 960.dp,
+            foldingFeature = null,
+            hasFold = false,
+            isFoldHorizontal = false,
+            isFoldVertical = false,
+            foldBounds = null,
         )
 
         else -> AdaptiveLayoutInfo(
@@ -99,6 +121,11 @@ fun rememberAdaptiveLayoutInfo(): AdaptiveLayoutInfo {
             preferRailNavigation = false,
             horizontalPadding = 8.dp,
             maxContentWidth = 680.dp,
+            foldingFeature = null,
+            hasFold = false,
+            isFoldHorizontal = false,
+            isFoldVertical = false,
+            foldBounds = null,
         )
     }
 }

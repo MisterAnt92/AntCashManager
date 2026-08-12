@@ -122,4 +122,19 @@ interface SettingsRepository {
     suspend fun setWidgetBackgroundColor(color: Long)
     fun getWidgetOpacity(): Flow<Int>
     suspend fun setWidgetOpacity(opacity: Int)
+
+    // ── Card Customization (persisted per backup) ──
+    /**
+     * Comma-separated storage keys for chart cards order (e.g., "DISTRIBUTION,PERIOD,QUICK_STATS").
+     * Empty string means use default order.
+     */
+    fun getChartCardsOrder(): Flow<String>
+    suspend fun setChartCardsOrder(order: String)
+
+    /**
+     * Comma-separated storage keys for home top cards order (e.g., "BALANCE,INCOME_EXPENSE").
+     * Empty string means use default order.
+     */
+    fun getHomeTopCardsOrder(): Flow<String>
+    suspend fun setHomeTopCardsOrder(order: String)
 }

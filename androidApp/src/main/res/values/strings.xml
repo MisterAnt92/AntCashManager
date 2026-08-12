@@ -28,10 +28,10 @@
     <string name="home_customize_top_cards_action">Customize top cards</string>
     <string name="home_customize_top_cards_title">Customize top cards</string>
     <string name="home_quick_insights_title">Quick insights</string>
+    <string name="home_quick_insights_net_balance">Net balance</string>
     <string name="home_quick_insights_transactions_count">Transactions in period</string>
     <string name="home_quick_insights_average_amount">Average amount</string>
-    <string name="home_quick_insights_savings_rate">Savings rate</string>
-    <string name="home_quick_insights_savings_rate_value">%1$.0f%%</string>
+    <string name="home_quick_insights_daily_average_expense">Daily average</string>
     <string name="home_move_up">Move up</string>
     <string name="home_move_down">Move down</string>
     <string name="home_balance_positive">📈 Positive</string>
@@ -117,6 +117,7 @@
     <string name="icon_shopping_cart">Groceries</string>
     <string name="icon_coffee">Coffee</string>
     <string name="icon_spa">Personal Care</string>
+    <string name="icon_card_giftcard">Meal Vouchers</string>
 
     <!-- Charts Screen -->
     <string name="charts_period">Period</string>
@@ -309,6 +310,14 @@
     <string name="language_french">Français</string>
     <string name="language_german">Deutsch</string>
     <string name="language_spanish">Español</string>
+    <string name="language_chinese_simplified">Chinese (Mandarin)</string>
+    <string name="language_chinese_traditional">Chinese (Traditional)</string>
+    <string name="language_japanese">Japanese</string>
+    <string name="language_polish">Polski</string>
+    <string name="language_hindi">हिन्दी (Hindi)</string>
+    <string name="language_russian">Русский (Russian)</string>
+    <string name="language_ukrainian">Українська (Ukrainian)</string>
+    <string name="language_korean">한국어 (Korean)</string>
     <string name="debug_import_started">Debug import started</string>
     <string name="back">Back</string>
 
@@ -425,6 +434,14 @@
     <string name="feedback_email_body_french">Bonjour à l\'équipe d\'AntCashManager,\n\nJ\'aimerais partager des commentaires sur l\'application:\n\n[Veuillez décrire vos commentaires ici]\n\nMerci!</string>
     <string name="feedback_email_body_german">Hallo AntCashManager-Team,\n\nIch möchte gerne Feedback zur App geben:\n\n[Bitte beschreiben Sie Ihr Feedback hier]\n\nDanke!</string>
     <string name="feedback_email_body_spanish">Hola equipo de AntCashManager,\n\nMe gustaría compartir comentarios sobre la aplicación:\n\n[Por favor describe tu retroalimentación aquí]\n\n¡Grazie!</string>
+    <string name="feedback_email_body_chinese_simplified">AntCashManager 团队您好，\n\n我想分享一些关于该应用的反馈：\n\n[请在此描述您的反馈]\n\n谢谢！</string>
+    <string name="feedback_email_body_chinese_traditional">AntCashManager 團隊您好，\n\n我想分享一些關於該應用的回饋：\n\n[請在此描述您的回饋]\n\n謝謝！</string>
+    <string name="feedback_email_body_japanese">AntCashManager チームの皆様、\n\nアプリについてフィードバックを共有したいと思います：\n\n[ここにフィードバックを記入してください]\n\nありがとうございます！</string>
+    <string name="feedback_email_body_polish">Cześć zespołem AntCashManager,\n\nChciałbym podzielić się opiniami na temat aplikacji:\n\n[Proszę opisz swoją opinię tutaj]\n\nDziękuję!</string>
+    <string name="feedback_email_body_hindi">AntCashManager टीम को नमस्ते,\n\nमैं ऐप के बारे में कुछ प्रतिक्रिया साझा करना चाहता हूँ:\n\n[कृपया यहाँ अपनी प्रतिक्रिया का वर्णन करें]\n\nधन्यवाद!</string>
+    <string name="feedback_email_body_russian">Привет команде AntCashManager,\n\nЯ хотел бы поделиться отзывом о приложении:\n\n[Пожалуйста опишите ваш отзыв здесь]\n\nСпасибо!</string>
+    <string name="feedback_email_body_ukrainian">Привіт команді AntCashManager,\n\nЯ хотів би поділитися відгуком про додаток:\n\n[Будь ласка, опишіть ваш відгук тут]\n\nДякую!</string>
+    <string name="feedback_email_body_korean">AntCashManager 팀에게,\n\n앱에 대한 의견을 공유하고 싶습니다:\n\n[여기에 피드백을 설명하세요]\n\n감사합니다!</string>
 
     <!-- Feedback Error Messages -->
     <string name="no_email_app_installed">No email app installed</string>
@@ -578,6 +595,36 @@
     <string name="dialog_close">Close</string>
     <string name="settings_title">Settings</string>
     <string name="charts_title">Graphics</string>
+    <string name="chart_customize_order">Customize chart cards order</string>
+    <string name="chart_cards_order_dialog_title">Reorder chart cards</string>
+    <string name="chart_cards_order_dialog_description">Drag up and down to reorder cards. Note: Period filter and summary row are fixed.</string>
     <string name="settings_project_by">A project made with love by Formica Simone @MisterAnt92</string>
+    <!-- Chart Cards - New Visualizations -->
+    <string name="chart_spending_forecast_title">Spending Forecast</string>
+    <string name="chart_avg_monthly">Monthly Average</string>
+    <string name="chart_period">Period</string>
+    <string name="chart_last_3_months">Last 3 months</string>
+    <string name="chart_quick_stats_title">Quick Stats</string>
+    <string name="chart_days_tracked">Days Tracked</string>
+    <string name="chart_max_daily">Max Daily</string>
+    <string name="chart_avg_daily">Daily Average</string>
+    <string name="chart_daily_expenses_title">Daily Expenses</string>
+    <string name="chart_last_14_days">Last 14 days</string>
+    <string name="chart_average">Average</string>
+    <string name="chart_weekday_distribution_title">Weekday Distribution</string>
 
+
+    <!-- Charts Customization -->
+    <string name="charts_customize_cards_title">Customize Card Order</string>
+
+    <!-- Chart Details Bottom Sheet -->
+    <string name="chart_details_title">Details</string>
+    <string name="chart_details_percentage">%d%% of total</string>
+    <string name="chart_details_amount">Amount</string>
+    <string name="chart_details_transactions">Transactions</string>
+    <string name="chart_details_info_title">Category Information</string>
+    <string name="chart_details_info_description">Tap on any chart slice to view more details about that category</string>
+    <string name="chart_trend_increasing">Spending trend: Increasing</string>
+    <string name="chart_trend_decreasing">Spending trend: Decreasing</string>
+    <string name="chart_trend_stable">Spending trend: Stable</string>
 </resources>

@@ -9,6 +9,7 @@ object AnalyticsConstants {
     const val SCREEN_CLASS_COMPOSE_NAV_HOST = "ComposeNavHost"
 
     val ALLOWED_USAGE_EVENTS = setOf(
+        // Existing events
         "transactions_filter_applied",
         "transactions_filter_cleared",
         "transaction_add_opened",
@@ -86,6 +87,33 @@ object AnalyticsConstants {
         "empty_state_action_taken",
         "chart_loading_completed",
         "settings_dialog_dismissed",
+
+        // NEW: Dialog dismissals & selections (Priority 2)
+        "date_picker_selected",
+        "category_selection_dialog_dismissed",
+        "transaction_type_selected",
+        "payment_type_selected",
+        "currency_format_dialog_dismissed",
+
+        // NEW: Navigation & Menu actions (Priority 2)
+        "sidebar_navigation_clicked",
+        "settings_submenu_opened",
+        "sidebar_toggled",
+
+        // NEW: List item actions (Priority 3)
+        "transactions_list_item_clicked",
+        "categories_list_item_clicked",
+        "chart_item_clicked",
+
+        // NEW: Easter egg (Priority 3)
+        "easter_egg_animation_opened",
+
+        // NEW: Tutorial progress tracking (Priority 4)
+        "tutorial_started",
+        "tutorial_step_completed",
+        "tutorial_step_skipped",
+        "tutorial_completed",
+        "tutorial_step_help_opened",
     )
 }
 

@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -43,6 +42,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.animation.AnimatedCard
 import com.antcashmanager.android.ui.components.animation.FadeInOnAppear
@@ -127,7 +129,7 @@ fun BalanceCard(
                         ),
                         fontWeight = FontWeight.SemiBold,
                     )
-                    Spacer(modifier = Modifier.height(12.dp))
+                    VerticalSpacer(SpacingSize.SM)
                     BalanceText(
                         amount = balance,
                         modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -168,7 +170,7 @@ fun BalanceCard(
                     },
                 ) {
                     Column {
-                        Spacer(modifier = Modifier.height(20.dp))
+                        VerticalSpacer(SpacingSize.ML)
                         PaymentTypeBreakdown(
                             balanceByPaymentType = balanceByPaymentType,
                             reduceMotion = reduceMotion,
@@ -197,7 +199,7 @@ private fun PaymentTypeBreakdown(
             color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
             fontWeight = FontWeight.Medium,
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        VerticalSpacer(SpacingSize.XS)
 
         // Get ordered payment types (ELECTRONIC, CASH, MEAL_VOUCHERS)
         val orderedPaymentTypes = PaymentType.values().mapNotNull { type ->
@@ -263,7 +265,7 @@ private fun PaymentTypeItem(
                 modifier = Modifier.size(22.dp),
                 tint = MaterialTheme.colorScheme.onSurface,
             )
-            Spacer(modifier = Modifier.height(6.dp))
+            VerticalSpacer(SpacingSize.XXS)
             AppText(
                 text = paymentTypeName,
                 style = MaterialTheme.typography.labelMedium,
@@ -272,7 +274,7 @@ private fun PaymentTypeItem(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-            Spacer(modifier = Modifier.height(4.dp))
+            VerticalSpacer(SpacingSize.XXXS)
             MoneyText(
                 amount = amount,
                 fontSize = 15,

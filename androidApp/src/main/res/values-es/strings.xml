@@ -10,10 +10,10 @@
     <string name="home_customize_top_cards_action">Personalizar tarjetas superiores</string>
     <string name="home_customize_top_cards_title">Personalizar tarjetas superiores</string>
     <string name="home_quick_insights_title">Resumen r\u00e1pido</string>
+    <string name="home_quick_insights_net_balance">Saldo neto</string>
     <string name="home_quick_insights_transactions_count">Transacciones del periodo</string>
     <string name="home_quick_insights_average_amount">Importe medio</string>
-    <string name="home_quick_insights_savings_rate">Tasa de ahorro</string>
-    <string name="home_quick_insights_savings_rate_value">%1$.0f%%</string>
+    <string name="home_quick_insights_daily_average_expense">Promedio diario</string>
     <string name="home_move_up">Mover arriba</string>
     <string name="home_move_down">Mover abajo</string>
     <string name="home_balance_positive">📈 Positivo</string>
@@ -92,6 +92,7 @@
     <string name="icon_shopping_cart">Supermercado</string>
     <string name="icon_coffee">Caf\u00e9</string>
     <string name="icon_spa">Cuidado personal</string>
+    <string name="icon_card_giftcard">Vales de Comida</string>
 
     <string name="charts_title">Gr\u00e1ficos</string>
     <string name="charts_period">Per\u00edodo</string>
@@ -270,6 +271,14 @@
     <string name="language_french">Français</string>
     <string name="language_german">Deutsch</string>
     <string name="language_spanish">Español</string>
+    <string name="language_chinese_simplified">Chino (Mandarín)</string>
+    <string name="language_chinese_traditional">Chino (Tradicional)</string>
+    <string name="language_japanese">Japonés</string>
+    <string name="language_polish">Polaco</string>
+    <string name="language_hindi">हिन्दी (Hindi)</string>
+    <string name="language_russian">Русский (Ruso)</string>
+    <string name="language_ukrainian">Український (Ucraniano)</string>
+    <string name="language_korean">한국어 (Coreano)</string>
     <string name="debug_import_started">Importación de depuración iniciada</string>
     <string name="back">Atrás</string>
     <string name="add_transaction">Añadir Transacción</string>
@@ -359,6 +368,9 @@
     <string name="feedback_email_body_french">Bonjour à l\'équipe d\'AntCashManager,\n\nJ\'aimerais partager des commentaires sur l\'application:\n\n[Veuillez décrire vos commentaires ici]\n\nMerci!</string>
     <string name="feedback_email_body_german">Hallo AntCashManager-Team,\n\nIch möchte gerne Feedback zur App geben:\n\n[Bitte beschreiben Sie Ihr Feedback hier]\n\nDanke!</string>
     <string name="feedback_email_body_spanish">Hola equipo de AntCashManager,\n\nMe gustaría compartir comentarios sobre la aplicación:\n\n[Por favor describe tu retroalimentación aquí]\n\n¡Gracias!</string>
+    <string name="feedback_email_body_chinese_simplified">AntCashManager 团队您好，\n\n我想分享一些关于该应用的反馈：\n\n[请在此描述您的反馈]\n\n谢谢！</string>
+    <string name="feedback_email_body_chinese_traditional">AntCashManager 團隊您好，\n\n我想分享一些關於該應用的回饋：\n\n[請在此描述您的回饋]\n\n謝謝！</string>
+    <string name="feedback_email_body_japanese">AntCashManager チームの皆様、\n\nアプリについてフィードバックを共有したいと思います：\n\n[ここにフィードバックを記入してください]\n\nありがとうございます！</string>
     <string name="no_email_app_installed">No hay aplicación de correo disponible</string>
     <string name="settings_display_charts">Gráficos</string>
     <string name="settings_charts_zoom">Activar Zoom de Gráficos</string>
@@ -500,5 +512,21 @@
     <string name="settings_easter_egg_message">🐜 ¡Hola! ¡Gracias por usar AntCash!</string>
     <string name="settings_title">Settings</string>
     <string name="settings_project_by">Un proyecto hecho con amor por Formica Simone @MisterAnt92</string>
+    <string name="chart_customize_order">Personalizar orden de tarjetas</string>
+    <string name="chart_cards_order_dialog_title">Reordenar tarjetas de gráficos</string>
+    <string name="chart_cards_order_dialog_description">Usa flechas arriba/abajo para reordenar. Nota: El filtro de período y la fila de resumen son fijos.</string>
+    <!-- Chart Cards - New Visualizations -->
+    <string name="chart_spending_forecast_title">Previsión de Gastos</string>
+    <string name="chart_avg_monthly">Promedio Mensual</string>
+    <string name="chart_period">Período</string>
+    <string name="chart_last_3_months">Últimos 3 meses</string>
+    <string name="chart_quick_stats_title">Estadísticas Rápidas</string>
+    <string name="chart_days_tracked">Días Registrados</string>
+    <string name="chart_max_daily">Máximo Diario</string>
+    <string name="chart_avg_daily">Promedio Diario</string>
+    <string name="chart_daily_expenses_title">Gastos Diarios</string>
+    <string name="chart_last_14_days">Últimos 14 días</string>
+    <string name="chart_average">Promedio</string>
+    <string name="chart_weekday_distribution_title">Distribución por Día</string>
 </resources>
 

@@ -45,7 +45,7 @@ La wiki è pubblicata anche come insieme di risorse statiche tramite GitHub Page
 | Campo | Valore |
 |---|---|
 | **App name** | `AntCashManager` |
-| **Versione corrente** | `1.4.6` |
+| **Versione corrente** | `1.7.0` |
 | **Package name** (`applicationId`) | `com.sformica.ant_cashmanager` |
 | **Namespace Android** | `com.antcashmanager.android` |
 | **Moduli principali** | `androidApp`, `shared` (Kotlin Multiplatform) |
@@ -184,6 +184,6 @@ Per domande sulla documentazione:
 
 ---
 
-**Ultima Modifica**: Maggio 2026  
-**Versione Wiki**: 1.0  
+**Ultima Modifica**: Agosto 2026  
+**Versione Wiki**: 1.7.0  
 **Status**: ✅ Documentazione Completa

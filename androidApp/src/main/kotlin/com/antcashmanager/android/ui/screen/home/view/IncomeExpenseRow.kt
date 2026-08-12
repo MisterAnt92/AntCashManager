@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -23,6 +22,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.animation.AnimatedCard
 import com.antcashmanager.android.ui.components.animation.FadeInOnAppear
@@ -75,14 +77,14 @@ fun IncomeExpenseRow(
                             )
                         }
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
+                    VerticalSpacer(SpacingSize.XS)
                     AppText(
                         text = stringResource(R.string.home_income),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f),
                         fontWeight = FontWeight.SemiBold,
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    VerticalSpacer(SpacingSize.XXXS)
                     CompactMoneyText(
                         amount = totalIncome,
                         fontSize = 18,
@@ -123,14 +125,14 @@ fun IncomeExpenseRow(
                             )
                         }
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
+                    VerticalSpacer(SpacingSize.XS)
                     AppText(
                         text = stringResource(R.string.home_expenses),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.8f),
                         fontWeight = FontWeight.SemiBold,
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    VerticalSpacer(SpacingSize.XXXS)
                     CompactMoneyText(
                         amount = totalExpense,
                         fontSize = 18,

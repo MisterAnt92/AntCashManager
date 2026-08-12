@@ -33,10 +33,50 @@ Segui sempre questi step nell'ordine:
 5. **Conferma** che il test mantenga uno scopo chiaro e stabile nel tempo
 
 ## Regole critiche
+
+### Stack Standard per KMP (OBBLIGATORIO)
+**La combinazione di riferimento per AntCashManager – seguire SEMPRE:**
+
+1. **`compose.uiTest`** (UI Testing Nativo) – Sviluppato da JetBrains/Google, cross-platform
+   - Libreria: `androidx.compose.ui:ui-test-junit4:*` (v2 con StandardTestDispatcher)
+   - API familiari: `onNodeWithText()`, `performClick()`, `onNodeWithTag()`, `performScroll()`, etc.
+   - Cross-platform: Codice di test condiviso nel `commonTest` ed eseguito su tutte le piattaforme
+   - **NO Roboelectric per unit test Compose** – Roboelectric è solo per instrumentation test
+
+2. **`kotlinx-coroutines-test`** (Gestione Coroutine) – StandardTestDispatcher + runTest
+   - Libreria: `org.jetbrains.kotlinx:kotlinx-coroutines-test:*`
+   - Essenziale per test di `StateFlow`, `SharedFlow`, azioni asincrone
+   - `runTest()` e `advanceUntilIdle()` per time advancement deterministico
+   - Elimina flakiness e rende test affidabili
+   - **Integrato in `BaseUnitTest`** per ViewModel test
+
+3. **`MockK`** (Mocking) – Unico framework di mocking autorizzato
+   - Libreria: `io.mockk:mockk:*`
+   - Comandi: `mockk()`, `every`, `coEvery`, `verify`, `coVerify`
+   - Supporto nativo per suspend fun e lambda
+
+### Librerie PROIBITE (NON USARE)
+- ❌ **`Mockito`** – VIETATO; usare **MockK** esclusivamente
+  - Non importare mai: `mockito.*`, `org.mockito.*`
+  - MockK è superiore per Kotlin e suspend fun
+  
+- ❌ **`Roboelectric` in unit test** – `org.robolectric.*` è SOLO per instrumentation test (`src/androidTest`), MAI in `src/test`
+  - Unit test devono eseguire su JVM con `compose.uiTest` standard
+  - Roboelectric è lento e non è necessario per Compose UI test
+  
+- ❌ **Database reali in unit test** – MAI usare Room, DataStore reali
+  - Usare `Fake*` repository dalla `com.antcashmanager.testutil` package
+  - Usare MockK per simulare comportamento di datasource
+  
+- ❌ **Direct Context/SharedPreferences/File I/O in unit test**
+  - Usare fake o mock, non accesso reale a sistema
+  
+- ❌ **`androidx.compose.ui.test.junit4.createComposeRule()` (v1 deprecated)**
+  - Usare SEMPRE v2: `androidx.compose.ui.test.junit4.v2.createComposeRule()` (con StandardTestDispatcher)
+
+### Struttura Codice
 - Non modificare file esclusi da `.gitignore`.
 - Non modificare mai `androidApp/google-services.json`.
-- Usa **MockK** come default: `mockk`, `every`, `coEvery`, `verify`, `coVerify`.
-- **Mockito e vietato**.
 - Nei test host-side Android in `androidApp/src/test/kotlin`, estendi SEMPRE `com.antcashmanager.android.BaseUnitTest`.
 - Nei test host-side Android, non duplicare `Dispatchers.setMain`, `Dispatchers.resetMain`, `StandardTestDispatcher()` o il boilerplate di `runTest(testDispatcher)`: riusa `BaseUnitTest`, `testDispatcher` e `runViewModelTest`.
 - I nomi dei test **non devono usare backtick**.
@@ -106,6 +146,63 @@ Copri repository che fanno qualcosa di piu della semplice delega, ad esempio:
 - gestione errori o fallback
 - trasformazioni `Flow`
 
+### 5. Compose UI Components (Unit Test con compose.uiTest v2)
+Copri sempre:
+- Stato renderizzato (visibilità, testo, icone)
+- Callback eseguiti su azione utente (click, scroll, etc.)
+- Estado disabilitato/abilitato del componente
+- Tint dinamico e colori (verifica su enabled/disabled state)
+- Accessibility (contentDescription su icone, pulsanti)
+
+Pattern consigliato per Compose UI unit test:
+```kotlin
+class MyComponentTest {
+    @get:Rule
+    val composeTestRule = createComposeRule()  // v2 API con StandardTestDispatcher
+    
+    @Test
+    fun component_shouldDisplayText_whenStateProvided() {
+        composeTestRule.setContent {
+            MyComponent(text = "Test")
+        }
+        
+        composeTestRule.onNodeWithText("Test")
+            .assertIsDisplayed()
+    }
+    
+    @Test
+    fun button_shouldBeEnabled_whenCanClick() {
+        composeTestRule.setContent {
+            MyButton(enabled = true, onClick = {})
+        }
+        
+        composeTestRule.onNodeWithContentDescription("My Button")
+            .assertIsEnabled()
+    }
+    
+    @Test
+    fun button_shouldCallOnClick_whenClicked() {
+        var clicked = false
+        composeTestRule.setContent {
+            MyButton(onClick = { clicked = true })
+        }
+        
+        composeTestRule.onNodeWithContentDescription("My Button")
+            .performClick()
+        
+        assertTrue(clicked)
+    }
+}
+```
+
+**REGOLE IMPORTANTI per Compose UI test:**
+- ✅ Usa `createComposeRule()` da `androidx.compose.ui.test.junit4.v2` (NO v1)
+- ✅ Verifica sempre `contentDescription` su icone e pulsanti
+- ✅ Testa stato visuale (enabled/disabled, visibilità)
+- ✅ Testa callback e side effects
+- ✅ Non dipendere da Roboelectric – usa solo compose.uiTest framework
+- ❌ NON testa internals di colori exact RGB – testa visibilità e stato
+
 ## Convenzioni di naming test
 ### Corretti
 - `onEvent_shouldPersistCustomFilter_whenSetDateRangeEventIsReceived`
@@ -131,6 +228,14 @@ Copri repository che fanno qualcosa di piu della semplice delega, ad esempio:
 - usa `every { dependency() } returns flowOf(...)` per `Flow`
 - usa `coVerify(exactly = 1) { dependency(param) }` per verificare la delega
 - evita verify troppo fragili su dettagli irrilevanti
+
+### Compose UI Test (compose.uiTest v2)
+- `composeTestRule.onNodeWithText("text").assertIsDisplayed()`
+- `composeTestRule.onNodeWithContentDescription("desc").assertIsEnabled()`
+- `composeTestRule.onNodeWithContentDescription("desc").assertIsNotEnabled()`
+- `composeTestRule.onNodeWithTag("tag").performClick()`
+- `composeTestRule.onNodeWithTag("tag").performScroll(SemanticsActions.Scroll, Vector2D(0f, -100f))`
+- `composeTestRule.onRoot().printToLog("TAG")` – per debug
 
 ## Source set e layering
 - `androidApp/src/test/kotlin`: test di `ViewModel` e logica Android non strumentale

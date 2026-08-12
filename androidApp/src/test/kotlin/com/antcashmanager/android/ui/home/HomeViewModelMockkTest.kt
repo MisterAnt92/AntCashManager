@@ -1,8 +1,8 @@
 package com.antcashmanager.android.ui.home
 
 import com.antcashmanager.android.BaseUnitTest
-import com.antcashmanager.android.ui.screen.home.event.HomeEvent
 import com.antcashmanager.android.ui.screen.home.HomeViewModel
+import com.antcashmanager.android.ui.screen.home.event.HomeEvent
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionSuggestions
@@ -50,7 +50,11 @@ class HomeViewModelMockkTest : BaseUnitTest() {
             val params = firstArg<FilterTransactionsUseCase.Params>()
             Result.success(params.transactions)
         }
-        every { getTransactionSuggestionsUseCase() } returns flowOf(Result.success(TransactionSuggestions()))
+        every { getTransactionSuggestionsUseCase() } returns flowOf(
+            Result.success(
+                TransactionSuggestions()
+            )
+        )
         every { getHomeDateFilterStateUseCase() } returns flowOf(
             Result.success(
                 SavedDateFilter(

@@ -5,12 +5,10 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,7 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,6 +35,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -47,17 +46,24 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
+import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
+import com.antcashmanager.android.ui.components.layout.FoldableAwareLayout
+import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
+import androidx.window.layout.FoldingFeature
+import kotlinx.coroutines.flow.first
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.components.animation.AntEasterEggAnimation
 import com.antcashmanager.android.ui.components.dialog.HelpButton
 import com.antcashmanager.android.ui.components.filter.DateRangeFilter
 import com.antcashmanager.android.ui.components.filter.SearchComponent
-import com.antcashmanager.android.ui.components.animation.AntEasterEggAnimation
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.overlay.TutorialOverlay
 import com.antcashmanager.android.ui.components.state.AntEmptyState
@@ -65,6 +71,8 @@ import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.home.event.HomeEvent
 import com.antcashmanager.android.ui.screen.home.model.HomeTopCardType
 import com.antcashmanager.android.ui.screen.home.transactionDetail.TransactionDetailsDialog
+import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
+import com.antcashmanager.android.navigation.ScreenHeaderConfig
 import com.antcashmanager.android.ui.screen.home.view.BalanceCard
 import com.antcashmanager.android.ui.screen.home.view.HelpDialog
 import com.antcashmanager.android.ui.screen.home.view.HomeTopCardsOrderDialog
@@ -136,6 +144,14 @@ internal fun HomeContent(
     var editingTopCardsOrder by remember { mutableStateOf(HomeTopCardType.parse(topCardsOrderRaw)) }
     val topCardsOrder = remember(topCardsOrderRaw) { HomeTopCardType.parse(topCardsOrderRaw) }
 
+    // Load persisted card order on composition
+    LaunchedEffect(Unit) {
+        val savedOrder = settingsRepository.getHomeTopCardsOrder().first()
+        if (savedOrder.isNotEmpty()) {
+            topCardsOrderRaw = savedOrder
+        }
+    }
+
     // DateRangeFilter expanded state from settings
     val dateFilterExpanded by settingsRepository.getDateFilterExpanded()
         .collectAsState(initial = true)
@@ -153,6 +169,11 @@ internal fun HomeContent(
     val coroutineScope = rememberCoroutineScope()
     val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
 
+    // Foldable device support
+    val displayFeatures = LocalDisplayFeatures.current
+    val multiPaneCoordinator = LocalMultiPaneCoordinator.current
+    val foldingFeature = displayFeatures.filterIsInstance<androidx.window.layout.FoldingFeature>().firstOrNull()
+
     val listState = rememberLazyListState()
     val showScrollToTop by remember {
         derivedStateOf { listState.firstVisibleItemIndex > 2 }
@@ -161,6 +182,20 @@ internal fun HomeContent(
         state.filteredTransactions
             .filter { it.type == TransactionType.EXPENSE }
             .maxByOrNull { kotlin.math.abs(it.amount) }
+    }
+
+    // Calcoli per Quick Insights Card
+    val netBalance = remember(state.totalIncome, state.totalExpense) {
+        state.totalIncome - state.totalExpense
+    }
+    val dailyAverageExpense = remember(state.totalExpense, state.dateRangeFrom, state.dateRangeTo) {
+        val daysInPeriod =
+            (state.dateRangeTo - state.dateRangeFrom) / 86400000.0 // Convert ms to days
+        if (daysInPeriod > 0) {
+            kotlin.math.abs(state.totalExpense) / daysInPeriod
+        } else {
+            0.0
+        }
     }
 
     // Elenco delle top card effettivamente visibili: esclude Quick Insights quando
@@ -175,6 +210,56 @@ internal fun HomeContent(
         }
     }
     val editableTopCardsOrder = visibleTopCardsOrder
+
+    // Configure screen header with actions
+    val headerConfigCallback = LocalScreenHeaderConfigCallback.current
+    val dashboardTitle = stringResource(R.string.common_dashboard)
+    LaunchedEffect(Unit) {
+        headerConfigCallback?.invoke(
+            ScreenHeaderConfig(
+                title = dashboardTitle,
+                actions = {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        // Search button
+                        IconButton(
+                            onClick = {
+                                onEvent(HomeEvent.ToggleSearchExpanded)
+                            },
+                            modifier = Modifier.size(40.dp),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = stringResource(R.string.transactions_search),
+                                tint = MaterialTheme.colorScheme.primary,
+                            )
+                        }
+
+                        // Tune/Customize button
+                        IconButton(
+                            onClick = {
+                                showTopCardsOrderDialog = true
+                            },
+                            modifier = Modifier.size(40.dp),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Sort,
+                                contentDescription = stringResource(R.string.home_customize_top_cards_action),
+                                tint = MaterialTheme.colorScheme.primary,
+                            )
+                        }
+
+                        // Help button
+                        HelpButton(
+                            onHelpClick = { showHelpDialog = true },
+                        )
+                    }
+                }
+            )
+        )
+    }
 
     // Tutorial full-screen
     if (!isTutorialCompleted) {
@@ -286,6 +371,10 @@ internal fun HomeContent(
                     }
                 }
                 topCardsOrderRaw = HomeTopCardType.serialize(updatedOrder)
+                // Persist card order to settings for backup/restore
+                coroutineScope.launch {
+                    settingsRepository.setHomeTopCardsOrder(HomeTopCardType.serialize(updatedOrder))
+                }
                 showTopCardsOrderDialog = false
                 analyticsManager.logEvent("home_top_cards_reordered")
             },
@@ -350,72 +439,6 @@ internal fun HomeContent(
                         ),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    // Header with action buttons in order: Search, Filter, Settings, Help
-                    item {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.ic_ant_mascot),
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .size(40.dp)
-                                        .clickable { showVersionDialog = true }
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                AppText(
-                                    text = stringResource(R.string.common_dashboard),
-                                    style = MaterialTheme.typography.headlineSmall,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                )
-                            }
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                // Search button
-                                IconButton(onClick = {
-                                    if (!state.isSearchExpanded) {
-                                        analyticsManager.logEvent("home_search_opened")
-                                    }
-                                    onEvent(HomeEvent.ToggleSearchExpanded)
-                                }) {
-                                    Icon(
-                                        imageVector = if (state.isSearchExpanded) Icons.Default.Close else Icons.Default.Search,
-                                        contentDescription = stringResource(R.string.transactions_search),
-                                        tint = if (state.searchQuery.isNotEmpty()) MaterialTheme.colorScheme.primary
-                                        else MaterialTheme.colorScheme.onSurfaceVariant,
-                                    )
-                                }
-                                // Filter button (Tune icon for top cards customization)
-                                IconButton(
-                                    onClick = {
-                                        editingTopCardsOrder = editableTopCardsOrder
-                                        showTopCardsOrderDialog = true
-                                    },
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Tune,
-                                        contentDescription = stringResource(
-                                            R.string.home_customize_top_cards_action,
-                                        ),
-                                    )
-                                }
-                                // Help button
-                                HelpButton(
-                                    onHelpClick = {
-                                        analyticsManager.logEvent("home_help_opened")
-                                        showHelpDialog = true
-                                    },
-                                )
-                            }
-                        }
-                    }
-
                     // Date Range Filter
                     item {
                         DateRangeFilter(
@@ -429,9 +452,12 @@ internal fun HomeContent(
                                     settingsRepository.setDateFilterExpanded(expanded)
                                 }
                             },
-                            onPresetSelected = {
-                                analyticsManager.logEvent("home_date_filter_changed")
-                                onEvent(HomeEvent.SelectPreset(it))
+                            onPresetSelected = { presetIndex ->
+                                val params = android.os.Bundle().apply {
+                                    putString("preset", presetIndex.toString())
+                                }
+                                analyticsManager.logEvent("home_date_filter_changed", params)
+                                onEvent(HomeEvent.SelectPreset(presetIndex))
                             },
                             onFromDateEdit = { showFromDatePicker = true },
                             onToDateEdit = { showToDatePicker = true },
@@ -461,6 +487,8 @@ internal fun HomeContent(
                                     totalIncome = state.totalIncome,
                                     totalExpense = state.totalExpense,
                                     transactionCount = state.filteredTransactions.size,
+                                    netBalance = netBalance,
+                                    dailyAverageExpense = dailyAverageExpense,
                                     biggestExpenseCategory = biggestExpense?.category,
                                     biggestExpenseAmount = biggestExpense?.amount,
                                 )
@@ -514,7 +542,17 @@ internal fun HomeContent(
                             RecentTransactionItem(
                                 transaction = transaction,
                                 onClick = {
+                                    val params = android.os.Bundle().apply {
+                                        putInt("index", state.recentTransactions.indexOf(transaction))
+                                        putString("type", transaction.type.name)
+                                    }
+                                    analyticsManager.logEvent("home_transaction_clicked", params)
                                     analyticsManager.logEvent("home_transaction_detail_opened")
+                                    // Notify multi-pane coordinator for foldable split-view sync
+                                    multiPaneCoordinator?.selectTransaction(
+                                        transaction = transaction,
+                                        navigateToDetailsPane = foldingFeature?.isSeparating == true
+                                    )
                                     onEvent(HomeEvent.ShowTransactionDetails(transaction))
                                 },
                                 displayType = transactionDisplayType,
@@ -523,7 +561,7 @@ internal fun HomeContent(
                     }
 
                     // Bottom spacer
-                    item { Spacer(modifier = Modifier.height(8.dp)) }
+                    item { VerticalSpacer(SpacingSize.XS) }
                 }
             }
         }
@@ -672,6 +710,15 @@ class MockHomeSettingsRepository : SettingsRepository {
         kotlinx.coroutines.flow.flowOf(100)
 
     override suspend fun setWidgetOpacity(opacity: Int) {}
+
+    override fun getChartCardsOrder(): kotlinx.coroutines.flow.Flow<String> =
+        kotlinx.coroutines.flow.flowOf("")
+
+    override suspend fun setChartCardsOrder(order: String) {}
+    override fun getHomeTopCardsOrder(): kotlinx.coroutines.flow.Flow<String> =
+        kotlinx.coroutines.flow.flowOf("")
+
+    override suspend fun setHomeTopCardsOrder(order: String) {}
 
     override suspend fun resetAllPreferences() {}
 }

@@ -61,10 +61,10 @@
     <string name="home_customize_top_cards_action">Personalizza card iniziali</string>
     <string name="home_customize_top_cards_title">Personalizza card iniziali</string>
     <string name="home_quick_insights_title">Insight rapidi</string>
+    <string name="home_quick_insights_net_balance">Bilancio netto</string>
     <string name="home_quick_insights_transactions_count">Transazioni nel periodo</string>
     <string name="home_quick_insights_average_amount">Importo medio</string>
-    <string name="home_quick_insights_savings_rate">Tasso di risparmio</string>
-    <string name="home_quick_insights_savings_rate_value">%1$.0f%%</string>
+    <string name="home_quick_insights_daily_average_expense">Media giornaliera</string>
     <string name="home_move_up">Sposta su</string>
     <string name="home_move_down">Sposta giu</string>
     <string name="home_balance_positive">📈 Positivo</string>
@@ -143,6 +143,7 @@
     <string name="icon_shopping_cart">Spesa</string>
     <string name="icon_coffee">Caffè</string>
     <string name="icon_spa">Cura personale</string>
+    <string name="icon_card_giftcard">Buoni Pasto</string>
 
     <string name="charts_period">Periodo</string>
     <string name="charts_from">Dal: %s</string>
@@ -318,6 +319,14 @@
     <string name="language_french">Fran\u00e7ais</string>
     <string name="language_german">Deutsch</string>
     <string name="language_spanish">Español</string>
+    <string name="language_chinese_simplified">Cinese (Mandarino)</string>
+    <string name="language_chinese_traditional">Cinese (Tradizionale)</string>
+    <string name="language_japanese">Giapponese</string>
+    <string name="language_polish">Polacco</string>
+    <string name="language_hindi">हिन्दी (Hindi)</string>
+    <string name="language_russian">Русский (Russo)</string>
+    <string name="language_ukrainian">Українська (Ucraino)</string>
+    <string name="language_korean">한국어 (Coreano)</string>
     <string name="debug_import_started">Importazione debug avviata</string>
     <string name="back">Indietro</string>
     <string name="add_transaction">Aggiungi Transazione</string>
@@ -411,6 +420,9 @@
     <string name="feedback_email_body_french">Bonjour à l\'équipe d\'AntCashManager,\n\nJ\'aimerais partager des commentaires sur l\'application:\n\n[Veuillez décrire vos commentaires ici]\n\nMerci!</string>
     <string name="feedback_email_body_german">Hallo AntCashManager-Team,\n\nIch möchte gerne Feedback zur App geben:\n\n[Bitte beschreiben Sie Ihr Feedback hier]\n\nDanke!</string>
     <string name="feedback_email_body_spanish">Hola equipo de AntCashManager,\n\nMe gustaría compartir comentarios sobre la aplicación:\n\n[Por favor describe tu retroalimentación aquí]\n\n¡Grazie!</string>
+    <string name="feedback_email_body_chinese_simplified">AntCashManager 团队您好，\n\n我想分享一些关于该应用的反馈：\n\n[请在此描述您的反馈]\n\n谢谢！</string>
+    <string name="feedback_email_body_chinese_traditional">AntCashManager 團隊您好，\n\n我想分享一些關於該應用的回饋：\n\n[請在此描述您的回饋]\n\n謝謝！</string>
+    <string name="feedback_email_body_japanese">AntCashManager チームの皆様、\n\nアプリについてフィードバックを共有したいと思います：\n\n[ここにフィードバックを記入してください]\n\nありがとうございます！</string>
     <string name="no_email_app_installed">Nessuna app email disponibile</string>
     <string name="error_opening_link">Impossibile aprire il link. Controlla le tue app.</string>
     <string name="settings_display_charts">Grafici</string>
@@ -502,7 +514,23 @@
     <string name="settings_third_party_author">di %s</string>
     <string name="settings_title">Impostazioni</string>
     <string name="charts_title">Grafici</string>
+    <string name="chart_customize_order">Personalizza ordine card</string>
+    <string name="chart_cards_order_dialog_title">Riordina card grafici</string>
+    <string name="chart_cards_order_dialog_description">Usa frecce su/giù per riordinare. Nota: Filtro periodo e riga riepilogo sono fissi.</string>
     <string name="dialog_cancel">Annulla</string>
     <string name="dialog_close">Chiudi</string>
     <string name="settings_project_by">Un progetto fatto con amore da Formica Simone @MisterAnt92</string>
+    <!-- Chart Cards - New Visualizations -->
+    <string name="chart_spending_forecast_title">Previsione Spesa</string>
+    <string name="chart_avg_monthly">Media Mensile</string>
+    <string name="chart_period">Periodo</string>
+    <string name="chart_last_3_months">Ultimi 3 mesi</string>
+    <string name="chart_quick_stats_title">Statistiche Rapide</string>
+    <string name="chart_days_tracked">Giorni Tracciati</string>
+    <string name="chart_max_daily">Massimo Giornaliero</string>
+    <string name="chart_avg_daily">Media Giornaliera</string>
+    <string name="chart_daily_expenses_title">Uscite Giornaliere</string>
+    <string name="chart_last_14_days">Ultimi 14 giorni</string>
+    <string name="chart_average">Media</string>
+    <string name="chart_weekday_distribution_title">Distribuzione per Giorno</string>
 </resources>

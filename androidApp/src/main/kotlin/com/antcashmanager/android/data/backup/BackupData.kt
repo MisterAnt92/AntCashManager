@@ -59,8 +59,8 @@ data class CategoryBackup(
 
 /**
  * Serializable representation delle impostazioni dell'app per backup purposes.
- * Copre solo tema/lingua/accessibilità/visualizzazione: esclude deliberatamente stato dei
- * filtri data per schermata, tutorial completato e flag di cifratura del backup stesso.
+ * Copre tema/lingua/accessibilità/visualizzazione/ordinamento carte/encryption.
+ * Esclude deliberatamente: stato dei filtri data per schermata, tutorial completato.
  */
 @Serializable
 data class SettingsBackup(
@@ -88,4 +88,9 @@ data class SettingsBackup(
     val suggestionsClearedAt: Long? = null,
     val widgetBackgroundColor: Long = 0xFFFFFFFFL,
     val widgetOpacity: Int = 100,
+    // ── Card Customization (v2+) ──
+    val chartCardsOrder: String = "", // Comma-separated chart card type storage keys
+    val homeTopCardsOrder: String = "", // Comma-separated home top card type storage keys
+    // ── Security (v2+) ──
+    val dataEncryptionEnabled: Boolean = false, // Whether backup data encryption is enabled
 )

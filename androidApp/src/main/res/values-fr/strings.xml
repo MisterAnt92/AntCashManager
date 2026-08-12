@@ -10,10 +10,10 @@
     <string name="home_customize_top_cards_action">Personnaliser les cartes du haut</string>
     <string name="home_customize_top_cards_title">Personnaliser les cartes du haut</string>
     <string name="home_quick_insights_title">Aper\u00e7us rapides</string>
+    <string name="home_quick_insights_net_balance">Solde net</string>
     <string name="home_quick_insights_transactions_count">Transactions sur la p\u00e9riode</string>
     <string name="home_quick_insights_average_amount">Montant moyen</string>
-    <string name="home_quick_insights_savings_rate">Taux d\'\u00e9pargne</string>
-    <string name="home_quick_insights_savings_rate_value">%1$.0f%%</string>
+    <string name="home_quick_insights_daily_average_expense">Moyenne quotidienne</string>
     <string name="home_move_up">Monter</string>
     <string name="home_move_down">Descendre</string>
     <string name="home_balance_positive">📈 Positif</string>
@@ -92,6 +92,7 @@
     <string name="icon_shopping_cart">Courses</string>
     <string name="icon_coffee">Caf\u00e9</string>
     <string name="icon_spa">Bien-\u00eatre</string>
+    <string name="icon_card_giftcard">Titres-Restaurant</string>
 
     <string name="charts_title">Graphiques</string>
     <string name="charts_period">P\u00e9riode</string>
@@ -271,6 +272,14 @@
     <string name="language_french">Français</string>
     <string name="language_german">Deutsch</string>
     <string name="language_spanish">Español</string>
+    <string name="language_chinese_simplified">Chinois (Mandarin)</string>
+    <string name="language_chinese_traditional">Chinois (Traditionnel)</string>
+    <string name="language_japanese">Japonais</string>
+    <string name="language_polish">Polonais</string>
+    <string name="language_hindi">हिन्दी (Hindi)</string>
+    <string name="language_russian">Русский (Russe)</string>
+    <string name="language_ukrainian">Українська (Ukrainien)</string>
+    <string name="language_korean">한국어 (Coréen)</string>
     <string name="debug_import_started">Importation de débogage lancée</string>
     <string name="back">Retour</string>
     <string name="add_transaction">Ajouter une Transaction</string>
@@ -364,6 +373,9 @@
     <string name="feedback_email_body_french">Bonjour à l\'équipe d\'AntCashManager,\n\nJ\'aimerais partager des commentaires sur l\'application:\n\n[Veuillez décrire vos commentaires ici]\n\nMerci!</string>
     <string name="feedback_email_body_german">Hallo AntCashManager-Team,\n\nIch möchte gerne Feedback zur App geben:\n\n[Bitte beschreiben Sie Ihr Feedback hier]\n\nDanke!</string>
     <string name="feedback_email_body_spanish">Hola equipo de AntCashManager,\n\nMe gustaría compartir comentarios sobre la aplicación:\n\n[Por favor describe tu retroalimentación aquí]\n\n¡Gracias!</string>
+    <string name="feedback_email_body_chinese_simplified">AntCashManager 团队您好，\n\n我想分享一些关于该应用的反馈：\n\n[请在此描述您的反馈]\n\n谢谢！</string>
+    <string name="feedback_email_body_chinese_traditional">AntCashManager 團隊您好，\n\n我想分享一些關於該應用的回饋：\n\n[請在此描述您的回饋]\n\n謝謝！</string>
+    <string name="feedback_email_body_japanese">AntCashManager チームの皆様、\n\nアプリについてフィードバックを共有したいと思います：\n\n[ここにフィードバックを記入してください]\n\nありがとうございます！</string>
     <string name="no_email_app_installed">Aucune application email disponible</string>
     <string name="settings_display_charts">Graphiques</string>
     <string name="settings_charts_zoom">Activer le zoom des graphiques</string>
@@ -505,4 +517,20 @@
     <string name="error_opening_link">Impossible d\'ouvrir le lien. Veuillez vérifier vos applications.</string>
     <string name="settings_easter_egg_message">🐜 Salut ! Merci d\'utiliser AntCash !</string>
     <string name="settings_project_by">Un projet fait avec amour par Formica Simone @MisterAnt92</string>
+    <string name="chart_customize_order">Personnaliser l\'ordre des cartes</string>
+    <string name="chart_cards_order_dialog_title">Réorganiser les cartes de graphiques</string>
+    <string name="chart_cards_order_dialog_description">Utilisez les flèches haut/bas pour réorganiser. Remarque: Le filtre de période et la ligne de résumé sont fixes.</string>
+    <!-- Chart Cards - New Visualizations -->
+    <string name="chart_spending_forecast_title">Prévision de Dépenses</string>
+    <string name="chart_avg_monthly">Moyenne Mensuelle</string>
+    <string name="chart_period">Période</string>
+    <string name="chart_last_3_months">3 derniers mois</string>
+    <string name="chart_quick_stats_title">Statistiques Rapides</string>
+    <string name="chart_days_tracked">Jours Suivis</string>
+    <string name="chart_max_daily">Maximum Quotidien</string>
+    <string name="chart_avg_daily">Moyenne Quotidienne</string>
+    <string name="chart_daily_expenses_title">Dépenses Quotidiennes</string>
+    <string name="chart_last_14_days">14 derniers jours</string>
+    <string name="chart_average">Moyenne</string>
+    <string name="chart_weekday_distribution_title">Distribution par Jour</string>
 </resources>

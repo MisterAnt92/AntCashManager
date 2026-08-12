@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Common Actions/Labels -->
+    <string name="common_dashboard">仪表板</string>
+    <string name="common_home">首页</string>
+    <string name="common_charts">图表</string>
+    <string name="common_transactions">交易</string>
+    <string name="common_categories">分类</string>
+    <string name="common_settings">设置</string>
+    <string name="common_income">收入</string>
+    <string name="common_expenses">支出</string>
+    <string name="common_back">返回</string>
+    <string name="common_add">添加</string>
+    <string name="common_preview">预览</string>
+
+    <!-- HelpDialog (Dashboard) -->
+    <string name="help_dashboard_desc">查看选定期间的总余额、收入和支出。</string>
+    <string name="app_name">蚂蚁现金管理器</string>
+
+    <!-- Home Screen -->
+    <string name="home_total_balance">总余额</string>
+    <string name="home_income">收入</string>
+    <string name="home_expenses">支出</string>
+    <string name="home_income_expense_card_title">收入和支出</string>
+    <string name="home_recent_transactions">最近交易</string>
+    <string name="home_customize_top_cards_action">自定义顶卡</string>
+    <string name="home_customize_top_cards_title">自定义顶卡</string>
+    <string name="home_quick_insights_title">快速洞察</string>
+    <string name="home_quick_insights_net_balance">净余额</string>
+    <string name="home_quick_insights_transactions_count">期间内的交易</string>
+    <string name="home_quick_insights_average_amount">平均金额</string>
+    <string name="home_quick_insights_daily_average_expense">每日平均</string>
+    <string name="home_move_up">上移</string>
+    <string name="home_move_down">下移</string>
+    <string name="home_balance_positive">📈 正数</string>
+    <string name="home_recent_transactions_count">最近交易 · %1$d</string>
+    <string name="home_quick_insights_biggest_expense">最大支出</string>
+    <string name="home_scroll_to_top">滚动到顶部</string>
+
+    <!-- Transactions Screen -->
+    <string name="transactions_add">添加交易</string>
+    <string name="transactions_type_income">收入</string>
+    <string name="transactions_type_expense">支出</string>
+    <string name="transactions_recurring">重复</string>
+    <string name="transactions_interval_daily">每日</string>
+    <string name="transactions_interval_weekly">每周</string>
+    <string name="transactions_interval_monthly">每月</string>
+    <string name="transactions_interval_yearly">每年</string>
+    <string name="transactions_search">搜索</string>
+    <string name="transactions_filter">过滤器</string>
+    <string name="transactions_search_label">搜索交易</string>
+    <string name="transactions_search_placeholder">名称或金额…</string>
+    <string name="transactions_advanced_filters">高级过滤器</string>
+    <string name="transactions_filter_type">交易类型</string>
+    <string name="transactions_filter_payment">支付方式</string>
+    <string name="transactions_filter_category">分类</string>
+    <string name="transactions_results_count">结果：%1$d</string>
+    <string name="common_all">全部</string>
+    <string name="common_clear">清除</string>
+    <string name="transaction_type_income">收入</string>
+    <string name="transaction_type_expense">支出</string>
+
+    <!-- Categories Screen -->
+    <string name="categories_empty">还没有分类</string>
+    <string name="categories_empty_subtitle">点击 + 添加您的第一个分类</string>
+    <string name="categories_add">添加分类</string>
+    <string name="categories_name_label">分类名称</string>
+    <string name="categories_color_label">颜色</string>
+    <string name="categories_delete_title">删除分类？</string>
+    <string name="categories_delete_message">您确定要删除"%s"吗？</string>
+    <string name="categories_add_content_desc">添加分类</string>
+    <string name="categories_selected">已选择</string>
+    <string name="categories_tab_expense">支出</string>
+    <string name="categories_tab_income">收入</string>
+    <string name="categories_default_badge">默认</string>
+    <string name="categories_icon_label">图标</string>
+    <string name="categories_hide">隐藏分类</string>
+    <string name="categories_show">显示分类</string>
+
+    <!-- Charts Screen -->
+    <string name="charts_period">期间</string>
+    <string name="charts_from">从：%s</string>
+    <string name="charts_to">到：%s</string>
+    <string name="charts_income">收入</string>
+    <string name="charts_expenses">支出</string>
+    <string name="charts_income_by_category">按分类划分的收入</string>
+    <string name="charts_expense_by_category">按分类划分的支出</string>
+    <string name="charts_monthly_overview">月度概览</string>
+    <string name="charts_yearly_overview">年度概览</string>
+    <string name="charts_no_data">选定期间内无数据</string>
+    <string name="chart_reset_zoom">重置缩放</string>
+    <string name="charts_payment_breakdown_title">支付方式细分</string>
+    <string name="charts_top_income_categories">顶级收入分类</string>
+    <string name="charts_top_expense_categories">顶级支出分类</string>
+    <string name="charts_pick_start_date">选择开始日期</string>
+    <string name="charts_pick_end_date">选择结束日期</string>
+    <string name="share">分享</string>
+
+    <!-- Range Presets -->
+    <string name="range_week">7天</string>
+    <string name="range_month">1个月</string>
+    <string name="range_three_months">3个月</string>
+    <string name="range_six_months">6个月</string>
+    <string name="range_year">1年</string>
+    <string name="range_two_years">2年</string>
+    <string name="range_three_years">3年</string>
+    <string name="range_five_years">5年</string>
+    <string name="range_six_years">6年</string>
+    <string name="range_all">所有时间</string>
+
+    <!-- Range Labels -->
+    <string name="range_label_today">今天</string>
+    <string name="range_label_this_week">本周</string>
+    <string name="range_label_this_month">本月</string>
+    <string name="range_label_this_year">今年</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_appearance">外观</string>
+    <string name="settings_theme">主题</string>
+    <string name="settings_theme_light">浅色</string>
+    <string name="settings_theme_dark">深色</string>
+    <string name="settings_theme_system">系统默认</string>
+    <string name="settings_language">语言</string>
+    <string name="settings_display">显示</string>
+    <string name="settings_currency_symbol">货币符号</string>
+    <string name="settings_decimal_digits">小数位数</string>
+    <string name="settings_decimal_separator">小数分隔符</string>
+    <string name="settings_thousands_separator">千位分隔符</string>
+    <string name="settings_support">支持</string>
+    <string name="settings_send_feedback">发送反馈</string>
+    <string name="settings_privacy_policy">隐私政策</string>
+    <string name="settings_app_version">应用版本</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_choose_theme">选择主题</string>
+    <string name="dialog_choose_language">选择语言</string>
+    <string name="dialog_ok">确定</string>
+    <string name="dialog_delete">删除</string>
+    <string name="dialog_add">添加</string>
+    <string name="common_confirm">确认</string>
+    <string name="common_cancel">取消</string>
+
+    <!-- Languages -->
+    <string name="language_system">系统默认</string>
+    <string name="language_english">English</string>
+    <string name="language_italian">Italiano</string>
+    <string name="language_french">Français</string>
+    <string name="language_german">Deutsch</string>
+    <string name="language_spanish">Español</string>
+    <string name="language_chinese_simplified">中文（简体）</string>
+    <string name="language_chinese_traditional">中文（繁體）</string>
+    <string name="language_japanese">日本語</string>
+    <string name="language_polish">Polski</string>
+    <string name="language_hindi">हिन्दी</string>
+    <string name="language_russian">Русский</string>
+    <string name="language_ukrainian">Українська</string>
+    <string name="language_korean">한국어</string>
+
+    <!-- Feedback Email -->
+    <string name="feedback_email_body_english">Hi AntCashManager Team,\n\nI would like to share some feedback about the app:\n\n[Please describe your feedback here]\n\nThank you!</string>
+    <string name="feedback_email_body_italian">Ciao team di AntCashManager,\n\nVorrei condividere alcuni feedback sull\'app:\n\n[Per favore descrivi il tuo feedback qui]\n\nGrazie!</string>
+    <string name="feedback_email_body_french">Bonjour à l\'équipe d\'AntCashManager,\n\nJ\'aimerais partager des commentaires sur l\'application:\n\n[Veuillez décrire vos commentaires ici]\n\nMerci!</string>
+    <string name="feedback_email_body_german">Hallo AntCashManager-Team,\n\nIch möchte gerne Feedback zur App geben:\n\n[Bitte beschreiben Sie Ihr Feedback hier]\n\nDanke!</string>
+    <string name="feedback_email_body_spanish">Hola equipo de AntCashManager,\n\nMe gustaría compartir comentarios sobre la aplicación:\n\n[Por favor describe tu retroalimentación aquí]\n\n¡Gracias!</string>
+    <string name="feedback_email_body_chinese_simplified">AntCashManager 团队您好，\n\n我想分享一些关于该应用的反馈：\n\n[请在此描述您的反馈]\n\n谢谢！</string>
+    <string name="feedback_email_body_chinese_traditional">AntCashManager 團隊您好，\n\n我想分享一些關於該應用的回饋：\n\n[請在此描述您的回饋]\n\n謝謝！</string>
+    <string name="feedback_email_body_japanese">AntCashManager チームの皆様、\n\nアプリについてフィードバックを共有したいと思います：\n\n[ここにフィードバックを記入してください]\n\nありがとうございます！</string>
+
+    <!-- Fallback to English for remaining strings -->
+</resources>

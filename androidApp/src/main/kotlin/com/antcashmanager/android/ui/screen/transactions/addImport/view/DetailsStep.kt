@@ -1,13 +1,9 @@
 package com.antcashmanager.android.ui.screen.transactions.addImport.view
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -15,66 +11,39 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.InputChip
-import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.button.AppButton
 import com.antcashmanager.android.ui.components.input.AutocompleteTextField
-import com.antcashmanager.android.ui.components.selection.AppSelectionItemCard
 import com.antcashmanager.android.ui.components.text.AppText
-import com.antcashmanager.android.ui.screen.transactions.addImport.event.AddTransactionEvent
 import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionState
-import com.antcashmanager.android.util.LocalAmountsMasked
-import com.antcashmanager.android.util.isProtectedSalaryCategory
-import com.antcashmanager.android.util.maskDigits
-import com.antcashmanager.domain.model.PaymentType
-import com.antcashmanager.domain.model.TransactionType
+import com.antcashmanager.android.ui.screen.transactions.addImport.event.AddTransactionEvent
 import org.koin.compose.koinInject
-import java.text.SimpleDateFormat
-import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -88,6 +57,8 @@ internal fun DetailsStep(
         analyticsManager.logEvent("transaction_recurring_toggled")
         onEvent(AddTransactionEvent.SetRecurring(recurring))
     }
+    val isMealVouchersPayment = state.isMealVouchersPayment
+
     // ── Dialog: Categoria ──
     if (state.showCategoryDialog) {
         CategorySelectionDialog(
@@ -230,34 +201,17 @@ internal fun DetailsStep(
                 )
                 .verticalScroll(rememberScrollState()),
         ) {
-            // ── Categoria – sempre editabile al tap ──
-            AppSelectionItemCard(
-                label = stringResource(R.string.add_transaction_category),
-                value = state.selectedCategory?.name
-                    ?: stringResource(R.string.add_transaction_none),
-                icon = state.selectedCategory?.icon,
-                isEditable = true,
-                onClick = { onEvent(AddTransactionEvent.EditCategory) },
+            // ── Categoria, Tipo, Data, Payment Type ──
+            DetailsCategoryTypeSection(
+                selectedCategory = state.selectedCategory,
+                selectedType = state.selectedType,
+                selectedPaymentType = state.selectedPaymentType,
+                timestamp = state.timestamp,
+                onEditCategory = { onEvent(AddTransactionEvent.EditCategory) },
+                onEditType = { onEvent(AddTransactionEvent.EditType) },
+                onEditDate = { onEvent(AddTransactionEvent.EditDate) },
+                onEditPaymentType = { onEvent(AddTransactionEvent.EditPaymentType) },
             )
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // ── Tipo – sempre editabile al tap ──
-            AppSelectionItemCard(
-                label = stringResource(R.string.add_transaction_type),
-                value = when (state.selectedType) {
-                    TransactionType.INCOME -> stringResource(R.string.add_transaction_income_label)
-                    TransactionType.EXPENSE -> stringResource(R.string.add_transaction_expense_label)
-                    null -> stringResource(R.string.add_transaction_none)
-                },
-                icon = when (state.selectedType) {
-                    TransactionType.INCOME -> "💰"
-                    TransactionType.EXPENSE -> "💸"
-                    null -> null
-                },
-                isEditable = true,
-                onClick = { onEvent(AddTransactionEvent.EditType) },
-            )
-            Spacer(modifier = Modifier.height(12.dp))
 
             // ── Titolo ──
             AutocompleteTextField(
@@ -267,267 +221,66 @@ internal fun DetailsStep(
                 label = stringResource(R.string.add_transaction_title_required),
                 modifier = Modifier.fillMaxWidth(),
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            VerticalSpacer(SpacingSize.SM)
 
-            // ── Importo (label e descrizione cambiano con Buoni Pasto) ──
-            val isMealVouchersPayment = state.selectedPaymentType == PaymentType.MEAL_VOUCHERS
-            OutlinedTextField(
-                value = state.amount,
-                onValueChange = { newValue ->
-                    // Permetti solo numeri e un singolo separatore decimale (punto o virgola)
-                    val filtered = newValue.filter { it.isDigit() || it == '.' || it == ',' }
-
-                    // Normalizza: sostituisci virgola con punto
-                    val normalized = filtered.replace(',', '.')
-
-                    // Previeni multipli punti decimali
-                    val dotCount = normalized.count { it == '.' }
-                    val finalValue = if (dotCount <= 1) {
-                        normalized
-                    } else {
-                        // Mantieni solo il primo punto
-                        val firstDotIndex = normalized.indexOf('.')
-                        normalized.substring(0, firstDotIndex + 1) +
-                                normalized.substring(firstDotIndex + 1).replace(".", "")
-                    }
-
-                    onEvent(AddTransactionEvent.UpdateAmount(finalValue))
-                },
-                label = {
-                    AppText(
-                        stringResource(
-                            if (isMealVouchersPayment)
-                                R.string.add_transaction_amount_total_meal_vouchers
-                            else
-                                R.string.add_transaction_amount_required
-                        )
-                    )
-                },
-                placeholder = { AppText("0.00") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                shape = RoundedCornerShape(16.dp),
+            // ── Importo ──
+            DetailsAmountField(
+                amount = state.amount,
+                onAmountChanged = { onEvent(AddTransactionEvent.UpdateAmount(it)) },
+                isMealVouchersPayment = state.isMealVouchersPayment,
+                selectedCategoryName = state.selectedCategory?.name,
+                selectedType = state.selectedType,
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                visualTransformation = if (
-                    LocalAmountsMasked.current &&
-                    isProtectedSalaryCategory(state.selectedCategory?.name, state.selectedType)
-                ) {
-                    MaskDigitsVisualTransformation
-                } else {
-                    VisualTransformation.None
-                },
             )
-            if (isMealVouchersPayment) {
-                Spacer(modifier = Modifier.height(4.dp))
-                AppText(
-                    text = stringResource(R.string.add_transaction_amount_total_meal_vouchers_description),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+            if (!state.isMealVouchersPayment) {
+                VerticalSpacer(SpacingSize.SM)
             }
-            Spacer(modifier = Modifier.height(12.dp))
 
-            // ── Data – sempre editabile al tap ──
-            AppSelectionItemCard(
-                label = stringResource(R.string.add_transaction_field_date),
-                value = SimpleDateFormat(
-                    "dd/MM/yyyy",
-                    LocalLocale.current.platformLocale,
-                ).format(Date(state.timestamp)),
-                isEditable = true,
-                onClick = { onEvent(AddTransactionEvent.EditDate) },
+            // ── Note, Payee, Location ──
+            DetailsOptionalFieldsSection(
+                notes = state.notes,
+                payee = state.payee,
+                location = state.location,
+                notesSuggestions = state.notesSuggestions,
+                payeeSuggestions = state.payeeSuggestions,
+                locationSuggestions = state.locationSuggestions,
+                onNotesChanged = { onEvent(AddTransactionEvent.UpdateNotes(it)) },
+                onPayeeChanged = { onEvent(AddTransactionEvent.UpdatePayee(it)) },
+                onLocationChanged = { onEvent(AddTransactionEvent.UpdateLocation(it)) },
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            VerticalSpacer(SpacingSize.SM)
 
-            // ── Note ──
-            AutocompleteTextField(
-                value = state.notes,
-                onValueChange = { onEvent(AddTransactionEvent.UpdateNotes(it)) },
-                suggestions = state.notesSuggestions,
-                label = stringResource(R.string.add_transaction_notes_label),
-                modifier = Modifier.fillMaxWidth(),
+            // ── Buoni Pasto ──
+            DetailsMealVoucherSection(
+                mealVoucherCount = state.mealVoucherCount,
+                mealVoucherValue = state.mealVoucherValue,
+                totalAmount = state.amount,
+                onMealVoucherCountChanged = { onEvent(AddTransactionEvent.UpdateMealVoucherCount(it)) },
+                isMealVouchersPayment = isMealVouchersPayment,
             )
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // ── Beneficiario ──
-            AutocompleteTextField(
-                value = state.payee,
-                onValueChange = { onEvent(AddTransactionEvent.UpdatePayee(it)) },
-                suggestions = state.payeeSuggestions,
-                label = stringResource(R.string.add_transaction_payee_label),
-                modifier = Modifier.fillMaxWidth(),
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // ── Luogo ──
-            AutocompleteTextField(
-                value = state.location,
-                onValueChange = { onEvent(AddTransactionEvent.UpdateLocation(it)) },
-                suggestions = state.locationSuggestions,
-                label = stringResource(R.string.add_transaction_location_label),
-                modifier = Modifier.fillMaxWidth(),
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // ── Tipo di Pagamento – sempre editabile al tap ──
-            AppSelectionItemCard(
-                label = stringResource(R.string.add_transaction_payment_type),
-                value = when (state.selectedPaymentType) {
-                    PaymentType.ELECTRONIC -> stringResource(R.string.add_transaction_payment_type_electronic)
-                    PaymentType.CASH -> stringResource(R.string.add_transaction_payment_type_cash)
-                    PaymentType.MEAL_VOUCHERS -> stringResource(R.string.add_transaction_payment_type_meal_vouchers)
-                },
-                isEditable = true,
-                onClick = { onEvent(AddTransactionEvent.EditPaymentType) },
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // ── Numero Buoni Pasto (visibile solo se MEAL_VOUCHERS) ──
             if (isMealVouchersPayment) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(MaterialTheme.colorScheme.secondaryContainer)
-                        .padding(16.dp)
-                ) {
-                    AppText(
-                        text = stringResource(R.string.add_transaction_meal_voucher_section_title),
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    AppText(
-                        text = stringResource(
-                            R.string.add_transaction_meal_voucher_unit_value,
-                            String.format("%.2f", state.mealVoucherValue)
-                        ),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    OutlinedTextField(
-                        value = state.mealVoucherCount,
-                        onValueChange = { newValue ->
-                            // Permetti solo numeri interi
-                            val filtered = newValue.filter { it.isDigit() }
-                            if (filtered.length <= 3) { // Max 999 buoni
-                                onEvent(AddTransactionEvent.UpdateMealVoucherCount(filtered))
-                            }
-                        },
-                        label = {
-                            AppText(stringResource(R.string.add_transaction_meal_voucher_count))
-                        },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(16.dp),
-                    )
-
-                    val voucherCount = state.mealVoucherCount.toIntOrNull() ?: 0
-                    val voucherTotal = voucherCount * state.mealVoucherValue
-
-                    if (voucherCount > 0) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        AppText(
-                            text = stringResource(
-                                R.string.add_transaction_meal_voucher_subtotal,
-                                String.format("%.2f", voucherTotal)
-                            ),
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.primary,
-                        )
-                    }
-                }
-
-                // Mostra la differenza pagata rispetto al valore coperto dai buoni (informativo)
-                val voucherCountForDifference = state.mealVoucherCount.toIntOrNull() ?: 0
-                if (voucherCountForDifference > 0) {
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(MaterialTheme.colorScheme.primaryContainer)
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        AppText(
-                            text = stringResource(R.string.add_transaction_meal_voucher_difference_paid),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                        )
-                        AppText(
-                            text = String.format("%.2f€", state.mealVoucherDifferencePaid),
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary,
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.height(12.dp))
+                VerticalSpacer(SpacingSize.SM)
             }
 
             // ── Tags – Improved management with chips ──
-            TagSelector(
+            DetailsTagsSection(
                 tags = state.tags,
                 onTagsChange = { onEvent(AddTransactionEvent.UpdateTags(it)) },
                 suggestions = state.tagsSuggestions
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            VerticalSpacer(SpacingSize.SM)
 
-            // ── Ricorrente ──
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(
-                        if (state.isRecurring)
-                            MaterialTheme.colorScheme.primaryContainer
-                        else
-                            MaterialTheme.colorScheme.surfaceVariant
-                    )
-                    .clickable { setRecurring(!state.isRecurring) }
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    AppText(
-                        stringResource(R.string.add_transaction_recurring_label),
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                    if (state.isRecurring) {
-                        AppText(
-                            text = stringResource(R.string.recurrence_interval_label),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                }
-                Checkbox(
-                    checked = state.isRecurring,
-                    onCheckedChange = setRecurring,
-                )
-            }
-
-            if (state.isRecurring) {
-                Spacer(modifier = Modifier.height(12.dp))
-                RecurrenceIntervalDropdown(
-                    selectedInterval = state.recurrenceInterval,
-                    onIntervalChange = { onEvent(AddTransactionEvent.UpdateRecurrenceInterval(it)) },
-                )
-            }
+            // ── Ricorrenza ──
+            DetailsRecurrenceSection(
+                isRecurring = state.isRecurring,
+                recurrenceInterval = state.recurrenceInterval,
+                onRecurringChanged = setRecurring,
+                onIntervalChanged = { onEvent(AddTransactionEvent.UpdateRecurrenceInterval(it)) },
+            )
 
             // ── Errore ──
             if (state.error != null) {
-                Spacer(modifier = Modifier.height(8.dp))
+                VerticalSpacer(SpacingSize.XS)
                 AppText(
                     text = state.error,
                     style = MaterialTheme.typography.bodySmall,
@@ -535,7 +288,7 @@ internal fun DetailsStep(
                 )
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            VerticalSpacer(SpacingSize.XL)
 
             // ── Pulsanti azione ──
             Row(
@@ -562,136 +315,8 @@ internal fun DetailsStep(
                     onClick = { onEvent(AddTransactionEvent.Submit) },
                 )
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            VerticalSpacer(SpacingSize.MD)
         }
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
-@Composable
-private fun TagSelector(
-    tags: String,
-    onTagsChange: (String) -> Unit,
-    suggestions: List<String>
-) {
-    var tagInput by remember { mutableStateOf("") }
-    val currentTags = remember(tags) {
-        tags.split(",").map { it.trim() }.filter { it.isNotBlank() }
-    }
-
-    Column(modifier = Modifier.fillMaxWidth()) {
-        AppText(
-            text = stringResource(R.string.add_transaction_tags_label),
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-
-        // Tag Input
-        OutlinedTextField(
-            value = tagInput,
-            onValueChange = { tagInput = it },
-            label = { AppText(stringResource(R.string.add_transaction_tags_placeholder)) },
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            trailingIcon = {
-                if (tagInput.isNotBlank()) {
-                    IconButton(onClick = {
-                        if (!currentTags.contains(tagInput.trim())) {
-                            val newTags = (currentTags + tagInput.trim()).joinToString(", ")
-                            onTagsChange(newTags)
-                        }
-                        tagInput = ""
-                    }) {
-                        Icon(Icons.Default.Add, contentDescription = "Add Tag")
-                    }
-                }
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-            singleLine = true
-        )
-
-        if (currentTags.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(8.dp))
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                currentTags.forEach { tag ->
-                    InputChip(
-                        selected = true,
-                        onClick = { },
-                        label = { AppText(tag) },
-                        trailingIcon = {
-                            Icon(
-                                Icons.Default.Close,
-                                contentDescription = "Remove",
-                                modifier = Modifier
-                                    .size(16.dp)
-                                    .clickable {
-                                        val newTags = currentTags
-                                            .filter { it != tag }
-                                            .joinToString(", ")
-                                        onTagsChange(newTags)
-                                    }
-                            )
-                        },
-                        colors = InputChipDefaults.inputChipColors(
-                            selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                            selectedLabelColor = MaterialTheme.colorScheme.onSecondaryContainer
-                        ),
-                        shape = RoundedCornerShape(16.dp),
-                        border = null
-                    )
-                }
-            }
-        }
-
-        // Suggestions
-        val filteredSuggestions = suggestions.filter {
-            it.contains(tagInput, ignoreCase = true) && !currentTags.contains(it)
-        }.take(5)
-
-        if (tagInput.isNotBlank() && filteredSuggestions.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(8.dp))
-            AppText(
-                text = stringResource(R.string.add_transaction_tags_suggestions),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                filteredSuggestions.forEach { suggestion ->
-                    AssistChip(
-                        onClick = {
-                            val newTags = (currentTags + suggestion).joinToString(", ")
-                            onTagsChange(newTags)
-                            tagInput = ""
-                        },
-                        label = {
-                            AppText(
-                                suggestion,
-                                style = MaterialTheme.typography.labelSmall
-                            )
-                        },
-                        shape = RoundedCornerShape(12.dp)
-                    )
-                }
-            }
-        }
-    }
-}
-
-/**
- * Maschera visivamente le cifre del campo importo (come un campo password) mantenendo il
- * valore reale digitato/precaricato nello state, per lo Stipendio quando il mascheramento è
- * attivo. [OffsetMapping.Identity] è corretto perché [maskDigits] sostituisce carattere per
- * carattere senza cambiare la lunghezza della stringa.
- */
-private object MaskDigitsVisualTransformation : VisualTransformation {
-    override fun filter(text: AnnotatedString): TransformedText =
-        TransformedText(AnnotatedString(maskDigits(text.text)), OffsetMapping.Identity)
-}

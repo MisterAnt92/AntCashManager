@@ -7,12 +7,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
@@ -53,6 +51,8 @@ import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
 import com.antcashmanager.android.ui.components.common.AppSwitch
 import com.antcashmanager.android.ui.components.dialog.BlockingProgressDialog
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import org.koin.androidx.compose.koinViewModel
@@ -553,7 +553,7 @@ private fun DataManagementSection(
     onShowDeleteConfirmDialog: () -> Unit,
 ) {
     AppCardSectionHeader(title = stringResource(R.string.settings_data_management))
-    Spacer(modifier = Modifier.height(SettingsDataConstant.CARD_SPACING_DP.dp))
+    VerticalSpacer(SpacingSize.XS)
     Column(verticalArrangement = Arrangement.spacedBy(SettingsDataConstant.CARD_SPACING_DP.dp)) {
         AppCard(
             title = stringResource(R.string.settings_backup),
@@ -632,7 +632,7 @@ private fun SecuritySection(
     onDataEncryptionEnabledChange: (Boolean) -> Unit,
 ) {
     AppCardSectionHeader(title = stringResource(R.string.settings_security))
-    Spacer(modifier = Modifier.height(SettingsDataConstant.CARD_SPACING_DP.dp))
+    VerticalSpacer(SpacingSize.XS)
     AppCard(
         title = stringResource(R.string.settings_security_data_encryption),
         subtitle = stringResource(R.string.settings_security_data_encryption_subtitle),
@@ -654,7 +654,7 @@ private fun SuggestionsSection(
     onShowDeleteSuggestionsDialog: () -> Unit,
 ) {
     AppCardSectionHeader(title = stringResource(R.string.settings_suggestions))
-    Spacer(modifier = Modifier.height(SettingsDataConstant.CARD_SPACING_DP.dp))
+    VerticalSpacer(SpacingSize.XS)
     Column(verticalArrangement = Arrangement.spacedBy(SettingsDataConstant.CARD_SPACING_DP.dp)) {
         AppCard(
             title = stringResource(R.string.settings_suggestions_enable),

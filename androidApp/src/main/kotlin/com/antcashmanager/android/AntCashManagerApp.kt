@@ -141,57 +141,59 @@ class AntCashManagerApp : Application() {
                 ) + newDefaultExpenseCategories
                 ).mapIndexed { index, category -> category.copy(sortOrder = index) }
 
-        val incomeCategories = listOf(
-            Category(
-                name = "Non categorizzato",
-                icon = "more_horiz",
-                color = 0xFF90A4AE,
-                type = "INCOME",
-                isDefault = true
-            ),
-            Category(
-                name = "Stipendio",
-                icon = "payments",
-                color = 0xFF81C784,
-                type = "INCOME",
-                isDefault = true
-            ),
-            Category(
-                name = "Paghetta",
-                icon = "savings",
-                color = 0xFF4DB6AC,
-                type = "INCOME",
-                isDefault = true
-            ),
-            Category(
-                name = "Rimborso",
-                icon = "currency_exchange",
-                color = 0xFF64B5F6,
-                type = "INCOME",
-                isDefault = true
-            ),
-            Category(
-                name = "Investimenti",
-                icon = "trending_up",
-                color = 0xFFFFD54F,
-                type = "INCOME",
-                isDefault = true
-            ),
-            Category(
-                name = "Freelance",
-                icon = "work",
-                color = 0xFFA1887F,
-                type = "INCOME",
-                isDefault = true
-            ),
-            Category(
-                name = "Altro",
-                icon = "more_horiz",
-                color = 0xFF90A4AE,
-                type = "INCOME",
-                isDefault = true
-            ),
-        ).mapIndexed { index, category -> category.copy(sortOrder = index) }
+        val incomeCategories = (
+                listOf(
+                    Category(
+                        name = "Non categorizzato",
+                        icon = "more_horiz",
+                        color = 0xFF90A4AE,
+                        type = "INCOME",
+                        isDefault = true
+                    ),
+                    Category(
+                        name = "Stipendio",
+                        icon = "payments",
+                        color = 0xFF81C784,
+                        type = "INCOME",
+                        isDefault = true
+                    ),
+                    Category(
+                        name = "Paghetta",
+                        icon = "savings",
+                        color = 0xFF4DB6AC,
+                        type = "INCOME",
+                        isDefault = true
+                    ),
+                    Category(
+                        name = "Rimborso",
+                        icon = "currency_exchange",
+                        color = 0xFF64B5F6,
+                        type = "INCOME",
+                        isDefault = true
+                    ),
+                    Category(
+                        name = "Investimenti",
+                        icon = "trending_up",
+                        color = 0xFFFFD54F,
+                        type = "INCOME",
+                        isDefault = true
+                    ),
+                    Category(
+                        name = "Freelance",
+                        icon = "work",
+                        color = 0xFFA1887F,
+                        type = "INCOME",
+                        isDefault = true
+                    ),
+                    Category(
+                        name = "Altro",
+                        icon = "more_horiz",
+                        color = 0xFF90A4AE,
+                        type = "INCOME",
+                        isDefault = true
+                    ),
+                ) + newDefaultIncomeCategories
+                ).mapIndexed { index, category -> category.copy(sortOrder = index) }
 
         (expenseCategories + incomeCategories).forEach { category ->
             categoryRepository.insertCategory(category)
@@ -262,8 +264,31 @@ class AntCashManagerApp : Application() {
         ),
     )
 
+    private val newDefaultIncomeCategories = listOf(
+        Category(
+            name = "Regalo",
+            icon = "redeem",
+            color = 0xFFFF8A65,
+            type = "INCOME",
+            isDefault = true
+        ),
+        Category(
+            name = "Buoni pasto",
+            icon = "card_giftcard",
+            color = 0xFF66BB6A,
+            type = "INCOME",
+            isDefault = true
+        ),
+    )
+
     private suspend fun backfillNewDefaultCategories(categoryRepository: CategoryRepository) {
         newDefaultExpenseCategories.forEach { category ->
+            if (categoryRepository.getCategoryByName(category.name) == null) {
+                Logger.d(tag = "AntCashManagerApp") { "Backfilling new default category: ${category.name}" }
+                categoryRepository.insertCategory(category)
+            }
+        }
+        newDefaultIncomeCategories.forEach { category ->
             if (categoryRepository.getCategoryByName(category.name) == null) {
                 Logger.d(tag = "AntCashManagerApp") { "Backfilling new default category: ${category.name}" }
                 categoryRepository.insertCategory(category)

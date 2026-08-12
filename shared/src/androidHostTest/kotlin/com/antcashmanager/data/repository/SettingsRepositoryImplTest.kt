@@ -163,21 +163,205 @@ class SettingsRepositoryImplTest {
             verify(exactly = 1) { DatabaseEncryptionManager.setEncryptionDesired(context, true) }
         }
 
-    @Test
-    fun resetAllPreferences_shouldRestoreAllDefaultsAndDisableEncryption_whenCalled() = runTest {
-        repository.setTheme(AppTheme.DARK)
-        repository.setLanguage(AppLanguage.ITALIAN)
-        repository.setCurrencySymbol("$")
-        repository.setDataEncryptionEnabled(true)
-        repository.setTransactionDisplayType(TransactionDisplayType.CATEGORY)
+     @Test
+     fun resetAllPreferences_shouldRestoreAllDefaultsAndDisableEncryption_whenCalled() = runTest {
+         repository.setTheme(AppTheme.DARK)
+         repository.setLanguage(AppLanguage.ITALIAN)
+         repository.setCurrencySymbol("$")
+         repository.setDataEncryptionEnabled(true)
+         repository.setTransactionDisplayType(TransactionDisplayType.CATEGORY)
 
-        repository.resetAllPreferences()
+         repository.resetAllPreferences()
 
-        assertEquals(AppTheme.SYSTEM, repository.getTheme().first())
-        assertEquals(AppLanguage.SYSTEM, repository.getLanguage().first())
-        assertEquals("€", repository.getCurrencySymbol().first())
-        assertEquals(false, repository.getDataEncryptionEnabled().first())
-        assertEquals(TransactionDisplayType.TREND, repository.getTransactionDisplayType().first())
-        verify(exactly = 1) { DatabaseEncryptionManager.setEncryptionDesired(context, false) }
-    }
+         assertEquals(AppTheme.SYSTEM, repository.getTheme().first())
+         assertEquals(AppLanguage.SYSTEM, repository.getLanguage().first())
+         assertEquals("€", repository.getCurrencySymbol().first())
+         assertEquals(false, repository.getDataEncryptionEnabled().first())
+         assertEquals(TransactionDisplayType.TREND, repository.getTransactionDisplayType().first())
+         verify(exactly = 1) { DatabaseEncryptionManager.setEncryptionDesired(context, false) }
+     }
+
+     @Test
+     fun getShowCharts_shouldReturnDefaultTrue_whenNotStored() = runTest {
+         assertEquals(true, repository.getShowCharts().first())
+     }
+
+     @Test
+     fun setShowCharts_shouldPersistBooleanValue_whenToggled() = runTest {
+         repository.setShowCharts(false)
+
+         assertEquals(false, repository.getShowCharts().first())
+     }
+
+     @Test
+     fun getHighContrast_shouldReturnDefaultFalse_whenNotStored() = runTest {
+         assertEquals(false, repository.getHighContrast().first())
+     }
+
+     @Test
+     fun setHighContrast_shouldPersistBooleanValue_whenToggled() = runTest {
+         repository.setHighContrast(true)
+
+         assertEquals(true, repository.getHighContrast().first())
+     }
+
+     @Test
+     fun getLargeText_shouldReturnDefaultFalse_whenNotStored() = runTest {
+         assertEquals(false, repository.getLargeText().first())
+     }
+
+     @Test
+     fun setLargeText_shouldPersistBooleanValue_whenToggled() = runTest {
+         repository.setLargeText(true)
+
+         assertEquals(true, repository.getLargeText().first())
+     }
+
+     @Test
+     fun getReduceMotion_shouldReturnDefaultFalse_whenNotStored() = runTest {
+         assertEquals(false, repository.getReduceMotion().first())
+     }
+
+     @Test
+     fun setReduceMotion_shouldPersistBooleanValue_whenToggled() = runTest {
+         repository.setReduceMotion(true)
+
+         assertEquals(true, repository.getReduceMotion().first())
+     }
+
+     @Test
+     fun getCurrencySymbol_shouldReturnDefaultEuro_whenNotStored() = runTest {
+         assertEquals("€", repository.getCurrencySymbol().first())
+     }
+
+     @Test
+     fun setCurrencySymbol_shouldPersistCustomSymbol_whenSet() = runTest {
+         repository.setCurrencySymbol("$")
+
+         assertEquals("$", repository.getCurrencySymbol().first())
+     }
+
+     @Test
+     fun getDecimalDigits_shouldReturnDefault2_whenNotStored() = runTest {
+         assertEquals(2, repository.getDecimalDigits().first())
+     }
+
+     @Test
+     fun setDecimalDigits_shouldPersistCustomValue_whenSet() = runTest {
+         repository.setDecimalDigits(3)
+
+         assertEquals(3, repository.getDecimalDigits().first())
+     }
+
+     @Test
+     fun getDecimalSeparator_shouldReturnDefaultComma_whenNotStored() = runTest {
+         assertEquals(",", repository.getDecimalSeparator().first())
+     }
+
+     @Test
+     fun setDecimalSeparator_shouldPersistCustomValue_whenSet() = runTest {
+         repository.setDecimalSeparator(".")
+
+         assertEquals(".", repository.getDecimalSeparator().first())
+     }
+
+     @Test
+     fun getThousandsSeparator_shouldReturnDefaultDot_whenNotStored() = runTest {
+         assertEquals(".", repository.getThousandsSeparator().first())
+     }
+
+     @Test
+     fun setThousandsSeparator_shouldPersistCustomValue_whenSet() = runTest {
+         repository.setThousandsSeparator(" ")
+
+         assertEquals(" ", repository.getThousandsSeparator().first())
+     }
+
+     @Test
+     fun getMealVoucherValue_shouldReturnDefault12_5_whenNotStored() = runTest {
+         assertEquals(12.5, repository.getMealVoucherValue().first(), 0.001)
+     }
+
+     @Test
+     fun setMealVoucherValue_shouldPersistCustomValue_whenSet() = runTest {
+         repository.setMealVoucherValue(15.0)
+
+         assertEquals(15.0, repository.getMealVoucherValue().first(), 0.001)
+     }
+
+     @Test
+     fun getDateFormat_shouldReturnDefaultDDMMYYYY_whenNotStored() = runTest {
+         assertEquals("dd/MM/yyyy", repository.getDateFormat().first())
+     }
+
+     @Test
+     fun setDateFormat_shouldPersistCustomFormat_whenSet() = runTest {
+         repository.setDateFormat("MM/dd/yyyy")
+
+         assertEquals("MM/dd/yyyy", repository.getDateFormat().first())
+     }
+
+     @Test
+     fun getSuggestionsEnabled_shouldReturnDefaultTrue_whenNotStored() = runTest {
+         assertEquals(true, repository.getSuggestionsEnabled().first())
+     }
+
+     @Test
+     fun setSuggestionsEnabled_shouldPersistBooleanValue_whenToggled() = runTest {
+         repository.setSuggestionsEnabled(false)
+
+         assertEquals(false, repository.getSuggestionsEnabled().first())
+     }
+
+     @Test
+     fun getLastBackupTimestamp_shouldReturnDefault0_whenNotStored() = runTest {
+         assertEquals(0L, repository.getLastBackupTimestamp().first())
+     }
+
+     @Test
+     fun setLastBackupTimestamp_shouldPersistTimestamp_whenSet() = runTest {
+         val timestamp = System.currentTimeMillis()
+         repository.setLastBackupTimestamp(timestamp)
+
+         assertEquals(timestamp, repository.getLastBackupTimestamp().first())
+     }
+
+     @Test
+     fun getShowQuickInsightsCard_shouldReturnDefaultTrue_whenNotStored() = runTest {
+         assertEquals(true, repository.getShowQuickInsightsCard().first())
+     }
+
+     @Test
+     fun setShowQuickInsightsCard_shouldPersistBooleanValue_whenToggled() = runTest {
+         repository.setShowQuickInsightsCard(false)
+
+         assertEquals(false, repository.getShowQuickInsightsCard().first())
+     }
+
+     @Test
+     fun getWidgetBackgroundColor_shouldReturnDefaultBlack_whenNotStored() = runTest {
+         assertEquals(-16777216L, repository.getWidgetBackgroundColor().first())
+     }
+
+     @Test
+     fun setWidgetBackgroundColor_shouldPersistCustomColor_whenSet() = runTest {
+         val color = 0xFF4CAF50L
+         repository.setWidgetBackgroundColor(color)
+
+         assertEquals(color, repository.getWidgetBackgroundColor().first())
+     }
+
+     @Test
+     fun getWidgetOpacity_shouldReturnDefault100_whenNotStored() = runTest {
+         // Widget opacity is represented as Int (0-100, where 100 = fully opaque)
+         assertEquals(100, repository.getWidgetOpacity().first())
+     }
+
+     @Test
+     fun setWidgetOpacity_shouldPersistCustomValue_whenSet() = runTest {
+         // Set opacity to 80 (80% opaque)
+         repository.setWidgetOpacity(80)
+
+         assertEquals(80, repository.getWidgetOpacity().first())
+     }
 }
