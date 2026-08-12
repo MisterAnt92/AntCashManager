@@ -536,5 +536,5 @@
     <string name="error_generic">Une erreur est survenue</string>
 
     <!-- App Description -->
-    <string name="app_description">Cette application est née du besoin de suivre les dépenses familiales sans abonnements, et de visualiser les dépenses et comparer les augmentations de prix.</string>
+    <string name="app_description">Cette application est née du besoin de suivre les dépenses familiales gratuitement et de comparer les augmentations de prix.</string>
 </resources>

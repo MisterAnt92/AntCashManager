@@ -1,29 +1,20 @@
-package com.antcashmanager.android.ui.screen.charts
-
 @file:Suppress("LocalVariableName")
 
-import com.antcashmanager.android.BaseComposeUnitTest
+package com.antcashmanager.android.ui.screen.charts
 
 import androidx.compose.foundation.layout.fillMaxSize
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 import androidx.compose.material3.ExperimentalMaterial3Api
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 import androidx.compose.material3.Surface
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 import androidx.compose.ui.Modifier
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 import androidx.compose.ui.test.onNodeWithText
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
+import com.antcashmanager.android.BaseComposeUnitTest
 import com.antcashmanager.android.ui.screen.charts.view.ChartsDetailsBottomSheet
 import com.antcashmanager.android.ui.screen.charts.view.ChartDetailsData
 import com.antcashmanager.android.ui.screen.charts.view.TrendDirection
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
 /**
  * Unit tests for ChartsDetailsBottomSheet composable.

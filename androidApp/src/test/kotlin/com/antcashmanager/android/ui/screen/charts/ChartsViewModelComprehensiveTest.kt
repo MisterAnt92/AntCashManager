@@ -1,7 +1,6 @@
-package com.antcashmanager.android.ui.screen.charts
-
 @file:Suppress("LocalVariableName")
 
+package com.antcashmanager.android.ui.screen.charts
 
 import androidx.lifecycle.viewModelScope
 import org.junit.runner.RunWith

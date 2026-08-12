@@ -630,5 +630,5 @@
     <string name="error_generic">An error occurred</string>
 
     <!-- App Description -->
-    <string name="app_description">This app was born from the need to track family expenses without subscriptions, and to view expenses and compare price increases.</string>
+    <string name="app_description">This app was born from the need to track family expenses for free and compare price increases.</string>
 </resources>

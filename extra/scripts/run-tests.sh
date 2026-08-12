@@ -67,7 +67,9 @@ if [ "$TEST_TYPE" = "all" ] || [ "$TEST_TYPE" = "coverage" ]; then
     ./gradlew \
       :shared:testAndroidHostTest \
       :androidApp:testDebugUnitTest \
+      :shared:testCoverageReport \
       :androidApp:jacocoTestDebugUnitTestReport \
+      :androidApp:testCoverageReport \
       --info 2>&1 | tee -a "$TEST_OUTPUT" || BUILD_STATUS=$?
 fi
 
@@ -168,19 +170,46 @@ if [ "$TEST_TYPE" = "all" ] || [ "$TEST_TYPE" = "coverage" ]; then
     echo "  📈 Coverage Reports (JaCoCo)"
     echo ""
 
-    JACOCO_ANDROID="$PROJECT_ROOT/androidApp/build/reports/jacoco/jacocoTestDebugUnitTestReport/html/index.html"
-    JACOCO_SHARED="$PROJECT_ROOT/shared/build/reports/jacoco/testAndroidHostTestCoverage/html/index.html"
+    # Try multiple possible paths for androidApp coverage
+    JACOCO_ANDROID_PATHS=(
+        "$PROJECT_ROOT/androidApp/build/reports/jacoco/jacocoTestDebugUnitTestReport/html/index.html"
+        "$PROJECT_ROOT/androidApp/build/reports/jacoco/jacocoConnectedDebugAndroidTestReport/html/index.html"
+        "$PROJECT_ROOT/androidApp/build/reports/coverage/debug/index.html"
+    )
+
+    JACOCO_ANDROID=""
+    for path in "${JACOCO_ANDROID_PATHS[@]}"; do
+        if [ -f "$path" ]; then
+            JACOCO_ANDROID="$path"
+            break
+        fi
+    done
+
+    # Try multiple possible paths for shared coverage
+    JACOCO_SHARED_PATHS=(
+        "$PROJECT_ROOT/shared/build/reports/jacoco/jacocoTestReport/html/index.html"
+        "$PROJECT_ROOT/shared/build/reports/jacoco/testAndroidHostTestCoverage/html/index.html"
+        "$PROJECT_ROOT/shared/build/reports/coverage/androidMain/index.html"
+    )
+
+    JACOCO_SHARED=""
+    for path in "${JACOCO_SHARED_PATHS[@]}"; do
+        if [ -f "$path" ]; then
+            JACOCO_SHARED="$path"
+            break
+        fi
+    done
 
     COVERAGE_FOUND=false
 
-    if [ -f "$JACOCO_ANDROID" ]; then
+    if [ -n "$JACOCO_ANDROID" ]; then
         printf "    📊 androidApp  →  file://%s\n" "$JACOCO_ANDROID"
         COVERAGE_FOUND=true
     else
         printf "    ⚠️  androidApp coverage report not found\n"
     fi
 
-    if [ -f "$JACOCO_SHARED" ]; then
+    if [ -n "$JACOCO_SHARED" ]; then
         printf "    📊 shared      →  file://%s\n" "$JACOCO_SHARED"
         COVERAGE_FOUND=true
     else
@@ -189,8 +218,13 @@ if [ "$TEST_TYPE" = "all" ] || [ "$TEST_TYPE" = "coverage" ]; then
 
     if [ "$COVERAGE_FOUND" = false ]; then
         echo ""
-        echo "    💡 To generate coverage reports, run:"
-        echo "       ./extra/scripts/run-tests.sh coverage"
+        echo "    💡 Tips to generate coverage reports:"
+        echo "       1. Make sure JaCoCo is enabled in build.gradle"
+        echo "       2. Run tests with coverage generation:"
+        echo "          ./gradlew :androidApp:testDebugUnitTest --info"
+        echo "          ./gradlew :shared:testAndroidHostTest --info"
+        echo ""
+        echo "       3. Look for 'Creating coverage report' in build output"
     fi
     echo ""
 fi
@@ -236,8 +270,9 @@ echo ""
 echo "  # Run instrumentation tests:"
 echo "  ./gradlew :androidApp:connectedDebugAndroidTest"
 echo ""
-echo "  # Generate coverage report:"
-echo "  ./gradlew :androidApp:jacocoTestDebugUnitTestReport"
+echo "  # Generate coverage reports:"
+echo "  ./gradlew :androidApp:testCoverageReport"
+echo "  ./gradlew :shared:testCoverageReport"
 echo ""
 
 exit $BUILD_STATUS

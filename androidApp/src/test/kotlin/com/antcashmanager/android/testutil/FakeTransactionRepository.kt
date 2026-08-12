@@ -35,6 +35,41 @@ open class FakeTransactionRepository(
 
     override fun getAllTransactions(): Flow<List<Transaction>> = transactions
 
+    override fun getTransactionsPaginated(pageSize: Int, pageIndex: Int): Flow<List<Transaction>> =
+        transactions.map { list ->
+            list.sortedByDescending { it.timestamp }
+                .drop(pageIndex * pageSize)
+                .take(pageSize)
+        }
+
+    override fun getTransactionsByCategory(
+        category: String,
+        pageSize: Int,
+        pageIndex: Int
+    ): Flow<List<Transaction>> =
+        transactions.map { list ->
+            list.filter { it.category == category }
+                .sortedByDescending { it.timestamp }
+                .drop(pageIndex * pageSize)
+                .take(pageSize)
+        }
+
+    override fun searchTransactions(
+        query: String,
+        pageSize: Int,
+        pageIndex: Int
+    ): Flow<List<Transaction>> =
+        transactions.map { list ->
+            list.filter {
+                it.title.contains(query, ignoreCase = true) ||
+                        it.payee.contains(query, ignoreCase = true) ||
+                        it.notes.contains(query, ignoreCase = true)
+            }
+                .sortedByDescending { it.timestamp }
+                .drop(pageIndex * pageSize)
+                .take(pageSize)
+        }
+
     override suspend fun getTransactionById(id: Long): Transaction? =
         transactions.value.find { it.id == id }
 

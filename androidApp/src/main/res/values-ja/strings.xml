@@ -626,5 +626,5 @@
 
 
     <!-- App Description -->
-    <string name="app_description">このアプリは、サブスクリプションなしで家族の支出を追跡する必要から生まれました。支出を表示して価格の上昇を比較することができます。</string>
+    <string name="app_description">このアプリは、家族の支出を無料で追跡し、価格上昇を比較する必要から生まれました。</string>
 </resources>

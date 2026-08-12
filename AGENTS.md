@@ -2,7 +2,7 @@
 
 **Complete guide for AI coding agents working in this codebase.**
 
-**🚀 New to the project?** Start with [ARCHITECTURE_OVERVIEW.md](.github/ARCHITECTURE_OVERVIEW.md) for a visual guide.  
+**🚀 New to the project?** Start with [ARCHITECTURE_OVERVIEW.md](.github/docs/architecture/ARCHITECTURE_OVERVIEW.md) for a visual guide.  
 **📚 Need specialized guidance?** See [.github/agents/README.md](.github/agents/README.md) for agent selection.
 
 ---
@@ -295,26 +295,42 @@ The app includes receipt scanning via Google ML Kit Text Recognition v2:
 | Data/Repository | `shared/src/androidHostTest/kotlin` | — | JUnit 4 + MockK |
 | Instrumentation (UI) | `androidApp/src/androidTest/kotlin` | — | AndroidJUnit4 + Compose UI Test |
 
+### 🔴 CRITICAL: Mocking & Test Libraries Rule
+
+**ALWAYS use ONLY MockK for all test mocking. NO exceptions.**
+
+- ✅ **MockK ONLY** – All unit tests, domain tests, repository tests use `io.mockk:mockk`
+- ❌ **Mockito is COMPLETELY FORBIDDEN** – Never use `mockito-core`, `mockito-kotlin`, or any Mockito variant
+- ❌ **No other mocking libraries** – No PowerMock, no EasyMock, no manual test doubles (unless Fake repositories)
+- ✅ **Use Fake repositories** from `com.antcashmanager.testutil.Fake*` package for data layer isolation when mocking is insufficient
+- ❌ Never import real database libraries (Room, DataStore) in unit tests – use Fakes or MockK
+
 ### Unit Test Rules
 
-**Mocking & Dependencies:**
-- ✅ Use **MockK** for all mocking (`io.mockk:mockk`)
-- ❌ **Mockito is forbidden** – never use Mockito
-- ❌ Never import real database libraries (Room, DataStore) in tests – use Fake repositories or MockK
-- ⚠️ **Roboelectric Strategy: Instrumentation Tests Only**
-  - ❌ **DO NOT use in unit tests** (`src/test`) – Use Compose UI Test v2 instead (simpler, faster)
-  - ✅ **CAN use in instrumentation tests** (`src/androidTest`) – When simulating Android Framework without real device
-    - Faster than device emulator (seconds vs minutes)
-    - Good for integration testing data layer with Android framework
-    - Use `@RunWith(RobolectricTestRunner::class)` with Compose UI Test v2 for framework simulation
-    - Example: Repository tests with Room/DataStore, navigation flows, settings integration
-  - ✅ **COMPLEMENT with real instrumentation tests** (`src/androidTest` on device/emulator) – For critical user flows
-    - Test actual user interactions (tap, swipe, real touch handling)
-    - GPU rendering validation
-    - Performance profiling on real hardware
-    - Accessibility testing (screen reader, contrast)
-    - Example: "Add Transaction" full flow, "Navigation" flow, "Search" flow
-- ✅ Use Fake repositories from `com.antcashmanager.testutil.Fake*` package for data layer isolation
+**MockK Usage Pattern:**
+```kotlin
+// ✅ CORRECT - MockK only
+private val repo = mockk<TransactionRepository>()
+coEvery { repo.getTransaction(any()) } returns Result.success(mockTransaction)
+coVerify { repo.getTransaction(1L) }
+
+// ❌ WRONG - Any other mocking library is forbidden
+@Mock private lateinit var repo: TransactionRepository  // Mockito - FORBIDDEN
+```
+
+**Roboelectric Strategy: Instrumentation Tests Only**
+- ❌ **DO NOT use in unit tests** (`src/test`) – Use Compose UI Test v2 instead (simpler, faster)
+- ✅ **CAN use in instrumentation tests** (`src/androidTest`) – When simulating Android Framework without real device
+  - Faster than device emulator (seconds vs minutes)
+  - Good for integration testing data layer with Android framework
+  - Use `@RunWith(RobolectricTestRunner::class)` with Compose UI Test v2 for framework simulation
+  - Example: Repository tests with Room/DataStore, navigation flows, settings integration
+- ✅ **COMPLEMENT with real instrumentation tests** (`src/androidTest` on device/emulator) – For critical user flows
+  - Test actual user interactions (tap, swipe, real touch handling)
+  - GPU rendering validation
+  - Performance profiling on real hardware
+  - Accessibility testing (screen reader, contrast)
+  - Example: "Add Transaction" full flow, "Navigation" flow, "Search" flow
 
 **Test Data:**
 - ✅ Use `TestDataBuilder` pattern for creating test data (`shared/src/commonTest/testutil/TestDataBuilder.kt`)
@@ -455,10 +471,19 @@ class MyViewModelTest : BaseUnitTest() {
 - ⚠️ Remember: Roboelectric simulates SDK 34-35, app compileSdk is 37 (some SDK 37 features may not be fully simulated)
 
 ### Forbidden Imports in Tests
-- ❌ `mockito.*` – use MockK instead
+
+**STRICTLY FORBIDDEN - ZERO TOLERANCE:**
+- ❌ `org.mockito.*` – use MockK (`io.mockk`) ONLY
+- ❌ `com.nhaarman.mockitokotlin2.*` – use MockK ONLY
+- ❌ `org.powermock.*` – never use PowerMock
+- ❌ `org.easymock.*` – never use EasyMock
+- ❌ Any mocking library except MockK – zero exceptions
+
+**Best Practices:**
 - ❌ Real Room database/DataStore implementations in unit tests – use Fakes
 - ❌ Direct `Context`, `SharedPreferences`, or `File` I/O in unit tests
 - ❌ `org.robolectric.*` in unit test files – move to instrumentation tests if needed
+- ❌ `android.` imports in domain layer tests (`shared/src/commonTest/`)
 
 ---
 
