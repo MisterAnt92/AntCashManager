@@ -1,22 +1,15 @@
-package com.antcashmanager.android.ui.components.button
-
 @file:Suppress("LocalVariableName")
 
+package com.antcashmanager.android.ui.components.button
 
 import androidx.compose.ui.test.assertIsEnabled
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 import androidx.compose.ui.test.assertIsNotEnabled
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 import androidx.compose.ui.test.onNodeWithContentDescription
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 import androidx.compose.ui.test.performClick
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 import com.antcashmanager.android.BaseComposeUnitTest
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
 /**
  * Unit tests per [ReorderButtons] component.

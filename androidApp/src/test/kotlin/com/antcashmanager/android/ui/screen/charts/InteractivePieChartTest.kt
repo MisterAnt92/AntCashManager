@@ -1,33 +1,20 @@
-package com.antcashmanager.android.ui.screen.charts
-
 @file:Suppress("LocalVariableName")
 
-import com.antcashmanager.android.BaseComposeUnitTest
+package com.antcashmanager.android.ui.screen.charts
 
 import androidx.compose.foundation.layout.size
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 import androidx.compose.material3.Surface
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 import androidx.compose.ui.Modifier
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 import androidx.compose.ui.test.onRoot
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 import androidx.compose.ui.test.performTouchInput
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 import androidx.compose.ui.test.swipeUp
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 import androidx.compose.ui.unit.dp
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
+import com.antcashmanager.android.BaseComposeUnitTest
 import com.antcashmanager.android.ui.screen.charts.view.InteractivePieChart
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import kotlin.math.cos
 import kotlin.math.sin
 

@@ -15,19 +15,19 @@
 
     <!-- HelpDialog (Dashboard) -->
     <string name="help_dashboard_desc">查看選定期間的總餘額、收入和支出。</string>
-    <string name="app_name">螞蟻現金管理器</string>
+    <string name="app_name">AntCashManager</string>
 
     <!-- Home Screen -->
     <string name="home_total_balance">總餘額</string>
     <string name="home_income">收入</string>
     <string name="home_expenses">支出</string>
-    <string name="home_income_expense_card_title">收入和支出</string>
+    <string name="home_income_expense_card_title">收入與支出</string>
     <string name="home_recent_transactions">最近交易</string>
     <string name="home_customize_top_cards_action">自訂頂部卡片</string>
     <string name="home_customize_top_cards_title">自訂頂部卡片</string>
     <string name="home_quick_insights_title">快速見解</string>
     <string name="home_quick_insights_net_balance">淨餘額</string>
-    <string name="home_quick_insights_transactions_count">期間內的交易</string>
+    <string name="home_quick_insights_transactions_count">期間內交易數</string>
     <string name="home_quick_insights_average_amount">平均金額</string>
     <string name="home_quick_insights_daily_average_expense">每日平均</string>
     <string name="home_move_up">上移</string>
@@ -36,6 +36,8 @@
     <string name="home_recent_transactions_count">最近交易 · %1$d</string>
     <string name="home_quick_insights_biggest_expense">最大支出</string>
     <string name="home_scroll_to_top">捲動至頂部</string>
+    <string name="home_balance_summary_cd">%1$s: %2$s, %3$s</string>
+    <string name="home_insight_row_cd">%1$s: %2$s</string>
 
     <!-- Transactions Screen -->
     <string name="transactions_add">新增交易</string>
@@ -46,14 +48,16 @@
     <string name="transactions_interval_weekly">每週</string>
     <string name="transactions_interval_monthly">每月</string>
     <string name="transactions_interval_yearly">每年</string>
+    <!-- Transactions Filters -->
     <string name="transactions_search">搜尋</string>
     <string name="transactions_filter">篩選</string>
     <string name="transactions_search_label">搜尋交易</string>
     <string name="transactions_search_placeholder">名稱或金額...</string>
     <string name="transactions_advanced_filters">進階篩選</string>
     <string name="transactions_filter_type">交易類型</string>
-    <string name="transactions_filter_payment">付款方式</string>
+    <string name="transactions_filter_payment">支付類型</string>
     <string name="transactions_filter_category">分類</string>
+
     <string name="transactions_results_count">結果：%1$d</string>
     <string name="common_all">全部</string>
     <string name="common_clear">清除</string>
@@ -76,6 +80,42 @@
     <string name="categories_icon_label">圖示</string>
     <string name="categories_hide">隱藏分類</string>
     <string name="categories_show">顯示分類</string>
+    <string name="categories_hidden_section_title">隱藏分類 (%d)</string>
+    <string name="categories_reorder">重新排序分類</string>
+    <string name="categories_selection_hint">點擊分類以選取（在真實應用中自動推進）</string>
+
+    <!-- Category Icons -->
+    <string name="icon_home">家</string>
+    <string name="icon_directions_car">交通</string>
+    <string name="icon_restaurant">餐飲</string>
+    <string name="icon_receipt_long">收據</string>
+    <string name="icon_local_dining">速食</string>
+    <string name="icon_theater_comedy">娛樂</string>
+    <string name="icon_local_hospital">醫療</string>
+    <string name="icon_shopping_bag">購物</string>
+    <string name="icon_school">教育</string>
+    <string name="icon_more_horiz">其他</string>
+    <string name="icon_payments">工資</string>
+    <string name="icon_savings">儲蓄</string>
+    <string name="icon_currency_exchange">匯兌</string>
+    <string name="icon_trending_up">投資</string>
+    <string name="icon_work">工作</string>
+    <string name="icon_redeem">禮物</string>
+    <string name="icon_flight">旅行</string>
+    <string name="icon_fitness_center">健身</string>
+    <string name="icon_pets">寵物</string>
+    <string name="icon_directions_bus">公共交通</string>
+    <string name="icon_lightbulb">公共事業</string>
+    <string name="icon_celebration">慶祝</string>
+    <string name="icon_subscriptions">訂閱</string>
+    <string name="icon_fastfood">零食</string>
+    <string name="icon_star">收藏</string>
+    <string name="icon_volunteer_activism">慈善</string>
+    <string name="icon_directions_bike">運動</string>
+    <string name="icon_shopping_cart">雜貨</string>
+    <string name="icon_coffee">咖啡</string>
+    <string name="icon_spa">個人護理</string>
+    <string name="icon_card_giftcard">餐券</string>
 
     <!-- Charts Screen -->
     <string name="charts_period">期間</string>
@@ -89,12 +129,28 @@
     <string name="charts_yearly_overview">年度概覽</string>
     <string name="charts_no_data">選定期間內無資料</string>
     <string name="chart_reset_zoom">重設縮放</string>
-    <string name="charts_payment_breakdown_title">付款方式細分</string>
+    <string name="charts_payment_breakdown_title">支付方式細分</string>
     <string name="charts_top_income_categories">頂級收入分類</string>
     <string name="charts_top_expense_categories">頂級支出分類</string>
+    <string name="charts_chart_summary_cd">%1$s: %2$d 分類, 總計 %3$s</string>
+    <string name="charts_category_item_cd">%1$s: %2$s, 佔總額的 %3$s</string>
     <string name="charts_pick_start_date">選擇開始日期</string>
     <string name="charts_pick_end_date">選擇結束日期</string>
+    <string name="charts_empty_ant">還沒有繪圖資料！小螞蟻正在努力工作中！ 🐜📊</string>
     <string name="share">分享</string>
+    <string name="share_categories_subject">AntCashManager - 按分類劃分的支出</string>
+    <string name="share_monthly_subject">AntCashManager - 月度概覽</string>
+    <string name="share_yearly_subject">AntCashManager - 年度概覽</string>
+    <string name="share_category_title">按分類劃分的支出</string>
+    <string name="share_monthly_title">月度概覽</string>
+    <string name="share_yearly_title">年度概覽</string>
+    <string name="share_total">總計</string>
+    <string name="share_income">收入</string>
+    <string name="share_expense">支出</string>
+    <string name="share_balance">餘額</string>
+    <string name="share_total_income">總收入</string>
+    <string name="share_total_expense">總支出</string>
+    <string name="share_final_balance">最終餘額</string>
 
     <!-- Range Presets -->
     <string name="range_week">7天</string>
@@ -108,11 +164,12 @@
     <string name="range_six_years">6年</string>
     <string name="range_all">所有時間</string>
 
-    <!-- Range Labels -->
+    <!-- Range Labels (for collapsed filter) -->
     <string name="range_label_today">今天</string>
     <string name="range_label_this_week">本週</string>
     <string name="range_label_this_month">本月</string>
     <string name="range_label_this_year">今年</string>
+    <string name="range_label_custom">從 %1$s 到 %2$s</string>
 
     <!-- Settings Screen -->
     <string name="settings_appearance">外觀</string>
@@ -122,42 +179,440 @@
     <string name="settings_theme_system">系統預設</string>
     <string name="settings_language">語言</string>
     <string name="settings_display">顯示</string>
+    <string name="settings_display_subtitle">自訂貨幣、小數和格式</string>
+    <string name="settings_show_charts_section">顯示圖表部分</string>
+    <string name="settings_show_charts_section_visible">導航中顯示圖表部分</string>
+    <string name="settings_show_charts_section_hidden">導航中隱藏圖表部分</string>
     <string name="settings_currency_symbol">貨幣符號</string>
     <string name="settings_decimal_digits">小數位數</string>
-    <string name="settings_decimal_separator">小數分隔符</string>
+    <string name="settings_decimal_digits_subtitle">%d 位小數</string>
+    <string name="settings_decimal_separator">小數點</string>
     <string name="settings_thousands_separator">千位分隔符</string>
+    <string name="settings_meal_voucher_value">餐券價值</string>
+    <string name="settings_meal_voucher_value_subtitle">目前值：%s</string>
+    <string name="dialog_meal_voucher_title">設定餐券價值</string>
+    <string name="dialog_meal_voucher_message">輸入餐券的固定價值。</string>
+    <string name="dialog_meal_voucher_label">餐券價值</string>
+    <string name="settings_format_preview">預覽：</string>
+    <string name="settings_separator_comma">逗號 (,)</string>
+    <string name="settings_separator_period">句號 (.)</string>
+    <string name="settings_separator_space">空格</string>
+    <string name="settings_separator_none">無</string>
+    <string name="settings_date_format">日期格式</string>
+    <string name="settings_date_format_subtitle">%s</string>
+    <string name="settings_section_currency">貨幣</string>
+    <string name="settings_section_dates">日期</string>
+    <string name="settings_section_other">其他</string>
+    <string name="settings_reset_preferences">重置所有偏好設定</string>
+    <string name="settings_reset_preferences_subtitle">將所有設定恢復為預設值</string>
+    <string name="settings_section_widgets">小部件</string>
+    <string name="settings_widget_background_color">背景顏色</string>
+    <string name="dialog_choose_widget_background_color">選擇小部件背景顏色</string>
+    <string name="settings_widget_opacity">不透明度</string>
+    <string name="settings_widget_opacity_value">%1$d%%</string>
+    <string name="settings_widget_preview_title">預覽</string>
+    <string name="settings_widget_preview_recent">最近交易</string>
+    <string name="settings_widget_preview_category">收入與支出</string>
+    <string name="date_format_ddmmyyyy">DD/MM/YYYY</string>
+    <string name="date_format_mmddyyyy">MM/DD/YYYY</string>
+    <string name="date_format_yyyymmdd">YYYY-MM-DD</string>
+    <string name="date_format_ddmmmyyyy">DD MMM YYYY</string>
+    <string name="dialog_choose_date_format">選擇日期格式</string>
+    <string name="settings_accessibility">輔助功能</string>
+    <string name="settings_high_contrast">高對比度</string>
+    <string name="settings_high_contrast_subtitle">提高對比度以獲得更好的可讀性。使用更大膽的顏色和更強的邊框。</string>
+    <string name="settings_large_text">大字體</string>
+    <string name="settings_large_text_subtitle">增大應用內的字體大小，以便閱讀。</string>
+    <string name="settings_reduce_motion">減弱動態效果</string>
+    <string name="settings_reduce_motion_subtitle">盡量減少動畫和過渡效果。對動態效果敏感的使用者很有幫助。</string>
+    <string name="settings_data_management">資料管理</string>
+    <string name="settings_security">安全</string>
+    <string name="settings_security_data_encryption">資料保護 - 加密</string>
+    <string name="settings_security_data_encryption_subtitle">加密並保護本地應用資料</string>
+    <string name="settings_suggestions">建議</string>
+    <string name="settings_suggestions_enable">自動建議</string>
+    <string name="settings_suggestions_enable_subtitle">從您的交易歷史記錄中建議標題、收款人、備註、地點和標籤</string>
+    <string name="settings_suggestions_delete_all">刪除所有建議</string>
+    <string name="settings_suggestions_delete_all_subtitle">忘記從過去交易中構建的建議</string>
+    <string name="settings_delete_all">刪除所有資料</string>
+    <string name="settings_delete_all_subtitle">永久刪除所有交易和分類</string>
+    <string name="settings_backup">備份資料</string>
+    <string name="settings_backup_subtitle">匯出您的資料以供妥善保管</string>
+    <string name="settings_last_backup_label">上次備份：%s</string>
+    <string name="settings_last_backup_never">尚未進行備份</string>
+    <string name="settings_restore">恢復資料</string>
+    <string name="settings_restore_subtitle">從備份檔案中匯入資料</string>
+    <string name="settings_last_restore_label">上次恢復：%s</string>
+    <string name="settings_last_restore_never">尚未執行恢復</string>
     <string name="settings_support">支援</string>
     <string name="settings_send_feedback">傳送回饋</string>
+    <string name="settings_send_feedback_subtitle">幫助我們改進應用</string>
     <string name="settings_privacy_policy">隱私權政策</string>
+    <string name="settings_privacy_policy_subtitle">我們如何處理您的資料</string>
     <string name="settings_app_version">應用程式版本</string>
+    <string name="settings_third_party">第三方</string>
+    <string name="settings_third_party_author">由 %s 開發</string>
+    <string name="settings_third_party_libraries">開源庫</string>
+    <string name="settings_third_party_subtitle">查看此應用程式中使用的開源庫</string>
 
     <!-- Dialogs -->
     <string name="dialog_choose_theme">選擇佈景主題</string>
     <string name="dialog_choose_language">選擇語言</string>
+    <string name="dialog_choose_currency">選擇貨幣符號</string>
+    <string name="dialog_choose_decimal_digits">選擇小數位數</string>
+    <string name="dialog_choose_decimal_separator">選擇小數點</string>
+    <string name="dialog_choose_thousands_separator">選擇千位分隔符</string>
     <string name="dialog_ok">確定</string>
     <string name="dialog_delete">刪除</string>
     <string name="dialog_add">新增</string>
+    <string name="exit_app_title">退出應用程式？</string>
+    <string name="exit_app_message">您要關閉 AntCashManager 嗎？</string>
+    <string name="exit_app_confirm">退出</string>
+
+    <!-- Common Actions -->
     <string name="common_confirm">確認</string>
     <string name="common_cancel">取消</string>
+    <string name="common_collapse">折疊</string>
+    <string name="common_expand">展開</string>
+
+    <!-- Backup/Restore -->
+    <string name="backup_success_title">備份完成</string>
+    <string name="backup_success_message">您的資料已成功匯出。</string>
+    <string name="backup_error_title">備份失敗</string>
+    <string name="backup_error_message">無法建立備份：%s</string>
+    <string name="backup_in_progress_message">正在建立備份...</string>
+    <string name="settings_data_file_picker_unavailable">此設備上無法使用檔案選取器。</string>
+    <string name="restore_success_title">恢復完成</string>
+    <string name="restore_success_message">成功恢復 %1$d 條交易和 %2$d 個分類。</string>
+    <string name="restore_error_title">恢復失敗</string>
+    <string name="restore_error_message">無法恢復備份：%s</string>
+    <string name="restore_in_progress_message">正在恢復您的資料...</string>
+    <string name="dialog_delete_all_title">刪除所有資料？</string>
+    <string name="dialog_delete_all_message">此操作將永久刪除所有交易和分類。此操作無法撤銷。</string>
+    <string name="dialog_data_deleted">資料已刪除</string>
+    <string name="dialog_data_deleted_message">所有資料已成功刪除。</string>
+    <string name="dialog_reset_preferences_title">重置所有偏好設定</string>
+    <string name="dialog_reset_preferences_message">這將把所有設定恢復為預設值。是否繼續？</string>
+    <string name="dialog_delete_suggestions_title">刪除所有建議？</string>
+    <string name="dialog_delete_suggestions_message">從您的交易歷史記錄（標題、收款人、備註、地點、標籤）中構建的建議將被遺忘。新的建議將在您新增交易時再次建立。是否繼續？</string>
+    <string name="dialog_reset">重置</string>
+
+    <!-- Privacy Policy -->
+    <string name="privacy_policy_title">隱私權政策</string>
+    <string name="privacy_policy_content">AntCashManager 致力於保護您的隱私。本應用程式不會向第三方收集或共享個人資料。所有財務資料都存儲在您的設備本地，絕不會傳輸到外部伺服器。\n\n您的資料完全保留在您的設備上，並受您控制。我們不使用分析、追蹤或廣告服務。\n\n如有任何關於隱私的問題，請通過應用商店列表聯繫我們。</string>
 
     <!-- Languages -->
     <string name="language_system">系統預設</string>
-    <string name="language_english">English</string>
-    <string name="language_italian">Italiano</string>
-    <string name="language_french">Français</string>
-    <string name="language_german">Deutsch</string>
-    <string name="language_spanish">Español</string>
+    <string name="language_english">English (英語)</string>
+    <string name="language_italian">Italiano (義大利語)</string>
+    <string name="language_french">Français (法語)</string>
+    <string name="language_german">Deutsch (德語)</string>
+    <string name="language_spanish">Español (西班牙語)</string>
     <string name="language_chinese_simplified">中文（简体）</string>
     <string name="language_chinese_traditional">中文（繁體）</string>
     <string name="language_japanese">日本語</string>
     <string name="language_polish">Polski</string>
-    <string name="language_hindi">हिन्दी</string>
-    <string name="language_russian">Русский</string>
-    <string name="language_ukrainian">Українська</string>
-    <string name="language_korean">한국어</string>
+    <string name="language_hindi">हिन्दी (印地語)</string>
+    <string name="language_russian">Русский (俄語)</string>
+    <string name="language_ukrainian">Українська (烏克蘭語)</string>
+    <string name="language_korean">한국어 (韓語)</string>
+    <string name="debug_import_started">偵錯匯入已開始</string>
+    <string name="back">返回</string>
 
-    <!-- Feedback Email -->
-    <string name="feedback_email_body_chinese_simplified">AntCashManager 团队您好，\n\n我想分享一些关于该应用的反馈：\n\n[请在此描述您的反馈]\n\n谢谢！</string>
+    <!-- Add Transaction Screen -->
+    <string name="add_transaction">新增交易</string>
+    <string name="transaction_type">交易類型</string>
+
+    <!-- Add Transaction Steps -->
+    <string name="add_transaction_select_category">選擇分類</string>
+    <string name="add_transaction_choose_category">為交易選擇一個分類</string>
+    <string name="add_transaction_no_categories_available">無可用分類</string>
+    <string name="add_transaction_cancel">取消</string>
+    <string name="add_transaction_previous">上一步</string>
+    <string name="add_transaction_select_type">選擇類型</string>
+    <string name="add_transaction_income_label">收入</string>
+    <string name="add_transaction_expense_label">支出</string>
+    <string name="add_transaction_details">交易詳情</string>
+    <string name="add_transaction_title_required">標題 *</string>
+    <string name="add_transaction_amount_required">金額 *</string>
+    <string name="add_transaction_amount_total_meal_vouchers">總支付金額</string>
+    <string name="add_transaction_amount_total_meal_vouchers_description">輸入支付的全額：所用餐券的價值加上通過其他方式支付的任何差額。</string>
+    <string name="add_transaction_notes_label">備註</string>
+    <string name="add_transaction_payee_label">收款人</string>
+    <string name="add_transaction_location_label">地點</string>
+    <string name="add_transaction_field_date">日期</string>
+    <string name="add_transaction_save">儲存</string>
+    <string name="add_transaction_update">更新</string>
+    <string name="edit_transaction_title">編輯交易</string>
+    <string name="add_transaction_back">返回</string>
+    <string name="add_transaction_none">無</string>
+    <string name="add_transaction_category">分類</string>
+    <string name="add_transaction_type">類型</string>
+    <string name="add_transaction_tags_label">標籤</string>
+    <string name="add_transaction_tags_placeholder">新增標籤，用逗號分隔</string>
+    <string name="add_transaction_tags_suggestions">建議：</string>
+    <string name="add_transaction_delete_confirm_msg">您確定要刪除此交易嗎？此操作無法撤銷。</string>
+    <string name="add_transaction_recurring_label">重複交易</string>
+
+    <!-- Recurrence intervals -->
+    <string name="recurrence_interval_label">重複間隔</string>
+    <string name="recurrence_interval_daily">每日</string>
+    <string name="recurrence_interval_weekly">每週</string>
+    <string name="recurrence_interval_monthly">每月</string>
+    <string name="recurrence_interval_yearly">每年</string>
+
+    <!-- Transaction Details Dialog -->
+    <string name="transaction_details_title">交易詳情</string>
+    <string name="transaction_details_category">分類</string>
+    <string name="transaction_details_type">類型</string>
+    <string name="transaction_details_payment_type">支付類型</string>
+    <string name="transaction_details_amount">金額</string>
+    <string name="transaction_details_date">日期</string>
+    <string name="transaction_details_time">時間</string>
+    <string name="transaction_details_notes">備註</string>
+    <string name="transaction_details_payee">收款人</string>
+    <string name="transaction_details_location">地點</string>
+    <string name="transaction_details_recurrence">重複</string>
+    <string name="transaction_details_share">分享交易</string>
+    <string name="transaction_details_close">關閉</string>
+
+    <!-- Payment Type -->
+    <string name="payment_type_electronic">電子支付</string>
+    <string name="payment_type_cash">現金</string>
+    <string name="payment_type_meal_vouchers">餐券</string>
+
+    <!-- Add Transaction Payment Type -->
+    <string name="add_transaction_payment_type">支付類型</string>
+    <string name="add_transaction_select_payment_type">選擇支付類型</string>
+    <string name="add_transaction_payment_type_electronic">電子支付</string>
+    <string name="add_transaction_payment_type_cash">現金</string>
+    <string name="add_transaction_payment_type_meal_vouchers">餐券</string>
+
+    <!-- Add Transaction - Meal Vouchers -->
+    <string name="add_transaction_meal_voucher_section_title">餐券</string>
+    <string name="add_transaction_meal_voucher_unit_value">單價：%s€</string>
+    <string name="add_transaction_meal_voucher_count">張數</string>
+    <string name="add_transaction_meal_voucher_subtotal">餐券小計：%s€</string>
+    <string name="add_transaction_meal_voucher_difference_paid">支付差額</string>
+
+    <!-- Empty State -->
+    <string name="empty_state_no_transactions">無交易記錄</string>
+    <string name="widget_recent_transactions_title">最近交易</string>
+    <string name="widget_recent_transactions_description">顯示您的最近交易，自動更新</string>
+    <string name="widget_category_breakdown_title">收入與支出</string>
+    <string name="widget_category_breakdown_description">按分類顯示本月的收入和支出，自動更新</string>
+    <string name="empty_state_no_transactions_subtitle">存錢罐正等著你呢！</string>
+
+    <!-- Payment Breakdown -->
+    <string name="payment_breakdown_label">按支付類型劃分的餘額</string>
+    <string name="payment_breakdown_item_desc">%1$s 餘額：%2$.2f</string>
+    <string name="settings_show_payment_breakdown">顯示按支付類型劃分的餘額</string>
+    <string name="settings_show_payment_breakdown_desc">在主螢幕上顯示按支付方式劃分的餘額細分</string>
+    <string name="settings_show_quick_insights_card">顯示快速見解卡片</string>
+    <string name="settings_show_quick_insights_card_desc">在主螢幕上顯示包含快速見解的摘要卡片</string>
+    <string name="settings_show_initial_animation">顯示初始動畫</string>
+    <string name="settings_show_initial_animation_desc">應用程式啟動時顯示簡短動畫</string>
+
+    <!-- Transaction Display -->
+    <string name="settings_transaction_display">交易圖示</string>
+    <string name="settings_transaction_display_desc">選擇每條交易顯示的圖示</string>
+    <string name="settings_transaction_display_trend">趨勢箭頭</string>
+    <string name="settings_transaction_display_trend_desc">收入顯示上箭頭，支出顯示下箭頭</string>
+    <string name="settings_transaction_display_category">分類圖示</string>
+    <string name="settings_transaction_display_category_desc">顯示每條交易的分類圖示</string>
+    <string name="settings_transaction_display_none">無圖示</string>
+    <string name="settings_transaction_display_none_desc">不顯示額外圖示</string>
+    <string name="dialog_choose_transaction_display">選擇圖示類型</string>
+
+    <!-- Feedback Email Bodies -->
     <string name="feedback_email_body_chinese_traditional">AntCashManager 團隊您好，\n\n我想分享一些關於該應用的回饋：\n\n[請在此描述您的回饋]\n\n謝謝！</string>
-    <string name="feedback_email_body_japanese">AntCashManager チームの皆様、\n\nアプリについてフィードバックを共有したいと思います：\n\n[ここにフィードバックを記入してください]\n\nありがとうございます！</string>
+
+    <!-- Feedback Error Messages -->
+    <string name="no_email_app_installed">未安裝電子郵件應用程式</string>
+    <string name="error_opening_link">無法開啟連結。請檢查您的應用程式。</string>
+    <string name="settings_easter_egg_message">🐜 你好！感謝使用 AntCash！</string>
+
+    <!-- Transaction Display Section -->
+    <string name="settings_display_charts">圖表</string>
+    <string name="settings_charts_zoom">開啟圖表縮放</string>
+    <string name="settings_charts_zoom_desc">允許透過捏合手勢縮放圖表</string>
+
+    <string name="settings_transaction_display_section">交易</string>
+    <string name="settings_show_transaction_notes">顯示交易備註</string>
+    <string name="settings_show_transaction_notes_subtitle_enabled">備註在交易項目中可見</string>
+    <string name="settings_show_transaction_notes_subtitle_disabled">備註已隱藏</string>
+    <string name="settings_mask_amounts">隱藏金額</string>
+    <string name="settings_mask_amounts_subtitle_enabled">數字被星號遮蓋</string>
+    <string name="settings_mask_amounts_subtitle_disabled">數字正常顯示</string>
+    <string name="settings_mask_amounts_preview">預覽：%s</string>
+    <string name="settings_transaction_icon_display_trend">趨勢箭頭</string>
+    <string name="settings_transaction_icon_display_category">分類</string>
+    <string name="settings_transaction_icon_display_none">無</string>
+    <string name="dialog_choose_transaction_icon_display">選擇圖示顯示類型</string>
+
+    <!-- Tutorial -->
+    <string name="settings_tutorial">教程</string>
+    <string name="settings_show_tutorial">顯示教程</string>
+    <string name="settings_show_tutorial_subtitle">重新觀看應用程式初始教程</string>
+    <string name="tutorial_welcome_title">歡迎使用 AntCashManager！🐜</string>
+    <string name="tutorial_welcome_desc">讓我們快速瀏覽一下，看看我們的小螞蟻如何幫助您理財。</string>
+    <string name="tutorial_welcome_point_track">在幾秒鐘內追蹤收入和支出。</string>
+    <string name="tutorial_welcome_point_insights">一目了然地查看餘額和趨勢。</string>
+    <string name="tutorial_welcome_point_categories">使用智慧分類整理支出。</string>
+    <string name="tutorial_welcome_point_customize">自訂語言、佈景主題和格式。</string>
+    <string name="tutorial_dashboard_title">儀表板</string>
+    <string name="tutorial_dashboard_desc">在這裡，您可以一目了然地查看總餘額、每月收入和支出。</string>
+    <string name="tutorial_transactions_title">交易</string>
+    <string name="tutorial_transactions_desc">在這裡管理您的所有變動。您可以輕鬆地搜尋、篩選和新增新項目。</string>
+    <string name="tutorial_charts_title">圖表與洞察</string>
+    <string name="tutorial_charts_desc">透過互動式圖表視覺化您的消費習慣。看看您的錢流向了哪裡！</string>
+    <string name="tutorial_categories_title">分類</string>
+    <string name="tutorial_categories_desc">使用自訂分類、圖示和顏色來組織您的交易。</string>
+    <string name="tutorial_settings_title">個性化</string>
+    <string name="tutorial_settings_desc">根據您的需求量身定制應用程式：貨幣、日期格式、輔助功能和佈景主題。</string>
+    <string name="tutorial_finish_title">一切準備就緒！</string>
+    <string name="tutorial_finish_desc">今天就開始使用 AntCashManager 開啟您的財務之旅吧。理財愉快！</string>
+    <string name="tutorial_next">下一步</string>
+    <string name="tutorial_skip">跳過</string>
+    <string name="tutorial_finish">明白了！</string>
+    <string name="tutorial_progress_cd">教程第 %1$d 步，共 %2$d 步</string>
+
+    <string name="settings_about">設定</string>
+
+    <!-- Category Translations (Keys) -->
+    <string name="category_uncategorized">未分類</string>
+    <string name="category_home">家</string>
+    <string name="category_transport">交通</string>
+    <string name="category_food">食物</string>
+    <string name="category_bills">帳單</string>
+    <string name="category_dining">外出就餐</string>
+    <string name="category_entertainment">娛樂</string>
+    <string name="category_health">健康</string>
+    <string name="category_shopping">購物</string>
+    <string name="category_education">教育</string>
+    <string name="category_other">其他</string>
+    <string name="category_salary">工資</string>
+    <string name="category_allowance">津貼</string>
+    <string name="category_reimbursement">報銷</string>
+    <string name="category_investments">投資</string>
+    <string name="category_freelance">自由職業</string>
+    <string name="category_gifts">禮物</string>
+    <string name="category_subscriptions">訂閱</string>
+    <string name="category_personal_care">個人護理</string>
+
+    <!-- Receipt Scan Screen -->
+    <string name="receipt_scan_title">掃描收據</string>
+    <string name="receipt_scan_capture_hint">拍攝收據照片或從相簿中選取，以自動提取金額、稅額、收款人和地點。</string>
+    <string name="receipt_scan_take_photo">拍照</string>
+    <string name="receipt_scan_pick_gallery">從相簿中選取</string>
+    <string name="receipt_scan_processing">正在分析收據...</string>
+    <string name="receipt_scan_total_label">提取的總額</string>
+    <string name="receipt_scan_amount_edited">金額已編輯</string>
+    <string name="receipt_scan_title_label">交易標題</string>
+    <string name="receipt_scan_payee_label">收款人/商戶</string>
+    <string name="receipt_scan_location_label">地點</string>
+    <string name="receipt_scan_select_category">選擇分類</string>
+    <string name="receipt_scan_save">儲存交易</string>
+    <string name="receipt_scan_retry">重新掃描</string>
+    <string name="receipt_scan_nav_label">掃描收據</string>
+    <string name="receipt_scan_select_payment_type">選擇支付類型</string>
+    <string name="help_features_label">功能：</string>
+    <string name="common_help">幫助</string>
+
+    <!-- Home Help Dialog -->
+    <string name="help_home_title">首頁指南</string>
+    <string name="help_home_desc">歡迎來到首頁！在這裡，您可以查看您的財務摘要和最近交易。</string>
+    <string name="help_home_feature_date_filters_title">日期範圍篩選器</string>
+    <string name="help_home_feature_date_filters_desc">按特定日期篩選交易或使用可用的預設。</string>
+    <string name="help_home_feature_recent_transactions_title">最近交易</string>
+    <string name="help_home_feature_recent_transactions_desc">查看帶有詳情和分類的最新交易。</string>
+
+    <!-- Charts Help Dialog -->
+    <string name="help_charts_title">圖表指南</string>
+    <string name="help_charts_desc">查看財務資料的圖表和分析。</string>
+    <string name="help_charts_feature_visualization_title">圖表視覺化</string>
+    <string name="help_charts_feature_visualization_desc">以圖表形式（按分類的圓餅圖）查看您的財務資料。</string>
+    <string name="help_charts_feature_filters_title">時間篩選器</string>
+    <string name="help_charts_feature_filters_desc">選擇預設或自訂期間來分析您的資料。</string>
+    <string name="help_charts_feature_analysis_title">詳細分析</string>
+    <string name="help_charts_feature_analysis_desc">查看月度概覽和分類分析。</string>
+
+    <!-- Transactions Help Dialog -->
+    <string name="help_transactions_title">交易指南</string>
+    <string name="help_transactions_desc">管理您的所有交易。您可以查看、搜尋和篩選您的財務操作。</string>
+    <string name="help_transactions_feature_view_title">查看交易</string>
+    <string name="help_transactions_feature_view_desc">查看您所有的收入和支出交易，包含完整的詳情。</string>
+    <string name="help_transactions_feature_filters_title">日期篩選器</string>
+    <string name="help_transactions_feature_filters_desc">按日期範圍篩選交易或使用預設範圍。</string>
+    <string name="help_transactions_feature_search_title">搜尋交易</string>
+    <string name="help_transactions_feature_search_desc">按標題、金額、分類或其他屬性搜尋交易。</string>
+
+    <!-- Settings Help Dialog -->
+    <string name="help_settings_title">設定指南</string>
+    <string name="help_settings_desc">根據您的偏好自訂應用程式。</string>
+    <string name="help_settings_feature_theme_title">深淺色佈景主題</string>
+    <string name="help_settings_feature_theme_desc">根據您的偏好自訂應用程式外觀。</string>
+    <string name="help_settings_feature_currency_title">貨幣</string>
+    <string name="help_settings_feature_currency_desc">選擇您偏好的貨幣以顯示金額。</string>
+    <string name="help_settings_feature_language_title">語言</string>
+    <string name="help_settings_feature_language_desc">選擇介面語言。</string>
+
+    <!-- Categories Help Dialog -->
+    <string name="help_categories_title">分類指南</string>
+    <string name="help_categories_desc">管理您的支出和收入分類。</string>
+    <string name="help_categories_feature_management_title">分類管理</string>
+    <string name="help_categories_feature_management_desc">建立並自訂分類以整理您的交易。</string>
+    <string name="help_categories_feature_income_expense_title">收入與支出</string>
+    <string name="help_categories_feature_income_expense_desc">將交易分類為收入或支出。</string>
+    <string name="help_categories_feature_delete_title">刪除分類</string>
+    <string name="help_categories_feature_delete_desc">當不再需要自訂分類時將其刪除。</string>
+    <string name="common_close">關閉</string>
+    <string name="common_click_here">點擊這裡</string>
+    <string name="preview_app_text_title">範例標題</string>
+    <string name="preview_app_text_dark">深色標題</string>
+    <string name="preview_app_text_clickable">可點擊文字</string>
+    <string name="preview_app_text_all_caps">此文字全為大寫</string>
+    <string name="home_balance_negative">📉 負數</string>
+    <string name="transactions_title">交易</string>
+
+    <string name="dialog_cancel">取消</string>
+    <string name="dialog_close">關閉</string>
+    <string name="settings_title">設定</string>
+    <string name="charts_title">圖形</string>
+    <string name="chart_customize_order">自訂圖表卡片順序</string>
+    <string name="chart_cards_order_dialog_title">重新排序圖表卡片</string>
+    <string name="chart_cards_order_dialog_description">上下拖動以重新排序卡片。注意：時間範圍篩選器和摘要行是固定的。</string>
+    <string name="settings_project_by">一個由 Formica Simone @MisterAnt92 傾情製作的專案</string>
+    <!-- Chart Cards - New Visualizations -->
+    <string name="chart_spending_forecast_title">消費預測</string>
+    <string name="chart_avg_monthly">月平均額</string>
+    <string name="chart_period">期間</string>
+    <string name="chart_last_3_months">過去 3 個月</string>
+    <string name="chart_quick_stats_title">快速統計</string>
+    <string name="chart_days_tracked">記錄天數</string>
+    <string name="chart_max_daily">單日最高</string>
+    <string name="chart_avg_daily">日平均額</string>
+    <string name="chart_daily_expenses_title">每日支出</string>
+    <string name="chart_last_14_days">過去 14 天</string>
+    <string name="chart_average">平均值</string>
+    <string name="chart_weekday_distribution_title">按星期分布</string>
+
+
+    <!-- Charts Customization -->
+    <string name="charts_customize_cards_title">自訂卡片順序</string>
+
+    <!-- Chart Details Bottom Sheet -->
+    <string name="chart_details_title">詳情</string>
+    <string name="chart_details_percentage">佔總額的 %d%%</string>
+    <string name="chart_details_amount">金額</string>
+    <string name="chart_details_transactions">交易紀錄</string>
+    <string name="chart_details_info_title">分類資訊</string>
+    <string name="chart_details_info_description">點擊任何圖表切片以查看該分類的更多詳情</string>
+    <string name="chart_trend_increasing">支出趨勢：增加</string>
+    <string name="chart_trend_decreasing">支出趨勢：減少</string>
+    <string name="chart_trend_stable">支出趨勢：穩定</string>
+    <string name="error_generic">An error occurred</string>
+
+    <!-- App Description -->
+    <string name="app_description">這個應用的誕生源於無需訂閱的情況下追蹤家庭支出的需要，並能夠查看支出並比較價格上漲。</string>
 </resources>

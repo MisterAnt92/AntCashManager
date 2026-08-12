@@ -528,5 +528,9 @@
     <string name="chart_last_14_days">Últimos 14 días</string>
     <string name="chart_average">Promedio</string>
     <string name="chart_weekday_distribution_title">Distribución por Día</string>
-</resources>
+    <string name="error_generic">Ocurrió un error</string>
 
+
+    <!-- App Description -->
+    <string name="app_description">Esta app nace de la necesidad de rastrear gastos familiares gratuitamente y comparar aumentos de precios.</string>
+</resources>

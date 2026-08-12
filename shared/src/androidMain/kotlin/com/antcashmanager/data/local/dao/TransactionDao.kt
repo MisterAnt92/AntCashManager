@@ -18,6 +18,42 @@ interface TransactionDao {
     @Query("SELECT COUNT(*) FROM transactions")
     suspend fun getCount(): Int
 
+    /**
+     * Fetch transactions with pagination.
+     * @param limit Number of transactions per page (recommended: 50-200)
+     * @param offset Offset from start (0 for first page)
+     * @return Flow of paginated transaction results
+     */
+    @Query("SELECT * FROM transactions ORDER BY timestamp DESC LIMIT :limit OFFSET :offset")
+    fun getTransactionsPaginated(limit: Int, offset: Int): Flow<List<TransactionEntity>>
+
+    /**
+     * Filter transactions by category with pagination.
+     * Pushes filtering to database level for efficiency.
+     */
+    @Query("SELECT * FROM transactions WHERE category = :category ORDER BY timestamp DESC LIMIT :limit OFFSET :offset")
+    fun getTransactionsByCategory(category: String, limit: Int = 100, offset: Int = 0): Flow<List<TransactionEntity>>
+
+    /**
+     * Filter transactions by date range and category with pagination.
+     * Optimized for charts and reports.
+     */
+    @Query("SELECT * FROM transactions WHERE category = :category AND timestamp BETWEEN :from AND :to ORDER BY timestamp DESC LIMIT :limit OFFSET :offset")
+    fun getTransactionsByCategoryAndDateRange(
+        category: String,
+        from: Long,
+        to: Long,
+        limit: Int = 100,
+        offset: Int = 0
+    ): Flow<List<TransactionEntity>>
+
+    /**
+     * Search transactions by title/payee/notes with pagination.
+     * Case-insensitive search.
+     */
+    @Query("SELECT * FROM transactions WHERE (title LIKE :query OR payee LIKE :query OR notes LIKE :query) ORDER BY timestamp DESC LIMIT :limit OFFSET :offset")
+    fun searchTransactions(query: String, limit: Int = 100, offset: Int = 0): Flow<List<TransactionEntity>>
+
     @Query("SELECT * FROM transactions WHERE id = :id")
     suspend fun getTransactionById(id: Long): TransactionEntity?
 

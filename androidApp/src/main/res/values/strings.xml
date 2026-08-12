@@ -627,4 +627,8 @@
     <string name="chart_trend_increasing">Spending trend: Increasing</string>
     <string name="chart_trend_decreasing">Spending trend: Decreasing</string>
     <string name="chart_trend_stable">Spending trend: Stable</string>
+    <string name="error_generic">An error occurred</string>
+
+    <!-- App Description -->
+    <string name="app_description">This app was born from the need to track family expenses for free and compare price increases.</string>
 </resources>

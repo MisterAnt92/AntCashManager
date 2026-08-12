@@ -1,6 +1,7 @@
 package com.antcashmanager.android.ui.screen
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -89,7 +90,7 @@ class ChartsScreenTest {
 
         // Scroll to find pie chart
         composeTestRule.onNodeWithText("Charts")
-            .performScrollToNode(composeTestRule.onNodeWithText("Spending"))
+            .performScrollToNode(hasText("Spending"))
 
         // Verify pie chart is displayed
         composeTestRule.onNodeWithText("Spending")
@@ -141,7 +142,7 @@ class ChartsScreenTest {
 
         // Scroll down to see all cards
         composeTestRule.onNodeWithText("Charts")
-            .performScrollToNode(composeTestRule.onNodeWithText("Expense"))
+            .performScrollToNode(hasText("Expense"))
     }
 
     /**

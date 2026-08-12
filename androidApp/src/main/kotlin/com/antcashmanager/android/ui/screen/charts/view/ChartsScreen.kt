@@ -224,21 +224,9 @@ internal fun ChartsContent(
         headerConfigCallback?.invoke(
             ScreenHeaderConfig(
                 title = chartsTitle,
+                hasOrderOption = true,
+                onOrderClick = { showChartsCardsOrderDialog = true },
                 actions = {
-                    val customizeOrderDesc = stringResource(R.string.chart_customize_order)
-                    // Customize charts order button
-                    IconButton(
-                        onClick = { showChartsCardsOrderDialog = true },
-                        modifier = Modifier.semantics {
-                            contentDescription = customizeOrderDesc
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Sort,
-                            contentDescription = customizeOrderDesc,
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
                     HelpButton(
                         onHelpClick = {
                             analyticsManager.logEvent("chart_help_opened")

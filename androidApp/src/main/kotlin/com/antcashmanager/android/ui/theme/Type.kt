@@ -44,8 +44,8 @@ val AppTypography = Typography(
     headlineSmall = TextStyle(
         fontFamily = PoppinsFontFamily,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 24.sp,
-        lineHeight = 32.sp,
+        fontSize = 20.sp,
+        lineHeight = 27.sp,
     ),
     titleLarge = TextStyle(
         fontFamily = PoppinsFontFamily,
