@@ -611,4 +611,5 @@
     <string name="chart_trend_increasing">Тренд витрат: Зростає</string>
     <string name="chart_trend_decreasing">Тренд витрат: Спадає</string>
     <string name="chart_trend_stable">Тренд витрат: Стабільний</string>
+    <string name="error_generic">An error occurred</string>
 </resources>

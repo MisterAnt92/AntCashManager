@@ -611,4 +611,5 @@
     <string name="chart_trend_increasing">Trend wydatków: Wzrostowy</string>
     <string name="chart_trend_decreasing">Trend wydatków: Spadkowy</string>
     <string name="chart_trend_stable">Trend wydatków: Stabilny</string>
+    <string name="error_generic">An error occurred</string>
 </resources>

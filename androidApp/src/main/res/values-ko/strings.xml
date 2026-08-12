@@ -625,4 +625,5 @@
     <string name="chart_trend_increasing">지출 추세: 증가 중</string>
     <string name="chart_trend_decreasing">지출 추세: 감소 중</string>
     <string name="chart_trend_stable">지출 추세: 안정적</string>
+    <string name="error_generic">An error occurred</string>
 </resources>

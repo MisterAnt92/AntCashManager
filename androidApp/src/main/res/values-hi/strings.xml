@@ -622,4 +622,5 @@
     <string name="chart_trend_increasing">खर्च का रुझान: बढ़ रहा है</string>
     <string name="chart_trend_decreasing">खर्च का रुझान: कम हो रहा है</string>
     <string name="chart_trend_stable">खर्च का रुझान: स्थिर</string>
+    <string name="error_generic">An error occurred</string>
 </resources>

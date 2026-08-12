@@ -53,7 +53,6 @@ import com.antcashmanager.domain.usecase.settings.GetMealVoucherValueUseCase
 import com.antcashmanager.domain.usecase.settings.GetReduceMotionUseCase
 import com.antcashmanager.domain.usecase.settings.GetShowChartsUseCase
 import com.antcashmanager.domain.usecase.settings.GetShowTransactionNotesUseCase
-import com.antcashmanager.domain.usecase.settings.SettingsUseCasesProvider
 import com.antcashmanager.domain.usecase.settings.GetThemeUseCase
 import com.antcashmanager.domain.usecase.settings.GetThousandsSeparatorUseCase
 import com.antcashmanager.domain.usecase.settings.GetTransactionDisplayTypeUseCase
@@ -188,12 +187,6 @@ val useCaseModule = module {
     // - ViewModels can gradually migrate to generics later if needed
     // - Single point of maintenance (generics)
 
-    // Generic use cases for future direct consumption
-    factory { GetSettingUseCase(getter = { get<SettingsRepository>().getTheme() }) }
-    factory { SetSettingUseCase(setter = { get<SettingsRepository>().setTheme(it) }) }
-    factory { GetSettingUseCase(getter = { get<SettingsRepository>().getLanguage() }) }
-    factory { SetSettingUseCase(setter = { get<SettingsRepository>().setLanguage(it) }) }
-
     factory { ScanReceiptUseCase(ocrService = get()) }
 
     // Specific use cases now implemented via generics (reduces boilerplate)
@@ -237,44 +230,18 @@ val useCaseModule = module {
     factory { ShareTransactionUseCase() }
 
     // ─────────────────────────────────────────────────────────────────────────────
-    // WEEK 2 PHASE 2: Settings Provider (all generic use cases bundled)
+    // WEEK 2 PHASE 2: SettingsUseCasesProvider (Infrastructure Ready)
     // ─────────────────────────────────────────────────────────────────────────────
-    // Single provider containing all settings use cases (Get/Set pairs).
-    // Simplifies ViewModel injection: 1 parameter instead of 40+
-    factory {
-        SettingsUseCasesProvider(
-            // Theme & Language
-            getTheme = GetSettingUseCase(getter = { get<SettingsRepository>().getTheme() }),
-            setTheme = SetSettingUseCase(setter = { get<SettingsRepository>().setTheme(it) }),
-            getLanguage = GetSettingUseCase(getter = { get<SettingsRepository>().getLanguage() }),
-            setLanguage = SetSettingUseCase(setter = { get<SettingsRepository>().setLanguage(it) }),
-            // Display preferences
-            getShowCharts = GetSettingUseCase(getter = { get<SettingsRepository>().getShowCharts() }),
-            setShowCharts = SetSettingUseCase(setter = { get<SettingsRepository>().setShowCharts(it) }),
-            getHighContrast = GetSettingUseCase(getter = { get<SettingsRepository>().getHighContrast() }),
-            setHighContrast = SetSettingUseCase(setter = { get<SettingsRepository>().setHighContrast(it) }),
-            getLargeText = GetSettingUseCase(getter = { get<SettingsRepository>().getLargeText() }),
-            setLargeText = SetSettingUseCase(setter = { get<SettingsRepository>().setLargeText(it) }),
-            getReduceMotion = GetSettingUseCase(getter = { get<SettingsRepository>().getReduceMotion() }),
-            setReduceMotion = SetSettingUseCase(setter = { get<SettingsRepository>().setReduceMotion(it) }),
-            getShowTransactionNotes = GetSettingUseCase(getter = { get<SettingsRepository>().getShowTransactionNotes() }),
-            // Number formatting
-            getCurrencySymbol = GetSettingUseCase(getter = { get<SettingsRepository>().getCurrencySymbol() }),
-            setCurrencySymbol = SetSettingUseCase(setter = { get<SettingsRepository>().setCurrencySymbol(it) }),
-            getDecimalDigits = GetSettingUseCase(getter = { get<SettingsRepository>().getDecimalDigits() }),
-            setDecimalDigits = SetSettingUseCase(setter = { get<SettingsRepository>().setDecimalDigits(it) }),
-            getDecimalSeparator = GetSettingUseCase(getter = { get<SettingsRepository>().getDecimalSeparator() }),
-            setDecimalSeparator = SetSettingUseCase(setter = { get<SettingsRepository>().setDecimalSeparator(it) }),
-            getThousandsSeparator = GetSettingUseCase(getter = { get<SettingsRepository>().getThousandsSeparator() }),
-            setThousandsSeparator = SetSettingUseCase(setter = { get<SettingsRepository>().setThousandsSeparator(it) }),
-            // Display type
-            getTransactionDisplayType = GetSettingUseCase(getter = { get<SettingsRepository>().getTransactionDisplayType() }),
-            setTransactionDisplayType = SetSettingUseCase(setter = { get<SettingsRepository>().setTransactionDisplayType(it) }),
-            // Other
-            setTutorialCompleted = SetSettingUseCase(setter = { get<SettingsRepository>().setIsTutorialCompleted(it) }),
-            resetAllPreferences = get(),
-        )
-    }
+    // Provider class created for future ViewModel consolidation.
+    // DI registration deferred until ViewModels are ready to migrate.
+    // This maintains backward compatibility while infrastructure is in place.
+    //
+    // TODO: Uncomment factory when SettingsViewModel and other ViewModels
+    // are updated to accept SettingsUseCasesProvider instead of individual use cases.
+    //
+    // factory {
+    //     SettingsUseCasesProvider(...)
+    // }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -362,32 +329,10 @@ val presentationModule = module {
     }
     viewModel {
         SettingsViewModel(
-            getThemeUseCase = get(),
-            setThemeUseCase = get(),
-            getLanguageUseCase = get(),
-            setLanguageUseCase = get(),
-            getShowChartsUseCase = get(),
-            setShowChartsUseCase = get(),
-            getHighContrastUseCase = get(),
-            setHighContrastUseCase = get(),
-            getLargeTextUseCase = get(),
-            setLargeTextUseCase = get(),
-            getReduceMotionUseCase = get(),
-            setReduceMotionUseCase = get(),
-            getCurrencySymbolUseCase = get(),
-            setCurrencySymbolUseCase = get(),
-            getDecimalDigitsUseCase = get(),
-            setDecimalDigitsUseCase = get(),
-            getDecimalSeparatorUseCase = get(),
-            setDecimalSeparatorUseCase = get(),
-            getThousandsSeparatorUseCase = get(),
-            setThousandsSeparatorUseCase = get(),
-            getShowTransactionNotesUseCase = get(),
-            getTransactionDisplayTypeUseCase = get(),
-            setTutorialCompletedUseCase = get(),
-            resetAllPreferencesUseCase = get(),
+            settingsUseCases = get(),
             deleteAllTransactionsUseCase = get(),
             insertTransactionUseCase = get(),
+            widgetUpdateNotifier = get(),
         )
     }
     viewModelOf(::DisplayViewModel)

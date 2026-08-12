@@ -10,10 +10,9 @@ import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.None
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
+import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.model.TransactionType
-// WEEK 2 PHASE 2: Simplified imports using SettingsUseCasesProvider
-// Before: 24 individual imports (GetThemeUseCase, SetThemeUseCase, GetLanguageUseCase, etc.)
-// After: Single SettingsUseCasesProvider contains all use cases
+import com.antcashmanager.domain.service.WidgetUpdateNotifier
 import com.antcashmanager.domain.usecase.settings.SettingsUseCasesProvider
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
@@ -30,12 +29,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
-
 class SettingsViewModel(
-    // WEEK 2 PHASE 2: Single provider contains all settings use cases (was 24 individual parameters)
     private val settingsUseCases: SettingsUseCasesProvider,
     private val deleteAllTransactionsUseCase: DeleteAllTransactionsUseCase,
     private val insertTransactionUseCase: InsertTransactionUseCase,
+    private val widgetUpdateNotifier: WidgetUpdateNotifier,
 ) : BaseViewModel<None>() {
 
     // Convenience properties for readability (delegate to provider)
@@ -63,7 +61,7 @@ class SettingsViewModel(
     private val getTransactionDisplayTypeUseCase get() = settingsUseCases.getTransactionDisplayType
     private val setTransactionDisplayTypeUseCase get() = settingsUseCases.setTransactionDisplayType
     private val setTutorialCompletedUseCase get() = settingsUseCases.setTutorialCompleted
-    private val resetAllPreferencesUseCase get() = settingsUseCases.resetAllPreferences {
+    private val resetAllPreferencesUseCase get() = settingsUseCases.resetAllPreferences
 
     private var setThemeJob: Job? = null
     private var setLanguageJob: Job? = null
@@ -171,68 +169,66 @@ class SettingsViewModel(
     // Stato aggregato delle preferenze - combinare i flussi in gruppi
     val state: StateFlow<SettingsState> = combine(
         combine(
-            getThemeUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_THEME } }.stateIn(
+            getThemeUseCase().map {
+                val themeName = it.getOrNull() ?: SettingsConstant.DEFAULT_THEME.name
+                try { AppTheme.valueOf(themeName) } catch (_: Exception) { SettingsConstant.DEFAULT_THEME }
+            }.stateIn(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
                 SettingsConstant.DEFAULT_THEME,
             ),
-            getLanguageUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_LANGUAGE } }.stateIn(
+            getLanguageUseCase().map {
+                val langName = it.getOrNull() ?: SettingsConstant.DEFAULT_LANGUAGE.name
+                try { AppLanguage.valueOf(langName) } catch (_: Exception) { SettingsConstant.DEFAULT_LANGUAGE }
+            }.stateIn(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
                 SettingsConstant.DEFAULT_LANGUAGE,
             ),
-            getShowChartsUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_SHOW_CHARTS } }
-                .stateIn(
-                    viewModelScope,
-                    SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-                    SettingsConstant.DEFAULT_SHOW_CHARTS,
-                ),
-            getHighContrastUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_HIGH_CONTRAST } }
-                .stateIn(
-                    viewModelScope,
-                    SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-                    SettingsConstant.DEFAULT_HIGH_CONTRAST,
-                ),
-            getLargeTextUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_LARGE_TEXT } }
-                .stateIn(
-                    viewModelScope,
-                    SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-                    SettingsConstant.DEFAULT_LARGE_TEXT,
-                ),
+            getShowChartsUseCase().map { it.getOrDefault(SettingsConstant.DEFAULT_SHOW_CHARTS) }.stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+                SettingsConstant.DEFAULT_SHOW_CHARTS,
+            ),
+            getHighContrastUseCase().map { it.getOrDefault(SettingsConstant.DEFAULT_HIGH_CONTRAST) }.stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+                SettingsConstant.DEFAULT_HIGH_CONTRAST,
+            ),
+            getLargeTextUseCase().map { it.getOrDefault(SettingsConstant.DEFAULT_LARGE_TEXT) }.stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+                SettingsConstant.DEFAULT_LARGE_TEXT,
+            ),
         ) { theme, language, showCharts, highContrast, largeText ->
             SettingsPreferences1(theme, language, showCharts, highContrast, largeText)
         },
         combine(
-            getReduceMotionUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_REDUCE_MOTION } }
-                .stateIn(
-                    viewModelScope,
-                    SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-                    SettingsConstant.DEFAULT_REDUCE_MOTION,
-                ),
-            getCurrencySymbolUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_CURRENCY_SYMBOL } }
-                .stateIn(
-                    viewModelScope,
-                    SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-                    SettingsConstant.DEFAULT_CURRENCY_SYMBOL,
-                ),
-            getDecimalDigitsUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_DECIMAL_DIGITS } }
-                .stateIn(
-                    viewModelScope,
-                    SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-                    SettingsConstant.DEFAULT_DECIMAL_DIGITS,
-                ),
-            getDecimalSeparatorUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_DECIMAL_SEPARATOR } }
-                .stateIn(
-                    viewModelScope,
-                    SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-                    SettingsConstant.DEFAULT_DECIMAL_SEPARATOR,
-                ),
-            getThousandsSeparatorUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_THOUSANDS_SEPARATOR } }
-                .stateIn(
-                    viewModelScope,
-                    SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-                    SettingsConstant.DEFAULT_THOUSANDS_SEPARATOR,
-                ),
+            getReduceMotionUseCase().map { it.getOrDefault(SettingsConstant.DEFAULT_REDUCE_MOTION) }.stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+                SettingsConstant.DEFAULT_REDUCE_MOTION,
+            ),
+            getCurrencySymbolUseCase().map { it.getOrDefault(SettingsConstant.DEFAULT_CURRENCY_SYMBOL) }.stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+                SettingsConstant.DEFAULT_CURRENCY_SYMBOL,
+            ),
+            getDecimalDigitsUseCase().map { it.getOrDefault(SettingsConstant.DEFAULT_DECIMAL_DIGITS) }.stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+                SettingsConstant.DEFAULT_DECIMAL_DIGITS,
+            ),
+            getDecimalSeparatorUseCase().map { it.getOrDefault(SettingsConstant.DEFAULT_DECIMAL_SEPARATOR) }.stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+                SettingsConstant.DEFAULT_DECIMAL_SEPARATOR,
+            ),
+            getThousandsSeparatorUseCase().map { it.getOrDefault(SettingsConstant.DEFAULT_THOUSANDS_SEPARATOR) }.stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+                SettingsConstant.DEFAULT_THOUSANDS_SEPARATOR,
+            ),
         ) { reduceMotion, currencySymbol, decimalDigits, decimalSeparator, thousandsSeparator ->
             SettingsPreferences2(
                 reduceMotion,
@@ -242,18 +238,19 @@ class SettingsViewModel(
                 thousandsSeparator
             )
         },
-        getShowTransactionNotesUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_SHOW_TRANSACTION_NOTES } }
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-                SettingsConstant.DEFAULT_SHOW_TRANSACTION_NOTES,
-            ),
-        getTransactionDisplayTypeUseCase().map { it.getOrElse { SettingsConstant.DEFAULT_TRANSACTION_DISPLAY_TYPE } }
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
-                SettingsConstant.DEFAULT_TRANSACTION_DISPLAY_TYPE,
-            ),
+        getShowTransactionNotesUseCase().map { it.getOrDefault(SettingsConstant.DEFAULT_SHOW_TRANSACTION_NOTES) }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+            SettingsConstant.DEFAULT_SHOW_TRANSACTION_NOTES,
+        ),
+        getTransactionDisplayTypeUseCase().map {
+            val typeName = it.getOrNull() ?: SettingsConstant.DEFAULT_TRANSACTION_DISPLAY_TYPE.name
+            try { TransactionDisplayType.valueOf(typeName) } catch (_: Exception) { SettingsConstant.DEFAULT_TRANSACTION_DISPLAY_TYPE }
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
+            SettingsConstant.DEFAULT_TRANSACTION_DISPLAY_TYPE,
+        ),
     ) { prefs1, prefs2, showTransactionNotes, transactionDisplayType ->
         SettingsState(
             theme = prefs1.theme,
@@ -304,7 +301,7 @@ class SettingsViewModel(
             delay(300)
             updatePreference(
                 logMsg = "Setting theme to: $theme",
-                action = { setThemeUseCase(theme) },
+                action = { setThemeUseCase(theme.name) },
             )
         }
     }
@@ -316,7 +313,11 @@ class SettingsViewModel(
             delay(300)
             updatePreference(
                 logMsg = "Setting language to: $language",
-                action = { setLanguageUseCase(language) },
+                action = {
+                    val result = setLanguageUseCase(language.name)
+                    widgetUpdateNotifier.notifyTransactionsChanged()
+                    result
+                },
             )
         }
     }
@@ -361,6 +362,11 @@ class SettingsViewModel(
         action = { setThousandsSeparatorUseCase(separator) },
     )
 
+    fun setTransactionDisplayType(displayType: TransactionDisplayType) = updatePreference(
+        logMsg = "Setting transaction display type: $displayType",
+        action = { setTransactionDisplayTypeUseCase(displayType.name) },
+    )
+
     fun setIsTutorialCompleted(completed: Boolean) = updatePreference(
         logMsg = "Setting tutorial completed: $completed",
         action = { setTutorialCompletedUseCase(completed) },
@@ -368,7 +374,11 @@ class SettingsViewModel(
 
     fun resetAllPreferences() = updatePreference(
         logMsg = "Resetting all preferences",
-        action = { resetAllPreferencesUseCase() },
+        action = {
+            val result = resetAllPreferencesUseCase()
+            widgetUpdateNotifier.notifyTransactionsChanged()
+            result
+        },
     )
 
     fun sendFeedbackEmail(emailBody: String, applicationContext: Context): Boolean {
@@ -385,7 +395,6 @@ class SettingsViewModel(
         return success
     }
 }
-
 
 // Data class di supporto per il combine dei preferenze
 private data class SettingsPreferences1(

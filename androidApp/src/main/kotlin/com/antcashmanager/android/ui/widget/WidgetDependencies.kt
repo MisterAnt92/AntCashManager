@@ -2,6 +2,7 @@ package com.antcashmanager.android.ui.widget
 
 import androidx.compose.ui.graphics.Color
 import com.antcashmanager.android.analytics.AnalyticsManager
+import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
@@ -14,14 +15,28 @@ import org.koin.core.context.GlobalContext
  */
 internal object WidgetDependencies {
     val transactionRepository: TransactionRepository
-        get() = GlobalContext.get().get()
+        get() = safeGet()
 
     val settingsRepository: SettingsRepository
-        get() = GlobalContext.get().get()
+        get() = safeGet()
 
     val analyticsManager: AnalyticsManager
-        get() = GlobalContext.get().get()
+        get() = safeGet()
+
+    private inline fun <reified T : Any> safeGet(): T {
+        return try {
+            GlobalContext.get().get()
+        } catch (e: Exception) {
+            // Se Koin non è inizializzato (raro in questo processo ma possibile in race conditions)
+            // rilanciamo un'eccezione specifica che cattureremo nel widget per mostrare uno stato di errore
+            // invece di far crashare l'intero provider del launcher.
+            throw IllegalStateException("Koin not initialized or dependency not found: ${T::class.simpleName}", e)
+        }
+    }
 }
+
+internal suspend fun loadLanguage(settingsRepository: SettingsRepository): AppLanguage =
+    settingsRepository.getLanguage().first()
 
 internal suspend fun loadCurrencyFormat(settingsRepository: SettingsRepository): CurrencyFormat =
     CurrencyFormat(

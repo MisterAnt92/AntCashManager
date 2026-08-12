@@ -611,4 +611,5 @@
     <string name="chart_trend_increasing">支出趨勢：增加</string>
     <string name="chart_trend_decreasing">支出趨勢：減少</string>
     <string name="chart_trend_stable">支出趨勢：穩定</string>
+    <string name="error_generic">An error occurred</string>
 </resources>
