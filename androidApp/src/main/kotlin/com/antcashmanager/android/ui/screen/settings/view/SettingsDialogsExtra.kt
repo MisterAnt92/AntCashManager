@@ -8,8 +8,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.TextButton
@@ -34,6 +37,7 @@ fun ThemeSelectionDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
+        icon = { Icon(imageVector = Icons.Default.Palette, contentDescription = null) },
         title = { AppText(stringResource(R.string.dialog_choose_theme)) },
         text = {
             Column(
@@ -81,11 +85,14 @@ fun LanguageSelectionDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
+        icon = { Icon(imageVector = Icons.Default.Language, contentDescription = null) },
         title = { AppText(stringResource(R.string.dialog_choose_language)) },
         text = {
             Column(
-                modifier = Modifier.padding(top = 12.dp),
-                verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp)
+                modifier = Modifier
+                    .padding(top = 12.dp)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(10.dp)
             ) {
                 AppLanguage.entries.forEach { language ->
                     Row(
@@ -93,6 +100,7 @@ fun LanguageSelectionDialog(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable { onLanguageSelected(language) }
+                            .padding(vertical = 4.dp)
                     ) {
                         RadioButton(
                             selected = currentLanguage == language,
@@ -107,9 +115,18 @@ fun LanguageSelectionDialog(
                                     AppLanguage.FRENCH -> R.string.language_french
                                     AppLanguage.GERMAN -> R.string.language_german
                                     AppLanguage.SPANISH -> R.string.language_spanish
+                                    AppLanguage.CHINESE_SIMPLIFIED -> R.string.language_chinese_simplified
+                                    AppLanguage.CHINESE_TRADITIONAL -> R.string.language_chinese_traditional
+                                    AppLanguage.JAPANESE -> R.string.language_japanese
+                                    AppLanguage.POLISH -> R.string.language_polish
+                                    AppLanguage.HINDI -> R.string.language_hindi
+                                    AppLanguage.RUSSIAN -> R.string.language_russian
+                                    AppLanguage.UKRAINIAN -> R.string.language_ukrainian
+                                    AppLanguage.KOREAN -> R.string.language_korean
                                 }
                             ),
-                            modifier = Modifier.padding(start = 8.dp)
+                            modifier = Modifier.padding(start = 8.dp),
+                            maxLines = 1
                         )
                     }
                 }

@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.Help
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -43,5 +44,11 @@ sealed class BottomNavItem(
         route = "settings",
         titleResId = R.string.common_settings,
         icon = Icons.Default.Settings,
+    )
+
+    data object Tutorial : BottomNavItem(
+        route = "tutorial",
+        titleResId = R.string.settings_tutorial,
+        icon = Icons.Default.Help,
     )
 }

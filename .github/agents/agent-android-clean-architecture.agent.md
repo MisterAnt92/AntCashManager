@@ -107,7 +107,7 @@ import kotlinx.coroutines.Dispatchers
 class YourFeatureUseCase(
     private val repository: YourRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : BaseUseCase<String, Result<Data>>(dispatcher) {
+) : UseCase<String, Data>(dispatcher) {
     /**
      * Esegue [operazione]. Chiamato da `invoke()` sul dispatcher corretto.
      * @param params Parametro necessario
@@ -121,12 +121,12 @@ class YourFeatureUseCase(
 
 **Base class da estendere in base al tipo:**
 
-| Tipo operazione         | Base class                       | Metodo da implementare                          |
-|-------------------------|----------------------------------|-------------------------------------------------|
-| suspend con parametri   | `BaseUseCase<Params, Result<T>>` | `override suspend fun execute(params)`          |
-| suspend senza parametri | `NoParamsUseCase<Result<T>>`     | `override suspend fun execute()`                |
-| Flow con parametri      | `FlowUseCase<Params, Result<T>>` | `override fun execute(params): Flow<Result<T>>` |
-| Flow senza parametri    | `NoParamsFlowUseCase<Result<T>>` | `override fun execute(): Flow<Result<T>>`       |
+| Tipo operazione         | Base class                   | Metodo da implementare                          |
+|-------------------------|------------------------------|-------------------------------------------------|
+| suspend con parametri   | `UseCase<Params, T>`         | `override suspend fun execute(params): T`       |
+| suspend senza parametri | `NoParamsUseCase<T>`         | `override suspend fun execute(): T`             |
+| Flow con parametri      | `ObservableUseCase<Params, T>` | `override fun execute(params): Flow<T>`       |
+| Flow senza parametri    | `NoParamsObservableUseCase<T>` | `override fun execute(): Flow<T>`             |
 
 **Requirements**:
 
@@ -392,10 +392,59 @@ private fun YourFeatureContentPreview() {
 
 - Separare Screen wrapper da Content composable (testabilità)
 - SEMPRE `stringResource(R.string.*)` per stringhe (MAI hardcoded)
-- `@Preview` per ogni composable principale
+- **MANDATORY: `@Preview` per ogni composable principale – MINIMO 2 preview: light theme + dark theme**
+  - Example:
+    ```kotlin
+    @Preview(showBackground = true)
+    @Composable
+    private fun YourFeatureContentPreview() { /* Light theme preview */ }
+    
+    @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+    @Composable
+    private fun YourFeatureContentDarkPreview() { /* Dark theme preview */ }
+    ```
 - Max 400 righe (estrarre sub-composables se più lungo)
 - ZERO business logic
 - NO accesso diretto a repository/database
+
+---
+
+## ⚠️ Eccezioni all'Architettura Clean
+
+**IMPORTANTE**: La regola generale è che ViewModel accetta SOLO UseCase instances dal domain layer, MAI repository direttamente.
+
+### ECCEZIONE: SettingsRepository per Root Composable
+
+**UNO E UNO SOLO** caso eccezionale è documentato in AGENTS.md:
+
+> "**Special case**: The root composable (`AntCashManagerNavHost`) directly injects `SettingsRepository` via Koin to read reactive display preferences – this is an intentional exception to the 'ViewModels-only consume UseCases' rule for composition-level configuration."
+
+**Quando si applica questa eccezione:**
+- ✅ Root composable (`AntCashManagerNavHost`, `AntCashManagerApp`) che ha bisogno di preferenze globali (tema, lingua)
+- ✅ Configuration composable che legge impostazioni di UI globali reactive
+- ❌ MAI in ViewModel normali (solo nel root composable)
+- ❌ MAI per logica di business (solo per UI configuration)
+
+**Esempio di utilizzo corretto:**
+```kotlin
+// ✅ CORRETTO - Root composable legge impostazioni globali
+@Composable
+fun AntCashManagerNavHost(
+    settingsRepository: SettingsRepository,  // ECCEZIONE accettata qui
+) {
+    val theme by settingsRepository.theme.collectAsState()
+    val language by settingsRepository.language.collectAsState()
+    
+    AntCashManagerTheme(theme = theme, language = language) {
+        // Navigation graph
+    }
+}
+
+// ❌ SBAGLIATO - ViewModel normale NON deve avere SettingsRepository
+class MyViewModel(
+    settingsRepository: SettingsRepository  // NO! Usa UseCase invece
+) : ViewModel() { }
+```
 
 ---
 

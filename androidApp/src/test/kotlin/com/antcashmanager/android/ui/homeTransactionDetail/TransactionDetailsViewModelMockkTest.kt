@@ -70,17 +70,18 @@ class TransactionDetailsViewModelMockkTest : BaseUnitTest() {
     }
 
     @Test
-    fun shareTransaction_shouldBuildSendIntentWithFormattedText_whenTransactionIsExpense() = runTest {
-        coEvery {
-            shareTransactionUseCase(ShareTransactionUseCase.Params(expenseTransaction))
-        } returns Result.success("formatted expense")
+    fun shareTransaction_shouldBuildSendIntentWithFormattedText_whenTransactionIsExpense() =
+        runTest {
+            coEvery {
+                shareTransactionUseCase(ShareTransactionUseCase.Params(expenseTransaction))
+            } returns Result.success("formatted expense")
 
-        viewModel.shareTransaction(expenseTransaction, context)
+            viewModel.shareTransaction(expenseTransaction, context)
 
-        verify { anyConstructed<Intent>().setAction(Intent.ACTION_SEND) }
-        verify { anyConstructed<Intent>().putExtra(Intent.EXTRA_TEXT, "formatted expense") }
-        verify { anyConstructed<Intent>().setType("text/plain") }
-    }
+            verify { anyConstructed<Intent>().setAction(Intent.ACTION_SEND) }
+            verify { anyConstructed<Intent>().putExtra(Intent.EXTRA_TEXT, "formatted expense") }
+            verify { anyConstructed<Intent>().setType("text/plain") }
+        }
 
     @Test
     fun shareTransaction_shouldDelegateWholeTransaction_whenTransactionTypeIsIncome() = runTest {

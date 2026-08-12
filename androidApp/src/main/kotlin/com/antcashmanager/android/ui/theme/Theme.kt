@@ -153,6 +153,7 @@ fun AntCashManagerTheme(
     }
 
     val typography = if (largeText) scaledTypography() else AppTypography
+    val responsiveTypography = rememberResponsiveTypography()
 
     val view = LocalView.current
     if (!view.isInEditMode) {
@@ -167,7 +168,10 @@ fun AntCashManagerTheme(
         typography = typography,
         shapes = AppShapes,
     ) {
-        CompositionLocalProvider(LocalReduceMotion provides reduceMotion) {
+        CompositionLocalProvider(
+            LocalReduceMotion provides reduceMotion,
+            LocalResponsiveTypography provides responsiveTypography,
+        ) {
             content()
         }
     }

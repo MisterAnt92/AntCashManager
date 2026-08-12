@@ -70,6 +70,8 @@ data class AddTransactionState(
         get() = title.isNotBlank() &&
                 selectedCategory != null &&
                 selectedType != null &&
+                // Ricorrenza: se abilitata, richiede intervallo
+                (!isRecurring || recurrenceInterval.isNotBlank()) &&
                 // Per buoni pasto: numero voucher obbligatorio, nessun importo manuale
                 if (isMealVouchersPayment) {
                     mealVoucherCount.toIntOrNull() != null && mealVoucherCount.toIntOrNull()!! > 0

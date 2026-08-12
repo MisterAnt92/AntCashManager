@@ -104,15 +104,112 @@ class CategoryRepositoryImplMockkTest {
         }
     }
 
-    @Test
-    fun deleteAllCategories_shouldDeleteOnlyNonDefaultCategories_whenCalled() = runTest {
-        repository.deleteAllCategories()
+     @Test
+     fun deleteAllCategories_shouldDeleteOnlyNonDefaultCategories_whenCalled() = runTest {
+         repository.deleteAllCategories()
 
-        coVerify(exactly = 1) { categoryDao.deleteAllNonDefaultCategories() }
-        coVerify(exactly = 0) { categoryDao.deleteAllCategories() }
-    }
+         coVerify(exactly = 1) { categoryDao.deleteAllNonDefaultCategories() }
+         coVerify(exactly = 0) { categoryDao.deleteAllCategories() }
+     }
 
-    private fun sampleEntity(
+     @Test
+     fun getCategoryById_shouldReturnMappedCategory_whenDaoReturnsEntity() = runTest {
+         val entity = sampleEntity(id = 3L, name = "Utilities")
+         coEvery { categoryDao.getCategoryById(3L) } returns entity
+
+         val result = repository.getCategoryById(3L)
+
+         assertEquals(sampleCategory(id = 3L, name = "Utilities"), result)
+         coVerify(exactly = 1) { categoryDao.getCategoryById(3L) }
+     }
+
+     @Test
+     fun getCategoryById_shouldReturnNull_whenDaoReturnsNull() = runTest {
+         coEvery { categoryDao.getCategoryById(999L) } returns null
+
+         val result = repository.getCategoryById(999L)
+
+         assertNull(result)
+     }
+
+     @Test
+     fun insertCategory_shouldCallDaoAndReturnCategoryId_whenCategoryProvided() = runTest {
+         val category = sampleCategory(id = 4L, name = "Health")
+         val expectedId = 4L
+         coEvery { categoryDao.insertCategory(any()) } returns expectedId
+
+         val result = repository.insertCategory(category)
+
+         assertEquals(expectedId, result)
+         coVerify(exactly = 1) { categoryDao.insertCategory(any()) }
+     }
+
+     @Test
+     fun updateCategory_shouldCallDaoWithMappedEntity_whenCategoryProvided() = runTest {
+         val category = sampleCategory(id = 5L, name = "Sports", sortOrder = 2)
+
+         repository.updateCategory(category)
+
+         coVerify(exactly = 1) {
+             categoryDao.updateCategory(
+                 match {
+                     it.id == category.id && it.name == category.name && it.sortOrder == category.sortOrder
+                 },
+             )
+         }
+     }
+
+     @Test
+     fun getCategoriesByType_shouldReturnMappedCategoriesFilteredByType_whenDaoEmitsEntities() = runTest {
+         val expenseEntity = sampleEntity(id = 6L, name = "Transport", sortOrder = 1)
+             .copy(type = "EXPENSE")
+         val incomeEntity = sampleEntity(id = 7L, name = "Salary", sortOrder = 0)
+             .copy(type = "INCOME")
+         every { categoryDao.getCategoriesByType("EXPENSE") } returns flowOf(listOf(expenseEntity))
+
+         val result = repository.getCategoriesByType("EXPENSE").first()
+
+         assertEquals(1, result.size)
+         assertEquals("Transport", result.first().name)
+         assertEquals("EXPENSE", result.first().type)
+     }
+
+     @Test
+     fun getDefaultCategoryCount_shouldReturnCountOfDefaultCategories_whenQueried() = runTest {
+         coEvery { categoryDao.getDefaultCategoryCount() } returns 5
+
+         val result = repository.getDefaultCategoryCount()
+
+         assertEquals(5, result)
+         coVerify(exactly = 1) { categoryDao.getDefaultCategoryCount() }
+     }
+
+     @Test
+     fun updateCategory_shouldPreserveAllFields_whenCategoryHasComplexData() = runTest {
+         val category = sampleCategory(
+             id = 8L,
+             name = "Updated Category",
+             isDefault = false,
+             sortOrder = 10,
+             isHidden = true,
+         )
+
+         repository.updateCategory(category)
+
+         coVerify(exactly = 1) {
+             categoryDao.updateCategory(
+                 match {
+                     it.id == 8L &&
+                     it.name == "Updated Category" &&
+                     it.isDefault == false &&
+                     it.sortOrder == 10 &&
+                     it.isHidden == true
+                 },
+             )
+         }
+     }
+
+     private fun sampleEntity(
         id: Long,
         name: String,
         isDefault: Boolean = false,

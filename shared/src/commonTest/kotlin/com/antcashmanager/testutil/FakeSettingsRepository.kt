@@ -56,6 +56,8 @@ open class FakeSettingsRepository : SettingsRepository {
     val suggestionsClearedAt = MutableStateFlow<Long?>(null)
     val widgetBackgroundColor = MutableStateFlow(0xFFFFFFFFL)
     val widgetOpacity = MutableStateFlow(100)
+    val chartCardsOrder = MutableStateFlow("")
+    val homeTopCardsOrder = MutableStateFlow("")
 
     override fun getTheme(): Flow<AppTheme> = theme
     override suspend fun setTheme(theme: AppTheme) {
@@ -241,6 +243,16 @@ open class FakeSettingsRepository : SettingsRepository {
         widgetOpacity.value = opacity
     }
 
+    override fun getChartCardsOrder(): Flow<String> = chartCardsOrder
+    override suspend fun setChartCardsOrder(order: String) {
+        chartCardsOrder.value = order
+    }
+
+    override fun getHomeTopCardsOrder(): Flow<String> = homeTopCardsOrder
+    override suspend fun setHomeTopCardsOrder(order: String) {
+        homeTopCardsOrder.value = order
+    }
+
     override suspend fun resetAllPreferences() {
         theme.value = AppTheme.SYSTEM
         language.value = AppLanguage.SYSTEM
@@ -268,5 +280,7 @@ open class FakeSettingsRepository : SettingsRepository {
         suggestionsClearedAt.value = null
         widgetBackgroundColor.value = 0xFFFFFFFFL
         widgetOpacity.value = 100
+        chartCardsOrder.value = ""
+        homeTopCardsOrder.value = ""
     }
 }

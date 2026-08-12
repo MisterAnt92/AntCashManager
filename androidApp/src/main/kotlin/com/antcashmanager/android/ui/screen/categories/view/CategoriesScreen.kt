@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -78,6 +77,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -97,11 +97,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
-import com.antcashmanager.android.ui.components.common.ScreenHeader
 import com.antcashmanager.android.ui.components.dialog.HelpButton
 import com.antcashmanager.android.ui.components.state.AntEmptyState
+import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
+import com.antcashmanager.android.navigation.ScreenHeaderConfig
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.categories.CategoriesState
 import com.antcashmanager.android.ui.screen.categories.CategoriesViewModel
@@ -238,6 +242,42 @@ internal fun CategoriesContent(
         if (selectedTab == 0) state.hiddenExpenseCategories else state.hiddenIncomeCategories
     val currentType = if (selectedTab == 0) "EXPENSE" else "INCOME"
 
+    // Configure screen header with actions
+    val headerConfigCallback = LocalScreenHeaderConfigCallback.current
+    val categoriesTitle = stringResource(R.string.common_categories)
+    LaunchedEffect(currentCategories.size, selectedTab) {
+        headerConfigCallback?.invoke(
+            ScreenHeaderConfig(
+                title = categoriesTitle,
+                actions = {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        IconButton(
+                            onClick = {
+                                analyticsManager.logEvent("categories_reorder_opened")
+                                showReorderDialog = true
+                            },
+                            enabled = currentCategories.size > 1,
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.SwapVert,
+                                contentDescription = stringResource(R.string.categories_reorder),
+                            )
+                        }
+                        HelpButton(
+                            onHelpClick = {
+                                analyticsManager.logEvent("categories_help_opened")
+                                showHelpDialog = true
+                            },
+                        )
+                    }
+                }
+            )
+        )
+    }
+
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         floatingActionButton = {
@@ -266,30 +306,6 @@ internal fun CategoriesContent(
                     bottom = innerPadding.calculateBottomPadding(),
                 ),
         ) {
-            ScreenHeader(
-                title = stringResource(R.string.common_categories),
-                actions = {
-                    IconButton(
-                        onClick = {
-                            analyticsManager.logEvent("categories_reorder_opened")
-                            showReorderDialog = true
-                        },
-                        enabled = currentCategories.size > 1,
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.SwapVert,
-                            contentDescription = stringResource(R.string.categories_reorder),
-                        )
-                    }
-                    HelpButton(
-                        onHelpClick = {
-                            analyticsManager.logEvent("categories_help_opened")
-                            showHelpDialog = true
-                        },
-                    )
-                },
-            )
-            Spacer(modifier = Modifier.height(12.dp))
 
             TabRow(selectedTabIndex = selectedTab) {
                 tabs.forEachIndexed { index, title ->
@@ -301,7 +317,7 @@ internal fun CategoriesContent(
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            VerticalSpacer(SpacingSize.SM)
 
             if (currentCategories.isEmpty() && currentHiddenCategories.isEmpty()) {
                 AntEmptyState(
@@ -315,6 +331,13 @@ internal fun CategoriesContent(
                     items(currentCategories, key = { it.id }) { category ->
                         CategoryItem(
                             category = category,
+                            onClick = {
+                                val params = android.os.Bundle().apply {
+                                    putString("category_name", category.name)
+                                    putInt("index", currentCategories.indexOf(category))
+                                }
+                                analyticsManager.logEvent("categories_list_item_clicked", params)
+                            },
                             onDelete = {
                                 if (!category.isDefault) {
                                     categoryToDelete = category
@@ -353,7 +376,7 @@ internal fun CategoriesContent(
                             }
                         }
                     }
-                    item { Spacer(modifier = Modifier.height(72.dp)) }
+                    item { VerticalSpacer(SpacingSize.XXXL) }
                 }
             }
         }
@@ -463,12 +486,15 @@ private fun CategoryItem(
     category: Category,
     onDelete: () -> Unit,
     onToggleHidden: () -> Unit,
+    onClick: (() -> Unit)? = null,
 ) {
     val icon = categoryIconMap[category.icon]
     val translatedName = translateCategory(category.name)
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .let { if (onClick != null) it.clickable { onClick() } else it },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
         ),
@@ -504,7 +530,7 @@ private fun CategoryItem(
                     )
                 }
             }
-            Spacer(modifier = Modifier.width(16.dp))
+            HorizontalSpacer(SpacingSize.MD)
             Column(modifier = Modifier.weight(1f)) {
                 AppText(
                     text = translatedName,
@@ -570,7 +596,7 @@ private fun AddCategoryDialog(
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
-                Spacer(modifier = Modifier.height(16.dp))
+                VerticalSpacer(SpacingSize.MD)
 
                 // Icon Selection
                 AppText(
@@ -578,7 +604,7 @@ private fun AddCategoryDialog(
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                VerticalSpacer(SpacingSize.XS)
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -626,7 +652,7 @@ private fun AddCategoryDialog(
                         }
                     }
                 }
-                Spacer(modifier = Modifier.height(16.dp))
+                VerticalSpacer(SpacingSize.MD)
 
                 // Color Selection
                 AppText(
@@ -634,7 +660,7 @@ private fun AddCategoryDialog(
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                VerticalSpacer(SpacingSize.XS)
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),

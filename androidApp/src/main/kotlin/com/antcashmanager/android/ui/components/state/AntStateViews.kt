@@ -9,7 +9,6 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -33,10 +32,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import android.os.Bundle
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.LocalReduceMotion
+import org.koin.compose.koinInject
 
 /**
  * Reusable empty-state composable with ant mascot image,
@@ -52,12 +56,14 @@ fun AntEmptyState(
     mascotSize: Dp = 96.dp,
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null,
+    actionAnalyticsLabel: String? = null,
 ) {
     val reduceMotion = LocalReduceMotion.current
     var visible by remember { mutableStateOf(reduceMotion) }
     LaunchedEffect(Unit) { visible = true }
 
     val enterDuration = if (reduceMotion) 0 else 500
+    val analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager = koinInject()
 
     AnimatedVisibility(
         visible = visible,
@@ -79,7 +85,7 @@ fun AntEmptyState(
                 contentDescription = null,
                 modifier = Modifier.size(mascotSize),
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            VerticalSpacer(SpacingSize.MD)
             AppText(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
@@ -87,7 +93,7 @@ fun AntEmptyState(
                 textAlign = TextAlign.Center,
             )
             if (subtitle != null) {
-                Spacer(modifier = Modifier.height(6.dp))
+                VerticalSpacer(SpacingSize.XXS)
                 AppText(
                     text = subtitle,
                     style = MaterialTheme.typography.bodySmall,
@@ -96,8 +102,19 @@ fun AntEmptyState(
                 )
             }
             if (actionLabel != null && onAction != null) {
-                Spacer(modifier = Modifier.height(16.dp))
-                OutlinedButton(onClick = onAction) {
+                VerticalSpacer(SpacingSize.MD)
+                OutlinedButton(
+                    onClick = {
+                        // Track empty state action
+                        if (actionAnalyticsLabel != null) {
+                            val params = Bundle().apply {
+                                putString("action", actionAnalyticsLabel)
+                            }
+                            analyticsManager.logEvent("empty_state_action_taken", params)
+                        }
+                        onAction()
+                    }
+                ) {
                     AppText(actionLabel)
                 }
             }
@@ -152,7 +169,7 @@ fun AntErrorState(
                     modifier = Modifier.size(28.dp),
                 )
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            VerticalSpacer(SpacingSize.MD)
             AppText(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
@@ -160,7 +177,7 @@ fun AntErrorState(
                 textAlign = TextAlign.Center,
             )
             if (subtitle != null) {
-                Spacer(modifier = Modifier.height(6.dp))
+                VerticalSpacer(SpacingSize.XXS)
                 AppText(
                     text = subtitle,
                     style = MaterialTheme.typography.bodySmall,
@@ -169,7 +186,7 @@ fun AntErrorState(
                 )
             }
             if (retryLabel != null && onRetry != null) {
-                Spacer(modifier = Modifier.height(16.dp))
+                VerticalSpacer(SpacingSize.MD)
                 OutlinedButton(onClick = onRetry) {
                     AppText(retryLabel)
                 }

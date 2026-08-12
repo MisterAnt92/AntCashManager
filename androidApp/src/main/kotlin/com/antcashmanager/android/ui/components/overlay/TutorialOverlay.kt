@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -53,16 +52,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.button.AppButton
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import org.koin.compose.koinInject
 
 @Composable
 fun TutorialOverlay(
     onDismiss: () -> Unit,
 ) {
+    val analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager = koinInject()
     val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
     var currentStep by remember { mutableIntStateOf(0) }
     val steps = listOf(
@@ -104,7 +108,10 @@ fun TutorialOverlay(
     )
 
     var welcomeVisible by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) { welcomeVisible = true }
+    LaunchedEffect(Unit) {
+        analyticsManager.logEvent("tutorial_started")
+        welcomeVisible = true
+    }
 
     // Il tasto/gesture back di sistema deve muoversi indietro nel tutorial invece di
     // uscire dalla Home sottostante (di cui il tutorial è un overlay a schermo intero).
@@ -218,7 +225,7 @@ fun TutorialOverlay(
                                     .semantics { heading() },
                             )
 
-                            Spacer(modifier = Modifier.height(12.dp))
+                            VerticalSpacer(SpacingSize.SM)
 
                             AppText(
                                 text = stringResource(animatedStep.descRes),
@@ -228,7 +235,7 @@ fun TutorialOverlay(
                                 modifier = Modifier.fillMaxWidth(descriptionWidthFraction),
                             )
 
-                            Spacer(modifier = Modifier.height(20.dp))
+                            VerticalSpacer(SpacingSize.ML)
                         }
                     }
 
@@ -363,7 +370,7 @@ fun TutorialOverlay(
                 }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            VerticalSpacer(SpacingSize.ML)
 
             Row(
                 modifier = Modifier.fillMaxWidth(controlsWidthFraction),
@@ -386,15 +393,30 @@ fun TutorialOverlay(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        TextButton(onClick = onDismiss) {
+                        TextButton(onClick = {
+                            val params = android.os.Bundle().apply {
+                                putInt("step", currentStep)
+                            }
+                            analyticsManager.logEvent("tutorial_step_skipped", params)
+                            onDismiss()
+                        }) {
                             AppText(text = stringResource(R.string.tutorial_skip))
                         }
-                        AppButton(onClick = { currentStep += 1 }) {
+                        AppButton(onClick = {
+                            val params = android.os.Bundle().apply {
+                                putInt("step", currentStep)
+                            }
+                            analyticsManager.logEvent("tutorial_step_completed", params)
+                            currentStep += 1
+                        }) {
                             AppText(text = stringResource(R.string.tutorial_next))
                         }
                     }
                 } else {
-                    AppButton(onClick = onDismiss) {
+                    AppButton(onClick = {
+                        analyticsManager.logEvent("tutorial_completed")
+                        onDismiss()
+                    }) {
                         AppText(text = stringResource(R.string.tutorial_finish))
                     }
                 }

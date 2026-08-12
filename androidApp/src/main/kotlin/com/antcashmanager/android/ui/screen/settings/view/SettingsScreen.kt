@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -31,6 +30,7 @@ import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,12 +45,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.BuildConfig
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
-import com.antcashmanager.android.navigation.BottomNavItem
 import com.antcashmanager.android.ui.components.animation.AntEasterEggAnimation
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
@@ -58,6 +60,8 @@ import com.antcashmanager.android.ui.components.common.AppSwitch
 import com.antcashmanager.android.ui.components.dialog.HelpButton
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.settings.SettingsViewModel
+import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
+import com.antcashmanager.android.navigation.ScreenHeaderConfig
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
@@ -109,12 +113,6 @@ fun SettingsScreen(
                 ).show()
             }
         },
-        onShowTutorial = {
-            viewModel.setIsTutorialCompleted(false)
-            navController.navigate(BottomNavItem.Home.route) {
-                launchSingleTop = true
-            }
-        },
         navController = navController,
         modifier = modifier,
     )
@@ -145,7 +143,6 @@ internal fun SettingsContent(
     onThousandsSeparatorSelected: (String) -> Unit = {},
     onImportDebugData: (Context) -> Unit = {},
     onSendFeedbackEmail: (String) -> Unit = {},
-    onShowTutorial: () -> Unit = {},
     navController: NavController? = null,
     modifier: Modifier = Modifier,
 ) {
@@ -179,6 +176,25 @@ internal fun SettingsContent(
         HelpDialog(onDismiss = { showHelpDialog = false })
     }
 
+    // Configure screen header with actions
+    val headerConfigCallback = LocalScreenHeaderConfigCallback.current
+    val settingsTitle = stringResource(R.string.common_settings)
+    LaunchedEffect(Unit) {
+        headerConfigCallback?.invoke(
+            ScreenHeaderConfig(
+                title = settingsTitle,
+                actions = {
+                    HelpButton(
+                        onHelpClick = {
+                            analyticsManager.logEvent("settings_help_opened")
+                            showHelpDialog = true
+                        },
+                    )
+                }
+            )
+        )
+    }
+
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         modifier = modifier
@@ -196,49 +212,6 @@ internal fun SettingsContent(
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = 24.dp),
         ) {
-            // Detect multiple taps on title to trigger debug import when in debug build
-            var titleTapCount by remember { mutableStateOf(0) }
-            val context = LocalContext.current
-            val debugImportStartedMessage = stringResource(R.string.debug_import_started)
-
-            // Custom header with debug tap functionality
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                AppText(
-                    text = stringResource(R.string.common_settings),
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier
-                        .weight(1f)
-                        .clickable {
-                            if (BuildConfig.DEBUG) {
-                                titleTapCount += 1
-                                if (titleTapCount >= 5) {
-                                    titleTapCount = 0
-                                    // call the provided callback which will perform import in ViewModel
-                                    onImportDebugData(context)
-                                    Toast.makeText(
-                                        context,
-                                        debugImportStartedMessage,
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            }
-                        },
-                )
-                HelpButton(
-                    onHelpClick = {
-                        analyticsManager.logEvent("settings_help_opened")
-                        showHelpDialog = true
-                    },
-                )
-            }
-            Spacer(modifier = Modifier.height(12.dp))
-
             // ── Appearance Section ──
             // ... rest of Column content ...
             AppCardSectionHeader(title = stringResource(R.string.settings_appearance))
@@ -268,7 +241,13 @@ internal fun SettingsContent(
                     title = stringResource(R.string.settings_display),
                     subtitle = stringResource(R.string.settings_display_subtitle),
                     leadingIcon = Icons.Default.TextFields,
-                    onClick = { navController?.navigate("display") },
+                    onClick = {
+                        val params = android.os.Bundle().apply {
+                            putString("submenu", "display")
+                        }
+                        analyticsManager.logEvent("settings_submenu_opened", params)
+                        navController?.navigate("display")
+                    },
                 )
             }
 
@@ -322,7 +301,13 @@ internal fun SettingsContent(
                     leadingIcon = Icons.Default.Backup,
                     iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
                     iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
-                    onClick = { navController?.navigate("settings_data") },
+                    onClick = {
+                        val params = android.os.Bundle().apply {
+                            putString("submenu", "data_management")
+                        }
+                        analyticsManager.logEvent("settings_submenu_opened", params)
+                        navController?.navigate("settings_data")
+                    },
                 )
             }
 
@@ -335,6 +320,14 @@ internal fun SettingsContent(
                     AppLanguage.FRENCH -> R.string.feedback_email_body_french
                     AppLanguage.GERMAN -> R.string.feedback_email_body_german
                     AppLanguage.SPANISH -> R.string.feedback_email_body_spanish
+                    AppLanguage.CHINESE_SIMPLIFIED -> R.string.feedback_email_body_english
+                    AppLanguage.CHINESE_TRADITIONAL -> R.string.feedback_email_body_english
+                    AppLanguage.JAPANESE -> R.string.feedback_email_body_english
+                    AppLanguage.POLISH -> R.string.feedback_email_body_english
+                    AppLanguage.HINDI -> R.string.feedback_email_body_english
+                    AppLanguage.RUSSIAN -> R.string.feedback_email_body_english
+                    AppLanguage.UKRAINIAN -> R.string.feedback_email_body_english
+                    AppLanguage.KOREAN -> R.string.feedback_email_body_english
                     AppLanguage.SYSTEM -> R.string.feedback_email_body_english
                 }
             )
@@ -363,18 +356,6 @@ internal fun SettingsContent(
                 )
             }
 
-            // ── Tutorial Section ──
-            AppCardSectionHeader(title = stringResource(R.string.settings_tutorial))
-            AppCard(
-                title = stringResource(R.string.settings_show_tutorial),
-                subtitle = stringResource(R.string.settings_show_tutorial_subtitle),
-                leadingIcon = Icons.Default.Info,
-                onClick = {
-                    analyticsManager.logEvent("tutorial_replay_requested")
-                    onShowTutorial()
-                },
-            )
-
             // ── About Section ──
             AppCardSectionHeader(title = stringResource(R.string.settings_about))
             AppCard(
@@ -383,6 +364,7 @@ internal fun SettingsContent(
                 leadingIcon = Icons.Default.Info,
                 showChevron = false,
                 onClick = {
+                    analyticsManager.logEvent("easter_egg_animation_opened")
                     showAntAnimation = true
                 },
             )
@@ -399,7 +381,7 @@ internal fun SettingsContent(
                 },
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            VerticalSpacer(SpacingSize.LG)
 
             AppText(
                 text = stringResource(R.string.settings_project_by),
@@ -544,6 +526,14 @@ private fun languageDisplayName(language: AppLanguage): String = when (language)
     AppLanguage.FRENCH -> stringResource(R.string.language_french)
     AppLanguage.GERMAN -> stringResource(R.string.language_german)
     AppLanguage.SPANISH -> stringResource(R.string.language_spanish)
+    AppLanguage.CHINESE_SIMPLIFIED -> stringResource(R.string.language_system)
+    AppLanguage.CHINESE_TRADITIONAL -> stringResource(R.string.language_system)
+    AppLanguage.JAPANESE -> stringResource(R.string.language_system)
+    AppLanguage.POLISH -> stringResource(R.string.language_system)
+    AppLanguage.HINDI -> stringResource(R.string.language_system)
+    AppLanguage.RUSSIAN -> stringResource(R.string.language_system)
+    AppLanguage.UKRAINIAN -> stringResource(R.string.language_system)
+    AppLanguage.KOREAN -> stringResource(R.string.language_system)
 }
 
 @Composable

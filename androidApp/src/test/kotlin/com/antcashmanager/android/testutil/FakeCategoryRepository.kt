@@ -57,4 +57,11 @@ open class FakeCategoryRepository(
 
     override suspend fun getDefaultCategoryCount(): Int =
         categories.value.count { it.isDefault }
+
+    /**
+     * Helper method for tests: remove a category by ID
+     */
+    fun removeCategory(id: Long) {
+        categories.update { list -> list.filterNot { it.id == id } }
+    }
 }

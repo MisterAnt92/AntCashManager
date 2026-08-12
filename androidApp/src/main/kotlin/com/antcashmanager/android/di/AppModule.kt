@@ -13,6 +13,9 @@ import com.antcashmanager.android.ui.screen.settings.dataManagement.SettingsData
 import com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayViewModel
 import com.antcashmanager.android.ui.screen.transactions.TransactionsViewModel
 import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionViewModel
+import com.antcashmanager.android.ui.screen.transactions.addImport.manager.SuggestionsManager
+import com.antcashmanager.android.ui.screen.transactions.addImport.manager.TransactionLoadManager
+import com.antcashmanager.android.ui.screen.transactions.addImport.manager.TransactionSubmitManager
 import com.antcashmanager.android.ui.theme.ThemeViewModel
 import com.antcashmanager.android.ui.widget.GlanceWidgetUpdateNotifier
 import com.antcashmanager.data.local.DatabaseProvider
@@ -229,15 +232,36 @@ val presentationModule = module {
             setTransactionsDateFilterStateUseCase = get(),
         )
     }
-    viewModel { (transactionId: Long?) ->
-        AddTransactionViewModel(
+
+    // ── Manager per AddTransaction ──
+    single {
+        TransactionLoadManager(
+            getTransactionByIdUseCase = get(),
             getCategoriesUseCase = get(),
             getMealVoucherValueUseCase = get(),
-            getTransactionByIdUseCase = get(),
+        )
+    }
+
+    single {
+        TransactionSubmitManager(
             insertTransactionUseCase = get(),
             updateTransactionUseCase = get(),
-            deleteTransactionUseCase = get(),
+        )
+    }
+
+    single {
+        SuggestionsManager(
             getTransactionSuggestionsUseCase = get(),
+        )
+    }
+
+    viewModel { (transactionId: Long?) ->
+        AddTransactionViewModel(
+            loadManager = get(),
+            submitManager = get(),
+            suggestionsManager = get(),
+            deleteTransactionUseCase = get(),
+            getTransactionByIdUseCase = get(),
             analyticsManager = get(),
             transactionId = transactionId,
         )

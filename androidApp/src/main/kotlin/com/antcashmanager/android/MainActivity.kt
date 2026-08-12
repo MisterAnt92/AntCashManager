@@ -8,14 +8,23 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.window.layout.DisplayFeature
+import androidx.window.layout.WindowInfoTracker
 import androidx.lifecycle.lifecycleScope
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.navigation.AntCashManagerNavHost
 import com.antcashmanager.android.ui.LocalLocale
+import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
+import com.antcashmanager.android.ui.base.MultiPaneCoordinator
+import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
 import com.antcashmanager.android.ui.theme.AppThemeProvider
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
@@ -66,9 +75,28 @@ class MainActivity : ComponentActivity() {
                     "Settings loaded: language=${settingsState.language}, theme=${settingsState.theme}"
                 }
 
+                // Track display features (folds, hinges) for foldable device support
+                var displayFeatures by remember { mutableStateOf<List<DisplayFeature>>(emptyList()) }
+                LaunchedEffect(Unit) {
+                    val windowInfoTracker = WindowInfoTracker.getOrCreate(this@MainActivity)
+                    windowInfoTracker.windowLayoutInfo(this@MainActivity).collect { layoutInfo ->
+                        displayFeatures = layoutInfo.displayFeatures
+                        Logger.d(tag = "MainActivity") {
+                            "Display features updated: ${displayFeatures.size} feature(s)"
+                        }
+                    }
+                }
+
+                // Create multi-pane coordinator for synchronized state across panes
+                val multiPaneCoordinator = remember { MultiPaneCoordinator() }
+
                 WithAppLocale(language = settingsState.language) {
                     AppThemeProvider(currentTheme = settingsState.theme) {
-                        AntCashManagerNavHost()
+                        WithDisplayFeatures(displayFeatures = displayFeatures) {
+                            WithMultiPaneCoordinator(coordinator = multiPaneCoordinator) {
+                                AntCashManagerNavHost()
+                            }
+                        }
                     }
                 }
             }
@@ -92,7 +120,7 @@ fun WithAppLocale(language: AppLanguage, content: @Composable () -> Unit) {
     } else {
         val context = LocalContext.current
         val activityResultRegistryOwner = LocalActivityResultRegistryOwner.current
-        val locale = Locale(language.code)
+        val locale = Locale.forLanguageTag(language.code)
         Logger.d(tag = "Language") { "WithAppLocale: applying locale ${language.code} (${locale.displayName})" }
         val config = Configuration(LocalConfiguration.current).apply {
             setLocale(locale)
@@ -114,5 +142,33 @@ fun WithAppLocale(language: AppLanguage, content: @Composable () -> Unit) {
                 content()
             }
         }
+    }
+}
+
+/**
+ * Provides display features (folds, hinges) to all composables below.
+ * Used for foldable device support (Samsung Galaxy Z Fold, Z Flip, etc.).
+ *
+ * @param displayFeatures List of display features detected on this device
+ * @param content Composable content that can access display features via LocalDisplayFeatures
+ */
+@Composable
+fun WithDisplayFeatures(displayFeatures: List<DisplayFeature>, content: @Composable () -> Unit) {
+    CompositionLocalProvider(LocalDisplayFeatures provides displayFeatures) {
+        content()
+    }
+}
+
+/**
+ * Provides multi-pane coordinator to all composables below.
+ * Used for synchronizing state between panes on foldable devices or tablets in split-view.
+ *
+ * @param coordinator MultiPaneCoordinator instance managing pane synchronization
+ * @param content Composable content that can access coordinator via LocalMultiPaneCoordinator
+ */
+@Composable
+fun WithMultiPaneCoordinator(coordinator: MultiPaneCoordinator, content: @Composable () -> Unit) {
+    CompositionLocalProvider(LocalMultiPaneCoordinator provides coordinator) {
+        content()
     }
 }

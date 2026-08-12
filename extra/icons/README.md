@@ -197,8 +197,8 @@ Quando aggiorni l'icona:
 
 ---
 
-**Last Updated**: May 2026
-**App Version**: 1.4.6
+**Last Updated**: August 2026
+**App Version**: 1.7.0
 **Package**: com.sformica.ant_cashmanager
 
 ## Gestione Multilingue degli Screenshot

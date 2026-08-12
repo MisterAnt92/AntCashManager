@@ -38,17 +38,14 @@ fun QuickInsightsCard(
     totalIncome: Double,
     totalExpense: Double,
     transactionCount: Int,
+    netBalance: Double,
+    dailyAverageExpense: Double,
     biggestExpenseCategory: String? = null,
     biggestExpenseAmount: Double? = null,
     modifier: Modifier = Modifier,
 ) {
     val averageAmount = if (transactionCount > 0) {
         (abs(totalIncome) + abs(totalExpense)) / transactionCount
-    } else {
-        0.0
-    }
-    val savingsRate = if (totalIncome > 0.0) {
-        ((totalIncome - totalExpense) / totalIncome) * 100.0
     } else {
         0.0
     }
@@ -81,6 +78,10 @@ fun QuickInsightsCard(
             }
 
             InsightRow(
+                label = stringResource(R.string.home_quick_insights_net_balance),
+                money = netBalance,
+            )
+            InsightRow(
                 label = stringResource(R.string.home_quick_insights_transactions_count),
                 value = transactionCount.toString(),
             )
@@ -89,11 +90,8 @@ fun QuickInsightsCard(
                 money = averageAmount,
             )
             InsightRow(
-                label = stringResource(R.string.home_quick_insights_savings_rate),
-                value = stringResource(
-                    R.string.home_quick_insights_savings_rate_value,
-                    savingsRate
-                ),
+                label = stringResource(R.string.home_quick_insights_daily_average_expense),
+                money = dailyAverageExpense,
             )
             if (biggestExpenseCategory != null && biggestExpenseAmount != null) {
                 InsightRow(
@@ -164,6 +162,8 @@ private fun QuickInsightsCardPreviewLight() {
             totalIncome = 2500.0,
             totalExpense = 1200.0,
             transactionCount = 24,
+            netBalance = 1300.0,
+            dailyAverageExpense = 171.43,
         )
     }
 }

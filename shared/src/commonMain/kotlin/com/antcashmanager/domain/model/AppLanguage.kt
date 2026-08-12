@@ -11,5 +11,13 @@ enum class AppLanguage(val code: String) {
     FRENCH("fr"),
     GERMAN("de"),
     SPANISH("es"),
+    CHINESE_SIMPLIFIED("zh"),
+    CHINESE_TRADITIONAL("zh-TW"),
+    JAPANESE("ja"),
+    POLISH("pl"),
+    HINDI("hi"),
+    RUSSIAN("ru"),
+    UKRAINIAN("uk"),
+    KOREAN("ko"),
 }
 

@@ -4,6 +4,8 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.base.BaseViewModel
+import com.antcashmanager.android.ui.screen.charts.view.ChartDetailsData
+import com.antcashmanager.android.ui.screen.charts.view.TrendDirection
 import com.antcashmanager.android.util.withCorrectAmounts
 import com.antcashmanager.domain.model.None
 import com.antcashmanager.domain.model.SavedDateFilter
@@ -28,6 +30,7 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import kotlin.math.abs
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ChartsViewModel(
@@ -58,6 +61,10 @@ class ChartsViewModel(
     val dateRange: StateFlow<DateRange> = _dateRange.asStateFlow()
     private val _selectedPresetIndex = MutableStateFlow(1)
     val selectedPresetIndex: StateFlow<Int> = _selectedPresetIndex.asStateFlow()
+
+    // Chart details for tap-to-details interaction
+    private val _selectedChartDetails = MutableStateFlow<ChartDetailsData?>(null)
+    val selectedChartDetails: StateFlow<ChartDetailsData?> = _selectedChartDetails.asStateFlow()
 
     val chartData: StateFlow<ChartData> = _dateRange
         .flatMapLatest { range ->
@@ -254,6 +261,38 @@ class ChartsViewModel(
             .mapValues { (_, txs) -> kotlin.math.abs(txs.sumOf { it.amount }) }
             .filterValues { it != 0.0 }
 
+        // Calculate expense by weekday (1=Mon...7=Sun per EU convention)
+        // Returns total expense amount per weekday, not average
+        val expenseByWeekday = expenseTransactions
+            .groupBy { tx ->
+                cal.timeInMillis = tx.timestamp
+                // Calendar.DAY_OF_WEEK: 1=Sun, 2=Mon, ..., 7=Sat
+                // Convert to EU convention: 1=Mon, 2=Tue, ..., 7=Sun
+                val calendarDayOfWeek = cal.get(Calendar.DAY_OF_WEEK)
+                if (calendarDayOfWeek == 1) 7 else calendarDayOfWeek - 1
+            }
+            .mapValues { (_, txs) ->
+                if (txs.isNotEmpty()) {
+                    kotlin.math.abs(txs.sumOf { it.amount })
+                } else 0.0
+            }
+
+        // Calculate daily timeline (sorted by date, only expenses)
+        val dateFormat = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)
+        val dailyMap = mutableMapOf<String, Double>()
+        expenseTransactions.forEach { tx ->
+            cal.timeInMillis = tx.timestamp
+            val dateLabel = dateFormat.format(cal.time)
+            val current = dailyMap.getOrDefault(dateLabel, 0.0)
+            dailyMap[dateLabel] = current + kotlin.math.abs(tx.amount)
+        }
+
+        val dailyTimeline = dailyMap.entries
+            .sortedBy { it.key }
+            .map { (dateLabel, expense) ->
+                DailyAmount(dateLabel = dateLabel, expense = expense)
+            }
+
         return ChartData(
             incomeByCategory = incomeByCategory,
             expenseByCategory = expenseByCategory,
@@ -262,7 +301,59 @@ class ChartsViewModel(
             monthlyData = monthlyData,
             yearlyData = yearlyData,
             paymentTypeBreakdown = paymentTypeBreakdown,
+            dailyTimeline = dailyTimeline,
+            expenseByWeekday = expenseByWeekday,
         )
+    }
+
+    /**
+     * Select a chart category to show details in bottom sheet.
+     *
+     * @param categoryName The category to select
+     * @param amount The total amount for this category
+     * @param colorHex The color code for visualization
+     * @param isExpense Whether this is an expense category
+     */
+    fun selectChartCategory(
+        categoryName: String,
+        amount: Double,
+        colorHex: Long,
+        isExpense: Boolean = true,
+    ) {
+        val currentData = chartData.value
+        val totalAmount = if (isExpense) currentData.totalExpense else currentData.totalIncome
+
+        val percentage = if (totalAmount != 0.0) {
+            ((abs(amount) / totalAmount) * 100).toInt().coerceIn(0, 100)
+        } else {
+            0
+        }
+
+        // Calculate trend based on transaction count for this category
+        val transactionCount = when {
+            isExpense -> currentData.expenseByCategory[categoryName]?.let { 1 } ?: 0
+            else -> currentData.incomeByCategory[categoryName]?.let { 1 } ?: 0
+        }
+
+        val details = ChartDetailsData(
+            categoryName = categoryName,
+            amount = amount,
+            percentage = percentage,
+            colorHex = colorHex,
+            transactionCount = transactionCount,
+            trend = TrendDirection.NEUTRAL, // Can be enhanced with trend analysis
+        )
+
+        _selectedChartDetails.value = details
+        logDebug("Selected chart category: $categoryName (${abs(amount)}, $percentage%)")
+    }
+
+    /**
+     * Clear the currently selected chart details.
+     */
+    fun clearChartSelection() {
+        _selectedChartDetails.value = null
+        logDebug("Cleared chart selection")
     }
 }
 

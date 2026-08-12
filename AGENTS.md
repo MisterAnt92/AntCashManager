@@ -4,15 +4,61 @@ Guide for AI coding agents working in this codebase. Read before making any chan
 
 ---
 
-## ⚠️ CRITICAL: Never Commit Changes
+## ⚠️ CRITICAL: Never Commit Changes Without Asking
 
-**AGENTS (AI assistants) MUST NEVER create git commits or push changes to the repository.**
+**AGENTS (AI assistants) MUST NEVER create git commits or push changes without explicit human authorization. NEVER. EVER.**
 
-- Write code, edit files, create new files as needed for the task.
-- Run tests and verify changes locally.
-- **STOP before `git add`, `git commit`, or `git push`.**
-- Present all changes for **human review and approval** before committing.
-- Only the human user can authorize and execute commits.
+### Non-Negotiable Policy:
+1. **ALWAYS ASK FIRST** – Before executing ANY git operation, ask the human for explicit permission
+   - Show what changes will be staged
+   - Show the proposed commit message
+   - Wait for clear approval (e.g., "procedi", "vai", "sì", "yes", "commit")
+   - Do NOT assume approval from unrelated prior messages
+
+2. **NO `git add`** – Do not stage any files automatically without asking
+3. **NO `git commit`** – Do not create commits under any circumstances without asking
+4. **NO `git push`** – Do not push to remote or any branch without asking
+5. **NO automated commits** – Even if authorized for a task, ask first before committing
+6. **NO exceptions** – This rule has zero exceptions, zero edge cases
+
+### Correct Workflow:
+1. **WRITE & TEST** – Write code, edit files, create new files as needed for the task
+2. **VERIFY** – Run tests and verify changes locally
+3. **DESCRIBE** – Describe changes clearly to the human user with:
+   - Summary of what was changed
+   - Why each change was made
+   - Any potential side effects or risks
+4. **SHOW DIFFS** – Show `git diff` or detailed explanation of modifications
+5. **ASK FOR PERMISSION** – Before ANY git operation, explicitly ask:
+   - "Ready to commit these changes. Here's what will be staged: [list files]"
+   - "Proposed commit message: [show message]"
+   - "Should I proceed with commit? (yes/no)"
+6. **WAIT FOR CLEAR APPROVAL** – Only after explicit human approval like:
+   - "procedi" (Italian: proceed)
+   - "vai" (Italian: go)
+   - "yes" / "sì" (English/Italian: yes)
+   - "commit" / "push"
+   - "go ahead"
+7. **EXECUTE** – Only then execute `git add`/`git commit`/`git push`
+
+**IMPORTANT:** Do not assume approval from context or prior messages. If unsure, ask again.
+
+### Why This Rule Exists:
+- **Human Oversight**: All code changes must be reviewed and approved by a human
+- **Repository Integrity**: Prevents accidental, unreviewed, or conflicting commits
+- **Accountability**: Clear audit trail of who authorized what changes
+- **Quality Control**: Humans can verify intent and correctness before commits
+- **Safety**: Prevents automated commits that might break the build or introduce bugs
+
+### Example Scenarios:
+- ❌ WRONG: "Task complete, changes committed and pushed"
+- ✅ RIGHT: "Task complete. Changes made to file.kt and test.kt. Ready for your review before committing?"
+
+- ❌ WRONG: Commits made during multi-step task execution
+- ✅ RIGHT: Collects all changes, presents them, waits for human "go ahead" signal
+
+- ❌ WRONG: "I'll commit these changes as part of the refactoring"
+- ✅ RIGHT: "Here are the refactored components. Ready to commit when you approve?"
 
 This ensures human oversight on all code changes and maintains repository integrity.
 
@@ -180,20 +226,130 @@ The app includes receipt scanning via Google ML Kit Text Recognition v2:
 
 ## Testing
 
-| Scope | Source Set | Base Class |
-|---|---|---|
-| ViewModel | `androidApp/src/test/kotlin` | `com.antcashmanager.android.BaseUnitTest` |
-| Domain (commonMain) | `shared/src/commonTest/kotlin` | — |
-| Data/Repository | `shared/src/androidHostTest/kotlin` | — |
+| Scope | Source Set | Base Class | Framework |
+|---|---|---|---|
+| ViewModel | `androidApp/src/test/kotlin` | `com.antcashmanager.android.BaseUnitTest` | JUnit 4 + MockK + Compose UI Test |
+| Domain (commonMain) | `shared/src/commonTest/kotlin` | — | JUnit 4 + MockK |
+| Data/Repository | `shared/src/androidHostTest/kotlin` | — | JUnit 4 + MockK |
+| Instrumentation (UI) | `androidApp/src/androidTest/kotlin` | — | AndroidJUnit4 + Compose UI Test |
 
-- Use **MockK** for mocking; Mockito is forbidden.
-- Test naming: `method_shouldExpectedBehavior_whenCondition` (no backticks).
-- `BaseUnitTest` provides:
-  - `testDispatcher: TestDispatcher` (auto-setup as `Dispatchers.Main`)
-  - `runUnitTest { }` – shorthand for `runTest(testDispatcher) { }` (use this instead of raw `runTest`)
-  - `runViewModelTest { }` – alias of `runUnitTest` for semantic clarity
-  - `launchInBackground { }` – launches coroutines in `backgroundScope` for Flow collectors/long-running jobs in tests
-- Don't duplicate `Dispatchers.setMain`/`resetMain` or `StandardTestDispatcher()` setup – `BaseUnitTest` handles it.
+### Unit Test Rules
+
+**Mocking & Dependencies:**
+- ✅ Use **MockK** for all mocking (`io.mockk:mockk`)
+- ❌ **Mockito is forbidden** – never use Mockito
+- ❌ Never import real database libraries (Room, DataStore) in tests – use Fake repositories or MockK
+- ⚠️ **Roboelectric: Hybrid Strategy**
+  - ✅ **USE in unit tests** (`src/test`) – For rapid Compose component testing + Android Framework operations (SharedPreferences, DataStore, Bundle)
+    - Roboelectric provides fast feedback (milliseconds) during development
+    - Deterministic execution (no timing races)
+    - No device/emulator required
+    - Example: Component testing, ViewModel logic, repository operations
+  - ✅ **ALSO USE in instrumentation tests** (`src/androidTest`) – When simulating Android Framework without real device
+    - Faster than device emulator (seconds vs minutes)
+    - Good for integration testing data layer with Android framework
+    - Use `@RunWith(RobolectricTestRunner::class)` with Compose UI Test v2
+  - ⚠️ **COMPLEMENT with real instrumentation tests** (`src/androidTest` on device/emulator) – For critical user flows
+    - Test actual user interactions (tap, swipe, real touch handling)
+    - GPU rendering validation
+    - Performance profiling on real hardware
+    - Accessibility testing (screen reader, contrast)
+    - Example: "Add Transaction" full flow, "Navigation" flow, "Search" flow
+- ✅ Use Fake repositories from `com.antcashmanager.testutil.Fake*` package for data layer isolation
+
+**Test Data:**
+- ✅ Use `TestDataBuilder` pattern for creating test data (`shared/src/commonTest/testutil/TestDataBuilder.kt`)
+- ✅ Create builder-style APIs: `testTransaction { title = "Lunch"; amount = -50.0 }`
+- ❌ Never hardcode complex test data directly in test methods
+
+**Compose UI Testing Strategy:**
+
+**Unit Tests** (`src/test`):
+- ✅ **Use `androidx.compose.ui.test.junit4.v2.createComposeRule()`** (v2 API with StandardTestDispatcher)
+- ✅ **CAN use Roboelectric** for rapid component testing without device
+  - Provides MockK mocking + Compose UI Test assertion capabilities
+  - Fast feedback during development (milliseconds)
+  - Good for component state verification, callback testing, simple layouts
+- ❌ **NEVER use deprecated v1** (`androidx.compose.ui.test.junit4.createComposeRule()`)
+- ❌ Never use Roboelectric for complex touch interactions (drag, swipe, multi-touch)
+
+**Instrumentation Tests** (`src/androidTest`, real device/emulator):
+- ✅ Use `createAndroidComposeRule<ComponentActivity>()` for full interaction testing
+- ✅ Test actual user interactions: tap, drag, swipe, long-press
+- ✅ Verify visual rendering, animations, color/layout correctness
+- ✅ Test integration with Android framework (navigation, system bars, dialogs)
+- ✅ Primary use case: end-to-end user flows ("Add Transaction flow", "Navigation", "Search")
+
+**Roboelectric-based Instrumentation Tests** (`src/androidTest` with `@RunWith(RobolectricTestRunner::class)`):
+- ✅ Fast alternative to real device when full interaction testing not needed
+- ✅ Test Android Framework integration (SharedPreferences, DataStore, Bundle, Resources)
+- ✅ Test navigation flows, screen transitions
+- ⚠️ NOT suitable for: Touch events, gestures, GPU rendering, performance profiling, sensors
+
+**Test Naming:**
+- ✅ Pattern: `method_shouldExpectedBehavior_whenCondition` (no backticks)
+- Example: `insertTransaction_shouldPersistAndRetrieve_whenValidDataProvided`
+
+**BaseUnitTest Utilities** (`androidApp/src/test/kotlin/com/antcashmanager/android/BaseUnitTest.kt`):
+- **Always extend `BaseUnitTest`** in `androidApp/src/test/kotlin` for ViewModel and Android host-side tests
+- `BaseUnitTest` automatically provides:
+  - `testDispatcher: TestDispatcher` – pre-configured as `Dispatchers.Main` for the test scope
+  - `runUnitTest { ... }` – shorthand for `runTest(testDispatcher) { ... }` (wraps coroutine with test dispatcher)
+  - `runViewModelTest { ... }` – semantic alias of `runUnitTest` for ViewModel-specific tests
+  - `launchInBackground { ... }` – launches coroutines in `backgroundScope` for Flow collectors, LiveData observers, or long-running background jobs that need to complete before test ends
+  - `advanceUntilIdle()` – available inside test block to advance dispatcher until all pending coroutines complete
+- **Do NOT manually set up:**
+  - ❌ `Dispatchers.setMain()` / `Dispatchers.resetMain()` – `BaseUnitTest` handles this in `setUp()`/`tearDown()`
+  - ❌ `StandardTestDispatcher()` – already created and assigned as Main dispatcher
+  - ❌ `runTest()` – use `runViewModelTest()` instead for consistency
+
+**Example:**
+```kotlin
+class MyViewModelTest : BaseUnitTest() {
+    private val repo = mockk<Repository>()
+    private lateinit var viewModel: MyViewModel
+
+    @Before
+    fun setup() {
+        viewModel = MyViewModel(repo)
+    }
+
+    @Test
+    fun loadData_shouldUpdateState() = runViewModelTest {
+        coEvery { repo.getData() } returns Result.success(listOf("item1"))
+        
+        viewModel.loadData()
+        advanceUntilIdle()
+        
+        assertEquals(listOf("item1"), viewModel.state.value)
+    }
+}
+```
+
+### Instrumentation Test Rules (Hybrid Strategy)
+
+**For REAL Device/Emulator Testing** (`src/androidTest` on actual Android environment):
+- ✅ Use `@RunWith(AndroidJUnit4::class)` for tests running on device/emulator
+- ✅ Use `createAndroidComposeRule<ComponentActivity>()` for full Compose UI interaction testing
+- ✅ Test real database operations, file I/O, GPS, camera, sensors
+- ✅ Test actual touch events, gestures (swipe, long-press, drag)
+- ✅ Test performance on real hardware (frame rate, memory, battery impact)
+- ✅ Focus on critical user flows: "Add Transaction" → "Save" → "Verify in List", "Navigation", "Search/Filter", "Settings Changes"
+- ✅ Use for accessibility testing (screen reader, font scaling, contrast)
+
+**For Framework Simulation Testing** (Roboelectric, `src/androidTest` or `src/test`):
+- ✅ Use `@RunWith(RobolectricTestRunner::class)` for Android Framework simulation without device
+- ✅ Faster execution for integration testing (~seconds vs minutes)
+- ✅ Use `createComposeRule()` or `createAndroidComposeRule<ComponentActivity>()` for Compose UI testing
+- ✅ Good for data layer integration + Android Framework operations (SharedPreferences, DataStore, Bundle)
+- ❌ Do NOT use for testing touch events, sensors, or performance on real hardware
+- ⚠️ Remember: Roboelectric simulates SDK 34-35, app compileSdk is 37 (some SDK 37 features may not be fully simulated)
+
+### Forbidden Imports in Tests
+- ❌ `mockito.*` – use MockK instead
+- ❌ Real Room database/DataStore implementations in unit tests – use Fakes
+- ❌ Direct `Context`, `SharedPreferences`, or `File` I/O in unit tests
+- ❌ `org.robolectric.*` in unit test files – move to instrumentation tests if needed
 
 ---
 

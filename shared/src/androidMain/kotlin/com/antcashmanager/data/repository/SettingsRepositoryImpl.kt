@@ -69,6 +69,9 @@ class SettingsRepositoryImpl(
     private val suggestionsClearedAtKey = longPreferencesKey("suggestions_cleared_at")
     private val widgetBackgroundColorKey = longPreferencesKey("widget_background_color")
     private val widgetOpacityKey = intPreferencesKey("widget_opacity")
+    // ── Card Customization (v3+) ──
+    private val chartCardsOrderKey = stringPreferencesKey("chart_cards_order")
+    private val homeTopCardsOrderKey = stringPreferencesKey("home_top_cards_order")
 
     private fun createSavedDateFilter(
         defaultPresetIndex: Int,
@@ -217,7 +220,7 @@ class SettingsRepositoryImpl(
     }
 
     override fun getThousandsSeparator(): Flow<String> =
-        dataStore.data.map { it[thousandsSeparatorKey] ?: "" }
+        dataStore.data.map { it[thousandsSeparatorKey] ?: "." }
 
     override suspend fun setThousandsSeparator(separator: String) {
         dataStore.edit { it[thousandsSeparatorKey] = separator }
@@ -420,7 +423,7 @@ class SettingsRepositoryImpl(
     }
 
     override fun getLastBackupTimestamp(): Flow<Long?> =
-        dataStore.data.map { it[lastBackupTimestampKey] }
+        dataStore.data.map { it[lastBackupTimestampKey] ?: 0L }
 
     override suspend fun setLastBackupTimestamp(timestamp: Long) {
         dataStore.edit { it[lastBackupTimestampKey] = timestamp }
@@ -459,6 +462,21 @@ class SettingsRepositoryImpl(
 
     override suspend fun setWidgetOpacity(opacity: Int) {
         dataStore.edit { it[widgetOpacityKey] = opacity }
+    }
+
+    // ── Card Customization (v3+) ──
+    override fun getChartCardsOrder(): Flow<String> =
+        dataStore.data.map { it[chartCardsOrderKey] ?: "" }
+
+    override suspend fun setChartCardsOrder(order: String) {
+        dataStore.edit { it[chartCardsOrderKey] = order }
+    }
+
+    override fun getHomeTopCardsOrder(): Flow<String> =
+        dataStore.data.map { it[homeTopCardsOrderKey] ?: "" }
+
+    override suspend fun setHomeTopCardsOrder(order: String) {
+        dataStore.edit { it[homeTopCardsOrderKey] = order }
     }
 
     override suspend fun resetAllPreferences() {
@@ -503,6 +521,8 @@ class SettingsRepositoryImpl(
             prefs.remove(suggestionsClearedAtKey)
             prefs[widgetBackgroundColorKey] = DEFAULT_WIDGET_BACKGROUND_COLOR
             prefs[widgetOpacityKey] = DEFAULT_WIDGET_OPACITY
+            prefs[chartCardsOrderKey] = ""
+            prefs[homeTopCardsOrderKey] = ""
         }
         DatabaseEncryptionManager.setEncryptionDesired(context, false)
     }
@@ -510,8 +530,8 @@ class SettingsRepositoryImpl(
     private companion object {
         const val WEEK_IN_MILLIS = 7L * 24 * 60 * 60 * 1000
         const val MONTH_IN_MILLIS = 30L * 24 * 60 * 60 * 1000
-        const val DEFAULT_MEAL_VOUCHER_VALUE = 5.29
-        const val DEFAULT_WIDGET_BACKGROUND_COLOR = 0xFFFFFFFFL
+        const val DEFAULT_MEAL_VOUCHER_VALUE = 12.5
+        const val DEFAULT_WIDGET_BACKGROUND_COLOR = -16777216L // Black (ARGB)
         const val DEFAULT_WIDGET_OPACITY = 100
     }
 }

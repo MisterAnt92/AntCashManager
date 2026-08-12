@@ -2,9 +2,9 @@ package com.antcashmanager.android.ui.screen.settings
 
 import android.content.Context
 import androidx.lifecycle.viewModelScope
-import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.android.BuildConfig
 import com.antcashmanager.android.data.feedback.FeedbackEmailHelper
+import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.None

@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -27,6 +26,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.animation.AnimatedCard
 import com.antcashmanager.android.ui.components.animation.AnimatedListItem
@@ -107,7 +109,7 @@ fun RecentTransactionItem(
                                 modifier = Modifier.size(20.dp),
                             )
                         }
-                        Spacer(modifier = Modifier.width(12.dp))
+                        HorizontalSpacer(SpacingSize.SM)
                     }
 
                     TransactionDisplayType.CATEGORY -> {
@@ -140,7 +142,7 @@ fun RecentTransactionItem(
                                 )
                             }
                         }
-                        Spacer(modifier = Modifier.width(12.dp))
+                        HorizontalSpacer(SpacingSize.SM)
                     }
 
                     TransactionDisplayType.NONE -> {
@@ -190,7 +192,7 @@ fun RecentTransactionItem(
                                 modifier = Modifier.size(14.dp),
                                 tint = MaterialTheme.colorScheme.tertiary,
                             )
-                            Spacer(modifier = Modifier.width(4.dp))
+                            HorizontalSpacer(SpacingSize.XXXS)
                             AppText(
                                 text = if (transaction.recurrenceInterval.isNotBlank()) {
                                     getRecurrenceIntervalLabel(transaction.recurrenceInterval)
@@ -205,7 +207,7 @@ fun RecentTransactionItem(
                     }
                 }
 
-                Spacer(modifier = Modifier.width(8.dp))
+                HorizontalSpacer(SpacingSize.XS)
 
                 // Amount with background
                 Box(
