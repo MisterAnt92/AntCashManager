@@ -45,14 +45,92 @@ fi
 if [ "$TEST_TYPE" = "all" ] || [ "$TEST_TYPE" = "instrumentation" ]; then
     echo ""
     echo "▶️  Running Instrumentation Tests..."
-    echo "   • :androidApp:connectedDebugAndroidTest"
-    echo ""
-    echo "⚠️  Make sure a device or emulator is connected!"
     echo ""
 
-    ./gradlew \
-      :androidApp:connectedDebugAndroidTest \
-      --info 2>&1 | tee -a "$TEST_OUTPUT" || BUILD_STATUS=$?
+    # Helper function to detect connected devices
+    detect_devices() {
+        # Get list of connected devices (adb must be in PATH)
+        local adb_output
+        adb_output=$(adb devices 2>/dev/null | tail -n +2 | grep -v "^$")
+
+        local physical_devices=""
+        local emulators=""
+
+        while IFS=$'\t' read -r device status; do
+            if [ -z "$device" ] || [ "$status" != "device" ]; then
+                continue
+            fi
+
+            # Check if device is emulator (contains "emulator" in name)
+            if [[ "$device" == emulator* ]]; then
+                emulators="$emulators $device"
+            else
+                physical_devices="$physical_devices $device"
+            fi
+        done <<< "$adb_output"
+
+        echo "$physical_devices|$emulators"
+    }
+
+    # Detect available devices
+    echo "🔍 Detecting connected devices..."
+    devices=$(detect_devices)
+    physical_devices="${devices%|*}"
+    emulators="${devices#*|}"
+
+    if [ -z "$physical_devices" ] && [ -z "$emulators" ]; then
+        echo ""
+        echo "❌ No devices or emulators found!"
+        echo ""
+        echo "Please connect a device or start an emulator:"
+        echo "  • Physical device: Connect via USB and enable USB debugging"
+        echo "  • Emulator: Use Android Studio or start from command line"
+        echo ""
+        BUILD_STATUS=1
+    else
+        # Run on physical device first (if available)
+        if [ -n "$physical_devices" ]; then
+            physical_count=$(echo "$physical_devices" | wc -w)
+            echo "✅ Found $physical_count physical device(s):"
+            for device in $physical_devices; do
+                echo "   • $device"
+            done
+            echo ""
+            echo "▶️  Running tests on physical device..."
+            echo ""
+
+            ./gradlew \
+              :androidApp:connectedDebugAndroidTest \
+              --info 2>&1 | tee -a "$TEST_OUTPUT" || BUILD_STATUS=$?
+
+            if [ $BUILD_STATUS -eq 0 ]; then
+                echo ""
+                echo "✅ Instrumentation tests on physical device PASSED!"
+            fi
+        fi
+
+        # Run on emulator if available (and either no physical device or user wants both)
+        if [ -n "$emulators" ]; then
+            emulator_count=$(echo "$emulators" | wc -w)
+            echo ""
+            echo "✅ Found $emulator_count emulator(s):"
+            for emulator in $emulators; do
+                echo "   • $emulator"
+            done
+            echo ""
+            echo "▶️  Running tests on emulator..."
+            echo ""
+
+            ./gradlew \
+              :androidApp:connectedDebugAndroidTest \
+              --info 2>&1 | tee -a "$TEST_OUTPUT" || BUILD_STATUS=$?
+
+            if [ $BUILD_STATUS -eq 0 ]; then
+                echo ""
+                echo "✅ Instrumentation tests on emulator PASSED!"
+            fi
+        fi
+    fi
 fi
 
 # ─── Generate Coverage Reports ──────────────────────────────────────────────
@@ -259,6 +337,16 @@ echo "    ./extra/scripts/run-tests.sh unit"
 echo "    ./extra/scripts/run-tests.sh instrumentation"
 echo "    ./extra/scripts/run-tests.sh coverage"
 echo ""
+echo "📱 Instrumentation Test Priority:"
+echo "  1. Physical device (if connected via USB)"
+echo "  2. Emulator (if running)"
+echo "  3. Error (if neither available)"
+echo ""
+echo "   Requirements:"
+echo "   • adb must be in your PATH"
+echo "   • USB debugging enabled on physical devices"
+echo "   • OR start emulator: emulator -avd <avd_name>"
+echo ""
 echo "🔍 Debugging Options:"
 echo ""
 echo "  # Test only shared data layer:"
@@ -273,6 +361,12 @@ echo ""
 echo "  # Generate coverage reports:"
 echo "  ./gradlew :androidApp:testCoverageReport"
 echo "  ./gradlew :shared:testCoverageReport"
+echo ""
+echo "  # List connected devices:"
+echo "  adb devices"
+echo ""
+echo "  # Start an emulator:"
+echo "  emulator -avd <avd_name> &"
 echo ""
 
 exit $BUILD_STATUS
