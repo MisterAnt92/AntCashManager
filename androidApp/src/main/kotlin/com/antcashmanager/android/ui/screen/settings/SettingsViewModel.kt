@@ -11,30 +11,10 @@ import com.antcashmanager.domain.model.None
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
-import com.antcashmanager.domain.usecase.settings.GetCurrencySymbolUseCase
-import com.antcashmanager.domain.usecase.settings.GetDecimalDigitsUseCase
-import com.antcashmanager.domain.usecase.settings.GetDecimalSeparatorUseCase
-import com.antcashmanager.domain.usecase.settings.GetHighContrastUseCase
-import com.antcashmanager.domain.usecase.settings.GetLanguageUseCase
-import com.antcashmanager.domain.usecase.settings.GetLargeTextUseCase
-import com.antcashmanager.domain.usecase.settings.GetReduceMotionUseCase
-import com.antcashmanager.domain.usecase.settings.GetShowChartsUseCase
-import com.antcashmanager.domain.usecase.settings.GetShowTransactionNotesUseCase
-import com.antcashmanager.domain.usecase.settings.GetThemeUseCase
-import com.antcashmanager.domain.usecase.settings.GetThousandsSeparatorUseCase
-import com.antcashmanager.domain.usecase.settings.GetTransactionDisplayTypeUseCase
-import com.antcashmanager.domain.usecase.settings.ResetAllPreferencesUseCase
-import com.antcashmanager.domain.usecase.settings.SetCurrencySymbolUseCase
-import com.antcashmanager.domain.usecase.settings.SetDecimalDigitsUseCase
-import com.antcashmanager.domain.usecase.settings.SetDecimalSeparatorUseCase
-import com.antcashmanager.domain.usecase.settings.SetHighContrastUseCase
-import com.antcashmanager.domain.usecase.settings.SetLanguageUseCase
-import com.antcashmanager.domain.usecase.settings.SetLargeTextUseCase
-import com.antcashmanager.domain.usecase.settings.SetReduceMotionUseCase
-import com.antcashmanager.domain.usecase.settings.SetShowChartsUseCase
-import com.antcashmanager.domain.usecase.settings.SetThemeUseCase
-import com.antcashmanager.domain.usecase.settings.SetThousandsSeparatorUseCase
-import com.antcashmanager.domain.usecase.settings.SetTutorialCompletedUseCase
+// WEEK 2 PHASE 2: Simplified imports using SettingsUseCasesProvider
+// Before: 24 individual imports (GetThemeUseCase, SetThemeUseCase, GetLanguageUseCase, etc.)
+// After: Single SettingsUseCasesProvider contains all use cases
+import com.antcashmanager.domain.usecase.settings.SettingsUseCasesProvider
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
 import kotlinx.coroutines.CancellationException
@@ -52,33 +32,38 @@ import org.json.JSONObject
 
 
 class SettingsViewModel(
-    getThemeUseCase: GetThemeUseCase,
-    private val setThemeUseCase: SetThemeUseCase,
-    getLanguageUseCase: GetLanguageUseCase,
-    private val setLanguageUseCase: SetLanguageUseCase,
-    getShowChartsUseCase: GetShowChartsUseCase,
-    private val setShowChartsUseCase: SetShowChartsUseCase,
-    getHighContrastUseCase: GetHighContrastUseCase,
-    private val setHighContrastUseCase: SetHighContrastUseCase,
-    getLargeTextUseCase: GetLargeTextUseCase,
-    private val setLargeTextUseCase: SetLargeTextUseCase,
-    getReduceMotionUseCase: GetReduceMotionUseCase,
-    private val setReduceMotionUseCase: SetReduceMotionUseCase,
-    getCurrencySymbolUseCase: GetCurrencySymbolUseCase,
-    private val setCurrencySymbolUseCase: SetCurrencySymbolUseCase,
-    getDecimalDigitsUseCase: GetDecimalDigitsUseCase,
-    private val setDecimalDigitsUseCase: SetDecimalDigitsUseCase,
-    getDecimalSeparatorUseCase: GetDecimalSeparatorUseCase,
-    private val setDecimalSeparatorUseCase: SetDecimalSeparatorUseCase,
-    getThousandsSeparatorUseCase: GetThousandsSeparatorUseCase,
-    private val setThousandsSeparatorUseCase: SetThousandsSeparatorUseCase,
-    getShowTransactionNotesUseCase: GetShowTransactionNotesUseCase,
-    getTransactionDisplayTypeUseCase: GetTransactionDisplayTypeUseCase,
-    private val setTutorialCompletedUseCase: SetTutorialCompletedUseCase,
-    private val resetAllPreferencesUseCase: ResetAllPreferencesUseCase,
+    // WEEK 2 PHASE 2: Single provider contains all settings use cases (was 24 individual parameters)
+    private val settingsUseCases: SettingsUseCasesProvider,
     private val deleteAllTransactionsUseCase: DeleteAllTransactionsUseCase,
     private val insertTransactionUseCase: InsertTransactionUseCase,
 ) : BaseViewModel<None>() {
+
+    // Convenience properties for readability (delegate to provider)
+    private val getThemeUseCase get() = settingsUseCases.getTheme
+    private val setThemeUseCase get() = settingsUseCases.setTheme
+    private val getLanguageUseCase get() = settingsUseCases.getLanguage
+    private val setLanguageUseCase get() = settingsUseCases.setLanguage
+    private val getShowChartsUseCase get() = settingsUseCases.getShowCharts
+    private val setShowChartsUseCase get() = settingsUseCases.setShowCharts
+    private val getHighContrastUseCase get() = settingsUseCases.getHighContrast
+    private val setHighContrastUseCase get() = settingsUseCases.setHighContrast
+    private val getLargeTextUseCase get() = settingsUseCases.getLargeText
+    private val setLargeTextUseCase get() = settingsUseCases.setLargeText
+    private val getReduceMotionUseCase get() = settingsUseCases.getReduceMotion
+    private val setReduceMotionUseCase get() = settingsUseCases.setReduceMotion
+    private val getCurrencySymbolUseCase get() = settingsUseCases.getCurrencySymbol
+    private val setCurrencySymbolUseCase get() = settingsUseCases.setCurrencySymbol
+    private val getDecimalDigitsUseCase get() = settingsUseCases.getDecimalDigits
+    private val setDecimalDigitsUseCase get() = settingsUseCases.setDecimalDigits
+    private val getDecimalSeparatorUseCase get() = settingsUseCases.getDecimalSeparator
+    private val setDecimalSeparatorUseCase get() = settingsUseCases.setDecimalSeparator
+    private val getThousandsSeparatorUseCase get() = settingsUseCases.getThousandsSeparator
+    private val setThousandsSeparatorUseCase get() = settingsUseCases.setThousandsSeparator
+    private val getShowTransactionNotesUseCase get() = settingsUseCases.getShowTransactionNotes
+    private val getTransactionDisplayTypeUseCase get() = settingsUseCases.getTransactionDisplayType
+    private val setTransactionDisplayTypeUseCase get() = settingsUseCases.setTransactionDisplayType
+    private val setTutorialCompletedUseCase get() = settingsUseCases.setTutorialCompleted
+    private val resetAllPreferencesUseCase get() = settingsUseCases.resetAllPreferences {
 
     private var setThemeJob: Job? = null
     private var setLanguageJob: Job? = null
