@@ -9,10 +9,15 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 # Setup Java home
 export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 
+# Parse arguments
+TEST_TYPE="${1:-all}"  # all, unit, instrumentation, coverage
+
 echo ""
 echo "╔══════════════════════════════════════════════════════════════════╗"
 echo "║                  🧪 AntCashManager Test Suite                    ║"
 echo "╚══════════════════════════════════════════════════════════════════╝"
+echo ""
+echo "Test Type: $TEST_TYPE"
 echo ""
 
 cd "$PROJECT_ROOT"
@@ -21,18 +26,50 @@ cd "$PROJECT_ROOT"
 TEST_OUTPUT=$(mktemp)
 trap "rm -f $TEST_OUTPUT" EXIT
 
-# Run all tests with Jacoco coverage enabled
-echo "▶️  Running tests..."
-echo "   • :shared:testAndroidHostTest"
-echo "   • :androidApp:testDebugUnitTest"
-echo ""
+BUILD_STATUS=0
 
-./gradlew \
-  :shared:testAndroidHostTest \
-  :androidApp:testDebugUnitTest \
-  --info 2>&1 | tee "$TEST_OUTPUT"
+# ─── Run Unit Tests ──────────────────────────────────────────────────────────
+if [ "$TEST_TYPE" = "all" ] || [ "$TEST_TYPE" = "unit" ]; then
+    echo "▶️  Running Unit Tests..."
+    echo "   • :shared:testAndroidHostTest"
+    echo "   • :androidApp:testDebugUnitTest"
+    echo ""
 
-BUILD_STATUS=$?
+    ./gradlew \
+      :shared:testAndroidHostTest \
+      :androidApp:testDebugUnitTest \
+      --info 2>&1 | tee "$TEST_OUTPUT" || BUILD_STATUS=$?
+fi
+
+# ─── Run Instrumentation Tests ──────────────────────────────────────────────
+if [ "$TEST_TYPE" = "all" ] || [ "$TEST_TYPE" = "instrumentation" ]; then
+    echo ""
+    echo "▶️  Running Instrumentation Tests..."
+    echo "   • :androidApp:connectedDebugAndroidTest"
+    echo ""
+    echo "⚠️  Make sure a device or emulator is connected!"
+    echo ""
+
+    ./gradlew \
+      :androidApp:connectedDebugAndroidTest \
+      --info 2>&1 | tee -a "$TEST_OUTPUT" || BUILD_STATUS=$?
+fi
+
+# ─── Generate Coverage Reports ──────────────────────────────────────────────
+if [ "$TEST_TYPE" = "all" ] || [ "$TEST_TYPE" = "coverage" ]; then
+    echo ""
+    echo "▶️  Generating Coverage Reports (JaCoCo)..."
+    echo "   • :shared:testAndroidHostTest (with coverage)"
+    echo "   • :androidApp:testDebugUnitTest (with coverage)"
+    echo "   • jacocoTestDebugUnitTestReport"
+    echo ""
+
+    ./gradlew \
+      :shared:testAndroidHostTest \
+      :androidApp:testDebugUnitTest \
+      :androidApp:jacocoTestDebugUnitTestReport \
+      --info 2>&1 | tee -a "$TEST_OUTPUT" || BUILD_STATUS=$?
+fi
 
 # ─── Helper: aggrega i risultati da file TEST-*.xml JUnit ──────────────────────
 # Usage: parse_test_results <xml_dir> → stampa totale/passed/failed/skipped/errors
@@ -92,50 +129,73 @@ echo "  📊 RESULTS"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-# ─── Riepilogo per modulo ───────────────────────────────────────────────────────
-echo "  📦 Unit Tests"
-echo ""
+# ─── Show Unit Test Results ─────────────────────────────────────────────────────
+if [ "$TEST_TYPE" = "all" ] || [ "$TEST_TYPE" = "unit" ] || [ "$TEST_TYPE" = "coverage" ]; then
+    echo "  📦 Unit Tests"
+    echo ""
 
-SHARED_XML_DIR="$PROJECT_ROOT/shared/build/intermediates/unit_test_results/androidMain/testAndroidHostTest"
-SHARED_HTML="$PROJECT_ROOT/shared/build/reports/tests/testAndroidHostTest/index.html"
-print_module_summary ":shared:testAndroidHostTest (Domain + Data)" "$SHARED_XML_DIR" "$SHARED_HTML"
+    SHARED_XML_DIR="$PROJECT_ROOT/shared/build/intermediates/unit_test_results/androidMain/testAndroidHostTest"
+    SHARED_HTML="$PROJECT_ROOT/shared/build/reports/tests/testAndroidHostTest/index.html"
+    print_module_summary ":shared:testAndroidHostTest (Domain + Data)" "$SHARED_XML_DIR" "$SHARED_HTML"
 
-echo ""
+    echo ""
 
-ANDROID_XML_DIR="$PROJECT_ROOT/androidApp/build/intermediates/unit_test_results/debug/testDebugUnitTest"
-ANDROID_HTML="$PROJECT_ROOT/androidApp/build/reports/tests/testDebugUnitTest/index.html"
-print_module_summary ":androidApp:testDebugUnitTest (Presentation)" "$ANDROID_XML_DIR" "$ANDROID_HTML"
+    ANDROID_XML_DIR="$PROJECT_ROOT/androidApp/build/intermediates/unit_test_results/debug/testDebugUnitTest"
+    ANDROID_HTML="$PROJECT_ROOT/androidApp/build/reports/tests/testDebugUnitTest/index.html"
+    print_module_summary ":androidApp:testDebugUnitTest (Presentation)" "$ANDROID_XML_DIR" "$ANDROID_HTML"
 
-echo ""
+    echo ""
+fi
 
-# ─── Instrumentation tests ─────────────────────────────────────────────────────
-INSTRUMENTATION_XML_DIR="$PROJECT_ROOT/androidApp/build/outputs/androidTest-results/connected/debug"
-INSTRUMENTATION_HTML="$PROJECT_ROOT/androidApp/build/reports/androidTests/connected/debug/index.html"
-
-if [ -d "$INSTRUMENTATION_XML_DIR" ] || [ -f "$INSTRUMENTATION_HTML" ]; then
+# ─── Show Instrumentation Test Results ─────────────────────────────────────────
+if [ "$TEST_TYPE" = "all" ] || [ "$TEST_TYPE" = "instrumentation" ]; then
     echo "  📱 Instrumentation Tests"
     echo ""
-    print_module_summary ":androidApp:connectedDebugAndroidTest" "$INSTRUMENTATION_XML_DIR" "$INSTRUMENTATION_HTML"
+
+    INSTRUMENTATION_XML_DIR="$PROJECT_ROOT/androidApp/build/outputs/androidTest-results/connected/debug"
+    INSTRUMENTATION_HTML="$PROJECT_ROOT/androidApp/build/reports/androidTests/connected/debug/index.html"
+
+    if [ -d "$INSTRUMENTATION_XML_DIR" ] || [ -f "$INSTRUMENTATION_HTML" ]; then
+        print_module_summary ":androidApp:connectedDebugAndroidTest" "$INSTRUMENTATION_XML_DIR" "$INSTRUMENTATION_HTML"
+    else
+        printf "  %-40s  %s\n" ":androidApp:connectedDebugAndroidTest" "⚠️  No device/emulator connected or no results found"
+    fi
     echo ""
 fi
 
-# ─── Coverage HTML reports (JaCoCo) ────────────────────────────────────────────
-JACOCO_ANDROID="$PROJECT_ROOT/androidApp/build/reports/jacoco/jacocoTestDebugUnitTestReport/html/index.html"
-JACOCO_SHARED="$PROJECT_ROOT/shared/build/reports/jacoco/testAndroidHostTestCoverage/html/index.html"
-
-if [ -f "$JACOCO_ANDROID" ] || [ -f "$JACOCO_SHARED" ]; then
+# ─── Show Coverage Reports ────────────────────────────────────────────────────
+if [ "$TEST_TYPE" = "all" ] || [ "$TEST_TYPE" = "coverage" ]; then
     echo "  📈 Coverage Reports (JaCoCo)"
     echo ""
+
+    JACOCO_ANDROID="$PROJECT_ROOT/androidApp/build/reports/jacoco/jacocoTestDebugUnitTestReport/html/index.html"
+    JACOCO_SHARED="$PROJECT_ROOT/shared/build/reports/jacoco/testAndroidHostTestCoverage/html/index.html"
+
+    COVERAGE_FOUND=false
+
     if [ -f "$JACOCO_ANDROID" ]; then
         printf "    📊 androidApp  →  file://%s\n" "$JACOCO_ANDROID"
+        COVERAGE_FOUND=true
+    else
+        printf "    ⚠️  androidApp coverage report not found\n"
     fi
+
     if [ -f "$JACOCO_SHARED" ]; then
         printf "    📊 shared      →  file://%s\n" "$JACOCO_SHARED"
+        COVERAGE_FOUND=true
+    else
+        printf "    ⚠️  shared coverage report not found\n"
+    fi
+
+    if [ "$COVERAGE_FOUND" = false ]; then
+        echo ""
+        echo "    💡 To generate coverage reports, run:"
+        echo "       ./extra/scripts/run-tests.sh coverage"
     fi
     echo ""
 fi
 
-# ─── Esito finale ───────────────────────────────────────────────────────────────
+# ─── Final Status ───────────────────────────────────────────────────────────────
 if [ $BUILD_STATUS -eq 0 ]; then
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo "  ✨ SUCCESS - All tests executed without errors"
@@ -146,18 +206,38 @@ else
     echo "  ❌ FAILURE - Fix errors above and retry"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo ""
-    echo "🔍 Debugging Options:"
-    echo ""
-    echo "  # Test only shared data layer:"
-    echo "  ./gradlew :shared:testAndroidHostTest"
-    echo ""
-    echo "  # Test only Android app:"
-    echo "  ./gradlew :androidApp:testDebugUnitTest"
-    echo ""
-    echo "  # Check compilation:"
-    echo "  ./gradlew :androidApp:compileDebugKotlin"
-    echo ""
-    exit 1
 fi
 
+# ─── Usage Help ──────────────────────────────────────────────────────────────────
+echo "📖 Usage:"
 echo ""
+echo "  ./extra/scripts/run-tests.sh [type]"
+echo ""
+echo "  Types:"
+echo "    all              - Run unit, instrumentation, and coverage tests (default)"
+echo "    unit             - Run unit tests only (shared + androidApp)"
+echo "    instrumentation  - Run instrumentation tests (requires device/emulator)"
+echo "    coverage         - Run unit tests with coverage reports (JaCoCo)"
+echo ""
+echo "  Examples:"
+echo "    ./extra/scripts/run-tests.sh"
+echo "    ./extra/scripts/run-tests.sh unit"
+echo "    ./extra/scripts/run-tests.sh instrumentation"
+echo "    ./extra/scripts/run-tests.sh coverage"
+echo ""
+echo "🔍 Debugging Options:"
+echo ""
+echo "  # Test only shared data layer:"
+echo "  ./gradlew :shared:testAndroidHostTest"
+echo ""
+echo "  # Test only Android app:"
+echo "  ./gradlew :androidApp:testDebugUnitTest"
+echo ""
+echo "  # Run instrumentation tests:"
+echo "  ./gradlew :androidApp:connectedDebugAndroidTest"
+echo ""
+echo "  # Generate coverage report:"
+echo "  ./gradlew :androidApp:jacocoTestDebugUnitTestReport"
+echo ""
+
+exit $BUILD_STATUS
