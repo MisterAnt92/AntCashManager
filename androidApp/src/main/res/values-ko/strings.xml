@@ -625,5 +625,9 @@
     <string name="chart_trend_increasing">지출 추세: 증가 중</string>
     <string name="chart_trend_decreasing">지출 추세: 감소 중</string>
     <string name="chart_trend_stable">지출 추세: 안정적</string>
-    <string name="error_generic">An error occurred</string>
+    <string name="error_generic">오류가 발생했습니다</string>
+
+
+    <!-- App Description -->
+    <string name="app_description">이 앱은 구독 없이 가족 지출을 추적해야 하는 필요성에서 탄생했으며, 지출을 보고 가격 인상을 비교할 수 있습니다.</string>
 </resources>

@@ -612,4 +612,8 @@
     <string name="chart_trend_decreasing">Trend wydatków: Spadkowy</string>
     <string name="chart_trend_stable">Trend wydatków: Stabilny</string>
     <string name="error_generic">An error occurred</string>
+
+
+    <!-- App Description -->
+    <string name="app_description">Ta aplikacja narodziła się z potrzeby śledzenia wydatków rodzinnych bez subskrypcji i możliwości przeglądania wydatków oraz porównywania podwyżek cen.</string>
 </resources>

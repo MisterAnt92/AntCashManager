@@ -612,4 +612,8 @@
     <string name="chart_trend_decreasing">Тренд витрат: Спадає</string>
     <string name="chart_trend_stable">Тренд витрат: Стабільний</string>
     <string name="error_generic">An error occurred</string>
+
+
+    <!-- App Description -->
+    <string name="app_description">Ця програма виникла з необхідності відстежувати сімейні видатки без підписок та можливості переглядати видатки і порівнювати підвищення цін.</string>
 </resources>

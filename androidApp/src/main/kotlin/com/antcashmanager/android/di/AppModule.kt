@@ -33,6 +33,12 @@ import com.antcashmanager.domain.service.WidgetUpdateNotifier
 import com.antcashmanager.domain.validation.TransactionValidator
 import com.antcashmanager.domain.validation.TransactionValidatorImpl
 import com.antcashmanager.android.data.storage.AndroidPreferencesStorageImpl
+import com.antcashmanager.domain.model.AppLanguage
+import com.antcashmanager.domain.model.AppTheme
+import com.antcashmanager.domain.model.TransactionDisplayType
+import com.antcashmanager.domain.usecase.settings.GetSettingUseCase
+import com.antcashmanager.domain.usecase.settings.SetSettingUseCase
+import com.antcashmanager.domain.usecase.settings.SettingsUseCasesProvider
 import com.antcashmanager.domain.usecase.ShareTransactionUseCase
 import com.antcashmanager.domain.usecase.category.DeleteCategoryUseCase
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
@@ -84,6 +90,7 @@ import com.antcashmanager.domain.usecase.transaction.GetTransactionsUseCase
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.SyncTransactionCategoriesUseCase
 import com.antcashmanager.domain.usecase.transaction.UpdateTransactionUseCase
+import kotlinx.coroutines.flow.map
 import org.koin.android.ext.koin.androidApplication
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
@@ -229,19 +236,40 @@ val useCaseModule = module {
     factory { CreateTransactionFromReceiptUseCase(transactionRepository = get()) }
     factory { ShareTransactionUseCase() }
 
-    // ─────────────────────────────────────────────────────────────────────────────
-    // WEEK 2 PHASE 2: SettingsUseCasesProvider (Infrastructure Ready)
-    // ─────────────────────────────────────────────────────────────────────────────
-    // Provider class created for future ViewModel consolidation.
-    // DI registration deferred until ViewModels are ready to migrate.
-    // This maintains backward compatibility while infrastructure is in place.
-    //
-    // TODO: Uncomment factory when SettingsViewModel and other ViewModels
-    // are updated to accept SettingsUseCasesProvider instead of individual use cases.
-    //
-    // factory {
-    //     SettingsUseCasesProvider(...)
-    // }
+    factory {
+        val repo = get<SettingsRepository>()
+        SettingsUseCasesProvider(
+            getTheme = GetSettingUseCase(getter = { repo.getTheme().map { it.name } }),
+            setTheme = SetSettingUseCase(setter = { repo.setTheme(AppTheme.valueOf(it)) }),
+            getLanguage = GetSettingUseCase(getter = { repo.getLanguage().map { it.name } }),
+            setLanguage = SetSettingUseCase(setter = { repo.setLanguage(AppLanguage.valueOf(it)) }),
+            getShowCharts = GetSettingUseCase(getter = { repo.getShowCharts() }),
+            setShowCharts = SetSettingUseCase(setter = { repo.setShowCharts(it) }),
+            getHighContrast = GetSettingUseCase(getter = { repo.getHighContrast() }),
+            setHighContrast = SetSettingUseCase(setter = { repo.setHighContrast(it) }),
+            getLargeText = GetSettingUseCase(getter = { repo.getLargeText() }),
+            setLargeText = SetSettingUseCase(setter = { repo.setLargeText(it) }),
+            getReduceMotion = GetSettingUseCase(getter = { repo.getReduceMotion() }),
+            setReduceMotion = SetSettingUseCase(setter = { repo.setReduceMotion(it) }),
+            getShowTransactionNotes = GetSettingUseCase(getter = { repo.getShowTransactionNotes() }),
+            getCurrencySymbol = GetSettingUseCase(getter = { repo.getCurrencySymbol() }),
+            setCurrencySymbol = SetSettingUseCase(setter = { repo.setCurrencySymbol(it) }),
+            getDecimalDigits = GetSettingUseCase(getter = { repo.getDecimalDigits() }),
+            setDecimalDigits = SetSettingUseCase(setter = { repo.setDecimalDigits(it) }),
+            getDecimalSeparator = GetSettingUseCase(getter = { repo.getDecimalSeparator() }),
+            setDecimalSeparator = SetSettingUseCase(setter = { repo.setDecimalSeparator(it) }),
+            getThousandsSeparator = GetSettingUseCase(getter = { repo.getThousandsSeparator() }),
+            setThousandsSeparator = SetSettingUseCase(setter = { repo.setThousandsSeparator(it) }),
+            getTransactionDisplayType = GetSettingUseCase(
+                getter = { repo.getTransactionDisplayType().map { it.name } }
+            ),
+            setTransactionDisplayType = SetSettingUseCase(
+                setter = { repo.setTransactionDisplayType(TransactionDisplayType.valueOf(it)) }
+            ),
+            setTutorialCompleted = SetSettingUseCase(setter = { repo.setIsTutorialCompleted(it) }),
+            resetAllPreferences = get(),
+        )
+    }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

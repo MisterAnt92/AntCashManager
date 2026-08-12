@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -28,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
@@ -108,15 +110,14 @@ fun LeftSidebar(
 private fun SidebarHeader(onHeaderClick: () -> Unit = {}) {
     Column(
         modifier = Modifier
-            .fillMaxHeight(0.18f)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
                 onClick = onHeaderClick,
             )
-            .padding(vertical = 12.dp),
+            .padding(vertical = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         // Launcher Icon (quadrato Google Play style)
         Image(
@@ -125,14 +126,25 @@ private fun SidebarHeader(onHeaderClick: () -> Unit = {}) {
             modifier = Modifier.size(64.dp),
         )
 
-        VerticalSpacer(SpacingSize.SM)
-
         // App Name
         AppText(
             text = stringResource(R.string.app_name),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
+        )
+
+        // App Description
+        AppText(
+            text = stringResource(R.string.app_description),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth(0.75f)
+                .padding(horizontal = 12.dp),
+            maxLines = 8,
+            fontWeight = FontWeight.Normal,
         )
     }
 }

@@ -622,5 +622,9 @@
     <string name="chart_trend_increasing">支出傾向: 増加中</string>
     <string name="chart_trend_decreasing">支出傾向: 減少中</string>
     <string name="chart_trend_stable">支出傾向: 安定</string>
-    <string name="error_generic">An error occurred</string>
+    <string name="error_generic">エラーが発生しました</string>
+
+
+    <!-- App Description -->
+    <string name="app_description">このアプリは、サブスクリプションなしで家族の支出を追跡する必要から生まれました。支出を表示して価格の上昇を比較することができます。</string>
 </resources>

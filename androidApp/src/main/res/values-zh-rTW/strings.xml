@@ -612,4 +612,8 @@
     <string name="chart_trend_decreasing">支出趨勢：減少</string>
     <string name="chart_trend_stable">支出趨勢：穩定</string>
     <string name="error_generic">An error occurred</string>
+
+
+    <!-- App Description -->
+    <string name="app_description">這個應用的誕生源於在沒有訂閱的情況下追踪家庭支出的需要，並能夠查看支出並比較價格上漲。</string>
 </resources>

@@ -612,4 +612,8 @@
     <string name="chart_trend_decreasing">Тренд расходов: Снижающийся</string>
     <string name="chart_trend_stable">Тренд расходов: Стабильный</string>
     <string name="error_generic">An error occurred</string>
+
+
+    <!-- App Description -->
+    <string name="app_description">Это приложение было создано из необходимости отслеживать семейные расходы без подписок и просматривать расходы и сравнивать повышение цен.</string>
 </resources>
