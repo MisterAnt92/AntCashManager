@@ -1,6 +1,8 @@
 package com.antcashmanager.android.ui.screen.settings.dataManagement
 
+import android.os.Build
 import androidx.lifecycle.viewModelScope
+import co.touchlab.kermit.Logger
 import com.antcashmanager.android.data.backup.BackupService
 import com.antcashmanager.android.security.BackupPayloadCipher
 import com.antcashmanager.android.ui.base.BaseViewModel
@@ -308,8 +310,28 @@ class SettingsDataViewModel(
 
         val payloadToRestore = if (BackupPayloadCipher.isEncryptedPayload(jsonString)) {
             runCatching { BackupPayloadCipher.decrypt(jsonString) }
+                .onFailure { error ->
+                    // ✅ Log API level info for diagnostics
+                    Logger.e(tag = "SettingsDataViewModel") {
+                        "Decryption failed on API ${Build.VERSION.SDK_INT}: ${error.message}"
+                    }
+                }
                 .getOrElse { error ->
-                    val message = error.message ?: SettingsDataConstant.UNKNOWN_ERROR
+                    // ✅ Enhanced error message mapping
+                    val message = when (error) {
+                        is IllegalArgumentException -> {
+                            "Payload di backup invalido o danneggiato"
+                        }
+                        is javax.crypto.BadPaddingException -> {
+                            "Chiave di crittografia non corrisponde - password errata?"
+                        }
+                        is java.security.InvalidKeyException -> {
+                            "Chiave di crittografia non valida"
+                        }
+                        else -> {
+                            error.message ?: SettingsDataConstant.UNKNOWN_ERROR
+                        }
+                    }
                     _state.update {
                         it.copy(
                             restoreResult = RestoreOperationResult.Error(message),
