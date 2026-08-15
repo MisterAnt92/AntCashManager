@@ -43,6 +43,7 @@ import com.antcashmanager.android.ui.components.input.AutocompleteTextField
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionState
 import com.antcashmanager.android.ui.screen.transactions.addImport.event.AddTransactionEvent
+import com.antcashmanager.domain.model.TransactionType
 import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
@@ -259,6 +260,7 @@ internal fun DetailsStep(
                 onMealVoucherCountChanged = { onEvent(AddTransactionEvent.UpdateMealVoucherCount(it)) },
                 onMealVoucherDifferenceChanged = { onEvent(AddTransactionEvent.UpdateMealVoucherDifference(it)) },
                 isMealVouchersPayment = isMealVouchersPayment,
+                isExpenseType = state.selectedType == TransactionType.EXPENSE,
             )
             if (isMealVouchersPayment) {
                 VerticalSpacer(SpacingSize.SM)

@@ -140,6 +140,59 @@ DetailsStep (353 linee)
     └── Toggle ricorrenza e intervallo
 ```
 
+### DetailsMealVoucherSection (Composable Specializzato)
+
+**File**: `view/DetailsMealVoucherSection.kt`  
+**Linee**: 180+  
+**Responsabilità**:
+
+- Renderizzare sezione buoni pasto con numero voucher + valore unitario
+- Mostrare campo "Differenza pagata" **SOLO per transazioni EXPENSE**
+- Calcolare totalAmount = (mealVoucherCount × mealVoucherValue) + mealVoucherDifference
+- Validare differenza pagata (>= 0, max 2 decimali)
+- Gestire reset della differenza quando cambia PaymentType
+
+**API**:
+
+```kotlin
+@Composable
+fun DetailsMealVoucherSection(
+    mealVoucherCount: String,                     // Numero buoni
+    mealVoucherValue: Double,                     // Valore unitario
+    mealVoucherDifference: String,               // Differenza pagata (input)
+    totalAmount: String,                          // Totale calcolato (display)
+    onMealVoucherCountChanged: (String) -> Unit,  // Callback numero buoni
+    onMealVoucherDifferenceChanged: (String) -> Unit, // Callback differenza
+    isMealVouchersPayment: Boolean,               // PaymentType == MEAL_VOUCHERS
+    isExpenseType: Boolean,                       // TransactionType == EXPENSE
+    modifier: Modifier = Modifier
+)
+```
+
+**Specifiche Critiche**:
+
+- ⚠️ **REGOLA FONDAMENTALE**: Campo "Differenza pagata" è visibile SOLO quando:
+  - `isMealVouchersPayment == true` AND
+  - `isExpenseType == true` (EXPENSE transactions)
+  - **NON** deve essere mostrato per INCOME (entrate)
+- Calcolo totalAmount: `(count × valore_unitario) + differenza_pagata`
+- Differenza pagata opzionale (default "0" quando non mostrato)
+- Reset differenza a "0" quando cambi da MEAL_VOUCHERS a altro PaymentType
+
+**Logica**:
+
+```
+Se INCOME + MEAL_VOUCHERS:
+  └─ Mostra SOLO: numero buoni + subtotale + totale
+     (NO campo differenza pagata - non è un pagamento)
+
+Se EXPENSE + MEAL_VOUCHERS:
+  └─ Mostra: numero buoni + differenza pagata + totale
+     (Differenza pagata ha senso: stai pagando)
+```
+
+---
+
 ### DetailsTagsSection (Nuovo Composable)
 
 **File**: `view/DetailsTagsSection.kt`  
