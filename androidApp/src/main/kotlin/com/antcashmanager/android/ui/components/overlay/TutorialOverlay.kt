@@ -42,8 +42,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import com.antcashmanager.android.util.DrawableLoader
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
@@ -246,17 +248,39 @@ fun TutorialOverlay(
                                 .weight(1f),
                             contentAlignment = Alignment.Center,
                         ) {
-                            Image(
-                                painter = painterResource(id = animatedStep.imageRes),
-                                contentDescription = stringResource(animatedStep.titleRes),
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .clip(RoundedCornerShape(16.dp))
-                                    .background(
-                                        color = MaterialTheme.colorScheme.surfaceVariant,
-                                    ),
-                                contentScale = ContentScale.Fit,
-                            )
+                            // ▼ AGGIUNTO: Carica drawable con downsampling per evitare bitmap troppo grandi
+                            val context = LocalContext.current
+                            val imageBitmap = remember(animatedStep.imageRes) {
+                                DrawableLoader.loadDrawableAsBitmap(context, animatedStep.imageRes)
+                            }
+
+                            if (imageBitmap != null) {
+                                Image(
+                                    bitmap = imageBitmap,
+                                    contentDescription = stringResource(animatedStep.titleRes),
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .background(
+                                            color = MaterialTheme.colorScheme.surfaceVariant,
+                                        ),
+                                    contentScale = ContentScale.Fit,
+                                )
+                            } else {
+                                // Fallback se loading fallisce: usa painterResource
+                                Image(
+                                    painter = painterResource(id = animatedStep.imageRes),
+                                    contentDescription = stringResource(animatedStep.titleRes),
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .background(
+                                            color = MaterialTheme.colorScheme.surfaceVariant,
+                                        ),
+                                    contentScale = ContentScale.Fit,
+                                )
+                            }
+                            // ▲ FINE AGGIUNTO
                         }
                     } else if (isAnimatedWelcomeStep) {
                         AnimatedVisibility(
