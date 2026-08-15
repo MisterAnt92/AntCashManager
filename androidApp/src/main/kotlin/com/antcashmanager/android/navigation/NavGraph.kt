@@ -60,6 +60,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.antcashmanager.android.BuildConfig
 import com.antcashmanager.android.analytics.AnalyticsManager
+import com.antcashmanager.android.util.AppExitManager.safeFinish
 import com.antcashmanager.android.ui.components.animation.AntEasterEggAnimation
 import com.antcashmanager.android.ui.components.animation.AntSplashScreen
 import com.antcashmanager.android.ui.components.dialog.AppExitConfirmationDialog
@@ -563,7 +564,7 @@ fun AntCashManagerNavHost() {
             onDismiss = { showExitDialog = false },
             onConfirmExit = {
                 showExitDialog = false
-                context.findActivity()?.finish()
+                context.findActivity()?.safeFinish()
             },
         )
 
