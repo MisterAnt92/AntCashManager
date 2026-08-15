@@ -394,6 +394,7 @@
     <string name="add_transaction_meal_voucher_count">張數</string>
     <string name="add_transaction_meal_voucher_subtotal">餐券小計：%s€</string>
     <string name="add_transaction_meal_voucher_difference_paid">支付差額</string>
+    <string name="add_transaction_meal_voucher_difference">支付差額（現金/卡/其他）</string>
 
     <!-- Empty State -->
     <string name="empty_state_no_transactions">無交易記錄</string>

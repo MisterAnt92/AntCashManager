@@ -393,6 +393,7 @@
     <string name="add_transaction_meal_voucher_count">वाउचर की संख्या</string>
     <string name="add_transaction_meal_voucher_subtotal">वाउचर उप-योग: %s€</string>
     <string name="add_transaction_meal_voucher_difference_paid">भुगतान किया गया अंतर</string>
+    <string name="add_transaction_meal_voucher_difference">भुगतान किया गया अंतर (नकद/कार्ड/अन्य)</string>
 
     <!-- Empty State -->
     <string name="empty_state_no_transactions">कोई लेनदेन मौजूद नहीं है</string>

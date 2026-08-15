@@ -161,19 +161,11 @@ class AddTransactionViewModel(
             is AddTransactionEvent.UpdateLocation -> _state.update { it.copy(location = event.location) }
             is AddTransactionEvent.UpdateTags -> _state.update { it.copy(tags = event.tags) }
             is AddTransactionEvent.UpdateMealVoucherCount -> {
-                _state.update { currentState ->
-                    // Calcola l'importo automaticamente basato sul numero di voucher
-                    val calculatedAmount = event.count.toIntOrNull()?.let { count ->
-                        // Importo = numero voucher * valore unitario
-                        val total = count * currentState.mealVoucherValue
-                        String.format(java.util.Locale.US, "%.2f", total)
-                    } ?: ""
+                _state.update { it.copy(mealVoucherCount = event.count) }
+            }
 
-                    currentState.copy(
-                        mealVoucherCount = event.count,
-                        amount = calculatedAmount,
-                    )
-                }
+            is AddTransactionEvent.UpdateMealVoucherDifference -> {
+                _state.update { it.copy(mealVoucherDifference = event.difference) }
             }
 
             is AddTransactionEvent.UpdateTimestamp -> _state.update { it.copy(timestamp = event.timestamp) }
@@ -277,7 +269,7 @@ class AddTransactionViewModel(
     private fun selectPaymentType(paymentType: PaymentType) {
         logDebug("Payment type selected: $paymentType")
         _state.update { currentState ->
-            // Se cambi DA MEAL_VOUCHERS a un altro tipo: resetta voucher e amount calcolato
+            // Se cambi DA MEAL_VOUCHERS a un altro tipo: resetta voucher, differenza e amount
             val resetMealVouchers = currentState.selectedPaymentType == PaymentType.MEAL_VOUCHERS &&
                     paymentType != PaymentType.MEAL_VOUCHERS
 
@@ -285,6 +277,7 @@ class AddTransactionViewModel(
                 selectedPaymentType = paymentType,
                 showPaymentTypeDialog = false,
                 mealVoucherCount = if (resetMealVouchers) "0" else currentState.mealVoucherCount,
+                mealVoucherDifference = if (resetMealVouchers) "0" else currentState.mealVoucherDifference,
                 amount = if (resetMealVouchers) "" else currentState.amount
             )
         }

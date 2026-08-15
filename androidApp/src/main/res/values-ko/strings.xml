@@ -396,6 +396,7 @@
     <string name="add_transaction_meal_voucher_count">식권 개수</string>
     <string name="add_transaction_meal_voucher_subtotal">식권 소계: %s€</string>
     <string name="add_transaction_meal_voucher_difference_paid">차액 결제액</string>
+    <string name="add_transaction_meal_voucher_difference">차액 결제액(현금/카드/기타)</string>
 
     <!-- Empty State -->
     <string name="empty_state_no_transactions">거래 내역이 없습니다</string>

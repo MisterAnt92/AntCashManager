@@ -254,8 +254,10 @@ internal fun DetailsStep(
             DetailsMealVoucherSection(
                 mealVoucherCount = state.mealVoucherCount,
                 mealVoucherValue = state.mealVoucherValue,
-                totalAmount = state.amount,
+                mealVoucherDifference = state.mealVoucherDifference,
+                totalAmount = String.format("%.2f", state.totalAmount),
                 onMealVoucherCountChanged = { onEvent(AddTransactionEvent.UpdateMealVoucherCount(it)) },
+                onMealVoucherDifferenceChanged = { onEvent(AddTransactionEvent.UpdateMealVoucherDifference(it)) },
                 isMealVouchersPayment = isMealVouchersPayment,
             )
             if (isMealVouchersPayment) {

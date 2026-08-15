@@ -45,8 +45,10 @@ import com.antcashmanager.android.ui.screen.transactions.addImport.validator.Tra
 internal fun DetailsMealVoucherSection(
     mealVoucherCount: String,
     mealVoucherValue: Double,
+    mealVoucherDifference: String,
     totalAmount: String,
     onMealVoucherCountChanged: (String) -> Unit,
+    onMealVoucherDifferenceChanged: (String) -> Unit,
     isMealVouchersPayment: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -106,7 +108,29 @@ internal fun DetailsMealVoucherSection(
                 shape = RoundedCornerShape(16.dp),
             )
 
-            // Campo importo totale (read-only)
+            // Spazio separatore prima della differenza pagata (grafica più accattivante)
+            VerticalSpacer(SpacingSize.MD)
+
+            // Campo differenza pagata (importo aggiuntivo in cash/carte)
+            OutlinedTextField(
+                value = mealVoucherDifference,
+                onValueChange = { newValue ->
+                    val normalized = TransactionValidator.normalizeMealVoucherDifference(newValue)
+                    if (TransactionValidator.isValidMealVoucherDifference(normalized) || normalized.isEmpty()) {
+                        onMealVoucherDifferenceChanged(normalized)
+                    }
+                },
+                label = {
+                    AppText(stringResource(R.string.add_transaction_meal_voucher_difference))
+                },
+                placeholder = { AppText("0.00") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+            )
+
+            // Campo importo totale (read-only, calcolato)
             if (totalAmount.isNotBlank()) {
                 VerticalSpacer(SpacingSize.XS)
                 OutlinedTextField(

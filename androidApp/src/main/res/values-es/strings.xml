@@ -343,6 +343,7 @@
     <string name="add_transaction_meal_voucher_count">Número de vales</string>
     <string name="add_transaction_meal_voucher_subtotal">Subtotal vales: %s€</string>
     <string name="add_transaction_meal_voucher_difference_paid">Diferencia pagada</string>
+    <string name="add_transaction_meal_voucher_difference">Diferencia pagada (efectivo/tarjetas/otro)</string>
 
     <string name="empty_state_no_transactions">No hay transacciones presentes</string>
     <string name="widget_recent_transactions_title">Transacciones recientes</string>
