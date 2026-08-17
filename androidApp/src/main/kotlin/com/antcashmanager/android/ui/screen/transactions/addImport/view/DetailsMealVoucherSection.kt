@@ -45,9 +45,12 @@ import com.antcashmanager.android.ui.screen.transactions.addImport.validator.Tra
 internal fun DetailsMealVoucherSection(
     mealVoucherCount: String,
     mealVoucherValue: Double,
+    mealVoucherDifference: String,
     totalAmount: String,
     onMealVoucherCountChanged: (String) -> Unit,
+    onMealVoucherDifferenceChanged: (String) -> Unit,
     isMealVouchersPayment: Boolean,
+    isExpenseType: Boolean,
     modifier: Modifier = Modifier,
 ) {
     // Mostra solo se MEAL_VOUCHERS è il payment type
@@ -106,7 +109,31 @@ internal fun DetailsMealVoucherSection(
                 shape = RoundedCornerShape(16.dp),
             )
 
-            // Campo importo totale (read-only)
+            // Campo differenza pagata (solo per EXPENSE - pagamenti out)
+            // NON mostrato per INCOME perché non è un pagamento
+            if (isExpenseType) {
+                VerticalSpacer(SpacingSize.MD)
+
+                OutlinedTextField(
+                    value = mealVoucherDifference,
+                    onValueChange = { newValue ->
+                        val normalized = TransactionValidator.normalizeMealVoucherDifference(newValue)
+                        if (TransactionValidator.isValidMealVoucherDifference(normalized) || normalized.isEmpty()) {
+                            onMealVoucherDifferenceChanged(normalized)
+                        }
+                    },
+                    label = {
+                        AppText(stringResource(R.string.add_transaction_meal_voucher_difference))
+                    },
+                    placeholder = { AppText("0.00") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                )
+            }
+
+            // Campo importo totale (read-only, calcolato)
             if (totalAmount.isNotBlank()) {
                 VerticalSpacer(SpacingSize.XS)
                 OutlinedTextField(

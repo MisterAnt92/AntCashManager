@@ -1,5 +1,6 @@
 package com.antcashmanager.android.data.backup
 
+import com.antcashmanager.android.security.BackupPayloadCipher
 import com.antcashmanager.android.testutil.FakeCategoryRepository
 import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.testutil.FakeTransactionRepository
@@ -482,4 +483,66 @@ class BackupServiceTest {
             )
             assertFalse(targetTransactionRepo.getDistinctTitles().first().isEmpty())
         }
+
+    @Test
+    fun createBackupThenRestoreBackup_shouldPreserveDataWhenEncrypted_roundTrip() =
+        runTest {
+            // Setup: create encrypted backup
+            val sourceTransaction = Transaction(
+                id = 1,
+                title = "Spesa",
+                amount = 42.5,
+                category = "Alimentari",
+                type = TransactionType.EXPENSE,
+                timestamp = 1_700_000_000_000L,
+            )
+            val sourceService = buildService(
+                transactionRepository = FakeTransactionRepository(listOf(sourceTransaction)),
+            )
+            val jsonString = sourceService.createBackup().getOrThrow()
+
+            // Encrypt the backup
+            val encryptedPayload = BackupPayloadCipher.encrypt(jsonString)
+            assertTrue(BackupPayloadCipher.isEncryptedPayload(encryptedPayload))
+
+            // Decrypt and restore
+            val decryptedPayload = BackupPayloadCipher.decrypt(encryptedPayload)
+
+            val targetTransactionRepo = FakeTransactionRepository()
+            val targetService = buildService(transactionRepository = targetTransactionRepo)
+            val result = targetService.restoreBackup(decryptedPayload).getOrThrow()
+
+            assertEquals(1, result.transactionsRestored)
+            assertEquals(sourceTransaction.title, targetTransactionRepo.transactions.value.single().title)
+        }
+
+    @Test
+    fun restoreBackup_shouldFailGracefully_whenEncryptedPayloadIsCorrupted() = runTest {
+        val sourceTransaction = Transaction(
+            id = 1,
+            title = "Test",
+            amount = 10.0,
+            category = "Test",
+            type = TransactionType.EXPENSE,
+        )
+        val sourceService = buildService(
+            transactionRepository = FakeTransactionRepository(listOf(sourceTransaction)),
+        )
+        val jsonString = sourceService.createBackup().getOrThrow()
+
+        // Encrypt
+        val encryptedPayload = BackupPayloadCipher.encrypt(jsonString)
+
+        // Corrupt the payload
+        val parts = encryptedPayload.removePrefix("ACM_ENC_V1:").split(":", limit = 2)
+        val corruptedData = parts[1].dropLast(1) + "X"
+        val corruptedPayload = "ACM_ENC_V1:${parts[0]}:$corruptedData"
+
+        val targetService = buildService()
+        val result = runCatching {
+            BackupPayloadCipher.decrypt(corruptedPayload)
+        }
+
+        assertTrue(result.isFailure)
+    }
 }

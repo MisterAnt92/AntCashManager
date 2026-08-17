@@ -398,6 +398,7 @@
     <string name="add_transaction_meal_voucher_count">Number of vouchers</string>
     <string name="add_transaction_meal_voucher_subtotal">Vouchers subtotal: %s€</string>
     <string name="add_transaction_meal_voucher_difference_paid">Difference paid</string>
+    <string name="add_transaction_meal_voucher_difference">Difference paid (cash/cards/other)</string>
 
     <!-- Empty State -->
     <string name="empty_state_no_transactions">No transactions present</string>

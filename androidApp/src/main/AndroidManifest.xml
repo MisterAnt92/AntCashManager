@@ -11,6 +11,14 @@
         android:name="com.google.android.gms.permission.AD_ID"
         tools:node="remove" />
 
+    <!-- Storage permissions for Android 8-9 (API 26-28) backup/restore compatibility -->
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
     <queries>
         <intent>
             <action android:name="android.intent.action.SENDTO" />
@@ -23,7 +31,7 @@
     </queries>
 
     <application
-        android:name=".AntCashManagerApp"
+        android:name="com.antcashmanager.android.AntCashManagerApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -32,8 +40,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AntCashManager">
         <activity
-            android:name=".MainActivity"
+            android:name="com.antcashmanager.android.MainActivity"
             android:exported="true"
+            android:launchMode="singleTop"
             android:theme="@style/Theme.AntCashManager">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

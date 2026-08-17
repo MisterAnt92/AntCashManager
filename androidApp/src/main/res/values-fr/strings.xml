@@ -344,6 +344,7 @@
     <string name="add_transaction_meal_voucher_count">Nombre de titres</string>
     <string name="add_transaction_meal_voucher_subtotal">Sous-total titres\u00a0: %s€</string>
     <string name="add_transaction_meal_voucher_difference_paid">Différence payée</string>
+    <string name="add_transaction_meal_voucher_difference">Différence payée (espèces/cartes/autre)</string>
 
     <string name="empty_state_no_transactions">Aucune transaction présente</string>
     <string name="widget_recent_transactions_title">Transactions récentes</string>

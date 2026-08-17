@@ -394,6 +394,7 @@
     <string name="add_transaction_meal_voucher_count">Кількість ваучерів</string>
     <string name="add_transaction_meal_voucher_subtotal">Сума за ваучерами: %s€</string>
     <string name="add_transaction_meal_voucher_difference_paid">Доплата</string>
+    <string name="add_transaction_meal_voucher_difference">Доплата (готівка/карти/інше)</string>
 
     <!-- Empty State -->
     <string name="empty_state_no_transactions">Транзакцій немає</string>

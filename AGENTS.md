@@ -69,6 +69,106 @@ This ensures human oversight on all code changes and maintains repository integr
 
 ---
 
+## 🔒 Agent Git Operations Checklist
+
+**EVERY agent MUST follow this checklist before ANY git operation (commit/push).**
+
+### Pre-Commit Checklist (REQUIRED):
+
+1. **Collect all changes** – Complete the task, don't commit incrementally
+2. **Run tests** – Execute `./gradlew :androidApp:testDebugUnitTest` and `./gradlew :shared:testAndroidHostTest`
+3. **Verify compilation** – Ensure no Kotlin/build errors
+4. **Check git status** – Run `git status` to see what changed
+5. **Prepare description** – Write clear summary of ALL changes:
+   - What was changed
+   - Why it was changed
+   - Files affected
+   - Test results
+   - Any breaking changes or risks
+
+6. **Show changes to human** – Display:
+   ```bash
+   git diff --stat              # Summary of file changes
+   git diff <file>              # Show actual changes for review
+   ```
+
+### Commit Authorization (REQUIRED BEFORE EXECUTION):
+
+**YOU MUST EXPLICITLY ASK THE HUMAN BEFORE COMMITTING:**
+
+```
+"Ready to commit the following changes:
+
+CHANGED FILES:
+- file1.kt (added new function X)
+- file2.kt (modified Y to fix bug Z)
+- new_file.kt (new component)
+
+PROPOSED COMMIT MESSAGE:
+'feat: Add feature X and fix bug Y
+
+- Change 1 description
+- Change 2 description
+
+Closes #123'
+
+TEST RESULTS:
+✅ Unit tests: 489 passed, 0 failed
+✅ Build: Success
+✅ Git status clean: 5 files changed
+
+Should I proceed with commit and push? (yes/no)"
+```
+
+### Valid Approval Signals (Human Must Say One):
+
+- ✅ "procedi" (Italian: proceed)
+- ✅ "vai" (Italian: go)
+- ✅ "sì" (Italian: yes)
+- ✅ "yes"
+- ✅ "commit"
+- ✅ "go ahead"
+- ✅ "push"
+- ✅ Any clear affirmation to commit
+
+### Invalid/Ambiguous Signals (DO NOT COMMIT):
+
+- ❌ "ok" (too vague)
+- ❌ Silence/no response (wait for explicit approval)
+- ❌ "looks good" (not explicit commit approval)
+- ❌ Previous approval from unrelated conversation
+- ❌ "when you're ready" (ask again, don't assume)
+
+### Execution (ONLY AFTER EXPLICIT APPROVAL):
+
+```bash
+git add <files>
+git commit -m "commit message"
+git push origin <branch>
+```
+
+### Post-Push Verification:
+
+```bash
+git log -1                    # Verify commit was created
+git status                    # Verify push succeeded
+git branch -v                 # Verify branch tracking
+```
+
+### CRITICAL REMINDERS:
+
+| DO NOT | REASON | CORRECT APPROACH |
+|--------|--------|------------------|
+| Auto-commit during task | Humans need to review | Ask for approval first |
+| Commit without asking | No oversight | Always ask explicitly |
+| Assume approval | Dangerous | Wait for clear "yes" |
+| Push without asking | Repository integrity | Ask before push too |
+| Commit partial work | Incomplete, untested | Complete task first |
+| Skip tests before commit | May break build | Run full test suite |
+| Commit directly to main | No code review | Use feature branch |
+
+---
+
 ## Architecture Overview
 
 3-layer **Clean Architecture** with strict dependency direction:

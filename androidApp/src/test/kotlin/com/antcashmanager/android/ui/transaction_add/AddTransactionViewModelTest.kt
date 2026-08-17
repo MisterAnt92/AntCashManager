@@ -1161,6 +1161,110 @@ class AddTransactionViewModelTest : BaseUnitTest() {
         )
     }
 
+    @Test
+    fun mealVoucherDifference_shouldUpdateState_whenEventReceived() = runViewModelTest {
+        viewModel = createViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Seleziona MEAL_VOUCHERS payment type
+        viewModel.onEvent(AddTransactionEvent.SelectPaymentType(PaymentType.MEAL_VOUCHERS))
+        viewModel.onEvent(AddTransactionEvent.UpdateTitle("Lunch"))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Inserisci differenza pagata
+        viewModel.onEvent(AddTransactionEvent.UpdateMealVoucherDifference("3.55"))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertEquals(
+            "Difference should be updated in state",
+            "3.55",
+            viewModel.state.value.mealVoucherDifference
+        )
+    }
+
+    @Test
+    fun totalAmount_shouldCalculateCorrectly_withMealVouchersAndDifference() = runViewModelTest {
+        viewModel = createViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Seleziona MEAL_VOUCHERS
+        viewModel.onEvent(AddTransactionEvent.SelectPaymentType(PaymentType.MEAL_VOUCHERS))
+        viewModel.onEvent(AddTransactionEvent.UpdateTitle("Lunch"))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Setup: 5 buoni × 5.29€ = 26.45€
+        viewModel.onEvent(AddTransactionEvent.UpdateMealVoucherCount("5"))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Aggiungere differenza: 3.55€
+        viewModel.onEvent(AddTransactionEvent.UpdateMealVoucherDifference("3.55"))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Totale = 26.45 + 3.55 = 30.00
+        val expectedTotal = 26.45 + 3.55
+        assertEquals(
+            "Total amount should be vouchers subtotal + difference",
+            expectedTotal,
+            viewModel.state.value.totalAmount,
+            0.01 // tolerance per floating point
+        )
+    }
+
+    @Test
+    fun totalAmount_shouldBeVoucherSubtotal_whenDifferenceIsEmpty() = runViewModelTest {
+        viewModel = createViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Seleziona MEAL_VOUCHERS
+        viewModel.onEvent(AddTransactionEvent.SelectPaymentType(PaymentType.MEAL_VOUCHERS))
+        viewModel.onEvent(AddTransactionEvent.UpdateTitle("Lunch"))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Setup: 5 buoni × 5.29€ = 26.45€
+        viewModel.onEvent(AddTransactionEvent.UpdateMealVoucherCount("5"))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Differenza vuota (default "0")
+        val expectedTotal = 5 * 5.29
+        assertEquals(
+            "Total should be only vouchers subtotal when difference is empty",
+            expectedTotal,
+            viewModel.state.value.totalAmount,
+            0.01
+        )
+    }
+
+    @Test
+    fun selectPaymentType_shouldResetMealVoucherDifference_whenChangingFromMealVouchers() = runViewModelTest {
+        viewModel = createViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Imposta MEAL_VOUCHERS con differenza
+        viewModel.onEvent(AddTransactionEvent.SelectPaymentType(PaymentType.MEAL_VOUCHERS))
+        viewModel.onEvent(AddTransactionEvent.UpdateMealVoucherCount("5"))
+        viewModel.onEvent(AddTransactionEvent.UpdateMealVoucherDifference("3.55"))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertEquals("3.55", viewModel.state.value.mealVoucherDifference)
+        assertEquals(5, viewModel.state.value.mealVoucherCount.toIntOrNull())
+
+        // Cambia a CASH payment type
+        viewModel.onEvent(AddTransactionEvent.SelectPaymentType(PaymentType.CASH))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Verifica che differenza e count siano resettate
+        assertEquals(
+            "Meal voucher difference should be reset when changing payment type",
+            "0",
+            viewModel.state.value.mealVoucherDifference
+        )
+        assertEquals(
+            "Meal voucher count should be reset when changing payment type",
+            "0",
+            viewModel.state.value.mealVoucherCount
+        )
+    }
+
     // ── Reset ──
 
     @Test
