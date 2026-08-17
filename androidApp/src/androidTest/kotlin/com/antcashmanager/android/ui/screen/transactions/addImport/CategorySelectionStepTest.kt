@@ -2,7 +2,7 @@ package com.antcashmanager.android.ui.screen.transactions.addImport
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -12,6 +12,8 @@ import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.screen.transactions.addImport.view.CategorySelectionStep
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.Category
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -48,6 +50,9 @@ class CategorySelectionStepTest {
             }
         }
 
+        // Wait for composables to fully render
+        composeTestRule.waitForIdle()
+
         // Verifica che tutte le categorie siano visualizzate
         composeTestRule.onNodeWithText("Food").assertIsDisplayed()
         composeTestRule.onNodeWithText("Salary").assertIsDisplayed()
@@ -76,7 +81,7 @@ class CategorySelectionStepTest {
         composeTestRule.waitForIdle()
 
         // Verifica che il callback sia stato chiamato con l'ID corretto
-        assert(selectedCategoryId == 1L) { "Expected category id 1, but was $selectedCategoryId" }
+        assertEquals("Should select Food category (id=1)", 1L, selectedCategoryId)
     }
 
     @Test
@@ -123,7 +128,7 @@ class CategorySelectionStepTest {
         composeTestRule.waitForIdle()
 
         // Verifica che il callback sia stato chiamato
-        assert(cancelCalled) { "Expected onCancel to be called" }
+        assertTrue("onCancel callback should be called when back button clicked", cancelCalled)
     }
 
     @Test

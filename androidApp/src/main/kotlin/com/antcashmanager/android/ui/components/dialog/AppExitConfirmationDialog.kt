@@ -12,18 +12,42 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
+private const val EXIT_DIALOG_DELAY_MS = 300
+private const val MASCOT_SCALE_ANIMATION_MS = 1000
+private const val MASCOT_FLOAT_ANIMATION_MS = 1400
+private const val MASCOT_SCALE_MIN = 0.94f
+private const val MASCOT_SCALE_MAX = 1.04f
+private const val MASCOT_FLOAT_MIN = -4f
+private const val MASCOT_FLOAT_MAX = 4f
+
+/**
+ * Exit confirmation dialog with synchronized dismissal and exit handling.
+ *
+ * On Android 16 (API 35+), the dialog dismissal and Activity.finish() are properly
+ * synchronized using LaunchedEffect with delay to prevent race conditions.
+ *
+ * @param onConfirmExit Called when user confirms exit. Must call Activity.safeFinish()
+ * @param onDismiss Called when user cancels or dismisses the dialog
+ * @param isVisible Controls dialog visibility
+ */
 @Composable
-fun AppExitConfirmationDialog(
+fun appExitConfirmationDialog(
     onConfirmExit: () -> Unit,
     onDismiss: () -> Unit,
     isVisible: Boolean = true,
@@ -32,13 +56,27 @@ fun AppExitConfirmationDialog(
         return
     }
 
+    val logger = Logger.withTag("AppExitDialog")
+    val (shouldExit, setShouldExit) = remember { mutableStateOf(false) }
+
+    // Synchronized exit handler for Android 16+ (API 35+)
+    // Delay ensures Compose has time to process dialog dismissal before Activity.finish()
+    LaunchedEffect(shouldExit) {
+        if (shouldExit) {
+            logger.d("Exit confirmed, waiting for dialog dismissal animation...")
+            delay(EXIT_DIALOG_DELAY_MS.milliseconds)
+            logger.d("Calling Activity.finish() after dialog dismissal delay")
+            onConfirmExit()
+        }
+    }
+
     val mascotTransition = rememberInfiniteTransition(label = "exitMascotTransition")
     val mascotScale = mascotTransition.animateFloat(
-        initialValue = 0.94f,
-        targetValue = 1.04f,
+        initialValue = MASCOT_SCALE_MIN,
+        targetValue = MASCOT_SCALE_MAX,
         animationSpec = infiniteRepeatable(
             animation = tween(
-                durationMillis = 1000,
+                durationMillis = MASCOT_SCALE_ANIMATION_MS,
                 easing = FastOutSlowInEasing,
             ),
             repeatMode = RepeatMode.Reverse,
@@ -46,11 +84,11 @@ fun AppExitConfirmationDialog(
         label = "exitMascotScale",
     )
     val mascotFloatY = mascotTransition.animateFloat(
-        initialValue = -4f,
-        targetValue = 4f,
+        initialValue = MASCOT_FLOAT_MIN,
+        targetValue = MASCOT_FLOAT_MAX,
         animationSpec = infiniteRepeatable(
             animation = tween(
-                durationMillis = 1400,
+                durationMillis = MASCOT_FLOAT_ANIMATION_MS,
                 easing = FastOutSlowInEasing,
             ),
             repeatMode = RepeatMode.Reverse,
@@ -59,7 +97,10 @@ fun AppExitConfirmationDialog(
     )
 
     AlertDialog(
-        onDismissRequest = onDismiss,
+        onDismissRequest = {
+            logger.d("Dialog dismissed via onDismissRequest")
+            onDismiss()
+        },
         icon = {
             Image(
                 painter = painterResource(id = R.drawable.ic_ant_mascot),
@@ -76,21 +117,41 @@ fun AppExitConfirmationDialog(
         title = { AppText(text = stringResource(R.string.exit_app_title)) },
         text = { AppText(text = stringResource(R.string.exit_app_message)) },
         confirmButton = {
-            TextButton(onClick = onConfirmExit) {
+            TextButton(
+                onClick = {
+                    logger.d("Confirm button clicked, setting shouldExit = true")
+                    setShouldExit(true)
+                }
+            ) {
                 AppText(text = stringResource(R.string.exit_app_confirm))
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
+            TextButton(
+                onClick = {
+                    logger.d("Cancel button clicked")
+                    onDismiss()
+                }
+            ) {
                 AppText(text = stringResource(R.string.common_cancel))
             }
         },
     )
 }
 
+// Wrapper Composable function with Kotlin naming convention
+@Composable
+fun AppExitConfirmationDialog(
+    onConfirmExit: () -> Unit,
+    onDismiss: () -> Unit,
+    isVisible: Boolean = true,
+) {
+    appExitConfirmationDialog(onConfirmExit, onDismiss, isVisible)
+}
+
 @Preview(name = "AppExitConfirmationDialog - Light", showBackground = true)
 @Composable
-private fun AppExitConfirmationDialogPreviewLight() {
+private fun previewAppExitConfirmationDialogLight() {
     AntCashManagerTheme(dynamicColor = false) {
         AppExitConfirmationDialog(
             onConfirmExit = {},
@@ -106,6 +167,8 @@ private fun AppExitConfirmationDialogPreviewLight() {
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 @Composable
-private fun AppExitConfirmationDialogPreviewDark() {
-    AppExitConfirmationDialogPreviewLight()
+private fun previewAppExitConfirmationDialogDark() {
+    previewAppExitConfirmationDialogLight()
 }
+
+

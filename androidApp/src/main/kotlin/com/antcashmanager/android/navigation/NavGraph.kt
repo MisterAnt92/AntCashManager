@@ -58,7 +58,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.antcashmanager.android.BuildConfig
+import co.touchlab.kermit.Logger
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.util.AppExitManager.safeFinish
 import com.antcashmanager.android.ui.components.animation.AntEasterEggAnimation
@@ -561,9 +561,15 @@ fun AntCashManagerNavHost() {
 
         AppExitConfirmationDialog(
             isVisible = showExitDialog,
-            onDismiss = { showExitDialog = false },
-            onConfirmExit = {
+            onDismiss = {
+                Logger.d(tag = "AppExit") { "Exit dialog dismissed" }
                 showExitDialog = false
+            },
+            onConfirmExit = {
+                // Dialog handles its own state and timing synchronization
+                // This callback is invoked after dialog dismissal delay (300ms)
+                // to prevent race conditions on Android 16 (API 35+)
+                Logger.d(tag = "AppExit") { "Exit confirmed, calling Activity.safeFinish()" }
                 context.findActivity()?.safeFinish()
             },
         )

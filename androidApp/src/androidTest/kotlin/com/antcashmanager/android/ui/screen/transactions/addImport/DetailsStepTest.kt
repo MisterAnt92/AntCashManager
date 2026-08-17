@@ -3,7 +3,7 @@ package com.antcashmanager.android.ui.screen.transactions.addImport
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -18,6 +18,8 @@ import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.TransactionType
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -179,7 +181,7 @@ class DetailsStepTest {
         composeTestRule.waitForIdle()
 
         // Verifica che il callback sia stato chiamato
-        assert(backClicked) { "Expected onNavigateBack to be called" }
+        assertTrue("onNavigateBack callback should be called", backClicked)
     }
 
     @Test
@@ -210,7 +212,7 @@ class DetailsStepTest {
         composeTestRule.waitForIdle()
 
         // Verifica che un evento sia stato ricevuto
-        assert(eventReceived != null) { "Expected onEvent to be called" }
+        assertNotNull("onEvent callback should be called with an event", eventReceived)
     }
 
     @Test
