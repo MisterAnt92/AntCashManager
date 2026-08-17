@@ -645,6 +645,194 @@ val filteredSuggestions = remember(tagInput, suggestions) {
 
 - `REFACTORING_SUMMARY.md` (questo file)
 - `INTEGRATION_INSTRUCTIONS.md` (guida integrazione)
+- `MANUAL_TESTING_GUIDE.md` (guida testing manuale v1.7.2)
+
+---
+
+## 🧪 Manual Testing Guide (v1.7.2 - Meal Vouchers Feature)
+
+**File**: `MANUAL_TESTING_GUIDE.md`
+
+Guida completa per il testing manuale della feature "Meal Vouchers con Differenza Pagata", implementata nella v1.7.2.
+
+### Contenuti della Guida
+
+**10 Scenari di Testing Completi**:
+
+1. **SCENARIO 1**: Creazione USCITE con solo buoni pasto
+2. **SCENARIO 2**: Creazione USCITE con buoni + differenza pagata
+3. **SCENARIO 3**: Creazione ENTRATE con buoni (verifica che differenza NON sia visibile)
+4. **SCENARIO 4**: Modifica transazione USCITE con ricalcolo
+5. **SCENARIO 5**: Modifica transazione ENTRATE (verifica nessun campo differenza)
+6. **SCENARIO 6**: Validazione di input invalidi (negativi, > 2 decimali, non-numerici)
+7. **SCENARIO 7**: Cambio payment type e reset della differenza
+8. **SCENARIO 8**: Verifica responsive layout (phone, tablet, foldable)
+9. **SCENARIO 9**: Verifica accessibilità (TalkBack screen reader)
+10. **SCENARIO 10**: Verifica multi-language (13 lingue)
+
+**Critical Verification Matrix**:
+
+- ✅ EXPENSE transactions: "Differenza pagata" **visibile**
+- ❌ INCOME transactions: "Differenza pagata" **NON visibile** (constraint critico)
+- ✅ Calcolo: `(count × value) + difference = total`
+- ✅ Validazione: rifiuta valori negativi, > 2 decimali, non-numerici
+- ✅ Tutte le 13 lingue hanno traduzione corretta
+
+**Negative Tests**:
+- Differenza negativa → Rifiutata
+- 3+ decimali → Normalizzata o rifiutata
+- Non-numerico → Rifiutato
+- INCOME con differenza visibile → Bug critico
+
+**Checklist Pre-Commit**:
+- [ ] Tutti 10 scenari superati
+- [ ] Layout responsive (phone, tablet)
+- [ ] Accessibilità conforme
+- [ ] Tutte 13 lingue verificate
+- [ ] Calcoli corretti
+
+**Tempo Stimato**: ~70 minuti per device/lingua
+
+---
+
+## 🎨 UI Verification Checklist (v1.7.2)
+
+**File**: `UI_VERIFICATION_CHECKLIST.md`
+
+Checklist dettagliata per la verifica visiva, layout e accessibilità della feature.
+
+### Contenuti
+
+**Layout & Styling**:
+- Verifica struttura visiva per EXPENSE vs INCOME
+- Card styling, field styling, spacing verification
+- Visual consistency across light/dark themes
+
+**Responsive Design**:
+- Test su 360dp (small phone) - nessuna truncation
+- Test su 800dp (tablet) - layout ok
+- Test su foldable/dual-screen
+- Tutti i campi accessibili senza scroll orizzontale
+
+**Text & Translation**:
+- Verifica string per ogni lingua (13 totali)
+- Nessun mojibake o corrupted text
+- Currency symbol display corretto
+
+**Keyboard & Input Behavior**:
+- Numero buoni: numeric keyboard only
+- Differenza pagata: decimal keyboard
+- Negative values rejected
+- Precision enforced (max 2 decimals)
+
+**Accessibility**:
+- TalkBack screen reader verification
+- Logical tab order
+- Focus visibility
+- All fields announced correctly
+- **CRITICAL**: Differenza field NOT announced on INCOME
+
+**Calculation Display**:
+- Subtotale display: count × 5.29
+- Differenza display: only if EXPENSE
+- Total Amount display: subtotal + difference
+- Currency formatting: "X.XX€"
+
+**State Persistence**:
+- Rotation (portrait ↔ landscape) preserves data
+- Navigation away/back behavior
+- App lifecycle state preservation
+
+---
+
+## 📊 Testing Summary & Execution Plan (v1.7.2)
+
+**File**: `TESTING_SUMMARY.md`
+
+Overview completo della strategia di testing e piano di esecuzione.
+
+### Contenuti
+
+**Testing Status**:
+- ✅ Implementation complete
+- ✅ Unit tests complete
+- ✅ Documentation complete
+- ⏳ Manual testing pending
+
+**Test Environment Requirements**:
+- Devices: Android 8.0+, 12+, 15+ (or emulators)
+- App setup: DEBUG build, database initialized
+- Languages: IT (primary), EN (secondary), +1 additional
+
+**Recommended Test Sequence** (70 min total):
+1. Phase 1: Core Functionality (15 min) - Scenarios 1-3
+2. Phase 2: Editing & State (10 min) - Scenarios 4-5
+3. Phase 3: Validation (5 min) - Scenario 6
+4. Phase 4: Behavior (5 min) - Scenario 7
+5. Phase 5: Visual (20 min) - Scenario 8
+6. Phase 6: Accessibility (10 min) - Scenario 9
+7. Phase 7: Languages (15 min) - Scenario 10
+
+**Bug Severity Levels**:
+- CRITICAL: Difference field on INCOME, calculation wrong, app crashes
+- HIGH: Reset not working, negative accepted, accessibility broken
+- MEDIUM: UI overflow, string missing, spacing inconsistent
+- LOW: Minor visual issues
+
+**Pass Criteria**:
+- All 10 scenarios pass on ≥2 devices
+- Zero critical bugs
+- EXPENSE-only constraint verified
+- All 13 languages OK
+- Responsive layout OK
+- Accessibility OK
+
+**Testing Artifacts**:
+- MANUAL_TESTING_GUIDE.md → Execute all 10 scenarios
+- UI_VERIFICATION_CHECKLIST.md → Verify visual & layout
+- TESTING_SUMMARY.md → Overall coordination & tracking
+
+---
+
+## 📁 Testing Documentation Directory
+
+```
+Testing Documentation for v1.7.2:
+
+├── REFACTORING_SUMMARY.md (this file)
+│   └── Architecture & feature specification
+│   
+├── MANUAL_TESTING_GUIDE.md ⭐
+│   ├── 10 detailed test scenarios
+│   ├── Calculation verification matrix
+│   ├── Negative test cases
+│   ├── Pre-commit checklist
+│   └── Estimated time: 70 min per device
+│   
+├── UI_VERIFICATION_CHECKLIST.md ⭐
+│   ├── Visual structure diagrams
+│   ├── Responsive layout tests
+│   ├── Text & translation verification
+│   ├── Keyboard & accessibility
+│   ├── Data persistence tests
+│   └── Sign-off checklist
+│   
+└── TESTING_SUMMARY.md ⭐
+    ├── Testing overview & status
+    ├── Environment requirements
+    ├── Recommended test sequence
+    ├── Bug severity levels
+    ├── Testing metrics & pass criteria
+    └── Troubleshooting reference
+
+To Execute Testing:
+1. Read TESTING_SUMMARY.md (Overview)
+2. Execute MANUAL_TESTING_GUIDE.md (Functional tests)
+3. Execute UI_VERIFICATION_CHECKLIST.md (Visual tests)
+4. Document results
+5. If bugs: fix → re-test
+6. If all pass: Sign-off ready
+```
 
 ---
 
