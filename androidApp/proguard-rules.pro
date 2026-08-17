@@ -210,3 +210,48 @@
     public static *** i(...);
 }
 
+# ══════════════════════════════════════════════════════════════════════════════
+# 16. ML KIT TEXT RECOGNITION – BITMAP MEMORY MANAGEMENT
+# ══════════════════════════════════════════════════════════════════════════════
+
+# Mantieni BitmapFactory per downsampling intelligente (inSampleSize)
+-keep class android.graphics.BitmapFactory {
+    public static *** decodeByteArray(...);
+    public static *** decodeStream(...);
+    public static *** decodeFile(...);
+}
+
+# Mantieni Bitmap methods critici per memory management
+-keepclassmembers class android.graphics.Bitmap {
+    public *** compress(...);
+    public void recycle();
+    public boolean isRecycled();
+    public int getByteCount();
+    public int getWidth();
+    public int getHeight();
+}
+
+# Mantieni BitmapFactory.Options per inSampleSize downsampling
+-keep class android.graphics.BitmapFactory$Options {
+    public int inSampleSize;
+    public int inJustDecodeBounds;
+    public *** inPreferredConfig;
+}
+
+# Mantieni ML Kit InputImage per proper bitmap processing
+-keepclassmembers class com.google.mlkit.vision.common.InputImage {
+    public static *** fromBitmap(...);
+    public *** close();
+    public *** getWidth();
+    public *** getHeight();
+}
+
+# Mantieni TextRecognizer process method
+-keepclassmembers class com.google.mlkit.vision.text.TextRecognizer {
+    public *** process(...);
+    public void close();
+}
+
+# Non avvertire su classi interne di ML Kit
+-dontwarn com.google.mlkit.vision.**
+

@@ -391,6 +391,7 @@
     <string name="add_transaction_meal_voucher_count">Numero di buoni</string>
     <string name="add_transaction_meal_voucher_subtotal">Subtotale buoni: %s€</string>
     <string name="add_transaction_meal_voucher_difference_paid">Differenza pagata</string>
+    <string name="add_transaction_meal_voucher_difference">Differenza pagata (cash/carte/altro)</string>
 
     <string name="empty_state_no_transactions">Nessuna transazione presente</string>
     <string name="widget_recent_transactions_title">Transazioni recenti</string>

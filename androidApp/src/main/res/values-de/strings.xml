@@ -381,6 +381,7 @@
     <string name="add_transaction_meal_voucher_count">Anzahl der Gutscheine</string>
     <string name="add_transaction_meal_voucher_subtotal">Gutscheine Zwischensumme: %s€</string>
     <string name="add_transaction_meal_voucher_difference_paid">Bezahlte Differenz</string>
+    <string name="add_transaction_meal_voucher_difference">Bezahlte Differenz (Bar/Karten/Sonstiges)</string>
 
     <!-- Empty State -->
     <string name="empty_state_no_transactions">Keine Transaktionen vorhanden</string>

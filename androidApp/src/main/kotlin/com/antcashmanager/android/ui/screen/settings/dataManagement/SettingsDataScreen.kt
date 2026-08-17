@@ -183,6 +183,36 @@ internal fun SettingsDataContent(
         }
     }
 
+    // Helper function to read backup file with charset fallback
+    fun readBackupFileContent(inputStream: java.io.InputStream, fileName: String?): String? {
+        return try {
+            // Attempt 1: UTF-8 (standard)
+            inputStream.bufferedReader(StandardCharsets.UTF_8).use { reader ->
+                reader.readText()
+            }
+        } catch (e: Exception) {
+            // Attempt 2: ISO-8859-1 (fallback for legacy files)
+            try {
+                inputStream.bufferedReader(StandardCharsets.ISO_8859_1).use { reader ->
+                    reader.readText()
+                }
+            } catch (iso8859e: Exception) {
+                // Attempt 3: System default charset (last resort)
+                try {
+                    inputStream.bufferedReader().use { reader ->
+                        reader.readText()
+                    }
+                } catch (fallbackError: Exception) {
+                    analyticsManager.logEvent("backup_file_read_charset_error")
+                    onRestoreFileReadError(
+                        "Impossibile leggere il file: ${fallbackError.message ?: "Charset error"}"
+                    )
+                    null
+                }
+            }
+        }
+    }
+
     val restoreLauncher =
         if (isPreview) null else rememberLauncherForActivityResult(
             contract = ActivityResultContracts.OpenDocument(),
@@ -194,9 +224,9 @@ internal fun SettingsDataContent(
                 val inputStream = context.contentResolver.openInputStream(uri)
                     ?: throw IllegalStateException("Unable to open selected backup file")
 
-                val payload = inputStream.bufferedReader(StandardCharsets.UTF_8).use { reader ->
-                    reader.readText()
-                }
+                // ✅ Use new function with charset fallback
+                val payload = readBackupFileContent(inputStream, uri.lastPathSegment)
+                    ?: return@rememberLauncherForActivityResult
 
                 if (payload.isBlank()) {
                     throw IllegalArgumentException("Selected backup file is empty")
@@ -204,6 +234,7 @@ internal fun SettingsDataContent(
 
                 onRestoreBackup(payload)
             } catch (error: Exception) {
+                analyticsManager.logEvent("backup_file_read_error")
                 onRestoreFileReadError(error.message ?: SettingsDataConstant.UNKNOWN_ERROR)
             }
         }
@@ -249,7 +280,13 @@ internal fun SettingsDataContent(
                             if (restoreLauncher != null) {
                                 analyticsManager.logEvent("restore_open_requested")
                                 restoreLauncher.launch(
-                                    arrayOf("application/json", "text/json", "text/plain"),
+                                    arrayOf(
+                                        "application/json",      // Standard JSON
+                                        "application/backup",    // Custom MIME type for .backup
+                                        "text/plain",           // Generic text file
+                                        "text/json",            // JSON as text
+                                        "*/*",                  // Fallback: accept any file type
+                                    ),
                                 )
                             } else {
                                 onRestoreFileReadError(filePickerUnavailableMessage)
@@ -306,7 +343,13 @@ internal fun SettingsDataContent(
                             if (restoreLauncher != null) {
                                 analyticsManager.logEvent("restore_open_requested")
                                 restoreLauncher.launch(
-                                    arrayOf("application/json", "text/json", "text/plain"),
+                                    arrayOf(
+                                        "application/json",      // Standard JSON
+                                        "application/backup",    // Custom MIME type for .backup
+                                        "text/plain",           // Generic text file
+                                        "text/json",            // JSON as text
+                                        "*/*",                  // Fallback: accept any file type
+                                    ),
                                 )
                             } else {
                                 onRestoreFileReadError(filePickerUnavailableMessage)

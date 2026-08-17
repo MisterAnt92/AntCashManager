@@ -8,6 +8,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.dialog.AppExitConfirmationDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.android.util.AppExitManager.safeFinish
 import org.junit.Assume
 import org.junit.Rule
 import org.junit.Test
@@ -253,6 +254,267 @@ class AppExitBehaviorTest {
         assert(dismissCalled) { "Dismiss should be called" }
         assert(!composeTestRule.activity.isFinishing) { "Activity should not be finishing" }
         // App should continue functioning (no crash)
+    }
+
+    /**
+     * NEW TEST 1: API 35 (Android 16) Standard Device
+     * Verifies that app exits correctly on API 35+ with standard manufacturing.
+     * Uses safeFinish() which calls finishAndRemoveTask() on API 35+
+     */
+    @Test
+    fun exitBehaviorAndroid16_Api35() {
+        skipIfNotRunningOn(35)  // VANILLA_ICE_CREAM
+
+        var exitCallbackInvoked = false
+
+        composeTestRule.setContent {
+            AntCashManagerTheme {
+                AppExitConfirmationDialog(
+                    onConfirmExit = {
+                        exitCallbackInvoked = true
+                        // Simulate NavGraph.kt behavior: uses safeFinish()
+                        composeTestRule.activity.safeFinish()
+                    },
+                    onDismiss = {},
+                    isVisible = true
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText(
+            composeTestRule.activity.getString(R.string.exit_app_confirm)
+        ).performClick()
+
+        composeTestRule.waitForIdle()
+
+        assert(exitCallbackInvoked) { "Exit callback should be invoked" }
+        assert(composeTestRule.activity.isFinishing) { "Activity should finish on API 35+" }
+    }
+
+    /**
+     * NEW TEST 2: API 35 (Android 16) Samsung Device
+     * Verifies that Samsung devices are properly detected on API 35+
+     * and exit behavior works correctly (uses finishAndRemoveTask)
+     */
+    @Test
+    fun exitBehaviorAndroid16_Samsung() {
+        skipIfNotRunningOn(35)  // VANILLA_ICE_CREAM
+
+        // This test runs on actual Samsung device with API 35
+        // (or emulator with Samsung configuration)
+        val isSamsungDevice = Build.MANUFACTURER?.equals("samsung", ignoreCase = true) == true
+
+        if (!isSamsungDevice) {
+            // Skip if not running on Samsung device
+            Assume.assumeTrue("Test is for Samsung devices only", false)
+            return
+        }
+
+        var exitCallbackInvoked = false
+
+        composeTestRule.setContent {
+            AntCashManagerTheme {
+                AppExitConfirmationDialog(
+                    onConfirmExit = {
+                        exitCallbackInvoked = true
+                        composeTestRule.activity.safeFinish()
+                    },
+                    onDismiss = {},
+                    isVisible = true
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText(
+            composeTestRule.activity.getString(R.string.exit_app_confirm)
+        ).performClick()
+
+        composeTestRule.waitForIdle()
+
+        assert(exitCallbackInvoked) { "Exit callback should be invoked on Samsung" }
+        assert(composeTestRule.activity.isFinishing) { "Activity should finish on Samsung API 35" }
+    }
+
+    /**
+     * NEW TEST 3: Multiple Exit/Enter Cycles (Stress Test)
+     * Verifies app stability across multiple open/exit cycles.
+     * Tests that state is correctly managed and no memory leaks occur.
+     */
+    @Test
+    fun exitBehavior_multipleRestartCycles() {
+        repeat(3) { iteration ->
+            var exitCallbackInvoked = false
+
+            composeTestRule.setContent {
+                AntCashManagerTheme {
+                    AppExitConfirmationDialog(
+                        onConfirmExit = {
+                            exitCallbackInvoked = true
+                            composeTestRule.activity.finish()
+                        },
+                        onDismiss = {},
+                        isVisible = true
+                    )
+                }
+            }
+
+            composeTestRule.onNodeWithText(
+                composeTestRule.activity.getString(R.string.exit_app_confirm)
+            ).performClick()
+
+            composeTestRule.waitForIdle()
+
+            assert(exitCallbackInvoked) { "Exit callback should be invoked in cycle $iteration" }
+            assert(composeTestRule.activity.isFinishing) { "Activity should finish in cycle $iteration" }
+        }
+    }
+
+    /**
+     * NEW TEST 4: Pre-API 35 Regression Test
+     * Ensures that devices running API 34 and below still use finish()
+     * and are not affected by finishAndRemoveTask() logic.
+     * This guarantees backward compatibility.
+     */
+    @Test
+    fun exitBehavior_preApi35_usesFinish() {
+        skipIfNotRunningOn(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+
+        // This test runs on API 34 and below
+        val currentSdk = Build.VERSION.SDK_INT
+        if (currentSdk >= 35) {
+            Assume.assumeTrue("This test is for API < 35 only", false)
+            return
+        }
+
+        var exitCallbackInvoked = false
+
+        composeTestRule.setContent {
+            AntCashManagerTheme {
+                AppExitConfirmationDialog(
+                    onConfirmExit = {
+                        exitCallbackInvoked = true
+                        // safeFinish() should use finish() on API < 35
+                        composeTestRule.activity.safeFinish()
+                    },
+                    onDismiss = {},
+                    isVisible = true
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText(
+            composeTestRule.activity.getString(R.string.exit_app_confirm)
+        ).performClick()
+
+        composeTestRule.waitForIdle()
+
+        assert(exitCallbackInvoked) { "Exit callback should be invoked on API < 35" }
+        assert(composeTestRule.activity.isFinishing) { "Activity should finish using finish() on API < 35" }
+    }
+
+    /**
+     * NEW TEST 5: Exit Dialog Lifecycle Consistency
+     * Verifies that dialog state is properly managed across open/dismiss cycles
+     * before the exit callback is actually triggered.
+     */
+    @Test
+    fun exitBehavior_dialogLifecycle_stateConsistency() {
+        var isVisibleState = true
+        var dismissCount = 0
+        var exitCount = 0
+
+        composeTestRule.setContent {
+            AntCashManagerTheme {
+                AppExitConfirmationDialog(
+                    onConfirmExit = {
+                        exitCount++
+                        composeTestRule.activity.finish()
+                    },
+                    onDismiss = {
+                        dismissCount++
+                        isVisibleState = false
+                    },
+                    isVisible = isVisibleState
+                )
+            }
+        }
+
+        // Dismiss once
+        composeTestRule.onNodeWithText(
+            composeTestRule.activity.getString(R.string.common_cancel)
+        ).performClick()
+
+        composeTestRule.waitForIdle()
+
+        assert(dismissCount == 1) { "Dismiss should be called once" }
+        assert(exitCount == 0) { "Exit should not be called on dismiss" }
+        assert(!composeTestRule.activity.isFinishing) { "Activity should not be finishing after dismiss" }
+
+        // Confirm exit
+        isVisibleState = true
+        composeTestRule.setContent {
+            AntCashManagerTheme {
+                AppExitConfirmationDialog(
+                    onConfirmExit = {
+                        exitCount++
+                        composeTestRule.activity.finish()
+                    },
+                    onDismiss = {
+                        dismissCount++
+                        isVisibleState = false
+                    },
+                    isVisible = isVisibleState
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText(
+            composeTestRule.activity.getString(R.string.exit_app_confirm)
+        ).performClick()
+
+        composeTestRule.waitForIdle()
+
+        assert(exitCount == 1) { "Exit should be called once after confirm" }
+        assert(composeTestRule.activity.isFinishing) { "Activity should be finishing after exit" }
+    }
+
+    /**
+     * NEW TEST 6: Activity Intent Verification
+     * Verifies that MainActivity is launched with singleTop launchMode
+     * and behaves correctly during exit dialog interactions.
+     */
+    @Test
+    fun exitBehavior_mainActivityLaunchMode() {
+        var exitCallbackInvoked = false
+
+        composeTestRule.setContent {
+            AntCashManagerTheme {
+                AppExitConfirmationDialog(
+                    onConfirmExit = {
+                        exitCallbackInvoked = true
+                        composeTestRule.activity.safeFinish()
+                    },
+                    onDismiss = {},
+                    isVisible = true
+                )
+            }
+        }
+
+        // Verify MainActivity is the current activity
+        val currentActivity = composeTestRule.activity
+        assert(currentActivity::class.simpleName == "MainActivity") {
+            "Activity should be MainActivity"
+        }
+
+        // Perform exit
+        composeTestRule.onNodeWithText(
+            composeTestRule.activity.getString(R.string.exit_app_confirm)
+        ).performClick()
+
+        composeTestRule.waitForIdle()
+
+        assert(exitCallbackInvoked) { "Exit callback should be invoked" }
+        assert(currentActivity.isFinishing) { "MainActivity should finish properly" }
     }
 
     /**

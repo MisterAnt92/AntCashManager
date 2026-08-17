@@ -394,6 +394,7 @@
     <string name="add_transaction_meal_voucher_count">Количество чеков</string>
     <string name="add_transaction_meal_voucher_subtotal">Сумма по чекам: %s€</string>
     <string name="add_transaction_meal_voucher_difference_paid">Доплата</string>
+    <string name="add_transaction_meal_voucher_difference">Доплата (наличные/карты/прочее)</string>
 
     <!-- Empty State -->
     <string name="empty_state_no_transactions">Нет транзакций</string>

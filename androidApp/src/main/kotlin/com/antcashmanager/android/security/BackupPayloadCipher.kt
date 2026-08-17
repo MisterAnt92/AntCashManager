@@ -51,7 +51,7 @@ object BackupPayloadCipher {
         }
 
         val plainBytes = cipher.doFinal(encryptedBytes)
-        return plainBytes.toString(Charsets.UTF_8)
+        return String(plainBytes, Charsets.UTF_8)
     }
 
     private fun getOrCreateSecretKey(): SecretKey {

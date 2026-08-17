@@ -29,6 +29,7 @@ sealed interface AddTransactionEvent {
     data class SetRecurring(val isRecurring: Boolean) : AddTransactionEvent
     data class UpdateRecurrenceInterval(val interval: String) : AddTransactionEvent
     data class UpdateMealVoucherCount(val count: String) : AddTransactionEvent
+    data class UpdateMealVoucherDifference(val difference: String) : AddTransactionEvent
 
     // ── Navigazione ──
     data object NextStep : AddTransactionEvent

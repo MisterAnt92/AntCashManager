@@ -394,6 +394,7 @@
     <string name="add_transaction_meal_voucher_count">Liczba bonów</string>
     <string name="add_transaction_meal_voucher_subtotal">Suma bonów: %s€</string>
     <string name="add_transaction_meal_voucher_difference_paid">Zapłacona różnica</string>
+    <string name="add_transaction_meal_voucher_difference">Zapłacona różnica (gotówka/karty/inne)</string>
 
     <!-- Empty State -->
     <string name="empty_state_no_transactions">Brak transakcji</string>

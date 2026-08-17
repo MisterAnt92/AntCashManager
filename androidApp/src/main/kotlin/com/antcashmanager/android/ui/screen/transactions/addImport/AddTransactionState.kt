@@ -42,6 +42,7 @@ data class AddTransactionState(
     val selectedPaymentType: PaymentType = PaymentType.ELECTRONIC,
     val mealVoucherCount: String = "0",
     val mealVoucherValue: Double = 5.29,
+    val mealVoucherDifference: String = "0",
 
     // Dati disponibili
     val categories: List<Category> = emptyList(),
@@ -81,12 +82,20 @@ data class AddTransactionState(
                 }
 
     /**
-     * Importo da persistere sulla transazione. Con pagamento in Buoni Pasto, [amount]
-     * rappresenta già il totale del pagamento (buoni + differenza), inserito
-     * direttamente dall'utente: non va sommato al subtotale dei buoni.
+     * Importo da persistere sulla transazione.
+     *
+     * Calcolo dipende dal tipo di pagamento:
+     * - MEAL_VOUCHERS: (mealVoucherCount × mealVoucherValue) + mealVoucherDifference
+     * - Altro: amount (inserito direttamente)
      */
     val totalAmount: Double
-        get() = amount.toDoubleOrNull() ?: 0.0
+        get() = if (isMealVouchersPayment) {
+            val voucherSubtotal = (mealVoucherCount.toIntOrNull() ?: 0) * mealVoucherValue
+            val difference = mealVoucherDifference.toDoubleOrNull() ?: 0.0
+            voucherSubtotal + difference
+        } else {
+            amount.toDoubleOrNull() ?: 0.0
+        }
 
     /**
      * Differenza pagata con altri mezzi rispetto al valore coperto dai buoni pasto.

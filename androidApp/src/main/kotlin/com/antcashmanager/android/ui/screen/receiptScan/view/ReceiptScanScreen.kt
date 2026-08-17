@@ -61,8 +61,10 @@ import com.antcashmanager.android.ui.screen.receiptScan.ReceiptScanViewModel
 import com.antcashmanager.android.ui.screen.transactions.addImport.view.CategorySelectionDialog
 import com.antcashmanager.android.ui.screen.transactions.addImport.view.PaymentTypeSelectionDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.android.util.ImageCompressionHelper
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -247,7 +249,18 @@ private fun CaptureStep(
             val bytes = tempFile.readBytes()
             if (bytes.isNotEmpty()) {
                 analyticsManager.logEvent("receipt_scan_captured")
-                onImageBytes(bytes)
+
+                // ▼ AGGIUNTO: Comprimi immagine prima di passare a OCR
+                try {
+                    val compressedBytes = ImageCompressionHelper.compressImage(bytes)
+                    onImageBytes(compressedBytes)
+                } catch (e: Exception) {
+                    Logger.e(throwable = e) { "Image compression failed, using original" }
+                    // Fallback: usa comunque l'immagine originale (downsampling in
+                    // MlKitReceiptOcrService gestirà il ridimensionamento)
+                    onImageBytes(bytes)
+                }
+                // ▲ FINE AGGIUNTO
             }
         }
     }
@@ -270,7 +283,18 @@ private fun CaptureStep(
             }
             if (bytes != null && bytes.isNotEmpty()) {
                 analyticsManager.logEvent("receipt_scan_captured")
-                onImageBytes(bytes)
+
+                // ▼ AGGIUNTO: Comprimi immagine prima di passare a OCR
+                try {
+                    val compressedBytes = ImageCompressionHelper.compressImage(bytes)
+                    onImageBytes(compressedBytes)
+                } catch (e: Exception) {
+                    Logger.e(throwable = e) { "Image compression failed, using original" }
+                    // Fallback: usa comunque l'immagine originale (downsampling in
+                    // MlKitReceiptOcrService gestirà il ridimensionamento)
+                    onImageBytes(bytes)
+                }
+                // ▲ FINE AGGIUNTO
             }
         }
     }
