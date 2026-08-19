@@ -1,18 +1,18 @@
 package com.antcashmanager.android.ui.screen.transactions.addImport
 
-import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.antcashmanager.android.R
+import com.antcashmanager.android.test.base.BaseInstrumentationTest
 import com.antcashmanager.android.ui.screen.transactions.addImport.view.CategorySelectionStep
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.Category
-import org.junit.Rule
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -23,11 +23,13 @@ import org.junit.runner.RunWith
  * - Le categorie siano mostrate nella lista
  * - Il click su una categoria chiami il callback onSelectCategory
  * - Il pulsante back chiami il callback onCancel
+ *
+ * Extends [BaseInstrumentationTest] which automatically:
+ * - Disables the tutorial overlay
+ * - Provides common test helpers
  */
 @RunWith(AndroidJUnit4::class)
-class CategorySelectionStepTest {
-    @get:Rule
-    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+class CategorySelectionStepTest : BaseInstrumentationTest() {
 
     private val mockCategories = listOf(
         Category(1, "Food", "🍔", 0xFFFF6B6B, "EXPENSE"),
@@ -47,6 +49,9 @@ class CategorySelectionStepTest {
                 )
             }
         }
+
+        // Wait for composables to fully render
+        composeTestRule.waitForIdle()
 
         // Verifica che tutte le categorie siano visualizzate
         composeTestRule.onNodeWithText("Food").assertIsDisplayed()
@@ -76,7 +81,7 @@ class CategorySelectionStepTest {
         composeTestRule.waitForIdle()
 
         // Verifica che il callback sia stato chiamato con l'ID corretto
-        assert(selectedCategoryId == 1L) { "Expected category id 1, but was $selectedCategoryId" }
+        assertEquals("Should select Food category (id=1)", 1L, selectedCategoryId)
     }
 
     @Test
@@ -123,7 +128,7 @@ class CategorySelectionStepTest {
         composeTestRule.waitForIdle()
 
         // Verifica che il callback sia stato chiamato
-        assert(cancelCalled) { "Expected onCancel to be called" }
+        assertTrue("onCancel callback should be called when back button clicked", cancelCalled)
     }
 
     @Test

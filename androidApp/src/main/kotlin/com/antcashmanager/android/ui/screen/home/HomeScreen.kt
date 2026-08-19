@@ -46,6 +46,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -381,6 +382,9 @@ internal fun HomeContent(
         state.isLoading -> LoadingState()
         else -> {
             Scaffold(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .testTag("home_screen"),
                 contentWindowInsets = WindowInsets(0, 0, 0, 0),
                 floatingActionButton = {
                     // Scroll to top button
@@ -406,7 +410,6 @@ internal fun HomeContent(
                         }
                     }
                 },
-                modifier = modifier.fillMaxSize()
             ) { innerPadding ->
                 LazyColumn(
                     state = listState,
@@ -419,78 +422,88 @@ internal fun HomeContent(
                         ),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    // Date Range Filter
-                    item {
-                        DateRangeFilter(
-                            selectedPresetIndex = state.selectedPresetIndex,
-                            presets = HomeState.PRESETS,
-                            dateRangeFrom = state.dateRangeFrom,
-                            dateRangeTo = state.dateRangeTo,
-                            expanded = dateFilterExpanded,
-                            onExpandedChange = { expanded ->
-                                coroutineScope.launch {
-                                    settingsRepository.setDateFilterExpanded(expanded)
-                                }
-                            },
-                            onPresetSelected = { presetIndex ->
-                                val params = android.os.Bundle().apply {
-                                    putString("preset", presetIndex.toString())
-                                }
-                                analyticsManager.logEvent("home_date_filter_changed", params)
-                                onEvent(HomeEvent.SelectPreset(presetIndex))
-                            },
-                            onFromDateEdit = { showFromDatePicker = true },
-                            onToDateEdit = { showToDatePicker = true },
-                        )
+                    // Date Range Filter - nascosto quando la ricerca è attiva
+                    if (!state.isSearchExpanded) {
+                        item {
+                            DateRangeFilter(
+                                selectedPresetIndex = state.selectedPresetIndex,
+                                presets = HomeState.PRESETS,
+                                dateRangeFrom = state.dateRangeFrom,
+                                dateRangeTo = state.dateRangeTo,
+                                expanded = dateFilterExpanded,
+                                onExpandedChange = { expanded ->
+                                    coroutineScope.launch {
+                                        settingsRepository.setDateFilterExpanded(expanded)
+                                    }
+                                },
+                                onPresetSelected = { presetIndex ->
+                                    val params = android.os.Bundle().apply {
+                                        putString("preset", presetIndex.toString())
+                                    }
+                                    analyticsManager.logEvent("home_date_filter_changed", params)
+                                    onEvent(HomeEvent.SelectPreset(presetIndex))
+                                },
+                                onFromDateEdit = { showFromDatePicker = true },
+                                onToDateEdit = { showToDatePicker = true },
+                            )
+                        }
                     }
 
-                    visibleTopCardsOrder.forEach { topCardType ->
-                        when (topCardType) {
-                            HomeTopCardType.BALANCE -> item(key = topCardType.storageKey) {
-                                BalanceCard(
-                                    balance = state.balance,
-                                    showPaymentTypeBreakdown = showPaymentTypeBreakdown,
-                                    balanceByPaymentType = state.balanceByPaymentType,
-                                    reduceMotion = reduceMotion,
-                                )
-                            }
+                    // Top Cards (Saldo, Entrate/Uscite, Quick Insights) - nascosti quando la ricerca è attiva
+                    if (!state.isSearchExpanded) {
+                        visibleTopCardsOrder.forEach { topCardType ->
+                            when (topCardType) {
+                                HomeTopCardType.BALANCE -> item(key = topCardType.storageKey) {
+                                    BalanceCard(
+                                        balance = state.balance,
+                                        showPaymentTypeBreakdown = showPaymentTypeBreakdown,
+                                        balanceByPaymentType = state.balanceByPaymentType,
+                                        reduceMotion = reduceMotion,
+                                    )
+                                }
 
-                            HomeTopCardType.INCOME_EXPENSE -> item(key = topCardType.storageKey) {
-                                IncomeExpenseRow(
-                                    totalIncome = state.totalIncome,
-                                    totalExpense = state.totalExpense,
-                                )
-                            }
+                                HomeTopCardType.INCOME_EXPENSE -> item(key = topCardType.storageKey) {
+                                    IncomeExpenseRow(
+                                        totalIncome = state.totalIncome,
+                                        totalExpense = state.totalExpense,
+                                    )
+                                }
 
-                            HomeTopCardType.QUICK_INSIGHTS -> item(key = topCardType.storageKey) {
-                                QuickInsightsCard(
-                                    totalIncome = state.totalIncome,
-                                    totalExpense = state.totalExpense,
-                                    transactionCount = state.filteredTransactions.size,
-                                    netBalance = netBalance,
-                                    dailyAverageExpense = dailyAverageExpense,
-                                    biggestExpenseCategory = biggestExpense?.category,
-                                    biggestExpenseAmount = biggestExpense?.amount,
-                                )
+                                HomeTopCardType.QUICK_INSIGHTS -> item(key = topCardType.storageKey) {
+                                    QuickInsightsCard(
+                                        totalIncome = state.totalIncome,
+                                        totalExpense = state.totalExpense,
+                                        transactionCount = state.filteredTransactions.size,
+                                        netBalance = netBalance,
+                                        dailyAverageExpense = dailyAverageExpense,
+                                        biggestExpenseCategory = biggestExpense?.category,
+                                        biggestExpenseAmount = biggestExpense?.amount,
+                                    )
+                                }
                             }
                         }
                     }
 
-                    // Recent Transactions header + Search bar
-                    // SearchComponent appare sotto il titolo quando expanded dalla top bar
+                    // Recent Transactions header
                     item {
-                        Column {
-                            AppText(
-                                text = stringResource(
-                                    R.string.home_recent_transactions_count,
-                                    state.filteredTransactions.size,
-                                ),
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.SemiBold,
-                                color = MaterialTheme.colorScheme.onBackground,
-                            )
+                        AppText(
+                            text = stringResource(
+                                R.string.home_recent_transactions_count,
+                                state.filteredTransactions.size,
+                            ),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            modifier = Modifier.testTag("recent_transactions_count"),
+                        )
+                    }
+
+                    // Search Component - renderizzato condizionalmente come item separato
+                    // Pattern replicato da TransactionsScreen per fix timing issue del FocusRequester
+                    if (state.isSearchExpanded) {
+                        item {
                             SearchComponent(
-                                isVisible = state.isSearchExpanded,
+                                isVisible = true,
                                 searchQuery = state.searchQuery,
                                 onSearchQueryChange = { newQuery ->
                                     if (newQuery.isNotEmpty() && state.searchQuery.isEmpty()) {
@@ -501,6 +514,7 @@ internal fun HomeContent(
                                     onEvent(HomeEvent.UpdateSearchQuery(newQuery))
                                 },
                                 searchSuggestions = state.searchSuggestions,
+                                modifier = Modifier.testTag("search_component"),
                             )
                         }
                     }
@@ -854,6 +868,35 @@ private fun TransactionDetailsDialogExpensePreview() {
                 tags = "food,groceries",
             ),
             onDismiss = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "HomeScreen - Search Expanded")
+@Composable
+private fun HomeContentSearchExpandedPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        val navController = androidx.navigation.compose.rememberNavController()
+        HomeContent(
+            state = HomeState(
+                transactions = sampleTransactions,
+                filteredTransactions = sampleTransactions,
+                recentTransactions = sampleTransactions,
+                totalIncome = 2500.0,
+                totalExpense = 205.5,
+                balance = 2294.5,
+                isSearchExpanded = true,
+                searchQuery = "gro",
+                searchSuggestions = listOf("Groceries"),
+                balanceByPaymentType = mapOf(
+                    PaymentType.ELECTRONIC to 1500.0,
+                    PaymentType.CASH to 794.5,
+                ),
+            ),
+            onEvent = {},
+            settingsRepository = MockHomeSettingsRepository(),
+            navController = navController,
+            modifier = Modifier,
         )
     }
 }
