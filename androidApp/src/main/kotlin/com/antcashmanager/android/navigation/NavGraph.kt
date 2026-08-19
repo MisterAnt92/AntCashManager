@@ -440,7 +440,9 @@ fun AntCashManagerNavHost() {
                                     if (screenHeaderConfig.showSearchIcon) {
                                         IconButton(
                                             onClick = { screenHeaderConfig.onSearchClick?.invoke() },
-                                            modifier = Modifier.size(40.dp),
+                                            modifier = Modifier
+                                                .size(40.dp)
+                                                .testTag("header_search_icon"),
                                         ) {
                                             Icon(
                                                 imageVector = Icons.Default.Search,

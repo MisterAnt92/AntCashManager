@@ -284,7 +284,14 @@ class HomeViewModel(
     }
 
     private fun toggleSearchExpanded() {
-        _filterState.update { it.copy(isSearchExpanded = !it.isSearchExpanded) }
+        _filterState.update {
+            it.copy(
+                isSearchExpanded = !it.isSearchExpanded,
+                // Cancella il searchQuery quando la ricerca viene disabilitata
+                // per tornare ai dati completi filtrati solo per data
+                searchQuery = if (it.isSearchExpanded) "" else it.searchQuery
+            )
+        }
     }
 
     private fun observeSavedDateFilter() {
