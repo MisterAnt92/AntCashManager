@@ -1,9 +1,7 @@
 package com.antcashmanager.android.ui.screen.transactions.addImport
 
-import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -12,13 +10,15 @@ import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.antcashmanager.android.R
+import com.antcashmanager.android.test.base.BaseInstrumentationTest
 import com.antcashmanager.android.ui.screen.transactions.addImport.event.AddTransactionEvent
 import com.antcashmanager.android.ui.screen.transactions.addImport.view.DetailsStep
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.TransactionType
-import org.junit.Rule
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -31,11 +31,13 @@ import org.junit.runner.RunWith
  * - Il campo amount sia nascosto quando PaymentType è MEAL_VOUCHERS
  * - I campi ricorrenza siano visibili quando isRecurring è true
  * - I callback onEvent e onNavigateBack siano chiamati correttamente
+ *
+ * Extends [BaseInstrumentationTest] which automatically:
+ * - Disables the tutorial overlay
+ * - Provides common test helpers
  */
 @RunWith(AndroidJUnit4::class)
-class DetailsStepTest {
-    @get:Rule
-    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+class DetailsStepTest : BaseInstrumentationTest() {
 
     private val mockCategory = Category(1, "Food", "🍔", 0xFFFF6B6B, "EXPENSE")
     private val mockCategoryMealVouchers =
@@ -179,7 +181,7 @@ class DetailsStepTest {
         composeTestRule.waitForIdle()
 
         // Verifica che il callback sia stato chiamato
-        assert(backClicked) { "Expected onNavigateBack to be called" }
+        assertTrue("onNavigateBack callback should be called", backClicked)
     }
 
     @Test
@@ -210,7 +212,7 @@ class DetailsStepTest {
         composeTestRule.waitForIdle()
 
         // Verifica che un evento sia stato ricevuto
-        assert(eventReceived != null) { "Expected onEvent to be called" }
+        assertNotNull("onEvent callback should be called with an event", eventReceived)
     }
 
     @Test

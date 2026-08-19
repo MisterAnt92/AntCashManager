@@ -1,23 +1,23 @@
 package com.antcashmanager.android.ui.screen.settingsData
 
-import android.content.Context
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import org.junit.Before
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.ByteArrayInputStream
 import java.nio.charset.StandardCharsets
 
+/**
+ * Tests for character encoding handling in backup/restore functionality.
+ * Verifies that the app correctly handles:
+ * - UTF-8 encoding (default, supports all Unicode)
+ * - ISO-8859-1 encoding (fallback for legacy backups)
+ * - Character set fallback logic
+ * - Special characters, emojis, and multiline JSON
+ */
 @RunWith(AndroidJUnit4::class)
 class CharsetHandlingTest {
-
-    private lateinit var context: Context
-
-    @Before
-    fun setUp() {
-        context = ApplicationProvider.getApplicationContext()
-    }
 
     @Test
     fun readBackupFile_shouldHandleUTF8Encoding() {
@@ -27,7 +27,7 @@ class CharsetHandlingTest {
 
         val result = inputStream.bufferedReader(StandardCharsets.UTF_8).use { it.readText() }
 
-        assert(result == jsonContent)
+        assertEquals("UTF-8 content should match", jsonContent, result)
     }
 
     @Test
@@ -38,7 +38,7 @@ class CharsetHandlingTest {
 
         val result = inputStream.bufferedReader(StandardCharsets.ISO_8859_1).use { it.readText() }
 
-        assert(result == jsonContent)
+        assertEquals("UTF-8 content should match", jsonContent, result)
     }
 
     @Test
@@ -55,7 +55,7 @@ class CharsetHandlingTest {
             ByteArrayInputStream(bytes).bufferedReader(StandardCharsets.ISO_8859_1).use { it.readText() }
         }.getOrNull()
 
-        assert(result == jsonContent)
+        assertEquals("UTF-8 content should match", jsonContent, result)
     }
 
     @Test
@@ -66,7 +66,7 @@ class CharsetHandlingTest {
 
         val result = inputStream.bufferedReader(StandardCharsets.UTF_8).use { it.readText() }
 
-        assert(result == jsonContent)
+        assertEquals("UTF-8 content should match", jsonContent, result)
     }
 
     @Test
@@ -82,7 +82,7 @@ class CharsetHandlingTest {
 
         val result = inputStream.bufferedReader(StandardCharsets.UTF_8).use { it.readText() }
 
-        assert(result == jsonContent)
+        assertEquals("UTF-8 content should match", jsonContent, result)
     }
 
     @Test
@@ -101,8 +101,8 @@ class CharsetHandlingTest {
 
         val result = inputStream.bufferedReader(StandardCharsets.UTF_8).use { it.readText() }
 
-        assert(result == largeJson)
-        assert(result.contains("""Transazione 99"""))
+        assertEquals("Large JSON content should match", largeJson, result)
+        assertTrue("Should contain last transaction", result.contains("""Transazione 99"""))
     }
 
     @Test
@@ -113,7 +113,7 @@ class CharsetHandlingTest {
 
         val result = inputStream.bufferedReader(StandardCharsets.UTF_8).use { it.readText() }
 
-        assert(result == emptyContent)
+        assertEquals("Empty file should result in empty string", emptyContent, result)
     }
 
     @Test
@@ -124,6 +124,6 @@ class CharsetHandlingTest {
 
         val result = inputStream.bufferedReader(StandardCharsets.UTF_8).use { it.readText() }
 
-        assert(result == jsonWithSpecialChars)
+        assertEquals("JSON with special chars and emoji should match", jsonWithSpecialChars, result)
     }
 }

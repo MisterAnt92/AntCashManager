@@ -48,6 +48,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -58,7 +59,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.antcashmanager.android.BuildConfig
+import co.touchlab.kermit.Logger
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.util.AppExitManager.safeFinish
 import com.antcashmanager.android.ui.components.animation.AntEasterEggAnimation
@@ -196,6 +197,7 @@ fun AntCashManagerNavHost() {
                         shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
                     ) {
                         NavigationBar(
+                            modifier = Modifier.testTag("bottom_nav_bar"),
                             containerColor = MaterialTheme.colorScheme.surface,
                             tonalElevation = 0.dp,
                         ) {
@@ -217,6 +219,7 @@ fun AntCashManagerNavHost() {
                                             restoreState = true
                                         }
                                     },
+                                    modifier = Modifier.testTag("nav_${item.route}"),
                                     icon = {
                                         Icon(
                                             item.icon,
@@ -437,7 +440,9 @@ fun AntCashManagerNavHost() {
                                     if (screenHeaderConfig.showSearchIcon) {
                                         IconButton(
                                             onClick = { screenHeaderConfig.onSearchClick?.invoke() },
-                                            modifier = Modifier.size(40.dp),
+                                            modifier = Modifier
+                                                .size(40.dp)
+                                                .testTag("header_search_icon"),
                                         ) {
                                             Icon(
                                                 imageVector = Icons.Default.Search,
@@ -561,9 +566,15 @@ fun AntCashManagerNavHost() {
 
         AppExitConfirmationDialog(
             isVisible = showExitDialog,
-            onDismiss = { showExitDialog = false },
-            onConfirmExit = {
+            onDismiss = {
+                Logger.d(tag = "AppExit") { "Exit dialog dismissed" }
                 showExitDialog = false
+            },
+            onConfirmExit = {
+                // Dialog handles its own state and timing synchronization
+                // This callback is invoked after dialog dismissal delay (300ms)
+                // to prevent race conditions on Android 16 (API 35+)
+                Logger.d(tag = "AppExit") { "Exit confirmed, calling Activity.safeFinish()" }
                 context.findActivity()?.safeFinish()
             },
         )
