@@ -48,6 +48,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -196,6 +197,7 @@ fun AntCashManagerNavHost() {
                         shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
                     ) {
                         NavigationBar(
+                            modifier = Modifier.testTag("bottom_nav_bar"),
                             containerColor = MaterialTheme.colorScheme.surface,
                             tonalElevation = 0.dp,
                         ) {
@@ -217,6 +219,7 @@ fun AntCashManagerNavHost() {
                                             restoreState = true
                                         }
                                     },
+                                    modifier = Modifier.testTag("nav_${item.route}"),
                                     icon = {
                                         Icon(
                                             item.icon,

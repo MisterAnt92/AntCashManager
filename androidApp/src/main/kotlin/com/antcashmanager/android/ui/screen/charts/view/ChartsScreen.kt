@@ -60,6 +60,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -501,6 +502,7 @@ internal fun ChartsContent(
     }
 
     Scaffold(
+        modifier = Modifier.testTag("charts_screen"),
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { padding ->
         Column(

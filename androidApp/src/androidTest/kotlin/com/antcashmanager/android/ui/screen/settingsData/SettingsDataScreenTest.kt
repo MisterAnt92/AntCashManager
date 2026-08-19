@@ -1,26 +1,22 @@
 package com.antcashmanager.android.ui.screen.settingsData
 
-import androidx.activity.ComponentActivity
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalInspectionMode
-import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.antcashmanager.android.R
+import com.antcashmanager.android.test.base.BaseInstrumentationTest
 import com.antcashmanager.android.ui.screen.settings.dataManagement.SettingsDataContent
 import com.antcashmanager.android.ui.screen.settings.dataManagement.SettingsDataState
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import org.junit.Assert.assertEquals
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class SettingsDataScreenTest {
-    @get:Rule
-    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+class SettingsDataScreenTest : BaseInstrumentationTest() {
 
     @Test
     fun restoreData_shouldReportError_whenFilePickerUnavailable() {

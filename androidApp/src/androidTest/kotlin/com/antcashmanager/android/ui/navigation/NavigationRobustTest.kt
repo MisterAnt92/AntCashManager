@@ -1,19 +1,17 @@
 package com.antcashmanager.android.ui.navigation
 
-import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.antcashmanager.android.navigation.AntCashManagerNavHost
+import com.antcashmanager.android.test.base.BaseInstrumentationTest
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * Robust navigation tests using TestTag selectors.
+ * Robust navigation tests using TestTag selectors and BaseInstrumentationTest.
  *
  * Tests core navigation functionality across app sections:
  * - Bottom navigation bar visibility
@@ -21,11 +19,20 @@ import org.junit.runner.RunWith
  * - Screen content display verification
  *
  * Uses TestTag selectors for stability (not affected by UI text changes).
+ *
+ * **Tutorial Handling**:
+ * Extends [BaseInstrumentationTest] which automatically disables the tutorial overlay
+ * by mocking SettingsRepository. This ensures navigation buttons are always accessible.
+ *
+ * **Benefits of Using BaseInstrumentationTest**:
+ * - Tutorial automatically disabled
+ * - SettingsRepository mocked with sensible defaults
+ * - Common helper methods (getString, getActivity)
+ * - Centralized test infrastructure
+ * - No test setup boilerplate
  */
 @RunWith(AndroidJUnit4::class)
-class NavigationRobustTest {
-    @get:Rule
-    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+class NavigationRobustTest : BaseInstrumentationTest() {
 
     @Test
     fun navigation_bottomNavBar_shouldBeVisible() {
