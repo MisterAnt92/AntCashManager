@@ -817,6 +817,14 @@ private fun DataManagementSection(
                 autoBackupFolderUri = autoBackupFolderUri,
                 onSelectBackupPath = onSelectBackupPathAction,
             )
+
+            // Google Drive status section (only when Google Drive is configured)
+            if (autoBackupDestination == BackupDestination.GOOGLE_DRIVE && !googleDriveUserEmail.isNullOrBlank()) {
+                VerticalSpacer(SpacingSize.XS)
+                AutoBackupGoogleDriveStatusSection(
+                    googleDriveUserEmail = googleDriveUserEmail,
+                )
+            }
         }
 
         AppCard(
@@ -931,6 +939,26 @@ private fun AutoBackupPathSection(
         iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
         showChevron = true,
         onClick = onSelectBackupPath,
+    )
+}
+
+/**
+ * Mostra lo status di Google Drive quando è configurato per il backup automatico.
+ * Visualizza: "Backup configurato per Google Drive (email@gmail.com)"
+ */
+@Composable
+private fun AutoBackupGoogleDriveStatusSection(
+    googleDriveUserEmail: String? = null,
+) {
+    if (googleDriveUserEmail.isNullOrBlank()) return
+
+    AppCard(
+        title = stringResource(R.string.settings_auto_backup_google_drive_configured),
+        subtitle = googleDriveUserEmail,
+        leadingIcon = Icons.Default.CloudUpload,
+        iconBackgroundColor = MaterialTheme.colorScheme.secondaryContainer,
+        iconTint = MaterialTheme.colorScheme.onSecondaryContainer,
+        showChevron = false,
     )
 }
 

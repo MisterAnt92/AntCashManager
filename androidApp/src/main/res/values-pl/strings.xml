@@ -312,6 +312,7 @@
     <string name="settings_auto_backup_path_button">Ścieżka kopii zapasowej</string>
     <string name="settings_auto_backup_path_not_selected">Nie wybrano folderu</string>
     <string name="settings_auto_backup_path_subtitle">Wybierz, gdzie mają być zapisywane automatyczne kopie zapasowe</string>
+    <string name="settings_auto_backup_google_drive_configured">Kopia zapasowa skonfigurowana dla Google Drive</string>
 
 
     <!-- Privacy Policy -->

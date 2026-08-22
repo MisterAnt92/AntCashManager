@@ -283,6 +283,7 @@
     <string name="settings_auto_backup_path_button">Ruta de Copia de Seguridad</string>
     <string name="settings_auto_backup_path_not_selected">Ninguna carpeta seleccionada</string>
     <string name="settings_auto_backup_path_subtitle">Elige dónde guardar las copias de seguridad automáticas</string>
+    <string name="settings_auto_backup_google_drive_configured">Copia de seguridad configurada para Google Drive</string>
 
 
     <string name="privacy_policy_title">Pol\u00edtica de privacidad</string>

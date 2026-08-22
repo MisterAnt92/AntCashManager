@@ -312,6 +312,7 @@
     <string name="settings_auto_backup_path_button">備份路徑</string>
     <string name="settings_auto_backup_path_not_selected">未選擇資料夾</string>
     <string name="settings_auto_backup_path_subtitle">選擇自動備份的保存位置</string>
+    <string name="settings_auto_backup_google_drive_configured">已為Google Drive配置備份</string>
 
 
     <!-- Privacy Policy -->

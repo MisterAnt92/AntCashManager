@@ -312,6 +312,7 @@
     <string name="settings_auto_backup_path_button">Путь резервной копии</string>
     <string name="settings_auto_backup_path_not_selected">Папка не выбрана</string>
     <string name="settings_auto_backup_path_subtitle">Выберите, где сохранять автоматические резервные копии</string>
+    <string name="settings_auto_backup_google_drive_configured">Резервная копия настроена для Google Drive</string>
 
 
     <!-- Privacy Policy -->

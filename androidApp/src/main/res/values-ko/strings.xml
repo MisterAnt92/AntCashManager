@@ -312,6 +312,7 @@
     <string name="settings_auto_backup_path_button">백업 경로</string>
     <string name="settings_auto_backup_path_not_selected">선택된 폴더 없음</string>
     <string name="settings_auto_backup_path_subtitle">자동 백업을 저장할 위치 선택</string>
+    <string name="settings_auto_backup_google_drive_configured">Google Drive에 대해 구성된 백업</string>
 
 
     <!-- Privacy Policy -->

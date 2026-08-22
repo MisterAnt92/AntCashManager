@@ -311,6 +311,7 @@
     <string name="settings_auto_backup_path_button">बैकअप पथ</string>
     <string name="settings_auto_backup_path_not_selected">कोई फ़ोल्डर चयनित नहीं</string>
     <string name="settings_auto_backup_path_subtitle">स्वचालित बैकअप कहाँ सहेजे जाएं यह चुनें</string>
+    <string name="settings_auto_backup_google_drive_configured">Google Drive के लिए कॉन्फ़िगर किया गया बैकअप</string>
 
 
     <!-- Privacy Policy -->

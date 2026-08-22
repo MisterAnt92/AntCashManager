@@ -284,6 +284,7 @@
     <string name="settings_auto_backup_path_button">Chemin de Sauvegarde</string>
     <string name="settings_auto_backup_path_not_selected">Aucun dossier sélectionné</string>
     <string name="settings_auto_backup_path_subtitle">Choisissez où enregistrer les sauvegardes automatiques</string>
+    <string name="settings_auto_backup_google_drive_configured">Sauvegarde configurée pour Google Drive</string>
 
 
     <string name="privacy_policy_title">Politique de confidentialit\u00e9</string>

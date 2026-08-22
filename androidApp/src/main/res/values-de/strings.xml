@@ -306,6 +306,7 @@
     <string name="settings_auto_backup_path_button">Sicherungspfad</string>
     <string name="settings_auto_backup_path_not_selected">Kein Ordner ausgewählt</string>
     <string name="settings_auto_backup_path_subtitle">Wählen Sie, wo automatische Sicherungen gespeichert werden sollen</string>
+    <string name="settings_auto_backup_google_drive_configured">Sicherung für Google Drive konfiguriert</string>
 
 
     <string name="privacy_policy_title">Datenschutzrichtlinie</string>

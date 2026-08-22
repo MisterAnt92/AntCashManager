@@ -318,6 +318,7 @@
     <string name="settings_auto_backup_path_button">Backup Path</string>
     <string name="settings_auto_backup_path_not_selected">No folder selected</string>
     <string name="settings_auto_backup_path_subtitle">Choose where to save automatic backups</string>
+    <string name="settings_auto_backup_google_drive_configured">Backup configured for Google Drive</string>
 
     <!-- Privacy Policy -->
     <string name="privacy_policy_title">Privacy Policy</string>
