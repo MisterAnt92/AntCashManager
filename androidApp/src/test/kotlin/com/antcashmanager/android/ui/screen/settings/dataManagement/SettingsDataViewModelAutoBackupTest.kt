@@ -7,8 +7,13 @@ import com.antcashmanager.android.work.AutoBackupScheduler
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.flow.flowOf
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
@@ -163,8 +168,8 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
             googleSignInManager = googleSignInManager,
         )
 
-        viewModel.state.value.autoBackupFolderUri.shouldBe(testUri)
-        viewModel.state.value.autoBackupEnabled.shouldBe(true)
+        assertEquals(testUri, viewModel.state.value.autoBackupFolderUri)
+        assertTrue(viewModel.state.value.autoBackupEnabled)
     }
 
     @Test
@@ -172,22 +177,15 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
         val settingsRepositoryNoUri: SettingsRepository = mockk(relaxed = true)
 
         // Mock the flows
-        io.mockk.coEvery { settingsRepositoryNoUri.getAutoBackupFolderUri() } returns
-            kotlinx.coroutines.flow.flowOf(null)
-        io.mockk.coEvery { settingsRepositoryNoUri.getAutoBackupEnabled() } returns
-            kotlinx.coroutines.flow.flowOf(true)
-        io.mockk.coEvery { settingsRepositoryNoUri.getLastBackupTimestamp() } returns
-            kotlinx.coroutines.flow.flowOf(null)
-        io.mockk.coEvery { settingsRepositoryNoUri.getLastRestoreTimestamp() } returns
-            kotlinx.coroutines.flow.flowOf(null)
-        io.mockk.coEvery { settingsRepositoryNoUri.getSuggestionsEnabled() } returns
-            kotlinx.coroutines.flow.flowOf(false)
-        io.mockk.coEvery { settingsRepositoryNoUri.getDataEncryptionEnabled() } returns
-            kotlinx.coroutines.flow.flowOf(false)
-        io.mockk.coEvery { settingsRepositoryNoUri.getAutoBackupDestination() } returns
-            kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.BackupDestination.LOCAL)
-        io.mockk.coEvery { settingsRepositoryNoUri.getGoogleDriveUserEmail() } returns
-            kotlinx.coroutines.flow.flowOf(null)
+        coEvery { settingsRepositoryNoUri.getAutoBackupFolderUri() } returns flowOf(null)
+        coEvery { settingsRepositoryNoUri.getAutoBackupEnabled() } returns flowOf(true)
+        coEvery { settingsRepositoryNoUri.getLastBackupTimestamp() } returns flowOf(null)
+        coEvery { settingsRepositoryNoUri.getLastRestoreTimestamp() } returns flowOf(null)
+        coEvery { settingsRepositoryNoUri.getSuggestionsEnabled() } returns flowOf(false)
+        coEvery { settingsRepositoryNoUri.getDataEncryptionEnabled() } returns flowOf(false)
+        coEvery { settingsRepositoryNoUri.getAutoBackupDestination() } returns
+            flowOf(com.antcashmanager.domain.model.BackupDestination.LOCAL)
+        coEvery { settingsRepositoryNoUri.getGoogleDriveUserEmail() } returns flowOf(null)
 
         val viewModel = SettingsDataViewModel(
             settingsRepository = settingsRepositoryNoUri,
@@ -198,7 +196,7 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
             googleSignInManager = googleSignInManager,
         )
 
-        viewModel.state.value.autoBackupFolderUri.shouldBeNull()
-        viewModel.state.value.autoBackupEnabled.shouldBe(true)
+        assertNull(viewModel.state.value.autoBackupFolderUri)
+        assertTrue(viewModel.state.value.autoBackupEnabled)
     }
 }

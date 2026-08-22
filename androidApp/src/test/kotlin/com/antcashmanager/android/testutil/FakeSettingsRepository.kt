@@ -68,6 +68,11 @@ open class FakeSettingsRepository : SettingsRepository {
     val widgetOpacity = MutableStateFlow(100)
     val chartCardsOrder = MutableStateFlow("")
     val homeTopCardsOrder = MutableStateFlow("")
+    val autoBackupEnabled = MutableStateFlow(false)
+    val autoBackupDestination = MutableStateFlow(BackupDestination.LOCAL)
+    val autoBackupFolderUri = MutableStateFlow<String?>(null)
+    val googleDriveFolderId = MutableStateFlow<String?>(null)
+    val googleDriveUserEmail = MutableStateFlow<String?>(null)
 
     override fun getTheme(): Flow<AppTheme> = theme
     override suspend fun setTheme(theme: AppTheme) {
@@ -233,36 +238,24 @@ open class FakeSettingsRepository : SettingsRepository {
         lastRestoreTimestamp.value = timestamp
     }
 
-    override fun getAutoBackupEnabled(): Flow<Boolean> {
-        TODO("Not yet implemented")
-    }
-
+    override fun getAutoBackupEnabled(): Flow<Boolean> = autoBackupEnabled
     override suspend fun setAutoBackupEnabled(enabled: Boolean) {
-        TODO("Not yet implemented")
+        autoBackupEnabled.value = enabled
     }
 
-    override fun getAutoBackupFolderUri(): Flow<String?> {
-        TODO("Not yet implemented")
-    }
-
+    override fun getAutoBackupFolderUri(): Flow<String?> = autoBackupFolderUri
     override suspend fun setAutoBackupFolderUri(uri: String?) {
-        TODO("Not yet implemented")
+        autoBackupFolderUri.value = uri
     }
 
-    override fun getAutoBackupDestination(): Flow<BackupDestination> {
-        TODO("Not yet implemented")
-    }
-
+    override fun getAutoBackupDestination(): Flow<BackupDestination> = autoBackupDestination
     override suspend fun setAutoBackupDestination(destination: BackupDestination) {
-        TODO("Not yet implemented")
+        autoBackupDestination.value = destination
     }
 
-    override fun getGoogleDriveFolderId(): Flow<String?> {
-        TODO("Not yet implemented")
-    }
-
+    override fun getGoogleDriveFolderId(): Flow<String?> = googleDriveFolderId
     override suspend fun setGoogleDriveFolderId(folderId: String?) {
-        TODO("Not yet implemented")
+        googleDriveFolderId.value = folderId
     }
 
     override fun getGoogleDriveAuthToken(): Flow<String?> {
@@ -281,12 +274,9 @@ open class FakeSettingsRepository : SettingsRepository {
         TODO("Not yet implemented")
     }
 
-    override fun getGoogleDriveUserEmail(): Flow<String?> {
-        TODO("Not yet implemented")
-    }
-
+    override fun getGoogleDriveUserEmail(): Flow<String?> = googleDriveUserEmail
     override suspend fun setGoogleDriveUserEmail(email: String?) {
-        TODO("Not yet implemented")
+        googleDriveUserEmail.value = email
     }
 
     override fun getSuggestionsEnabled(): Flow<Boolean> = suggestionsEnabled
@@ -346,5 +336,10 @@ open class FakeSettingsRepository : SettingsRepository {
         suggestionsClearedAt.value = null
         widgetBackgroundColor.value = 0xFFFFFFFFL
         widgetOpacity.value = 100
+        autoBackupEnabled.value = false
+        autoBackupDestination.value = BackupDestination.LOCAL
+        autoBackupFolderUri.value = null
+        googleDriveFolderId.value = null
+        googleDriveUserEmail.value = null
     }
 }

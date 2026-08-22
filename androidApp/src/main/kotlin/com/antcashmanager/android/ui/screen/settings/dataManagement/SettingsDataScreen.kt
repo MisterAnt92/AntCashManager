@@ -102,7 +102,7 @@ fun SettingsDataScreen(
         onDeleteAllSuggestions = viewModel::deleteAllSuggestions,
         onAutoBackupEnabledChange = viewModel::setAutoBackupEnabled,
         onAutoBackupFolderSelected = viewModel::onAutoBackupFolderSelected,
-        onSelectBackupPath = {},  // Will be set inside SettingsDataContent
+        onSelectBackupPath = {},
         autoBackupEnabled = state.autoBackupEnabled,
         autoBackupFolderUri = state.autoBackupFolderUri,
         autoBackupDestination = state.autoBackupDestination,
@@ -395,7 +395,10 @@ internal fun SettingsDataContent(
                         onAutoBackupDestinationChange = onAutoBackupDestinationChange,
                         onGoogleSignInClick = onGoogleSignInClick,
                         onGoogleSignOutClick = onGoogleSignOutClick,
-                        onSelectBackupPath = { folderPickerLauncher?.launch(null) },
+                        onSelectBackupPathAction = {
+                            onSelectBackupPath()
+                            folderPickerLauncher?.launch(null)
+                        },
                     )
                 }
 
@@ -468,7 +471,10 @@ internal fun SettingsDataContent(
                         onAutoBackupDestinationChange = onAutoBackupDestinationChange,
                         onGoogleSignInClick = onGoogleSignInClick,
                         onGoogleSignOutClick = onGoogleSignOutClick,
-                        onSelectBackupPath = { folderPickerLauncher?.launch(null) },
+                        onSelectBackupPathAction = {
+                            onSelectBackupPath()
+                            folderPickerLauncher?.launch(null)
+                        },
                     )
                 }
                 Column(
@@ -749,7 +755,7 @@ private fun DataManagementSection(
     onAutoBackupDestinationChange: (BackupDestination) -> Unit = {},
     onGoogleSignInClick: () -> Unit = {},
     onGoogleSignOutClick: () -> Unit = {},
-    onSelectBackupPath: () -> Unit = {},
+    onSelectBackupPathAction: () -> Unit = {},
 ) {
     AppCardSectionHeader(title = stringResource(R.string.settings_data_management))
     VerticalSpacer(SpacingSize.XS)
@@ -809,7 +815,7 @@ private fun DataManagementSection(
         if (autoBackupEnabled) {
             AutoBackupPathSection(
                 autoBackupFolderUri = autoBackupFolderUri,
-                onSelectBackupPath = onSelectBackupPath,
+                onSelectBackupPath = onSelectBackupPathAction,
             )
         }
 
