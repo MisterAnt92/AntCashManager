@@ -297,26 +297,25 @@
     <string name="dialog_delete_suggestions_message">从您的交易历史记录（标题、收款人、备注、地点、标签）中构建的建议将被遗忘。新的建议将在您添加交易时再次建立。是否继续？</string>
     <string name="dialog_reset">重置</string>
 
+    <!-- Automatic Backup (Phase 1 & 2) -->
+    <string name="settings_auto_backup">自动备份</string>
+    <string name="settings_auto_backup_subtitle">每周自动备份</string>
+    <string name="settings_auto_backup_weekly_label">自动备份每周进行一次</string>
+    <string name="settings_auto_backup_destination_local">本地</string>
+    <string name="settings_auto_backup_destination_google_drive">Google Drive</string>
+    <string name="settings_auto_backup_google_drive_coming_soon">即将推出</string>
+    <string name="settings_auto_backup_google_drive_sign_in_title">启用Google Drive备份</string>
+    <string name="settings_auto_backup_google_drive_sign_in_message">使用您的Google账户登录以启用Google Drive自动备份。您的数据将被加密并安全存储。</string>
+    <string name="settings_auto_backup_google_drive_sign_in">使用Google登录</string>
+    <string name="settings_auto_backup_google_drive_signing_in">正在登录Google…</string>
+    <string name="settings_auto_backup_google_drive_sign_out">从Google登出</string>
+
     <!-- Privacy Policy -->
     <string name="privacy_policy_title">隐私政策</string>
     <string name="privacy_policy_content">AntCashManager 致力于保护您的隐私。本应用不会向第三方收集或共享个人数据。所有财务数据都存储在您的设备本地，绝不会传输到外部服务器。\n\n您的数据完全保留在您的设备上，并受您控制。我们不使用分析、跟踪或广告服务。\n\n如有任何关于隐私的问题，请通过应用商店列表联系我们。</string>
 
     <!-- Languages -->
     <string name="language_system">系统默认</string>
-    <string name="language_english">English (英语)</string>
-    <string name="language_italian">Italiano (意大利语)</string>
-    <string name="language_french">Français (法语)</string>
-    <string name="language_german">Deutsch (德语)</string>
-    <string name="language_spanish">Español (西班牙语)</string>
-    <string name="language_chinese_simplified">中文（简体）</string>
-    <string name="language_chinese_traditional">中文（繁體）</string>
-    <string name="language_japanese">日本語</string>
-    <string name="language_polish">Polski</string>
-    <string name="language_hindi">हिन्दी (印地语)</string>
-    <string name="language_russian">Русский (俄语)</string>
-    <string name="language_ukrainian">Українська (乌克兰语)</string>
-    <string name="language_korean">한국어 (韩语)</string>
-    <string name="debug_import_started">调试导入已开始</string>
     <string name="back">返回</string>
 
     <!-- Add Transaction Screen -->

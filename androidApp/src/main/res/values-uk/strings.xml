@@ -297,26 +297,25 @@
     <string name="dialog_delete_suggestions_message">Пропозиції, створені на основі вашої історії (назви, платники, нотатки, місця, теги), буде видалено. Нові пропозиції знову накопичуватимуться при додаванні транзакцій. Продовжити?</string>
     <string name="dialog_reset">Скинути</string>
 
+    <!-- Automatic Backup (Phase 1 & 2) -->
+    <string name="settings_auto_backup">Автоматичне резервне копіювання</string>
+    <string name="settings_auto_backup_subtitle">Автоматичне резервне копіювання щотижня</string>
+    <string name="settings_auto_backup_weekly_label">Автоматичне резервне копіювання щотижня</string>
+    <string name="settings_auto_backup_destination_local">Локально</string>
+    <string name="settings_auto_backup_destination_google_drive">Google Drive</string>
+    <string name="settings_auto_backup_google_drive_coming_soon">Найближчим часом</string>
+    <string name="settings_auto_backup_google_drive_sign_in_title">Увімкнути резервне копіювання на Google Drive</string>
+    <string name="settings_auto_backup_google_drive_sign_in_message">Увійдіть за допомогою облікового запису Google, щоб увімкнути автоматичне резервне копіювання на Google Drive. Ваші дані будуть зашифровані та безпечно збережені.</string>
+    <string name="settings_auto_backup_google_drive_sign_in">Увійти через Google</string>
+    <string name="settings_auto_backup_google_drive_signing_in">Вхід до Google…</string>
+    <string name="settings_auto_backup_google_drive_sign_out">Вихід з Google</string>
+
     <!-- Privacy Policy -->
     <string name="privacy_policy_title">Політика конфіденційності</string>
     <string name="privacy_policy_content">AntCashManager прагне захищати вашу конфіденційність. Цей додаток не збирає та не передає особисті дані третім особам. Усі фінансові дані зберігаються локально на вашому пристрої та ніколи не передаються на зовнішні сервери.\n\nВаші дані залишаються повністю на вашому пристрої та під вашим контролем. Ми не використовуємо аналітику, трекери або рекламні послуги.\n\nЗ будь-яких питань щодо конфіденційності, будь ласка, зв\'яжіться з нами через сторінку додатка в магазині.</string>
 
     <!-- Languages -->
     <string name="language_system">Системна за замовчуванням</string>
-    <string name="language_english">English (Англійська)</string>
-    <string name="language_italian">Italiano (Італійська)</string>
-    <string name="language_french">Français (Французька)</string>
-    <string name="language_german">Deutsch (Німецька)</string>
-    <string name="language_spanish">Español (Іспанська)</string>
-    <string name="language_chinese_simplified">Китайська (Спрощена)</string>
-    <string name="language_chinese_traditional">Китайська (Традиційна)</string>
-    <string name="language_japanese">Японська</string>
-    <string name="language_polish">Польська</string>
-    <string name="language_hindi">Гінді</string>
-    <string name="language_russian">Російська (Russian)</string>
-    <string name="language_ukrainian">Українська (Ukrainian)</string>
-    <string name="language_korean">Корейська (Korean)</string>
-    <string name="debug_import_started">Почато налагоджувальний імпорт</string>
     <string name="back">Назад</string>
 
     <!-- Add Transaction Screen -->

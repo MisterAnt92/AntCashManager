@@ -3,4 +3,20 @@
     <string name="home_transaction_item_subtitle" translatable="false">%1$s • %2$s</string>
     <string name="transactions_search_query_preview" translatable="false">\"%s\"</string>
     <string name="transaction_details_tags" translatable="false">Tag</string>
+
+    <string name="language_english" translatable="false">English</string>
+    <string name="language_italian" translatable="false">Italiano</string>
+    <string name="language_french" translatable="false">Français</string>
+    <string name="language_german" translatable="false">Deutsch</string>
+    <string name="language_spanish" translatable="false">Español</string>
+    <string name="language_chinese_simplified" translatable="false">Chinois (Mandarin)</string>
+    <string name="language_chinese_traditional" translatable="false">Chinois (Traditionnel)</string>
+    <string name="language_japanese" translatable="false">Japonais</string>
+    <string name="language_polish" translatable="false">Polonais</string>
+    <string name="language_hindi" translatable="false">हिन्दी (Hindi)</string>
+    <string name="language_russian" translatable="false">Русский (Russe)</string>
+    <string name="language_ukrainian" translatable="false">Українська (Ukrainien)</string>
+    <string name="language_korean" translatable="false">한국어 (Coréen)</string>
+
+    <string name="debug_import_started" translatable="false">Debug import started</string>
 </resources>

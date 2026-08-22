@@ -297,26 +297,25 @@
     <string name="dialog_delete_suggestions_message">Предложения на основе истории (названия, плательщики и т.д.) будут забыты. Новые накопятся со временем. Продолжить?</string>
     <string name="dialog_reset">Сбросить</string>
 
+    <!-- Automatic Backup (Phase 1 & 2) -->
+    <string name="settings_auto_backup">Автоматическое резервное копирование</string>
+    <string name="settings_auto_backup_subtitle">Автоматическое резервное копирование еженедельно</string>
+    <string name="settings_auto_backup_weekly_label">Автоматическое резервное копирование еженедельно</string>
+    <string name="settings_auto_backup_destination_local">Локально</string>
+    <string name="settings_auto_backup_destination_google_drive">Google Drive</string>
+    <string name="settings_auto_backup_google_drive_coming_soon">Скоро</string>
+    <string name="settings_auto_backup_google_drive_sign_in_title">Включить резервное копирование на Google Drive</string>
+    <string name="settings_auto_backup_google_drive_sign_in_message">Войдите с помощью аккаунта Google, чтобы включить автоматическое резервное копирование на Google Drive. Ваши данные будут зашифрованы и безопасно сохранены.</string>
+    <string name="settings_auto_backup_google_drive_sign_in">Войти через Google</string>
+    <string name="settings_auto_backup_google_drive_signing_in">Вход в Google…</string>
+    <string name="settings_auto_backup_google_drive_sign_out">Выход из Google</string>
+
     <!-- Privacy Policy -->
     <string name="privacy_policy_title">Политика конфиденциальности</string>
     <string name="privacy_policy_content">AntCashManager стремится защищать вашу конфиденциальность. Это приложение не собирает и не передает личные данные третьим лицам. Все финансовые данные хранятся локально на вашем устройстве и никогда не передаются на внешние серверы.\n\nВаши данные остаются полностью на вашем устройстве и под вашим контролем. Мы не используем аналитические сервисы, трекеры или рекламу.\n\nПо любым вопросам о конфиденциальности обращайтесь к нам через страницу приложения в магазине.</string>
 
     <!-- Languages -->
     <string name="language_system">Системная по умолчанию</string>
-    <string name="language_english">English (Английский)</string>
-    <string name="language_italian">Italiano (Итальянский)</string>
-    <string name="language_french">Français (Французский)</string>
-    <string name="language_german">Deutsch (Немецкий)</string>
-    <string name="language_spanish">Español (Испанский)</string>
-    <string name="language_chinese_simplified">Китайский (Упрощенный)</string>
-    <string name="language_chinese_traditional">Китайский (Традиционный)</string>
-    <string name="language_japanese">Японский</string>
-    <string name="language_polish">Польский</string>
-    <string name="language_hindi">Хинди</string>
-    <string name="language_russian">Русский (Russian)</string>
-    <string name="language_ukrainian">Украинский (Ukrainian)</string>
-    <string name="language_korean">Корейский (Korean)</string>
-    <string name="debug_import_started">Начат отладочный импорт</string>
     <string name="back">Назад</string>
 
     <!-- Add Transaction Screen -->

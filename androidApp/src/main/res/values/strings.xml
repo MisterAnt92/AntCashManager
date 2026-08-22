@@ -246,6 +246,10 @@
     <string name="settings_restore_subtitle">Import data from a backup file</string>
     <string name="settings_last_restore_label">Last restore: %s</string>
     <string name="settings_last_restore_never">No restore performed yet</string>
+    <string name="auto_backup_notification_channel_name">Automatic Backup Errors</string>
+    <string name="auto_backup_notification_channel_description">Notifications for automatic backup failures</string>
+    <string name="auto_backup_notification_failure_title">Automatic Backup Failed</string>
+    <string name="auto_backup_notification_failure_message">Could not complete automatic backup. Check your storage permissions.</string>
     <string name="settings_support">Support</string>
     <string name="settings_send_feedback">Send Feedback</string>
     <string name="settings_send_feedback_subtitle">Help us improve the app</string>
@@ -299,26 +303,25 @@
     <string name="dialog_delete_suggestions_message">Suggestions built from your transaction history (titles, payees, notes, locations, tags) will be forgotten. New suggestions will build up again as you add transactions. Continue?</string>
     <string name="dialog_reset">Reset</string>
 
+    <!-- Automatic Backup (Phase 1 & 2) -->
+    <string name="settings_auto_backup">Automatic Backup</string>
+    <string name="settings_auto_backup_subtitle">Weekly automatic backups</string>
+    <string name="settings_auto_backup_weekly_label">Automatic backup is weekly</string>
+    <string name="settings_auto_backup_destination_local">Local</string>
+    <string name="settings_auto_backup_destination_google_drive">Google Drive</string>
+    <string name="settings_auto_backup_google_drive_coming_soon">Coming soon</string>
+    <string name="settings_auto_backup_google_drive_sign_in_title">Enable Google Drive Backup</string>
+    <string name="settings_auto_backup_google_drive_sign_in_message">Sign in with your Google account to enable automatic backups to Google Drive. Your data will be encrypted and stored securely.</string>
+    <string name="settings_auto_backup_google_drive_sign_in">Sign In with Google</string>
+    <string name="settings_auto_backup_google_drive_signing_in">Signing in to Google…</string>
+    <string name="settings_auto_backup_google_drive_sign_out">Sign Out from Google</string>
+
     <!-- Privacy Policy -->
     <string name="privacy_policy_title">Privacy Policy</string>
     <string name="privacy_policy_content">AntCashManager is committed to protecting your privacy. This application does not collect or share personal data with third parties. All financial data is stored locally on your device and is never transmitted to external servers.\n\nYour data remains entirely on your device and under your control. We do not use analytics, tracking, or advertising services.\n\nFor any questions about privacy, please contact us through the app store listing.</string>
 
     <!-- Languages -->
     <string name="language_system">System Default</string>
-    <string name="language_english">English</string>
-    <string name="language_italian">Italiano</string>
-    <string name="language_french">Français</string>
-    <string name="language_german">Deutsch</string>
-    <string name="language_spanish">Español</string>
-    <string name="language_chinese_simplified">Chinese (Mandarin)</string>
-    <string name="language_chinese_traditional">Chinese (Traditional)</string>
-    <string name="language_japanese">Japanese</string>
-    <string name="language_polish">Polski</string>
-    <string name="language_hindi">हिन्दी (Hindi)</string>
-    <string name="language_russian">Русский (Russian)</string>
-    <string name="language_ukrainian">Українська (Ukrainian)</string>
-    <string name="language_korean">한국어 (Korean)</string>
-    <string name="debug_import_started">Debug import started</string>
     <string name="back">Back</string>
 
     <!-- Add Transaction Screen -->

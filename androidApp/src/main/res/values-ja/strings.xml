@@ -299,26 +299,25 @@
     <string name="dialog_delete_suggestions_message">履歴から構築された提案が消去されます。取引を追加すると再び構築されます。よろしいですか？</string>
     <string name="dialog_reset">リセット</string>
 
+    <!-- Automatic Backup (Phase 1 & 2) -->
+    <string name="settings_auto_backup">自動バックアップ</string>
+    <string name="settings_auto_backup_subtitle">毎週自動バックアップ</string>
+    <string name="settings_auto_backup_weekly_label">自動バックアップは毎週実行されます</string>
+    <string name="settings_auto_backup_destination_local">ローカル</string>
+    <string name="settings_auto_backup_destination_google_drive">Google Drive</string>
+    <string name="settings_auto_backup_google_drive_coming_soon">近日公開予定</string>
+    <string name="settings_auto_backup_google_drive_sign_in_title">Google Driveバックアップを有効にする</string>
+    <string name="settings_auto_backup_google_drive_sign_in_message">Googleアカウントにサインインして、Google Driveへの自動バックアップを有効にしてください。データは暗号化され安全に保存されます。</string>
+    <string name="settings_auto_backup_google_drive_sign_in">Googleでサインイン</string>
+    <string name="settings_auto_backup_google_drive_signing_in">Googleにサインイン中…</string>
+    <string name="settings_auto_backup_google_drive_sign_out">Googleからサインアウト</string>
+
     <!-- Privacy Policy -->
     <string name="privacy_policy_title">プライバシーポリシー</string>
     <string name="privacy_policy_content">AntCashManagerはお客様のプライバシーを保護することをお約束します。このアプリは個人データを収集したり第三者と共有したりすることはありません。すべての財務データはデバイス内にローカルに保存され、外部サーバーに送信されることはありません。\n\nデータは完全にあなたのデバイス内にあり、あなたの管理下にあります。分析、追跡、広告サービスは使用していません。\n\nプライバシーに関するご質問は、アプリストアの連絡先までお問い合わせください。</string>
 
     <!-- Languages -->
     <string name="language_system">システム設定</string>
-    <string name="language_english">English (英語)</string>
-    <string name="language_italian">Italiano (イタリア語)</string>
-    <string name="language_french">Français (フランス語)</string>
-    <string name="language_german">Deutsch (ドイツ語)</string>
-    <string name="language_spanish">Español (スペイン語)</string>
-    <string name="language_chinese_simplified">中国語 (簡体字)</string>
-    <string name="language_chinese_traditional">中国語 (繁体字)</string>
-    <string name="language_japanese">日本語</string>
-    <string name="language_polish">ポーランド語</string>
-    <string name="language_hindi">हिन्दी (ヒンディー語)</string>
-    <string name="language_russian">Русский (ロシア語)</string>
-    <string name="language_ukrainian">Українська (ウクライナ語)</string>
-    <string name="language_korean">한국어 (韓国語)</string>
-    <string name="debug_import_started">デバッグ用インポート開始</string>
     <string name="back">戻る</string>
 
     <!-- Add Transaction Screen -->

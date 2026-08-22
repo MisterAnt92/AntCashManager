@@ -296,26 +296,25 @@
     <string name="dialog_delete_suggestions_message">आपके लेनदेन इतिहास (शीर्षक, भुगतानकर्ता, नोट्स, स्थान, टैग) से बने सुझाव मिटा दिए जाएंगे। जैसे ही आप लेनदेन जोड़ेंगे, नए सुझाव फिर से बनेंगे। जारी रखें?</string>
     <string name="dialog_reset">रीसेट</string>
 
+    <!-- Automatic Backup (Phase 1 & 2) -->
+    <string name="settings_auto_backup">स्वचालित बैकअप</string>
+    <string name="settings_auto_backup_subtitle">साप्ताहिक स्वचालित बैकअप</string>
+    <string name="settings_auto_backup_weekly_label">स्वचालित बैकअप साप्ताहिक है</string>
+    <string name="settings_auto_backup_destination_local">स्थानीय</string>
+    <string name="settings_auto_backup_destination_google_drive">Google Drive</string>
+    <string name="settings_auto_backup_google_drive_coming_soon">जल्द आ रहा है</string>
+    <string name="settings_auto_backup_google_drive_sign_in_title">Google Drive बैकअप सक्षम करें</string>
+    <string name="settings_auto_backup_google_drive_sign_in_message">Google Drive पर स्वचालित बैकअप सक्षम करने के लिए अपने Google खाते से साइन इन करें। आपके डेटा को एनक्रिप्ट किया जाएगा और सुरक्षित रूप से संग्रहित किया जाएगा।</string>
+    <string name="settings_auto_backup_google_drive_sign_in">Google से साइन इन करें</string>
+    <string name="settings_auto_backup_google_drive_signing_in">Google में साइन इन किया जा रहा है…</string>
+    <string name="settings_auto_backup_google_drive_sign_out">Google से साइन आउट करें</string>
+
     <!-- Privacy Policy -->
     <string name="privacy_policy_title">गोपनीयता नीति</string>
     <string name="privacy_policy_content">AntCashManager आपकी गोपनीयता की रक्षा के लिए प्रतिबद्ध है। यह एप्लिकेशन तीसरे पक्षों के साथ व्यक्तिगत डेटा एकत्र या साझा नहीं करता है। सारा वित्तीय डेटा आपके डिवाइस पर स्थानीय रूप से संग्रहीत किया जाता है और बाहरी सर्वरों पर कभी भी प्रेषित नहीं किया जाता है।\n\nआपका डेटा पूरी तरह से आपके डिवाइस पर और आपके नियंत्रण में रहता है। हम विश्लेषण, ट्रैकिंग या विज्ञापन सेवाओं का उपयोग नहीं करते हैं।\n\nगोपनीयता के बारे में किसी भी प्रश्न के लिए, कृपया ऐप स्टोर लिस्टिंग के माध्यम से हमसे संपर्क करें।</string>
 
     <!-- Languages -->
     <string name="language_system">सिस्टम डिफ़ॉल्ट</string>
-    <string name="language_english">English (अंग्रेजी)</string>
-    <string name="language_italian">Italiano (इतालवी)</string>
-    <string name="language_french">Français (फ्रांसीसी)</string>
-    <string name="language_german">Deutsch (जर्मन)</string>
-    <string name="language_spanish">Español (स्पेनिश)</string>
-    <string name="language_chinese_simplified">चीनी (सरलीकृत)</string>
-    <string name="language_chinese_traditional">चीनी (पारंपरिक)</string>
-    <string name="language_japanese">जापानी</string>
-    <string name="language_polish">पोलिश</string>
-    <string name="language_hindi">हिन्दी (Hindi)</string>
-    <string name="language_russian">रूसी (Russian)</string>
-    <string name="language_ukrainian">यूक्रेनी (Ukrainian)</string>
-    <string name="language_korean">कोरियाई (Korean)</string>
-    <string name="debug_import_started">डीबग आयात शुरू हुआ</string>
     <string name="back">पीछे</string>
 
     <!-- Add Transaction Screen -->

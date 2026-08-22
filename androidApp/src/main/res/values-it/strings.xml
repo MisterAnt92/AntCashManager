@@ -265,6 +265,10 @@
     <string name="settings_restore_subtitle">Importa dati da un file di backup</string>
     <string name="settings_last_restore_label">Ultimo ripristino: %s</string>
     <string name="settings_last_restore_never">Nessun ripristino effettuato</string>
+    <string name="auto_backup_notification_channel_name">Errori Backup Automatico</string>
+    <string name="auto_backup_notification_channel_description">Notifiche per i fallimenti del backup automatico</string>
+    <string name="auto_backup_notification_failure_title">Backup Automatico Non Riuscito</string>
+    <string name="auto_backup_notification_failure_message">Impossibile completare il backup automatico. Controlla i permessi di archiviazione.</string>
     <string name="settings_support">Supporto</string>
     <string name="settings_send_feedback">Invia Feedback</string>
     <string name="settings_send_feedback_subtitle">Aiutaci a migliorare l\'app</string>
@@ -311,23 +315,23 @@
     <string name="dialog_delete_suggestions_title">Eliminare tutti i suggerimenti?</string>
     <string name="dialog_delete_suggestions_message">I suggerimenti costruiti dallo storico delle transazioni (titoli, beneficiari, note, luoghi, tag) verranno dimenticati. Nuovi suggerimenti si accumuleranno di nuovo con le prossime transazioni. Continuare?</string>
     <string name="dialog_reset">Ripristina</string>
+
+    <!-- Automatic Backup (Phase 1 & 2) -->
+    <string name="settings_auto_backup">Backup Automatico</string>
+    <string name="settings_auto_backup_subtitle">Backup automatici settimanali</string>
+    <string name="settings_auto_backup_weekly_label">Il backup automatico è settimanale</string>
+    <string name="settings_auto_backup_destination_local">Locale</string>
+    <string name="settings_auto_backup_destination_google_drive">Google Drive</string>
+    <string name="settings_auto_backup_google_drive_coming_soon">Prossimamente</string>
+    <string name="settings_auto_backup_google_drive_sign_in_title">Abilita Backup su Google Drive</string>
+    <string name="settings_auto_backup_google_drive_sign_in_message">Accedi con il tuo account Google per abilitare i backup automatici su Google Drive. I tuoi dati saranno crittografati e archiviati in modo sicuro.</string>
+    <string name="settings_auto_backup_google_drive_sign_in">Accedi con Google</string>
+    <string name="settings_auto_backup_google_drive_signing_in">Accesso a Google in corso…</string>
+    <string name="settings_auto_backup_google_drive_sign_out">Disconnetiti da Google</string>
+
     <string name="privacy_policy_title">Informativa sulla Privacy</string>
     <string name="privacy_policy_content">AntCashManager si impegna a proteggere la tua privacy. Questa applicazione non raccoglie n\u00e9 condivide dati personali con terze parti. Tutti i dati finanziari sono memorizzati localmente sul tuo dispositivo e non vengono mai trasmessi a server esterni.\n\nI tuoi dati rimangono interamente sul tuo dispositivo e sotto il tuo controllo. Non utilizziamo pubblicit\u00e0.\n\nPer qualsiasi domanda sulla privacy, contattaci attraverso la pagina dello store.</string>
     <string name="language_system">Predefinito di sistema</string>
-    <string name="language_english">English</string>
-    <string name="language_italian">Italiano</string>
-    <string name="language_french">Fran\u00e7ais</string>
-    <string name="language_german">Deutsch</string>
-    <string name="language_spanish">Español</string>
-    <string name="language_chinese_simplified">Cinese (Mandarino)</string>
-    <string name="language_chinese_traditional">Cinese (Tradizionale)</string>
-    <string name="language_japanese">Giapponese</string>
-    <string name="language_polish">Polacco</string>
-    <string name="language_hindi">हिन्दी (Hindi)</string>
-    <string name="language_russian">Русский (Russo)</string>
-    <string name="language_ukrainian">Українська (Ucraino)</string>
-    <string name="language_korean">한국어 (Coreano)</string>
-    <string name="debug_import_started">Importazione debug avviata</string>
     <string name="back">Indietro</string>
     <string name="add_transaction">Aggiungi Transazione</string>
     <string name="transaction_type">Tipo di Transazione</string>

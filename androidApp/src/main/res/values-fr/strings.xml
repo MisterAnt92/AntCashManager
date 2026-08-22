@@ -216,6 +216,16 @@
     <string name="settings_restore_subtitle">Importer les donn\u00e9es depuis un fichier de sauvegarde</string>
     <string name="settings_last_restore_label">Derni\u00e8re restauration : %s</string>
     <string name="settings_last_restore_never">Aucune restauration effectu\u00e9e</string>
+    <string name="settings_auto_backup">Sauvegarde automatique</string>
+    <string name="settings_auto_backup_subtitle">Sauvegarde automatique hebdomadaire sur le stockage local</string>
+    <string name="settings_auto_backup_weekly_label">La sauvegarde automatique est hebdomadaire</string>
+    <string name="settings_auto_backup_destination_local">Stockage local</string>
+    <string name="settings_auto_backup_destination_google_drive">Google Drive</string>
+    <string name="settings_auto_backup_google_drive_coming_soon">\u00c0 venir bient\u00f4t</string>
+    <string name="auto_backup_notification_channel_name">Erreurs de sauvegarde automatique</string>
+    <string name="auto_backup_notification_channel_description">Notifications en cas d\'\u00e9chec de la sauvegarde automatique</string>
+    <string name="auto_backup_notification_failure_title">\u00c9chec de la sauvegarde automatique</string>
+    <string name="auto_backup_notification_failure_message">Impossible de terminer la sauvegarde automatique. V\u00e9rifiez les autorisations de stockage.</string>
     <string name="settings_support">Assistance</string>
     <string name="settings_send_feedback">Envoyer un commentaire</string>
     <string name="settings_send_feedback_subtitle">Aidez-nous \u00e0 am\u00e9liorer l\'application</string>
@@ -264,22 +274,18 @@
     <string name="dialog_delete_suggestions_title">Supprimer toutes les suggestions\u00a0?</string>
     <string name="dialog_delete_suggestions_message">Les suggestions construites \u00e0 partir de l\'historique des transactions (titres, b\u00e9n\u00e9ficiaires, notes, lieux, tags) seront oubli\u00e9es. De nouvelles suggestions se reconstruiront au fil des prochaines transactions. Continuer\u00a0?</string>
     <string name="dialog_reset">R\u00e9initialiser</string>
+
+    <!-- Automatic Backup (Phase 1 & 2) -->
+    <string name="settings_auto_backup_google_drive_sign_in_title">Activer la Sauvegarde sur Google Drive</string>
+    <string name="settings_auto_backup_google_drive_sign_in_message">Connectez-vous avec votre compte Google pour activer les sauvegardes automatiques sur Google Drive. Vos donn\u00e9es seront chiffr\u00e9es et stock\u00e9es en toute s\u00e9curit\u00e9.</string>
+    <string name="settings_auto_backup_google_drive_sign_in">Se connecter avec Google</string>
+    <string name="settings_auto_backup_google_drive_signing_in">Connexion \u00e0 Google en cours\u2026</string>
+    <string name="settings_auto_backup_google_drive_sign_out">Se d\u00e9connecter de Google</string>
+
     <string name="privacy_policy_title">Politique de confidentialit\u00e9</string>
     <string name="privacy_policy_content">AntCashManager s\'engage \u00e0 prot\u00e9ger votre vie priv\u00e9e. Cette application ne collecte ni ne partage de donn\u00e9es personnelles avec des tiers. Toutes les donn\u00e9es financi\u00e8res sont stock\u00e9es localement sur votre appareil et ne sont jamais transmises \u00e0 des serveurs externes.\n\nVos donn\u00e9es restent enti\u00e8rement sur votre appareil et sous votre contr\u00f4le. Nous n\'utilisons pas de services d\'analyse, de suivi ou de publicit\u00e9.\n\nPour toute question concernant la confidentialit\u00e9, contactez-nous via la page du store.</string>
     <string name="language_system">Par d\u00e9faut du syst\u00e8me</string>
-    <string name="language_english">English</string>
-    <string name="language_italian">Italiano</string>
-    <string name="language_french">Français</string>
-    <string name="language_german">Deutsch</string>
-    <string name="language_spanish">Español</string>
-    <string name="language_chinese_simplified">Chinois (Mandarin)</string>
-    <string name="language_chinese_traditional">Chinois (Traditionnel)</string>
-    <string name="language_japanese">Japonais</string>
-    <string name="language_polish">Polonais</string>
-    <string name="language_hindi">हिन्दी (Hindi)</string>
-    <string name="language_russian">Русский (Russe)</string>
-    <string name="language_ukrainian">Українська (Ukrainien)</string>
-    <string name="language_korean">한국어 (Coréen)</string>
+
     <string name="debug_import_started">Importation de débogage lancée</string>
     <string name="back">Retour</string>
     <string name="add_transaction">Ajouter une Transaction</string>
