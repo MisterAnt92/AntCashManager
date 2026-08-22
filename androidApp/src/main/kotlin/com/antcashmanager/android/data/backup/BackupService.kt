@@ -3,6 +3,7 @@ package com.antcashmanager.android.data.backup
 import co.touchlab.kermit.Logger
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
+import com.antcashmanager.domain.model.BackupDestination
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
@@ -261,6 +262,12 @@ class BackupService(
         chartCardsOrder = settingsRepository.getChartCardsOrder().first(),
         homeTopCardsOrder = settingsRepository.getHomeTopCardsOrder().first(),
         dataEncryptionEnabled = settingsRepository.getDataEncryptionEnabled().first(),
+        // ── v4+ fields (Backup Destination & Google Drive Config) ──
+        autoBackupEnabled = settingsRepository.getAutoBackupEnabled().first(),
+        autoBackupDestination = settingsRepository.getAutoBackupDestination().first().name,
+        autoBackupFolderUri = settingsRepository.getAutoBackupFolderUri().first(),
+        googleDriveFolderId = settingsRepository.getGoogleDriveFolderId().first(),
+        googleDriveUserEmail = settingsRepository.getGoogleDriveUserEmail().first(),
     )
 
     private suspend fun applySettings(settings: SettingsBackup) {
@@ -308,6 +315,15 @@ class BackupService(
         }
         // CRITICAL: Encryption status must be preserved
         settingsRepository.setDataEncryptionEnabled(settings.dataEncryptionEnabled)
+
+        // ── v4+ fields (Backup Destination & Google Drive Config) ──
+        settingsRepository.setAutoBackupEnabled(settings.autoBackupEnabled)
+        settingsRepository.setAutoBackupDestination(
+            enumValueOfOrDefault(settings.autoBackupDestination, BackupDestination.LOCAL)
+        )
+        settings.autoBackupFolderUri?.let { settingsRepository.setAutoBackupFolderUri(it) }
+        settings.googleDriveFolderId?.let { settingsRepository.setGoogleDriveFolderId(it) }
+        settings.googleDriveUserEmail?.let { settingsRepository.setGoogleDriveUserEmail(it) }
     }
 
     private inline fun <reified T : Enum<T>> enumValueOfOrDefault(name: String, default: T): T =
