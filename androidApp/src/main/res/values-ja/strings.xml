@@ -428,16 +428,6 @@
     <string name="settings_transaction_display_none_desc">追加のアイコンを表示しません</string>
     <string name="dialog_choose_transaction_display">アイコンの種類を選択</string>
 
-    <!-- Feedback Email Bodies -->
-    <string name="feedback_email_body_english">AntCashManager チームの皆様、\n\nアプリについてフィードバックを共有したいと思います：\n\n[ここにフィードバックを記入してください]\n\nありがとうございます！</string>
-    <string name="feedback_email_body_italian">AntCashManager チームの皆様、\n\nアプリについてフィードバックを共有したいと思います：\n\n[ここにフィードバックを記入してください]\n\nありがとうございます！</string>
-    <string name="feedback_email_body_french">AntCashManager チームの皆様、\n\nアプリについてフィードバックを共有したいと思います：\n\n[ここにフィードバックを記入してください]\n\nありがとうございます！</string>
-    <string name="feedback_email_body_german">AntCashManager チームの皆様、\n\nアプリについてフィードバックを共有したいと思います：\n\n[ここにフィードバックを記入してください]\n\nありがとうございます！</string>
-    <string name="feedback_email_body_spanish">AntCashManager チームの皆様、\n\nアプリについてフィードバックを共有したいと思います：\n\n[ここにフィードバックを記入してください]\n\nありがとうございます！</string>
-    <string name="feedback_email_body_chinese_simplified">AntCashManager チームの皆様、\n\nアプリについてフィードバックを共有したいと思います：\n\n[ここにフィードバックを記入してください]\n\nありがとうございます！</string>
-    <string name="feedback_email_body_chinese_traditional">AntCashManager チームの皆様、\n\nアプリについてフィードバックを共有したいと思います：\n\n[ここにフィードバックを記入してください]\n\nありがとうございます！</string>
-    <string name="feedback_email_body_japanese">AntCashManager チームの皆様、\n\nアプリについてフィードバックを共有したいと思います：\n\n[ここにフィードバックを記入してください]\n\nありがとうございます！</string>
-
     <!-- Feedback Error Messages -->
     <string name="no_email_app_installed">メールアプリが見つかりません</string>
     <string name="error_opening_link">リンクを開けませんでした。アプリの設定を確認してください。</string>

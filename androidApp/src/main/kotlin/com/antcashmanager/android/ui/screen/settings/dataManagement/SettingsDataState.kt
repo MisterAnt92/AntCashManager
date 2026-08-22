@@ -1,7 +1,18 @@
 package com.antcashmanager.android.ui.screen.settings.dataManagement
 
+import com.antcashmanager.domain.model.BackupDestination
+
 /**
  * Stato UI per la schermata Gestione Dati.
+ *
+ * **Backup Automatico (Fase 1 & 2)**:
+ * - `autoBackupEnabled`: Toggle abilitazione backup automatico
+ * - `autoBackupDestination`: LOCAL o GOOGLE_DRIVE
+ * - `autoBackupFolderUri`: URI della cartella locale (Phase 1)
+ * - `googleDriveUserEmail`: Email utente loggato (Phase 2)
+ * - `isGoogleDriveSignedIn`: Flag se l'utente è autenticato con Google
+ * - `showGoogleSignInDialog`: Mostra dialog di login
+ * - `googleDriveSignInLoading`: Loading state durante sign-in flow
  */
 data class SettingsDataState(
     val deleteResult: DeleteResult = DeleteResult.Idle,
@@ -24,6 +35,15 @@ data class SettingsDataState(
     val lastRestoreTimestamp: Long? = null,
     val suggestionsEnabled: Boolean = true,
     val showDeleteSuggestionsDialog: Boolean = false,
+    // ── Automatic Backup (Phase 1 & 2) ──
+    val autoBackupEnabled: Boolean = false,
+    val autoBackupDestination: BackupDestination = BackupDestination.LOCAL,
+    val autoBackupFolderUri: String? = null,
+    // ── Google Drive Backup (Phase 2) ──
+    val googleDriveUserEmail: String? = null,
+    val isGoogleDriveSignedIn: Boolean = false,
+    val showGoogleSignInDialog: Boolean = false,
+    val googleDriveSignInLoading: Boolean = false,
 )
 
 data class RestoreSuccessInfo(

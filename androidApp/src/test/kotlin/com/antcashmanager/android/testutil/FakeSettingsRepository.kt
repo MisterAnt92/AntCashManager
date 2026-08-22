@@ -2,6 +2,7 @@ package com.antcashmanager.android.testutil
 
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
+import com.antcashmanager.domain.model.BackupDestination
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.SettingsRepository
@@ -230,6 +231,62 @@ open class FakeSettingsRepository : SettingsRepository {
     override fun getLastRestoreTimestamp(): Flow<Long?> = lastRestoreTimestamp
     override suspend fun setLastRestoreTimestamp(timestamp: Long) {
         lastRestoreTimestamp.value = timestamp
+    }
+
+    override fun getAutoBackupEnabled(): Flow<Boolean> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun setAutoBackupEnabled(enabled: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getAutoBackupFolderUri(): Flow<String?> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun setAutoBackupFolderUri(uri: String?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getAutoBackupDestination(): Flow<BackupDestination> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun setAutoBackupDestination(destination: BackupDestination) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getGoogleDriveFolderId(): Flow<String?> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun setGoogleDriveFolderId(folderId: String?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getGoogleDriveAuthToken(): Flow<String?> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun setGoogleDriveAuthToken(token: String?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getGoogleDriveRefreshToken(): Flow<String?> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun setGoogleDriveRefreshToken(token: String?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getGoogleDriveUserEmail(): Flow<String?> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun setGoogleDriveUserEmail(email: String?) {
+        TODO("Not yet implemented")
     }
 
     override fun getSuggestionsEnabled(): Flow<Boolean> = suggestionsEnabled

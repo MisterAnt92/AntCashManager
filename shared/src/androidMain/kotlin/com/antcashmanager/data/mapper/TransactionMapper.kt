@@ -24,6 +24,7 @@ fun TransactionEntity.toDomain(): Transaction = Transaction(
         PaymentType.ELECTRONIC
     },
     mealVoucherCount = mealVoucherCount,
+    mealVoucherDifference = mealVoucherDifference,
     categoryIcon = categoryIcon,
     categoryColor = categoryColor,
 )
@@ -43,6 +44,7 @@ fun Transaction.toEntity(): TransactionEntity = TransactionEntity(
     recurrenceInterval = recurrenceInterval,
     paymentType = paymentType.name,
     mealVoucherCount = mealVoucherCount,
+    mealVoucherDifference = mealVoucherDifference,
     categoryIcon = categoryIcon,
     categoryColor = categoryColor,
 )

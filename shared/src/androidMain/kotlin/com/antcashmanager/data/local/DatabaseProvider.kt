@@ -16,7 +16,7 @@ object DatabaseProvider {
                 AppDatabase::class.java,
                 DATABASE_NAME,
             )
-                .addMigrations(Migration_8_9())
+                .addMigrations(Migration_9_10())
                 .build().also {
                     database = it
                 }

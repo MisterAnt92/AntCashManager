@@ -432,21 +432,6 @@
     <string name="settings_transaction_display_none_desc">No additional icon is shown</string>
     <string name="dialog_choose_transaction_display">Choose icon type</string>
 
-    <!-- Feedback Email Bodies -->
-    <string name="feedback_email_body_english">Hi AntCashManager Team,\n\nI would like to share some feedback about the app:\n\n[Please describe your feedback here]\n\nThank you!</string>
-    <string name="feedback_email_body_italian">Ciao team di AntCashManager,\n\nVorrei condividere alcuni feedback sull\'app:\n\n[Per favore descrivi il tuo feedback qui]\n\nGrazie!</string>
-    <string name="feedback_email_body_french">Bonjour à l\'équipe d\'AntCashManager,\n\nJ\'aimerais partager des commentaires sur l\'application:\n\n[Veuillez décrire vos commentaires ici]\n\nMerci!</string>
-    <string name="feedback_email_body_german">Hallo AntCashManager-Team,\n\nIch möchte gerne Feedback zur App geben:\n\n[Bitte beschreiben Sie Ihr Feedback hier]\n\nDanke!</string>
-    <string name="feedback_email_body_spanish">Hola equipo de AntCashManager,\n\nMe gustaría compartir comentarios sobre la aplicación:\n\n[Por favor describe tu retroalimentación aquí]\n\n¡Grazie!</string>
-    <string name="feedback_email_body_chinese_simplified">AntCashManager 团队您好，\n\n我想分享一些关于该应用的反馈：\n\n[请在此描述您的反馈]\n\n谢谢！</string>
-    <string name="feedback_email_body_chinese_traditional">AntCashManager 團隊您好，\n\n我想分享一些關於該應用的回饋：\n\n[請在此描述您的回饋]\n\n謝謝！</string>
-    <string name="feedback_email_body_japanese">AntCashManager チームの皆様、\n\nアプリについてフィードバックを共有したいと思います：\n\n[ここにフィードバックを記入してください]\n\nありがとうございます！</string>
-    <string name="feedback_email_body_polish">Cześć zespołem AntCashManager,\n\nChciałbym podzielić się opiniami na temat aplikacji:\n\n[Proszę opisz swoją opinię tutaj]\n\nDziękuję!</string>
-    <string name="feedback_email_body_hindi">AntCashManager टीम को नमस्ते,\n\nमैं ऐप के बारे में कुछ प्रतिक्रिया साझा करना चाहता हूँ:\n\n[कृपया यहाँ अपनी प्रतिक्रिया का वर्णन करें]\n\nधन्यवाद!</string>
-    <string name="feedback_email_body_russian">Привет команде AntCashManager,\n\nЯ хотел бы поделиться отзывом о приложении:\n\n[Пожалуйста опишите ваш отзыв здесь]\n\nСпасибо!</string>
-    <string name="feedback_email_body_ukrainian">Привіт команді AntCashManager,\n\nЯ хотів би поділитися відгуком про додаток:\n\n[Будь ласка, опишіть ваш відгук тут]\n\nДякую!</string>
-    <string name="feedback_email_body_korean">AntCashManager 팀에게,\n\n앱에 대한 의견을 공유하고 싶습니다:\n\n[여기에 피드백을 설명하세요]\n\n감사합니다!</string>
-
     <!-- Feedback Error Messages -->
     <string name="no_email_app_installed">No email app installed</string>
     <string name="error_opening_link">Could not open the link. Please check your apps.</string>

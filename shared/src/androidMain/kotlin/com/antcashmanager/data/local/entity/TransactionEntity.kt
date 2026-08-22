@@ -38,6 +38,8 @@ data class TransactionEntity(
     val paymentType: String = "ELECTRONIC",
     @ColumnInfo(name = "meal_voucher_count", defaultValue = "0")
     val mealVoucherCount: Int = 0,
+    @ColumnInfo(name = "meal_voucher_difference", defaultValue = "0.0")
+    val mealVoucherDifference: Double = 0.0,
     @ColumnInfo(name = "category_icon", defaultValue = "")
     val categoryIcon: String = "",
     @ColumnInfo(name = "category_color", defaultValue = "9474862")

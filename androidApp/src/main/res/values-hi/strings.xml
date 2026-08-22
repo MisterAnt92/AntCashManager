@@ -423,21 +423,6 @@
     <string name="settings_transaction_display_none_desc">कोई अतिरिक्त आइकन नहीं दिखाया गया है</string>
     <string name="dialog_choose_transaction_display">आइकन प्रकार चुनें</string>
 
-    <!-- Feedback Email Bodies -->
-    <string name="feedback_email_body_english">नमस्ते AntCashManager टीम,\n\nमैं ऐप के बारे में कुछ प्रतिक्रिया साझा करना चाहता हूँ:\n\n[कृपया यहाँ अपनी प्रतिक्रिया का वर्णन करें]\n\nधन्यवाद!</string>
-    <string name="feedback_email_body_italian">नमस्ते AntCashManager टीम,\n\nमैं ऐप के बारे में कुछ प्रतिक्रिया साझा करना चाहता हूँ:\n\n[कृपया यहाँ अपनी प्रतिक्रिया का वर्णन करें]\n\nधन्यवाद!</string>
-    <string name="feedback_email_body_french">नमस्ते AntCashManager टीम,\n\nमैं ऐप के बारे में कुछ प्रतिक्रिया साझा करना चाहता हूँ:\n\n[कृपया यहाँ अपनी प्रतिक्रिया का वर्णन करें]\n\nधन्यवाद!</string>
-    <string name="feedback_email_body_german">नमस्ते AntCashManager टीम,\n\nमैं ऐप के बारे में कुछ प्रतिक्रिया साझा करना चाहता हूँ:\n\n[कृपया यहाँ अपनी प्रतिक्रिया का वर्णन करें]\n\nधन्यवाद!</string>
-    <string name="feedback_email_body_spanish">नमस्ते AntCashManager टीम,\n\nमैं ऐप के बारे में कुछ प्रतिक्रिया साझा करना चाहता हूँ:\n\n[कृपया यहाँ अपनी प्रतिक्रिया का वर्णन करें]\n\nधन्यवाद!</string>
-    <string name="feedback_email_body_chinese_simplified">नमस्ते AntCashManager टीम,\n\nमैं ऐप के बारे में कुछ प्रतिक्रिया साझा करना चाहता हूँ:\n\n[कृपया यहाँ अपनी प्रतिक्रिया का वर्णन करें]\n\nधन्यवाद!</string>
-    <string name="feedback_email_body_chinese_traditional">नमस्ते AntCashManager टीम,\n\nमैं ऐप के बारे में कुछ प्रतिक्रिया साझा करना चाहता हूँ:\n\n[कृपया यहाँ अपनी प्रतिक्रिया का वर्णन करें]\n\nधन्यवाद!</string>
-    <string name="feedback_email_body_japanese">नमस्ते AntCashManager टीम,\n\nमैं ऐप के बारे में कुछ प्रतिक्रिया साझा करना चाहता हूँ:\n\n[कृपया यहाँ अपनी प्रतिक्रिया का वर्णन करें]\n\nधन्यवाद!</string>
-    <string name="feedback_email_body_polish">नमस्ते AntCashManager टीम,\n\nमैं ऐप के बारे में कुछ प्रतिक्रिया साझा करना चाहता हूँ:\n\n[कृपया यहाँ अपनी प्रतिक्रिया का वर्णन करें]\n\nधन्यवाद!</string>
-    <string name="feedback_email_body_hindi">AntCashManager टीम को नमस्ते,\n\nमैं ऐप के बारे में कुछ प्रतिक्रिया साझा करना चाहता हूँ:\n\n[कृपया यहाँ अपनी प्रतिक्रिया का वर्णन करें]\n\nधन्यवाद!</string>
-    <string name="feedback_email_body_russian">नमस्ते AntCashManager टीम,\n\nमैं ऐप के बारे में कुछ प्रतिक्रिया साझा करना चाहता हूँ:\n\n[कृपया यहाँ अपनी प्रतिक्रिया का वर्णन करें]\n\nधन्यवाद!</string>
-    <string name="feedback_email_body_ukrainian">नमस्ते AntCashManager टीम,\n\nमैं ऐप के बारे में कुछ प्रतिक्रिया साझा करना चाहता हूँ:\n\n[कृपया यहाँ अपनी प्रतिक्रिया का वर्णन करें]\n\nधन्यवाद!</string>
-    <string name="feedback_email_body_korean">नमस्ते AntCashManager टीम,\n\nमैं ऐप के बारे में कुछ प्रतिक्रिया साझा करना चाहता हूँ:\n\n[कृपया यहाँ अपनी प्रतिक्रिया का वर्णन करें]\n\nधन्यवाद!</string>
-
     <!-- Feedback Error Messages -->
     <string name="no_email_app_installed">कोई ईमेल ऐप इंस्टॉल नहीं है</string>
     <string name="error_opening_link">लिंक नहीं खोला जा सका। कृपया अपने ऐप्स देखें।</string>

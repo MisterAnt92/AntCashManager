@@ -3,9 +3,12 @@ package com.antcashmanager.android.ui.screen.settings.dataManagement
 import android.os.Build
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
+import com.antcashmanager.android.auth.GoogleSignInManager
 import com.antcashmanager.android.data.backup.BackupService
 import com.antcashmanager.android.security.BackupPayloadCipher
+import com.antcashmanager.android.work.AutoBackupScheduler
 import com.antcashmanager.android.ui.base.BaseViewModel
+import com.antcashmanager.domain.model.BackupDestination
 import com.antcashmanager.domain.model.None
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
@@ -23,12 +26,20 @@ import java.util.Locale
 
 /**
  * ViewModel per la sotto-sezione Gestione Dati.
+ *
+ * **Backup Automatico (Phase 1 & 2)**:
+ * - Gestisce l'abilitazione/disabilitazione del backup automatico
+ * - Gestisce la selezione della cartella locale (SAF picker)
+ * - Gestisce il sign-in OAuth con Google per Google Drive backup
+ * - Coordina il cambio di destinazione (LOCAL ↔ GOOGLE_DRIVE)
  */
 class SettingsDataViewModel(
     settingsRepository: SettingsRepository,
     private val categoryRepository: CategoryRepository,
     private val deleteAllTransactionsUseCase: DeleteAllTransactionsUseCase,
     private val backupService: BackupService,
+    private val autoBackupScheduler: AutoBackupScheduler,
+    private val googleSignInManager: GoogleSignInManager,
 ) : BaseViewModel<None>() {
     private val settingsRepositoryRef = settingsRepository
 
@@ -54,6 +65,27 @@ class SettingsDataViewModel(
         viewModelScope.launch {
             settingsRepositoryRef.getSuggestionsEnabled().collect { enabled ->
                 _state.update { it.copy(suggestionsEnabled = enabled) }
+            }
+        }
+        viewModelScope.launch {
+            settingsRepositoryRef.getAutoBackupEnabled().collect { enabled ->
+                _state.update { it.copy(autoBackupEnabled = enabled) }
+            }
+        }
+        viewModelScope.launch {
+            settingsRepositoryRef.getAutoBackupFolderUri().collect { uri ->
+                _state.update { it.copy(autoBackupFolderUri = uri) }
+            }
+        }
+        // ── Phase 2: Google Drive Backup ──
+        viewModelScope.launch {
+            settingsRepositoryRef.getAutoBackupDestination().collect { destination ->
+                _state.update { it.copy(autoBackupDestination = destination) }
+            }
+        }
+        viewModelScope.launch {
+            settingsRepositoryRef.getGoogleDriveUserEmail().collect { email ->
+                _state.update { it.copy(googleDriveUserEmail = email, isGoogleDriveSignedIn = email != null) }
             }
         }
     }
@@ -86,6 +118,35 @@ class SettingsDataViewModel(
             settingsRepositoryRef.setSuggestionsClearedAt(System.currentTimeMillis())
             _state.update { it.copy(showDeleteSuggestionsDialog = false) }
         }
+    }
+
+    fun setAutoBackupEnabled(enabled: Boolean) {
+        logDebug("Setting auto backup enabled: $enabled")
+        viewModelScope.launch {
+            if (enabled) {
+                // Enable: chiama il scheduler per avviare il backup settimanale
+                autoBackupScheduler.schedule()
+            } else {
+                // Disable: cancella il lavoro schedulato
+                autoBackupScheduler.cancel()
+            }
+            settingsRepositoryRef.setAutoBackupEnabled(enabled)
+        }
+    }
+
+    fun onAutoBackupFolderSelected(uriString: String) {
+        logDebug("Auto backup folder selected: $uriString")
+        viewModelScope.launch {
+            // Persisti URI, abilita backup, e schedula il lavoro
+            settingsRepositoryRef.setAutoBackupFolderUri(uriString)
+            settingsRepositoryRef.setAutoBackupEnabled(true)
+            autoBackupScheduler.schedule()
+        }
+    }
+
+    fun onAutoBackupFolderSelectionCancelled() {
+        logDebug("Auto backup folder selection cancelled")
+        // No-op: il toggle rimane OFF, niente è stato persistito
     }
 
     fun showDeleteConfirmDialog() {
@@ -382,6 +443,184 @@ class SettingsDataViewModel(
         viewModelScope.launch {
             settingsRepositoryRef.resetAllPreferences()
             _state.update { it.copy(showResetPreferencesDialog = false) }
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────────
+    // Google Drive Backup (Phase 2)
+    // ─────────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Cambia la destinazione del backup automatico (LOCAL ↔ GOOGLE_DRIVE).
+     *
+     * **Logica**:
+     * - Se cambio a GOOGLE_DRIVE e l'utente non è loggato, mostra il dialog di sign-in
+     * - Se cambio a LOCAL, disabilita il dialog di sign-in
+     * - Persiste la destinazione in SettingsRepository
+     */
+    fun setAutoBackupDestination(destination: BackupDestination) {
+        logDebug("Setting auto backup destination: $destination")
+        viewModelScope.launch {
+            when (destination) {
+                BackupDestination.LOCAL -> {
+                    // Seleziona LOCAL: persisti e chiudi dialog se aperto
+                    settingsRepositoryRef.setAutoBackupDestination(BackupDestination.LOCAL)
+                    _state.update { it.copy(showGoogleSignInDialog = false) }
+                }
+                BackupDestination.GOOGLE_DRIVE -> {
+                    // Seleziona GOOGLE_DRIVE: verifica se già loggato
+                    val isSignedIn = googleSignInManager.isSignedIn()
+                    if (!isSignedIn) {
+                        // Non loggato: mostra dialog di sign-in
+                        logDebug("User not signed in with Google — showing sign-in dialog")
+                        _state.update { it.copy(showGoogleSignInDialog = true) }
+                    } else {
+                        // Già loggato: persisti subito
+                        logDebug("User already signed in — setting destination to GOOGLE_DRIVE")
+                        settingsRepositoryRef.setAutoBackupDestination(BackupDestination.GOOGLE_DRIVE)
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Avvia il flusso di sign-in OAuth con Google.
+     *
+     * **Flusso**:
+     * 1. Mostra loading state
+     * 2. Chiama GoogleSignInManager.signIn()
+     * 3. Su successo: persisti token, aggiorna email, imposta destinazione a GOOGLE_DRIVE
+     * 4. Su fallimento: mostra errore
+     *
+     * **Nota**: Il vero picker di account è gestito a livello di Activity tramite
+     * `registerForActivityResult(ActivityResultContracts.StartActivityForResult())`.
+     * Questo metodo coordina il flusso post-picker.
+     */
+    fun initiateGoogleSignIn() {
+        logDebug("Initiating Google Sign-In flow")
+        _state.update { it.copy(googleDriveSignInLoading = true) }
+        viewModelScope.launch {
+            try {
+                val signInResult = googleSignInManager.signIn()
+                if (signInResult.isSuccess) {
+                    val result = signInResult.getOrNull()
+                    if (result != null) {
+                        handleGoogleSignInSuccess(result)
+                    } else {
+                        handleGoogleSignInError(Exception("Sign-in returned null result"))
+                    }
+                } else {
+                    val throwable = signInResult.exceptionOrNull()
+                    val error = if (throwable is Exception) throwable else Exception(throwable?.message ?: "Unknown sign-in error", throwable)
+                    handleGoogleSignInError(error)
+                }
+            } catch (e: Exception) {
+                handleGoogleSignInError(e)
+            }
+        }
+    }
+
+    /**
+     * Gestisce il successo del sign-in.
+     *
+     * **Azioni**:
+     * - Salva email dell'utente
+     * - Imposta flag isGoogleDriveSignedIn a true
+     * - Imposta destinazione a GOOGLE_DRIVE
+     * - Chiude il dialog di sign-in
+     * - Disabilita il loading state
+     */
+    private suspend fun handleGoogleSignInSuccess(result: com.antcashmanager.android.auth.GoogleSignInResult) {
+        logDebug("Google Sign-In successful for ${result.email}")
+        try {
+            // I token sono già salvati da GoogleSignInManager.handleSignInSuccess()
+            // Aggiorna solo l'UI
+            _state.update {
+                it.copy(
+                    googleDriveUserEmail = result.email,
+                    isGoogleDriveSignedIn = true,
+                    autoBackupDestination = BackupDestination.GOOGLE_DRIVE,
+                    showGoogleSignInDialog = false,
+                    googleDriveSignInLoading = false,
+                )
+            }
+            // Persisti destinazione
+            settingsRepositoryRef.setAutoBackupDestination(BackupDestination.GOOGLE_DRIVE)
+        } catch (e: Exception) {
+            logError("Error handling sign-in success: ${e.message}", e)
+            handleGoogleSignInError(e)
+        }
+    }
+
+    /**
+     * Gestisce il fallimento del sign-in.
+     *
+     * **Azioni**:
+     * - Log dell'errore
+     * - Mantiene il toggle su LOCAL
+     * - Disabilita il loading state
+     * - Chiude il dialog (l'utente può ritentare cliccando di nuovo)
+     */
+    private suspend fun handleGoogleSignInError(error: Exception) {
+        logError("Google Sign-In error: ${error.message}", error)
+        _state.update {
+            it.copy(
+                autoBackupDestination = BackupDestination.LOCAL,
+                showGoogleSignInDialog = false,
+                googleDriveSignInLoading = false,
+            )
+        }
+    }
+
+    /**
+     * Effettua il logout da Google.
+     *
+     * **Azioni**:
+     * - Revoca credenziali via GoogleSignInManager
+     * - Cancella token dal device
+     * - Ripristina destinazione a LOCAL
+     * - Aggiorna stato UI
+     */
+    fun signOutFromGoogle() {
+        logDebug("Signing out from Google")
+        viewModelScope.launch {
+            try {
+                val result = googleSignInManager.signOut()
+                if (result.isSuccess) {
+                    logDebug("Signed out successfully")
+                    _state.update {
+                        it.copy(
+                            googleDriveUserEmail = null,
+                            isGoogleDriveSignedIn = false,
+                            autoBackupDestination = BackupDestination.LOCAL,
+                        )
+                    }
+                } else {
+                    logError("Sign-out failed: ${result.exceptionOrNull()?.message}")
+                }
+            } catch (e: Exception) {
+                logError("Error signing out: ${e.message}", e)
+            }
+        }
+    }
+
+    /**
+     * Chiude il dialog di sign-in senza effettuare alcuna azione.
+     *
+     * **Azioni**:
+     * - Chiude il dialog
+     * - Mantiene la destinazione su LOCAL
+     * - Disabilita il loading state
+     */
+    fun dismissGoogleSignInDialog() {
+        logDebug("Dismissing Google Sign-In dialog")
+        _state.update {
+            it.copy(
+                showGoogleSignInDialog = false,
+                googleDriveSignInLoading = false,
+                autoBackupDestination = BackupDestination.LOCAL,
+            )
         }
     }
 }

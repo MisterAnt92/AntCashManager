@@ -38,6 +38,7 @@ data class TransactionBackup(
     val recurrenceInterval: String = "",
     val paymentType: String = "ELECTRONIC",
     val mealVoucherCount: Int = 0,
+    val mealVoucherDifference: Double = 0.0,
     val categoryIcon: String = "",
     val categoryColor: Long = 0xFF90A4AE,
 )

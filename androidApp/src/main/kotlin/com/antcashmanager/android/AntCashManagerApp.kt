@@ -3,6 +3,7 @@ package com.antcashmanager.android
 import android.app.Application
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.di.appModules
+import com.antcashmanager.android.work.AutoBackupNotifier
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
@@ -31,6 +32,9 @@ class AntCashManagerApp : Application() {
             androidContext(this@AntCashManagerApp)
             modules(appModules)
         }
+
+        // Crea il notification channel per i fallimenti del backup automatico
+        AutoBackupNotifier.ensureChannel(this)
 
         appScope.launch {
             seedDefaultCategories()

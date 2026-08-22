@@ -15,6 +15,7 @@ data class Transaction(
     val recurrenceInterval: String = "",
     val paymentType: PaymentType = PaymentType.ELECTRONIC,
     val mealVoucherCount: Int = 0,
+    val mealVoucherDifference: Double = 0.0,
     val categoryIcon: String = "",
     val categoryColor: Long = 0xFF90A4AE,
 )

@@ -332,6 +332,7 @@ class BackupService(
         recurrenceInterval = recurrenceInterval,
         paymentType = paymentType.name,
         mealVoucherCount = mealVoucherCount,
+        mealVoucherDifference = mealVoucherDifference,
         categoryIcon = categoryIcon,
         categoryColor = categoryColor,
     )
@@ -359,6 +360,7 @@ class BackupService(
             PaymentType.ELECTRONIC
         },
         mealVoucherCount = mealVoucherCount,
+        mealVoucherDifference = mealVoucherDifference,
         categoryIcon = categoryIcon,
         categoryColor = categoryColor,
     )

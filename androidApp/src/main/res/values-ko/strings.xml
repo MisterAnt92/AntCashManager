@@ -426,21 +426,6 @@
     <string name="settings_transaction_display_none_desc">아이콘을 표시하지 않습니다</string>
     <string name="dialog_choose_transaction_display">아이콘 유형 선택</string>
 
-    <!-- Feedback Email Bodies -->
-    <string name="feedback_email_body_english">AntCashManager 팀에게,\n\n앱에 대한 의견을 공유하고 싶습니다:\n\n[여기에 피드백을 설명하세요]\n\n감사합니다!</string>
-    <string name="feedback_email_body_italian">AntCashManager 팀에게,\n\n앱에 대한 의견을 공유하고 싶습니다:\n\n[여기에 피드백을 설명하세요]\n\n감사합니다!</string>
-    <string name="feedback_email_body_french">AntCashManager 팀에게,\n\n앱에 대한 의견을 공유하고 싶습니다:\n\n[여기에 피드백을 설명하세요]\n\n감사합니다!</string>
-    <string name="feedback_email_body_german">AntCashManager 팀에게,\n\n앱에 대한 의견을 공유하고 싶습니다:\n\n[여기에 피드백을 설명하세요]\n\n감사합니다!</string>
-    <string name="feedback_email_body_spanish">AntCashManager 팀에게,\n\n앱에 대한 의견을 공유하고 싶습니다:\n\n[여기에 피드백을 설명하세요]\n\n감사합니다!</string>
-    <string name="feedback_email_body_chinese_simplified">AntCashManager 팀에게,\n\n앱에 대한 의견을 공유하고 싶습니다:\n\n[여기에 피드백을 설명하세요]\n\n감사합니다!</string>
-    <string name="feedback_email_body_chinese_traditional">AntCashManager 팀에게,\n\n앱에 대한 의견을 공유하고 싶습니다:\n\n[여기에 피드백을 설명하세요]\n\n감사합니다!</string>
-    <string name="feedback_email_body_japanese">AntCashManager 팀에게,\n\n앱에 대한 의견을 공유하고 싶습니다:\n\n[여기에 피드백을 설명하세요]\n\n감사합니다!</string>
-    <string name="feedback_email_body_polish">AntCashManager 팀에게,\n\n앱에 대한 의견을 공유하고 싶습니다:\n\n[여기에 피드백을 설명하세요]\n\n감사합니다!</string>
-    <string name="feedback_email_body_hindi">AntCashManager 팀에게,\n\n앱에 대한 의견을 공유하고 싶습니다:\n\n[여기에 피드백을 설명하세요]\n\n감사합니다!</string>
-    <string name="feedback_email_body_russian">AntCashManager 팀에게,\n\n앱에 대한 의견을 공유하고 싶습니다:\n\n[여기에 피드백을 설명하세요]\n\n감사합니다!</string>
-    <string name="feedback_email_body_ukrainian">AntCashManager 팀에게,\n\n앱에 대한 의견을 공유하고 싶습니다:\n\n[여기에 피드백을 설명하세요]\n\n감사합니다!</string>
-    <string name="feedback_email_body_korean">AntCashManager 팀에게,\n\n앱에 대한 의견을 공유하고 싶습니다:\n\n[여기에 피드백을 설명하세요]\n\n감사합니다!</string>
-
     <!-- Feedback Error Messages -->
     <string name="no_email_app_installed">설치된 이메일 앱이 없습니다</string>
     <string name="error_opening_link">링크를 열 수 없습니다. 앱 설정을 확인하세요.</string>

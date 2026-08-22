@@ -522,10 +522,17 @@ class SettingsDataViewModelMockkTest : BaseUnitTest() {
             assertFalse(viewModel.state.value.showResetPreferencesDialog)
         }
 
-    private fun buildViewModel(): SettingsDataViewModel = SettingsDataViewModel(
-        settingsRepository = settingsRepository,
-        categoryRepository = categoryRepository,
-        deleteAllTransactionsUseCase = deleteAllTransactionsUseCase,
-        backupService = backupService,
-    )
+    private fun buildViewModel(): SettingsDataViewModel {
+        val autoBackupScheduler: com.antcashmanager.android.work.AutoBackupScheduler = mockk(relaxed = true)
+        val googleSignInManager: com.antcashmanager.android.auth.GoogleSignInManager = mockk(relaxed = true)
+
+        return SettingsDataViewModel(
+            settingsRepository = settingsRepository,
+            categoryRepository = categoryRepository,
+            deleteAllTransactionsUseCase = deleteAllTransactionsUseCase,
+            backupService = backupService,
+            autoBackupScheduler = autoBackupScheduler,
+            googleSignInManager = googleSignInManager,
+        )
+    }
 }

@@ -2,6 +2,7 @@ package com.antcashmanager.domain.repository
 
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
+import com.antcashmanager.domain.model.BackupDestination
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.TransactionDisplayType
 import kotlinx.coroutines.flow.Flow
@@ -103,6 +104,28 @@ interface SettingsRepository {
     suspend fun setLastBackupTimestamp(timestamp: Long)
     fun getLastRestoreTimestamp(): Flow<Long?>
     suspend fun setLastRestoreTimestamp(timestamp: Long)
+
+    // ── Automatic Backup (stato locale del device, non incluso in resetAllPreferences) ──
+    fun getAutoBackupEnabled(): Flow<Boolean>
+    suspend fun setAutoBackupEnabled(enabled: Boolean)
+    fun getAutoBackupFolderUri(): Flow<String?>
+    suspend fun setAutoBackupFolderUri(uri: String?)
+
+    // ── Google Drive Backup Configuration ──
+    fun getAutoBackupDestination(): Flow<BackupDestination>
+    suspend fun setAutoBackupDestination(destination: BackupDestination)
+
+    fun getGoogleDriveFolderId(): Flow<String?>
+    suspend fun setGoogleDriveFolderId(folderId: String?)
+
+    fun getGoogleDriveAuthToken(): Flow<String?>
+    suspend fun setGoogleDriveAuthToken(token: String?)
+
+    fun getGoogleDriveRefreshToken(): Flow<String?>
+    suspend fun setGoogleDriveRefreshToken(token: String?)
+
+    fun getGoogleDriveUserEmail(): Flow<String?>
+    suspend fun setGoogleDriveUserEmail(email: String?)
 
     /**
      * ── Suggerimenti (autocomplete titoli/beneficiari/note/luoghi/tag) ──

@@ -405,22 +405,16 @@
     <string name="settings_show_initial_animation">Anfängliche Animation anzeigen</string>
     <string name="settings_show_initial_animation_desc">Zeigt eine kurze Animation beim Start der App an</string>
 
-    <!-- Transaction Display -->
-    <string name="settings_transaction_display">Transaktionslistenanzeige</string>
-    <string name="settings_transaction_display_trend">Trend</string>
-    <string name="settings_transaction_display_category">Kategorie</string>
-    <string name="settings_transaction_display_none">Keine</string>
-    <string name="dialog_choose_transaction_display">Anzeigetyp wählen</string>
-
-    <!-- Feedback Email Bodies -->
-    <string name="feedback_email_body_english">Hi AntCashManager Team,\n\nI would like to share some feedback about the app:\n\n[Please describe your feedback here]\n\nThank you!</string>
-    <string name="feedback_email_body_italian">Ciao team di AntCashManager,\n\nVorrei condividere alcuni feedback sull\'app:\n\n[Per favore descrivi il tuo feedback qui]\n\nGrazie!</string>
-    <string name="feedback_email_body_french">Bonjour à l\'équipe d\'AntCashManager,\n\nJ\'aimerais partager des commentaires sur l\'application:\n\n[Veuillez décrire vos commentaires ici]\n\nMerci!</string>
-    <string name="feedback_email_body_german">Hallo AntCashManager-Team,\n\nIch möchte gerne Feedback zur App geben:\n\n[Bitte beschreiben Sie Ihr Feedback hier]\n\nDanke!</string>
-    <string name="feedback_email_body_spanish">Hola equipo de AntCashManager,\n\nMe gustaría compartir comentarios sobre la aplicación:\n\n[Por favor describe tu retroalimentación aquí]\n\n¡Gracias!</string>
-    <string name="feedback_email_body_chinese_simplified">AntCashManager 团队您好，\n\n我想分享一些关于该应用的反馈：\n\n[请在此描述您的反馈]\n\n谢谢！</string>
-    <string name="feedback_email_body_chinese_traditional">AntCashManager 團隊您好，\n\n我想分享一些關於該應用的回饋：\n\n[請在此描述您的回饋]\n\n謝謝！</string>
-    <string name="feedback_email_body_japanese">AntCashManager チームの皆様、\n\nアプリについてフィードバックを共有したいと思います：\n\n[ここにフィードバックを記入してください]\n\nありがとうございます！</string>
+     <!-- Transaction Display -->
+     <string name="settings_transaction_display">Icon auf Transaktionen</string>
+     <string name="settings_transaction_display_desc">Wähle aus, welches Symbol für jede Transaktion angezeigt werden soll</string>
+     <string name="settings_transaction_display_trend">Trendsymbole</string>
+     <string name="settings_transaction_display_trend_desc">Zeigt Pfeil nach oben für Einnahmen, nach unten für Ausgaben</string>
+     <string name="settings_transaction_display_category">Kategoriesymbol</string>
+     <string name="settings_transaction_display_category_desc">Zeigt das Kategoriesymbol für jede Transaktion</string>
+     <string name="settings_transaction_display_none">Kein Symbol</string>
+     <string name="settings_transaction_display_none_desc">Es wird kein zusätzliches Symbol angezeigt</string>
+     <string name="dialog_choose_transaction_display">Symboltyp wählen</string>
 
     <!-- Feedback Error Messages -->
     <string name="no_email_app_installed">Keine E-Mail-App verfügbar</string>

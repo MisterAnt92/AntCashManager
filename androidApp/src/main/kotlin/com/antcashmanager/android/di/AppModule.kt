@@ -1,8 +1,11 @@
 package com.antcashmanager.android.di
 
 import com.antcashmanager.android.analytics.AnalyticsManager
+import com.antcashmanager.android.auth.GoogleSignInManager
 import com.antcashmanager.android.data.backup.BackupService
 import com.antcashmanager.android.data.receipt.MlKitReceiptOcrService
+import com.antcashmanager.android.drive.DriveUploadManager
+import com.antcashmanager.android.work.AutoBackupScheduler
 import com.antcashmanager.android.ui.screen.categories.CategoriesViewModel
 import com.antcashmanager.android.ui.screen.charts.ChartsViewModel
 import com.antcashmanager.android.ui.screen.home.HomeViewModel
@@ -120,6 +123,9 @@ val dataModule = module {
         )
     }
     single<SettingsRepository> { SettingsRepositoryImpl(androidApplication()) }
+    single { AutoBackupScheduler(androidApplication()) }
+    single { GoogleSignInManager(androidApplication(), get<SettingsRepository>()) }
+    single { DriveUploadManager(androidApplication(), get<GoogleSignInManager>(), get<SettingsRepository>()) }
     single<CategoryRepository> {
         CategoryRepositoryImpl(
             categoryDao = get<com.antcashmanager.data.local.AppDatabase>().categoryDao(),
@@ -364,7 +370,16 @@ val presentationModule = module {
         )
     }
     viewModelOf(::DisplayViewModel)
-    viewModelOf(::SettingsDataViewModel)
+    viewModel {
+        SettingsDataViewModel(
+            settingsRepository = get(),
+            categoryRepository = get(),
+            deleteAllTransactionsUseCase = get(),
+            backupService = get(),
+            autoBackupScheduler = get(),
+            googleSignInManager = get(),
+        )
+    }
     viewModel {
         ReceiptScanViewModel(
             scanReceiptUseCase = get(),
