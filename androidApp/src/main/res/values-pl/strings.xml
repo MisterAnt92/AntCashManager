@@ -309,6 +309,10 @@
     <string name="settings_auto_backup_google_drive_sign_in">Zaloguj się przez Google</string>
     <string name="settings_auto_backup_google_drive_signing_in">Logowanie do Google…</string>
     <string name="settings_auto_backup_google_drive_sign_out">Wyloguj się z Google</string>
+    <string name="settings_auto_backup_path_button">Ścieżka kopii zapasowej</string>
+    <string name="settings_auto_backup_path_not_selected">Nie wybrano folderu</string>
+    <string name="settings_auto_backup_path_subtitle">Wybierz, gdzie mają być zapisywane automatyczne kopie zapasowe</string>
+
 
     <!-- Privacy Policy -->
     <string name="privacy_policy_title">Polityka prywatności</string>

@@ -308,6 +308,10 @@
     <string name="settings_auto_backup_google_drive_sign_in">Google से साइन इन करें</string>
     <string name="settings_auto_backup_google_drive_signing_in">Google में साइन इन किया जा रहा है…</string>
     <string name="settings_auto_backup_google_drive_sign_out">Google से साइन आउट करें</string>
+    <string name="settings_auto_backup_path_button">बैकअप पथ</string>
+    <string name="settings_auto_backup_path_not_selected">कोई फ़ोल्डर चयनित नहीं</string>
+    <string name="settings_auto_backup_path_subtitle">स्वचालित बैकअप कहाँ सहेजे जाएं यह चुनें</string>
+
 
     <!-- Privacy Policy -->
     <string name="privacy_policy_title">गोपनीयता नीति</string>

@@ -315,6 +315,9 @@
     <string name="settings_auto_backup_google_drive_sign_in">Sign In with Google</string>
     <string name="settings_auto_backup_google_drive_signing_in">Signing in to Google…</string>
     <string name="settings_auto_backup_google_drive_sign_out">Sign Out from Google</string>
+    <string name="settings_auto_backup_path_button">Backup Path</string>
+    <string name="settings_auto_backup_path_not_selected">No folder selected</string>
+    <string name="settings_auto_backup_path_subtitle">Choose where to save automatic backups</string>
 
     <!-- Privacy Policy -->
     <string name="privacy_policy_title">Privacy Policy</string>

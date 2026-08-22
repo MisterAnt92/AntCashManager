@@ -309,6 +309,10 @@
     <string name="settings_auto_backup_google_drive_sign_in">Google로 로그인</string>
     <string name="settings_auto_backup_google_drive_signing_in">Google에 로그인 중…</string>
     <string name="settings_auto_backup_google_drive_sign_out">Google에서 로그아웃</string>
+    <string name="settings_auto_backup_path_button">백업 경로</string>
+    <string name="settings_auto_backup_path_not_selected">선택된 폴더 없음</string>
+    <string name="settings_auto_backup_path_subtitle">자동 백업을 저장할 위치 선택</string>
+
 
     <!-- Privacy Policy -->
     <string name="privacy_policy_title">개인정보 처리방침</string>

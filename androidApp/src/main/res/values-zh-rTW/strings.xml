@@ -309,6 +309,10 @@
     <string name="settings_auto_backup_google_drive_sign_in">使用Google登入</string>
     <string name="settings_auto_backup_google_drive_signing_in">正在登入Google…</string>
     <string name="settings_auto_backup_google_drive_sign_out">從Google登出</string>
+    <string name="settings_auto_backup_path_button">備份路徑</string>
+    <string name="settings_auto_backup_path_not_selected">未選擇資料夾</string>
+    <string name="settings_auto_backup_path_subtitle">選擇自動備份的保存位置</string>
+
 
     <!-- Privacy Policy -->
     <string name="privacy_policy_title">隱私權政策</string>

@@ -311,6 +311,10 @@
     <string name="settings_auto_backup_google_drive_sign_in">Googleでサインイン</string>
     <string name="settings_auto_backup_google_drive_signing_in">Googleにサインイン中…</string>
     <string name="settings_auto_backup_google_drive_sign_out">Googleからサインアウト</string>
+    <string name="settings_auto_backup_path_button">バックアップパス</string>
+    <string name="settings_auto_backup_path_not_selected">フォルダが選択されていません</string>
+    <string name="settings_auto_backup_path_subtitle">自動バックアップを保存する場所を選択</string>
+
 
     <!-- Privacy Policy -->
     <string name="privacy_policy_title">プライバシーポリシー</string>

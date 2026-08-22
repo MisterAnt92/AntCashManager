@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.CloudUpload
+import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.RestorePage
@@ -101,6 +102,7 @@ fun SettingsDataScreen(
         onDeleteAllSuggestions = viewModel::deleteAllSuggestions,
         onAutoBackupEnabledChange = viewModel::setAutoBackupEnabled,
         onAutoBackupFolderSelected = viewModel::onAutoBackupFolderSelected,
+        onSelectBackupPath = {},  // Will be set inside SettingsDataContent
         autoBackupEnabled = state.autoBackupEnabled,
         autoBackupFolderUri = state.autoBackupFolderUri,
         autoBackupDestination = state.autoBackupDestination,
@@ -144,6 +146,7 @@ internal fun SettingsDataContent(
     onDeleteAllSuggestions: () -> Unit = {},
     onAutoBackupEnabledChange: (Boolean) -> Unit = {},
     onAutoBackupFolderSelected: (String) -> Unit = {},
+    onSelectBackupPath: () -> Unit = {},
     autoBackupEnabled: Boolean = false,
     autoBackupFolderUri: String? = null,
     autoBackupDestination: BackupDestination = BackupDestination.LOCAL,
@@ -392,6 +395,7 @@ internal fun SettingsDataContent(
                         onAutoBackupDestinationChange = onAutoBackupDestinationChange,
                         onGoogleSignInClick = onGoogleSignInClick,
                         onGoogleSignOutClick = onGoogleSignOutClick,
+                        onSelectBackupPath = { folderPickerLauncher?.launch(null) },
                     )
                 }
 
@@ -464,6 +468,7 @@ internal fun SettingsDataContent(
                         onAutoBackupDestinationChange = onAutoBackupDestinationChange,
                         onGoogleSignInClick = onGoogleSignInClick,
                         onGoogleSignOutClick = onGoogleSignOutClick,
+                        onSelectBackupPath = { folderPickerLauncher?.launch(null) },
                     )
                 }
                 Column(
@@ -744,6 +749,7 @@ private fun DataManagementSection(
     onAutoBackupDestinationChange: (BackupDestination) -> Unit = {},
     onGoogleSignInClick: () -> Unit = {},
     onGoogleSignOutClick: () -> Unit = {},
+    onSelectBackupPath: () -> Unit = {},
 ) {
     AppCardSectionHeader(title = stringResource(R.string.settings_data_management))
     VerticalSpacer(SpacingSize.XS)
@@ -799,15 +805,11 @@ private fun DataManagementSection(
             modifier = Modifier.padding(start = 4.dp, top = 2.dp, bottom = 4.dp),
         )
 
-        // Destination section (only when enabled)
+        // Backup Path section (only when enabled)
         if (autoBackupEnabled) {
-            AutoBackupDestinationSection(
-                selectedDestination = autoBackupDestination,
-                googleDriveUserEmail = googleDriveUserEmail,
-                isGoogleDriveSignedIn = isGoogleDriveSignedIn,
-                onDestinationChange = onAutoBackupDestinationChange,
-                onGoogleSignInClick = onGoogleSignInClick,
-                onGoogleSignOutClick = onGoogleSignOutClick,
+            AutoBackupPathSection(
+                autoBackupFolderUri = autoBackupFolderUri,
+                onSelectBackupPath = onSelectBackupPath,
             )
         }
 
@@ -911,85 +913,44 @@ private fun SuggestionsSection(
 }
 
 @Composable
-private fun AutoBackupDestinationSection(
-    selectedDestination: BackupDestination = BackupDestination.LOCAL,
-    googleDriveUserEmail: String? = null,
-    isGoogleDriveSignedIn: Boolean = false,
-    onDestinationChange: (BackupDestination) -> Unit = {},
-    onGoogleSignInClick: () -> Unit = {},
-    onGoogleSignOutClick: () -> Unit = {},
+private fun AutoBackupPathSection(
+    autoBackupFolderUri: String? = null,
+    onSelectBackupPath: () -> Unit = {},
 ) {
-    AppCardSectionHeader(title = stringResource(R.string.settings_auto_backup_destination_local))
-    VerticalSpacer(SpacingSize.XS)
-    Column(verticalArrangement = Arrangement.spacedBy(SettingsDataConstant.CARD_SPACING_DP.dp)) {
-        // ── Local Destination ──
-        AppCard(
-            title = stringResource(R.string.settings_auto_backup_destination_local),
-            subtitle = stringResource(R.string.settings_backup_subtitle),
-            leadingIcon = Icons.Default.Backup,
-            iconBackgroundColor = if (selectedDestination == BackupDestination.LOCAL) {
-                MaterialTheme.colorScheme.tertiaryContainer
-            } else {
-                MaterialTheme.colorScheme.surfaceVariant
-            },
-            iconTint = if (selectedDestination == BackupDestination.LOCAL) {
-                MaterialTheme.colorScheme.onTertiaryContainer
-            } else {
-                MaterialTheme.colorScheme.onSurfaceVariant
-            },
-            showChevron = false,
-            onClick = {
-                if (selectedDestination != BackupDestination.LOCAL) {
-                    onDestinationChange(BackupDestination.LOCAL)
-                }
-            },
-        )
+    AppCard(
+        title = stringResource(R.string.settings_auto_backup_path_button),
+        subtitle = formatAutoBackupPath(autoBackupFolderUri),
+        leadingIcon = Icons.Default.FolderOpen,
+        iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
+        iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
+        showChevron = true,
+        onClick = onSelectBackupPath,
+    )
+}
 
-        // ── Google Drive (Placeholder for Phase 2) ──
-        AppCard(
-            title = stringResource(R.string.settings_auto_backup_destination_google_drive),
-            subtitle = if (isGoogleDriveSignedIn && googleDriveUserEmail != null) {
-                // Loggato: mostra email
-                googleDriveUserEmail
-            } else {
-                // Non loggato: mostra placeholder
-                stringResource(R.string.settings_auto_backup_google_drive_coming_soon)
-            },
-            leadingIcon = Icons.Default.CloudUpload,
-            iconBackgroundColor = if (selectedDestination == BackupDestination.GOOGLE_DRIVE) {
-                MaterialTheme.colorScheme.secondaryContainer
-            } else {
-                MaterialTheme.colorScheme.surfaceVariant
-            },
-            iconTint = if (selectedDestination == BackupDestination.GOOGLE_DRIVE) {
-                MaterialTheme.colorScheme.onSecondaryContainer
-            } else {
-                MaterialTheme.colorScheme.onSurfaceVariant
-            },
-            showChevron = false,
-            enabled = selectedDestination == BackupDestination.GOOGLE_DRIVE || !isGoogleDriveSignedIn,  // Enable if not signed in (per sign-in) or already selected
-            onClick = {
-                if (!isGoogleDriveSignedIn) {
-                    // Non loggato: apri dialog di sign-in
-                    onGoogleSignInClick()
-                } else if (selectedDestination != BackupDestination.GOOGLE_DRIVE) {
-                    // Loggato ma non selezionato: seleziona
-                    onDestinationChange(BackupDestination.GOOGLE_DRIVE)
-                }
-            },
-        )
-
-        // ── Sign-out button (solo se loggato e selezionato) ──
-        if (isGoogleDriveSignedIn && selectedDestination == BackupDestination.GOOGLE_DRIVE) {
-            AppCard(
-                title = stringResource(R.string.settings_auto_backup_google_drive_sign_out),
-                subtitle = googleDriveUserEmail ?: "",
-                leadingIcon = Icons.Default.CloudUpload,
-                iconBackgroundColor = MaterialTheme.colorScheme.errorContainer,
-                iconTint = MaterialTheme.colorScheme.onErrorContainer,
-                showChevron = false,
-                onClick = onGoogleSignOutClick,
-            )
+/**
+ * Estrae il nome della cartella dal SAF URI per visualizzazione leggibile.
+ *
+ * - Se URI è null/blank → restituisce stringResource(R.string.settings_auto_backup_path_not_selected)
+ * - Altrimenti estrae il nome della cartella dal path
+ * - Fallback: ultimi 40 caratteri dell'URI se parsing fallisce
+ *
+ * Esempi:
+ * - "content://com.android.externalstorage/tree/primary:AntCashManager/Backups" → "AntCashManager/Backups"
+ * - null → "Nessuna cartella selezionata"
+ */
+@Composable
+private fun formatAutoBackupPath(uriString: String?): String {
+    return if (uriString.isNullOrBlank()) {
+        stringResource(R.string.settings_auto_backup_path_not_selected)
+    } else {
+        try {
+            val uri = android.net.Uri.parse(uriString)
+            val path = uri.path ?: uriString
+            path.substringAfterLast("/").takeIf { it.isNotEmpty() }
+                ?: uriString.takeLast(40)
+        } catch (e: Exception) {
+            uriString.takeLast(40)
         }
     }
 }

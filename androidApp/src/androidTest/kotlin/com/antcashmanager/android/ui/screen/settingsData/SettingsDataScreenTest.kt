@@ -66,5 +66,85 @@ class SettingsDataScreenTest : BaseInstrumentationTest() {
 
         assertEquals(unavailableMessage, receivedError)
     }
+
+    @Test
+    fun autoBackupPathButton_shouldBeVisible_whenAutoBackupEnabled() {
+        val ctx = InstrumentationRegistry.getInstrumentation().targetContext
+        val buttonLabel = ctx.getString(R.string.settings_auto_backup_path_button)
+
+        composeTestRule.setContent {
+            AntCashManagerTheme {
+                SettingsDataContent(
+                    state = SettingsDataState(
+                        autoBackupEnabled = true,
+                        autoBackupFolderUri = "content://some/path",
+                    ),
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText(buttonLabel).assertExists()
+    }
+
+    @Test
+    fun autoBackupPathButton_shouldNotBeVisible_whenAutoBackupDisabled() {
+        val ctx = InstrumentationRegistry.getInstrumentation().targetContext
+        val buttonLabel = ctx.getString(R.string.settings_auto_backup_path_button)
+
+        composeTestRule.setContent {
+            AntCashManagerTheme {
+                SettingsDataContent(
+                    state = SettingsDataState(
+                        autoBackupEnabled = false,
+                    ),
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText(buttonLabel).assertDoesNotExist()
+    }
+
+    @Test
+    fun autoBackupPathButton_shouldShowNotSelected_whenUriIsNull() {
+        val ctx = InstrumentationRegistry.getInstrumentation().targetContext
+        val notSelectedLabel = ctx.getString(R.string.settings_auto_backup_path_not_selected)
+
+        composeTestRule.setContent {
+            AntCashManagerTheme {
+                SettingsDataContent(
+                    state = SettingsDataState(
+                        autoBackupEnabled = true,
+                        autoBackupFolderUri = null,
+                    ),
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText(notSelectedLabel).assertExists()
+    }
+
+    @Test
+    fun autoBackupPathButton_shouldTriggerCallback_onClick() {
+        val ctx = InstrumentationRegistry.getInstrumentation().targetContext
+        val buttonLabel = ctx.getString(R.string.settings_auto_backup_path_button)
+        var callbackInvoked = false
+
+        composeTestRule.setContent {
+            AntCashManagerTheme {
+                SettingsDataContent(
+                    state = SettingsDataState(
+                        autoBackupEnabled = true,
+                        autoBackupFolderUri = "content://some/path",
+                    ),
+                    onSelectBackupPath = { callbackInvoked = true },
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText(buttonLabel).performClick()
+        composeTestRule.waitForIdle()
+
+        assertEquals(true, callbackInvoked)
+    }
 }
 

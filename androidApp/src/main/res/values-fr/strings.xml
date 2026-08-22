@@ -281,6 +281,10 @@
     <string name="settings_auto_backup_google_drive_sign_in">Se connecter avec Google</string>
     <string name="settings_auto_backup_google_drive_signing_in">Connexion \u00e0 Google en cours\u2026</string>
     <string name="settings_auto_backup_google_drive_sign_out">Se d\u00e9connecter de Google</string>
+    <string name="settings_auto_backup_path_button">Chemin de Sauvegarde</string>
+    <string name="settings_auto_backup_path_not_selected">Aucun dossier sélectionné</string>
+    <string name="settings_auto_backup_path_subtitle">Choisissez où enregistrer les sauvegardes automatiques</string>
+
 
     <string name="privacy_policy_title">Politique de confidentialit\u00e9</string>
     <string name="privacy_policy_content">AntCashManager s\'engage \u00e0 prot\u00e9ger votre vie priv\u00e9e. Cette application ne collecte ni ne partage de donn\u00e9es personnelles avec des tiers. Toutes les donn\u00e9es financi\u00e8res sont stock\u00e9es localement sur votre appareil et ne sont jamais transmises \u00e0 des serveurs externes.\n\nVos donn\u00e9es restent enti\u00e8rement sur votre appareil et sous votre contr\u00f4le. Nous n\'utilisons pas de services d\'analyse, de suivi ou de publicit\u00e9.\n\nPour toute question concernant la confidentialit\u00e9, contactez-nous via la page du store.</string>

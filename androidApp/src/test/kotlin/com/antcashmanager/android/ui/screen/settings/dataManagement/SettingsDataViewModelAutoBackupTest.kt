@@ -130,4 +130,75 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
 
         coVerify { settingsRepository.setAutoBackupFolderUri(uri2) }
     }
+
+    @Test
+    fun `when autoBackupEnabled is true, state should contain folder URI from repository`() = runUnitTest {
+        val testUri = "content://com.android.externalstorage/tree/primary%3AAntCashManager"
+        val settingsRepositoryWithUri: SettingsRepository = mockk(relaxed = true)
+
+        // Mock the flow to return the URI
+        io.mockk.coEvery { settingsRepositoryWithUri.getAutoBackupFolderUri() } returns
+            kotlinx.coroutines.flow.flowOf(testUri)
+        io.mockk.coEvery { settingsRepositoryWithUri.getAutoBackupEnabled() } returns
+            kotlinx.coroutines.flow.flowOf(true)
+        io.mockk.coEvery { settingsRepositoryWithUri.getLastBackupTimestamp() } returns
+            kotlinx.coroutines.flow.flowOf(null)
+        io.mockk.coEvery { settingsRepositoryWithUri.getLastRestoreTimestamp() } returns
+            kotlinx.coroutines.flow.flowOf(null)
+        io.mockk.coEvery { settingsRepositoryWithUri.getSuggestionsEnabled() } returns
+            kotlinx.coroutines.flow.flowOf(false)
+        io.mockk.coEvery { settingsRepositoryWithUri.getDataEncryptionEnabled() } returns
+            kotlinx.coroutines.flow.flowOf(false)
+        io.mockk.coEvery { settingsRepositoryWithUri.getAutoBackupDestination() } returns
+            kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.BackupDestination.LOCAL)
+        io.mockk.coEvery { settingsRepositoryWithUri.getGoogleDriveUserEmail() } returns
+            kotlinx.coroutines.flow.flowOf(null)
+
+        val viewModel = SettingsDataViewModel(
+            settingsRepository = settingsRepositoryWithUri,
+            categoryRepository = categoryRepository,
+            deleteAllTransactionsUseCase = deleteAllTransactionsUseCase,
+            backupService = backupService,
+            autoBackupScheduler = autoBackupScheduler,
+            googleSignInManager = googleSignInManager,
+        )
+
+        viewModel.state.value.autoBackupFolderUri.shouldBe(testUri)
+        viewModel.state.value.autoBackupEnabled.shouldBe(true)
+    }
+
+    @Test
+    fun `when autoBackupEnabled but folder URI is null, should show not-selected state`() = runUnitTest {
+        val settingsRepositoryNoUri: SettingsRepository = mockk(relaxed = true)
+
+        // Mock the flows
+        io.mockk.coEvery { settingsRepositoryNoUri.getAutoBackupFolderUri() } returns
+            kotlinx.coroutines.flow.flowOf(null)
+        io.mockk.coEvery { settingsRepositoryNoUri.getAutoBackupEnabled() } returns
+            kotlinx.coroutines.flow.flowOf(true)
+        io.mockk.coEvery { settingsRepositoryNoUri.getLastBackupTimestamp() } returns
+            kotlinx.coroutines.flow.flowOf(null)
+        io.mockk.coEvery { settingsRepositoryNoUri.getLastRestoreTimestamp() } returns
+            kotlinx.coroutines.flow.flowOf(null)
+        io.mockk.coEvery { settingsRepositoryNoUri.getSuggestionsEnabled() } returns
+            kotlinx.coroutines.flow.flowOf(false)
+        io.mockk.coEvery { settingsRepositoryNoUri.getDataEncryptionEnabled() } returns
+            kotlinx.coroutines.flow.flowOf(false)
+        io.mockk.coEvery { settingsRepositoryNoUri.getAutoBackupDestination() } returns
+            kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.BackupDestination.LOCAL)
+        io.mockk.coEvery { settingsRepositoryNoUri.getGoogleDriveUserEmail() } returns
+            kotlinx.coroutines.flow.flowOf(null)
+
+        val viewModel = SettingsDataViewModel(
+            settingsRepository = settingsRepositoryNoUri,
+            categoryRepository = categoryRepository,
+            deleteAllTransactionsUseCase = deleteAllTransactionsUseCase,
+            backupService = backupService,
+            autoBackupScheduler = autoBackupScheduler,
+            googleSignInManager = googleSignInManager,
+        )
+
+        viewModel.state.value.autoBackupFolderUri.shouldBeNull()
+        viewModel.state.value.autoBackupEnabled.shouldBe(true)
+    }
 }

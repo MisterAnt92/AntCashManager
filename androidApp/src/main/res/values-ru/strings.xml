@@ -309,6 +309,10 @@
     <string name="settings_auto_backup_google_drive_sign_in">Войти через Google</string>
     <string name="settings_auto_backup_google_drive_signing_in">Вход в Google…</string>
     <string name="settings_auto_backup_google_drive_sign_out">Выход из Google</string>
+    <string name="settings_auto_backup_path_button">Путь резервной копии</string>
+    <string name="settings_auto_backup_path_not_selected">Папка не выбрана</string>
+    <string name="settings_auto_backup_path_subtitle">Выберите, где сохранять автоматические резервные копии</string>
+
 
     <!-- Privacy Policy -->
     <string name="privacy_policy_title">Политика конфиденциальности</string>
