@@ -34,6 +34,7 @@ googleDriveApi = "v3-rev20260720-2.0.0"
 googleHttpClient = "1.44.1"
 googleOAuthClient = "1.36.0"
 securityCrypto = "1.1.0-alpha06"
+testOrchestrator = "1.4.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -88,6 +89,7 @@ google-drive-api = { group = "com.google.apis", name = "google-api-services-driv
 google-http-client = { group = "com.google.http-client", name = "google-http-client", version.ref = "googleHttpClient" }
 google-oauth-client = { group = "com.google.oauth-client", name = "google-oauth-client", version.ref = "googleOAuthClient" }
 androidx-security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "securityCrypto" }
+androidx-test-orchestrator = { group = "androidx.test", name = "orchestrator", version.ref = "testOrchestrator" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

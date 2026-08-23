@@ -77,7 +77,6 @@ android {
 dependencies {
     implementation(project(":shared"))
     implementation(platform(libs.firebase.bom))
-    implementation(libs.androidx.compose.ui.test.junit4)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
@@ -128,7 +127,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
 
     // Android Test Orchestrator for better test isolation and parallelism
-    androidTestUtil("androidx.test:orchestrator:1.4.2")
+    androidTestUtil(libs.androidx.test.orchestrator)
 }
 
 // ── Jacoco Coverage Report Tasks ──
