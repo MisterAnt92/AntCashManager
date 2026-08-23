@@ -2,6 +2,7 @@ package com.antcashmanager.android.ui.transactions
 
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.BaseUnitTest
+import com.antcashmanager.android.analytics.EngagementTracker
 import com.antcashmanager.android.testutil.FakeCategoryRepository
 import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.testutil.FakeTransactionRepository
@@ -13,6 +14,7 @@ import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionSuggestions
 import com.antcashmanager.domain.model.TransactionType
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,6 +34,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
     private lateinit var fakeTransactionRepo: FakeTransactionRepositoryWithSuggestions
     private lateinit var fakeCategoryRepo: FakeCategoryRepository
     private lateinit var fakeSettingsRepository: FakeSettingsRepository
+    private lateinit var engagementTracker: EngagementTracker
     private lateinit var viewModel: TransactionsViewModel
 
     @Before
@@ -39,11 +42,13 @@ class TransactionsViewModelTest : BaseUnitTest() {
         fakeTransactionRepo = FakeTransactionRepositoryWithSuggestions()
         fakeCategoryRepo = FakeCategoryRepository()
         fakeSettingsRepository = FakeSettingsRepository()
+        engagementTracker = mockk(relaxed = true)
         viewModel = TransactionsViewModel(
             transactionRepository = fakeTransactionRepo,
             categoryRepository = fakeCategoryRepo,
             settingsRepository = fakeSettingsRepository,
             dispatcher = testDispatcher,
+            engagementTracker = engagementTracker,
         )
     }
 
@@ -223,6 +228,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
             categoryRepository = fakeCategoryRepo,
             settingsRepository = fakeSettingsRepository,
             dispatcher = testDispatcher,
+            engagementTracker = engagementTracker,
         )
 
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
@@ -343,6 +349,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
                 categoryRepository = fakeCategoryRepo,
                 settingsRepository = fakeSettingsRepository,
                 dispatcher = testDispatcher,
+                engagementTracker = engagementTracker,
             )
 
             val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
@@ -375,6 +382,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
             categoryRepository = fakeCategoryRepo,
             settingsRepository = fakeSettingsRepository,
             dispatcher = testDispatcher,
+            engagementTracker = mockk(relaxed = true),
         )
 
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
@@ -413,6 +421,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
                 categoryRepository = fakeCategoryRepo,
                 settingsRepository = fakeSettingsRepository,
                 dispatcher = testDispatcher,
+            engagementTracker = mockk(relaxed = true),
             )
 
             val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
@@ -451,6 +460,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
             categoryRepository = fakeCategoryRepo,
             settingsRepository = fakeSettingsRepository,
             dispatcher = testDispatcher,
+            engagementTracker = mockk(relaxed = true),
         )
 
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {

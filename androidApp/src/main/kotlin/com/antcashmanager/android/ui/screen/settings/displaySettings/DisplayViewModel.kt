@@ -3,6 +3,7 @@ package com.antcashmanager.android.ui.screen.settings.displaySettings
 import android.os.Bundle
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.analytics.AnalyticsManager
+import com.antcashmanager.android.analytics.EngagementTracker
 import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.domain.model.None
 import com.antcashmanager.domain.model.TransactionDisplayType
@@ -25,7 +26,10 @@ class DisplayViewModel(
     private val settingsRepository: SettingsRepository,
     private val widgetUpdateNotifier: WidgetUpdateNotifier = NoOpWidgetUpdateNotifier,
     private val analyticsManager: AnalyticsManager,
+    private val engagementTracker: EngagementTracker,
 ) : BaseViewModel<None>() {
+
+    private var settingsModifiedCount = 0
 
     // Espone il simbolo valuta attuale
     val currencySymbol = settingsRepository.getCurrencySymbol()
@@ -367,7 +371,15 @@ class DisplayViewModel(
      */
     private fun updatePreference(logMsg: String, action: suspend () -> Unit) {
         logDebug(logMsg)
-        viewModelScope.launch { action() }
+        settingsModifiedCount++
+        viewModelScope.launch {
+            action()
+            // Track settings customization score after each preference update
+            engagementTracker.trackSettingsCustomizationScore(
+                settingsModifiedCount = settingsModifiedCount,
+                accessibilityEnabled = maskAmounts.value // Use mask amounts as proxy for accessibility
+            )
+        }
     }
 
     private fun sanitizeCurrencySymbol(symbol: String): String =

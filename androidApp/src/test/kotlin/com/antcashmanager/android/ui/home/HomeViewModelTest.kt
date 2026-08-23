@@ -2,6 +2,7 @@ package com.antcashmanager.android.ui.home
 
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.BaseUnitTest
+import com.antcashmanager.android.analytics.SegmentationTracker
 import com.antcashmanager.android.testutil.FakeCategoryRepository
 import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.testutil.FakeTransactionRepository
@@ -11,6 +12,7 @@ import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -28,6 +30,7 @@ class HomeViewModelTest : BaseUnitTest() {
     private lateinit var fakeRepo: FakeTransactionRepository
     private lateinit var fakeCategoryRepo: FakeCategoryRepository
     private lateinit var fakeSettingsRepository: FakeSettingsRepository
+    private lateinit var segmentationTracker: SegmentationTracker
     private lateinit var viewModel: HomeViewModel
 
     @Before
@@ -35,12 +38,14 @@ class HomeViewModelTest : BaseUnitTest() {
         fakeRepo = FakeTransactionRepository()
         fakeCategoryRepo = FakeCategoryRepository()
         fakeSettingsRepository = FakeSettingsRepository()
+        segmentationTracker = mockk(relaxed = true)
         viewModel = HomeViewModel(
             transactionRepository = fakeRepo,
             settingsRepository = fakeSettingsRepository,
             categoryRepository = fakeCategoryRepo,
             dispatcher = testDispatcher,
             searchDebounceMs = 0L,
+            segmentationTracker = segmentationTracker,
         )
     }
 
@@ -311,6 +316,7 @@ class HomeViewModelTest : BaseUnitTest() {
                 categoryRepository = fakeCategoryRepo,
                 dispatcher = testDispatcher,
                 searchDebounceMs = 0L,
+                segmentationTracker = segmentationTracker,
             )
 
             val collectJob = launch {
@@ -414,6 +420,7 @@ class HomeViewModelTest : BaseUnitTest() {
                 categoryRepository = fakeCategoryRepo,
                 dispatcher = testDispatcher,
                 searchDebounceMs = 0L,
+            segmentationTracker = mockk(relaxed = true),
             )
 
             val collectJob = launch {
@@ -479,6 +486,7 @@ class HomeViewModelTest : BaseUnitTest() {
                 categoryRepository = fakeCategoryRepo,
                 dispatcher = testDispatcher,
                 searchDebounceMs = 0L,
+            segmentationTracker = mockk(relaxed = true),
             )
 
             val collectJob = launch {
@@ -593,6 +601,7 @@ class HomeViewModelTest : BaseUnitTest() {
             categoryRepository = fakeCategoryRepo,
             dispatcher = testDispatcher,
             searchDebounceMs = 0L,
+            segmentationTracker = segmentationTracker,
         )
 
         val collectJob = launch {
@@ -653,6 +662,7 @@ class HomeViewModelTest : BaseUnitTest() {
             categoryRepository = fakeCategoryRepo,
             dispatcher = testDispatcher,
             searchDebounceMs = 0L,
+            segmentationTracker = mockk(relaxed = true),
         )
 
         val collectJob = launch {
@@ -686,6 +696,7 @@ class HomeViewModelTest : BaseUnitTest() {
             categoryRepository = fakeCategoryRepo,
             dispatcher = testDispatcher,
             searchDebounceMs = 0L,
+            segmentationTracker = mockk(relaxed = true),
         )
 
         val collectJob = launch {

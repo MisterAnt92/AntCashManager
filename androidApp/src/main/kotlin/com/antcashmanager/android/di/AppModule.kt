@@ -311,6 +311,7 @@ val presentationModule = module {
             getHomeDateFilterStateUseCase = get(),
             setHomeDateFilterStateUseCase = get(),
             getCategoriesUseCase = get(),
+            segmentationTracker = get(),
         )
     }
     viewModel {
@@ -343,6 +344,7 @@ val presentationModule = module {
             getTransactionSuggestionsUseCase = get(),
             getTransactionsDateFilterStateUseCase = get(),
             setTransactionsDateFilterStateUseCase = get(),
+            engagementTracker = get(),
         )
     }
 
@@ -395,6 +397,7 @@ val presentationModule = module {
             settingsRepository = get(),
             widgetUpdateNotifier = get(),
             analyticsManager = get(),
+            engagementTracker = get(),
         )
     }
     viewModel {
