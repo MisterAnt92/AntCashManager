@@ -12,12 +12,7 @@
     <string name="common_back">Назад</string>
     <string name="common_add">Додати</string>
     <string name="common_preview">Попередній перегляд</string>
-
-    <!-- HelpDialog (Dashboard) -->
     <string name="help_dashboard_desc">Перегляньте загальний баланс, дохід та видатки за вибраний період.</string>
-    <string name="app_name">AntCashManager</string>
-
-    <!-- Home Screen -->
     <string name="home_total_balance">Загальний баланс</string>
     <string name="home_income">Дохід</string>
     <string name="home_expenses">Видатки</string>
@@ -36,8 +31,6 @@
     <string name="home_recent_transactions_count">Недавні транзакції · %1$d</string>
     <string name="home_quick_insights_biggest_expense">Найбільший видаток</string>
     <string name="home_scroll_to_top">Прокрутити вгору</string>
-    <string name="home_balance_summary_cd">%1$s: %2$s, %3$s</string>
-    <string name="home_insight_row_cd">%1$s: %2$s</string>
 
     <!-- Transactions Screen -->
     <string name="transactions_add">Додати транзакцію</string>
@@ -213,10 +206,6 @@
     <string name="settings_widget_preview_title">Попередній перегляд</string>
     <string name="settings_widget_preview_recent">Недавні транзакції</string>
     <string name="settings_widget_preview_category">Доходи та видатки</string>
-    <string name="date_format_ddmmyyyy">ДД/ММ/РРРР</string>
-    <string name="date_format_mmddyyyy">ММ/ДД/РРРР</string>
-    <string name="date_format_yyyymmdd">РРРР-ММ-ДД</string>
-    <string name="date_format_ddmmmyyyy">ДД МММ РРРР</string>
     <string name="dialog_choose_date_format">Виберіть формат дати</string>
     <string name="settings_accessibility">Спеціальні можливості</string>
     <string name="settings_high_contrast">Високий контраст</string>

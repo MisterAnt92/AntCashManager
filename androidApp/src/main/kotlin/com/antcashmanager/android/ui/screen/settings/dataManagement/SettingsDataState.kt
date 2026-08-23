@@ -41,6 +41,8 @@ data class SettingsDataState(
     val autoBackupFolderUri: String? = null,
     // ── Google Drive Backup (Phase 2) ──
     val googleDriveUserEmail: String? = null,
+    val googleDriveFolderId: String? = null,
+    val googleDriveFolderName: String? = null,
     val isGoogleDriveSignedIn: Boolean = false,
     val showGoogleSignInDialog: Boolean = false,
     val googleDriveSignInLoading: Boolean = false,

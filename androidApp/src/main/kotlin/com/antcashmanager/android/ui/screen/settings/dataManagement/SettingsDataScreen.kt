@@ -389,6 +389,8 @@ internal fun SettingsDataContent(
                         autoBackupEnabled = state.autoBackupEnabled,
                         autoBackupFolderUri = state.autoBackupFolderUri,
                         autoBackupDestination = autoBackupDestination,
+                        googleDriveFolderId = state.googleDriveFolderId,
+                        googleDriveFolderName = state.googleDriveFolderName,
                         googleDriveUserEmail = googleDriveUserEmail,
                         isGoogleDriveSignedIn = isGoogleDriveSignedIn,
                         onAutoBackupEnabledChange = handleAutoBackupToggle,
@@ -465,6 +467,8 @@ internal fun SettingsDataContent(
                         autoBackupEnabled = state.autoBackupEnabled,
                         autoBackupFolderUri = state.autoBackupFolderUri,
                         autoBackupDestination = autoBackupDestination,
+                        googleDriveFolderId = state.googleDriveFolderId,
+                        googleDriveFolderName = state.googleDriveFolderName,
                         googleDriveUserEmail = googleDriveUserEmail,
                         isGoogleDriveSignedIn = isGoogleDriveSignedIn,
                         onAutoBackupEnabledChange = handleAutoBackupToggle,
@@ -749,6 +753,8 @@ private fun DataManagementSection(
     autoBackupEnabled: Boolean = false,
     autoBackupFolderUri: String? = null,
     autoBackupDestination: BackupDestination = BackupDestination.LOCAL,
+    googleDriveFolderId: String? = null,
+    googleDriveFolderName: String? = null,
     googleDriveUserEmail: String? = null,
     isGoogleDriveSignedIn: Boolean = false,
     onAutoBackupEnabledChange: (Boolean) -> Unit = {},
@@ -814,7 +820,11 @@ private fun DataManagementSection(
         // Backup Path section (only when enabled)
         if (autoBackupEnabled) {
             AutoBackupPathSection(
+                destination = autoBackupDestination,
                 autoBackupFolderUri = autoBackupFolderUri,
+                googleDriveFolderId = googleDriveFolderId,
+                googleDriveFolderName = googleDriveFolderName,
+                googleDriveUserEmail = googleDriveUserEmail,
                 onSelectBackupPath = onSelectBackupPathAction,
             )
 
@@ -928,17 +938,62 @@ private fun SuggestionsSection(
 
 @Composable
 private fun AutoBackupPathSection(
+    destination: BackupDestination = BackupDestination.LOCAL,
     autoBackupFolderUri: String? = null,
+    googleDriveFolderId: String? = null,
+    googleDriveFolderName: String? = null,
+    googleDriveUserEmail: String? = null,
     onSelectBackupPath: () -> Unit = {},
 ) {
     AppCard(
         title = stringResource(R.string.settings_auto_backup_path_button),
-        subtitle = formatAutoBackupPath(autoBackupFolderUri),
+        subtitle = stringResource(R.string.settings_auto_backup_path_subtitle),
         leadingIcon = Icons.Default.FolderOpen,
         iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
         iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
         showChevron = true,
         onClick = onSelectBackupPath,
+    )
+
+    // Mostra il percorso selezionato in una label separata
+    AutoBackupPathLabel(
+        destination = destination,
+        localFolderUri = autoBackupFolderUri,
+        googleDriveFolderName = googleDriveFolderName,
+        googleDriveEmail = googleDriveUserEmail,
+    )
+}
+
+/**
+ * Mostra il percorso selezionato per il backup automatico in una label separata.
+ * Visualizza il nome finale della cartella (non l'URI completo) per backup locale,
+ * oppure il nome della cartella Google Drive con email per backup su Google Drive.
+ *
+ * Esempi:
+ * - "Percorso selezionato: AntCashManager/Backups" (LOCAL)
+ * - "Percorso selezionato: AntCashManager/Backups (user@gmail.com)" (GOOGLE_DRIVE)
+ * - "Percorso selezionato: Nessuna cartella selezionata" (se null)
+ */
+@Composable
+private fun AutoBackupPathLabel(
+    destination: BackupDestination = BackupDestination.LOCAL,
+    localFolderUri: String? = null,
+    googleDriveFolderName: String? = null,
+    googleDriveEmail: String? = null,
+) {
+    val selectedPathText = formatAutoBackupPath(
+        destination = destination,
+        localFolderUri = localFolderUri,
+        googleDriveFolderName = googleDriveFolderName,
+        googleDriveEmail = googleDriveEmail,
+    )
+    val labelText = stringResource(R.string.settings_auto_backup_path_selected, selectedPathText)
+
+    AppText(
+        text = labelText,
+        style = MaterialTheme.typography.labelSmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.padding(start = 4.dp, top = 2.dp, bottom = 4.dp),
     )
 }
 
@@ -963,28 +1018,54 @@ private fun AutoBackupGoogleDriveStatusSection(
 }
 
 /**
- * Estrae il nome della cartella dal SAF URI per visualizzazione leggibile.
+ * Estrae il nome della cartella dal SAF URI o dal nome Google Drive per visualizzazione leggibile.
  *
+ * Per LOCAL:
  * - Se URI è null/blank → restituisce stringResource(R.string.settings_auto_backup_path_not_selected)
  * - Altrimenti estrae il nome della cartella dal path
  * - Fallback: ultimi 40 caratteri dell'URI se parsing fallisce
  *
+ * Per GOOGLE_DRIVE:
+ * - Se nome è null/blank → restituisce stringResource(R.string.settings_auto_backup_path_not_selected)
+ * - Altrimenti restituisce il nome della cartella con email
+ *
  * Esempi:
- * - "content://com.android.externalstorage/tree/primary:AntCashManager/Backups" → "AntCashManager/Backups"
+ * - LOCAL: "content://com.android.externalstorage/tree/primary:AntCashManager/Backups" → "AntCashManager/Backups"
+ * - GOOGLE_DRIVE: "AntCashManager/Backups" con "user@gmail.com" → "AntCashManager/Backups (user@gmail.com)"
  * - null → "Nessuna cartella selezionata"
  */
 @Composable
-private fun formatAutoBackupPath(uriString: String?): String {
-    return if (uriString.isNullOrBlank()) {
-        stringResource(R.string.settings_auto_backup_path_not_selected)
-    } else {
-        try {
-            val uri = android.net.Uri.parse(uriString)
-            val path = uri.path ?: uriString
-            path.substringAfterLast("/").takeIf { it.isNotEmpty() }
-                ?: uriString.takeLast(40)
-        } catch (e: Exception) {
-            uriString.takeLast(40)
+private fun formatAutoBackupPath(
+    destination: BackupDestination = BackupDestination.LOCAL,
+    localFolderUri: String? = null,
+    googleDriveFolderName: String? = null,
+    googleDriveEmail: String? = null,
+): String {
+    return when (destination) {
+        BackupDestination.LOCAL -> {
+            if (localFolderUri.isNullOrBlank()) {
+                stringResource(R.string.settings_auto_backup_path_not_selected)
+            } else {
+                try {
+                    val uri = android.net.Uri.parse(localFolderUri)
+                    val path = uri.path ?: localFolderUri
+                    path.substringAfterLast("/").takeIf { it.isNotEmpty() }
+                        ?: localFolderUri.takeLast(40)
+                } catch (e: Exception) {
+                    localFolderUri.takeLast(40)
+                }
+            }
+        }
+        BackupDestination.GOOGLE_DRIVE -> {
+            if (googleDriveFolderName.isNullOrBlank()) {
+                stringResource(R.string.settings_auto_backup_path_not_selected)
+            } else {
+                if (googleDriveEmail.isNullOrBlank()) {
+                    googleDriveFolderName
+                } else {
+                    "$googleDriveFolderName ($googleDriveEmail)"
+                }
+            }
         }
     }
 }

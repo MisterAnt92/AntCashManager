@@ -79,9 +79,13 @@ class SettingsRepositoryImpl(
     // ── Google Drive Backup Configuration ──
     private val autoBackupDestinationKey = stringPreferencesKey("auto_backup_destination")
     private val googleDriveFolderIdKey = stringPreferencesKey("google_drive_folder_id")
+    private val googleDriveFolderNameKey = stringPreferencesKey("google_drive_folder_name")
     private val googleDriveAuthTokenKey = stringPreferencesKey("google_drive_auth_token")
     private val googleDriveRefreshTokenKey = stringPreferencesKey("google_drive_refresh_token")
     private val googleDriveUserEmailKey = stringPreferencesKey("google_drive_user_email")
+
+    // ── Default Payment Type ──
+    private val defaultPaymentTypeKey = stringPreferencesKey("default_payment_type")
 
     private fun createSavedDateFilter(
         defaultPresetIndex: Int,
@@ -369,6 +373,17 @@ class SettingsRepositoryImpl(
         }
     }
 
+    override fun getDefaultPaymentType(): Flow<String> =
+        dataStore.data.map { preferences ->
+            preferences[defaultPaymentTypeKey] ?: "ELECTRONIC"
+        }
+
+    override suspend fun setDefaultPaymentType(paymentType: String) {
+        dataStore.edit { preferences ->
+            preferences[defaultPaymentTypeKey] = paymentType
+        }
+    }
+
     override fun getTransactionDisplayType(): Flow<TransactionDisplayType> =
         dataStore.data.map { preferences ->
             val typeName =
@@ -531,6 +546,19 @@ class SettingsRepositoryImpl(
                 preferences.remove(googleDriveFolderIdKey)
             } else {
                 preferences[googleDriveFolderIdKey] = folderId
+            }
+        }
+    }
+
+    override fun getGoogleDriveFolderName(): Flow<String?> =
+        dataStore.data.map { it[googleDriveFolderNameKey] }
+
+    override suspend fun setGoogleDriveFolderName(folderName: String?) {
+        dataStore.edit { preferences ->
+            if (folderName == null) {
+                preferences.remove(googleDriveFolderNameKey)
+            } else {
+                preferences[googleDriveFolderNameKey] = folderName
             }
         }
     }

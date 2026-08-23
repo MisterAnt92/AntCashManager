@@ -12,12 +12,7 @@
     <string name="common_back">वापस</string>
     <string name="common_add">जोड़ें</string>
     <string name="common_preview">पूर्वावलोकन</string>
-
-    <!-- HelpDialog (Dashboard) -->
     <string name="help_dashboard_desc">चयनित अवधि के लिए कुल शेष, आय और खर्च देखें।</string>
-    <string name="app_name">AntCashManager</string>
-
-    <!-- Home Screen -->
     <string name="home_total_balance">कुल शेष</string>
     <string name="home_income">आय</string>
     <string name="home_expenses">खर्च</string>
@@ -36,10 +31,6 @@
     <string name="home_recent_transactions_count">हाल के लेनदेन · %1$d</string>
     <string name="home_quick_insights_biggest_expense">सबसे बड़ा खर्च</string>
     <string name="home_scroll_to_top">शीर्ष पर स्क्रॉल करें</string>
-    <string name="home_balance_summary_cd">%1$s: %2$s, %3$s</string>
-    <string name="home_insight_row_cd">%1$s: %2$s</string>
-
-    <!-- Transactions Screen -->
     <string name="transactions_add">लेनदेन जोड़ें</string>
     <string name="transactions_type_income">आय</string>
     <string name="transactions_type_expense">खर्च</string>
@@ -212,10 +203,6 @@
     <string name="settings_widget_preview_title">पूर्वावलोकन</string>
     <string name="settings_widget_preview_recent">हाल के लेनदेन</string>
     <string name="settings_widget_preview_category">आय और खर्च</string>
-    <string name="date_format_ddmmyyyy">DD/MM/YYYY</string>
-    <string name="date_format_mmddyyyy">MM/DD/YYYY</string>
-    <string name="date_format_yyyymmdd">YYYY-MM-DD</string>
-    <string name="date_format_ddmmmyyyy">DD MMM YYYY</string>
     <string name="dialog_choose_date_format">तिथि प्रारूप चुनें</string>
     <string name="settings_accessibility">पहुँच योग्यता</string>
     <string name="settings_high_contrast">उच्च कंट्रास्ट</string>

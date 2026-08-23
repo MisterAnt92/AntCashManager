@@ -12,12 +12,7 @@
     <string name="common_back">Wstecz</string>
     <string name="common_add">Dodaj</string>
     <string name="common_preview">Podgląd</string>
-
-    <!-- HelpDialog (Dashboard) -->
     <string name="help_dashboard_desc">Wyświetl całkowite saldo, przychody i wydatki dla wybranego okresu.</string>
-    <string name="app_name">AntCashManager</string>
-
-    <!-- Home Screen -->
     <string name="home_total_balance">Całkowite saldo</string>
     <string name="home_income">Przychody</string>
     <string name="home_expenses">Wydatki</string>
@@ -36,10 +31,6 @@
     <string name="home_recent_transactions_count">Ostatnie transakcje · %1$d</string>
     <string name="home_quick_insights_biggest_expense">Największy wydatek</string>
     <string name="home_scroll_to_top">Przewiń do góry</string>
-    <string name="home_balance_summary_cd">%1$s: %2$s, %3$s</string>
-    <string name="home_insight_row_cd">%1$s: %2$s</string>
-
-    <!-- Transactions Screen -->
     <string name="transactions_add">Dodaj transakcję</string>
     <string name="transactions_type_income">Przychód</string>
     <string name="transactions_type_expense">Wydatek</string>
@@ -213,10 +204,6 @@
     <string name="settings_widget_preview_title">Podgląd</string>
     <string name="settings_widget_preview_recent">Ostatnie transakcje</string>
     <string name="settings_widget_preview_category">Przychody i wydatki</string>
-    <string name="date_format_ddmmyyyy">DD/MM/YYYY</string>
-    <string name="date_format_mmddyyyy">MM/DD/YYYY</string>
-    <string name="date_format_yyyymmdd">YYYY-MM-DD</string>
-    <string name="date_format_ddmmmyyyy">DD MMM YYYY</string>
     <string name="dialog_choose_date_format">Wybierz format daty</string>
     <string name="settings_accessibility">Dostępność</string>
     <string name="settings_high_contrast">Wysoki kontrast</string>

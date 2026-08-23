@@ -12,12 +12,7 @@
     <string name="common_back">뒤로</string>
     <string name="common_add">추가</string>
     <string name="common_preview">미리보기</string>
-
-    <!-- HelpDialog (Dashboard) -->
     <string name="help_dashboard_desc">선택한 기간의 총 잔액, 수입 및 지출을 확인합니다.</string>
-    <string name="app_name">AntCashManager</string>
-
-    <!-- Home Screen -->
     <string name="home_total_balance">총 잔액</string>
     <string name="home_income">수입</string>
     <string name="home_expenses">지출</string>
@@ -36,10 +31,6 @@
     <string name="home_recent_transactions_count">최근 거래 · %1$d</string>
     <string name="home_quick_insights_biggest_expense">최대 지출</string>
     <string name="home_scroll_to_top">맨 위로 스크롤</string>
-    <string name="home_balance_summary_cd">%1$s: %2$s, %3$s</string>
-    <string name="home_insight_row_cd">%1$s: %2$s</string>
-
-    <!-- Transactions Screen -->
     <string name="transactions_add">거래 추가</string>
     <string name="transactions_type_income">수입</string>
     <string name="transactions_type_expense">지출</string>
@@ -213,10 +204,6 @@
     <string name="settings_widget_preview_title">미리보기</string>
     <string name="settings_widget_preview_recent">최근 거래</string>
     <string name="settings_widget_preview_category">수입 및 지출</string>
-    <string name="date_format_ddmmyyyy">DD/MM/YYYY</string>
-    <string name="date_format_mmddyyyy">MM/DD/YYYY</string>
-    <string name="date_format_yyyymmdd">YYYY-MM-DD</string>
-    <string name="date_format_ddmmmyyyy">DD MMM YYYY</string>
     <string name="dialog_choose_date_format">날짜 형식 선택</string>
     <string name="settings_accessibility">접근성</string>
     <string name="settings_high_contrast">고대비</string>

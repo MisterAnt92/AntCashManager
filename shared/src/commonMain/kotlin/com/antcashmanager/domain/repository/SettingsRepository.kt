@@ -70,6 +70,10 @@ interface SettingsRepository {
     fun getShowQuickInsightsCard(): Flow<Boolean> = flowOf(false)
     suspend fun setShowQuickInsightsCard(show: Boolean) {}
 
+    // ── Default Payment Type ──
+    fun getDefaultPaymentType(): Flow<String>
+    suspend fun setDefaultPaymentType(paymentType: String)
+
     // ── Transaction Display Type ──
     fun getTransactionDisplayType(): Flow<TransactionDisplayType>
     suspend fun setTransactionDisplayType(displayType: TransactionDisplayType)
@@ -117,6 +121,9 @@ interface SettingsRepository {
 
     fun getGoogleDriveFolderId(): Flow<String?>
     suspend fun setGoogleDriveFolderId(folderId: String?)
+
+    fun getGoogleDriveFolderName(): Flow<String?>
+    suspend fun setGoogleDriveFolderName(folderName: String?)
 
     fun getGoogleDriveAuthToken(): Flow<String?>
     suspend fun setGoogleDriveAuthToken(token: String?)

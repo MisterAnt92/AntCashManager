@@ -129,6 +129,14 @@ class DisplayViewModel(
             DisplayConstant.DEFAULT_SHOW_QUICK_INSIGHTS_CARD,
         )
 
+    // Espone il tipo di pagamento predefinito
+    val defaultPaymentType = settingsRepository.getDefaultPaymentType()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_PAYMENT_TYPE,
+        )
+
     // Espone il tipo di visualizzazione delle transazioni (Home)
     val transactionDisplayType = settingsRepository.getTransactionDisplayType()
         .stateIn(
@@ -283,6 +291,14 @@ class DisplayViewModel(
     fun setShowQuickInsightsCard(show: Boolean) = updatePreference(
         logMsg = "Setting show quick insights card: $show",
         action = { settingsRepository.setShowQuickInsightsCard(show) },
+    )
+
+    /**
+     * Aggiorna il tipo di pagamento predefinito.
+     */
+    fun setDefaultPaymentType(paymentType: String) = updatePreference(
+        logMsg = "Setting default payment type: $paymentType",
+        action = { settingsRepository.setDefaultPaymentType(paymentType) },
     )
 
     /**

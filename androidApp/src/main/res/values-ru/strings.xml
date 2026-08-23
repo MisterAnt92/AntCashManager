@@ -12,12 +12,7 @@
     <string name="common_back">Назад</string>
     <string name="common_add">Добавить</string>
     <string name="common_preview">Предпросмотр</string>
-
-    <!-- HelpDialog (Dashboard) -->
     <string name="help_dashboard_desc">Просмотрите общий баланс, доходы и расходы за выбранный период.</string>
-    <string name="app_name">AntCashManager</string>
-
-    <!-- Home Screen -->
     <string name="home_total_balance">Общий баланс</string>
     <string name="home_income">Доходы</string>
     <string name="home_expenses">Расходы</string>
@@ -36,10 +31,6 @@
     <string name="home_recent_transactions_count">Последние транзакции · %1$d</string>
     <string name="home_quick_insights_biggest_expense">Наибольший расход</string>
     <string name="home_scroll_to_top">Прокрутить вверх</string>
-    <string name="home_balance_summary_cd">%1$s: %2$s, %3$s</string>
-    <string name="home_insight_row_cd">%1$s: %2$s</string>
-
-    <!-- Transactions Screen -->
     <string name="transactions_add">Добавить транзакцию</string>
     <string name="transactions_type_income">Доход</string>
     <string name="transactions_type_expense">Расход</string>
@@ -213,10 +204,6 @@
     <string name="settings_widget_preview_title">Предпросмотр</string>
     <string name="settings_widget_preview_recent">Последние транзакции</string>
     <string name="settings_widget_preview_category">Доходы и расходы</string>
-    <string name="date_format_ddmmyyyy">ДД/ММ/ГГГГ</string>
-    <string name="date_format_mmddyyyy">ММ/ДД/ГГГГ</string>
-    <string name="date_format_yyyymmdd">ГГГГ-ММ-ДД</string>
-    <string name="date_format_ddmmmyyyy">ДД МММ ГГГГ</string>
     <string name="dialog_choose_date_format">Выберите формат даты</string>
     <string name="settings_accessibility">Специальные возможности</string>
     <string name="settings_high_contrast">Высокий контраст</string>

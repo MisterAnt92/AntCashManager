@@ -88,6 +88,16 @@ class SettingsDataViewModel(
                 _state.update { it.copy(googleDriveUserEmail = email, isGoogleDriveSignedIn = email != null) }
             }
         }
+        viewModelScope.launch {
+            settingsRepositoryRef.getGoogleDriveFolderId().collect { folderId ->
+                _state.update { it.copy(googleDriveFolderId = folderId) }
+            }
+        }
+        viewModelScope.launch {
+            settingsRepositoryRef.getGoogleDriveFolderName().collect { folderName ->
+                _state.update { it.copy(googleDriveFolderName = folderName) }
+            }
+        }
     }
 
     fun setDataEncryptionEnabled(enabled: Boolean) {

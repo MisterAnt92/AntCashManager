@@ -11,14 +11,7 @@
     <string name="common_expenses">Ausgaben</string>
     <string name="common_back">Zurück</string>
     <string name="common_add">Hinzufügen</string>
-
-    <!-- HelpDialog (Dashboard) -->
     <string name="help_dashboard_desc">Zeigt den Gesamtsaldo, Einnahmen und Ausgaben für den ausgewählten Zeitraum an.</string>
-    <string name="app_name">AntCashManager</string>
-
-    <!-- Navigation -->
-
-    <!-- Home Screen -->
     <string name="home_total_balance">Gesamtsaldo</string>
     <string name="home_income">Einnahmen</string>
     <string name="home_expenses">Ausgaben</string>
@@ -37,8 +30,6 @@
     <string name="home_recent_transactions_count">Letzte Transaktionen · %1$d</string>
     <string name="home_quick_insights_biggest_expense">Größte Ausgabe</string>
     <string name="home_scroll_to_top">Nach oben scrollen</string>
-    <string name="home_balance_summary_cd">%1$s: %2$s, %3$s</string>
-    <string name="home_insight_row_cd">%1$s: %2$s</string>
     <string name="transactions_add">Transaktion hinzuf\u00fcgen</string>
     <string name="transactions_type_income">Einnahme</string>
     <string name="transactions_type_expense">Ausgabe</string>
@@ -211,10 +202,7 @@
     <string name="settings_section_currency">W\u00e4hrung</string>
     <string name="settings_section_dates">Daten</string>
     <string name="settings_section_other">Sonstiges</string>
-    <string name="date_format_ddmmyyyy">TT.MM.JJJJ</string>
-    <string name="date_format_mmddyyyy">MM/TT/JJJJ</string>
-    <string name="date_format_yyyymmdd">JJJJ-MM-TT</string>
-    <string name="date_format_ddmmmyyyy">TT MMM JJJJ</string>
+
     <string name="dialog_choose_date_format">Datumsformat w\u00e4hlen</string>
     <string name="settings_data_management">Datenverwaltung</string>
     <string name="settings_security">Sicherheit</string>

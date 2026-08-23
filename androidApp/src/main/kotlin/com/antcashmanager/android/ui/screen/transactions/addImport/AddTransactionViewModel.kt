@@ -11,6 +11,7 @@ import com.antcashmanager.android.ui.screen.transactions.addImport.manager.Trans
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.TransactionType
+import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.usecase.transaction.DeleteTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.GetTransactionByIdUseCase
 import kotlinx.coroutines.CancellationException
@@ -31,6 +32,7 @@ class AddTransactionViewModel(
     private val deleteTransactionUseCase: DeleteTransactionUseCase,
     private val getTransactionByIdUseCase: GetTransactionByIdUseCase,
     private val analyticsManager: AnalyticsManager,
+    private val settingsRepository: SettingsRepository,
     private val transactionId: Long? = null,
 ) : BaseViewModel<AddTransactionEvent>() {
 
@@ -42,6 +44,7 @@ class AddTransactionViewModel(
         loadCategories()
         loadTransactionSuggestions()
         loadMealVoucherValue()
+        loadDefaultPaymentType()
         if (transactionId != null) {
             loadTransactionForEdit(transactionId)
         }
@@ -57,6 +60,25 @@ class AddTransactionViewModel(
                     if (error is CancellationException) throw error
                     logError("Error loading meal voucher value: ${error.message}", error)
                 }
+        }
+    }
+
+    private fun loadDefaultPaymentType() {
+        viewModelScope.launch {
+            try {
+                settingsRepository.getDefaultPaymentType().collect { defaultPaymentTypeStr ->
+                    val paymentType = try {
+                        PaymentType.valueOf(defaultPaymentTypeStr ?: "ELECTRONIC")
+                    } catch (e: IllegalArgumentException) {
+                        PaymentType.ELECTRONIC
+                    }
+                    _state.update { it.copy(selectedPaymentType = paymentType) }
+                }
+            } catch (error: Exception) {
+                if (error is CancellationException) throw error
+                logError("Error loading default payment type: ${error.message}", error)
+                // Fallback a ELECTRONIC (già il default in AddTransactionState)
+            }
         }
     }
 

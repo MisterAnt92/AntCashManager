@@ -15,7 +15,7 @@
 
     <!-- HelpDialog (Dashboard) -->
     <string name="help_dashboard_desc">View the total balance, income, and expenses for the selected period.</string>
-    <string name="app_name">AntCashManager</string>
+
 
     <!-- Navigation -->
 
@@ -38,10 +38,6 @@
     <string name="home_recent_transactions_count">Recent Transactions · %1$d</string>
     <string name="home_quick_insights_biggest_expense">Biggest expense</string>
     <string name="home_scroll_to_top">Scroll to top</string>
-    <string name="home_balance_summary_cd">%1$s: %2$s, %3$s</string>
-    <string name="home_insight_row_cd">%1$s: %2$s</string>
-
-    <!-- Transactions Screen -->
     <string name="transactions_add">Add Transaction</string>
     <string name="transactions_type_income">Income</string>
     <string name="transactions_type_expense">Expense</string>
@@ -215,10 +211,6 @@
     <string name="settings_widget_preview_title">Preview</string>
     <string name="settings_widget_preview_recent">Recent Transactions</string>
     <string name="settings_widget_preview_category">Income &amp; Expenses</string>
-    <string name="date_format_ddmmyyyy">DD/MM/YYYY</string>
-    <string name="date_format_mmddyyyy">MM/DD/YYYY</string>
-    <string name="date_format_yyyymmdd">YYYY-MM-DD</string>
-    <string name="date_format_ddmmmyyyy">DD MMM YYYY</string>
     <string name="dialog_choose_date_format">Choose Date Format</string>
     <string name="settings_accessibility">Accessibility</string>
     <string name="settings_high_contrast">High Contrast</string>
@@ -318,6 +310,7 @@
     <string name="settings_auto_backup_path_button">Backup Path</string>
     <string name="settings_auto_backup_path_not_selected">No folder selected</string>
     <string name="settings_auto_backup_path_subtitle">Choose where to save automatic backups</string>
+    <string name="settings_auto_backup_path_selected">Selected path: %s</string>
     <string name="settings_auto_backup_google_drive_configured">Backup configured for Google Drive</string>
 
     <!-- Privacy Policy -->
@@ -424,6 +417,12 @@
     <string name="settings_show_quick_insights_card_desc">Display a summary card with quick insights on the Home screen</string>
     <string name="settings_show_initial_animation">Show initial animation</string>
     <string name="settings_show_initial_animation_desc">Display a brief animation when the app starts</string>
+
+    <!-- Payment Type -->
+    <string name="settings_payment_type_section">Payments</string>
+    <string name="settings_default_payment_type">Default Payment Type</string>
+    <string name="settings_default_payment_type_desc">Choose the default payment type for new transactions</string>
+    <string name="dialog_payment_type_title">Select Default Payment Type</string>
 
     <!-- Transaction Display -->
     <string name="settings_transaction_display">Icon on transactions</string>

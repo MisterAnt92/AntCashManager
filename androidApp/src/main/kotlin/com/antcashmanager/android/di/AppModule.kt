@@ -358,6 +358,7 @@ val presentationModule = module {
             deleteTransactionUseCase = get(),
             getTransactionByIdUseCase = get(),
             analyticsManager = get(),
+            settingsRepository = get(),
             transactionId = transactionId,
         )
     }

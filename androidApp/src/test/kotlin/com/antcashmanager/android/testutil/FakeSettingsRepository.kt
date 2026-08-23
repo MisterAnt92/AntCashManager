@@ -72,7 +72,9 @@ open class FakeSettingsRepository : SettingsRepository {
     val autoBackupDestination = MutableStateFlow(BackupDestination.LOCAL)
     val autoBackupFolderUri = MutableStateFlow<String?>(null)
     val googleDriveFolderId = MutableStateFlow<String?>(null)
+    val googleDriveFolderName = MutableStateFlow<String?>(null)
     val googleDriveUserEmail = MutableStateFlow<String?>(null)
+    val defaultPaymentType = MutableStateFlow("ELECTRONIC")
 
     override fun getTheme(): Flow<AppTheme> = theme
     override suspend fun setTheme(theme: AppTheme) {
@@ -196,6 +198,11 @@ open class FakeSettingsRepository : SettingsRepository {
         showQuickInsightsCard.value = show
     }
 
+    override fun getDefaultPaymentType(): Flow<String> = defaultPaymentType
+    override suspend fun setDefaultPaymentType(paymentType: String) {
+        defaultPaymentType.value = paymentType
+    }
+
     override fun getTransactionDisplayType(): Flow<TransactionDisplayType> = transactionDisplayType
     override suspend fun setTransactionDisplayType(displayType: TransactionDisplayType) {
         transactionDisplayType.value = displayType
@@ -256,6 +263,11 @@ open class FakeSettingsRepository : SettingsRepository {
     override fun getGoogleDriveFolderId(): Flow<String?> = googleDriveFolderId
     override suspend fun setGoogleDriveFolderId(folderId: String?) {
         googleDriveFolderId.value = folderId
+    }
+
+    override fun getGoogleDriveFolderName(): Flow<String?> = googleDriveFolderName
+    override suspend fun setGoogleDriveFolderName(folderName: String?) {
+        googleDriveFolderName.value = folderName
     }
 
     override fun getGoogleDriveAuthToken(): Flow<String?> {
@@ -340,6 +352,8 @@ open class FakeSettingsRepository : SettingsRepository {
         autoBackupDestination.value = BackupDestination.LOCAL
         autoBackupFolderUri.value = null
         googleDriveFolderId.value = null
+        googleDriveFolderName.value = null
         googleDriveUserEmail.value = null
+        defaultPaymentType.value = "ELECTRONIC"
     }
 }

@@ -99,6 +99,7 @@ class AddTransactionIntegrationTest : BaseUnitTest() {
             deleteTransactionUseCase = deleteTransactionUC,
             getTransactionByIdUseCase = getTransactionByIdUC,
             analyticsManager = analyticsManager,
+            settingsRepository = settingsRepository,
             transactionId = transactionId,
         )
     }

@@ -1,7 +1,6 @@
 package com.antcashmanager.android.auth
 
 import android.content.Context
-import android.content.Intent
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.data.storage.EncryptedGoogleDriveStorage
 import com.antcashmanager.domain.model.BackupDestination
@@ -11,7 +10,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.Scope
-import com.google.android.gms.tasks.Task
 import com.google.api.services.drive.DriveScopes
 import kotlinx.coroutines.tasks.await
 
@@ -136,7 +134,7 @@ class GoogleSignInManager(
      * da un launcher registrato in Activity (vedi ViewModel).
      * Per ora, è un placeholder che simula il flusso.
      */
-    private suspend fun getSignedInAccountFromUI(): GoogleSignInAccount? {
+    private fun getSignedInAccountFromUI(): GoogleSignInAccount? {
         // TODO: Implementare via Activity.registerForActivityResult()
         // Per ora ritorna null (caller gestirà il launch della Activity)
         logger.w(tag = "GoogleSignInManager") { "getSignedInAccountFromUI is a placeholder — implement via registerForActivityResult()" }
@@ -175,7 +173,7 @@ class GoogleSignInManager(
     /**
      * Verifica se l'utente è già loggato.
      */
-    suspend fun isSignedIn(): Boolean {
+    fun isSignedIn(): Boolean {
         return try {
             val account = GoogleSignIn.getLastSignedInAccount(context)
             val isSignedIn = account != null && account.isExpired.not()
@@ -184,32 +182,6 @@ class GoogleSignInManager(
         } catch (e: Exception) {
             logger.e(tag = "GoogleSignInManager") { "Error checking sign-in status: ${e.message}" }
             false
-        }
-    }
-
-    /**
-     * Scarica l'access token silenziosamente.
-     *
-     * **Utilizzo**: Prima di ogni upload su Google Drive, verificare che
-     * l'access token sia valido. Se scaduto, questo metodo lo richiede automaticamente.
-     */
-    suspend fun getAccessTokenSilently(): Result<String> {
-        return try {
-            val account = GoogleSignIn.getLastSignedInAccount(context)
-            if (account == null) {
-                return Result.failure(Exception("No signed-in account"))
-            }
-
-            val token = account.idToken ?: account.serverAuthCode
-            if (token != null) {
-                logger.d(tag = "GoogleSignInManager") { "Access token retrieved silently" }
-                Result.success(token)
-            } else {
-                Result.failure(Exception("No access token available"))
-            }
-        } catch (e: Exception) {
-            logger.e(tag = "GoogleSignInManager") { "Error getting access token: ${e.message}" }
-            Result.failure(e)
         }
     }
 
@@ -223,10 +195,9 @@ class GoogleSignInManager(
     suspend fun refreshAccessToken(): Result<String> {
         return try {
             logger.d(tag = "GoogleSignInManager") { "Refreshing access token" }
-            val account = GoogleSignIn.getLastSignedInAccount(context)
-            if (account == null) {
-                return Result.failure(Exception("No signed-in account"))
-            }
+            val account = GoogleSignIn.getLastSignedInAccount(context) ?: return Result.failure(
+                Exception("No signed-in account")
+            )
 
             // Google Play Services refresh automaticamente se validità < 1 minuto
             // Questo è un manual refresh fallback
@@ -275,35 +246,6 @@ class GoogleSignInManager(
             logger.e(tag = "GoogleSignInManager") { "Sign-out error: ${e.message}" }
             Result.failure(e)
         }
-    }
-
-    /**
-     * Ottiene l'email dell'utente attualmente loggato.
-     */
-    suspend fun getCurrentUserEmail(): String? {
-        return try {
-            val account = GoogleSignIn.getLastSignedInAccount(context)
-            account?.email
-        } catch (e: Exception) {
-            logger.e(tag = "GoogleSignInManager") { "Error getting current user: ${e.message}" }
-            null
-        }
-    }
-
-    /**
-     * Crea la cartella di backup su Google Drive (one-shot).
-     *
-     * **Cartella**: "/AntCashManager/Backups"
-     *
-     * **Note**:
-     * - Verrà implementato in `DriveUploadManager.kt`
-     * - Stored in `settingsRepository.setGoogleDriveFolderId()`
-     * - Non richiamato ogni volta — solo una volta al sign-in
-     */
-    suspend fun ensureDriveFolderExists(): Result<String> {
-        // TODO: Implementare in DriveUploadManager.ensureFolderExists()
-        logger.w(tag = "GoogleSignInManager") { "ensureDriveFolderExists is a placeholder" }
-        return Result.failure(Exception("Not yet implemented"))
     }
 
     /**

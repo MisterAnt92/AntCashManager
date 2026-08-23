@@ -1236,6 +1236,8 @@ class MockSettingsRepository : SettingsRepository {
     override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {}
     override fun getShowQuickInsightsCard() = kotlinx.coroutines.flow.flowOf(true)
     override suspend fun setShowQuickInsightsCard(show: Boolean) {}
+    override fun getDefaultPaymentType() = kotlinx.coroutines.flow.flowOf("ELECTRONIC")
+    override suspend fun setDefaultPaymentType(paymentType: String) {}
 
     override fun getShowInitialAnimation(): Flow<Boolean> =
         kotlinx.coroutines.flow.flowOf(true)
@@ -1297,6 +1299,8 @@ class MockSettingsRepository : SettingsRepository {
     override suspend fun setAutoBackupDestination(destination: com.antcashmanager.domain.model.BackupDestination) {}
     override fun getGoogleDriveFolderId(): Flow<String?> = kotlinx.coroutines.flow.flowOf(null)
     override suspend fun setGoogleDriveFolderId(folderId: String?) {}
+    override fun getGoogleDriveFolderName(): Flow<String?> = kotlinx.coroutines.flow.flowOf(null)
+    override suspend fun setGoogleDriveFolderName(folderName: String?) {}
     override fun getGoogleDriveAuthToken(): Flow<String?> = kotlinx.coroutines.flow.flowOf(null)
     override suspend fun setGoogleDriveAuthToken(token: String?) {}
     override fun getGoogleDriveRefreshToken(): Flow<String?> = kotlinx.coroutines.flow.flowOf(null)

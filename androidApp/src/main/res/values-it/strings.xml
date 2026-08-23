@@ -52,7 +52,6 @@
     <string name="help_categories_feature_income_expense_desc">Categorizza le transazioni come entrate o uscite.</string>
     <string name="help_categories_feature_delete_title">Elimina Categorie</string>
     <string name="help_categories_feature_delete_desc">Rimuovi le categorie personalizzate quando non sono più necessarie.</string>
-    <string name="app_name">AntCashManager</string>
     <string name="home_total_balance">Saldo Totale</string>
     <string name="home_income">Entrate</string>
     <string name="home_expenses">Uscite</string>
@@ -71,8 +70,6 @@
     <string name="home_recent_transactions_count">Transazioni Recenti · %1$d</string>
     <string name="home_quick_insights_biggest_expense">Spesa maggiore</string>
     <string name="home_scroll_to_top">Torna in cima</string>
-    <string name="home_balance_summary_cd">%1$s: %2$s, %3$s</string>
-    <string name="home_insight_row_cd">%1$s: %2$s</string>
     <string name="transactions_add">Aggiungi Transazione</string>
     <string name="transactions_type_income">Entrata</string>
     <string name="transactions_type_expense">Uscita</string>
@@ -234,10 +231,6 @@
     <string name="settings_widget_preview_title">Anteprima</string>
     <string name="settings_widget_preview_recent">Transazioni recenti</string>
     <string name="settings_widget_preview_category">Entrate e uscite</string>
-    <string name="date_format_ddmmyyyy">GG/MM/AAAA</string>
-    <string name="date_format_mmddyyyy">MM/GG/AAAA</string>
-    <string name="date_format_yyyymmdd">AAAA-MM-GG</string>
-    <string name="date_format_ddmmmyyyy">GG MMM AAAA</string>
     <string name="dialog_choose_date_format">Scegli Formato Data</string>
     <string name="settings_accessibility">Accessibilit\u00e0</string>
     <string name="settings_high_contrast">Contrasto Elevato</string>
@@ -331,6 +324,7 @@
     <string name="settings_auto_backup_path_button">Percorso Backup</string>
     <string name="settings_auto_backup_path_not_selected">Nessuna cartella selezionata</string>
     <string name="settings_auto_backup_path_subtitle">Scegli dove salvare i backup automatici</string>
+    <string name="settings_auto_backup_path_selected">Percorso selezionato: %s</string>
     <string name="settings_auto_backup_google_drive_configured">Backup configurato per Google Drive</string>
 
     <string name="privacy_policy_title">Informativa sulla Privacy</string>
@@ -413,6 +407,10 @@
     <string name="settings_show_quick_insights_card_desc">Visualizza una card di riepilogo con dati rapidi nella schermata Home</string>
     <string name="settings_show_initial_animation">Mostra animazione iniziale</string>
     <string name="settings_show_initial_animation_desc">Mostra una breve animazione all\'avvio dell\'app</string>
+    <string name="settings_payment_type_section">Pagamenti</string>
+    <string name="settings_default_payment_type">Tipo di Pagamento</string>
+    <string name="settings_default_payment_type_desc">Scegli il tipo di pagamento predefinito per le nuove transazioni</string>
+    <string name="dialog_payment_type_title">Seleziona Tipo di Pagamento</string>
     <string name="payment_breakdown_label">Saldo per Tipo di Pagamento</string>
     <string name="payment_breakdown_item_desc">Saldo con %1$s: %2$.2f</string>
     <string name="settings_transaction_display">Icona sulla transazione</string>

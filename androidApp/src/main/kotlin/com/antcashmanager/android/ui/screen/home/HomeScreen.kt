@@ -647,6 +647,8 @@ class MockHomeSettingsRepository : SettingsRepository {
     override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {}
     override fun getShowQuickInsightsCard() = kotlinx.coroutines.flow.flowOf(true)
     override suspend fun setShowQuickInsightsCard(show: Boolean) {}
+    override fun getDefaultPaymentType() = kotlinx.coroutines.flow.flowOf("ELECTRONIC")
+    override suspend fun setDefaultPaymentType(paymentType: String) {}
 
     override fun getShowInitialAnimation(): kotlinx.coroutines.flow.Flow<Boolean> =
         kotlinx.coroutines.flow.flowOf(true)
@@ -734,6 +736,11 @@ class MockHomeSettingsRepository : SettingsRepository {
         kotlinx.coroutines.flow.flowOf(null)
 
     override suspend fun setGoogleDriveFolderId(folderId: String?) {}
+
+    override fun getGoogleDriveFolderName(): kotlinx.coroutines.flow.Flow<String?> =
+        kotlinx.coroutines.flow.flowOf(null)
+
+    override suspend fun setGoogleDriveFolderName(folderName: String?) {}
 
     override fun getGoogleDriveAuthToken(): kotlinx.coroutines.flow.Flow<String?> =
         kotlinx.coroutines.flow.flowOf(null)

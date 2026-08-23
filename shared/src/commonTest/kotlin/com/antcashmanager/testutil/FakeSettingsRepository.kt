@@ -65,9 +65,13 @@ open class FakeSettingsRepository : SettingsRepository {
     val autoBackupFolderUri = MutableStateFlow<String?>(null)
     val autoBackupDestination = MutableStateFlow(BackupDestination.LOCAL)
     val googleDriveFolderId = MutableStateFlow<String?>(null)
+    val googleDriveFolderName = MutableStateFlow<String?>(null)
     val googleDriveAuthToken = MutableStateFlow<String?>(null)
     val googleDriveRefreshToken = MutableStateFlow<String?>(null)
     val googleDriveUserEmail = MutableStateFlow<String?>(null)
+
+    // ── Default Payment Type ──
+    val defaultPaymentType = MutableStateFlow("ELECTRONIC")
 
     override fun getTheme(): Flow<AppTheme> = theme
     override suspend fun setTheme(theme: AppTheme) {
@@ -191,6 +195,11 @@ open class FakeSettingsRepository : SettingsRepository {
         showQuickInsightsCard.value = show
     }
 
+    override fun getDefaultPaymentType(): Flow<String> = defaultPaymentType
+    override suspend fun setDefaultPaymentType(paymentType: String) {
+        defaultPaymentType.value = paymentType
+    }
+
     override fun getTransactionDisplayType(): Flow<TransactionDisplayType> = transactionDisplayType
     override suspend fun setTransactionDisplayType(displayType: TransactionDisplayType) {
         transactionDisplayType.value = displayType
@@ -284,6 +293,11 @@ open class FakeSettingsRepository : SettingsRepository {
         googleDriveFolderId.value = folderId
     }
 
+    override fun getGoogleDriveFolderName(): Flow<String?> = googleDriveFolderName
+    override suspend fun setGoogleDriveFolderName(folderName: String?) {
+        googleDriveFolderName.value = folderName
+    }
+
     override fun getGoogleDriveAuthToken(): Flow<String?> = googleDriveAuthToken
     override suspend fun setGoogleDriveAuthToken(token: String?) {
         googleDriveAuthToken.value = token
@@ -318,6 +332,7 @@ open class FakeSettingsRepository : SettingsRepository {
         chartsZoomEnabled.value = false
         showPaymentTypeBreakdown.value = false
         showQuickInsightsCard.value = true
+        defaultPaymentType.value = "ELECTRONIC"
         transactionDisplayType.value = TransactionDisplayType.TREND
         transactionsTransactionDisplayType.value = TransactionDisplayType.TREND
         showInitialAnimation.value = false

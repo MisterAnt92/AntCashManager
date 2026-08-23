@@ -12,12 +12,7 @@
     <string name="common_back">返回</string>
     <string name="common_add">添加</string>
     <string name="common_preview">预览</string>
-
-    <!-- HelpDialog (Dashboard) -->
     <string name="help_dashboard_desc">查看选定期间的总余额、收入和支出。</string>
-    <string name="app_name">AntCashManager</string>
-
-    <!-- Home Screen -->
     <string name="home_total_balance">总余额</string>
     <string name="home_income">收入</string>
     <string name="home_expenses">支出</string>
@@ -36,10 +31,6 @@
     <string name="home_recent_transactions_count">最近交易 · %1$d</string>
     <string name="home_quick_insights_biggest_expense">最大支出</string>
     <string name="home_scroll_to_top">滚动到顶部</string>
-    <string name="home_balance_summary_cd">%1$s: %2$s, %3$s</string>
-    <string name="home_insight_row_cd">%1$s: %2$s</string>
-
-    <!-- Transactions Screen -->
     <string name="transactions_add">添加交易</string>
     <string name="transactions_type_income">收入</string>
     <string name="transactions_type_expense">支出</string>
@@ -213,10 +204,6 @@
     <string name="settings_widget_preview_title">预览</string>
     <string name="settings_widget_preview_recent">最近交易</string>
     <string name="settings_widget_preview_category">收入与支出</string>
-    <string name="date_format_ddmmyyyy">DD/MM/YYYY</string>
-    <string name="date_format_mmddyyyy">MM/DD/YYYY</string>
-    <string name="date_format_yyyymmdd">YYYY-MM-DD</string>
-    <string name="date_format_ddmmmyyyy">DD MMM YYYY</string>
     <string name="dialog_choose_date_format">选择日期格式</string>
     <string name="settings_accessibility">辅助功能</string>
     <string name="settings_high_contrast">高对比度</string>

@@ -12,12 +12,7 @@
     <string name="common_back">返回</string>
     <string name="common_add">新增</string>
     <string name="common_preview">預覽</string>
-
-    <!-- HelpDialog (Dashboard) -->
     <string name="help_dashboard_desc">查看選定期間的總餘額、收入和支出。</string>
-    <string name="app_name">AntCashManager</string>
-
-    <!-- Home Screen -->
     <string name="home_total_balance">總餘額</string>
     <string name="home_income">收入</string>
     <string name="home_expenses">支出</string>
@@ -36,10 +31,6 @@
     <string name="home_recent_transactions_count">最近交易 · %1$d</string>
     <string name="home_quick_insights_biggest_expense">最大支出</string>
     <string name="home_scroll_to_top">捲動至頂部</string>
-    <string name="home_balance_summary_cd">%1$s: %2$s, %3$s</string>
-    <string name="home_insight_row_cd">%1$s: %2$s</string>
-
-    <!-- Transactions Screen -->
     <string name="transactions_add">新增交易</string>
     <string name="transactions_type_income">收入</string>
     <string name="transactions_type_expense">支出</string>
@@ -52,7 +43,7 @@
     <string name="transactions_search">搜尋</string>
     <string name="transactions_filter">篩選</string>
     <string name="transactions_search_label">搜尋交易</string>
-    <string name="transactions_search_placeholder">名稱或金額...</string>
+    <string name="transactions_search_placeholder">名稱或金額…</string>
     <string name="transactions_advanced_filters">進階篩選</string>
     <string name="transactions_filter_type">交易類型</string>
     <string name="transactions_filter_payment">支付類型</string>
@@ -213,10 +204,6 @@
     <string name="settings_widget_preview_title">預覽</string>
     <string name="settings_widget_preview_recent">最近交易</string>
     <string name="settings_widget_preview_category">收入與支出</string>
-    <string name="date_format_ddmmyyyy">DD/MM/YYYY</string>
-    <string name="date_format_mmddyyyy">MM/DD/YYYY</string>
-    <string name="date_format_yyyymmdd">YYYY-MM-DD</string>
-    <string name="date_format_ddmmmyyyy">DD MMM YYYY</string>
     <string name="dialog_choose_date_format">選擇日期格式</string>
     <string name="settings_accessibility">輔助功能</string>
     <string name="settings_high_contrast">高對比度</string>
