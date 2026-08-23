@@ -1,6 +1,8 @@
 package com.antcashmanager.android.ui.screen.settings.dataManagement
 
 import com.antcashmanager.android.BaseUnitTest
+import com.antcashmanager.android.analytics.ErrorTracker
+import com.antcashmanager.android.analytics.PerformanceTracker
 import com.antcashmanager.android.auth.GoogleSignInManager
 import com.antcashmanager.android.data.backup.BackupService
 import com.antcashmanager.android.work.AutoBackupScheduler
@@ -32,6 +34,8 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
     private val backupService: BackupService = mockk(relaxed = true)
     private val autoBackupScheduler: AutoBackupScheduler = mockk(relaxed = true)
     private val googleSignInManager: GoogleSignInManager = mockk(relaxed = true)
+    private val performanceTracker: PerformanceTracker = mockk(relaxed = true)
+    private val errorTracker: ErrorTracker = mockk(relaxed = true)
 
     private fun createViewModel(): SettingsDataViewModel {
         return SettingsDataViewModel(
@@ -41,6 +45,8 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
             backupService = backupService,
             autoBackupScheduler = autoBackupScheduler,
             googleSignInManager = googleSignInManager,
+            performanceTracker = performanceTracker,
+            errorTracker = errorTracker,
         )
     }
 
@@ -166,6 +172,8 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
             backupService = backupService,
             autoBackupScheduler = autoBackupScheduler,
             googleSignInManager = googleSignInManager,
+            performanceTracker = mockk(relaxed = true),
+            errorTracker = mockk(relaxed = true),
         )
 
         assertEquals(testUri, viewModel.state.value.autoBackupFolderUri)
@@ -194,6 +202,8 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
             backupService = backupService,
             autoBackupScheduler = autoBackupScheduler,
             googleSignInManager = googleSignInManager,
+            performanceTracker = mockk(relaxed = true),
+            errorTracker = mockk(relaxed = true),
         )
 
         assertNull(viewModel.state.value.autoBackupFolderUri)

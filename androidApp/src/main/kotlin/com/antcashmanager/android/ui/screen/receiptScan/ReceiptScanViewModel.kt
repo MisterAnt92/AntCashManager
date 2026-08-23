@@ -3,6 +3,8 @@ package com.antcashmanager.android.ui.screen.receiptScan
 import android.os.Bundle
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.analytics.AnalyticsManager
+import com.antcashmanager.android.analytics.ErrorTracker
+import com.antcashmanager.android.analytics.PerformanceTracker
 import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.None
@@ -41,6 +43,8 @@ class ReceiptScanViewModel(
     private val getCategoriesUseCase: GetCategoriesUseCase,
     private val getTransactionSuggestionsUseCase: GetTransactionSuggestionsUseCase,
     private val analyticsManager: AnalyticsManager,
+    private val performanceTracker: PerformanceTracker,
+    private val errorTracker: ErrorTracker,
 ) : BaseViewModel<None>() {
 
     // ── State ─────────────────────────────────────────────────────────────────
@@ -66,6 +70,7 @@ class ReceiptScanViewModel(
     fun scanReceipt(imageBytes: ByteArray) {
         activeJob?.cancel()
         activeJob = viewModelScope.launch {
+            val scanStartTime = System.currentTimeMillis()
             logDebug("Starting receipt scan, bytes=${imageBytes.size}")
             _state.update {
                 it.copy(
@@ -78,6 +83,8 @@ class ReceiptScanViewModel(
             scanReceiptUseCase(imageBytes)
                 .onSuccess { receiptData ->
                     logInfo("Scan OK: amount=${receiptData.totalAmount}, payee=${receiptData.payee}")
+                    val duration = System.currentTimeMillis() - scanStartTime
+                    performanceTracker.trackReceiptOcrProcessingTime(duration, pages = 1, success = true)
 
                     val refinedTitle = matchSuggestion(receiptData.payee, distinctTitles)
                         ?: matchAgainstRawText(receiptData.rawText, distinctTitles)
@@ -104,6 +111,15 @@ class ReceiptScanViewModel(
                 .onFailure { error ->
                     if (error is CancellationException) throw error
                     logError("Scan failed", error)
+                    val duration = System.currentTimeMillis() - scanStartTime
+                    performanceTracker.trackReceiptOcrProcessingTime(duration, pages = 1, success = false)
+                    val errorCode = when {
+                        error.message?.contains("timeout") == true -> "network_timeout"
+                        error.message?.contains("image") == true -> "invalid_image"
+                        error.message?.contains("text") == true -> "text_not_found"
+                        else -> "processing_failed"
+                    }
+                    errorTracker.trackReceiptOcrError(errorCode, retryCount = 0)
                     analyticsManager.logEvent("receipt_scan_failed", Bundle().apply {
                         putString("failure_reason", error.message?.take(40) ?: "unknown")
                     })

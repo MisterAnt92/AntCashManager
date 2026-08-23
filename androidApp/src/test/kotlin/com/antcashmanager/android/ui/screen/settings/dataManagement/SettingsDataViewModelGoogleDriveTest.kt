@@ -2,6 +2,8 @@ package com.antcashmanager.android.ui.screen.settings.dataManagement
 
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.BaseUnitTest
+import com.antcashmanager.android.analytics.ErrorTracker
+import com.antcashmanager.android.analytics.PerformanceTracker
 import com.antcashmanager.android.auth.GoogleSignInManager
 import com.antcashmanager.android.auth.GoogleSignInResult
 import com.antcashmanager.android.data.backup.BackupService
@@ -34,6 +36,8 @@ class SettingsDataViewModelGoogleDriveTest : BaseUnitTest() {
     private val backupService: BackupService = mockk(relaxed = true)
     private val autoBackupScheduler: AutoBackupScheduler = mockk(relaxed = true)
     private val googleSignInManager: GoogleSignInManager = mockk(relaxed = true)
+    private val performanceTracker: PerformanceTracker = mockk(relaxed = true)
+    private val errorTracker: ErrorTracker = mockk(relaxed = true)
 
     private val viewModel: SettingsDataViewModel by lazy {
         // Setup default Flow responses
@@ -52,6 +56,8 @@ class SettingsDataViewModelGoogleDriveTest : BaseUnitTest() {
             backupService = backupService,
             autoBackupScheduler = autoBackupScheduler,
             googleSignInManager = googleSignInManager,
+            performanceTracker = performanceTracker,
+            errorTracker = errorTracker,
         )
     }
 

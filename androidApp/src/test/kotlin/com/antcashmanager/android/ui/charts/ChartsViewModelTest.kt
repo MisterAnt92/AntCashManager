@@ -1,6 +1,8 @@
 package com.antcashmanager.android.ui.charts
 
 import com.antcashmanager.android.BaseUnitTest
+import com.antcashmanager.android.analytics.PerformanceTracker
+import com.antcashmanager.android.analytics.SegmentationTracker
 import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.testutil.FakeTransactionRepository
 import com.antcashmanager.android.ui.screen.charts.ChartsViewModel
@@ -9,6 +11,7 @@ import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -22,16 +25,22 @@ import org.junit.Test
 class ChartsViewModelTest : BaseUnitTest() {
     private lateinit var fakeRepo: FakeTransactionRepository
     private lateinit var fakeSettingsRepository: FakeSettingsRepository
+    private lateinit var performanceTracker: PerformanceTracker
+    private lateinit var segmentationTracker: SegmentationTracker
     private lateinit var viewModel: ChartsViewModel
 
     @Before
     fun setup() {
         fakeRepo = FakeTransactionRepository()
         fakeSettingsRepository = FakeSettingsRepository()
+        performanceTracker = mockk(relaxed = true)
+        segmentationTracker = mockk(relaxed = true)
         viewModel = ChartsViewModel(
             transactionRepository = fakeRepo,
             settingsRepository = fakeSettingsRepository,
             dispatcher = testDispatcher,
+            performanceTracker = performanceTracker,
+            segmentationTracker = segmentationTracker,
         )
     }
 
@@ -114,6 +123,8 @@ class ChartsViewModelTest : BaseUnitTest() {
                 transactionRepository = fakeRepo,
                 settingsRepository = FakeSettingsRepository(),
                 dispatcher = testDispatcher,
+                performanceTracker = mockk(relaxed = true),
+                segmentationTracker = mockk(relaxed = true),
             )
             presetViewModel.setPresetRange(preset)
             advanceUntilIdle()
@@ -236,6 +247,8 @@ class ChartsViewModelTest : BaseUnitTest() {
             transactionRepository = fakeRepo,
             settingsRepository = fakeSettingsRepository,
             dispatcher = testDispatcher,
+            performanceTracker = mockk(relaxed = true),
+            segmentationTracker = mockk(relaxed = true),
         )
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
             restoredViewModel.chartData.collect {}

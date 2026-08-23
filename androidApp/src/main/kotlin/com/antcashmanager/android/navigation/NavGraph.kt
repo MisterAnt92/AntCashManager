@@ -66,6 +66,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.analytics.AnalyticsManager
+import com.antcashmanager.android.analytics.PerformanceTracker
 import com.antcashmanager.android.util.AppExitManager.safeFinish
 import com.antcashmanager.android.ui.components.animation.AntEasterEggAnimation
 import com.antcashmanager.android.ui.components.animation.AntSplashScreen
@@ -98,6 +99,7 @@ import org.koin.compose.koinInject
 fun AntCashManagerNavHost() {
     val settingsRepository: SettingsRepository = koinInject()
     val analyticsManager: AnalyticsManager = koinInject()
+    val performanceTracker: PerformanceTracker = koinInject()
 
     val navController = rememberNavController()
     val showCharts by settingsRepository.getShowCharts().collectAsState(initial = true)
@@ -181,7 +183,11 @@ fun AntCashManagerNavHost() {
         }
 
         LaunchedEffect(currentDestination?.route) {
-            currentDestination?.route?.let(analyticsManager::logScreenView)
+            currentDestination?.route?.let { route ->
+                val startTime = System.currentTimeMillis()
+                analyticsManager.logScreenView(route)
+                performanceTracker.trackScreenLoadTime(route, System.currentTimeMillis() - startTime)
+            }
         }
 
         Box(modifier = Modifier.fillMaxSize()) {

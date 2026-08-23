@@ -3,6 +3,8 @@ package com.antcashmanager.android.ui.screen.settings.dataManagement
 import android.os.Build
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
+import com.antcashmanager.android.analytics.ErrorTracker
+import com.antcashmanager.android.analytics.PerformanceTracker
 import com.antcashmanager.android.auth.GoogleSignInManager
 import com.antcashmanager.android.data.backup.BackupService
 import com.antcashmanager.android.security.BackupPayloadCipher
@@ -40,6 +42,8 @@ class SettingsDataViewModel(
     private val backupService: BackupService,
     private val autoBackupScheduler: AutoBackupScheduler,
     private val googleSignInManager: GoogleSignInManager,
+    private val performanceTracker: PerformanceTracker,
+    private val errorTracker: ErrorTracker,
 ) : BaseViewModel<None>() {
     private val settingsRepositoryRef = settingsRepository
 
@@ -328,8 +332,13 @@ class SettingsDataViewModel(
         logDebug("Creating backup")
         _state.update { it.copy(backupResult = BackupResult.Loading) }
         viewModelScope.launch {
+            val backupStartTime = System.currentTimeMillis()
             withMinimumLoadingDuration { backupService.createBackup() }
                 .onSuccess { jsonString ->
+                    val duration = System.currentTimeMillis() - backupStartTime
+                    val fileSizeMb = jsonString.length.toDouble() / (1024 * 1024)
+                    performanceTracker.trackBackupRestoreDuration(duration, fileSizeMb, operation = "backup")
+
                     val payloadToPersist = if (_state.value.dataEncryptionEnabled) {
                         runCatching { BackupPayloadCipher.encrypt(jsonString) }
                             .getOrElse { error ->
@@ -363,6 +372,14 @@ class SettingsDataViewModel(
                 }
                 .onFailure { error ->
                     if (error is CancellationException) throw error
+                    val duration = System.currentTimeMillis() - backupStartTime
+                    val errorCode = when {
+                        error.message?.contains("permission") == true -> "permission_denied"
+                        error.message?.contains("storage") == true -> "storage_error"
+                        error.message?.contains("encrypt") == true -> "encryption_error"
+                        else -> "backup_failed"
+                    }
+                    errorTracker.trackSyncError("backup_local", errorCode)
                     val message = error.message ?: SettingsDataConstant.UNKNOWN_ERROR
                     _state.update {
                         it.copy(
@@ -378,6 +395,7 @@ class SettingsDataViewModel(
     fun restoreBackup(jsonString: String) {
         logDebug("Restoring backup")
         _state.update { it.copy(restoreResult = RestoreOperationResult.Loading) }
+        val restoreStartTime = System.currentTimeMillis()
 
         val payloadToRestore = if (BackupPayloadCipher.isEncryptedPayload(jsonString)) {
             runCatching { BackupPayloadCipher.decrypt(jsonString) }
@@ -386,6 +404,14 @@ class SettingsDataViewModel(
                     Logger.e(tag = "SettingsDataViewModel") {
                         "Decryption failed on API ${Build.VERSION.SDK_INT}: ${error.message}"
                     }
+                    // Track decryption error
+                    val errorCode = when (error) {
+                        is javax.crypto.BadPaddingException -> "wrong_password"
+                        is java.security.InvalidKeyException -> "invalid_key"
+                        is IllegalArgumentException -> "invalid_payload"
+                        else -> "decryption_failed"
+                    }
+                    errorTracker.trackSyncError("restore_local", errorCode)
                 }
                 .getOrElse { error ->
                     // ✅ Enhanced error message mapping
@@ -419,6 +445,10 @@ class SettingsDataViewModel(
         viewModelScope.launch {
             withMinimumLoadingDuration { backupService.restoreBackup(payloadToRestore) }
                 .onSuccess { result ->
+                    val duration = System.currentTimeMillis() - restoreStartTime
+                    val fileSizeMb = payloadToRestore.length.toDouble() / (1024 * 1024)
+                    performanceTracker.trackBackupRestoreDuration(duration, fileSizeMb, operation = "restore")
+
                     _state.update {
                         it.copy(
                             restoreResult = RestoreOperationResult.Success(
@@ -436,6 +466,14 @@ class SettingsDataViewModel(
                 }
                 .onFailure { error ->
                     if (error is CancellationException) throw error
+                    val errorCode = when {
+                        error.message?.contains("permission") == true -> "permission_denied"
+                        error.message?.contains("invalid") == true -> "invalid_data"
+                        error.message?.contains("schema") == true -> "schema_mismatch"
+                        error.message?.contains("database") == true -> "database_error"
+                        else -> "restore_failed"
+                    }
+                    errorTracker.trackSyncError("restore_local", errorCode)
                     val message = error.message ?: SettingsDataConstant.UNKNOWN_ERROR
                     _state.update {
                         it.copy(

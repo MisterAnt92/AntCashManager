@@ -8,6 +8,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.analytics.AnalyticsManager
+import com.antcashmanager.android.analytics.ErrorTracker
 import com.antcashmanager.android.data.backup.BackupService
 import com.antcashmanager.android.drive.DriveUploadManager
 import com.antcashmanager.android.security.BackupPayloadCipher
@@ -50,6 +51,7 @@ class AutoBackupWorker(
     private val googleSignInManager: GoogleSignInManager by inject()
     private val driveUploadManager: DriveUploadManager by inject()
     private val analyticsManager: AnalyticsManager by inject()
+    private val errorTracker: ErrorTracker by inject()
 
     override suspend fun doWork(): Result {
         return try {
@@ -70,6 +72,7 @@ class AutoBackupWorker(
             val backupResult = backupService.createBackup()
             val backupJson = backupResult.getOrElse { error ->
                 Logger.e(tag = "AutoBackupWorker") { "Backup generation failed: $error" }
+                errorTracker.trackSyncError("backup_local", "generation_failed")
                 AutoBackupNotifier.notifyFailure(applicationContext)
                 return Result.failure()
             }
@@ -81,6 +84,7 @@ class AutoBackupWorker(
                     BackupPayloadCipher.encrypt(backupJson)
                 } catch (e: Exception) {
                     Logger.e(tag = "AutoBackupWorker") { "Encryption failed: ${e.message}" }
+                    errorTracker.trackSyncError("backup_local", "encryption_error")
                     AutoBackupNotifier.notifyFailure(applicationContext)
                     return Result.failure()
                 }
@@ -105,6 +109,7 @@ class AutoBackupWorker(
             }
 
             if (!writeResult) {
+                errorTracker.trackSyncError("backup_${destination.name.lowercase()}", "write_failed")
                 return Result.failure()
             }
 
@@ -125,11 +130,13 @@ class AutoBackupWorker(
                     putString("status", "error")
                     putString("error_type", "timestamp_update_failed")
                 })
+                errorTracker.trackSyncError("backup_${destination.name.lowercase()}", "timestamp_update_failed")
                 AutoBackupNotifier.notifyFailure(applicationContext)
                 Result.failure()
             }
         } catch (e: Exception) {
             Logger.e(tag = "AutoBackupWorker") { "Unexpected error in AutoBackupWorker: ${e.message}" }
+            errorTracker.trackSyncError("backup_unknown", "unexpected_error")
             AutoBackupNotifier.notifyFailure(applicationContext)
             Result.failure()
         }

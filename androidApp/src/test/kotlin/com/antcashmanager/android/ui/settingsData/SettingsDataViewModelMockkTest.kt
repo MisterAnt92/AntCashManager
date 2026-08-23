@@ -1,6 +1,8 @@
 package com.antcashmanager.android.ui.settingsData
 
 import com.antcashmanager.android.BaseUnitTest
+import com.antcashmanager.android.analytics.ErrorTracker
+import com.antcashmanager.android.analytics.PerformanceTracker
 import com.antcashmanager.android.data.backup.BackupService
 import com.antcashmanager.android.data.backup.RestoreResult
 import com.antcashmanager.android.security.BackupPayloadCipher
@@ -525,6 +527,8 @@ class SettingsDataViewModelMockkTest : BaseUnitTest() {
     private fun buildViewModel(): SettingsDataViewModel {
         val autoBackupScheduler: com.antcashmanager.android.work.AutoBackupScheduler = mockk(relaxed = true)
         val googleSignInManager: com.antcashmanager.android.auth.GoogleSignInManager = mockk(relaxed = true)
+        val performanceTracker: PerformanceTracker = mockk(relaxed = true)
+        val errorTracker: ErrorTracker = mockk(relaxed = true)
 
         return SettingsDataViewModel(
             settingsRepository = settingsRepository,
@@ -533,6 +537,8 @@ class SettingsDataViewModelMockkTest : BaseUnitTest() {
             backupService = backupService,
             autoBackupScheduler = autoBackupScheduler,
             googleSignInManager = googleSignInManager,
+            performanceTracker = performanceTracker,
+            errorTracker = errorTracker,
         )
     }
 }

@@ -4,11 +4,14 @@ package com.antcashmanager.android.ui.screen.charts
 
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.BaseUnitTest
+import com.antcashmanager.android.analytics.PerformanceTracker
+import com.antcashmanager.android.analytics.SegmentationTracker
 import com.antcashmanager.android.testutil.FakeCategoryRepository
 import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.testutil.FakeTransactionRepository
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -36,16 +39,22 @@ import java.util.Calendar
 class ChartsViewModelComprehensiveTest : BaseUnitTest() {
     private lateinit var fakeRepo: FakeTransactionRepository
     private lateinit var fakeSettingsRepository: FakeSettingsRepository
+    private lateinit var performanceTracker: PerformanceTracker
+    private lateinit var segmentationTracker: SegmentationTracker
     private lateinit var viewModel: ChartsViewModel
 
     @Before
     fun setup() {
         fakeRepo = FakeTransactionRepository()
         fakeSettingsRepository = FakeSettingsRepository()
+        performanceTracker = mockk(relaxed = true)
+        segmentationTracker = mockk(relaxed = true)
         viewModel = ChartsViewModel(
             transactionRepository = fakeRepo,
             settingsRepository = fakeSettingsRepository,
             dispatcher = testDispatcher,
+            performanceTracker = performanceTracker,
+            segmentationTracker = segmentationTracker,
         )
     }
 

@@ -1,6 +1,11 @@
 package com.antcashmanager.android.di
 
 import com.antcashmanager.android.analytics.AnalyticsManager
+import com.antcashmanager.android.analytics.EngagementTracker
+import com.antcashmanager.android.analytics.ErrorTracker
+import com.antcashmanager.android.analytics.PerformanceTracker
+import com.antcashmanager.android.analytics.SegmentationTracker
+import com.antcashmanager.android.analytics.SessionTracker
 import com.antcashmanager.android.auth.GoogleSignInManager
 import com.antcashmanager.android.data.backup.BackupService
 import com.antcashmanager.android.data.receipt.MlKitReceiptOcrService
@@ -132,6 +137,16 @@ val dataModule = module {
         )
     }
     single { AnalyticsManager(androidApplication()) }
+
+    // PHASE 2: Performance & Session & Error Tracking
+    single { PerformanceTracker(get<AnalyticsManager>()) }
+    single { SessionTracker(get<AnalyticsManager>()) }
+    single { ErrorTracker(get<AnalyticsManager>()) }
+
+    // PHASE 3: Advanced Analytics (Segmentation & Engagement)
+    single { SegmentationTracker(get<AnalyticsManager>()) }
+    single { EngagementTracker(get<AnalyticsManager>()) }
+
     single {
         BackupService(
             transactionRepository = get(),
@@ -313,6 +328,8 @@ val presentationModule = module {
             getTransactionsByDateRangeUseCase = get(),
             getChartsDateFilterStateUseCase = get(),
             setChartsDateFilterStateUseCase = get(),
+            performanceTracker = get(),
+            segmentationTracker = get(),
         )
     }
     viewModel {
@@ -360,6 +377,8 @@ val presentationModule = module {
             getTransactionByIdUseCase = get(),
             analyticsManager = get(),
             settingsRepository = get(),
+            performanceTracker = get(),
+            errorTracker = get(),
             transactionId = transactionId,
         )
     }
@@ -386,6 +405,8 @@ val presentationModule = module {
             backupService = get(),
             autoBackupScheduler = get(),
             googleSignInManager = get(),
+            performanceTracker = get(),
+            errorTracker = get(),
         )
     }
     viewModel {
@@ -395,6 +416,8 @@ val presentationModule = module {
             getCategoriesUseCase = get(),
             getTransactionSuggestionsUseCase = get(),
             analyticsManager = get(),
+            performanceTracker = get(),
+            errorTracker = get(),
         )
     }
     viewModelOf(::TransactionDetailsViewModel)
