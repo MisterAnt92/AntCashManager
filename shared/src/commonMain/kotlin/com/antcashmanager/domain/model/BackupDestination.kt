@@ -6,7 +6,7 @@ package com.antcashmanager.domain.model
  * - LOCAL: Salva i backup localmente nel dispositivo (via Storage Access Framework)
  * - GOOGLE_DRIVE: Salva i backup in Google Drive (requires OAuth 2.0 authentication)
  */
-enum class BackupDestination {
+public enum class BackupDestination {
     LOCAL,
     GOOGLE_DRIVE,
 }

@@ -9,11 +9,11 @@ package com.antcashmanager.domain.model
  * @property locations Lista di luoghi distinti dalle transazioni precedenti
  * @property tags Lista di tag distinti dalle transazioni precedenti
  */
-data class TransactionSuggestions(
-    val titles: List<String> = emptyList(),
-    val payees: List<String> = emptyList(),
-    val notes: List<String> = emptyList(),
-    val locations: List<String> = emptyList(),
-    val tags: List<String> = emptyList(),
+public data class TransactionSuggestions(
+    public val titles: List<String> = emptyList(),
+    public val payees: List<String> = emptyList(),
+    public val notes: List<String> = emptyList(),
+    public val locations: List<String> = emptyList(),
+    public val tags: List<String> = emptyList(),
 )
 

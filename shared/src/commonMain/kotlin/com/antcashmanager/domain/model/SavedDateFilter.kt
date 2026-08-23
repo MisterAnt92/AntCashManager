@@ -10,16 +10,16 @@ import com.antcashmanager.domain.model.SavedDateFilter.Companion.CUSTOM_PRESET_I
  * @property from timestamp iniziale in millisecondi
  * @property to timestamp finale in millisecondi
  */
-data class SavedDateFilter(
-    val presetIndex: Int,
-    val from: Long,
-    val to: Long,
+public data class SavedDateFilter(
+    public val presetIndex: Int,
+    public val from: Long,
+    public val to: Long,
 ) {
-    val isCustom: Boolean
+    public val isCustom: Boolean
         get() = presetIndex == CUSTOM_PRESET_INDEX
 
-    companion object {
-        const val CUSTOM_PRESET_INDEX: Int = -1
+    public companion object {
+        public const val CUSTOM_PRESET_INDEX: Int = -1
     }
 }
 

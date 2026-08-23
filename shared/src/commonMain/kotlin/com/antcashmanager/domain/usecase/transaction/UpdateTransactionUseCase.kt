@@ -10,7 +10,7 @@ import kotlinx.coroutines.Dispatchers
  * UseCase per l'aggiornamento di una transazione.
  * Restituisce [Result] con Unit in caso di successo o l'eccezione in caso di errore.
  */
-class UpdateTransactionUseCase(
+public class UpdateTransactionUseCase(
     private val transactionRepository: TransactionRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : UseCase<Transaction, Unit>(dispatcher) {

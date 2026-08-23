@@ -230,6 +230,8 @@
     <string name="settings_restore_subtitle">बैकअप फ़ाइल से डेटा आयात करें</string>
     <string name="settings_last_restore_label">अंतिम बहाली: %s</string>
     <string name="settings_last_restore_never">अभी तक कोई बहाली नहीं हुई</string>
+    <string name="auto_backup_notification_channel_name">स्वचालित बैकअप त्रुटियां</string>
+    <string name="auto_backup_notification_channel_description">स्वचालित बैकअप विफलताओं के लिए सूचनाएं</string>
     <string name="settings_support">समर्थन</string>
     <string name="settings_send_feedback">प्रतिक्रिया भेजें</string>
     <string name="settings_send_feedback_subtitle">ऐप को बेहतर बनाने में हमारी मदद करें</string>

@@ -3,11 +3,11 @@ package com.antcashmanager.data.local
 import android.content.Context
 import androidx.room.Room
 
-object DatabaseProvider {
+public object DatabaseProvider {
     private const val DATABASE_NAME = "antcashmanager.db"
     private var database: AppDatabase? = null
 
-    fun getDatabase(context: Context): AppDatabase {
+    public fun getDatabase(context: Context): AppDatabase {
         return database ?: synchronized(this) {
             val appContext = context.applicationContext
 

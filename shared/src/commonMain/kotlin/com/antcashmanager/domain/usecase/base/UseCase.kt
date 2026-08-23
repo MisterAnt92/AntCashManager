@@ -24,7 +24,7 @@ import kotlinx.coroutines.withContext
  * @param R Tipo del valore di successo racchiuso nel [Result] restituito da [invoke]
  * @param dispatcher Dispatcher su cui viene eseguita la logica. Default [Dispatchers.Default].
  */
-abstract class UseCase<in P, out R>(
+public abstract class UseCase<in P, out R>(
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) {
     protected val log: Logger = Logger.withTag(this::class.simpleName ?: "UseCase")
@@ -44,7 +44,7 @@ abstract class UseCase<in P, out R>(
      * `final`: le subclass implementano SOLO [execute], mai [invoke], per garantire che il
      * dispatcher configurato, la gestione degli errori e il logging siano sempre rispettati.
      */
-    suspend operator fun invoke(params: P): Result<R> = withContext(dispatcher) {
+    public suspend operator fun invoke(params: P): Result<R> = withContext(dispatcher) {
         ensureActive()
         log.d { "started" }
         runSuspendCatching { execute(params) }

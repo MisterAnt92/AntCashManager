@@ -5,7 +5,7 @@ import com.antcashmanager.domain.usecase.base.UseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
-class SetCurrencySymbolUseCase(
+public class SetCurrencySymbolUseCase(
     private val settingsRepository: SettingsRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : UseCase<String, Unit>(dispatcher) {

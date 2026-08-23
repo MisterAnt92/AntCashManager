@@ -4,7 +4,7 @@ import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.usecase.base.NoParamsObservableUseCase
 import kotlinx.coroutines.flow.Flow
 
-class GetReduceMotionUseCase(
+public class GetReduceMotionUseCase(
     private val settingsRepository: SettingsRepository,
 ) : NoParamsObservableUseCase<Boolean>() {
 

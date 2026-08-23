@@ -20,7 +20,7 @@ import kotlinx.coroutines.Dispatchers
  * @param ocrService Servizio OCR (implementazione platform-specific).
  * @param dispatcher Dispatcher per l'esecuzione asincrona (default: [Dispatchers.Default]).
  */
-class ScanReceiptUseCase(
+public class ScanReceiptUseCase(
     private val ocrService: ReceiptOcrService,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : UseCase<ByteArray, ReceiptData>(dispatcher) {

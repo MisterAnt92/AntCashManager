@@ -1,17 +1,17 @@
 package com.antcashmanager.domain.model
 
 /** Preferences for formatting monetary amounts throughout the app. */
-data class CurrencyFormat(
-    val currencySymbol: String = "\u20ac",
-    val decimalDigits: Int = 2,
-    val decimalSeparator: String = ",",
-    val thousandsSeparator: String = "",
+public data class CurrencyFormat(
+    public val currencySymbol: String = "\u20ac",
+    public val decimalDigits: Int = 2,
+    public val decimalSeparator: String = ",",
+    public val thousandsSeparator: String = "",
 ) {
-    companion object {
-        val DEFAULT = CurrencyFormat()
+    public companion object {
+        public val DEFAULT: CurrencyFormat = CurrencyFormat()
 
         /** Symbol to display-label pairs for all supported currencies. */
-        val SUPPORTED_CURRENCIES: List<Pair<String, String>> = listOf(
+        public val SUPPORTED_CURRENCIES: List<Pair<String, String>> = listOf(
             "\u20ac" to "Euro (\u20ac)",
             "$" to "US Dollar ($)",
             "\u00a3" to "British Pound (\u00a3)",
@@ -29,13 +29,13 @@ data class CurrencyFormat(
             "\u0e3f" to "Thai Baht (\u0e3f)",
         )
 
-        val DECIMAL_SEPARATORS: List<Pair<String, String>> = listOf(
+        public val DECIMAL_SEPARATORS: List<Pair<String, String>> = listOf(
             "," to "Comma (,)",
             "." to "Period (.)",
         )
 
         /** Empty string = no thousands separator. */
-        val THOUSANDS_SEPARATORS: List<Pair<String, String>> = listOf(
+        public val THOUSANDS_SEPARATORS: List<Pair<String, String>> = listOf(
             "." to "Period (.)",
             "," to "Comma (,)",
             " " to "Space",

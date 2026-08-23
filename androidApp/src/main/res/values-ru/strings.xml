@@ -231,6 +231,8 @@
     <string name="settings_restore_subtitle">Импортируйте данные из файла резервной копии</string>
     <string name="settings_last_restore_label">Последнее восстановление: %s</string>
     <string name="settings_last_restore_never">Восстановление еще не проводилось</string>
+    <string name="auto_backup_notification_channel_name">Ошибки автоматического резервного копирования</string>
+    <string name="auto_backup_notification_channel_description">Уведомления об ошибках автоматического резервного копирования</string>
     <string name="settings_support">Поддержка</string>
     <string name="settings_send_feedback">Отправить отзыв</string>
     <string name="settings_send_feedback_subtitle">Помогите нам улучшить приложение</string>

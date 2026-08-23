@@ -14,7 +14,7 @@ import androidx.room.PrimaryKey
         Index("type")                 // WHERE type = :type
     ]
 )
-data class TransactionEntity(
+public data class TransactionEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val title: String,

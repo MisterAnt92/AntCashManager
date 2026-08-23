@@ -8,7 +8,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
  * This migration also fixes an issue where version 9 might have been created without
  * the 'meal_voucher_difference' column due to an incomplete manual migration.
  */
-class Migration_9_10 : Migration(9, 10) {
+public class Migration_9_10 : Migration(9, 10) {
     override fun migrate(database: SupportSQLiteDatabase) {
         // Check if meal_voucher_difference column exists in transactions table
         val cursor = database.query("PRAGMA table_info(transactions)")

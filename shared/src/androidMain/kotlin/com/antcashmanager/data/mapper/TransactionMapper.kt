@@ -5,7 +5,7 @@ import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 
-fun TransactionEntity.toDomain(): Transaction = Transaction(
+public fun TransactionEntity.toDomain(): Transaction = Transaction(
     id = id,
     title = title,
     amount = amount,
@@ -29,7 +29,7 @@ fun TransactionEntity.toDomain(): Transaction = Transaction(
     categoryColor = categoryColor,
 )
 
-fun Transaction.toEntity(): TransactionEntity = TransactionEntity(
+public fun Transaction.toEntity(): TransactionEntity = TransactionEntity(
     id = id,
     title = title,
     amount = amount,

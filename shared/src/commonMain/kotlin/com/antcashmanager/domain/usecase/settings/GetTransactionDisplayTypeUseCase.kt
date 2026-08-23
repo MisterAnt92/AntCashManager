@@ -5,7 +5,7 @@ import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.usecase.base.NoParamsObservableUseCase
 import kotlinx.coroutines.flow.Flow
 
-class GetTransactionDisplayTypeUseCase(
+public class GetTransactionDisplayTypeUseCase(
     private val settingsRepository: SettingsRepository,
 ) : NoParamsObservableUseCase<TransactionDisplayType>() {
 

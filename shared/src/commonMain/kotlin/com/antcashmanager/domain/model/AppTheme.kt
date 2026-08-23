@@ -1,5 +1,5 @@
 package com.antcashmanager.domain.model
 
-enum class AppTheme {
+public enum class AppTheme {
     LIGHT, DARK, SYSTEM
 }

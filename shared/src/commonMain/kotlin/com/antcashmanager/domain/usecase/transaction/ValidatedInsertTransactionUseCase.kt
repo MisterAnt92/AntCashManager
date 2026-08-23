@@ -49,7 +49,7 @@ import kotlinx.coroutines.Dispatchers
  * @param validator Validator for domain rules
  * @param dispatcher Coroutine dispatcher (default: Default)
  */
-class ValidatedInsertTransactionUseCase(
+public class ValidatedInsertTransactionUseCase(
     private val transactionRepository: TransactionRepository,
     private val validator: TransactionValidator,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
@@ -83,7 +83,7 @@ class ValidatedInsertTransactionUseCase(
  *     }
  * ```
  */
-fun <T> Result<T>.handleValidationError(action: (List<com.antcashmanager.domain.validation.ValidationError>) -> Unit): Result<T> {
+public fun <T> Result<T>.handleValidationError(action: (List<com.antcashmanager.domain.validation.ValidationError>) -> Unit): Result<T> {
     val exception = exceptionOrNull()
     if (exception is ValidationException) {
         action(exception.errors)
@@ -94,7 +94,7 @@ fun <T> Result<T>.handleValidationError(action: (List<com.antcashmanager.domain.
 /**
  * Extension function for handling non-validation errors.
  */
-fun <T> Result<T>.handleOtherError(action: (Throwable) -> Unit): Result<T> {
+public fun <T> Result<T>.handleOtherError(action: (Throwable) -> Unit): Result<T> {
     val exception = exceptionOrNull()
     if (exception != null && exception !is ValidationException) {
         action(exception)

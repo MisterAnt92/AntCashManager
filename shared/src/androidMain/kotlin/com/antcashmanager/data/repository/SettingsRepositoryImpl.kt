@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.map
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
-class SettingsRepositoryImpl(
+public class SettingsRepositoryImpl(
     private val context: Context,
     private val dataStore: DataStore<Preferences> = context.dataStore,
 ) : SettingsRepository {

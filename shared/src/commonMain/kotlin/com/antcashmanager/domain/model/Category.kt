@@ -1,6 +1,6 @@
 package com.antcashmanager.domain.model
 
-data class Category(
+public data class Category(
     val id: Long = 0,
     val name: String,
     val icon: String = "category",

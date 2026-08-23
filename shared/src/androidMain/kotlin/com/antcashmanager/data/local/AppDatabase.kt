@@ -24,7 +24,7 @@ import com.antcashmanager.data.local.entity.TransactionEntity
         AutoMigration(from = 9, to = 10),
     ],
 )
-abstract class AppDatabase : RoomDatabase() {
-    abstract fun transactionDao(): TransactionDao
-    abstract fun categoryDao(): CategoryDao
+public abstract class AppDatabase : RoomDatabase() {
+    public abstract fun transactionDao(): TransactionDao
+    public abstract fun categoryDao(): CategoryDao
 }

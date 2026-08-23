@@ -31,14 +31,14 @@ import kotlinx.datetime.Clock
  * }
  * ```
  */
-interface TransactionValidator {
+public interface TransactionValidator {
     /**
      * Validates a transaction against domain rules.
      *
      * @param transaction The transaction to validate
      * @return [ValidationResult] containing all validation errors (if any)
      */
-    fun validate(transaction: Transaction): ValidationResult
+    public fun validate(transaction: Transaction): ValidationResult
 }
 
 /**
@@ -46,25 +46,25 @@ interface TransactionValidator {
  *
  * Use `isValid()` to check if validation passed, or `errors` to inspect failures.
  */
-data class ValidationResult(
-    val errors: List<ValidationError> = emptyList(),
+public data class ValidationResult(
+    public val errors: List<ValidationError> = emptyList(),
 ) {
     /**
      * Returns true if validation passed (no errors found).
      */
-    fun isValid(): Boolean = errors.isEmpty()
+    public fun isValid(): Boolean = errors.isEmpty()
 
     /**
      * Returns true if validation failed (at least one error found).
      */
-    fun isInvalid(): Boolean = errors.isNotEmpty()
+    public fun isInvalid(): Boolean = errors.isNotEmpty()
 
     /**
      * Converts validation result to Kotlin Result<T>.
      *
      * Useful for chaining with other Result operations.
      */
-    fun toResult(value: Unit = Unit): Result<Unit> =
+    public fun toResult(value: Unit = Unit): Result<Unit> =
         if (isValid()) Result.success(value) else Result.failure(
             ValidationException(errors)
         )
@@ -72,7 +72,7 @@ data class ValidationResult(
     /**
      * Executes callback if validation passed.
      */
-    fun onSuccess(action: (Unit) -> Unit): ValidationResult {
+    public fun onSuccess(action: (Unit) -> Unit): ValidationResult {
         if (isValid()) action(Unit)
         return this
     }
@@ -80,7 +80,7 @@ data class ValidationResult(
     /**
      * Executes callback if validation failed.
      */
-    fun onFailure(action: (List<ValidationError>) -> Unit): ValidationResult {
+    public fun onFailure(action: (List<ValidationError>) -> Unit): ValidationResult {
         if (isInvalid()) action(errors)
         return this
     }
@@ -95,10 +95,10 @@ data class ValidationResult(
  * - `TRANSACTION_TIMESTAMP_FUTURE`: Timestamp is in the future
  * - `TRANSACTION_CATEGORY_EMPTY`: Category is empty or blank
  */
-data class ValidationError(
-    val code: String,
-    val message: String,
-    val field: String? = null,
+public data class ValidationError(
+    public val code: String,
+    public val message: String,
+    public val field: String? = null,
 )
 
 /**
@@ -106,8 +106,8 @@ data class ValidationError(
  *
  * Contains all validation errors for proper error handling and UI feedback.
  */
-class ValidationException(
-    val errors: List<ValidationError>,
+public class ValidationException(
+    public val errors: List<ValidationError>,
 ) : Exception(
     "Transaction validation failed: ${errors.joinToString(", ") { it.code }}"
 )
@@ -123,7 +123,7 @@ class ValidationException(
  *
  * @param clock Clock for getting current time (default: System)
  */
-class TransactionValidatorImpl(
+public class TransactionValidatorImpl(
     private val clock: Clock = Clock.System,
 ) : TransactionValidator {
 
