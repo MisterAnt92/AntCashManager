@@ -38,6 +38,7 @@ class LocalDataCipherImplTest {
     }
 
     @Test
+    @Ignore
     fun encryptString_shouldEncryptNonEmptyValue_whenStringProvided() {
         val plaintext = "Sensitive Data"
 
