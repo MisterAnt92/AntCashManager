@@ -1,3 +1,4 @@
+package com.antcashmanager.android.ui.screen.transactions.addImport
 
 import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.analytics.AnalyticsManager

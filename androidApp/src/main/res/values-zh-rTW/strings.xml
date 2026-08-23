@@ -289,7 +289,6 @@
     <string name="settings_auto_backup_subtitle">每週自動備份</string>
     <string name="settings_auto_backup_weekly_label">自動備份每週進行一次</string>
     <string name="settings_auto_backup_destination_local">本機</string>
-    <string name="settings_auto_backup_destination_google_drive">Google Drive</string>
     <string name="settings_auto_backup_google_drive_coming_soon">即將推出</string>
     <string name="settings_auto_backup_google_drive_sign_in_title">啟用Google Drive備份</string>
     <string name="settings_auto_backup_google_drive_sign_in_message">使用您的Google帳戶登入以啟用Google Drive自動備份。您的資料將被加密並安全儲存。</string>

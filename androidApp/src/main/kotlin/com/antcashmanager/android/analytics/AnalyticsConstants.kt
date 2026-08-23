@@ -114,6 +114,18 @@ object AnalyticsConstants {
         "tutorial_step_skipped",
         "tutorial_completed",
         "tutorial_step_help_opened",
+
+        // PHASE 1: Priority Analytics Events (Coverage 45% → 55%)
+        "category_type_distribution",           // CategoriesScreen - income vs expense distribution
+        "meal_voucher_details_updated",         // DisplayViewModel - value changes
+        "recurring_interval_selected",          // AddTransactionViewModel - frequency selection
+        "search_query_initiated",               // HomeScreen - search box usage
+        "filter_combination_applied",           // TransactionsScreen/ChartsScreen - multi-filter tracking
+        "category_crud_operation",              // CategoriesViewModel - create/update/delete/reorder
+        "form_field_first_interaction",         // AddTransactionViewModel - first field touched
+        "app_auto_backup_executed",             // SettingsDataViewModel - auto-backup result
+        "widget_tap_action_triggered",          // WidgetTapActions - widget interactions
+        "transaction_duplicate_suggestion_accepted", // AddTransactionViewModel - suggestion acceptance
     )
 }
 

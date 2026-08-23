@@ -291,7 +291,6 @@
     <string name="settings_auto_backup_subtitle">Автоматичне резервне копіювання щотижня</string>
     <string name="settings_auto_backup_weekly_label">Автоматичне резервне копіювання щотижня</string>
     <string name="settings_auto_backup_destination_local">Локально</string>
-    <string name="settings_auto_backup_destination_google_drive">Google Drive</string>
     <string name="settings_auto_backup_google_drive_coming_soon">Найближчим часом</string>
     <string name="settings_auto_backup_google_drive_sign_in_title">Увімкнути резервне копіювання на Google Drive</string>
     <string name="settings_auto_backup_google_drive_sign_in_message">Увійдіть за допомогою облікового запису Google, щоб увімкнути автоматичне резервне копіювання на Google Drive. Ваші дані будуть зашифровані та безпечно збережені.</string>

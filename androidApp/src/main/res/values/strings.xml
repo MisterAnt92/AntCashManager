@@ -300,7 +300,6 @@
     <string name="settings_auto_backup_subtitle">Weekly automatic backups</string>
     <string name="settings_auto_backup_weekly_label">Automatic backup is weekly</string>
     <string name="settings_auto_backup_destination_local">Local</string>
-    <string name="settings_auto_backup_destination_google_drive">Google Drive</string>
     <string name="settings_auto_backup_google_drive_coming_soon">Coming soon</string>
     <string name="settings_auto_backup_google_drive_sign_in_title">Enable Google Drive Backup</string>
     <string name="settings_auto_backup_google_drive_sign_in_message">Sign in with your Google account to enable automatic backups to Google Drive. Your data will be encrypted and stored securely.</string>

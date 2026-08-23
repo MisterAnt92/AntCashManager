@@ -12,19 +12,8 @@ Quando inserisci pagamento buoni pasto ci deve essere la possibilità opzionale 
 attualmente non è così. Analizza e sistema questo tipo di inserimento e vedi se è possibile implementare migliorie.
 
 
-- TODO: Alla sezione di Impostazioni, sotto Visualizzazione aggiungi una nuova sezione "Pagamenti", sposta dentro la parte relativa al Valore Buono Pasto e poi aggiungi
-il pulsante "Tipo di pagamento predefinito". Al click si cambierà il tipo di pagamento predefinito che attualmente è il tipo Elettronico quando vai ad 
-aggiungere/modificare una Transazione. Questa opzione andrà salvata come configurazione e poi andrà visualizzato/impostato il predefinito sulle nuove Transazioni
-che si andranno ad aggiungere.  Aggiorna poi gli unit test e quelli che falliranno con questa modifica.
-
-
-
-- Unit Test da sistemare:
-- Caused by: java.io.IOException: Error while instrumenting sun/util/resources/cldr/provider/CLDRLocaleDataMetaInfo with JaCoCo 0.8.12.202403310830/dbfb6f2.
-- Caused by: java.lang.IllegalArgumentException: Unsupported class file major version 69
-- Caused by: java.security.NoSuchAlgorithmException at BackupServiceTest.kt:491
-- Caused by: java.security.NoSuchAlgorithmException at BackupPayloadCipherTest.kt:127
-- Caused by: java.lang.ClassNotFoundException at SandboxClassLoader.java:164
-
-- 
+- Sistema gli unit test: AddTransactionViewModelTest, BackupServiceTest, CategoryRepositoryTest, CategoryViewModelTest, AndroidPreferencesStorageImplTest,
+  BackupPayloadCipherTest, SettingsRepositoryTest, SettingsViewModelTest, TransactionRepositoryTest, TransactionViewModelTest,
+  ChartsViewModelComprehensiveTest, ChartsDetailsBottomSheetTest, ChartCardsTest, HomeViewModelComprehensiveTest, AutoBackupWorkerTest,
+  AutoBackupNotifierTest, AutoBackupEncryptionTest
 

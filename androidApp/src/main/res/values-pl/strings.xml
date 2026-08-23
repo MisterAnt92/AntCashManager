@@ -289,7 +289,6 @@
     <string name="settings_auto_backup_subtitle">Automatyczne kopie zapasowe cotygodniowo</string>
     <string name="settings_auto_backup_weekly_label">Automatyczna kopia zapasowa jest cotygodniowa</string>
     <string name="settings_auto_backup_destination_local">Lokalnie</string>
-    <string name="settings_auto_backup_destination_google_drive">Google Drive</string>
     <string name="settings_auto_backup_google_drive_coming_soon">Wkrótce</string>
     <string name="settings_auto_backup_google_drive_sign_in_title">Włącz Kopię Zapasową na Google Drive</string>
     <string name="settings_auto_backup_google_drive_sign_in_message">Zaloguj się za pomocą konta Google, aby włączyć automatyczne kopie zapasowe na Google Drive. Twoje dane będą szyfrowane i bezpiecznie przechowywane.</string>

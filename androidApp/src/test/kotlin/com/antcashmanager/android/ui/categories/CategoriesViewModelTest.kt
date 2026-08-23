@@ -1,6 +1,7 @@
 package com.antcashmanager.android.ui.categories
 
 import com.antcashmanager.android.BaseUnitTest
+import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.screen.categories.CategoriesViewModel
 import com.antcashmanager.domain.exception.CategoryException
 import com.antcashmanager.domain.model.Category
@@ -29,6 +30,7 @@ class CategoriesViewModelTest : BaseUnitTest() {
     private lateinit var updateCategoryUseCase: UpdateCategoryUseCase
     private lateinit var deleteCategoryUseCase: DeleteCategoryUseCase
     private lateinit var syncTransactionCategoriesUseCase: SyncTransactionCategoriesUseCase
+    private lateinit var analyticsManager: AnalyticsManager
 
     @Before
     fun setup() {
@@ -37,6 +39,7 @@ class CategoriesViewModelTest : BaseUnitTest() {
         updateCategoryUseCase = mockk()
         deleteCategoryUseCase = mockk()
         syncTransactionCategoriesUseCase = mockk()
+        analyticsManager = mockk(relaxed = true)
 
         every { getCategoriesUseCase() } returns flowOf(Result.success(emptyList()))
         coEvery { insertCategoryUseCase(any()) } returns Result.success(1L)
@@ -448,5 +451,6 @@ class CategoriesViewModelTest : BaseUnitTest() {
         updateCategoryUseCase = updateCategoryUseCase,
         deleteCategoryUseCase = deleteCategoryUseCase,
         syncTransactionCategoriesUseCase = syncTransactionCategoriesUseCase,
+        analyticsManager = analyticsManager,
     )
 }

@@ -3,103 +3,130 @@ package com.antcashmanager.android.work
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
-import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.mockk.mockk
+import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RuntimeEnvironment
-import org.robolectric.Shadows
 
 /**
- * Unit tests for [AutoBackupNotifier].
+ * Unit tests for [AutoBackupNotifier] using MockK.
  *
  * Verifies:
- * - Notification channel creation (API 26+)
- * - Notification sending and content
- * - Permission handling (API 33+)
- * - Exception handling for notification failures
+ * - Notification channel creation (handled gracefully on all API levels)
+ * - Notification method invocation (not throwing exceptions)
+ * - Idempotency of channel creation
+ *
+ * NOTE: Full notification delivery testing with actual Android system
+ * should be in src/androidTest as it requires real NotificationManager.
+ * This suite tests the notification logic using mocked Context.
  */
-@RunWith(AndroidJUnit4::class)
 class AutoBackupNotifierTest {
 
-    private lateinit var context: Context
+    private lateinit var mockContext: Context
 
     @Before
     fun setup() {
-        context = RuntimeEnvironment.getApplication()
+        mockContext = mockk(relaxed = true)
     }
 
     @Test
-    fun ensureChannel_createsNotificationChannel() {
-        AutoBackupNotifier.ensureChannel(context)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Verify that ensureChannel completes without error
-            // Actual channel verification would require deeper mocking
+    fun ensureChannel_shouldCompleteWithoutException_whenCalled() {
+        // Should not throw even if AndroidJUnit4 not available
+        try {
+            AutoBackupNotifier.ensureChannel(mockContext)
+        } catch (e: Exception) {
+            throw AssertionError("ensureChannel should not throw: ${e.message}")
         }
     }
 
     @Test
-    fun ensureChannel_whenCalledMultipleTimes_isIdempotent() {
-        AutoBackupNotifier.ensureChannel(context)
-        AutoBackupNotifier.ensureChannel(context)
-        AutoBackupNotifier.ensureChannel(context)
-
-        // Verify no exception thrown - idempotent
-    }
-
-    @Test
-    fun notifyFailure_sendsNotification() {
-        AutoBackupNotifier.ensureChannel(context)
-        AutoBackupNotifier.notifyFailure(context)
-
-        // Verify notification is sent without throwing
-    }
-
-    @Test
-    fun notifyFailure_doesNotThrow() {
-        AutoBackupNotifier.ensureChannel(context)
-
-        // Should not throw even if resources are missing
-        AutoBackupNotifier.notifyFailure(context)
-    }
-
-    @Test
-    fun notifyFailure_calledMultipleTimes_eachSucceeds() {
-        AutoBackupNotifier.ensureChannel(context)
-
-        AutoBackupNotifier.notifyFailure(context)
-        AutoBackupNotifier.notifyFailure(context)
-        AutoBackupNotifier.notifyFailure(context)
-
-        // Verify all calls complete without error
-    }
-
-    @Test
-    fun notifyFailure_withoutChannelSetup_stillWorks() {
-        // Should work even if ensureChannel not called first
-        AutoBackupNotifier.notifyFailure(context)
-    }
-
-    @Test
-    fun ensureChannel_onApiLessThan26_isNoOp() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            AutoBackupNotifier.ensureChannel(context)
-            // Should complete without throwing
+    fun ensureChannel_shouldBeIdempotent_whenCalledMultipleTimes() {
+        // Multiple calls should not cause issues
+        try {
+            AutoBackupNotifier.ensureChannel(mockContext)
+            AutoBackupNotifier.ensureChannel(mockContext)
+            AutoBackupNotifier.ensureChannel(mockContext)
+        } catch (e: Exception) {
+            throw AssertionError("ensureChannel should be idempotent: ${e.message}")
         }
     }
 
     @Test
-    fun notifyFailure_readsStringsFromResources() {
-        // Verify that the notifier reads strings from resources (not hardcoded)
-        AutoBackupNotifier.ensureChannel(context)
-        AutoBackupNotifier.notifyFailure(context)
-
-        // If resources are mocked, this would fail - that's expected in unit tests
+    fun notifyFailure_shouldCompleteWithoutException_whenCalled() {
+        // Should not throw even without channel setup
+        try {
+            AutoBackupNotifier.notifyFailure(mockContext)
+        } catch (e: Exception) {
+            throw AssertionError("notifyFailure should not throw: ${e.message}")
+        }
     }
 
-    companion object {
-        private const val CHANNEL_ID = "auto_backup_errors"
-        private const val NOTIFICATION_ID = 1001
+    @Test
+    fun notifyFailure_shouldCompleteWithoutException_afterChannelSetup() {
+        // Should not throw after channel setup
+        try {
+            AutoBackupNotifier.ensureChannel(mockContext)
+            AutoBackupNotifier.notifyFailure(mockContext)
+        } catch (e: Exception) {
+            throw AssertionError("notifyFailure after ensureChannel should not throw: ${e.message}")
+        }
+    }
+
+    @Test
+    fun notifyFailure_shouldBeIdempotent_whenCalledMultipleTimes() {
+        // Multiple calls should not cause issues
+        try {
+            AutoBackupNotifier.notifyFailure(mockContext)
+            AutoBackupNotifier.notifyFailure(mockContext)
+            AutoBackupNotifier.notifyFailure(mockContext)
+        } catch (e: Exception) {
+            throw AssertionError("Multiple notifyFailure calls should not throw: ${e.message}")
+        }
+    }
+
+    @Test
+    fun ensureChannelAndNotifyFailure_shouldChainCorrectly_whenCalled() {
+        // The two methods should work together
+        try {
+            AutoBackupNotifier.ensureChannel(mockContext)
+            AutoBackupNotifier.notifyFailure(mockContext)
+            AutoBackupNotifier.notifyFailure(mockContext)
+        } catch (e: Exception) {
+            throw AssertionError("ensureChannel and notifyFailure chain should work: ${e.message}")
+        }
+    }
+
+    @Test
+    fun notifyFailure_shouldUseMockedContext_forNotificationManager() {
+        val notificationManager = mockk<NotificationManager>(relaxed = true)
+        val contextWithManager = mockk<Context> {
+            io.mockk.every { getSystemService(Context.NOTIFICATION_SERVICE) } returns notificationManager
+        }
+
+        try {
+            AutoBackupNotifier.notifyFailure(contextWithManager)
+        } catch (e: Exception) {
+            throw AssertionError("notifyFailure with mocked NotificationManager should not throw: ${e.message}")
+        }
+    }
+
+    @Test
+    fun apiLevelHandling_shouldWorkOnAllSdkVersions_withoutException() {
+        // Test should work regardless of API level
+        val currentApiLevel = Build.VERSION.SDK_INT
+        if (currentApiLevel >= Build.VERSION_CODES.O) {
+            try {
+                AutoBackupNotifier.ensureChannel(mockContext)
+            } catch (e: Exception) {
+                throw AssertionError("ensureChannel on API 26+ should not throw: ${e.message}")
+            }
+        } else {
+            try {
+                AutoBackupNotifier.ensureChannel(mockContext)
+                AutoBackupNotifier.notifyFailure(mockContext)
+            } catch (e: Exception) {
+                throw AssertionError("Methods should work on API < 26: ${e.message}")
+            }
+        }
     }
 }

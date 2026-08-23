@@ -289,7 +289,6 @@
     <string name="settings_auto_backup_subtitle">毎週自動バックアップ</string>
     <string name="settings_auto_backup_weekly_label">自動バックアップは毎週実行されます</string>
     <string name="settings_auto_backup_destination_local">ローカル</string>
-    <string name="settings_auto_backup_destination_google_drive">Google Drive</string>
     <string name="settings_auto_backup_google_drive_coming_soon">近日公開予定</string>
     <string name="settings_auto_backup_google_drive_sign_in_title">Google Driveバックアップを有効にする</string>
     <string name="settings_auto_backup_google_drive_sign_in_message">Googleアカウントにサインインして、Google Driveへの自動バックアップを有効にしてください。データは暗号化され安全に保存されます。</string>

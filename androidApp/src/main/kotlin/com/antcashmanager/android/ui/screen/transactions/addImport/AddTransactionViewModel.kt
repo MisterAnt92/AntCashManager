@@ -40,6 +40,9 @@ class AddTransactionViewModel(
     private val _state = MutableStateFlow(AddTransactionState())
     val state: StateFlow<AddTransactionState> = _state.asStateFlow()
 
+    // Track first form field interaction for analytics
+    private var firstFormFieldTracked = false
+
     init {
         loadCategories()
         loadTransactionSuggestions()
@@ -172,7 +175,16 @@ class AddTransactionViewModel(
             is AddTransactionEvent.SelectCategory -> selectCategory(event.category)
             is AddTransactionEvent.SelectType -> selectType(event.type)
             is AddTransactionEvent.SelectPaymentType -> selectPaymentType(event.paymentType)
-            is AddTransactionEvent.UpdateTitle -> _state.update { it.copy(title = event.title) }
+            is AddTransactionEvent.UpdateTitle -> {
+                // Track first form field interaction
+                if (!firstFormFieldTracked && event.title.isNotEmpty()) {
+                    analyticsManager.logEvent("form_field_first_interaction", Bundle().apply {
+                        putString("field", "title")
+                    })
+                    firstFormFieldTracked = true
+                }
+                _state.update { it.copy(title = event.title) }
+            }
             is AddTransactionEvent.UpdateAmount -> {
                 // Permetti input libero durante la digitazione, validazione al salvataggio
                 _state.update { it.copy(amount = event.amount) }
@@ -192,10 +204,16 @@ class AddTransactionViewModel(
 
             is AddTransactionEvent.UpdateTimestamp -> _state.update { it.copy(timestamp = event.timestamp) }
             is AddTransactionEvent.SetRecurring -> _state.update { it.copy(isRecurring = event.isRecurring) }
-            is AddTransactionEvent.UpdateRecurrenceInterval -> _state.update {
-                it.copy(
-                    recurrenceInterval = event.interval
-                )
+            is AddTransactionEvent.UpdateRecurrenceInterval -> {
+                // Track recurring interval selection
+                analyticsManager.logEvent("recurring_interval_selected", Bundle().apply {
+                    putString("interval", event.interval)
+                })
+                _state.update {
+                    it.copy(
+                        recurrenceInterval = event.interval
+                    )
+                }
             }
 
             is AddTransactionEvent.NextStep -> nextStep()
@@ -290,6 +308,10 @@ class AddTransactionViewModel(
 
     private fun selectPaymentType(paymentType: PaymentType) {
         logDebug("Payment type selected: $paymentType")
+        // Track payment type selection
+        analyticsManager.logEvent("payment_type_selected", Bundle().apply {
+            putString("payment_type", paymentType.name)
+        })
         _state.update { currentState ->
             // Se cambi DA MEAL_VOUCHERS a un altro tipo: resetta voucher, differenza e amount
             val resetMealVouchers = currentState.selectedPaymentType == PaymentType.MEAL_VOUCHERS &&

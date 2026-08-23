@@ -15,8 +15,6 @@ import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.domain.model.CurrencyFormat
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 
 /**
  * Unit tests for chart card composables (QuickStatsCard, WeekdayExpenseCard).
@@ -32,7 +30,6 @@ import org.robolectric.RobolectricTestRunner
  * with kotlinx-coroutines-test for deterministic test execution.
  */
 
-@RunWith(RobolectricTestRunner::class)
 class ChartCardsTest : BaseComposeUnitTest() {
 
 

@@ -288,7 +288,6 @@
     <string name="settings_auto_backup_subtitle">साप्ताहिक स्वचालित बैकअप</string>
     <string name="settings_auto_backup_weekly_label">स्वचालित बैकअप साप्ताहिक है</string>
     <string name="settings_auto_backup_destination_local">स्थानीय</string>
-    <string name="settings_auto_backup_destination_google_drive">Google Drive</string>
     <string name="settings_auto_backup_google_drive_coming_soon">जल्द आ रहा है</string>
     <string name="settings_auto_backup_google_drive_sign_in_title">Google Drive बैकअप सक्षम करें</string>
     <string name="settings_auto_backup_google_drive_sign_in_message">Google Drive पर स्वचालित बैकअप सक्षम करने के लिए अपने Google खाते से साइन इन करें। आपके डेटा को एनक्रिप्ट किया जाएगा और सुरक्षित रूप से संग्रहित किया जाएगा।</string>

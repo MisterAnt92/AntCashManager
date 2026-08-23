@@ -289,7 +289,6 @@
     <string name="settings_auto_backup_subtitle">Автоматическое резервное копирование еженедельно</string>
     <string name="settings_auto_backup_weekly_label">Автоматическое резервное копирование еженедельно</string>
     <string name="settings_auto_backup_destination_local">Локально</string>
-    <string name="settings_auto_backup_destination_google_drive">Google Drive</string>
     <string name="settings_auto_backup_google_drive_coming_soon">Скоро</string>
     <string name="settings_auto_backup_google_drive_sign_in_title">Включить резервное копирование на Google Drive</string>
     <string name="settings_auto_backup_google_drive_sign_in_message">Войдите с помощью аккаунта Google, чтобы включить автоматическое резервное копирование на Google Drive. Ваши данные будут зашифрованы и безопасно сохранены.</string>

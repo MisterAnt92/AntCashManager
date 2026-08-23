@@ -152,6 +152,20 @@ fun TransactionsScreen(
                             putString("payment_type", state.pendingPaymentType?.name ?: "all")
                         }
                         analyticsManager.logEvent("transactions_filter_applied", params)
+
+                        // Track filter combination
+                        val filterTypes = mutableListOf<String>()
+                        if (state.pendingSearchQuery.isNotBlank()) filterTypes.add("search")
+                        if (state.pendingCategory != null) filterTypes.add("category")
+                        if (state.pendingTransactionType != null) filterTypes.add("type")
+                        if (state.pendingPaymentType != null) filterTypes.add("payment_type")
+
+                        if (filterTypes.isNotEmpty()) {
+                            analyticsManager.logEvent("filter_combination_applied", Bundle().apply {
+                                putInt("filter_count", filterTypes.size)
+                                putString("types", filterTypes.joinToString("|"))
+                            })
+                        }
                     }
 
                     is com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ClearAllFilters -> {

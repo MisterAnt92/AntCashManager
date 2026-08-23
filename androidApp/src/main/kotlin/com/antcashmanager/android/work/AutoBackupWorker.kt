@@ -2,10 +2,12 @@ package com.antcashmanager.android.work
 
 import android.content.Context
 import android.net.Uri
+import android.os.Bundle
 import androidx.documentfile.provider.DocumentFile
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import co.touchlab.kermit.Logger
+import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.data.backup.BackupService
 import com.antcashmanager.android.drive.DriveUploadManager
 import com.antcashmanager.android.security.BackupPayloadCipher
@@ -47,6 +49,7 @@ class AutoBackupWorker(
     private val backupService: BackupService by inject()
     private val googleSignInManager: GoogleSignInManager by inject()
     private val driveUploadManager: DriveUploadManager by inject()
+    private val analyticsManager: AnalyticsManager by inject()
 
     override suspend fun doWork(): Result {
         return try {
@@ -109,9 +112,19 @@ class AutoBackupWorker(
             try {
                 settingsRepository.setLastBackupTimestamp(timestamp)
                 Logger.d(tag = "AutoBackupWorker") { "Backup successful, timestamp updated" }
+                // Track auto backup execution
+                analyticsManager.logEvent("app_auto_backup_executed", Bundle().apply {
+                    putString("status", "success")
+                    putLong("duration_ms", System.currentTimeMillis() - timestamp)
+                })
                 Result.success()
             } catch (e: Exception) {
                 Logger.e(tag = "AutoBackupWorker") { "Error updating timestamp: ${e.message}" }
+                // Track backup failure
+                analyticsManager.logEvent("app_auto_backup_executed", Bundle().apply {
+                    putString("status", "error")
+                    putString("error_type", "timestamp_update_failed")
+                })
                 AutoBackupNotifier.notifyFailure(applicationContext)
                 Result.failure()
             }

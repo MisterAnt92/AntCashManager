@@ -515,6 +515,11 @@ internal fun ChartsContent(
                 onPresetSelected = { index, preset ->
                     selectedPreset = index
                     analyticsManager.logEvent("chart_date_filter_changed")
+                    // Track filter combination
+                    analyticsManager.logEvent("filter_combination_applied", android.os.Bundle().apply {
+                        putInt("filter_count", 1)
+                        putString("types", "date")
+                    })
                     onPresetSelected(preset)
                 },
                 onShowFromPicker = { showFromPicker = true },
@@ -557,6 +562,11 @@ internal fun ChartsContent(
                 TextButton(onClick = {
                     state.selectedDateMillis?.let {
                         analyticsManager.logEvent("chart_custom_date_range_set")
+                        // Track filter combination
+                        analyticsManager.logEvent("filter_combination_applied", android.os.Bundle().apply {
+                            putInt("filter_count", 1)
+                            putString("types", "date")
+                        })
                         onDateRangeChanged(it, dateRange.to)
                     }
                     selectedPreset = -1
@@ -578,6 +588,11 @@ internal fun ChartsContent(
                 TextButton(onClick = {
                     state.selectedDateMillis?.let {
                         analyticsManager.logEvent("chart_custom_date_range_set")
+                        // Track filter combination
+                        analyticsManager.logEvent("filter_combination_applied", android.os.Bundle().apply {
+                            putInt("filter_count", 1)
+                            putString("types", "date")
+                        })
                         onDateRangeChanged(dateRange.from, it)
                     }
                     selectedPreset = -1

@@ -1,6 +1,8 @@
 package com.antcashmanager.android.ui.screen.settings.displaySettings
 
+import android.os.Bundle
 import androidx.lifecycle.viewModelScope
+import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.domain.model.None
 import com.antcashmanager.domain.model.TransactionDisplayType
@@ -22,6 +24,7 @@ import kotlinx.coroutines.launch
 class DisplayViewModel(
     private val settingsRepository: SettingsRepository,
     private val widgetUpdateNotifier: WidgetUpdateNotifier = NoOpWidgetUpdateNotifier,
+    private val analyticsManager: AnalyticsManager,
 ) : BaseViewModel<None>() {
 
     // Espone il simbolo valuta attuale
@@ -230,12 +233,18 @@ class DisplayViewModel(
     /**
      * Aggiorna il valore del buono pasto.
      */
-    fun setMealVoucherValue(value: Double) = updatePreference(
-        logMsg = "Setting meal voucher value: $value",
-        action = {
-            settingsRepository.setMealVoucherValue(value.coerceAtLeast(0.0))
-        },
-    )
+    fun setMealVoucherValue(value: Double) {
+        // Track meal voucher details update
+        analyticsManager.logEvent("meal_voucher_details_updated", Bundle().apply {
+            putDouble("value", value)
+        })
+        updatePreference(
+            logMsg = "Setting meal voucher value: $value",
+            action = {
+                settingsRepository.setMealVoucherValue(value.coerceAtLeast(0.0))
+            },
+        )
+    }
 
     /**
      * Aggiorna la preferenza per la visualizzazione della sezione grafici.

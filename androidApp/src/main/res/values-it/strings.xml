@@ -314,7 +314,7 @@
     <string name="settings_auto_backup_subtitle">Backup automatici settimanali</string>
     <string name="settings_auto_backup_weekly_label">Il backup automatico è settimanale</string>
     <string name="settings_auto_backup_destination_local">Locale</string>
-    <string name="settings_auto_backup_destination_google_drive">Google Drive</string>
+
     <string name="settings_auto_backup_google_drive_coming_soon">Prossimamente</string>
     <string name="settings_auto_backup_google_drive_sign_in_title">Abilita Backup su Google Drive</string>
     <string name="settings_auto_backup_google_drive_sign_in_message">Accedi con il tuo account Google per abilitare i backup automatici su Google Drive. I tuoi dati saranno crittografati e archiviati in modo sicuro.</string>

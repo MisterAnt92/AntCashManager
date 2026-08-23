@@ -3,8 +3,6 @@
 package com.antcashmanager.android.ui.screen.charts
 
 import androidx.lifecycle.viewModelScope
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.testutil.FakeCategoryRepository
 import com.antcashmanager.android.testutil.FakeSettingsRepository

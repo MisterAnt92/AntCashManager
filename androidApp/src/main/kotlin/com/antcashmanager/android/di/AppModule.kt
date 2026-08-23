@@ -305,6 +305,7 @@ val presentationModule = module {
             updateCategoryUseCase = get(),
             deleteCategoryUseCase = get(),
             syncTransactionCategoriesUseCase = get(),
+            analyticsManager = get(),
         )
     }
     viewModel {
@@ -370,7 +371,13 @@ val presentationModule = module {
             widgetUpdateNotifier = get(),
         )
     }
-    viewModelOf(::DisplayViewModel)
+    viewModel {
+        DisplayViewModel(
+            settingsRepository = get(),
+            widgetUpdateNotifier = get(),
+            analyticsManager = get(),
+        )
+    }
     viewModel {
         SettingsDataViewModel(
             settingsRepository = get(),

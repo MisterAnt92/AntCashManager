@@ -13,8 +13,6 @@ import com.antcashmanager.android.ui.screen.charts.view.ChartDetailsData
 import com.antcashmanager.android.ui.screen.charts.view.TrendDirection
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 
 /**
  * Unit tests for ChartsDetailsBottomSheet composable.
@@ -28,7 +26,6 @@ import org.robolectric.RobolectricTestRunner
  * Uses Compose UI Test v2 framework (no BaseUnitTest - pure Compose UI test).
  */
 
-@RunWith(RobolectricTestRunner::class)
 class ChartsDetailsBottomSheetTest : BaseComposeUnitTest() {
 
 

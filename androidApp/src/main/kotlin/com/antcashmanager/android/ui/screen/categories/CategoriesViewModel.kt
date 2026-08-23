@@ -1,6 +1,8 @@
 package com.antcashmanager.android.ui.screen.categories
 
+import android.os.Bundle
 import androidx.lifecycle.viewModelScope
+import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.None
@@ -21,6 +23,7 @@ class CategoriesViewModel(
     private val updateCategoryUseCase: UpdateCategoryUseCase,
     private val deleteCategoryUseCase: DeleteCategoryUseCase,
     private val syncTransactionCategoriesUseCase: SyncTransactionCategoriesUseCase,
+    private val analyticsManager: AnalyticsManager,
 ) : BaseViewModel<None>() {
 
     private val _state = MutableStateFlow(CategoriesState())
@@ -41,6 +44,11 @@ class CategoriesViewModel(
                             hiddenIncomeCategories = income.filter { category -> category.isHidden },
                         )
                     }
+                    // Track category type distribution
+                    analyticsManager.logEvent("category_type_distribution", Bundle().apply {
+                        putInt("expense_count", expense.size)
+                        putInt("income_count", income.size)
+                    })
                 }.onFailure { error ->
                     if (error is CancellationException) throw error
                     logError("Error loading categories: ${error.message}", error)
@@ -51,6 +59,11 @@ class CategoriesViewModel(
 
     fun addCategory(name: String, icon: String, color: Long, type: String = "EXPENSE") {
         logDebug("Adding category: $name ($type)")
+        // Track category creation
+        analyticsManager.logEvent("category_crud_operation", Bundle().apply {
+            putString("operation", "create")
+            putString("type", type)
+        })
         // Accoda la nuova categoria in fondo all'ordine esistente per quel tipo, invece di
         // farla comparire in cima con sortOrder = 0 di default.
         val nextSortOrder = (
@@ -78,6 +91,11 @@ class CategoriesViewModel(
 
     fun updateCategory(category: Category) {
         logDebug("Updating category: ${category.name}")
+        // Track category update
+        analyticsManager.logEvent("category_crud_operation", Bundle().apply {
+            putString("operation", "update")
+            putString("type", category.type)
+        })
         val oldName = _state.value.categories.find { it.id == category.id }?.name
         viewModelScope.launch {
             val result = updateCategoryUseCase(category)
@@ -124,6 +142,10 @@ class CategoriesViewModel(
      */
     fun reorderCategories(reordered: List<Category>) {
         logDebug("Reordering ${reordered.size} categories")
+        // Track category reorder
+        analyticsManager.logEvent("category_crud_operation", Bundle().apply {
+            putString("operation", "reorder")
+        })
         viewModelScope.launch {
             reordered.forEachIndexed { index, category ->
                 if (category.sortOrder != index) {
@@ -141,6 +163,11 @@ class CategoriesViewModel(
 
     fun deleteCategory(category: Category) {
         logDebug("Deleting category: ${category.name}")
+        // Track category delete
+        analyticsManager.logEvent("category_crud_operation", Bundle().apply {
+            putString("operation", "delete")
+            putString("type", category.type)
+        })
         viewModelScope.launch {
             val result = deleteCategoryUseCase(category)
             result.onFailure { error ->

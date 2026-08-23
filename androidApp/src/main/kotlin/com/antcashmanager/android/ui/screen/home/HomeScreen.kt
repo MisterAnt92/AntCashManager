@@ -508,6 +508,11 @@ internal fun HomeContent(
                                 onSearchQueryChange = { newQuery ->
                                     if (newQuery.isNotEmpty() && state.searchQuery.isEmpty()) {
                                         analyticsManager.logEvent("home_search_submitted")
+                                        // Track search query initiated
+                                        analyticsManager.logEvent("search_query_initiated", android.os.Bundle().apply {
+                                            putInt("query_length", newQuery.length)
+                                            putBoolean("filters_active", false)
+                                        })
                                     } else if (newQuery.isEmpty() && state.searchQuery.isNotEmpty()) {
                                         analyticsManager.logEvent("home_search_cleared")
                                     }

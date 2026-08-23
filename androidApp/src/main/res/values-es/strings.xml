@@ -212,7 +212,6 @@
     <string name="settings_auto_backup_subtitle">Copia de seguridad automática semanal en almacenamiento local</string>
     <string name="settings_auto_backup_weekly_label">La copia de seguridad automática es semanal</string>
     <string name="settings_auto_backup_destination_local">Almacenamiento Local</string>
-    <string name="settings_auto_backup_destination_google_drive">Google Drive</string>
     <string name="settings_auto_backup_google_drive_coming_soon">Próximamente</string>
     <string name="auto_backup_notification_channel_name">Errores de Copia de Seguridad Automática</string>
     <string name="auto_backup_notification_channel_description">Notificaciones de errores en copias de seguridad automáticas</string>

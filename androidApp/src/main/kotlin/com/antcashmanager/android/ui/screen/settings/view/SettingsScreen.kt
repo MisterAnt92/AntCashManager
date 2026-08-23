@@ -161,14 +161,26 @@ internal fun SettingsContent(
     val analyticsManager: AnalyticsManager = koinInject()
     val handleHighContrastChanged: (Boolean) -> Unit = { enabled ->
         analyticsManager.logEvent("settings_high_contrast_toggled")
+        analyticsManager.logEvent("settings_accessibility_change", android.os.Bundle().apply {
+            putString("setting", "high_contrast")
+            putBoolean("enabled", enabled)
+        })
         onHighContrastChanged(enabled)
     }
     val handleLargeTextChanged: (Boolean) -> Unit = { enabled ->
         analyticsManager.logEvent("settings_large_text_toggled")
+        analyticsManager.logEvent("settings_accessibility_change", android.os.Bundle().apply {
+            putString("setting", "large_text")
+            putBoolean("enabled", enabled)
+        })
         onLargeTextChanged(enabled)
     }
     val handleReduceMotionChanged: (Boolean) -> Unit = { enabled ->
         analyticsManager.logEvent("settings_reduce_motion_toggled")
+        analyticsManager.logEvent("settings_accessibility_change", android.os.Bundle().apply {
+            putString("setting", "reduce_motion")
+            putBoolean("enabled", enabled)
+        })
         onReduceMotionChanged(enabled)
     }
 

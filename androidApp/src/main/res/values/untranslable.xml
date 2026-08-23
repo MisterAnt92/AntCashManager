@@ -23,7 +23,7 @@
     <string name="language_korean" translatable="false">한국어 (Coréen)</string>
 
     <string name="debug_import_started" translatable="false">Debug import started</string>
-
+    <string name="settings_auto_backup_destination_google_drive" translatable="false">Google Drive</string>
     <string name="extra_thanks" translatable="false">Extra thanks to Anna 💙 and Eleonora for helping and testing this app!</string>
 
     <!-- Feedback Email Bodies -->

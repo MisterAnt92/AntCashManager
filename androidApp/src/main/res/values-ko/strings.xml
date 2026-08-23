@@ -289,7 +289,6 @@
     <string name="settings_auto_backup_subtitle">주간 자동 백업</string>
     <string name="settings_auto_backup_weekly_label">자동 백업은 매주 진행됩니다</string>
     <string name="settings_auto_backup_destination_local">로컬</string>
-    <string name="settings_auto_backup_destination_google_drive">Google Drive</string>
     <string name="settings_auto_backup_google_drive_coming_soon">곧 출시 예정</string>
     <string name="settings_auto_backup_google_drive_sign_in_title">Google Drive 백업 활성화</string>
     <string name="settings_auto_backup_google_drive_sign_in_message">Google 계정으로 로그인하여 Google Drive로의 자동 백업을 활성화하세요. 데이터는 암호화되어 안전하게 저장됩니다.</string>
