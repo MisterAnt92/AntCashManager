@@ -276,6 +276,7 @@
     <string name="settings_auto_backup_path_button">Chemin de Sauvegarde</string>
     <string name="settings_auto_backup_path_not_selected">Aucun dossier sélectionné</string>
     <string name="settings_auto_backup_path_subtitle">Choisissez où enregistrer les sauvegardes automatiques</string>
+    <string name="settings_auto_backup_path_selected">Chemin sélectionné: %s</string>
     <string name="settings_auto_backup_google_drive_configured">Sauvegarde configurée pour Google Drive</string>
 
 
@@ -528,9 +529,30 @@
     <string name="chart_daily_expenses_title">Dépenses Quotidiennes</string>
     <string name="chart_last_14_days">14 derniers jours</string>
     <string name="chart_average">Moyenne</string>
-    <string name="chart_weekday_distribution_title">Distribution par Jour</string>
-    <string name="error_generic">Une erreur est survenue</string>
+     <string name="chart_weekday_distribution_title">Distribution par Jour</string>
+     <string name="error_generic">Une erreur est survenue</string>
+
+     <!-- Charts Customization -->
+     <string name="charts_customize_cards_title">Personnaliser l\'ordre des cartes</string>
+
+     <!-- Chart Details Bottom Sheet -->
+     <string name="chart_details_title">Détails</string>
+     <string name="chart_details_percentage">%d%% du total</string>
+     <string name="chart_details_amount">Montant</string>
+     <string name="chart_details_transactions">Transactions</string>
+     <string name="chart_details_info_title">Information Catégorie</string>
+     <string name="chart_details_info_description">Appuyez sur une partie du graphique pour voir plus de détails sur cette catégorie</string>
+     <string name="chart_trend_increasing">Tendance dépenses: En augmentation</string>
+     <string name="chart_trend_decreasing">Tendance dépenses: En diminution</string>
+     <string name="chart_trend_stable">Tendance dépenses: Stable</string>
 
     <!-- App Description -->
     <string name="app_description">Cette application est née du besoin de suivre les dépenses familiales gratuitement et de comparer les augmentations de prix.</string>
+
+    <!-- Payment Type Settings -->
+    <string name="settings_payment_type_section">Méthodes de paiement</string>
+    <string name="settings_default_payment_type">Méthode de paiement par défaut</string>
+    <string name="settings_default_payment_type_desc">Choisissez la méthode de paiement par défaut pour les nouvelles transactions</string>
+    <string name="dialog_payment_type_title">Sélectionner la méthode de paiement</string>
+
 </resources>

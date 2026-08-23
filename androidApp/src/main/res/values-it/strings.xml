@@ -531,8 +531,22 @@
     <string name="chart_daily_expenses_title">Uscite Giornaliere</string>
     <string name="chart_last_14_days">Ultimi 14 giorni</string>
     <string name="chart_average">Media</string>
-    <string name="chart_weekday_distribution_title">Distribuzione per Giorno</string>
-    <string name="error_generic">Si è verificato un errore</string>
+     <string name="chart_weekday_distribution_title">Distribuzione per Giorno</string>
+     <string name="error_generic">Si è verificato un errore</string>
+
+     <!-- Charts Customization -->
+     <string name="charts_customize_cards_title">Personalizza ordine card</string>
+
+     <!-- Chart Details Bottom Sheet -->
+     <string name="chart_details_title">Dettagli</string>
+     <string name="chart_details_percentage">%d%% del totale</string>
+     <string name="chart_details_amount">Importo</string>
+     <string name="chart_details_transactions">Transazioni</string>
+     <string name="chart_details_info_title">Informazioni Categoria</string>
+     <string name="chart_details_info_description">Tocca qualsiasi sezione del grafico per visualizzare più dettagli su quella categoria</string>
+     <string name="chart_trend_increasing">Trend spesa: In aumento</string>
+     <string name="chart_trend_decreasing">Trend spesa: In diminuzione</string>
+     <string name="chart_trend_stable">Trend spesa: Stabile</string>
 
     <!-- App Description -->
     <string name="app_description">Questa app nasce dall\'esigenza di tracciare le spese familiari gratuitamente e di confrontare gli aumenti dei prezzi.</string>

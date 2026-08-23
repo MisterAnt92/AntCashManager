@@ -292,8 +292,9 @@
     <string name="settings_auto_backup_google_drive_sign_out">Von Google abmelden</string>
     <string name="settings_auto_backup_path_button">Sicherungspfad</string>
     <string name="settings_auto_backup_path_not_selected">Kein Ordner ausgewählt</string>
-    <string name="settings_auto_backup_path_subtitle">Wählen Sie, wo automatische Sicherungen gespeichert werden sollen</string>
-    <string name="settings_auto_backup_google_drive_configured">Sicherung für Google Drive konfiguriert</string>
+     <string name="settings_auto_backup_path_subtitle">Wählen Sie, wo automatische Sicherungen gespeichert werden sollen</string>
+     <string name="settings_auto_backup_path_selected">Ausgewählter Pfad: %s</string>
+     <string name="settings_auto_backup_google_drive_configured">Sicherung für Google Drive konfiguriert</string>
 
 
     <string name="privacy_policy_title">Datenschutzrichtlinie</string>
@@ -551,6 +552,7 @@
     <string name="transactions_title">Transaktionen</string>
     <string name="common_close">Schließen</string>
     <string name="common_click_here">Hier klicken</string>
+    <string name="common_preview">Vorschau</string>
     <string name="preview_app_text_title">Beispieltitel</string>
     <string name="preview_app_text_dark">Dunkler Titel</string>
     <string name="preview_app_text_clickable">Anklickbarer Text</string>
@@ -576,10 +578,31 @@
     <string name="chart_daily_expenses_title">Tägliche Ausgaben</string>
     <string name="chart_last_14_days">Letzte 14 Tage</string>
     <string name="chart_average">Durchschnitt</string>
-    <string name="chart_weekday_distribution_title">Wochentagverteilung</string>
-    <string name="error_generic">Ein Fehler ist aufgetreten</string>
+     <string name="chart_weekday_distribution_title">Wochentagverteilung</string>
+
+     <!-- Charts Customization -->
+     <string name="charts_customize_cards_title">Kartensortierung anpassen</string>
+
+     <!-- Chart Details Bottom Sheet -->
+     <string name="chart_details_title">Details</string>
+     <string name="chart_details_percentage">%d%% der Summe</string>
+     <string name="chart_details_amount">Betrag</string>
+     <string name="chart_details_transactions">Transaktionen</string>
+     <string name="chart_details_info_title">Kategorieinformation</string>
+     <string name="chart_details_info_description">Tippen Sie auf einen Diagrammsektor, um weitere Details zu dieser Kategorie anzuzeigen</string>
+     <string name="chart_trend_increasing">Ausgabenlauf: Steigernd</string>
+     <string name="chart_trend_decreasing">Ausgabenlauf: Fallend</string>
+     <string name="chart_trend_stable">Ausgabenlauf: Stabil</string>
+     <string name="error_generic">Ein Fehler ist aufgetreten</string>
 
     <!-- App Description -->
     <string name="app_description">Diese App entstand aus der Notwendigkeit, Familienausgaben kostenlos zu verfolgen und Preiserhöhungen zu vergleichen.</string>
+
+    <!-- Payment Type Settings -->
+    <string name="settings_payment_type_section">Zahlungsarten</string>
+    <string name="settings_default_payment_type">Standard-Zahlungsart</string>
+    <string name="settings_default_payment_type_desc">Wählen Sie die Standard-Zahlungsart für neue Transaktionen</string>
+    <string name="dialog_payment_type_title">Zahlungsart auswählen</string>
+
 </resources>
 

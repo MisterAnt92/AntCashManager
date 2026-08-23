@@ -232,6 +232,8 @@
     <string name="settings_last_restore_never">अभी तक कोई बहाली नहीं हुई</string>
     <string name="auto_backup_notification_channel_name">स्वचालित बैकअप त्रुटियां</string>
     <string name="auto_backup_notification_channel_description">स्वचालित बैकअप विफलताओं के लिए सूचनाएं</string>
+    <string name="auto_backup_notification_failure_title">स्वचालित बैकअप विफल</string>
+    <string name="auto_backup_notification_failure_message">स्वचालित बैकअप पूरा नहीं किया जा सका। अपनी स्टोरेज अनुमतियां जांचें।</string>
     <string name="settings_support">समर्थन</string>
     <string name="settings_send_feedback">प्रतिक्रिया भेजें</string>
     <string name="settings_send_feedback_subtitle">ऐप को बेहतर बनाने में हमारी मदद करें</string>
@@ -299,6 +301,7 @@
     <string name="settings_auto_backup_path_button">बैकअप पथ</string>
     <string name="settings_auto_backup_path_not_selected">कोई फ़ोल्डर चयनित नहीं</string>
     <string name="settings_auto_backup_path_subtitle">स्वचालित बैकअप कहाँ सहेजे जाएं यह चुनें</string>
+    <string name="settings_auto_backup_path_selected">चयनित पथ: %s</string>
     <string name="settings_auto_backup_google_drive_configured">Google Drive के लिए कॉन्फ़िगर किया गया बैकअप</string>
 
 
@@ -605,4 +608,11 @@
 
     <!-- App Description -->
     <string name="app_description">यह ऐप पारिवारिक खर्चों को सदस्यता के बिना ट्रैक करने की आवश्यकता से पैदा हुआ था, और खर्चों को देखने और मूल्य वृद्धि की तुलना करने के लिए।</string>
+
+    <!-- Payment Type Settings -->
+    <string name="settings_payment_type_section">भुगतान विधियाँ</string>
+    <string name="settings_default_payment_type">डिफ़ॉल्ट भुगतान विधि</string>
+    <string name="settings_default_payment_type_desc">नए लेनदेन के लिए डिफ़ॉल्ट भुगतान विधि चुनें</string>
+    <string name="dialog_payment_type_title">भुगतान विधि चुनें</string>
+
 </resources>

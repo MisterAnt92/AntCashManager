@@ -275,6 +275,7 @@
     <string name="settings_auto_backup_path_button">Ruta de Copia de Seguridad</string>
     <string name="settings_auto_backup_path_not_selected">Ninguna carpeta seleccionada</string>
     <string name="settings_auto_backup_path_subtitle">Elige dónde guardar las copias de seguridad automáticas</string>
+    <string name="settings_auto_backup_path_selected">Ruta seleccionada: %s</string>
     <string name="settings_auto_backup_google_drive_configured">Copia de seguridad configurada para Google Drive</string>
 
 
@@ -488,6 +489,7 @@
     <string name="transactions_title">Transacciones</string>
     <string name="common_close">Cerrar</string>
     <string name="common_click_here">Haz clic aquí</string>
+    <string name="common_preview">Vista previa</string>
     <string name="preview_app_text_title">Título de ejemplo</string>
     <string name="preview_app_text_dark">Título oscuro</string>
     <string name="preview_app_text_clickable">Texto clicable</string>
@@ -525,10 +527,31 @@
     <string name="chart_daily_expenses_title">Gastos Diarios</string>
     <string name="chart_last_14_days">Últimos 14 días</string>
     <string name="chart_average">Promedio</string>
-    <string name="chart_weekday_distribution_title">Distribución por Día</string>
-    <string name="error_generic">Ocurrió un error</string>
+     <string name="chart_weekday_distribution_title">Distribución por Día</string>
+     <string name="error_generic">Ocurrió un error</string>
+
+     <!-- Charts Customization -->
+     <string name="charts_customize_cards_title">Personalizar orden de tarjetas</string>
+
+     <!-- Chart Details Bottom Sheet -->
+     <string name="chart_details_title">Detalles</string>
+     <string name="chart_details_percentage">%d%% del total</string>
+     <string name="chart_details_amount">Cantidad</string>
+     <string name="chart_details_transactions">Transacciones</string>
+     <string name="chart_details_info_title">Información de Categoría</string>
+     <string name="chart_details_info_description">Toca cualquier sección del gráfico para ver más detalles sobre esa categoría</string>
+     <string name="chart_trend_increasing">Tendencia de gastos: Aumentando</string>
+     <string name="chart_trend_decreasing">Tendencia de gastos: Disminuyendo</string>
+     <string name="chart_trend_stable">Tendencia de gastos: Estable</string>
 
 
     <!-- App Description -->
     <string name="app_description">Esta app nace de la necesidad de rastrear gastos familiares gratuitamente y comparar aumentos de precios.</string>
+
+    <!-- Payment Type Settings -->
+    <string name="settings_payment_type_section">Métodos de pago</string>
+    <string name="settings_default_payment_type">Método de pago predeterminado</string>
+    <string name="settings_default_payment_type_desc">Elige el método de pago predeterminado para nuevas transacciones</string>
+    <string name="dialog_payment_type_title">Seleccionar método de pago</string>
+
 </resources>

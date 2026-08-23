@@ -231,6 +231,10 @@
     <string name="settings_restore_subtitle">백업 파일에서 데이터 가져오기</string>
     <string name="settings_last_restore_label">마지막 복원: %s</string>
     <string name="settings_last_restore_never">아직 복원 내역이 없습니다</string>
+    <string name="auto_backup_notification_channel_name">자동 백업 오류</string>
+    <string name="auto_backup_notification_channel_description">자동 백업 실패에 대한 알림</string>
+    <string name="auto_backup_notification_failure_title">자동 백업 실패</string>
+    <string name="auto_backup_notification_failure_message">자동 백업을 완료할 수 없습니다. 저장소 권한을 확인하세요.</string>
     <string name="settings_support">지원</string>
     <string name="settings_send_feedback">의견 보내기</string>
     <string name="settings_send_feedback_subtitle">앱 개선에 도움을 주세요</string>
@@ -298,6 +302,7 @@
     <string name="settings_auto_backup_path_button">백업 경로</string>
     <string name="settings_auto_backup_path_not_selected">선택된 폴더 없음</string>
     <string name="settings_auto_backup_path_subtitle">자동 백업을 저장할 위치 선택</string>
+    <string name="settings_auto_backup_path_selected">선택된 경로: %s</string>
     <string name="settings_auto_backup_google_drive_configured">Google Drive에 대해 구성된 백업</string>
 
 
@@ -606,4 +611,11 @@
 
     <!-- App Description -->
     <string name="app_description">이 앱은 구독 없이 가족 지출을 추적해야 하는 필요성에서 탄생했으며, 지출을 보고 가격 인상을 비교할 수 있습니다.</string>
+
+    <!-- Payment Type Settings -->
+    <string name="settings_payment_type_section">결제 방법</string>
+    <string name="settings_default_payment_type">기본 결제 방법</string>
+    <string name="settings_default_payment_type_desc">새 거래의 기본 결제 방법을 선택하세요</string>
+    <string name="dialog_payment_type_title">결제 방법 선택</string>
+
 </resources>

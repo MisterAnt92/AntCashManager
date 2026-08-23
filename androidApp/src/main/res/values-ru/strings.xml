@@ -233,6 +233,8 @@
     <string name="settings_last_restore_never">Восстановление еще не проводилось</string>
     <string name="auto_backup_notification_channel_name">Ошибки автоматического резервного копирования</string>
     <string name="auto_backup_notification_channel_description">Уведомления об ошибках автоматического резервного копирования</string>
+    <string name="auto_backup_notification_failure_title">Автоматическое резервное копирование не удалось</string>
+    <string name="auto_backup_notification_failure_message">Не удалось завершить автоматическое резервное копирование. Проверьте разрешения на хранилище.</string>
     <string name="settings_support">Поддержка</string>
     <string name="settings_send_feedback">Отправить отзыв</string>
     <string name="settings_send_feedback_subtitle">Помогите нам улучшить приложение</string>
@@ -300,6 +302,7 @@
     <string name="settings_auto_backup_path_button">Путь резервной копии</string>
     <string name="settings_auto_backup_path_not_selected">Папка не выбрана</string>
     <string name="settings_auto_backup_path_subtitle">Выберите, где сохранять автоматические резервные копии</string>
+    <string name="settings_auto_backup_path_selected">Выбранный путь: %s</string>
     <string name="settings_auto_backup_google_drive_configured">Резервная копия настроена для Google Drive</string>
 
 
@@ -609,4 +612,11 @@
 
     <!-- App Description -->
     <string name="app_description">Это приложение было создано из необходимости отслеживать семейные расходы без подписок и просматривать расходы и сравнивать повышение цен.</string>
+
+    <!-- Payment Type Settings -->
+    <string name="settings_payment_type_section">Способы оплаты</string>
+    <string name="settings_default_payment_type">Способ оплаты по умолчанию</string>
+    <string name="settings_default_payment_type_desc">Выберите способ оплаты по умолчанию для новых транзакций</string>
+    <string name="dialog_payment_type_title">Выберите способ оплаты</string>
+
 </resources>

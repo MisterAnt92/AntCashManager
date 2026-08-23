@@ -233,6 +233,10 @@
     <string name="settings_restore_subtitle">Імпортуйте дані з файлу резервної копії</string>
     <string name="settings_last_restore_label">Останнє відновлення: %s</string>
     <string name="settings_last_restore_never">Відновлення ще не проводилося</string>
+    <string name="auto_backup_notification_channel_name">Помилки автоматичного резервного копіювання</string>
+    <string name="auto_backup_notification_channel_description">Сповіщення про помилки автоматичного резервного копіювання</string>
+    <string name="auto_backup_notification_failure_title">Автоматичне резервне копіювання не вдалося</string>
+    <string name="auto_backup_notification_failure_message">Не вдалося завершити автоматичне резервне копіювання. Перевірте дозволи сховища.</string>
     <string name="settings_support">Підтримка</string>
     <string name="settings_send_feedback">Надіслати відгук</string>
     <string name="settings_send_feedback_subtitle">Допоможіть нам покращити додаток</string>
@@ -300,6 +304,7 @@
     <string name="settings_auto_backup_path_button">Шлях резервної копії</string>
     <string name="settings_auto_backup_path_not_selected">Папка не вибрана</string>
     <string name="settings_auto_backup_path_subtitle">Виберіть, де зберігати автоматичні резервні копії</string>
+    <string name="settings_auto_backup_path_selected">Вибрана шлях: %s</string>
     <string name="settings_auto_backup_google_drive_configured">Резервна копія налаштована для Google Drive</string>
 
 
@@ -609,4 +614,11 @@
 
     <!-- App Description -->
     <string name="app_description">Ця програма виникла з необхідності відстежувати сімейні видатки без підписок та можливості переглядати видатки і порівнювати підвищення цін.</string>
+
+    <!-- Payment Type Settings -->
+    <string name="settings_payment_type_section">Способи оплати</string>
+    <string name="settings_default_payment_type">Спосіб оплати за замовчуванням</string>
+    <string name="settings_default_payment_type_desc">Виберіть спосіб оплати за замовчуванням для нових операцій</string>
+    <string name="dialog_payment_type_title">Виберіть спосіб оплати</string>
+
 </resources>

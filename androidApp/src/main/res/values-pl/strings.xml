@@ -231,6 +231,10 @@
     <string name="settings_restore_subtitle">Importuj dane z pliku kopii zapasowej</string>
     <string name="settings_last_restore_label">Ostatnie przywracanie: %s</string>
     <string name="settings_last_restore_never">Nie wykonano jeszcze przywracania</string>
+    <string name="auto_backup_notification_channel_name">Błędy automatycznej kopii zapasowej</string>
+    <string name="auto_backup_notification_channel_description">Powiadomienia o błędach automatycznej kopii zapasowej</string>
+    <string name="auto_backup_notification_failure_title">Automatyczna kopia zapasowa nie powiodła się</string>
+    <string name="auto_backup_notification_failure_message">Nie udało się ukończyć automatycznej kopii zapasowej. Sprawdź uprawnienia do magazynu.</string>
     <string name="settings_support">Pomoc techniczna</string>
     <string name="settings_send_feedback">Wyślij opinię</string>
     <string name="settings_send_feedback_subtitle">Pomóż nam ulepszyć aplikację</string>
@@ -298,6 +302,7 @@
     <string name="settings_auto_backup_path_button">Ścieżka kopii zapasowej</string>
     <string name="settings_auto_backup_path_not_selected">Nie wybrano folderu</string>
     <string name="settings_auto_backup_path_subtitle">Wybierz, gdzie mają być zapisywane automatyczne kopie zapasowe</string>
+    <string name="settings_auto_backup_path_selected">Wybrana ścieżka: %s</string>
     <string name="settings_auto_backup_google_drive_configured">Kopia zapasowa skonfigurowana dla Google Drive</string>
 
 
@@ -607,4 +612,11 @@
 
     <!-- App Description -->
     <string name="app_description">Ta aplikacja narodziła się z potrzeby śledzenia wydatków rodzinnych bez subskrypcji i możliwości przeglądania wydatków oraz porównywania podwyżek cen.</string>
+
+    <!-- Payment Type Settings -->
+    <string name="settings_payment_type_section">Metody płatności</string>
+    <string name="settings_default_payment_type">Domyślna metoda płatności</string>
+    <string name="settings_default_payment_type_desc">Wybierz domyślną metodę płatności dla nowych transakcji</string>
+    <string name="dialog_payment_type_title">Wybierz metodę płatności</string>
+
 </resources>

@@ -231,6 +231,10 @@
     <string name="settings_restore_subtitle">バックアップファイルからデータをインポートします</string>
     <string name="settings_last_restore_label">最終復元: %s</string>
     <string name="settings_last_restore_never">復元未実施</string>
+    <string name="auto_backup_notification_channel_name">自動バックアップエラー</string>
+    <string name="auto_backup_notification_channel_description">自動バックアップ失敗に関する通知</string>
+    <string name="auto_backup_notification_failure_title">自動バックアップに失敗しました</string>
+    <string name="auto_backup_notification_failure_message">自動バックアップを完了できませんでした。ストレージの権限を確認してください。</string>
     <string name="settings_support">サポート</string>
     <string name="settings_send_feedback">フィードバックを送信</string>
     <string name="settings_send_feedback_subtitle">アプリの改善にご協力ください</string>
@@ -298,6 +302,7 @@
     <string name="settings_auto_backup_path_button">バックアップパス</string>
     <string name="settings_auto_backup_path_not_selected">フォルダが選択されていません</string>
     <string name="settings_auto_backup_path_subtitle">自動バックアップを保存する場所を選択</string>
+    <string name="settings_auto_backup_path_selected">選択されたパス: %s</string>
     <string name="settings_auto_backup_google_drive_configured">Google Driveに設定されたバックアップ</string>
 
 
@@ -606,4 +611,11 @@
 
     <!-- App Description -->
     <string name="app_description">このアプリは、家族の支出を無料で追跡し、価格上昇を比較する必要から生まれました。</string>
+
+    <!-- Payment Type Settings -->
+    <string name="settings_payment_type_section">支払い方法</string>
+    <string name="settings_default_payment_type">デフォルト支払い方法</string>
+    <string name="settings_default_payment_type_desc">新しいトランザクションのデフォルト支払い方法を選択してください</string>
+    <string name="dialog_payment_type_title">支払い方法を選択</string>
+
 </resources>
