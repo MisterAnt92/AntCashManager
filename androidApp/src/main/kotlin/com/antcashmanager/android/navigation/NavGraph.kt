@@ -63,6 +63,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.analytics.AnalyticsManager
@@ -171,7 +172,7 @@ fun AntCashManagerNavHost() {
             visibleNavItems.any { item -> item.route == currentRoute }
         } == true
 
-        val isOnTutorial = currentDestination?.route == BottomNavItem.Tutorial.route
+        val isOnTutorial = currentDestination?.route == AppRoute.BottomRoute.Tutorial.route
 
         BackHandler {
             when {
@@ -197,9 +198,9 @@ fun AntCashManagerNavHost() {
                     // Bottom bar non visibile su Categories, Settings e Tutorial
                     val isOnCategoriesSettingsOrTutorial =
                         currentDestination?.route?.let { currentRoute ->
-                            currentRoute == BottomNavItem.Categories.route ||
-                                    currentRoute == BottomNavItem.Settings.route ||
-                                    currentRoute == BottomNavItem.Tutorial.route
+                            currentRoute == AppRoute.BottomRoute.Categories.route ||
+                                    AppRoute.isSettingsRoute(currentRoute) ||
+                                    currentRoute == AppRoute.BottomRoute.Tutorial.route
                         } == true
 
                     if (isTutorialCompleted && !adaptiveLayoutInfo.preferRailNavigation && !isSidebarOpen && !isOnCategoriesSettingsOrTutorial) {
@@ -224,13 +225,7 @@ fun AntCashManagerNavHost() {
                                                 putString("destination", item.route)
                                             }
                                             analyticsManager.logEvent("sidebar_navigation_clicked", params)
-                                            navController.navigate(item.route) {
-                                                popUpTo(navController.graph.findStartDestination().id) {
-                                                    saveState = true
-                                                }
-                                                launchSingleTop = true
-                                                restoreState = true
-                                            }
+                                            navController.navigateToBottomTab(item.route)
                                         },
                                         modifier = Modifier.testTag("nav_${item.route}"),
                                         icon = {
@@ -269,37 +264,74 @@ fun AntCashManagerNavHost() {
                 ) {
                     NavHost(
                         navController = navController,
-                        startDestination = BottomNavItem.Home.route,
+                        startDestination = AppRoute.BottomRoute.Home.route,
                         modifier = navModifier,
                     ) {
-                        composable(BottomNavItem.Home.route) {
+                        composable(
+                            route = AppRoute.BottomRoute.Home.route,
+                            deepLinks = listOf(
+                                androidx.navigation.navDeepLink {
+                                    uriPattern = "https://antcashmanager.com/app/home"
+                                },
+                                androidx.navigation.navDeepLink {
+                                    uriPattern = "antcashmanager://app/home"
+                                },
+                            ),
+                        ) {
                             HomeScreen(navController = navController)
                         }
-                        composable(BottomNavItem.Charts.route) {
+                        composable(AppRoute.BottomRoute.Charts.route) {
                             ChartsScreen()
                         }
-                        composable(BottomNavItem.Transactions.route) {
+                        composable(
+                            route = AppRoute.BottomRoute.Transactions.route,
+                            deepLinks = listOf(
+                                androidx.navigation.navDeepLink {
+                                    uriPattern = "https://antcashmanager.com/app/transactions"
+                                },
+                                androidx.navigation.navDeepLink {
+                                    uriPattern = "antcashmanager://app/transactions"
+                                },
+                            ),
+                        ) {
                             TransactionsScreen(navController = navController)
                         }
-                        composable(BottomNavItem.Categories.route) {
+                        composable(
+                            route = AppRoute.BottomRoute.Categories.route,
+                            deepLinks = listOf(
+                                androidx.navigation.navDeepLink {
+                                    uriPattern = "https://antcashmanager.com/app/categories"
+                                },
+                                androidx.navigation.navDeepLink {
+                                    uriPattern = "antcashmanager://app/categories"
+                                },
+                            ),
+                        ) {
                             CategoriesScreen()
                         }
-                        composable(BottomNavItem.Settings.route) {
-                            SettingsScreen(navController = navController)
+                        // Nested navigation graph per Settings e sub-screens
+                        navigation(
+                            startDestination = AppRoute.SettingsRoute.Main.route,
+                            route = "settings_graph",
+                        ) {
+                            composable(AppRoute.SettingsRoute.Main.route) {
+                                SettingsScreen(navController = navController)
+                            }
+                            composable(AppRoute.SettingsRoute.Display.route) {
+                                DisplayScreen(navController = navController)
+                            }
+                            composable(AppRoute.SettingsRoute.DataManagement.route) {
+                                SettingsDataScreen(navController = navController)
+                            }
                         }
-                        composable(BottomNavItem.Tutorial.route) {
+
+                        composable(AppRoute.BottomRoute.Tutorial.route) {
                             TutorialScreen(
                                 onNavigateBack = { navController.popBackStack() },
                             )
                         }
-                        composable("display") {
-                            DisplayScreen(navController = navController)
-                        }
-                        composable("settings_data") {
-                            SettingsDataScreen(navController = navController)
-                        }
                         composable(
-                            route = "add_transaction?transactionId={transactionId}",
+                            route = "transactions/add?transactionId={transactionId}",
                             arguments = listOf(
                                 androidx.navigation.navArgument("transactionId") {
                                     type = androidx.navigation.NavType.LongType
@@ -315,7 +347,7 @@ fun AntCashManagerNavHost() {
                                 onTransactionAdded = { navController.popBackStack() },
                             )
                         }
-                        composable("receipt_scan") {
+                        composable(AppRoute.TransactionRoute.ReceiptScan.route) {
                             ReceiptScanScreen(
                                 onNavigateBack = { navController.popBackStack() },
                                 onTransactionSaved = { navController.popBackStack() },
@@ -465,13 +497,7 @@ fun AntCashManagerNavHost() {
                                                 putString("destination", item.route)
                                             }
                                             analyticsManager.logEvent("sidebar_navigation_clicked", params)
-                                            navController.navigate(item.route) {
-                                                popUpTo(navController.graph.findStartDestination().id) {
-                                                    saveState = true
-                                                }
-                                                launchSingleTop = true
-                                                restoreState = true
-                                            }
+                                            navController.navigateToBottomTab(item.route)
                                         },
                                         icon = {
                                             Icon(

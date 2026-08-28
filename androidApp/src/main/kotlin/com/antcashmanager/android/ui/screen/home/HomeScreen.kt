@@ -173,9 +173,12 @@ internal fun HomeContent(
     // Foldable device support
     val displayFeatures = LocalDisplayFeatures.current
     val multiPaneCoordinator = LocalMultiPaneCoordinator.current
-    val foldingFeature = displayFeatures.filterIsInstance<androidx.window.layout.FoldingFeature>().firstOrNull()
+    val foldingFeature = displayFeatures.filterIsInstance<FoldingFeature>().firstOrNull()
 
-    val listState = rememberLazyListState()
+    // Preserva scroll position durante navigazione back/forward
+    val listState = rememberSaveable(saver = androidx.compose.foundation.lazy.LazyListState.Saver) {
+        androidx.compose.foundation.lazy.LazyListState()
+    }
     val showScrollToTop by remember {
         derivedStateOf { listState.firstVisibleItemIndex > 2 }
     }

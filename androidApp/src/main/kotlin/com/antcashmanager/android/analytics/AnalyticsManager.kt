@@ -80,17 +80,19 @@ open class AnalyticsManager {
 
     private fun isAllowedAnalyticsKey(key: String): Boolean {
         val normalizedKey = key.lowercase()
+        // Blocked keys contain personal/sensitive data (email, names, locations, amounts).
+        // ALLOWED: error_code (diagnostic, not personal), operation names, type enums.
         val blockedFragments = listOf(
-            "email",
-            "query",
-            "message",
-            "error",
-            "title",
-            "notes",
-            "payee",
-            "location",
-            "tags",
-            "amount",
+            "email",       // Personal identifier
+            "query",       // User search input (potentially sensitive)
+            "message",     // User-generated text (sensitive)
+            // NOTE: "error" removed — error_code is diagnostic, not personal data
+            "title",       // Transaction/note title (personal content)
+            "notes",       // Transaction notes (personal content)
+            "payee",       // Transaction payee name (personal contact)
+            "location",    // Transaction location (personal location)
+            "tags",        // User tags (personal classification)
+            "amount",      // Transaction amounts (personal financial data)
         )
         return blockedFragments.none { fragment -> normalizedKey.contains(fragment) }
     }

@@ -1,6 +1,7 @@
 package com.antcashmanager.android.ui.screen.transactions.addImport
 
 import android.os.Bundle
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.analytics.ErrorTracker
@@ -38,9 +39,13 @@ class AddTransactionViewModel(
     private val performanceTracker: PerformanceTracker,
     private val errorTracker: ErrorTracker,
     private val transactionId: Long? = null,
+    private val savedStateHandle: SavedStateHandle,  // NEW: Preserva form state su rotation
 ) : BaseViewModel<AddTransactionEvent>() {
 
     // ── State ──
+    // Nota: SavedStateHandle è disponibile per future implementazioni di state recovery
+    // Per adesso usiamo MutableStateFlow standard; future: sincroniazzare con savedStateHandle per preservare
+    // lo stato del form durante reconfigurazioni (rotation, process death)
     private val _state = MutableStateFlow(AddTransactionState())
     val state: StateFlow<AddTransactionState> = _state.asStateFlow()
 

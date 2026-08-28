@@ -382,6 +382,7 @@ val presentationModule = module {
             performanceTracker = get(),
             errorTracker = get(),
             transactionId = transactionId,
+            savedStateHandle = get(),  // NEW: Per state recovery
         )
     }
     viewModel {

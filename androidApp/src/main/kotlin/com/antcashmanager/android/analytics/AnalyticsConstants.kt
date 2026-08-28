@@ -159,6 +159,17 @@ object AnalyticsConstants {
         "chart_interaction_depth",              // Chart engagement - interaction frequency
         "widget_engagement_session",            // Widget usage - active time tracking
         "settings_customization_score",         // Settings adoption - customization level
+
+        // TIER C: Lifecycle & Infrastructure Tracking
+        "viewmodel_created",                    // BaseViewModel init - ViewModel creation tracking
+        "viewmodel_cleared",                    // BaseViewModel onCleared - ViewModel destruction tracking
+
+        // Error Tracking Events (ErrorTracker)
+        "transaction_validation_error",         // Form validation failures (AddTransactionViewModel)
+        "receipt_ocr_error",                    // OCR processing failures (ReceiptScanViewModel)
+        "database_error",                       // Database operation failures (Repository layer)
+        "sync_error",                           // Backup/restore sync failures (BackupWorker)
+        "payment_method_error",                 // Payment processing failures (PaymentProcessor)
     )
 }
 

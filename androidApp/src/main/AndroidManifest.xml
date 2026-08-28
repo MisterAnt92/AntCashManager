@@ -47,9 +47,42 @@
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/Theme.AntCashManager">
+            <!-- App launcher intent filter -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- Deep linking support via HTTPS
+                 Abilita navigazione da notifiche, app shortcuts, dynamic links.
+                 Pattern: https://antcashmanager.com/app/{route}
+                 Esempio: https://antcashmanager.com/app/transactions
+            -->
+            <intent-filter
+                android:autoVerify="true"
+                tools:ignore="AppLinkUrlError">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="antcashmanager.com"
+                    android:pathPrefix="/app/"
+                    android:scheme="https" />
+            </intent-filter>
+
+            <!-- Alternative custom scheme for testing (app-specific link)
+                 Può essere usato per testing senza HTTPS verification.
+                 Pattern: antcashmanager://app/{route}
+                 Nota: Non richiede domain verification.
+            -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="app"
+                    android:pathPrefix="/"
+                    android:scheme="antcashmanager" />
             </intent-filter>
         </activity>
 

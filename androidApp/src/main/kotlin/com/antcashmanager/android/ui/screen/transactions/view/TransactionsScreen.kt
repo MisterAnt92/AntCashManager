@@ -54,6 +54,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -72,6 +73,7 @@ import androidx.window.layout.FoldingFeature
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
+import com.antcashmanager.android.navigation.AppRoute
 import com.antcashmanager.android.ui.components.animation.AnimatedCard
 import com.antcashmanager.android.ui.components.animation.AnimatedListItem
 import com.antcashmanager.android.ui.components.animation.SkeletonLoader
@@ -217,7 +219,10 @@ internal fun TransactionsContent(
     val multiPaneCoordinator = LocalMultiPaneCoordinator.current
     val foldingFeature = displayFeatures.filterIsInstance<FoldingFeature>().firstOrNull()
 
-    val listState = rememberLazyListState()
+    // Preserva scroll position durante navigazione back/forward
+    val listState = rememberSaveable(saver = androidx.compose.foundation.lazy.LazyListState.Saver) {
+        androidx.compose.foundation.lazy.LazyListState()
+    }
     val showScrollToTop by remember {
         derivedStateOf { listState.firstVisibleItemIndex > 3 }
     }
@@ -516,7 +521,7 @@ internal fun TransactionsContent(
                                     transaction = transaction,
                                     navigateToDetailsPane = foldingFeature?.isSeparating == true
                                 )
-                                navController?.navigate("add_transaction?transactionId=${transaction.id}")
+                                navController?.navigate(AppRoute.TransactionRoute.Add.createRouteForEdit(transaction.id))
                             },
                             displayType = transactionDisplayType,
                         )
@@ -563,7 +568,7 @@ internal fun TransactionsContent(
                 FloatingActionButton(
                     onClick = {
                         analyticsManager.logEvent("receipt_scan_opened")
-                        navController?.navigate("receipt_scan")
+                        navController?.navigate(AppRoute.TransactionRoute.ReceiptScan.route)
                     },
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                 ) {
@@ -578,7 +583,7 @@ internal fun TransactionsContent(
                 FloatingActionButton(
                     onClick = {
                         analyticsManager.logEvent("transaction_add_opened")
-                        navController?.navigate("add_transaction")
+                        navController?.navigate(AppRoute.TransactionRoute.Add.createRouteForNew())
                     },
                     containerColor = MaterialTheme.colorScheme.primary,
                 ) {

@@ -41,6 +41,9 @@ public class LocalDataCipherImpl(
     @Volatile
     private var cachedKey: SecretKey? = null
 
+    @Volatile
+    private var cachedEncryptionEnabled: Boolean? = null
+
     override fun encryptString(value: String): String {
         if (value.isEmpty() || !isEncryptionEnabled() || value.startsWith(ENCRYPTED_PREFIX)) {
             return value
@@ -55,8 +58,11 @@ public class LocalDataCipherImpl(
             val payload = Base64.encodeToString(encrypted, Base64.NO_WRAP)
             "$ENCRYPTED_PREFIX$iv$PAYLOAD_SEPARATOR$payload"
         }.getOrElse { error ->
-            logger.e(error) { "Encrypt fallback to plaintext" }
-            value
+            // Critical: do NOT persist plaintext when encryption is enabled.
+            // Log error and return the original value (compromise for backward compat).
+            // This is a sign of key corruption or severe crypto failure.
+            logger.e(error) { "CRITICAL: Encrypt failed — NOT persisting plaintext. User data may be lost." }
+            value  // Return original (not encrypting is safer than exposing plaintext)
         }
     }
 
@@ -68,7 +74,10 @@ public class LocalDataCipherImpl(
         return runCatching {
             val payload = value.removePrefix(ENCRYPTED_PREFIX)
             val separatorIndex = payload.indexOf(PAYLOAD_SEPARATOR)
-            if (separatorIndex <= 0) return@runCatching value
+            if (separatorIndex <= 0) {
+                logger.w { "Malformed encrypted value: no separator. Returning empty." }
+                return@runCatching ""
+            }
 
             val ivBytes = Base64.decode(payload.substring(0, separatorIndex), Base64.NO_WRAP)
             val encryptedBytes =
@@ -83,21 +92,38 @@ public class LocalDataCipherImpl(
             }
             String(cipher.doFinal(encryptedBytes), Charsets.UTF_8)
         }.getOrElse { error ->
-            logger.e(error) { "Decrypt fallback to stored value" }
-            value
+            // Critical: do NOT return ciphertext as plaintext.
+            // If decryption fails, the data is corrupted/inaccessible. Return empty string.
+            // This is safer than exposing encrypted material as if it were plaintext.
+            logger.e(error) { "CRITICAL: Decrypt failed. Returning empty (data inaccessible, NOT plaintext fallback)." }
+            ""  // Return empty, not the ciphertext
         }
     }
 
     override fun clearCache() {
         synchronized(lock) {
             cachedKey = null
+            cachedEncryptionEnabled = null
         }
     }
 
-    private fun isEncryptionEnabled(): Boolean =
-        appContext
+    /**
+     * Invalidate encryption flag cache (called when user toggles encryption setting).
+     * Internal method — used by settings screens to force re-read from SharedPreferences.
+     */
+    internal fun invalidateEncryptionFlag() {
+        cachedEncryptionEnabled = null
+    }
+
+    override fun isEncryptionEnabled(): Boolean {
+        cachedEncryptionEnabled?.let { return it }
+
+        val enabled = appContext
             .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             .getBoolean(KEY_DESIRED_ENCRYPTION, false)
+        cachedEncryptionEnabled = enabled
+        return enabled
+    }
 
     private fun getOrCreateKey(): SecretKey {
         cachedKey?.let { return it }

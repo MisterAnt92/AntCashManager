@@ -259,7 +259,7 @@ internal fun SettingsContent(
                             putString("submenu", "display")
                         }
                         analyticsManager.logEvent("settings_submenu_opened", params)
-                        navController?.navigate("display")
+                        navController?.navigate(com.antcashmanager.android.navigation.AppRoute.SettingsRoute.Display.route)
                     },
                 )
             }
@@ -319,7 +319,7 @@ internal fun SettingsContent(
                             putString("submenu", "data_management")
                         }
                         analyticsManager.logEvent("settings_submenu_opened", params)
-                        navController?.navigate("settings_data")
+                        navController?.navigate(com.antcashmanager.android.navigation.AppRoute.SettingsRoute.DataManagement.route)
                     },
                 )
             }

@@ -21,7 +21,8 @@ import com.antcashmanager.data.local.entity.TransactionEntity
         AutoMigration(from = 6, to = 7),
         AutoMigration(from = 7, to = 8),
         AutoMigration(from = 8, to = 9),
-        AutoMigration(from = 9, to = 10),
+        // NOTE: 9→10 is handled by manual Migration_9_10 in DatabaseProvider
+        // (remove AutoMigration here to avoid conflicts with the manual migration)
     ],
 )
 public abstract class AppDatabase : RoomDatabase() {
