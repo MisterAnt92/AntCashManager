@@ -5,7 +5,7 @@ import com.antcashmanager.domain.usecase.base.UseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
-class SetShowTransactionNotesUseCase(
+public class SetShowTransactionNotesUseCase(
     private val settingsRepository: SettingsRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : UseCase<Boolean, Unit>(dispatcher) {

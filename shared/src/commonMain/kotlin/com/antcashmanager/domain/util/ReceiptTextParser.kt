@@ -11,7 +11,7 @@ import com.antcashmanager.domain.model.ReceiptItem
  * Il parsing è best-effort: i campi non trovati restano al valore default.
  * Rileva automaticamente il tipo di pagamento (contante, buoni pasto, elettronico).
  */
-object ReceiptTextParser {
+public object ReceiptTextParser {
 
     // ── Regex Patterns ────────────────────────────────────────────────────────
 
@@ -188,7 +188,7 @@ object ReceiptTextParser {
      * @param language Codice lingua (it, en, es, de, fr). Default: it
      * @return [ReceiptData] con i campi valorizzati e validati.
      */
-    fun parse(rawText: String, language: String = "it"): ReceiptData {
+    public fun parse(rawText: String, language: String = "it"): ReceiptData {
         val lines = rawText.lines().map { it.trim() }.filter { it.isNotBlank() }
 
         val totalAmount = extractTotal(rawText, lines, language)
@@ -336,7 +336,7 @@ object ReceiptTextParser {
      * @param text Testo estratto dall'OCR
      * @param language Codice lingua (it, en, es, de, fr). Default: it
      */
-    fun detectPaymentType(text: String, language: String = "it"): PaymentType {
+    public fun detectPaymentType(text: String, language: String = "it"): PaymentType {
         val (mealPattern, cashPattern, electronicPattern) = when (language) {
             "en" -> Triple(EN_MEAL_VOUCHER_PATTERN, EN_CASH_PATTERN, EN_ELECTRONIC_PATTERN)
             "es" -> Triple(ES_MEAL_VOUCHER_PATTERN, ES_CASH_PATTERN, ES_ELECTRONIC_PATTERN)
@@ -356,7 +356,7 @@ object ReceiptTextParser {
      * Converte una stringa decimale (virgola o punto) in Double.
      * Esempio: "1.234,56" → 1234.56, "1234.56" → 1234.56
      */
-    fun parseDecimal(value: String): Double {
+    public fun parseDecimal(value: String): Double {
         if (value.isBlank()) return 0.0
         val normalized = when {
             // formato europeo: "1.234,56"

@@ -32,6 +32,7 @@ class TransactionTestDataBuilder {
     var recurrenceInterval: String = ""
     var paymentType: PaymentType = PaymentType.ELECTRONIC
     var mealVoucherCount: Int = 0
+    var mealVoucherDifference: Double = 0.0
     var categoryIcon: String = ""
     var categoryColor: Long = 0xFF000000L
 
@@ -50,6 +51,7 @@ class TransactionTestDataBuilder {
         recurrenceInterval = recurrenceInterval,
         paymentType = paymentType,
         mealVoucherCount = mealVoucherCount,
+        mealVoucherDifference = mealVoucherDifference,
         categoryIcon = categoryIcon,
         categoryColor = categoryColor,
     )

@@ -5,8 +5,12 @@ import android.content.Context
 import android.content.ContextWrapper
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -47,6 +51,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -61,6 +66,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.analytics.AnalyticsManager
+import com.antcashmanager.android.analytics.PerformanceTracker
 import com.antcashmanager.android.util.AppExitManager.safeFinish
 import com.antcashmanager.android.ui.components.animation.AntEasterEggAnimation
 import com.antcashmanager.android.ui.components.animation.AntSplashScreen
@@ -93,6 +99,7 @@ import org.koin.compose.koinInject
 fun AntCashManagerNavHost() {
     val settingsRepository: SettingsRepository = koinInject()
     val analyticsManager: AnalyticsManager = koinInject()
+    val performanceTracker: PerformanceTracker = koinInject()
 
     val navController = rememberNavController()
     val showCharts by settingsRepository.getShowCharts().collectAsState(initial = true)
@@ -168,6 +175,7 @@ fun AntCashManagerNavHost() {
 
         BackHandler {
             when {
+                isSidebarOpen -> isSidebarOpen = false
                 showExitDialog -> showExitDialog = false
                 isOnTopLevelRoute -> showExitDialog = true
                 !navController.popBackStack() -> showExitDialog = true
@@ -175,79 +183,84 @@ fun AntCashManagerNavHost() {
         }
 
         LaunchedEffect(currentDestination?.route) {
-            currentDestination?.route?.let(analyticsManager::logScreenView)
+            currentDestination?.route?.let { route ->
+                val startTime = System.currentTimeMillis()
+                analyticsManager.logScreenView(route)
+                performanceTracker.trackScreenLoadTime(route, System.currentTimeMillis() - startTime)
+            }
         }
 
-        AntScreenScaffold(
-            showTopBar = false,
-            bottomBar = {
-                // Bottom bar non visibile su Categories, Settings e Tutorial
-                val isOnCategoriesSettingsOrTutorial =
-                    currentDestination?.route?.let { currentRoute ->
-                        currentRoute == BottomNavItem.Categories.route ||
-                                currentRoute == BottomNavItem.Settings.route ||
-                                currentRoute == BottomNavItem.Tutorial.route
-                    } == true
+        Box(modifier = Modifier.fillMaxSize()) {
+            AntScreenScaffold(
+                showTopBar = false,
+                bottomBar = {
+                    // Bottom bar non visibile su Categories, Settings e Tutorial
+                    val isOnCategoriesSettingsOrTutorial =
+                        currentDestination?.route?.let { currentRoute ->
+                            currentRoute == BottomNavItem.Categories.route ||
+                                    currentRoute == BottomNavItem.Settings.route ||
+                                    currentRoute == BottomNavItem.Tutorial.route
+                        } == true
 
-                if (isTutorialCompleted && !adaptiveLayoutInfo.preferRailNavigation && !isSidebarOpen && !isOnCategoriesSettingsOrTutorial) {
-                    Surface(
-                        color = MaterialTheme.colorScheme.surface,
-                        tonalElevation = 6.dp,
-                        shadowElevation = 8.dp,
-                        shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
-                    ) {
-                        NavigationBar(
-                            modifier = Modifier.testTag("bottom_nav_bar"),
-                            containerColor = MaterialTheme.colorScheme.surface,
-                            tonalElevation = 0.dp,
+                    if (isTutorialCompleted && !adaptiveLayoutInfo.preferRailNavigation && !isSidebarOpen && !isOnCategoriesSettingsOrTutorial) {
+                        Surface(
+                            color = MaterialTheme.colorScheme.surface,
+                            tonalElevation = 6.dp,
+                            shadowElevation = 8.dp,
+                            shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
                         ) {
-                            visibleNavItems.forEach { item ->
-                                val isSelected =
-                                    currentDestination?.hierarchy?.any { it.route == item.route } == true
-                                NavigationBarItem(
-                                    selected = isSelected,
-                                    onClick = {
-                                        val params = android.os.Bundle().apply {
-                                            putString("destination", item.route)
-                                        }
-                                        analyticsManager.logEvent("sidebar_navigation_clicked", params)
-                                        navController.navigate(item.route) {
-                                            popUpTo(navController.graph.findStartDestination().id) {
-                                                saveState = true
+                            NavigationBar(
+                                modifier = Modifier.testTag("bottom_nav_bar"),
+                                containerColor = MaterialTheme.colorScheme.surface,
+                                tonalElevation = 0.dp,
+                            ) {
+                                visibleNavItems.forEach { item ->
+                                    val isSelected =
+                                        currentDestination?.hierarchy?.any { it.route == item.route } == true
+                                    NavigationBarItem(
+                                        selected = isSelected,
+                                        onClick = {
+                                            val params = android.os.Bundle().apply {
+                                                putString("destination", item.route)
                                             }
-                                            launchSingleTop = true
-                                            restoreState = true
-                                        }
-                                    },
-                                    modifier = Modifier.testTag("nav_${item.route}"),
-                                    icon = {
-                                        Icon(
-                                            item.icon,
-                                            contentDescription = stringResource(item.titleResId),
-                                        )
-                                    },
-                                    label = {
-                                        AppText(
-                                            stringResource(item.titleResId),
-                                            style = MaterialTheme.typography.labelSmall,
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis,
-                                        )
-                                    },
-                                    colors = NavigationBarItemDefaults.colors(
-                                        selectedIconColor = MaterialTheme.colorScheme.primary,
-                                        selectedTextColor = MaterialTheme.colorScheme.primary,
-                                        indicatorColor = MaterialTheme.colorScheme.primaryContainer,
-                                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    ),
-                                )
+                                            analyticsManager.logEvent("sidebar_navigation_clicked", params)
+                                            navController.navigate(item.route) {
+                                                popUpTo(navController.graph.findStartDestination().id) {
+                                                    saveState = true
+                                                }
+                                                launchSingleTop = true
+                                                restoreState = true
+                                            }
+                                        },
+                                        modifier = Modifier.testTag("nav_${item.route}"),
+                                        icon = {
+                                            Icon(
+                                                item.icon,
+                                                contentDescription = stringResource(item.titleResId),
+                                            )
+                                        },
+                                        label = {
+                                            AppText(
+                                                stringResource(item.titleResId),
+                                                style = MaterialTheme.typography.labelSmall,
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis,
+                                            )
+                                        },
+                                        colors = NavigationBarItemDefaults.colors(
+                                            selectedIconColor = MaterialTheme.colorScheme.primary,
+                                            selectedTextColor = MaterialTheme.colorScheme.primary,
+                                            indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                                            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        ),
+                                    )
+                                }
                             }
                         }
                     }
-                }
-            },
-        ) { innerPadding ->
+                },
+            ) { innerPadding ->
             val navHostContent: @Composable (Modifier) -> Unit = { navModifier ->
                 CompositionLocalProvider(
                     LocalScreenHeaderConfigCallback provides { config ->
@@ -313,245 +326,317 @@ fun AntCashManagerNavHost() {
             }
 
             if (isTutorialCompleted && adaptiveLayoutInfo.preferRailNavigation && !isOnTutorial) {
-                Row(
+                Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding),
                 ) {
-                    Surface(
-                        tonalElevation = 4.dp,
-                        shadowElevation = 6.dp,
-                        shape = RoundedCornerShape(24.dp),
-                        color = MaterialTheme.colorScheme.surfaceContainerLow,
-                        modifier = Modifier
-                            .padding(
-                                start = railPaddingStart,
-                                top = 12.dp,
-                                end = railPaddingEnd,
-                                bottom = 12.dp,
-                            )
-                            .width(railContainerWidth)
-                            .fillMaxHeight(),
-                    ) {
-                        NavigationRail(
+                    // Top bar con pulsanti (Search, Filter, Sort, Helper) - senza Hamburger menu su tablet
+                    if (!isOnTutorial) {
+                        Row(
                             modifier = Modifier
-                                .fillMaxHeight()
-                                .padding(vertical = 8.dp),
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                                .fillMaxWidth()
+                                .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
                         ) {
-                            visibleNavItems.forEach { item ->
-                                NavigationRailItem(
-                                    selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
-                                    onClick = {
-                                        val params = android.os.Bundle().apply {
-                                            putString("destination", item.route)
-                                        }
-                                        analyticsManager.logEvent("sidebar_navigation_clicked", params)
-                                        navController.navigate(item.route) {
-                                            popUpTo(navController.graph.findStartDestination().id) {
-                                                saveState = true
-                                            }
-                                            launchSingleTop = true
-                                            restoreState = true
-                                        }
-                                    },
-                                    icon = {
-                                        Icon(
-                                            imageVector = item.icon,
-                                            contentDescription = stringResource(item.titleResId),
-                                        )
-                                    },
-                                    label = {
-                                        AppText(
-                                            text = stringResource(item.titleResId),
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis,
-                                        )
-                                    },
-                                    alwaysShowLabel = true,
+                            // Screen Title (left side)
+                            if (screenHeaderConfig.title.isNotEmpty()) {
+                                AppText(
+                                    text = screenHeaderConfig.title,
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onBackground,
                                 )
                             }
-                        }
-                    }
 
-                    navHostContent(Modifier.weight(1f))
-                }
-            } else if (isTutorialCompleted) {
-                // Per dispositivi NON tablet: Sidebar scorrevole (drawer-style) + Content con BottomBar
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(if (isOnTutorial) PaddingValues() else innerPadding),
-                ) {
-                    // Content con pulsante hamburger
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                    ) {
-                        // Top bar con hamburger menu - nascosto su Tutorial
-                        if (!isOnTutorial) {
+                            // Filter/Order/Search Icons (right side) - Tablet version (senza hamburger)
                             Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween,
+                                horizontalArrangement = Arrangement.spacedBy(4.dp),
                             ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.weight(1f),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                ) {
-                                    // Hamburger Menu
+                                // Search Icon
+                                if (screenHeaderConfig.showSearchIcon) {
                                     IconButton(
-                                        onClick = {
-                                            val params = android.os.Bundle().apply {
-                                                putBoolean("isOpen", !isSidebarOpen)
-                                            }
-                                            analyticsManager.logEvent("sidebar_toggled", params)
-                                            isSidebarOpen = !isSidebarOpen
-                                        },
-                                        modifier = Modifier.size(40.dp),
+                                        onClick = { screenHeaderConfig.onSearchClick?.invoke() },
+                                        modifier = Modifier
+                                            .size(40.dp)
+                                            .testTag("header_search_icon"),
                                     ) {
                                         Icon(
-                                            imageVector = Icons.Default.Menu,
-                                            contentDescription = "Toggle Navigation",
+                                            imageVector = Icons.Default.Search,
+                                            contentDescription = "Search",
                                             modifier = Modifier.size(24.dp),
                                             tint = MaterialTheme.colorScheme.primary,
                                         )
                                     }
-
-                                    // Screen Title (dynamic)
-                                    if (screenHeaderConfig.title.isNotEmpty()) {
-                                        AppText(
-                                            text = screenHeaderConfig.title,
-                                            style = MaterialTheme.typography.headlineSmall,
-                                            fontWeight = FontWeight.Bold,
-                                            color = MaterialTheme.colorScheme.onBackground,
-                                        )
-                                    }
                                 }
 
-                                // Filter/Order/Search Icons (dynamic)
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                                ) {
-                                    // Search Icon
-                                    if (screenHeaderConfig.showSearchIcon) {
-                                        IconButton(
-                                            onClick = { screenHeaderConfig.onSearchClick?.invoke() },
-                                            modifier = Modifier
-                                                .size(40.dp)
-                                                .testTag("header_search_icon"),
-                                        ) {
+                                // Filter Icon with Badge
+                                if (screenHeaderConfig.onFilterClick != null) {
+                                    IconButton(
+                                        onClick = { screenHeaderConfig.onFilterClick!!.invoke() },
+                                        modifier = Modifier.size(40.dp),
+                                    ) {
+                                        Box {
                                             Icon(
-                                                imageVector = Icons.Default.Search,
-                                                contentDescription = "Search",
+                                                imageVector = Icons.Default.FilterList,
+                                                contentDescription = "Filtri",
                                                 modifier = Modifier.size(24.dp),
                                                 tint = MaterialTheme.colorScheme.primary,
                                             )
-                                        }
-                                    }
-
-                                    // Filter Icon with Badge
-                                    if (screenHeaderConfig.onFilterClick != null) {
-                                        IconButton(
-                                            onClick = { screenHeaderConfig.onFilterClick!!.invoke() },
-                                            modifier = Modifier.size(40.dp),
-                                        ) {
-                                            Box {
-                                                Icon(
-                                                    imageVector = Icons.Default.FilterList,
-                                                    contentDescription = "Filtri",
-                                                    modifier = Modifier.size(24.dp),
-                                                    tint = MaterialTheme.colorScheme.primary,
-                                                )
-                                                // Badge for active filters
-                                                if (screenHeaderConfig.filterCount > 0) {
-                                                    Surface(
-                                                        shape = CircleShape,
-                                                        color = MaterialTheme.colorScheme.error,
+                                            // Badge for active filters
+                                            if (screenHeaderConfig.filterCount > 0) {
+                                                Surface(
+                                                    shape = CircleShape,
+                                                    color = MaterialTheme.colorScheme.error,
+                                                    modifier = Modifier
+                                                        .size(18.dp)
+                                                        .align(Alignment.TopEnd)
+                                                        .padding(top = 2.dp, end = 2.dp),
+                                                ) {
+                                                    AppText(
+                                                        text = screenHeaderConfig.filterCount.toString(),
+                                                        style = MaterialTheme.typography.labelSmall,
+                                                        color = MaterialTheme.colorScheme.onError,
                                                         modifier = Modifier
-                                                            .size(18.dp)
-                                                            .align(Alignment.TopEnd)
-                                                            .padding(top = 2.dp, end = 2.dp),
-                                                    ) {
-                                                        AppText(
-                                                            text = screenHeaderConfig.filterCount.toString(),
-                                                            style = MaterialTheme.typography.labelSmall,
-                                                            color = MaterialTheme.colorScheme.onError,
-                                                            modifier = Modifier
-                                                                .padding(2.dp)
-                                                                .align(Alignment.Center),
-                                                        )
-                                                    }
+                                                            .padding(2.dp)
+                                                            .align(Alignment.Center),
+                                                    )
                                                 }
                                             }
                                         }
                                     }
+                                }
 
-                                    // Sort/Order Icon
-                                    if (screenHeaderConfig.hasOrderOption) {
-                                        IconButton(
-                                            onClick = { screenHeaderConfig.onOrderClick?.invoke() },
-                                            modifier = Modifier.size(40.dp),
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Default.Sort,
-                                                contentDescription = "Ordinamento",
-                                                modifier = Modifier.size(24.dp),
-                                                tint = MaterialTheme.colorScheme.primary,
-                                            )
-                                        }
+                                // Sort/Order Icon
+                                if (screenHeaderConfig.hasOrderOption) {
+                                    IconButton(
+                                        onClick = { screenHeaderConfig.onOrderClick?.invoke() },
+                                        modifier = Modifier.size(40.dp),
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Sort,
+                                            contentDescription = "Ordinamento",
+                                            modifier = Modifier.size(24.dp),
+                                            tint = MaterialTheme.colorScheme.primary,
+                                        )
                                     }
                                 }
 
-                                // Action Buttons (dynamic)
+                                // Action Buttons (dynamic) - Helper button
                                 if (screenHeaderConfig.actions != null) {
                                     screenHeaderConfig.actions!!()
                                 }
                             }
                         }
-
-                        // Content
-                        navHostContent(Modifier.weight(1f))
                     }
 
-                    // Sidebar animata (slide in/out)
-                    AnimatedVisibility(
-                        visible = isSidebarOpen,
-                        enter = slideInHorizontally(initialOffsetX = { -it }),
-                        exit = slideOutHorizontally(targetOffsetX = { -it }),
+                    // Navigation Rail + Content
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
                     ) {
-                        Box(
+                        Surface(
+                            tonalElevation = 4.dp,
+                            shadowElevation = 6.dp,
+                            shape = RoundedCornerShape(24.dp),
+                            color = MaterialTheme.colorScheme.surfaceContainerLow,
                             modifier = Modifier
-                                .fillMaxHeight()
-                                .clickable(
-                                    enabled = isSidebarOpen,
-                                    indication = null,
-                                    interactionSource = remember { MutableInteractionSource() },
-                                ) {
-                                    isSidebarOpen = false
-                                },
+                                .padding(
+                                    start = railPaddingStart,
+                                    top = 12.dp,
+                                    end = railPaddingEnd,
+                                    bottom = 12.dp,
+                                )
+                                .width(railContainerWidth)
+                                .fillMaxHeight(),
                         ) {
-                            LeftSidebar(
-                                selectedRoute = currentDestination?.route,
-                                onNavigate = { route ->
-                                    navController.navigate(route) {
-                                        popUpTo(navController.graph.findStartDestination().id) {
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
-                                    // Chiudi la sidebar dopo la navigazione
-                                    isSidebarOpen = false
-                                },
-                                visibleNavItems = sidebarNavItems,
-                                onHeaderClick = { showAntAnimation = true },
+                            NavigationRail(
                                 modifier = Modifier
-                                    .padding(top = 8.dp, bottom = 8.dp),
-                            )
+                                    .fillMaxHeight()
+                                    .padding(vertical = 8.dp),
+                                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                            ) {
+                                visibleNavItems.forEach { item ->
+                                    NavigationRailItem(
+                                        selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
+                                        onClick = {
+                                            val params = android.os.Bundle().apply {
+                                                putString("destination", item.route)
+                                            }
+                                            analyticsManager.logEvent("sidebar_navigation_clicked", params)
+                                            navController.navigate(item.route) {
+                                                popUpTo(navController.graph.findStartDestination().id) {
+                                                    saveState = true
+                                                }
+                                                launchSingleTop = true
+                                                restoreState = true
+                                            }
+                                        },
+                                        icon = {
+                                            Icon(
+                                                imageVector = item.icon,
+                                                contentDescription = stringResource(item.titleResId),
+                                            )
+                                        },
+                                        label = {
+                                            AppText(
+                                                text = stringResource(item.titleResId),
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis,
+                                            )
+                                        },
+                                        alwaysShowLabel = true,
+                                    )
+                                }
+                            }
+                        }
+
+                        navHostContent(Modifier.weight(1f))
+                    }
+                }
+            } else if (isTutorialCompleted) {
+                // Per dispositivi NON tablet: Sidebar scorrevole (drawer-style) + Content con BottomBar
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    // Content con pulsante hamburger + innerPadding
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(if (isOnTutorial) PaddingValues() else innerPadding),
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                        ) {
+                            // Top bar con hamburger menu - nascosto su Tutorial
+                            if (!isOnTutorial) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier.weight(1f),
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    ) {
+                                        // Hamburger Menu
+                                        IconButton(
+                                            onClick = {
+                                                val params = android.os.Bundle().apply {
+                                                    putBoolean("isOpen", !isSidebarOpen)
+                                                }
+                                                analyticsManager.logEvent("sidebar_toggled", params)
+                                                isSidebarOpen = !isSidebarOpen
+                                            },
+                                            modifier = Modifier.size(40.dp),
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Menu,
+                                                contentDescription = "Toggle Navigation",
+                                                modifier = Modifier.size(24.dp),
+                                                tint = MaterialTheme.colorScheme.primary,
+                                            )
+                                        }
+
+                                        // Screen Title (dynamic)
+                                        if (screenHeaderConfig.title.isNotEmpty()) {
+                                            AppText(
+                                                text = screenHeaderConfig.title,
+                                                style = MaterialTheme.typography.headlineSmall,
+                                                fontWeight = FontWeight.Bold,
+                                                color = MaterialTheme.colorScheme.onBackground,
+                                            )
+                                        }
+                                    }
+
+                                    // Filter/Order/Search Icons (dynamic)
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                    ) {
+                                        // Search Icon
+                                        if (screenHeaderConfig.showSearchIcon) {
+                                            IconButton(
+                                                onClick = { screenHeaderConfig.onSearchClick?.invoke() },
+                                                modifier = Modifier
+                                                    .size(40.dp)
+                                                    .testTag("header_search_icon"),
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.Search,
+                                                    contentDescription = "Search",
+                                                    modifier = Modifier.size(24.dp),
+                                                    tint = MaterialTheme.colorScheme.primary,
+                                                )
+                                            }
+                                        }
+
+                                        // Filter Icon with Badge
+                                        if (screenHeaderConfig.onFilterClick != null) {
+                                            IconButton(
+                                                onClick = { screenHeaderConfig.onFilterClick!!.invoke() },
+                                                modifier = Modifier.size(40.dp),
+                                            ) {
+                                                Box {
+                                                    Icon(
+                                                        imageVector = Icons.Default.FilterList,
+                                                        contentDescription = "Filtri",
+                                                        modifier = Modifier.size(24.dp),
+                                                        tint = MaterialTheme.colorScheme.primary,
+                                                    )
+                                                    // Badge for active filters
+                                                    if (screenHeaderConfig.filterCount > 0) {
+                                                        Surface(
+                                                            shape = CircleShape,
+                                                            color = MaterialTheme.colorScheme.error,
+                                                            modifier = Modifier
+                                                                .size(18.dp)
+                                                                .align(Alignment.TopEnd)
+                                                                .padding(top = 2.dp, end = 2.dp),
+                                                        ) {
+                                                            AppText(
+                                                                text = screenHeaderConfig.filterCount.toString(),
+                                                                style = MaterialTheme.typography.labelSmall,
+                                                                color = MaterialTheme.colorScheme.onError,
+                                                                modifier = Modifier
+                                                                    .padding(2.dp)
+                                                                    .align(Alignment.Center),
+                                                            )
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        // Sort/Order Icon
+                                        if (screenHeaderConfig.hasOrderOption) {
+                                            IconButton(
+                                                onClick = { screenHeaderConfig.onOrderClick?.invoke() },
+                                                modifier = Modifier.size(40.dp),
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.Sort,
+                                                    contentDescription = "Ordinamento",
+                                                    modifier = Modifier.size(24.dp),
+                                                    tint = MaterialTheme.colorScheme.primary,
+                                                )
+                                            }
+                                        }
+                                    }
+
+                                    // Action Buttons (dynamic)
+                                    if (screenHeaderConfig.actions != null) {
+                                        screenHeaderConfig.actions!!()
+                                    }
+                                }
+                            }
+
+                            // Content
+                            navHostContent(Modifier.weight(1f))
                         }
                     }
                 }
@@ -561,6 +646,53 @@ fun AntCashManagerNavHost() {
             } else {
                 // Caso di fallback (tutorial non completato)
                 navHostContent(Modifier.padding(innerPadding))
+            }
+            }
+
+            // Sidebar animata (slide in/out) con dimming overlay - LIVELLO TOP-LEVEL FUORI DALLO SCAFFOLD
+            // Posizionato SOPRA lo Scaffold per coprire tutta la superficie dello schermo (inclusi i margini)
+            AnimatedVisibility(
+                visible = isSidebarOpen,
+                enter = slideInHorizontally(initialOffsetX = { -it }, animationSpec = tween(300)),
+                exit = slideOutHorizontally(targetOffsetX = { -it }, animationSpec = tween(300)),
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    // Dimming overlay - copre TUTTA la superficie dello schermo senza alcun margine
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Black.copy(alpha = 0.3f))
+                            .clickable(
+                                enabled = isSidebarOpen,
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() },
+                            ) {
+                                isSidebarOpen = false
+                            },
+                    )
+
+                    // Sidebar - non propagates clicks al dimming overlay
+                    LeftSidebar(
+                        selectedRoute = currentDestination?.route,
+                        onNavigate = { route ->
+                            navController.navigate(route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                            // Chiudi la sidebar dopo la navigazione
+                            isSidebarOpen = false
+                        },
+                        visibleNavItems = sidebarNavItems,
+                        onHeaderClick = { showAntAnimation = true },
+                        modifier = Modifier
+                            .padding(top = 8.dp, bottom = 8.dp),
+                    )
+                }
             }
         }
 

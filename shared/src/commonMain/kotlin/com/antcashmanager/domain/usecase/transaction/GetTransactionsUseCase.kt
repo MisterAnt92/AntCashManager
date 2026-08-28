@@ -7,7 +7,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 
-class GetTransactionsUseCase(
+public class GetTransactionsUseCase(
     private val transactionRepository: TransactionRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : NoParamsObservableUseCase<List<Transaction>>(dispatcher) {

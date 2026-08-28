@@ -18,12 +18,12 @@ import kotlinx.coroutines.Dispatchers
  *
  * Il dispatcher è iniettabile per testabilità. Restituisce [Result<Unit>].
  */
-class SyncTransactionCategoriesUseCase(
+public class SyncTransactionCategoriesUseCase(
     private val transactionRepository: TransactionRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : UseCase<SyncTransactionCategoriesUseCase.Params, Unit>(dispatcher) {
 
-    override suspend fun execute(params: Params) {
+    override suspend fun execute(params: Params): Unit {
         Logger.d(tag = "SyncTransactionCategoriesUseCase") {
             "Syncing category data: ${params.oldCategoryName} -> ${params.category.name}"
         }
@@ -35,7 +35,7 @@ class SyncTransactionCategoriesUseCase(
         )
     }
 
-    data class Params(
+    public data class Params(
         val oldCategoryName: String,
         val category: Category,
     )

@@ -13,13 +13,13 @@ import kotlinx.datetime.Clock
  * new transaction instances if the interval has elapsed since the last
  * occurrence.
  */
-class ProcessRecurringTransactionsUseCase(
+public class ProcessRecurringTransactionsUseCase(
     private val transactionRepository: TransactionRepository,
     private val clock: Clock = Clock.System,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : NoParamsUseCase<Unit>(dispatcher) {
 
-    override suspend fun execute(params: Unit) {
+    override suspend fun execute(params: Unit): Unit {
         val recurring = transactionRepository.getRecurringTransactions().first()
         val now = clock.now().toEpochMilliseconds()
 

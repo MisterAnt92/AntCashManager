@@ -6,7 +6,7 @@ import kotlinx.coroutines.CancellationException
  * Simile a [runCatching], ma garantisce che le [CancellationException] non vengano catturate.
  * Questo è fondamentale per il corretto funzionamento della structured concurrency in Kotlin Coroutines.
  */
-inline fun <R> runSuspendCatching(block: () -> R): Result<R> {
+public inline fun <R> runSuspendCatching(block: () -> R): Result<R> {
     return try {
         Result.success(block())
     } catch (c: CancellationException) {

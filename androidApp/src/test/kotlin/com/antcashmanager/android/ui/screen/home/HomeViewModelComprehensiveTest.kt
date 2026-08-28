@@ -2,12 +2,14 @@ package com.antcashmanager.android.ui.home
 
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.BaseUnitTest
+import com.antcashmanager.android.analytics.SegmentationTracker
 import com.antcashmanager.android.testutil.FakeCategoryRepository
 import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.testutil.FakeTransactionRepository
 import com.antcashmanager.android.ui.screen.home.HomeViewModel
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -44,6 +46,7 @@ class HomeViewModelComprehensiveTest : BaseUnitTest() {
             categoryRepository = fakeCategoryRepo,
             dispatcher = testDispatcher,
             searchDebounceMs = 0L,
+            segmentationTracker = mockk(relaxed = true),
         )
     }
 

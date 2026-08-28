@@ -1,10 +1,13 @@
 package com.antcashmanager.android.ui.settingsDisplay
 
 import com.antcashmanager.android.BaseUnitTest
+import com.antcashmanager.android.analytics.AnalyticsManager
+import com.antcashmanager.android.analytics.EngagementTracker
 import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayViewModel
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.service.WidgetUpdateNotifier
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -20,13 +23,17 @@ class DisplayViewModelTest : BaseUnitTest() {
 
     private lateinit var fakeSettingsRepo: FakeSettingsRepository
     private lateinit var fakeWidgetUpdateNotifier: FakeWidgetUpdateNotifier
+    private lateinit var analyticsManager: AnalyticsManager
+    private lateinit var engagementTracker: EngagementTracker
     private lateinit var viewModel: DisplayViewModel
 
     @Before
     fun setup() {
         fakeSettingsRepo = FakeSettingsRepository()
         fakeWidgetUpdateNotifier = FakeWidgetUpdateNotifier()
-        viewModel = DisplayViewModel(fakeSettingsRepo, fakeWidgetUpdateNotifier)
+        analyticsManager = mockk(relaxed = true)
+        engagementTracker = mockk(relaxed = true)
+        viewModel = DisplayViewModel(fakeSettingsRepo, fakeWidgetUpdateNotifier, analyticsManager, engagementTracker)
     }
 
     @Test

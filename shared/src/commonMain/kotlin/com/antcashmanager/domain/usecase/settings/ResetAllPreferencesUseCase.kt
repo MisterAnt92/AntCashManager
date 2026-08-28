@@ -5,7 +5,7 @@ import com.antcashmanager.domain.usecase.base.NoParamsUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
-class ResetAllPreferencesUseCase(
+public class ResetAllPreferencesUseCase(
     private val settingsRepository: SettingsRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : NoParamsUseCase<Unit>(dispatcher) {

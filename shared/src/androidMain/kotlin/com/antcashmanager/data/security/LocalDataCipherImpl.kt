@@ -16,10 +16,10 @@ import javax.crypto.spec.GCMParameterSpec
  * Cifratura locale field-level basata su Android Keystore (AES/GCM).
  * La chiave viene mantenuta in cache in memoria per la durata della sessione.
  */
-class LocalDataCipherImpl(
+public class LocalDataCipherImpl(
     context: Context,
 ) : LocalDataCipher {
-    companion object {
+    public companion object {
         private const val TAG = "LocalDataCipher"
         private const val PREFS_NAME = "db_security_prefs"
         private const val KEY_DESIRED_ENCRYPTION = "desired_data_encryption"

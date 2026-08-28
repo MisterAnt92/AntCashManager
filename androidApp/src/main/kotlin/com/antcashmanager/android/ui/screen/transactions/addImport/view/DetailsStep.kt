@@ -215,12 +215,20 @@ internal fun DetailsStep(
             )
 
             // ── Titolo ──
+            val analyticsManager: AnalyticsManager = koinInject()
             AutocompleteTextField(
                 value = state.title,
                 onValueChange = { onEvent(AddTransactionEvent.UpdateTitle(it)) },
                 suggestions = state.titleSuggestions,
                 label = stringResource(R.string.add_transaction_title_required),
                 modifier = Modifier.fillMaxWidth(),
+                onSuggestionSelected = { suggestion ->
+                    // Track transaction duplicate suggestion accepted
+                    analyticsManager.logEvent("transaction_duplicate_suggestion_accepted", android.os.Bundle().apply {
+                        putString("suggestion_type", "title")
+                        putInt("suggestion_length", suggestion.length)
+                    })
+                }
             )
             VerticalSpacer(SpacingSize.SM)
 

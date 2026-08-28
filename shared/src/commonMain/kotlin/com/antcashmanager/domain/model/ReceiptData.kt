@@ -13,23 +13,23 @@ package com.antcashmanager.domain.model
  * @property rawText Testo grezzo OCR originale, utile per debug/correzione manuale.
  * @property items Elenco dei singoli prodotti/voci estratti dallo scontrino.
  */
-data class ReceiptData(
-    val totalAmount: Double = 0.0,
-    val vatRate: Double = 0.0,
-    val vatAmount: Double = 0.0,
-    val payee: String = "",
-    val location: String = "",
-    val paymentType: PaymentType = PaymentType.ELECTRONIC,
-    val rawText: String = "",
-    val items: List<ReceiptItem> = emptyList(),
+public data class ReceiptData(
+    public val totalAmount: Double = 0.0,
+    public val vatRate: Double = 0.0,
+    public val vatAmount: Double = 0.0,
+    public val payee: String = "",
+    public val location: String = "",
+    public val paymentType: PaymentType = PaymentType.ELECTRONIC,
+    public val rawText: String = "",
+    public val items: List<ReceiptItem> = emptyList(),
 )
 
 /**
  * Rappresenta una singola voce estratta dallo scontrino (prodotto e prezzo).
  */
-data class ReceiptItem(
-    val name: String,
-    val price: Double,
+public data class ReceiptItem(
+    public val name: String,
+    public val price: Double,
 )
 
 

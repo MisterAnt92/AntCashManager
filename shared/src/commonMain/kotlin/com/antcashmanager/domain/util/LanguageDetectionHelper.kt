@@ -4,7 +4,7 @@ package com.antcashmanager.domain.util
  * Helper per rilevare la lingua del testo di uno scontrino basandosi su keyword dominanti.
  * Supporta: Italiano, Inglese, Spagnolo, Tedesco, Francese
  */
-object LanguageDetectionHelper {
+public object LanguageDetectionHelper {
 
     private val KEYWORDS_IT = listOf(
         "TOTALE", "IVA", "IMPORTO", "SCONTRINO", "BENEFICIARIO",
@@ -38,7 +38,7 @@ object LanguageDetectionHelper {
      * @param text Testo estratto dall'OCR
      * @return Language code: "it", "en", "es", "de", "fr" (default: "it")
      */
-    fun detectLanguage(text: String): String {
+    public fun detectLanguage(text: String): String {
         val upperText = text.uppercase()
 
         val itCount = KEYWORDS_IT.count { upperText.contains(it) }

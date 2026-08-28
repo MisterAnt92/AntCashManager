@@ -10,34 +10,34 @@ import com.antcashmanager.data.local.entity.CategoryEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface CategoryDao {
+public interface CategoryDao {
     @Query("SELECT * FROM categories ORDER BY is_hidden ASC, sort_order ASC")
-    fun getAllCategories(): Flow<List<CategoryEntity>>
+    public fun getAllCategories(): Flow<List<CategoryEntity>>
 
     @Query("SELECT * FROM categories WHERE id = :id")
-    suspend fun getCategoryById(id: Long): CategoryEntity?
+    public suspend fun getCategoryById(id: Long): CategoryEntity?
 
     @Query("SELECT * FROM categories WHERE name = :name LIMIT 1")
-    suspend fun getCategoryByName(name: String): CategoryEntity?
+    public suspend fun getCategoryByName(name: String): CategoryEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertCategory(category: CategoryEntity): Long
+    public suspend fun insertCategory(category: CategoryEntity): Long
 
     @Update
-    suspend fun updateCategory(category: CategoryEntity)
+    public suspend fun updateCategory(category: CategoryEntity)
 
     @Delete
-    suspend fun deleteCategory(category: CategoryEntity)
+    public suspend fun deleteCategory(category: CategoryEntity)
 
     @Query("DELETE FROM categories")
-    suspend fun deleteAllCategories()
+    public suspend fun deleteAllCategories()
 
     @Query("DELETE FROM categories WHERE is_default = 0")
-    suspend fun deleteAllNonDefaultCategories()
+    public suspend fun deleteAllNonDefaultCategories()
 
     @Query("SELECT * FROM categories WHERE type = :type ORDER BY is_hidden ASC, sort_order ASC")
-    fun getCategoriesByType(type: String): Flow<List<CategoryEntity>>
+    public fun getCategoriesByType(type: String): Flow<List<CategoryEntity>>
 
     @Query("SELECT COUNT(*) FROM categories WHERE is_default = 1")
-    suspend fun getDefaultCategoryCount(): Int
+    public suspend fun getDefaultCategoryCount(): Int
 }

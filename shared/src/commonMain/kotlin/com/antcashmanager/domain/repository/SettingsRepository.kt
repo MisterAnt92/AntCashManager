@@ -2,107 +2,137 @@ package com.antcashmanager.domain.repository
 
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
+import com.antcashmanager.domain.model.BackupDestination
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.TransactionDisplayType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
-interface SettingsRepository {
-    fun getTheme(): Flow<AppTheme>
-    suspend fun setTheme(theme: AppTheme)
-    fun getLanguage(): Flow<AppLanguage>
-    suspend fun setLanguage(language: AppLanguage)
-    fun getShowCharts(): Flow<Boolean>
-    suspend fun setShowCharts(show: Boolean)
-    fun getHighContrast(): Flow<Boolean>
-    suspend fun setHighContrast(enabled: Boolean)
-    fun getLargeText(): Flow<Boolean>
-    suspend fun setLargeText(enabled: Boolean)
-    fun getReduceMotion(): Flow<Boolean>
-    suspend fun setReduceMotion(enabled: Boolean)
-    fun getShowTransactionNotes(): Flow<Boolean>
-    suspend fun setShowTransactionNotes(show: Boolean)
-    fun getMaskAmounts(): Flow<Boolean>
-    suspend fun setMaskAmounts(mask: Boolean)
+public interface SettingsRepository {
+    public fun getTheme(): Flow<AppTheme>
+    public suspend fun setTheme(theme: AppTheme): Unit
+    public fun getLanguage(): Flow<AppLanguage>
+    public suspend fun setLanguage(language: AppLanguage): Unit
+    public fun getShowCharts(): Flow<Boolean>
+    public suspend fun setShowCharts(show: Boolean): Unit
+    public fun getHighContrast(): Flow<Boolean>
+    public suspend fun setHighContrast(enabled: Boolean): Unit
+    public fun getLargeText(): Flow<Boolean>
+    public suspend fun setLargeText(enabled: Boolean): Unit
+    public fun getReduceMotion(): Flow<Boolean>
+    public suspend fun setReduceMotion(enabled: Boolean): Unit
+    public fun getShowTransactionNotes(): Flow<Boolean>
+    public suspend fun setShowTransactionNotes(show: Boolean): Unit
+    public fun getMaskAmounts(): Flow<Boolean>
+    public suspend fun setMaskAmounts(mask: Boolean): Unit
 
     // ── Currency / number format ──
-    fun getCurrencySymbol(): Flow<String>
-    suspend fun setCurrencySymbol(symbol: String)
-    fun getDecimalDigits(): Flow<Int>
-    suspend fun setDecimalDigits(digits: Int)
-    fun getDecimalSeparator(): Flow<String>
-    suspend fun setDecimalSeparator(separator: String)
-    fun getThousandsSeparator(): Flow<String>
-    suspend fun setThousandsSeparator(separator: String)
-    fun getMealVoucherValue(): Flow<Double>
-    suspend fun setMealVoucherValue(value: Double)
+    public fun getCurrencySymbol(): Flow<String>
+    public suspend fun setCurrencySymbol(symbol: String): Unit
+    public fun getDecimalDigits(): Flow<Int>
+    public suspend fun setDecimalDigits(digits: Int): Unit
+    public fun getDecimalSeparator(): Flow<String>
+    public suspend fun setDecimalSeparator(separator: String): Unit
+    public fun getThousandsSeparator(): Flow<String>
+    public suspend fun setThousandsSeparator(separator: String): Unit
+    public fun getMealVoucherValue(): Flow<Double>
+    public suspend fun setMealVoucherValue(value: Double): Unit
 
     // ── Date format ──
-    fun getDateFormat(): Flow<String>
-    suspend fun setDateFormat(pattern: String)
+    public fun getDateFormat(): Flow<String>
+    public suspend fun setDateFormat(pattern: String): Unit
 
     // ── Date Filter UI State ──
-    fun getDateFilterExpanded(): Flow<Boolean>
-    suspend fun setDateFilterExpanded(expanded: Boolean)
+    public fun getDateFilterExpanded(): Flow<Boolean>
+    public suspend fun setDateFilterExpanded(expanded: Boolean): Unit
 
-    fun getHomeDateFilterPreset(): Flow<Int>
-    suspend fun setHomeDateFilterPreset(index: Int)
-    fun getHomeDateFilterState(): Flow<SavedDateFilter>
-    suspend fun setHomeDateFilterState(filter: SavedDateFilter)
+    public fun getHomeDateFilterPreset(): Flow<Int>
+    public suspend fun setHomeDateFilterPreset(index: Int): Unit
+    public fun getHomeDateFilterState(): Flow<SavedDateFilter>
+    public suspend fun setHomeDateFilterState(filter: SavedDateFilter): Unit
 
-    fun getTransactionsDateFilterPreset(): Flow<Int>
-    suspend fun setTransactionsDateFilterPreset(index: Int)
-    fun getTransactionsDateFilterState(): Flow<SavedDateFilter>
-    suspend fun setTransactionsDateFilterState(filter: SavedDateFilter)
+    public fun getTransactionsDateFilterPreset(): Flow<Int>
+    public suspend fun setTransactionsDateFilterPreset(index: Int): Unit
+    public fun getTransactionsDateFilterState(): Flow<SavedDateFilter>
+    public suspend fun setTransactionsDateFilterState(filter: SavedDateFilter): Unit
 
-    fun getChartsDateFilterPreset(): Flow<Int>
-    suspend fun setChartsDateFilterPreset(index: Int)
-    fun getChartsDateFilterState(): Flow<SavedDateFilter>
-    suspend fun setChartsDateFilterState(filter: SavedDateFilter)
+    public fun getChartsDateFilterPreset(): Flow<Int>
+    public suspend fun setChartsDateFilterPreset(index: Int): Unit
+    public fun getChartsDateFilterState(): Flow<SavedDateFilter>
+    public suspend fun setChartsDateFilterState(filter: SavedDateFilter): Unit
 
-    fun getChartsZoomEnabled(): Flow<Boolean>
-    suspend fun setChartsZoomEnabled(enabled: Boolean)
+    public fun getChartsZoomEnabled(): Flow<Boolean>
+    public suspend fun setChartsZoomEnabled(enabled: Boolean): Unit
 
     // ── Payment Type Breakdown ──
-    fun getShowPaymentTypeBreakdown(): Flow<Boolean>
-    suspend fun setShowPaymentTypeBreakdown(show: Boolean)
-    fun getShowQuickInsightsCard(): Flow<Boolean> = flowOf(false)
-    suspend fun setShowQuickInsightsCard(show: Boolean) {}
+    public fun getShowPaymentTypeBreakdown(): Flow<Boolean>
+    public suspend fun setShowPaymentTypeBreakdown(show: Boolean): Unit
+    public fun getShowQuickInsightsCard(): Flow<Boolean> = flowOf(false)
+    public suspend fun setShowQuickInsightsCard(show: Boolean): Unit {}
+
+    // ── Default Payment Type ──
+    public fun getDefaultPaymentType(): Flow<String>
+    public suspend fun setDefaultPaymentType(paymentType: String): Unit
 
     // ── Transaction Display Type ──
-    fun getTransactionDisplayType(): Flow<TransactionDisplayType>
-    suspend fun setTransactionDisplayType(displayType: TransactionDisplayType)
+    public fun getTransactionDisplayType(): Flow<TransactionDisplayType>
+    public suspend fun setTransactionDisplayType(displayType: TransactionDisplayType): Unit
 
-    fun getTransactionsTransactionDisplayType(): Flow<TransactionDisplayType>
-    suspend fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType)
+    public fun getTransactionsTransactionDisplayType(): Flow<TransactionDisplayType>
+    public suspend fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType): Unit
 
-    fun getShowInitialAnimation(): Flow<Boolean>
-    suspend fun setShowInitialAnimation(show: Boolean)
+    public fun getShowInitialAnimation(): Flow<Boolean>
+    public suspend fun setShowInitialAnimation(show: Boolean): Unit
 
     // ── Onboarding / Tutorial ──
-    fun getIsTutorialCompleted(): Flow<Boolean>
-    suspend fun setIsTutorialCompleted(completed: Boolean)
+    public fun getIsTutorialCompleted(): Flow<Boolean>
+    public suspend fun setIsTutorialCompleted(completed: Boolean): Unit
 
     /**
      * Flag one-shot: indica se il backfill di [com.antcashmanager.domain.model.Category.sortOrder]
      * per le categorie già esistenti (migrazione DB) è già stato eseguito. Stato locale del
      * device, non incluso in [resetAllPreferences] né nel backup.
      */
-    fun getCategorySortOrderInitialized(): Flow<Boolean>
-    suspend fun setCategorySortOrderInitialized(initialized: Boolean)
+    public fun getCategorySortOrderInitialized(): Flow<Boolean>
+    public suspend fun setCategorySortOrderInitialized(initialized: Boolean): Unit
 
     // ── Security ──
-    fun getDataEncryptionEnabled(): Flow<Boolean>
-    suspend fun setDataEncryptionEnabled(enabled: Boolean)
+    public fun getDataEncryptionEnabled(): Flow<Boolean>
+    public suspend fun setDataEncryptionEnabled(enabled: Boolean): Unit
 
     /** Resets every preference to its factory default. */
-    suspend fun resetAllPreferences()
+    public suspend fun resetAllPreferences(): Unit
 
     // ── Backup/Restore history (stato locale del device, non incluso in resetAllPreferences) ──
-    fun getLastBackupTimestamp(): Flow<Long?>
-    suspend fun setLastBackupTimestamp(timestamp: Long)
-    fun getLastRestoreTimestamp(): Flow<Long?>
-    suspend fun setLastRestoreTimestamp(timestamp: Long)
+    public fun getLastBackupTimestamp(): Flow<Long?>
+    public suspend fun setLastBackupTimestamp(timestamp: Long): Unit
+    public fun getLastRestoreTimestamp(): Flow<Long?>
+    public suspend fun setLastRestoreTimestamp(timestamp: Long): Unit
+
+    // ── Automatic Backup (stato locale del device, non incluso in resetAllPreferences) ──
+    public fun getAutoBackupEnabled(): Flow<Boolean>
+    public suspend fun setAutoBackupEnabled(enabled: Boolean): Unit
+    public fun getAutoBackupFolderUri(): Flow<String?>
+    public suspend fun setAutoBackupFolderUri(uri: String?): Unit
+
+    // ── Google Drive Backup Configuration ──
+    public fun getAutoBackupDestination(): Flow<BackupDestination>
+    public suspend fun setAutoBackupDestination(destination: BackupDestination): Unit
+
+    public fun getGoogleDriveFolderId(): Flow<String?>
+    public suspend fun setGoogleDriveFolderId(folderId: String?): Unit
+
+    public fun getGoogleDriveFolderName(): Flow<String?>
+    public suspend fun setGoogleDriveFolderName(folderName: String?): Unit
+
+    public fun getGoogleDriveAuthToken(): Flow<String?>
+    public suspend fun setGoogleDriveAuthToken(token: String?): Unit
+
+    public fun getGoogleDriveRefreshToken(): Flow<String?>
+    public suspend fun setGoogleDriveRefreshToken(token: String?): Unit
+
+    public fun getGoogleDriveUserEmail(): Flow<String?>
+    public suspend fun setGoogleDriveUserEmail(email: String?): Unit
 
     /**
      * ── Suggerimenti (autocomplete titoli/beneficiari/note/luoghi/tag) ──
@@ -112,29 +142,29 @@ interface SettingsRepository {
      * questo istante, senza dover toccare le transazioni stesse. `null` significa "mai
      * cancellati".
      */
-    fun getSuggestionsEnabled(): Flow<Boolean>
-    suspend fun setSuggestionsEnabled(enabled: Boolean)
-    fun getSuggestionsClearedAt(): Flow<Long?>
-    suspend fun setSuggestionsClearedAt(timestamp: Long)
+    public fun getSuggestionsEnabled(): Flow<Boolean>
+    public suspend fun setSuggestionsEnabled(enabled: Boolean): Unit
+    public fun getSuggestionsClearedAt(): Flow<Long?>
+    public suspend fun setSuggestionsClearedAt(timestamp: Long): Unit
 
     // ── Aspetto widget (Home screen) ──
-    fun getWidgetBackgroundColor(): Flow<Long>
-    suspend fun setWidgetBackgroundColor(color: Long)
-    fun getWidgetOpacity(): Flow<Int>
-    suspend fun setWidgetOpacity(opacity: Int)
+    public fun getWidgetBackgroundColor(): Flow<Long>
+    public suspend fun setWidgetBackgroundColor(color: Long): Unit
+    public fun getWidgetOpacity(): Flow<Int>
+    public suspend fun setWidgetOpacity(opacity: Int): Unit
 
     // ── Card Customization (persisted per backup) ──
     /**
      * Comma-separated storage keys for chart cards order (e.g., "DISTRIBUTION,PERIOD,QUICK_STATS").
      * Empty string means use default order.
      */
-    fun getChartCardsOrder(): Flow<String>
-    suspend fun setChartCardsOrder(order: String)
+    public fun getChartCardsOrder(): Flow<String>
+    public suspend fun setChartCardsOrder(order: String): Unit
 
     /**
      * Comma-separated storage keys for home top cards order (e.g., "BALANCE,INCOME_EXPENSE").
      * Empty string means use default order.
      */
-    fun getHomeTopCardsOrder(): Flow<String>
-    suspend fun setHomeTopCardsOrder(order: String)
+    public fun getHomeTopCardsOrder(): Flow<String>
+    public suspend fun setHomeTopCardsOrder(order: String): Unit
 }

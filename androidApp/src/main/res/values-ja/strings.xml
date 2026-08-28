@@ -12,14 +12,7 @@
     <string name="common_back">戻る</string>
     <string name="common_add">追加</string>
     <string name="common_preview">プレビュー</string>
-
-    <!-- HelpDialog (Dashboard) -->
     <string name="help_dashboard_desc">選択した期間の合計残高、収入、支出を表示します。</string>
-    <string name="app_name">AntCashManager</string>
-
-    <!-- Navigation -->
-
-    <!-- Home Screen -->
     <string name="home_total_balance">合計残高</string>
     <string name="home_income">収入</string>
     <string name="home_expenses">支出</string>
@@ -38,10 +31,6 @@
     <string name="home_recent_transactions_count">最近の取引 · %1$d</string>
     <string name="home_quick_insights_biggest_expense">最大の支出</string>
     <string name="home_scroll_to_top">トップへスクロール</string>
-    <string name="home_balance_summary_cd">%1$s: %2$s, %3$s</string>
-    <string name="home_insight_row_cd">%1$s: %2$s</string>
-
-    <!-- Transactions Screen -->
     <string name="transactions_add">取引を追加</string>
     <string name="transactions_type_income">収入</string>
     <string name="transactions_type_expense">支出</string>
@@ -54,7 +43,7 @@
     <string name="transactions_search">検索</string>
     <string name="transactions_filter">フィルター</string>
     <string name="transactions_search_label">取引を検索</string>
-    <string name="transactions_search_placeholder">名前または金額...</string>
+    <string name="transactions_search_placeholder">名前または金額…</string>
     <string name="transactions_advanced_filters">高度なフィルター</string>
     <string name="transactions_filter_type">取引タイプ</string>
     <string name="transactions_filter_payment">支払い方法</string>
@@ -215,10 +204,6 @@
     <string name="settings_widget_preview_title">プレビュー</string>
     <string name="settings_widget_preview_recent">最近の取引</string>
     <string name="settings_widget_preview_category">収入と支出</string>
-    <string name="date_format_ddmmyyyy">DD/MM/YYYY</string>
-    <string name="date_format_mmddyyyy">MM/DD/YYYY</string>
-    <string name="date_format_yyyymmdd">YYYY-MM-DD</string>
-    <string name="date_format_ddmmmyyyy">DD MMM YYYY</string>
     <string name="dialog_choose_date_format">日付形式を選択</string>
     <string name="settings_accessibility">アクセシビリティ</string>
     <string name="settings_high_contrast">ハイコントラスト</string>
@@ -246,6 +231,10 @@
     <string name="settings_restore_subtitle">バックアップファイルからデータをインポートします</string>
     <string name="settings_last_restore_label">最終復元: %s</string>
     <string name="settings_last_restore_never">復元未実施</string>
+    <string name="auto_backup_notification_channel_name">自動バックアップエラー</string>
+    <string name="auto_backup_notification_channel_description">自動バックアップ失敗に関する通知</string>
+    <string name="auto_backup_notification_failure_title">自動バックアップに失敗しました</string>
+    <string name="auto_backup_notification_failure_message">自動バックアップを完了できませんでした。ストレージの権限を確認してください。</string>
     <string name="settings_support">サポート</string>
     <string name="settings_send_feedback">フィードバックを送信</string>
     <string name="settings_send_feedback_subtitle">アプリの改善にご協力ください</string>
@@ -299,26 +288,30 @@
     <string name="dialog_delete_suggestions_message">履歴から構築された提案が消去されます。取引を追加すると再び構築されます。よろしいですか？</string>
     <string name="dialog_reset">リセット</string>
 
+    <!-- Automatic Backup (Phase 1 & 2) -->
+    <string name="settings_auto_backup">自動バックアップ</string>
+    <string name="settings_auto_backup_subtitle">毎週自動バックアップ</string>
+    <string name="settings_auto_backup_weekly_label">自動バックアップは毎週実行されます</string>
+    <string name="settings_auto_backup_destination_local">ローカル</string>
+    <string name="settings_auto_backup_google_drive_coming_soon">近日公開予定</string>
+    <string name="settings_auto_backup_google_drive_sign_in_title">Google Driveバックアップを有効にする</string>
+    <string name="settings_auto_backup_google_drive_sign_in_message">Googleアカウントにサインインして、Google Driveへの自動バックアップを有効にしてください。データは暗号化され安全に保存されます。</string>
+    <string name="settings_auto_backup_google_drive_sign_in">Googleでサインイン</string>
+    <string name="settings_auto_backup_google_drive_signing_in">Googleにサインイン中…</string>
+    <string name="settings_auto_backup_google_drive_sign_out">Googleからサインアウト</string>
+    <string name="settings_auto_backup_path_button">バックアップパス</string>
+    <string name="settings_auto_backup_path_not_selected">フォルダが選択されていません</string>
+    <string name="settings_auto_backup_path_subtitle">自動バックアップを保存する場所を選択</string>
+    <string name="settings_auto_backup_path_selected">選択されたパス: %s</string>
+    <string name="settings_auto_backup_google_drive_configured">Google Driveに設定されたバックアップ</string>
+
+
     <!-- Privacy Policy -->
     <string name="privacy_policy_title">プライバシーポリシー</string>
     <string name="privacy_policy_content">AntCashManagerはお客様のプライバシーを保護することをお約束します。このアプリは個人データを収集したり第三者と共有したりすることはありません。すべての財務データはデバイス内にローカルに保存され、外部サーバーに送信されることはありません。\n\nデータは完全にあなたのデバイス内にあり、あなたの管理下にあります。分析、追跡、広告サービスは使用していません。\n\nプライバシーに関するご質問は、アプリストアの連絡先までお問い合わせください。</string>
 
     <!-- Languages -->
     <string name="language_system">システム設定</string>
-    <string name="language_english">English (英語)</string>
-    <string name="language_italian">Italiano (イタリア語)</string>
-    <string name="language_french">Français (フランス語)</string>
-    <string name="language_german">Deutsch (ドイツ語)</string>
-    <string name="language_spanish">Español (スペイン語)</string>
-    <string name="language_chinese_simplified">中国語 (簡体字)</string>
-    <string name="language_chinese_traditional">中国語 (繁体字)</string>
-    <string name="language_japanese">日本語</string>
-    <string name="language_polish">ポーランド語</string>
-    <string name="language_hindi">हिन्दी (ヒンディー語)</string>
-    <string name="language_russian">Русский (ロシア語)</string>
-    <string name="language_ukrainian">Українська (ウクライナ語)</string>
-    <string name="language_korean">한국어 (韓国語)</string>
-    <string name="debug_import_started">デバッグ用インポート開始</string>
     <string name="back">戻る</string>
 
     <!-- Add Transaction Screen -->
@@ -428,16 +421,6 @@
     <string name="settings_transaction_display_none">アイコンなし</string>
     <string name="settings_transaction_display_none_desc">追加のアイコンを表示しません</string>
     <string name="dialog_choose_transaction_display">アイコンの種類を選択</string>
-
-    <!-- Feedback Email Bodies -->
-    <string name="feedback_email_body_english">AntCashManager チームの皆様、\n\nアプリについてフィードバックを共有したいと思います：\n\n[ここにフィードバックを記入してください]\n\nありがとうございます！</string>
-    <string name="feedback_email_body_italian">AntCashManager チームの皆様、\n\nアプリについてフィードバックを共有したいと思います：\n\n[ここにフィードバックを記入してください]\n\nありがとうございます！</string>
-    <string name="feedback_email_body_french">AntCashManager チームの皆様、\n\nアプリについてフィードバックを共有したいと思います：\n\n[ここにフィードバックを記入してください]\n\nありがとうございます！</string>
-    <string name="feedback_email_body_german">AntCashManager チームの皆様、\n\nアプリについてフィードバックを共有したいと思います：\n\n[ここにフィードバックを記入してください]\n\nありがとうございます！</string>
-    <string name="feedback_email_body_spanish">AntCashManager チームの皆様、\n\nアプリについてフィードバックを共有したいと思います：\n\n[ここにフィードバックを記入してください]\n\nありがとうございます！</string>
-    <string name="feedback_email_body_chinese_simplified">AntCashManager チームの皆様、\n\nアプリについてフィードバックを共有したいと思います：\n\n[ここにフィードバックを記入してください]\n\nありがとうございます！</string>
-    <string name="feedback_email_body_chinese_traditional">AntCashManager チームの皆様、\n\nアプリについてフィードバックを共有したいと思います：\n\n[ここにフィードバックを記入してください]\n\nありがとうございます！</string>
-    <string name="feedback_email_body_japanese">AntCashManager チームの皆様、\n\nアプリについてフィードバックを共有したいと思います：\n\n[ここにフィードバックを記入してください]\n\nありがとうございます！</string>
 
     <!-- Feedback Error Messages -->
     <string name="no_email_app_installed">メールアプリが見つかりません</string>
@@ -628,4 +611,11 @@
 
     <!-- App Description -->
     <string name="app_description">このアプリは、家族の支出を無料で追跡し、価格上昇を比較する必要から生まれました。</string>
+
+    <!-- Payment Type Settings -->
+    <string name="settings_payment_type_section">支払い方法</string>
+    <string name="settings_default_payment_type">デフォルト支払い方法</string>
+    <string name="settings_default_payment_type_desc">新しいトランザクションのデフォルト支払い方法を選択してください</string>
+    <string name="dialog_payment_type_title">支払い方法を選択</string>
+
 </resources>

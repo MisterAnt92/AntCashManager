@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 /**
  * UseCase per l'inserimento di una categoria.
  */
-class InsertCategoryUseCase(
+public class InsertCategoryUseCase(
     private val categoryRepository: CategoryRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : UseCase<Category, Long>(dispatcher) {

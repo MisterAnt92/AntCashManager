@@ -1,6 +1,7 @@
 package com.antcashmanager.android.ui.home
 
 import com.antcashmanager.android.BaseUnitTest
+import com.antcashmanager.android.analytics.SegmentationTracker
 import com.antcashmanager.android.ui.screen.home.HomeViewModel
 import com.antcashmanager.android.ui.screen.home.event.HomeEvent
 import com.antcashmanager.domain.model.SavedDateFilter
@@ -35,6 +36,7 @@ class HomeViewModelMockkTest : BaseUnitTest() {
     private lateinit var getHomeDateFilterStateUseCase: GetHomeDateFilterStateUseCase
     private lateinit var setHomeDateFilterStateUseCase: SetHomeDateFilterStateUseCase
     private lateinit var getCategoriesUseCase: GetCategoriesUseCase
+    private lateinit var segmentationTracker: SegmentationTracker
 
     @Before
     fun setup() {
@@ -44,6 +46,7 @@ class HomeViewModelMockkTest : BaseUnitTest() {
         getHomeDateFilterStateUseCase = mockk()
         setHomeDateFilterStateUseCase = mockk()
         getCategoriesUseCase = mockk()
+        segmentationTracker = mockk(relaxed = true)
 
         every { getTransactionsUseCase() } returns flowOf(Result.success(emptyList()))
         coEvery { filterTransactionsUseCase(any()) } answers {
@@ -273,5 +276,6 @@ class HomeViewModelMockkTest : BaseUnitTest() {
         setHomeDateFilterStateUseCase = setHomeDateFilterStateUseCase,
         getCategoriesUseCase = getCategoriesUseCase,
         searchDebounceMs = 0L,
+        segmentationTracker = segmentationTracker,
     )
 }

@@ -4,7 +4,7 @@ package com.antcashmanager.domain.model
  * Supported languages for the app.
  * @param code The ISO 639-1 language code. Empty string means "follow system".
  */
-enum class AppLanguage(val code: String) {
+public enum class AppLanguage(public val code: String) {
     SYSTEM(""),
     ENGLISH("en"),
     ITALIAN("it"),

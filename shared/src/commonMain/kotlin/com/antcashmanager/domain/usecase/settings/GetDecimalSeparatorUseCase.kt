@@ -4,7 +4,7 @@ import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.usecase.base.NoParamsObservableUseCase
 import kotlinx.coroutines.flow.Flow
 
-class GetDecimalSeparatorUseCase(
+public class GetDecimalSeparatorUseCase(
     private val settingsRepository: SettingsRepository,
 ) : NoParamsObservableUseCase<String>() {
 

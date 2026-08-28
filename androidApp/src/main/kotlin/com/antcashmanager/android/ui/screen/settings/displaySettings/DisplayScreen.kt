@@ -119,6 +119,7 @@ fun DisplayScreen(
     val maskAmounts by viewModel.maskAmounts.collectAsState()
     val showPaymentTypeBreakdown by viewModel.showPaymentTypeBreakdown.collectAsState()
     val showQuickInsightsCard by viewModel.showQuickInsightsCard.collectAsState()
+    val defaultPaymentType by viewModel.defaultPaymentType.collectAsState()
     val transactionDisplayType by viewModel.transactionDisplayType.collectAsState()
     val transactionsTransactionDisplayType by viewModel.transactionsTransactionDisplayType.collectAsState()
     val chartsZoomEnabled by viewModel.chartsZoomEnabled.collectAsState()
@@ -150,6 +151,8 @@ fun DisplayScreen(
         onShowPaymentTypeBreakdownChanged = { viewModel.setShowPaymentTypeBreakdown(it) },
         showQuickInsightsCard = showQuickInsightsCard,
         onShowQuickInsightsCardChanged = { viewModel.setShowQuickInsightsCard(it) },
+        defaultPaymentType = defaultPaymentType,
+        onDefaultPaymentTypeSelected = { viewModel.setDefaultPaymentType(it) },
         transactionDisplayType = transactionDisplayType,
         onTransactionDisplayTypeSelected = { viewModel.setTransactionDisplayType(it) },
         transactionsTransactionDisplayType = transactionsTransactionDisplayType,
@@ -203,6 +206,8 @@ internal fun DisplayContent(
     onShowPaymentTypeBreakdownChanged: (Boolean) -> Unit,
     showQuickInsightsCard: Boolean,
     onShowQuickInsightsCardChanged: (Boolean) -> Unit,
+    defaultPaymentType: String,
+    onDefaultPaymentTypeSelected: (String) -> Unit,
     transactionDisplayType: TransactionDisplayType,
     onTransactionDisplayTypeSelected: (TransactionDisplayType) -> Unit,
     transactionsTransactionDisplayType: TransactionDisplayType,
@@ -219,6 +224,7 @@ internal fun DisplayContent(
     var showDecimalSeparatorDialog by remember { mutableStateOf(false) }
     var showThousandsSeparatorDialog by remember { mutableStateOf(false) }
     var showMealVoucherDialog by remember { mutableStateOf(false) }
+    var showPaymentTypeDialog by remember { mutableStateOf(false) }
     var showDateFormatDialog by remember { mutableStateOf(false) }
     var showResetPreferencesDialog by remember { mutableStateOf(false) }
     var showTransactionDisplayDialog by remember { mutableStateOf(false) }
@@ -295,12 +301,23 @@ internal fun DisplayContent(
                         decimalDigits = decimalDigits,
                         decimalSeparator = decimalSeparator,
                         thousandsSeparator = thousandsSeparator,
-                        mealVoucherValue = mealVoucherValue,
                         onShowCurrencyDialog = { showCurrencyDialog = true },
                         onShowDecimalDigitsDialog = { showDecimalDigitsDialog = true },
                         onShowDecimalSeparatorDialog = { showDecimalSeparatorDialog = true },
                         onShowThousandsSeparatorDialog = { showThousandsSeparatorDialog = true },
+                    )
+                }
+
+                item {
+                    PaymentTypeSection(
+                        currencySymbol = currencySymbol,
+                        decimalDigits = decimalDigits,
+                        decimalSeparator = decimalSeparator,
+                        thousandsSeparator = thousandsSeparator,
+                        mealVoucherValue = mealVoucherValue,
                         onShowMealVoucherDialog = { showMealVoucherDialog = true },
+                        defaultPaymentType = defaultPaymentType,
+                        onShowPaymentTypeDialog = { showPaymentTypeDialog = true },
                     )
                 }
 
@@ -385,12 +402,20 @@ internal fun DisplayContent(
                         decimalDigits = decimalDigits,
                         decimalSeparator = decimalSeparator,
                         thousandsSeparator = thousandsSeparator,
-                        mealVoucherValue = mealVoucherValue,
                         onShowCurrencyDialog = { showCurrencyDialog = true },
                         onShowDecimalDigitsDialog = { showDecimalDigitsDialog = true },
                         onShowDecimalSeparatorDialog = { showDecimalSeparatorDialog = true },
                         onShowThousandsSeparatorDialog = { showThousandsSeparatorDialog = true },
+                    )
+                    PaymentTypeSection(
+                        currencySymbol = currencySymbol,
+                        decimalDigits = decimalDigits,
+                        decimalSeparator = decimalSeparator,
+                        thousandsSeparator = thousandsSeparator,
+                        mealVoucherValue = mealVoucherValue,
                         onShowMealVoucherDialog = { showMealVoucherDialog = true },
+                        defaultPaymentType = defaultPaymentType,
+                        onShowPaymentTypeDialog = { showPaymentTypeDialog = true },
                     )
                     DateSection(
                         dateFormat = dateFormat,
@@ -474,6 +499,13 @@ internal fun DisplayContent(
         showMealVoucherDialog = false
     }
     val dismissMealVoucher: () -> Unit = { showMealVoucherDialog = false }
+
+    val handlePaymentTypeSelected: (String) -> Unit = { paymentType ->
+        analyticsManager.logEvent("default_payment_type_changed")
+        onDefaultPaymentTypeSelected(paymentType)
+        showPaymentTypeDialog = false
+    }
+    val dismissPaymentType: () -> Unit = { showPaymentTypeDialog = false }
 
     val handleDateFormatSelected: (String) -> Unit = { fmt ->
         analyticsManager.logEvent("date_format_changed")
@@ -576,6 +608,87 @@ internal fun DisplayContent(
         )
     }
 
+    if (showPaymentTypeDialog) {
+        val paymentTypeOptions = listOf(
+            Triple("ELECTRONIC", stringResource(R.string.payment_type_electronic), Icons.Default.Payment),
+            Triple("CASH", stringResource(R.string.payment_type_cash), Icons.Default.MonetizationOn),
+            Triple("MEAL_VOUCHERS", stringResource(R.string.payment_type_meal_vouchers), Icons.Default.Restaurant),
+        )
+
+        AlertDialog(
+            onDismissRequest = dismissPaymentType,
+            title = { AppText(stringResource(R.string.dialog_payment_type_title)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    paymentTypeOptions.forEach { (typeKey, typeLabel, typeIcon) ->
+                        Surface(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
+                                .border(
+                                    width = 2.dp,
+                                    color = if (defaultPaymentType == typeKey)
+                                        MaterialTheme.colorScheme.primary
+                                    else
+                                        MaterialTheme.colorScheme.outline,
+                                    shape = RoundedCornerShape(8.dp)
+                                ),
+                            color = if (defaultPaymentType == typeKey)
+                                MaterialTheme.colorScheme.primaryContainer
+                            else
+                                MaterialTheme.colorScheme.surface,
+                            onClick = { handlePaymentTypeSelected(typeKey) },
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(12.dp),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Icon(
+                                    imageVector = typeIcon,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(24.dp),
+                                    tint = if (defaultPaymentType == typeKey)
+                                        MaterialTheme.colorScheme.onPrimaryContainer
+                                    else
+                                        MaterialTheme.colorScheme.onSurface,
+                                )
+
+                                AppText(
+                                    text = typeLabel,
+                                    modifier = Modifier.weight(1f),
+                                    color = if (defaultPaymentType == typeKey)
+                                        MaterialTheme.colorScheme.onPrimaryContainer
+                                    else
+                                        MaterialTheme.colorScheme.onSurface,
+                                    fontWeight = if (defaultPaymentType == typeKey)
+                                        FontWeight.Bold
+                                    else
+                                        FontWeight.Normal,
+                                )
+
+                                if (defaultPaymentType == typeKey) {
+                                    AppText(
+                                        text = "✓",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = dismissPaymentType) {
+                    AppText(stringResource(R.string.common_close))
+                }
+            },
+        )
+    }
+
     if (showDateFormatDialog) {
         DateFormatDialog(
             currentFormat = dateFormat,
@@ -631,12 +744,10 @@ private fun CurrencySection(
     decimalDigits: Int,
     decimalSeparator: String,
     thousandsSeparator: String,
-    mealVoucherValue: Double,
     onShowCurrencyDialog: () -> Unit,
     onShowDecimalDigitsDialog: () -> Unit,
     onShowDecimalSeparatorDialog: () -> Unit,
     onShowThousandsSeparatorDialog: () -> Unit,
-    onShowMealVoucherDialog: () -> Unit,
 ) {
     AppCardSectionHeader(title = stringResource(R.string.settings_section_currency))
     VerticalSpacer(SpacingSize.XS)
@@ -699,8 +810,24 @@ private fun CurrencySection(
             color = MaterialTheme.colorScheme.primary,
         )
 
-        VerticalSpacer(SpacingSize.XS)
+    }
+}
 
+@Composable
+private fun PaymentTypeSection(
+    currencySymbol: String,
+    decimalDigits: Int,
+    decimalSeparator: String,
+    thousandsSeparator: String,
+    mealVoucherValue: Double,
+    onShowMealVoucherDialog: () -> Unit,
+    defaultPaymentType: String,
+    onShowPaymentTypeDialog: () -> Unit,
+) {
+    AppCardSectionHeader(title = stringResource(R.string.settings_payment_type_section))
+    VerticalSpacer(SpacingSize.XS)
+
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         AppCard(
             title = stringResource(R.string.settings_meal_voucher_value),
             subtitle = stringResource(
@@ -717,6 +844,26 @@ private fun CurrencySection(
             ),
             leadingIcon = Icons.Default.Payment,
             onClick = onShowMealVoucherDialog,
+        )
+
+        val paymentTypeLabel = when (defaultPaymentType) {
+            "CASH" -> stringResource(R.string.payment_type_cash)
+            "MEAL_VOUCHERS" -> stringResource(R.string.payment_type_meal_vouchers)
+            else -> stringResource(R.string.payment_type_electronic)
+        }
+
+        AppCard(
+            title = stringResource(R.string.settings_default_payment_type),
+            subtitle = stringResource(R.string.settings_default_payment_type_desc),
+            leadingIcon = Icons.Default.Payment,
+            onClick = onShowPaymentTypeDialog,
+            trailingContent = {
+                AppText(
+                    text = paymentTypeLabel,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            },
         )
     }
 }
@@ -1336,6 +1483,8 @@ private fun DisplayContentPreview() {
             onShowPaymentTypeBreakdownChanged = {},
             showQuickInsightsCard = false,
             onShowQuickInsightsCardChanged = {},
+            defaultPaymentType = "ELECTRONIC",
+            onDefaultPaymentTypeSelected = {},
             transactionDisplayType = TransactionDisplayType.TREND,
             onTransactionDisplayTypeSelected = {},
             transactionsTransactionDisplayType = TransactionDisplayType.TREND,

@@ -17,15 +17,15 @@ import kotlin.math.abs
  * - Transaction type (INCOME/EXPENSE)
  * - Payment type (ELECTRONIC/CASH/MEAL_VOUCHERS)
  */
-class FilterTransactionsUseCase(
+public class FilterTransactionsUseCase(
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : UseCase<FilterTransactionsUseCase.Params, List<Transaction>>(dispatcher) {
 
-    companion object {
+    public companion object {
         private const val AMOUNT_COMPARISON_EPSILON = 0.000001
     }
 
-    data class Params(
+    public data class Params(
         val transactions: List<Transaction>,
         val filterParams: TransactionFilterParams,
     )

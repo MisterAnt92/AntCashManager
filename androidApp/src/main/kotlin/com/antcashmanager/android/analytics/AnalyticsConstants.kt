@@ -114,6 +114,51 @@ object AnalyticsConstants {
         "tutorial_step_skipped",
         "tutorial_completed",
         "tutorial_step_help_opened",
+
+        // PHASE 1: Priority Analytics Events (Coverage 45% → 55%)
+        "category_type_distribution",           // CategoriesScreen - income vs expense distribution
+        "meal_voucher_details_updated",         // DisplayViewModel - value changes
+        "recurring_interval_selected",          // AddTransactionViewModel - frequency selection
+        "search_query_initiated",               // HomeScreen - search box usage
+        "filter_combination_applied",           // TransactionsScreen/ChartsScreen - multi-filter tracking
+        "category_crud_operation",              // CategoriesViewModel - create/update/delete/reorder
+        "form_field_first_interaction",         // AddTransactionViewModel - first field touched
+        "app_auto_backup_executed",             // SettingsDataViewModel - auto-backup result
+        "widget_tap_action_triggered",          // WidgetTapActions - widget interactions
+        "transaction_duplicate_suggestion_accepted", // AddTransactionViewModel - suggestion acceptance
+
+        // PHASE 2: Infrastructure Tracking (Coverage 55% → 65%)
+        // Performance Metrics
+        "screen_load_time",                     // NavGraph - screen loading latency
+        "transaction_form_submit_latency",      // AddTransactionViewModel - form submission time
+        "chart_rendering_time",                 // ChartsViewModel - chart rendering performance
+        "receipt_ocr_processing_time",          // ReceiptScanViewModel - OCR processing duration
+        "backup_restore_duration",              // SettingsDataViewModel - backup/restore time
+
+        // Session Tracking
+        "app_launched",                         // Application.onCreate - app startup
+        "session_started",                      // Activity.onResume - session beginning
+        "session_ended",                        // Activity.onPause - session end with duration
+        "app_version_updated",                  // SharedPreferences - version change detection
+        "daily_active_user",                    // First event of day - DAU tracking
+
+        // Error Tracking
+        "database_error",                       // Repository layer - database operation failures
+        "sync_error",                           // Backup/Restore - synchronization errors
+        "payment_method_error",                 // Payment processing - payment type errors
+
+        // PHASE 3: Advanced Analytics (Coverage 65% → 75%+)
+        // User Segmentation & Cohorts
+        "user_cohort_identified",               // First app launch - cohort assignment
+        "spending_pattern_detected",            // Transaction analysis - spending behavior
+        "income_source_tracking",               // Income categorization - user income sources
+        "budget_exceeded_alert",                // Expense detection - over-budget alerts
+        "category_preference_shift",            // Category analysis - preference changes
+        "payment_method_preference",            // Payment distribution - user method preference
+        "transaction_search_effectiveness",     // Search conversion - search quality metrics
+        "chart_interaction_depth",              // Chart engagement - interaction frequency
+        "widget_engagement_session",            // Widget usage - active time tracking
+        "settings_customization_score",         // Settings adoption - customization level
     )
 }
 

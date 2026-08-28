@@ -13,7 +13,7 @@ plugins {
 
 // ── Jacoco Configuration ──
 jacoco {
-    toolVersion = "0.8.10"
+    toolVersion = "0.8.13"
 }
 
 android {
@@ -24,8 +24,8 @@ android {
         applicationId = "com.sformica.ant_cashmanager"
         minSdk = 26
         targetSdk = 37
-        versionCode = 22
-        versionName = "1.7.3"
+        versionCode = 23
+        versionName = "1.7.4"
     }
 
     buildTypes {
@@ -59,6 +59,8 @@ android {
             excludes += setOf(
                 "META-INF/LICENSE.md",
                 "META-INF/LICENSE-notice.md",
+                "META-INF/INDEX.LIST",
+                "META-INF/DEPENDENCIES"
             )
         }
     }
@@ -75,7 +77,6 @@ android {
 dependencies {
     implementation(project(":shared"))
     implementation(platform(libs.firebase.bom))
-    implementation(libs.androidx.compose.ui.test.junit4)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
@@ -98,6 +99,16 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
     implementation(libs.koin.compose)
+    // WorkManager + DocumentFile
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.documentfile)
+    // Google Drive Integration
+    implementation(libs.google.play.services.auth)
+    implementation(libs.google.drive.api)
+    implementation(libs.google.http.client)
+    implementation(libs.google.oauth.client)
+    // Security crypto for encrypted token storage
+    implementation(libs.androidx.security.crypto)
     // Foldable device support
     implementation(libs.androidx.window)
     implementation(libs.androidx.window.core)
@@ -110,12 +121,13 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.androidx.compose.ui.test.junit4)
     testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.work.testing)
     androidTestImplementation(libs.androidx.junit.ext)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
 
     // Android Test Orchestrator for better test isolation and parallelism
-    androidTestUtil("androidx.test:orchestrator:1.4.2")
+    androidTestUtil(libs.androidx.test.orchestrator)
 }
 
 // ── Jacoco Coverage Report Tasks ──

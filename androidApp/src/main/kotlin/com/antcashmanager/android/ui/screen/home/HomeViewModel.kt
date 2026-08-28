@@ -1,6 +1,7 @@
 package com.antcashmanager.android.ui.screen.home
 
 import androidx.lifecycle.viewModelScope
+import com.antcashmanager.android.analytics.SegmentationTracker
 import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.android.ui.screen.home.event.HomeEvent
 import com.antcashmanager.android.util.calculateBalance
@@ -51,6 +52,7 @@ class HomeViewModel(
     private val getCategoriesUseCase: GetCategoriesUseCase,
     searchDebounceMs: Long = 300L,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
+    private val segmentationTracker: SegmentationTracker,
 ) : BaseViewModel<HomeEvent>(dispatcher) {
 
     constructor(
@@ -59,6 +61,7 @@ class HomeViewModel(
         categoryRepository: CategoryRepository,
         dispatcher: CoroutineDispatcher = Dispatchers.Default,
         searchDebounceMs: Long = 300L,
+        segmentationTracker: SegmentationTracker,
     ) : this(
         getTransactionsUseCase = GetTransactionsUseCase(
             transactionRepository = transactionRepository,
@@ -86,6 +89,7 @@ class HomeViewModel(
         ),
         searchDebounceMs = searchDebounceMs,
         dispatcher = dispatcher,
+        segmentationTracker = segmentationTracker,
     )
 
     // ── Categories cache for enriching transactions ──
@@ -192,6 +196,10 @@ class HomeViewModel(
             }
         }
 
+    // ── State tracking for budget and preference detection ──
+    private var previousExpenseTotal = 0.0
+    private var previousTopCategory: String? = null
+
     // ── Combined UI State ──
     val state: StateFlow<HomeState> = combine(
         transactionsFlow,
@@ -231,6 +239,36 @@ class HomeViewModel(
             .groupBy { it.paymentType }
             .mapValues { (_, txs) -> txs.sumOf { it.amount } }
             .filterValues { it != 0.0 }
+
+        // Track budget exceeded: when expense increases significantly
+        val expenseAbsoluteValue = kotlin.math.abs(totalExpense)
+        if (expenseAbsoluteValue > previousExpenseTotal && previousExpenseTotal > 0) {
+            val increasePercent = ((expenseAbsoluteValue - previousExpenseTotal) / previousExpenseTotal * 100).toInt()
+            if (increasePercent > 20) {
+                segmentationTracker.trackBudgetExceededAlert(
+                    category = "All_Categories",
+                    budget = previousExpenseTotal,
+                    spent = expenseAbsoluteValue
+                )
+            }
+        }
+        previousExpenseTotal = expenseAbsoluteValue
+
+        // Track category preference shift: detect top category changes
+        val categoryExpenses = enrichedFiltered
+            .filter { it.amount < 0 } // Only expenses
+            .groupBy { it.category }
+            .mapValues { (_, txs) -> kotlin.math.abs(txs.sumOf { it.amount }) }
+
+        val currentTopCategory = categoryExpenses.maxByOrNull { it.value }?.key
+        if (previousTopCategory != null && previousTopCategory != currentTopCategory && currentTopCategory != null) {
+            segmentationTracker.trackCategoryPreferenceShift(
+                oldCategory = previousTopCategory ?: "Unknown",
+                newCategory = currentTopCategory,
+                daysDiff = 1
+            )
+        }
+        previousTopCategory = currentTopCategory
 
         HomeState(
             transactions = transactions,

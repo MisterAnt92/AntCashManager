@@ -3,14 +3,14 @@ package com.antcashmanager.domain.repository
 import com.antcashmanager.domain.model.Category
 import kotlinx.coroutines.flow.Flow
 
-interface CategoryRepository {
-    fun getAllCategories(): Flow<List<Category>>
-    suspend fun getCategoryById(id: Long): Category?
-    suspend fun getCategoryByName(name: String): Category?
-    suspend fun insertCategory(category: Category): Long
-    suspend fun updateCategory(category: Category)
-    suspend fun deleteCategory(category: Category)
-    suspend fun deleteAllCategories()
-    fun getCategoriesByType(type: String): Flow<List<Category>>
-    suspend fun getDefaultCategoryCount(): Int
+public interface CategoryRepository {
+    public fun getAllCategories(): Flow<List<Category>>
+    public suspend fun getCategoryById(id: Long): Category?
+    public suspend fun getCategoryByName(name: String): Category?
+    public suspend fun insertCategory(category: Category): Long
+    public suspend fun updateCategory(category: Category): Unit
+    public suspend fun deleteCategory(category: Category): Unit
+    public suspend fun deleteAllCategories(): Unit
+    public fun getCategoriesByType(type: String): Flow<List<Category>>
+    public suspend fun getDefaultCategoryCount(): Int
 }

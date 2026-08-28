@@ -20,15 +20,15 @@ import kotlinx.coroutines.Dispatchers
  * @property paymentType Tipo di pagamento. Se null, usa il valore rilevato in [receiptData].
  * @property timestamp Data/ora della transazione.
  */
-data class CreateTransactionFromReceiptParams(
-    val receiptData: ReceiptData,
-    val title: String,
-    val categoryName: String,
-    val categoryIcon: String = "",
-    val categoryColor: Long = 0xFF90A4AE,
-    val notes: String = "",
-    val paymentType: PaymentType? = null,
-    val timestamp: Long = System.currentTimeMillis(),
+public data class CreateTransactionFromReceiptParams(
+    public val receiptData: ReceiptData,
+    public val title: String,
+    public val categoryName: String,
+    public val categoryIcon: String = "",
+    public val categoryColor: Long = 0xFF90A4AE,
+    public val notes: String = "",
+    public val paymentType: PaymentType? = null,
+    public val timestamp: Long = System.currentTimeMillis(),
 )
 
 /**
@@ -42,12 +42,12 @@ data class CreateTransactionFromReceiptParams(
  * @param transactionRepository Repository per il salvataggio della transazione.
  * @param dispatcher Dispatcher per l'esecuzione asincrona.
  */
-class CreateTransactionFromReceiptUseCase(
+public class CreateTransactionFromReceiptUseCase(
     private val transactionRepository: TransactionRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : UseCase<CreateTransactionFromReceiptParams, Long>(dispatcher) {
 
-    companion object {
+    internal companion object {
         private const val DEFAULT_RECEIPT_TITLE = "Scontrino"
         private const val VAT_LABEL = "IVA"
     }

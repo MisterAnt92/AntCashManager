@@ -8,7 +8,7 @@ import com.antcashmanager.domain.repository.CategoryRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class CategoryRepositoryImpl(
+public class CategoryRepositoryImpl(
     private val categoryDao: CategoryDao,
 ) : CategoryRepository {
     override fun getAllCategories(): Flow<List<Category>> =
@@ -25,7 +25,7 @@ class CategoryRepositoryImpl(
     override suspend fun insertCategory(category: Category): Long =
         categoryDao.insertCategory(category.toEntity())
 
-    override suspend fun updateCategory(category: Category) =
+    override suspend fun updateCategory(category: Category): Unit =
         categoryDao.updateCategory(category.toEntity())
 
     override suspend fun deleteCategory(category: Category) {
@@ -33,7 +33,7 @@ class CategoryRepositoryImpl(
         categoryDao.deleteCategory(category.toEntity())
     }
 
-    override suspend fun deleteAllCategories() =
+    override suspend fun deleteAllCategories(): Unit =
         categoryDao.deleteAllNonDefaultCategories()
 
     override fun getCategoriesByType(type: String): Flow<List<Category>> =

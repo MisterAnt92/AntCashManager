@@ -3,6 +3,8 @@ package com.antcashmanager.android.ui.screen.charts
 import androidx.annotation.StringRes
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.R
+import com.antcashmanager.android.analytics.PerformanceTracker
+import com.antcashmanager.android.analytics.SegmentationTracker
 import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.android.ui.screen.charts.view.ChartDetailsData
 import com.antcashmanager.android.ui.screen.charts.view.TrendDirection
@@ -37,6 +39,8 @@ class ChartsViewModel(
     private val getTransactionsByDateRangeUseCase: GetTransactionsByDateRangeUseCase,
     private val getChartsDateFilterStateUseCase: GetChartsDateFilterStateUseCase,
     private val setChartsDateFilterStateUseCase: SetChartsDateFilterStateUseCase,
+    private val performanceTracker: PerformanceTracker,
+    private val segmentationTracker: SegmentationTracker,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : BaseViewModel<None>(dispatcher) {
 
@@ -44,6 +48,8 @@ class ChartsViewModel(
         transactionRepository: TransactionRepository,
         settingsRepository: SettingsRepository,
         dispatcher: CoroutineDispatcher = Dispatchers.Default,
+        performanceTracker: PerformanceTracker,
+        segmentationTracker: SegmentationTracker,
     ) : this(
         getTransactionsByDateRangeUseCase = GetTransactionsByDateRangeUseCase(
             transactionRepository = transactionRepository,
@@ -54,6 +60,8 @@ class ChartsViewModel(
             settingsRepository = settingsRepository,
             dispatcher = dispatcher,
         ),
+        performanceTracker = performanceTracker,
+        segmentationTracker = segmentationTracker,
         dispatcher = dispatcher,
     )
 
@@ -177,6 +185,7 @@ class ChartsViewModel(
     }
 
     private fun buildChartData(transactions: List<Transaction>): ChartData {
+        val startTime = System.currentTimeMillis()
         logDebug("Building chart data from ${transactions.size} transactions")
 
         val incomeTransactions = transactions.filter { it.type == TransactionType.INCOME }
@@ -292,6 +301,27 @@ class ChartsViewModel(
             .map { (dateLabel, expense) ->
                 DailyAmount(dateLabel = dateLabel, expense = expense)
             }
+
+        val duration = System.currentTimeMillis() - startTime
+        performanceTracker.trackChartRenderingTime(duration, transactions.size)
+
+        // Track spending patterns
+        if (expenseByCategory.isNotEmpty()) {
+            val maxExpenseCategory = expenseByCategory.maxByOrNull { it.value }
+            if (maxExpenseCategory != null) {
+                val avgExpense = maxExpenseCategory.value / kotlin.math.max(1, expenseTransactions.count { it.category == maxExpenseCategory.key })
+                segmentationTracker.trackSpendingPatternDetected("category_focus", maxExpenseCategory.key, avgExpense)
+            }
+        }
+
+        // Track income sources
+        if (incomeByCategory.isNotEmpty()) {
+            val maxIncomeCategory = incomeByCategory.maxByOrNull { it.value }
+            if (maxIncomeCategory != null) {
+                val avgIncome = maxIncomeCategory.value / kotlin.math.max(1, incomeTransactions.count { it.category == maxIncomeCategory.key })
+                segmentationTracker.trackIncomeSourceTracking(maxIncomeCategory.key, "monthly", avgIncome)
+            }
+        }
 
         return ChartData(
             incomeByCategory = incomeByCategory,

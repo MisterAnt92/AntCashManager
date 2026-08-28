@@ -14,11 +14,11 @@ import kotlinx.coroutines.flow.Flow
  * @param R Tipo del valore di successo emesso nel [Result] dal flusso restituito da [invoke]
  * @param dispatcher Dispatcher su cui viene prodotto il Flow. Default [Dispatchers.Default].
  */
-abstract class NoParamsObservableUseCase<R>(
+public abstract class NoParamsObservableUseCase<R>(
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : ObservableUseCase<Unit, R>(dispatcher) {
     /**
      * Restituisce il flusso di risultati. Delega a [ObservableUseCase.invoke] con parametro Unit.
      */
-    operator fun invoke(): Flow<Result<R>> = invoke(Unit)
+    public operator fun invoke(): Flow<Result<R>> = invoke(Unit)
 }

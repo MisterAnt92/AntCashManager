@@ -12,12 +12,7 @@
     <string name="common_back">Назад</string>
     <string name="common_add">Додати</string>
     <string name="common_preview">Попередній перегляд</string>
-
-    <!-- HelpDialog (Dashboard) -->
     <string name="help_dashboard_desc">Перегляньте загальний баланс, дохід та видатки за вибраний період.</string>
-    <string name="app_name">AntCashManager</string>
-
-    <!-- Home Screen -->
     <string name="home_total_balance">Загальний баланс</string>
     <string name="home_income">Дохід</string>
     <string name="home_expenses">Видатки</string>
@@ -36,8 +31,6 @@
     <string name="home_recent_transactions_count">Недавні транзакції · %1$d</string>
     <string name="home_quick_insights_biggest_expense">Найбільший видаток</string>
     <string name="home_scroll_to_top">Прокрутити вгору</string>
-    <string name="home_balance_summary_cd">%1$s: %2$s, %3$s</string>
-    <string name="home_insight_row_cd">%1$s: %2$s</string>
 
     <!-- Transactions Screen -->
     <string name="transactions_add">Додати транзакцію</string>
@@ -213,10 +206,6 @@
     <string name="settings_widget_preview_title">Попередній перегляд</string>
     <string name="settings_widget_preview_recent">Недавні транзакції</string>
     <string name="settings_widget_preview_category">Доходи та видатки</string>
-    <string name="date_format_ddmmyyyy">ДД/ММ/РРРР</string>
-    <string name="date_format_mmddyyyy">ММ/ДД/РРРР</string>
-    <string name="date_format_yyyymmdd">РРРР-ММ-ДД</string>
-    <string name="date_format_ddmmmyyyy">ДД МММ РРРР</string>
     <string name="dialog_choose_date_format">Виберіть формат дати</string>
     <string name="settings_accessibility">Спеціальні можливості</string>
     <string name="settings_high_contrast">Високий контраст</string>
@@ -244,6 +233,10 @@
     <string name="settings_restore_subtitle">Імпортуйте дані з файлу резервної копії</string>
     <string name="settings_last_restore_label">Останнє відновлення: %s</string>
     <string name="settings_last_restore_never">Відновлення ще не проводилося</string>
+    <string name="auto_backup_notification_channel_name">Помилки автоматичного резервного копіювання</string>
+    <string name="auto_backup_notification_channel_description">Сповіщення про помилки автоматичного резервного копіювання</string>
+    <string name="auto_backup_notification_failure_title">Автоматичне резервне копіювання не вдалося</string>
+    <string name="auto_backup_notification_failure_message">Не вдалося завершити автоматичне резервне копіювання. Перевірте дозволи сховища.</string>
     <string name="settings_support">Підтримка</string>
     <string name="settings_send_feedback">Надіслати відгук</string>
     <string name="settings_send_feedback_subtitle">Допоможіть нам покращити додаток</string>
@@ -297,26 +290,30 @@
     <string name="dialog_delete_suggestions_message">Пропозиції, створені на основі вашої історії (назви, платники, нотатки, місця, теги), буде видалено. Нові пропозиції знову накопичуватимуться при додаванні транзакцій. Продовжити?</string>
     <string name="dialog_reset">Скинути</string>
 
+    <!-- Automatic Backup (Phase 1 & 2) -->
+    <string name="settings_auto_backup">Автоматичне резервне копіювання</string>
+    <string name="settings_auto_backup_subtitle">Автоматичне резервне копіювання щотижня</string>
+    <string name="settings_auto_backup_weekly_label">Автоматичне резервне копіювання щотижня</string>
+    <string name="settings_auto_backup_destination_local">Локально</string>
+    <string name="settings_auto_backup_google_drive_coming_soon">Найближчим часом</string>
+    <string name="settings_auto_backup_google_drive_sign_in_title">Увімкнути резервне копіювання на Google Drive</string>
+    <string name="settings_auto_backup_google_drive_sign_in_message">Увійдіть за допомогою облікового запису Google, щоб увімкнути автоматичне резервне копіювання на Google Drive. Ваші дані будуть зашифровані та безпечно збережені.</string>
+    <string name="settings_auto_backup_google_drive_sign_in">Увійти через Google</string>
+    <string name="settings_auto_backup_google_drive_signing_in">Вхід до Google…</string>
+    <string name="settings_auto_backup_google_drive_sign_out">Вихід з Google</string>
+    <string name="settings_auto_backup_path_button">Шлях резервної копії</string>
+    <string name="settings_auto_backup_path_not_selected">Папка не вибрана</string>
+    <string name="settings_auto_backup_path_subtitle">Виберіть, де зберігати автоматичні резервні копії</string>
+    <string name="settings_auto_backup_path_selected">Вибрана шлях: %s</string>
+    <string name="settings_auto_backup_google_drive_configured">Резервна копія налаштована для Google Drive</string>
+
+
     <!-- Privacy Policy -->
     <string name="privacy_policy_title">Політика конфіденційності</string>
     <string name="privacy_policy_content">AntCashManager прагне захищати вашу конфіденційність. Цей додаток не збирає та не передає особисті дані третім особам. Усі фінансові дані зберігаються локально на вашому пристрої та ніколи не передаються на зовнішні сервери.\n\nВаші дані залишаються повністю на вашому пристрої та під вашим контролем. Ми не використовуємо аналітику, трекери або рекламні послуги.\n\nЗ будь-яких питань щодо конфіденційності, будь ласка, зв\'яжіться з нами через сторінку додатка в магазині.</string>
 
     <!-- Languages -->
     <string name="language_system">Системна за замовчуванням</string>
-    <string name="language_english">English (Англійська)</string>
-    <string name="language_italian">Italiano (Італійська)</string>
-    <string name="language_french">Français (Французька)</string>
-    <string name="language_german">Deutsch (Німецька)</string>
-    <string name="language_spanish">Español (Іспанська)</string>
-    <string name="language_chinese_simplified">Китайська (Спрощена)</string>
-    <string name="language_chinese_traditional">Китайська (Традиційна)</string>
-    <string name="language_japanese">Японська</string>
-    <string name="language_polish">Польська</string>
-    <string name="language_hindi">Гінді</string>
-    <string name="language_russian">Російська (Russian)</string>
-    <string name="language_ukrainian">Українська (Ukrainian)</string>
-    <string name="language_korean">Корейська (Korean)</string>
-    <string name="debug_import_started">Почато налагоджувальний імпорт</string>
     <string name="back">Назад</string>
 
     <!-- Add Transaction Screen -->
@@ -617,4 +614,11 @@
 
     <!-- App Description -->
     <string name="app_description">Ця програма виникла з необхідності відстежувати сімейні видатки без підписок та можливості переглядати видатки і порівнювати підвищення цін.</string>
+
+    <!-- Payment Type Settings -->
+    <string name="settings_payment_type_section">Способи оплати</string>
+    <string name="settings_default_payment_type">Спосіб оплати за замовчуванням</string>
+    <string name="settings_default_payment_type_desc">Виберіть спосіб оплати за замовчуванням для нових операцій</string>
+    <string name="dialog_payment_type_title">Виберіть спосіб оплати</string>
+
 </resources>

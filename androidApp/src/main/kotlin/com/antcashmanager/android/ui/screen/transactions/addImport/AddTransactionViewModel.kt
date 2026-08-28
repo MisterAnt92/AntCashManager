@@ -3,6 +3,8 @@ package com.antcashmanager.android.ui.screen.transactions.addImport
 import android.os.Bundle
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.analytics.AnalyticsManager
+import com.antcashmanager.android.analytics.ErrorTracker
+import com.antcashmanager.android.analytics.PerformanceTracker
 import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.android.ui.screen.transactions.addImport.event.AddTransactionEvent
 import com.antcashmanager.android.ui.screen.transactions.addImport.manager.SuggestionsManager
@@ -11,6 +13,7 @@ import com.antcashmanager.android.ui.screen.transactions.addImport.manager.Trans
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.TransactionType
+import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.usecase.transaction.DeleteTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.GetTransactionByIdUseCase
 import kotlinx.coroutines.CancellationException
@@ -31,6 +34,9 @@ class AddTransactionViewModel(
     private val deleteTransactionUseCase: DeleteTransactionUseCase,
     private val getTransactionByIdUseCase: GetTransactionByIdUseCase,
     private val analyticsManager: AnalyticsManager,
+    private val settingsRepository: SettingsRepository,
+    private val performanceTracker: PerformanceTracker,
+    private val errorTracker: ErrorTracker,
     private val transactionId: Long? = null,
 ) : BaseViewModel<AddTransactionEvent>() {
 
@@ -38,10 +44,14 @@ class AddTransactionViewModel(
     private val _state = MutableStateFlow(AddTransactionState())
     val state: StateFlow<AddTransactionState> = _state.asStateFlow()
 
+    // Track first form field interaction for analytics
+    private var firstFormFieldTracked = false
+
     init {
         loadCategories()
         loadTransactionSuggestions()
         loadMealVoucherValue()
+        loadDefaultPaymentType()
         if (transactionId != null) {
             loadTransactionForEdit(transactionId)
         }
@@ -57,6 +67,25 @@ class AddTransactionViewModel(
                     if (error is CancellationException) throw error
                     logError("Error loading meal voucher value: ${error.message}", error)
                 }
+        }
+    }
+
+    private fun loadDefaultPaymentType() {
+        viewModelScope.launch {
+            try {
+                settingsRepository.getDefaultPaymentType().collect { defaultPaymentTypeStr ->
+                    val paymentType = try {
+                        PaymentType.valueOf(defaultPaymentTypeStr ?: "ELECTRONIC")
+                    } catch (e: IllegalArgumentException) {
+                        PaymentType.ELECTRONIC
+                    }
+                    _state.update { it.copy(selectedPaymentType = paymentType) }
+                }
+            } catch (error: Exception) {
+                if (error is CancellationException) throw error
+                logError("Error loading default payment type: ${error.message}", error)
+                // Fallback a ELECTRONIC (già il default in AddTransactionState)
+            }
         }
     }
 
@@ -150,7 +179,16 @@ class AddTransactionViewModel(
             is AddTransactionEvent.SelectCategory -> selectCategory(event.category)
             is AddTransactionEvent.SelectType -> selectType(event.type)
             is AddTransactionEvent.SelectPaymentType -> selectPaymentType(event.paymentType)
-            is AddTransactionEvent.UpdateTitle -> _state.update { it.copy(title = event.title) }
+            is AddTransactionEvent.UpdateTitle -> {
+                // Track first form field interaction
+                if (!firstFormFieldTracked && event.title.isNotEmpty()) {
+                    analyticsManager.logEvent("form_field_first_interaction", Bundle().apply {
+                        putString("field", "title")
+                    })
+                    firstFormFieldTracked = true
+                }
+                _state.update { it.copy(title = event.title) }
+            }
             is AddTransactionEvent.UpdateAmount -> {
                 // Permetti input libero durante la digitazione, validazione al salvataggio
                 _state.update { it.copy(amount = event.amount) }
@@ -170,10 +208,16 @@ class AddTransactionViewModel(
 
             is AddTransactionEvent.UpdateTimestamp -> _state.update { it.copy(timestamp = event.timestamp) }
             is AddTransactionEvent.SetRecurring -> _state.update { it.copy(isRecurring = event.isRecurring) }
-            is AddTransactionEvent.UpdateRecurrenceInterval -> _state.update {
-                it.copy(
-                    recurrenceInterval = event.interval
-                )
+            is AddTransactionEvent.UpdateRecurrenceInterval -> {
+                // Track recurring interval selection
+                analyticsManager.logEvent("recurring_interval_selected", Bundle().apply {
+                    putString("interval", event.interval)
+                })
+                _state.update {
+                    it.copy(
+                        recurrenceInterval = event.interval
+                    )
+                }
             }
 
             is AddTransactionEvent.NextStep -> nextStep()
@@ -268,6 +312,10 @@ class AddTransactionViewModel(
 
     private fun selectPaymentType(paymentType: PaymentType) {
         logDebug("Payment type selected: $paymentType")
+        // Track payment type selection
+        analyticsManager.logEvent("payment_type_selected", Bundle().apply {
+            putString("payment_type", paymentType.name)
+        })
         _state.update { currentState ->
             // Se cambi DA MEAL_VOUCHERS a un altro tipo: resetta voucher, differenza e amount
             val resetMealVouchers = currentState.selectedPaymentType == PaymentType.MEAL_VOUCHERS &&
@@ -305,6 +353,7 @@ class AddTransactionViewModel(
 
     private fun submitTransaction() {
         val currentState = _state.value
+        val submitStartTime = System.currentTimeMillis()
 
         // Valida lo stato usando il manager
         val validationError = submitManager.validateTransactionState(currentState)
@@ -321,6 +370,16 @@ class AddTransactionViewModel(
             analyticsManager.logEvent("transaction_form_validation_failed", Bundle().apply {
                 putString("error_type", errorType)
             })
+            // Track validation error with ErrorTracker
+            val fieldName = when (errorType) {
+                "missing_category_or_type" -> "category"
+                "missing_title_or_amount" -> "title"
+                "invalid_amount" -> "amount"
+                "category_not_found" -> "category"
+                "invalid_meal_voucher_count" -> "meal_voucher_count"
+                else -> "unknown"
+            }
+            errorTracker.trackTransactionValidationError(fieldName, errorType)
             return
         }
 
@@ -335,6 +394,8 @@ class AddTransactionViewModel(
                 submitManager.saveTransaction(transaction, currentState.isModifying)
                     .onSuccess {
                         logDebug("Transaction ${if (currentState.isModifying) "updated" else "inserted"} successfully")
+                        val duration = System.currentTimeMillis() - submitStartTime
+                        performanceTracker.trackTransactionFormSubmitLatency(duration, hasReceipt = false)
                         _state.update { it.copy(isTransactionSaved = true, isLoading = false) }
                     }
                     .onFailure { error ->

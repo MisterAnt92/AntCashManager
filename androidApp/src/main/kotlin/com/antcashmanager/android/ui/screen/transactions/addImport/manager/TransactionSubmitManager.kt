@@ -125,6 +125,7 @@ class TransactionSubmitManager(
             recurrenceInterval = state.recurrenceInterval,
             paymentType = state.selectedPaymentType,
             mealVoucherCount = state.mealVoucherCount.toIntOrNull() ?: 0,
+            mealVoucherDifference = state.mealVoucherDifference.toDoubleOrNull() ?: 0.0,
             categoryIcon = selectedCategory.icon,
             categoryColor = selectedCategory.color,
         )

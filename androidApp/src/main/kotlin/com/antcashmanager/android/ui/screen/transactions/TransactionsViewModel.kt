@@ -5,6 +5,7 @@ package com.antcashmanager.android.ui.screen.transactions
 // ══════════════════════════════════════════════════════════════════════════════
 
 import androidx.lifecycle.viewModelScope
+import com.antcashmanager.android.analytics.EngagementTracker
 import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
 import com.antcashmanager.android.util.withCorrectAmounts
@@ -60,6 +61,7 @@ class TransactionsViewModel(
     private val getTransactionsDateFilterStateUseCase: GetTransactionsDateFilterStateUseCase,
     private val setTransactionsDateFilterStateUseCase: SetTransactionsDateFilterStateUseCase,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
+    private val engagementTracker: EngagementTracker,
 ) : BaseViewModel<TransactionsEvent>(dispatcher) {
 
     constructor(
@@ -67,6 +69,7 @@ class TransactionsViewModel(
         categoryRepository: CategoryRepository,
         settingsRepository: SettingsRepository,
         dispatcher: CoroutineDispatcher = Dispatchers.Default,
+        engagementTracker: EngagementTracker,
     ) : this(
         getTransactionsUseCase = GetTransactionsUseCase(
             transactionRepository = transactionRepository,
@@ -105,6 +108,7 @@ class TransactionsViewModel(
             dispatcher = dispatcher,
         ),
         dispatcher = dispatcher,
+        engagementTracker = engagementTracker,
     )
 
 
@@ -388,6 +392,16 @@ class TransactionsViewModel(
                 pendingSearchQuery = query,
                 // Search is applied immediately from the search bar
                 searchQuery = query,
+            )
+        }
+
+        // Track search effectiveness when query is entered
+        if (query.isNotEmpty()) {
+            val resultsCount = state.value.filteredTransactions.size
+            engagementTracker.trackTransactionSearchEffectiveness(
+                queryLength = query.length,
+                resultsCount = resultsCount,
+                resultClicked = false
             )
         }
     }

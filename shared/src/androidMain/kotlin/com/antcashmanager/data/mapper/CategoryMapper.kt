@@ -3,7 +3,7 @@ package com.antcashmanager.data.mapper
 import com.antcashmanager.data.local.entity.CategoryEntity
 import com.antcashmanager.domain.model.Category
 
-fun CategoryEntity.toDomain(): Category = Category(
+public fun CategoryEntity.toDomain(): Category = Category(
     id = id,
     name = name,
     icon = icon,
@@ -14,7 +14,7 @@ fun CategoryEntity.toDomain(): Category = Category(
     isHidden = isHidden,
 )
 
-fun Category.toEntity(): CategoryEntity = CategoryEntity(
+public fun Category.toEntity(): CategoryEntity = CategoryEntity(
     id = id,
     name = name,
     icon = icon,

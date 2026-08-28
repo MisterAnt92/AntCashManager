@@ -196,6 +196,13 @@ fun AntEasterEggAnimation(
                     )
                     VerticalSpacer(SpacingSize.XS)
                     AppText(
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                        text = stringResource(R.string.extra_thanks),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    VerticalSpacer(SpacingSize.XS)
+                    AppText(
                         text = "v$versionName",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant

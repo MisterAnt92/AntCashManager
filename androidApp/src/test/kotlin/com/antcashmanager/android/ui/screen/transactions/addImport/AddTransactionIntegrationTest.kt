@@ -2,6 +2,8 @@ package com.antcashmanager.android.ui.screen.transactions.addImport
 
 import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.analytics.AnalyticsManager
+import com.antcashmanager.android.analytics.ErrorTracker
+import com.antcashmanager.android.analytics.PerformanceTracker
 import com.antcashmanager.android.testutil.FakeCategoryRepository
 import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.testutil.FakeTransactionRepository
@@ -46,6 +48,8 @@ class AddTransactionIntegrationTest : BaseUnitTest() {
     private lateinit var settingsRepository: FakeSettingsRepository
     private lateinit var transactionRepository: FakeTransactionRepository
     private lateinit var analyticsManager: AnalyticsManager
+    private lateinit var performanceTracker: PerformanceTracker
+    private lateinit var errorTracker: ErrorTracker
     private lateinit var viewModel: AddTransactionViewModel
 
     private val mockCategories = listOf(
@@ -62,6 +66,8 @@ class AddTransactionIntegrationTest : BaseUnitTest() {
 
         // Mock AnalyticsManager with relaxed mode (all methods return Unit by default)
         analyticsManager = mockk(relaxed = true)
+        performanceTracker = mockk(relaxed = true)
+        errorTracker = mockk(relaxed = true)
     }
 
     private fun createViewModel(transactionId: Long? = null): AddTransactionViewModel {
@@ -99,6 +105,9 @@ class AddTransactionIntegrationTest : BaseUnitTest() {
             deleteTransactionUseCase = deleteTransactionUC,
             getTransactionByIdUseCase = getTransactionByIdUC,
             analyticsManager = analyticsManager,
+            settingsRepository = settingsRepository,
+            performanceTracker = performanceTracker,
+            errorTracker = errorTracker,
             transactionId = transactionId,
         )
     }

@@ -4,7 +4,7 @@ import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.usecase.base.NoParamsObservableUseCase
 import kotlinx.coroutines.flow.Flow
 
-class GetCurrencySymbolUseCase(
+public class GetCurrencySymbolUseCase(
     private val settingsRepository: SettingsRepository,
 ) : NoParamsObservableUseCase<String>() {
 

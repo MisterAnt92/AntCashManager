@@ -6,7 +6,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
 
-class DeleteAllTransactionsUseCase(
+public class DeleteAllTransactionsUseCase(
     private val transactionRepository: TransactionRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : NoParamsUseCase<Unit>(dispatcher) {

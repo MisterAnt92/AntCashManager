@@ -2,6 +2,7 @@ package com.antcashmanager.android.ui.screen.charts.view
 
 import android.content.Context
 import android.content.Intent
+import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -25,21 +26,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.Sort
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import com.antcashmanager.android.ui.components.layout.SpacingSize
-import com.antcashmanager.android.ui.components.layout.VerticalSpacer
-import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
-import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
-import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
-import androidx.window.layout.FoldingFeature
-import androidx.activity.compose.BackHandler
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -69,16 +60,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
+import androidx.window.layout.FoldingFeature
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.data.formatter.ShareTextFormatter
-import com.antcashmanager.android.ui.components.dialog.HelpButton
-import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
 import com.antcashmanager.android.navigation.ScreenHeaderConfig
+import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
+import com.antcashmanager.android.ui.components.dialog.HelpButton
+import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.state.AntEmptyState
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.charts.ChartData
@@ -87,14 +81,6 @@ import com.antcashmanager.android.ui.screen.charts.ChartsViewModel
 import com.antcashmanager.android.ui.screen.charts.MonthlyAmount
 import com.antcashmanager.android.ui.screen.charts.RangePreset
 import com.antcashmanager.android.ui.screen.charts.YearlyAmount
-import com.antcashmanager.android.ui.screen.charts.view.ChartsDetailsBottomSheet
-import com.antcashmanager.android.ui.screen.charts.view.ChartDetailsData
-import com.antcashmanager.android.ui.screen.charts.view.DailyExpenseLineChartCard
-import com.antcashmanager.android.ui.screen.charts.view.InteractivePieChart
-import com.antcashmanager.android.ui.screen.charts.view.QuickStatsCard
-import com.antcashmanager.android.ui.screen.charts.view.SpendingForecastCard
-import com.antcashmanager.android.ui.screen.charts.view.TrendDirection
-import com.antcashmanager.android.ui.screen.charts.view.WeekdayExpenseCard
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.ThemeConstants
 import com.antcashmanager.android.util.LocalAmountsMasked
@@ -110,6 +96,9 @@ import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.usecase.transaction.DateRange
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import java.text.SimpleDateFormat
@@ -526,6 +515,11 @@ internal fun ChartsContent(
                 onPresetSelected = { index, preset ->
                     selectedPreset = index
                     analyticsManager.logEvent("chart_date_filter_changed")
+                    // Track filter combination
+                    analyticsManager.logEvent("filter_combination_applied", android.os.Bundle().apply {
+                        putInt("filter_count", 1)
+                        putString("types", "date")
+                    })
                     onPresetSelected(preset)
                 },
                 onShowFromPicker = { showFromPicker = true },
@@ -568,6 +562,11 @@ internal fun ChartsContent(
                 TextButton(onClick = {
                     state.selectedDateMillis?.let {
                         analyticsManager.logEvent("chart_custom_date_range_set")
+                        // Track filter combination
+                        analyticsManager.logEvent("filter_combination_applied", android.os.Bundle().apply {
+                            putInt("filter_count", 1)
+                            putString("types", "date")
+                        })
                         onDateRangeChanged(it, dateRange.to)
                     }
                     selectedPreset = -1
@@ -589,6 +588,11 @@ internal fun ChartsContent(
                 TextButton(onClick = {
                     state.selectedDateMillis?.let {
                         analyticsManager.logEvent("chart_custom_date_range_set")
+                        // Track filter combination
+                        analyticsManager.logEvent("filter_combination_applied", android.os.Bundle().apply {
+                            putInt("filter_count", 1)
+                            putString("types", "date")
+                        })
                         onDateRangeChanged(dateRange.from, it)
                     }
                     selectedPreset = -1
@@ -1349,6 +1353,8 @@ private class MockChartsSettingsRepository : SettingsRepository {
     override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {}
     override fun getShowQuickInsightsCard() = kotlinx.coroutines.flow.flowOf(false)
     override suspend fun setShowQuickInsightsCard(show: Boolean) {}
+    override fun getDefaultPaymentType() = kotlinx.coroutines.flow.flowOf("ELECTRONIC")
+    override suspend fun setDefaultPaymentType(paymentType: String) {}
     override fun getShowInitialAnimation() = kotlinx.coroutines.flow.flowOf(false)
     override suspend fun setShowInitialAnimation(show: Boolean) {}
     override fun getTransactionDisplayType() = kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.TransactionDisplayType.TREND)
@@ -1377,6 +1383,27 @@ private class MockChartsSettingsRepository : SettingsRepository {
     override suspend fun setChartCardsOrder(order: String) {}
     override fun getHomeTopCardsOrder() = kotlinx.coroutines.flow.flowOf("")
     override suspend fun setHomeTopCardsOrder(order: String) {}
+
+    // ── Google Drive Backup Configuration ──
+    override fun getAutoBackupEnabled(): Flow<Boolean> = kotlinx.coroutines.flow.flowOf(false)
+    override suspend fun setAutoBackupEnabled(enabled: Boolean) {}
+    override fun getAutoBackupFolderUri(): Flow<String?> = kotlinx.coroutines.flow.flowOf(null)
+    override suspend fun setAutoBackupFolderUri(uri: String?) {}
+    override fun getAutoBackupDestination(): Flow<com.antcashmanager.domain.model.BackupDestination> =
+        kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.BackupDestination.LOCAL)
+
+    override suspend fun setAutoBackupDestination(destination: com.antcashmanager.domain.model.BackupDestination) {}
+    override fun getGoogleDriveFolderId(): Flow<String?> = kotlinx.coroutines.flow.flowOf(null)
+    override suspend fun setGoogleDriveFolderId(folderId: String?) {}
+    override fun getGoogleDriveFolderName(): Flow<String?> = kotlinx.coroutines.flow.flowOf(null)
+    override suspend fun setGoogleDriveFolderName(folderName: String?) {}
+    override fun getGoogleDriveAuthToken(): Flow<String?> = kotlinx.coroutines.flow.flowOf(null)
+    override suspend fun setGoogleDriveAuthToken(token: String?) {}
+    override fun getGoogleDriveRefreshToken(): Flow<String?> = kotlinx.coroutines.flow.flowOf(null)
+    override suspend fun setGoogleDriveRefreshToken(token: String?) {}
+    override fun getGoogleDriveUserEmail(): Flow<String?> = kotlinx.coroutines.flow.flowOf(null)
+    override suspend fun setGoogleDriveUserEmail(email: String?) {}
+
     override suspend fun resetAllPreferences() {}
 }
 

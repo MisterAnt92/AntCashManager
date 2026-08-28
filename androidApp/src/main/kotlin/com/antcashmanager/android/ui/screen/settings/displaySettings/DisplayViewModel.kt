@@ -1,6 +1,9 @@
 package com.antcashmanager.android.ui.screen.settings.displaySettings
 
+import android.os.Bundle
 import androidx.lifecycle.viewModelScope
+import com.antcashmanager.android.analytics.AnalyticsManager
+import com.antcashmanager.android.analytics.EngagementTracker
 import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.domain.model.None
 import com.antcashmanager.domain.model.TransactionDisplayType
@@ -22,7 +25,11 @@ import kotlinx.coroutines.launch
 class DisplayViewModel(
     private val settingsRepository: SettingsRepository,
     private val widgetUpdateNotifier: WidgetUpdateNotifier = NoOpWidgetUpdateNotifier,
+    private val analyticsManager: AnalyticsManager,
+    private val engagementTracker: EngagementTracker,
 ) : BaseViewModel<None>() {
+
+    private var settingsModifiedCount = 0
 
     // Espone il simbolo valuta attuale
     val currencySymbol = settingsRepository.getCurrencySymbol()
@@ -129,6 +136,14 @@ class DisplayViewModel(
             DisplayConstant.DEFAULT_SHOW_QUICK_INSIGHTS_CARD,
         )
 
+    // Espone il tipo di pagamento predefinito
+    val defaultPaymentType = settingsRepository.getDefaultPaymentType()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_PAYMENT_TYPE,
+        )
+
     // Espone il tipo di visualizzazione delle transazioni (Home)
     val transactionDisplayType = settingsRepository.getTransactionDisplayType()
         .stateIn(
@@ -222,12 +237,18 @@ class DisplayViewModel(
     /**
      * Aggiorna il valore del buono pasto.
      */
-    fun setMealVoucherValue(value: Double) = updatePreference(
-        logMsg = "Setting meal voucher value: $value",
-        action = {
-            settingsRepository.setMealVoucherValue(value.coerceAtLeast(0.0))
-        },
-    )
+    fun setMealVoucherValue(value: Double) {
+        // Track meal voucher details update
+        analyticsManager.logEvent("meal_voucher_details_updated", Bundle().apply {
+            putDouble("value", value)
+        })
+        updatePreference(
+            logMsg = "Setting meal voucher value: $value",
+            action = {
+                settingsRepository.setMealVoucherValue(value.coerceAtLeast(0.0))
+            },
+        )
+    }
 
     /**
      * Aggiorna la preferenza per la visualizzazione della sezione grafici.
@@ -283,6 +304,14 @@ class DisplayViewModel(
     fun setShowQuickInsightsCard(show: Boolean) = updatePreference(
         logMsg = "Setting show quick insights card: $show",
         action = { settingsRepository.setShowQuickInsightsCard(show) },
+    )
+
+    /**
+     * Aggiorna il tipo di pagamento predefinito.
+     */
+    fun setDefaultPaymentType(paymentType: String) = updatePreference(
+        logMsg = "Setting default payment type: $paymentType",
+        action = { settingsRepository.setDefaultPaymentType(paymentType) },
     )
 
     /**
@@ -342,7 +371,15 @@ class DisplayViewModel(
      */
     private fun updatePreference(logMsg: String, action: suspend () -> Unit) {
         logDebug(logMsg)
-        viewModelScope.launch { action() }
+        settingsModifiedCount++
+        viewModelScope.launch {
+            action()
+            // Track settings customization score after each preference update
+            engagementTracker.trackSettingsCustomizationScore(
+                settingsModifiedCount = settingsModifiedCount,
+                accessibilityEnabled = maskAmounts.value // Use mask amounts as proxy for accessibility
+            )
+        }
     }
 
     private fun sanitizeCurrencySymbol(symbol: String): String =
