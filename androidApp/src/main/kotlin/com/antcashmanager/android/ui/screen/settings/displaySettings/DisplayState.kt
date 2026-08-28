@@ -6,4 +6,5 @@ data class DisplayState(
     val decimalSeparator: String = ",",
     val thousandsSeparator: String = "",
     val mealVoucherValue: Double = 5.29,
+    val defaultPaymentType: String = "ELECTRONIC",
 )

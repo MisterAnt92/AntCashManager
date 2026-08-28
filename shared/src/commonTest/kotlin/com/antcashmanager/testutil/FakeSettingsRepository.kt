@@ -2,6 +2,7 @@ package com.antcashmanager.testutil
 
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
+import com.antcashmanager.domain.model.BackupDestination
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.SettingsRepository
@@ -58,6 +59,19 @@ open class FakeSettingsRepository : SettingsRepository {
     val widgetOpacity = MutableStateFlow(100)
     val chartCardsOrder = MutableStateFlow("")
     val homeTopCardsOrder = MutableStateFlow("")
+
+    // ── Google Drive Backup Configuration ──
+    val autoBackupEnabled = MutableStateFlow(false)
+    val autoBackupFolderUri = MutableStateFlow<String?>(null)
+    val autoBackupDestination = MutableStateFlow(BackupDestination.LOCAL)
+    val googleDriveFolderId = MutableStateFlow<String?>(null)
+    val googleDriveFolderName = MutableStateFlow<String?>(null)
+    val googleDriveAuthToken = MutableStateFlow<String?>(null)
+    val googleDriveRefreshToken = MutableStateFlow<String?>(null)
+    val googleDriveUserEmail = MutableStateFlow<String?>(null)
+
+    // ── Default Payment Type ──
+    val defaultPaymentType = MutableStateFlow("ELECTRONIC")
 
     override fun getTheme(): Flow<AppTheme> = theme
     override suspend fun setTheme(theme: AppTheme) {
@@ -181,6 +195,11 @@ open class FakeSettingsRepository : SettingsRepository {
         showQuickInsightsCard.value = show
     }
 
+    override fun getDefaultPaymentType(): Flow<String> = defaultPaymentType
+    override suspend fun setDefaultPaymentType(paymentType: String) {
+        defaultPaymentType.value = paymentType
+    }
+
     override fun getTransactionDisplayType(): Flow<TransactionDisplayType> = transactionDisplayType
     override suspend fun setTransactionDisplayType(displayType: TransactionDisplayType) {
         transactionDisplayType.value = displayType
@@ -253,6 +272,47 @@ open class FakeSettingsRepository : SettingsRepository {
         homeTopCardsOrder.value = order
     }
 
+    // ── Google Drive Backup Configuration ──
+    override fun getAutoBackupEnabled(): Flow<Boolean> = autoBackupEnabled
+    override suspend fun setAutoBackupEnabled(enabled: Boolean) {
+        autoBackupEnabled.value = enabled
+    }
+
+    override fun getAutoBackupFolderUri(): Flow<String?> = autoBackupFolderUri
+    override suspend fun setAutoBackupFolderUri(uri: String?) {
+        autoBackupFolderUri.value = uri
+    }
+
+    override fun getAutoBackupDestination(): Flow<BackupDestination> = autoBackupDestination
+    override suspend fun setAutoBackupDestination(destination: BackupDestination) {
+        autoBackupDestination.value = destination
+    }
+
+    override fun getGoogleDriveFolderId(): Flow<String?> = googleDriveFolderId
+    override suspend fun setGoogleDriveFolderId(folderId: String?) {
+        googleDriveFolderId.value = folderId
+    }
+
+    override fun getGoogleDriveFolderName(): Flow<String?> = googleDriveFolderName
+    override suspend fun setGoogleDriveFolderName(folderName: String?) {
+        googleDriveFolderName.value = folderName
+    }
+
+    override fun getGoogleDriveAuthToken(): Flow<String?> = googleDriveAuthToken
+    override suspend fun setGoogleDriveAuthToken(token: String?) {
+        googleDriveAuthToken.value = token
+    }
+
+    override fun getGoogleDriveRefreshToken(): Flow<String?> = googleDriveRefreshToken
+    override suspend fun setGoogleDriveRefreshToken(token: String?) {
+        googleDriveRefreshToken.value = token
+    }
+
+    override fun getGoogleDriveUserEmail(): Flow<String?> = googleDriveUserEmail
+    override suspend fun setGoogleDriveUserEmail(email: String?) {
+        googleDriveUserEmail.value = email
+    }
+
     override suspend fun resetAllPreferences() {
         theme.value = AppTheme.SYSTEM
         language.value = AppLanguage.SYSTEM
@@ -272,6 +332,7 @@ open class FakeSettingsRepository : SettingsRepository {
         chartsZoomEnabled.value = false
         showPaymentTypeBreakdown.value = false
         showQuickInsightsCard.value = true
+        defaultPaymentType.value = "ELECTRONIC"
         transactionDisplayType.value = TransactionDisplayType.TREND
         transactionsTransactionDisplayType.value = TransactionDisplayType.TREND
         showInitialAnimation.value = false

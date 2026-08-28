@@ -10,7 +10,7 @@ plugins {
 
 // ── Jacoco Configuration ──
 jacoco {
-    toolVersion = "0.8.10"
+    toolVersion = "0.8.13"
 }
 
 kotlin {
@@ -25,10 +25,23 @@ kotlin {
             // Kotlin compiler optimizations
             freeCompilerArgs.addAll(
                 "-opt-in=kotlin.RequiresOptIn",
-                "-progressive"
+                "-progressive",
+                "-Xjvm-default=all",              // Inline interface methods
+                "-Xstring-concat=inline"          // Optimize string concatenation
             )
+            // Release-only aggressive optimizations (when building in CI)
+            if (System.getenv("CI") != null) {
+                freeCompilerArgs.addAll(
+                    "-Xno-param-assertions",      // Remove parameter null checks
+                    "-Xno-call-assertions",       // Remove call assertions
+                    "-Xno-receiver-assertions"    // Remove receiver null checks
+                )
+            }
         }
     }
+
+    // Enforce explicit API visibility for better tree-shaking and clearer API design
+    explicitApi()
 
     sourceSets {
         getByName("commonMain") {

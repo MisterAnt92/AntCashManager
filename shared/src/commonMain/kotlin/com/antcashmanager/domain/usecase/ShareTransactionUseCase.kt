@@ -11,9 +11,9 @@ import kotlinx.datetime.toLocalDateTime
  * Use case per la formattazione dei dati di una transazione per la condivisione.
  * Implementa la business logic di preparazione dei dati estendendo [UseCase].
  */
-class ShareTransactionUseCase : UseCase<ShareTransactionUseCase.Params, String>() {
+public class ShareTransactionUseCase : UseCase<ShareTransactionUseCase.Params, String>() {
 
-    data class Params(val transaction: Transaction)
+    public data class Params(val transaction: Transaction)
 
     /**
      * Formatta i dati della transazione in una stringa leggibile per la condivisione.
@@ -90,7 +90,7 @@ class ShareTransactionUseCase : UseCase<ShareTransactionUseCase.Params, String>(
  * Returns false if the note is null, blank, or contains the string "null".
  * Returns true if the note should be displayed.
  */
-fun String?.isValidNote(): Boolean {
+public fun String?.isValidNote(): Boolean {
     // Null or blank strings are not valid
     if (this.isNullOrBlank()) return false
     // Strings containing "null" are not valid

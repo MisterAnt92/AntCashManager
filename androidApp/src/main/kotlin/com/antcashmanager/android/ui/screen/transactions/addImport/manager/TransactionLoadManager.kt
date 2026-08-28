@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.transactions.addImport.manager
 
+import com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayConstant
 import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionState
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
@@ -42,12 +43,12 @@ class TransactionLoadManager(
     /**
      * Carica il valore unitario dei buoni pasto dalle settings.
      *
-     * Se non trovato, ritorna 0.0 come valore di default.
+     * Se non trovato, ritorna il valore di default definito in DisplayConstant.
      *
      * @return Result contenente il valore unitario dei buoni pasto
      */
     suspend fun loadMealVoucherValue(): Result<Double> = runCatching {
-        getMealVoucherValueUseCase().first().getOrDefault(0.0)
+        getMealVoucherValueUseCase().first().getOrDefault(DisplayConstant.DEFAULT_MEAL_VOUCHER_VALUE)
     }
 
     /**
@@ -120,6 +121,7 @@ class TransactionLoadManager(
             recurrenceInterval = transaction.recurrenceInterval,
             selectedPaymentType = transaction.paymentType,
             mealVoucherCount = transaction.mealVoucherCount.toString(),
+            mealVoucherDifference = transaction.mealVoucherDifference.toString(),
             isLoading = false,
             categories = categoriesForPicker,
         )

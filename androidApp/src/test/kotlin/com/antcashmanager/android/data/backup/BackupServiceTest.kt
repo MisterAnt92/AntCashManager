@@ -6,6 +6,7 @@ import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.testutil.FakeTransactionRepository
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
+import com.antcashmanager.domain.model.BackupDestination
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
@@ -13,8 +14,9 @@ import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.service.WidgetUpdateNotifier
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -544,5 +546,62 @@ class BackupServiceTest {
         }
 
         assertTrue(result.isFailure)
+    }
+
+    @Test
+    fun createBackupThenRestoreBackup_shouldPreserveGoogleDriveConfig_whenRoundTripped() = runTest {
+        // Setup: abilita Google Drive backup nel sourceSettings
+        val sourceSettings = FakeSettingsRepository().apply {
+            autoBackupEnabled.value = true
+            autoBackupDestination.value = BackupDestination.GOOGLE_DRIVE
+            autoBackupFolderUri.value = "content://com.android.externalstorage.documents/tree/primary%3AAntCashManager"
+            googleDriveFolderId.value = "folder_id_12345"
+            googleDriveUserEmail.value = "user@gmail.com"
+        }
+
+        val sourceService = buildService(settingsRepository = sourceSettings)
+        val backupJson = sourceService.createBackup().getOrThrow()
+
+        // Restore in targetSettings
+        val targetSettings = FakeSettingsRepository()
+        val targetService = buildService(settingsRepository = targetSettings)
+        targetService.restoreBackup(backupJson).getOrThrow()
+
+        // Assert tutti i 5 campi sono preservati
+        assertTrue(targetSettings.autoBackupEnabled.value)
+        assertEquals(BackupDestination.GOOGLE_DRIVE, targetSettings.autoBackupDestination.value)
+        assertEquals("content://com.android.externalstorage.documents/tree/primary%3AAntCashManager",
+            targetSettings.autoBackupFolderUri.value)
+        assertEquals("folder_id_12345", targetSettings.googleDriveFolderId.value)
+        assertEquals("user@gmail.com", targetSettings.googleDriveUserEmail.value)
+    }
+
+    @Test
+    fun restoreBackup_shouldApplyDefaults_whenBackupIsV3WithoutGoogleDriveFields() = runTest {
+        // Simula un backup v3 senza i campi v4
+        val legacyV3Json = """
+            {
+              "version": 3,
+              "timestamp": 1234567890000,
+              "transactions": [],
+              "categories": [],
+              "settings": {
+                "theme": "DARK",
+                "language": "ITALIAN",
+                "currencySymbol": "€"
+              }
+            }
+        """.trimIndent()
+
+        val targetSettings = FakeSettingsRepository()
+        val service = buildService(settingsRepository = targetSettings)
+        service.restoreBackup(legacyV3Json).getOrThrow()
+
+        // Assert defaults applicati per campi v4
+        assertFalse(targetSettings.autoBackupEnabled.value)
+        assertEquals(BackupDestination.LOCAL, targetSettings.autoBackupDestination.value)
+        assertNull(targetSettings.autoBackupFolderUri.value)
+        assertNull(targetSettings.googleDriveFolderId.value)
+        assertNull(targetSettings.googleDriveUserEmail.value)
     }
 }

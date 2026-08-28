@@ -5,14 +5,14 @@ package com.antcashmanager.domain.service
  * ricaricarsi: sia dopo una modifica alle transazioni, sia dopo un cambio delle impostazioni
  * di aspetto (colore di sfondo, opacità).
  */
-interface WidgetUpdateNotifier {
-    suspend fun notifyTransactionsChanged()
+public interface WidgetUpdateNotifier {
+    public suspend fun notifyTransactionsChanged(): Unit
 }
 
 /**
  * Implementazione di default per le piattaforme/contesti senza widget home screen
  * (es. test), così i chiamanti non devono gestire un notifier nullable.
  */
-object NoOpWidgetUpdateNotifier : WidgetUpdateNotifier {
-    override suspend fun notifyTransactionsChanged() = Unit
+public object NoOpWidgetUpdateNotifier : WidgetUpdateNotifier {
+    override suspend fun notifyTransactionsChanged(): Unit = Unit
 }

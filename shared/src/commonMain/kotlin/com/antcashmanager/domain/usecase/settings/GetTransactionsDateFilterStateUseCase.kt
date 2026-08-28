@@ -7,7 +7,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 
-class GetTransactionsDateFilterStateUseCase(
+public class GetTransactionsDateFilterStateUseCase(
     private val settingsRepository: SettingsRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : NoParamsObservableUseCase<SavedDateFilter>(dispatcher) {

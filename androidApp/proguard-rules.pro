@@ -255,3 +255,20 @@
 # Non avvertire su classi interne di ML Kit
 -dontwarn com.google.mlkit.vision.**
 
+# ══════════════════════════════════════════════════════════════════════════════
+# 17. GOOGLE DRIVE API & HTTP CLIENT LIBRARIES
+# ══════════════════════════════════════════════════════════════════════════════
+
+# google-http-client reflection usage
+-keep class com.google.api.client.json.** { *; }
+-keep class com.google.api.client.util.** { *; }
+-dontwarn com.google.api.client.**
+
+# google-oauth-client
+-keep class com.google.oauth.client.** { *; }
+-dontwarn com.google.oauth.client.**
+
+# google-api-services-drive (stub classes)
+-keep class com.google.api.services.drive.model.** { *; }
+-dontwarn com.google.api.services.drive.**
+

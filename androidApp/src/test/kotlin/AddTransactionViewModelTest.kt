@@ -1,6 +1,9 @@
+package com.antcashmanager.android.ui.screen.transactions.addImport
 
 import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.analytics.AnalyticsManager
+import com.antcashmanager.android.analytics.ErrorTracker
+import com.antcashmanager.android.analytics.PerformanceTracker
 import com.antcashmanager.android.testutil.FakeCategoryRepository
 import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.testutil.FakeTransactionRepository
@@ -49,6 +52,8 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     private lateinit var categoryRepository: FakeCategoryRepository
     private lateinit var settingsRepository: FakeSettingsRepository
     private lateinit var analyticsManager: AnalyticsManager
+    private lateinit var performanceTracker: PerformanceTracker
+    private lateinit var errorTracker: ErrorTracker
     private lateinit var viewModel: AddTransactionViewModel
 
     private val mockCategories = listOf(
@@ -78,6 +83,8 @@ class AddTransactionViewModelTest : BaseUnitTest() {
         categoryRepository = FakeCategoryRepository(mockCategories)
         settingsRepository = FakeSettingsRepository()
         analyticsManager = mockk(relaxed = true)
+        performanceTracker = mockk(relaxed = true)
+        errorTracker = mockk(relaxed = true)
     }
 
     // ── Creazione nuova transazione ──
@@ -1364,6 +1371,9 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             deleteTransactionUseCase = deleteTransactionUC,
             getTransactionByIdUseCase = getTransactionByIdUC,
             analyticsManager = analyticsManager,
+            settingsRepository = settingsRepository,
+            performanceTracker = performanceTracker,
+            errorTracker = errorTracker,
             transactionId = transactionId,
         )
     }

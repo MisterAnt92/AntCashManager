@@ -13,11 +13,11 @@ import kotlinx.coroutines.Dispatchers
  * @param R Tipo del valore di successo racchiuso nel [Result] restituito da [invoke]
  * @param dispatcher Dispatcher su cui viene eseguita la logica. Default [Dispatchers.Default].
  */
-abstract class NoParamsUseCase<R>(
+public abstract class NoParamsUseCase<R>(
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : UseCase<Unit, R>(dispatcher) {
     /**
      * Esegue il UseCase. Delega a [UseCase.invoke] con parametro Unit.
      */
-    suspend operator fun invoke(): Result<R> = invoke(Unit)
+    public suspend operator fun invoke(): Result<R> = invoke(Unit)
 }

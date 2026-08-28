@@ -12,12 +12,7 @@
     <string name="common_back">返回</string>
     <string name="common_add">新增</string>
     <string name="common_preview">預覽</string>
-
-    <!-- HelpDialog (Dashboard) -->
     <string name="help_dashboard_desc">查看選定期間的總餘額、收入和支出。</string>
-    <string name="app_name">AntCashManager</string>
-
-    <!-- Home Screen -->
     <string name="home_total_balance">總餘額</string>
     <string name="home_income">收入</string>
     <string name="home_expenses">支出</string>
@@ -36,10 +31,6 @@
     <string name="home_recent_transactions_count">最近交易 · %1$d</string>
     <string name="home_quick_insights_biggest_expense">最大支出</string>
     <string name="home_scroll_to_top">捲動至頂部</string>
-    <string name="home_balance_summary_cd">%1$s: %2$s, %3$s</string>
-    <string name="home_insight_row_cd">%1$s: %2$s</string>
-
-    <!-- Transactions Screen -->
     <string name="transactions_add">新增交易</string>
     <string name="transactions_type_income">收入</string>
     <string name="transactions_type_expense">支出</string>
@@ -52,7 +43,7 @@
     <string name="transactions_search">搜尋</string>
     <string name="transactions_filter">篩選</string>
     <string name="transactions_search_label">搜尋交易</string>
-    <string name="transactions_search_placeholder">名稱或金額...</string>
+    <string name="transactions_search_placeholder">名稱或金額…</string>
     <string name="transactions_advanced_filters">進階篩選</string>
     <string name="transactions_filter_type">交易類型</string>
     <string name="transactions_filter_payment">支付類型</string>
@@ -213,10 +204,6 @@
     <string name="settings_widget_preview_title">預覽</string>
     <string name="settings_widget_preview_recent">最近交易</string>
     <string name="settings_widget_preview_category">收入與支出</string>
-    <string name="date_format_ddmmyyyy">DD/MM/YYYY</string>
-    <string name="date_format_mmddyyyy">MM/DD/YYYY</string>
-    <string name="date_format_yyyymmdd">YYYY-MM-DD</string>
-    <string name="date_format_ddmmmyyyy">DD MMM YYYY</string>
     <string name="dialog_choose_date_format">選擇日期格式</string>
     <string name="settings_accessibility">輔助功能</string>
     <string name="settings_high_contrast">高對比度</string>
@@ -297,26 +284,29 @@
     <string name="dialog_delete_suggestions_message">從您的交易歷史記錄（標題、收款人、備註、地點、標籤）中構建的建議將被遺忘。新的建議將在您新增交易時再次建立。是否繼續？</string>
     <string name="dialog_reset">重置</string>
 
+    <!-- Automatic Backup (Phase 1 & 2) -->
+    <string name="settings_auto_backup">自動備份</string>
+    <string name="settings_auto_backup_subtitle">每週自動備份</string>
+    <string name="settings_auto_backup_weekly_label">自動備份每週進行一次</string>
+    <string name="settings_auto_backup_destination_local">本機</string>
+    <string name="settings_auto_backup_google_drive_coming_soon">即將推出</string>
+    <string name="settings_auto_backup_google_drive_sign_in_title">啟用Google Drive備份</string>
+    <string name="settings_auto_backup_google_drive_sign_in_message">使用您的Google帳戶登入以啟用Google Drive自動備份。您的資料將被加密並安全儲存。</string>
+    <string name="settings_auto_backup_google_drive_sign_in">使用Google登入</string>
+    <string name="settings_auto_backup_google_drive_signing_in">正在登入Google…</string>
+    <string name="settings_auto_backup_google_drive_sign_out">從Google登出</string>
+    <string name="settings_auto_backup_path_button">備份路徑</string>
+    <string name="settings_auto_backup_path_not_selected">未選擇資料夾</string>
+    <string name="settings_auto_backup_path_subtitle">選擇自動備份的保存位置</string>
+    <string name="settings_auto_backup_google_drive_configured">已為Google Drive配置備份</string>
+
+
     <!-- Privacy Policy -->
     <string name="privacy_policy_title">隱私權政策</string>
     <string name="privacy_policy_content">AntCashManager 致力於保護您的隱私。本應用程式不會向第三方收集或共享個人資料。所有財務資料都存儲在您的設備本地，絕不會傳輸到外部伺服器。\n\n您的資料完全保留在您的設備上，並受您控制。我們不使用分析、追蹤或廣告服務。\n\n如有任何關於隱私的問題，請通過應用商店列表聯繫我們。</string>
 
     <!-- Languages -->
     <string name="language_system">系統預設</string>
-    <string name="language_english">English (英語)</string>
-    <string name="language_italian">Italiano (義大利語)</string>
-    <string name="language_french">Français (法語)</string>
-    <string name="language_german">Deutsch (德語)</string>
-    <string name="language_spanish">Español (西班牙語)</string>
-    <string name="language_chinese_simplified">中文（简体）</string>
-    <string name="language_chinese_traditional">中文（繁體）</string>
-    <string name="language_japanese">日本語</string>
-    <string name="language_polish">Polski</string>
-    <string name="language_hindi">हिन्दी (印地語)</string>
-    <string name="language_russian">Русский (俄語)</string>
-    <string name="language_ukrainian">Українська (烏克蘭語)</string>
-    <string name="language_korean">한국어 (韓語)</string>
-    <string name="debug_import_started">偵錯匯入已開始</string>
     <string name="back">返回</string>
 
     <!-- Add Transaction Screen -->

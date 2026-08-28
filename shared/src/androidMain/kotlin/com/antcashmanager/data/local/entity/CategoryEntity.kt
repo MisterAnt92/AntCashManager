@@ -12,7 +12,7 @@ import androidx.room.PrimaryKey
         Index("name")   // Potential unique constraint
     ]
 )
-data class CategoryEntity(
+public data class CategoryEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val name: String,

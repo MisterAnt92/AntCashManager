@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.settings.dataManagement
 
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
@@ -20,9 +21,12 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DeleteSweep
+import androidx.compose.material.icons.filled.CloudUpload
+import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.RestorePage
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -55,6 +59,7 @@ import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.domain.model.BackupDestination
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import java.nio.charset.StandardCharsets
@@ -95,6 +100,20 @@ fun SettingsDataScreen(
         onShowDeleteSuggestionsDialog = viewModel::showDeleteSuggestionsDialog,
         onDismissDeleteSuggestionsDialog = viewModel::dismissDeleteSuggestionsDialog,
         onDeleteAllSuggestions = viewModel::deleteAllSuggestions,
+        onAutoBackupEnabledChange = viewModel::setAutoBackupEnabled,
+        onAutoBackupFolderSelected = viewModel::onAutoBackupFolderSelected,
+        onSelectBackupPath = {},
+        autoBackupEnabled = state.autoBackupEnabled,
+        autoBackupFolderUri = state.autoBackupFolderUri,
+        autoBackupDestination = state.autoBackupDestination,
+        googleDriveUserEmail = state.googleDriveUserEmail,
+        isGoogleDriveSignedIn = state.isGoogleDriveSignedIn,
+        showGoogleSignInDialog = state.showGoogleSignInDialog,
+        googleDriveSignInLoading = state.googleDriveSignInLoading,
+        onAutoBackupDestinationChange = viewModel::setAutoBackupDestination,
+        onGoogleSignInClick = viewModel::initiateGoogleSignIn,
+        onGoogleSignOutClick = viewModel::signOutFromGoogle,
+        onDismissGoogleSignInDialog = viewModel::dismissGoogleSignInDialog,
         onNavigateBack = { navController.popBackStack() },
     )
 }
@@ -125,6 +144,20 @@ internal fun SettingsDataContent(
     onShowDeleteSuggestionsDialog: () -> Unit = {},
     onDismissDeleteSuggestionsDialog: () -> Unit = {},
     onDeleteAllSuggestions: () -> Unit = {},
+    onAutoBackupEnabledChange: (Boolean) -> Unit = {},
+    onAutoBackupFolderSelected: (String) -> Unit = {},
+    onSelectBackupPath: () -> Unit = {},
+    autoBackupEnabled: Boolean = false,
+    autoBackupFolderUri: String? = null,
+    autoBackupDestination: BackupDestination = BackupDestination.LOCAL,
+    googleDriveUserEmail: String? = null,
+    isGoogleDriveSignedIn: Boolean = false,
+    showGoogleSignInDialog: Boolean = false,
+    googleDriveSignInLoading: Boolean = false,
+    onAutoBackupDestinationChange: (BackupDestination) -> Unit = {},
+    onGoogleSignInClick: () -> Unit = {},
+    onGoogleSignOutClick: () -> Unit = {},
+    onDismissGoogleSignInDialog: () -> Unit = {},
     onNavigateBack: () -> Unit = {},
 ) {
     val context = LocalContext.current
@@ -239,6 +272,65 @@ internal fun SettingsDataContent(
             }
         }
 
+    // Launcher per il permesso POST_NOTIFICATIONS (API 33+) — dichiarare prima del folderPickerLauncher
+    val notificationPermissionLauncher =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !isPreview) {
+            rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.RequestPermission(),
+            ) { isGranted ->
+                // L'esito è ignorato: il backup funziona comunque, le notifiche di fallimento
+                // degenerano gracefully se il permesso non è concesso
+                if (isGranted) {
+                    analyticsManager.logEvent("notification_permission_granted")
+                }
+            }
+        } else {
+            null
+        }
+
+    // Launcher per il picker della cartella di backup automatico (SAF)
+    val folderPickerLauncher =
+        if (isPreview) null else rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.OpenDocumentTree(),
+        ) { uri ->
+            if (uri == null) {
+                // Utente ha annullato: il toggle rimane OFF, niente viene persistito
+                return@rememberLauncherForActivityResult
+            }
+
+            // Utente ha selezionato una cartella: persisti il permesso e il URI
+            try {
+                context.contentResolver.takePersistableUriPermission(
+                    uri,
+                    android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                    android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                )
+            } catch (e: Exception) {
+                // Se takePersistableUriPermission fallisce, continua comunque
+                // (il permesso potrebbe non essere necessario su alcuni device)
+            }
+
+            onAutoBackupFolderSelected(uri.toString())
+            analyticsManager.logEvent("auto_backup_folder_selected")
+
+            // Opzionale: richiedi il permesso POST_NOTIFICATIONS su API 33+ dopo il folder
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                notificationPermissionLauncher?.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+
+    // Logica per gestire il toggle del backup automatico
+    val handleAutoBackupToggle: (Boolean) -> Unit = { enabled ->
+        analyticsManager.logEvent("auto_backup_toggled")
+        if (enabled && autoBackupFolderUri.isNullOrBlank()) {
+            // Se abilita senza URI: apri il folder picker
+            folderPickerLauncher?.launch(null)
+        } else {
+            // Se disabilita o URI già esiste: applica direttamente
+            onAutoBackupEnabledChange(enabled)
+        }
+    }
+
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
@@ -294,6 +386,21 @@ internal fun SettingsDataContent(
                         },
                         onShowResetPreferencesDialog = onShowResetPreferencesDialog,
                         onShowDeleteConfirmDialog = onShowDeleteConfirmDialog,
+                        autoBackupEnabled = state.autoBackupEnabled,
+                        autoBackupFolderUri = state.autoBackupFolderUri,
+                        autoBackupDestination = autoBackupDestination,
+                        googleDriveFolderId = state.googleDriveFolderId,
+                        googleDriveFolderName = state.googleDriveFolderName,
+                        googleDriveUserEmail = googleDriveUserEmail,
+                        isGoogleDriveSignedIn = isGoogleDriveSignedIn,
+                        onAutoBackupEnabledChange = handleAutoBackupToggle,
+                        onAutoBackupDestinationChange = onAutoBackupDestinationChange,
+                        onGoogleSignInClick = onGoogleSignInClick,
+                        onGoogleSignOutClick = onGoogleSignOutClick,
+                        onSelectBackupPathAction = {
+                            onSelectBackupPath()
+                            folderPickerLauncher?.launch(null)
+                        },
                     )
                 }
 
@@ -357,6 +464,21 @@ internal fun SettingsDataContent(
                         },
                         onShowResetPreferencesDialog = onShowResetPreferencesDialog,
                         onShowDeleteConfirmDialog = onShowDeleteConfirmDialog,
+                        autoBackupEnabled = state.autoBackupEnabled,
+                        autoBackupFolderUri = state.autoBackupFolderUri,
+                        autoBackupDestination = autoBackupDestination,
+                        googleDriveFolderId = state.googleDriveFolderId,
+                        googleDriveFolderName = state.googleDriveFolderName,
+                        googleDriveUserEmail = googleDriveUserEmail,
+                        isGoogleDriveSignedIn = isGoogleDriveSignedIn,
+                        onAutoBackupEnabledChange = handleAutoBackupToggle,
+                        onAutoBackupDestinationChange = onAutoBackupDestinationChange,
+                        onGoogleSignInClick = onGoogleSignInClick,
+                        onGoogleSignOutClick = onGoogleSignOutClick,
+                        onSelectBackupPathAction = {
+                            onSelectBackupPath()
+                            folderPickerLauncher?.launch(null)
+                        },
                     )
                 }
                 Column(
@@ -584,6 +706,40 @@ internal fun SettingsDataContent(
             icon = Icons.Default.RestorePage,
         )
     }
+
+    // ── Google Sign-In Dialog ──
+    if (showGoogleSignInDialog) {
+        AlertDialog(
+            onDismissRequest = onDismissGoogleSignInDialog,
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.CloudUpload,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+            },
+            title = { AppText(stringResource(R.string.settings_auto_backup_google_drive_sign_in_title)) },
+            text = { AppText(stringResource(R.string.settings_auto_backup_google_drive_sign_in_message)) },
+            confirmButton = {
+                TextButton(onClick = onGoogleSignInClick) {
+                    AppText(stringResource(R.string.settings_auto_backup_google_drive_sign_in))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismissGoogleSignInDialog) {
+                    AppText(stringResource(R.string.common_cancel))
+                }
+            },
+        )
+    }
+
+    // ── Google Sign-In Loading ──
+    if (googleDriveSignInLoading) {
+        BlockingProgressDialog(
+            message = stringResource(R.string.settings_auto_backup_google_drive_signing_in),
+            icon = Icons.Default.CloudUpload,
+        )
+    }
 }
 
 @Composable
@@ -594,6 +750,18 @@ private fun DataManagementSection(
     onRestoreBackup: () -> Unit,
     onShowResetPreferencesDialog: () -> Unit,
     onShowDeleteConfirmDialog: () -> Unit,
+    autoBackupEnabled: Boolean = false,
+    autoBackupFolderUri: String? = null,
+    autoBackupDestination: BackupDestination = BackupDestination.LOCAL,
+    googleDriveFolderId: String? = null,
+    googleDriveFolderName: String? = null,
+    googleDriveUserEmail: String? = null,
+    isGoogleDriveSignedIn: Boolean = false,
+    onAutoBackupEnabledChange: (Boolean) -> Unit = {},
+    onAutoBackupDestinationChange: (BackupDestination) -> Unit = {},
+    onGoogleSignInClick: () -> Unit = {},
+    onGoogleSignOutClick: () -> Unit = {},
+    onSelectBackupPathAction: () -> Unit = {},
 ) {
     AppCardSectionHeader(title = stringResource(R.string.settings_data_management))
     VerticalSpacer(SpacingSize.XS)
@@ -624,6 +792,51 @@ private fun DataManagementSection(
             labelRes = R.string.settings_last_restore_label,
             neverRes = R.string.settings_last_restore_never,
         )
+
+        // ── Automatic Backup Card ──
+        AppCard(
+            title = stringResource(R.string.settings_auto_backup),
+            subtitle = stringResource(R.string.settings_auto_backup_subtitle),
+            leadingIcon = Icons.Default.Schedule,
+            iconBackgroundColor = MaterialTheme.colorScheme.secondaryContainer,
+            iconTint = MaterialTheme.colorScheme.onSecondaryContainer,
+            trailingContent = {
+                AppSwitch(
+                    checked = autoBackupEnabled,
+                    onCheckedChange = onAutoBackupEnabledChange,
+                )
+            },
+            onClick = { onAutoBackupEnabledChange(!autoBackupEnabled) },
+        )
+
+        // Weekly label (always shown)
+        AppText(
+            text = stringResource(R.string.settings_auto_backup_weekly_label),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(start = 4.dp, top = 2.dp, bottom = 4.dp),
+        )
+
+        // Backup Path section (only when enabled)
+        if (autoBackupEnabled) {
+            AutoBackupPathSection(
+                destination = autoBackupDestination,
+                autoBackupFolderUri = autoBackupFolderUri,
+                googleDriveFolderId = googleDriveFolderId,
+                googleDriveFolderName = googleDriveFolderName,
+                googleDriveUserEmail = googleDriveUserEmail,
+                onSelectBackupPath = onSelectBackupPathAction,
+            )
+
+            // Google Drive status section (only when Google Drive is configured)
+            if (autoBackupDestination == BackupDestination.GOOGLE_DRIVE && !googleDriveUserEmail.isNullOrBlank()) {
+                VerticalSpacer(SpacingSize.XS)
+                AutoBackupGoogleDriveStatusSection(
+                    googleDriveUserEmail = googleDriveUserEmail,
+                )
+            }
+        }
+
         AppCard(
             title = stringResource(R.string.settings_reset_preferences),
             subtitle = stringResource(R.string.settings_reset_preferences_subtitle),
@@ -720,6 +933,140 @@ private fun SuggestionsSection(
             showChevron = false,
             onClick = onShowDeleteSuggestionsDialog,
         )
+    }
+}
+
+@Composable
+private fun AutoBackupPathSection(
+    destination: BackupDestination = BackupDestination.LOCAL,
+    autoBackupFolderUri: String? = null,
+    googleDriveFolderId: String? = null,
+    googleDriveFolderName: String? = null,
+    googleDriveUserEmail: String? = null,
+    onSelectBackupPath: () -> Unit = {},
+) {
+    AppCard(
+        title = stringResource(R.string.settings_auto_backup_path_button),
+        subtitle = stringResource(R.string.settings_auto_backup_path_subtitle),
+        leadingIcon = Icons.Default.FolderOpen,
+        iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
+        iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
+        showChevron = true,
+        onClick = onSelectBackupPath,
+    )
+
+    // Mostra il percorso selezionato in una label separata
+    AutoBackupPathLabel(
+        destination = destination,
+        localFolderUri = autoBackupFolderUri,
+        googleDriveFolderName = googleDriveFolderName,
+        googleDriveEmail = googleDriveUserEmail,
+    )
+}
+
+/**
+ * Mostra il percorso selezionato per il backup automatico in una label separata.
+ * Visualizza il nome finale della cartella (non l'URI completo) per backup locale,
+ * oppure il nome della cartella Google Drive con email per backup su Google Drive.
+ *
+ * Esempi:
+ * - "Percorso selezionato: AntCashManager/Backups" (LOCAL)
+ * - "Percorso selezionato: AntCashManager/Backups (user@gmail.com)" (GOOGLE_DRIVE)
+ * - "Percorso selezionato: Nessuna cartella selezionata" (se null)
+ */
+@Composable
+private fun AutoBackupPathLabel(
+    destination: BackupDestination = BackupDestination.LOCAL,
+    localFolderUri: String? = null,
+    googleDriveFolderName: String? = null,
+    googleDriveEmail: String? = null,
+) {
+    val selectedPathText = formatAutoBackupPath(
+        destination = destination,
+        localFolderUri = localFolderUri,
+        googleDriveFolderName = googleDriveFolderName,
+        googleDriveEmail = googleDriveEmail,
+    )
+    val labelText = stringResource(R.string.settings_auto_backup_path_selected, selectedPathText)
+
+    AppText(
+        text = labelText,
+        style = MaterialTheme.typography.labelSmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.padding(start = 4.dp, top = 2.dp, bottom = 4.dp),
+    )
+}
+
+/**
+ * Mostra lo status di Google Drive quando è configurato per il backup automatico.
+ * Visualizza: "Backup configurato per Google Drive (email@gmail.com)"
+ */
+@Composable
+private fun AutoBackupGoogleDriveStatusSection(
+    googleDriveUserEmail: String? = null,
+) {
+    if (googleDriveUserEmail.isNullOrBlank()) return
+
+    AppCard(
+        title = stringResource(R.string.settings_auto_backup_google_drive_configured),
+        subtitle = googleDriveUserEmail,
+        leadingIcon = Icons.Default.CloudUpload,
+        iconBackgroundColor = MaterialTheme.colorScheme.secondaryContainer,
+        iconTint = MaterialTheme.colorScheme.onSecondaryContainer,
+        showChevron = false,
+    )
+}
+
+/**
+ * Estrae il nome della cartella dal SAF URI o dal nome Google Drive per visualizzazione leggibile.
+ *
+ * Per LOCAL:
+ * - Se URI è null/blank → restituisce stringResource(R.string.settings_auto_backup_path_not_selected)
+ * - Altrimenti estrae il nome della cartella dal path
+ * - Fallback: ultimi 40 caratteri dell'URI se parsing fallisce
+ *
+ * Per GOOGLE_DRIVE:
+ * - Se nome è null/blank → restituisce stringResource(R.string.settings_auto_backup_path_not_selected)
+ * - Altrimenti restituisce il nome della cartella con email
+ *
+ * Esempi:
+ * - LOCAL: "content://com.android.externalstorage/tree/primary:AntCashManager/Backups" → "AntCashManager/Backups"
+ * - GOOGLE_DRIVE: "AntCashManager/Backups" con "user@gmail.com" → "AntCashManager/Backups (user@gmail.com)"
+ * - null → "Nessuna cartella selezionata"
+ */
+@Composable
+private fun formatAutoBackupPath(
+    destination: BackupDestination = BackupDestination.LOCAL,
+    localFolderUri: String? = null,
+    googleDriveFolderName: String? = null,
+    googleDriveEmail: String? = null,
+): String {
+    return when (destination) {
+        BackupDestination.LOCAL -> {
+            if (localFolderUri.isNullOrBlank()) {
+                stringResource(R.string.settings_auto_backup_path_not_selected)
+            } else {
+                try {
+                    val uri = android.net.Uri.parse(localFolderUri)
+                    val path = uri.path ?: localFolderUri
+                    path.substringAfterLast("/").takeIf { it.isNotEmpty() }
+                        ?: localFolderUri.takeLast(40)
+                } catch (e: Exception) {
+                    localFolderUri.takeLast(40)
+                }
+            }
+        }
+        BackupDestination.GOOGLE_DRIVE -> {
+            if (googleDriveFolderName.isNullOrBlank()) {
+                stringResource(R.string.settings_auto_backup_path_not_selected)
+            } else {
+                if (googleDriveEmail.isNullOrBlank()) {
+                    googleDriveFolderName
+                } else {
+                    "$googleDriveFolderName ($googleDriveEmail)"
+                }
+            }
+        }
     }
 }
 

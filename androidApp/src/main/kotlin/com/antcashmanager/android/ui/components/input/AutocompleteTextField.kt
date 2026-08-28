@@ -33,6 +33,7 @@ import com.antcashmanager.android.ui.theme.AntCashManagerTheme
  * @param suggestions Lista di suggerimenti disponibili
  * @param label Label del campo
  * @param modifier Modifier del componente
+ * @param onSuggestionSelected Callback quando una suggestion viene selezionata (opzionale)
  */
 @Composable
 fun AutocompleteTextField(
@@ -41,6 +42,7 @@ fun AutocompleteTextField(
     suggestions: List<String>,
     label: String,
     modifier: Modifier = Modifier,
+    onSuggestionSelected: ((String) -> Unit)? = null,
 ) {
     var expanded by remember { mutableStateOf(false) }
     var hasFocus by remember { mutableStateOf(false) }
@@ -92,6 +94,7 @@ fun AutocompleteTextField(
                             .fillMaxWidth()
                             .clickable {
                                 onValueChange(suggestion)
+                                onSuggestionSelected?.invoke(suggestion)
                                 expanded = false
                             }
                             .padding(horizontal = 16.dp, vertical = 12.dp),

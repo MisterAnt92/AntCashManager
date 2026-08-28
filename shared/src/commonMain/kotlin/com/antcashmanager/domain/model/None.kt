@@ -5,4 +5,4 @@ package com.antcashmanager.domain.model
  *
  * @constructor Creates a new None
  */
-class None
+public class None

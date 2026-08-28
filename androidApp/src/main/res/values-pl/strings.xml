@@ -12,12 +12,7 @@
     <string name="common_back">Wstecz</string>
     <string name="common_add">Dodaj</string>
     <string name="common_preview">Podgląd</string>
-
-    <!-- HelpDialog (Dashboard) -->
     <string name="help_dashboard_desc">Wyświetl całkowite saldo, przychody i wydatki dla wybranego okresu.</string>
-    <string name="app_name">AntCashManager</string>
-
-    <!-- Home Screen -->
     <string name="home_total_balance">Całkowite saldo</string>
     <string name="home_income">Przychody</string>
     <string name="home_expenses">Wydatki</string>
@@ -36,10 +31,6 @@
     <string name="home_recent_transactions_count">Ostatnie transakcje · %1$d</string>
     <string name="home_quick_insights_biggest_expense">Największy wydatek</string>
     <string name="home_scroll_to_top">Przewiń do góry</string>
-    <string name="home_balance_summary_cd">%1$s: %2$s, %3$s</string>
-    <string name="home_insight_row_cd">%1$s: %2$s</string>
-
-    <!-- Transactions Screen -->
     <string name="transactions_add">Dodaj transakcję</string>
     <string name="transactions_type_income">Przychód</string>
     <string name="transactions_type_expense">Wydatek</string>
@@ -213,10 +204,6 @@
     <string name="settings_widget_preview_title">Podgląd</string>
     <string name="settings_widget_preview_recent">Ostatnie transakcje</string>
     <string name="settings_widget_preview_category">Przychody i wydatki</string>
-    <string name="date_format_ddmmyyyy">DD/MM/YYYY</string>
-    <string name="date_format_mmddyyyy">MM/DD/YYYY</string>
-    <string name="date_format_yyyymmdd">YYYY-MM-DD</string>
-    <string name="date_format_ddmmmyyyy">DD MMM YYYY</string>
     <string name="dialog_choose_date_format">Wybierz format daty</string>
     <string name="settings_accessibility">Dostępność</string>
     <string name="settings_high_contrast">Wysoki kontrast</string>
@@ -244,6 +231,10 @@
     <string name="settings_restore_subtitle">Importuj dane z pliku kopii zapasowej</string>
     <string name="settings_last_restore_label">Ostatnie przywracanie: %s</string>
     <string name="settings_last_restore_never">Nie wykonano jeszcze przywracania</string>
+    <string name="auto_backup_notification_channel_name">Błędy automatycznej kopii zapasowej</string>
+    <string name="auto_backup_notification_channel_description">Powiadomienia o błędach automatycznej kopii zapasowej</string>
+    <string name="auto_backup_notification_failure_title">Automatyczna kopia zapasowa nie powiodła się</string>
+    <string name="auto_backup_notification_failure_message">Nie udało się ukończyć automatycznej kopii zapasowej. Sprawdź uprawnienia do magazynu.</string>
     <string name="settings_support">Pomoc techniczna</string>
     <string name="settings_send_feedback">Wyślij opinię</string>
     <string name="settings_send_feedback_subtitle">Pomóż nam ulepszyć aplikację</string>
@@ -297,26 +288,30 @@
     <string name="dialog_delete_suggestions_message">Sugestie utworzone na podstawie Twojej historii transakcji (tytuły, płatnicy, notatki, lokalizacje, tagi) zostaną usunięte. Nowe sugestie będą się budować ponownie w miarę dodawania transakcji. Kontynuować?</string>
     <string name="dialog_reset">Resetuj</string>
 
+    <!-- Automatic Backup (Phase 1 & 2) -->
+    <string name="settings_auto_backup">Automatyczna Kopia Zapasowa</string>
+    <string name="settings_auto_backup_subtitle">Automatyczne kopie zapasowe cotygodniowo</string>
+    <string name="settings_auto_backup_weekly_label">Automatyczna kopia zapasowa jest cotygodniowa</string>
+    <string name="settings_auto_backup_destination_local">Lokalnie</string>
+    <string name="settings_auto_backup_google_drive_coming_soon">Wkrótce</string>
+    <string name="settings_auto_backup_google_drive_sign_in_title">Włącz Kopię Zapasową na Google Drive</string>
+    <string name="settings_auto_backup_google_drive_sign_in_message">Zaloguj się za pomocą konta Google, aby włączyć automatyczne kopie zapasowe na Google Drive. Twoje dane będą szyfrowane i bezpiecznie przechowywane.</string>
+    <string name="settings_auto_backup_google_drive_sign_in">Zaloguj się przez Google</string>
+    <string name="settings_auto_backup_google_drive_signing_in">Logowanie do Google…</string>
+    <string name="settings_auto_backup_google_drive_sign_out">Wyloguj się z Google</string>
+    <string name="settings_auto_backup_path_button">Ścieżka kopii zapasowej</string>
+    <string name="settings_auto_backup_path_not_selected">Nie wybrano folderu</string>
+    <string name="settings_auto_backup_path_subtitle">Wybierz, gdzie mają być zapisywane automatyczne kopie zapasowe</string>
+    <string name="settings_auto_backup_path_selected">Wybrana ścieżka: %s</string>
+    <string name="settings_auto_backup_google_drive_configured">Kopia zapasowa skonfigurowana dla Google Drive</string>
+
+
     <!-- Privacy Policy -->
     <string name="privacy_policy_title">Polityka prywatności</string>
     <string name="privacy_policy_content">AntCashManager dba o Twoją prywatność. Ta aplikacja nie zbiera ani nie udostępnia danych osobowych osobom trzecim. Wszystkie dane finansowe są przechowywane lokalnie na Twoim urządzeniu i nigdy nie są przesyłane na serwery zewnętrzne.\n\nTwoje dane pozostają wyłącznie na Twoim urządzeniu i pod Twoją kontrolą. Nie korzystamy z usług analitycznych, śledzących ani reklamowych.\n\nW przypadku pytań dotyczących prywatności prosimy o kontakt poprzez sklep z aplikacjami.</string>
 
     <!-- Languages -->
     <string name="language_system">Domyślny systemowy</string>
-    <string name="language_english">English (Angielski)</string>
-    <string name="language_italian">Italiano (Włoski)</string>
-    <string name="language_french">Français (Francuski)</string>
-    <string name="language_german">Deutsch (Niemiecki)</string>
-    <string name="language_spanish">Español (Hiszpański)</string>
-    <string name="language_chinese_simplified">Chiński (Uproszczony)</string>
-    <string name="language_chinese_traditional">Chiński (Tradycyjny)</string>
-    <string name="language_japanese">Japoński</string>
-    <string name="language_polish">Polski</string>
-    <string name="language_hindi">Hindi</string>
-    <string name="language_russian">Rosyjski</string>
-    <string name="language_ukrainian">Ukraiński</string>
-    <string name="language_korean">Koreański</string>
-    <string name="debug_import_started">Rozpoczęto import debugowania</string>
     <string name="back">Wstecz</string>
 
     <!-- Add Transaction Screen -->
@@ -617,4 +612,11 @@
 
     <!-- App Description -->
     <string name="app_description">Ta aplikacja narodziła się z potrzeby śledzenia wydatków rodzinnych bez subskrypcji i możliwości przeglądania wydatków oraz porównywania podwyżek cen.</string>
+
+    <!-- Payment Type Settings -->
+    <string name="settings_payment_type_section">Metody płatności</string>
+    <string name="settings_default_payment_type">Domyślna metoda płatności</string>
+    <string name="settings_default_payment_type_desc">Wybierz domyślną metodę płatności dla nowych transakcji</string>
+    <string name="dialog_payment_type_title">Wybierz metodę płatności</string>
+
 </resources>

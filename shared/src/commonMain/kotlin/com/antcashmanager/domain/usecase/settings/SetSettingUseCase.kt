@@ -31,7 +31,7 @@ import kotlinx.coroutines.flow.flowOf
  * @param setter A lambda that updates the setting in repository (suspend function)
  * @param dispatcher The coroutine dispatcher (default: Default for performance)
  */
-class SetSettingUseCase<T>(
+public class SetSettingUseCase<T>(
     private val setter: suspend (T) -> Unit,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : UseCase<T, Unit>(dispatcher) {

@@ -278,8 +278,8 @@ class SettingsRepositoryImplTest {
      }
 
      @Test
-     fun getMealVoucherValue_shouldReturnDefault12_5_whenNotStored() = runTest {
-         assertEquals(12.5, repository.getMealVoucherValue().first(), 0.001)
+     fun getMealVoucherValue_shouldReturnDefault5_29_whenNotStored() = runTest {
+         assertEquals(5.29, repository.getMealVoucherValue().first(), 0.001)
      }
 
      @Test

@@ -1,8 +1,16 @@
 package com.antcashmanager.android.di
 
 import com.antcashmanager.android.analytics.AnalyticsManager
+import com.antcashmanager.android.analytics.EngagementTracker
+import com.antcashmanager.android.analytics.ErrorTracker
+import com.antcashmanager.android.analytics.PerformanceTracker
+import com.antcashmanager.android.analytics.SegmentationTracker
+import com.antcashmanager.android.analytics.SessionTracker
+import com.antcashmanager.android.auth.GoogleSignInManager
 import com.antcashmanager.android.data.backup.BackupService
 import com.antcashmanager.android.data.receipt.MlKitReceiptOcrService
+import com.antcashmanager.android.drive.DriveUploadManager
+import com.antcashmanager.android.work.AutoBackupScheduler
 import com.antcashmanager.android.ui.screen.categories.CategoriesViewModel
 import com.antcashmanager.android.ui.screen.charts.ChartsViewModel
 import com.antcashmanager.android.ui.screen.home.HomeViewModel
@@ -120,12 +128,25 @@ val dataModule = module {
         )
     }
     single<SettingsRepository> { SettingsRepositoryImpl(androidApplication()) }
+    single { AutoBackupScheduler(androidApplication()) }
+    single { GoogleSignInManager(androidApplication(), get<SettingsRepository>()) }
+    single { DriveUploadManager(androidApplication(), get<GoogleSignInManager>(), get<SettingsRepository>()) }
     single<CategoryRepository> {
         CategoryRepositoryImpl(
             categoryDao = get<com.antcashmanager.data.local.AppDatabase>().categoryDao(),
         )
     }
     single { AnalyticsManager(androidApplication()) }
+
+    // PHASE 2: Performance & Session & Error Tracking
+    single { PerformanceTracker(get<AnalyticsManager>()) }
+    single { SessionTracker(get<AnalyticsManager>()) }
+    single { ErrorTracker(get<AnalyticsManager>()) }
+
+    // PHASE 3: Advanced Analytics (Segmentation & Engagement)
+    single { SegmentationTracker(get<AnalyticsManager>()) }
+    single { EngagementTracker(get<AnalyticsManager>()) }
+
     single {
         BackupService(
             transactionRepository = get(),
@@ -290,6 +311,7 @@ val presentationModule = module {
             getHomeDateFilterStateUseCase = get(),
             setHomeDateFilterStateUseCase = get(),
             getCategoriesUseCase = get(),
+            segmentationTracker = get(),
         )
     }
     viewModel {
@@ -299,6 +321,7 @@ val presentationModule = module {
             updateCategoryUseCase = get(),
             deleteCategoryUseCase = get(),
             syncTransactionCategoriesUseCase = get(),
+            analyticsManager = get(),
         )
     }
     viewModel {
@@ -306,6 +329,8 @@ val presentationModule = module {
             getTransactionsByDateRangeUseCase = get(),
             getChartsDateFilterStateUseCase = get(),
             setChartsDateFilterStateUseCase = get(),
+            performanceTracker = get(),
+            segmentationTracker = get(),
         )
     }
     viewModel {
@@ -319,6 +344,7 @@ val presentationModule = module {
             getTransactionSuggestionsUseCase = get(),
             getTransactionsDateFilterStateUseCase = get(),
             setTransactionsDateFilterStateUseCase = get(),
+            engagementTracker = get(),
         )
     }
 
@@ -352,6 +378,9 @@ val presentationModule = module {
             deleteTransactionUseCase = get(),
             getTransactionByIdUseCase = get(),
             analyticsManager = get(),
+            settingsRepository = get(),
+            performanceTracker = get(),
+            errorTracker = get(),
             transactionId = transactionId,
         )
     }
@@ -363,8 +392,26 @@ val presentationModule = module {
             widgetUpdateNotifier = get(),
         )
     }
-    viewModelOf(::DisplayViewModel)
-    viewModelOf(::SettingsDataViewModel)
+    viewModel {
+        DisplayViewModel(
+            settingsRepository = get(),
+            widgetUpdateNotifier = get(),
+            analyticsManager = get(),
+            engagementTracker = get(),
+        )
+    }
+    viewModel {
+        SettingsDataViewModel(
+            settingsRepository = get(),
+            categoryRepository = get(),
+            deleteAllTransactionsUseCase = get(),
+            backupService = get(),
+            autoBackupScheduler = get(),
+            googleSignInManager = get(),
+            performanceTracker = get(),
+            errorTracker = get(),
+        )
+    }
     viewModel {
         ReceiptScanViewModel(
             scanReceiptUseCase = get(),
@@ -372,6 +419,8 @@ val presentationModule = module {
             getCategoriesUseCase = get(),
             getTransactionSuggestionsUseCase = get(),
             analyticsManager = get(),
+            performanceTracker = get(),
+            errorTracker = get(),
         )
     }
     viewModelOf(::TransactionDetailsViewModel)

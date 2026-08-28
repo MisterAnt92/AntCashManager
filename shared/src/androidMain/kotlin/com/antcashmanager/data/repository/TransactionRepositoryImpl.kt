@@ -31,7 +31,7 @@ private class DecryptionLRUCache(maxSize: Int = 500) : LinkedHashMap<Long, Pair<
     }
 }
 
-class TransactionRepositoryImpl(
+public class TransactionRepositoryImpl(
     private val transactionDao: TransactionDao,
     private val localDataCipher: LocalDataCipher,
     private val widgetUpdateNotifier: WidgetUpdateNotifier = NoOpWidgetUpdateNotifier,
@@ -141,7 +141,7 @@ class TransactionRepositoryImpl(
         newCategoryName: String,
         icon: String,
         color: Long
-    ) =
+    ): Unit =
         transactionDao.renameCategory(oldCategoryName, newCategoryName, icon, color)
 
     // Implementazione metodi per suggerimenti

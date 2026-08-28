@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 9,
-    "identityHash": "3495aba51fdf03755c299a6c6c50a2ff",
+    "identityHash": "47faed74a4517e7f6fa075dd40f41bc9",
     "entities": [
       {
         "tableName": "transactions",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `amount` REAL NOT NULL, `category` TEXT NOT NULL, `type` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `notes` TEXT NOT NULL DEFAULT '', `payee` TEXT NOT NULL DEFAULT '', `location` TEXT NOT NULL DEFAULT '', `is_recurring` INTEGER NOT NULL DEFAULT 0, `tags` TEXT NOT NULL DEFAULT '', `recurrence_interval` TEXT NOT NULL DEFAULT '', `payment_type` TEXT NOT NULL DEFAULT 'ELECTRONIC', `meal_voucher_count` INTEGER NOT NULL DEFAULT 0, `category_icon` TEXT NOT NULL DEFAULT '', `category_color` INTEGER NOT NULL DEFAULT 9474862)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `amount` REAL NOT NULL, `category` TEXT NOT NULL, `type` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `notes` TEXT NOT NULL DEFAULT '', `payee` TEXT NOT NULL DEFAULT '', `location` TEXT NOT NULL DEFAULT '', `is_recurring` INTEGER NOT NULL DEFAULT 0, `tags` TEXT NOT NULL DEFAULT '', `recurrence_interval` TEXT NOT NULL DEFAULT '', `payment_type` TEXT NOT NULL DEFAULT 'ELECTRONIC', `meal_voucher_count` INTEGER NOT NULL DEFAULT 0, `meal_voucher_difference` REAL NOT NULL DEFAULT 0.0, `category_icon` TEXT NOT NULL DEFAULT '', `category_color` INTEGER NOT NULL DEFAULT 9474862)",
         "fields": [
           {
             "fieldPath": "id",
@@ -99,6 +99,13 @@
             "affinity": "INTEGER",
             "notNull": true,
             "defaultValue": "0"
+          },
+          {
+            "fieldPath": "mealVoucherDifference",
+            "columnName": "meal_voucher_difference",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "0.0"
           },
           {
             "fieldPath": "categoryIcon",
@@ -247,7 +254,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3495aba51fdf03755c299a6c6c50a2ff')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '47faed74a4517e7f6fa075dd40f41bc9')"
     ]
   }
 }

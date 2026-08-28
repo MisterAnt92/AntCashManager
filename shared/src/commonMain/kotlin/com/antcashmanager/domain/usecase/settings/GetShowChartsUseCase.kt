@@ -4,7 +4,7 @@ import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.usecase.base.NoParamsObservableUseCase
 import kotlinx.coroutines.flow.Flow
 
-class GetShowChartsUseCase(
+public class GetShowChartsUseCase(
     private val settingsRepository: SettingsRepository,
 ) : NoParamsObservableUseCase<Boolean>() {
 

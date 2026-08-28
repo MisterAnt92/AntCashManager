@@ -4,7 +4,7 @@ import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.usecase.base.NoParamsObservableUseCase
 import kotlinx.coroutines.flow.Flow
 
-class GetLargeTextUseCase(
+public class GetLargeTextUseCase(
     private val settingsRepository: SettingsRepository,
 ) : NoParamsObservableUseCase<Boolean>() {
 

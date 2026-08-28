@@ -2,6 +2,7 @@ package com.antcashmanager.android.testutil
 
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
+import com.antcashmanager.domain.model.BackupDestination
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.SettingsRepository
@@ -67,6 +68,13 @@ open class FakeSettingsRepository : SettingsRepository {
     val widgetOpacity = MutableStateFlow(100)
     val chartCardsOrder = MutableStateFlow("")
     val homeTopCardsOrder = MutableStateFlow("")
+    val autoBackupEnabled = MutableStateFlow(false)
+    val autoBackupDestination = MutableStateFlow(BackupDestination.LOCAL)
+    val autoBackupFolderUri = MutableStateFlow<String?>(null)
+    val googleDriveFolderId = MutableStateFlow<String?>(null)
+    val googleDriveFolderName = MutableStateFlow<String?>(null)
+    val googleDriveUserEmail = MutableStateFlow<String?>(null)
+    val defaultPaymentType = MutableStateFlow("ELECTRONIC")
 
     override fun getTheme(): Flow<AppTheme> = theme
     override suspend fun setTheme(theme: AppTheme) {
@@ -190,6 +198,11 @@ open class FakeSettingsRepository : SettingsRepository {
         showQuickInsightsCard.value = show
     }
 
+    override fun getDefaultPaymentType(): Flow<String> = defaultPaymentType
+    override suspend fun setDefaultPaymentType(paymentType: String) {
+        defaultPaymentType.value = paymentType
+    }
+
     override fun getTransactionDisplayType(): Flow<TransactionDisplayType> = transactionDisplayType
     override suspend fun setTransactionDisplayType(displayType: TransactionDisplayType) {
         transactionDisplayType.value = displayType
@@ -230,6 +243,52 @@ open class FakeSettingsRepository : SettingsRepository {
     override fun getLastRestoreTimestamp(): Flow<Long?> = lastRestoreTimestamp
     override suspend fun setLastRestoreTimestamp(timestamp: Long) {
         lastRestoreTimestamp.value = timestamp
+    }
+
+    override fun getAutoBackupEnabled(): Flow<Boolean> = autoBackupEnabled
+    override suspend fun setAutoBackupEnabled(enabled: Boolean) {
+        autoBackupEnabled.value = enabled
+    }
+
+    override fun getAutoBackupFolderUri(): Flow<String?> = autoBackupFolderUri
+    override suspend fun setAutoBackupFolderUri(uri: String?) {
+        autoBackupFolderUri.value = uri
+    }
+
+    override fun getAutoBackupDestination(): Flow<BackupDestination> = autoBackupDestination
+    override suspend fun setAutoBackupDestination(destination: BackupDestination) {
+        autoBackupDestination.value = destination
+    }
+
+    override fun getGoogleDriveFolderId(): Flow<String?> = googleDriveFolderId
+    override suspend fun setGoogleDriveFolderId(folderId: String?) {
+        googleDriveFolderId.value = folderId
+    }
+
+    override fun getGoogleDriveFolderName(): Flow<String?> = googleDriveFolderName
+    override suspend fun setGoogleDriveFolderName(folderName: String?) {
+        googleDriveFolderName.value = folderName
+    }
+
+    override fun getGoogleDriveAuthToken(): Flow<String?> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun setGoogleDriveAuthToken(token: String?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getGoogleDriveRefreshToken(): Flow<String?> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun setGoogleDriveRefreshToken(token: String?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getGoogleDriveUserEmail(): Flow<String?> = googleDriveUserEmail
+    override suspend fun setGoogleDriveUserEmail(email: String?) {
+        googleDriveUserEmail.value = email
     }
 
     override fun getSuggestionsEnabled(): Flow<Boolean> = suggestionsEnabled
@@ -289,5 +348,12 @@ open class FakeSettingsRepository : SettingsRepository {
         suggestionsClearedAt.value = null
         widgetBackgroundColor.value = 0xFFFFFFFFL
         widgetOpacity.value = 100
+        autoBackupEnabled.value = false
+        autoBackupDestination.value = BackupDestination.LOCAL
+        autoBackupFolderUri.value = null
+        googleDriveFolderId.value = null
+        googleDriveFolderName.value = null
+        googleDriveUserEmail.value = null
+        defaultPaymentType.value = "ELECTRONIC"
     }
 }

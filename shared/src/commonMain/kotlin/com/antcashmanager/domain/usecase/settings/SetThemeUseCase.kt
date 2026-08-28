@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 /**
  * UseCase per l'impostazione del tema dell'app.
  */
-class SetThemeUseCase(
+public class SetThemeUseCase(
     private val settingsRepository: SettingsRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : UseCase<AppTheme, Unit>(dispatcher) {

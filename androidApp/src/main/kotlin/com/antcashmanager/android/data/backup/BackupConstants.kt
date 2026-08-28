@@ -17,7 +17,12 @@ object BackupConstants {
      * v3: aggiunge card customization (chartCardsOrder, homeTopCardsOrder) e security flag
      * (dataEncryptionEnabled). Nuovo backup v3 è retrocompatibile: v2 backup resta leggibile
      * (nuovi campi usano default). Parsing lenient permette import di future versioni.
+     *
+     * v4: aggiunge backup destination config (autoBackupEnabled, autoBackupDestination,
+     * autoBackupFolderUri, googleDriveFolderId, googleDriveUserEmail). I token di
+     * autenticazione Google (authToken, refreshToken) NON sono salvati per sicurezza.
+     * Nuovo backup v4 è retrocompatibile: v3 backup resta leggibile (nuovi campi usano default).
      */
-    const val CURRENT_VERSION = 3
+    const val CURRENT_VERSION = 4
 }
 

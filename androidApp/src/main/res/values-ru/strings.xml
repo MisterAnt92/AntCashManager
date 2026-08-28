@@ -12,12 +12,7 @@
     <string name="common_back">Назад</string>
     <string name="common_add">Добавить</string>
     <string name="common_preview">Предпросмотр</string>
-
-    <!-- HelpDialog (Dashboard) -->
     <string name="help_dashboard_desc">Просмотрите общий баланс, доходы и расходы за выбранный период.</string>
-    <string name="app_name">AntCashManager</string>
-
-    <!-- Home Screen -->
     <string name="home_total_balance">Общий баланс</string>
     <string name="home_income">Доходы</string>
     <string name="home_expenses">Расходы</string>
@@ -36,10 +31,6 @@
     <string name="home_recent_transactions_count">Последние транзакции · %1$d</string>
     <string name="home_quick_insights_biggest_expense">Наибольший расход</string>
     <string name="home_scroll_to_top">Прокрутить вверх</string>
-    <string name="home_balance_summary_cd">%1$s: %2$s, %3$s</string>
-    <string name="home_insight_row_cd">%1$s: %2$s</string>
-
-    <!-- Transactions Screen -->
     <string name="transactions_add">Добавить транзакцию</string>
     <string name="transactions_type_income">Доход</string>
     <string name="transactions_type_expense">Расход</string>
@@ -213,10 +204,6 @@
     <string name="settings_widget_preview_title">Предпросмотр</string>
     <string name="settings_widget_preview_recent">Последние транзакции</string>
     <string name="settings_widget_preview_category">Доходы и расходы</string>
-    <string name="date_format_ddmmyyyy">ДД/ММ/ГГГГ</string>
-    <string name="date_format_mmddyyyy">ММ/ДД/ГГГГ</string>
-    <string name="date_format_yyyymmdd">ГГГГ-ММ-ДД</string>
-    <string name="date_format_ddmmmyyyy">ДД МММ ГГГГ</string>
     <string name="dialog_choose_date_format">Выберите формат даты</string>
     <string name="settings_accessibility">Специальные возможности</string>
     <string name="settings_high_contrast">Высокий контраст</string>
@@ -244,6 +231,10 @@
     <string name="settings_restore_subtitle">Импортируйте данные из файла резервной копии</string>
     <string name="settings_last_restore_label">Последнее восстановление: %s</string>
     <string name="settings_last_restore_never">Восстановление еще не проводилось</string>
+    <string name="auto_backup_notification_channel_name">Ошибки автоматического резервного копирования</string>
+    <string name="auto_backup_notification_channel_description">Уведомления об ошибках автоматического резервного копирования</string>
+    <string name="auto_backup_notification_failure_title">Автоматическое резервное копирование не удалось</string>
+    <string name="auto_backup_notification_failure_message">Не удалось завершить автоматическое резервное копирование. Проверьте разрешения на хранилище.</string>
     <string name="settings_support">Поддержка</string>
     <string name="settings_send_feedback">Отправить отзыв</string>
     <string name="settings_send_feedback_subtitle">Помогите нам улучшить приложение</string>
@@ -297,26 +288,30 @@
     <string name="dialog_delete_suggestions_message">Предложения на основе истории (названия, плательщики и т.д.) будут забыты. Новые накопятся со временем. Продолжить?</string>
     <string name="dialog_reset">Сбросить</string>
 
+    <!-- Automatic Backup (Phase 1 & 2) -->
+    <string name="settings_auto_backup">Автоматическое резервное копирование</string>
+    <string name="settings_auto_backup_subtitle">Автоматическое резервное копирование еженедельно</string>
+    <string name="settings_auto_backup_weekly_label">Автоматическое резервное копирование еженедельно</string>
+    <string name="settings_auto_backup_destination_local">Локально</string>
+    <string name="settings_auto_backup_google_drive_coming_soon">Скоро</string>
+    <string name="settings_auto_backup_google_drive_sign_in_title">Включить резервное копирование на Google Drive</string>
+    <string name="settings_auto_backup_google_drive_sign_in_message">Войдите с помощью аккаунта Google, чтобы включить автоматическое резервное копирование на Google Drive. Ваши данные будут зашифрованы и безопасно сохранены.</string>
+    <string name="settings_auto_backup_google_drive_sign_in">Войти через Google</string>
+    <string name="settings_auto_backup_google_drive_signing_in">Вход в Google…</string>
+    <string name="settings_auto_backup_google_drive_sign_out">Выход из Google</string>
+    <string name="settings_auto_backup_path_button">Путь резервной копии</string>
+    <string name="settings_auto_backup_path_not_selected">Папка не выбрана</string>
+    <string name="settings_auto_backup_path_subtitle">Выберите, где сохранять автоматические резервные копии</string>
+    <string name="settings_auto_backup_path_selected">Выбранный путь: %s</string>
+    <string name="settings_auto_backup_google_drive_configured">Резервная копия настроена для Google Drive</string>
+
+
     <!-- Privacy Policy -->
     <string name="privacy_policy_title">Политика конфиденциальности</string>
     <string name="privacy_policy_content">AntCashManager стремится защищать вашу конфиденциальность. Это приложение не собирает и не передает личные данные третьим лицам. Все финансовые данные хранятся локально на вашем устройстве и никогда не передаются на внешние серверы.\n\nВаши данные остаются полностью на вашем устройстве и под вашим контролем. Мы не используем аналитические сервисы, трекеры или рекламу.\n\nПо любым вопросам о конфиденциальности обращайтесь к нам через страницу приложения в магазине.</string>
 
     <!-- Languages -->
     <string name="language_system">Системная по умолчанию</string>
-    <string name="language_english">English (Английский)</string>
-    <string name="language_italian">Italiano (Итальянский)</string>
-    <string name="language_french">Français (Французский)</string>
-    <string name="language_german">Deutsch (Немецкий)</string>
-    <string name="language_spanish">Español (Испанский)</string>
-    <string name="language_chinese_simplified">Китайский (Упрощенный)</string>
-    <string name="language_chinese_traditional">Китайский (Традиционный)</string>
-    <string name="language_japanese">Японский</string>
-    <string name="language_polish">Польский</string>
-    <string name="language_hindi">Хинди</string>
-    <string name="language_russian">Русский (Russian)</string>
-    <string name="language_ukrainian">Украинский (Ukrainian)</string>
-    <string name="language_korean">Корейский (Korean)</string>
-    <string name="debug_import_started">Начат отладочный импорт</string>
     <string name="back">Назад</string>
 
     <!-- Add Transaction Screen -->
@@ -617,4 +612,11 @@
 
     <!-- App Description -->
     <string name="app_description">Это приложение было создано из необходимости отслеживать семейные расходы без подписок и просматривать расходы и сравнивать повышение цен.</string>
+
+    <!-- Payment Type Settings -->
+    <string name="settings_payment_type_section">Способы оплаты</string>
+    <string name="settings_default_payment_type">Способ оплаты по умолчанию</string>
+    <string name="settings_default_payment_type_desc">Выберите способ оплаты по умолчанию для новых транзакций</string>
+    <string name="dialog_payment_type_title">Выберите способ оплаты</string>
+
 </resources>

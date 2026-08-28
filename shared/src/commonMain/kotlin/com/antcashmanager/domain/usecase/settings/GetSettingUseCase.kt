@@ -31,7 +31,7 @@ import kotlinx.coroutines.flow.Flow
  * @param getter A lambda that retrieves the setting from repository as a Flow<T>
  * @param dispatcher The coroutine dispatcher (default: Default for performance)
  */
-class GetSettingUseCase<T>(
+public class GetSettingUseCase<T>(
     private val getter: () -> Flow<T>,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : NoParamsObservableUseCase<T>(dispatcher) {

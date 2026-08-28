@@ -7,9 +7,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 
-data class DateRange(val from: Long, val to: Long)
+public data class DateRange(val from: Long, val to: Long)
 
-class GetTransactionsByDateRangeUseCase(
+public class GetTransactionsByDateRangeUseCase(
     private val transactionRepository: TransactionRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : ObservableUseCase<DateRange, List<Transaction>>(dispatcher) {

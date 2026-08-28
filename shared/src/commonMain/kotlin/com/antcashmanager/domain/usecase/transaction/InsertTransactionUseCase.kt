@@ -10,7 +10,7 @@ import kotlinx.coroutines.Dispatchers
  * UseCase per l'inserimento di una transazione.
  * Restituisce un [Result] che contiene l'id della transazione inserita o l'eccezione di dominio.
  */
-class InsertTransactionUseCase(
+public class InsertTransactionUseCase(
     private val transactionRepository: TransactionRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : UseCase<Transaction, Long>(dispatcher) {

@@ -1,6 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name" translatable="false">AntCashManager</string>
+
     <string name="home_transaction_item_subtitle" translatable="false">%1$s • %2$s</string>
     <string name="transactions_search_query_preview" translatable="false">\"%s\"</string>
     <string name="transaction_details_tags" translatable="false">Tag</string>
+    <string name="home_balance_summary_cd" translatable="false">%1$s: %2$s, %3$s</string>
+    <string name="home_insight_row_cd" translatable="false">%1$s: %2$s</string>
+
+    <string name="language_english" translatable="false">English</string>
+    <string name="language_italian" translatable="false">Italiano</string>
+    <string name="language_french" translatable="false">Français</string>
+    <string name="language_german" translatable="false">Deutsch</string>
+    <string name="language_spanish" translatable="false">Español</string>
+    <string name="language_chinese_simplified" translatable="false">Chinois (Mandarin)</string>
+    <string name="language_chinese_traditional" translatable="false">Chinois (Traditionnel)</string>
+    <string name="language_japanese" translatable="false">Japonais</string>
+    <string name="language_polish" translatable="false">Polonais</string>
+    <string name="language_hindi" translatable="false">हिन्दी (Hindi)</string>
+    <string name="language_russian" translatable="false">Русский (Russe)</string>
+    <string name="language_ukrainian" translatable="false">Українська (Ukrainien)</string>
+    <string name="language_korean" translatable="false">한국어 (Coréen)</string>
+
+    <string name="debug_import_started" translatable="false">Debug import started</string>
+    <string name="settings_auto_backup_destination_google_drive" translatable="false">Google Drive</string>
+    <string name="extra_thanks" translatable="false">Extra thanks to Anna 💙 and Eleonora for helping and testing this app!</string>
+
+    <!-- Feedback Email Bodies -->
+    <string name="feedback_email_body_english" translatable="false">Hi AntCashManager Team,\n\nI would like to share some feedback about the app:\n\n[Please describe your feedback here]\n\nThank you!</string>
+    <string name="feedback_email_body_italian" translatable="false">Ciao team di AntCashManager,\n\nVorrei condividere alcuni feedback sull\'app:\n\n[Per favore descrivi il tuo feedback qui]\n\nGrazie in anticipo!</string>
+    <string name="feedback_email_body_french" translatable="false">Bonjour à l\'équipe d\'AntCashManager,\n\nJ\'aimerais partager des commentaires sur l\'application:\n\n[Veuillez décrire vos commentaires ici]\n\nMerci!</string>
+    <string name="feedback_email_body_german" translatable="false">Hallo AntCashManager-Team,\n\nIch möchte gerne Feedback zur App geben:\n\n[Bitte beschreiben Sie Ihr Feedback hier]\n\nDanke!</string>
+    <string name="feedback_email_body_spanish" translatable="false">Hola equipo de AntCashManager,\n\nMe gustaría compartir comentarios sobre la aplicación:\n\n[Por favor describe tu retroalimentación aquí]\n\n¡Grazie!</string>
+    <string name="feedback_email_body_chinese_simplified" translatable="false">AntCashManager 团队您好，\n\n我想分享一些关于该应用的反馈：\n\n[请在此描述您的反馈]\n\n谢谢！</string>
+    <string name="feedback_email_body_chinese_traditional" translatable="false">AntCashManager 團隊您好，\n\n我想分享一些關於該應用的回饋：\n\n[請在此描述您的回饋]\n\n謝謝！</string>
+    <string name="feedback_email_body_japanese" translatable="false">AntCashManager チームの皆様、\n\nアプリについてフィードバックを共有したいと思います：\n\n[ここにフィードバックを記入してください]\n\nありがとうございます！</string>
+    <string name="feedback_email_body_polish" translatable="false">Cześć zespołem AntCashManager,\n\nChciałbym podzielić się opiniami na temat aplikacji:\n\n[Proszę opisz swoją opinię tutaj]\n\nDziękuję!</string>
+    <string name="feedback_email_body_hindi" translatable="false">AntCashManager टीम को नमस्ते,\n\nमैं ऐप के बारे में कुछ प्रतिक्रिया साझा करना चाहता हूँ:\n\n[कृपया यहाँ अपनी प्रतिक्रिया का वर्णन करें]\n\nधन्यवाद!</string>
+    <string name="feedback_email_body_russian" translatable="false">Привет команде AntCashManager,\n\nЯ хотел бы поделиться отзывом о приложении:\n\n[Пожалуйста опишите ваш отзыв здесь]\n\nСпасибо!</string>
+    <string name="feedback_email_body_ukrainian" translatable="false">Привіт команді AntCashManager,\n\nЯ хотів би поділитися відгуком про додаток:\n\n[Будь ласка, опишіть ваш відгук тут]\n\nДякую!</string>
+    <string name="feedback_email_body_korean" translatable="false">AntCashManager 팀에게,\n\n앱에 대한 의견을 공유하고 싶습니다:\n\n[여기에 피드백을 설명하세요]\n\n감사합니다!</string>
+
+    <string name="date_format_ddmmyyyy" translatable="false">DD/MM/YYYY</string>
+    <string name="date_format_mmddyyyy" translatable="false">MM/DD/YYYY</string>
+    <string name="date_format_yyyymmdd" translatable="false">YYYY-MM-DD</string>
+    <string name="date_format_ddmmmyyyy" translatable="false">DD MMM YYYY</string>
 </resources>

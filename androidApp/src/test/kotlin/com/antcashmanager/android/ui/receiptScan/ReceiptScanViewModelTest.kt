@@ -3,6 +3,8 @@ package com.antcashmanager.android.ui.receiptScan
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.analytics.AnalyticsManager
+import com.antcashmanager.android.analytics.ErrorTracker
+import com.antcashmanager.android.analytics.PerformanceTracker
 import com.antcashmanager.android.testutil.FakeCategoryRepository
 import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.testutil.FakeTransactionRepository
@@ -40,6 +42,8 @@ class ReceiptScanViewModelTest : BaseUnitTest() {
     private lateinit var fakeTxRepo: FakeTransactionRepository
     private lateinit var fakeCatRepo: FakeCategoryRepository
     private lateinit var analyticsManager: AnalyticsManager
+    private lateinit var performanceTracker: PerformanceTracker
+    private lateinit var errorTracker: ErrorTracker
     private lateinit var viewModel: ReceiptScanViewModel
 
     private val expenseCategory = Category(id = 1L, name = "Alimentari", type = "EXPENSE")
@@ -50,6 +54,8 @@ class ReceiptScanViewModelTest : BaseUnitTest() {
         fakeTxRepo = FakeTransactionRepository()
         fakeCatRepo = FakeCategoryRepository(listOf(expenseCategory, incomeCategory))
         analyticsManager = mockk(relaxed = true)
+        performanceTracker = mockk(relaxed = true)
+        errorTracker = mockk(relaxed = true)
         val fakeOcrService = FakeTestOcrService()
         val scanUseCase = ScanReceiptUseCase(fakeOcrService)
         viewModel = ReceiptScanViewModel(
@@ -65,6 +71,8 @@ class ReceiptScanViewModelTest : BaseUnitTest() {
                 testDispatcher
             ),
             analyticsManager = analyticsManager,
+            performanceTracker = performanceTracker,
+            errorTracker = errorTracker,
         )
     }
 

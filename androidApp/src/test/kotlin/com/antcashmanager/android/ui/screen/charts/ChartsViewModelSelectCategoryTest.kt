@@ -1,12 +1,15 @@
 package com.antcashmanager.android.ui.screen.charts
 
 import com.antcashmanager.android.BaseUnitTest
+import com.antcashmanager.android.analytics.PerformanceTracker
+import com.antcashmanager.android.analytics.SegmentationTracker
 import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.testutil.FakeTransactionRepository
 import com.antcashmanager.android.ui.screen.charts.view.TrendDirection
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -33,14 +36,18 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
 
     private lateinit var fakeTransactionRepo: FakeTransactionRepository
     private lateinit var fakeSettingsRepo: FakeSettingsRepository
+    private lateinit var performanceTracker: PerformanceTracker
+    private lateinit var segmentationTracker: SegmentationTracker
     private lateinit var viewModel: ChartsViewModel
 
     @Before
     fun setup() {
         fakeTransactionRepo = FakeTransactionRepository()
         fakeSettingsRepo = FakeSettingsRepository()
+        performanceTracker = mockk(relaxed = true)
+        segmentationTracker = mockk(relaxed = true)
         // Pass testDispatcher to ensure ViewModel uses the same dispatcher as the test
-        viewModel = ChartsViewModel(fakeTransactionRepo, fakeSettingsRepo, dispatcher = testDispatcher)
+        viewModel = ChartsViewModel(fakeTransactionRepo, fakeSettingsRepo, dispatcher = testDispatcher, performanceTracker = performanceTracker, segmentationTracker = segmentationTracker)
     }
 
     @Test

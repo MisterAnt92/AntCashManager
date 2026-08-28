@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.map
  * @param R Tipo del valore di successo emesso nel [Result] dal flusso restituito da [invoke]
  * @param dispatcher Dispatcher su cui viene prodotto il Flow. Default [Dispatchers.Default].
  */
-abstract class ObservableUseCase<in P, R>(
+public abstract class ObservableUseCase<in P, R>(
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) {
     protected val log: Logger = Logger.withTag(this::class.simpleName ?: "ObservableUseCase")
@@ -44,7 +44,7 @@ abstract class ObservableUseCase<in P, R>(
      *
      * `final`: le subclass implementano SOLO [execute], mai [invoke].
      */
-    operator fun invoke(params: P): Flow<Result<R>> = execute(params)
+    public operator fun invoke(params: P): Flow<Result<R>> = execute(params)
         .map { Result.success(it) }
         .catch { throwable ->
             if (throwable is CancellationException) throw throwable

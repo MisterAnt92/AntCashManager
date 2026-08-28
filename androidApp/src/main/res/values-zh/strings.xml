@@ -12,12 +12,7 @@
     <string name="common_back">返回</string>
     <string name="common_add">添加</string>
     <string name="common_preview">预览</string>
-
-    <!-- HelpDialog (Dashboard) -->
     <string name="help_dashboard_desc">查看选定期间的总余额、收入和支出。</string>
-    <string name="app_name">AntCashManager</string>
-
-    <!-- Home Screen -->
     <string name="home_total_balance">总余额</string>
     <string name="home_income">收入</string>
     <string name="home_expenses">支出</string>
@@ -36,10 +31,6 @@
     <string name="home_recent_transactions_count">最近交易 · %1$d</string>
     <string name="home_quick_insights_biggest_expense">最大支出</string>
     <string name="home_scroll_to_top">滚动到顶部</string>
-    <string name="home_balance_summary_cd">%1$s: %2$s, %3$s</string>
-    <string name="home_insight_row_cd">%1$s: %2$s</string>
-
-    <!-- Transactions Screen -->
     <string name="transactions_add">添加交易</string>
     <string name="transactions_type_income">收入</string>
     <string name="transactions_type_expense">支出</string>
@@ -213,10 +204,6 @@
     <string name="settings_widget_preview_title">预览</string>
     <string name="settings_widget_preview_recent">最近交易</string>
     <string name="settings_widget_preview_category">收入与支出</string>
-    <string name="date_format_ddmmyyyy">DD/MM/YYYY</string>
-    <string name="date_format_mmddyyyy">MM/DD/YYYY</string>
-    <string name="date_format_yyyymmdd">YYYY-MM-DD</string>
-    <string name="date_format_ddmmmyyyy">DD MMM YYYY</string>
     <string name="dialog_choose_date_format">选择日期格式</string>
     <string name="settings_accessibility">辅助功能</string>
     <string name="settings_high_contrast">高对比度</string>
@@ -297,26 +284,30 @@
     <string name="dialog_delete_suggestions_message">从您的交易历史记录（标题、收款人、备注、地点、标签）中构建的建议将被遗忘。新的建议将在您添加交易时再次建立。是否继续？</string>
     <string name="dialog_reset">重置</string>
 
+    <!-- Automatic Backup (Phase 1 & 2) -->
+    <string name="settings_auto_backup">自动备份</string>
+    <string name="settings_auto_backup_subtitle">每周自动备份</string>
+    <string name="settings_auto_backup_weekly_label">自动备份每周进行一次</string>
+    <string name="settings_auto_backup_destination_local">本地</string>
+    <string name="settings_auto_backup_google_drive_coming_soon">即将推出</string>
+    <string name="settings_auto_backup_google_drive_sign_in_title">启用Google Drive备份</string>
+    <string name="settings_auto_backup_google_drive_sign_in_message">使用您的Google账户登录以启用Google Drive自动备份。您的数据将被加密并安全存储。</string>
+    <string name="settings_auto_backup_google_drive_sign_in">使用Google登录</string>
+    <string name="settings_auto_backup_google_drive_signing_in">正在登录Google…</string>
+    <string name="settings_auto_backup_google_drive_sign_out">从Google登出</string>
+    <string name="settings_auto_backup_path_button">备份路径</string>
+    <string name="settings_auto_backup_path_not_selected">未选择文件夹</string>
+    <string name="settings_auto_backup_path_subtitle">选择自动备份的保存位置</string>
+    <string name="settings_auto_backup_path_selected">选定的路径: %s</string>
+    <string name="settings_auto_backup_google_drive_configured">为Google Drive配置的备份</string>
+
+
     <!-- Privacy Policy -->
     <string name="privacy_policy_title">隐私政策</string>
     <string name="privacy_policy_content">AntCashManager 致力于保护您的隐私。本应用不会向第三方收集或共享个人数据。所有财务数据都存储在您的设备本地，绝不会传输到外部服务器。\n\n您的数据完全保留在您的设备上，并受您控制。我们不使用分析、跟踪或广告服务。\n\n如有任何关于隐私的问题，请通过应用商店列表联系我们。</string>
 
     <!-- Languages -->
     <string name="language_system">系统默认</string>
-    <string name="language_english">English (英语)</string>
-    <string name="language_italian">Italiano (意大利语)</string>
-    <string name="language_french">Français (法语)</string>
-    <string name="language_german">Deutsch (德语)</string>
-    <string name="language_spanish">Español (西班牙语)</string>
-    <string name="language_chinese_simplified">中文（简体）</string>
-    <string name="language_chinese_traditional">中文（繁體）</string>
-    <string name="language_japanese">日本語</string>
-    <string name="language_polish">Polski</string>
-    <string name="language_hindi">हिन्दी (印地语)</string>
-    <string name="language_russian">Русский (俄语)</string>
-    <string name="language_ukrainian">Українська (乌克兰语)</string>
-    <string name="language_korean">한국어 (韩语)</string>
-    <string name="debug_import_started">调试导入已开始</string>
     <string name="back">返回</string>
 
     <!-- Add Transaction Screen -->
@@ -616,4 +607,17 @@
 
     <!-- App Description -->
     <string name="app_description">这个应用的诞生源于无需订阅的情况下追踪家庭支出的需要，并能够查看支出并比较价格上涨。</string>
+
+    <!-- Payment Type Settings -->
+    <string name="settings_payment_type_section">支付方式</string>
+    <string name="settings_default_payment_type">默认支付方式</string>
+    <string name="settings_default_payment_type_desc">为新交易选择默认支付方式</string>
+    <string name="dialog_payment_type_title">选择支付方式</string>
+
+    <!-- Auto Backup Notifications -->
+    <string name="auto_backup_notification_channel_name">自动备份错误</string>
+    <string name="auto_backup_notification_channel_description">自动备份失败的通知</string>
+    <string name="auto_backup_notification_failure_title">自动备份失败</string>
+    <string name="auto_backup_notification_failure_message">无法完成自动备份。请检查您的存储权限。</string>
+
 </resources>

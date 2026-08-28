@@ -65,7 +65,16 @@ fun LeftSidebar(
     Surface(
         modifier = modifier
             .width(280.dp)
-            .fillMaxHeight(),
+            .fillMaxHeight()
+            .clickable(
+                enabled = true,
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() },
+                onClick = {
+                    // Block click propagation to parent (dimming overlay)
+                    // This prevents closing sidebar when clicking on sidebar itself
+                },
+            ),
         color = MaterialTheme.colorScheme.surface,
         tonalElevation = 6.dp,
         shadowElevation = 8.dp,
@@ -187,6 +196,7 @@ private fun SidebarMenuItem(
 
     Row(
         modifier = Modifier
+            .fillMaxWidth()
             .height(56.dp)
             .clickable(
                 enabled = true,

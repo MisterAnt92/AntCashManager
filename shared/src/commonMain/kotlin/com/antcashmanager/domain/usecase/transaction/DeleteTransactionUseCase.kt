@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 /**
  * UseCase per la cancellazione di una transazione.
  */
-class DeleteTransactionUseCase(
+public class DeleteTransactionUseCase(
     private val transactionRepository: TransactionRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : UseCase<Transaction, Unit>(dispatcher) {

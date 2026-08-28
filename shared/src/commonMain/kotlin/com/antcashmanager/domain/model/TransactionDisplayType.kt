@@ -3,7 +3,7 @@ package com.antcashmanager.domain.model
 /**
  * Defines how transaction icons are displayed in the UI.
  */
-enum class TransactionDisplayType {
+public enum class TransactionDisplayType {
     /**
      * Show trend arrows (up for income, down for expense).
      */

@@ -6,7 +6,7 @@ import com.antcashmanager.domain.usecase.base.UseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
-class SetHomeDateFilterStateUseCase(
+public class SetHomeDateFilterStateUseCase(
     private val settingsRepository: SettingsRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : UseCase<SavedDateFilter, Unit>(dispatcher) {

@@ -32,7 +32,7 @@ import kotlinx.coroutines.flow.flowOf
  * @param dispatcher Dispatcher su cui viene prodotto il Flow. Default [Dispatchers.Default].
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-class GetTransactionSuggestionsUseCase(
+public class GetTransactionSuggestionsUseCase(
     private val repository: TransactionRepository,
     private val settingsRepository: SettingsRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,

@@ -38,7 +38,7 @@ package com.antcashmanager.domain.usecase.settings
  * - Easy to add new settings (just add parameter)
  * - Strongly typed (no string-based access)
  */
-data class SettingsUseCasesProvider(
+public data class SettingsUseCasesProvider(
     // Theme & Language (UI state)
     val getTheme: GetSettingUseCase<String>,
     val setTheme: SetSettingUseCase<String>,

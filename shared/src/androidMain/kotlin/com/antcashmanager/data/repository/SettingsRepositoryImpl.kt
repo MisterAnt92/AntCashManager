@@ -14,6 +14,7 @@ import co.touchlab.kermit.Logger
 import com.antcashmanager.data.local.DatabaseEncryptionManager
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
+import com.antcashmanager.domain.model.BackupDestination
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.SettingsRepository
@@ -22,7 +23,7 @@ import kotlinx.coroutines.flow.map
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
-class SettingsRepositoryImpl(
+public class SettingsRepositoryImpl(
     private val context: Context,
     private val dataStore: DataStore<Preferences> = context.dataStore,
 ) : SettingsRepository {
@@ -65,6 +66,8 @@ class SettingsRepositoryImpl(
     private val showInitialAnimationKey = booleanPreferencesKey("show_initial_animation")
     private val lastBackupTimestampKey = longPreferencesKey("last_backup_timestamp")
     private val lastRestoreTimestampKey = longPreferencesKey("last_restore_timestamp")
+    private val autoBackupEnabledKey = booleanPreferencesKey("auto_backup_enabled")
+    private val autoBackupFolderUriKey = stringPreferencesKey("auto_backup_folder_uri")
     private val suggestionsEnabledKey = booleanPreferencesKey("suggestions_enabled")
     private val suggestionsClearedAtKey = longPreferencesKey("suggestions_cleared_at")
     private val widgetBackgroundColorKey = longPreferencesKey("widget_background_color")
@@ -72,6 +75,17 @@ class SettingsRepositoryImpl(
     // ── Card Customization (v3+) ──
     private val chartCardsOrderKey = stringPreferencesKey("chart_cards_order")
     private val homeTopCardsOrderKey = stringPreferencesKey("home_top_cards_order")
+
+    // ── Google Drive Backup Configuration ──
+    private val autoBackupDestinationKey = stringPreferencesKey("auto_backup_destination")
+    private val googleDriveFolderIdKey = stringPreferencesKey("google_drive_folder_id")
+    private val googleDriveFolderNameKey = stringPreferencesKey("google_drive_folder_name")
+    private val googleDriveAuthTokenKey = stringPreferencesKey("google_drive_auth_token")
+    private val googleDriveRefreshTokenKey = stringPreferencesKey("google_drive_refresh_token")
+    private val googleDriveUserEmailKey = stringPreferencesKey("google_drive_user_email")
+
+    // ── Default Payment Type ──
+    private val defaultPaymentTypeKey = stringPreferencesKey("default_payment_type")
 
     private fun createSavedDateFilter(
         defaultPresetIndex: Int,
@@ -359,6 +373,17 @@ class SettingsRepositoryImpl(
         }
     }
 
+    override fun getDefaultPaymentType(): Flow<String> =
+        dataStore.data.map { preferences ->
+            preferences[defaultPaymentTypeKey] ?: "ELECTRONIC"
+        }
+
+    override suspend fun setDefaultPaymentType(paymentType: String) {
+        dataStore.edit { preferences ->
+            preferences[defaultPaymentTypeKey] = paymentType
+        }
+    }
+
     override fun getTransactionDisplayType(): Flow<TransactionDisplayType> =
         dataStore.data.map { preferences ->
             val typeName =
@@ -436,6 +461,26 @@ class SettingsRepositoryImpl(
         dataStore.edit { it[lastRestoreTimestampKey] = timestamp }
     }
 
+    override fun getAutoBackupEnabled(): Flow<Boolean> =
+        dataStore.data.map { it[autoBackupEnabledKey] ?: false }
+
+    override suspend fun setAutoBackupEnabled(enabled: Boolean) {
+        dataStore.edit { it[autoBackupEnabledKey] = enabled }
+    }
+
+    override fun getAutoBackupFolderUri(): Flow<String?> =
+        dataStore.data.map { it[autoBackupFolderUriKey] }
+
+    override suspend fun setAutoBackupFolderUri(uri: String?) {
+        dataStore.edit { preferences ->
+            if (uri == null) {
+                preferences.remove(autoBackupFolderUriKey)
+            } else {
+                preferences[autoBackupFolderUriKey] = uri
+            }
+        }
+    }
+
     override fun getSuggestionsEnabled(): Flow<Boolean> =
         dataStore.data.map { it[suggestionsEnabledKey] ?: true }
 
@@ -477,6 +522,84 @@ class SettingsRepositoryImpl(
 
     override suspend fun setHomeTopCardsOrder(order: String) {
         dataStore.edit { it[homeTopCardsOrderKey] = order }
+    }
+
+    // ── Google Drive Backup Configuration ──
+    override fun getAutoBackupDestination(): Flow<BackupDestination> =
+        dataStore.data.map { preferences ->
+            val destinationName = preferences[autoBackupDestinationKey] ?: BackupDestination.LOCAL.name
+            BackupDestination.valueOf(destinationName)
+        }
+
+    override suspend fun setAutoBackupDestination(destination: BackupDestination) {
+        dataStore.edit { preferences ->
+            preferences[autoBackupDestinationKey] = destination.name
+        }
+    }
+
+    override fun getGoogleDriveFolderId(): Flow<String?> =
+        dataStore.data.map { it[googleDriveFolderIdKey] }
+
+    override suspend fun setGoogleDriveFolderId(folderId: String?) {
+        dataStore.edit { preferences ->
+            if (folderId == null) {
+                preferences.remove(googleDriveFolderIdKey)
+            } else {
+                preferences[googleDriveFolderIdKey] = folderId
+            }
+        }
+    }
+
+    override fun getGoogleDriveFolderName(): Flow<String?> =
+        dataStore.data.map { it[googleDriveFolderNameKey] }
+
+    override suspend fun setGoogleDriveFolderName(folderName: String?) {
+        dataStore.edit { preferences ->
+            if (folderName == null) {
+                preferences.remove(googleDriveFolderNameKey)
+            } else {
+                preferences[googleDriveFolderNameKey] = folderName
+            }
+        }
+    }
+
+    override fun getGoogleDriveAuthToken(): Flow<String?> =
+        dataStore.data.map { it[googleDriveAuthTokenKey] }
+
+    override suspend fun setGoogleDriveAuthToken(token: String?) {
+        dataStore.edit { preferences ->
+            if (token == null) {
+                preferences.remove(googleDriveAuthTokenKey)
+            } else {
+                preferences[googleDriveAuthTokenKey] = token
+            }
+        }
+    }
+
+    override fun getGoogleDriveRefreshToken(): Flow<String?> =
+        dataStore.data.map { it[googleDriveRefreshTokenKey] }
+
+    override suspend fun setGoogleDriveRefreshToken(token: String?) {
+        dataStore.edit { preferences ->
+            if (token == null) {
+                preferences.remove(googleDriveRefreshTokenKey)
+            } else {
+                preferences[googleDriveRefreshTokenKey] = token
+            }
+        }
+    }
+
+    override fun getGoogleDriveUserEmail(): Flow<String?> =
+        dataStore.data.map { it[googleDriveUserEmailKey] }
+
+    override suspend fun setGoogleDriveUserEmail(email: String?) {
+        dataStore.edit { preferences ->
+            if (email == null) {
+                preferences.remove(googleDriveUserEmailKey)
+            } else {
+                preferences[googleDriveUserEmailKey] = email
+            }
+        }
     }
 
     override suspend fun resetAllPreferences() {
@@ -530,7 +653,7 @@ class SettingsRepositoryImpl(
     private companion object {
         const val WEEK_IN_MILLIS = 7L * 24 * 60 * 60 * 1000
         const val MONTH_IN_MILLIS = 30L * 24 * 60 * 60 * 1000
-        const val DEFAULT_MEAL_VOUCHER_VALUE = 12.5
+        const val DEFAULT_MEAL_VOUCHER_VALUE = 5.29
         const val DEFAULT_WIDGET_BACKGROUND_COLOR = -16777216L // Black (ARGB)
         const val DEFAULT_WIDGET_OPACITY = 100
     }

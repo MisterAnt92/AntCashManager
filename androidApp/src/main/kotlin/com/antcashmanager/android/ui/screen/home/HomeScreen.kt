@@ -508,6 +508,11 @@ internal fun HomeContent(
                                 onSearchQueryChange = { newQuery ->
                                     if (newQuery.isNotEmpty() && state.searchQuery.isEmpty()) {
                                         analyticsManager.logEvent("home_search_submitted")
+                                        // Track search query initiated
+                                        analyticsManager.logEvent("search_query_initiated", android.os.Bundle().apply {
+                                            putInt("query_length", newQuery.length)
+                                            putBoolean("filters_active", false)
+                                        })
                                     } else if (newQuery.isEmpty() && state.searchQuery.isNotEmpty()) {
                                         analyticsManager.logEvent("home_search_cleared")
                                     }
@@ -647,6 +652,8 @@ class MockHomeSettingsRepository : SettingsRepository {
     override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {}
     override fun getShowQuickInsightsCard() = kotlinx.coroutines.flow.flowOf(true)
     override suspend fun setShowQuickInsightsCard(show: Boolean) {}
+    override fun getDefaultPaymentType() = kotlinx.coroutines.flow.flowOf("ELECTRONIC")
+    override suspend fun setDefaultPaymentType(paymentType: String) {}
 
     override fun getShowInitialAnimation(): kotlinx.coroutines.flow.Flow<Boolean> =
         kotlinx.coroutines.flow.flowOf(true)
@@ -713,6 +720,47 @@ class MockHomeSettingsRepository : SettingsRepository {
         kotlinx.coroutines.flow.flowOf("")
 
     override suspend fun setHomeTopCardsOrder(order: String) {}
+
+    // ── Google Drive Backup Configuration ──
+    override fun getAutoBackupEnabled(): kotlinx.coroutines.flow.Flow<Boolean> =
+        kotlinx.coroutines.flow.flowOf(false)
+
+    override suspend fun setAutoBackupEnabled(enabled: Boolean) {}
+
+    override fun getAutoBackupFolderUri(): kotlinx.coroutines.flow.Flow<String?> =
+        kotlinx.coroutines.flow.flowOf(null)
+
+    override suspend fun setAutoBackupFolderUri(uri: String?) {}
+
+    override fun getAutoBackupDestination(): kotlinx.coroutines.flow.Flow<com.antcashmanager.domain.model.BackupDestination> =
+        kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.BackupDestination.LOCAL)
+
+    override suspend fun setAutoBackupDestination(destination: com.antcashmanager.domain.model.BackupDestination) {}
+
+    override fun getGoogleDriveFolderId(): kotlinx.coroutines.flow.Flow<String?> =
+        kotlinx.coroutines.flow.flowOf(null)
+
+    override suspend fun setGoogleDriveFolderId(folderId: String?) {}
+
+    override fun getGoogleDriveFolderName(): kotlinx.coroutines.flow.Flow<String?> =
+        kotlinx.coroutines.flow.flowOf(null)
+
+    override suspend fun setGoogleDriveFolderName(folderName: String?) {}
+
+    override fun getGoogleDriveAuthToken(): kotlinx.coroutines.flow.Flow<String?> =
+        kotlinx.coroutines.flow.flowOf(null)
+
+    override suspend fun setGoogleDriveAuthToken(token: String?) {}
+
+    override fun getGoogleDriveRefreshToken(): kotlinx.coroutines.flow.Flow<String?> =
+        kotlinx.coroutines.flow.flowOf(null)
+
+    override suspend fun setGoogleDriveRefreshToken(token: String?) {}
+
+    override fun getGoogleDriveUserEmail(): kotlinx.coroutines.flow.Flow<String?> =
+        kotlinx.coroutines.flow.flowOf(null)
+
+    override suspend fun setGoogleDriveUserEmail(email: String?) {}
 
     override suspend fun resetAllPreferences() {}
 }

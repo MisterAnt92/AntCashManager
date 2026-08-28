@@ -2,6 +2,7 @@ package com.antcashmanager.android.ui.widget
 
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import androidx.glance.GlanceId
 import androidx.glance.action.ActionParameters
 import androidx.glance.appwidget.action.ActionCallback
@@ -26,6 +27,10 @@ class RecentTransactionsWidgetTapAction : ActionCallback {
         parameters: ActionParameters
     ) {
         WidgetDependencies.analyticsManager.logEvent("widget_recent_transactions_opened")
+        // Track widget tap action
+        WidgetDependencies.analyticsManager.logEvent("widget_tap_action_triggered", Bundle().apply {
+            putString("action", "view_recent")
+        })
         openApp(context)
     }
 }
@@ -37,6 +42,10 @@ class CategoryBreakdownWidgetTapAction : ActionCallback {
         parameters: ActionParameters
     ) {
         WidgetDependencies.analyticsManager.logEvent("widget_category_breakdown_opened")
+        // Track widget tap action
+        WidgetDependencies.analyticsManager.logEvent("widget_tap_action_triggered", Bundle().apply {
+            putString("action", "view_breakdown")
+        })
         openApp(context)
     }
 }

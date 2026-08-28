@@ -22,6 +22,7 @@ object DisplayConstant {
     const val DEFAULT_SHOW_CHARTS_ZOOM = true
     const val DEFAULT_SHOW_PAYMENT_BREAKDOWN = false
     const val DEFAULT_SHOW_QUICK_INSIGHTS_CARD = true
+    const val DEFAULT_PAYMENT_TYPE = "ELECTRONIC"
     val DEFAULT_TRANSACTION_DISPLAY_TYPE: TransactionDisplayType = TransactionDisplayType.TREND
     const val DEFAULT_WIDGET_BACKGROUND_COLOR = 0xFFFFFFFFL
     const val DEFAULT_WIDGET_OPACITY = 100

@@ -20,6 +20,7 @@ import androidx.window.layout.DisplayFeature
 import androidx.window.layout.WindowInfoTracker
 import androidx.lifecycle.lifecycleScope
 import co.touchlab.kermit.Logger
+import com.antcashmanager.android.analytics.SessionTracker
 import com.antcashmanager.android.navigation.AntCashManagerNavHost
 import com.antcashmanager.android.ui.LocalLocale
 import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
@@ -40,11 +41,20 @@ class MainActivity : ComponentActivity() {
 
     private val getLanguageUseCase: GetLanguageUseCase by inject()
     private val getThemeUseCase: GetThemeUseCase by inject()
+    private val sessionTracker: SessionTracker by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         Logger.d(tag = "MainActivity") { "onCreate: initializing app with settings" }
+
+        // Track app launch event
+        val appVersion = try {
+            packageManager.getPackageInfo(packageName, 0).versionName ?: "unknown"
+        } catch (e: Exception) {
+            "unknown"
+        }
+        sessionTracker.onAppLaunched(appVersion, isFirstLaunch = false)
 
         // Pre-load settings from DataStore to ensure they're available immediately
         lifecycleScope.launch {
@@ -101,6 +111,18 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Logger.d(tag = "MainActivity") { "onResume: session started" }
+        sessionTracker.onSessionStarted()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Logger.d(tag = "MainActivity") { "onPause: session ended" }
+        sessionTracker.onSessionEnded()
     }
 }
 
