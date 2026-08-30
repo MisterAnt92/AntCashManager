@@ -501,7 +501,7 @@ internal fun TransactionsContent(
                 }
 
                 else -> {
-                    items(state.filteredTransactions) { transaction ->
+                    items(state.filteredTransactions, key = { it.id }) { transaction ->
                         TransactionItem(
                             transaction = transaction,
                             onClick = {
