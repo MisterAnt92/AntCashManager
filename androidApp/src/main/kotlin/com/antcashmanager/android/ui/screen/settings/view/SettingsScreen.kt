@@ -61,6 +61,7 @@ import com.antcashmanager.android.ui.components.common.AppSwitch
 import com.antcashmanager.android.ui.components.dialog.HelpButton
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.settings.SettingsViewModel
+import com.antcashmanager.android.navigation.AppRoute
 import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
 import com.antcashmanager.android.navigation.ScreenHeaderConfig
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
@@ -259,7 +260,7 @@ internal fun SettingsContent(
                             putString("submenu", "display")
                         }
                         analyticsManager.logEvent("settings_submenu_opened", params)
-                        navController?.navigate("display")
+                        navController?.navigate(AppRoute.SettingsRoute.Display.route)
                     },
                 )
             }
@@ -319,7 +320,7 @@ internal fun SettingsContent(
                             putString("submenu", "data_management")
                         }
                         analyticsManager.logEvent("settings_submenu_opened", params)
-                        navController?.navigate("settings_data")
+                        navController?.navigate(AppRoute.SettingsRoute.DataManagement.route)
                     },
                 )
             }

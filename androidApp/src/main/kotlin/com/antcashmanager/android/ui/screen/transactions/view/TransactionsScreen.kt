@@ -81,6 +81,7 @@ import com.antcashmanager.android.ui.components.dialog.HelpButton
 import com.antcashmanager.android.ui.components.dialog.HelpDialogFeatureSpec
 import com.antcashmanager.android.ui.components.filter.DateRangeFilter
 import com.antcashmanager.android.ui.components.filter.SearchComponent
+import com.antcashmanager.android.navigation.AppRoute
 import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
 import com.antcashmanager.android.navigation.ScreenHeaderConfig
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
@@ -516,7 +517,7 @@ internal fun TransactionsContent(
                                     transaction = transaction,
                                     navigateToDetailsPane = foldingFeature?.isSeparating == true
                                 )
-                                navController?.navigate("add_transaction?transactionId=${transaction.id}")
+                                navController?.navigate(AppRoute.TransactionRoute.Edit.createRoute(transaction.id))
                             },
                             displayType = transactionDisplayType,
                         )
@@ -563,7 +564,7 @@ internal fun TransactionsContent(
                 FloatingActionButton(
                     onClick = {
                         analyticsManager.logEvent("receipt_scan_opened")
-                        navController?.navigate("receipt_scan")
+                        navController?.navigate(AppRoute.TransactionRoute.ReceiptScan.route)
                     },
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                 ) {
@@ -578,7 +579,7 @@ internal fun TransactionsContent(
                 FloatingActionButton(
                     onClick = {
                         analyticsManager.logEvent("transaction_add_opened")
-                        navController?.navigate("add_transaction")
+                        navController?.navigate(AppRoute.TransactionRoute.Add.route)
                     },
                     containerColor = MaterialTheme.colorScheme.primary,
                 ) {
