@@ -78,7 +78,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
@@ -201,7 +201,7 @@ val categoryColors = listOf(
 @Composable
 fun CategoriesScreen() {
     val viewModel: CategoriesViewModel = koinViewModel()
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     CategoriesContent(
         state = state,
         onAddCategory = viewModel::addCategory,

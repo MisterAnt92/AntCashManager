@@ -48,7 +48,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -126,9 +126,9 @@ fun TransactionsScreen(
         koinViewModel()
     val settingsRepository: SettingsRepository = koinInject()
 
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val transactionDisplayType by settingsRepository.getTransactionsTransactionDisplayType()
-        .collectAsState(initial = TransactionDisplayType.TREND)
+        .collectAsStateWithLifecycle(initialValue = TransactionDisplayType.TREND)
 
     TransactionsContent(
         params = TransactionsContentParams(
@@ -208,7 +208,7 @@ internal fun TransactionsContent(
 
     // DateRangeFilter expanded state from settings
     val dateFilterExpanded by settingsRepository.getDateFilterExpanded()
-        .collectAsState(initial = true)
+        .collectAsStateWithLifecycle(initialValue = true)
     val coroutineScope = rememberCoroutineScope()
     val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
 

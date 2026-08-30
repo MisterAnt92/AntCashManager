@@ -43,7 +43,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -102,15 +102,15 @@ fun AntCashManagerNavHost() {
     val performanceTracker: PerformanceTracker = koinInject()
 
     val navController = rememberNavController()
-    val showCharts by settingsRepository.getShowCharts().collectAsState(initial = true)
+    val showCharts by settingsRepository.getShowCharts().collectAsStateWithLifecycle(initialValue = true)
     val isTutorialCompleted by settingsRepository.getIsTutorialCompleted()
-        .collectAsState(initial = true)
-    val currencySymbol by settingsRepository.getCurrencySymbol().collectAsState(initial = "\u20ac")
-    val decimalDigits by settingsRepository.getDecimalDigits().collectAsState(initial = 2)
-    val decimalSeparator by settingsRepository.getDecimalSeparator().collectAsState(initial = ",")
+        .collectAsStateWithLifecycle(initialValue = true)
+    val currencySymbol by settingsRepository.getCurrencySymbol().collectAsStateWithLifecycle(initialValue = "\u20ac")
+    val decimalDigits by settingsRepository.getDecimalDigits().collectAsStateWithLifecycle(initialValue = 2)
+    val decimalSeparator by settingsRepository.getDecimalSeparator().collectAsStateWithLifecycle(initialValue = ",")
     val thousandsSeparator by settingsRepository.getThousandsSeparator()
-        .collectAsState(initial = "")
-    val maskAmounts by settingsRepository.getMaskAmounts().collectAsState(initial = false)
+        .collectAsStateWithLifecycle(initialValue = "")
+    val maskAmounts by settingsRepository.getMaskAmounts().collectAsStateWithLifecycle(initialValue = false)
 
     val showInitialAnimation = false
     var showSplash by rememberSaveable { mutableStateOf(true) }

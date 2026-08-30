@@ -48,7 +48,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -108,23 +108,23 @@ fun DisplayScreen(
 ) {
     val viewModel: DisplayViewModel = koinViewModel()
 
-    val currencySymbol by viewModel.currencySymbol.collectAsState()
-    val decimalDigits by viewModel.decimalDigits.collectAsState()
-    val decimalSeparator by viewModel.decimalSeparator.collectAsState()
-    val thousandsSeparator by viewModel.thousandsSeparator.collectAsState()
-    val mealVoucherValue by viewModel.mealVoucherValue.collectAsState()
-    val showChartsSection by viewModel.showChartsSection.collectAsState()
-    val dateFormat by viewModel.dateFormat.collectAsState()
-    val showTransactionNotes by viewModel.showTransactionNotes.collectAsState()
-    val maskAmounts by viewModel.maskAmounts.collectAsState()
-    val showPaymentTypeBreakdown by viewModel.showPaymentTypeBreakdown.collectAsState()
-    val showQuickInsightsCard by viewModel.showQuickInsightsCard.collectAsState()
-    val defaultPaymentType by viewModel.defaultPaymentType.collectAsState()
-    val transactionDisplayType by viewModel.transactionDisplayType.collectAsState()
-    val transactionsTransactionDisplayType by viewModel.transactionsTransactionDisplayType.collectAsState()
-    val chartsZoomEnabled by viewModel.chartsZoomEnabled.collectAsState()
-    val widgetBackgroundColor by viewModel.widgetBackgroundColor.collectAsState()
-    val widgetOpacity by viewModel.widgetOpacity.collectAsState()
+    val currencySymbol by viewModel.currencySymbol.collectAsStateWithLifecycle()
+    val decimalDigits by viewModel.decimalDigits.collectAsStateWithLifecycle()
+    val decimalSeparator by viewModel.decimalSeparator.collectAsStateWithLifecycle()
+    val thousandsSeparator by viewModel.thousandsSeparator.collectAsStateWithLifecycle()
+    val mealVoucherValue by viewModel.mealVoucherValue.collectAsStateWithLifecycle()
+    val showChartsSection by viewModel.showChartsSection.collectAsStateWithLifecycle()
+    val dateFormat by viewModel.dateFormat.collectAsStateWithLifecycle()
+    val showTransactionNotes by viewModel.showTransactionNotes.collectAsStateWithLifecycle()
+    val maskAmounts by viewModel.maskAmounts.collectAsStateWithLifecycle()
+    val showPaymentTypeBreakdown by viewModel.showPaymentTypeBreakdown.collectAsStateWithLifecycle()
+    val showQuickInsightsCard by viewModel.showQuickInsightsCard.collectAsStateWithLifecycle()
+    val defaultPaymentType by viewModel.defaultPaymentType.collectAsStateWithLifecycle()
+    val transactionDisplayType by viewModel.transactionDisplayType.collectAsStateWithLifecycle()
+    val transactionsTransactionDisplayType by viewModel.transactionsTransactionDisplayType.collectAsStateWithLifecycle()
+    val chartsZoomEnabled by viewModel.chartsZoomEnabled.collectAsStateWithLifecycle()
+    val widgetBackgroundColor by viewModel.widgetBackgroundColor.collectAsStateWithLifecycle()
+    val widgetOpacity by viewModel.widgetOpacity.collectAsStateWithLifecycle()
 
     DisplayContent(
         currencySymbol = currencySymbol,

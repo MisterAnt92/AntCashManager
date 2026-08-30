@@ -3,7 +3,7 @@ package com.antcashmanager.android.ui.theme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import co.touchlab.kermit.Logger
@@ -30,10 +30,10 @@ fun AppThemeProvider(
 ) {
     val viewModel: ThemeViewModel = koinViewModel()
 
-    val appTheme by viewModel.appTheme.collectAsState(initial = currentTheme)
-    val highContrast by viewModel.highContrast.collectAsState(initial = false)
-    val largeText by viewModel.largeText.collectAsState(initial = false)
-    val reduceMotion by viewModel.reduceMotion.collectAsState(initial = false)
+    val appTheme by viewModel.appTheme.collectAsStateWithLifecycle(initialValue = currentTheme)
+    val highContrast by viewModel.highContrast.collectAsStateWithLifecycle(initialValue = false)
+    val largeText by viewModel.largeText.collectAsStateWithLifecycle(initialValue = false)
+    val reduceMotion by viewModel.reduceMotion.collectAsStateWithLifecycle(initialValue = false)
 
     val darkTheme = when (appTheme) {
         AppTheme.DARK -> {

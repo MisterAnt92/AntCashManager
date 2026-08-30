@@ -40,7 +40,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -111,12 +111,12 @@ fun ChartsScreen() {
     Logger.d(tag = "ChartsScreen") { "Displaying ChartsScreen" }
     val viewModel: ChartsViewModel = koinViewModel()
     val settingsRepository: SettingsRepository = koinInject()
-    val chartData by viewModel.chartData.collectAsState()
-    val dateRange by viewModel.dateRange.collectAsState()
-    val selectedPresetIndex by viewModel.selectedPresetIndex.collectAsState()
+    val chartData by viewModel.chartData.collectAsStateWithLifecycle()
+    val dateRange by viewModel.dateRange.collectAsStateWithLifecycle()
+    val selectedPresetIndex by viewModel.selectedPresetIndex.collectAsStateWithLifecycle()
 
     val chartsZoomEnabled by settingsRepository.getChartsZoomEnabled()
-        .collectAsState(initial = false)
+        .collectAsStateWithLifecycle(initialValue = false)
 
     ChartsContent(
         chartData = chartData,
