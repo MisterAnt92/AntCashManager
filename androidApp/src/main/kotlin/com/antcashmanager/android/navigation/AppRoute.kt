@@ -12,6 +12,16 @@ package com.antcashmanager.android.navigation
  */
 sealed class AppRoute(val route: String) {
 
+    // Bottom navigation routes
+    sealed class BottomRoute(route: String) : AppRoute(route) {
+        object Home : BottomRoute("home")
+        object Charts : BottomRoute("charts")
+        object Transactions : BottomRoute("transactions")
+        object Categories : BottomRoute("categories")
+        object Settings : BottomRoute("settings")
+        object Tutorial : BottomRoute("tutorial")
+    }
+
     // Transaction routes
     sealed class TransactionRoute(route: String) : AppRoute(route) {
         object List : TransactionRoute("transactions")
@@ -52,5 +62,16 @@ sealed class AppRoute(val route: String) {
     // Receipt Scan routes
     sealed class ReceiptRoute(route: String) : AppRoute(route) {
         object ReceiptScan : ReceiptRoute("receipt_scan")
+    }
+
+    companion object {
+        fun isSettingsRoute(route: String?): Boolean {
+            return when (route) {
+                SettingsRoute.Main.route,
+                SettingsRoute.Display.route,
+                SettingsRoute.DataManagement.route -> true
+                else -> false
+            }
+        }
     }
 }
