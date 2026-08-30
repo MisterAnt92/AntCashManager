@@ -83,6 +83,7 @@ import com.antcashmanager.android.ui.screen.settings.view.MealVoucherDialog
 import com.antcashmanager.android.ui.screen.settings.view.SeparatorDialog
 import com.antcashmanager.android.ui.screen.settings.view.TransactionDisplayDialog
 import com.antcashmanager.android.ui.screen.settings.view.WidgetBackgroundColorDialog
+import com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayEvent
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.formatAmount
 import com.antcashmanager.domain.model.CurrencyFormat
@@ -138,23 +139,23 @@ fun DisplayScreen(
         mealVoucherValue = mealVoucherValue,
         onMealVoucherValueSelected = { viewModel.setMealVoucherValue(it) },
         showTransactionNotes = showTransactionNotes,
-        onShowTransactionNotesChanged = { viewModel.setShowTransactionNotes(it) },
+        onShowTransactionNotesChanged = { viewModel.onEvent(DisplayEvent.SetShowTransactionNotes(it)) },
         maskAmounts = maskAmounts,
-        onMaskAmountsChanged = { viewModel.setMaskAmounts(it) },
+        onMaskAmountsChanged = { viewModel.onEvent(DisplayEvent.SetMaskAmounts(it)) },
         showChartsSection = showChartsSection,
-        onShowChartsSectionChanged = { viewModel.setShowChartsSection(it) },
+        onShowChartsSectionChanged = { viewModel.onEvent(DisplayEvent.SetShowChartsSection(it)) },
         chartsZoomEnabled = chartsZoomEnabled,
-        onChartsZoomEnabledChanged = { viewModel.setChartsZoomEnabled(it) },
+        onChartsZoomEnabledChanged = { viewModel.onEvent(DisplayEvent.SetChartsZoomEnabled(it)) },
         dateFormat = dateFormat,
-        onDateFormatSelected = { viewModel.setDateFormat(it) },
+        onDateFormatSelected = { viewModel.onEvent(DisplayEvent.SetDateFormat(it)) },
         showPaymentTypeBreakdown = showPaymentTypeBreakdown,
-        onShowPaymentTypeBreakdownChanged = { viewModel.setShowPaymentTypeBreakdown(it) },
+        onShowPaymentTypeBreakdownChanged = { viewModel.onEvent(DisplayEvent.SetShowPaymentTypeBreakdown(it)) },
         showQuickInsightsCard = showQuickInsightsCard,
-        onShowQuickInsightsCardChanged = { viewModel.setShowQuickInsightsCard(it) },
+        onShowQuickInsightsCardChanged = { viewModel.onEvent(DisplayEvent.SetShowQuickInsightsCard(it)) },
         defaultPaymentType = defaultPaymentType,
-        onDefaultPaymentTypeSelected = { viewModel.setDefaultPaymentType(it) },
+        onDefaultPaymentTypeSelected = { viewModel.onEvent(DisplayEvent.SetDefaultPaymentType(it)) },
         transactionDisplayType = transactionDisplayType,
-        onTransactionDisplayTypeSelected = { viewModel.setTransactionDisplayType(it) },
+        onTransactionDisplayTypeSelected = { viewModel.onEvent(DisplayEvent.SetTransactionDisplayType(it)) },
         transactionsTransactionDisplayType = transactionsTransactionDisplayType,
         onTransactionsTransactionDisplayTypeSelected = {
             viewModel.setTransactionsTransactionDisplayType(
@@ -162,9 +163,9 @@ fun DisplayScreen(
             )
         },
         widgetBackgroundColor = widgetBackgroundColor,
-        onWidgetBackgroundColorSelected = { viewModel.setWidgetBackgroundColor(it) },
+        onWidgetBackgroundColorSelected = { viewModel.onEvent(DisplayEvent.SetWidgetBackgroundColor(it)) },
         widgetOpacity = widgetOpacity,
-        onWidgetOpacityChanged = { viewModel.setWidgetOpacity(it) },
+        onWidgetOpacityChanged = { viewModel.onEvent(DisplayEvent.SetWidgetOpacity(it)) },
         onResetAllPreferences = { viewModel.resetAllPreferences() },
         onNavigateBack = { navController.popBackStack() },
     )
