@@ -35,12 +35,10 @@ import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.security.LocalDataCipher
-import com.antcashmanager.domain.service.PreferencesStorage
 import com.antcashmanager.domain.service.ReceiptOcrService
 import com.antcashmanager.domain.service.WidgetUpdateNotifier
 import com.antcashmanager.domain.validation.TransactionValidator
 import com.antcashmanager.domain.validation.TransactionValidatorImpl
-import com.antcashmanager.android.data.storage.AndroidPreferencesStorageImpl
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.TransactionDisplayType
@@ -54,7 +52,6 @@ import com.antcashmanager.domain.usecase.category.InsertCategoryUseCase
 import com.antcashmanager.domain.usecase.category.UpdateCategoryUseCase
 import com.antcashmanager.domain.usecase.receipt.CreateTransactionFromReceiptUseCase
 import com.antcashmanager.domain.usecase.receipt.ScanReceiptUseCase
-import com.antcashmanager.domain.usecase.transaction.ValidatedInsertTransactionUseCase
 import com.antcashmanager.domain.usecase.settings.GetChartsDateFilterStateUseCase
 import com.antcashmanager.domain.usecase.settings.GetCurrencySymbolUseCase
 import com.antcashmanager.domain.usecase.settings.GetDecimalDigitsUseCase
@@ -163,9 +160,6 @@ val dataModule = module {
 
     // Domain validation for transactions
     single<TransactionValidator> { TransactionValidatorImpl() }
-
-    // KMP-compatible preferences storage (platform-agnostic)
-    single<PreferencesStorage> { AndroidPreferencesStorageImpl(androidApplication()) }
 }
 
 val useCaseModule = module {
@@ -173,7 +167,6 @@ val useCaseModule = module {
     factory { GetTransactionsByDateRangeUseCase(transactionRepository = get()) }
     factory { GetTransactionSuggestionsUseCase(repository = get(), settingsRepository = get()) }
     factory { InsertTransactionUseCase(transactionRepository = get()) }
-    factory { ValidatedInsertTransactionUseCase(transactionRepository = get(), validator = get()) }
     factory { UpdateTransactionUseCase(transactionRepository = get()) }
     factory { DeleteTransactionUseCase(transactionRepository = get()) }
     factory { DeleteAllTransactionsUseCase(transactionRepository = get()) }

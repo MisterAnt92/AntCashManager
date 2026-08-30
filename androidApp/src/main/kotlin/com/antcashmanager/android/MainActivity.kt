@@ -9,7 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -77,8 +77,8 @@ class MainActivity : ComponentActivity() {
                     val language = langResult.getOrElse { AppLanguage.SYSTEM }
                     val theme = themeResult.getOrElse { AppTheme.SYSTEM }
                     SettingsSnapshot(language, theme)
-                }.collectAsState(
-                    initial = SettingsSnapshot(AppLanguage.SYSTEM, AppTheme.SYSTEM)
+                }.collectAsStateWithLifecycle(
+                    initialValue = SettingsSnapshot(AppLanguage.SYSTEM, AppTheme.SYSTEM)
                 )
 
                 Logger.d(tag = "MainActivity") {

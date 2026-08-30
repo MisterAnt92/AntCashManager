@@ -48,13 +48,12 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -73,7 +72,6 @@ import androidx.window.layout.FoldingFeature
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
-import com.antcashmanager.android.navigation.AppRoute
 import com.antcashmanager.android.ui.components.animation.AnimatedCard
 import com.antcashmanager.android.ui.components.animation.AnimatedListItem
 import com.antcashmanager.android.ui.components.animation.SkeletonLoader
@@ -83,6 +81,7 @@ import com.antcashmanager.android.ui.components.dialog.HelpButton
 import com.antcashmanager.android.ui.components.dialog.HelpDialogFeatureSpec
 import com.antcashmanager.android.ui.components.filter.DateRangeFilter
 import com.antcashmanager.android.ui.components.filter.SearchComponent
+import com.antcashmanager.android.navigation.AppRoute
 import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
 import com.antcashmanager.android.navigation.ScreenHeaderConfig
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
@@ -128,9 +127,9 @@ fun TransactionsScreen(
         koinViewModel()
     val settingsRepository: SettingsRepository = koinInject()
 
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val transactionDisplayType by settingsRepository.getTransactionsTransactionDisplayType()
-        .collectAsState(initial = TransactionDisplayType.TREND)
+        .collectAsStateWithLifecycle(initialValue = TransactionDisplayType.TREND)
 
     TransactionsContent(
         params = TransactionsContentParams(
@@ -210,7 +209,7 @@ internal fun TransactionsContent(
 
     // DateRangeFilter expanded state from settings
     val dateFilterExpanded by settingsRepository.getDateFilterExpanded()
-        .collectAsState(initial = true)
+        .collectAsStateWithLifecycle(initialValue = true)
     val coroutineScope = rememberCoroutineScope()
     val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
 
@@ -219,10 +218,7 @@ internal fun TransactionsContent(
     val multiPaneCoordinator = LocalMultiPaneCoordinator.current
     val foldingFeature = displayFeatures.filterIsInstance<FoldingFeature>().firstOrNull()
 
-    // Preserva scroll position durante navigazione back/forward
-    val listState = rememberSaveable(saver = androidx.compose.foundation.lazy.LazyListState.Saver) {
-        androidx.compose.foundation.lazy.LazyListState()
-    }
+    val listState = rememberLazyListState()
     val showScrollToTop by remember {
         derivedStateOf { listState.firstVisibleItemIndex > 3 }
     }
@@ -506,7 +502,7 @@ internal fun TransactionsContent(
                 }
 
                 else -> {
-                    items(state.filteredTransactions) { transaction ->
+                    items(state.filteredTransactions, key = { it.id }) { transaction ->
                         TransactionItem(
                             transaction = transaction,
                             onClick = {
@@ -521,7 +517,7 @@ internal fun TransactionsContent(
                                     transaction = transaction,
                                     navigateToDetailsPane = foldingFeature?.isSeparating == true
                                 )
-                                navController?.navigate(AppRoute.TransactionRoute.Add.createRouteForEdit(transaction.id))
+                                navController?.navigate(AppRoute.TransactionRoute.Edit.createRoute(transaction.id))
                             },
                             displayType = transactionDisplayType,
                         )
@@ -583,7 +579,7 @@ internal fun TransactionsContent(
                 FloatingActionButton(
                     onClick = {
                         analyticsManager.logEvent("transaction_add_opened")
-                        navController?.navigate(AppRoute.TransactionRoute.Add.createRouteForNew())
+                        navController?.navigate(AppRoute.TransactionRoute.Add.route)
                     },
                     containerColor = MaterialTheme.colorScheme.primary,
                 ) {

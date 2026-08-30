@@ -7,7 +7,6 @@ import com.antcashmanager.android.data.feedback.FeedbackEmailHelper
 import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
-import com.antcashmanager.domain.model.None
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionDisplayType
@@ -34,7 +33,7 @@ class SettingsViewModel(
     private val deleteAllTransactionsUseCase: DeleteAllTransactionsUseCase,
     private val insertTransactionUseCase: InsertTransactionUseCase,
     private val widgetUpdateNotifier: WidgetUpdateNotifier,
-) : BaseViewModel<None>() {
+) : BaseViewModel<SettingEvent>() {
 
     // Convenience properties for readability (delegate to provider)
     private val getThemeUseCase get() = settingsUseCases.getTheme
@@ -66,13 +65,35 @@ class SettingsViewModel(
     private var setThemeJob: Job? = null
     private var setLanguageJob: Job? = null
 
+    override fun onEvent(event: SettingEvent) {
+        logDebug("Event: $event")
+        when (event) {
+            is SettingEvent.SetTheme -> setTheme(event.theme)
+            is SettingEvent.SetLanguage -> setLanguage(event.language)
+            is SettingEvent.SetShowCharts -> setShowCharts(event.show)
+            is SettingEvent.SetHighContrast -> setHighContrast(event.enabled)
+            is SettingEvent.SetLargeText -> setLargeText(event.enabled)
+            is SettingEvent.SetReduceMotion -> setReduceMotion(event.enabled)
+            is SettingEvent.SetCurrencySymbol -> setCurrencySymbol(event.symbol)
+            is SettingEvent.SetDecimalDigits -> setDecimalDigits(event.digits)
+            is SettingEvent.SetDecimalSeparator -> setDecimalSeparator(event.separator)
+            is SettingEvent.SetThousandsSeparator -> setThousandsSeparator(event.separator)
+            is SettingEvent.SetTransactionDisplayType -> setTransactionDisplayType(event.displayType)
+            is SettingEvent.SetTutorialCompleted -> setIsTutorialCompleted(event.completed)
+            is SettingEvent.ResetAllPreferences -> resetAllPreferences()
+            is SettingEvent.ImportDebugData -> importDebugData(event.context)
+            is SettingEvent.SendFeedbackEmail -> sendFeedbackEmail(event.emailBody, event.context)
+            is SettingEvent.RetryLastOperation -> logInfo("Retry requested")
+        }
+    }
+
     /**
      * Import debug data from asset `debug_initial_data.json`.
      * This runs only when the app is built in DEBUG. It reads the asset and inserts
      * transactions using the provided UseCase. Errors are logged and
      * ignored to keep this safe for debug usage.
      */
-    fun importDebugData(context: Context) {
+    private fun importDebugData(context: Context) {
         if (!BuildConfig.DEBUG) return
         logDebug("Importing debug data from assets")
         viewModelScope.launch {
@@ -294,7 +315,7 @@ class SettingsViewModel(
         }
     }
 
-    fun setTheme(theme: AppTheme) {
+    private fun setTheme(theme: AppTheme) {
         // Debounce: cancel previous job and schedule new one with 300ms delay
         setThemeJob?.cancel()
         setThemeJob = viewModelScope.launch {
@@ -306,7 +327,7 @@ class SettingsViewModel(
         }
     }
 
-    fun setLanguage(language: AppLanguage) {
+    private fun setLanguage(language: AppLanguage) {
         // Debounce: cancel previous job and schedule new one with 300ms delay
         setLanguageJob?.cancel()
         setLanguageJob = viewModelScope.launch {
@@ -322,57 +343,57 @@ class SettingsViewModel(
         }
     }
 
-    fun setShowCharts(show: Boolean) = updatePreference(
+    private fun setShowCharts(show: Boolean) = updatePreference(
         logMsg = "Setting show charts: $show",
         action = { setShowChartsUseCase(show) },
     )
 
-    fun setHighContrast(enabled: Boolean) = updatePreference(
+    private fun setHighContrast(enabled: Boolean) = updatePreference(
         logMsg = "Setting high contrast: $enabled",
         action = { setHighContrastUseCase(enabled) },
     )
 
-    fun setLargeText(enabled: Boolean) = updatePreference(
+    private fun setLargeText(enabled: Boolean) = updatePreference(
         logMsg = "Setting large text: $enabled",
         action = { setLargeTextUseCase(enabled) },
     )
 
-    fun setReduceMotion(enabled: Boolean) = updatePreference(
+    private fun setReduceMotion(enabled: Boolean) = updatePreference(
         logMsg = "Setting reduce motion: $enabled",
         action = { setReduceMotionUseCase(enabled) },
     )
 
-    fun setCurrencySymbol(symbol: String) = updatePreference(
+    private fun setCurrencySymbol(symbol: String) = updatePreference(
         logMsg = "Setting currency symbol: $symbol",
         action = { setCurrencySymbolUseCase(symbol) },
     )
 
-    fun setDecimalDigits(digits: Int) = updatePreference(
+    private fun setDecimalDigits(digits: Int) = updatePreference(
         logMsg = "Setting decimal digits: $digits",
         action = { setDecimalDigitsUseCase(digits) },
     )
 
-    fun setDecimalSeparator(separator: String) = updatePreference(
+    private fun setDecimalSeparator(separator: String) = updatePreference(
         logMsg = "Setting decimal separator: $separator",
         action = { setDecimalSeparatorUseCase(separator) },
     )
 
-    fun setThousandsSeparator(separator: String) = updatePreference(
+    private fun setThousandsSeparator(separator: String) = updatePreference(
         logMsg = "Setting thousands separator: $separator",
         action = { setThousandsSeparatorUseCase(separator) },
     )
 
-    fun setTransactionDisplayType(displayType: TransactionDisplayType) = updatePreference(
+    private fun setTransactionDisplayType(displayType: TransactionDisplayType) = updatePreference(
         logMsg = "Setting transaction display type: $displayType",
         action = { setTransactionDisplayTypeUseCase(displayType.name) },
     )
 
-    fun setIsTutorialCompleted(completed: Boolean) = updatePreference(
+    private fun setIsTutorialCompleted(completed: Boolean) = updatePreference(
         logMsg = "Setting tutorial completed: $completed",
         action = { setTutorialCompletedUseCase(completed) },
     )
 
-    fun resetAllPreferences() = updatePreference(
+    private fun resetAllPreferences() = updatePreference(
         logMsg = "Resetting all preferences",
         action = {
             val result = resetAllPreferencesUseCase()
@@ -381,7 +402,7 @@ class SettingsViewModel(
         },
     )
 
-    fun sendFeedbackEmail(emailBody: String, applicationContext: Context): Boolean {
+    private fun sendFeedbackEmail(emailBody: String, applicationContext: Context): Boolean {
         val success = FeedbackEmailHelper.sendFeedbackEmail(
             applicationContext,
             emailBody,

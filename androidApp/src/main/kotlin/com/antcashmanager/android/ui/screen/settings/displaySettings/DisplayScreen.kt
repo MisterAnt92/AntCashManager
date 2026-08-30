@@ -48,7 +48,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -83,6 +83,7 @@ import com.antcashmanager.android.ui.screen.settings.view.MealVoucherDialog
 import com.antcashmanager.android.ui.screen.settings.view.SeparatorDialog
 import com.antcashmanager.android.ui.screen.settings.view.TransactionDisplayDialog
 import com.antcashmanager.android.ui.screen.settings.view.WidgetBackgroundColorDialog
+import com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayEvent
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.formatAmount
 import com.antcashmanager.domain.model.CurrencyFormat
@@ -108,63 +109,61 @@ fun DisplayScreen(
 ) {
     val viewModel: DisplayViewModel = koinViewModel()
 
-    val currencySymbol by viewModel.currencySymbol.collectAsState()
-    val decimalDigits by viewModel.decimalDigits.collectAsState()
-    val decimalSeparator by viewModel.decimalSeparator.collectAsState()
-    val thousandsSeparator by viewModel.thousandsSeparator.collectAsState()
-    val mealVoucherValue by viewModel.mealVoucherValue.collectAsState()
-    val showChartsSection by viewModel.showChartsSection.collectAsState()
-    val dateFormat by viewModel.dateFormat.collectAsState()
-    val showTransactionNotes by viewModel.showTransactionNotes.collectAsState()
-    val maskAmounts by viewModel.maskAmounts.collectAsState()
-    val showPaymentTypeBreakdown by viewModel.showPaymentTypeBreakdown.collectAsState()
-    val showQuickInsightsCard by viewModel.showQuickInsightsCard.collectAsState()
-    val defaultPaymentType by viewModel.defaultPaymentType.collectAsState()
-    val transactionDisplayType by viewModel.transactionDisplayType.collectAsState()
-    val transactionsTransactionDisplayType by viewModel.transactionsTransactionDisplayType.collectAsState()
-    val chartsZoomEnabled by viewModel.chartsZoomEnabled.collectAsState()
-    val widgetBackgroundColor by viewModel.widgetBackgroundColor.collectAsState()
-    val widgetOpacity by viewModel.widgetOpacity.collectAsState()
+    val currencySymbol by viewModel.currencySymbol.collectAsStateWithLifecycle()
+    val decimalDigits by viewModel.decimalDigits.collectAsStateWithLifecycle()
+    val decimalSeparator by viewModel.decimalSeparator.collectAsStateWithLifecycle()
+    val thousandsSeparator by viewModel.thousandsSeparator.collectAsStateWithLifecycle()
+    val mealVoucherValue by viewModel.mealVoucherValue.collectAsStateWithLifecycle()
+    val showChartsSection by viewModel.showChartsSection.collectAsStateWithLifecycle()
+    val dateFormat by viewModel.dateFormat.collectAsStateWithLifecycle()
+    val showTransactionNotes by viewModel.showTransactionNotes.collectAsStateWithLifecycle()
+    val maskAmounts by viewModel.maskAmounts.collectAsStateWithLifecycle()
+    val showPaymentTypeBreakdown by viewModel.showPaymentTypeBreakdown.collectAsStateWithLifecycle()
+    val showQuickInsightsCard by viewModel.showQuickInsightsCard.collectAsStateWithLifecycle()
+    val defaultPaymentType by viewModel.defaultPaymentType.collectAsStateWithLifecycle()
+    val transactionDisplayType by viewModel.transactionDisplayType.collectAsStateWithLifecycle()
+    val transactionsTransactionDisplayType by viewModel.transactionsTransactionDisplayType.collectAsStateWithLifecycle()
+    val chartsZoomEnabled by viewModel.chartsZoomEnabled.collectAsStateWithLifecycle()
+    val widgetBackgroundColor by viewModel.widgetBackgroundColor.collectAsStateWithLifecycle()
+    val widgetOpacity by viewModel.widgetOpacity.collectAsStateWithLifecycle()
 
     DisplayContent(
         currencySymbol = currencySymbol,
-        onCurrencySymbolSelected = { viewModel.setCurrencySymbol(it) },
+        onCurrencySymbolSelected = { viewModel.onEvent(DisplayEvent.SetCurrencySymbol(it)) },
         decimalDigits = decimalDigits,
-        onDecimalDigitsSelected = { viewModel.setDecimalDigits(it) },
+        onDecimalDigitsSelected = { viewModel.onEvent(DisplayEvent.SetDecimalDigits(it)) },
         decimalSeparator = decimalSeparator,
-        onDecimalSeparatorSelected = { viewModel.setDecimalSeparator(it) },
+        onDecimalSeparatorSelected = { viewModel.onEvent(DisplayEvent.SetDecimalSeparator(it)) },
         thousandsSeparator = thousandsSeparator,
-        onThousandsSeparatorSelected = { viewModel.setThousandsSeparator(it) },
+        onThousandsSeparatorSelected = { viewModel.onEvent(DisplayEvent.SetThousandsSeparator(it)) },
         mealVoucherValue = mealVoucherValue,
-        onMealVoucherValueSelected = { viewModel.setMealVoucherValue(it) },
+        onMealVoucherValueSelected = { viewModel.onEvent(DisplayEvent.SetMealVoucherValue(it)) },
         showTransactionNotes = showTransactionNotes,
-        onShowTransactionNotesChanged = { viewModel.setShowTransactionNotes(it) },
+        onShowTransactionNotesChanged = { viewModel.onEvent(DisplayEvent.SetShowTransactionNotes(it)) },
         maskAmounts = maskAmounts,
-        onMaskAmountsChanged = { viewModel.setMaskAmounts(it) },
+        onMaskAmountsChanged = { viewModel.onEvent(DisplayEvent.SetMaskAmounts(it)) },
         showChartsSection = showChartsSection,
-        onShowChartsSectionChanged = { viewModel.setShowChartsSection(it) },
+        onShowChartsSectionChanged = { viewModel.onEvent(DisplayEvent.SetShowChartsSection(it)) },
         chartsZoomEnabled = chartsZoomEnabled,
-        onChartsZoomEnabledChanged = { viewModel.setChartsZoomEnabled(it) },
+        onChartsZoomEnabledChanged = { viewModel.onEvent(DisplayEvent.SetChartsZoomEnabled(it)) },
         dateFormat = dateFormat,
-        onDateFormatSelected = { viewModel.setDateFormat(it) },
+        onDateFormatSelected = { viewModel.onEvent(DisplayEvent.SetDateFormat(it)) },
         showPaymentTypeBreakdown = showPaymentTypeBreakdown,
-        onShowPaymentTypeBreakdownChanged = { viewModel.setShowPaymentTypeBreakdown(it) },
+        onShowPaymentTypeBreakdownChanged = { viewModel.onEvent(DisplayEvent.SetShowPaymentTypeBreakdown(it)) },
         showQuickInsightsCard = showQuickInsightsCard,
-        onShowQuickInsightsCardChanged = { viewModel.setShowQuickInsightsCard(it) },
+        onShowQuickInsightsCardChanged = { viewModel.onEvent(DisplayEvent.SetShowQuickInsightsCard(it)) },
         defaultPaymentType = defaultPaymentType,
-        onDefaultPaymentTypeSelected = { viewModel.setDefaultPaymentType(it) },
+        onDefaultPaymentTypeSelected = { viewModel.onEvent(DisplayEvent.SetDefaultPaymentType(it)) },
         transactionDisplayType = transactionDisplayType,
-        onTransactionDisplayTypeSelected = { viewModel.setTransactionDisplayType(it) },
+        onTransactionDisplayTypeSelected = { viewModel.onEvent(DisplayEvent.SetTransactionDisplayType(it)) },
         transactionsTransactionDisplayType = transactionsTransactionDisplayType,
         onTransactionsTransactionDisplayTypeSelected = {
-            viewModel.setTransactionsTransactionDisplayType(
-                it
-            )
+            viewModel.onEvent(DisplayEvent.SetTransactionDisplayType(it))
         },
         widgetBackgroundColor = widgetBackgroundColor,
-        onWidgetBackgroundColorSelected = { viewModel.setWidgetBackgroundColor(it) },
+        onWidgetBackgroundColorSelected = { viewModel.onEvent(DisplayEvent.SetWidgetBackgroundColor(it)) },
         widgetOpacity = widgetOpacity,
-        onWidgetOpacityChanged = { viewModel.setWidgetOpacity(it) },
+        onWidgetOpacityChanged = { viewModel.onEvent(DisplayEvent.SetWidgetOpacity(it)) },
         onResetAllPreferences = { viewModel.resetAllPreferences() },
         onNavigateBack = { navController.popBackStack() },
     )

@@ -24,7 +24,7 @@ class CategoriesViewModel(
     private val deleteCategoryUseCase: DeleteCategoryUseCase,
     private val syncTransactionCategoriesUseCase: SyncTransactionCategoriesUseCase,
     private val analyticsManager: AnalyticsManager,
-) : BaseViewModel<None>() {
+) : BaseViewModel<CategoryEvent>() {
 
     private val _state = MutableStateFlow(CategoriesState())
     val state: StateFlow<CategoriesState> = _state
@@ -57,7 +57,19 @@ class CategoriesViewModel(
         }
     }
 
-    fun addCategory(name: String, icon: String, color: Long, type: String = "EXPENSE") {
+    override fun onEvent(event: CategoryEvent) {
+        logDebug("Event: $event")
+        when (event) {
+            is CategoryEvent.AddCategory -> addCategory(event.name, event.icon, event.color, event.type)
+            is CategoryEvent.UpdateCategory -> updateCategory(event.category)
+            is CategoryEvent.DeleteCategory -> deleteCategory(event.category)
+            is CategoryEvent.SetCategoryHidden -> setCategoryHidden(event.category, event.hidden)
+            is CategoryEvent.ReorderCategories -> reorderCategories(event.reordered)
+            is CategoryEvent.RetryLastOperation -> logInfo("Retry requested")
+        }
+    }
+
+    private fun addCategory(name: String, icon: String, color: Long, type: String = "EXPENSE") {
         logDebug("Adding category: $name ($type)")
         // Track category creation
         analyticsManager.logEvent("category_crud_operation", Bundle().apply {
@@ -73,7 +85,7 @@ class CategoriesViewModel(
                     ?: -1
                 ) + 1
         viewModelScope.launch {
-            val result = insertCategoryUseCase(
+            insertCategoryUseCase(
                 Category(
                     name = name,
                     icon = icon,
@@ -81,15 +93,13 @@ class CategoriesViewModel(
                     type = type,
                     sortOrder = nextSortOrder
                 ),
-            )
-            result.onFailure { error ->
-                if (error is CancellationException) throw error
-                logError("Failed to insert category: ${error.message}", error)
+            ).handleError { errorState ->
+                _state.update { it.copy(errorState = errorState) }
             }
         }
     }
 
-    fun updateCategory(category: Category) {
+    private fun updateCategory(category: Category) {
         logDebug("Updating category: ${category.name}")
         // Track category update
         analyticsManager.logEvent("category_crud_operation", Bundle().apply {
@@ -98,24 +108,18 @@ class CategoriesViewModel(
         })
         val oldName = _state.value.categories.find { it.id == category.id }?.name
         viewModelScope.launch {
-            val result = updateCategoryUseCase(category)
-            result.onSuccess {
+            updateCategoryUseCase(category).handleError { errorState ->
+                _state.update { it.copy(errorState = errorState) }
+            }?.also {
                 // Propaga nome/icona/colore aggiornati alle transazioni che referenziano
                 // ancora il nome precedente, evitando categorie "orfane" nei Grafici.
                 if (oldName != null) {
                     syncTransactionCategoriesUseCase(
                         SyncTransactionCategoriesUseCase.Params(oldName, category),
-                    ).onFailure { error ->
-                        if (error is CancellationException) throw error
-                        logError(
-                            "Failed to sync transactions for renamed category: ${error.message}",
-                            error
-                        )
+                    ).handleError { errorState ->
+                        _state.update { it.copy(errorState = errorState) }
                     }
                 }
-            }.onFailure { error ->
-                if (error is CancellationException) throw error
-                logError("Failed to update category: ${error.message}", error)
             }
         }
     }
@@ -126,12 +130,11 @@ class CategoriesViewModel(
      * sincronizzazione sarebbe solo un aggiornamento ridondante su tutte le transazioni
      * corrispondenti.
      */
-    fun setCategoryHidden(category: Category, hidden: Boolean) {
+    private fun setCategoryHidden(category: Category, hidden: Boolean) {
         logDebug("Setting category '${category.name}' hidden=$hidden")
         viewModelScope.launch {
-            updateCategoryUseCase(category.copy(isHidden = hidden)).onFailure { error ->
-                if (error is CancellationException) throw error
-                logError("Failed to update category visibility: ${error.message}", error)
+            updateCategoryUseCase(category.copy(isHidden = hidden)).handleError { errorState ->
+                _state.update { it.copy(errorState = errorState) }
             }
         }
     }
@@ -140,7 +143,7 @@ class CategoriesViewModel(
      * Persiste il nuovo ordine di [reordered] assegnando `sortOrder` in base alla posizione
      * nella lista. Aggiorna solo le categorie il cui `sortOrder` è effettivamente cambiato.
      */
-    fun reorderCategories(reordered: List<Category>) {
+    private fun reorderCategories(reordered: List<Category>) {
         logDebug("Reordering ${reordered.size} categories")
         // Track category reorder
         analyticsManager.logEvent("category_crud_operation", Bundle().apply {
@@ -149,19 +152,15 @@ class CategoriesViewModel(
         viewModelScope.launch {
             reordered.forEachIndexed { index, category ->
                 if (category.sortOrder != index) {
-                    updateCategoryUseCase(category.copy(sortOrder = index)).onFailure { error ->
-                        if (error is CancellationException) throw error
-                        logError(
-                            "Failed to persist reordered category '${category.name}': ${error.message}",
-                            error
-                        )
+                    updateCategoryUseCase(category.copy(sortOrder = index)).handleError { errorState ->
+                        _state.update { it.copy(errorState = errorState) }
                     }
                 }
             }
         }
     }
 
-    fun deleteCategory(category: Category) {
+    private fun deleteCategory(category: Category) {
         logDebug("Deleting category: ${category.name}")
         // Track category delete
         analyticsManager.logEvent("category_crud_operation", Bundle().apply {
@@ -169,10 +168,8 @@ class CategoriesViewModel(
             putString("type", category.type)
         })
         viewModelScope.launch {
-            val result = deleteCategoryUseCase(category)
-            result.onFailure { error ->
-                if (error is CancellationException) throw error
-                logError("Failed to delete category: ${error.message}", error)
+            deleteCategoryUseCase(category).handleError { errorState ->
+                _state.update { it.copy(errorState = errorState) }
             }
         }
     }

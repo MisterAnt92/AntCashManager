@@ -1,100 +1,56 @@
 package com.antcashmanager.android.navigation
 
 /**
- * Centralizzato, type-safe route definitions per la navigazione in Compose.
+ * Centralized route definitions for type-safe navigation.
+ * All string-literal navigations should reference these sealed class routes.
  *
- * Questa sealed class gerarchica riunisce tutte le rotte dell'app in un'unica fonte di verità,
- * evitando string literals sparse e garantendo compile-time type-safety.
- *
- * **Vantaggi**:
- * - ✅ Compile-time type-safety (no typo risk)
- * - ✅ Centralizzato in un file (easy to maintain)
- * - ✅ Hierarchical per feature (Settings, Transactions, etc.)
- * - ✅ Helper methods per rotte con parametri (es: createRoute(id))
- * - ✅ No string duplication
- *
- * **Uso**:
- * ```kotlin
- * navController.navigate(AppRoute.BottomRoute.Home.route)
- * navController.navigate(AppRoute.TransactionRoute.Edit.createRoute(123))
+ * Pattern:
+ * ```
+ * navController?.navigate(AppRoute.TransactionRoute.Add.route)
+ * navController?.navigate(AppRoute.TransactionRoute.Edit.createRoute(id))
  * ```
  */
-sealed class AppRoute {
-    // ========== BOTTOM TAB ROUTES ==========
-    sealed class BottomRoute(val route: String) {
-        data object Home : BottomRoute("home")
-        data object Charts : BottomRoute("charts")
-        data object Transactions : BottomRoute("transactions")
-        data object Categories : BottomRoute("categories")
-        data object Settings : BottomRoute("settings")
-        data object Tutorial : BottomRoute("tutorial")
+sealed class AppRoute(val route: String) {
+
+    // Transaction routes
+    sealed class TransactionRoute(route: String) : AppRoute(route) {
+        object List : TransactionRoute("transactions")
+        object Add : TransactionRoute("add_transaction")
+        object Edit : TransactionRoute("add_transaction") {
+            fun createRoute(transactionId: Long) = "add_transaction?transactionId=$transactionId"
+        }
+        object ReceiptScan : TransactionRoute("receipt_scan")
     }
 
-    // ========== SETTINGS SUB-ROUTES (Nested Navigation) ==========
-    sealed class SettingsRoute(val route: String) {
-        data object Main : SettingsRoute("settings")  // Alias for BottomRoute.Settings
-        data object Display : SettingsRoute("settings/display")
-        data object DataManagement : SettingsRoute("settings/data")
+    // Settings routes
+    sealed class SettingsRoute(route: String) : AppRoute(route) {
+        object Main : SettingsRoute("settings")
+        object Display : SettingsRoute("display")
+        object DataManagement : SettingsRoute("settings_data")
     }
 
-    // ========== TRANSACTION FLOW ROUTES ==========
-    sealed class TransactionRoute(val route: String) {
-        /**
-         * Rotta per aggiungere/modificare una transazione.
-         * Supporta parametro opzionale transactionId.
-         * - Nuova: naviga con transactionId=-1 o senza parametro
-         * - Modifica: naviga con transactionId=ID
-         */
-        data object Add : TransactionRoute("transactions/add?transactionId={transactionId}") {
-            fun createRouteForNew(): String = "transactions/add?transactionId=-1"
-            fun createRouteForEdit(transactionId: Long): String = "transactions/add?transactionId=$transactionId"
-        }
-
-        data object ReceiptScan : TransactionRoute("transactions/receipt-scan")
+    // Chart routes
+    sealed class ChartRoute(route: String) : AppRoute(route) {
+        object Charts : ChartRoute("charts")
     }
 
-    // ========== HELPER COMPANION OBJECT ==========
-    companion object {
-        /**
-         * Lista di tutte le rotte bottom tab per facilmente iterare/filtrare
-         */
-        fun bottomRoutes(): List<BottomRoute> = listOf(
-            BottomRoute.Home,
-            BottomRoute.Charts,
-            BottomRoute.Transactions,
-            BottomRoute.Categories,
-            BottomRoute.Settings,
-            BottomRoute.Tutorial,
-        )
+    // Category routes
+    sealed class CategoryRoute(route: String) : AppRoute(route) {
+        object Categories : CategoryRoute("categories")
+    }
 
-        /**
-         * Controlla se una rotta è una rotta bottom tab
-         */
-        fun isBottomRoute(route: String?): Boolean {
-            return route?.let { r ->
-                bottomRoutes().any { it.route == r }
-            } ?: false
-        }
+    // Home routes
+    sealed class HomeRoute(route: String) : AppRoute(route) {
+        object Home : HomeRoute("home")
+    }
 
-        /**
-         * Controlla se una rotta è una rotta Settings (main o sub-screens)
-         */
-        fun isSettingsRoute(route: String?): Boolean {
-            return route?.let { r ->
-                r == SettingsRoute.Main.route ||
-                        r == SettingsRoute.Display.route ||
-                        r == SettingsRoute.DataManagement.route
-            } ?: false
-        }
+    // Tutorial routes
+    sealed class TutorialRoute(route: String) : AppRoute(route) {
+        object Tutorial : TutorialRoute("tutorial")
+    }
 
-        /**
-         * Controlla se una rotta è una rotta Transaction
-         */
-        fun isTransactionRoute(route: String?): Boolean {
-            return route?.let { r ->
-                r.startsWith("transactions/")
-            } ?: false
-        }
-
+    // Receipt Scan routes
+    sealed class ReceiptRoute(route: String) : AppRoute(route) {
+        object ReceiptScan : ReceiptRoute("receipt_scan")
     }
 }

@@ -36,7 +36,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -106,7 +106,7 @@ fun HomeScreen(
     val viewModel: HomeViewModel = koinViewModel()
     val settingsRepository: SettingsRepository = koinInject()
 
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     HomeContent(
         state = state,
@@ -155,17 +155,17 @@ internal fun HomeContent(
 
     // DateRangeFilter expanded state from settings
     val dateFilterExpanded by settingsRepository.getDateFilterExpanded()
-        .collectAsState(initial = true)
+        .collectAsStateWithLifecycle(initialValue = true)
     val showPaymentTypeBreakdown by settingsRepository.getShowPaymentTypeBreakdown()
-        .collectAsState(initial = false)
+        .collectAsStateWithLifecycle(initialValue = false)
     val showQuickInsightsCard by settingsRepository.getShowQuickInsightsCard()
-        .collectAsState(initial = false)
+        .collectAsStateWithLifecycle(initialValue = false)
     val reduceMotion by settingsRepository.getReduceMotion()
-        .collectAsState(initial = false)
+        .collectAsStateWithLifecycle(initialValue = false)
     val transactionDisplayType by settingsRepository.getTransactionDisplayType()
-        .collectAsState(initial = TransactionDisplayType.TREND)
+        .collectAsStateWithLifecycle(initialValue = TransactionDisplayType.TREND)
     val isTutorialCompleted by settingsRepository.getIsTutorialCompleted()
-        .collectAsState(initial = true)
+        .collectAsStateWithLifecycle(initialValue = true)
 
     val coroutineScope = rememberCoroutineScope()
     val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()

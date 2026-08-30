@@ -1,23 +1,20 @@
 package com.antcashmanager.android.ui.base
 
 import androidx.lifecycle.ViewModel
-import android.os.Bundle
 import co.touchlab.kermit.Logger
-import com.antcashmanager.android.analytics.AnalyticsManager
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import java.io.IOException
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 
 /**
- * Rappresenta lo stato di errore in un ViewModel.
+ * Unified error state model for all ViewModels.
+ * Centralizes error handling across the app.
  *
- * @property isError true se c'è un errore attivo
- * @property message Messaggio di errore user-friendly
- * @property throwable Exception sottostante (per logging/debugging)
- * @property retryable true se l'operazione può essere ritenuta (es. network error)
+ * @param isError true if an error occurred
+ * @param message human-readable error message
+ * @param throwable the underlying exception (for logging only, never exposed to UI)
+ * @param retryable true if the operation can be retried (e.g., network errors)
  */
 data class ErrorState(
     val isError: Boolean = false,
@@ -34,19 +31,17 @@ data class ErrorState(
  * - Tag automatico derivato da [this::class.simpleName]
  * - Supporto per gli eventi tramite [onEvent] (override necessario nei ViewModel con eventi)
  * - Dispatcher configurabile (default [Dispatchers.Default]) per l'esecuzione di operazioni async
- * - Error handling centralizzato tramite [handleError] (elimina 36 duplicazioni)
- * - Lifecycle hooks [onViewModelCreated] e [onViewModelCleared]
+ * - Centralizzato error handling via [ErrorState] e [handleError] extension
  *
  * I ViewModel senza eventi estendono [BaseViewModel]<[Nothing]>; quelli con eventi specificano
  * il tipo dell'evento (e.g., [BaseViewModel]<HomeEvent>).
  *
- * **Pattern di Error Handling:**
- * ```kotlin
- * viewModelScope.launch {
- *     repository.fetchData()
- *         .handleError(viewModel)  // Centralizzato: logs + optional onError callback
- *         ?.let { data -> _state.update { it.copy(data = data) } }
- * }
+ * **UDF Pattern**:
+ * ```
+ * FeatureState { errorState: ErrorState, data: T }
+ * FeatureEvent { sealed events }
+ * FeatureViewModel: onEvent() processes events → updates state via StateFlow
+ * FeatureScreen: reads state.collectAsStateWithLifecycle() + emits onEvent()
  * ```
  *
  * @param E il tipo dell'evento. [Nothing] per i ViewModel senza eventi.
@@ -54,55 +49,9 @@ data class ErrorState(
  */
 abstract class BaseViewModel<E : Any>(
     protected val dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : ViewModel(), KoinComponent {
+) : ViewModel() {
 
     protected val tag: String = this::class.simpleName ?: "ViewModel"
-
-    // Lazy injection di AnalyticsManager via Koin (safe if not available)
-    private val analyticsManager: AnalyticsManager? by lazy {
-        runCatching {
-            getKoin().get<AnalyticsManager>()
-        }.getOrNull()
-    }
-
-    init {
-        onViewModelCreated()
-        // Track ViewModel creation with analytics
-        analyticsManager?.logEvent(
-            "viewmodel_created",
-            Bundle().apply {
-                putString("viewmodel_class", tag)
-            }
-        )
-    }
-
-    override fun onCleared() {
-        // Track ViewModel destruction with analytics
-        analyticsManager?.logEvent(
-            "viewmodel_cleared",
-            Bundle().apply {
-                putString("viewmodel_class", tag)
-            }
-        )
-        onViewModelCleared()
-        super.onCleared()
-    }
-
-    /**
-     * Hook chiamato quando il ViewModel è creato.
-     * Override per aggiungere logica di inizializzazione custom.
-     */
-    open fun onViewModelCreated() {
-        // Default: nessuna azione
-    }
-
-    /**
-     * Hook chiamato quando il ViewModel è pulito/distrutto.
-     * Override per aggiungere logica di cleanup custom.
-     */
-    open fun onViewModelCleared() {
-        // Default: nessuna azione
-    }
 
     /**
      * Gestisce gli eventi del ViewModel.
@@ -136,47 +85,30 @@ abstract class BaseViewModel<E : Any>(
     }
 
     /**
-     * Gestisce gli errori da Result in modo centralizzato.
+     * Centralizzato error handling for Result<T>.
+     * Automatically detects retryable errors (IOException) and logs appropriately.
      *
-     * Automaticamente:
-     * - Propaga [CancellationException]
-     * - Crea [ErrorState] con metadati (message, throwable, retryable)
-     * - Chiama il callback onError
-     * - Logga l'errore
-     *
-     * @param onError Callback opzionale per gestire l'errore (es. update UI state)
-     * @return il valore di successo, o null se errore
-     *
-     * **Uso:**
-     * ```kotlin
-     * viewModelScope.launch {
-     *     repository.fetchData()
-     *         .handleError { errorState ->
-     *             _state.update { it.copy(errorState = errorState) }
-     *         }
-     *         ?.let { data -> _state.update { it.copy(data = data) } }
+     * Usage in ViewModel:
+     * ```
+     * result.handleError { errorState ->
+     *     _state.value = _state.value.copy(errorState = errorState)
      * }
      * ```
+     *
+     * @param onError callback to handle the error state
+     * @return the successful value or null if error occurred
      */
     protected fun <T> Result<T>.handleError(
-        onError: (errorState: ErrorState) -> Unit = { },
+        onError: (error: ErrorState) -> Unit = { logError(it.message ?: "Unknown error") }
     ): T? {
         return onFailure { error ->
-            // Propaga CancellationException senza creare error state
             if (error is CancellationException) throw error
-
-            // Crea error state con metadati
             val errorState = ErrorState(
                 isError = true,
-                message = error.message ?: "Unknown error occurred",
+                message = error.message ?: error::class.simpleName,
                 throwable = error,
-                retryable = error is IOException, // Network errors sono retryable
+                retryable = error is IOException
             )
-
-            // Log l'errore
-            logError(errorState.message!!, throwable = error)
-
-            // Chiama il callback
             onError(errorState)
         }.getOrNull()
     }

@@ -32,7 +32,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -58,6 +58,7 @@ import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.receiptScan.ReceiptScanState
 import com.antcashmanager.android.ui.screen.receiptScan.ReceiptScanStep
 import com.antcashmanager.android.ui.screen.receiptScan.ReceiptScanViewModel
+import com.antcashmanager.android.ui.screen.receiptScan.ReceiptScanEvent
 import com.antcashmanager.android.ui.screen.transactions.addImport.view.CategorySelectionDialog
 import com.antcashmanager.android.ui.screen.transactions.addImport.view.PaymentTypeSelectionDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
@@ -87,7 +88,7 @@ fun ReceiptScanScreen(
     val viewModel: ReceiptScanViewModel = koinViewModel()
     val analyticsManager: AnalyticsManager = koinInject()
 
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(state.isTransactionSaved) {
         if (state.isTransactionSaved) {
@@ -98,19 +99,19 @@ fun ReceiptScanScreen(
 
     ReceiptScanContent(
         state = state,
-        onImageBytes = viewModel::scanReceipt,
-        onUpdateTitle = viewModel::updateTitle,
-        onUpdatePayee = viewModel::updatePayee,
-        onUpdateLocation = viewModel::updateLocation,
-        onUpdateNotes = viewModel::updateNotes,
-        onUpdateAmount = viewModel::updateAmount,
-        onSelectCategory = viewModel::selectCategory,
-        onShowCategoryDialog = viewModel::showCategoryDialog,
-        onDismissCategoryDialog = viewModel::dismissCategoryDialog,
-        onSelectPaymentType = viewModel::selectPaymentType,
-        onShowPaymentTypeDialog = viewModel::showPaymentTypeDialog,
-        onDismissPaymentTypeDialog = viewModel::dismissPaymentTypeDialog,
-        onRetry = viewModel::retryCapture,
+        onImageBytes = { viewModel.onEvent(ReceiptScanEvent.ScanReceipt(it)) },
+        onUpdateTitle = { viewModel.onEvent(ReceiptScanEvent.UpdateTitle(it)) },
+        onUpdatePayee = { viewModel.onEvent(ReceiptScanEvent.UpdatePayee(it)) },
+        onUpdateLocation = { viewModel.onEvent(ReceiptScanEvent.UpdateLocation(it)) },
+        onUpdateNotes = { viewModel.onEvent(ReceiptScanEvent.UpdateNotes(it)) },
+        onUpdateAmount = { viewModel.onEvent(ReceiptScanEvent.UpdateAmount(it)) },
+        onSelectCategory = { viewModel.onEvent(ReceiptScanEvent.SelectCategory(it)) },
+        onShowCategoryDialog = { viewModel.onEvent(ReceiptScanEvent.ShowCategoryDialog) },
+        onDismissCategoryDialog = { viewModel.onEvent(ReceiptScanEvent.DismissCategoryDialog) },
+        onSelectPaymentType = { viewModel.onEvent(ReceiptScanEvent.SelectPaymentType(it)) },
+        onShowPaymentTypeDialog = { viewModel.onEvent(ReceiptScanEvent.ShowPaymentTypeDialog) },
+        onDismissPaymentTypeDialog = { viewModel.onEvent(ReceiptScanEvent.DismissPaymentTypeDialog) },
+        onRetry = { viewModel.onEvent(ReceiptScanEvent.RetryCapture) },
         onSave = viewModel::saveTransaction,
         onClearError = viewModel::clearError,
         onNavigateBack = onNavigateBack,

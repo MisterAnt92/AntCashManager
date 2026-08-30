@@ -78,7 +78,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
@@ -110,6 +110,7 @@ import com.antcashmanager.android.navigation.ScreenHeaderConfig
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.categories.CategoriesState
 import com.antcashmanager.android.ui.screen.categories.CategoriesViewModel
+import com.antcashmanager.android.ui.screen.categories.CategoryEvent
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.translateCategory
 import com.antcashmanager.domain.model.Category
@@ -201,13 +202,21 @@ val categoryColors = listOf(
 @Composable
 fun CategoriesScreen() {
     val viewModel: CategoriesViewModel = koinViewModel()
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     CategoriesContent(
         state = state,
-        onAddCategory = viewModel::addCategory,
-        onDeleteCategory = viewModel::deleteCategory,
-        onSetCategoryHidden = viewModel::setCategoryHidden,
-        onReorderCategories = viewModel::reorderCategories,
+        onAddCategory = { name, icon, color, type ->
+            viewModel.onEvent(CategoryEvent.AddCategory(name, icon, color, type))
+        },
+        onDeleteCategory = { category ->
+            viewModel.onEvent(CategoryEvent.DeleteCategory(category))
+        },
+        onSetCategoryHidden = { category, hidden ->
+            viewModel.onEvent(CategoryEvent.SetCategoryHidden(category, hidden))
+        },
+        onReorderCategories = { categories ->
+            viewModel.onEvent(CategoryEvent.ReorderCategories(categories))
+        },
     )
 }
 
