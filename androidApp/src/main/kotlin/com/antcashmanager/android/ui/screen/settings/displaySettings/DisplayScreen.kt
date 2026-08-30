@@ -129,15 +129,15 @@ fun DisplayScreen(
 
     DisplayContent(
         currencySymbol = currencySymbol,
-        onCurrencySymbolSelected = { viewModel.setCurrencySymbol(it) },
+        onCurrencySymbolSelected = { viewModel.onEvent(DisplayEvent.SetCurrencySymbol(it)) },
         decimalDigits = decimalDigits,
-        onDecimalDigitsSelected = { viewModel.setDecimalDigits(it) },
+        onDecimalDigitsSelected = { viewModel.onEvent(DisplayEvent.SetDecimalDigits(it)) },
         decimalSeparator = decimalSeparator,
-        onDecimalSeparatorSelected = { viewModel.setDecimalSeparator(it) },
+        onDecimalSeparatorSelected = { viewModel.onEvent(DisplayEvent.SetDecimalSeparator(it)) },
         thousandsSeparator = thousandsSeparator,
-        onThousandsSeparatorSelected = { viewModel.setThousandsSeparator(it) },
+        onThousandsSeparatorSelected = { viewModel.onEvent(DisplayEvent.SetThousandsSeparator(it)) },
         mealVoucherValue = mealVoucherValue,
-        onMealVoucherValueSelected = { viewModel.setMealVoucherValue(it) },
+        onMealVoucherValueSelected = { viewModel.onEvent(DisplayEvent.SetMealVoucherValue(it)) },
         showTransactionNotes = showTransactionNotes,
         onShowTransactionNotesChanged = { viewModel.onEvent(DisplayEvent.SetShowTransactionNotes(it)) },
         maskAmounts = maskAmounts,
@@ -158,9 +158,7 @@ fun DisplayScreen(
         onTransactionDisplayTypeSelected = { viewModel.onEvent(DisplayEvent.SetTransactionDisplayType(it)) },
         transactionsTransactionDisplayType = transactionsTransactionDisplayType,
         onTransactionsTransactionDisplayTypeSelected = {
-            viewModel.setTransactionsTransactionDisplayType(
-                it
-            )
+            viewModel.onEvent(DisplayEvent.SetTransactionDisplayType(it))
         },
         widgetBackgroundColor = widgetBackgroundColor,
         onWidgetBackgroundColorSelected = { viewModel.onEvent(DisplayEvent.SetWidgetBackgroundColor(it)) },

@@ -109,13 +109,11 @@ fun SettingsScreen(
         onSendFeedbackEmail = { emailBody ->
             viewModel.onEvent(SettingEvent.SendFeedbackEmail(emailBody, context))
             // TODO: handle success/failure via errorState in state
-            val noEmailAppInstalledMessage = stringResource(R.string.no_email_app_installed)
             Toast.makeText(
                 context,
                 noEmailAppInstalledMessage,
                 Toast.LENGTH_SHORT
-                ).show()
-            }
+            ).show()
         },
         navController = navController,
         modifier = modifier,

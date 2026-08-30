@@ -39,7 +39,7 @@ data class SettingsState(
     
     // Transaction Display
     val showTransactionNotes: Boolean = true,
-    val transactionDisplayType: TransactionDisplayType = TransactionDisplayType.COMPACT,
+    val transactionDisplayType: TransactionDisplayType = TransactionDisplayType.CATEGORY,
     
     // Error handling & loading
     val errorState: ErrorState = ErrorState(),
