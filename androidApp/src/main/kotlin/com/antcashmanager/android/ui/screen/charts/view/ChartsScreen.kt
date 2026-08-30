@@ -77,6 +77,7 @@ import com.antcashmanager.android.ui.components.state.AntEmptyState
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.charts.ChartData
 import com.antcashmanager.android.ui.screen.charts.ChartsConstant
+import com.antcashmanager.android.ui.screen.charts.ChartEvent
 import com.antcashmanager.android.ui.screen.charts.ChartsViewModel
 import com.antcashmanager.android.ui.screen.charts.MonthlyAmount
 import com.antcashmanager.android.ui.screen.charts.RangePreset
@@ -124,8 +125,8 @@ fun ChartsScreen() {
         initialPresetIndex = selectedPresetIndex,
         zoomEnabled = chartsZoomEnabled,
         settingsRepository = settingsRepository,
-        onDateRangeChanged = { from, to -> viewModel.setDateRange(from, to) },
-        onPresetSelected = viewModel::setPresetRange,
+        onDateRangeChanged = { from, to -> viewModel.onEvent(ChartEvent.SetDateRange(from, to)) },
+        onPresetSelected = { preset -> viewModel.onEvent(ChartEvent.SetPresetRange(preset)) },
     )
 }
 

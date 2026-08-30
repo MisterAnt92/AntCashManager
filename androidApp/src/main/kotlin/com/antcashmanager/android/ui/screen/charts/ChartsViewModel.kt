@@ -9,7 +9,6 @@ import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.android.ui.screen.charts.view.ChartDetailsData
 import com.antcashmanager.android.ui.screen.charts.view.TrendDirection
 import com.antcashmanager.android.util.withCorrectAmounts
-import com.antcashmanager.domain.model.None
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
@@ -42,7 +41,7 @@ class ChartsViewModel(
     private val performanceTracker: PerformanceTracker,
     private val segmentationTracker: SegmentationTracker,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : BaseViewModel<None>(dispatcher) {
+) : BaseViewModel<ChartEvent>(dispatcher) {
 
     constructor(
         transactionRepository: TransactionRepository,
@@ -91,7 +90,23 @@ class ChartsViewModel(
         observeSavedDateFilter()
     }
 
-    fun setDateRange(from: Long, to: Long) {
+    override fun onEvent(event: ChartEvent) {
+        logDebug("Event: $event")
+        when (event) {
+            is ChartEvent.SetDateRange -> setDateRange(event.from, event.to)
+            is ChartEvent.SetPresetRange -> setPresetRange(event.preset)
+            is ChartEvent.SelectChartCategory -> selectChartCategory(
+                event.categoryName,
+                event.amount,
+                event.colorHex,
+                event.isExpense
+            )
+            is ChartEvent.ClearChartSelection -> clearChartSelection()
+            is ChartEvent.RetryLastOperation -> logInfo("Retry requested")
+        }
+    }
+
+    private fun setDateRange(from: Long, to: Long) {
         val normalizedFrom = minOf(from, to)
         val normalizedTo = maxOf(from, to)
         logDebug("Setting date range: $normalizedFrom - $normalizedTo")
@@ -106,7 +121,7 @@ class ChartsViewModel(
         )
     }
 
-    fun setPresetRange(preset: RangePreset) {
+    private fun setPresetRange(preset: RangePreset) {
         val range = buildPresetDateRange(preset)
         _selectedPresetIndex.value = preset.ordinal
         _dateRange.value = range
@@ -344,7 +359,7 @@ class ChartsViewModel(
      * @param colorHex The color code for visualization
      * @param isExpense Whether this is an expense category
      */
-    fun selectChartCategory(
+    private fun selectChartCategory(
         categoryName: String,
         amount: Double,
         colorHex: Long,
@@ -381,7 +396,7 @@ class ChartsViewModel(
     /**
      * Clear the currently selected chart details.
      */
-    fun clearChartSelection() {
+    private fun clearChartSelection() {
         _selectedChartDetails.value = null
         logDebug("Cleared chart selection")
     }
