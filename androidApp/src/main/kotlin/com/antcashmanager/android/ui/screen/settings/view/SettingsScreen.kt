@@ -60,6 +60,7 @@ import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
 import com.antcashmanager.android.ui.components.common.AppSwitch
 import com.antcashmanager.android.ui.components.dialog.HelpButton
 import com.antcashmanager.android.ui.components.text.AppText
+import com.antcashmanager.android.ui.screen.settings.SettingEvent
 import com.antcashmanager.android.ui.screen.settings.SettingsViewModel
 import com.antcashmanager.android.navigation.AppRoute
 import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
@@ -84,34 +85,35 @@ fun SettingsScreen(
 
     SettingsContent(
         currentTheme = state.theme,
-        onThemeSelected = { viewModel.setTheme(it) },
+        onThemeSelected = { viewModel.onEvent(SettingEvent.SetTheme(it)) },
         currentLanguage = state.language,
-        onLanguageSelected = { viewModel.setLanguage(it) },
+        onLanguageSelected = { viewModel.onEvent(SettingEvent.SetLanguage(it)) },
         versionName = BuildConfig.VERSION_NAME,
         showCharts = state.showCharts,
-        onShowChartsChanged = { viewModel.setShowCharts(it) },
+        onShowChartsChanged = { viewModel.onEvent(SettingEvent.SetShowCharts(it)) },
         highContrast = state.highContrast,
-        onHighContrastChanged = { viewModel.setHighContrast(it) },
+        onHighContrastChanged = { viewModel.onEvent(SettingEvent.SetHighContrast(it)) },
         largeText = state.largeText,
-        onLargeTextChanged = { viewModel.setLargeText(it) },
+        onLargeTextChanged = { viewModel.onEvent(SettingEvent.SetLargeText(it)) },
         reduceMotion = state.reduceMotion,
-        onReduceMotionChanged = { viewModel.setReduceMotion(it) },
+        onReduceMotionChanged = { viewModel.onEvent(SettingEvent.SetReduceMotion(it)) },
         currencySymbol = state.currencySymbol,
-        onCurrencySymbolSelected = { viewModel.setCurrencySymbol(it) },
+        onCurrencySymbolSelected = { viewModel.onEvent(SettingEvent.SetCurrencySymbol(it)) },
         decimalDigits = state.decimalDigits,
-        onDecimalDigitsSelected = { viewModel.setDecimalDigits(it) },
+        onDecimalDigitsSelected = { viewModel.onEvent(SettingEvent.SetDecimalDigits(it)) },
         decimalSeparator = state.decimalSeparator,
-        onDecimalSeparatorSelected = { viewModel.setDecimalSeparator(it) },
+        onDecimalSeparatorSelected = { viewModel.onEvent(SettingEvent.SetDecimalSeparator(it)) },
         thousandsSeparator = state.thousandsSeparator,
-        onThousandsSeparatorSelected = { viewModel.setThousandsSeparator(it) },
-        onImportDebugData = { ctx -> viewModel.importDebugData(ctx) },
+        onThousandsSeparatorSelected = { viewModel.onEvent(SettingEvent.SetThousandsSeparator(it)) },
+        onImportDebugData = { ctx -> viewModel.onEvent(SettingEvent.ImportDebugData(ctx)) },
         onSendFeedbackEmail = { emailBody ->
-            val success = viewModel.sendFeedbackEmail(emailBody, context)
-            if (!success) {
-                Toast.makeText(
-                    context,
-                    noEmailAppInstalledMessage,
-                    Toast.LENGTH_SHORT
+            viewModel.onEvent(SettingEvent.SendFeedbackEmail(emailBody, context))
+            // TODO: handle success/failure via errorState in state
+            val noEmailAppInstalledMessage = stringResource(R.string.no_email_app_installed)
+            Toast.makeText(
+                context,
+                noEmailAppInstalledMessage,
+                Toast.LENGTH_SHORT
                 ).show()
             }
         },
