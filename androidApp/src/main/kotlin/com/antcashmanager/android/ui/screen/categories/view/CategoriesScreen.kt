@@ -110,6 +110,7 @@ import com.antcashmanager.android.navigation.ScreenHeaderConfig
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.categories.CategoriesState
 import com.antcashmanager.android.ui.screen.categories.CategoriesViewModel
+import com.antcashmanager.android.ui.screen.categories.CategoryEvent
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.translateCategory
 import com.antcashmanager.domain.model.Category
@@ -204,10 +205,18 @@ fun CategoriesScreen() {
     val state by viewModel.state.collectAsStateWithLifecycle()
     CategoriesContent(
         state = state,
-        onAddCategory = viewModel::addCategory,
-        onDeleteCategory = viewModel::deleteCategory,
-        onSetCategoryHidden = viewModel::setCategoryHidden,
-        onReorderCategories = viewModel::reorderCategories,
+        onAddCategory = { name, icon, color, type ->
+            viewModel.onEvent(CategoryEvent.AddCategory(name, icon, color, type))
+        },
+        onDeleteCategory = { category ->
+            viewModel.onEvent(CategoryEvent.DeleteCategory(category))
+        },
+        onSetCategoryHidden = { category, hidden ->
+            viewModel.onEvent(CategoryEvent.SetCategoryHidden(category, hidden))
+        },
+        onReorderCategories = { categories ->
+            viewModel.onEvent(CategoryEvent.ReorderCategories(categories))
+        },
     )
 }
 

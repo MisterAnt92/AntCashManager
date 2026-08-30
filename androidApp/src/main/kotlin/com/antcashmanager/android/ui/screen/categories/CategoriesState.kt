@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.categories
 
+import com.antcashmanager.android.ui.base.ErrorState
 import com.antcashmanager.domain.model.Category
 
 /**
@@ -9,6 +10,11 @@ import com.antcashmanager.domain.model.Category
  * [Category.sortOrder]. Le categorie nascoste sono esposte separatamente in
  * [hiddenExpenseCategories]/[hiddenIncomeCategories] per la sezione dedicata "categorie
  * nascoste" nella UI.
+ *
+ * UDF Pattern:
+ * - state: CategoriesState (this)
+ * - events: CategoryEvent (sealed class)
+ * - viewModel: CategoriesViewModel (onEvent handler)
  */
 data class CategoriesState(
     val categories: List<Category> = emptyList(),
@@ -18,4 +24,5 @@ data class CategoriesState(
     val hiddenIncomeCategories: List<Category> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null,
+    val errorState: ErrorState = ErrorState(),
 )
