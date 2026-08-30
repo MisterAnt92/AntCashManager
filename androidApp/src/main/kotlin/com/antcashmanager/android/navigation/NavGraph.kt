@@ -331,7 +331,7 @@ fun AntCashManagerNavHost() {
                             )
                         }
                         composable(
-                            route = "transactions/add?transactionId={transactionId}",
+                            route = AppRoute.TransactionRoute.Add.route + "?transactionId={transactionId}",
                             arguments = listOf(
                                 androidx.navigation.navArgument("transactionId") {
                                     type = androidx.navigation.NavType.LongType

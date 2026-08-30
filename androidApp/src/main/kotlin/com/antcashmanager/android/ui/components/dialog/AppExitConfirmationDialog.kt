@@ -52,15 +52,13 @@ fun appExitConfirmationDialog(
     onDismiss: () -> Unit,
     isVisible: Boolean = true,
 ) {
-    if (!isVisible) {
-        return
-    }
-
     val logger = Logger.withTag("AppExitDialog")
     val (shouldExit, setShouldExit) = remember { mutableStateOf(false) }
 
     // Synchronized exit handler for Android 16+ (API 35+)
     // Delay ensures Compose has time to process dialog dismissal before Activity.finish()
+    // We keep this outside the isVisible check to ensure the delay completes even
+    // if the dialog is removed from the composition by the parent.
     LaunchedEffect(shouldExit) {
         if (shouldExit) {
             logger.d("Exit confirmed, waiting for dialog dismissal animation...")
@@ -68,6 +66,10 @@ fun appExitConfirmationDialog(
             logger.d("Calling Activity.finish() after dialog dismissal delay")
             onConfirmExit()
         }
+    }
+
+    if (!isVisible) {
+        return
     }
 
     val mascotTransition = rememberInfiniteTransition(label = "exitMascotTransition")
@@ -121,6 +123,8 @@ fun appExitConfirmationDialog(
                 onClick = {
                     logger.d("Confirm button clicked, setting shouldExit = true")
                     setShouldExit(true)
+                    // Inform the parent to start the dismissal process immediately
+                    onDismiss()
                 }
             ) {
                 AppText(text = stringResource(R.string.exit_app_confirm))
