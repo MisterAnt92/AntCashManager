@@ -7,7 +7,6 @@ import com.antcashmanager.android.analytics.ErrorTracker
 import com.antcashmanager.android.analytics.PerformanceTracker
 import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.domain.model.Category
-import com.antcashmanager.domain.model.None
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.ReceiptData
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
@@ -45,7 +44,7 @@ class ReceiptScanViewModel(
     private val analyticsManager: AnalyticsManager,
     private val performanceTracker: PerformanceTracker,
     private val errorTracker: ErrorTracker,
-) : BaseViewModel<None>() {
+) : BaseViewModel<ReceiptScanEvent>() {
 
     // ── State ─────────────────────────────────────────────────────────────────
     private val _state = MutableStateFlow(ReceiptScanState())
@@ -63,11 +62,31 @@ class ReceiptScanViewModel(
 
     // ── Public API ────────────────────────────────────────────────────────────
 
+    override fun onEvent(event: ReceiptScanEvent) {
+        logDebug("Event: $event")
+        when (event) {
+            is ReceiptScanEvent.ScanReceipt -> scanReceipt(event.imageBytes)
+            is ReceiptScanEvent.UpdateTitle -> updateTitle(event.title)
+            is ReceiptScanEvent.UpdatePayee -> updatePayee(event.payee)
+            is ReceiptScanEvent.UpdateLocation -> updateLocation(event.location)
+            is ReceiptScanEvent.UpdateNotes -> updateNotes(event.notes)
+            is ReceiptScanEvent.UpdateAmount -> updateAmount(event.amount)
+            is ReceiptScanEvent.SelectCategory -> selectCategory(event.category)
+            is ReceiptScanEvent.SelectPaymentType -> selectPaymentType(event.paymentType)
+            is ReceiptScanEvent.ShowCategoryDialog -> showCategoryDialog()
+            is ReceiptScanEvent.DismissCategoryDialog -> dismissCategoryDialog()
+            is ReceiptScanEvent.ShowPaymentTypeDialog -> showPaymentTypeDialog()
+            is ReceiptScanEvent.DismissPaymentTypeDialog -> dismissPaymentTypeDialog()
+            is ReceiptScanEvent.RetryCapture -> retryCapture()
+            is ReceiptScanEvent.RetryLastOperation -> logInfo("Retry requested")
+        }
+    }
+
     /**
      * Avvia la scansione OCR sull'immagine fornita come [ByteArray].
      * Transita allo step [ReceiptScanStep.PROCESSING], poi [ReceiptScanStep.REVIEW] se ok.
      */
-    fun scanReceipt(imageBytes: ByteArray) {
+    private fun scanReceipt(imageBytes: ByteArray) {
         activeJob?.cancel()
         activeJob = viewModelScope.launch {
             val scanStartTime = System.currentTimeMillis()
@@ -135,63 +154,63 @@ class ReceiptScanViewModel(
     }
 
     /** Aggiorna il titolo della transazione. */
-    fun updateTitle(title: String) {
+    private fun updateTitle(title: String) {
         _state.update { it.copy(title = title) }
     }
 
     /** Aggiorna il beneficiario. */
-    fun updatePayee(payee: String) {
+    private fun updatePayee(payee: String) {
         _state.update { it.copy(payee = payee) }
     }
 
     /** Aggiorna il luogo. */
-    fun updateLocation(location: String) {
+    private fun updateLocation(location: String) {
         _state.update { it.copy(location = location) }
     }
 
     /** Aggiorna le note. */
-    fun updateNotes(notes: String) {
+    private fun updateNotes(notes: String) {
         _state.update { it.copy(notes = notes) }
     }
 
     /** Aggiorna l'importo totale durante la fase REVIEW. */
-    fun updateAmount(amount: Double) {
+    private fun updateAmount(amount: Double) {
         _state.update { it.copy(editedAmount = amount) }
     }
 
     /** Seleziona una categoria e chiude il dialog. */
-    fun selectCategory(category: Category) {
+    private fun selectCategory(category: Category) {
         logDebug("Category selected: ${category.name}")
         _state.update { it.copy(selectedCategory = category, showCategoryDialog = false) }
     }
 
-    fun showCategoryDialog() {
+    private fun showCategoryDialog() {
         _state.update { it.copy(showCategoryDialog = true) }
     }
 
     /** Chiude il dialog di selezione categoria. */
-    fun dismissCategoryDialog() {
+    private fun dismissCategoryDialog() {
         _state.update { it.copy(showCategoryDialog = false) }
     }
 
     /** Permette all'utente di sovrascrivere il tipo di pagamento rilevato dall'OCR. */
-    fun selectPaymentType(paymentType: PaymentType) {
+    private fun selectPaymentType(paymentType: PaymentType) {
         logDebug("Payment type selected by user: $paymentType")
         _state.update { it.copy(selectedPaymentType = paymentType, showPaymentTypeDialog = false) }
     }
 
     /** Mostra il dialog di selezione tipo pagamento. */
-    fun showPaymentTypeDialog() {
+    private fun showPaymentTypeDialog() {
         _state.update { it.copy(showPaymentTypeDialog = true) }
     }
 
     /** Chiude il dialog di selezione tipo pagamento. */
-    fun dismissPaymentTypeDialog() {
+    private fun dismissPaymentTypeDialog() {
         _state.update { it.copy(showPaymentTypeDialog = false) }
     }
 
     /** Torna allo step di cattura per ripetere la scansione. */
-    fun retryCapture() {
+    private fun retryCapture() {
         activeJob?.cancel()
         _state.update { ReceiptScanState(categories = _state.value.categories) }
     }
