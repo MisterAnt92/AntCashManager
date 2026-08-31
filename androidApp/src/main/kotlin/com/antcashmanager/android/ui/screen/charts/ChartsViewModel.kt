@@ -3,8 +3,8 @@ package com.antcashmanager.android.ui.screen.charts
 import androidx.annotation.StringRes
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.R
-import com.antcashmanager.android.analytics.PerformanceTracker
-import com.antcashmanager.android.analytics.SegmentationTracker
+import com.antcashmanager.android.analytics.tracker.PerformanceTracker
+import com.antcashmanager.android.analytics.tracker.SegmentationTracker
 import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.android.ui.screen.charts.view.ChartDetailsData
 import com.antcashmanager.android.ui.screen.charts.view.TrendDirection

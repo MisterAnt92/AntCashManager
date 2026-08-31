@@ -5,7 +5,7 @@ package com.antcashmanager.android.ui.screen.transactions
 // ══════════════════════════════════════════════════════════════════════════════
 
 import androidx.lifecycle.viewModelScope
-import com.antcashmanager.android.analytics.EngagementTracker
+import com.antcashmanager.android.analytics.tracker.EngagementTracker
 import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
 import com.antcashmanager.android.util.withCorrectAmounts
@@ -226,15 +226,23 @@ class TransactionsViewModel(
             }
         }
 
-    // ── Combined UI State ──
-    val state: StateFlow<TransactionsState> = combine(
+    // ── Combined UI State (2-layer combine to avoid type inference issues) ──
+    // Layer 1: Combine data flows (transactions, categories, filtered)
+    private val dataLayer = combine(
         transactionsFlow,
         categoriesFlow,
         filteredTransactionsFlow,
+    ) { transactions, categories, filtered ->
+        Triple(transactions, categories, filtered)
+    }
+
+    // Layer 2: Combine Layer1 + filter + suggestions + displayType
+    val state: StateFlow<TransactionsState> = combine(
+        dataLayer,
         searchSuggestionsFlow,
         _filterState,
         settingsRepository.getTransactionDisplayType(),
-    ) { transactions, categories, filtered, suggestions, filterState, displayType ->
+    ) { (transactions, categories, filtered), suggestions, filterState, displayType ->
         val categoryCache = categories.associateBy { it.name }
 
         // Enrich transactions with category icon and color from cache

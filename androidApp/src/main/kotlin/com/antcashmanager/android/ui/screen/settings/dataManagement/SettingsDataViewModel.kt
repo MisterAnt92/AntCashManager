@@ -3,8 +3,8 @@ package com.antcashmanager.android.ui.screen.settings.dataManagement
 import android.os.Build
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
-import com.antcashmanager.android.analytics.ErrorTracker
-import com.antcashmanager.android.analytics.PerformanceTracker
+import com.antcashmanager.android.analytics.tracker.ErrorTracker
+import com.antcashmanager.android.analytics.tracker.PerformanceTracker
 import com.antcashmanager.android.auth.GoogleSignInManager
 import com.antcashmanager.android.data.backup.BackupService
 import com.antcashmanager.android.security.BackupPayloadCipher

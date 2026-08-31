@@ -1,6 +1,7 @@
-package com.antcashmanager.android.analytics
+package com.antcashmanager.android.analytics.tracker
 
 import android.os.Bundle
+import com.antcashmanager.android.analytics.AnalyticsManager
 
 /**
  * Tracker per user segmentation e advanced cohort analysis.

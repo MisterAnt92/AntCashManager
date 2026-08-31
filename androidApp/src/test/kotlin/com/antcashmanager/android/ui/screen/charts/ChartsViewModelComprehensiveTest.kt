@@ -4,9 +4,8 @@ package com.antcashmanager.android.ui.screen.charts
 
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.BaseUnitTest
-import com.antcashmanager.android.analytics.PerformanceTracker
-import com.antcashmanager.android.analytics.SegmentationTracker
-import com.antcashmanager.android.testutil.FakeCategoryRepository
+import com.antcashmanager.android.analytics.tracker.PerformanceTracker
+import com.antcashmanager.android.analytics.tracker.SegmentationTracker
 import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.testutil.FakeTransactionRepository
 import com.antcashmanager.domain.model.Transaction
@@ -23,7 +22,6 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import java.util.Calendar
 
 /**
  * Comprehensive edge case tests for ChartsViewModel.

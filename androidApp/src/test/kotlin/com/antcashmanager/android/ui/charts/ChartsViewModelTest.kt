@@ -1,8 +1,8 @@
 package com.antcashmanager.android.ui.charts
 
 import com.antcashmanager.android.BaseUnitTest
-import com.antcashmanager.android.analytics.PerformanceTracker
-import com.antcashmanager.android.analytics.SegmentationTracker
+import com.antcashmanager.android.analytics.tracker.PerformanceTracker
+import com.antcashmanager.android.analytics.tracker.SegmentationTracker
 import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.testutil.FakeTransactionRepository
 import com.antcashmanager.android.ui.screen.charts.ChartsViewModel

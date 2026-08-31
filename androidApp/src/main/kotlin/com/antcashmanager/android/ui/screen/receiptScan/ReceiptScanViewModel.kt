@@ -3,8 +3,8 @@ package com.antcashmanager.android.ui.screen.receiptScan
 import android.os.Bundle
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.analytics.AnalyticsManager
-import com.antcashmanager.android.analytics.ErrorTracker
-import com.antcashmanager.android.analytics.PerformanceTracker
+import com.antcashmanager.android.analytics.tracker.ErrorTracker
+import com.antcashmanager.android.analytics.tracker.PerformanceTracker
 import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType

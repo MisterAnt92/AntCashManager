@@ -20,7 +20,7 @@ import androidx.window.layout.DisplayFeature
 import androidx.window.layout.WindowInfoTracker
 import androidx.lifecycle.lifecycleScope
 import co.touchlab.kermit.Logger
-import com.antcashmanager.android.analytics.SessionTracker
+import com.antcashmanager.android.analytics.tracker.SessionTracker
 import com.antcashmanager.android.navigation.AntCashManagerNavHost
 import com.antcashmanager.android.ui.LocalLocale
 import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator

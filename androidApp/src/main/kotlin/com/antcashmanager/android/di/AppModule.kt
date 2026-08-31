@@ -1,11 +1,11 @@
 package com.antcashmanager.android.di
 
 import com.antcashmanager.android.analytics.AnalyticsManager
-import com.antcashmanager.android.analytics.EngagementTracker
-import com.antcashmanager.android.analytics.ErrorTracker
-import com.antcashmanager.android.analytics.PerformanceTracker
-import com.antcashmanager.android.analytics.SegmentationTracker
-import com.antcashmanager.android.analytics.SessionTracker
+import com.antcashmanager.android.analytics.tracker.EngagementTracker
+import com.antcashmanager.android.analytics.tracker.ErrorTracker
+import com.antcashmanager.android.analytics.tracker.PerformanceTracker
+import com.antcashmanager.android.analytics.tracker.SegmentationTracker
+import com.antcashmanager.android.analytics.tracker.SessionTracker
 import com.antcashmanager.android.auth.GoogleSignInManager
 import com.antcashmanager.android.data.backup.BackupService
 import com.antcashmanager.android.data.receipt.MlKitReceiptOcrService

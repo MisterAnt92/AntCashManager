@@ -1,7 +1,7 @@
 package com.antcashmanager.android.ui.screen.home
 
 import androidx.lifecycle.viewModelScope
-import com.antcashmanager.android.analytics.SegmentationTracker
+import com.antcashmanager.android.analytics.tracker.SegmentationTracker
 import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.android.ui.screen.home.event.HomeEvent
 import com.antcashmanager.android.util.calculateBalance

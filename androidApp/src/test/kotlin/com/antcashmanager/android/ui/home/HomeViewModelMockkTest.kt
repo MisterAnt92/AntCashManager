@@ -1,7 +1,7 @@
 package com.antcashmanager.android.ui.home
 
 import com.antcashmanager.android.BaseUnitTest
-import com.antcashmanager.android.analytics.SegmentationTracker
+import com.antcashmanager.android.analytics.tracker.SegmentationTracker
 import com.antcashmanager.android.ui.screen.home.HomeViewModel
 import com.antcashmanager.android.ui.screen.home.event.HomeEvent
 import com.antcashmanager.domain.model.SavedDateFilter

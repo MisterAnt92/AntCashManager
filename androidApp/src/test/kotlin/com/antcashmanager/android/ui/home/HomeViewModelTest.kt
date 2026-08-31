@@ -2,7 +2,7 @@ package com.antcashmanager.android.ui.home
 
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.BaseUnitTest
-import com.antcashmanager.android.analytics.SegmentationTracker
+import com.antcashmanager.android.analytics.tracker.SegmentationTracker
 import com.antcashmanager.android.testutil.FakeCategoryRepository
 import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.testutil.FakeTransactionRepository

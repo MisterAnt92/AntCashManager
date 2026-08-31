@@ -1,9 +1,8 @@
 package com.antcashmanager.android.ui.screen.settings.dataManagement
 
-import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.BaseUnitTest
-import com.antcashmanager.android.analytics.ErrorTracker
-import com.antcashmanager.android.analytics.PerformanceTracker
+import com.antcashmanager.android.analytics.tracker.ErrorTracker
+import com.antcashmanager.android.analytics.tracker.PerformanceTracker
 import com.antcashmanager.android.auth.GoogleSignInManager
 import com.antcashmanager.android.auth.GoogleSignInResult
 import com.antcashmanager.android.data.backup.BackupService
@@ -16,7 +15,6 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
-import org.junit.Before
 import org.junit.Test
 
 /**

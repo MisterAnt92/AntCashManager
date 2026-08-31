@@ -1,8 +1,8 @@
 package com.antcashmanager.android.ui.settingsData
 
 import com.antcashmanager.android.BaseUnitTest
-import com.antcashmanager.android.analytics.ErrorTracker
-import com.antcashmanager.android.analytics.PerformanceTracker
+import com.antcashmanager.android.analytics.tracker.ErrorTracker
+import com.antcashmanager.android.analytics.tracker.PerformanceTracker
 import com.antcashmanager.android.data.backup.BackupService
 import com.antcashmanager.android.data.backup.RestoreResult
 import com.antcashmanager.android.security.BackupPayloadCipher
