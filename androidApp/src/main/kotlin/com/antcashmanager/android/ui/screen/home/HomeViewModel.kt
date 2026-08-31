@@ -9,6 +9,7 @@ import com.antcashmanager.android.util.calculateTotalExpense
 import com.antcashmanager.android.util.calculateTotalIncome
 import com.antcashmanager.android.util.withCorrectAmounts
 import com.antcashmanager.domain.model.SavedDateFilter
+import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.model.TransactionSuggestions
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
@@ -224,12 +225,17 @@ class HomeViewModel(
         val filterState = args[3] as FilterState
         val selectedTransaction = args[4] as com.antcashmanager.domain.model.Transaction?
         val categoryCache = args[5] as Map<String, com.antcashmanager.domain.model.Category>
-        val homeTopCardsOrder = args[6] as List<String>
+        val homeTopCardsOrderRaw = args[6] as String
+        val homeTopCardsOrder = if (homeTopCardsOrderRaw.isEmpty()) {
+            emptyList()
+        } else {
+            homeTopCardsOrderRaw.split(",")
+        }
         val dateFilterExpanded = args[7] as Boolean
         val showPaymentTypeBreakdown = args[8] as Boolean
         val showQuickInsightsCard = args[9] as Boolean
         val reduceMotion = args[10] as Boolean
-        val transactionDisplayType = args[11] as String
+        val transactionDisplayType = (args[11] as TransactionDisplayType).name
         val isTutorialCompleted = args[12] as Boolean
 
         // Enrich transactions with category icon and color from cache
