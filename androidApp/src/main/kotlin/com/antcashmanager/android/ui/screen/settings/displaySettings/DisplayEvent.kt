@@ -26,7 +26,7 @@ sealed class DisplayEvent {
     data class SetShowQuickInsightsCard(val show: Boolean) : DisplayEvent()
     data class SetDefaultPaymentType(val paymentType: String) : DisplayEvent()
     data class SetTransactionDisplayType(val displayType: TransactionDisplayType) : DisplayEvent()
-    data class SetShowInitialAnimation(val show: Boolean) : DisplayEvent()
+    data class SetTransactionsTransactionDisplayType(val displayType: TransactionDisplayType) : DisplayEvent()
     data class SetWidgetBackgroundColor(val color: Long) : DisplayEvent()
     data class SetWidgetOpacity(val opacity: Int) : DisplayEvent()
     

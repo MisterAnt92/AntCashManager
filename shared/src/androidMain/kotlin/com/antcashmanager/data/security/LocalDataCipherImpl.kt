@@ -59,10 +59,9 @@ public class LocalDataCipherImpl(
             "$ENCRYPTED_PREFIX$iv$PAYLOAD_SEPARATOR$payload"
         }.getOrElse { error ->
             // Critical: do NOT persist plaintext when encryption is enabled.
-            // Log error and return the original value (compromise for backward compat).
             // This is a sign of key corruption or severe crypto failure.
-            logger.e(error) { "CRITICAL: Encrypt failed — NOT persisting plaintext. User data may be lost." }
-            value  // Return original (not encrypting is safer than exposing plaintext)
+            logger.e(error) { "CRITICAL: Encryption failed. User data will not be persisted in plaintext." }
+            throw error  // Fail fast: caller must handle the failure and not persist
         }
     }
 

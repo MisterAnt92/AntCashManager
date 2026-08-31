@@ -142,7 +142,13 @@ class BackupService(
                     }
                 }
 
-                // Restore transactions
+                // Apply settings BEFORE restoring transactions
+                // CRITICAL: Encryption status must be applied first so rows are inserted with correct encryption state
+                backupData.settings?.let {
+                    applySettings(it)
+                }
+
+                // Restore transactions (with correct encryption state from settings)
                 var transactionsRestored = 0
                 for (transactionBackup in backupData.transactions) {
                     try {
@@ -153,11 +159,8 @@ class BackupService(
                     }
                 }
 
-                // Restore settings, se presenti (assenti in un backup v1 o se esplicitamente null)
+                // Notify widgets of changes
                 backupData.settings?.let {
-                    applySettings(it)
-                    // Assicura il refresh dei widget anche se il backup non contiene
-                    // transazioni (in quel caso insertTransaction non lo farebbe scattare).
                     widgetUpdateNotifier.notifyTransactionsChanged()
                 }
 
@@ -243,7 +246,6 @@ class BackupService(
         maskAmounts = settingsRepository.getMaskAmounts().first(),
         showPaymentTypeBreakdown = settingsRepository.getShowPaymentTypeBreakdown().first(),
         showQuickInsightsCard = settingsRepository.getShowQuickInsightsCard().first(),
-        showInitialAnimation = settingsRepository.getShowInitialAnimation().first(),
         transactionDisplayType = settingsRepository.getTransactionDisplayType().first().name,
         transactionsTransactionDisplayType = settingsRepository.getTransactionsTransactionDisplayType()
             .first().name,
@@ -281,7 +283,6 @@ class BackupService(
         settingsRepository.setMaskAmounts(settings.maskAmounts)
         settingsRepository.setShowPaymentTypeBreakdown(settings.showPaymentTypeBreakdown)
         settingsRepository.setShowQuickInsightsCard(settings.showQuickInsightsCard)
-        settingsRepository.setShowInitialAnimation(settings.showInitialAnimation)
         settingsRepository.setTransactionDisplayType(
             enumValueOfOrDefault(settings.transactionDisplayType, TransactionDisplayType.TREND),
         )

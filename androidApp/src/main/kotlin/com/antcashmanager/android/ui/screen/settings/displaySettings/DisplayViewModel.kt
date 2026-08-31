@@ -160,13 +160,6 @@ class DisplayViewModel(
                 DisplayConstant.DEFAULT_TRANSACTION_DISPLAY_TYPE,
             )
 
-    val showInitialAnimation = settingsRepository.getShowInitialAnimation()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
-            true,
-        )
-
     // Espone il colore di sfondo dei widget della home screen
     val widgetBackgroundColor = settingsRepository.getWidgetBackgroundColor()
         .stateIn(
@@ -200,7 +193,7 @@ class DisplayViewModel(
             is DisplayEvent.SetShowQuickInsightsCard -> setShowQuickInsightsCard(event.show)
             is DisplayEvent.SetDefaultPaymentType -> setDefaultPaymentType(event.paymentType)
             is DisplayEvent.SetTransactionDisplayType -> setTransactionDisplayType(event.displayType)
-            is DisplayEvent.SetShowInitialAnimation -> setShowInitialAnimation(event.show)
+            is DisplayEvent.SetTransactionsTransactionDisplayType -> setTransactionsTransactionDisplayType(event.displayType)
             is DisplayEvent.SetWidgetBackgroundColor -> setWidgetBackgroundColor(event.color)
             is DisplayEvent.SetWidgetOpacity -> setWidgetOpacity(event.opacity)
             is DisplayEvent.RetryLastOperation -> logInfo("Retry requested")
@@ -353,11 +346,6 @@ class DisplayViewModel(
             logMsg = "Setting transactions transaction display type: $displayType",
             action = { settingsRepository.setTransactionsTransactionDisplayType(displayType) },
         )
-
-    private fun setShowInitialAnimation(show: Boolean) = updatePreference(
-        logMsg = "Setting show initial animation: $show",
-        action = { settingsRepository.setShowInitialAnimation(show) },
-    )
 
     /**
      * Aggiorna il colore di sfondo dei widget e ne forza il refresh immediato.

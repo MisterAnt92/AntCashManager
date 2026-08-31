@@ -658,11 +658,6 @@ class MockHomeSettingsRepository : SettingsRepository {
     override fun getDefaultPaymentType() = kotlinx.coroutines.flow.flowOf("ELECTRONIC")
     override suspend fun setDefaultPaymentType(paymentType: String) {}
 
-    override fun getShowInitialAnimation(): kotlinx.coroutines.flow.Flow<Boolean> =
-        kotlinx.coroutines.flow.flowOf(true)
-
-    override suspend fun setShowInitialAnimation(show: Boolean) {}
-
     override fun getTransactionDisplayType() =
         kotlinx.coroutines.flow.flowOf(TransactionDisplayType.TREND)
 

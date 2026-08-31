@@ -248,8 +248,8 @@ class DisplayViewModelTest : BaseUnitTest() {
         }
         advanceUntilIdle()
 
-        viewModel.setTransactionDisplayType(TransactionDisplayType.CATEGORY)
-        viewModel.setTransactionsTransactionDisplayType(TransactionDisplayType.CATEGORY)
+        viewModel.onEvent(DisplayEvent.SetTransactionDisplayType(TransactionDisplayType.CATEGORY))
+        viewModel.onEvent(DisplayEvent.SetTransactionsTransactionDisplayType(TransactionDisplayType.CATEGORY))
         advanceUntilIdle()
 
         assertEquals(TransactionDisplayType.CATEGORY, viewModel.transactionDisplayType.value)

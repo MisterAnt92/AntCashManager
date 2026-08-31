@@ -1028,7 +1028,7 @@ private fun TransactionItem(
                             contentAlignment = Alignment.Center,
                         ) {
                             Icon(
-                                imageVector = if (isIncome) Icons.Default.ArrowDownward else Icons.Default.ArrowUpward,
+                                imageVector = if (isIncome) Icons.AutoMirrored.Filled.TrendingUp else Icons.AutoMirrored.Filled.TrendingDown,
                                 contentDescription = null,
                                 tint = if (isIncome) IncomeGreen else ExpenseRed,
                                 modifier = Modifier.size(20.dp),
@@ -1253,11 +1253,6 @@ class MockSettingsRepository : SettingsRepository {
     override suspend fun setShowQuickInsightsCard(show: Boolean) {}
     override fun getDefaultPaymentType() = kotlinx.coroutines.flow.flowOf("ELECTRONIC")
     override suspend fun setDefaultPaymentType(paymentType: String) {}
-
-    override fun getShowInitialAnimation(): Flow<Boolean> =
-        kotlinx.coroutines.flow.flowOf(true)
-
-    override suspend fun setShowInitialAnimation(show: Boolean) {}
 
     override fun getTransactionDisplayType(): Flow<TransactionDisplayType> =
         kotlinx.coroutines.flow.flowOf(TransactionDisplayType.TREND)

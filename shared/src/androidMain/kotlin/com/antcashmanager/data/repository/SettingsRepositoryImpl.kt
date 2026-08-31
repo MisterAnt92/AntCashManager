@@ -12,6 +12,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import co.touchlab.kermit.Logger
 import com.antcashmanager.data.local.DatabaseEncryptionManager
+import com.antcashmanager.data.security.LocalDataCipherImpl
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.BackupDestination
@@ -26,6 +27,7 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 public class SettingsRepositoryImpl(
     private val context: Context,
     private val dataStore: DataStore<Preferences> = context.dataStore,
+    private val localDataCipher: LocalDataCipherImpl = LocalDataCipherImpl(context),
 ) : SettingsRepository {
 
     private val themeKey = stringPreferencesKey("theme")
@@ -63,7 +65,6 @@ public class SettingsRepositoryImpl(
     private val categorySortOrderInitializedKey =
         booleanPreferencesKey("category_sort_order_initialized")
     private val dataEncryptionEnabledKey = booleanPreferencesKey("data_encryption_enabled")
-    private val showInitialAnimationKey = booleanPreferencesKey("show_initial_animation")
     private val lastBackupTimestampKey = longPreferencesKey("last_backup_timestamp")
     private val lastRestoreTimestampKey = longPreferencesKey("last_restore_timestamp")
     private val autoBackupEnabledKey = booleanPreferencesKey("auto_backup_enabled")
@@ -418,13 +419,6 @@ public class SettingsRepositoryImpl(
         }
     }
 
-    override fun getShowInitialAnimation(): Flow<Boolean> =
-        dataStore.data.map { it[showInitialAnimationKey] ?: false }
-
-    override suspend fun setShowInitialAnimation(show: Boolean) {
-        dataStore.edit { it[showInitialAnimationKey] = show }
-    }
-
     override fun getIsTutorialCompleted(): Flow<Boolean> =
         dataStore.data.map { it[isTutorialCompletedKey] ?: false }
 
@@ -445,6 +439,8 @@ public class SettingsRepositoryImpl(
     override suspend fun setDataEncryptionEnabled(enabled: Boolean) {
         dataStore.edit { it[dataEncryptionEnabledKey] = enabled }
         DatabaseEncryptionManager.setEncryptionDesired(context, enabled)
+        // Invalidate cipher cache so new encryption state is reflected immediately
+        localDataCipher.invalidateEncryptionFlag()
     }
 
     override fun getLastBackupTimestamp(): Flow<Long?> =
@@ -639,7 +635,6 @@ public class SettingsRepositoryImpl(
             prefs[transactionsTransactionDisplayTypeKey] = TransactionDisplayType.TREND.name
             prefs[isTutorialCompletedKey] = false
             prefs[dataEncryptionEnabledKey] = false
-            prefs[showInitialAnimationKey] = false
             prefs[suggestionsEnabledKey] = true
             prefs.remove(suggestionsClearedAtKey)
             prefs[widgetBackgroundColorKey] = DEFAULT_WIDGET_BACKGROUND_COLOR

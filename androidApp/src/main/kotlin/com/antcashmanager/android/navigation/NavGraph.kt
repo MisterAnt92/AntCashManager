@@ -70,7 +70,6 @@ import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.analytics.PerformanceTracker
 import com.antcashmanager.android.util.AppExitManager.safeFinish
 import com.antcashmanager.android.ui.components.animation.AntEasterEggAnimation
-import com.antcashmanager.android.ui.components.animation.AntSplashScreen
 import com.antcashmanager.android.ui.components.dialog.AppExitConfirmationDialog
 import com.antcashmanager.android.ui.components.layout.AntScreenScaffold
 import com.antcashmanager.android.ui.components.layout.LeftSidebar
@@ -112,14 +111,6 @@ fun AntCashManagerNavHost() {
     val thousandsSeparator by settingsRepository.getThousandsSeparator()
         .collectAsStateWithLifecycle(initialValue = "")
     val maskAmounts by settingsRepository.getMaskAmounts().collectAsStateWithLifecycle(initialValue = false)
-
-    val showInitialAnimation = false
-    var showSplash by rememberSaveable { mutableStateOf(true) }
-
-    if (showSplash && showInitialAnimation) {
-        AntSplashScreen(onAnimationFinished = { showSplash = false })
-        return
-    }
 
     val currencyFormat = CurrencyFormat(
         currencySymbol = currencySymbol,

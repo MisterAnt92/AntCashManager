@@ -1356,8 +1356,6 @@ private class MockChartsSettingsRepository : SettingsRepository {
     override suspend fun setShowQuickInsightsCard(show: Boolean) {}
     override fun getDefaultPaymentType() = kotlinx.coroutines.flow.flowOf("ELECTRONIC")
     override suspend fun setDefaultPaymentType(paymentType: String) {}
-    override fun getShowInitialAnimation() = kotlinx.coroutines.flow.flowOf(false)
-    override suspend fun setShowInitialAnimation(show: Boolean) {}
     override fun getTransactionDisplayType() = kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.TransactionDisplayType.TREND)
     override suspend fun setTransactionDisplayType(displayType: TransactionDisplayType) {}
     override fun getTransactionsTransactionDisplayType() = kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.TransactionDisplayType.TREND)
