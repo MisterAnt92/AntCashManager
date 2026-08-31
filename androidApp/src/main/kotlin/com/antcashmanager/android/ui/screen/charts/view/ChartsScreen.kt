@@ -669,7 +669,7 @@ private fun PeriodFilterCard(
                 )
                 IconButton(
                     onClick = onShowFromPicker,
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(48.dp)
                 ) {
                     Icon(
                         Icons.Default.CalendarMonth,
@@ -688,7 +688,7 @@ private fun PeriodFilterCard(
                 )
                 IconButton(
                     onClick = onShowToPicker,
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(48.dp)
                 ) {
                     Icon(
                         Icons.Default.CalendarMonth,
@@ -902,7 +902,7 @@ private fun CategoryPieChartCard(
                         onShared()
                         context.startActivity(Intent.createChooser(intent, shareLabel))
                     },
-                    modifier = Modifier.size(32.dp),
+                    modifier = Modifier.size(48.dp),
                 ) {
                     Icon(
                         imageVector = Icons.Default.Share,
@@ -1093,7 +1093,7 @@ private fun MonthlyBarChartCard(
                         onShared()
                         context.startActivity(Intent.createChooser(intent, shareLabel))
                     },
-                    modifier = Modifier.size(32.dp),
+                    modifier = Modifier.size(48.dp),
                 ) {
                     Icon(
                         imageVector = Icons.Default.Share,
@@ -1189,7 +1189,7 @@ private fun YearlyBarChartCard(
                         onShared()
                         context.startActivity(Intent.createChooser(intent, shareLabel))
                     },
-                    modifier = Modifier.size(32.dp),
+                    modifier = Modifier.size(48.dp),
                 ) {
                     Icon(
                         imageVector = Icons.Default.Share,

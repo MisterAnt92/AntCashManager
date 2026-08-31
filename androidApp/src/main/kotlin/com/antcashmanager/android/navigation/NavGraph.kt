@@ -383,7 +383,7 @@ fun AntCashManagerNavHost() {
                                     IconButton(
                                         onClick = { screenHeaderConfig.onSearchClick?.invoke() },
                                         modifier = Modifier
-                                            .size(40.dp)
+                                            .size(48.dp)
                                             .testTag("header_search_icon"),
                                     ) {
                                         Icon(
@@ -399,7 +399,7 @@ fun AntCashManagerNavHost() {
                                 if (screenHeaderConfig.onFilterClick != null) {
                                     IconButton(
                                         onClick = { screenHeaderConfig.onFilterClick!!.invoke() },
-                                        modifier = Modifier.size(40.dp),
+                                        modifier = Modifier.size(48.dp),
                                     ) {
                                         Box {
                                             Icon(
@@ -436,7 +436,7 @@ fun AntCashManagerNavHost() {
                                 if (screenHeaderConfig.hasOrderOption) {
                                     IconButton(
                                         onClick = { screenHeaderConfig.onOrderClick?.invoke() },
-                                        modifier = Modifier.size(40.dp),
+                                        modifier = Modifier.size(48.dp),
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.Sort,
@@ -549,7 +549,7 @@ fun AntCashManagerNavHost() {
                                                 analyticsManager.logEvent("sidebar_toggled", params)
                                                 isSidebarOpen = !isSidebarOpen
                                             },
-                                            modifier = Modifier.size(40.dp),
+                                            modifier = Modifier.size(48.dp),
                                         ) {
                                             Icon(
                                                 imageVector = Icons.Default.Menu,
@@ -580,7 +580,7 @@ fun AntCashManagerNavHost() {
                                             IconButton(
                                                 onClick = { screenHeaderConfig.onSearchClick?.invoke() },
                                                 modifier = Modifier
-                                                    .size(40.dp)
+                                                    .size(48.dp)
                                                     .testTag("header_search_icon"),
                                             ) {
                                                 Icon(
@@ -596,7 +596,7 @@ fun AntCashManagerNavHost() {
                                         if (screenHeaderConfig.onFilterClick != null) {
                                             IconButton(
                                                 onClick = { screenHeaderConfig.onFilterClick!!.invoke() },
-                                                modifier = Modifier.size(40.dp),
+                                                modifier = Modifier.size(48.dp),
                                             ) {
                                                 Box {
                                                     Icon(
@@ -633,7 +633,7 @@ fun AntCashManagerNavHost() {
                                         if (screenHeaderConfig.hasOrderOption) {
                                             IconButton(
                                                 onClick = { screenHeaderConfig.onOrderClick?.invoke() },
-                                                modifier = Modifier.size(40.dp),
+                                                modifier = Modifier.size(48.dp),
                                             ) {
                                                 Icon(
                                                     imageVector = Icons.Default.Sort,

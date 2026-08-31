@@ -271,7 +271,7 @@ fun DateRangeFilter(
                         IconButton(
                             onClick = onFromDateEdit,
                             modifier = Modifier
-                                .size(32.dp)
+                                .size(48.dp)
                                 .semantics {
                                     contentDescription = "Modifica data inizio: ${
                                         dateFormat.format(
@@ -300,7 +300,7 @@ fun DateRangeFilter(
                         IconButton(
                             onClick = onToDateEdit,
                             modifier = Modifier
-                                .size(32.dp)
+                                .size(48.dp)
                                 .semantics {
                                     contentDescription =
                                         "Modifica data fine: ${dateFormat.format(Date(dateRangeTo))}"
