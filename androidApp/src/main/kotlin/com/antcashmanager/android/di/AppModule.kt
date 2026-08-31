@@ -253,34 +253,34 @@ val useCaseModule = module {
     factory {
         val repo = get<SettingsRepository>()
         SettingsUseCasesProvider(
-            getTheme = GetSettingUseCase(getter = { repo.getTheme().map { it.name } }),
-            setTheme = SetSettingUseCase(setter = { repo.setTheme(AppTheme.valueOf(it)) }),
-            getLanguage = GetSettingUseCase(getter = { repo.getLanguage().map { it.name } }),
-            setLanguage = SetSettingUseCase(setter = { repo.setLanguage(AppLanguage.valueOf(it)) }),
-            getShowCharts = GetSettingUseCase(getter = { repo.getShowCharts() }),
-            setShowCharts = SetSettingUseCase(setter = { repo.setShowCharts(it) }),
-            getHighContrast = GetSettingUseCase(getter = { repo.getHighContrast() }),
-            setHighContrast = SetSettingUseCase(setter = { repo.setHighContrast(it) }),
-            getLargeText = GetSettingUseCase(getter = { repo.getLargeText() }),
-            setLargeText = SetSettingUseCase(setter = { repo.setLargeText(it) }),
-            getReduceMotion = GetSettingUseCase(getter = { repo.getReduceMotion() }),
-            setReduceMotion = SetSettingUseCase(setter = { repo.setReduceMotion(it) }),
-            getShowTransactionNotes = GetSettingUseCase(getter = { repo.getShowTransactionNotes() }),
-            getCurrencySymbol = GetSettingUseCase(getter = { repo.getCurrencySymbol() }),
-            setCurrencySymbol = SetSettingUseCase(setter = { repo.setCurrencySymbol(it) }),
-            getDecimalDigits = GetSettingUseCase(getter = { repo.getDecimalDigits() }),
-            setDecimalDigits = SetSettingUseCase(setter = { repo.setDecimalDigits(it) }),
-            getDecimalSeparator = GetSettingUseCase(getter = { repo.getDecimalSeparator() }),
-            setDecimalSeparator = SetSettingUseCase(setter = { repo.setDecimalSeparator(it) }),
-            getThousandsSeparator = GetSettingUseCase(getter = { repo.getThousandsSeparator() }),
-            setThousandsSeparator = SetSettingUseCase(setter = { repo.setThousandsSeparator(it) }),
-            getTransactionDisplayType = GetSettingUseCase(
+            getTheme = GetSettingUseCase<String>(getter = { repo.getTheme().map { it.name } }),
+            setTheme = SetSettingUseCase<String>(setter = { repo.setTheme(AppTheme.valueOf(it)) }),
+            getLanguage = GetSettingUseCase<String>(getter = { repo.getLanguage().map { it.name } }),
+            setLanguage = SetSettingUseCase<String>(setter = { repo.setLanguage(AppLanguage.valueOf(it)) }),
+            getShowCharts = GetSettingUseCase<Boolean>(getter = { repo.getShowCharts() }),
+            setShowCharts = SetSettingUseCase<Boolean>(setter = { repo.setShowCharts(it) }),
+            getHighContrast = GetSettingUseCase<Boolean>(getter = { repo.getHighContrast() }),
+            setHighContrast = SetSettingUseCase<Boolean>(setter = { repo.setHighContrast(it) }),
+            getLargeText = GetSettingUseCase<Boolean>(getter = { repo.getLargeText() }),
+            setLargeText = SetSettingUseCase<Boolean>(setter = { repo.setLargeText(it) }),
+            getReduceMotion = GetSettingUseCase<Boolean>(getter = { repo.getReduceMotion() }),
+            setReduceMotion = SetSettingUseCase<Boolean>(setter = { repo.setReduceMotion(it) }),
+            getShowTransactionNotes = GetSettingUseCase<Boolean>(getter = { repo.getShowTransactionNotes() }),
+            getCurrencySymbol = GetSettingUseCase<String>(getter = { repo.getCurrencySymbol() }),
+            setCurrencySymbol = SetSettingUseCase<String>(setter = { repo.setCurrencySymbol(it) }),
+            getDecimalDigits = GetSettingUseCase<Int>(getter = { repo.getDecimalDigits() }),
+            setDecimalDigits = SetSettingUseCase<Int>(setter = { repo.setDecimalDigits(it) }),
+            getDecimalSeparator = GetSettingUseCase<String>(getter = { repo.getDecimalSeparator() }),
+            setDecimalSeparator = SetSettingUseCase<String>(setter = { repo.setDecimalSeparator(it) }),
+            getThousandsSeparator = GetSettingUseCase<String>(getter = { repo.getThousandsSeparator() }),
+            setThousandsSeparator = SetSettingUseCase<String>(setter = { repo.setThousandsSeparator(it) }),
+            getTransactionDisplayType = GetSettingUseCase<String>(
                 getter = { repo.getTransactionDisplayType().map { it.name } }
             ),
-            setTransactionDisplayType = SetSettingUseCase(
+            setTransactionDisplayType = SetSettingUseCase<String>(
                 setter = { repo.setTransactionDisplayType(TransactionDisplayType.valueOf(it)) }
             ),
-            setTutorialCompleted = SetSettingUseCase(setter = { repo.setIsTutorialCompleted(it) }),
+            setTutorialCompleted = SetSettingUseCase<Boolean>(setter = { repo.setIsTutorialCompleted(it) }),
             resetAllPreferences = get(),
         )
     }
@@ -304,7 +304,8 @@ val presentationModule = module {
             getHomeDateFilterStateUseCase = get(),
             setHomeDateFilterStateUseCase = get(),
             getCategoriesUseCase = get(),
-            segmentationTracker = get(),
+            settingsRepository = get(),
+            segmentationTracker = get<SegmentationTracker>(),
         )
     }
     viewModel {
@@ -322,8 +323,9 @@ val presentationModule = module {
             getTransactionsByDateRangeUseCase = get(),
             getChartsDateFilterStateUseCase = get(),
             setChartsDateFilterStateUseCase = get(),
-            performanceTracker = get(),
-            segmentationTracker = get(),
+            performanceTracker = get<PerformanceTracker>(),
+            segmentationTracker = get<SegmentationTracker>(),
+            settingsRepository = get(),
         )
     }
     viewModel {
@@ -337,7 +339,8 @@ val presentationModule = module {
             getTransactionSuggestionsUseCase = get(),
             getTransactionsDateFilterStateUseCase = get(),
             setTransactionsDateFilterStateUseCase = get(),
-            engagementTracker = get(),
+            settingsRepository = get(),
+            engagementTracker = get<EngagementTracker>(),
         )
     }
 
@@ -372,8 +375,8 @@ val presentationModule = module {
             getTransactionByIdUseCase = get(),
             analyticsManager = get(),
             settingsRepository = get(),
-            performanceTracker = get(),
-            errorTracker = get(),
+            performanceTracker = get<PerformanceTracker>(),
+            errorTracker = get<ErrorTracker>(),
             transactionId = transactionId,
             savedStateHandle = get(),  // NEW: Per state recovery
         )
@@ -391,19 +394,20 @@ val presentationModule = module {
             settingsRepository = get(),
             widgetUpdateNotifier = get(),
             analyticsManager = get(),
-            engagementTracker = get(),
+            engagementTracker = get<EngagementTracker>(),
         )
     }
     viewModel {
         SettingsDataViewModel(
             settingsRepository = get(),
             categoryRepository = get(),
+            transactionRepository = get(),
             deleteAllTransactionsUseCase = get(),
             backupService = get(),
             autoBackupScheduler = get(),
             googleSignInManager = get(),
-            performanceTracker = get(),
-            errorTracker = get(),
+            performanceTracker = get<PerformanceTracker>(),
+            errorTracker = get<ErrorTracker>(),
         )
     }
     viewModel {
@@ -413,8 +417,8 @@ val presentationModule = module {
             getCategoriesUseCase = get(),
             getTransactionSuggestionsUseCase = get(),
             analyticsManager = get(),
-            performanceTracker = get(),
-            errorTracker = get(),
+            performanceTracker = get<PerformanceTracker>(),
+            errorTracker = get<ErrorTracker>(),
         )
     }
     viewModelOf(::TransactionDetailsViewModel)

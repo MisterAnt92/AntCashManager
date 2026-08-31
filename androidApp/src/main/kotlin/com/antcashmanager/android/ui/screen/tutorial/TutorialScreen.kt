@@ -2,6 +2,8 @@ package com.antcashmanager.android.ui.screen.tutorial
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import com.antcashmanager.android.ui.components.overlay.TutorialOverlay
 import org.koin.compose.koinInject
 
@@ -13,10 +15,12 @@ import org.koin.compose.koinInject
  * - Da tablet: tramite item Tutorial nel rail navigation
  *
  * Al completamento del tutorial, naviga indietro.
+ * FASE 7c: Refactored to use navController instead of callback.
  */
 @Composable
 fun TutorialScreen(
-    onNavigateBack: () -> Unit,
+    navController: NavController? = null,
+    modifier: Modifier = Modifier,
 ) {
     val analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager = koinInject()
 
@@ -26,6 +30,6 @@ fun TutorialScreen(
     }
 
     TutorialOverlay(
-        onDismiss = onNavigateBack,
+        onDismiss = { navController?.popBackStack() },
     )
 }

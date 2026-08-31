@@ -95,6 +95,13 @@ class ChartsViewModel(
             initialValue = false,
         )
 
+    val chartsCardOrder: StateFlow<String> = settingsRepository.getChartCardsOrder()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = ChartsConstant.DEFAULT_CHARTS_CARDS_ORDER,
+        )
+
     init {
         observeSavedDateFilter()
     }

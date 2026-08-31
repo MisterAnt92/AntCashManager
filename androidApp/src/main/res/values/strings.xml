@@ -16,6 +16,16 @@
     <!-- HelpDialog (Dashboard) -->
     <string name="help_dashboard_desc">View the total balance, income, and expenses for the selected period.</string>
 
+    <!-- HelpDialog (Transactions) -->
+    <string name="transactions_help_title">Transactions Help</string>
+    <string name="transactions_help_desc">Learn how to manage and filter your transactions.</string>
+    <string name="transactions_help_filter_title">Filter Transactions</string>
+    <string name="transactions_help_filter_desc">Use filters to find specific transactions by type, category, or payment method.</string>
+    <string name="transactions_help_search_title">Search</string>
+    <string name="transactions_help_search_desc">Search for transactions by title or amount using the search bar.</string>
+    <string name="transactions_help_display_title">Display Options</string>
+    <string name="transactions_help_display_desc">Change how transactions are displayed in the list from the settings menu.</string>
+
 
     <!-- Navigation -->
 

@@ -3,6 +3,7 @@ package com.antcashmanager.android.ui.screen.transactions
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
+import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.model.TransactionType
 
 /**
@@ -28,6 +29,8 @@ data class TransactionsState(
     val isSearchExpanded: Boolean = false,
     val isFiltersExpanded: Boolean = false,
     val searchSuggestions: List<String> = emptyList(),
+    val transactionDisplayType: TransactionDisplayType = TransactionDisplayType.TREND,
+    val dateFilterExpanded: Boolean = false,
 ) {
     val hasActiveFilters: Boolean
         get() = searchQuery.isNotBlank() ||

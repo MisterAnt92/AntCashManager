@@ -12,6 +12,14 @@
     <string name="common_back">Zurück</string>
     <string name="common_add">Hinzufügen</string>
     <string name="help_dashboard_desc">Zeigt den Gesamtsaldo, Einnahmen und Ausgaben für den ausgewählten Zeitraum an.</string>
+
+    <!-- HelpDialog (Transactions) -->
+    <string name="transactions_help_filter_title">Transaktionen filtern</string>
+    <string name="transactions_help_filter_desc">Verwenden Sie Filter, um bestimmte Transaktionen nach Typ, Kategorie oder Zahlungsmethode zu finden.</string>
+    <string name="transactions_help_search_title">Suche</string>
+    <string name="transactions_help_search_desc">Suchen Sie nach Transaktionen nach Name oder Betrag über die Suchleiste.</string>
+    <string name="transactions_help_display_title">Anzeigeoptionen</string>
+    <string name="transactions_help_display_desc">Ändern Sie im Einstellungsmenü, wie Transaktionen in der Liste angezeigt werden.</string>
     <string name="home_total_balance">Gesamtsaldo</string>
     <string name="home_income">Einnahmen</string>
     <string name="home_expenses">Ausgaben</string>

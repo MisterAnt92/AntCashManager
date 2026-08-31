@@ -26,6 +26,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.TrendingDown
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
@@ -126,11 +128,7 @@ fun TransactionsScreen(
         koinViewModel()
 
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val transactionDisplayType = try {
-        TransactionDisplayType.valueOf(state.transactionDisplayType)
-    } catch (e: Exception) {
-        TransactionDisplayType.TREND
-    }
+    val transactionDisplayType = state.transactionDisplayType
 
     TransactionsContent(
         params = TransactionsContentParams(
@@ -178,7 +176,6 @@ fun TransactionsScreen(
                 }
                 viewModel.onEvent(event)
             },
-            settingsRepository = settingsRepository,
             navController = navController,
             transactionDisplayType = transactionDisplayType,
             modifier = modifier,
@@ -198,7 +195,6 @@ internal fun TransactionsContent(
     val analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager = koinInject()
     val state = params.state
     val onEvent = params.onEvent
-    val settingsRepository = params.settingsRepository
     val navController = params.navController
     val transactionDisplayType = params.transactionDisplayType
     val modifier = params.modifier
@@ -208,9 +204,8 @@ internal fun TransactionsContent(
     var showToDatePicker by remember { mutableStateOf(false) }
     var showHelpDialog by remember { mutableStateOf(false) }
 
-    // DateRangeFilter expanded state from settings
-    val dateFilterExpanded by settingsRepository.getDateFilterExpanded()
-        .collectAsStateWithLifecycle(initialValue = true)
+    // DateRangeFilter expanded state from state (UDF)
+    val dateFilterExpanded = state.dateFilterExpanded
     val coroutineScope = rememberCoroutineScope()
     val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
 

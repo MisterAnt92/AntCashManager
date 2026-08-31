@@ -78,3 +78,141 @@ fun NavController.safePopBackStack(): Boolean {
         false
     }
 }
+
+// ══════════════════════════════════════════════════════════════════════════════
+// TYPE-SAFE NAVIGATION FUNCTIONS (FASE 7b Enhancement)
+// ══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Type-safe navigation to Home screen.
+ *
+ * **Uso:**
+ * ```kotlin
+ * navController.navigateToHome()
+ * ```
+ */
+fun NavController.navigateToHome() {
+    navigateToBottomTab(AppRoute.BottomRoute.Home.route)
+}
+
+/**
+ * Type-safe navigation to Charts screen.
+ *
+ * **Uso:**
+ * ```kotlin
+ * navController.navigateToCharts()
+ * ```
+ */
+fun NavController.navigateToCharts() {
+    navigateToBottomTab(AppRoute.BottomRoute.Charts.route)
+}
+
+/**
+ * Type-safe navigation to Transactions screen.
+ *
+ * **Uso:**
+ * ```kotlin
+ * navController.navigateToTransactions()
+ * ```
+ */
+fun NavController.navigateToTransactions() {
+    navigateToBottomTab(AppRoute.BottomRoute.Transactions.route)
+}
+
+/**
+ * Type-safe navigation to Categories screen.
+ *
+ * **Uso:**
+ * ```kotlin
+ * navController.navigateToCategories()
+ * ```
+ */
+fun NavController.navigateToCategories() {
+    navigateToBottomTab(AppRoute.BottomRoute.Categories.route)
+}
+
+/**
+ * Type-safe navigation to Settings main screen.
+ *
+ * **Uso:**
+ * ```kotlin
+ * navController.navigateToSettings()
+ * ```
+ */
+fun NavController.navigateToSettingsMain() {
+    navigateToSettings(AppRoute.SettingsRoute.Main.route)
+}
+
+/**
+ * Type-safe navigation to Display preferences screen.
+ *
+ * **Uso:**
+ * ```kotlin
+ * navController.navigateToDisplaySettings()
+ * ```
+ */
+fun NavController.navigateToDisplaySettings() {
+    navigateToSettings(AppRoute.SettingsRoute.Display.route)
+}
+
+/**
+ * Type-safe navigation to Data Management screen.
+ *
+ * **Uso:**
+ * ```kotlin
+ * navController.navigateToDataManagement()
+ * ```
+ */
+fun NavController.navigateToDataManagement() {
+    navigateToSettings(AppRoute.SettingsRoute.DataManagement.route)
+}
+
+/**
+ * Type-safe navigation to Tutorial screen.
+ *
+ * **Uso:**
+ * ```kotlin
+ * navController.navigateToTutorial()
+ * ```
+ */
+fun NavController.navigateToTutorial() {
+    navigateToBottomTab(AppRoute.BottomRoute.Tutorial.route)
+}
+
+/**
+ * Type-safe navigation to Receipt Scan screen.
+ *
+ * **Uso:**
+ * ```kotlin
+ * navController.navigateToReceiptScan()
+ * ```
+ */
+fun NavController.navigateToReceiptScan() {
+    navigateToTransaction(AppRoute.TransactionRoute.ReceiptScan.route)
+}
+
+/**
+ * Type-safe navigation to Add Transaction screen.
+ *
+ * **Uso:**
+ * ```kotlin
+ * navController.navigateToAddTransaction()
+ * ```
+ */
+fun NavController.navigateToAddTransaction() {
+    navigateToTransaction(AppRoute.TransactionRoute.Add.route)
+}
+
+/**
+ * Type-safe navigation to Edit Transaction screen with transaction ID.
+ *
+ * **Uso:**
+ * ```kotlin
+ * navController.navigateToEditTransaction(transactionId = 123L)
+ * ```
+ *
+ * @param transactionId ID della transazione da editare
+ */
+fun NavController.navigateToEditTransaction(transactionId: Long) {
+    navigateToTransaction(AppRoute.TransactionRoute.Edit.createRoute(transactionId))
+}

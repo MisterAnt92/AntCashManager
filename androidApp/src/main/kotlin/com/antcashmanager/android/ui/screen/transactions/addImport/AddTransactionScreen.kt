@@ -19,19 +19,20 @@ import com.antcashmanager.android.ui.screen.transactions.addImport.view.Category
 import com.antcashmanager.android.ui.screen.transactions.addImport.view.DetailsStep
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.TransactionType
+import androidx.navigation.NavController
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
 
 // ══════════════════════════════════════════════════════════════════════════════
-// SCREEN
+// SCREEN (FASE 7c: Refactored to remove callbacks, use navController directly)
 // ══════════════════════════════════════════════════════════════════════════════
 
 @Composable
 fun AddTransactionScreen(
     transactionId: Long? = null,
-    onNavigateBack: () -> Unit,
-    onTransactionAdded: () -> Unit,
+    navController: NavController? = null,
+    modifier: Modifier = Modifier,
 ) {
     Logger.d(tag = "AddTransactionScreen") { "Displaying AddTransactionScreen" }
 
@@ -55,34 +56,35 @@ fun AddTransactionScreen(
                 putString("transaction_type", state.selectedType?.name ?: "unknown")
             }
             analyticsManager.logEvent("transaction_submit_success", params)
-            onTransactionAdded()
+            navController?.popBackStack()
         }
     }
 
     AddTransactionContent(
         state = state,
         onEvent = { event -> viewModel.onEvent(event) },
-        onNavigateBack = {
-            analyticsManager.logEvent("transaction_form_cancelled")
-            onNavigateBack()
-        },
+        navController = navController,
+        analyticsManager = analyticsManager,
+        modifier = modifier,
     )
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// CONTENT – flusso semplificato a 2 step
+// CONTENT – flusso semplificato a 2 step (FASE 7c: Refactored to use navController)
 // ══════════════════════════════════════════════════════════════════════════════
 
 @Composable
 internal fun AddTransactionContent(
     state: AddTransactionState,
     onEvent: (AddTransactionEvent) -> Unit,
-    onNavigateBack: () -> Unit,
+    navController: NavController? = null,
+    analyticsManager: AnalyticsManager? = null,
+    modifier: Modifier = Modifier,
 ) {
     when {
         state.isLoading -> {
             Box(
-                modifier = Modifier.fillMaxSize(),
+                modifier = modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center,
             ) {
                 CircularProgressIndicator()
@@ -94,7 +96,10 @@ internal fun AddTransactionContent(
                 categories = state.categories,
                 selectedCategory = state.selectedCategory,
                 onSelectCategory = { onEvent(AddTransactionEvent.SelectCategory(it)) },
-                onCancel = onNavigateBack,
+                onCancel = {
+                    analyticsManager?.logEvent("transaction_form_cancelled")
+                    navController?.popBackStack()
+                },
             )
         }
 
@@ -102,7 +107,10 @@ internal fun AddTransactionContent(
             DetailsStep(
                 state = state,
                 onEvent = onEvent,
-                onNavigateBack = onNavigateBack,
+                onNavigateBack = {
+                    analyticsManager?.logEvent("transaction_form_cancelled")
+                    navController?.popBackStack()
+                },
             )
         }
     }
@@ -135,7 +143,8 @@ fun AddTransactionScreenNewPreview() {
                 amount = "12.50",
             ),
             onEvent = {},
-            onNavigateBack = {},
+            navController = null,
+            analyticsManager = null,
         )
     }
 }
@@ -155,7 +164,8 @@ fun AddTransactionScreenEditPreview() {
                 notes = "Stipendio mensile",
             ),
             onEvent = {},
-            onNavigateBack = {},
+            navController = null,
+            analyticsManager = null,
         )
     }
 }

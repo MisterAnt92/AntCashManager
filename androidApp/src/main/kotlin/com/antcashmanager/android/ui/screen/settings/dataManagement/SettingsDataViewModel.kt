@@ -124,9 +124,9 @@ class SettingsDataViewModel(
                     settingsRepositoryRef.setDataEncryptionEnabled(!enabled)
                 } catch (rollbackError: Exception) {
                     logError("CRITICAL: Failed to rollback encryption flag: ${rollbackError.message}")
-                    errorTracker.trackError("encryption_toggle_rollback_failed", rollbackError)
+                    errorTracker.trackDatabaseError("encryption_toggle_rollback_failed", rollbackError.message ?: "unknown")
                 }
-                errorTracker.trackError("encryption_toggle_failed", e)
+                errorTracker.trackDatabaseError("encryption_toggle_failed", e.message ?: "unknown")
             }
         }
     }

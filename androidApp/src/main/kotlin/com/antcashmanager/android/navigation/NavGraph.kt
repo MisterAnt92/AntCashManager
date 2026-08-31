@@ -316,7 +316,7 @@ fun AntCashManagerNavHost() {
 
                         composable(AppRoute.BottomRoute.Tutorial.route) {
                             TutorialScreen(
-                                onNavigateBack = { navController.popBackStack() },
+                                navController = navController,
                             )
                         }
                         composable(
@@ -332,14 +332,12 @@ fun AntCashManagerNavHost() {
                                 backStackEntry.arguments?.getLong("transactionId")?.takeIf { it != -1L }
                             AddTransactionScreen(
                                 transactionId = transactionId,
-                                onNavigateBack = { navController.popBackStack() },
-                                onTransactionAdded = { navController.popBackStack() },
+                                navController = navController,
                             )
                         }
                         composable(AppRoute.TransactionRoute.ReceiptScan.route) {
                             ReceiptScanScreen(
-                                onNavigateBack = { navController.popBackStack() },
-                                onTransactionSaved = { navController.popBackStack() },
+                                navController = navController,
                             )
                         }
                     }

@@ -236,13 +236,14 @@ class TransactionsViewModel(
         Triple(transactions, categories, filtered)
     }
 
-    // Layer 2: Combine Layer1 + filter + suggestions + displayType
+    // Layer 2: Combine Layer1 + filter + suggestions + displayType + dateFilterExpanded
     val state: StateFlow<TransactionsState> = combine(
         dataLayer,
         searchSuggestionsFlow,
         _filterState,
         settingsRepository.getTransactionDisplayType(),
-    ) { (transactions, categories, filtered), suggestions, filterState, displayType ->
+        settingsRepository.getDateFilterExpanded(),
+    ) { (transactions, categories, filtered), suggestions, filterState, displayType, dateFilterExpanded ->
         val categoryCache = categories.associateBy { it.name }
 
         // Enrich transactions with category icon and color from cache
@@ -279,6 +280,7 @@ class TransactionsViewModel(
             isFiltersExpanded = filterState.isFiltersExpanded,
             searchSuggestions = suggestions,
             transactionDisplayType = displayType,
+            dateFilterExpanded = dateFilterExpanded,
         )
     }.stateIn(
         scope = viewModelScope,

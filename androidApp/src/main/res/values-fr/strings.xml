@@ -1,6 +1,14 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
     <string name="help_dashboard_desc">Affichez le solde total, les revenus et les dépenses pour la période sélectionnée.</string>
+
+    <!-- HelpDialog (Transactions) -->
+    <string name="transactions_help_filter_title">Filtrer les transactions</string>
+    <string name="transactions_help_filter_desc">Utilisez des filtres pour trouver des transactions spécifiques par type, catégorie ou mode de paiement.</string>
+    <string name="transactions_help_search_title">Recherche</string>
+    <string name="transactions_help_search_desc">Recherchez des transactions par nom ou par montant à l\'aide de la barre de recherche.</string>
+    <string name="transactions_help_display_title">Options d\'affichage</string>
+    <string name="transactions_help_display_desc">Modifiez la façon dont les transactions sont affichées dans la liste à partir du menu des paramètres.</string>
     <string name="home_total_balance">Solde Total</string>
     <string name="home_income">Revenus</string>
     <string name="home_expenses">D\u00e9penses</string>

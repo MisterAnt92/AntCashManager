@@ -3,7 +3,7 @@ package com.antcashmanager.android.ui.screen.settings.displaySettings
 import android.os.Bundle
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.analytics.AnalyticsManager
-import com.antcashmanager.android.analytics.EngagementTracker
+import com.antcashmanager.android.analytics.tracker.EngagementTracker
 import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.SettingsRepository

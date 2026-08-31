@@ -114,15 +114,17 @@ fun ChartsScreen() {
     val dateRange by viewModel.dateRange.collectAsStateWithLifecycle()
     val selectedPresetIndex by viewModel.selectedPresetIndex.collectAsStateWithLifecycle()
     val chartsZoomEnabled by viewModel.chartsZoomEnabled.collectAsStateWithLifecycle(initialValue = false)
+    val chartsCardOrder by viewModel.chartsCardOrder.collectAsStateWithLifecycle()
 
     ChartsContent(
         chartData = chartData,
         dateRange = dateRange,
         initialPresetIndex = selectedPresetIndex,
         zoomEnabled = chartsZoomEnabled,
-        settingsRepository = settingsRepository,
+        chartsCardOrderRaw = chartsCardOrder,
         onDateRangeChanged = { from, to -> viewModel.onEvent(ChartEvent.SetDateRange(from, to)) },
         onPresetSelected = { preset -> viewModel.onEvent(ChartEvent.SetPresetRange(preset)) },
+        onEvent = viewModel::onEvent
     )
 }
 
@@ -133,9 +135,10 @@ internal fun ChartsContent(
     dateRange: DateRange,
     initialPresetIndex: Int = 1,
     zoomEnabled: Boolean = false,
-    settingsRepository: SettingsRepository,
+    chartsCardOrderRaw: String,
     onDateRangeChanged: (Long, Long) -> Unit = { _, _ -> },
     onPresetSelected: (RangePreset) -> Unit = {},
+    onEvent: (ChartEvent) -> Unit = {},
 ) {
     val context = LocalContext.current
     val analyticsManager: AnalyticsManager = koinInject()
@@ -158,21 +161,13 @@ internal fun ChartsContent(
     var selectedChartDetails by remember { mutableStateOf<ChartDetailsData?>(null) }
 
     // Charts card ordering state - persists across session and restores from settings
-    var chartsCardOrderRaw by remember {
-        mutableStateOf(ChartsConstant.DEFAULT_CHARTS_CARDS_ORDER)
+    var localChartsCardOrderRaw by remember(chartsCardOrderRaw) {
+        mutableStateOf(chartsCardOrderRaw)
     }
-    val chartsCardOrder = remember(chartsCardOrderRaw) {
-        com.antcashmanager.android.ui.screen.charts.model.ChartCardType.parse(chartsCardOrderRaw)
+    val chartsCardOrder = remember(localChartsCardOrderRaw) {
+        com.antcashmanager.android.ui.screen.charts.model.ChartCardType.parse(localChartsCardOrderRaw)
     }
     var showChartsCardsOrderDialog by remember { mutableStateOf(false) }
-
-    // Load persisted card order on composition
-    LaunchedEffect(Unit) {
-        val savedOrder = settingsRepository.getChartCardsOrder().first()
-        if (savedOrder.isNotEmpty()) {
-            chartsCardOrderRaw = savedOrder
-        }
-    }
 
     val chartCardContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh
 
@@ -235,7 +230,7 @@ internal fun ChartsContent(
                     val temp = mutableOrder[index]
                     mutableOrder[index] = mutableOrder[index - 1]
                     mutableOrder[index - 1] = temp
-                    chartsCardOrderRaw = com.antcashmanager.android.ui.screen.charts.model.ChartCardType.serialize(mutableOrder)
+                    localChartsCardOrderRaw = com.antcashmanager.android.ui.screen.charts.model.ChartCardType.serialize(mutableOrder)
                 }
             },
             onMoveDown = { index ->
@@ -244,13 +239,13 @@ internal fun ChartsContent(
                     val temp = mutableOrder[index]
                     mutableOrder[index] = mutableOrder[index + 1]
                     mutableOrder[index + 1] = temp
-                    chartsCardOrderRaw = com.antcashmanager.android.ui.screen.charts.model.ChartCardType.serialize(mutableOrder)
+                    localChartsCardOrderRaw = com.antcashmanager.android.ui.screen.charts.model.ChartCardType.serialize(mutableOrder)
                 }
             },
             onDismiss = { showChartsCardsOrderDialog = false },
             onConfirm = {
                 // Persist card order to settings for backup/restore
-                onEvent(ChartEvent.SetChartCardsOrder(chartsCardOrderRaw))
+                onEvent(ChartEvent.SetChartCardsOrder(localChartsCardOrderRaw))
                 showChartsCardsOrderDialog = false
             }
         )
@@ -1287,5 +1282,5 @@ private data class SummaryCardState(
     val contentColor: Color,
     val fmt: CurrencyFormat,
     val isBalance: Boolean = false,
-    // Le uscite pure non possono contenere lo stipendio, quindi mostrano sempre la cifra reale;
-    // saldo ed entrate restano mascherati per intero perché potrebbero includerlo.
+    val includesIncome: Boolean = true
+)
