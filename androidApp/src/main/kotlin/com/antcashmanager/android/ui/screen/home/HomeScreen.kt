@@ -124,7 +124,6 @@ fun HomeScreen(
 internal fun HomeContent(
     state: HomeState,
     onEvent: (HomeEvent) -> Unit,
-    settingsRepository: SettingsRepository,
     navController: androidx.navigation.NavController,
     modifier: Modifier = Modifier,
 ) {
@@ -141,27 +140,24 @@ internal fun HomeContent(
     var editingTopCardsOrder by remember { mutableStateOf(HomeTopCardType.parse(topCardsOrderRaw)) }
     val topCardsOrder = remember(topCardsOrderRaw) { HomeTopCardType.parse(topCardsOrderRaw) }
 
-    // Load persisted card order on composition
-    LaunchedEffect(Unit) {
-        val savedOrder = settingsRepository.getHomeTopCardsOrder().first()
-        if (savedOrder.isNotEmpty()) {
-            topCardsOrderRaw = savedOrder
+    // Load persisted card order on composition from state (populated by ViewModel)
+    LaunchedEffect(state.homeTopCardsOrder) {
+        if (state.homeTopCardsOrder.isNotEmpty()) {
+            topCardsOrderRaw = state.homeTopCardsOrder.joinToString(",")
         }
     }
 
-    // DateRangeFilter expanded state from settings
-    val dateFilterExpanded by settingsRepository.getDateFilterExpanded()
-        .collectAsStateWithLifecycle(initialValue = true)
-    val showPaymentTypeBreakdown by settingsRepository.getShowPaymentTypeBreakdown()
-        .collectAsStateWithLifecycle(initialValue = false)
-    val showQuickInsightsCard by settingsRepository.getShowQuickInsightsCard()
-        .collectAsStateWithLifecycle(initialValue = false)
-    val reduceMotion by settingsRepository.getReduceMotion()
-        .collectAsStateWithLifecycle(initialValue = false)
-    val transactionDisplayType by settingsRepository.getTransactionDisplayType()
-        .collectAsStateWithLifecycle(initialValue = TransactionDisplayType.TREND)
-    val isTutorialCompleted by settingsRepository.getIsTutorialCompleted()
-        .collectAsStateWithLifecycle(initialValue = true)
+    // Settings from state (populated by HomeViewModel)
+    val dateFilterExpanded = state.dateFilterExpanded
+    val showPaymentTypeBreakdown = state.showPaymentTypeBreakdown
+    val showQuickInsightsCard = state.showQuickInsightsCard
+    val reduceMotion = state.reduceMotion
+    val transactionDisplayType = try {
+        TransactionDisplayType.valueOf(state.transactionDisplayType)
+    } catch (e: Exception) {
+        TransactionDisplayType.TREND
+    }
+    val isTutorialCompleted = state.isTutorialCompleted
 
     val coroutineScope = rememberCoroutineScope()
     val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
