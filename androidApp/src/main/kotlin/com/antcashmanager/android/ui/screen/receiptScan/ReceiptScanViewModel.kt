@@ -289,6 +289,10 @@ class ReceiptScanViewModel(
                     distinctTitles = suggestions.titles
                     distinctLocations = suggestions.locations
                 }
+                    .onFailure { error ->
+                        // FASE 5: Log error for debugging (will be surfaced to user via ErrorState in future)
+                        logError("Failed to load transaction suggestions: ${error.message}")
+                    }
             }
         }
     }
