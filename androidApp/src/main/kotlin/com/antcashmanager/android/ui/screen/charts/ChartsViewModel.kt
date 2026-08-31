@@ -112,6 +112,13 @@ class ChartsViewModel(
             )
             is ChartEvent.ClearChartSelection -> clearChartSelection()
             is ChartEvent.RetryLastOperation -> logInfo("Retry requested")
+            is ChartEvent.SetChartCardsOrder -> setChartCardsOrder(event.order)
+        }
+    }
+
+    private fun setChartCardsOrder(order: String) {
+        viewModelScope.launch {
+            settingsRepository.setChartCardsOrder(order)
         }
     }
 

@@ -250,9 +250,7 @@ internal fun ChartsContent(
             onDismiss = { showChartsCardsOrderDialog = false },
             onConfirm = {
                 // Persist card order to settings for backup/restore
-                scope.launch {
-                    settingsRepository.setChartCardsOrder(chartsCardOrderRaw)
-                }
+                onEvent(ChartEvent.SetChartCardsOrder(chartsCardOrderRaw))
                 showChartsCardsOrderDialog = false
             }
         )

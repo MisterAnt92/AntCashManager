@@ -26,6 +26,7 @@ sealed interface TransactionsEvent {
     data object ApplyFilters : TransactionsEvent
     data object CancelFilterChanges : TransactionsEvent
     data object ClearAllFilters : TransactionsEvent
+    data class SetDateFilterExpanded(val expanded: Boolean) : TransactionsEvent
 
     // Transaction CRUD events
     data object AddTransactionClicked : TransactionsEvent

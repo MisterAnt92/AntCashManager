@@ -300,6 +300,7 @@ class TransactionsViewModel(
             is TransactionsEvent.ApplyFilters -> applyFilters()
             is TransactionsEvent.CancelFilterChanges -> cancelFilterChanges()
             is TransactionsEvent.ClearAllFilters -> clearAllFilters()
+            is TransactionsEvent.SetDateFilterExpanded -> setDateFilterExpanded(event.expanded)
 
             // Transaction CRUD events
             is TransactionsEvent.AddTransactionClicked -> { /* Navigation handled by Screen */
@@ -464,6 +465,12 @@ class TransactionsViewModel(
                 pendingTransactionType = null,
                 pendingPaymentType = null,
             )
+        }
+    }
+
+    private fun setDateFilterExpanded(expanded: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.setDateFilterExpanded(expanded)
         }
     }
 

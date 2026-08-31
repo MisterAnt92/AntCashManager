@@ -427,9 +427,7 @@ internal fun TransactionsContent(
                     dateRangeTo = state.dateRangeTo,
                     expanded = dateFilterExpanded,
                     onExpandedChange = { expanded ->
-                        coroutineScope.launch {
-                            settingsRepository.setDateFilterExpanded(expanded)
-                        }
+                        onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.SetDateFilterExpanded(expanded))
                     },
                     onPresetSelected = {
                         onEvent(

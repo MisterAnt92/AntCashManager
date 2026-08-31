@@ -241,9 +241,7 @@ internal fun HomeContent(
     if (!isTutorialCompleted) {
         TutorialOverlay(
             onDismiss = {
-                coroutineScope.launch {
-                    settingsRepository.setIsTutorialCompleted(true)
-                }
+                onEvent(HomeEvent.SetIsTutorialCompleted(true))
             },
         )
         return
@@ -348,9 +346,7 @@ internal fun HomeContent(
                 }
                 topCardsOrderRaw = HomeTopCardType.serialize(updatedOrder)
                 // Persist card order to settings for backup/restore
-                coroutineScope.launch {
-                    settingsRepository.setHomeTopCardsOrder(HomeTopCardType.serialize(updatedOrder))
-                }
+                onEvent(HomeEvent.SetHomeTopCardsOrder(HomeTopCardType.serialize(updatedOrder)))
                 showTopCardsOrderDialog = false
                 analyticsManager.logEvent("home_top_cards_reordered")
             },
@@ -427,9 +423,7 @@ internal fun HomeContent(
                                 dateRangeTo = state.dateRangeTo,
                                 expanded = dateFilterExpanded,
                                 onExpandedChange = { expanded ->
-                                    coroutineScope.launch {
-                                        settingsRepository.setDateFilterExpanded(expanded)
-                                    }
+                                    onEvent(HomeEvent.SetDateFilterExpanded(expanded))
                                 },
                                 onPresetSelected = { presetIndex ->
                                     val params = android.os.Bundle().apply {

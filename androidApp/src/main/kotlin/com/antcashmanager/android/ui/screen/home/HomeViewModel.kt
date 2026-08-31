@@ -337,6 +337,9 @@ class HomeViewModel(
             HomeEvent.DismissTransactionDetails -> _selectedTransactionState.value = null
             is HomeEvent.UpdateSearchQuery -> updateSearchQuery(event.query)
             HomeEvent.ToggleSearchExpanded -> toggleSearchExpanded()
+            is HomeEvent.SetIsTutorialCompleted -> setIsTutorialCompleted(event.completed)
+            is HomeEvent.SetHomeTopCardsOrder -> setHomeTopCardsOrder(event.order)
+            is HomeEvent.SetDateFilterExpanded -> setDateFilterExpanded(event.expanded)
         }
     }
 
@@ -352,6 +355,24 @@ class HomeViewModel(
                 // per tornare ai dati completi filtrati solo per data
                 searchQuery = if (it.isSearchExpanded) "" else it.searchQuery
             )
+        }
+    }
+
+    private fun setIsTutorialCompleted(completed: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.setIsTutorialCompleted(completed)
+        }
+    }
+
+    private fun setHomeTopCardsOrder(order: String) {
+        viewModelScope.launch {
+            settingsRepository.setHomeTopCardsOrder(order)
+        }
+    }
+
+    private fun setDateFilterExpanded(expanded: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.setDateFilterExpanded(expanded)
         }
     }
 
