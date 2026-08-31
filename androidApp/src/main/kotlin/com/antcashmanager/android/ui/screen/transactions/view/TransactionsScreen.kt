@@ -102,7 +102,6 @@ import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.model.TransactionType
-import com.antcashmanager.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -125,11 +124,13 @@ fun TransactionsScreen(
 
     val viewModel: com.antcashmanager.android.ui.screen.transactions.TransactionsViewModel =
         koinViewModel()
-    val settingsRepository: SettingsRepository = koinInject()
 
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val transactionDisplayType by settingsRepository.getTransactionsTransactionDisplayType()
-        .collectAsStateWithLifecycle(initialValue = TransactionDisplayType.TREND)
+    val transactionDisplayType = try {
+        TransactionDisplayType.valueOf(state.transactionDisplayType)
+    } catch (e: Exception) {
+        TransactionDisplayType.TREND
+    }
 
     TransactionsContent(
         params = TransactionsContentParams(
@@ -605,7 +606,6 @@ internal fun TransactionsContent(
 data class TransactionsContentParams(
     val state: com.antcashmanager.android.ui.screen.transactions.TransactionsState,
     val onEvent: (com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent) -> Unit,
-    val settingsRepository: SettingsRepository,
     val navController: NavController? = null,
     val transactionDisplayType: TransactionDisplayType = TransactionDisplayType.TREND,
     val modifier: Modifier = Modifier,
