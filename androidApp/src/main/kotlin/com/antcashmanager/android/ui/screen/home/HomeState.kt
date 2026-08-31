@@ -22,6 +22,14 @@ data class HomeState(
     val searchQuery: String = "",
     val isSearchExpanded: Boolean = false,
     val searchSuggestions: List<String> = emptyList(),
+    // Settings (remove direct repo injection from HomeScreen)
+    val homeTopCardsOrder: List<String> = emptyList(),
+    val dateFilterExpanded: Boolean = false,
+    val showPaymentTypeBreakdown: Boolean = false,
+    val showQuickInsightsCard: Boolean = true,
+    val reduceMotion: Boolean = false,
+    val transactionDisplayType: String = "TREND",
+    val isTutorialCompleted: Boolean = false,
 ) {
     companion object {
         val PRESETS = HomeConstant.PRESETS

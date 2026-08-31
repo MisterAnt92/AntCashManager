@@ -95,7 +95,6 @@ import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.TransactionDisplayType
-import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.usecase.transaction.DateRange
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -111,13 +110,10 @@ import kotlin.math.abs
 fun ChartsScreen() {
     Logger.d(tag = "ChartsScreen") { "Displaying ChartsScreen" }
     val viewModel: ChartsViewModel = koinViewModel()
-    val settingsRepository: SettingsRepository = koinInject()
     val chartData by viewModel.chartData.collectAsStateWithLifecycle()
     val dateRange by viewModel.dateRange.collectAsStateWithLifecycle()
     val selectedPresetIndex by viewModel.selectedPresetIndex.collectAsStateWithLifecycle()
-
-    val chartsZoomEnabled by settingsRepository.getChartsZoomEnabled()
-        .collectAsStateWithLifecycle(initialValue = false)
+    val chartsZoomEnabled by viewModel.chartsZoomEnabled.collectAsStateWithLifecycle(initialValue = false)
 
     ChartsContent(
         chartData = chartData,

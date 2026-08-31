@@ -87,7 +87,6 @@ import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.model.TransactionType
-import com.antcashmanager.domain.repository.SettingsRepository
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -104,8 +103,6 @@ fun HomeScreen(
     Logger.d(tag = "HomeScreen") { "Displaying HomeScreen" }
 
     val viewModel: HomeViewModel = koinViewModel()
-    val settingsRepository: SettingsRepository = koinInject()
-
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     HomeContent(
@@ -113,7 +110,6 @@ fun HomeScreen(
         onEvent = { event ->
             viewModel.onEvent(event)
         },
-        settingsRepository = settingsRepository,
         navController = navController,
         modifier = modifier,
     )
