@@ -1371,6 +1371,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             settingsRepository = settingsRepository,
             performanceTracker = performanceTracker,
             errorTracker = errorTracker,
+            savedStateHandle = androidx.lifecycle.SavedStateHandle(),
             transactionId = transactionId,
         )
     }
