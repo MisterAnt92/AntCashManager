@@ -60,6 +60,7 @@ class TransactionsViewModel(
     private val getTransactionSuggestionsUseCase: GetTransactionSuggestionsUseCase,
     private val getTransactionsDateFilterStateUseCase: GetTransactionsDateFilterStateUseCase,
     private val setTransactionsDateFilterStateUseCase: SetTransactionsDateFilterStateUseCase,
+    private val settingsRepository: SettingsRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val engagementTracker: EngagementTracker,
 ) : BaseViewModel<TransactionsEvent>(dispatcher) {
@@ -107,6 +108,7 @@ class TransactionsViewModel(
             settingsRepository = settingsRepository,
             dispatcher = dispatcher,
         ),
+        settingsRepository = settingsRepository,
         dispatcher = dispatcher,
         engagementTracker = engagementTracker,
     )
@@ -231,7 +233,8 @@ class TransactionsViewModel(
         filteredTransactionsFlow,
         searchSuggestionsFlow,
         _filterState,
-    ) { transactions, categories, filtered, suggestions, filterState ->
+        settingsRepository.getTransactionDisplayType(),
+    ) { transactions, categories, filtered, suggestions, filterState, displayType ->
         val categoryCache = categories.associateBy { it.name }
 
         // Enrich transactions with category icon and color from cache
@@ -267,6 +270,7 @@ class TransactionsViewModel(
             isSearchExpanded = filterState.isSearchExpanded,
             isFiltersExpanded = filterState.isFiltersExpanded,
             searchSuggestions = suggestions,
+            transactionDisplayType = displayType,
         )
     }.stateIn(
         scope = viewModelScope,

@@ -50,6 +50,7 @@ class HomeViewModel(
     private val getHomeDateFilterStateUseCase: GetHomeDateFilterStateUseCase,
     private val setHomeDateFilterStateUseCase: SetHomeDateFilterStateUseCase,
     private val getCategoriesUseCase: GetCategoriesUseCase,
+    private val settingsRepository: SettingsRepository,
     searchDebounceMs: Long = 300L,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val segmentationTracker: SegmentationTracker,
@@ -87,6 +88,7 @@ class HomeViewModel(
             categoryRepository = categoryRepository,
             dispatcher = dispatcher,
         ),
+        settingsRepository = settingsRepository,
         searchDebounceMs = searchDebounceMs,
         dispatcher = dispatcher,
         segmentationTracker = segmentationTracker,
@@ -208,6 +210,13 @@ class HomeViewModel(
         _filterState,
         _selectedTransactionState,
         categoriesCache,
+        settingsRepository.getHomeTopCardsOrder(),
+        settingsRepository.getDateFilterExpanded(),
+        settingsRepository.getShowPaymentTypeBreakdown(),
+        settingsRepository.getShowQuickInsightsCard(),
+        settingsRepository.getReduceMotion(),
+        settingsRepository.getTransactionDisplayType(),
+        settingsRepository.getIsTutorialCompleted(),
     ) { args: Array<Any?> ->
         val transactions = args[0] as List<com.antcashmanager.domain.model.Transaction>
         val filtered = args[1] as List<com.antcashmanager.domain.model.Transaction>
@@ -215,6 +224,13 @@ class HomeViewModel(
         val filterState = args[3] as FilterState
         val selectedTransaction = args[4] as com.antcashmanager.domain.model.Transaction?
         val categoryCache = args[5] as Map<String, com.antcashmanager.domain.model.Category>
+        val homeTopCardsOrder = args[6] as List<String>
+        val dateFilterExpanded = args[7] as Boolean
+        val showPaymentTypeBreakdown = args[8] as Boolean
+        val showQuickInsightsCard = args[9] as Boolean
+        val reduceMotion = args[10] as Boolean
+        val transactionDisplayType = args[11] as String
+        val isTutorialCompleted = args[12] as Boolean
 
         // Enrich transactions with category icon and color from cache
         val enrichedFiltered = filtered.map { transaction ->
@@ -286,6 +302,13 @@ class HomeViewModel(
             searchQuery = filterState.searchQuery,
             isSearchExpanded = filterState.isSearchExpanded,
             searchSuggestions = suggestions,
+            homeTopCardsOrder = homeTopCardsOrder,
+            dateFilterExpanded = dateFilterExpanded,
+            showPaymentTypeBreakdown = showPaymentTypeBreakdown,
+            showQuickInsightsCard = showQuickInsightsCard,
+            reduceMotion = reduceMotion,
+            transactionDisplayType = transactionDisplayType,
+            isTutorialCompleted = isTutorialCompleted,
         )
     }.stateIn(
         scope = viewModelScope,

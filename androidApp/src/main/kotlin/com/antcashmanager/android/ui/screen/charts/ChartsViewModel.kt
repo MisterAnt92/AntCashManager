@@ -40,6 +40,7 @@ class ChartsViewModel(
     private val setChartsDateFilterStateUseCase: SetChartsDateFilterStateUseCase,
     private val performanceTracker: PerformanceTracker,
     private val segmentationTracker: SegmentationTracker,
+    private val settingsRepository: SettingsRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : BaseViewModel<ChartEvent>(dispatcher) {
 
@@ -61,6 +62,7 @@ class ChartsViewModel(
         ),
         performanceTracker = performanceTracker,
         segmentationTracker = segmentationTracker,
+        settingsRepository = settingsRepository,
         dispatcher = dispatcher,
     )
 
@@ -84,6 +86,13 @@ class ChartsViewModel(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = ChartData(),
+        )
+
+    val chartsZoomEnabled: StateFlow<Boolean> = settingsRepository.getChartsZoomEnabled()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = false,
         )
 
     init {
