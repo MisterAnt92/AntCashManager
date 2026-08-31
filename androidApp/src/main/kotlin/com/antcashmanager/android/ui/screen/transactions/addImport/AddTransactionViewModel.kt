@@ -130,6 +130,10 @@ class AddTransactionViewModel(
                         )
                     }
                 }
+                    .onFailure { error ->
+                        // FASE 5: Log error (will surface to ErrorState in future)
+                        logError("Failed to load suggestions: ${error.message}")
+                    }
             }
         }
     }

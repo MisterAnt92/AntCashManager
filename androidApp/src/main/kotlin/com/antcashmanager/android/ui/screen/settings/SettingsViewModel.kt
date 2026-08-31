@@ -172,11 +172,13 @@ class SettingsViewModel(
                             )
                             try {
                                 insertTransactionUseCase(transaction)
-                            } catch (_: Exception) {
-                                // ignore individual insert failures in debug import
+                            } catch (insertError: Exception) {
+                                // FASE 5: Log individual insert failures in debug import
+                                logWarn("Failed to insert transaction: ${insertError.message}")
                             }
-                        } catch (_: Exception) {
-                            // ignore malformed entries
+                        } catch (entryError: Exception) {
+                            // FASE 5: Log malformed entries
+                            logWarn("Skipped malformed entry: ${entryError.message}")
                         }
                     }
                 }

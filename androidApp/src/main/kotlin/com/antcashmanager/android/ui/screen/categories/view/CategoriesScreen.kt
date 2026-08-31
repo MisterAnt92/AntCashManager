@@ -25,6 +25,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ReceiptLong
@@ -203,21 +205,39 @@ val categoryColors = listOf(
 fun CategoriesScreen() {
     val viewModel: CategoriesViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
-    CategoriesContent(
-        state = state,
-        onAddCategory = { name, icon, color, type ->
-            viewModel.onEvent(CategoryEvent.AddCategory(name, icon, color, type))
-        },
-        onDeleteCategory = { category ->
-            viewModel.onEvent(CategoryEvent.DeleteCategory(category))
-        },
-        onSetCategoryHidden = { category, hidden ->
-            viewModel.onEvent(CategoryEvent.SetCategoryHidden(category, hidden))
-        },
-        onReorderCategories = { categories ->
-            viewModel.onEvent(CategoryEvent.ReorderCategories(categories))
-        },
-    )
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    // Show error snackbar when errorState changes
+    LaunchedEffect(state.errorState.isError) {
+        if (state.errorState.isError && state.errorState.message != null) {
+            snackbarHostState.showSnackbar(state.errorState.message!!)
+        }
+    }
+
+    Box {
+        CategoriesContent(
+            state = state,
+            onAddCategory = { name, icon, color, type ->
+                viewModel.onEvent(CategoryEvent.AddCategory(name, icon, color, type))
+            },
+            onDeleteCategory = { category ->
+                viewModel.onEvent(CategoryEvent.DeleteCategory(category))
+            },
+            onSetCategoryHidden = { category, hidden ->
+                viewModel.onEvent(CategoryEvent.SetCategoryHidden(category, hidden))
+            },
+            onReorderCategories = { categories ->
+                viewModel.onEvent(CategoryEvent.ReorderCategories(categories))
+            },
+        )
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(16.dp)
+        )
+    }
 }
 
 @Composable
