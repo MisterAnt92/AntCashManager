@@ -193,6 +193,31 @@ Code is organized **package-by-feature**, not by technical type. Reference scree
 - `CategoryBreakdownWidget` – displays category spending breakdown
 - `GlanceWidgetUpdateNotifier` – implementation of domain's `WidgetUpdateNotifier` interface
 
+### UDF (Unidirectional Data Flow) + Layer Separation (FASE 6, 2026-08-31)
+
+**Complete architecture refactor for production readiness:**
+
+1. **Layer Separation (FASE 6.0a)**: All repository injections removed from composables
+   - Screens read settings from ViewModel state instead of direct repo
+   - Rules: `HomeScreen`, `ChartsScreen`, `TransactionsScreen` use `state.settingX` not `settingsRepository.getX()`
+   - Exception: Components in `src/debug` (previews) can mock repos for Compose preview
+
+2. **State Population (FASE 6.0b)**: All settings flows wired to ViewModel state
+   - HomeViewModel: 7 settings flows (homeTopCardsOrder, dateFilterExpanded, etc.)
+   - ChartsViewModel: chartsZoomEnabled StateFlow exposed
+   - TransactionsViewModel: transactionDisplayType from repository flow
+   - Pattern: combine() at ViewModel level; UI reads immutable state
+
+3. **Event-Based Writes (FASE 6.0c)**: All settings changes routed through onEvent()
+   - No direct repository.set*() calls from UI
+   - Events: HomeEvent (SetIsTutorialCompleted, SetHomeTopCardsOrder, SetDateFilterExpanded)
+   - Events: TransactionsEvent.SetDateFilterExpanded, ChartEvent.SetChartCardsOrder
+   - DisplayViewModel: 17 pre-implemented event handlers (setCurrencySymbol, setMealVoucherValue, etc.)
+   - ThemeViewModel: SetTheme event + onEvent handler
+   - All writes happen in ViewModel.viewModelScope.launch { repository.set*() }
+
+**Result**: 100% layer separation enforced. UI → Event → ViewModel → Repository. No exceptions.
+
 ---
 
 ## Key Commands
