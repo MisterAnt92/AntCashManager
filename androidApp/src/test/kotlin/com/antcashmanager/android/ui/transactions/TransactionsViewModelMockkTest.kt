@@ -89,7 +89,7 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
     fun addTransaction_shouldCallInsertUseCase_whenInputIsValid() = runViewModelTest {
         val viewModel = buildViewModel()
 
-        viewModel.addTransaction(
+        viewModel.onEvent(TransactionsEvent.AddTransaction(
             title = "Lunch",
             amount = 18.5,
             category = "Food",
@@ -97,7 +97,7 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
             timestamp = 1_712_000_000_000L,
             notes = "menu",
             payee = "Cafe",
-        )
+        ))
         advanceUntilIdle()
 
         coVerify(atLeast = 1) {
@@ -161,13 +161,13 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
             )
             val viewModel = buildViewModel()
 
-            viewModel.addTransaction(
+            viewModel.onEvent(TransactionsEvent.AddTransaction(
                 title = "Lunch",
                 amount = 18.5,
                 category = "Food",
                 type = TransactionType.EXPENSE,
                 timestamp = 1_712_000_000_000L,
-            )
+            ))
             advanceUntilIdle()
 
             coVerify(exactly = 1) { insertTransactionUseCase(any()) }

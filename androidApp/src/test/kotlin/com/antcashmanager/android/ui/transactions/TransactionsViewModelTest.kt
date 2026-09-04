@@ -84,13 +84,13 @@ class TransactionsViewModelTest : BaseUnitTest() {
         advanceUntilIdle()
 
         val now = System.currentTimeMillis()
-        viewModel.addTransaction(
+        viewModel.onEvent(TransactionsEvent.AddTransaction(
             title = "Lunch",
             amount = 15.0,
             category = "Food",
             type = TransactionType.EXPENSE,
             timestamp = now,
-        )
+        ))
         advanceUntilIdle()
 
         assertEquals(1, viewModel.state.value.transactions.size)
@@ -120,7 +120,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
         advanceUntilIdle()
         assertEquals(1, viewModel.state.value.transactions.size)
 
-        viewModel.deleteTransaction(transaction)
+        viewModel.onEvent(TransactionsEvent.DeleteTransaction(transaction))
         advanceUntilIdle()
 
         assertTrue(viewModel.state.value.transactions.isEmpty())
@@ -147,7 +147,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
         advanceUntilIdle()
 
         val updated = transaction.copy(title = "Espresso", amount = 2.5)
-        viewModel.updateTransaction(updated)
+        viewModel.onEvent(TransactionsEvent.UpdateTransaction(updated))
         advanceUntilIdle()
 
         assertEquals(1, viewModel.state.value.transactions.size)
@@ -183,13 +183,13 @@ class TransactionsViewModelTest : BaseUnitTest() {
         advanceUntilIdle()
 
         val now = System.currentTimeMillis()
-        viewModel.addTransaction(
+        viewModel.onEvent(TransactionsEvent.AddTransaction(
             title = "Salary",
             amount = 3000.0,
             category = "Work",
             type = TransactionType.INCOME,
             timestamp = now,
-        )
+        ))
         advanceUntilIdle()
 
         assertEquals(1, viewModel.state.value.transactions.size)
@@ -431,13 +431,13 @@ class TransactionsViewModelTest : BaseUnitTest() {
 
             // Inserisce una transazione con timestamp = adesso (> staleStoredTo)
             val transactionTimestamp = System.currentTimeMillis()
-            testViewModel.addTransaction(
+            testViewModel.onEvent(TransactionsEvent.AddTransaction(
                 title = "Caffè",
                 amount = 2.0,
                 category = "Food",
                 type = TransactionType.EXPENSE,
                 timestamp = transactionTimestamp,
-            )
+            ))
             advanceUntilIdle()
 
             // La transazione deve comparire subito in filteredTransactions senza necessità di refresh

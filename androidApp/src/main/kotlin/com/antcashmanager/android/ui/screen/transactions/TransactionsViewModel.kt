@@ -316,6 +316,20 @@ class TransactionsViewModel(
             is TransactionsEvent.AddTransactionClicked -> { /* Navigation handled by Screen */
             }
 
+            is TransactionsEvent.AddTransaction -> addTransaction(
+                title = event.title,
+                amount = event.amount,
+                category = event.category,
+                type = event.type,
+                timestamp = event.timestamp,
+                notes = event.notes,
+                payee = event.payee,
+                location = event.location,
+                tags = event.tags,
+                isRecurring = event.isRecurring,
+                recurrenceInterval = event.recurrenceInterval,
+            )
+
             is TransactionsEvent.DeleteTransaction -> deleteTransaction(event.transaction)
             is TransactionsEvent.UpdateTransaction -> updateTransaction(event.transaction)
         }
@@ -484,8 +498,8 @@ class TransactionsViewModel(
         }
     }
 
-    // ── Public Methods - Transaction CRUD ──
-    fun addTransaction(
+    // ── Private Methods - Transaction CRUD ──
+    private fun addTransaction(
         title: String,
         amount: Double,
         category: String,
@@ -525,7 +539,7 @@ class TransactionsViewModel(
         }
     }
 
-    fun updateTransaction(transaction: Transaction) {
+    private fun updateTransaction(transaction: Transaction) {
         logDebug("Updating transaction: ${transaction.title}")
         viewModelScope.launch {
             val result = updateTransactionUseCase(transaction)
@@ -539,7 +553,7 @@ class TransactionsViewModel(
         }
     }
 
-    fun deleteTransaction(transaction: Transaction) {
+    private fun deleteTransaction(transaction: Transaction) {
         logDebug("Deleting transaction: ${transaction.title}")
         viewModelScope.launch {
             val result = deleteTransactionUseCase(transaction)
