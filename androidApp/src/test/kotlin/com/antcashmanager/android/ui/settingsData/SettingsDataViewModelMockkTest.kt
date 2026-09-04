@@ -13,6 +13,7 @@ import com.antcashmanager.android.ui.screen.settings.dataManagement.RestoreSucce
 import com.antcashmanager.android.ui.screen.settings.dataManagement.SettingsDataViewModel
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
+import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -533,6 +534,7 @@ class SettingsDataViewModelMockkTest : BaseUnitTest() {
         return SettingsDataViewModel(
             settingsRepository = settingsRepository,
             categoryRepository = categoryRepository,
+            transactionRepository = mockk(relaxed = true),
             deleteAllTransactionsUseCase = deleteAllTransactionsUseCase,
             backupService = backupService,
             autoBackupScheduler = autoBackupScheduler,

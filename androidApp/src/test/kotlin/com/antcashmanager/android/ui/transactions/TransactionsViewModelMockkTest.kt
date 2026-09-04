@@ -9,6 +9,7 @@ import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionSuggestions
 import com.antcashmanager.domain.model.TransactionType
+import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.settings.GetTransactionsDateFilterStateUseCase
 import com.antcashmanager.domain.usecase.settings.SetTransactionsDateFilterStateUseCase
@@ -43,6 +44,7 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
     private lateinit var getTransactionSuggestionsUseCase: GetTransactionSuggestionsUseCase
     private lateinit var getTransactionsDateFilterStateUseCase: GetTransactionsDateFilterStateUseCase
     private lateinit var setTransactionsDateFilterStateUseCase: SetTransactionsDateFilterStateUseCase
+    private lateinit var settingsRepository: SettingsRepository
     private lateinit var analyticsManager: AnalyticsManager
     private lateinit var engagementTracker: EngagementTracker
 
@@ -57,6 +59,7 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
         getTransactionSuggestionsUseCase = mockk()
         getTransactionsDateFilterStateUseCase = mockk()
         setTransactionsDateFilterStateUseCase = mockk(relaxed = true)
+        settingsRepository = mockk(relaxed = true)
         analyticsManager = mockk(relaxed = true)
         engagementTracker = mockk(relaxed = true)
 
@@ -248,6 +251,7 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
         getTransactionSuggestionsUseCase = getTransactionSuggestionsUseCase,
         getTransactionsDateFilterStateUseCase = getTransactionsDateFilterStateUseCase,
         setTransactionsDateFilterStateUseCase = setTransactionsDateFilterStateUseCase,
+        settingsRepository = settingsRepository,
         engagementTracker = engagementTracker,
     )
 }

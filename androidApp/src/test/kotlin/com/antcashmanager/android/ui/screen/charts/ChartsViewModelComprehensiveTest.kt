@@ -228,7 +228,7 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
         val from = now - 86400000 // 1 day ago
         val to = now
 
-        viewModel.setDateRange(from, to)
+        viewModel.onEvent(ChartEvent.SetDateRange(from, to))
         advanceUntilIdle()
 
         val dateRange = viewModel.dateRange.value
@@ -242,7 +242,7 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
         val from = now
         val to = now - 86400000 // Intentionally reversed
 
-        viewModel.setDateRange(from, to) // Reversed order
+        viewModel.onEvent(ChartEvent.SetDateRange(from, to)) // Reversed order
         advanceUntilIdle()
 
         val dateRange = viewModel.dateRange.value
@@ -256,7 +256,7 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
             viewModel.selectedPresetIndex.collect {}
         }
 
-        viewModel.setPresetRange(RangePreset.WEEK)
+        viewModel.onEvent(ChartEvent.SetPresetRange(RangePreset.WEEK))
         advanceUntilIdle()
 
         assertEquals(RangePreset.WEEK.ordinal, viewModel.selectedPresetIndex.value)
@@ -269,7 +269,7 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
             viewModel.selectedPresetIndex.collect {}
         }
 
-        viewModel.setPresetRange(RangePreset.MONTH)
+        viewModel.onEvent(ChartEvent.SetPresetRange(RangePreset.MONTH))
         advanceUntilIdle()
 
         assertEquals(RangePreset.MONTH.ordinal, viewModel.selectedPresetIndex.value)
@@ -282,7 +282,7 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
             viewModel.selectedPresetIndex.collect {}
         }
 
-        viewModel.setPresetRange(RangePreset.YEAR)
+        viewModel.onEvent(ChartEvent.SetPresetRange(RangePreset.YEAR))
         advanceUntilIdle()
 
         assertEquals(RangePreset.YEAR.ordinal, viewModel.selectedPresetIndex.value)
@@ -295,12 +295,12 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
             viewModel.selectedChartDetails.collect {}
         }
 
-        viewModel.selectChartCategory(
+        viewModel.onEvent(ChartEvent.SelectChartCategory(
             categoryName = "Food",
             amount = -500.0,
             colorHex = 0xFF5555,
             isExpense = true,
-        )
+        ))
         advanceUntilIdle()
 
         val details = viewModel.selectedChartDetails.value
@@ -324,12 +324,12 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
         }
         advanceUntilIdle()
 
-        viewModel.selectChartCategory(
+        viewModel.onEvent(ChartEvent.SelectChartCategory(
             categoryName = "Food",
             amount = -500.0,
             colorHex = 0xFF5555,
             isExpense = true,
-        )
+        ))
         advanceUntilIdle()
 
         val details = viewModel.selectedChartDetails.value
@@ -344,16 +344,16 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
             viewModel.selectedChartDetails.collect {}
         }
 
-        viewModel.selectChartCategory(
+        viewModel.onEvent(ChartEvent.SelectChartCategory(
             categoryName = "Food",
             amount = -500.0,
             colorHex = 0xFF5555,
-        )
+        ))
         advanceUntilIdle()
 
         assertNotNull(viewModel.selectedChartDetails.value)
 
-        viewModel.clearChartSelection()
+        viewModel.onEvent(ChartEvent.ClearChartSelection)
         advanceUntilIdle()
 
         assertNull(viewModel.selectedChartDetails.value)

@@ -4,6 +4,7 @@ import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.analytics.tracker.EngagementTracker
 import com.antcashmanager.android.testutil.FakeSettingsRepository
+import com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayEvent
 import com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayViewModel
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.service.WidgetUpdateNotifier
@@ -65,7 +66,7 @@ class DisplayViewModelTest : BaseUnitTest() {
         ) { launch { viewModel.currencySymbol.collect { } } }
         advanceUntilIdle()
 
-        viewModel.setCurrencySymbol("$")
+        viewModel.onEvent(DisplayEvent.SetCurrencySymbol("$"))
         advanceUntilIdle()
 
         assertEquals("$", viewModel.currencySymbol.value)
@@ -79,7 +80,7 @@ class DisplayViewModelTest : BaseUnitTest() {
         ) { launch { viewModel.decimalDigits.collect { } } }
         advanceUntilIdle()
 
-        viewModel.setDecimalDigits(0)
+        viewModel.onEvent(DisplayEvent.SetDecimalDigits(0))
         advanceUntilIdle()
 
         assertEquals(0, viewModel.decimalDigits.value)
@@ -96,8 +97,8 @@ class DisplayViewModelTest : BaseUnitTest() {
         }
         advanceUntilIdle()
 
-        viewModel.setDecimalSeparator(".")
-        viewModel.setThousandsSeparator(",")
+        viewModel.onEvent(DisplayEvent.SetDecimalSeparator("."))
+        viewModel.onEvent(DisplayEvent.SetThousandsSeparator(","))
         advanceUntilIdle()
 
         assertEquals(".", viewModel.decimalSeparator.value)
@@ -127,16 +128,16 @@ class DisplayViewModelTest : BaseUnitTest() {
         }
         advanceUntilIdle()
 
-        viewModel.setCurrencySymbol("INVALID")
-        viewModel.setDecimalDigits(9)
-        viewModel.setThousandsSeparator("INVALID")
+        viewModel.onEvent(DisplayEvent.SetCurrencySymbol("INVALID"))
+        viewModel.onEvent(DisplayEvent.SetDecimalDigits(9))
+        viewModel.onEvent(DisplayEvent.SetThousandsSeparator("INVALID"))
         advanceUntilIdle()
 
         assertEquals("\u20ac", viewModel.currencySymbol.value)
         assertEquals(4, viewModel.decimalDigits.value)
         assertEquals("", viewModel.thousandsSeparator.value)
 
-        viewModel.setDecimalDigits(-5)
+        viewModel.onEvent(DisplayEvent.SetDecimalDigits(-5))
         advanceUntilIdle()
         assertEquals(0, viewModel.decimalDigits.value)
 
@@ -154,18 +155,18 @@ class DisplayViewModelTest : BaseUnitTest() {
         advanceUntilIdle()
 
         // 1. Setting thousands same as current decimal -> should result in default (empty)
-        viewModel.setThousandsSeparator(",")
+        viewModel.onEvent(DisplayEvent.SetThousandsSeparator(","))
         advanceUntilIdle()
         assertEquals(",", viewModel.decimalSeparator.value)
         assertEquals("", viewModel.thousandsSeparator.value)
 
         // 2. Setting thousands different -> should work
-        viewModel.setThousandsSeparator(".")
+        viewModel.onEvent(DisplayEvent.SetThousandsSeparator("."))
         advanceUntilIdle()
         assertEquals(".", viewModel.thousandsSeparator.value)
 
         // 3. Setting decimal same as current thousands -> should reset thousands to default (empty)
-        viewModel.setDecimalSeparator(".")
+        viewModel.onEvent(DisplayEvent.SetDecimalSeparator("."))
         advanceUntilIdle()
 
         assertEquals(".", viewModel.decimalSeparator.value)
@@ -181,11 +182,11 @@ class DisplayViewModelTest : BaseUnitTest() {
         ) { launch { viewModel.mealVoucherValue.collect { } } }
         advanceUntilIdle()
 
-        viewModel.setMealVoucherValue(7.5)
+        viewModel.onEvent(DisplayEvent.SetMealVoucherValue(7.5))
         advanceUntilIdle()
         assertEquals(7.5, viewModel.mealVoucherValue.value, 0.0)
 
-        viewModel.setMealVoucherValue(-1.0)
+        viewModel.onEvent(DisplayEvent.SetMealVoucherValue(-1.0))
         advanceUntilIdle()
         assertEquals(0.0, viewModel.mealVoucherValue.value, 0.0)
 
@@ -199,7 +200,7 @@ class DisplayViewModelTest : BaseUnitTest() {
         ) { launch { viewModel.dateFormat.collect { } } }
         advanceUntilIdle()
 
-        viewModel.setDateFormat("yyyy-MM-dd")
+        viewModel.onEvent(DisplayEvent.SetDateFormat("yyyy-MM-dd"))
         advanceUntilIdle()
         assertEquals("yyyy-MM-dd", viewModel.dateFormat.value)
 
@@ -220,12 +221,12 @@ class DisplayViewModelTest : BaseUnitTest() {
         }
         advanceUntilIdle()
 
-        viewModel.setShowChartsSection(false)
-        viewModel.setChartsZoomEnabled(true)
-        viewModel.setShowTransactionNotes(false)
-        viewModel.setShowPaymentTypeBreakdown(true)
-        viewModel.setShowQuickInsightsCard(true)
-        viewModel.setMaskAmounts(true)
+        viewModel.onEvent(DisplayEvent.SetShowChartsSection(false))
+        viewModel.onEvent(DisplayEvent.SetChartsZoomEnabled(true))
+        viewModel.onEvent(DisplayEvent.SetShowTransactionNotes(false))
+        viewModel.onEvent(DisplayEvent.SetShowPaymentTypeBreakdown(true))
+        viewModel.onEvent(DisplayEvent.SetShowQuickInsightsCard(true))
+        viewModel.onEvent(DisplayEvent.SetMaskAmounts(true))
         advanceUntilIdle()
 
         assertFalse(viewModel.showChartsSection.value)
@@ -262,20 +263,6 @@ class DisplayViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun setShowInitialAnimationUpdatesValue() = runViewModelTest {
-        val collectJob = launch(
-            UnconfinedTestDispatcher(testScheduler)
-        ) { launch { viewModel.showInitialAnimation.collect { } } }
-        advanceUntilIdle()
-
-        viewModel.setShowInitialAnimation(false)
-        advanceUntilIdle()
-        assertFalse(viewModel.showInitialAnimation.value)
-
-        collectJob.cancel()
-    }
-
-    @Test
     fun widgetAppearanceDefaultsAreExposedCorrectly() = runViewModelTest {
         val collectJob = launch(
             UnconfinedTestDispatcher(testScheduler)
@@ -298,7 +285,7 @@ class DisplayViewModelTest : BaseUnitTest() {
         ) { launch { viewModel.widgetBackgroundColor.collect { } } }
         advanceUntilIdle()
 
-        viewModel.setWidgetBackgroundColor(0xFF212121L)
+        viewModel.onEvent(DisplayEvent.SetWidgetBackgroundColor(0xFF212121L))
         advanceUntilIdle()
 
         assertEquals(0xFF212121L, viewModel.widgetBackgroundColor.value)
@@ -314,7 +301,7 @@ class DisplayViewModelTest : BaseUnitTest() {
         ) { launch { viewModel.widgetOpacity.collect { } } }
         advanceUntilIdle()
 
-        viewModel.setWidgetOpacity(40)
+        viewModel.onEvent(DisplayEvent.SetWidgetOpacity(40))
         advanceUntilIdle()
 
         assertEquals(40, viewModel.widgetOpacity.value)
@@ -330,11 +317,11 @@ class DisplayViewModelTest : BaseUnitTest() {
         ) { launch { viewModel.widgetOpacity.collect { } } }
         advanceUntilIdle()
 
-        viewModel.setWidgetOpacity(150)
+        viewModel.onEvent(DisplayEvent.SetWidgetOpacity(150))
         advanceUntilIdle()
         assertEquals(100, viewModel.widgetOpacity.value)
 
-        viewModel.setWidgetOpacity(-20)
+        viewModel.onEvent(DisplayEvent.SetWidgetOpacity(-20))
         advanceUntilIdle()
         assertEquals(0, viewModel.widgetOpacity.value)
 

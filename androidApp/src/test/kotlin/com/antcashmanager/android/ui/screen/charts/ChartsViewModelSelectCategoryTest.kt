@@ -5,6 +5,8 @@ import com.antcashmanager.android.analytics.tracker.PerformanceTracker
 import com.antcashmanager.android.analytics.tracker.SegmentationTracker
 import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.testutil.FakeTransactionRepository
+import com.antcashmanager.android.ui.screen.charts.ChartEvent
+import com.antcashmanager.android.ui.screen.charts.ChartsViewModel
 import com.antcashmanager.android.ui.screen.charts.view.TrendDirection
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
@@ -56,12 +58,12 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
             viewModel.selectedChartDetails.collect { }
         }
 
-        viewModel.selectChartCategory(
+        viewModel.onEvent(ChartEvent.SelectChartCategory(
             categoryName = "Food",
             amount = 250.0,
             colorHex = 0xFFE57373,
             isExpense = true,
-        )
+        ))
         advanceUntilIdle()
 
         val details = viewModel.selectedChartDetails.value
@@ -106,16 +108,16 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
         advanceUntilIdle()
 
         // Set date range to load transactions
-        viewModel.setDateRange(timestamp - 86_400_000L, timestamp + 86_400_000L)
+        viewModel.onEvent(ChartEvent.SetDateRange(timestamp - 86_400_000L, timestamp + 86_400_000L))
         advanceUntilIdle()
 
         // Select Food category (100 out of 250 total = 40%)
-        viewModel.selectChartCategory(
+        viewModel.onEvent(ChartEvent.SelectChartCategory(
             categoryName = "Food",
             amount = 100.0,
             colorHex = 0xFFE57373,
             isExpense = true,
-        )
+        ))
         advanceUntilIdle()
 
         val details = viewModel.selectedChartDetails.value
@@ -130,12 +132,12 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
             viewModel.selectedChartDetails.collect { }
         }
 
-        viewModel.selectChartCategory(
+        viewModel.onEvent(ChartEvent.SelectChartCategory(
             categoryName = "Test",
             amount = 1000.0,
             colorHex = 0xFFE57373,
             isExpense = true,
-        )
+        ))
         advanceUntilIdle()
 
         val details = viewModel.selectedChartDetails.value
@@ -153,12 +155,12 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
         }
         advanceUntilIdle()
 
-        viewModel.selectChartCategory(
+        viewModel.onEvent(ChartEvent.SelectChartCategory(
             categoryName = "Empty",
             amount = 100.0,
             colorHex = 0xFFE57373,
             isExpense = true,
-        )
+        ))
         advanceUntilIdle()
 
         val details = viewModel.selectedChartDetails.value
@@ -175,12 +177,12 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
         }
 
         val colorHex = 0xFFE57373L
-        viewModel.selectChartCategory(
+        viewModel.onEvent(ChartEvent.SelectChartCategory(
             categoryName = "Food",
             amount = 250.0,
             colorHex = colorHex,
             isExpense = true,
-        )
+        ))
         advanceUntilIdle()
 
         val details = viewModel.selectedChartDetails.value
@@ -196,17 +198,17 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
         }
 
         // First select a category
-        viewModel.selectChartCategory(
+        viewModel.onEvent(ChartEvent.SelectChartCategory(
             categoryName = "Food",
             amount = 250.0,
             colorHex = 0xFFE57373,
             isExpense = true,
-        )
+        ))
         advanceUntilIdle()
         assertNotNull(viewModel.selectedChartDetails.value)
 
         // Then clear
-        viewModel.clearChartSelection()
+        viewModel.onEvent(ChartEvent.ClearChartSelection)
         advanceUntilIdle()
 
         assertNull(viewModel.selectedChartDetails.value)
@@ -220,12 +222,12 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
             viewModel.selectedChartDetails.collect { }
         }
 
-        viewModel.selectChartCategory(
+        viewModel.onEvent(ChartEvent.SelectChartCategory(
             categoryName = "Salary",
             amount = 5000.0,
             colorHex = 0xFF81C784,
             isExpense = false,
-        )
+        ))
         advanceUntilIdle()
 
         val details = viewModel.selectedChartDetails.value
@@ -241,12 +243,12 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
             viewModel.selectedChartDetails.collect { }
         }
 
-        viewModel.selectChartCategory(
+        viewModel.onEvent(ChartEvent.SelectChartCategory(
             categoryName = "Food",
             amount = 250.0,
             colorHex = 0xFFE57373,
             isExpense = true,
-        )
+        ))
         advanceUntilIdle()
 
         val details = viewModel.selectedChartDetails.value

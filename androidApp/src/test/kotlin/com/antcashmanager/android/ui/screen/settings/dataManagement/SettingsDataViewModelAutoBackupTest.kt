@@ -5,9 +5,11 @@ import com.antcashmanager.android.analytics.tracker.ErrorTracker
 import com.antcashmanager.android.analytics.tracker.PerformanceTracker
 import com.antcashmanager.android.auth.GoogleSignInManager
 import com.antcashmanager.android.data.backup.BackupService
+import com.antcashmanager.android.testutil.FakeTransactionRepository
 import com.antcashmanager.android.work.AutoBackupScheduler
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
+import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -41,6 +43,7 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
         return SettingsDataViewModel(
             settingsRepository = settingsRepository,
             categoryRepository = categoryRepository,
+            transactionRepository = mockk(relaxed = true),
             deleteAllTransactionsUseCase = deleteAllTransactionsUseCase,
             backupService = backupService,
             autoBackupScheduler = autoBackupScheduler,
@@ -168,6 +171,7 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
         val viewModel = SettingsDataViewModel(
             settingsRepository = settingsRepositoryWithUri,
             categoryRepository = categoryRepository,
+            transactionRepository = mockk(relaxed = true),
             deleteAllTransactionsUseCase = deleteAllTransactionsUseCase,
             backupService = backupService,
             autoBackupScheduler = autoBackupScheduler,
@@ -198,6 +202,7 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
         val viewModel = SettingsDataViewModel(
             settingsRepository = settingsRepositoryNoUri,
             categoryRepository = categoryRepository,
+            transactionRepository = mockk(relaxed = true),
             deleteAllTransactionsUseCase = deleteAllTransactionsUseCase,
             backupService = backupService,
             autoBackupScheduler = autoBackupScheduler,

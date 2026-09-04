@@ -8,6 +8,7 @@ import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionSuggestions
 import com.antcashmanager.domain.model.TransactionType
+import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.settings.GetHomeDateFilterStateUseCase
 import com.antcashmanager.domain.usecase.settings.SetHomeDateFilterStateUseCase
@@ -36,6 +37,7 @@ class HomeViewModelMockkTest : BaseUnitTest() {
     private lateinit var getHomeDateFilterStateUseCase: GetHomeDateFilterStateUseCase
     private lateinit var setHomeDateFilterStateUseCase: SetHomeDateFilterStateUseCase
     private lateinit var getCategoriesUseCase: GetCategoriesUseCase
+    private lateinit var settingsRepository: SettingsRepository
     private lateinit var segmentationTracker: SegmentationTracker
 
     @Before
@@ -46,6 +48,7 @@ class HomeViewModelMockkTest : BaseUnitTest() {
         getHomeDateFilterStateUseCase = mockk()
         setHomeDateFilterStateUseCase = mockk()
         getCategoriesUseCase = mockk()
+        settingsRepository = mockk(relaxed = true)
         segmentationTracker = mockk(relaxed = true)
 
         every { getTransactionsUseCase() } returns flowOf(Result.success(emptyList()))
@@ -275,6 +278,7 @@ class HomeViewModelMockkTest : BaseUnitTest() {
         getHomeDateFilterStateUseCase = getHomeDateFilterStateUseCase,
         setHomeDateFilterStateUseCase = setHomeDateFilterStateUseCase,
         getCategoriesUseCase = getCategoriesUseCase,
+        settingsRepository = settingsRepository,
         searchDebounceMs = 0L,
         segmentationTracker = segmentationTracker,
     )

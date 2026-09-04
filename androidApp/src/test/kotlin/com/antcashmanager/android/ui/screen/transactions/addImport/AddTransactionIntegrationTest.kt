@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.transactions.addImport
 
+import androidx.lifecycle.SavedStateHandle
 import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.analytics.tracker.ErrorTracker
@@ -109,6 +110,7 @@ class AddTransactionIntegrationTest : BaseUnitTest() {
             performanceTracker = performanceTracker,
             errorTracker = errorTracker,
             transactionId = transactionId,
+            savedStateHandle = SavedStateHandle(),
         )
     }
 

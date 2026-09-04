@@ -129,7 +129,7 @@ class ChartsViewModel(
         }
     }
 
-    private fun setDateRange(from: Long, to: Long) {
+    fun setDateRange(from: Long, to: Long) {
         val normalizedFrom = minOf(from, to)
         val normalizedTo = maxOf(from, to)
         logDebug("Setting date range: $normalizedFrom - $normalizedTo")

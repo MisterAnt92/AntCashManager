@@ -2,6 +2,7 @@ package com.antcashmanager.android.ui.settings
 
 import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.data.feedback.FeedbackEmailHelper
+import com.antcashmanager.android.ui.screen.settings.SettingEvent
 import com.antcashmanager.android.ui.screen.settings.SettingsViewModel
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
@@ -144,7 +145,7 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
     fun setTheme_shouldDelegateToUseCase_whenThemeChanges() = runViewModelTest {
         val viewModel = buildViewModel()
 
-        viewModel.setTheme(AppTheme.LIGHT)
+        viewModel.onEvent(SettingEvent.SetTheme(AppTheme.LIGHT))
         advanceUntilIdle()
 
         coVerify(exactly = 1) { setThemeUseCase(any()) }
@@ -154,7 +155,7 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
     fun setLanguage_shouldDelegateToUseCase_whenLanguageChanges() = runViewModelTest {
         val viewModel = buildViewModel()
 
-        viewModel.setLanguage(AppLanguage.SPANISH)
+        viewModel.onEvent(SettingEvent.SetLanguage(AppLanguage.SPANISH))
         advanceUntilIdle()
 
         coVerify(exactly = 1) { setLanguageUseCase(any()) }
@@ -164,7 +165,7 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
     fun setShowCharts_shouldDelegateToUseCase_whenToggleChanges() = runViewModelTest {
         val viewModel = buildViewModel()
 
-        viewModel.setShowCharts(false)
+        viewModel.onEvent(SettingEvent.SetShowCharts(false))
         advanceUntilIdle()
 
         coVerify(exactly = 1) { setShowChartsUseCase(any()) }
@@ -174,7 +175,7 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
     fun resetAllPreferences_shouldDelegateToUseCase_whenRequested() = runViewModelTest {
         val viewModel = buildViewModel()
 
-        viewModel.resetAllPreferences()
+        viewModel.onEvent(SettingEvent.ResetAllPreferences)
         advanceUntilIdle()
 
         coVerify(exactly = 1) { resetAllPreferencesUseCase() }

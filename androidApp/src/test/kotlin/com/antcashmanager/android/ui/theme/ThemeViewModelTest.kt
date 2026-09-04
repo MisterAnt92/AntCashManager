@@ -3,6 +3,8 @@ package com.antcashmanager.android.ui.theme
 import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.domain.model.AppTheme
+import com.antcashmanager.android.ui.theme.ThemeEvent
+import com.antcashmanager.android.ui.theme.ThemeViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -37,7 +39,7 @@ class ThemeViewModelTest : BaseUnitTest() {
 
     @Test
     fun setThemeUpdatesRepository() = runViewModelTest {
-        viewModel.setTheme(AppTheme.DARK)
+        viewModel.onEvent(ThemeEvent.SetTheme(AppTheme.DARK))
         advanceUntilIdle()
 
         // Fake repo mirrors setTheme into its flow
