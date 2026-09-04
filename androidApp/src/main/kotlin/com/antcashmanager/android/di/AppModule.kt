@@ -210,9 +210,42 @@ val useCaseModule = module {
 
     factory { ScanReceiptUseCase(ocrService = get()) }
 
-    // ❌ DEPRECATED: Old boilerplate use cases removed (use GetSettingUseCase<T> / SetSettingUseCase<T> instead)
-    // This space held 36 factory registrations for Get/Set individual use cases
-    // All are now consolidated into SettingsUseCasesProvider using generics (see below)
+    // ─────────────────────────────────────────────────────────────────────────────
+    // RESTORED: Settings use cases (Legacy support during migration)
+    // These are required by ViewModels and Activity that haven't migrated to generics yet.
+    // ─────────────────────────────────────────────────────────────────────────────
+    factory { GetThemeUseCase(settingsRepository = get()) }
+    factory { SetThemeUseCase(settingsRepository = get()) }
+    factory { GetLanguageUseCase(settingsRepository = get()) }
+    factory { SetLanguageUseCase(settingsRepository = get()) }
+    factory { GetShowChartsUseCase(settingsRepository = get()) }
+    factory { SetShowChartsUseCase(settingsRepository = get()) }
+    factory { GetHighContrastUseCase(settingsRepository = get()) }
+    factory { SetHighContrastUseCase(settingsRepository = get()) }
+    factory { GetLargeTextUseCase(settingsRepository = get()) }
+    factory { SetLargeTextUseCase(settingsRepository = get()) }
+    factory { GetReduceMotionUseCase(settingsRepository = get()) }
+    factory { SetReduceMotionUseCase(settingsRepository = get()) }
+    factory { GetShowTransactionNotesUseCase(settingsRepository = get()) }
+    factory { SetShowTransactionNotesUseCase(settingsRepository = get()) }
+    factory { GetCurrencySymbolUseCase(settingsRepository = get()) }
+    factory { SetCurrencySymbolUseCase(settingsRepository = get()) }
+    factory { GetDecimalDigitsUseCase(settingsRepository = get()) }
+    factory { SetDecimalDigitsUseCase(settingsRepository = get()) }
+    factory { GetDecimalSeparatorUseCase(settingsRepository = get()) }
+    factory { SetDecimalSeparatorUseCase(settingsRepository = get()) }
+    factory { GetThousandsSeparatorUseCase(settingsRepository = get()) }
+    factory { SetThousandsSeparatorUseCase(settingsRepository = get()) }
+    factory { GetTransactionDisplayTypeUseCase(settingsRepository = get()) }
+    factory { SetTransactionDisplayTypeUseCase(settingsRepository = get()) }
+    factory { GetHomeDateFilterStateUseCase(settingsRepository = get()) }
+    factory { SetHomeDateFilterStateUseCase(settingsRepository = get()) }
+    factory { GetChartsDateFilterStateUseCase(settingsRepository = get()) }
+    factory { SetChartsDateFilterStateUseCase(settingsRepository = get()) }
+    factory { GetTransactionsDateFilterStateUseCase(settingsRepository = get()) }
+    factory { SetTransactionsDateFilterStateUseCase(settingsRepository = get()) }
+    factory { GetMealVoucherValueUseCase(settingsRepository = get()) }
+    factory { SetTutorialCompletedUseCase(settingsRepository = get()) }
 
     factory { CreateTransactionFromReceiptUseCase(transactionRepository = get()) }
     factory { ShareTransactionUseCase() }
