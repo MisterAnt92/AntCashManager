@@ -29,6 +29,7 @@ import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
 private const val EXIT_DIALOG_DELAY_MS = 300
+private const val EXIT_DIALOG_DELAY_LANGUAGE_CHANGE_MS = 500  // FIX 2: Extended delay for language change
 private const val MASCOT_SCALE_ANIMATION_MS = 1000
 private const val MASCOT_FLOAT_ANIMATION_MS = 1400
 private const val MASCOT_SCALE_MIN = 0.94f
@@ -42,15 +43,20 @@ private const val MASCOT_FLOAT_MAX = 4f
  * On Android 16 (API 35+), the dialog dismissal and Activity.finish() are properly
  * synchronized using LaunchedEffect with delay to prevent race conditions.
  *
+ * FIX 2: When language change is detected, increases delay to 500ms to ensure
+ * WithAppLocale recomposition completes and new context is established before exit.
+ *
  * @param onConfirmExit Called when user confirms exit. Must call Activity.safeFinish()
  * @param onDismiss Called when user cancels or dismisses the dialog
  * @param isVisible Controls dialog visibility
+ * @param isLanguageChanging If true, increases delay to prevent race condition with locale change
  */
 @Composable
 fun appExitConfirmationDialog(
     onConfirmExit: () -> Unit,
     onDismiss: () -> Unit,
     isVisible: Boolean = true,
+    isLanguageChanging: Boolean = false,  // FIX 2: Parameter for language change detection
 ) {
     val logger = Logger.withTag("AppExitDialog")
     val (shouldExit, setShouldExit) = remember { mutableStateOf(false) }
@@ -62,7 +68,10 @@ fun appExitConfirmationDialog(
     LaunchedEffect(shouldExit) {
         if (shouldExit) {
             logger.d("Exit confirmed, waiting for dialog dismissal animation...")
-            delay(EXIT_DIALOG_DELAY_MS.milliseconds)
+            // FIX 2: Increase delay if language is changing to allow WithAppLocale recomposition
+            val delayMs = if (isLanguageChanging) EXIT_DIALOG_DELAY_LANGUAGE_CHANGE_MS else EXIT_DIALOG_DELAY_MS
+            logger.d("Exit delay: ${delayMs}ms (language changing: $isLanguageChanging)")
+            delay(delayMs.milliseconds)
             logger.d("Calling Activity.finish() after dialog dismissal delay")
             onConfirmExit()
         }
@@ -149,8 +158,9 @@ fun AppExitConfirmationDialog(
     onConfirmExit: () -> Unit,
     onDismiss: () -> Unit,
     isVisible: Boolean = true,
+    isLanguageChanging: Boolean = false,  // FIX 2: Add parameter to wrapper
 ) {
-    appExitConfirmationDialog(onConfirmExit, onDismiss, isVisible)
+    appExitConfirmationDialog(onConfirmExit, onDismiss, isVisible, isLanguageChanging)
 }
 
 @Preview(name = "AppExitConfirmationDialog - Light", showBackground = true)
