@@ -68,7 +68,7 @@ import com.antcashmanager.domain.usecase.settings.GetThemeUseCase
 import com.antcashmanager.domain.usecase.settings.GetThousandsSeparatorUseCase
 import com.antcashmanager.domain.usecase.settings.GetTransactionDisplayTypeUseCase
 import com.antcashmanager.domain.usecase.settings.GetTransactionsDateFilterStateUseCase
-// DEPRECATED: ResetAllPreferencesUseCase import removed (marked @Deprecated in domain)
+import com.antcashmanager.domain.usecase.settings.ResetAllPreferencesUseCase
 import com.antcashmanager.domain.usecase.settings.SetChartsDateFilterStateUseCase
 import com.antcashmanager.domain.usecase.settings.SetCurrencySymbolUseCase
 import com.antcashmanager.domain.usecase.settings.SetDecimalDigitsUseCase
@@ -216,6 +216,7 @@ val useCaseModule = module {
 
     factory { CreateTransactionFromReceiptUseCase(transactionRepository = get()) }
     factory { ShareTransactionUseCase() }
+    factory { ResetAllPreferencesUseCase(settingsRepository = get()) }
 
     factory {
         val repo = get<SettingsRepository>()
@@ -248,7 +249,7 @@ val useCaseModule = module {
                 setter = { repo.setTransactionDisplayType(TransactionDisplayType.valueOf(it)) }
             ),
             setTutorialCompleted = SetSettingUseCase<Boolean>(setter = { repo.setIsTutorialCompleted(it) }),
-            resetAllPreferences = get(),
+            resetAllPreferences = ResetAllPreferencesUseCase(settingsRepository = repo),
         )
     }
 }

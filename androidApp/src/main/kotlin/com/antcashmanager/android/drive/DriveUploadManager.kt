@@ -1,6 +1,7 @@
 package com.antcashmanager.android.drive
 
 import android.content.Context
+import com.antcashmanager.android.BuildConfig
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.data.storage.EncryptedGoogleDriveStorage
 import com.google.api.client.googleapis.media.MediaHttpUploader
@@ -64,6 +65,16 @@ class DriveUploadManager(
     private val signInManager: com.antcashmanager.android.auth.GoogleSignInManager,
     private val settingsRepository: com.antcashmanager.domain.repository.SettingsRepository,
 ) {
+
+    // ── Feature Gating: Google Drive Backup ──
+    init {
+        if (!BuildConfig.INCLUDE_DRIVE_BACKUP) {
+            throw UnsupportedOperationException(
+                "Google Drive backup is not included in this build variant (lite). " +
+                "Use 'full' variant to enable Drive backup functionality."
+            )
+        }
+    }
 
     companion object {
         private const val BACKUP_FOLDER_NAME = "AntCashManager"

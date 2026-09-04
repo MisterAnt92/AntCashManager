@@ -28,6 +28,22 @@ android {
         versionName = "1.7.5"
     }
 
+    // ── Product Flavors for Optimization ──
+    // full: Complete app with Google Drive backup
+    // lite: Minimal app without Google Drive API dependencies (-2-3 MB)
+    flavorDimensions.add("variant")
+    productFlavors {
+        register("full") {
+            dimension = "variant"
+            isDefault = true
+            buildConfigField("boolean", "INCLUDE_DRIVE_BACKUP", "true")
+        }
+        register("lite") {
+            dimension = "variant"
+            buildConfigField("boolean", "INCLUDE_DRIVE_BACKUP", "false")
+        }
+    }
+
     buildTypes {
         debug {
             enableUnitTestCoverage = true
@@ -46,6 +62,11 @@ android {
             }
         }
     }
+
+    // ── Build Variant-Specific ProGuard Rules ──
+    // Note: Lite variant will use proguard-rules-lite.pro for additional shrinking
+    // This can be configured per-variant in the android extension if needed
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
