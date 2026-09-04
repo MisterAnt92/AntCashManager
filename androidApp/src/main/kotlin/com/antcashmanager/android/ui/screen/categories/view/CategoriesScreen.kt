@@ -105,6 +105,7 @@ import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
+import com.antcashmanager.android.ui.components.layout.FoldableAwareLayout
 import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
 import androidx.window.layout.FoldingFeature
 import com.antcashmanager.android.R
@@ -313,8 +314,11 @@ internal fun CategoriesContent(
         )
     }
 
-    Scaffold(
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+    // FASE 1: Composable for list pane
+    @Composable
+    fun CategoryListPane() {
+        Scaffold(
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showAddDialog = true },
@@ -416,6 +420,80 @@ internal fun CategoriesContent(
                 }
             }
         }
+    }
+    }
+
+    // FASE 1: Composable for category details pane
+    @Composable
+    fun CategoryDetailsPane(category: Category) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            AppText(
+                text = "Details",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+            )
+
+            AppText(
+                text = translateCategory(category.name),
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+            )
+
+            AppText(
+                text = category.type,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape)
+                    .background(Color(category.color)),
+                contentAlignment = Alignment.Center,
+            ) {
+                categoryIconMap[category.icon]?.let { icon ->
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp),
+                    )
+                }
+            }
+        }
+    }
+
+    // FASE 1: Main layout logic - split-pane or single-pane
+    if (adaptiveLayoutInfo.hasFold && foldingFeature != null) {
+        FoldableAwareLayout(
+            foldingFeature = foldingFeature,
+            modifier = Modifier.fillMaxSize(),
+            topContent = { _, _ ->
+                CategoryListPane()
+            },
+            bottomContent = { _, _ ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AppText(
+                        text = "Select a category to view details",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        )
+    } else {
+        CategoryListPane()
     }
 
     if (showAddDialog) {
