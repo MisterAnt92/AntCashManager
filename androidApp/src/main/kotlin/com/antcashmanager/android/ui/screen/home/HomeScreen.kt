@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -369,10 +370,10 @@ internal fun HomeContent(
         )
     }
 
-    when {
-        state.isLoading -> LoadingState()
-        else -> {
-            Scaffold(
+    // FASE 1: Composable for list pane (used in both single-pane and split-pane layouts)
+    @Composable
+    fun HomeListPane() {
+        Scaffold(
                 modifier = Modifier
                     .fillMaxSize()
                     .testTag("home_screen"),
@@ -551,6 +552,82 @@ internal fun HomeContent(
                     // Bottom spacer
                     item { VerticalSpacer(SpacingSize.XS) }
                 }
+            }
+    }
+
+    // FASE 1: Composable for transaction details pane (used in split-pane layout on foldable)
+    @Composable
+    fun TransactionDetailsPane(transaction: Transaction) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            AppText(
+                text = "Details",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+            )
+
+            // Transaction title
+            AppText(
+                text = transaction.title,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+            )
+
+            // Category and type
+            AppText(
+                text = "${transaction.category} • ${transaction.type.name}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            // Amount (formatted)
+            AppText(
+                text = "€ ${String.format("%.2f", kotlin.math.abs(transaction.amount))}",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+            )
+
+            // Notes if present
+            if (transaction.notes.isNotEmpty()) {
+                Divider(modifier = Modifier.padding(vertical = 8.dp))
+                AppText(
+                    text = "Notes",
+                    style = MaterialTheme.typography.labelMedium,
+                )
+                AppText(
+                    text = transaction.notes,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+        }
+    }
+
+    // FASE 1: Main layout logic - choose between split-pane and single-pane
+    when {
+        state.isLoading -> LoadingState()
+        else -> {
+            if (adaptiveLayoutInfo.hasFold && adaptiveLayoutInfo.foldingFeature != null) {
+                // Split-pane layout for foldable devices
+                FoldableAwareLayout(
+                    foldingFeature = adaptiveLayoutInfo.foldingFeature,
+                    modifier = Modifier.fillMaxSize(),
+                    topContent = { _, _ ->
+                        HomeListPane()
+                    },
+                    bottomContent = { _, _ ->
+                        // Details pane shown when transaction is selected on foldable
+                        if (multiPaneCoordinator?.showDetailsPane?.value == true && state.selectedTransaction != null) {
+                            TransactionDetailsPane(state.selectedTransaction!!)
+                        }
+                    }
+                )
+            } else {
+                // Single-pane layout for phones and tablets without fold
+                HomeListPane()
             }
         }
     }
