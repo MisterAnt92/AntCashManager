@@ -68,7 +68,7 @@ import com.antcashmanager.domain.usecase.settings.GetThemeUseCase
 import com.antcashmanager.domain.usecase.settings.GetThousandsSeparatorUseCase
 import com.antcashmanager.domain.usecase.settings.GetTransactionDisplayTypeUseCase
 import com.antcashmanager.domain.usecase.settings.GetTransactionsDateFilterStateUseCase
-import com.antcashmanager.domain.usecase.settings.ResetAllPreferencesUseCase
+// DEPRECATED: ResetAllPreferencesUseCase import removed (marked @Deprecated in domain)
 import com.antcashmanager.domain.usecase.settings.SetChartsDateFilterStateUseCase
 import com.antcashmanager.domain.usecase.settings.SetCurrencySymbolUseCase
 import com.antcashmanager.domain.usecase.settings.SetDecimalDigitsUseCase
@@ -210,42 +210,9 @@ val useCaseModule = module {
 
     factory { ScanReceiptUseCase(ocrService = get()) }
 
-    // Specific use cases now implemented via generics (reduces boilerplate)
-    factory { GetThemeUseCase(settingsRepository = get()) }
-    factory { SetThemeUseCase(settingsRepository = get()) }
-    factory { GetLanguageUseCase(settingsRepository = get()) }
-    factory { SetLanguageUseCase(settingsRepository = get()) }
-    factory { GetHomeDateFilterStateUseCase(settingsRepository = get()) }
-    factory { SetHomeDateFilterStateUseCase(settingsRepository = get()) }
-    factory { GetChartsDateFilterStateUseCase(settingsRepository = get()) }
-    factory { SetChartsDateFilterStateUseCase(settingsRepository = get()) }
-    factory { GetTransactionsDateFilterStateUseCase(settingsRepository = get()) }
-    factory { SetTransactionsDateFilterStateUseCase(settingsRepository = get()) }
-
-    // Settings preferences (granular use cases)
-    factory { GetShowChartsUseCase(settingsRepository = get()) }
-    factory { SetShowChartsUseCase(settingsRepository = get()) }
-    factory { GetHighContrastUseCase(settingsRepository = get()) }
-    factory { SetHighContrastUseCase(settingsRepository = get()) }
-    factory { GetLargeTextUseCase(settingsRepository = get()) }
-    factory { SetLargeTextUseCase(settingsRepository = get()) }
-    factory { GetReduceMotionUseCase(settingsRepository = get()) }
-    factory { SetReduceMotionUseCase(settingsRepository = get()) }
-    factory { GetShowTransactionNotesUseCase(settingsRepository = get()) }
-    factory { SetShowTransactionNotesUseCase(settingsRepository = get()) }
-    factory { GetCurrencySymbolUseCase(settingsRepository = get()) }
-    factory { SetCurrencySymbolUseCase(settingsRepository = get()) }
-    factory { GetDecimalSeparatorUseCase(settingsRepository = get()) }
-    factory { SetDecimalSeparatorUseCase(settingsRepository = get()) }
-    factory { GetThousandsSeparatorUseCase(settingsRepository = get()) }
-    factory { SetThousandsSeparatorUseCase(settingsRepository = get()) }
-    factory { GetDecimalDigitsUseCase(settingsRepository = get()) }
-    factory { SetDecimalDigitsUseCase(settingsRepository = get()) }
-    factory { GetTransactionDisplayTypeUseCase(settingsRepository = get()) }
-    factory { SetTransactionDisplayTypeUseCase(settingsRepository = get()) }
-    factory { GetMealVoucherValueUseCase(settingsRepository = get()) }
-    factory { SetTutorialCompletedUseCase(settingsRepository = get()) }
-    factory { ResetAllPreferencesUseCase(settingsRepository = get()) }
+    // ❌ DEPRECATED: Old boilerplate use cases removed (use GetSettingUseCase<T> / SetSettingUseCase<T> instead)
+    // This space held 36 factory registrations for Get/Set individual use cases
+    // All are now consolidated into SettingsUseCasesProvider using generics (see below)
 
     factory { CreateTransactionFromReceiptUseCase(transactionRepository = get()) }
     factory { ShareTransactionUseCase() }

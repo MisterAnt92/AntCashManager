@@ -9,6 +9,10 @@ import kotlinx.coroutines.Dispatchers
 /**
  * UseCase per l'impostazione del tema dell'app.
  */
+@Deprecated(
+    message = "Use GetSettingUseCase<T> or SetSettingUseCase<T> instead. This class is pure boilerplate and will be removed in v1.8.",
+    replaceWith = ReplaceWith("GetSettingUseCase<T>() or SetSettingUseCase<T>()")
+)
 public class SetThemeUseCase(
     private val settingsRepository: SettingsRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
