@@ -71,6 +71,7 @@ import com.antcashmanager.android.ui.components.animation.AntEasterEggAnimation
 import com.antcashmanager.android.ui.components.dialog.AppExitConfirmationDialog
 import com.antcashmanager.android.ui.components.layout.AntScreenScaffold
 import com.antcashmanager.android.ui.components.layout.LeftSidebar
+import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.categories.view.CategoriesScreen
@@ -123,7 +124,9 @@ fun AntCashManagerNavHost() {
         LocalCurrencyFormat provides currencyFormat,
         LocalAmountsMasked provides maskAmounts,
     ) {
-        val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
+        // FASE 1: Get display features from CompositionLocal and pass to adaptive layout
+        val displayFeatures = LocalDisplayFeatures.current
+        val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo(displayFeatures = displayFeatures)
         // ... existing AntScreenScaffold code ...
 
         val visibleNavItems = buildList {

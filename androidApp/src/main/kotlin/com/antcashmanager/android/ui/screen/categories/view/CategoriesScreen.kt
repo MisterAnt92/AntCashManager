@@ -103,6 +103,10 @@ import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
+import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
+import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
+import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
+import androidx.window.layout.FoldingFeature
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.dialog.HelpButton
@@ -256,6 +260,12 @@ internal fun CategoriesContent(
     var showHelpDialog by remember { mutableStateOf(false) }
     var showReorderDialog by remember { mutableStateOf(false) }
     var hiddenSectionExpanded by remember { mutableStateOf(false) }
+
+    // Foldable device support
+    val displayFeatures = LocalDisplayFeatures.current
+    val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo(displayFeatures = displayFeatures)
+    val multiPaneCoordinator = LocalMultiPaneCoordinator.current
+    val foldingFeature = adaptiveLayoutInfo.foldingFeature
 
     // Help dialog
     if (showHelpDialog) {

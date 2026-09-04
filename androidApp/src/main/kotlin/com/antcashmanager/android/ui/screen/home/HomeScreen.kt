@@ -160,12 +160,12 @@ internal fun HomeContent(
     val isTutorialCompleted = state.isTutorialCompleted
 
     val coroutineScope = rememberCoroutineScope()
-    val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
 
     // Foldable device support
     val displayFeatures = LocalDisplayFeatures.current
+    val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo(displayFeatures = displayFeatures)
     val multiPaneCoordinator = LocalMultiPaneCoordinator.current
-    val foldingFeature = displayFeatures.filterIsInstance<FoldingFeature>().firstOrNull()
+    val foldingFeature = adaptiveLayoutInfo.foldingFeature
 
     // Preserva scroll position durante navigazione back/forward
     val listState = rememberSaveable(saver = androidx.compose.foundation.lazy.LazyListState.Saver) {

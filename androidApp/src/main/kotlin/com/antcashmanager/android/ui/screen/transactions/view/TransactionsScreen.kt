@@ -207,12 +207,12 @@ internal fun TransactionsContent(
     // DateRangeFilter expanded state from state (UDF)
     val dateFilterExpanded = state.dateFilterExpanded
     val coroutineScope = rememberCoroutineScope()
-    val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
 
     // Foldable device support
     val displayFeatures = LocalDisplayFeatures.current
+    val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo(displayFeatures = displayFeatures)
     val multiPaneCoordinator = LocalMultiPaneCoordinator.current
-    val foldingFeature = displayFeatures.filterIsInstance<FoldingFeature>().firstOrNull()
+    val foldingFeature = adaptiveLayoutInfo.foldingFeature
 
     val listState = rememberLazyListState()
     val showScrollToTop by remember {
