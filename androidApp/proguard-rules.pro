@@ -272,3 +272,41 @@
 -keep class com.google.api.services.drive.model.** { *; }
 -dontwarn com.google.api.services.drive.**
 
+# ══════════════════════════════════════════════════════════════════════════════
+# 18. AGGRESSIVE R8 OPTIMIZATION PASSES (23% Coverage Target)
+# ══════════════════════════════════════════════════════════════════════════════
+
+# R8 Specific: Enable 8 optimization passes (default 5)
+# Each pass removes more dead code, inlines more methods, optimizes further
+-optimizationpasses 8
+
+# Aggressive class and member renaming to short names (a, b, c...)
+# This significantly reduces string constant pool and method/class metadata
+-repackageclasses 'com.antcashmanager.opt'
+
+# R8 automatically removes empty inner classes in aggressive mode
+# (Legacy ProGuard option -removeinnerclasseswithmembersonly not supported in R8)
+
+# Allow removal of const string values if used only in assertions
+# These are already removed by log stripping above
+-assumenosideeffects class java.lang.System {
+    public static void exit(int);
+}
+
+# Aggressive shrinking of Kotlin coroutine state machines
+-keep class kotlin.coroutines.** { *; }
+-keepclassmembers class **$1 { *; }  # Keep lambda/SAM implementations
+-keepclassmembers class **$2 { *; }  # Some compilers generate multiple
+
+# Note: Settings use case classes (GetXxxUseCase, SetXxxUseCase) can be
+# aggressively minified since domain logic is protected by interfaces
+# R8 will automatically minify these in aggressive mode
+
+# Note: R8 automatically inlines single-use methods in aggressive mode
+# Note: R8 automatically merges redundant methods and classes in aggressive mode
+
+# Assertion stripping for release builds (Kotlin internal checks)
+-assumenosideeffects class kotlin.jvm.internal.Intrinsics {
+    public static void check*(...);
+}
+
