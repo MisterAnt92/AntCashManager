@@ -99,8 +99,6 @@ fun AntCashManagerNavHost() {
     val settingsRepository: SettingsRepository = koinInject()
     val analyticsManager: AnalyticsManager = koinInject()
     val performanceTracker: PerformanceTracker = koinInject()
-    // FIX 2: Inject SettingsViewModel to monitor language change flag
-    val settingsViewModel: com.antcashmanager.android.ui.screen.settings.SettingsViewModel = koinInject()
 
     val navController = rememberNavController()
     val showCharts by settingsRepository.getShowCharts().collectAsStateWithLifecycle(initialValue = true)
@@ -163,17 +161,9 @@ fun AntCashManagerNavHost() {
         // Capture the context value when showExitDialog becomes true via LaunchedEffect.
         var exitDialogContext by remember { mutableStateOf(context) }
 
-        // Capture the current context when exit dialog is shown
-        LaunchedEffect(showExitDialog) {
-            if (showExitDialog) {
-                exitDialogContext = context
-            }
-        }
         var isSidebarOpen by rememberSaveable { mutableStateOf(false) }
         var showAntAnimation by rememberSaveable { mutableStateOf(false) }
         var screenHeaderConfig by remember { mutableStateOf(ScreenHeaderConfig()) }
-        // FIX 2: Observe language change flag from SettingsViewModel
-        val isLanguageChanging by settingsViewModel.isLanguageChanging.collectAsStateWithLifecycle(initialValue = false)
         val railContainerWidth = if (adaptiveLayoutInfo.isFoldableDevice) 84.dp else 92.dp
         val railPaddingStart = if (adaptiveLayoutInfo.isFoldableDevice) 8.dp else 12.dp
         val railPaddingEnd = if (adaptiveLayoutInfo.isFoldableDevice) 6.dp else 8.dp
@@ -745,17 +735,19 @@ fun AntCashManagerNavHost() {
                 showExitDialog = false
             },
             onConfirmExit = {
-                // Dialog handles its own state and timing synchronization
-                // This callback is invoked after dialog dismissal delay (300ms or 500ms if language changing)
-                // to prevent race conditions on Android 16 (API 35+)
+                // Dialog invokes this after a 500ms delay (handles WithAppLocale recomposition timing)
                 Logger.d(tag = "AppExit") { "Exit confirmed, calling Activity.safeFinish()" }
-                // FIX 1: Use captured context to prevent race condition with language change
-                // If language changes during the delay, exitDialogContext remains stable
-                // while LocalContext would be recreated by WithAppLocale recomposition
-                exitDialogContext.findActivity()?.safeFinish()
+                // FIX 1: Use captured context (exitDialogContext) to prevent race condition
+                // with language change. exitDialogContext is captured synchronously in BackHandler
+                // and is stable even if WithAppLocale recomposes LocalContext.
+                val activity = exitDialogContext.findActivity()
+                if (activity != null) {
+                    activity.safeFinish()
+                } else {
+                    Logger.e(tag = "AppExit") { "findActivity() returned null — falling back to System.exit(0)" }
+                    System.exit(0)
+                }
             },
-            // FIX 2: Pass language change flag to increase delay if needed
-            isLanguageChanging = isLanguageChanging,
         )
 
         if (showAntAnimation) {

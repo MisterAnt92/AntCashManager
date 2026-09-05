@@ -28,8 +28,9 @@ import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
-private const val EXIT_DIALOG_DELAY_MS = 300
-private const val EXIT_DIALOG_DELAY_LANGUAGE_CHANGE_MS = 500  // FIX 2: Extended delay for language change
+// 500ms ensures WithAppLocale recomposition always completes before Activity.finish(),
+// even if a language change is in progress (was 300ms + conditional 500ms via koinInject bug).
+private const val EXIT_DIALOG_DELAY_MS = 500
 private const val MASCOT_SCALE_ANIMATION_MS = 1000
 private const val MASCOT_FLOAT_ANIMATION_MS = 1400
 private const val MASCOT_SCALE_MIN = 0.94f
@@ -41,38 +42,31 @@ private const val MASCOT_FLOAT_MAX = 4f
  * Exit confirmation dialog with synchronized dismissal and exit handling.
  *
  * On Android 16 (API 35+), the dialog dismissal and Activity.finish() are properly
- * synchronized using LaunchedEffect with delay to prevent race conditions.
- *
- * FIX 2: When language change is detected, increases delay to 500ms to ensure
- * WithAppLocale recomposition completes and new context is established before exit.
+ * synchronized using LaunchedEffect with a 500ms delay to prevent race conditions,
+ * including the case where a language change is in progress (WithAppLocale recomposition).
  *
  * @param onConfirmExit Called when user confirms exit. Must call Activity.safeFinish()
  * @param onDismiss Called when user cancels or dismisses the dialog
  * @param isVisible Controls dialog visibility
- * @param isLanguageChanging If true, increases delay to prevent race condition with locale change
  */
 @Composable
 fun appExitConfirmationDialog(
     onConfirmExit: () -> Unit,
     onDismiss: () -> Unit,
     isVisible: Boolean = true,
-    isLanguageChanging: Boolean = false,  // FIX 2: Parameter for language change detection
 ) {
     val logger = Logger.withTag("AppExitDialog")
     val (shouldExit, setShouldExit) = remember { mutableStateOf(false) }
 
     // Synchronized exit handler for Android 16+ (API 35+)
-    // Delay ensures Compose has time to process dialog dismissal before Activity.finish()
-    // We keep this outside the isVisible check to ensure the delay completes even
-    // if the dialog is removed from the composition by the parent.
+    // 500ms delay ensures Compose finishes recomposition (including WithAppLocale locale changes)
+    // before Activity.finish() is called. Keep outside the isVisible check so the
+    // coroutine survives even after the parent sets showExitDialog = false.
     LaunchedEffect(shouldExit) {
         if (shouldExit) {
-            logger.d("Exit confirmed, waiting for dialog dismissal animation...")
-            // FIX 2: Increase delay if language is changing to allow WithAppLocale recomposition
-            val delayMs = if (isLanguageChanging) EXIT_DIALOG_DELAY_LANGUAGE_CHANGE_MS else EXIT_DIALOG_DELAY_MS
-            logger.d("Exit delay: ${delayMs}ms (language changing: $isLanguageChanging)")
-            delay(delayMs.milliseconds)
-            logger.d("Calling Activity.finish() after dialog dismissal delay")
+            logger.d("Exit confirmed, waiting ${EXIT_DIALOG_DELAY_MS}ms for dialog dismissal + recomposition...")
+            delay(EXIT_DIALOG_DELAY_MS.milliseconds)
+            logger.d("Calling Activity.finish() after delay")
             onConfirmExit()
         }
     }
@@ -158,9 +152,8 @@ fun AppExitConfirmationDialog(
     onConfirmExit: () -> Unit,
     onDismiss: () -> Unit,
     isVisible: Boolean = true,
-    isLanguageChanging: Boolean = false,  // FIX 2: Add parameter to wrapper
 ) {
-    appExitConfirmationDialog(onConfirmExit, onDismiss, isVisible, isLanguageChanging)
+    appExitConfirmationDialog(onConfirmExit, onDismiss, isVisible)
 }
 
 @Preview(name = "AppExitConfirmationDialog - Light", showBackground = true)
