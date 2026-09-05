@@ -22,6 +22,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -330,12 +334,143 @@ internal fun TransactionsContent(
         )
     }
 
+    // FASE 2: Shared header composable used in both grid and single-column layouts
+    @Composable
+    fun TransactionListHeaders() {
+        if (state.isSearchExpanded) {
+            SearchComponent(
+                isVisible = true,
+                searchQuery = state.searchQuery,
+                onSearchQueryChange = {
+                    onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.UpdateSearchQuery(it))
+                },
+                searchSuggestions = state.searchSuggestions,
+            )
+        }
+        if (state.isFiltersExpanded) {
+            VerticalSpacer(SpacingSize.SM)
+            FilterCard(
+                categories = state.categories,
+                selectedCategory = state.pendingCategory,
+                selectedTransactionType = state.pendingTransactionType,
+                selectedPaymentType = state.pendingPaymentType,
+                onCategorySelected = {
+                    onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.UpdateCategoryFilter(it))
+                },
+                onTransactionTypeSelected = {
+                    onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.UpdateTransactionTypeFilter(it))
+                },
+                onPaymentTypeSelected = {
+                    onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.UpdatePaymentTypeFilter(it))
+                },
+                onClearFilters = { onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ClearAllFilters) },
+                hasFilterChanges = state.hasFilterChanges,
+                onApplyFilters = {
+                    onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ApplyFilters)
+                    onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ToggleFiltersExpanded)
+                },
+                onCancelFilters = { onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.CancelFilterChanges) },
+            )
+        }
+        if (state.hasActiveFilters && !state.isFiltersExpanded) {
+            VerticalSpacer(SpacingSize.XS)
+            ActiveFiltersRow(
+                searchQuery = state.searchQuery,
+                selectedCategory = state.selectedCategory,
+                selectedTransactionType = state.selectedTransactionType,
+                selectedPaymentType = state.selectedPaymentType,
+                onClearAll = { onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ClearAllFilters) },
+            )
+        }
+        VerticalSpacer(SpacingSize.SM)
+        DateRangeFilter(
+            selectedPresetIndex = state.selectedPresetIndex,
+            presets = com.antcashmanager.android.ui.screen.transactions.TransactionsState.Companion.PRESETS,
+            dateRangeFrom = state.dateRangeFrom,
+            dateRangeTo = state.dateRangeTo,
+            expanded = dateFilterExpanded,
+            onExpandedChange = { expanded ->
+                onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.SetDateFilterExpanded(expanded))
+            },
+            onPresetSelected = {
+                onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.SelectPreset(it))
+            },
+            onFromDateEdit = { showFromDatePicker = true },
+            onToDateEdit = { showToDatePicker = true },
+        )
+        VerticalSpacer(SpacingSize.SM)
+        if (state.hasActiveFilters) {
+            AppText(
+                text = stringResource(R.string.transactions_results_count, state.filteredTransactions.size),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            VerticalSpacer(SpacingSize.XS)
+        }
+    }
+
     // FASE 1: Composable for list pane (used in both single-pane and split-pane layouts)
     @Composable
     fun TransactionListPane() {
+        val isGridLayout = adaptiveLayoutInfo.isExpanded && !adaptiveLayoutInfo.hasFold
         Box(modifier = modifier
             .fillMaxSize()
             .testTag("transactions_screen")) {
+        if (isGridLayout) {
+            // FASE 2: Tablet grid layout (2 columns) for expanded screens without fold
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(
+                        horizontal = adaptiveLayoutInfo.horizontalPadding,
+                        vertical = 16.dp,
+                    ),
+                horizontalArrangement = Arrangement.spacedBy(TransactionsScreenDefaults.CardSpacing),
+                verticalArrangement = Arrangement.spacedBy(TransactionsScreenDefaults.CardSpacing),
+                contentPadding = PaddingValues(bottom = TransactionsScreenDefaults.ListBottomSpacer)
+            ) {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Column { TransactionListHeaders() }
+                }
+                when {
+                    state.isLoading -> {
+                        items(6) {
+                            Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)) {
+                                SkeletonLoader(height = 16.dp, cornerRadius = 8)
+                                VerticalSpacer(SpacingSize.XS)
+                                SkeletonLoader(height = 20.dp, cornerRadius = 8)
+                            }
+                        }
+                    }
+                    state.filteredTransactions.isEmpty() -> {
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            AntEmptyState(
+                                mascotRes = R.drawable.ic_piggy_bank,
+                                title = stringResource(R.string.empty_state_no_transactions),
+                                subtitle = stringResource(R.string.empty_state_no_transactions_subtitle),
+                                modifier = Modifier.fillMaxWidth(),
+                            )
+                        }
+                    }
+                    else -> {
+                        items(state.filteredTransactions, key = { it.id }) { transaction ->
+                            TransactionItem(
+                                transaction = transaction,
+                                onClick = {
+                                    multiPaneCoordinator?.selectTransaction(
+                                        transaction = transaction,
+                                        navigateToDetailsPane = foldingFeature?.isSeparating == true
+                                    )
+                                    navController?.navigate(AppRoute.TransactionRoute.Edit.createRoute(transaction.id))
+                                },
+                                displayType = transactionDisplayType,
+                            )
+                        }
+                    }
+                }
+            }
+        } else {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -524,6 +659,7 @@ internal fun TransactionsContent(
                 }
             }
         }
+        } // end else (single-column LazyColumn)
         Column(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
