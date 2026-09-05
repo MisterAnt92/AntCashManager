@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -143,12 +144,12 @@ internal fun ChartsContent(
     val context = LocalContext.current
     val analyticsManager: AnalyticsManager = koinInject()
     val scope = rememberCoroutineScope()
-    val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
-
     // Foldable device support
     val displayFeatures = LocalDisplayFeatures.current
+    val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo(displayFeatures = displayFeatures)
     val multiPaneCoordinator = LocalMultiPaneCoordinator.current
-    val foldingFeature = displayFeatures.filterIsInstance<FoldingFeature>().firstOrNull()
+    val foldingFeature = adaptiveLayoutInfo.foldingFeature
+    val isGridLayout = adaptiveLayoutInfo.isExpanded && !adaptiveLayoutInfo.hasFold
 
     val dateFormat = remember { SimpleDateFormat("dd MMM yyyy", Locale.getDefault()) }
     val fmt = LocalCurrencyFormat.current
@@ -299,23 +300,23 @@ internal fun ChartsContent(
 
     // Function to render a single chart card based on type
     @Composable
-    fun RenderChartCard(cardType: com.antcashmanager.android.ui.screen.charts.model.ChartCardType) {
+    fun RenderChartCard(cardType: com.antcashmanager.android.ui.screen.charts.model.ChartCardType, showSpacer: Boolean = true) {
         when (cardType) {
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.SPENDING_FORECAST_CARD -> {
                 SpendingForecastCard(chartData = chartData)
-                VerticalSpacer(SpacingSize.MD)
+                if (showSpacer) VerticalSpacer(SpacingSize.MD)
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.QUICK_STATS_CARD -> {
                 QuickStatsCard(chartData = chartData)
-                VerticalSpacer(SpacingSize.MD)
+                if (showSpacer) VerticalSpacer(SpacingSize.MD)
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.DAILY_EXPENSE_CHART_CARD -> {
                 DailyExpenseLineChartCard(chartData = chartData)
-                VerticalSpacer(SpacingSize.MD)
+                if (showSpacer) VerticalSpacer(SpacingSize.MD)
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.WEEKDAY_DISTRIBUTION_CARD -> {
                 WeekdayExpenseCard(chartData = chartData)
-                VerticalSpacer(SpacingSize.MD)
+                if (showSpacer) VerticalSpacer(SpacingSize.MD)
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.INCOME_CATEGORY_PIE_CHART -> {
                 if (chartData.incomeByCategory.isNotEmpty()) {
@@ -350,7 +351,7 @@ internal fun ChartsContent(
                             )
                         },
                     )
-                    VerticalSpacer(SpacingSize.MD)
+                    if (showSpacer) VerticalSpacer(SpacingSize.MD)
                 }
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.EXPENSE_CATEGORY_PIE_CHART -> {
@@ -386,7 +387,7 @@ internal fun ChartsContent(
                             )
                         },
                     )
-                    VerticalSpacer(SpacingSize.MD)
+                    if (showSpacer) VerticalSpacer(SpacingSize.MD)
                 }
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.TOP_INCOME_CATEGORIES -> {
@@ -398,7 +399,7 @@ internal fun ChartsContent(
                         fmt = fmt,
                         chartCardContainerColor = chartCardContainerColor,
                     )
-                    VerticalSpacer(SpacingSize.MD)
+                    if (showSpacer) VerticalSpacer(SpacingSize.MD)
                 }
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.TOP_EXPENSE_CATEGORIES -> {
@@ -410,7 +411,7 @@ internal fun ChartsContent(
                         fmt = fmt,
                         chartCardContainerColor = chartCardContainerColor,
                     )
-                    VerticalSpacer(SpacingSize.MD)
+                    if (showSpacer) VerticalSpacer(SpacingSize.MD)
                 }
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.PAYMENT_TYPE_BREAKDOWN -> {
@@ -444,7 +445,7 @@ internal fun ChartsContent(
                             )
                         },
                     )
-                    VerticalSpacer(SpacingSize.MD)
+                    if (showSpacer) VerticalSpacer(SpacingSize.MD)
                 }
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.MONTHLY_BAR_CHART -> {
@@ -459,7 +460,7 @@ internal fun ChartsContent(
                         context = context,
                         onShared = { analyticsManager.logEvent("chart_shared") },
                     )
-                    VerticalSpacer(SpacingSize.MD)
+                    if (showSpacer) VerticalSpacer(SpacingSize.MD)
                 }
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.YEARLY_BAR_CHART -> {
@@ -474,7 +475,7 @@ internal fun ChartsContent(
                         context = context,
                         onShared = { analyticsManager.logEvent("chart_shared") },
                     )
-                    VerticalSpacer(SpacingSize.MD)
+                    if (showSpacer) VerticalSpacer(SpacingSize.MD)
                 }
             }
         }
@@ -521,8 +522,26 @@ internal fun ChartsContent(
             VerticalSpacer(SpacingSize.MD)
 
             // Render all charts cards in custom order
-            chartsCardOrder.forEach { cardType ->
-                RenderChartCard(cardType)
+            // FASE 2: 2-column layout for expanded screens without fold
+            if (isGridLayout) {
+                chartsCardOrder.chunked(2).forEach { pair ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        pair.forEach { cardType ->
+                            Box(modifier = Modifier.weight(1f)) {
+                                RenderChartCard(cardType, showSpacer = false)
+                            }
+                        }
+                        if (pair.size == 1) Spacer(modifier = Modifier.weight(1f))
+                    }
+                    VerticalSpacer(SpacingSize.MD)
+                }
+            } else {
+                chartsCardOrder.forEach { cardType ->
+                    RenderChartCard(cardType)
+                }
             }
 
             // Empty state - shown when no data is available
