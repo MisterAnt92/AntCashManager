@@ -55,6 +55,7 @@ import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.charts.MonthlyAmount
 import com.antcashmanager.android.ui.screen.charts.YearlyAmount
+import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.theme.LocalReduceMotion
 import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.LocalCurrencyFormat
@@ -749,6 +750,11 @@ internal fun ZoomablePieChart(
     val total = data.values.sum()
     if (total <= 0.0) return
 
+    // FASE 3: Wider zoom range on tablets for better chart exploration
+    val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
+    val zoomMin = if (adaptiveLayoutInfo.isExpanded) 0.3f else 0.5f
+    val zoomMax = if (adaptiveLayoutInfo.isExpanded) 4f else 3f
+
     val reduceMotion = LocalReduceMotion.current
     val animDuration = if (reduceMotion) 0 else 1200
     val animatedProgress by animateFloatAsState(
@@ -772,7 +778,7 @@ internal fun ZoomablePieChart(
                         try {
                             // Safe zoom calculation with validation
                             val newScale = (scale * zoom).takeIf { it.isFinite() } ?: scale
-                            scale = newScale.coerceIn(0.5f, 3f)
+                            scale = newScale.coerceIn(zoomMin, zoomMax)
 
                             // Safe pan calculation with validation
                             val newOffsetX = (offsetX + pan.x).takeIf { it.isFinite() } ?: offsetX

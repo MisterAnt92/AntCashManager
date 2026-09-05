@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
+import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
 
 /**
@@ -66,6 +67,10 @@ fun AppButton(
     useDefaultSize: Boolean = true,
     content: (@Composable () -> Unit)? = null,
 ) {
+    // Adaptive touch target: 48dp on phones, 56dp on tablets (WCAG 2.5.8)
+    val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
+    val touchTargetHeight = if (adaptiveLayoutInfo.isExpanded) 56.dp else 48.dp
+
     // Animazione di scala al press
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -91,7 +96,7 @@ fun AppButton(
 
     val sizeModifier = if (useDefaultSize) {
         modifier
-            .height(48.dp)
+            .height(touchTargetHeight)
             .defaultMinSize(minWidth = 90.dp)
             .graphicsLayer { scaleX = scale; scaleY = scale }
     } else modifier.graphicsLayer { scaleX = scale; scaleY = scale }
