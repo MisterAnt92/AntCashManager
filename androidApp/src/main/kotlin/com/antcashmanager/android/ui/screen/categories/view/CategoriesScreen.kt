@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -21,6 +22,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
@@ -359,6 +364,7 @@ internal fun CategoriesContent(
 
             VerticalSpacer(SpacingSize.SM)
 
+            val isGridLayout = adaptiveLayoutInfo.isExpanded && !adaptiveLayoutInfo.hasFold
             if (currentCategories.isEmpty() && currentHiddenCategories.isEmpty()) {
                 AntEmptyState(
                     mascotRes = R.drawable.ic_ant_mascot,
@@ -366,6 +372,58 @@ internal fun CategoriesContent(
                     subtitle = stringResource(R.string.categories_empty_subtitle),
                     modifier = Modifier.fillMaxSize(),
                 )
+            } else if (isGridLayout) {
+                // FASE 2: Tablet 3-column grid for expanded screens without fold
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(bottom = 80.dp),
+                ) {
+                    items(currentCategories, key = { it.id }) { category ->
+                        CategoryItem(
+                            category = category,
+                            onClick = {
+                                val params = android.os.Bundle().apply {
+                                    putString("category_name", category.name)
+                                    putInt("index", currentCategories.indexOf(category))
+                                }
+                                analyticsManager.logEvent("categories_list_item_clicked", params)
+                            },
+                            onDelete = {
+                                if (!category.isDefault) { categoryToDelete = category }
+                            },
+                            onToggleHidden = {
+                                analyticsManager.logEvent("category_hidden")
+                                onSetCategoryHidden(category, true)
+                            },
+                        )
+                    }
+                    if (currentHiddenCategories.isNotEmpty()) {
+                        item(key = "hidden_section_header", span = { GridItemSpan(maxLineSpan) }) {
+                            HiddenCategoriesSectionHeader(
+                                count = currentHiddenCategories.size,
+                                expanded = hiddenSectionExpanded,
+                                onExpandedChange = { hiddenSectionExpanded = it },
+                            )
+                        }
+                        if (hiddenSectionExpanded) {
+                            items(currentHiddenCategories, key = { "hidden_${it.id}" }) { category ->
+                                CategoryItem(
+                                    category = category,
+                                    onDelete = {
+                                        if (!category.isDefault) { categoryToDelete = category }
+                                    },
+                                    onToggleHidden = {
+                                        analyticsManager.logEvent("category_shown")
+                                        onSetCategoryHidden(category, false)
+                                    },
+                                )
+                            }
+                        }
+                    }
+                    item(span = { GridItemSpan(maxLineSpan) }) { VerticalSpacer(SpacingSize.XXXL) }
+                }
             } else {
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(currentCategories, key = { it.id }) { category ->
