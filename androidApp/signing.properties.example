@@ -1,0 +1,12 @@
+# Release signing configuration for AntCashManager
+# Copy this file to signing.properties and fill in your keystore details.
+# signing.properties is gitignored — never commit your real credentials.
+
+# Absolute or relative path to your .jks or .keystore file.
+# Relative paths are resolved from the project root directory.
+storeFile=/path/to/your/release.jks
+
+# Passwords and alias as set when the keystore was created.
+storePassword=your_store_password
+keyAlias=your_key_alias
+keyPassword=your_key_password

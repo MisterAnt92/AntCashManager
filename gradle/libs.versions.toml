@@ -21,6 +21,7 @@ firebaseCrashlyticsGradle = "3.0.7"
 firebaseBom = "34.17.0"
 googleFonts = "1.11.4"
 mlkitTextRecognition = "19.0.1"
+coreSplashscreen = "1.0.1"
 koin = "4.2.2"
 mockk = "1.14.11"
 kotlinxDatetime = "0.6.0"
@@ -70,6 +71,7 @@ firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
 androidx-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "googleFonts" }
 mlkit-text-recognition = { group = "com.google.android.gms", name = "play-services-mlkit-text-recognition", version.ref = "mlkitTextRecognition" }
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
 koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koin" }
 koin-compose = { group = "io.insert-koin", name = "koin-compose", version.ref = "koin" }

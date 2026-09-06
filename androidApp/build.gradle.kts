@@ -1,5 +1,6 @@
 import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
 import org.gradle.testing.jacoco.tasks.JacocoReport
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -13,6 +14,19 @@ plugins {
 // ── Jacoco Configuration ──
 jacoco {
     toolVersion = "0.8.13"
+}
+
+// ── Release Signing ──
+// Fill androidApp/signing.properties with your keystore details (gitignored).
+// If the file is absent the build falls back to the debug keystore with a warning.
+val signingProps =
+    Properties().apply {
+        rootProject.file("androidApp/signing.properties").takeIf { it.exists() }?.inputStream()?.use(::load)
+    }
+val hasReleaseKeystore = signingProps.isNotEmpty()
+if (!hasReleaseKeystore) {
+    logger.warn("⚠️  androidApp/signing.properties not found — release build will use DEBUG keystore. " +
+        "Copy signing.properties.example and fill in your keystore details before uploading to Play Store.")
 }
 
 android {
@@ -45,6 +59,17 @@ android {
         }
     }
 
+    signingConfigs {
+        if (hasReleaseKeystore) {
+            create("release") {
+                storeFile = signingProps["storeFile"]?.let { file(it as String) }
+                storePassword = signingProps["storePassword"] as String?
+                keyAlias = signingProps["keyAlias"] as String?
+                keyPassword = signingProps["keyPassword"] as String?
+            }
+        }
+    }
+
     buildTypes {
         debug {
             enableUnitTestCoverage = true
@@ -57,7 +82,12 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig =
+                if (hasReleaseKeystore) {
+                    signingConfigs.getByName("release")
+                } else {
+                    signingConfigs.getByName("debug")
+                }
             configure<CrashlyticsExtension> {
                 // Upload automatico del mapping file per deobfuscation stacktrace release.
                 mappingFileUploadEnabled = true
@@ -128,6 +158,7 @@ android {
 
 dependencies {
     implementation(project(":shared"))
+    implementation(libs.androidx.core.splashscreen)
     implementation(platform(libs.firebase.bom))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

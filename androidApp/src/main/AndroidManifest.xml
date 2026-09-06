@@ -51,7 +51,7 @@
             android:name="com.antcashmanager.android.MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.AntCashManager">
+            android:theme="@style/Theme.AntCashManager.Starting">
             <!-- App launcher intent filter -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

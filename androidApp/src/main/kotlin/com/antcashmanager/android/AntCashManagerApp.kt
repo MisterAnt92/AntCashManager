@@ -260,7 +260,7 @@ class AntCashManagerApp : Application() {
      * primo avvio in assoluto (vedi [seedDefaultCategories]) e retro-inserite singolarmente per
      * chi ha già categorie esistenti (vedi [backfillNewDefaultCategories]).
      */
-    private val newDefaultExpenseCategories =
+    private val newDefaultExpenseCategories by lazy {
         listOf(
             Category(
                 name = "Regali",
@@ -284,8 +284,9 @@ class AntCashManagerApp : Application() {
                 isDefault = true,
             ),
         )
+    }
 
-    private val newDefaultIncomeCategories =
+    private val newDefaultIncomeCategories by lazy {
         listOf(
             Category(
                 name = "Regalo",
@@ -302,6 +303,7 @@ class AntCashManagerApp : Application() {
                 isDefault = true,
             ),
         )
+    }
 
     private suspend fun backfillNewDefaultCategories(categoryRepository: CategoryRepository) {
         newDefaultExpenseCategories.forEach { category ->

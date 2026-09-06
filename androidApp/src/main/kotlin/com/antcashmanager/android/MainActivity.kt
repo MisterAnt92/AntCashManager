@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivityResultRegistryOwner
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -43,6 +44,13 @@ class MainActivity : ComponentActivity() {
     private val sessionTracker: SessionTracker by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // installSplashScreen() must be called BEFORE super.onCreate() / setContent.
+        // setKeepOnScreenCondition keeps the OS splash visible until DataStore settings
+        // are pre-loaded; avoids the blank white window between cold start and first frame.
+        var settingsLoaded = false
+        val splashScreen = installSplashScreen()
+        splashScreen.setKeepOnScreenCondition { !settingsLoaded }
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         Logger.d(tag = "MainActivity") { "onCreate: initializing app with settings" }
@@ -65,6 +73,9 @@ class MainActivity : ComponentActivity() {
                 Logger.d(tag = "MainActivity") { "Pre-load complete, launching Compose UI" }
             } catch (e: Exception) {
                 Logger.e(tag = "MainActivity", throwable = e) { "Error pre-loading settings" }
+            } finally {
+                // Release the OS splash screen — Compose SplashScreen in NavGraph takes over.
+                settingsLoaded = true
             }
 
             // Now setContent with data already loaded
