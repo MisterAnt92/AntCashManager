@@ -1,5 +1,4 @@
 import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
-import org.gradle.testing.jacoco.plugins.JacocoPluginExtension
 import org.gradle.testing.jacoco.tasks.JacocoReport
 
 plugins {
@@ -41,6 +40,8 @@ android {
         register("lite") {
             dimension = "variant"
             buildConfigField("boolean", "INCLUDE_DRIVE_BACKUP", "false")
+            // Regole R8 aggiuntive per ulteriore shrinking delle dipendenze Drive rimosse
+            proguardFile("proguard-rules-lite.pro")
         }
     }
 
@@ -54,7 +55,7 @@ android {
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
             configure<CrashlyticsExtension> {
                 // Upload automatico del mapping file per deobfuscation stacktrace release.
@@ -77,12 +78,13 @@ android {
     }
     packaging {
         resources {
-            excludes += setOf(
-                "META-INF/LICENSE.md",
-                "META-INF/LICENSE-notice.md",
-                "META-INF/INDEX.LIST",
-                "META-INF/DEPENDENCIES"
-            )
+            excludes +=
+                setOf(
+                    "META-INF/LICENSE.md",
+                    "META-INF/LICENSE-notice.md",
+                    "META-INF/INDEX.LIST",
+                    "META-INF/DEPENDENCIES",
+                )
         }
     }
 
@@ -93,7 +95,6 @@ android {
         }
     }
 }
-
 
 dependencies {
     implementation(project(":shared"))
@@ -168,9 +169,9 @@ tasks.register("jacocoTestDebugUnitTestReport", JacocoReport::class) {
                 "**/R\$*.class",
                 "**/BuildConfig.*",
                 "**/Manifest*.*",
-                "**/*Test*.*"
+                "**/*Test*.*",
             )
-        }
+        },
     )
 
     sourceDirectories.setFrom(files("src/main/kotlin", "src/main/java"))
@@ -192,9 +193,9 @@ tasks.register("jacocoConnectedDebugAndroidTestReport", JacocoReport::class) {
                 "**/R\$*.class",
                 "**/BuildConfig.*",
                 "**/Manifest*.*",
-                "**/*Test*.*"
+                "**/*Test*.*",
             )
-        }
+        },
     )
 
     sourceDirectories.setFrom(files("src/main/kotlin", "src/main/java"))

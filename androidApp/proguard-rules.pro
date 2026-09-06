@@ -32,11 +32,14 @@
 # 2. KOTLIN COROUTINES
 # ------------------------------------------------------------------------------
 
+# Coroutines ha consumer-rules proprie via aar – manteniamo solo ciò che non copre
+-dontwarn kotlinx.coroutines.**
 -keepclassmembernames class kotlinx.** {
     volatile <fields>;
 }
--dontwarn kotlinx.coroutines.**
--keep class kotlinx.coroutines.** { *; }
+# Dispatcher factory e handler usati per riflessione da coroutines
+-keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}
+-keepnames class kotlinx.coroutines.CoroutineExceptionHandler {}
 
 # ------------------------------------------------------------------------------
 # 3. KOTLINX SERIALIZATION
@@ -83,8 +86,7 @@
 -keepclassmembers class * extends androidx.room.RoomDatabase {
     abstract !final *;
 }
--keepclassmembers class androidx.room.** { *; }
--keep class androidx.room.** { *; }
+# Room ha consumer-rules proprie nell'aar – non serve -keep su androidx.room.**
 -dontwarn androidx.room.**
 
 # Auto-migration spec
@@ -118,8 +120,12 @@
 -keepnames class org.koin.** { *; }
 -dontwarn org.koin.**
 
-# Mantieni le classi iniettate via Koin (ViewModel, Repository, UseCase)
--keep class com.antcashmanager.** { *; }
+# Koin usa DSL esplicito (non riflessione massiva): non serve -keep su tutto il package.
+# Le classi del dominio sono già protette dalle sezioni Room, Serialization, ViewModel.
+# Manteniamo solo i constructor primari per garantire l'istanziazione via Koin DSL.
+-keepclassmembers class com.antcashmanager.** {
+    public <init>(...);
+}
 
 # ------------------------------------------------------------------------------
 # 8. ML KIT – TEXT RECOGNITION
@@ -148,15 +154,14 @@
 # 11. JETPACK COMPOSE
 # ------------------------------------------------------------------------------
 
-# Compose usa reflection per le Preview e alcune annotazioni interne
--keep class androidx.compose.** { *; }
+# Compose, Lifecycle e Navigation hanno consumer-rules proprie via aar.
+# Manteniamo solo le regole non coperte automaticamente.
 -dontwarn androidx.compose.**
--keep class androidx.lifecycle.** { *; }
 -dontwarn androidx.lifecycle.**
-
-# Navigation Compose
--keep class androidx.navigation.** { *; }
 -dontwarn androidx.navigation.**
+
+# Platform host classes usate da Compose per reflection interna
+-keepclassmembers class androidx.compose.ui.platform.** { *; }
 
 # ------------------------------------------------------------------------------
 # 12. GOOGLE FONTS (ui-text-google-fonts)
@@ -189,12 +194,34 @@
 -dontnote **
 
 # ------------------------------------------------------------------------------
-# 14. SICUREZZA – DATI SENSIBILI
+# 14. WORKMANAGER
 # ------------------------------------------------------------------------------
 
-# DatabaseEncryptionManager usa SQLCipher / EncryptedSharedPreferences
--keep class net.sqlcipher.** { *; }
--dontwarn net.sqlcipher.**
+# Worker classes vengono istanziate per riflessione da WorkManager factory
+-keep class * extends androidx.work.Worker
+-keep class * extends androidx.work.CoroutineWorker
+-keep class * extends androidx.work.ListenableWorker {
+    public <init>(android.content.Context, androidx.work.WorkerParameters);
+}
+-keepclassmembers class * extends androidx.work.ListenableWorker {
+    public <init>(...);
+}
+-dontwarn androidx.work.**
+
+# ── Glance AppWidget ─────────────────────────────────────────────────────────
+# GlanceAppWidget receiver viene caricato da XML tramite riflessione
+-keep class * extends androidx.glance.appwidget.GlanceAppWidget
+-keep class * extends androidx.glance.appwidget.GlanceAppWidgetReceiver {
+    public <init>();
+}
+-dontwarn androidx.glance.**
+
+# ------------------------------------------------------------------------------
+# 15. SICUREZZA – DATI SENSIBILI
+# ------------------------------------------------------------------------------
+
+# EncryptedSharedPreferences (androidx.security.crypto)
+# SQLCipher non è nelle dipendenze – regola rimossa
 -keep class androidx.security.crypto.** { *; }
 -dontwarn androidx.security.crypto.**
 
