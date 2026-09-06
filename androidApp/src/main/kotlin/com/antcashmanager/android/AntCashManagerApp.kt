@@ -2,6 +2,7 @@ package com.antcashmanager.android
 
 import android.app.Application
 import co.touchlab.kermit.Logger
+import co.touchlab.kermit.Severity
 import com.antcashmanager.android.di.appModules
 import com.antcashmanager.android.work.AutoBackupNotifier
 import com.antcashmanager.domain.model.Category
@@ -24,6 +25,9 @@ class AntCashManagerApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        // In release: suppress Verbose/Debug logs to avoid leaking internal state
+        // to logcat and to let R8 dead-code-eliminate the unused log lambdas.
+        if (!BuildConfig.DEBUG) Logger.setMinSeverity(Severity.Warn)
         Logger.d(tag = "AntCashManagerApp") { "Application started" }
 
         startKoin {

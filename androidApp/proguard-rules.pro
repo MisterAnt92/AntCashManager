@@ -149,7 +149,9 @@
 # 10. KERMIT LOGGER (co.touchlab:kermit)
 # ------------------------------------------------------------------------------
 
--keep class co.touchlab.kermit.** { *; }
+# Kermit uses no reflection — R8 can shrink/inline it freely.
+# Logger.setMinSeverity(Severity.Warn) in release ensures debug lambdas
+# are never evaluated (Kermit inline functions check severity before invoke).
 -dontwarn co.touchlab.kermit.**
 
 # ------------------------------------------------------------------------------
