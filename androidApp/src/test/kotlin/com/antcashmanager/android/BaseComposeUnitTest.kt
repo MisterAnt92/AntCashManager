@@ -20,7 +20,6 @@ import org.junit.Rule
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 abstract class BaseComposeUnitTest : BaseUnitTest() {
-
     @get:Rule
     val composeTestRule = createComposeRule()
 

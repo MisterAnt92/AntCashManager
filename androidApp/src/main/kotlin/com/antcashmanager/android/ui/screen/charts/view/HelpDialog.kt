@@ -11,23 +11,24 @@ import com.antcashmanager.android.ui.components.dialog.HelpDialogFeatureSpec
 
 @Composable
 internal fun HelpDialog(onDismiss: () -> Unit) {
-    val helpFeatures = listOf(
-        HelpDialogFeatureSpec(
-            titleResId = R.string.help_charts_feature_visualization_title,
-            descriptionResId = R.string.help_charts_feature_visualization_desc,
-            icon = Icons.Default.BarChart,
-        ),
-        HelpDialogFeatureSpec(
-            titleResId = R.string.help_charts_feature_filters_title,
-            descriptionResId = R.string.help_charts_feature_filters_desc,
-            icon = Icons.Default.CalendarMonth,
-        ),
-        HelpDialogFeatureSpec(
-            titleResId = R.string.help_charts_feature_analysis_title,
-            descriptionResId = R.string.help_charts_feature_analysis_desc,
-            icon = Icons.AutoMirrored.Default.TrendingUp,
-        ),
-    )
+    val helpFeatures =
+        listOf(
+            HelpDialogFeatureSpec(
+                titleResId = R.string.help_charts_feature_visualization_title,
+                descriptionResId = R.string.help_charts_feature_visualization_desc,
+                icon = Icons.Default.BarChart,
+            ),
+            HelpDialogFeatureSpec(
+                titleResId = R.string.help_charts_feature_filters_title,
+                descriptionResId = R.string.help_charts_feature_filters_desc,
+                icon = Icons.Default.CalendarMonth,
+            ),
+            HelpDialogFeatureSpec(
+                titleResId = R.string.help_charts_feature_analysis_title,
+                descriptionResId = R.string.help_charts_feature_analysis_desc,
+                icon = Icons.AutoMirrored.Default.TrendingUp,
+            ),
+        )
 
     AppHelpDialog(
         titleResId = R.string.help_charts_title,
@@ -36,4 +37,3 @@ internal fun HelpDialog(onDismiss: () -> Unit) {
         onDismiss = onDismiss,
     )
 }
-

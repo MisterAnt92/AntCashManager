@@ -23,8 +23,8 @@ internal object WidgetDependencies {
     val analyticsManager: AnalyticsManager
         get() = safeGet()
 
-    private inline fun <reified T : Any> safeGet(): T {
-        return try {
+    private inline fun <reified T : Any> safeGet(): T =
+        try {
             GlobalContext.get().get()
         } catch (e: Exception) {
             // Se Koin non è inizializzato (raro in questo processo ma possibile in race conditions)
@@ -32,7 +32,6 @@ internal object WidgetDependencies {
             // invece di far crashare l'intero provider del launcher.
             throw IllegalStateException("Koin not initialized or dependency not found: ${T::class.simpleName}", e)
         }
-    }
 }
 
 internal suspend fun loadLanguage(settingsRepository: SettingsRepository): AppLanguage =

@@ -38,8 +38,8 @@ fun DecimalDigitsDialog(
                             AppText(
                                 stringResource(
                                     R.string.settings_decimal_digits_subtitle,
-                                    digits
-                                )
+                                    digits,
+                                ),
                             )
                         },
                         leadingContent = {

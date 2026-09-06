@@ -12,8 +12,9 @@ import kotlinx.datetime.toLocalDateTime
  * Implementa la business logic di preparazione dei dati estendendo [UseCase].
  */
 public class ShareTransactionUseCase : UseCase<ShareTransactionUseCase.Params, String>() {
-
-    public data class Params(val transaction: Transaction)
+    public data class Params(
+        val transaction: Transaction,
+    )
 
     /**
      * Formatta i dati della transazione in una stringa leggibile per la condivisione.
@@ -28,26 +29,30 @@ public class ShareTransactionUseCase : UseCase<ShareTransactionUseCase.Params, S
             } else {
                 ""
             }
-        val notesInfo = if (transaction.notes.isValidNote()) {
-            "\nNotes: ${transaction.notes}"
-        } else {
-            ""
-        }
-        val payeeInfo = if (transaction.payee.isNotBlank()) {
-            "\nPayee: ${transaction.payee}"
-        } else {
-            ""
-        }
-        val locationInfo = if (transaction.location.isNotBlank()) {
-            "\nLocation: ${transaction.location}"
-        } else {
-            ""
-        }
-        val tagsInfo = if (transaction.tags.isNotBlank()) {
-            "\nTags: ${transaction.tags}"
-        } else {
-            ""
-        }
+        val notesInfo =
+            if (transaction.notes.isValidNote()) {
+                "\nNotes: ${transaction.notes}"
+            } else {
+                ""
+            }
+        val payeeInfo =
+            if (transaction.payee.isNotBlank()) {
+                "\nPayee: ${transaction.payee}"
+            } else {
+                ""
+            }
+        val locationInfo =
+            if (transaction.location.isNotBlank()) {
+                "\nLocation: ${transaction.location}"
+            } else {
+                ""
+            }
+        val tagsInfo =
+            if (transaction.tags.isNotBlank()) {
+                "\nTags: ${transaction.tags}"
+            } else {
+                ""
+            }
         val formattedDate = formatDateForShare(transaction.timestamp)
         val formattedAmount = formatAmountForShare(transaction.amount)
         return """
@@ -58,7 +63,7 @@ public class ShareTransactionUseCase : UseCase<ShareTransactionUseCase.Params, S
             Amount: ${if (isIncome) "+" else "-"}${'$'}$formattedAmount
             Date: $formattedDate$notesInfo$payeeInfo$locationInfo$recurrenceInfo$tagsInfo
             Shared via AntCashManager
-        """.trimIndent()
+            """.trimIndent()
     }
 
     private fun formatDateForShare(timestampMillis: Long): String {

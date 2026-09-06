@@ -28,7 +28,6 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 class ChartsScreenRobustTest : BaseInstrumentationTest() {
-
     @Test
     fun chartsScreen_shouldBeNavigable() {
         composeTestRule.setContent {
@@ -40,13 +39,15 @@ class ChartsScreenRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Navigate to charts
-        composeTestRule.onNodeWithTag("nav_charts")
+        composeTestRule
+            .onNodeWithTag("nav_charts")
             .performClick()
 
         composeTestRule.waitForIdle()
 
         // Verify charts screen is displayed
-        composeTestRule.onNodeWithTag("charts_screen")
+        composeTestRule
+            .onNodeWithTag("charts_screen")
             .assertIsDisplayed()
     }
 
@@ -61,13 +62,15 @@ class ChartsScreenRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Navigate to charts
-        composeTestRule.onNodeWithTag("nav_charts")
+        composeTestRule
+            .onNodeWithTag("nav_charts")
             .performClick()
 
         composeTestRule.waitForIdle()
 
         // Verify pie chart is visible
-        composeTestRule.onNodeWithTag("pie_chart")
+        composeTestRule
+            .onNodeWithTag("pie_chart")
             .assertIsDisplayed()
     }
 
@@ -82,13 +85,15 @@ class ChartsScreenRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Navigate to charts
-        composeTestRule.onNodeWithTag("nav_charts")
+        composeTestRule
+            .onNodeWithTag("nav_charts")
             .performClick()
 
         composeTestRule.waitForIdle()
 
         // Verify period selector is visible
-        composeTestRule.onNodeWithTag("period_selector")
+        composeTestRule
+            .onNodeWithTag("period_selector")
             .assertIsDisplayed()
     }
 
@@ -103,13 +108,15 @@ class ChartsScreenRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Navigate to charts
-        composeTestRule.onNodeWithTag("nav_charts")
+        composeTestRule
+            .onNodeWithTag("nav_charts")
             .performClick()
 
         composeTestRule.waitForIdle()
 
         // Verify category breakdown is visible
-        composeTestRule.onNodeWithTag("category_breakdown")
+        composeTestRule
+            .onNodeWithTag("category_breakdown")
             .assertIsDisplayed()
     }
 
@@ -124,13 +131,15 @@ class ChartsScreenRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Navigate to charts
-        composeTestRule.onNodeWithTag("nav_charts")
+        composeTestRule
+            .onNodeWithTag("nav_charts")
             .performClick()
 
         composeTestRule.waitForIdle()
 
         // Verify legend is visible
-        composeTestRule.onNodeWithTag("chart_legend")
+        composeTestRule
+            .onNodeWithTag("chart_legend")
             .assertIsDisplayed()
     }
 }

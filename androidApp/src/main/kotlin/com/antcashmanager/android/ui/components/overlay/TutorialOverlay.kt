@@ -45,7 +45,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import com.antcashmanager.android.util.DrawableLoader
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
@@ -54,60 +53,59 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.antcashmanager.android.ui.components.layout.SpacingSize
-import com.antcashmanager.android.ui.components.layout.VerticalSpacer
-import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.button.AppButton
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.android.util.DrawableLoader
 import org.koin.compose.koinInject
 
 @Composable
-fun TutorialOverlay(
-    onDismiss: () -> Unit,
-) {
+fun TutorialOverlay(onDismiss: () -> Unit) {
     val analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager = koinInject()
     val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
     var currentStep by remember { mutableIntStateOf(0) }
-    val steps = listOf(
-        TutorialStep(
-            titleRes = R.string.tutorial_welcome_title,
-            descRes = R.string.tutorial_welcome_desc,
-            imageRes = null,
-        ),
-        TutorialStep(
-            titleRes = R.string.tutorial_dashboard_title,
-            descRes = R.string.tutorial_dashboard_desc,
-            imageRes = R.drawable.main,
-        ),
-        TutorialStep(
-            titleRes = R.string.tutorial_charts_title,
-            descRes = R.string.tutorial_charts_desc,
-            imageRes = R.drawable.charts,
-        ),
-        TutorialStep(
-            titleRes = R.string.tutorial_transactions_title,
-            descRes = R.string.tutorial_transactions_desc,
-            imageRes = R.drawable.transactions,
-        ),
-        TutorialStep(
-            titleRes = R.string.tutorial_categories_title,
-            descRes = R.string.tutorial_categories_desc,
-            imageRes = R.drawable.categories,
-        ),
-        TutorialStep(
-            titleRes = R.string.tutorial_settings_title,
-            descRes = R.string.tutorial_settings_desc,
-            imageRes = R.drawable.settings,
-        ),
-        TutorialStep(
-            titleRes = R.string.tutorial_finish_title,
-            descRes = R.string.tutorial_finish_desc,
-            imageRes = R.drawable.final_step,
-        ),
-    )
+    val steps =
+        listOf(
+            TutorialStep(
+                titleRes = R.string.tutorial_welcome_title,
+                descRes = R.string.tutorial_welcome_desc,
+                imageRes = null,
+            ),
+            TutorialStep(
+                titleRes = R.string.tutorial_dashboard_title,
+                descRes = R.string.tutorial_dashboard_desc,
+                imageRes = R.drawable.main,
+            ),
+            TutorialStep(
+                titleRes = R.string.tutorial_charts_title,
+                descRes = R.string.tutorial_charts_desc,
+                imageRes = R.drawable.charts,
+            ),
+            TutorialStep(
+                titleRes = R.string.tutorial_transactions_title,
+                descRes = R.string.tutorial_transactions_desc,
+                imageRes = R.drawable.transactions,
+            ),
+            TutorialStep(
+                titleRes = R.string.tutorial_categories_title,
+                descRes = R.string.tutorial_categories_desc,
+                imageRes = R.drawable.categories,
+            ),
+            TutorialStep(
+                titleRes = R.string.tutorial_settings_title,
+                descRes = R.string.tutorial_settings_desc,
+                imageRes = R.drawable.settings,
+            ),
+            TutorialStep(
+                titleRes = R.string.tutorial_finish_title,
+                descRes = R.string.tutorial_finish_desc,
+                imageRes = R.drawable.final_step,
+            ),
+        )
 
     var welcomeVisible by remember { mutableStateOf(true) }
     LaunchedEffect(true) {
@@ -126,43 +124,50 @@ fun TutorialOverlay(
 
     val isLastStep = currentStep == steps.lastIndex
     val isFirstStep = currentStep == 0
-    val progressDescription = stringResource(
-        R.string.tutorial_progress_cd,
-        currentStep + 1,
-        steps.size,
-    )
-    val welcomeHighlights = listOf(
-        R.string.tutorial_welcome_point_track,
-        R.string.tutorial_welcome_point_insights,
-        R.string.tutorial_welcome_point_categories,
-        R.string.tutorial_welcome_point_customize,
-    )
+    val progressDescription =
+        stringResource(
+            R.string.tutorial_progress_cd,
+            currentStep + 1,
+            steps.size,
+        )
+    val welcomeHighlights =
+        listOf(
+            R.string.tutorial_welcome_point_track,
+            R.string.tutorial_welcome_point_insights,
+            R.string.tutorial_welcome_point_categories,
+            R.string.tutorial_welcome_point_customize,
+        )
     val isFoldablePortrait = adaptiveLayoutInfo.isFoldableDevice && !adaptiveLayoutInfo.isLandscape
-    val horizontalPadding = when {
-        adaptiveLayoutInfo.isExpanded -> 32.dp
-        isFoldablePortrait -> 16.dp
-        else -> 12.dp
-    }
-    val verticalPadding = when {
-        adaptiveLayoutInfo.isExpanded -> 24.dp
-        isFoldablePortrait -> 16.dp
-        else -> 12.dp
-    }
-    val titleWidthFraction = when {
-        adaptiveLayoutInfo.isCompact -> 1f
-        isFoldablePortrait -> 0.9f
-        else -> 0.85f
-    }
-    val descriptionWidthFraction = when {
-        adaptiveLayoutInfo.isExpanded -> 0.85f
-        isFoldablePortrait -> 0.9f
-        else -> 1f
-    }
-    val imageWidthFraction = when {
-        adaptiveLayoutInfo.isExpanded -> 0.85f
-        isFoldablePortrait -> 0.95f
-        else -> 1f
-    }
+    val horizontalPadding =
+        when {
+            adaptiveLayoutInfo.isExpanded -> 32.dp
+            isFoldablePortrait -> 16.dp
+            else -> 12.dp
+        }
+    val verticalPadding =
+        when {
+            adaptiveLayoutInfo.isExpanded -> 24.dp
+            isFoldablePortrait -> 16.dp
+            else -> 12.dp
+        }
+    val titleWidthFraction =
+        when {
+            adaptiveLayoutInfo.isCompact -> 1f
+            isFoldablePortrait -> 0.9f
+            else -> 0.85f
+        }
+    val descriptionWidthFraction =
+        when {
+            adaptiveLayoutInfo.isExpanded -> 0.85f
+            isFoldablePortrait -> 0.9f
+            else -> 1f
+        }
+    val imageWidthFraction =
+        when {
+            adaptiveLayoutInfo.isExpanded -> 0.85f
+            isFoldablePortrait -> 0.95f
+            else -> 1f
+        }
     val controlsWidthFraction = 1f
     val welcomeCardPadding = if (adaptiveLayoutInfo.isExpanded) 20.dp else 12.dp
 
@@ -171,9 +176,10 @@ fun TutorialOverlay(
         color = MaterialTheme.colorScheme.background,
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = horizontalPadding, vertical = verticalPadding),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = horizontalPadding, vertical = verticalPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             // Contenuto per-step (titolo, descrizione, immagine/highlights) con transizione
@@ -185,17 +191,20 @@ fun TutorialOverlay(
                 targetState = currentStep,
                 transitionSpec = {
                     val forward = targetState > initialState
-                    val enter = slideInHorizontally(tween(350)) { width ->
-                        if (forward) width / 4 else -width / 4
-                    } + fadeIn(tween(350))
-                    val exit = slideOutHorizontally(tween(350)) { width ->
-                        if (forward) -width / 4 else width / 4
-                    } + fadeOut(tween(200))
+                    val enter =
+                        slideInHorizontally(tween(350)) { width ->
+                            if (forward) width / 4 else -width / 4
+                        } + fadeIn(tween(350))
+                    val exit =
+                        slideOutHorizontally(tween(350)) { width ->
+                            if (forward) -width / 4 else width / 4
+                        } + fadeOut(tween(200))
                     enter togetherWith exit
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
                 label = "tutorial_step_content",
             ) { stepIndex ->
                 val animatedStep = steps[stepIndex]
@@ -206,12 +215,13 @@ fun TutorialOverlay(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     val contentVisible = !isAnimatedWelcomeStep || welcomeVisible
-                    val enterTransition = if (isAnimatedWelcomeStep) {
-                        fadeIn(tween(durationMillis = 600)) +
+                    val enterTransition =
+                        if (isAnimatedWelcomeStep) {
+                            fadeIn(tween(durationMillis = 600)) +
                                 slideInVertically(tween(durationMillis = 600)) { it / 4 }
-                    } else {
-                        fadeIn(tween(durationMillis = 0))
-                    }
+                        } else {
+                            fadeIn(tween(durationMillis = 0))
+                        }
 
                     AnimatedVisibility(visible = contentVisible, enter = enterTransition) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -221,9 +231,10 @@ fun TutorialOverlay(
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.primary,
                                 textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .fillMaxWidth(titleWidthFraction)
-                                    .semantics { heading() },
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth(titleWidthFraction)
+                                        .semantics { heading() },
                             )
 
                             VerticalSpacer(SpacingSize.SM)
@@ -242,27 +253,30 @@ fun TutorialOverlay(
 
                     if (animatedStep.imageRes != null) {
                         Box(
-                            modifier = Modifier
-                                .fillMaxWidth(imageWidthFraction)
-                                .weight(1f),
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth(imageWidthFraction)
+                                    .weight(1f),
                             contentAlignment = Alignment.Center,
                         ) {
                             // ▼ AGGIUNTO: Carica drawable con downsampling per evitare bitmap troppo grandi
                             val context = LocalContext.current
-                            val imageBitmap = remember(animatedStep.imageRes) {
-                                DrawableLoader.loadDrawableAsBitmap(context, animatedStep.imageRes)
-                            }
+                            val imageBitmap =
+                                remember(animatedStep.imageRes) {
+                                    DrawableLoader.loadDrawableAsBitmap(context, animatedStep.imageRes)
+                                }
 
                             if (imageBitmap != null) {
                                 Image(
                                     bitmap = imageBitmap,
                                     contentDescription = stringResource(animatedStep.titleRes),
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .clip(RoundedCornerShape(16.dp))
-                                        .background(
-                                            color = MaterialTheme.colorScheme.surfaceVariant,
-                                        ),
+                                    modifier =
+                                        Modifier
+                                            .fillMaxSize()
+                                            .clip(RoundedCornerShape(16.dp))
+                                            .background(
+                                                color = MaterialTheme.colorScheme.surfaceVariant,
+                                            ),
                                     contentScale = ContentScale.Fit,
                                 )
                             } else {
@@ -270,12 +284,13 @@ fun TutorialOverlay(
                                 Image(
                                     painter = painterResource(id = animatedStep.imageRes),
                                     contentDescription = stringResource(animatedStep.titleRes),
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .clip(RoundedCornerShape(16.dp))
-                                        .background(
-                                            color = MaterialTheme.colorScheme.surfaceVariant,
-                                        ),
+                                    modifier =
+                                        Modifier
+                                            .fillMaxSize()
+                                            .clip(RoundedCornerShape(16.dp))
+                                            .background(
+                                                color = MaterialTheme.colorScheme.surfaceVariant,
+                                            ),
                                     contentScale = ContentScale.Fit,
                                 )
                             }
@@ -284,19 +299,21 @@ fun TutorialOverlay(
                     } else if (isAnimatedWelcomeStep) {
                         AnimatedVisibility(
                             visible = welcomeVisible,
-                            enter = fadeIn(tween(durationMillis = 700, delayMillis = 300)) +
+                            enter =
+                                fadeIn(tween(durationMillis = 700, delayMillis = 300)) +
                                     slideInVertically(
                                         tween(
                                             durationMillis = 700,
-                                            delayMillis = 300
-                                        )
+                                            delayMillis = 300,
+                                        ),
                                     ) { it / 3 },
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
                         ) {
                             Column(
-                                modifier = Modifier
-                                    .fillMaxWidth(descriptionWidthFraction)
-                                    .padding(vertical = 4.dp, horizontal = 4.dp),
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth(descriptionWidthFraction)
+                                        .padding(vertical = 4.dp, horizontal = 4.dp),
                                 verticalArrangement = Arrangement.Center,
                                 horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
@@ -308,9 +325,10 @@ fun TutorialOverlay(
                                     shadowElevation = 2.dp,
                                 ) {
                                     Column(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(welcomeCardPadding),
+                                        modifier =
+                                            Modifier
+                                                .fillMaxWidth()
+                                                .padding(welcomeCardPadding),
                                         verticalArrangement = Arrangement.spacedBy(10.dp),
                                     ) {
                                         welcomeHighlights.forEachIndexed { index, textRes ->
@@ -320,20 +338,22 @@ fun TutorialOverlay(
                                                 color = MaterialTheme.colorScheme.surfaceVariant,
                                             ) {
                                                 Row(
-                                                    modifier = Modifier
-                                                        .fillMaxWidth()
-                                                        .padding(
-                                                            horizontal = 12.dp,
-                                                            vertical = 10.dp
-                                                        ),
+                                                    modifier =
+                                                        Modifier
+                                                            .fillMaxWidth()
+                                                            .padding(
+                                                                horizontal = 12.dp,
+                                                                vertical = 10.dp,
+                                                            ),
                                                     verticalAlignment = Alignment.CenterVertically,
                                                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                                                 ) {
                                                     Box(
-                                                        modifier = Modifier
-                                                            .size(28.dp)
-                                                            .clip(CircleShape)
-                                                            .background(MaterialTheme.colorScheme.primary),
+                                                        modifier =
+                                                            Modifier
+                                                                .size(28.dp)
+                                                                .clip(CircleShape)
+                                                                .background(MaterialTheme.colorScheme.primary),
                                                         contentAlignment = Alignment.Center,
                                                     ) {
                                                         AppText(
@@ -363,12 +383,13 @@ fun TutorialOverlay(
 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-                modifier = Modifier
-                    .fillMaxWidth(controlsWidthFraction)
-                    .padding(vertical = 6.dp, horizontal = 6.dp)
-                    .clearAndSetSemantics {
-                        contentDescription = progressDescription
-                    },
+                modifier =
+                    Modifier
+                        .fillMaxWidth(controlsWidthFraction)
+                        .padding(vertical = 6.dp, horizontal = 6.dp)
+                        .clearAndSetSemantics {
+                            contentDescription = progressDescription
+                        },
             ) {
                 steps.forEachIndexed { index, _ ->
                     val isActiveDot = index == currentStep
@@ -377,18 +398,18 @@ fun TutorialOverlay(
                         label = "tutorial_dot_width",
                     )
                     Box(
-                        modifier = Modifier
-                            .height(8.dp)
-                            .width(dotWidth)
-                            .clip(RoundedCornerShape(50))
-                            .background(
-                                if (isActiveDot) {
-                                    MaterialTheme.colorScheme.primary
-                                } else {
-                                    MaterialTheme.colorScheme.outlineVariant
-                                },
-                            )
-                            .clickable(enabled = !isActiveDot) { currentStep = index },
+                        modifier =
+                            Modifier
+                                .height(8.dp)
+                                .width(dotWidth)
+                                .clip(RoundedCornerShape(50))
+                                .background(
+                                    if (isActiveDot) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.outlineVariant
+                                    },
+                                ).clickable(enabled = !isActiveDot) { currentStep = index },
                     )
                 }
             }
@@ -417,18 +438,20 @@ fun TutorialOverlay(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         TextButton(onClick = {
-                            val params = android.os.Bundle().apply {
-                                putInt("step", currentStep)
-                            }
+                            val params =
+                                android.os.Bundle().apply {
+                                    putInt("step", currentStep)
+                                }
                             analyticsManager.logEvent("tutorial_step_skipped", params)
                             onDismiss()
                         }) {
                             AppText(text = stringResource(R.string.tutorial_skip))
                         }
                         AppButton(onClick = {
-                            val params = android.os.Bundle().apply {
-                                putInt("step", currentStep)
-                            }
+                            val params =
+                                android.os.Bundle().apply {
+                                    putInt("step", currentStep)
+                                }
                             analyticsManager.logEvent("tutorial_step_completed", params)
                             currentStep += 1
                         }) {

@@ -29,14 +29,19 @@ fun isProtectedSalaryTransaction(transaction: Transaction): Boolean =
     transaction.type == TransactionType.INCOME && transaction.category == PROTECTED_INCOME_CATEGORY
 
 /** Variante di [isProtectedSalaryTransaction] per gli schermi dove non è ancora disponibile una [Transaction] completa. */
-fun isProtectedSalaryCategory(categoryName: String?, type: TransactionType?): Boolean =
-    type == TransactionType.INCOME && categoryName == PROTECTED_INCOME_CATEGORY
+fun isProtectedSalaryCategory(
+    categoryName: String?,
+    type: TransactionType?,
+): Boolean = type == TransactionType.INCOME && categoryName == PROTECTED_INCOME_CATEGORY
 
 /**
  * Formats [amount] as an absolute monetary value using [format] preferences.
  * Example: 1234567.89, format(symbol="€", digits=2, dec=",", thou="")  -> "€1234567,89"
  */
-fun formatAmount(amount: Double, format: CurrencyFormat): String {
+fun formatAmount(
+    amount: Double,
+    format: CurrencyFormat,
+): String {
     val absAmount = abs(amount)
     // Use Locale.US to ensure "." is always used as the internal decimal separator,
     // regardless of the device locale (e.g. Italian/French devices use "," which breaks parsing).
@@ -47,23 +52,29 @@ fun formatAmount(amount: Double, format: CurrencyFormat): String {
     val decPart =
         if (dotIndex >= 0 && format.decimalDigits > 0) rawFormatted.substring(dotIndex + 1) else ""
 
-    val intWithSeparator = if (format.thousandsSeparator.isNotEmpty() && intPart.length > 3) {
-        // If thousands separator is the same as decimal separator it would create ambiguity
-        // (e.g. if both are ","), so disable thousands separator in that case.
-        val thousandsSepEffective = if (format.thousandsSeparator == format.decimalSeparator) {
-            ""
-        } else {
-            format.thousandsSeparator
-        }
+    val intWithSeparator =
+        if (format.thousandsSeparator.isNotEmpty() && intPart.length > 3) {
+            // If thousands separator is the same as decimal separator it would create ambiguity
+            // (e.g. if both are ","), so disable thousands separator in that case.
+            val thousandsSepEffective =
+                if (format.thousandsSeparator == format.decimalSeparator) {
+                    ""
+                } else {
+                    format.thousandsSeparator
+                }
 
-        if (thousandsSepEffective.isNotEmpty()) {
-            intPart.reversed().chunked(3).joinToString(thousandsSepEffective).reversed()
+            if (thousandsSepEffective.isNotEmpty()) {
+                intPart
+                    .reversed()
+                    .chunked(3)
+                    .joinToString(thousandsSepEffective)
+                    .reversed()
+            } else {
+                intPart
+            }
         } else {
             intPart
         }
-    } else {
-        intPart
-    }
 
     return buildString {
         append(format.currencySymbol)
@@ -72,11 +83,12 @@ fun formatAmount(amount: Double, format: CurrencyFormat): String {
         val hasThousandsSep = format.thousandsSeparator.isNotEmpty()
         val endsWithThousandsSep = intWithSeparator.endsWith(format.thousandsSeparator)
 
-        val finalIntPart = if (hasDecimals && hasThousandsSep && endsWithThousandsSep) {
-            intWithSeparator.removeSuffix(format.thousandsSeparator)
-        } else {
-            intWithSeparator
-        }
+        val finalIntPart =
+            if (hasDecimals && hasThousandsSep && endsWithThousandsSep) {
+                intWithSeparator.removeSuffix(format.thousandsSeparator)
+            } else {
+                intWithSeparator
+            }
 
         append(finalIntPart)
 
@@ -91,7 +103,11 @@ fun formatAmount(amount: Double, format: CurrencyFormat): String {
  * Formats [amount] with a sign prefix depending on [isIncome].
  * Example: +€1.234,50  or  -€85,00
  */
-fun formatAmountWithSign(amount: Double, format: CurrencyFormat, isIncome: Boolean): String {
+fun formatAmountWithSign(
+    amount: Double,
+    format: CurrencyFormat,
+    isIncome: Boolean,
+): String {
     val sign = if (isIncome) "+" else "-"
     return "$sign${formatAmount(amount, format)}"
 }
@@ -101,19 +117,24 @@ fun formatAmountWithSign(amount: Double, format: CurrencyFormat, isIncome: Boole
  * Negative amounts show the minus sign before the currency symbol.
  * Example: 1234.56 -> "€1.234,56", -1234.56 -> "-€1.234,56"
  */
-fun formatAmountWithNegative(amount: Double, format: CurrencyFormat): String {
-    return if (amount < 0) {
+fun formatAmountWithNegative(
+    amount: Double,
+    format: CurrencyFormat,
+): String =
+    if (amount < 0) {
         "-${formatAmount(amount, format)}"
     } else {
         formatAmount(amount, format)
     }
-}
 
 /**
  * Formats [amount] for transaction display showing +/- based on actual amount sign.
  * Example: 1234.56 -> "+€1.234,56", -1234.56 -> "-€1.234,56"
  */
-fun formatTransactionAmount(amount: Double, format: CurrencyFormat): String {
+fun formatTransactionAmount(
+    amount: Double,
+    format: CurrencyFormat,
+): String {
     val sign = if (amount < 0) "-" else "+"
     return "$sign${formatAmount(amount, format)}"
 }
@@ -130,4 +151,3 @@ fun String?.isValidNote(): Boolean {
     if (this.equals("null", ignoreCase = true)) return false
     return true
 }
-

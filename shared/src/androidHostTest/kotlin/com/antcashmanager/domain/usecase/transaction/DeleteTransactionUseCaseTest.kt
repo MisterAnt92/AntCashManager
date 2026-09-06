@@ -10,43 +10,46 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class DeleteTransactionUseCaseTest {
-
-    private val sampleTransaction = Transaction(
-        id = 1L,
-        title = "Groceries",
-        amount = 85.50,
-        category = "Food",
-        type = TransactionType.EXPENSE,
-        timestamp = 1000L,
-    )
-
-    @Test
-    fun invokeDeletesTransactionFromRepository() = runTest {
-        val fakeRepo = FakeTransactionRepository(listOf(sampleTransaction))
-        val useCase = DeleteTransactionUseCase(fakeRepo)
-
-        useCase(sampleTransaction)
-
-        assertTrue(fakeRepo.transactions.value.isEmpty())
-    }
-
-    @Test
-    fun invokeDeletesOnlyTheSpecifiedTransaction() = runTest {
-        val otherTransaction = Transaction(
-            id = 2L,
-            title = "Salary",
-            amount = 2500.0,
-            category = "Work",
-            type = TransactionType.INCOME,
-            timestamp = 2000L,
+    private val sampleTransaction =
+        Transaction(
+            id = 1L,
+            title = "Groceries",
+            amount = 85.50,
+            category = "Food",
+            type = TransactionType.EXPENSE,
+            timestamp = 1000L,
         )
-        val fakeRepo = FakeTransactionRepository(listOf(sampleTransaction, otherTransaction))
-        val useCase = DeleteTransactionUseCase(fakeRepo)
 
-        useCase(sampleTransaction)
+    @Test
+    fun invokeDeletesTransactionFromRepository() =
+        runTest {
+            val fakeRepo = FakeTransactionRepository(listOf(sampleTransaction))
+            val useCase = DeleteTransactionUseCase(fakeRepo)
 
-        assertEquals(1, fakeRepo.transactions.value.size)
-        assertFalse(fakeRepo.transactions.value.contains(sampleTransaction))
-        assertTrue(fakeRepo.transactions.value.contains(otherTransaction))
-    }
+            useCase(sampleTransaction)
+
+            assertTrue(fakeRepo.transactions.value.isEmpty())
+        }
+
+    @Test
+    fun invokeDeletesOnlyTheSpecifiedTransaction() =
+        runTest {
+            val otherTransaction =
+                Transaction(
+                    id = 2L,
+                    title = "Salary",
+                    amount = 2500.0,
+                    category = "Work",
+                    type = TransactionType.INCOME,
+                    timestamp = 2000L,
+                )
+            val fakeRepo = FakeTransactionRepository(listOf(sampleTransaction, otherTransaction))
+            val useCase = DeleteTransactionUseCase(fakeRepo)
+
+            useCase(sampleTransaction)
+
+            assertEquals(1, fakeRepo.transactions.value.size)
+            assertFalse(fakeRepo.transactions.value.contains(sampleTransaction))
+            assertTrue(fakeRepo.transactions.value.contains(otherTransaction))
+        }
 }

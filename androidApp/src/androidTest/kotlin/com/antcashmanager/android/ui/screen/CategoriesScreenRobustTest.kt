@@ -28,7 +28,6 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 class CategoriesScreenRobustTest : BaseInstrumentationTest() {
-
     @Test
     fun categoriesScreen_shouldBeNavigable() {
         composeTestRule.setContent {
@@ -40,13 +39,15 @@ class CategoriesScreenRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Navigate to categories
-        composeTestRule.onNodeWithTag("nav_categories")
+        composeTestRule
+            .onNodeWithTag("nav_categories")
             .performClick()
 
         composeTestRule.waitForIdle()
 
         // Verify categories screen is displayed
-        composeTestRule.onNodeWithTag("categories_screen")
+        composeTestRule
+            .onNodeWithTag("categories_screen")
             .assertIsDisplayed()
     }
 
@@ -61,13 +62,15 @@ class CategoriesScreenRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Navigate to categories
-        composeTestRule.onNodeWithTag("nav_categories")
+        composeTestRule
+            .onNodeWithTag("nav_categories")
             .performClick()
 
         composeTestRule.waitForIdle()
 
         // Verify categories list is visible
-        composeTestRule.onNodeWithTag("categories_list")
+        composeTestRule
+            .onNodeWithTag("categories_list")
             .assertIsDisplayed()
     }
 
@@ -82,13 +85,15 @@ class CategoriesScreenRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Navigate to categories
-        composeTestRule.onNodeWithTag("nav_categories")
+        composeTestRule
+            .onNodeWithTag("nav_categories")
             .performClick()
 
         composeTestRule.waitForIdle()
 
         // Verify search bar is visible
-        composeTestRule.onNodeWithTag("categories_search_bar")
+        composeTestRule
+            .onNodeWithTag("categories_search_bar")
             .assertIsDisplayed()
     }
 
@@ -103,13 +108,15 @@ class CategoriesScreenRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Navigate to categories
-        composeTestRule.onNodeWithTag("nav_categories")
+        composeTestRule
+            .onNodeWithTag("nav_categories")
             .performClick()
 
         composeTestRule.waitForIdle()
 
         // Verify add button is visible
-        composeTestRule.onNodeWithTag("add_category_button")
+        composeTestRule
+            .onNodeWithTag("add_category_button")
             .assertIsDisplayed()
     }
 
@@ -124,13 +131,15 @@ class CategoriesScreenRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Navigate to categories
-        composeTestRule.onNodeWithTag("nav_categories")
+        composeTestRule
+            .onNodeWithTag("nav_categories")
             .performClick()
 
         composeTestRule.waitForIdle()
 
         // Verify reorder button is visible
-        composeTestRule.onNodeWithTag("reorder_categories_button")
+        composeTestRule
+            .onNodeWithTag("reorder_categories_button")
             .assertIsDisplayed()
     }
 }

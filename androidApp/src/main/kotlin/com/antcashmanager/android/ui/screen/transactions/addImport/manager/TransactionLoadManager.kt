@@ -25,7 +25,6 @@ class TransactionLoadManager(
     private val getCategoriesUseCase: GetCategoriesUseCase,
     private val getMealVoucherValueUseCase: GetMealVoucherValueUseCase,
 ) {
-
     /**
      * Carica le categorie disponibili dal database.
      *
@@ -34,11 +33,14 @@ class TransactionLoadManager(
      *
      * @return Result contenente la lista di categorie ordinate, o un errore
      */
-    suspend fun loadCategories(): Result<List<Category>> = runCatching {
-        getCategoriesUseCase().first().getOrThrow()
-            .filterNot { it.isHidden }
-            .sortedBy { it.sortOrder }
-    }
+    suspend fun loadCategories(): Result<List<Category>> =
+        runCatching {
+            getCategoriesUseCase()
+                .first()
+                .getOrThrow()
+                .filterNot { it.isHidden }
+                .sortedBy { it.sortOrder }
+        }
 
     /**
      * Carica il valore unitario dei buoni pasto dalle settings.
@@ -47,9 +49,10 @@ class TransactionLoadManager(
      *
      * @return Result contenente il valore unitario dei buoni pasto
      */
-    suspend fun loadMealVoucherValue(): Result<Double> = runCatching {
-        getMealVoucherValueUseCase().first().getOrDefault(DisplayConstant.DEFAULT_MEAL_VOUCHER_VALUE)
-    }
+    suspend fun loadMealVoucherValue(): Result<Double> =
+        runCatching {
+            getMealVoucherValueUseCase().first().getOrDefault(DisplayConstant.DEFAULT_MEAL_VOUCHER_VALUE)
+        }
 
     /**
      * Carica una transazione esistente dal DB per la modifica.
@@ -66,17 +69,22 @@ class TransactionLoadManager(
      * @return Result contenente l'id della transazione caricata per validazione
      * @throws IllegalArgumentException Se la categoria non è trovata
      */
-    suspend fun loadTransactionForEdit(transactionId: Long): Result<Long> = runCatching {
-        val transaction = getTransactionByIdUseCase(transactionId).getOrThrow()
-            ?: throw IllegalArgumentException("Transaction with id $transactionId not found")
+    suspend fun loadTransactionForEdit(transactionId: Long): Result<Long> =
+        runCatching {
+            val transaction =
+                getTransactionByIdUseCase(transactionId).getOrThrow()
+                    ?: throw IllegalArgumentException("Transaction with id $transactionId not found")
 
-        val categoryList = getCategoriesUseCase().first().getOrThrow()
-        val selectedCat = categoryList.find { it.name == transaction.category }
-            ?: throw IllegalArgumentException("Category '${transaction.category}' not found for transaction ${transaction.id}")
+            val categoryList = getCategoriesUseCase().first().getOrThrow()
+            val selectedCat =
+                categoryList.find { it.name == transaction.category }
+                    ?: throw IllegalArgumentException(
+                        "Category '${transaction.category}' not found for transaction ${transaction.id}",
+                    )
 
-        // Valida che la categoria esista
-        transactionId
-    }
+            // Valida che la categoria esista
+            transactionId
+        }
 
     /**
      * Prepara lo stato iniziale per la modifica di una transazione.
@@ -87,43 +95,49 @@ class TransactionLoadManager(
      */
     suspend fun prepareEditState(
         transactionId: Long,
-        currentState: AddTransactionState
-    ): Result<AddTransactionState> = runCatching {
-        val transaction = getTransactionByIdUseCase(transactionId).getOrThrow()
-            ?: throw IllegalArgumentException("Transaction with id $transactionId not found")
+        currentState: AddTransactionState,
+    ): Result<AddTransactionState> =
+        runCatching {
+            val transaction =
+                getTransactionByIdUseCase(transactionId).getOrThrow()
+                    ?: throw IllegalArgumentException("Transaction with id $transactionId not found")
 
-        val categoryList = getCategoriesUseCase().first().getOrThrow()
-        val selectedCat = categoryList.find { it.name == transaction.category }
-            ?: throw IllegalArgumentException("Category '${transaction.category}' not found for transaction ${transaction.id}")
+            val categoryList = getCategoriesUseCase().first().getOrThrow()
+            val selectedCat =
+                categoryList.find { it.name == transaction.category }
+                    ?: throw IllegalArgumentException(
+                        "Category '${transaction.category}' not found for transaction ${transaction.id}",
+                    )
 
-        // La categoria già assegnata alla transazione deve restare selezionabile
-        // nel picker anche se nel frattempo è stata nascosta
-        val visibleCategories = categoryList.filterNot { it.isHidden }
-        val categoriesForPicker = if (selectedCat.isHidden) {
-            visibleCategories + selectedCat
-        } else {
-            visibleCategories
+            // La categoria già assegnata alla transazione deve restare selezionabile
+            // nel picker anche se nel frattempo è stata nascosta
+            val visibleCategories = categoryList.filterNot { it.isHidden }
+            val categoriesForPicker =
+                if (selectedCat.isHidden) {
+                    visibleCategories + selectedCat
+                } else {
+                    visibleCategories
+                }
+
+            currentState.copy(
+                isModifying = true,
+                transactionId = transactionId,
+                selectedCategory = selectedCat,
+                selectedType = transaction.type,
+                title = transaction.title,
+                amount = abs(transaction.amount).toString(),
+                notes = transaction.notes,
+                payee = transaction.payee,
+                location = transaction.location,
+                tags = transaction.tags,
+                timestamp = transaction.timestamp,
+                isRecurring = transaction.isRecurring,
+                recurrenceInterval = transaction.recurrenceInterval,
+                selectedPaymentType = transaction.paymentType,
+                mealVoucherCount = transaction.mealVoucherCount.toString(),
+                mealVoucherDifference = transaction.mealVoucherDifference.toString(),
+                isLoading = false,
+                categories = categoriesForPicker,
+            )
         }
-
-        currentState.copy(
-            isModifying = true,
-            transactionId = transactionId,
-            selectedCategory = selectedCat,
-            selectedType = transaction.type,
-            title = transaction.title,
-            amount = abs(transaction.amount).toString(),
-            notes = transaction.notes,
-            payee = transaction.payee,
-            location = transaction.location,
-            tags = transaction.tags,
-            timestamp = transaction.timestamp,
-            isRecurring = transaction.isRecurring,
-            recurrenceInterval = transaction.recurrenceInterval,
-            selectedPaymentType = transaction.paymentType,
-            mealVoucherCount = transaction.mealVoucherCount.toString(),
-            mealVoucherDifference = transaction.mealVoucherDifference.toString(),
-            isLoading = false,
-            categories = categoriesForPicker,
-        )
-    }
 }

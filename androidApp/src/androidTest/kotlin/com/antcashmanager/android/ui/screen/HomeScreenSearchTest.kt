@@ -1,10 +1,6 @@
 package com.antcashmanager.android.ui.screen
 
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.antcashmanager.android.navigation.AntCashManagerNavHost
 import com.antcashmanager.android.test.base.BaseInstrumentationTest
@@ -28,7 +24,6 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 class HomeScreenSearchTest : BaseInstrumentationTest() {
-
     @Test
     fun searchComponent_shouldBeHidden_initially() {
         composeTestRule.setContent {
@@ -40,7 +35,8 @@ class HomeScreenSearchTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Search input should not be visible initially (search is collapsed)
-        composeTestRule.onNodeWithTag("search_input")
+        composeTestRule
+            .onNodeWithTag("search_input")
             .assertDoesNotExist()
     }
 
@@ -55,7 +51,8 @@ class HomeScreenSearchTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Search input should not be visible initially
-        composeTestRule.onNodeWithTag("search_input")
+        composeTestRule
+            .onNodeWithTag("search_input")
             .assertDoesNotExist()
 
         // Click search icon in the top bar (header search icon)

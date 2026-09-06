@@ -34,7 +34,7 @@ fun AppUnitDropdown(
 ) {
     ExposedDropdownMenuBox(
         expanded = expanded,
-        onExpandedChange = onExpandedChange
+        onExpandedChange = onExpandedChange,
     ) {
         TextField(
             value = selectedValue,
@@ -43,19 +43,20 @@ fun AppUnitDropdown(
             label = { AppText(label) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             shape = shape,
-            modifier = modifier
-                .fillMaxWidth()
+            modifier =
+                modifier
+                    .fillMaxWidth(),
         )
         ExposedDropdownMenu(
             expanded = expanded,
-            onDismissRequest = { onExpandedChange(false) }
+            onDismissRequest = { onExpandedChange(false) },
         ) {
             menuItems.forEach { unit ->
                 DropdownMenuItem(
                     text = { AppText(unit) },
                     onClick = {
                         onValueChange(unit)
-                    }
+                    },
                 )
             }
         }
@@ -74,8 +75,11 @@ fun AppUnitDropdownPreview() {
             onExpandedChange = { expanded = it },
             selectedValue = selected,
             label = "Length Unit",
-            onValueChange = { selected = it; expanded = false },
-            menuItems = listOf("mm", "cm", "in")
+            onValueChange = {
+                selected = it
+                expanded = false
+            },
+            menuItems = listOf("mm", "cm", "in"),
         )
     }
 }
@@ -96,7 +100,10 @@ private fun AppUnitDropdownPreviewDark() {
             onExpandedChange = { expanded = it },
             selectedValue = selected,
             label = "Length Unit",
-            onValueChange = { selected = it; expanded = false },
+            onValueChange = {
+                selected = it
+                expanded = false
+            },
             menuItems = listOf("mm", "cm", "in"),
         )
     }

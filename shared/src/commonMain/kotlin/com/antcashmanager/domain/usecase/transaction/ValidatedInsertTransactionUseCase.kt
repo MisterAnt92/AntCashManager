@@ -54,7 +54,6 @@ public class ValidatedInsertTransactionUseCase(
     private val validator: TransactionValidator,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : UseCase<Transaction, Long>(dispatcher) {
-
     override suspend fun execute(params: Transaction): Long {
         // Validate before persistence
         val validationResult = validator.validate(params)
@@ -83,7 +82,9 @@ public class ValidatedInsertTransactionUseCase(
  *     }
  * ```
  */
-public fun <T> Result<T>.handleValidationError(action: (List<com.antcashmanager.domain.validation.ValidationError>) -> Unit): Result<T> {
+public fun <T> Result<T>.handleValidationError(
+    action: (List<com.antcashmanager.domain.validation.ValidationError>) -> Unit,
+): Result<T> {
     val exception = exceptionOrNull()
     if (exception is ValidationException) {
         action(exception.errors)

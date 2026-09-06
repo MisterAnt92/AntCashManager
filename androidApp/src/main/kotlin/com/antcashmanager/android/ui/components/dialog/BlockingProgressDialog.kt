@@ -47,10 +47,11 @@ fun BlockingProgressDialog(
 ) {
     Dialog(
         onDismissRequest = {},
-        properties = DialogProperties(
-            dismissOnBackPress = false,
-            dismissOnClickOutside = false,
-        ),
+        properties =
+            DialogProperties(
+                dismissOnBackPress = false,
+                dismissOnClickOutside = false,
+            ),
     ) {
         Surface(
             shape = MaterialTheme.shapes.extraLarge,
@@ -58,9 +59,10 @@ fun BlockingProgressDialog(
             tonalElevation = 6.dp,
         ) {
             Column(
-                modifier = Modifier
-                    .padding(32.dp)
-                    .widthIn(min = 220.dp),
+                modifier =
+                    Modifier
+                        .padding(32.dp)
+                        .widthIn(min = 220.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 val infiniteTransition =
@@ -68,10 +70,11 @@ fun BlockingProgressDialog(
                 val bounce by infiniteTransition.animateFloat(
                     initialValue = 0f,
                     targetValue = 2f * PI.toFloat(),
-                    animationSpec = infiniteRepeatable(
-                        animation = tween(durationMillis = 1400, easing = LinearEasing),
-                        repeatMode = RepeatMode.Restart,
-                    ),
+                    animationSpec =
+                        infiniteRepeatable(
+                            animation = tween(durationMillis = 1400, easing = LinearEasing),
+                            repeatMode = RepeatMode.Restart,
+                        ),
                     label = "blocking_progress_bounce_angle",
                 )
 
@@ -83,13 +86,14 @@ fun BlockingProgressDialog(
                     Icon(
                         imageVector = icon,
                         contentDescription = null,
-                        modifier = Modifier
-                            .size(32.dp)
-                            .graphicsLayer {
-                                // Piccolo "respiro" verticale continuo: rende l'attesa più simpatica
-                                // senza distrarre dallo spinner, che resta l'indicatore di stato reale.
-                                translationY = sin(bounce) * 6f
-                            },
+                        modifier =
+                            Modifier
+                                .size(32.dp)
+                                .graphicsLayer {
+                                    // Piccolo "respiro" verticale continuo: rende l'attesa più simpatica
+                                    // senza distrarre dallo spinner, che resta l'indicatore di stato reale.
+                                    translationY = sin(bounce) * 6f
+                                },
                         tint = MaterialTheme.colorScheme.primary,
                     )
                 }

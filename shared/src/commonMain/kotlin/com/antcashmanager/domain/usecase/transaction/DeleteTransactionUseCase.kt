@@ -13,7 +13,5 @@ public class DeleteTransactionUseCase(
     private val transactionRepository: TransactionRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : UseCase<Transaction, Unit>(dispatcher) {
-
-    override suspend fun execute(params: Transaction): Unit =
-        transactionRepository.deleteTransaction(params)
+    override suspend fun execute(params: Transaction): Unit = transactionRepository.deleteTransaction(params)
 }

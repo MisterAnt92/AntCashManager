@@ -16,4 +16,3 @@ public data class TransactionSuggestions(
     public val locations: List<String> = emptyList(),
     public val tags: List<String> = emptyList(),
 )
-

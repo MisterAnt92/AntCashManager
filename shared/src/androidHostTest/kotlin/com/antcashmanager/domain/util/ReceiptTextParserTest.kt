@@ -9,7 +9,6 @@ import org.junit.Test
  * Test per [ReceiptTextParser] — parsing del testo grezzo degli scontrini.
  */
 class ReceiptTextParserTest {
-
     // ── parseDecimal ─────────────────────────────────────────────────────────
 
     @Test
@@ -36,12 +35,13 @@ class ReceiptTextParserTest {
 
     @Test
     fun parse_shouldExtractTotal_whenTotaleKeywordPresent() {
-        val text = """
+        val text =
+            """
             SUPERMERCATO ABC
             Via Roma 1
             TOTALE EUR    68,90
             GRAZIE
-        """.trimIndent()
+            """.trimIndent()
 
         val result = ReceiptTextParser.parse(text)
         assertEquals(68.90, result.totalAmount, 0.001)
@@ -56,11 +56,12 @@ class ReceiptTextParserTest {
 
     @Test
     fun parse_shouldFallbackToMaxValue_whenNoTotaleKeyword() {
-        val text = """
+        val text =
+            """
             Item A  10,00
             Item B  15,50
             Item C  30,00
-        """.trimIndent()
+            """.trimIndent()
 
         val result = ReceiptTextParser.parse(text)
         assertEquals(30.0, result.totalAmount, 0.001)
@@ -94,11 +95,12 @@ class ReceiptTextParserTest {
 
     @Test
     fun parse_shouldExtractPayee_fromFirstMeaningfulLine() {
-        val text = """
+        val text =
+            """
             ESSELUNGA S.P.A.
             Via Roma 1, Milano
             TOTALE 68,90
-        """.trimIndent()
+            """.trimIndent()
 
         val result = ReceiptTextParser.parse(text)
         assertEquals("ESSELUNGA S.P.A.", result.payee)
@@ -106,11 +108,12 @@ class ReceiptTextParserTest {
 
     @Test
     fun parse_shouldIgnoreLinesThatAreOnlyNumbers_forPayee() {
-        val text = """
+        val text =
+            """
             12345678
             CONAD SRL
             TOTALE 20,00
-        """.trimIndent()
+            """.trimIndent()
 
         val result = ReceiptTextParser.parse(text)
         assertEquals("CONAD SRL", result.payee)
@@ -120,11 +123,12 @@ class ReceiptTextParserTest {
 
     @Test
     fun parse_shouldExtractLocation_whenAddressPatternPresent() {
-        val text = """
+        val text =
+            """
             LIDL ITALIA
             VIA GARIBALDI 10, TORINO
             TOTALE 35,00
-        """.trimIndent()
+            """.trimIndent()
 
         val result = ReceiptTextParser.parse(text)
         assertTrue(result.location.contains("GARIBALDI", ignoreCase = true))
@@ -246,7 +250,8 @@ class ReceiptTextParserTest {
 
     @Test
     fun parse_shouldExtractAllFields_forCompleteItalianReceipt() {
-        val text = """
+        val text =
+            """
             COOP ITALIA
             PIAZZA VENEZIA 3, ROMA
             P.IVA 01234567890
@@ -259,7 +264,7 @@ class ReceiptTextParserTest {
             TOTALE EUR    3,20
             CONTANTE      5,00
             RESTO         1,80
-        """.trimIndent()
+            """.trimIndent()
 
         val result = ReceiptTextParser.parse(text)
         assertEquals(3.20, result.totalAmount, 0.01)
@@ -268,4 +273,3 @@ class ReceiptTextParserTest {
         assertTrue(result.location.isNotBlank())
     }
 }
-

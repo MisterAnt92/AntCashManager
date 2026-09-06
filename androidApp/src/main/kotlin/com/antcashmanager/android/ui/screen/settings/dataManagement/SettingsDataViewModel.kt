@@ -8,8 +8,8 @@ import com.antcashmanager.android.analytics.tracker.PerformanceTracker
 import com.antcashmanager.android.auth.GoogleSignInManager
 import com.antcashmanager.android.data.backup.BackupService
 import com.antcashmanager.android.security.BackupPayloadCipher
-import com.antcashmanager.android.work.AutoBackupScheduler
 import com.antcashmanager.android.ui.base.BaseViewModel
+import com.antcashmanager.android.work.AutoBackupScheduler
 import com.antcashmanager.domain.model.BackupDestination
 import com.antcashmanager.domain.model.None
 import com.antcashmanager.domain.repository.CategoryRepository
@@ -124,7 +124,10 @@ class SettingsDataViewModel(
                     settingsRepositoryRef.setDataEncryptionEnabled(!enabled)
                 } catch (rollbackError: Exception) {
                     logError("CRITICAL: Failed to rollback encryption flag: ${rollbackError.message}")
-                    errorTracker.trackDatabaseError("encryption_toggle_rollback_failed", rollbackError.message ?: "unknown")
+                    errorTracker.trackDatabaseError(
+                        "encryption_toggle_rollback_failed",
+                        rollbackError.message ?: "unknown",
+                    )
                 }
                 errorTracker.trackDatabaseError("encryption_toggle_failed", e.message ?: "unknown")
             }
@@ -148,16 +151,16 @@ class SettingsDataViewModel(
                     reencrypted++
                 } catch (e: Exception) {
                     logError("Failed to re-encrypt transaction ${transaction.id}: ${e.message}")
-                    throw e  // Fail fast: abort re-encryption on first error
+                    throw e // Fail fast: abort re-encryption on first error
                 }
             }
 
             logDebug("Successfully re-encrypted $reencrypted transactions")
         } catch (e: CancellationException) {
-            throw e  // Propagate cancellation
+            throw e // Propagate cancellation
         } catch (e: Exception) {
             logError("Re-encryption failed: ${e.message}")
-            throw e  // Propagate to caller for rollback handling
+            throw e // Propagate to caller for rollback handling
         }
     }
 
@@ -335,15 +338,15 @@ class SettingsDataViewModel(
                                 showDeleteSuccessDialog = true,
                             )
                         }
-                    }
-                    .onFailure { error ->
+                    }.onFailure { error ->
                         if (error is CancellationException) throw error
                         logError("Error deleting data: ${error.message}", error)
                         _state.update {
                             it.copy(
-                                deleteResult = DeleteResult.Error(
-                                    error.message ?: SettingsDataConstant.UNKNOWN_ERROR,
-                                ),
+                                deleteResult =
+                                    DeleteResult.Error(
+                                        error.message ?: SettingsDataConstant.UNKNOWN_ERROR,
+                                    ),
                                 showDeleteConfirmDialog = false,
                             )
                         }
@@ -354,9 +357,10 @@ class SettingsDataViewModel(
                 logError("Error deleting data: ${error.message}", error)
                 _state.update {
                     it.copy(
-                        deleteResult = DeleteResult.Error(
-                            error.message ?: SettingsDataConstant.UNKNOWN_ERROR,
-                        ),
+                        deleteResult =
+                            DeleteResult.Error(
+                                error.message ?: SettingsDataConstant.UNKNOWN_ERROR,
+                            ),
                         showDeleteConfirmDialog = false,
                     )
                 }
@@ -389,28 +393,29 @@ class SettingsDataViewModel(
                     val fileSizeMb = jsonString.length.toDouble() / (1024 * 1024)
                     performanceTracker.trackBackupRestoreDuration(duration, fileSizeMb, operation = "backup")
 
-                    val payloadToPersist = if (_state.value.dataEncryptionEnabled) {
-                        runCatching { BackupPayloadCipher.encrypt(jsonString) }
-                            .getOrElse { error ->
-                                val message = error.message ?: SettingsDataConstant.UNKNOWN_ERROR
-                                _state.update {
-                                    it.copy(
-                                        backupResult = BackupResult.Error(message),
-                                        backupErrorMessage = message,
-                                        showBackupErrorDialog = true,
-                                    )
+                    val payloadToPersist =
+                        if (_state.value.dataEncryptionEnabled) {
+                            runCatching { BackupPayloadCipher.encrypt(jsonString) }
+                                .getOrElse { error ->
+                                    val message = error.message ?: SettingsDataConstant.UNKNOWN_ERROR
+                                    _state.update {
+                                        it.copy(
+                                            backupResult = BackupResult.Error(message),
+                                            backupErrorMessage = message,
+                                            showBackupErrorDialog = true,
+                                        )
+                                    }
+                                    return@onSuccess
                                 }
-                                return@onSuccess
-                            }
-                    } else {
-                        jsonString
-                    }
+                        } else {
+                            jsonString
+                        }
 
-                    val timestamp = SimpleDateFormat(
-                        SettingsDataConstant.BACKUP_TIMESTAMP_PATTERN,
-                        Locale.getDefault(),
-                    )
-                        .format(Date())
+                    val timestamp =
+                        SimpleDateFormat(
+                            SettingsDataConstant.BACKUP_TIMESTAMP_PATTERN,
+                            Locale.getDefault(),
+                        ).format(Date())
                     _state.update {
                         it.copy(
                             backupResult = BackupResult.Success,
@@ -419,16 +424,16 @@ class SettingsDataViewModel(
                                 "${SettingsDataConstant.BACKUP_FILE_PREFIX}$timestamp${SettingsDataConstant.BACKUP_FILE_SUFFIX}",
                         )
                     }
-                }
-                .onFailure { error ->
+                }.onFailure { error ->
                     if (error is CancellationException) throw error
                     val duration = System.currentTimeMillis() - backupStartTime
-                    val errorCode = when {
-                        error.message?.contains("permission") == true -> "permission_denied"
-                        error.message?.contains("storage") == true -> "storage_error"
-                        error.message?.contains("encrypt") == true -> "encryption_error"
-                        else -> "backup_failed"
-                    }
+                    val errorCode =
+                        when {
+                            error.message?.contains("permission") == true -> "permission_denied"
+                            error.message?.contains("storage") == true -> "storage_error"
+                            error.message?.contains("encrypt") == true -> "encryption_error"
+                            else -> "backup_failed"
+                        }
                     errorTracker.trackSyncError("backup_local", errorCode)
                     val message = error.message ?: SettingsDataConstant.UNKNOWN_ERROR
                     _state.update {
@@ -447,60 +452,62 @@ class SettingsDataViewModel(
         _state.update { it.copy(restoreResult = RestoreOperationResult.Loading) }
         val restoreStartTime = System.currentTimeMillis()
 
-        val payloadToRestore = if (BackupPayloadCipher.isEncryptedPayload(jsonString)) {
-            runCatching { BackupPayloadCipher.decrypt(jsonString) }
-                .onFailure { error ->
-                    // ✅ Log API level info for diagnostics
-                    Logger.e(tag = "SettingsDataViewModel") {
-                        "Decryption failed on API ${Build.VERSION.SDK_INT}: ${error.message}"
-                    }
-                    // Track decryption error
-                    val errorCode = when (error) {
-                        is javax.crypto.BadPaddingException -> "wrong_password"
-                        is java.security.InvalidKeyException -> "invalid_key"
-                        is IllegalArgumentException -> "invalid_payload"
-                        else -> "decryption_failed"
-                    }
-                    errorTracker.trackSyncError("restore_local", errorCode)
-                }
-                .getOrElse { error ->
-                    // ✅ Enhanced error message mapping
-                    val message = when (error) {
-                        is IllegalArgumentException -> {
-                            when {
-                                error.message?.contains("another device") == true -> {
-                                    "Questo backup è stato creato su un altro dispositivo. " +
-                                        "I backup con crittografia device-bound non possono essere ripristinati su telefoni diversi. " +
-                                        "Usa backup con password protetta (v1.8+) per trasferimenti tra dispositivi."
-                                }
-                                error.message?.contains("password-based") == true -> {
-                                    "Questo backup richiede una password. Aggiorna all'app v1.8+ per ripristinare backup con password."
-                                }
-                                else -> "Payload di backup invalido o danneggiato"
+        val payloadToRestore =
+            if (BackupPayloadCipher.isEncryptedPayload(jsonString)) {
+                runCatching { BackupPayloadCipher.decrypt(jsonString) }
+                    .onFailure { error ->
+                        // ✅ Log API level info for diagnostics
+                        Logger.e(tag = "SettingsDataViewModel") {
+                            "Decryption failed on API ${Build.VERSION.SDK_INT}: ${error.message}"
+                        }
+                        // Track decryption error
+                        val errorCode =
+                            when (error) {
+                                is javax.crypto.BadPaddingException -> "wrong_password"
+                                is java.security.InvalidKeyException -> "invalid_key"
+                                is IllegalArgumentException -> "invalid_payload"
+                                else -> "decryption_failed"
                             }
+                        errorTracker.trackSyncError("restore_local", errorCode)
+                    }.getOrElse { error ->
+                        // ✅ Enhanced error message mapping
+                        val message =
+                            when (error) {
+                                is IllegalArgumentException -> {
+                                    when {
+                                        error.message?.contains("another device") == true -> {
+                                            "Questo backup è stato creato su un altro dispositivo. " +
+                                                "I backup con crittografia device-bound non possono essere ripristinati su telefoni diversi. " +
+                                                "Usa backup con password protetta (v1.8+) per trasferimenti tra dispositivi."
+                                        }
+                                        error.message?.contains("password-based") == true -> {
+                                            "Questo backup richiede una password. Aggiorna all'app v1.8+ per ripristinare backup con password."
+                                        }
+                                        else -> "Payload di backup invalido o danneggiato"
+                                    }
+                                }
+                                is javax.crypto.BadPaddingException -> {
+                                    "Chiave di crittografia non corrisponde - password errata?"
+                                }
+                                is java.security.InvalidKeyException -> {
+                                    "Chiave di crittografia non valida"
+                                }
+                                else -> {
+                                    error.message ?: SettingsDataConstant.UNKNOWN_ERROR
+                                }
+                            }
+                        _state.update {
+                            it.copy(
+                                restoreResult = RestoreOperationResult.Error(message),
+                                restoreErrorMessage = message,
+                                showRestoreErrorDialog = true,
+                            )
                         }
-                        is javax.crypto.BadPaddingException -> {
-                            "Chiave di crittografia non corrisponde - password errata?"
-                        }
-                        is java.security.InvalidKeyException -> {
-                            "Chiave di crittografia non valida"
-                        }
-                        else -> {
-                            error.message ?: SettingsDataConstant.UNKNOWN_ERROR
-                        }
+                        return
                     }
-                    _state.update {
-                        it.copy(
-                            restoreResult = RestoreOperationResult.Error(message),
-                            restoreErrorMessage = message,
-                            showRestoreErrorDialog = true,
-                        )
-                    }
-                    return
-                }
-        } else {
-            jsonString
-        }
+            } else {
+                jsonString
+            }
 
         viewModelScope.launch {
             withMinimumLoadingDuration { backupService.restoreBackup(payloadToRestore) }
@@ -511,28 +518,30 @@ class SettingsDataViewModel(
 
                     _state.update {
                         it.copy(
-                            restoreResult = RestoreOperationResult.Success(
-                                transactions = result.transactionsRestored,
-                                categories = result.categoriesRestored,
-                            ),
-                            restoreSuccessInfo = RestoreSuccessInfo(
-                                transactions = result.transactionsRestored,
-                                categories = result.categoriesRestored,
-                            ),
+                            restoreResult =
+                                RestoreOperationResult.Success(
+                                    transactions = result.transactionsRestored,
+                                    categories = result.categoriesRestored,
+                                ),
+                            restoreSuccessInfo =
+                                RestoreSuccessInfo(
+                                    transactions = result.transactionsRestored,
+                                    categories = result.categoriesRestored,
+                                ),
                             showRestoreSuccessDialog = true,
                         )
                     }
                     settingsRepositoryRef.setLastRestoreTimestamp(System.currentTimeMillis())
-                }
-                .onFailure { error ->
+                }.onFailure { error ->
                     if (error is CancellationException) throw error
-                    val errorCode = when {
-                        error.message?.contains("permission") == true -> "permission_denied"
-                        error.message?.contains("invalid") == true -> "invalid_data"
-                        error.message?.contains("schema") == true -> "schema_mismatch"
-                        error.message?.contains("database") == true -> "database_error"
-                        else -> "restore_failed"
-                    }
+                    val errorCode =
+                        when {
+                            error.message?.contains("permission") == true -> "permission_denied"
+                            error.message?.contains("invalid") == true -> "invalid_data"
+                            error.message?.contains("schema") == true -> "schema_mismatch"
+                            error.message?.contains("database") == true -> "database_error"
+                            else -> "restore_failed"
+                        }
                     errorTracker.trackSyncError("restore_local", errorCode)
                     val message = error.message ?: SettingsDataConstant.UNKNOWN_ERROR
                     _state.update {
@@ -620,7 +629,15 @@ class SettingsDataViewModel(
                     }
                 } else {
                     val throwable = signInResult.exceptionOrNull()
-                    val error = if (throwable is Exception) throwable else Exception(throwable?.message ?: "Unknown sign-in error", throwable)
+                    val error =
+                        if (throwable is Exception) {
+                            throwable
+                        } else {
+                            Exception(
+                                throwable?.message ?: "Unknown sign-in error",
+                                throwable,
+                            )
+                        }
                     handleGoogleSignInError(error)
                 }
             } catch (e: Exception) {
@@ -732,4 +749,3 @@ class SettingsDataViewModel(
         }
     }
 }
-

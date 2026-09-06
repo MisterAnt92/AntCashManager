@@ -20,11 +20,12 @@ fun TransactionDisplayDialog(
     onDisplayTypeSelected: (TransactionDisplayType) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val options = listOf(
-        TransactionDisplayType.TREND to stringResource(R.string.settings_transaction_display_trend),
-        TransactionDisplayType.CATEGORY to stringResource(R.string.settings_transaction_display_category),
-        TransactionDisplayType.NONE to stringResource(R.string.settings_transaction_display_none),
-    )
+    val options =
+        listOf(
+            TransactionDisplayType.TREND to stringResource(R.string.settings_transaction_display_trend),
+            TransactionDisplayType.CATEGORY to stringResource(R.string.settings_transaction_display_category),
+            TransactionDisplayType.NONE to stringResource(R.string.settings_transaction_display_none),
+        )
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -38,7 +39,8 @@ fun TransactionDisplayDialog(
                         leadingContent = {
                             AppRadioButton(
                                 selected = type == currentDisplayType,
-                                onClick = { onDisplayTypeSelected(type) })
+                                onClick = { onDisplayTypeSelected(type) },
+                            )
                         },
                     )
                 }
@@ -47,4 +49,3 @@ fun TransactionDisplayDialog(
         confirmButton = { TextButton(onClick = onDismiss) { AppText(stringResource(R.string.common_cancel)) } },
     )
 }
-

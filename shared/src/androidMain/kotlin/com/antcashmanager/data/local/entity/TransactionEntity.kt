@@ -8,11 +8,11 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = "transactions",
     indices = [
-        Index("timestamp"),           // ORDER BY timestamp
-        Index("is_recurring"),        // WHERE is_recurring = 1
-        Index("category"),            // WHERE category = :category
-        Index("type")                 // WHERE type = :type
-    ]
+        Index("timestamp"), // ORDER BY timestamp
+        Index("is_recurring"), // WHERE is_recurring = 1
+        Index("category"), // WHERE category = :category
+        Index("type"), // WHERE type = :type
+    ],
 )
 public data class TransactionEntity(
     @PrimaryKey(autoGenerate = true)

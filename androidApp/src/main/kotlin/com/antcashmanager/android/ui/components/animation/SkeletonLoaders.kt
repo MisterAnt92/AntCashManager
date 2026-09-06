@@ -25,7 +25,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
-import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 @Composable
@@ -38,21 +37,23 @@ fun SkeletonLoader(
     val shimmerAlpha by infiniteTransition.animateFloat(
         initialValue = 0.2f,
         targetValue = 0.9f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1200, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse,
-        ),
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(1200, easing = LinearEasing),
+                repeatMode = RepeatMode.Reverse,
+            ),
         label = "shimmer_alpha",
     )
 
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(height)
-            .background(
-                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = shimmerAlpha),
-                shape = RoundedCornerShape(cornerRadius.dp),
-            ),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(height)
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = shimmerAlpha),
+                    shape = RoundedCornerShape(cornerRadius.dp),
+                ),
     )
 }
 
@@ -67,9 +68,10 @@ fun TransactionSkeletonLoader(
     ) {
         items(itemCount) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 4.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 4.dp),
             ) {
                 SkeletonLoader(height = 16.dp, cornerRadius = 8)
                 VerticalSpacer(SpacingSize.XS)
@@ -78,15 +80,17 @@ fun TransactionSkeletonLoader(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     SkeletonLoader(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(12.dp),
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .height(12.dp),
                         cornerRadius = 6,
                     )
                     SkeletonLoader(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(12.dp),
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .height(12.dp),
                         cornerRadius = 6,
                     )
                 }

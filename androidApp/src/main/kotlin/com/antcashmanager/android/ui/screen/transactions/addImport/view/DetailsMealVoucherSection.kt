@@ -2,7 +2,6 @@ package com.antcashmanager.android.ui.screen.transactions.addImport.view
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -17,10 +16,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
-import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
-import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.transactions.addImport.validator.TransactionValidator
 
@@ -59,17 +57,20 @@ internal fun DetailsMealVoucherSection(
     }
 
     Card(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier =
+            modifier
+                .fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.3f)
-        ),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.3f),
+            ),
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
         ) {
             // Titolo sezione
             AppText(
@@ -82,10 +83,11 @@ internal fun DetailsMealVoucherSection(
 
             // Valore unitario del voucher
             AppText(
-                text = stringResource(
-                    R.string.add_transaction_meal_voucher_unit_value,
-                    String.format("%.2f", mealVoucherValue)
-                ),
+                text =
+                    stringResource(
+                        R.string.add_transaction_meal_voucher_unit_value,
+                        String.format("%.2f", mealVoucherValue),
+                    ),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
             )
@@ -145,9 +147,11 @@ internal fun DetailsMealVoucherSection(
                     placeholder = { AppText("0.00") },
                     enabled = false,
                     singleLine = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .alpha(0.7f), // Rendi più trasparente per indicare disabilitato
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .alpha(0.7f),
+                    // Rendi più trasparente per indicare disabilitato
                     shape = RoundedCornerShape(16.dp),
                 )
             }
@@ -159,10 +163,11 @@ internal fun DetailsMealVoucherSection(
             if (voucherCount > 0) {
                 VerticalSpacer(SpacingSize.XS)
                 AppText(
-                    text = stringResource(
-                        R.string.add_transaction_meal_voucher_subtotal,
-                        String.format("%.2f", voucherTotal)
-                    ),
+                    text =
+                        stringResource(
+                            R.string.add_transaction_meal_voucher_subtotal,
+                            String.format("%.2f", voucherTotal),
+                        ),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.primary,
@@ -174,9 +179,10 @@ internal fun DetailsMealVoucherSection(
                 if (differencePaid > 0) {
                     VerticalSpacer(SpacingSize.XXXS)
                     AppText(
-                        text = stringResource(
-                            R.string.add_transaction_meal_voucher_difference_paid
-                        ) + ": €" + String.format("%.2f", differencePaid),
+                        text =
+                            stringResource(
+                                R.string.add_transaction_meal_voucher_difference_paid,
+                            ) + ": €" + String.format("%.2f", differencePaid),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )

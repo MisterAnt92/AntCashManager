@@ -65,9 +65,13 @@ public data class ValidationResult(
      * Useful for chaining with other Result operations.
      */
     public fun toResult(value: Unit = Unit): Result<Unit> =
-        if (isValid()) Result.success(value) else Result.failure(
-            ValidationException(errors)
-        )
+        if (isValid()) {
+            Result.success(value)
+        } else {
+            Result.failure(
+                ValidationException(errors),
+            )
+        }
 
     /**
      * Executes callback if validation passed.
@@ -109,8 +113,8 @@ public data class ValidationError(
 public class ValidationException(
     public val errors: List<ValidationError>,
 ) : Exception(
-    "Transaction validation failed: ${errors.joinToString(", ") { it.code }}"
-)
+        "Transaction validation failed: ${errors.joinToString(", ") { it.code }}",
+    )
 
 /**
  * Default implementation of [TransactionValidator].
@@ -126,7 +130,6 @@ public class ValidationException(
 public class TransactionValidatorImpl(
     private val clock: Clock = Clock.System,
 ) : TransactionValidator {
-
     override fun validate(transaction: Transaction): ValidationResult {
         val errors = mutableListOf<ValidationError>()
 
@@ -137,7 +140,7 @@ public class TransactionValidatorImpl(
                     code = "TRANSACTION_TITLE_EMPTY",
                     message = "Transaction title cannot be empty",
                     field = "title",
-                )
+                ),
             )
         }
 
@@ -148,7 +151,7 @@ public class TransactionValidatorImpl(
                     code = "TRANSACTION_AMOUNT_NOT_POSITIVE",
                     message = "Transaction amount must be positive (> 0)",
                     field = "amount",
-                )
+                ),
             )
         }
 
@@ -160,7 +163,7 @@ public class TransactionValidatorImpl(
                     code = "TRANSACTION_TIMESTAMP_FUTURE",
                     message = "Transaction timestamp cannot be in the future",
                     field = "timestamp",
-                )
+                ),
             )
         }
 
@@ -171,7 +174,7 @@ public class TransactionValidatorImpl(
                     code = "TRANSACTION_CATEGORY_EMPTY",
                     message = "Transaction category cannot be empty",
                     field = "category",
-                )
+                ),
             )
         }
 

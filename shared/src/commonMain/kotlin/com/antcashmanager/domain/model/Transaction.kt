@@ -21,13 +21,19 @@ public data class Transaction(
 )
 
 public enum class TransactionType {
-    INCOME, EXPENSE
+    INCOME,
+    EXPENSE,
 }
 
 public enum class PaymentType {
-    ELECTRONIC, CASH, MEAL_VOUCHERS
+    ELECTRONIC,
+    CASH,
+    MEAL_VOUCHERS,
 }
 
 public enum class RecurrenceInterval {
-    DAILY, WEEKLY, MONTHLY, YEARLY
+    DAILY,
+    WEEKLY,
+    MONTHLY,
+    YEARLY,
 }

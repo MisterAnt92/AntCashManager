@@ -10,68 +10,95 @@ package com.antcashmanager.android.navigation
  * navController?.navigate(AppRoute.TransactionRoute.Edit.createRoute(id))
  * ```
  */
-sealed class AppRoute(val route: String) {
-
+sealed class AppRoute(
+    val route: String,
+) {
     // Bottom navigation routes
-    sealed class BottomRoute(route: String) : AppRoute(route) {
+    sealed class BottomRoute(
+        route: String,
+    ) : AppRoute(route) {
         object Home : BottomRoute("home")
+
         object Charts : BottomRoute("charts")
+
         object Transactions : BottomRoute("transactions")
+
         object Categories : BottomRoute("categories")
+
         object Settings : BottomRoute("settings")
+
         object Tutorial : BottomRoute("tutorial")
     }
 
     // Transaction routes
-    sealed class TransactionRoute(route: String) : AppRoute(route) {
+    sealed class TransactionRoute(
+        route: String,
+    ) : AppRoute(route) {
         object List : TransactionRoute("transactions")
+
         object Add : TransactionRoute("add_transaction")
+
         object Edit : TransactionRoute("add_transaction") {
             fun createRoute(transactionId: Long) = "add_transaction?transactionId=$transactionId"
         }
+
         object ReceiptScan : TransactionRoute("receipt_scan")
     }
 
     // Settings routes
-    sealed class SettingsRoute(route: String) : AppRoute(route) {
+    sealed class SettingsRoute(
+        route: String,
+    ) : AppRoute(route) {
         object Main : SettingsRoute("settings")
+
         object Display : SettingsRoute("display")
+
         object DataManagement : SettingsRoute("settings_data")
     }
 
     // Chart routes
-    sealed class ChartRoute(route: String) : AppRoute(route) {
+    sealed class ChartRoute(
+        route: String,
+    ) : AppRoute(route) {
         object Charts : ChartRoute("charts")
     }
 
     // Category routes
-    sealed class CategoryRoute(route: String) : AppRoute(route) {
+    sealed class CategoryRoute(
+        route: String,
+    ) : AppRoute(route) {
         object Categories : CategoryRoute("categories")
     }
 
     // Home routes
-    sealed class HomeRoute(route: String) : AppRoute(route) {
+    sealed class HomeRoute(
+        route: String,
+    ) : AppRoute(route) {
         object Home : HomeRoute("home")
     }
 
     // Tutorial routes
-    sealed class TutorialRoute(route: String) : AppRoute(route) {
+    sealed class TutorialRoute(
+        route: String,
+    ) : AppRoute(route) {
         object Tutorial : TutorialRoute("tutorial")
     }
 
     // Receipt Scan routes
-    sealed class ReceiptRoute(route: String) : AppRoute(route) {
+    sealed class ReceiptRoute(
+        route: String,
+    ) : AppRoute(route) {
         object ReceiptScan : ReceiptRoute("receipt_scan")
     }
 
     companion object {
-        fun isSettingsRoute(route: String?): Boolean {
-            return when (route) {
+        fun isSettingsRoute(route: String?): Boolean =
+            when (route) {
                 SettingsRoute.Main.route,
                 SettingsRoute.Display.route,
-                SettingsRoute.DataManagement.route -> true
+                SettingsRoute.DataManagement.route,
+                -> true
                 else -> false
             }
-        }
     }
 }

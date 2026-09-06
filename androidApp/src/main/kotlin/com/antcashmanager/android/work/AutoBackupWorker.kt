@@ -9,20 +9,20 @@ import androidx.work.WorkerParameters
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.analytics.tracker.ErrorTracker
+import com.antcashmanager.android.auth.GoogleSignInManager
 import com.antcashmanager.android.data.backup.BackupService
 import com.antcashmanager.android.drive.DriveUploadManager
 import com.antcashmanager.android.security.BackupPayloadCipher
 import com.antcashmanager.android.ui.screen.settings.dataManagement.SettingsDataConstant
-import com.antcashmanager.android.auth.GoogleSignInManager
 import com.antcashmanager.domain.model.BackupDestination
 import com.antcashmanager.domain.repository.SettingsRepository
+import kotlinx.coroutines.flow.first
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
-import kotlinx.coroutines.flow.first
 
 /**
  * Worker per eseguire il backup automatico settimanale.
@@ -43,8 +43,8 @@ import kotlinx.coroutines.flow.first
 class AutoBackupWorker(
     appContext: Context,
     params: WorkerParameters,
-) : CoroutineWorker(appContext, params), KoinComponent {
-
+) : CoroutineWorker(appContext, params),
+    KoinComponent {
     private val settingsRepository: SettingsRepository by inject()
     private val backupService: BackupService by inject()
     private val googleSignInManager: GoogleSignInManager by inject()
@@ -69,43 +69,48 @@ class AutoBackupWorker(
 
             // ── 2. Genera JSON di backup ──
             val backupResult = backupService.createBackup()
-            val backupJson = backupResult.getOrElse { error ->
-                Logger.e(tag = "AutoBackupWorker") { "Backup generation failed: $error" }
-                errorTracker.trackSyncError("backup_local", "generation_failed")
-                AutoBackupNotifier.notifyFailure(applicationContext)
-                return Result.failure()
-            }
-
-            // ── 3. Applica cifratura se necessaria ──
-            val dataEncryptionEnabled = settingsRepository.getDataEncryptionEnabled().first()
-            val contentToWrite = if (dataEncryptionEnabled) {
-                try {
-                    BackupPayloadCipher.encrypt(backupJson)
-                } catch (e: Exception) {
-                    Logger.e(tag = "AutoBackupWorker") { "Encryption failed: ${e.message}" }
-                    errorTracker.trackSyncError("backup_local", "encryption_error")
+            val backupJson =
+                backupResult.getOrElse { error ->
+                    Logger.e(tag = "AutoBackupWorker") { "Backup generation failed: $error" }
+                    errorTracker.trackSyncError("backup_local", "generation_failed")
                     AutoBackupNotifier.notifyFailure(applicationContext)
                     return Result.failure()
                 }
-            } else {
-                backupJson
-            }
+
+            // ── 3. Applica cifratura se necessaria ──
+            val dataEncryptionEnabled = settingsRepository.getDataEncryptionEnabled().first()
+            val contentToWrite =
+                if (dataEncryptionEnabled) {
+                    try {
+                        BackupPayloadCipher.encrypt(backupJson)
+                    } catch (e: Exception) {
+                        Logger.e(tag = "AutoBackupWorker") { "Encryption failed: ${e.message}" }
+                        errorTracker.trackSyncError("backup_local", "encryption_error")
+                        AutoBackupNotifier.notifyFailure(applicationContext)
+                        return Result.failure()
+                    }
+                } else {
+                    backupJson
+                }
 
             // Genera nome file e timestamp
             val timestamp = System.currentTimeMillis()
             val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
-            val fileName = "${SettingsDataConstant.BACKUP_FILE_PREFIX}${dateFormat.format(Date(timestamp))}${SettingsDataConstant.BACKUP_FILE_SUFFIX}"
+            val fileName = "${SettingsDataConstant.BACKUP_FILE_PREFIX}${dateFormat.format(
+                Date(timestamp),
+            )}${SettingsDataConstant.BACKUP_FILE_SUFFIX}"
 
             // ── 4. Scrivi a destinazione (LOCAL o GOOGLE_DRIVE) ──
-            val writeResult = try {
-                when (destination) {
-                    BackupDestination.LOCAL -> writeToLocalFolder(fileName, contentToWrite, dataEncryptionEnabled)
-                    BackupDestination.GOOGLE_DRIVE -> writeToGoogleDrive(fileName, contentToWrite)
+            val writeResult =
+                try {
+                    when (destination) {
+                        BackupDestination.LOCAL -> writeToLocalFolder(fileName, contentToWrite, dataEncryptionEnabled)
+                        BackupDestination.GOOGLE_DRIVE -> writeToGoogleDrive(fileName, contentToWrite)
+                    }
+                } catch (e: IOException) {
+                    Logger.e(tag = "AutoBackupWorker") { "IO/Network error during backup write — will retry" }
+                    return Result.retry()
                 }
-            } catch (e: IOException) {
-                Logger.e(tag = "AutoBackupWorker") { "IO/Network error during backup write — will retry" }
-                return Result.retry()
-            }
 
             if (!writeResult) {
                 errorTracker.trackSyncError("backup_${destination.name.lowercase()}", "write_failed")
@@ -117,18 +122,24 @@ class AutoBackupWorker(
                 settingsRepository.setLastBackupTimestamp(timestamp)
                 Logger.d(tag = "AutoBackupWorker") { "Backup successful, timestamp updated" }
                 // Track auto backup execution
-                analyticsManager.logEvent("app_auto_backup_executed", Bundle().apply {
-                    putString("status", "success")
-                    putLong("duration_ms", System.currentTimeMillis() - timestamp)
-                })
+                analyticsManager.logEvent(
+                    "app_auto_backup_executed",
+                    Bundle().apply {
+                        putString("status", "success")
+                        putLong("duration_ms", System.currentTimeMillis() - timestamp)
+                    },
+                )
                 Result.success()
             } catch (e: Exception) {
                 Logger.e(tag = "AutoBackupWorker") { "Error updating timestamp: ${e.message}" }
                 // Track backup failure
-                analyticsManager.logEvent("app_auto_backup_executed", Bundle().apply {
-                    putString("status", "error")
-                    putString("error_type", "timestamp_update_failed")
-                })
+                analyticsManager.logEvent(
+                    "app_auto_backup_executed",
+                    Bundle().apply {
+                        putString("status", "error")
+                        putString("error_type", "timestamp_update_failed")
+                    },
+                )
                 errorTracker.trackSyncError("backup_${destination.name.lowercase()}", "timestamp_update_failed")
                 AutoBackupNotifier.notifyFailure(applicationContext)
                 Result.failure()
@@ -170,10 +181,11 @@ class AutoBackupWorker(
             }
 
             // Crea il file nel DocumentFile
-            val backupFile = parentDir.createFile(
-                if (isEncrypted) "application/octet-stream" else "application/json",
-                fileName.substringBeforeLast(".")
-            )
+            val backupFile =
+                parentDir.createFile(
+                    if (isEncrypted) "application/octet-stream" else "application/json",
+                    fileName.substringBeforeLast("."),
+                )
 
             if (backupFile == null) {
                 Logger.e(tag = "AutoBackupWorker") { "Failed to create backup file" }
@@ -200,7 +212,7 @@ class AutoBackupWorker(
             }
         } catch (e: IOException) {
             Logger.e(tag = "AutoBackupWorker") { "IO error writing to local folder — will retry" }
-            throw e  // Re-throw per trigger Result.retry() nel caller
+            throw e // Re-throw per trigger Result.retry() nel caller
         }
     }
 
@@ -219,17 +231,20 @@ class AutoBackupWorker(
             // Step 1: Assicurati che la cartella esista
             val folderResult = driveUploadManager.ensureFolderExists()
             if (!folderResult.isSuccess) {
-                Logger.e(tag = "AutoBackupWorker") { "Failed to ensure Drive folder: ${folderResult.exceptionOrNull()?.message}" }
+                Logger.e(
+                    tag = "AutoBackupWorker",
+                ) { "Failed to ensure Drive folder: ${folderResult.exceptionOrNull()?.message}" }
                 AutoBackupNotifier.notifyFailure(applicationContext)
                 return false
             }
 
             // Step 2: Upload il file
-            val uploadResult = driveUploadManager.uploadBackupFile(
-                fileName = fileName,
-                fileContent = content.toByteArray(Charsets.UTF_8),
-                mimeType = "application/json"  // Sempre JSON (cifratura opzionale è gestita a livello di contenuto)
-            )
+            val uploadResult =
+                driveUploadManager.uploadBackupFile(
+                    fileName = fileName,
+                    fileContent = content.toByteArray(Charsets.UTF_8),
+                    mimeType = "application/json", // Sempre JSON (cifratura opzionale è gestita a livello di contenuto)
+                )
 
             if (uploadResult.isSuccess) {
                 Logger.d(tag = "AutoBackupWorker") { "Backup uploaded to Google Drive: ${uploadResult.getOrNull()}" }
@@ -243,7 +258,7 @@ class AutoBackupWorker(
                 when {
                     error?.message?.contains("401") == true -> {
                         Logger.w(tag = "AutoBackupWorker") { "Token expired — will retry after refresh" }
-                        throw error  // Re-throw per trigger Result.retry()
+                        throw error // Re-throw per trigger Result.retry()
                     }
                     error?.message?.contains("403") == true -> {
                         Logger.e(tag = "AutoBackupWorker") { "Permission denied — user must sign in again" }
@@ -258,12 +273,11 @@ class AutoBackupWorker(
             }
         } catch (e: IOException) {
             Logger.e(tag = "AutoBackupWorker") { "Network error uploading to Google Drive — will retry" }
-            throw e  // Re-throw per trigger Result.retry()
+            throw e // Re-throw per trigger Result.retry()
         } catch (e: Exception) {
             Logger.e(tag = "AutoBackupWorker") { "Error uploading to Google Drive: ${e.message}" }
             AutoBackupNotifier.notifyFailure(applicationContext)
             false
         }
     }
-
 }

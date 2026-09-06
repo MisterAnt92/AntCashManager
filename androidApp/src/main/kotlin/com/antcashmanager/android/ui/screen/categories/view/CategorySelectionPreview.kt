@@ -26,14 +26,15 @@ import com.antcashmanager.domain.model.Category
 @Preview(name = "Category List Preview", showBackground = true)
 @Composable
 fun CategoryListPreview() {
-    val categories = listOf(
-        Category(1, "Food & Dining", "🍔", 0xFFFF6B6B, "EXPENSE"),
-        Category(2, "Transportation", "🚗", 0xFFFFA500, "EXPENSE"),
-        Category(3, "Entertainment & Fun", "🎮", 0xFF9C27B0, "EXPENSE"),
-        Category(4, "Salary & Wages", "💰", 0xFF51CF66, "INCOME"),
-        Category(5, "Gifts & Bonuses", "🎁", 0xFFE91E63, "INCOME"),
-        Category(6, "Business Income", "💼", 0xFF2196F3, "INCOME")
-    )
+    val categories =
+        listOf(
+            Category(1, "Food & Dining", "🍔", 0xFFFF6B6B, "EXPENSE"),
+            Category(2, "Transportation", "🚗", 0xFFFFA500, "EXPENSE"),
+            Category(3, "Entertainment & Fun", "🎮", 0xFF9C27B0, "EXPENSE"),
+            Category(4, "Salary & Wages", "💰", 0xFF51CF66, "INCOME"),
+            Category(5, "Gifts & Bonuses", "🎁", 0xFFE91E63, "INCOME"),
+            Category(6, "Business Income", "💼", 0xFF2196F3, "INCOME"),
+        )
 
     var selectedCategory by remember { mutableStateOf<Category?>(null) }
 
@@ -41,19 +42,20 @@ fun CategoryListPreview() {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { AppText("Select Category - New UI") }
+                    title = { AppText("Select Category - New UI") },
                 )
-            }
+            },
         ) { paddingValues ->
             Column(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .padding(16.dp)
+                modifier =
+                    Modifier
+                        .padding(paddingValues)
+                        .padding(16.dp),
             ) {
                 AppText(
                     text = stringResource(R.string.categories_selection_hint),
                     style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(bottom = 16.dp)
+                    modifier = Modifier.padding(bottom = 16.dp),
                 )
 
                 categories.forEach { category ->
@@ -64,7 +66,7 @@ fun CategoryListPreview() {
                             selectedCategory =
                                 if (selectedCategory?.id == category.id) null else category
                         },
-                        modifier = Modifier.padding(bottom = 8.dp)
+                        modifier = Modifier.padding(bottom = 8.dp),
                     )
                 }
             }

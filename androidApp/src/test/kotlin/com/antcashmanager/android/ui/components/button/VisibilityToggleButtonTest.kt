@@ -1,9 +1,7 @@
 package com.antcashmanager.android.ui.components.button
-import com.antcashmanager.android.BaseComposeUnitTest
-import org.junit.Ignore
-
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.performClick
+import com.antcashmanager.android.BaseComposeUnitTest
 import org.junit.Test
 
 /**
@@ -19,7 +17,6 @@ import org.junit.Test
  * For now, we keep them as unit test placeholders - they document the test structure.
  */
 class VisibilityToggleButtonTest : BaseComposeUnitTest() {
-
     @Test
     fun whenVisible_toggleButtonShowsVisibilityOffIcon() {
         var currentVisibility = true
@@ -61,7 +58,8 @@ class VisibilityToggleButtonTest : BaseComposeUnitTest() {
         }
 
         // Trovare il pulsante e cliccare usando hasClickAction matcher
-        composeTestRule.onNode(hasClickAction())
+        composeTestRule
+            .onNode(hasClickAction())
             .performClick()
 
         // La callback dovrebbe essere stata chiamata con lo stato invertito
@@ -115,7 +113,8 @@ class VisibilityToggleButtonTest : BaseComposeUnitTest() {
         }
 
         // Verificare che il pulsante è clicabile
-        composeTestRule.onNode(hasClickAction())
+        composeTestRule
+            .onNode(hasClickAction())
             .assertExists()
     }
 
@@ -141,7 +140,10 @@ class VisibilityToggleButtonTest : BaseComposeUnitTest() {
 }
 
 // Helper function per verificare uguaglianza
-private fun assertEquals(expected: Any?, actual: Any?) {
+private fun assertEquals(
+    expected: Any?,
+    actual: Any?,
+) {
     if (expected != actual) {
         throw AssertionError("Expected: $expected, Actual: $actual")
     }

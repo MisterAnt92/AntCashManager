@@ -1,16 +1,13 @@
 package com.antcashmanager.android.ui.screen.transactions.addImport.view
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import com.antcashmanager.android.ui.components.layout.SpacingSize
-import com.antcashmanager.android.ui.components.layout.VerticalSpacer
-import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.input.AutocompleteTextField
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 
 /**
  * Composable per i campi opzionali nella form di aggiunta/modifica transazione.

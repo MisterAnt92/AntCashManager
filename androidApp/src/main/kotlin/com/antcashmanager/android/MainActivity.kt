@@ -9,16 +9,16 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.window.layout.DisplayFeature
 import androidx.window.layout.WindowInfoTracker
-import androidx.lifecycle.lifecycleScope
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.analytics.tracker.SessionTracker
 import com.antcashmanager.android.navigation.AntCashManagerNavHost
@@ -38,7 +38,6 @@ import org.koin.android.ext.android.inject
 import java.util.Locale
 
 class MainActivity : ComponentActivity() {
-
     private val getLanguageUseCase: GetLanguageUseCase by inject()
     private val getThemeUseCase: GetThemeUseCase by inject()
     private val sessionTracker: SessionTracker by inject()
@@ -49,19 +48,20 @@ class MainActivity : ComponentActivity() {
         Logger.d(tag = "MainActivity") { "onCreate: initializing app with settings" }
 
         // Track app launch event
-        val appVersion = try {
-            packageManager.getPackageInfo(packageName, 0).versionName ?: "unknown"
-        } catch (e: Exception) {
-            "unknown"
-        }
+        val appVersion =
+            try {
+                packageManager.getPackageInfo(packageName, 0).versionName ?: "unknown"
+            } catch (e: Exception) {
+                "unknown"
+            }
         sessionTracker.onAppLaunched(appVersion, isFirstLaunch = false)
 
         // Pre-load settings from DataStore to ensure they're available immediately
         lifecycleScope.launch {
             try {
                 Logger.d(tag = "MainActivity") { "Pre-loading theme and language from DataStore..." }
-                getLanguageUseCase().first()  // Force load from DataStore
-                getThemeUseCase().first()     // Force load from DataStore
+                getLanguageUseCase().first() // Force load from DataStore
+                getThemeUseCase().first() // Force load from DataStore
                 Logger.d(tag = "MainActivity") { "Pre-load complete, launching Compose UI" }
             } catch (e: Exception) {
                 Logger.e(tag = "MainActivity", throwable = e) { "Error pre-loading settings" }
@@ -72,13 +72,13 @@ class MainActivity : ComponentActivity() {
                 // Combine language + theme in one state for synchronized updates
                 val settingsState by combine(
                     getLanguageUseCase(),
-                    getThemeUseCase()
+                    getThemeUseCase(),
                 ) { langResult, themeResult ->
                     val language = langResult.getOrElse { AppLanguage.SYSTEM }
                     val theme = themeResult.getOrElse { AppTheme.SYSTEM }
                     SettingsSnapshot(language, theme)
                 }.collectAsStateWithLifecycle(
-                    initialValue = SettingsSnapshot(AppLanguage.SYSTEM, AppTheme.SYSTEM)
+                    initialValue = SettingsSnapshot(AppLanguage.SYSTEM, AppTheme.SYSTEM),
                 )
 
                 Logger.d(tag = "MainActivity") {
@@ -132,7 +132,10 @@ data class SettingsSnapshot(
 )
 
 @Composable
-fun WithAppLocale(language: AppLanguage, content: @Composable () -> Unit) {
+fun WithAppLocale(
+    language: AppLanguage,
+    content: @Composable () -> Unit,
+) {
     if (language == AppLanguage.SYSTEM) {
         Logger.d(tag = "Language") { "WithAppLocale: using SYSTEM locale" }
         val systemLocale = Locale.getDefault()
@@ -144,22 +147,23 @@ fun WithAppLocale(language: AppLanguage, content: @Composable () -> Unit) {
         val activityResultRegistryOwner = LocalActivityResultRegistryOwner.current
         val locale = Locale.forLanguageTag(language.code)
         Logger.d(tag = "Language") { "WithAppLocale: applying locale ${language.code} (${locale.displayName})" }
-        val config = Configuration(LocalConfiguration.current).apply {
-            setLocale(locale)
-        }
+        val config =
+            Configuration(LocalConfiguration.current).apply {
+                setLocale(locale)
+            }
         val localizedContext = context.createConfigurationContext(config)
         if (activityResultRegistryOwner != null) {
             CompositionLocalProvider(
                 LocalContext provides localizedContext,
                 LocalActivityResultRegistryOwner provides activityResultRegistryOwner,
-                LocalLocale provides locale,  // Expose locale globally
+                LocalLocale provides locale, // Expose locale globally
             ) {
                 content()
             }
         } else {
             CompositionLocalProvider(
                 LocalContext provides localizedContext,
-                LocalLocale provides locale,  // Expose locale globally
+                LocalLocale provides locale, // Expose locale globally
             ) {
                 content()
             }
@@ -175,7 +179,10 @@ fun WithAppLocale(language: AppLanguage, content: @Composable () -> Unit) {
  * @param content Composable content that can access display features via LocalDisplayFeatures
  */
 @Composable
-fun WithDisplayFeatures(displayFeatures: List<DisplayFeature>, content: @Composable () -> Unit) {
+fun WithDisplayFeatures(
+    displayFeatures: List<DisplayFeature>,
+    content: @Composable () -> Unit,
+) {
     CompositionLocalProvider(LocalDisplayFeatures provides displayFeatures) {
         content()
     }
@@ -189,7 +196,10 @@ fun WithDisplayFeatures(displayFeatures: List<DisplayFeature>, content: @Composa
  * @param content Composable content that can access coordinator via LocalMultiPaneCoordinator
  */
 @Composable
-fun WithMultiPaneCoordinator(coordinator: MultiPaneCoordinator, content: @Composable () -> Unit) {
+fun WithMultiPaneCoordinator(
+    coordinator: MultiPaneCoordinator,
+    content: @Composable () -> Unit,
+) {
     CompositionLocalProvider(LocalMultiPaneCoordinator provides coordinator) {
         content()
     }

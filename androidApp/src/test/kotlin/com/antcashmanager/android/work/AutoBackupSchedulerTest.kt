@@ -1,11 +1,7 @@
 package com.antcashmanager.android.work
 
 import android.app.Application
-import androidx.work.BackoffPolicy
-import androidx.work.ExistingPeriodicWorkPolicy
-import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
 
@@ -20,7 +16,6 @@ import org.junit.Test
  * - Idempotent scheduling
  */
 class AutoBackupSchedulerTest {
-
     private val application: Application = mockk(relaxed = true)
     private lateinit var scheduler: AutoBackupScheduler
 

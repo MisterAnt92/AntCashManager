@@ -19,7 +19,8 @@ public data class TransactionFilterParams(
      * Returns true if any filter is active (excluding date range which is always applied).
      */
     public val hasActiveFilters: Boolean
-        get() = searchQuery.isNotBlank() ||
+        get() =
+            searchQuery.isNotBlank() ||
                 categoryName != null ||
                 transactionType != null ||
                 paymentType != null
@@ -31,4 +32,3 @@ public data class TransactionFilterParams(
         public val EMPTY: TransactionFilterParams = TransactionFilterParams()
     }
 }
-

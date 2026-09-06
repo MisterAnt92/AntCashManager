@@ -15,8 +15,6 @@ import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import kotlin.math.cos
-import kotlin.math.sin
 
 /**
  * Unit tests for InteractivePieChart composable.
@@ -35,13 +33,12 @@ import kotlin.math.sin
 
 @RunWith(RobolectricTestRunner::class)
 class InteractivePieChartTest : BaseComposeUnitTest() {
-
-
-    private val sampleData = mapOf(
-        "Food" to 100.0,
-        "Transport" to 50.0,
-        "Entertainment" to 75.0,
-    )
+    private val sampleData =
+        mapOf(
+            "Food" to 100.0,
+            "Transport" to 50.0,
+            "Entertainment" to 75.0,
+        )
 
     @Test
     fun interactivePieChart_rendersSuccessfully() {
@@ -55,7 +52,7 @@ class InteractivePieChartTest : BaseComposeUnitTest() {
                         onCategorySelected = { category, _, _ ->
                             selectedCategory = category
                         },
-                        modifier = Modifier.size(400.dp, 300.dp)
+                        modifier = Modifier.size(400.dp, 300.dp),
                     )
                 }
             }
@@ -77,7 +74,7 @@ class InteractivePieChartTest : BaseComposeUnitTest() {
                         onCategorySelected = { _, _, _ ->
                             callbackCalled = true
                         },
-                        modifier = Modifier.size(400.dp, 300.dp)
+                        modifier = Modifier.size(400.dp, 300.dp),
                     )
                 }
             }
@@ -103,7 +100,7 @@ class InteractivePieChartTest : BaseComposeUnitTest() {
                             selectedAmount = amount
                             callbackCalled = true
                         },
-                        modifier = Modifier.size(400.dp, 300.dp)
+                        modifier = Modifier.size(400.dp, 300.dp),
                     )
                 }
             }
@@ -122,9 +119,10 @@ class InteractivePieChartTest : BaseComposeUnitTest() {
 
     @Test
     fun interactivePieChart_multipleSlicesRendered() {
-        val complexData = (1..5).associate { i ->
-            "Category$i" to (100.0 * i)
-        }
+        val complexData =
+            (1..5).associate { i ->
+                "Category$i" to (100.0 * i)
+            }
 
         var selectedCategories = listOf<String>()
 
@@ -136,7 +134,7 @@ class InteractivePieChartTest : BaseComposeUnitTest() {
                         onCategorySelected = { category, _, _ ->
                             selectedCategories = selectedCategories + category
                         },
-                        modifier = Modifier.size(400.dp, 300.dp)
+                        modifier = Modifier.size(400.dp, 300.dp),
                     )
                 }
             }
@@ -155,7 +153,6 @@ class InteractivePieChartTest : BaseComposeUnitTest() {
 
 @RunWith(RobolectricTestRunner::class)
 class PieChartSliceDetectionTest : BaseComposeUnitTest() {
-
     @Test
     fun sliceDetection_identifiesCorrectSliceAtStartAngle() {
         // Pie chart starts at -90 degrees (top)

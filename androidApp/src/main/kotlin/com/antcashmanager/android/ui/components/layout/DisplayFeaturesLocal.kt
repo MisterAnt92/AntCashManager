@@ -18,15 +18,11 @@ val LocalDisplayFeatures = compositionLocalOf<List<DisplayFeature>> { emptyList(
  *
  * @return FoldingFeature if device has a fold, null otherwise
  */
-fun List<DisplayFeature>.getFoldingFeature(): FoldingFeature? {
-    return filterIsInstance<FoldingFeature>().firstOrNull()
-}
+fun List<DisplayFeature>.getFoldingFeature(): FoldingFeature? = filterIsInstance<FoldingFeature>().firstOrNull()
 
 /**
  * Check if device has a folding feature (is foldable).
  *
  * @return True if device has fold/hinge
  */
-fun List<DisplayFeature>.hasFoldingFeature(): Boolean {
-    return any { it is FoldingFeature }
-}
+fun List<DisplayFeature>.hasFoldingFeature(): Boolean = any { it is FoldingFeature }

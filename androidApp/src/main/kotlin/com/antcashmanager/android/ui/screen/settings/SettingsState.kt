@@ -24,23 +24,19 @@ data class SettingsState(
     // Theme & Language
     val theme: AppTheme = AppTheme.LIGHT,
     val language: AppLanguage = AppLanguage.ENGLISH,
-    
     // Display Preferences
     val showCharts: Boolean = true,
     val highContrast: Boolean = false,
     val largeText: Boolean = false,
     val reduceMotion: Boolean = false,
-    
     // Number Formatting
     val currencySymbol: String = "€",
     val decimalDigits: Int = 2,
     val decimalSeparator: String = ".",
     val thousandsSeparator: String = ",",
-    
     // Transaction Display
     val showTransactionNotes: Boolean = true,
     val transactionDisplayType: TransactionDisplayType = TransactionDisplayType.CATEGORY,
-    
     // Error handling & loading
     val errorState: ErrorState = ErrorState(),
     val isLoading: Boolean = false,

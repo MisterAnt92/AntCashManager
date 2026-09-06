@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
@@ -27,11 +26,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.antcashmanager.android.ui.components.button.ReorderButtons
-import com.antcashmanager.android.ui.components.layout.SpacingSize
-import com.antcashmanager.android.ui.components.layout.VerticalSpacer
-import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.components.button.ReorderButtons
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
+import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.translateCategory
@@ -47,18 +45,20 @@ fun CategoriesReorderDialog(
 
     fun moveUp(index: Int) {
         if (index <= 0) return
-        order = order.toMutableList().apply {
-            val item = removeAt(index)
-            add(index - 1, item)
-        }
+        order =
+            order.toMutableList().apply {
+                val item = removeAt(index)
+                add(index - 1, item)
+            }
     }
 
     fun moveDown(index: Int) {
         if (index >= order.lastIndex) return
-        order = order.toMutableList().apply {
-            val item = removeAt(index)
-            add(index + 1, item)
-        }
+        order =
+            order.toMutableList().apply {
+                val item = removeAt(index)
+                add(index + 1, item)
+            }
     }
 
     AlertDialog(
@@ -70,17 +70,19 @@ fun CategoriesReorderDialog(
             ) {
                 itemsIndexed(order, key = { _, category -> category.id }) { index, category ->
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 2.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 2.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Box(
-                            modifier = Modifier
-                                .size(24.dp)
-                                .clip(CircleShape)
-                                .background(Color(category.color)),
+                            modifier =
+                                Modifier
+                                    .size(24.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(category.color)),
                         )
                         HorizontalSpacer(SpacingSize.SM)
                         AppText(
@@ -117,32 +119,33 @@ fun CategoriesReorderDialog(
 private fun CategoriesReorderDialogPreviewLight() {
     AntCashManagerTheme(dynamicColor = false) {
         CategoriesReorderDialog(
-            categories = listOf(
-                Category(
-                    id = 1,
-                    name = "Casa",
-                    icon = "home",
-                    color = 0xFF4FC3F7,
-                    type = "EXPENSE",
-                    sortOrder = 0
+            categories =
+                listOf(
+                    Category(
+                        id = 1,
+                        name = "Casa",
+                        icon = "home",
+                        color = 0xFF4FC3F7,
+                        type = "EXPENSE",
+                        sortOrder = 0,
+                    ),
+                    Category(
+                        id = 2,
+                        name = "Cibo",
+                        icon = "restaurant",
+                        color = 0xFFE57373,
+                        type = "EXPENSE",
+                        sortOrder = 1,
+                    ),
+                    Category(
+                        id = 3,
+                        name = "Shopping",
+                        icon = "shopping_bag",
+                        color = 0xFFDCE775,
+                        type = "EXPENSE",
+                        sortOrder = 2,
+                    ),
                 ),
-                Category(
-                    id = 2,
-                    name = "Cibo",
-                    icon = "restaurant",
-                    color = 0xFFE57373,
-                    type = "EXPENSE",
-                    sortOrder = 1
-                ),
-                Category(
-                    id = 3,
-                    name = "Shopping",
-                    icon = "shopping_bag",
-                    color = 0xFFDCE775,
-                    type = "EXPENSE",
-                    sortOrder = 2
-                ),
-            ),
             onDismiss = {},
             onConfirm = {},
         )

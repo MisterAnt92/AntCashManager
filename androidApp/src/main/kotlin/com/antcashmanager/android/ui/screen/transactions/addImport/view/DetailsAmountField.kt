@@ -48,7 +48,8 @@ internal fun DetailsAmountField(
         return
     }
 
-    val shouldMaskAmount = LocalAmountsMasked.current &&
+    val shouldMaskAmount =
+        LocalAmountsMasked.current &&
             isProtectedSalaryCategory(selectedCategoryName, selectedType)
 
     OutlinedTextField(
@@ -59,7 +60,7 @@ internal fun DetailsAmountField(
         },
         label = {
             AppText(
-                stringResource(R.string.add_transaction_amount_required)
+                stringResource(R.string.add_transaction_amount_required),
             )
         },
         placeholder = { AppText("0.00") },
@@ -67,11 +68,12 @@ internal fun DetailsAmountField(
         shape = RoundedCornerShape(16.dp),
         modifier = modifier,
         singleLine = true,
-        visualTransformation = if (shouldMaskAmount) {
-            MaskDigitsVisualTransformation
-        } else {
-            VisualTransformation.None
-        },
+        visualTransformation =
+            if (shouldMaskAmount) {
+                MaskDigitsVisualTransformation
+            } else {
+                VisualTransformation.None
+            },
     )
 }
 

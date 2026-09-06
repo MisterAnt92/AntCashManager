@@ -22,7 +22,6 @@ import co.touchlab.kermit.Logger
  * - Prevents "UI thread already destroyed" exceptions on API 35+
  */
 object AppExitManager {
-
     private val logger = Logger.withTag("AppExitManager")
     private const val API_LEVEL_35 = 35
     private const val SLEEP_DELAY_MS = 100L
@@ -57,7 +56,9 @@ object AppExitManager {
                     logExit("finish", isSamsung, apiLevel, manufacturer)
                 }
             }
-        } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
+        } catch (
+            @Suppress("TooGenericExceptionCaught") e: Exception,
+        ) {
             val exceptionInfo = "${e.javaClass.simpleName}: ${e.message}"
             logger.w("Exception in exit method for $manufacturer (API $apiLevel): $exceptionInfo")
             try {
@@ -65,16 +66,18 @@ object AppExitManager {
                 logger.d("Attempting finish() as fallback")
                 finish()
                 logExit("finish_fallback", isSamsung, apiLevel, manufacturer)
-            } catch (@Suppress("TooGenericExceptionCaught") e2: Exception) {
+            } catch (
+                @Suppress("TooGenericExceptionCaught") e2: Exception,
+            ) {
                 val fallbackInfo = "${e2.javaClass.simpleName}: ${e2.message}"
                 logger.e(
                     "finish() also failed for $manufacturer (API $apiLevel): $fallbackInfo, " +
-                        "using System.exit(0)"
+                        "using System.exit(0)",
                 )
                 // Last resort - force process exit
                 try {
                     @Suppress("MagicNumber")
-                    Thread.sleep(SLEEP_DELAY_MS)  // Ensure logs are flushed
+                    Thread.sleep(SLEEP_DELAY_MS) // Ensure logs are flushed
                 } catch (_: InterruptedException) {
                     // Ignore interruption
                 }
@@ -86,9 +89,7 @@ object AppExitManager {
     /**
      * Detect if device is Samsung by checking Build.MANUFACTURER
      */
-    private fun isSamsungDevice(): Boolean {
-        return Build.MANUFACTURER?.equals("samsung", ignoreCase = true) == true
-    }
+    private fun isSamsungDevice(): Boolean = Build.MANUFACTURER?.equals("samsung", ignoreCase = true) == true
 
     /**
      * Log exit method, device manufacturer, and API level for diagnostics

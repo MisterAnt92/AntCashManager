@@ -26,15 +26,15 @@ kotlin {
             freeCompilerArgs.addAll(
                 "-opt-in=kotlin.RequiresOptIn",
                 "-progressive",
-                "-Xjvm-default=all",              // Inline interface methods
-                "-Xstring-concat=inline"          // Optimize string concatenation
+                "-Xjvm-default=all", // Inline interface methods
+                "-Xstring-concat=inline", // Optimize string concatenation
             )
             // Release-only aggressive optimizations (when building in CI)
             if (System.getenv("CI") != null) {
                 freeCompilerArgs.addAll(
-                    "-Xno-param-assertions",      // Remove parameter null checks
-                    "-Xno-call-assertions",       // Remove call assertions
-                    "-Xno-receiver-assertions"    // Remove receiver null checks
+                    "-Xno-param-assertions", // Remove parameter null checks
+                    "-Xno-call-assertions", // Remove call assertions
+                    "-Xno-receiver-assertions", // Remove receiver null checks
                 )
             }
         }
@@ -100,21 +100,21 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
                 "**/R\$*.class",
                 "**/BuildConfig.*",
                 "**/Manifest*.*",
-                "**/*Test*.*"
+                "**/*Test*.*",
             )
-        }
+        },
     )
 
     sourceDirectories.setFrom(
         files(
             "src/androidMain/kotlin",
-            "src/commonMain/kotlin"
-        )
+            "src/commonMain/kotlin",
+        ),
     )
     executionData.setFrom(
         fileTree("${layout.buildDirectory}") {
             include("jacoco/*.exec")
-        }
+        },
     )
 }
 

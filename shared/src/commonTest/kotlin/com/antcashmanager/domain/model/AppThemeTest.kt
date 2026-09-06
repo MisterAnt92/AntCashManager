@@ -14,7 +14,6 @@ import kotlin.test.assertNotNull
  * - Theme parsing from string
  */
 class AppThemeEnumTest {
-
     @Test
     fun appTheme_shouldHaveLightTheme() {
         val theme = AppTheme.LIGHT

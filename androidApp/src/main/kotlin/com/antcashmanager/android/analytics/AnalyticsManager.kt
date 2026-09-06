@@ -10,7 +10,6 @@ import com.google.firebase.analytics.FirebaseAnalytics
  * Espone metodi semplici per tracciare schermate ed eventi custom.
  */
 open class AnalyticsManager {
-
     private val firebaseAnalytics: FirebaseAnalytics?
 
     constructor(context: Context) {
@@ -22,23 +21,27 @@ open class AnalyticsManager {
         if (screenName.isBlank()) return
 
         runCatching {
-            val params = Bundle().apply {
-                putString(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
-                putString(
-                    FirebaseAnalytics.Param.SCREEN_CLASS,
-                    AnalyticsConstants.SCREEN_CLASS_COMPOSE_NAV_HOST,
-                )
-            }
+            val params =
+                Bundle().apply {
+                    putString(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
+                    putString(
+                        FirebaseAnalytics.Param.SCREEN_CLASS,
+                        AnalyticsConstants.SCREEN_CLASS_COMPOSE_NAV_HOST,
+                    )
+                }
             firebaseAnalytics?.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, params)
         }.onFailure { error ->
             Logger.e(
                 throwable = error,
-                tag = AnalyticsConstants.TAG
+                tag = AnalyticsConstants.TAG,
             ) { "Failed to log screen view for route=$route" }
         }
     }
 
-    fun logEvent(eventName: String, params: Bundle = Bundle()) {
+    fun logEvent(
+        eventName: String,
+        params: Bundle = Bundle(),
+    ) {
         val sanitizedName = sanitizeName(eventName)
         if (sanitizedName.isBlank()) return
         if (sanitizedName !in AnalyticsConstants.ALLOWED_USAGE_EVENTS) {
@@ -51,7 +54,7 @@ open class AnalyticsManager {
         }.onFailure { error ->
             Logger.e(
                 throwable = error,
-                tag = AnalyticsConstants.TAG
+                tag = AnalyticsConstants.TAG,
             ) { "Failed to log event=$sanitizedName" }
         }
     }
@@ -82,18 +85,19 @@ open class AnalyticsManager {
         val normalizedKey = key.lowercase()
         // Blocked keys contain personal/sensitive data (email, names, locations, amounts).
         // ALLOWED: error_code (diagnostic, not personal), operation names, type enums.
-        val blockedFragments = listOf(
-            "email",       // Personal identifier
-            "query",       // User search input (potentially sensitive)
-            "message",     // User-generated text (sensitive)
-            // NOTE: "error" removed — error_code is diagnostic, not personal data
-            "title",       // Transaction/note title (personal content)
-            "notes",       // Transaction notes (personal content)
-            "payee",       // Transaction payee name (personal contact)
-            "location",    // Transaction location (personal location)
-            "tags",        // User tags (personal classification)
-            "amount",      // Transaction amounts (personal financial data)
-        )
+        val blockedFragments =
+            listOf(
+                "email", // Personal identifier
+                "query", // User search input (potentially sensitive)
+                "message", // User-generated text (sensitive)
+                // NOTE: "error" removed — error_code is diagnostic, not personal data
+                "title", // Transaction/note title (personal content)
+                "notes", // Transaction notes (personal content)
+                "payee", // Transaction payee name (personal contact)
+                "location", // Transaction location (personal location)
+                "tags", // User tags (personal classification)
+                "amount", // Transaction amounts (personal financial data)
+            )
         return blockedFragments.none { fragment -> normalizedKey.contains(fragment) }
     }
 
@@ -106,6 +110,6 @@ open class AnalyticsManager {
 
     private fun String.toAnalyticsName(): String =
         substringBefore('?')
-            .substringBefore('/').ifBlank { this }
+            .substringBefore('/')
+            .ifBlank { this }
 }
-

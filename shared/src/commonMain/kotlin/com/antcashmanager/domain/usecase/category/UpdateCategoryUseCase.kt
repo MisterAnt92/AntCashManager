@@ -13,7 +13,5 @@ public class UpdateCategoryUseCase(
     private val categoryRepository: CategoryRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : UseCase<Category, Unit>(dispatcher) {
-
-    override suspend fun execute(params: Category): Unit =
-        categoryRepository.updateCategory(params)
+    override suspend fun execute(params: Category): Unit = categoryRepository.updateCategory(params)
 }

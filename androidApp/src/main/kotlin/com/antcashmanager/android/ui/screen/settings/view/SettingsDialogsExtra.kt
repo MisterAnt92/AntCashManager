@@ -42,28 +42,32 @@ fun ThemeSelectionDialog(
         text = {
             Column(
                 modifier = Modifier.padding(top = 12.dp),
-                verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp)
+                verticalArrangement =
+                    androidx.compose.foundation.layout.Arrangement
+                        .spacedBy(12.dp),
             ) {
                 AppTheme.entries.forEach { theme ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onThemeSelected(theme) }
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .clickable { onThemeSelected(theme) },
                     ) {
                         RadioButton(
                             selected = currentTheme == theme,
-                            onClick = { onThemeSelected(theme) }
+                            onClick = { onThemeSelected(theme) },
                         )
                         AppText(
-                            text = stringResource(
-                                when (theme) {
-                                    AppTheme.LIGHT -> R.string.settings_theme_light
-                                    AppTheme.DARK -> R.string.settings_theme_dark
-                                    AppTheme.SYSTEM -> R.string.settings_theme_system
-                                }
-                            ),
-                            modifier = Modifier.padding(start = 8.dp)
+                            text =
+                                stringResource(
+                                    when (theme) {
+                                        AppTheme.LIGHT -> R.string.settings_theme_light
+                                        AppTheme.DARK -> R.string.settings_theme_dark
+                                        AppTheme.SYSTEM -> R.string.settings_theme_system
+                                    },
+                                ),
+                            modifier = Modifier.padding(start = 8.dp),
                         )
                     }
                 }
@@ -89,44 +93,49 @@ fun LanguageSelectionDialog(
         title = { AppText(stringResource(R.string.dialog_choose_language)) },
         text = {
             Column(
-                modifier = Modifier
-                    .padding(top = 12.dp)
-                    .verticalScroll(rememberScrollState()),
-                verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(10.dp)
+                modifier =
+                    Modifier
+                        .padding(top = 12.dp)
+                        .verticalScroll(rememberScrollState()),
+                verticalArrangement =
+                    androidx.compose.foundation.layout.Arrangement
+                        .spacedBy(10.dp),
             ) {
                 AppLanguage.entries.forEach { language ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onLanguageSelected(language) }
-                            .padding(vertical = 4.dp)
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .clickable { onLanguageSelected(language) }
+                                .padding(vertical = 4.dp),
                     ) {
                         RadioButton(
                             selected = currentLanguage == language,
-                            onClick = { onLanguageSelected(language) }
+                            onClick = { onLanguageSelected(language) },
                         )
                         AppText(
-                            text = stringResource(
-                                when (language) {
-                                    AppLanguage.SYSTEM -> R.string.language_system
-                                    AppLanguage.ENGLISH -> R.string.language_english
-                                    AppLanguage.ITALIAN -> R.string.language_italian
-                                    AppLanguage.FRENCH -> R.string.language_french
-                                    AppLanguage.GERMAN -> R.string.language_german
-                                    AppLanguage.SPANISH -> R.string.language_spanish
-                                    AppLanguage.CHINESE_SIMPLIFIED -> R.string.language_chinese_simplified
-                                    AppLanguage.CHINESE_TRADITIONAL -> R.string.language_chinese_traditional
-                                    AppLanguage.JAPANESE -> R.string.language_japanese
-                                    AppLanguage.POLISH -> R.string.language_polish
-                                    AppLanguage.HINDI -> R.string.language_hindi
-                                    AppLanguage.RUSSIAN -> R.string.language_russian
-                                    AppLanguage.UKRAINIAN -> R.string.language_ukrainian
-                                    AppLanguage.KOREAN -> R.string.language_korean
-                                }
-                            ),
+                            text =
+                                stringResource(
+                                    when (language) {
+                                        AppLanguage.SYSTEM -> R.string.language_system
+                                        AppLanguage.ENGLISH -> R.string.language_english
+                                        AppLanguage.ITALIAN -> R.string.language_italian
+                                        AppLanguage.FRENCH -> R.string.language_french
+                                        AppLanguage.GERMAN -> R.string.language_german
+                                        AppLanguage.SPANISH -> R.string.language_spanish
+                                        AppLanguage.CHINESE_SIMPLIFIED -> R.string.language_chinese_simplified
+                                        AppLanguage.CHINESE_TRADITIONAL -> R.string.language_chinese_traditional
+                                        AppLanguage.JAPANESE -> R.string.language_japanese
+                                        AppLanguage.POLISH -> R.string.language_polish
+                                        AppLanguage.HINDI -> R.string.language_hindi
+                                        AppLanguage.RUSSIAN -> R.string.language_russian
+                                        AppLanguage.UKRAINIAN -> R.string.language_ukrainian
+                                        AppLanguage.KOREAN -> R.string.language_korean
+                                    },
+                                ),
                             modifier = Modifier.padding(start = 8.dp),
-                            maxLines = 1
+                            maxLines = 1,
                         )
                     }
                 }
@@ -147,9 +156,10 @@ fun PrivacyPolicyDialog(onDismiss: () -> Unit) {
         title = { AppText(stringResource(R.string.privacy_policy_title)) },
         text = {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState()),
             ) {
                 AppText(
                     text = stringResource(R.string.privacy_policy_content),
@@ -168,13 +178,14 @@ fun PrivacyPolicyDialog(onDismiss: () -> Unit) {
 
 @Composable
 fun ThirdPartyLibrariesDialog(onDismiss: () -> Unit) {
-    val libraries = listOf(
-        "Jetpack Compose" to "Google",
-        "Room" to "Google",
-        "Coroutines" to "JetBrains",
-        "Hilt" to "Google",
-        "Timber" to "Jake Wharton",
-    )
+    val libraries =
+        listOf(
+            "Jetpack Compose" to "Google",
+            "Room" to "Google",
+            "Coroutines" to "JetBrains",
+            "Hilt" to "Google",
+            "Timber" to "Jake Wharton",
+        )
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -182,19 +193,21 @@ fun ThirdPartyLibrariesDialog(onDismiss: () -> Unit) {
         text = {
             Column(
                 modifier = Modifier.padding(top = 12.dp),
-                verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp)
+                verticalArrangement =
+                    androidx.compose.foundation.layout.Arrangement
+                        .spacedBy(12.dp),
             ) {
                 libraries.forEach { (name, author) ->
                     Column {
                         AppText(
                             text = name,
                             style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Medium
+                            fontWeight = FontWeight.Medium,
                         )
                         AppText(
                             text = stringResource(R.string.settings_third_party_author, author),
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 }
@@ -210,23 +223,24 @@ fun ThirdPartyLibrariesDialog(onDismiss: () -> Unit) {
 
 @Composable
 fun HelpDialog(onDismiss: () -> Unit) {
-    val helpFeatures = listOf(
-        HelpDialogFeatureSpec(
-            titleResId = R.string.help_settings_feature_theme_title,
-            descriptionResId = R.string.help_settings_feature_theme_desc,
-            icon = Icons.Default.Settings,
-        ),
-        HelpDialogFeatureSpec(
-            titleResId = R.string.help_settings_feature_currency_title,
-            descriptionResId = R.string.help_settings_feature_currency_desc,
-            icon = Icons.Default.Settings,
-        ),
-        HelpDialogFeatureSpec(
-            titleResId = R.string.help_settings_feature_language_title,
-            descriptionResId = R.string.help_settings_feature_language_desc,
-            icon = Icons.Default.Settings,
-        ),
-    )
+    val helpFeatures =
+        listOf(
+            HelpDialogFeatureSpec(
+                titleResId = R.string.help_settings_feature_theme_title,
+                descriptionResId = R.string.help_settings_feature_theme_desc,
+                icon = Icons.Default.Settings,
+            ),
+            HelpDialogFeatureSpec(
+                titleResId = R.string.help_settings_feature_currency_title,
+                descriptionResId = R.string.help_settings_feature_currency_desc,
+                icon = Icons.Default.Settings,
+            ),
+            HelpDialogFeatureSpec(
+                titleResId = R.string.help_settings_feature_language_title,
+                descriptionResId = R.string.help_settings_feature_language_desc,
+                icon = Icons.Default.Settings,
+            ),
+        )
 
     AppHelpDialog(
         titleResId = R.string.help_settings_title,
@@ -235,4 +249,3 @@ fun HelpDialog(onDismiss: () -> Unit) {
         onDismiss = onDismiss,
     )
 }
-

@@ -29,7 +29,6 @@ public class SettingsRepositoryImpl(
     private val dataStore: DataStore<Preferences> = context.dataStore,
     private val localDataCipher: LocalDataCipherImpl = LocalDataCipherImpl(context),
 ) : SettingsRepository {
-
     private val themeKey = stringPreferencesKey("theme")
     private val languageKey = stringPreferencesKey("language")
     private val showChartsKey = booleanPreferencesKey("show_charts")
@@ -73,6 +72,7 @@ public class SettingsRepositoryImpl(
     private val suggestionsClearedAtKey = longPreferencesKey("suggestions_cleared_at")
     private val widgetBackgroundColorKey = longPreferencesKey("widget_background_color")
     private val widgetOpacityKey = intPreferencesKey("widget_opacity")
+
     // ── Card Customization (v3+) ──
     private val chartCardsOrderKey = stringPreferencesKey("chart_cards_order")
     private val homeTopCardsOrderKey = stringPreferencesKey("home_top_cards_order")
@@ -90,7 +90,7 @@ public class SettingsRepositoryImpl(
 
     private fun createSavedDateFilter(
         defaultPresetIndex: Int,
-        defaultDurationMs: Long
+        defaultDurationMs: Long,
     ): SavedDateFilter {
         val now = System.currentTimeMillis()
         return SavedDateFilter(
@@ -213,29 +213,25 @@ public class SettingsRepositoryImpl(
         }
     }
 
-    override fun getCurrencySymbol(): Flow<String> =
-        dataStore.data.map { it[currencySymbolKey] ?: "\u20ac" }
+    override fun getCurrencySymbol(): Flow<String> = dataStore.data.map { it[currencySymbolKey] ?: "\u20ac" }
 
     override suspend fun setCurrencySymbol(symbol: String) {
         dataStore.edit { it[currencySymbolKey] = symbol }
     }
 
-    override fun getDecimalDigits(): Flow<Int> =
-        dataStore.data.map { it[decimalDigitsKey] ?: 2 }
+    override fun getDecimalDigits(): Flow<Int> = dataStore.data.map { it[decimalDigitsKey] ?: 2 }
 
     override suspend fun setDecimalDigits(digits: Int) {
         dataStore.edit { it[decimalDigitsKey] = digits }
     }
 
-    override fun getDecimalSeparator(): Flow<String> =
-        dataStore.data.map { it[decimalSeparatorKey] ?: "," }
+    override fun getDecimalSeparator(): Flow<String> = dataStore.data.map { it[decimalSeparatorKey] ?: "," }
 
     override suspend fun setDecimalSeparator(separator: String) {
         dataStore.edit { it[decimalSeparatorKey] = separator }
     }
 
-    override fun getThousandsSeparator(): Flow<String> =
-        dataStore.data.map { it[thousandsSeparatorKey] ?: "." }
+    override fun getThousandsSeparator(): Flow<String> = dataStore.data.map { it[thousandsSeparatorKey] ?: "." }
 
     override suspend fun setThousandsSeparator(separator: String) {
         dataStore.edit { it[thousandsSeparatorKey] = separator }
@@ -248,8 +244,7 @@ public class SettingsRepositoryImpl(
         dataStore.edit { it[mealVoucherValueKey] = value }
     }
 
-    override fun getDateFormat(): Flow<String> =
-        dataStore.data.map { it[dateFormatKey] ?: "dd/MM/yyyy" }
+    override fun getDateFormat(): Flow<String> = dataStore.data.map { it[dateFormatKey] ?: "dd/MM/yyyy" }
 
     override suspend fun setDateFormat(pattern: String) {
         dataStore.edit { it[dateFormatKey] = pattern }
@@ -266,8 +261,7 @@ public class SettingsRepositoryImpl(
         }
     }
 
-    override fun getHomeDateFilterPreset(): Flow<Int> =
-        dataStore.data.map { it[homeDateFilterPresetKey] ?: 1 }
+    override fun getHomeDateFilterPreset(): Flow<Int> = dataStore.data.map { it[homeDateFilterPresetKey] ?: 1 }
 
     override suspend fun setHomeDateFilterPreset(index: Int) {
         dataStore.edit { it[homeDateFilterPresetKey] = index }
@@ -319,8 +313,7 @@ public class SettingsRepositoryImpl(
         }
     }
 
-    override fun getChartsDateFilterPreset(): Flow<Int> =
-        dataStore.data.map { it[chartsDateFilterPresetKey] ?: 1 }
+    override fun getChartsDateFilterPreset(): Flow<Int> = dataStore.data.map { it[chartsDateFilterPresetKey] ?: 1 }
 
     override suspend fun setChartsDateFilterPreset(index: Int) {
         dataStore.edit { it[chartsDateFilterPresetKey] = index }
@@ -345,8 +338,7 @@ public class SettingsRepositoryImpl(
         }
     }
 
-    override fun getChartsZoomEnabled(): Flow<Boolean> =
-        dataStore.data.map { it[chartsZoomEnabledKey] ?: false }
+    override fun getChartsZoomEnabled(): Flow<Boolean> = dataStore.data.map { it[chartsZoomEnabledKey] ?: false }
 
     override suspend fun setChartsZoomEnabled(enabled: Boolean) {
         dataStore.edit { it[chartsZoomEnabledKey] = enabled }
@@ -404,8 +396,9 @@ public class SettingsRepositoryImpl(
 
     override fun getTransactionsTransactionDisplayType(): Flow<TransactionDisplayType> =
         dataStore.data.map { preferences ->
-            val typeName = preferences[transactionsTransactionDisplayTypeKey]
-                ?: TransactionDisplayType.TREND.name
+            val typeName =
+                preferences[transactionsTransactionDisplayTypeKey]
+                    ?: TransactionDisplayType.TREND.name
             try {
                 TransactionDisplayType.valueOf(typeName)
             } catch (_: IllegalArgumentException) {
@@ -419,8 +412,7 @@ public class SettingsRepositoryImpl(
         }
     }
 
-    override fun getIsTutorialCompleted(): Flow<Boolean> =
-        dataStore.data.map { it[isTutorialCompletedKey] ?: false }
+    override fun getIsTutorialCompleted(): Flow<Boolean> = dataStore.data.map { it[isTutorialCompletedKey] ?: false }
 
     override suspend fun setIsTutorialCompleted(completed: Boolean) {
         dataStore.edit { it[isTutorialCompletedKey] = completed }
@@ -443,29 +435,25 @@ public class SettingsRepositoryImpl(
         localDataCipher.invalidateEncryptionFlag()
     }
 
-    override fun getLastBackupTimestamp(): Flow<Long?> =
-        dataStore.data.map { it[lastBackupTimestampKey] ?: 0L }
+    override fun getLastBackupTimestamp(): Flow<Long?> = dataStore.data.map { it[lastBackupTimestampKey] ?: 0L }
 
     override suspend fun setLastBackupTimestamp(timestamp: Long) {
         dataStore.edit { it[lastBackupTimestampKey] = timestamp }
     }
 
-    override fun getLastRestoreTimestamp(): Flow<Long?> =
-        dataStore.data.map { it[lastRestoreTimestampKey] }
+    override fun getLastRestoreTimestamp(): Flow<Long?> = dataStore.data.map { it[lastRestoreTimestampKey] }
 
     override suspend fun setLastRestoreTimestamp(timestamp: Long) {
         dataStore.edit { it[lastRestoreTimestampKey] = timestamp }
     }
 
-    override fun getAutoBackupEnabled(): Flow<Boolean> =
-        dataStore.data.map { it[autoBackupEnabledKey] ?: false }
+    override fun getAutoBackupEnabled(): Flow<Boolean> = dataStore.data.map { it[autoBackupEnabledKey] ?: false }
 
     override suspend fun setAutoBackupEnabled(enabled: Boolean) {
         dataStore.edit { it[autoBackupEnabledKey] = enabled }
     }
 
-    override fun getAutoBackupFolderUri(): Flow<String?> =
-        dataStore.data.map { it[autoBackupFolderUriKey] }
+    override fun getAutoBackupFolderUri(): Flow<String?> = dataStore.data.map { it[autoBackupFolderUriKey] }
 
     override suspend fun setAutoBackupFolderUri(uri: String?) {
         dataStore.edit { preferences ->
@@ -477,15 +465,13 @@ public class SettingsRepositoryImpl(
         }
     }
 
-    override fun getSuggestionsEnabled(): Flow<Boolean> =
-        dataStore.data.map { it[suggestionsEnabledKey] ?: true }
+    override fun getSuggestionsEnabled(): Flow<Boolean> = dataStore.data.map { it[suggestionsEnabledKey] ?: true }
 
     override suspend fun setSuggestionsEnabled(enabled: Boolean) {
         dataStore.edit { it[suggestionsEnabledKey] = enabled }
     }
 
-    override fun getSuggestionsClearedAt(): Flow<Long?> =
-        dataStore.data.map { it[suggestionsClearedAtKey] }
+    override fun getSuggestionsClearedAt(): Flow<Long?> = dataStore.data.map { it[suggestionsClearedAtKey] }
 
     override suspend fun setSuggestionsClearedAt(timestamp: Long) {
         dataStore.edit { it[suggestionsClearedAtKey] = timestamp }
@@ -498,23 +484,20 @@ public class SettingsRepositoryImpl(
         dataStore.edit { it[widgetBackgroundColorKey] = color }
     }
 
-    override fun getWidgetOpacity(): Flow<Int> =
-        dataStore.data.map { it[widgetOpacityKey] ?: DEFAULT_WIDGET_OPACITY }
+    override fun getWidgetOpacity(): Flow<Int> = dataStore.data.map { it[widgetOpacityKey] ?: DEFAULT_WIDGET_OPACITY }
 
     override suspend fun setWidgetOpacity(opacity: Int) {
         dataStore.edit { it[widgetOpacityKey] = opacity }
     }
 
     // ── Card Customization (v3+) ──
-    override fun getChartCardsOrder(): Flow<String> =
-        dataStore.data.map { it[chartCardsOrderKey] ?: "" }
+    override fun getChartCardsOrder(): Flow<String> = dataStore.data.map { it[chartCardsOrderKey] ?: "" }
 
     override suspend fun setChartCardsOrder(order: String) {
         dataStore.edit { it[chartCardsOrderKey] = order }
     }
 
-    override fun getHomeTopCardsOrder(): Flow<String> =
-        dataStore.data.map { it[homeTopCardsOrderKey] ?: "" }
+    override fun getHomeTopCardsOrder(): Flow<String> = dataStore.data.map { it[homeTopCardsOrderKey] ?: "" }
 
     override suspend fun setHomeTopCardsOrder(order: String) {
         dataStore.edit { it[homeTopCardsOrderKey] = order }
@@ -533,8 +516,7 @@ public class SettingsRepositoryImpl(
         }
     }
 
-    override fun getGoogleDriveFolderId(): Flow<String?> =
-        dataStore.data.map { it[googleDriveFolderIdKey] }
+    override fun getGoogleDriveFolderId(): Flow<String?> = dataStore.data.map { it[googleDriveFolderIdKey] }
 
     override suspend fun setGoogleDriveFolderId(folderId: String?) {
         dataStore.edit { preferences ->
@@ -546,8 +528,7 @@ public class SettingsRepositoryImpl(
         }
     }
 
-    override fun getGoogleDriveFolderName(): Flow<String?> =
-        dataStore.data.map { it[googleDriveFolderNameKey] }
+    override fun getGoogleDriveFolderName(): Flow<String?> = dataStore.data.map { it[googleDriveFolderNameKey] }
 
     override suspend fun setGoogleDriveFolderName(folderName: String?) {
         dataStore.edit { preferences ->
@@ -559,8 +540,7 @@ public class SettingsRepositoryImpl(
         }
     }
 
-    override fun getGoogleDriveAuthToken(): Flow<String?> =
-        dataStore.data.map { it[googleDriveAuthTokenKey] }
+    override fun getGoogleDriveAuthToken(): Flow<String?> = dataStore.data.map { it[googleDriveAuthTokenKey] }
 
     override suspend fun setGoogleDriveAuthToken(token: String?) {
         dataStore.edit { preferences ->
@@ -572,8 +552,7 @@ public class SettingsRepositoryImpl(
         }
     }
 
-    override fun getGoogleDriveRefreshToken(): Flow<String?> =
-        dataStore.data.map { it[googleDriveRefreshTokenKey] }
+    override fun getGoogleDriveRefreshToken(): Flow<String?> = dataStore.data.map { it[googleDriveRefreshTokenKey] }
 
     override suspend fun setGoogleDriveRefreshToken(token: String?) {
         dataStore.edit { preferences ->
@@ -585,8 +564,7 @@ public class SettingsRepositoryImpl(
         }
     }
 
-    override fun getGoogleDriveUserEmail(): Flow<String?> =
-        dataStore.data.map { it[googleDriveUserEmailKey] }
+    override fun getGoogleDriveUserEmail(): Flow<String?> = dataStore.data.map { it[googleDriveUserEmailKey] }
 
     override suspend fun setGoogleDriveUserEmail(email: String?) {
         dataStore.edit { preferences ->

@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.update
 open class FakeCategoryRepository(
     initialCategories: List<Category> = emptyList(),
 ) : CategoryRepository {
-
     val categories = MutableStateFlow(initialCategories)
 
     var errorToThrow: Throwable? = null
@@ -24,11 +23,9 @@ open class FakeCategoryRepository(
 
     override fun getAllCategories(): Flow<List<Category>> = categories
 
-    override suspend fun getCategoryById(id: Long): Category? =
-        categories.value.find { it.id == id }
+    override suspend fun getCategoryById(id: Long): Category? = categories.value.find { it.id == id }
 
-    override suspend fun getCategoryByName(name: String): Category? =
-        categories.value.find { it.name == name }
+    override suspend fun getCategoryByName(name: String): Category? = categories.value.find { it.name == name }
 
     override suspend fun insertCategory(category: Category): Long {
         errorToThrow?.let { throw it }
@@ -55,8 +52,7 @@ open class FakeCategoryRepository(
     override fun getCategoriesByType(type: String): Flow<List<Category>> =
         categories.map { list -> list.filter { it.type == type } }
 
-    override suspend fun getDefaultCategoryCount(): Int =
-        categories.value.count { it.isDefault }
+    override suspend fun getDefaultCategoryCount(): Int = categories.value.count { it.isDefault }
 
     /**
      * Helper method for tests: remove a category by ID

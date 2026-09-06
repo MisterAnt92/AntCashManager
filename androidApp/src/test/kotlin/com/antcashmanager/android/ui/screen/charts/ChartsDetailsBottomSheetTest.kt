@@ -8,8 +8,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.onNodeWithText
 import com.antcashmanager.android.BaseComposeUnitTest
-import com.antcashmanager.android.ui.screen.charts.view.ChartsDetailsBottomSheet
 import com.antcashmanager.android.ui.screen.charts.view.ChartDetailsData
+import com.antcashmanager.android.ui.screen.charts.view.ChartsDetailsBottomSheet
 import com.antcashmanager.android.ui.screen.charts.view.TrendDirection
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import org.junit.Test
@@ -27,16 +27,15 @@ import org.junit.Test
  */
 
 class ChartsDetailsBottomSheetTest : BaseComposeUnitTest() {
-
-
-    private val sampleDetails = ChartDetailsData(
-        categoryName = "Food",
-        amount = 250.50,
-        percentage = 35,
-        colorHex = 0xFFE57373,
-        transactionCount = 12,
-        trend = TrendDirection.UP,
-    )
+    private val sampleDetails =
+        ChartDetailsData(
+            categoryName = "Food",
+            amount = 250.50,
+            percentage = 35,
+            colorHex = 0xFFE57373,
+            transactionCount = 12,
+            trend = TrendDirection.UP,
+        )
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Test

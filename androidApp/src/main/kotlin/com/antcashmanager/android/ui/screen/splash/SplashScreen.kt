@@ -26,20 +26,21 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun SplashScreen() {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = MaterialTheme.colorScheme.background),
-        contentAlignment = Alignment.Center
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(color = MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.Center,
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             // App Icon
             Icon(
                 imageVector = Icons.Default.AttachMoney,
                 contentDescription = "App Icon",
                 modifier = Modifier.size(120.dp),
-                tint = MaterialTheme.colorScheme.primary
+                tint = MaterialTheme.colorScheme.primary,
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -48,7 +49,7 @@ fun SplashScreen() {
             CircularProgressIndicator(
                 modifier = Modifier.size(48.dp),
                 color = MaterialTheme.colorScheme.primary,
-                strokeWidth = 4.dp
+                strokeWidth = 4.dp,
             )
         }
     }

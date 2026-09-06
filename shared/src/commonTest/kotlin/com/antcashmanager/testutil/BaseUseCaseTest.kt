@@ -16,6 +16,5 @@ import kotlinx.coroutines.test.runTest
 abstract class BaseUseCaseTest {
     protected val testDispatcher = StandardTestDispatcher()
 
-    protected fun runUnitTest(block: suspend TestScope.() -> Unit) =
-        runTest(testDispatcher) { block() }
+    protected fun runUnitTest(block: suspend TestScope.() -> Unit) = runTest(testDispatcher) { block() }
 }

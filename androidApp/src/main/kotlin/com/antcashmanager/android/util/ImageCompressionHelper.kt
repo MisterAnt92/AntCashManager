@@ -25,10 +25,9 @@ import java.io.ByteArrayOutputStream
  * - Reusable per backup, import, e altre features
  */
 object ImageCompressionHelper {
-
     private const val MAX_IMAGE_WIDTH = 1920
     private const val MAX_IMAGE_HEIGHT = 1440
-    private const val JPEG_QUALITY = 80  // 0-100, dove 100 = massima qualità
+    private const val JPEG_QUALITY = 80 // 0-100, dove 100 = massima qualità
     private const val TAG = "ImageCompressionHelper"
 
     /**
@@ -50,55 +49,63 @@ object ImageCompressionHelper {
             // ═════════════════════════════════════════════════════════════════════
             // STEP 1: Decode dimensions first (no allocation)
             // ═════════════════════════════════════════════════════════════════════
-            val dimensionOptions = BitmapFactory.Options().apply {
-                inJustDecodeBounds = true
-            }
+            val dimensionOptions =
+                BitmapFactory.Options().apply {
+                    inJustDecodeBounds = true
+                }
             BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size, dimensionOptions)
 
             val originalWidth = dimensionOptions.outWidth
             val originalHeight = dimensionOptions.outHeight
 
             if (originalWidth <= 0 || originalHeight <= 0) {
-                throw IllegalArgumentException("Invalid image dimensions: ${originalWidth}×${originalHeight}")
+                throw IllegalArgumentException("Invalid image dimensions: $originalWidth×$originalHeight")
             }
 
             // ═════════════════════════════════════════════════════════════════════
             // STEP 2: Calculate downsampling factor
             // ═════════════════════════════════════════════════════════════════════
-            val inSampleSize = calculateInSampleSize(
-                originalWidth,
-                originalHeight,
-                MAX_IMAGE_WIDTH,
-                MAX_IMAGE_HEIGHT
-            )
+            val inSampleSize =
+                calculateInSampleSize(
+                    originalWidth,
+                    originalHeight,
+                    MAX_IMAGE_WIDTH,
+                    MAX_IMAGE_HEIGHT,
+                )
 
             Logger.d(tag = TAG) {
-                "Compressing image: ${originalWidth}×${originalHeight} " +
-                "→ ${originalWidth / inSampleSize}×${originalHeight / inSampleSize} " +
-                "(inSampleSize=$inSampleSize)"
+                "Compressing image: $originalWidth×$originalHeight " +
+                    "→ ${originalWidth / inSampleSize}×${originalHeight / inSampleSize} " +
+                    "(inSampleSize=$inSampleSize)"
             }
 
             // ═════════════════════════════════════════════════════════════════════
             // STEP 3: Decode bitmap WITH downsampling
             // ═════════════════════════════════════════════════════════════════════
-            val decodeOptions = BitmapFactory.Options().apply {
-                this.inSampleSize = inSampleSize
-            }
+            val decodeOptions =
+                BitmapFactory.Options().apply {
+                    this.inSampleSize = inSampleSize
+                }
 
-            val bitmap = BitmapFactory.decodeByteArray(
-                imageBytes, 0, imageBytes.size, decodeOptions
-            ) ?: throw IllegalArgumentException("Failed to decode image")
+            val bitmap =
+                BitmapFactory.decodeByteArray(
+                    imageBytes,
+                    0,
+                    imageBytes.size,
+                    decodeOptions,
+                ) ?: throw IllegalArgumentException("Failed to decode image")
 
             try {
                 // ═════════════════════════════════════════════════════════════════
                 // STEP 4: Re-encode as JPEG with quality 80
                 // ═════════════════════════════════════════════════════════════════
                 val outputStream = ByteArrayOutputStream()
-                val success = bitmap.compress(
-                    Bitmap.CompressFormat.JPEG,
-                    JPEG_QUALITY,
-                    outputStream
-                )
+                val success =
+                    bitmap.compress(
+                        Bitmap.CompressFormat.JPEG,
+                        JPEG_QUALITY,
+                        outputStream,
+                    )
 
                 if (!success) {
                     throw IllegalStateException("JPEG compression failed")
@@ -109,8 +116,8 @@ object ImageCompressionHelper {
 
                 Logger.d(tag = TAG) {
                     "Compression result: ${imageBytes.size} bytes " +
-                    "→ ${compressedBytes.size} bytes " +
-                    "($compressionRatio% original size)"
+                        "→ ${compressedBytes.size} bytes " +
+                        "($compressionRatio% original size)"
                 }
 
                 return compressedBytes
@@ -140,12 +147,13 @@ object ImageCompressionHelper {
         imageWidth: Int,
         imageHeight: Int,
         maxWidth: Int,
-        maxHeight: Int
+        maxHeight: Int,
     ): Int {
         var inSampleSize = 1
 
         while ((imageWidth / inSampleSize) > maxWidth ||
-            (imageHeight / inSampleSize) > maxHeight) {
+            (imageHeight / inSampleSize) > maxHeight
+        ) {
             inSampleSize *= 2
         }
 

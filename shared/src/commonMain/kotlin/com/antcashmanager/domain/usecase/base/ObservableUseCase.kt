@@ -44,12 +44,12 @@ public abstract class ObservableUseCase<in P, R>(
      *
      * `final`: le subclass implementano SOLO [execute], mai [invoke].
      */
-    public operator fun invoke(params: P): Flow<Result<R>> = execute(params)
-        .map { Result.success(it) }
-        .catch { throwable ->
-            if (throwable is CancellationException) throw throwable
-            log.e(throwable = throwable) { "flow failed" }
-            emit(Result.failure(throwable))
-        }
-        .flowOn(dispatcher)
+    public operator fun invoke(params: P): Flow<Result<R>> =
+        execute(params)
+            .map { Result.success(it) }
+            .catch { throwable ->
+                if (throwable is CancellationException) throw throwable
+                log.e(throwable = throwable) { "flow failed" }
+                emit(Result.failure(throwable))
+            }.flowOn(dispatcher)
 }

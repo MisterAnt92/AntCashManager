@@ -10,11 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
-import com.antcashmanager.android.ui.screen.charts.ChartsConstant
-import kotlin.math.cos
-import kotlin.math.sin
 
 /**
  * Line chart with points showing daily expense trends.
@@ -35,9 +31,10 @@ internal fun ExpenseLineChart(
 
     Box(modifier = modifier.fillMaxWidth()) {
         Canvas(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(150.dp),
         ) {
             val padding = 32f
             val chartWidth = size.width - (padding * 2)
@@ -58,7 +55,7 @@ internal fun ExpenseLineChart(
                     color = gridColor.copy(alpha = 0.2f),
                     start = Offset(padding, y),
                     end = Offset(size.width - padding, y),
-                    strokeWidth = 1f
+                    strokeWidth = 1f,
                 )
             }
 
@@ -78,7 +75,7 @@ internal fun ExpenseLineChart(
                     start = points[i],
                     end = points[i + 1],
                     strokeWidth = 2.5f,
-                    cap = StrokeCap.Round
+                    cap = StrokeCap.Round,
                 )
             }
 
@@ -87,12 +84,12 @@ internal fun ExpenseLineChart(
                 drawCircle(
                     color = pointColor,
                     radius = 4.5f,
-                    center = point
+                    center = point,
                 )
                 drawCircle(
                     color = pointColor.copy(alpha = 0.3f),
                     radius = 8f,
-                    center = point
+                    center = point,
                 )
             }
         }
@@ -119,9 +116,10 @@ internal fun WeekdayBarChart(
 
     Box(modifier = modifier.fillMaxWidth()) {
         Canvas(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(140.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(140.dp),
         ) {
             val padding = 32f
             val chartWidth = size.width - (padding * 2)
@@ -143,7 +141,7 @@ internal fun WeekdayBarChart(
                     color = gridColor.copy(alpha = 0.2f),
                     start = Offset(padding, y),
                     end = Offset(size.width - padding, y),
-                    strokeWidth = 1f
+                    strokeWidth = 1f,
                 )
             }
 
@@ -157,24 +155,29 @@ internal fun WeekdayBarChart(
                     val y = size.height - padding - barHeight
 
                     // Determine color based on expense level
-                    val color = when {
-                        expense > maxValue * 0.7 -> errorColor
-                        expense > maxValue * 0.4 -> tertiaryColor
-                        else -> barColor
-                    }
+                    val color =
+                        when {
+                            expense > maxValue * 0.7 -> errorColor
+                            expense > maxValue * 0.4 -> tertiaryColor
+                            else -> barColor
+                        }
 
                     // Draw bar
                     drawRect(
                         color = color,
                         topLeft = Offset(x, y),
-                        size = androidx.compose.ui.geometry.Size(barWidth, barHeight)
+                        size =
+                            androidx.compose.ui.geometry
+                                .Size(barWidth, barHeight),
                     )
 
                     // Highlight for better visibility
                     drawRect(
                         color = Color.White.copy(alpha = 0.2f),
                         topLeft = Offset(x, y),
-                        size = androidx.compose.ui.geometry.Size(barWidth * 0.3f, barHeight)
+                        size =
+                            androidx.compose.ui.geometry
+                                .Size(barWidth * 0.3f, barHeight),
                     )
                 }
             }

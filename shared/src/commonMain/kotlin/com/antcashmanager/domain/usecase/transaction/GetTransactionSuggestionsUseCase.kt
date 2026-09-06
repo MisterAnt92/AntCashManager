@@ -44,19 +44,20 @@ public class GetTransactionSuggestionsUseCase(
      *
      * @return Flow contenente [TransactionSuggestions] con tutti i suggerimenti disponibili
      */
-    override fun execute(params: Unit): Flow<TransactionSuggestions> = combine(
-        settingsRepository.getSuggestionsEnabled(),
-        settingsRepository.getSuggestionsClearedAt(),
-    ) { enabled, clearedAt -> enabled to clearedAt }
-        .flatMapLatest { (enabled, clearedAt) ->
-            if (!enabled) {
-                flowOf(TransactionSuggestions())
-            } else {
-                val since = clearedAt ?: 0L
-                // Use unified query: 1 query instead of 5 separate queries
-                flow {
-                    emit(repository.getSuggestions(since))
+    override fun execute(params: Unit): Flow<TransactionSuggestions> =
+        combine(
+            settingsRepository.getSuggestionsEnabled(),
+            settingsRepository.getSuggestionsClearedAt(),
+        ) { enabled, clearedAt -> enabled to clearedAt }
+            .flatMapLatest { (enabled, clearedAt) ->
+                if (!enabled) {
+                    flowOf(TransactionSuggestions())
+                } else {
+                    val since = clearedAt ?: 0L
+                    // Use unified query: 1 query instead of 5 separate queries
+                    flow {
+                        emit(repository.getSuggestions(since))
+                    }
                 }
             }
-        }
 }

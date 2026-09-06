@@ -1,9 +1,7 @@
 package com.antcashmanager.android.ui.components.card
-import com.antcashmanager.android.BaseComposeUnitTest
-import org.junit.Ignore
-
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.onNodeWithText
+import com.antcashmanager.android.BaseComposeUnitTest
 import com.antcashmanager.android.ui.screen.home.view.BalanceCard
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import org.junit.Test
@@ -21,7 +19,6 @@ import org.junit.Test
  * For now, we keep them as unit test placeholders - they document the test structure.
  */
 class BalanceCardTest : BaseComposeUnitTest() {
-
     @Test
     fun balanceCard_shouldDisplayPositiveBalance() {
         composeTestRule.setContent {
@@ -32,7 +29,8 @@ class BalanceCardTest : BaseComposeUnitTest() {
 
         // Verificare che la card è visualizzata
         // Note: Il testo esatto dipende dalle string resources, quindi testiamo la visualizzazione
-        composeTestRule.onNodeWithText("€1,000.00", useUnmergedTree = true)
+        composeTestRule
+            .onNodeWithText("€1,000.00", useUnmergedTree = true)
             .assertIsDisplayed()
     }
 
@@ -45,7 +43,8 @@ class BalanceCardTest : BaseComposeUnitTest() {
         }
 
         // Verificare che la card mostra il saldo negativo
-        composeTestRule.onNodeWithText("-€500.00", useUnmergedTree = true)
+        composeTestRule
+            .onNodeWithText("-€500.00", useUnmergedTree = true)
             .assertIsDisplayed()
     }
 
@@ -58,7 +57,8 @@ class BalanceCardTest : BaseComposeUnitTest() {
         }
 
         // Verificare che mostra zero
-        composeTestRule.onNodeWithText("€0.00", useUnmergedTree = true)
+        composeTestRule
+            .onNodeWithText("€0.00", useUnmergedTree = true)
             .assertIsDisplayed()
     }
 
@@ -77,7 +77,8 @@ class BalanceCardTest : BaseComposeUnitTest() {
         }
 
         // Verificare che la card è visualizzata
-        composeTestRule.onNodeWithText("€1,500.00", useUnmergedTree = true)
+        composeTestRule
+            .onNodeWithText("€1,500.00", useUnmergedTree = true)
             .assertIsDisplayed()
     }
 
@@ -90,7 +91,8 @@ class BalanceCardTest : BaseComposeUnitTest() {
         }
 
         // Verificare che gestisce numeri grandi
-        composeTestRule.onNodeWithText("€999,999.99", useUnmergedTree = true)
+        composeTestRule
+            .onNodeWithText("€999,999.99", useUnmergedTree = true)
             .assertIsDisplayed()
     }
 
@@ -103,7 +105,8 @@ class BalanceCardTest : BaseComposeUnitTest() {
         }
 
         // Verificare che mostra piccoli importi
-        composeTestRule.onNodeWithText("€0.01", useUnmergedTree = true)
+        composeTestRule
+            .onNodeWithText("€0.01", useUnmergedTree = true)
             .assertIsDisplayed()
     }
 }

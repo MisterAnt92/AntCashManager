@@ -76,30 +76,36 @@ fun appExitConfirmationDialog(
     }
 
     val mascotTransition = rememberInfiniteTransition(label = "exitMascotTransition")
-    val mascotScale = mascotTransition.animateFloat(
-        initialValue = MASCOT_SCALE_MIN,
-        targetValue = MASCOT_SCALE_MAX,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = MASCOT_SCALE_ANIMATION_MS,
-                easing = FastOutSlowInEasing,
-            ),
-            repeatMode = RepeatMode.Reverse,
-        ),
-        label = "exitMascotScale",
-    )
-    val mascotFloatY = mascotTransition.animateFloat(
-        initialValue = MASCOT_FLOAT_MIN,
-        targetValue = MASCOT_FLOAT_MAX,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = MASCOT_FLOAT_ANIMATION_MS,
-                easing = FastOutSlowInEasing,
-            ),
-            repeatMode = RepeatMode.Reverse,
-        ),
-        label = "exitMascotFloatY",
-    )
+    val mascotScale =
+        mascotTransition.animateFloat(
+            initialValue = MASCOT_SCALE_MIN,
+            targetValue = MASCOT_SCALE_MAX,
+            animationSpec =
+                infiniteRepeatable(
+                    animation =
+                        tween(
+                            durationMillis = MASCOT_SCALE_ANIMATION_MS,
+                            easing = FastOutSlowInEasing,
+                        ),
+                    repeatMode = RepeatMode.Reverse,
+                ),
+            label = "exitMascotScale",
+        )
+    val mascotFloatY =
+        mascotTransition.animateFloat(
+            initialValue = MASCOT_FLOAT_MIN,
+            targetValue = MASCOT_FLOAT_MAX,
+            animationSpec =
+                infiniteRepeatable(
+                    animation =
+                        tween(
+                            durationMillis = MASCOT_FLOAT_ANIMATION_MS,
+                            easing = FastOutSlowInEasing,
+                        ),
+                    repeatMode = RepeatMode.Reverse,
+                ),
+            label = "exitMascotFloatY",
+        )
 
     AlertDialog(
         onDismissRequest = {
@@ -110,13 +116,14 @@ fun appExitConfirmationDialog(
             Image(
                 painter = painterResource(id = R.drawable.ic_ant_mascot),
                 contentDescription = null,
-                modifier = Modifier
-                    .size(64.dp)
-                    .graphicsLayer {
-                        scaleX = mascotScale.value
-                        scaleY = mascotScale.value
-                        translationY = mascotFloatY.value
-                    }
+                modifier =
+                    Modifier
+                        .size(64.dp)
+                        .graphicsLayer {
+                            scaleX = mascotScale.value
+                            scaleY = mascotScale.value
+                            translationY = mascotFloatY.value
+                        },
             )
         },
         title = { AppText(text = stringResource(R.string.exit_app_title)) },
@@ -128,7 +135,7 @@ fun appExitConfirmationDialog(
                     setShouldExit(true)
                     // Inform the parent to start the dismissal process immediately
                     onDismiss()
-                }
+                },
             ) {
                 AppText(text = stringResource(R.string.exit_app_confirm))
             }
@@ -138,7 +145,7 @@ fun appExitConfirmationDialog(
                 onClick = {
                     logger.d("Cancel button clicked")
                     onDismiss()
-                }
+                },
             ) {
                 AppText(text = stringResource(R.string.common_cancel))
             }
@@ -177,5 +184,3 @@ private fun previewAppExitConfirmationDialogLight() {
 private fun previewAppExitConfirmationDialogDark() {
     previewAppExitConfirmationDialogLight()
 }
-
-

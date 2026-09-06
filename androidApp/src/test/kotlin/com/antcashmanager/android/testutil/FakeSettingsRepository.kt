@@ -19,7 +19,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
  * corrispondente, prima o dopo la creazione del ViewModel.
  */
 open class FakeSettingsRepository : SettingsRepository {
-
     companion object {
         private const val WEEK_IN_MILLIS = 7L * 24 * 60 * 60 * 1000
         private const val MONTH_IN_MILLIS = 30L * 24 * 60 * 60 * 1000
@@ -76,133 +75,157 @@ open class FakeSettingsRepository : SettingsRepository {
     val defaultPaymentType = MutableStateFlow("ELECTRONIC")
 
     override fun getTheme(): Flow<AppTheme> = theme
+
     override suspend fun setTheme(theme: AppTheme) {
         this.theme.value = theme
     }
 
     override fun getLanguage(): Flow<AppLanguage> = language
+
     override suspend fun setLanguage(language: AppLanguage) {
         this.language.value = language
     }
 
     override fun getShowCharts(): Flow<Boolean> = showCharts
+
     override suspend fun setShowCharts(show: Boolean) {
         showCharts.value = show
     }
 
     override fun getHighContrast(): Flow<Boolean> = highContrast
+
     override suspend fun setHighContrast(enabled: Boolean) {
         highContrast.value = enabled
     }
 
     override fun getLargeText(): Flow<Boolean> = largeText
+
     override suspend fun setLargeText(enabled: Boolean) {
         largeText.value = enabled
     }
 
     override fun getReduceMotion(): Flow<Boolean> = reduceMotion
+
     override suspend fun setReduceMotion(enabled: Boolean) {
         reduceMotion.value = enabled
     }
 
     override fun getShowTransactionNotes(): Flow<Boolean> = showTransactionNotes
+
     override suspend fun setShowTransactionNotes(show: Boolean) {
         showTransactionNotes.value = show
     }
 
     override fun getMaskAmounts(): Flow<Boolean> = maskAmounts
+
     override suspend fun setMaskAmounts(mask: Boolean) {
         maskAmounts.value = mask
     }
 
     override fun getCurrencySymbol(): Flow<String> = currencySymbol
+
     override suspend fun setCurrencySymbol(symbol: String) {
         currencySymbol.value = symbol
     }
 
     override fun getDecimalDigits(): Flow<Int> = decimalDigits
+
     override suspend fun setDecimalDigits(digits: Int) {
         decimalDigits.value = digits
     }
 
     override fun getDecimalSeparator(): Flow<String> = decimalSeparator
+
     override suspend fun setDecimalSeparator(separator: String) {
         decimalSeparator.value = separator
     }
 
     override fun getThousandsSeparator(): Flow<String> = thousandsSeparator
+
     override suspend fun setThousandsSeparator(separator: String) {
         thousandsSeparator.value = separator
     }
 
     override fun getMealVoucherValue(): Flow<Double> = mealVoucherValue
+
     override suspend fun setMealVoucherValue(value: Double) {
         mealVoucherValue.value = value
     }
 
     override fun getDateFormat(): Flow<String> = dateFormat
+
     override suspend fun setDateFormat(pattern: String) {
         dateFormat.value = pattern
     }
 
     override fun getDateFilterExpanded(): Flow<Boolean> = dateFilterExpanded
+
     override suspend fun setDateFilterExpanded(expanded: Boolean) {
         dateFilterExpanded.value = expanded
     }
 
     override fun getHomeDateFilterPreset(): Flow<Int> = homeDateFilterPreset
+
     override suspend fun setHomeDateFilterPreset(index: Int) {
         homeDateFilterPreset.value = index
     }
 
     override fun getHomeDateFilterState(): Flow<SavedDateFilter> = homeDateFilterState
+
     override suspend fun setHomeDateFilterState(filter: SavedDateFilter) {
         homeDateFilterState.value = filter
     }
 
     override fun getTransactionsDateFilterPreset(): Flow<Int> = transactionsDateFilterPreset
+
     override suspend fun setTransactionsDateFilterPreset(index: Int) {
         transactionsDateFilterPreset.value = index
     }
 
-    override fun getTransactionsDateFilterState(): Flow<SavedDateFilter> =
-        transactionsDateFilterState
+    override fun getTransactionsDateFilterState(): Flow<SavedDateFilter> = transactionsDateFilterState
 
     override suspend fun setTransactionsDateFilterState(filter: SavedDateFilter) {
         transactionsDateFilterState.value = filter
     }
 
     override fun getChartsDateFilterPreset(): Flow<Int> = chartsDateFilterPreset
+
     override suspend fun setChartsDateFilterPreset(index: Int) {
         chartsDateFilterPreset.value = index
     }
 
     override fun getChartsDateFilterState(): Flow<SavedDateFilter> = chartsDateFilterState
+
     override suspend fun setChartsDateFilterState(filter: SavedDateFilter) {
         chartsDateFilterState.value = filter
     }
 
     override fun getChartsZoomEnabled(): Flow<Boolean> = chartsZoomEnabled
+
     override suspend fun setChartsZoomEnabled(enabled: Boolean) {
         chartsZoomEnabled.value = enabled
     }
 
     override fun getShowPaymentTypeBreakdown(): Flow<Boolean> = showPaymentTypeBreakdown
+
     override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {
         showPaymentTypeBreakdown.value = show
     }
 
     override fun getShowQuickInsightsCard(): Flow<Boolean> = showQuickInsightsCard
+
     override suspend fun setShowQuickInsightsCard(show: Boolean) {
         showQuickInsightsCard.value = show
     }
 
     override fun getDefaultPaymentType(): Flow<String> = defaultPaymentType
+
     override suspend fun setDefaultPaymentType(paymentType: String) {
         defaultPaymentType.value = paymentType
     }
 
     override fun getTransactionDisplayType(): Flow<TransactionDisplayType> = transactionDisplayType
+
     override suspend fun setTransactionDisplayType(displayType: TransactionDisplayType) {
         transactionDisplayType.value = displayType
     }
@@ -215,51 +238,61 @@ open class FakeSettingsRepository : SettingsRepository {
     }
 
     override fun getIsTutorialCompleted(): Flow<Boolean> = isTutorialCompleted
+
     override suspend fun setIsTutorialCompleted(completed: Boolean) {
         isTutorialCompleted.value = completed
     }
 
     override fun getCategorySortOrderInitialized(): Flow<Boolean> = categorySortOrderInitialized
+
     override suspend fun setCategorySortOrderInitialized(initialized: Boolean) {
         categorySortOrderInitialized.value = initialized
     }
 
     override fun getDataEncryptionEnabled(): Flow<Boolean> = dataEncryptionEnabled
+
     override suspend fun setDataEncryptionEnabled(enabled: Boolean) {
         dataEncryptionEnabled.value = enabled
     }
 
     override fun getLastBackupTimestamp(): Flow<Long?> = lastBackupTimestamp
+
     override suspend fun setLastBackupTimestamp(timestamp: Long) {
         lastBackupTimestamp.value = timestamp
     }
 
     override fun getLastRestoreTimestamp(): Flow<Long?> = lastRestoreTimestamp
+
     override suspend fun setLastRestoreTimestamp(timestamp: Long) {
         lastRestoreTimestamp.value = timestamp
     }
 
     override fun getAutoBackupEnabled(): Flow<Boolean> = autoBackupEnabled
+
     override suspend fun setAutoBackupEnabled(enabled: Boolean) {
         autoBackupEnabled.value = enabled
     }
 
     override fun getAutoBackupFolderUri(): Flow<String?> = autoBackupFolderUri
+
     override suspend fun setAutoBackupFolderUri(uri: String?) {
         autoBackupFolderUri.value = uri
     }
 
     override fun getAutoBackupDestination(): Flow<BackupDestination> = autoBackupDestination
+
     override suspend fun setAutoBackupDestination(destination: BackupDestination) {
         autoBackupDestination.value = destination
     }
 
     override fun getGoogleDriveFolderId(): Flow<String?> = googleDriveFolderId
+
     override suspend fun setGoogleDriveFolderId(folderId: String?) {
         googleDriveFolderId.value = folderId
     }
 
     override fun getGoogleDriveFolderName(): Flow<String?> = googleDriveFolderName
+
     override suspend fun setGoogleDriveFolderName(folderName: String?) {
         googleDriveFolderName.value = folderName
     }
@@ -281,36 +314,43 @@ open class FakeSettingsRepository : SettingsRepository {
     }
 
     override fun getGoogleDriveUserEmail(): Flow<String?> = googleDriveUserEmail
+
     override suspend fun setGoogleDriveUserEmail(email: String?) {
         googleDriveUserEmail.value = email
     }
 
     override fun getSuggestionsEnabled(): Flow<Boolean> = suggestionsEnabled
+
     override suspend fun setSuggestionsEnabled(enabled: Boolean) {
         suggestionsEnabled.value = enabled
     }
 
     override fun getSuggestionsClearedAt(): Flow<Long?> = suggestionsClearedAt
+
     override suspend fun setSuggestionsClearedAt(timestamp: Long) {
         suggestionsClearedAt.value = timestamp
     }
 
     override fun getWidgetBackgroundColor(): Flow<Long> = widgetBackgroundColor
+
     override suspend fun setWidgetBackgroundColor(color: Long) {
         widgetBackgroundColor.value = color
     }
 
     override fun getWidgetOpacity(): Flow<Int> = widgetOpacity
+
     override suspend fun setWidgetOpacity(opacity: Int) {
         widgetOpacity.value = opacity
     }
 
     override fun getChartCardsOrder(): Flow<String> = chartCardsOrder
+
     override suspend fun setChartCardsOrder(order: String) {
         chartCardsOrder.value = order
     }
 
     override fun getHomeTopCardsOrder(): Flow<String> = homeTopCardsOrder
+
     override suspend fun setHomeTopCardsOrder(order: String) {
         homeTopCardsOrder.value = order
     }

@@ -33,13 +33,15 @@ data class TransactionsState(
     val dateFilterExpanded: Boolean = false,
 ) {
     val hasActiveFilters: Boolean
-        get() = searchQuery.isNotBlank() ||
+        get() =
+            searchQuery.isNotBlank() ||
                 selectedCategory != null ||
                 selectedTransactionType != null ||
                 selectedPaymentType != null
 
     val hasFilterChanges: Boolean
-        get() = pendingSearchQuery != searchQuery ||
+        get() =
+            pendingSearchQuery != searchQuery ||
                 pendingCategory != selectedCategory ||
                 pendingTransactionType != selectedTransactionType ||
                 pendingPaymentType != selectedPaymentType
@@ -67,17 +69,18 @@ data class TransactionsState(
     companion object {
         val PRESETS = TransactionsConstant.PRESETS
 
-        fun getDateFromForPreset(index: Int): Long = when (index) {
-            0 -> System.currentTimeMillis() - TransactionsConstant.ONE_DAY_MS
-            1 -> System.currentTimeMillis() - TransactionsConstant.ONE_WEEK_MS
-            2 -> System.currentTimeMillis() - TransactionsConstant.THIRTY_DAYS_MS
-            3 -> System.currentTimeMillis() - TransactionsConstant.ONE_YEAR_MS
-            4 -> System.currentTimeMillis() - TransactionsConstant.TWO_YEARS_MS
-            5 -> System.currentTimeMillis() - TransactionsConstant.THREE_YEARS_MS
-            6 -> System.currentTimeMillis() - TransactionsConstant.FIVE_YEARS_MS
-            7 -> System.currentTimeMillis() - TransactionsConstant.SIX_YEARS_MS
-            8 -> System.currentTimeMillis() - TransactionsConstant.ALL_TIME_MS
-            else -> System.currentTimeMillis() - TransactionsConstant.ONE_WEEK_MS
-        }
+        fun getDateFromForPreset(index: Int): Long =
+            when (index) {
+                0 -> System.currentTimeMillis() - TransactionsConstant.ONE_DAY_MS
+                1 -> System.currentTimeMillis() - TransactionsConstant.ONE_WEEK_MS
+                2 -> System.currentTimeMillis() - TransactionsConstant.THIRTY_DAYS_MS
+                3 -> System.currentTimeMillis() - TransactionsConstant.ONE_YEAR_MS
+                4 -> System.currentTimeMillis() - TransactionsConstant.TWO_YEARS_MS
+                5 -> System.currentTimeMillis() - TransactionsConstant.THREE_YEARS_MS
+                6 -> System.currentTimeMillis() - TransactionsConstant.FIVE_YEARS_MS
+                7 -> System.currentTimeMillis() - TransactionsConstant.SIX_YEARS_MS
+                8 -> System.currentTimeMillis() - TransactionsConstant.ALL_TIME_MS
+                else -> System.currentTimeMillis() - TransactionsConstant.ONE_WEEK_MS
+            }
     }
 }

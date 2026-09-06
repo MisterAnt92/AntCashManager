@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -30,10 +29,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
-import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
-import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
@@ -51,11 +49,12 @@ fun HelpButton(
 ) {
     IconButton(
         onClick = onHelpClick,
-        modifier = modifier
-            .background(
-                color = MaterialTheme.colorScheme.primaryContainer,
-                shape = CircleShape,
-            ),
+        modifier =
+            modifier
+                .background(
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    shape = CircleShape,
+                ),
     ) {
         Icon(
             imageVector = Icons.AutoMirrored.Default.Help,
@@ -99,9 +98,10 @@ fun HelpDialogContent(
             },
             text = {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .verticalScroll(rememberScrollState()),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     AppText(
@@ -129,9 +129,10 @@ fun HelpDialogContent(
                     AppText(stringResource(R.string.common_close))
                 }
             },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
         )
     }
 }
@@ -142,13 +143,13 @@ private fun HelpFeatureItemRow(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(
-                color = MaterialTheme.colorScheme.surfaceContainerLow,
-                shape = RoundedCornerShape(8.dp),
-            )
-            .padding(12.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceContainerLow,
+                    shape = RoundedCornerShape(8.dp),
+                ).padding(12.dp),
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
@@ -187,13 +188,14 @@ private fun HelpDialogPreviewLight() {
                 isVisible = true,
                 title = "Help Title",
                 description = "This is a help description",
-                features = listOf(
-                    SimpleHelpFeature(
-                        title = "Feature 1",
-                        description = "Description of feature 1",
-                        icon = Icons.AutoMirrored.Default.Help,
+                features =
+                    listOf(
+                        SimpleHelpFeature(
+                            title = "Feature 1",
+                            description = "Description of feature 1",
+                            icon = Icons.AutoMirrored.Default.Help,
+                        ),
                     ),
-                ),
                 onDismiss = {},
             )
         }

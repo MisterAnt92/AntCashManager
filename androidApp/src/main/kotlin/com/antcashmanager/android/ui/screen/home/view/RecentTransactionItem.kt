@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -26,12 +25,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.antcashmanager.android.ui.components.layout.SpacingSize
-import com.antcashmanager.android.ui.components.layout.VerticalSpacer
-import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.animation.AnimatedCard
 import com.antcashmanager.android.ui.components.animation.AnimatedListItem
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
+import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.text.TransactionAmountText
 import com.antcashmanager.android.ui.screen.categories.view.categoryIconMap
@@ -52,15 +50,14 @@ import java.util.Locale
 private val dateFormat = SimpleDateFormat("dd MMM", Locale.getDefault())
 
 @Composable
-fun getRecurrenceIntervalLabel(interval: String): String {
-    return when (interval.lowercase()) {
+fun getRecurrenceIntervalLabel(interval: String): String =
+    when (interval.lowercase()) {
         "daily" -> stringResource(R.string.transactions_interval_daily)
         "weekly" -> stringResource(R.string.transactions_interval_weekly)
         "monthly" -> stringResource(R.string.transactions_interval_monthly)
         "yearly" -> stringResource(R.string.transactions_interval_yearly)
         else -> stringResource(R.string.transactions_recurring)
     }
-}
 
 @Composable
 fun RecentTransactionItem(
@@ -75,15 +72,17 @@ fun RecentTransactionItem(
 
     AnimatedListItem(index = transaction.id.toInt()) {
         AnimatedCard(
-            modifier = modifier
-                .fillMaxWidth()
-                .clickable(onClick = onClick),
+            modifier =
+                modifier
+                    .fillMaxWidth()
+                    .clickable(onClick = onClick),
             backgroundColor = cardBackgroundColor,
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 // Icon based on display type
@@ -91,15 +90,19 @@ fun RecentTransactionItem(
                     TransactionDisplayType.TREND -> {
                         // Icon with background
                         Box(
-                            modifier = Modifier
-                                .size(44.dp)
-                                .background(
-                                    if (isIncome) IncomeGreen.copy(alpha = 0.25f) else ExpenseRed.copy(
-                                        alpha = 0.25f
-                                    ),
-                                    shape = RoundedCornerShape(32.dp),
-                                )
-                                .padding(8.dp),
+                            modifier =
+                                Modifier
+                                    .size(44.dp)
+                                    .background(
+                                        if (isIncome) {
+                                            IncomeGreen.copy(alpha = 0.25f)
+                                        } else {
+                                            ExpenseRed.copy(
+                                                alpha = 0.25f,
+                                            )
+                                        },
+                                        shape = RoundedCornerShape(32.dp),
+                                    ).padding(8.dp),
                             contentAlignment = Alignment.Center,
                         ) {
                             Icon(
@@ -116,12 +119,13 @@ fun RecentTransactionItem(
                         // Category badge with icon from category data
                         val categoryIconVector = categoryIconMap[transaction.categoryIcon]
                         Box(
-                            modifier = Modifier
-                                .size(44.dp)
-                                .background(
-                                    color = Color(transaction.categoryColor),
-                                    shape = CircleShape
-                                ),
+                            modifier =
+                                Modifier
+                                    .size(44.dp)
+                                    .background(
+                                        color = Color(transaction.categoryColor),
+                                        shape = CircleShape,
+                                    ),
                             contentAlignment = Alignment.Center,
                         ) {
                             if (categoryIconVector != null) {
@@ -160,23 +164,34 @@ fun RecentTransactionItem(
                         color = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onErrorContainer,
                     )
                     AppText(
-                        text = stringResource(
-                            R.string.home_transaction_item_subtitle,
-                            translateCategory(transaction.category),
-                            dateFormat.format(Date(transaction.timestamp))
-                        ),
+                        text =
+                            stringResource(
+                                R.string.home_transaction_item_subtitle,
+                                translateCategory(transaction.category),
+                                dateFormat.format(Date(transaction.timestamp)),
+                            ),
                         style = MaterialTheme.typography.bodySmall,
-                        color = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer.copy(
-                            alpha = 0.7f
-                        ) else MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.7f),
+                        color =
+                            if (isIncome) {
+                                MaterialTheme.colorScheme.onSecondaryContainer.copy(
+                                    alpha = 0.7f,
+                                )
+                            } else {
+                                MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.7f)
+                            },
                     )
                     if (transaction.notes.isValidNote()) {
                         AppText(
                             text = transaction.notes,
                             style = MaterialTheme.typography.labelSmall,
-                            color = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer.copy(
-                                alpha = 0.6f
-                            ) else MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.6f),
+                            color =
+                                if (isIncome) {
+                                    MaterialTheme.colorScheme.onSecondaryContainer.copy(
+                                        alpha = 0.6f,
+                                    )
+                                } else {
+                                    MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.6f)
+                                },
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
@@ -194,11 +209,12 @@ fun RecentTransactionItem(
                             )
                             HorizontalSpacer(SpacingSize.XXXS)
                             AppText(
-                                text = if (transaction.recurrenceInterval.isNotBlank()) {
-                                    getRecurrenceIntervalLabel(transaction.recurrenceInterval)
-                                } else {
-                                    stringResource(R.string.transactions_recurring)
-                                },
+                                text =
+                                    if (transaction.recurrenceInterval.isNotBlank()) {
+                                        getRecurrenceIntervalLabel(transaction.recurrenceInterval)
+                                    } else {
+                                        stringResource(R.string.transactions_recurring)
+                                    },
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.tertiary,
                                 fontWeight = FontWeight.SemiBold,
@@ -211,14 +227,17 @@ fun RecentTransactionItem(
 
                 // Amount with background
                 Box(
-                    modifier = Modifier
-                        .padding(8.dp),
+                    modifier =
+                        Modifier
+                            .padding(8.dp),
                 ) {
                     TransactionAmountText(
                         amount = transaction.amount, // Amount will already be negative for expenses
-                        masked = LocalAmountsMasked.current && isProtectedSalaryTransaction(
-                            transaction
-                        ),
+                        masked =
+                            LocalAmountsMasked.current &&
+                                isProtectedSalaryTransaction(
+                                    transaction,
+                                ),
                     )
                 }
             }
@@ -231,16 +250,17 @@ fun RecentTransactionItem(
 private fun RecentTransactionItemIncomePreview() {
     AntCashManagerTheme(dynamicColor = false) {
         RecentTransactionItem(
-            transaction = Transaction(
-                id = 1,
-                title = "Salary",
-                amount = 2500.0,
-                category = "Work",
-                type = TransactionType.INCOME,
-                timestamp = System.currentTimeMillis(),
-                categoryIcon = "payments",
-                categoryColor = 0xFF81C784,
-            ),
+            transaction =
+                Transaction(
+                    id = 1,
+                    title = "Salary",
+                    amount = 2500.0,
+                    category = "Work",
+                    type = TransactionType.INCOME,
+                    timestamp = System.currentTimeMillis(),
+                    categoryIcon = "payments",
+                    categoryColor = 0xFF81C784,
+                ),
         )
     }
 }
@@ -250,17 +270,18 @@ private fun RecentTransactionItemIncomePreview() {
 private fun RecentTransactionItemExpensePreview() {
     AntCashManagerTheme(dynamicColor = false) {
         RecentTransactionItem(
-            transaction = Transaction(
-                id = 2,
-                title = "Groceries",
-                amount = 85.50,
-                category = "Food",
-                type = TransactionType.EXPENSE,
-                timestamp = System.currentTimeMillis(),
-                notes = "Weekly shopping",
-                categoryIcon = "restaurant",
-                categoryColor = 0xFFE57373,
-            ),
+            transaction =
+                Transaction(
+                    id = 2,
+                    title = "Groceries",
+                    amount = 85.50,
+                    category = "Food",
+                    type = TransactionType.EXPENSE,
+                    timestamp = System.currentTimeMillis(),
+                    notes = "Weekly shopping",
+                    categoryIcon = "restaurant",
+                    categoryColor = 0xFFE57373,
+                ),
         )
     }
 }
@@ -270,18 +291,19 @@ private fun RecentTransactionItemExpensePreview() {
 private fun RecentTransactionItemRecurringExpensePreview() {
     AntCashManagerTheme(dynamicColor = false) {
         RecentTransactionItem(
-            transaction = Transaction(
-                id = 3,
-                title = "Electric Bill",
-                amount = 120.0,
-                category = "Utilities",
-                type = TransactionType.EXPENSE,
-                timestamp = System.currentTimeMillis(),
-                isRecurring = true,
-                recurrenceInterval = "monthly",
-                categoryIcon = "receipt_long",
-                categoryColor = 0xFFFFB74D,
-            ),
+            transaction =
+                Transaction(
+                    id = 3,
+                    title = "Electric Bill",
+                    amount = 120.0,
+                    category = "Utilities",
+                    type = TransactionType.EXPENSE,
+                    timestamp = System.currentTimeMillis(),
+                    isRecurring = true,
+                    recurrenceInterval = "monthly",
+                    categoryIcon = "receipt_long",
+                    categoryColor = 0xFFFFB74D,
+                ),
         )
     }
 }
@@ -291,14 +313,15 @@ private fun RecentTransactionItemRecurringExpensePreview() {
 private fun TransactionItemTrendPreview() {
     AntCashManagerTheme(dynamicColor = false) {
         RecentTransactionItem(
-            transaction = Transaction(
-                id = 1,
-                title = "Groceries",
-                amount = -85.50,
-                category = "Food",
-                type = TransactionType.EXPENSE,
-                timestamp = System.currentTimeMillis(),
-            ),
+            transaction =
+                Transaction(
+                    id = 1,
+                    title = "Groceries",
+                    amount = -85.50,
+                    category = "Food",
+                    type = TransactionType.EXPENSE,
+                    timestamp = System.currentTimeMillis(),
+                ),
             displayType = TransactionDisplayType.TREND,
         )
     }
@@ -309,16 +332,17 @@ private fun TransactionItemTrendPreview() {
 private fun TransactionItemCategoryPreview() {
     AntCashManagerTheme(dynamicColor = false) {
         RecentTransactionItem(
-            transaction = Transaction(
-                id = 2,
-                title = "Groceries",
-                amount = -85.50,
-                category = "Food",
-                type = TransactionType.EXPENSE,
-                timestamp = System.currentTimeMillis(),
-                categoryIcon = "restaurant",
-                categoryColor = 0xFFE57373,
-            ),
+            transaction =
+                Transaction(
+                    id = 2,
+                    title = "Groceries",
+                    amount = -85.50,
+                    category = "Food",
+                    type = TransactionType.EXPENSE,
+                    timestamp = System.currentTimeMillis(),
+                    categoryIcon = "restaurant",
+                    categoryColor = 0xFFE57373,
+                ),
             displayType = TransactionDisplayType.CATEGORY,
         )
     }
@@ -329,14 +353,15 @@ private fun TransactionItemCategoryPreview() {
 private fun TransactionItemNonePreview() {
     AntCashManagerTheme(dynamicColor = false) {
         RecentTransactionItem(
-            transaction = Transaction(
-                id = 3,
-                title = "Groceries",
-                amount = -85.50,
-                category = "Food",
-                type = TransactionType.EXPENSE,
-                timestamp = System.currentTimeMillis(),
-            ),
+            transaction =
+                Transaction(
+                    id = 3,
+                    title = "Groceries",
+                    amount = -85.50,
+                    category = "Food",
+                    type = TransactionType.EXPENSE,
+                    timestamp = System.currentTimeMillis(),
+                ),
             displayType = TransactionDisplayType.NONE,
         )
     }

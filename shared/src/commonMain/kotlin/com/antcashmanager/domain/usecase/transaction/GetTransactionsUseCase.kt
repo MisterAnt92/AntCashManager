@@ -11,7 +11,5 @@ public class GetTransactionsUseCase(
     private val transactionRepository: TransactionRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : NoParamsObservableUseCase<List<Transaction>>(dispatcher) {
-
-    override fun execute(params: Unit): Flow<List<Transaction>> =
-        transactionRepository.getAllTransactions()
+    override fun execute(params: Unit): Flow<List<Transaction>> = transactionRepository.getAllTransactions()
 }

@@ -32,16 +32,17 @@ fun AppIcon(
     imageVector: ImageVector? = null,
     contentDescription: String? = null,
     tint: Color = MaterialTheme.colorScheme.primary,
-    size: Dp = 24.dp
+    size: Dp = 24.dp,
 ) {
     require(painter != null || imageVector != null) { "Either painter or imageVector must be provided" }
 
     Icon(
-        painter = painter
-            ?: rememberVectorPainter(imageVector!!),
+        painter =
+            painter
+                ?: rememberVectorPainter(imageVector!!),
         contentDescription = contentDescription,
         tint = tint,
-        modifier = modifier.then(Modifier.size(size))
+        modifier = modifier.then(Modifier.size(size)),
     )
 }
 
@@ -50,7 +51,7 @@ fun AppIcon(
 private fun AppIconPreviewLight() {
     AppIcon(
         painter = painterResource(id = android.R.drawable.ic_menu_search),
-        contentDescription = "Search Icon"
+        contentDescription = "Search Icon",
     )
 }
 
@@ -59,7 +60,7 @@ private fun AppIconPreviewLight() {
 private fun AppIconPreviewDark() {
     AppIcon(
         painter = painterResource(id = android.R.drawable.ic_menu_search),
-        contentDescription = "Search Icon"
+        contentDescription = "Search Icon",
     )
 }
 
@@ -68,7 +69,7 @@ private fun AppIconPreviewDark() {
 private fun AppIconPreviewWithPainter() {
     AppIcon(
         painter = painterResource(id = android.R.drawable.ic_menu_search),
-        contentDescription = "Search Icon from Painter"
+        contentDescription = "Search Icon from Painter",
     )
 }
 

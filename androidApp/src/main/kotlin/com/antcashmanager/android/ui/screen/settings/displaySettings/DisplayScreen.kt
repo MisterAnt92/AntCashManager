@@ -48,7 +48,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -64,9 +63,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import com.antcashmanager.android.ui.components.layout.SpacingSize
-import com.antcashmanager.android.ui.components.layout.VerticalSpacer
-import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
@@ -74,8 +71,12 @@ import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
 import com.antcashmanager.android.ui.components.common.AppSlider
 import com.antcashmanager.android.ui.components.common.AppSwitch
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
+import com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayEvent
 import com.antcashmanager.android.ui.screen.settings.view.CurrencySymbolDialog
 import com.antcashmanager.android.ui.screen.settings.view.DateFormatDialog
 import com.antcashmanager.android.ui.screen.settings.view.DecimalDigitsDialog
@@ -83,7 +84,6 @@ import com.antcashmanager.android.ui.screen.settings.view.MealVoucherDialog
 import com.antcashmanager.android.ui.screen.settings.view.SeparatorDialog
 import com.antcashmanager.android.ui.screen.settings.view.TransactionDisplayDialog
 import com.antcashmanager.android.ui.screen.settings.view.WidgetBackgroundColorDialog
-import com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayEvent
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.formatAmount
 import com.antcashmanager.domain.model.CurrencyFormat
@@ -104,9 +104,7 @@ import java.util.Locale
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DisplayScreen(
-    navController: NavController,
-) {
+fun DisplayScreen(navController: NavController) {
     val viewModel: DisplayViewModel = koinViewModel()
 
     val currencySymbol by viewModel.currencySymbol.collectAsStateWithLifecycle()
@@ -284,14 +282,17 @@ internal fun DisplayContent(
         if (adaptiveLayoutInfo.isCompact) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(
-                    start = innerPadding.calculateStartPadding(LayoutDirection.Ltr) +
-                            DisplayConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
-                    top = innerPadding.calculateTopPadding() + DisplayConstant.CONTENT_TOP_PADDING_DP.dp,
-                    end = innerPadding.calculateEndPadding(LayoutDirection.Ltr) +
-                            DisplayConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
-                    bottom = innerPadding.calculateBottomPadding() + DisplayConstant.CONTENT_BOTTOM_PADDING_DP.dp,
-                ),
+                contentPadding =
+                    PaddingValues(
+                        start =
+                            innerPadding.calculateStartPadding(LayoutDirection.Ltr) +
+                                DisplayConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
+                        top = innerPadding.calculateTopPadding() + DisplayConstant.CONTENT_TOP_PADDING_DP.dp,
+                        end =
+                            innerPadding.calculateEndPadding(LayoutDirection.Ltr) +
+                                DisplayConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
+                        bottom = innerPadding.calculateBottomPadding() + DisplayConstant.CONTENT_BOTTOM_PADDING_DP.dp,
+                    ),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 item {
@@ -379,17 +380,20 @@ internal fun DisplayContent(
             }
         } else {
             Row(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(
-                        start = innerPadding.calculateStartPadding(LayoutDirection.Ltr) +
-                                DisplayConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
-                        top = innerPadding.calculateTopPadding() + DisplayConstant.CONTENT_TOP_PADDING_DP.dp,
-                        end = innerPadding.calculateEndPadding(LayoutDirection.Ltr) +
-                                DisplayConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
-                        bottom = innerPadding.calculateBottomPadding() + DisplayConstant.CONTENT_BOTTOM_PADDING_DP.dp,
-                    )
-                    .verticalScroll(rememberScrollState()),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(
+                            start =
+                                innerPadding.calculateStartPadding(LayoutDirection.Ltr) +
+                                    DisplayConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
+                            top = innerPadding.calculateTopPadding() + DisplayConstant.CONTENT_TOP_PADDING_DP.dp,
+                            end =
+                                innerPadding.calculateEndPadding(LayoutDirection.Ltr) +
+                                    DisplayConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
+                            bottom =
+                                innerPadding.calculateBottomPadding() + DisplayConstant.CONTENT_BOTTOM_PADDING_DP.dp,
+                        ).verticalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(DisplayConstant.TABLET_COLUMNS_SPACING_DP.dp),
             ) {
                 Column(
@@ -537,7 +541,7 @@ internal fun DisplayContent(
                 }) {
                     AppText(
                         stringResource(R.string.dialog_reset),
-                        color = MaterialTheme.colorScheme.error
+                        color = MaterialTheme.colorScheme.error,
                     )
                 }
             },
@@ -582,7 +586,13 @@ internal fun DisplayContent(
     if (showDecimalSeparatorDialog) {
         SeparatorDialog(
             title = stringResource(R.string.dialog_choose_decimal_separator),
-            options = translateSeparatorOptions(CurrencyFormat.DECIMAL_SEPARATORS.filter { it.first != thousandsSeparator }),
+            options =
+                translateSeparatorOptions(
+                    CurrencyFormat.DECIMAL_SEPARATORS.filter {
+                        it.first !=
+                            thousandsSeparator
+                    },
+                ),
             currentValue = decimalSeparator,
             onSelected = handleDecimalSeparatorSelected,
             onDismiss = dismissDecimalSeparator,
@@ -592,7 +602,13 @@ internal fun DisplayContent(
     if (showThousandsSeparatorDialog) {
         SeparatorDialog(
             title = stringResource(R.string.dialog_choose_thousands_separator),
-            options = translateSeparatorOptions(CurrencyFormat.THOUSANDS_SEPARATORS.filter { it.first != decimalSeparator }),
+            options =
+                translateSeparatorOptions(
+                    CurrencyFormat.THOUSANDS_SEPARATORS.filter {
+                        it.first !=
+                            decimalSeparator
+                    },
+                ),
             currentValue = thousandsSeparator,
             onSelected = handleThousandsSeparatorSelected,
             onDismiss = dismissThousandsSeparator,
@@ -608,11 +624,12 @@ internal fun DisplayContent(
     }
 
     if (showPaymentTypeDialog) {
-        val paymentTypeOptions = listOf(
-            Triple("ELECTRONIC", stringResource(R.string.payment_type_electronic), Icons.Default.Payment),
-            Triple("CASH", stringResource(R.string.payment_type_cash), Icons.Default.MonetizationOn),
-            Triple("MEAL_VOUCHERS", stringResource(R.string.payment_type_meal_vouchers), Icons.Default.Restaurant),
-        )
+        val paymentTypeOptions =
+            listOf(
+                Triple("ELECTRONIC", stringResource(R.string.payment_type_electronic), Icons.Default.Payment),
+                Triple("CASH", stringResource(R.string.payment_type_cash), Icons.Default.MonetizationOn),
+                Triple("MEAL_VOUCHERS", stringResource(R.string.payment_type_meal_vouchers), Icons.Default.Restaurant),
+            )
 
         AlertDialog(
             onDismissRequest = dismissPaymentType,
@@ -621,27 +638,33 @@ internal fun DisplayContent(
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     paymentTypeOptions.forEach { (typeKey, typeLabel, typeIcon) ->
                         Surface(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(8.dp))
-                                .border(
-                                    width = 2.dp,
-                                    color = if (defaultPaymentType == typeKey)
-                                        MaterialTheme.colorScheme.primary
-                                    else
-                                        MaterialTheme.colorScheme.outline,
-                                    shape = RoundedCornerShape(8.dp)
-                                ),
-                            color = if (defaultPaymentType == typeKey)
-                                MaterialTheme.colorScheme.primaryContainer
-                            else
-                                MaterialTheme.colorScheme.surface,
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .border(
+                                        width = 2.dp,
+                                        color =
+                                            if (defaultPaymentType == typeKey) {
+                                                MaterialTheme.colorScheme.primary
+                                            } else {
+                                                MaterialTheme.colorScheme.outline
+                                            },
+                                        shape = RoundedCornerShape(8.dp),
+                                    ),
+                            color =
+                                if (defaultPaymentType == typeKey) {
+                                    MaterialTheme.colorScheme.primaryContainer
+                                } else {
+                                    MaterialTheme.colorScheme.surface
+                                },
                             onClick = { handlePaymentTypeSelected(typeKey) },
                         ) {
                             Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(12.dp),
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(12.dp),
                                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
@@ -649,23 +672,29 @@ internal fun DisplayContent(
                                     imageVector = typeIcon,
                                     contentDescription = null,
                                     modifier = Modifier.size(24.dp),
-                                    tint = if (defaultPaymentType == typeKey)
-                                        MaterialTheme.colorScheme.onPrimaryContainer
-                                    else
-                                        MaterialTheme.colorScheme.onSurface,
+                                    tint =
+                                        if (defaultPaymentType == typeKey) {
+                                            MaterialTheme.colorScheme.onPrimaryContainer
+                                        } else {
+                                            MaterialTheme.colorScheme.onSurface
+                                        },
                                 )
 
                                 AppText(
                                     text = typeLabel,
                                     modifier = Modifier.weight(1f),
-                                    color = if (defaultPaymentType == typeKey)
-                                        MaterialTheme.colorScheme.onPrimaryContainer
-                                    else
-                                        MaterialTheme.colorScheme.onSurface,
-                                    fontWeight = if (defaultPaymentType == typeKey)
-                                        FontWeight.Bold
-                                    else
-                                        FontWeight.Normal,
+                                    color =
+                                        if (defaultPaymentType == typeKey) {
+                                            MaterialTheme.colorScheme.onPrimaryContainer
+                                        } else {
+                                            MaterialTheme.colorScheme.onSurface
+                                        },
+                                    fontWeight =
+                                        if (defaultPaymentType == typeKey) {
+                                            FontWeight.Bold
+                                        } else {
+                                            FontWeight.Normal
+                                        },
                                 )
 
                                 if (defaultPaymentType == typeKey) {
@@ -722,7 +751,10 @@ internal fun DisplayContent(
 }
 
 @Composable
-private fun separatorLabel(value: String, isThou: Boolean): String {
+private fun separatorLabel(
+    value: String,
+    isThou: Boolean,
+): String {
     val comma = stringResource(R.string.settings_separator_comma)
     val period = stringResource(R.string.settings_separator_period)
     val space = stringResource(R.string.settings_separator_space)
@@ -754,8 +786,9 @@ private fun CurrencySection(
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         AppCard(
             title = stringResource(R.string.settings_currency_symbol),
-            subtitle = CurrencyFormat.SUPPORTED_CURRENCIES.find { it.first == currencySymbol }?.second
-                ?: currencySymbol,
+            subtitle =
+                CurrencyFormat.SUPPORTED_CURRENCIES.find { it.first == currencySymbol }?.second
+                    ?: currencySymbol,
             leadingIcon = Icons.Default.MonetizationOn,
             onClick = onShowCurrencyDialog,
         )
@@ -796,19 +829,19 @@ private fun CurrencySection(
         )
 
         AppText(
-            text = formatAmount(
-                1234567.89,
-                CurrencyFormat(
-                    currencySymbol = currencySymbol,
-                    decimalDigits = decimalDigits,
-                    decimalSeparator = decimalSeparator,
-                    thousandsSeparator = thousandsSeparator,
+            text =
+                formatAmount(
+                    1234567.89,
+                    CurrencyFormat(
+                        currencySymbol = currencySymbol,
+                        decimalDigits = decimalDigits,
+                        decimalSeparator = decimalSeparator,
+                        thousandsSeparator = thousandsSeparator,
+                    ),
                 ),
-            ),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.primary,
         )
-
     }
 }
 
@@ -829,27 +862,29 @@ private fun PaymentTypeSection(
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         AppCard(
             title = stringResource(R.string.settings_meal_voucher_value),
-            subtitle = stringResource(
-                R.string.settings_meal_voucher_value_subtitle,
-                formatAmount(
-                    mealVoucherValue,
-                    CurrencyFormat(
-                        currencySymbol = currencySymbol,
-                        decimalDigits = decimalDigits,
-                        decimalSeparator = decimalSeparator,
-                        thousandsSeparator = thousandsSeparator,
+            subtitle =
+                stringResource(
+                    R.string.settings_meal_voucher_value_subtitle,
+                    formatAmount(
+                        mealVoucherValue,
+                        CurrencyFormat(
+                            currencySymbol = currencySymbol,
+                            decimalDigits = decimalDigits,
+                            decimalSeparator = decimalSeparator,
+                            thousandsSeparator = thousandsSeparator,
+                        ),
                     ),
                 ),
-            ),
             leadingIcon = Icons.Default.Payment,
             onClick = onShowMealVoucherDialog,
         )
 
-        val paymentTypeLabel = when (defaultPaymentType) {
-            "CASH" -> stringResource(R.string.payment_type_cash)
-            "MEAL_VOUCHERS" -> stringResource(R.string.payment_type_meal_vouchers)
-            else -> stringResource(R.string.payment_type_electronic)
-        }
+        val paymentTypeLabel =
+            when (defaultPaymentType) {
+                "CASH" -> stringResource(R.string.payment_type_cash)
+                "MEAL_VOUCHERS" -> stringResource(R.string.payment_type_meal_vouchers)
+                else -> stringResource(R.string.payment_type_electronic)
+            }
 
         AppCard(
             title = stringResource(R.string.settings_default_payment_type),
@@ -875,12 +910,13 @@ private fun DateSection(
     AppCardSectionHeader(title = stringResource(R.string.settings_section_dates))
     VerticalSpacer(SpacingSize.XS)
 
-    val currentDateExample = remember(dateFormat) {
-        runCatching {
-            val formatter = SimpleDateFormat(dateFormat, Locale.getDefault())
-            formatter.format(Date())
-        }.getOrElse { dateFormat }
-    }
+    val currentDateExample =
+        remember(dateFormat) {
+            runCatching {
+                val formatter = SimpleDateFormat(dateFormat, Locale.getDefault())
+                formatter.format(Date())
+            }.getOrElse { dateFormat }
+        }
 
     AppCard(
         title = stringResource(R.string.settings_date_format),
@@ -903,9 +939,14 @@ private fun ChartsDisplaySection(
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         AppCard(
             title = stringResource(R.string.settings_show_charts_section),
-            subtitle = if (showChartsSection) stringResource(R.string.settings_show_charts_section_visible) else stringResource(
-                R.string.settings_show_charts_section_hidden
-            ),
+            subtitle =
+                if (showChartsSection) {
+                    stringResource(R.string.settings_show_charts_section_visible)
+                } else {
+                    stringResource(
+                        R.string.settings_show_charts_section_hidden,
+                    )
+                },
             leadingIcon = Icons.Default.BarChart,
             trailingContent = {
                 Switch(checked = showChartsSection, onCheckedChange = onShowChartsSectionChanged)
@@ -945,7 +986,7 @@ private fun HomeDisplaySection(
             trailingContent = {
                 AppSwitch(
                     checked = showPaymentTypeBreakdown,
-                    onCheckedChange = onShowPaymentTypeBreakdownChanged
+                    onCheckedChange = onShowPaymentTypeBreakdownChanged,
                 )
             },
             onClick = { onShowPaymentTypeBreakdownChanged(!showPaymentTypeBreakdown) },
@@ -1003,10 +1044,11 @@ private fun TransactionDisplayPreviewHome(displayType: TransactionDisplayType) {
 @Composable
 private fun TransactionDisplayPreview(displayType: TransactionDisplayType) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         AppText(
             text = stringResource(R.string.common_preview),
@@ -1033,17 +1075,17 @@ private fun TransactionDisplayPreview(displayType: TransactionDisplayType) {
 @Composable
 private fun TrendPreviewCard() {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.surfaceContainerLow)
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(12.dp)
-            )
-            .padding(12.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(12.dp))
+                .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.outlineVariant,
+                    shape = RoundedCornerShape(12.dp),
+                ).padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         AppText(
             text = stringResource(R.string.settings_transaction_display_trend_desc),
@@ -1055,50 +1097,52 @@ private fun TrendPreviewCard() {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Box(
-                modifier = Modifier
-                    .size(32.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary),
-                contentAlignment = Alignment.Center
+                modifier =
+                    Modifier
+                        .size(32.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary),
+                contentAlignment = Alignment.Center,
             ) {
                 AppText(
                     "↑",
                     color = MaterialTheme.colorScheme.onPrimary,
-                    style = MaterialTheme.typography.headlineSmall
+                    style = MaterialTheme.typography.headlineSmall,
                 )
             }
             AppText(
                 "Income +€50,00",
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
 
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Box(
-                modifier = Modifier
-                    .size(32.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.error),
-                contentAlignment = Alignment.Center
+                modifier =
+                    Modifier
+                        .size(32.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.error),
+                contentAlignment = Alignment.Center,
             ) {
                 AppText(
                     "↓",
                     color = MaterialTheme.colorScheme.onError,
-                    style = MaterialTheme.typography.headlineSmall
+                    style = MaterialTheme.typography.headlineSmall,
                 )
             }
             AppText(
                 "Expense -€15,00",
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
     }
@@ -1107,17 +1151,17 @@ private fun TrendPreviewCard() {
 @Composable
 private fun CategoryPreviewCard() {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.surfaceContainerLow)
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(12.dp)
-            )
-            .padding(12.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(12.dp))
+                .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.outlineVariant,
+                    shape = RoundedCornerShape(12.dp),
+                ).padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         AppText(
             text = stringResource(R.string.settings_transaction_display_category_desc),
@@ -1129,36 +1173,36 @@ private fun CategoryPreviewCard() {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Icon(
                 Icons.Default.MonetizationOn,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier.size(32.dp),
             )
             AppText(
                 "Salary +€2500,00",
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
 
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Icon(
                 Icons.Default.Restaurant,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.error,
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier.size(32.dp),
             )
             AppText(
                 "Restaurant -€25,00",
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
     }
@@ -1167,17 +1211,17 @@ private fun CategoryPreviewCard() {
 @Composable
 private fun NoIconPreviewCard() {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.surfaceContainerLow)
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(12.dp)
-            )
-            .padding(12.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(12.dp))
+                .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.outlineVariant,
+                    shape = RoundedCornerShape(12.dp),
+                ).padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         AppText(
             text = stringResource(R.string.settings_transaction_display_none_desc),
@@ -1188,17 +1232,17 @@ private fun NoIconPreviewCard() {
 
         Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             AppText(
                 "Income +€2500,00",
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
             AppText(
                 "Expense -€25,00",
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
     }
@@ -1218,14 +1262,19 @@ private fun OtherSection(
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         AppCard(
             title = stringResource(R.string.settings_show_transaction_notes),
-            subtitle = if (showTransactionNotes) stringResource(R.string.settings_show_transaction_notes_subtitle_enabled) else stringResource(
-                R.string.settings_show_transaction_notes_subtitle_disabled
-            ),
+            subtitle =
+                if (showTransactionNotes) {
+                    stringResource(R.string.settings_show_transaction_notes_subtitle_enabled)
+                } else {
+                    stringResource(
+                        R.string.settings_show_transaction_notes_subtitle_disabled,
+                    )
+                },
             leadingIcon = Icons.Default.TextFields,
             trailingContent = {
                 Switch(
                     checked = showTransactionNotes,
-                    onCheckedChange = onShowTransactionNotesChanged
+                    onCheckedChange = onShowTransactionNotesChanged,
                 )
             },
             onClick = { onShowTransactionNotesChanged(!showTransactionNotes) },
@@ -1233,11 +1282,12 @@ private fun OtherSection(
 
         AppCard(
             title = stringResource(R.string.settings_mask_amounts),
-            subtitle = if (maskAmounts) {
-                stringResource(R.string.settings_mask_amounts_subtitle_enabled)
-            } else {
-                stringResource(R.string.settings_mask_amounts_subtitle_disabled)
-            },
+            subtitle =
+                if (maskAmounts) {
+                    stringResource(R.string.settings_mask_amounts_subtitle_enabled)
+                } else {
+                    stringResource(R.string.settings_mask_amounts_subtitle_disabled)
+                },
             leadingIcon = Icons.Default.VisibilityOff,
             trailingContent = {
                 Switch(
@@ -1276,11 +1326,12 @@ private fun WidgetsDisplaySection(
             leadingIcon = Icons.Default.Palette,
             trailingContent = {
                 Box(
-                    modifier = Modifier
-                        .size(28.dp)
-                        .clip(CircleShape)
-                        .background(Color(widgetBackgroundColor))
-                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape),
+                    modifier =
+                        Modifier
+                            .size(28.dp)
+                            .clip(CircleShape)
+                            .background(Color(widgetBackgroundColor))
+                            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape),
                 )
             },
             onClick = onShowWidgetBackgroundColorDialog,
@@ -1310,7 +1361,10 @@ private fun WidgetsDisplaySection(
 }
 
 @Composable
-private fun WidgetPreviewMock(backgroundColor: Long, opacity: Int) {
+private fun WidgetPreviewMock(
+    backgroundColor: Long,
+    opacity: Int,
+) {
     val resolvedColor = Color(backgroundColor).copy(alpha = opacity / 100f)
     val isLight = isColorPerceptuallyLight(backgroundColor)
     val primaryText = if (isLight) Color(0xFF212121) else Color.White
@@ -1324,23 +1378,24 @@ private fun WidgetPreviewMock(backgroundColor: Long, opacity: Int) {
     VerticalSpacer(SpacingSize.XXXS)
 
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .background(
-                Brush.linearGradient(
-                    listOf(Color(0xFF90A4AE), Color(0xFF64B5F6)),
-                ),
-            )
-            .padding(10.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+                .background(
+                    Brush.linearGradient(
+                        listOf(Color(0xFF90A4AE), Color(0xFF64B5F6)),
+                    ),
+                ).padding(10.dp),
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(resolvedColor)
-                    .padding(10.dp),
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(resolvedColor)
+                        .padding(10.dp),
             ) {
                 AppText(
                     text = stringResource(R.string.settings_widget_preview_recent),
@@ -1350,41 +1405,44 @@ private fun WidgetPreviewMock(backgroundColor: Long, opacity: Int) {
                 VerticalSpacer(SpacingSize.XXS)
                 MockTransactionRows.forEach { (color, label, amount) ->
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 2.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 2.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Box(
-                                modifier = Modifier
-                                    .size(8.dp)
-                                    .clip(CircleShape)
-                                    .background(Color(color)),
+                                modifier =
+                                    Modifier
+                                        .size(8.dp)
+                                        .clip(CircleShape)
+                                        .background(Color(color)),
                             )
                             HorizontalSpacer(SpacingSize.XXS)
                             AppText(
                                 text = label,
                                 style = MaterialTheme.typography.labelSmall,
-                                color = primaryText
+                                color = primaryText,
                             )
                         }
                         AppText(
                             text = amount,
                             style = MaterialTheme.typography.labelSmall,
-                            color = secondaryText
+                            color = secondaryText,
                         )
                     }
                 }
             }
 
             Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(resolvedColor)
-                    .padding(10.dp),
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(resolvedColor)
+                        .padding(10.dp),
             ) {
                 AppText(
                     text = stringResource(R.string.settings_widget_preview_category),
@@ -1400,11 +1458,12 @@ private fun WidgetPreviewMock(backgroundColor: Long, opacity: Int) {
                 MockCategoryBars.forEach { (color, fraction) ->
                     VerticalSpacer(SpacingSize.XXXS)
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth(fraction)
-                            .height(4.dp)
-                            .clip(RoundedCornerShape(2.dp))
-                            .background(Color(color)),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth(fraction)
+                                .height(4.dp)
+                                .clip(RoundedCornerShape(2.dp))
+                                .background(Color(color)),
                     )
                 }
             }
@@ -1412,16 +1471,18 @@ private fun WidgetPreviewMock(backgroundColor: Long, opacity: Int) {
     }
 }
 
-private val MockTransactionRows = listOf(
-    Triple(0xFF81C784L, "Spesa", "-45,00 €"),
-    Triple(0xFF64B5F6L, "Stipendio", "+1.200,00 €"),
-    Triple(0xFFFFB74DL, "Benzina", "-30,00 €"),
-)
+private val MockTransactionRows =
+    listOf(
+        Triple(0xFF81C784L, "Spesa", "-45,00 €"),
+        Triple(0xFF64B5F6L, "Stipendio", "+1.200,00 €"),
+        Triple(0xFFFFB74DL, "Benzina", "-30,00 €"),
+    )
 
-private val MockCategoryBars = listOf(
-    0xFFE57373L to 1f,
-    0xFFFFB74DL to 0.6f,
-)
+private val MockCategoryBars =
+    listOf(
+        0xFFE57373L to 1f,
+        0xFFFFB74DL to 0.6f,
+    )
 
 private fun isColorPerceptuallyLight(color: Long): Boolean {
     val r = (color shr 16 and 0xFF) / 255f
@@ -1439,13 +1500,14 @@ fun translateSeparatorOptions(options: List<Pair<String, String>>): List<Pair<St
     val none = stringResource(R.string.settings_separator_none)
 
     return options.map { (value, label) ->
-        value to when (label) {
-            "Comma (,)" -> comma
-            "Period (.)" -> period
-            "Space" -> space
-            "None" -> none
-            else -> label
-        }
+        value to
+            when (label) {
+                "Comma (,)" -> comma
+                "Period (.)" -> period
+                "Space" -> space
+                "None" -> none
+                else -> label
+            }
     }
 }
 

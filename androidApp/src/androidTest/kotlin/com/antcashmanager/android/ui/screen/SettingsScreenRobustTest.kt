@@ -30,7 +30,6 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 class SettingsScreenRobustTest : BaseInstrumentationTest() {
-
     @Test
     fun settingsScreen_shouldBeNavigable() {
         composeTestRule.setContent {
@@ -42,13 +41,15 @@ class SettingsScreenRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Navigate to settings
-        composeTestRule.onNodeWithTag("nav_settings")
+        composeTestRule
+            .onNodeWithTag("nav_settings")
             .performClick()
 
         composeTestRule.waitForIdle()
 
         // Verify settings screen is displayed
-        composeTestRule.onNodeWithTag("settings_screen")
+        composeTestRule
+            .onNodeWithTag("settings_screen")
             .assertIsDisplayed()
     }
 
@@ -63,13 +64,15 @@ class SettingsScreenRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Navigate to settings
-        composeTestRule.onNodeWithTag("nav_settings")
+        composeTestRule
+            .onNodeWithTag("nav_settings")
             .performClick()
 
         composeTestRule.waitForIdle()
 
         // Verify settings list is visible
-        composeTestRule.onNodeWithTag("settings_list")
+        composeTestRule
+            .onNodeWithTag("settings_list")
             .assertIsDisplayed()
     }
 
@@ -84,13 +87,15 @@ class SettingsScreenRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Navigate to settings
-        composeTestRule.onNodeWithTag("nav_settings")
+        composeTestRule
+            .onNodeWithTag("nav_settings")
             .performClick()
 
         composeTestRule.waitForIdle()
 
         // Verify theme option is visible
-        composeTestRule.onNodeWithTag("theme_setting")
+        composeTestRule
+            .onNodeWithTag("theme_setting")
             .assertIsDisplayed()
     }
 
@@ -105,13 +110,15 @@ class SettingsScreenRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Navigate to settings
-        composeTestRule.onNodeWithTag("nav_settings")
+        composeTestRule
+            .onNodeWithTag("nav_settings")
             .performClick()
 
         composeTestRule.waitForIdle()
 
         // Verify language option is visible
-        composeTestRule.onNodeWithTag("language_setting")
+        composeTestRule
+            .onNodeWithTag("language_setting")
             .assertIsDisplayed()
     }
 
@@ -126,13 +133,15 @@ class SettingsScreenRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Navigate to settings
-        composeTestRule.onNodeWithTag("nav_settings")
+        composeTestRule
+            .onNodeWithTag("nav_settings")
             .performClick()
 
         composeTestRule.waitForIdle()
 
         // Verify data management option is visible
-        composeTestRule.onNodeWithTag("data_management_option")
+        composeTestRule
+            .onNodeWithTag("data_management_option")
             .assertIsDisplayed()
     }
 
@@ -147,13 +156,15 @@ class SettingsScreenRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Navigate to settings
-        composeTestRule.onNodeWithTag("nav_settings")
+        composeTestRule
+            .onNodeWithTag("nav_settings")
             .performClick()
 
         composeTestRule.waitForIdle()
 
         // Verify display settings option is visible
-        composeTestRule.onNodeWithTag("display_settings_option")
+        composeTestRule
+            .onNodeWithTag("display_settings_option")
             .assertIsDisplayed()
     }
 
@@ -168,13 +179,15 @@ class SettingsScreenRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Navigate to settings
-        composeTestRule.onNodeWithTag("nav_settings")
+        composeTestRule
+            .onNodeWithTag("nav_settings")
             .performClick()
 
         composeTestRule.waitForIdle()
 
         // Verify about option is visible
-        composeTestRule.onNodeWithTag("about_option")
+        composeTestRule
+            .onNodeWithTag("about_option")
             .assertIsDisplayed()
     }
 }

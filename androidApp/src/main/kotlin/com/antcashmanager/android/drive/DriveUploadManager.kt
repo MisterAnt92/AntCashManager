@@ -1,20 +1,18 @@
 package com.antcashmanager.android.drive
 
 import android.content.Context
-import com.antcashmanager.android.BuildConfig
 import co.touchlab.kermit.Logger
+import com.antcashmanager.android.BuildConfig
 import com.antcashmanager.android.data.storage.EncryptedGoogleDriveStorage
-import com.google.api.client.googleapis.media.MediaHttpUploader
-import com.google.api.client.googleapis.media.MediaHttpUploaderProgressListener
 import com.google.api.client.http.ByteArrayContent
 import com.google.api.client.http.HttpRequestInitializer
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.drive.Drive
-import com.google.api.services.drive.model.File as DriveFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.IOException
+import com.google.api.services.drive.model.File as DriveFile
 
 /**
  * Gestisce l'upload dei file di backup a Google Drive.
@@ -65,13 +63,12 @@ class DriveUploadManager(
     private val signInManager: com.antcashmanager.android.auth.GoogleSignInManager,
     private val settingsRepository: com.antcashmanager.domain.repository.SettingsRepository,
 ) {
-
     // ── Feature Gating: Google Drive Backup ──
     init {
         if (!BuildConfig.INCLUDE_DRIVE_BACKUP) {
             throw UnsupportedOperationException(
                 "Google Drive backup is not included in this build variant (lite). " +
-                "Use 'full' variant to enable Drive backup functionality."
+                    "Use 'full' variant to enable Drive backup functionality.",
             )
         }
     }
@@ -81,7 +78,7 @@ class DriveUploadManager(
         private const val BACKUPS_SUBFOLDER_NAME = "Backups"
         private const val FULL_FOLDER_PATH = "$BACKUP_FOLDER_NAME/$BACKUPS_SUBFOLDER_NAME"
         private const val MAX_RETRIES = 3
-        private const val RETRY_DELAY_MS = 1000L  // 1s, con backoff esponenziale
+        private const val RETRY_DELAY_MS = 1000L // 1s, con backoff esponenziale
     }
 
     private val logger = Logger
@@ -146,22 +143,24 @@ class DriveUploadManager(
 
             try {
                 // Step 1: Crea o trova "/AntCashManager"
-                val antCashManagerFolderId = findOrCreateFolder(
-                    drive,
-                    folderName = BACKUP_FOLDER_NAME,
-                    parentFolderId = null  // root
-                )
+                val antCashManagerFolderId =
+                    findOrCreateFolder(
+                        drive,
+                        folderName = BACKUP_FOLDER_NAME,
+                        parentFolderId = null, // root
+                    )
                 if (antCashManagerFolderId.isEmpty()) {
                     logger.e(tag = "DriveUploadManager") { "Failed to create/find $BACKUP_FOLDER_NAME folder" }
                     return@withContext ""
                 }
 
                 // Step 2: Crea o trova "/AntCashManager/Backups"
-                val backupsFolderId = findOrCreateFolder(
-                    drive,
-                    folderName = BACKUPS_SUBFOLDER_NAME,
-                    parentFolderId = antCashManagerFolderId
-                )
+                val backupsFolderId =
+                    findOrCreateFolder(
+                        drive,
+                        folderName = BACKUPS_SUBFOLDER_NAME,
+                        parentFolderId = antCashManagerFolderId,
+                    )
                 if (backupsFolderId.isEmpty()) {
                     logger.e(tag = "DriveUploadManager") { "Failed to create/find $BACKUPS_SUBFOLDER_NAME folder" }
                     return@withContext ""
@@ -200,13 +199,16 @@ class DriveUploadManager(
                 val query = buildFolderQuery(folderName, parentFolderId)
                 logger.d(tag = "DriveUploadManager") { "Searching for folder: $folderName (query: $query)" }
 
-                val files = drive.Files().list()
-                    .setQ(query)
-                    .setSpaces("drive")
-                    .setFields("files(id, name)")
-                    .setPageSize(1)
-                    .execute()
-                    .files
+                val files =
+                    drive
+                        .Files()
+                        .list()
+                        .setQ(query)
+                        .setSpaces("drive")
+                        .setFields("files(id, name)")
+                        .setPageSize(1)
+                        .execute()
+                        .files
 
                 if (files.isNotEmpty()) {
                     logger.d(tag = "DriveUploadManager") { "Found existing folder: ${files[0].id}" }
@@ -222,9 +224,12 @@ class DriveUploadManager(
                     newFolder.parents = listOf(parentFolderId)
                 }
 
-                val created = drive.Files().create(newFolder)
-                    .setFields("id")
-                    .execute()
+                val created =
+                    drive
+                        .Files()
+                        .create(newFolder)
+                        .setFields("id")
+                        .execute()
 
                 logger.d(tag = "DriveUploadManager") { "Folder created: ${created.id}" }
                 created.id ?: ""
@@ -242,12 +247,16 @@ class DriveUploadManager(
     /**
      * Compila la query per cercare una cartella.
      */
-    private fun buildFolderQuery(folderName: String, parentFolderId: String?): String {
-        val parentClause = if (parentFolderId != null) {
-            " AND '$parentFolderId' in parents"
-        } else {
-            " AND 'root' in parents"
-        }
+    private fun buildFolderQuery(
+        folderName: String,
+        parentFolderId: String?,
+    ): String {
+        val parentClause =
+            if (parentFolderId != null) {
+                " AND '$parentFolderId' in parents"
+            } else {
+                " AND 'root' in parents"
+            }
         return "name = '$folderName' AND mimeType = 'application/vnd.google-apps.folder' AND trashed = false$parentClause"
     }
 
@@ -315,8 +324,9 @@ class DriveUploadManager(
     ): Result<String> {
         return withContext(Dispatchers.IO) {
             try {
-                val drive = createDriveService()
-                    ?: return@withContext Result.failure(Exception("Failed to create Drive service"))
+                val drive =
+                    createDriveService()
+                        ?: return@withContext Result.failure(Exception("Failed to create Drive service"))
 
                 val metadata = DriveFile()
                 metadata.name = fileName
@@ -327,9 +337,12 @@ class DriveUploadManager(
 
                 logger.d(tag = "DriveUploadManager") { "Uploading file: $fileName (size: ${fileContent.size} bytes)" }
 
-                val file = drive.Files().create(metadata, content)
-                    .setFields("id, name, createdTime, size")
-                    .execute()
+                val file =
+                    drive
+                        .Files()
+                        .create(metadata, content)
+                        .setFields("id, name, createdTime, size")
+                        .execute()
 
                 logger.d(tag = "DriveUploadManager") { "File uploaded successfully: ${file.id} (${file.size} bytes)" }
                 Result.success(file.id ?: "")
@@ -343,20 +356,26 @@ class DriveUploadManager(
                                 // Retry upload
                                 uploadWithRetry(fileName, fileContent, mimeType, folderId, retryCount + 1)
                             } else {
-                                Result.failure(Exception("Token refresh failed: ${tokenResult.exceptionOrNull()?.message}"))
+                                Result.failure(
+                                    Exception("Token refresh failed: ${tokenResult.exceptionOrNull()?.message}"),
+                                )
                             }
                         } else {
                             Result.failure(Exception("Token refresh failed after retry — permission revoked"))
                         }
                     }
                     e.message?.contains("403") == true -> {
-                        logger.e(tag = "DriveUploadManager") { "Permission denied (403) — file not created by this app?" }
+                        logger.e(
+                            tag = "DriveUploadManager",
+                        ) { "Permission denied (403) — file not created by this app?" }
                         Result.failure(Exception("Permission denied — folder may not be owned by this app"))
                     }
                     e.message?.contains("5") == true -> {
                         if (retryCount < MAX_RETRIES) {
-                            val delay = RETRY_DELAY_MS * (retryCount + 1)  // Backoff esponenziale
-                            logger.w(tag = "DriveUploadManager") { "Server error — retrying in ${delay}ms (attempt ${retryCount + 1}/$MAX_RETRIES)" }
+                            val delay = RETRY_DELAY_MS * (retryCount + 1) // Backoff esponenziale
+                            logger.w(tag = "DriveUploadManager") {
+                                "Server error — retrying in ${delay}ms (attempt ${retryCount + 1}/$MAX_RETRIES)"
+                            }
                             kotlinx.coroutines.delay(delay)
                             uploadWithRetry(fileName, fileContent, mimeType, folderId, retryCount + 1)
                         } else {
@@ -385,18 +404,19 @@ class DriveUploadManager(
                 return null
             }
 
-            val requestInitializer = HttpRequestInitializer { request ->
-                request.headers.authorization = "Bearer $accessToken"
-                request.connectTimeout = 30000  // 30s
-                request.readTimeout = 30000
-            }
+            val requestInitializer =
+                HttpRequestInitializer { request ->
+                    request.headers.authorization = "Bearer $accessToken"
+                    request.connectTimeout = 30000 // 30s
+                    request.readTimeout = 30000
+                }
 
-            Drive.Builder(
-                NetHttpTransport(),
-                GsonFactory(),
-                requestInitializer
-            )
-                .setApplicationName("AntCashManager")
+            Drive
+                .Builder(
+                    NetHttpTransport(),
+                    GsonFactory(),
+                    requestInitializer,
+                ).setApplicationName("AntCashManager")
                 .build()
         } catch (e: Exception) {
             logger.e(tag = "DriveUploadManager") { "Error creating Drive service: ${e.message}" }
@@ -412,8 +432,9 @@ class DriveUploadManager(
      */
     suspend fun deleteFile(fileId: String): Result<Unit> {
         return try {
-            val drive = createDriveService()
-                ?: return Result.failure(Exception("Failed to create Drive service"))
+            val drive =
+                createDriveService()
+                    ?: return Result.failure(Exception("Failed to create Drive service"))
 
             logger.d(tag = "DriveUploadManager") { "Deleting file: $fileId" }
             drive.Files().delete(fileId).execute()
@@ -433,8 +454,9 @@ class DriveUploadManager(
      */
     suspend fun listBackupFiles(folderId: String? = null): Result<List<DriveFile>> {
         return try {
-            val drive = createDriveService()
-                ?: return Result.failure(Exception("Failed to create Drive service"))
+            val drive =
+                createDriveService()
+                    ?: return Result.failure(Exception("Failed to create Drive service"))
 
             val backupFolderId = folderId ?: settingsRepository.getGoogleDriveFolderId().toString()
             if (backupFolderId.isEmpty() || backupFolderId == "null") {
@@ -443,14 +465,17 @@ class DriveUploadManager(
 
             logger.d(tag = "DriveUploadManager") { "Listing backup files in folder: $backupFolderId" }
 
-            val files = drive.Files().list()
-                .setQ("'$backupFolderId' in parents AND trashed = false")
-                .setSpaces("drive")
-                .setFields("files(id, name, createdTime, size, mimeType)")
-                .setPageSize(100)
-                .setOrderBy("createdTime desc")
-                .execute()
-                .files
+            val files =
+                drive
+                    .Files()
+                    .list()
+                    .setQ("'$backupFolderId' in parents AND trashed = false")
+                    .setSpaces("drive")
+                    .setFields("files(id, name, createdTime, size, mimeType)")
+                    .setPageSize(100)
+                    .setOrderBy("createdTime desc")
+                    .execute()
+                    .files
 
             logger.d(tag = "DriveUploadManager") { "Found ${files?.size ?: 0} backup files" }
             Result.success(files ?: emptyList())

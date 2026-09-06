@@ -39,7 +39,6 @@ import org.junit.Test
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class ReceiptScanViewModelTest : BaseUnitTest() {
-
     private lateinit var fakeTxRepo: FakeTransactionRepository
     private lateinit var fakeCatRepo: FakeCategoryRepository
     private lateinit var analyticsManager: AnalyticsManager
@@ -59,22 +58,25 @@ class ReceiptScanViewModelTest : BaseUnitTest() {
         errorTracker = mockk(relaxed = true)
         val fakeOcrService = FakeTestOcrService()
         val scanUseCase = ScanReceiptUseCase(fakeOcrService)
-        viewModel = ReceiptScanViewModel(
-            scanReceiptUseCase = scanUseCase,
-            createTransactionUseCase = CreateTransactionFromReceiptUseCase(
-                fakeTxRepo,
-                testDispatcher
-            ),
-            getCategoriesUseCase = GetCategoriesUseCase(fakeCatRepo, testDispatcher),
-            getTransactionSuggestionsUseCase = GetTransactionSuggestionsUseCase(
-                fakeTxRepo,
-                FakeSettingsRepository(),
-                testDispatcher
-            ),
-            analyticsManager = analyticsManager,
-            performanceTracker = performanceTracker,
-            errorTracker = errorTracker,
-        )
+        viewModel =
+            ReceiptScanViewModel(
+                scanReceiptUseCase = scanUseCase,
+                createTransactionUseCase =
+                    CreateTransactionFromReceiptUseCase(
+                        fakeTxRepo,
+                        testDispatcher,
+                    ),
+                getCategoriesUseCase = GetCategoriesUseCase(fakeCatRepo, testDispatcher),
+                getTransactionSuggestionsUseCase =
+                    GetTransactionSuggestionsUseCase(
+                        fakeTxRepo,
+                        FakeSettingsRepository(),
+                        testDispatcher,
+                    ),
+                analyticsManager = analyticsManager,
+                performanceTracker = performanceTracker,
+                errorTracker = errorTracker,
+            )
     }
 
     @After
@@ -87,26 +89,33 @@ class ReceiptScanViewModelTest : BaseUnitTest() {
     // ── Initial State ────────────────────────────────────────────────────────
 
     @Test
-    fun initialState_shouldBeCapture() = runViewModelTest {
-        advanceUntilIdle()
-        assertEquals(ReceiptScanStep.CAPTURE, viewModel.state.value.step)
-    }
+    fun initialState_shouldBeCapture() =
+        runViewModelTest {
+            advanceUntilIdle()
+            assertEquals(ReceiptScanStep.CAPTURE, viewModel.state.value.step)
+        }
 
     @Test
-    fun initialState_shouldLoadOnlyExpenseCategories() = runViewModelTest {
-        advanceUntilIdle()
-        val cats = viewModel.state.value.categories
-        assertTrue(cats.all { it.type.equals("EXPENSE", ignoreCase = true) })
-        assertEquals(1, cats.size)
-        assertEquals("Alimentari", cats.first().name)
-    }
+    fun initialState_shouldLoadOnlyExpenseCategories() =
+        runViewModelTest {
+            advanceUntilIdle()
+            val cats = viewModel.state.value.categories
+            assertTrue(cats.all { it.type.equals("EXPENSE", ignoreCase = true) })
+            assertEquals(1, cats.size)
+            assertEquals("Alimentari", cats.first().name)
+        }
 
     @Test
-    fun initialState_shouldAutoSelectFirstExpenseCategory() = runViewModelTest {
-        advanceUntilIdle()
-        assertNotNull(viewModel.state.value.selectedCategory)
-        assertEquals("Alimentari", viewModel.state.value.selectedCategory?.name)
-    }
+    fun initialState_shouldAutoSelectFirstExpenseCategory() =
+        runViewModelTest {
+            advanceUntilIdle()
+            assertNotNull(viewModel.state.value.selectedCategory)
+            assertEquals(
+                "Alimentari",
+                viewModel.state.value.selectedCategory
+                    ?.name,
+            )
+        }
 
     // ── updateTitle ──────────────────────────────────────────────────────────
 
@@ -138,7 +147,11 @@ class ReceiptScanViewModelTest : BaseUnitTest() {
     fun selectCategory_shouldUpdateSelectedCategory() {
         val cat = Category(id = 3L, name = "Trasporti", type = "EXPENSE")
         viewModel.onEvent(ReceiptScanEvent.SelectCategory(cat))
-        assertEquals("Trasporti", viewModel.state.value.selectedCategory?.name)
+        assertEquals(
+            "Trasporti",
+            viewModel.state.value.selectedCategory
+                ?.name,
+        )
     }
 
     @Test
@@ -204,40 +217,43 @@ class ReceiptScanViewModelTest : BaseUnitTest() {
     // ── retryCapture ─────────────────────────────────────────────────────────
 
     @Test
-    fun retryCapture_shouldResetToCapture_preservingCategories() = runViewModelTest {
-        advanceUntilIdle()
-        viewModel.onEvent(ReceiptScanEvent.UpdateTitle("Titolo test"))
-        viewModel.onEvent(ReceiptScanEvent.RetryCapture)
+    fun retryCapture_shouldResetToCapture_preservingCategories() =
+        runViewModelTest {
+            advanceUntilIdle()
+            viewModel.onEvent(ReceiptScanEvent.UpdateTitle("Titolo test"))
+            viewModel.onEvent(ReceiptScanEvent.RetryCapture)
 
-        val state = viewModel.state.value
-        assertEquals(ReceiptScanStep.CAPTURE, state.step)
-        assertEquals("", state.title)
-        // Le categorie vengono ricaricate dall'init, quindi possono essere presenti
-    }
+            val state = viewModel.state.value
+            assertEquals(ReceiptScanStep.CAPTURE, state.step)
+            assertEquals("", state.title)
+            // Le categorie vengono ricaricate dall'init, quindi possono essere presenti
+        }
 
     // ── saveTransaction – validation ─────────────────────────────────────────
 
     @Test
-    fun saveTransaction_shouldSetError_whenNoReceiptData() = runViewModelTest {
-        advanceUntilIdle()
-        // receiptData è null nello stato iniziale
-        viewModel.saveTransaction()
-        advanceUntilIdle()
+    fun saveTransaction_shouldSetError_whenNoReceiptData() =
+        runViewModelTest {
+            advanceUntilIdle()
+            // receiptData è null nello stato iniziale
+            viewModel.saveTransaction()
+            advanceUntilIdle()
 
-        assertNotNull(viewModel.state.value.error)
-    }
+            assertNotNull(viewModel.state.value.error)
+        }
 
     // ── clearError ───────────────────────────────────────────────────────────
 
     @Test
-    fun clearError_shouldSetErrorToNull() = runViewModelTest {
-        viewModel.saveTransaction() // produce un errore (no receiptData)
-        advanceUntilIdle()
-        assertNotNull(viewModel.state.value.error)
+    fun clearError_shouldSetErrorToNull() =
+        runViewModelTest {
+            viewModel.saveTransaction() // produce un errore (no receiptData)
+            advanceUntilIdle()
+            assertNotNull(viewModel.state.value.error)
 
-        viewModel.clearError()
-        assertNull(viewModel.state.value.error)
-    }
+            viewModel.clearError()
+            assertNull(viewModel.state.value.error)
+        }
 }
 
 // ── Fake OCR Service ────────────────────────────────────────────────────────
@@ -246,4 +262,3 @@ private class FakeTestOcrService : ReceiptOcrService {
     override suspend fun extractText(imageBytes: ByteArray): Result<String> =
         Result.success("TOTALE 68,90\nIVA 22% 12,40")
 }
-

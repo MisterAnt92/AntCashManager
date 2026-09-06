@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -35,15 +34,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
-import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
-import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.text.AppText
+import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.android.util.formatAmount
-import com.antcashmanager.android.util.maskDigits
-import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.translateCategory
 
 /**
@@ -59,8 +56,12 @@ data class ChartDetailsData(
     val trend: TrendDirection = TrendDirection.NEUTRAL,
 )
 
-enum class TrendDirection(val symbol: String) {
-    UP("↑"), DOWN("↓"), NEUTRAL("→")
+enum class TrendDirection(
+    val symbol: String,
+) {
+    UP("↑"),
+    DOWN("↓"),
+    NEUTRAL("→"),
 }
 
 /**
@@ -114,16 +115,18 @@ private fun ChartsDetailsContent(
     val categoryDisplayName = translateCategory(details.categoryName)
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState())
-            .padding(top = 16.dp, bottom = 32.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .padding(top = 16.dp, bottom = 32.dp),
     ) {
         // Header with close button
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp, vertical = 16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp, vertical = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -145,23 +148,27 @@ private fun ChartsDetailsContent(
 
         // Category header with color indicator
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp, vertical = 16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp, vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             // Color indicator circle with animation
-            val indicatorColor = androidx.compose.ui.graphics.Color(details.colorHex)
+            val indicatorColor =
+                androidx.compose.ui.graphics
+                    .Color(details.colorHex)
             val animatedColor by animateColorAsState(
                 targetValue = indicatorColor,
-                label = "colorIndicatorAnimation"
+                label = "colorIndicatorAnimation",
             )
             Box(
-                modifier = Modifier
-                    .size(16.dp)
-                    .clip(CircleShape)
-                    .background(animatedColor)
+                modifier =
+                    Modifier
+                        .size(16.dp)
+                        .clip(CircleShape)
+                        .background(animatedColor),
             )
 
             Column(modifier = Modifier.weight(1f)) {
@@ -172,10 +179,11 @@ private fun ChartsDetailsContent(
                 )
                 VerticalSpacer(SpacingSize.XXXS)
                 AppText(
-                    text = stringResource(
-                        R.string.chart_details_percentage,
-                        details.percentage
-                    ),
+                    text =
+                        stringResource(
+                            R.string.chart_details_percentage,
+                            details.percentage,
+                        ),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -227,21 +235,24 @@ private fun DetailsMetricCard(
     val displayValue = if (isMasked) "••••••" else value
     val animatedHorizontalPadding by animateDpAsState(
         targetValue = 24.dp,
-        label = "metricPaddingAnimation"
+        label = "metricPaddingAnimation",
     )
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = animatedHorizontalPadding, vertical = 8.dp),
-        colors = androidx.compose.material3.CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-        ),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = animatedHorizontalPadding, vertical = 8.dp),
+        colors =
+            androidx.compose.material3.CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            ),
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
         ) {
             AppText(
                 text = label,
@@ -262,21 +273,22 @@ private fun DetailsMetricCard(
 
 @Composable
 private fun TrendIndicator(direction: TrendDirection) {
-    val trendColor = when (direction) {
-        TrendDirection.UP -> MaterialTheme.colorScheme.error // Red for higher spending
-        TrendDirection.DOWN -> MaterialTheme.colorScheme.primary // Green for lower
-        TrendDirection.NEUTRAL -> MaterialTheme.colorScheme.onSurfaceVariant
-    }
+    val trendColor =
+        when (direction) {
+            TrendDirection.UP -> MaterialTheme.colorScheme.error // Red for higher spending
+            TrendDirection.DOWN -> MaterialTheme.colorScheme.primary // Green for lower
+            TrendDirection.NEUTRAL -> MaterialTheme.colorScheme.onSurfaceVariant
+        }
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 8.dp)
-            .background(
-                color = trendColor.copy(alpha = 0.1f),
-                shape = MaterialTheme.shapes.small,
-            )
-            .padding(12.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp, vertical = 8.dp)
+                .background(
+                    color = trendColor.copy(alpha = 0.1f),
+                    shape = MaterialTheme.shapes.small,
+                ).padding(12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
@@ -287,13 +299,14 @@ private fun TrendIndicator(direction: TrendDirection) {
             modifier = Modifier.width(20.dp),
         )
         AppText(
-            text = stringResource(
-                when (direction) {
-                    TrendDirection.UP -> R.string.chart_trend_increasing
-                    TrendDirection.DOWN -> R.string.chart_trend_decreasing
-                    TrendDirection.NEUTRAL -> R.string.chart_trend_stable
-                }
-            ),
+            text =
+                stringResource(
+                    when (direction) {
+                        TrendDirection.UP -> R.string.chart_trend_increasing
+                        TrendDirection.DOWN -> R.string.chart_trend_decreasing
+                        TrendDirection.NEUTRAL -> R.string.chart_trend_stable
+                    },
+                ),
             style = MaterialTheme.typography.bodySmall,
             color = trendColor,
             fontWeight = FontWeight.Medium,
@@ -304,9 +317,10 @@ private fun TrendIndicator(direction: TrendDirection) {
 @Composable
 private fun InfoSection() {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp),
     ) {
         AppText(
             text = stringResource(R.string.chart_details_info_title),
@@ -326,7 +340,9 @@ private fun InfoSection() {
 @Composable
 private fun Card(
     modifier: Modifier = Modifier,
-    colors: androidx.compose.material3.CardColors = androidx.compose.material3.CardDefaults.cardColors(),
+    colors: androidx.compose.material3.CardColors =
+        androidx.compose.material3.CardDefaults
+            .cardColors(),
     content: @Composable () -> Unit,
 ) {
     androidx.compose.material3.Card(
@@ -338,6 +354,4 @@ private fun Card(
 }
 
 // Helper extension for Modifier.size when used with Spacer
-private fun Modifier.size(size: androidx.compose.ui.unit.Dp): Modifier {
-    return this.width(size).height(size)
-}
+private fun Modifier.size(size: androidx.compose.ui.unit.Dp): Modifier = this.width(size).height(size)

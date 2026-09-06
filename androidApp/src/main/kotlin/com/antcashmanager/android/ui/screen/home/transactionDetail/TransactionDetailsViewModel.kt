@@ -18,7 +18,6 @@ import kotlinx.coroutines.launch
 class TransactionDetailsViewModel(
     private val shareTransactionUseCase: ShareTransactionUseCase,
 ) : BaseViewModel<None>() {
-
     /**
      * Condivide i dati della transazione usando lo use case
      * @param transaction La transazione da condividere
@@ -31,26 +30,25 @@ class TransactionDetailsViewModel(
         viewModelScope.launch {
             // Usa lo use case per formattare i dati (Business Logic)
             shareTransactionUseCase(
-                ShareTransactionUseCase.Params(transaction)
-            )
-                .onSuccess { shareText ->
-                    // Crea l'intent di condivisione (Android-specific)
-                    val shareIntent = Intent().apply {
+                ShareTransactionUseCase.Params(transaction),
+            ).onSuccess { shareText ->
+                // Crea l'intent di condivisione (Android-specific)
+                val shareIntent =
+                    Intent().apply {
                         action = Intent.ACTION_SEND
                         putExtra(Intent.EXTRA_TEXT, shareText)
                         type = "text/plain"
                     }
-                    // Avvia il chooser
-                    context.startActivity(
-                        Intent.createChooser(
-                            shareIntent,
-                            context.getString(R.string.transaction_details_share)
-                        )
-                    )
-                }
-                .onFailure { error ->
-                    logError("Failed to format share text", error)
-                }
+                // Avvia il chooser
+                context.startActivity(
+                    Intent.createChooser(
+                        shareIntent,
+                        context.getString(R.string.transaction_details_share),
+                    ),
+                )
+            }.onFailure { error ->
+                logError("Failed to format share text", error)
+            }
         }
     }
 }

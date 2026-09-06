@@ -50,16 +50,19 @@ import java.util.Locale
 private const val MAX_TRANSACTIONS = 20
 
 class RecentTransactionsWidget : GlanceAppWidget() {
+    override val sizeMode =
+        SizeMode.Responsive(
+            setOf(
+                DpSize(120.dp, 120.dp),
+                DpSize(250.dp, 120.dp),
+                DpSize(250.dp, 300.dp),
+            ),
+        )
 
-    override val sizeMode = SizeMode.Responsive(
-        setOf(
-            DpSize(120.dp, 120.dp),
-            DpSize(250.dp, 120.dp),
-            DpSize(250.dp, 300.dp),
-        ),
-    )
-
-    override suspend fun provideGlance(context: Context, id: GlanceId) {
+    override suspend fun provideGlance(
+        context: Context,
+        id: GlanceId,
+    ) {
         try {
             val transactionRepository = WidgetDependencies.transactionRepository
             val settingsRepository = WidgetDependencies.settingsRepository
@@ -70,15 +73,17 @@ class RecentTransactionsWidget : GlanceAppWidget() {
             val palette = loadWidgetPalette(settingsRepository)
             val language = loadLanguage(settingsRepository)
 
-            val localizedContext = if (language != AppLanguage.SYSTEM) {
-                val locale = Locale.forLanguageTag(language.code)
-                val config = Configuration(context.resources.configuration).apply {
-                    setLocale(locale)
+            val localizedContext =
+                if (language != AppLanguage.SYSTEM) {
+                    val locale = Locale.forLanguageTag(language.code)
+                    val config =
+                        Configuration(context.resources.configuration).apply {
+                            setLocale(locale)
+                        }
+                    context.createConfigurationContext(config)
+                } else {
+                    context
                 }
-                context.createConfigurationContext(config)
-            } else {
-                context
-            }
 
             provideContent {
                 CompositionLocalProvider(LocalContext provides localizedContext) {
@@ -101,11 +106,11 @@ private fun ErrorWidgetContent(context: Context) {
     Column(
         modifier = GlanceModifier.fillMaxSize().padding(16.dp),
         horizontalAlignment = Alignment.Horizontal.CenterHorizontally,
-        verticalAlignment = Alignment.Vertical.CenterVertically
+        verticalAlignment = Alignment.Vertical.CenterVertically,
     ) {
         Text(
             text = context.getString(R.string.error_generic),
-            style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium)
+            style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium),
         )
     }
 }
@@ -122,20 +127,22 @@ private fun RecentTransactionsContent(
 ) {
     val context = LocalContext.current
     Column(
-        modifier = GlanceModifier
-            .fillMaxSize()
-            .background(palette.background)
-            .cornerRadius(16.dp)
-            .padding(12.dp)
-            .clickable(actionRunCallback<RecentTransactionsWidgetTapAction>()),
+        modifier =
+            GlanceModifier
+                .fillMaxSize()
+                .background(palette.background)
+                .cornerRadius(16.dp)
+                .padding(12.dp)
+                .clickable(actionRunCallback<RecentTransactionsWidgetTapAction>()),
     ) {
         Text(
             text = context.getString(R.string.widget_recent_transactions_title),
-            style = TextStyle(
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                color = ColorProvider(palette.primaryText)
-            ),
+            style =
+                TextStyle(
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = ColorProvider(palette.primaryText),
+                ),
         )
         Spacer(modifier = GlanceModifier.height(8.dp))
         if (transactions.isEmpty()) {
@@ -157,7 +164,7 @@ private fun RecentTransactionsContent(
 private fun TransactionRow(
     transaction: Transaction,
     currencyFormat: CurrencyFormat,
-    palette: WidgetPalette
+    palette: WidgetPalette,
 ) {
     val context = LocalContext.current
     val isIncome = transaction.type == TransactionType.INCOME
@@ -168,20 +175,22 @@ private fun TransactionRow(
         verticalAlignment = Alignment.Vertical.CenterVertically,
     ) {
         Box(
-            modifier = GlanceModifier
-                .size(10.dp)
-                .background(Color(transaction.categoryColor))
-                .cornerRadius(5.dp),
+            modifier =
+                GlanceModifier
+                    .size(10.dp)
+                    .background(Color(transaction.categoryColor))
+                    .cornerRadius(5.dp),
         ) {}
         Spacer(modifier = GlanceModifier.width(8.dp))
         Column(modifier = GlanceModifier.defaultWeight()) {
             Text(
-                text = transaction.title.ifBlank {
-                    translateCategoryPlain(
-                        context,
-                        transaction.category
-                    )
-                },
+                text =
+                    transaction.title.ifBlank {
+                        translateCategoryPlain(
+                            context,
+                            transaction.category,
+                        )
+                    },
                 maxLines = 1,
                 style = TextStyle(fontSize = 13.sp, color = ColorProvider(palette.primaryText)),
             )
@@ -194,11 +203,12 @@ private fun TransactionRow(
         Text(
             text = formatAmountWithSign(transaction.amount, currencyFormat, isIncome),
             maxLines = 1,
-            style = TextStyle(
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Medium,
-                color = ColorProvider(amountColor)
-            ),
+            style =
+                TextStyle(
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = ColorProvider(amountColor),
+                ),
         )
     }
 }

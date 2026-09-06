@@ -1,7 +1,5 @@
 package com.antcashmanager.android.ui.components.navigation
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -9,9 +7,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
@@ -42,9 +38,10 @@ fun NavigationRailTablet(
     val showLabels = adaptiveInfo.isMedium || adaptiveInfo.isExpanded
 
     NavigationRail(
-        modifier = modifier
-            .fillMaxHeight()
-            .padding(vertical = 8.dp),
+        modifier =
+            modifier
+                .fillMaxHeight()
+                .padding(vertical = 8.dp),
     ) {
         items.forEachIndexed { index, item ->
             NavigationRailItem(
@@ -57,15 +54,18 @@ fun NavigationRailTablet(
                         modifier = Modifier.size(24.dp),
                     )
                 },
-                label = if (showLabels) {
-                    {
-                        AppText(
-                            text = item.label,
-                            style = MaterialTheme.typography.labelMedium,
-                            maxLines = 2,
-                        )
-                    }
-                } else null,
+                label =
+                    if (showLabels) {
+                        {
+                            AppText(
+                                text = item.label,
+                                style = MaterialTheme.typography.labelMedium,
+                                maxLines = 2,
+                            )
+                        }
+                    } else {
+                        null
+                    },
                 modifier = Modifier.padding(vertical = 4.dp),
             )
         }

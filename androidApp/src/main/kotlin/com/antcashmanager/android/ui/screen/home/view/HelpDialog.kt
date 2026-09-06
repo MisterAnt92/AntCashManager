@@ -15,23 +15,24 @@ import com.antcashmanager.android.ui.components.dialog.HelpDialogFeatureSpec
 
 @Composable
 fun HelpDialog(onDismiss: () -> Unit) {
-    val helpFeatures = listOf(
-        HelpDialogFeatureSpec(
-            titleResId = R.string.common_dashboard,
-            descriptionResId = R.string.help_dashboard_desc,
-            icon = Icons.AutoMirrored.Filled.TrendingUp,
-        ),
-        HelpDialogFeatureSpec(
-            titleResId = R.string.help_home_feature_date_filters_title,
-            descriptionResId = R.string.help_home_feature_date_filters_desc,
-            icon = Icons.Default.ArrowUpward,
-        ),
-        HelpDialogFeatureSpec(
-            titleResId = R.string.help_home_feature_recent_transactions_title,
-            descriptionResId = R.string.help_home_feature_recent_transactions_desc,
-            icon = Icons.Default.Repeat,
-        ),
-    )
+    val helpFeatures =
+        listOf(
+            HelpDialogFeatureSpec(
+                titleResId = R.string.common_dashboard,
+                descriptionResId = R.string.help_dashboard_desc,
+                icon = Icons.AutoMirrored.Filled.TrendingUp,
+            ),
+            HelpDialogFeatureSpec(
+                titleResId = R.string.help_home_feature_date_filters_title,
+                descriptionResId = R.string.help_home_feature_date_filters_desc,
+                icon = Icons.Default.ArrowUpward,
+            ),
+            HelpDialogFeatureSpec(
+                titleResId = R.string.help_home_feature_recent_transactions_title,
+                descriptionResId = R.string.help_home_feature_recent_transactions_desc,
+                icon = Icons.Default.Repeat,
+            ),
+        )
 
     AppHelpDialog(
         titleResId = R.string.help_home_title,

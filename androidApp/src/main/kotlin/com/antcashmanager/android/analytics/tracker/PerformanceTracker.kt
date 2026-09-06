@@ -18,19 +18,26 @@ import com.antcashmanager.android.analytics.AnalyticsManager
  *
  * Privacy: Solo metriche anonime, nessun dato sensibile
  */
-class PerformanceTracker(private val analyticsManager: AnalyticsManager) {
-
+class PerformanceTracker(
+    private val analyticsManager: AnalyticsManager,
+) {
     /**
      * Traccia il tempo di caricamento di una schermata.
      *
      * @param screenName Nome della schermata (es: "home_screen", "transactions_screen")
      * @param durationMs Durata di caricamento in millisecondi
      */
-    fun trackScreenLoadTime(screenName: String, durationMs: Long) {
-        analyticsManager.logEvent("screen_load_time", Bundle().apply {
-            putString("screen", screenName)
-            putLong("duration_ms", durationMs)
-        })
+    fun trackScreenLoadTime(
+        screenName: String,
+        durationMs: Long,
+    ) {
+        analyticsManager.logEvent(
+            "screen_load_time",
+            Bundle().apply {
+                putString("screen", screenName)
+                putLong("duration_ms", durationMs)
+            },
+        )
     }
 
     /**
@@ -39,11 +46,17 @@ class PerformanceTracker(private val analyticsManager: AnalyticsManager) {
      * @param durationMs Durata di elaborazione in millisecondi
      * @param hasReceipt Se la transazione include una ricevuta scansionata
      */
-    fun trackTransactionFormSubmitLatency(durationMs: Long, hasReceipt: Boolean = false) {
-        analyticsManager.logEvent("transaction_form_submit_latency", Bundle().apply {
-            putLong("duration_ms", durationMs)
-            putBoolean("has_receipt", hasReceipt)
-        })
+    fun trackTransactionFormSubmitLatency(
+        durationMs: Long,
+        hasReceipt: Boolean = false,
+    ) {
+        analyticsManager.logEvent(
+            "transaction_form_submit_latency",
+            Bundle().apply {
+                putLong("duration_ms", durationMs)
+                putBoolean("has_receipt", hasReceipt)
+            },
+        )
     }
 
     /**
@@ -52,11 +65,17 @@ class PerformanceTracker(private val analyticsManager: AnalyticsManager) {
      * @param durationMs Durata di rendering in millisecondi
      * @param dataPoints Numero di punti dati renderizzati
      */
-    fun trackChartRenderingTime(durationMs: Long, dataPoints: Int = 0) {
-        analyticsManager.logEvent("chart_rendering_time", Bundle().apply {
-            putLong("duration_ms", durationMs)
-            putInt("data_points", dataPoints)
-        })
+    fun trackChartRenderingTime(
+        durationMs: Long,
+        dataPoints: Int = 0,
+    ) {
+        analyticsManager.logEvent(
+            "chart_rendering_time",
+            Bundle().apply {
+                putLong("duration_ms", durationMs)
+                putInt("data_points", dataPoints)
+            },
+        )
     }
 
     /**
@@ -66,12 +85,19 @@ class PerformanceTracker(private val analyticsManager: AnalyticsManager) {
      * @param pages Numero di pagine processate
      * @param success Se il processing è riuscito
      */
-    fun trackReceiptOcrProcessingTime(durationMs: Long, pages: Int = 1, success: Boolean = true) {
-        analyticsManager.logEvent("receipt_ocr_processing_time", Bundle().apply {
-            putLong("duration_ms", durationMs)
-            putInt("pages", pages)
-            putBoolean("success", success)
-        })
+    fun trackReceiptOcrProcessingTime(
+        durationMs: Long,
+        pages: Int = 1,
+        success: Boolean = true,
+    ) {
+        analyticsManager.logEvent(
+            "receipt_ocr_processing_time",
+            Bundle().apply {
+                putLong("duration_ms", durationMs)
+                putInt("pages", pages)
+                putBoolean("success", success)
+            },
+        )
     }
 
     /**
@@ -81,11 +107,18 @@ class PerformanceTracker(private val analyticsManager: AnalyticsManager) {
      * @param fileSizeMb Dimensione del file in MB
      * @param operation Tipo di operazione ("backup" o "restore")
      */
-    fun trackBackupRestoreDuration(durationMs: Long, fileSizeMb: Double = 0.0, operation: String = "backup") {
-        analyticsManager.logEvent("backup_restore_duration", Bundle().apply {
-            putLong("duration_ms", durationMs)
-            putDouble("file_size_mb", fileSizeMb)
-            putString("operation", operation)
-        })
+    fun trackBackupRestoreDuration(
+        durationMs: Long,
+        fileSizeMb: Double = 0.0,
+        operation: String = "backup",
+    ) {
+        analyticsManager.logEvent(
+            "backup_restore_duration",
+            Bundle().apply {
+                putLong("duration_ms", durationMs)
+                putDouble("file_size_mb", fileSizeMb)
+                putString("operation", operation)
+            },
+        )
     }
 }

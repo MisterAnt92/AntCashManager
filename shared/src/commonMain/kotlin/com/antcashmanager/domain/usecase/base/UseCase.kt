@@ -44,11 +44,12 @@ public abstract class UseCase<in P, out R>(
      * `final`: le subclass implementano SOLO [execute], mai [invoke], per garantire che il
      * dispatcher configurato, la gestione degli errori e il logging siano sempre rispettati.
      */
-    public suspend operator fun invoke(params: P): Result<R> = withContext(dispatcher) {
-        ensureActive()
-        log.d { "started" }
-        runSuspendCatching { execute(params) }
-            .onSuccess { log.d { "succeeded" } }
-            .onFailure { log.e(throwable = it) { "failed" } }
-    }
+    public suspend operator fun invoke(params: P): Result<R> =
+        withContext(dispatcher) {
+            ensureActive()
+            log.d { "started" }
+            runSuspendCatching { execute(params) }
+                .onSuccess { log.d { "succeeded" } }
+                .onFailure { log.e(throwable = it) { "failed" } }
+        }
 }

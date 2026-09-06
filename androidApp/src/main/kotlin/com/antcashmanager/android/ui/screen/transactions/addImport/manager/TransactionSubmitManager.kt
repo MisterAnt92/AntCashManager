@@ -25,7 +25,6 @@ class TransactionSubmitManager(
     private val updateTransactionUseCase: UpdateTransactionUseCase,
     private val validator: TransactionValidator = TransactionValidator,
 ) {
-
     /**
      * Valida lo stato della transazione e ritorna un messaggio di errore se invalido.
      *
@@ -93,22 +92,28 @@ class TransactionSubmitManager(
      * @throws IllegalStateException Se selectedCategory o selectedType sono null
      *                               (dovrebbero essere validati in validateTransactionState())
      */
-    fun buildTransaction(state: AddTransactionState, transactionId: Long?): Transaction {
+    fun buildTransaction(
+        state: AddTransactionState,
+        transactionId: Long?,
+    ): Transaction {
         // Validate che categoria e tipo siano non-null
         // (dovrebbero già essere validati in validateTransactionState, ma controlliamo qui per safety)
-        val selectedCategory = state.selectedCategory
-            ?: throw IllegalStateException("selectedCategory must not be null")
-        val selectedType = state.selectedType
-            ?: throw IllegalStateException("selectedType must not be null")
+        val selectedCategory =
+            state.selectedCategory
+                ?: throw IllegalStateException("selectedCategory must not be null")
+        val selectedType =
+            state.selectedType
+                ?: throw IllegalStateException("selectedType must not be null")
 
         // Calcola l'importo finale con il segno corretto
-        val finalAmount = state.totalAmount.let { amount ->
-            if (selectedType == TransactionType.EXPENSE) {
-                -amount // Negativo per le spese
-            } else {
-                amount // Positivo per le entrate
+        val finalAmount =
+            state.totalAmount.let { amount ->
+                if (selectedType == TransactionType.EXPENSE) {
+                    -amount // Negativo per le spese
+                } else {
+                    amount // Positivo per le entrate
+                }
             }
-        }
 
         return Transaction(
             id = if (state.isModifying) transactionId ?: 0 else 0,
@@ -140,7 +145,10 @@ class TransactionSubmitManager(
      * @param isModifying true per update, false per insert
      * @return Result<Unit> con successo o errore
      */
-    suspend fun saveTransaction(transaction: Transaction, isModifying: Boolean): Result<Unit> =
+    suspend fun saveTransaction(
+        transaction: Transaction,
+        isModifying: Boolean,
+    ): Result<Unit> =
         runCatching {
             if (isModifying) {
                 updateTransactionUseCase(transaction).getOrThrow()
@@ -159,7 +167,10 @@ class TransactionSubmitManager(
      * @param transactionId L'ID della transazione (per modifica)
      * @return Result<Unit> con successo o messaggio di errore
      */
-    suspend fun submitTransaction(state: AddTransactionState, transactionId: Long?): Result<Unit> =
+    suspend fun submitTransaction(
+        state: AddTransactionState,
+        transactionId: Long?,
+    ): Result<Unit> =
         runCatching {
             // 1. Valida
             val validationError = validateTransactionState(state)

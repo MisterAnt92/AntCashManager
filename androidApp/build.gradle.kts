@@ -57,6 +57,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            signingConfig = signingConfigs.getByName("debug")
             configure<CrashlyticsExtension> {
                 // Upload automatico del mapping file per deobfuscation stacktrace release.
                 mappingFileUploadEnabled = true

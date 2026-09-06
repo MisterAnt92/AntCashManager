@@ -22,7 +22,6 @@ import kotlinx.coroutines.flow.update
 open class FakeTransactionRepository(
     initialTransactions: List<Transaction> = emptyList(),
 ) : TransactionRepository {
-
     val transactions = MutableStateFlow(initialTransactions)
 
     /** Se non-null, ogni operazione di scrittura lo lancia invece di eseguire l'operazione. */
@@ -35,9 +34,13 @@ open class FakeTransactionRepository(
 
     override fun getAllTransactions(): Flow<List<Transaction>> = transactions
 
-    override fun getTransactionsPaginated(pageSize: Int, pageIndex: Int): Flow<List<Transaction>> =
+    override fun getTransactionsPaginated(
+        pageSize: Int,
+        pageIndex: Int,
+    ): Flow<List<Transaction>> =
         transactions.map { list ->
-            list.sortedByDescending { it.timestamp }
+            list
+                .sortedByDescending { it.timestamp }
                 .drop(pageIndex * pageSize)
                 .take(pageSize)
         }
@@ -45,10 +48,11 @@ open class FakeTransactionRepository(
     override fun getTransactionsByCategory(
         category: String,
         pageSize: Int,
-        pageIndex: Int
+        pageIndex: Int,
     ): Flow<List<Transaction>> =
         transactions.map { list ->
-            list.filter { it.category == category }
+            list
+                .filter { it.category == category }
                 .sortedByDescending { it.timestamp }
                 .drop(pageIndex * pageSize)
                 .take(pageSize)
@@ -57,21 +61,20 @@ open class FakeTransactionRepository(
     override fun searchTransactions(
         query: String,
         pageSize: Int,
-        pageIndex: Int
+        pageIndex: Int,
     ): Flow<List<Transaction>> =
         transactions.map { list ->
-            list.filter {
-                it.title.contains(query, ignoreCase = true) ||
+            list
+                .filter {
+                    it.title.contains(query, ignoreCase = true) ||
                         it.payee.contains(query, ignoreCase = true) ||
                         it.notes.contains(query, ignoreCase = true)
-            }
-                .sortedByDescending { it.timestamp }
+                }.sortedByDescending { it.timestamp }
                 .drop(pageIndex * pageSize)
                 .take(pageSize)
         }
 
-    override suspend fun getTransactionById(id: Long): Transaction? =
-        transactions.value.find { it.id == id }
+    override suspend fun getTransactionById(id: Long): Transaction? = transactions.value.find { it.id == id }
 
     override suspend fun insertTransaction(transaction: Transaction): Long {
         applyDelayAndMaybeThrow()
@@ -112,8 +115,10 @@ open class FakeTransactionRepository(
         transactions.value = emptyList()
     }
 
-    override fun getTransactionsByDateRange(from: Long, to: Long): Flow<List<Transaction>> =
-        transactions.map { list -> list.filter { it.timestamp in from..to } }
+    override fun getTransactionsByDateRange(
+        from: Long,
+        to: Long,
+    ): Flow<List<Transaction>> = transactions.map { list -> list.filter { it.timestamp in from..to } }
 
     override fun getRecurringTransactions(): Flow<List<Transaction>> =
         transactions.map { list -> list.filter { it.isRecurring } }
@@ -122,7 +127,7 @@ open class FakeTransactionRepository(
         oldCategoryName: String,
         newCategoryName: String,
         icon: String,
-        color: Long
+        color: Long,
     ) {
         transactions.update { list ->
             list.map { current ->
@@ -130,7 +135,7 @@ open class FakeTransactionRepository(
                     current.copy(
                         category = newCategoryName,
                         categoryIcon = icon,
-                        categoryColor = color
+                        categoryColor = color,
                     )
                 } else {
                     current
@@ -139,20 +144,15 @@ open class FakeTransactionRepository(
         }
     }
 
-    override fun getDistinctTitles(since: Long): Flow<List<String>> =
-        distinctValuesOf(since) { it.title }
+    override fun getDistinctTitles(since: Long): Flow<List<String>> = distinctValuesOf(since) { it.title }
 
-    override fun getDistinctPayees(since: Long): Flow<List<String>> =
-        distinctValuesOf(since) { it.payee }
+    override fun getDistinctPayees(since: Long): Flow<List<String>> = distinctValuesOf(since) { it.payee }
 
-    override fun getDistinctNotes(since: Long): Flow<List<String>> =
-        distinctValuesOf(since) { it.notes }
+    override fun getDistinctNotes(since: Long): Flow<List<String>> = distinctValuesOf(since) { it.notes }
 
-    override fun getDistinctLocations(since: Long): Flow<List<String>> =
-        distinctValuesOf(since) { it.location }
+    override fun getDistinctLocations(since: Long): Flow<List<String>> = distinctValuesOf(since) { it.location }
 
-    override fun getDistinctTags(since: Long): Flow<List<String>> =
-        distinctValuesOf(since) { it.tags }
+    override fun getDistinctTags(since: Long): Flow<List<String>> = distinctValuesOf(since) { it.tags }
 
     override suspend fun getSuggestions(since: Long): TransactionSuggestions {
         applyDelayAndMaybeThrow()
@@ -162,16 +162,19 @@ open class FakeTransactionRepository(
             payees = filtered.map { it.payee }.filter { it.isNotBlank() }.distinct(),
             notes = filtered.map { it.notes }.filter { it.isNotBlank() }.distinct(),
             locations = filtered.map { it.location }.filter { it.isNotBlank() }.distinct(),
-            tags = filtered.map { it.tags }.filter { it.isNotBlank() }.distinct()
+            tags = filtered.map { it.tags }.filter { it.isNotBlank() }.distinct(),
         )
     }
 
     private fun distinctValuesOf(
         since: Long,
-        selector: (Transaction) -> String
+        selector: (Transaction) -> String,
     ): Flow<List<String>> =
         transactions.map { list ->
-            list.filter { it.timestamp >= since }.map(selector).filter { it.isNotBlank() }
+            list
+                .filter { it.timestamp >= since }
+                .map(selector)
+                .filter { it.isNotBlank() }
                 .distinct()
         }
 

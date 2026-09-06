@@ -58,22 +58,22 @@ fun WidgetBackgroundColorDialog(
                 DisplayConstant.WIDGET_BACKGROUND_COLOR_PRESETS.forEach { color ->
                     val isSelected = color == currentColor
                     Box(
-                        modifier = Modifier
-                            .size(36.dp)
-                            .clip(CircleShape)
-                            .background(Color(color))
-                            .then(
-                                if (isSelected) {
-                                    Modifier.border(
-                                        3.dp,
-                                        MaterialTheme.colorScheme.primary,
-                                        CircleShape
-                                    )
-                                } else {
-                                    Modifier
-                                },
-                            )
-                            .clickable { onColorSelected(color) },
+                        modifier =
+                            Modifier
+                                .size(36.dp)
+                                .clip(CircleShape)
+                                .background(Color(color))
+                                .then(
+                                    if (isSelected) {
+                                        Modifier.border(
+                                            3.dp,
+                                            MaterialTheme.colorScheme.primary,
+                                            CircleShape,
+                                        )
+                                    } else {
+                                        Modifier
+                                    },
+                                ).clickable { onColorSelected(color) },
                         contentAlignment = Alignment.Center,
                     ) {
                         if (isSelected) {

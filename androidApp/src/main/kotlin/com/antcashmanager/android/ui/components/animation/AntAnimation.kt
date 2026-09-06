@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -34,34 +33,37 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
-import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
-import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.text.AppText
 import kotlinx.coroutines.delay
 
 @Composable
 fun AntSplashScreen(
     onAnimationFinished: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
-    val accessibilityManager = remember {
-        context.getSystemService(android.content.Context.ACCESSIBILITY_SERVICE) as android.view.accessibility.AccessibilityManager
-    }
+    val accessibilityManager =
+        remember {
+            context.getSystemService(
+                android.content.Context.ACCESSIBILITY_SERVICE,
+            ) as android.view.accessibility.AccessibilityManager
+        }
     val isAccessibilityEnabled =
         accessibilityManager.isEnabled && accessibilityManager.isTouchExplorationEnabled
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-        contentAlignment = Alignment.Center
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.Center,
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             BouncingAnt(modifier = Modifier.size(180.dp))
 
@@ -70,16 +72,17 @@ fun AntSplashScreen(
             AppText(
                 text = stringResource(R.string.app_name),
                 style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
             )
         }
 
         // Skip button - always available but especially prominent/needed for accessibility
         TextButton(
             onClick = onAnimationFinished,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 48.dp)
+            modifier =
+                Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 48.dp),
         ) {
             AppText(text = stringResource(R.string.tutorial_skip))
         }
@@ -99,39 +102,42 @@ fun BouncingAnt(modifier: Modifier = Modifier) {
     val scale by infiniteTransition.animateFloat(
         initialValue = 1f,
         targetValue = 1.1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(600, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "Scale"
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(600, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse,
+            ),
+        label = "Scale",
     )
 
     val translationY by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = -20f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(600, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "TranslationY"
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(600, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse,
+            ),
+        label = "TranslationY",
     )
 
     Image(
         painter = painterResource(id = R.drawable.ic_ant_mascot),
         contentDescription = null,
-        modifier = modifier
-            .graphicsLayer {
-                scaleX = scale
-                scaleY = scale
-                this.translationY = translationY
-            }
+        modifier =
+            modifier
+                .graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                    this.translationY = translationY
+                },
     )
 }
 
 @Composable
 fun AntEasterEggAnimation(
     versionName: String,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     var isRunning by remember { mutableStateOf(false) }
     var offsetX by remember { mutableStateOf(0.dp) }
@@ -154,37 +160,41 @@ fun AntEasterEggAnimation(
 
     Dialog(
         onDismissRequest = onDismiss,
-        properties = DialogProperties(
-            usePlatformDefaultWidth = false,
-            decorFitsSystemWindows = false,
-            dismissOnBackPress = false,
-            dismissOnClickOutside = false
-        )
+        properties =
+            DialogProperties(
+                usePlatformDefaultWidth = false,
+                decorFitsSystemWindows = false,
+                dismissOnBackPress = false,
+                dismissOnClickOutside = false,
+            ),
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background),
-            contentAlignment = Alignment.Center
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background),
+            contentAlignment = Alignment.Center,
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(32.dp)
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(32.dp),
             ) {
                 // Content area with clickable ant and text
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 ) {
                     BouncingAnt(
-                        modifier = Modifier
-                            .size(160.dp)
-                            .offset(offsetX, offsetY)
-                            .clickable { isRunning = true }
+                        modifier =
+                            Modifier
+                                .size(160.dp)
+                                .offset(offsetX, offsetY)
+                                .clickable { isRunning = true },
                     )
                     VerticalSpacer(SpacingSize.LG)
                     AppText(
@@ -192,20 +202,20 @@ fun AntEasterEggAnimation(
                         text = stringResource(R.string.settings_easter_egg_message),
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.clickable { isRunning = true }
+                        modifier = Modifier.clickable { isRunning = true },
                     )
                     VerticalSpacer(SpacingSize.XS)
                     AppText(
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                         text = stringResource(R.string.extra_thanks),
                         style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     VerticalSpacer(SpacingSize.XS)
                     AppText(
                         text = "v$versionName",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
 
@@ -213,7 +223,7 @@ fun AntEasterEggAnimation(
                 TextButton(onClick = onDismiss) {
                     AppText(
                         text = stringResource(R.string.common_close),
-                        style = MaterialTheme.typography.labelLarge
+                        style = MaterialTheme.typography.labelLarge,
                     )
                 }
             }

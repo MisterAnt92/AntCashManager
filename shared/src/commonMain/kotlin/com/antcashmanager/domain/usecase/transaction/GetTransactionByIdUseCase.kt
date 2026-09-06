@@ -10,6 +10,5 @@ public class GetTransactionByIdUseCase(
     private val transactionRepository: TransactionRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : UseCase<Long, Transaction?>(dispatcher) {
-    override suspend fun execute(params: Long): Transaction? =
-        transactionRepository.getTransactionById(params)
+    override suspend fun execute(params: Long): Transaction? = transactionRepository.getTransactionById(params)
 }

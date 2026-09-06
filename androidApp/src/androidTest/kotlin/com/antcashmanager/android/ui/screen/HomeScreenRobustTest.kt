@@ -27,7 +27,6 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 class HomeScreenRobustTest : BaseInstrumentationTest() {
-
     @Test
     fun homeScreen_shouldDisplayBalanceCard() {
         composeTestRule.setContent {
@@ -39,7 +38,8 @@ class HomeScreenRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Verify balance card is visible
-        composeTestRule.onNodeWithTag("balance_card")
+        composeTestRule
+            .onNodeWithTag("balance_card")
             .assertIsDisplayed()
     }
 
@@ -54,7 +54,8 @@ class HomeScreenRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Verify recent transactions section exists
-        composeTestRule.onNodeWithTag("recent_transactions_section")
+        composeTestRule
+            .onNodeWithTag("recent_transactions_section")
             .assertIsDisplayed()
     }
 
@@ -69,7 +70,8 @@ class HomeScreenRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Verify FAB (Floating Action Button) for adding transactions
-        composeTestRule.onNodeWithTag("fab_add_transaction")
+        composeTestRule
+            .onNodeWithTag("fab_add_transaction")
             .assertIsDisplayed()
     }
 
@@ -84,10 +86,12 @@ class HomeScreenRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Verify top info cards (income/expense/balance)
-        composeTestRule.onNodeWithTag("income_card")
+        composeTestRule
+            .onNodeWithTag("income_card")
             .assertIsDisplayed()
 
-        composeTestRule.onNodeWithTag("expense_card")
+        composeTestRule
+            .onNodeWithTag("expense_card")
             .assertIsDisplayed()
     }
 
@@ -102,7 +106,8 @@ class HomeScreenRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Verify scrollable content area exists
-        composeTestRule.onNodeWithTag("home_scrollable_content")
+        composeTestRule
+            .onNodeWithTag("home_scrollable_content")
             .assertIsDisplayed()
     }
 }

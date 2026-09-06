@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -36,7 +35,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Receipt
 import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material.icons.filled.Search
@@ -55,7 +53,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -68,37 +65,33 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.antcashmanager.android.ui.components.layout.SpacingSize
-import com.antcashmanager.android.ui.components.layout.VerticalSpacer
-import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
-import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
-import com.antcashmanager.android.ui.components.layout.FoldableAwareLayout
-import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
-import androidx.window.layout.FoldingFeature
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
+import com.antcashmanager.android.navigation.AppRoute
+import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
+import com.antcashmanager.android.navigation.ScreenHeaderConfig
+import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
 import com.antcashmanager.android.ui.components.animation.AnimatedCard
 import com.antcashmanager.android.ui.components.animation.AnimatedListItem
 import com.antcashmanager.android.ui.components.animation.SkeletonLoader
 import com.antcashmanager.android.ui.components.button.AppButton
-import com.antcashmanager.android.ui.components.dialog.AppHelpDialog
 import com.antcashmanager.android.ui.components.dialog.HelpButton
-import com.antcashmanager.android.ui.components.dialog.HelpDialogFeatureSpec
 import com.antcashmanager.android.ui.components.filter.DateRangeFilter
 import com.antcashmanager.android.ui.components.filter.SearchComponent
-import com.antcashmanager.android.navigation.AppRoute
-import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
-import com.antcashmanager.android.navigation.ScreenHeaderConfig
+import com.antcashmanager.android.ui.components.layout.FoldableAwareLayout
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
+import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.state.AntEmptyState
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.text.TransactionAmountText
 import com.antcashmanager.android.ui.screen.categories.view.categoryIconMap
 import com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
-import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.ExpenseRed
 import com.antcashmanager.android.ui.theme.IncomeGreen
 import com.antcashmanager.android.util.LocalAmountsMasked
@@ -106,11 +99,9 @@ import com.antcashmanager.android.util.isProtectedSalaryTransaction
 import com.antcashmanager.android.util.isValidNote
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
-import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.model.TransactionType
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -137,55 +128,60 @@ fun TransactionsScreen(
     val transactionDisplayType = state.transactionDisplayType
 
     TransactionsContent(
-        params = TransactionsContentParams(
-            state = state,
-            onEvent = { event ->
-                when (event) {
-                    is com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ApplyFilters -> {
-                        val params = Bundle().apply {
-                            putString(
-                                "has_search_query",
-                                if (state.pendingSearchQuery.isNotBlank()) "yes" else "no",
-                            )
-                            putString(
-                                "has_category_filter",
-                                if (state.pendingCategory != null) "yes" else "no",
-                            )
-                            putString(
-                                "transaction_type",
-                                state.pendingTransactionType?.name ?: "all"
-                            )
-                            putString("payment_type", state.pendingPaymentType?.name ?: "all")
+        params =
+            TransactionsContentParams(
+                state = state,
+                onEvent = { event ->
+                    when (event) {
+                        is com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ApplyFilters -> {
+                            val params =
+                                Bundle().apply {
+                                    putString(
+                                        "has_search_query",
+                                        if (state.pendingSearchQuery.isNotBlank()) "yes" else "no",
+                                    )
+                                    putString(
+                                        "has_category_filter",
+                                        if (state.pendingCategory != null) "yes" else "no",
+                                    )
+                                    putString(
+                                        "transaction_type",
+                                        state.pendingTransactionType?.name ?: "all",
+                                    )
+                                    putString("payment_type", state.pendingPaymentType?.name ?: "all")
+                                }
+                            analyticsManager.logEvent("transactions_filter_applied", params)
+
+                            // Track filter combination
+                            val filterTypes = mutableListOf<String>()
+                            if (state.pendingSearchQuery.isNotBlank()) filterTypes.add("search")
+                            if (state.pendingCategory != null) filterTypes.add("category")
+                            if (state.pendingTransactionType != null) filterTypes.add("type")
+                            if (state.pendingPaymentType != null) filterTypes.add("payment_type")
+
+                            if (filterTypes.isNotEmpty()) {
+                                analyticsManager.logEvent(
+                                    "filter_combination_applied",
+                                    Bundle().apply {
+                                        putInt("filter_count", filterTypes.size)
+                                        putString("types", filterTypes.joinToString("|"))
+                                    },
+                                )
+                            }
                         }
-                        analyticsManager.logEvent("transactions_filter_applied", params)
 
-                        // Track filter combination
-                        val filterTypes = mutableListOf<String>()
-                        if (state.pendingSearchQuery.isNotBlank()) filterTypes.add("search")
-                        if (state.pendingCategory != null) filterTypes.add("category")
-                        if (state.pendingTransactionType != null) filterTypes.add("type")
-                        if (state.pendingPaymentType != null) filterTypes.add("payment_type")
-
-                        if (filterTypes.isNotEmpty()) {
-                            analyticsManager.logEvent("filter_combination_applied", Bundle().apply {
-                                putInt("filter_count", filterTypes.size)
-                                putString("types", filterTypes.joinToString("|"))
-                            })
+                        is com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ClearAllFilters -> {
+                            analyticsManager.logEvent("transactions_filter_cleared")
                         }
-                    }
 
-                    is com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ClearAllFilters -> {
-                        analyticsManager.logEvent("transactions_filter_cleared")
+                        else -> Unit
                     }
-
-                    else -> Unit
-                }
-                viewModel.onEvent(event)
-            },
-            navController = navController,
-            transactionDisplayType = transactionDisplayType,
-            modifier = modifier,
-        ),
+                    viewModel.onEvent(event)
+                },
+                navController = navController,
+                transactionDisplayType = transactionDisplayType,
+                modifier = modifier,
+            ),
     )
 }
 
@@ -195,9 +191,7 @@ fun TransactionsScreen(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-internal fun TransactionsContent(
-    params: TransactionsContentParams,
-) {
+internal fun TransactionsContent(params: TransactionsContentParams) {
     val analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager = koinInject()
     val state = params.state
     val onEvent = params.onEvent
@@ -227,9 +221,10 @@ internal fun TransactionsContent(
 
     // Dialogs
     if (showFromDatePicker) {
-        val datePickerState = rememberDatePickerState(
-            initialSelectedDateMillis = state.dateRangeFrom
-        )
+        val datePickerState =
+            rememberDatePickerState(
+                initialSelectedDateMillis = state.dateRangeFrom,
+            )
         DatePickerDialog(
             onDismissRequest = { showFromDatePicker = false },
             confirmButton = {
@@ -238,8 +233,8 @@ internal fun TransactionsContent(
                         onEvent(
                             com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.SetDateRange(
                                 from = it,
-                                to = state.dateRangeTo
-                            )
+                                to = state.dateRangeTo,
+                            ),
                         )
                     }
                     showFromDatePicker = false
@@ -251,16 +246,17 @@ internal fun TransactionsContent(
                 TextButton(onClick = { showFromDatePicker = false }) {
                     AppText(stringResource(R.string.common_cancel))
                 }
-            }
+            },
         ) {
             DatePicker(state = datePickerState)
         }
     }
 
     if (showToDatePicker) {
-        val datePickerState = rememberDatePickerState(
-            initialSelectedDateMillis = state.dateRangeTo
-        )
+        val datePickerState =
+            rememberDatePickerState(
+                initialSelectedDateMillis = state.dateRangeTo,
+            )
         DatePickerDialog(
             onDismissRequest = { showToDatePicker = false },
             confirmButton = {
@@ -269,8 +265,8 @@ internal fun TransactionsContent(
                         onEvent(
                             com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.SetDateRange(
                                 from = state.dateRangeFrom,
-                                to = it
-                            )
+                                to = it,
+                            ),
                         )
                     }
                     showToDatePicker = false
@@ -282,7 +278,7 @@ internal fun TransactionsContent(
                 TextButton(onClick = { showToDatePicker = false }) {
                     AppText(stringResource(R.string.common_cancel))
                 }
-            }
+            },
         ) {
             DatePicker(state = datePickerState)
         }
@@ -305,7 +301,9 @@ internal fun TransactionsContent(
                     if (!state.isFiltersExpanded) {
                         analyticsManager.logEvent("transactions_filter_opened")
                     }
-                    onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ToggleFiltersExpanded)
+                    onEvent(
+                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ToggleFiltersExpanded,
+                    )
                 },
                 actions = {
                     Row(
@@ -313,13 +311,21 @@ internal fun TransactionsContent(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         IconButton(
-                            onClick = { onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ToggleSearchExpanded) },
+                            onClick = {
+                                onEvent(
+                                    com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ToggleSearchExpanded,
+                                )
+                            },
                         ) {
                             Icon(
                                 imageVector = if (state.isSearchExpanded) Icons.Default.Close else Icons.Default.Search,
                                 contentDescription = stringResource(R.string.transactions_search),
-                                tint = if (state.searchQuery.isNotEmpty()) MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.onSurfaceVariant,
+                                tint =
+                                    if (state.searchQuery.isNotEmpty()) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    },
                             )
                         }
                         HelpButton(
@@ -329,8 +335,8 @@ internal fun TransactionsContent(
                             },
                         )
                     }
-                }
-            )
+                },
+            ),
         )
     }
 
@@ -342,7 +348,10 @@ internal fun TransactionsContent(
                 isVisible = true,
                 searchQuery = state.searchQuery,
                 onSearchQueryChange = {
-                    onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.UpdateSearchQuery(it))
+                    onEvent(
+                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
+                            .UpdateSearchQuery(it),
+                    )
                 },
                 searchSuggestions = state.searchSuggestions,
             )
@@ -355,21 +364,45 @@ internal fun TransactionsContent(
                 selectedTransactionType = state.pendingTransactionType,
                 selectedPaymentType = state.pendingPaymentType,
                 onCategorySelected = {
-                    onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.UpdateCategoryFilter(it))
+                    onEvent(
+                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.UpdateCategoryFilter(
+                            it,
+                        ),
+                    )
                 },
                 onTransactionTypeSelected = {
-                    onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.UpdateTransactionTypeFilter(it))
+                    onEvent(
+                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
+                            .UpdateTransactionTypeFilter(
+                                it,
+                            ),
+                    )
                 },
                 onPaymentTypeSelected = {
-                    onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.UpdatePaymentTypeFilter(it))
+                    onEvent(
+                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
+                            .UpdatePaymentTypeFilter(
+                                it,
+                            ),
+                    )
                 },
-                onClearFilters = { onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ClearAllFilters) },
+                onClearFilters = {
+                    onEvent(
+                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ClearAllFilters,
+                    )
+                },
                 hasFilterChanges = state.hasFilterChanges,
                 onApplyFilters = {
                     onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ApplyFilters)
-                    onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ToggleFiltersExpanded)
+                    onEvent(
+                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ToggleFiltersExpanded,
+                    )
                 },
-                onCancelFilters = { onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.CancelFilterChanges) },
+                onCancelFilters = {
+                    onEvent(
+                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.CancelFilterChanges,
+                    )
+                },
             )
         }
         if (state.hasActiveFilters && !state.isFiltersExpanded) {
@@ -379,7 +412,11 @@ internal fun TransactionsContent(
                 selectedCategory = state.selectedCategory,
                 selectedTransactionType = state.selectedTransactionType,
                 selectedPaymentType = state.selectedPaymentType,
-                onClearAll = { onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ClearAllFilters) },
+                onClearAll = {
+                    onEvent(
+                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ClearAllFilters,
+                    )
+                },
             )
         }
         VerticalSpacer(SpacingSize.SM)
@@ -390,10 +427,17 @@ internal fun TransactionsContent(
             dateRangeTo = state.dateRangeTo,
             expanded = dateFilterExpanded,
             onExpandedChange = { expanded ->
-                onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.SetDateFilterExpanded(expanded))
+                onEvent(
+                    com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.SetDateFilterExpanded(
+                        expanded,
+                    ),
+                )
             },
             onPresetSelected = {
-                onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.SelectPreset(it))
+                onEvent(
+                    com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
+                        .SelectPreset(it),
+                )
             },
             onFromDateEdit = { showFromDatePicker = true },
             onToDateEdit = { showToDatePicker = true },
@@ -413,330 +457,378 @@ internal fun TransactionsContent(
     @Composable
     fun TransactionListPane() {
         val isGridLayout = adaptiveLayoutInfo.isExpanded && !adaptiveLayoutInfo.hasFold
-        Box(modifier = modifier
-            .fillMaxSize()
-            .testTag("transactions_screen")) {
-        if (isGridLayout) {
-            // FASE 2: Tablet grid layout (2 columns) for expanded screens without fold
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                modifier = Modifier
+        Box(
+            modifier =
+                modifier
                     .fillMaxSize()
-                    .padding(
-                        horizontal = adaptiveLayoutInfo.horizontalPadding,
-                        vertical = 16.dp,
-                    ),
-                horizontalArrangement = Arrangement.spacedBy(TransactionsScreenDefaults.CardSpacing),
-                verticalArrangement = Arrangement.spacedBy(TransactionsScreenDefaults.CardSpacing),
-                contentPadding = PaddingValues(bottom = TransactionsScreenDefaults.ListBottomSpacer)
-            ) {
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    Column { TransactionListHeaders() }
-                }
-                when {
-                    state.isLoading -> {
-                        items(6) {
-                            Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)) {
-                                SkeletonLoader(height = 16.dp, cornerRadius = 8)
-                                VerticalSpacer(SpacingSize.XS)
-                                SkeletonLoader(height = 20.dp, cornerRadius = 8)
-                            }
-                        }
-                    }
-                    state.filteredTransactions.isEmpty() -> {
-                        item(span = { GridItemSpan(maxLineSpan) }) {
-                            AntEmptyState(
-                                mascotRes = R.drawable.ic_piggy_bank,
-                                title = stringResource(R.string.empty_state_no_transactions),
-                                subtitle = stringResource(R.string.empty_state_no_transactions_subtitle),
-                                modifier = Modifier.fillMaxWidth(),
-                            )
-                        }
-                    }
-                    else -> {
-                        items(state.filteredTransactions, key = { it.id }) { transaction ->
-                            TransactionItem(
-                                transaction = transaction,
-                                onClick = {
-                                    multiPaneCoordinator?.selectTransaction(
-                                        transaction = transaction,
-                                        navigateToDetailsPane = foldingFeature?.isSeparating == true
-                                    )
-                                    navController?.navigate(AppRoute.TransactionRoute.Edit.createRoute(transaction.id))
-                                },
-                                displayType = transactionDisplayType,
-                            )
-                        }
-                    }
-                }
-            }
-        } else {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    horizontal = adaptiveLayoutInfo.horizontalPadding,
-                    vertical = if (adaptiveLayoutInfo.isExpanded) 16.dp else 12.dp,
-                ),
-            state = listState,
-            verticalArrangement = Arrangement.spacedBy(TransactionsScreenDefaults.CardSpacing),
-            contentPadding = PaddingValues(bottom = TransactionsScreenDefaults.ListBottomSpacer)
+                    .testTag("transactions_screen"),
         ) {
-            // Search bar
-            if (state.isSearchExpanded) {
-                item {
-                    SearchComponent(
-                        isVisible = true,
-                        searchQuery = state.searchQuery,
-                        onSearchQueryChange = {
-                            onEvent(
-                                com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.UpdateSearchQuery(
-                                    it
-                                )
-                            )
-                        },
-                        searchSuggestions = state.searchSuggestions,
-                    )
-                }
-            }
-            // Filters
-            if (state.isFiltersExpanded) {
-                item { VerticalSpacer(SpacingSize.SM) }
-                item {
-                    FilterCard(
-                        categories = state.categories,
-                        selectedCategory = state.pendingCategory,
-                        selectedTransactionType = state.pendingTransactionType,
-                        selectedPaymentType = state.pendingPaymentType,
-                        onCategorySelected = {
-                            onEvent(
-                                com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.UpdateCategoryFilter(
-                                    it
-                                )
-                            )
-                        },
-                        onTransactionTypeSelected = {
-                            onEvent(
-                                com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.UpdateTransactionTypeFilter(
-                                    it
-                                )
-                            )
-                        },
-                        onPaymentTypeSelected = {
-                            onEvent(
-                                com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.UpdatePaymentTypeFilter(
-                                    it
-                                )
-                            )
-                        },
-                        onClearFilters = { onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ClearAllFilters) },
-                        hasFilterChanges = state.hasFilterChanges,
-                        onApplyFilters = {
-                            onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ApplyFilters)
-                            onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ToggleFiltersExpanded)
-                        },
-                        onCancelFilters = { onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.CancelFilterChanges) },
-                    )
-                }
-            }
-            // Active filters indicator (compact)
-            if (state.hasActiveFilters && !state.isFiltersExpanded) {
-                item { VerticalSpacer(SpacingSize.XS) }
-                item {
-                    ActiveFiltersRow(
-                        searchQuery = state.searchQuery,
-                        selectedCategory = state.selectedCategory,
-                        selectedTransactionType = state.selectedTransactionType,
-                        selectedPaymentType = state.selectedPaymentType,
-                        onClearAll = { onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ClearAllFilters) },
-                    )
-                }
-            }
-            item { VerticalSpacer(SpacingSize.SM) }
-            // Date Range Filter
-            item {
-                DateRangeFilter(
-                    selectedPresetIndex = state.selectedPresetIndex,
-                    presets = com.antcashmanager.android.ui.screen.transactions.TransactionsState.Companion.PRESETS,
-                    dateRangeFrom = state.dateRangeFrom,
-                    dateRangeTo = state.dateRangeTo,
-                    expanded = dateFilterExpanded,
-                    onExpandedChange = { expanded ->
-                        onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.SetDateFilterExpanded(expanded))
-                    },
-                    onPresetSelected = {
-                        onEvent(
-                            com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.SelectPreset(
-                                it
-                            )
-                        )
-                    },
-                    onFromDateEdit = { showFromDatePicker = true },
-                    onToDateEdit = { showToDatePicker = true },
-                )
-            }
-            item { VerticalSpacer(SpacingSize.SM) }
-            // Results count
-            if (state.hasActiveFilters) {
-                item {
-                    AppText(
-                        text = stringResource(
-                            R.string.transactions_results_count,
-                            state.filteredTransactions.size
-                        ),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-                item { VerticalSpacer(SpacingSize.XS) }
-            }
-            // Content based on state
-            when {
-                state.isLoading -> {
-                    items(5) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 4.dp),
-                        ) {
-                            SkeletonLoader(height = 16.dp, cornerRadius = 8)
-                            VerticalSpacer(SpacingSize.XS)
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            ) {
-                                SkeletonLoader(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .height(12.dp),
-                                    cornerRadius = 6,
-                                )
-                                SkeletonLoader(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .height(12.dp),
-                                    cornerRadius = 6,
-                                )
-                            }
-                            VerticalSpacer(SpacingSize.XS)
-                            SkeletonLoader(height = 20.dp, cornerRadius = 8)
-                        }
+            if (isGridLayout) {
+                // FASE 2: Tablet grid layout (2 columns) for expanded screens without fold
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(
+                                horizontal = adaptiveLayoutInfo.horizontalPadding,
+                                vertical = 16.dp,
+                            ),
+                    horizontalArrangement = Arrangement.spacedBy(TransactionsScreenDefaults.CardSpacing),
+                    verticalArrangement = Arrangement.spacedBy(TransactionsScreenDefaults.CardSpacing),
+                    contentPadding = PaddingValues(bottom = TransactionsScreenDefaults.ListBottomSpacer),
+                ) {
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        Column { TransactionListHeaders() }
                     }
-                    item { VerticalSpacer(SpacingSize.XXXL) }
-                }
-
-                state.filteredTransactions.isEmpty() -> {
-                    item {
-                        AntEmptyState(
-                            mascotRes = R.drawable.ic_piggy_bank,
-                            title = stringResource(R.string.empty_state_no_transactions),
-                            subtitle = stringResource(R.string.empty_state_no_transactions_subtitle),
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                    }
-                }
-
-                else -> {
-                    items(state.filteredTransactions, key = { it.id }) { transaction ->
-                        TransactionItem(
-                            transaction = transaction,
-                            onClick = {
-                                val params = Bundle().apply {
-                                    putInt("index", state.filteredTransactions.indexOf(transaction))
-                                    putString("type", transaction.type.name)
-                                    putString("date", SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(transaction.timestamp)))
+                    when {
+                        state.isLoading -> {
+                            items(6) {
+                                Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)) {
+                                    SkeletonLoader(height = 16.dp, cornerRadius = 8)
+                                    VerticalSpacer(SpacingSize.XS)
+                                    SkeletonLoader(height = 20.dp, cornerRadius = 8)
                                 }
-                                analyticsManager.logEvent("transactions_list_item_clicked", params)
-                                // Notify multi-pane coordinator for foldable split-view sync
-                                multiPaneCoordinator?.selectTransaction(
-                                    transaction = transaction,
-                                    navigateToDetailsPane = foldingFeature?.isSeparating == true
+                            }
+                        }
+                        state.filteredTransactions.isEmpty() -> {
+                            item(span = { GridItemSpan(maxLineSpan) }) {
+                                AntEmptyState(
+                                    mascotRes = R.drawable.ic_piggy_bank,
+                                    title = stringResource(R.string.empty_state_no_transactions),
+                                    subtitle = stringResource(R.string.empty_state_no_transactions_subtitle),
+                                    modifier = Modifier.fillMaxWidth(),
                                 )
-                                navController?.navigate(AppRoute.TransactionRoute.Edit.createRoute(transaction.id))
+                            }
+                        }
+                        else -> {
+                            items(state.filteredTransactions, key = { it.id }) { transaction ->
+                                TransactionItem(
+                                    transaction = transaction,
+                                    onClick = {
+                                        multiPaneCoordinator?.selectTransaction(
+                                            transaction = transaction,
+                                            navigateToDetailsPane = foldingFeature?.isSeparating == true,
+                                        )
+                                        navController?.navigate(
+                                            AppRoute.TransactionRoute.Edit.createRoute(transaction.id),
+                                        )
+                                    },
+                                    displayType = transactionDisplayType,
+                                )
+                            }
+                        }
+                    }
+                }
+            } else {
+                LazyColumn(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(
+                                horizontal = adaptiveLayoutInfo.horizontalPadding,
+                                vertical = if (adaptiveLayoutInfo.isExpanded) 16.dp else 12.dp,
+                            ),
+                    state = listState,
+                    verticalArrangement = Arrangement.spacedBy(TransactionsScreenDefaults.CardSpacing),
+                    contentPadding = PaddingValues(bottom = TransactionsScreenDefaults.ListBottomSpacer),
+                ) {
+                    // Search bar
+                    if (state.isSearchExpanded) {
+                        item {
+                            SearchComponent(
+                                isVisible = true,
+                                searchQuery = state.searchQuery,
+                                onSearchQueryChange = {
+                                    onEvent(
+                                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
+                                            .UpdateSearchQuery(
+                                                it,
+                                            ),
+                                    )
+                                },
+                                searchSuggestions = state.searchSuggestions,
+                            )
+                        }
+                    }
+                    // Filters
+                    if (state.isFiltersExpanded) {
+                        item { VerticalSpacer(SpacingSize.SM) }
+                        item {
+                            FilterCard(
+                                categories = state.categories,
+                                selectedCategory = state.pendingCategory,
+                                selectedTransactionType = state.pendingTransactionType,
+                                selectedPaymentType = state.pendingPaymentType,
+                                onCategorySelected = {
+                                    onEvent(
+                                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
+                                            .UpdateCategoryFilter(
+                                                it,
+                                            ),
+                                    )
+                                },
+                                onTransactionTypeSelected = {
+                                    onEvent(
+                                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
+                                            .UpdateTransactionTypeFilter(
+                                                it,
+                                            ),
+                                    )
+                                },
+                                onPaymentTypeSelected = {
+                                    onEvent(
+                                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
+                                            .UpdatePaymentTypeFilter(
+                                                it,
+                                            ),
+                                    )
+                                },
+                                onClearFilters = {
+                                    onEvent(
+                                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ClearAllFilters,
+                                    )
+                                },
+                                hasFilterChanges = state.hasFilterChanges,
+                                onApplyFilters = {
+                                    onEvent(
+                                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ApplyFilters,
+                                    )
+                                    onEvent(
+                                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ToggleFiltersExpanded,
+                                    )
+                                },
+                                onCancelFilters = {
+                                    onEvent(
+                                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.CancelFilterChanges,
+                                    )
+                                },
+                            )
+                        }
+                    }
+                    // Active filters indicator (compact)
+                    if (state.hasActiveFilters && !state.isFiltersExpanded) {
+                        item { VerticalSpacer(SpacingSize.XS) }
+                        item {
+                            ActiveFiltersRow(
+                                searchQuery = state.searchQuery,
+                                selectedCategory = state.selectedCategory,
+                                selectedTransactionType = state.selectedTransactionType,
+                                selectedPaymentType = state.selectedPaymentType,
+                                onClearAll = {
+                                    onEvent(
+                                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ClearAllFilters,
+                                    )
+                                },
+                            )
+                        }
+                    }
+                    item { VerticalSpacer(SpacingSize.SM) }
+                    // Date Range Filter
+                    item {
+                        DateRangeFilter(
+                            selectedPresetIndex = state.selectedPresetIndex,
+                            presets = com.antcashmanager.android.ui.screen.transactions.TransactionsState.Companion.PRESETS,
+                            dateRangeFrom = state.dateRangeFrom,
+                            dateRangeTo = state.dateRangeTo,
+                            expanded = dateFilterExpanded,
+                            onExpandedChange = { expanded ->
+                                onEvent(
+                                    com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
+                                        .SetDateFilterExpanded(
+                                            expanded,
+                                        ),
+                                )
                             },
-                            displayType = transactionDisplayType,
+                            onPresetSelected = {
+                                onEvent(
+                                    com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
+                                        .SelectPreset(
+                                            it,
+                                        ),
+                                )
+                            },
+                            onFromDateEdit = { showFromDatePicker = true },
+                            onToDateEdit = { showToDatePicker = true },
+                        )
+                    }
+                    item { VerticalSpacer(SpacingSize.SM) }
+                    // Results count
+                    if (state.hasActiveFilters) {
+                        item {
+                            AppText(
+                                text =
+                                    stringResource(
+                                        R.string.transactions_results_count,
+                                        state.filteredTransactions.size,
+                                    ),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        item { VerticalSpacer(SpacingSize.XS) }
+                    }
+                    // Content based on state
+                    when {
+                        state.isLoading -> {
+                            items(5) {
+                                Column(
+                                    modifier =
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 4.dp),
+                                ) {
+                                    SkeletonLoader(height = 16.dp, cornerRadius = 8)
+                                    VerticalSpacer(SpacingSize.XS)
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    ) {
+                                        SkeletonLoader(
+                                            modifier =
+                                                Modifier
+                                                    .weight(1f)
+                                                    .height(12.dp),
+                                            cornerRadius = 6,
+                                        )
+                                        SkeletonLoader(
+                                            modifier =
+                                                Modifier
+                                                    .weight(1f)
+                                                    .height(12.dp),
+                                            cornerRadius = 6,
+                                        )
+                                    }
+                                    VerticalSpacer(SpacingSize.XS)
+                                    SkeletonLoader(height = 20.dp, cornerRadius = 8)
+                                }
+                            }
+                            item { VerticalSpacer(SpacingSize.XXXL) }
+                        }
+
+                        state.filteredTransactions.isEmpty() -> {
+                            item {
+                                AntEmptyState(
+                                    mascotRes = R.drawable.ic_piggy_bank,
+                                    title = stringResource(R.string.empty_state_no_transactions),
+                                    subtitle = stringResource(R.string.empty_state_no_transactions_subtitle),
+                                    modifier = Modifier.fillMaxWidth(),
+                                )
+                            }
+                        }
+
+                        else -> {
+                            items(state.filteredTransactions, key = { it.id }) { transaction ->
+                                TransactionItem(
+                                    transaction = transaction,
+                                    onClick = {
+                                        val params =
+                                            Bundle().apply {
+                                                putInt("index", state.filteredTransactions.indexOf(transaction))
+                                                putString("type", transaction.type.name)
+                                                putString(
+                                                    "date",
+                                                    SimpleDateFormat(
+                                                        "yyyy-MM-dd",
+                                                        Locale.getDefault(),
+                                                    ).format(Date(transaction.timestamp)),
+                                                )
+                                            }
+                                        analyticsManager.logEvent("transactions_list_item_clicked", params)
+                                        // Notify multi-pane coordinator for foldable split-view sync
+                                        multiPaneCoordinator?.selectTransaction(
+                                            transaction = transaction,
+                                            navigateToDetailsPane = foldingFeature?.isSeparating == true,
+                                        )
+                                        navController?.navigate(
+                                            AppRoute.TransactionRoute.Edit.createRoute(transaction.id),
+                                        )
+                                    },
+                                    displayType = transactionDisplayType,
+                                )
+                            }
+                        }
+                    }
+                }
+            } // end else (single-column LazyColumn)
+            Column(
+                modifier =
+                    Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(24.dp),
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                // Compare solo quando serve, sopra i FAB principali senza lasciare "buchi" in basso.
+                AnimatedVisibility(
+                    visible = showScrollToTop,
+                    enter = fadeIn() + scaleIn(),
+                    exit = fadeOut() + scaleOut(),
+                ) {
+                    FloatingActionButton(
+                        onClick = {
+                            coroutineScope.launch {
+                                listState.animateScrollToItem(0)
+                            }
+                        },
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        modifier = Modifier.size(44.dp),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowUpward,
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp),
+                        )
+                    }
+                }
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.Bottom,
+                ) {
+                    // FloatingActionButton scan receipt (sempre visibile)
+                    FloatingActionButton(
+                        onClick = {
+                            analyticsManager.logEvent("receipt_scan_opened")
+                            navController?.navigate(AppRoute.TransactionRoute.ReceiptScan.route)
+                        },
+                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Receipt,
+                            contentDescription = stringResource(R.string.receipt_scan_nav_label),
+                            modifier = Modifier.size(24.dp),
+                        )
+                    }
+
+                    // FloatingActionButton add transaction (sempre visibile)
+                    FloatingActionButton(
+                        onClick = {
+                            analyticsManager.logEvent("transaction_add_opened")
+                            navController?.navigate(AppRoute.TransactionRoute.Add.route)
+                        },
+                        containerColor = MaterialTheme.colorScheme.primary,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = stringResource(R.string.transactions_add),
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.size(28.dp),
                         )
                     }
                 }
             }
         }
-        } // end else (single-column LazyColumn)
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(24.dp),
-            horizontalAlignment = Alignment.End,
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            // Compare solo quando serve, sopra i FAB principali senza lasciare "buchi" in basso.
-            AnimatedVisibility(
-                visible = showScrollToTop,
-                enter = fadeIn() + scaleIn(),
-                exit = fadeOut() + scaleOut(),
-            ) {
-                FloatingActionButton(
-                    onClick = {
-                        coroutineScope.launch {
-                            listState.animateScrollToItem(0)
-                        }
-                    },
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                    modifier = Modifier.size(44.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowUpward,
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-            }
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.Bottom,
-            ) {
-                // FloatingActionButton scan receipt (sempre visibile)
-                FloatingActionButton(
-                    onClick = {
-                        analyticsManager.logEvent("receipt_scan_opened")
-                        navController?.navigate(AppRoute.TransactionRoute.ReceiptScan.route)
-                    },
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Receipt,
-                        contentDescription = stringResource(R.string.receipt_scan_nav_label),
-                        modifier = Modifier.size(24.dp),
-                    )
-                }
-
-                // FloatingActionButton add transaction (sempre visibile)
-                FloatingActionButton(
-                    onClick = {
-                        analyticsManager.logEvent("transaction_add_opened")
-                        navController?.navigate(AppRoute.TransactionRoute.Add.route)
-                    },
-                    containerColor = MaterialTheme.colorScheme.primary,
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = stringResource(R.string.transactions_add),
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.size(28.dp),
-                    )
-                }
-            }
-        }
-    }
     }
 
     // FASE 1: Composable for transaction details pane (used in split-pane layout on foldable)
     @Composable
     fun TransactionDetailsPane(transaction: Transaction) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             AppText(
@@ -791,10 +883,11 @@ internal fun TransactionsContent(
                 // Note: TransactionsScreen uses navigation for details, not split-pane
                 // This can be enhanced later when selectedTransaction is added to state
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                    contentAlignment = Alignment.Center,
                 ) {
                     AppText(
                         text = "Select a transaction to view details",
@@ -802,7 +895,7 @@ internal fun TransactionsContent(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
-            }
+            },
         )
     } else {
         // Single-pane layout for phones and tablets without fold
@@ -912,22 +1005,26 @@ private fun FilterCard(
                         selected = selectedTransactionType == null,
                         onClick = { onTransactionTypeSelected(null) },
                         label = { AppText(stringResource(R.string.common_all), maxLines = 1) },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                        ),
+                        colors =
+                            FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            ),
                     )
                     FilterChip(
                         selected = selectedTransactionType == TransactionType.INCOME,
                         onClick = {
                             onTransactionTypeSelected(
-                                if (selectedTransactionType == TransactionType.INCOME) null
-                                else TransactionType.INCOME
+                                if (selectedTransactionType == TransactionType.INCOME) {
+                                    null
+                                } else {
+                                    TransactionType.INCOME
+                                },
                             )
                         },
                         label = {
                             AppText(
                                 stringResource(R.string.transaction_type_income),
-                                maxLines = 1
+                                maxLines = 1,
                             )
                         },
                         leadingIcon = {
@@ -938,22 +1035,26 @@ private fun FilterCard(
                                 tint = IncomeGreen,
                             )
                         },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = IncomeGreen.copy(alpha = 0.2f),
-                        ),
+                        colors =
+                            FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = IncomeGreen.copy(alpha = 0.2f),
+                            ),
                     )
                     FilterChip(
                         selected = selectedTransactionType == TransactionType.EXPENSE,
                         onClick = {
                             onTransactionTypeSelected(
-                                if (selectedTransactionType == TransactionType.EXPENSE) null
-                                else TransactionType.EXPENSE
+                                if (selectedTransactionType == TransactionType.EXPENSE) {
+                                    null
+                                } else {
+                                    TransactionType.EXPENSE
+                                },
                             )
                         },
                         label = {
                             AppText(
                                 stringResource(R.string.transaction_type_expense),
-                                maxLines = 1
+                                maxLines = 1,
                             )
                         },
                         leadingIcon = {
@@ -964,9 +1065,10 @@ private fun FilterCard(
                                 tint = ExpenseRed,
                             )
                         },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = ExpenseRed.copy(alpha = 0.2f),
-                        ),
+                        colors =
+                            FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = ExpenseRed.copy(alpha = 0.2f),
+                            ),
                     )
                 }
             }
@@ -987,31 +1089,37 @@ private fun FilterCard(
                         selected = selectedPaymentType == null,
                         onClick = { onPaymentTypeSelected(null) },
                         label = { AppText(stringResource(R.string.common_all), maxLines = 1) },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                        ),
+                        colors =
+                            FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            ),
                     )
                     PaymentType.values().forEach { paymentType ->
                         FilterChip(
                             selected = selectedPaymentType == paymentType,
                             onClick = {
                                 onPaymentTypeSelected(
-                                    if (selectedPaymentType == paymentType) null else paymentType
+                                    if (selectedPaymentType == paymentType) null else paymentType,
                                 )
                             },
                             label = {
                                 AppText(
-                                    text = when (paymentType) {
-                                        PaymentType.ELECTRONIC -> stringResource(R.string.payment_type_electronic)
-                                        PaymentType.CASH -> stringResource(R.string.payment_type_cash)
-                                        PaymentType.MEAL_VOUCHERS -> stringResource(R.string.payment_type_meal_vouchers)
-                                    },
+                                    text =
+                                        when (paymentType) {
+                                            PaymentType.ELECTRONIC -> stringResource(R.string.payment_type_electronic)
+                                            PaymentType.CASH -> stringResource(R.string.payment_type_cash)
+                                            PaymentType.MEAL_VOUCHERS ->
+                                                stringResource(
+                                                    R.string.payment_type_meal_vouchers,
+                                                )
+                                        },
                                     maxLines = 1,
                                 )
                             },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                            ),
+                            colors =
+                                FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                ),
                         )
                     }
                 }
@@ -1034,22 +1142,24 @@ private fun FilterCard(
                             selected = selectedCategory == null,
                             onClick = { onCategorySelected(null) },
                             label = { AppText(stringResource(R.string.common_all), maxLines = 1) },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                            ),
+                            colors =
+                                FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                ),
                         )
                         categories.take(8).forEach { category ->
                             FilterChip(
                                 selected = selectedCategory == category.name,
                                 onClick = {
                                     onCategorySelected(
-                                        if (selectedCategory == category.name) null else category.name
+                                        if (selectedCategory == category.name) null else category.name,
                                     )
                                 },
                                 label = { AppText(category.name, maxLines = 1) },
-                                colors = FilterChipDefaults.filterChipColors(
-                                    selectedContainerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                                ),
+                                colors =
+                                    FilterChipDefaults.filterChipColors(
+                                        selectedContainerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                                    ),
                             )
                         }
                     }
@@ -1066,9 +1176,10 @@ private fun FilterCard(
                 ) {
                     OutlinedButton(
                         onClick = onCancelFilters,
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(40.dp),
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .height(40.dp),
                     ) {
                         AppText(
                             text = stringResource(R.string.common_cancel),
@@ -1077,9 +1188,10 @@ private fun FilterCard(
                     }
                     AppButton(
                         onClick = onApplyFilters,
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(40.dp),
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .height(40.dp),
                     ) {
                         AppText(
                             text = stringResource(R.string.common_confirm),
@@ -1117,10 +1229,11 @@ private fun ActiveFiltersRow(
                     onClick = { },
                     label = {
                         AppText(
-                            text = stringResource(
-                                R.string.transactions_search_query_preview,
-                                searchQuery
-                            ),
+                            text =
+                                stringResource(
+                                    R.string.transactions_search_query_preview,
+                                    searchQuery,
+                                ),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
@@ -1134,10 +1247,11 @@ private fun ActiveFiltersRow(
                     onClick = { },
                     label = {
                         AppText(
-                            text = when (type) {
-                                TransactionType.INCOME -> stringResource(R.string.transaction_type_income)
-                                TransactionType.EXPENSE -> stringResource(R.string.transaction_type_expense)
-                            },
+                            text =
+                                when (type) {
+                                    TransactionType.INCOME -> stringResource(R.string.transaction_type_income)
+                                    TransactionType.EXPENSE -> stringResource(R.string.transaction_type_expense)
+                                },
                             maxLines = 1,
                         )
                     },
@@ -1150,11 +1264,12 @@ private fun ActiveFiltersRow(
                     onClick = { },
                     label = {
                         AppText(
-                            text = when (payment) {
-                                PaymentType.ELECTRONIC -> stringResource(R.string.payment_type_electronic)
-                                PaymentType.CASH -> stringResource(R.string.payment_type_cash)
-                                PaymentType.MEAL_VOUCHERS -> stringResource(R.string.payment_type_meal_vouchers)
-                            },
+                            text =
+                                when (payment) {
+                                    PaymentType.ELECTRONIC -> stringResource(R.string.payment_type_electronic)
+                                    PaymentType.CASH -> stringResource(R.string.payment_type_cash)
+                                    PaymentType.MEAL_VOUCHERS -> stringResource(R.string.payment_type_meal_vouchers)
+                                },
                             maxLines = 1,
                         )
                     },
@@ -1189,19 +1304,17 @@ private fun ActiveFiltersRow(
 // COMPONENTS
 // ══════════════════════════════════════════════════════════════════════════════
 
-
 private val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
 
 @Composable
-private fun getRecurrenceIntervalLabel(interval: String): String {
-    return when (interval.lowercase()) {
+private fun getRecurrenceIntervalLabel(interval: String): String =
+    when (interval.lowercase()) {
         "daily" -> stringResource(R.string.transactions_interval_daily)
         "weekly" -> stringResource(R.string.transactions_interval_weekly)
         "monthly" -> stringResource(R.string.transactions_interval_monthly)
         "yearly" -> stringResource(R.string.transactions_interval_yearly)
         else -> stringResource(R.string.transactions_recurring)
     }
-}
 
 @Composable
 private fun TransactionItem(
@@ -1215,30 +1328,36 @@ private fun TransactionItem(
 
     AnimatedListItem(index = transaction.id.toInt()) {
         AnimatedCard(
-            modifier = Modifier
-                .fillMaxWidth()
-                .let { if (onClick != null) it.clickable { onClick() } else it },
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .let { if (onClick != null) it.clickable { onClick() } else it },
             backgroundColor = cardBackgroundColor,
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 // Icon based on display type
                 when (displayType) {
                     TransactionDisplayType.TREND -> {
                         Box(
-                            modifier = Modifier
-                                .size(44.dp)
-                                .background(
-                                    if (isIncome) IncomeGreen.copy(alpha = 0.25f) else ExpenseRed.copy(
-                                        alpha = 0.25f
-                                    ),
-                                    shape = RoundedCornerShape(32.dp),
-                                )
-                                .padding(8.dp),
+                            modifier =
+                                Modifier
+                                    .size(44.dp)
+                                    .background(
+                                        if (isIncome) {
+                                            IncomeGreen.copy(alpha = 0.25f)
+                                        } else {
+                                            ExpenseRed.copy(
+                                                alpha = 0.25f,
+                                            )
+                                        },
+                                        shape = RoundedCornerShape(32.dp),
+                                    ).padding(8.dp),
                             contentAlignment = Alignment.Center,
                         ) {
                             Icon(
@@ -1254,12 +1373,15 @@ private fun TransactionItem(
                     TransactionDisplayType.CATEGORY -> {
                         val categoryIconVector = categoryIconMap[transaction.categoryIcon]
                         Box(
-                            modifier = Modifier
-                                .size(44.dp)
-                                .background(
-                                    color = androidx.compose.ui.graphics.Color(transaction.categoryColor),
-                                    shape = androidx.compose.foundation.shape.CircleShape
-                                ),
+                            modifier =
+                                Modifier
+                                    .size(44.dp)
+                                    .background(
+                                        color =
+                                            androidx.compose.ui.graphics
+                                                .Color(transaction.categoryColor),
+                                        shape = androidx.compose.foundation.shape.CircleShape,
+                                    ),
                             contentAlignment = Alignment.Center,
                         ) {
                             if (categoryIconVector != null) {
@@ -1298,18 +1420,24 @@ private fun TransactionItem(
                     )
 
                     // Subtitle
-                    val subtitleParts = buildList {
-                        add(transaction.category)
-                        add(dateFormat.format(Date(transaction.timestamp)))
-                        if (transaction.payee.isNotBlank()) add(transaction.payee)
-                        if (transaction.location.isNotBlank()) add(transaction.location)
-                    }
+                    val subtitleParts =
+                        buildList {
+                            add(transaction.category)
+                            add(dateFormat.format(Date(transaction.timestamp)))
+                            if (transaction.payee.isNotBlank()) add(transaction.payee)
+                            if (transaction.location.isNotBlank()) add(transaction.location)
+                        }
                     AppText(
                         text = subtitleParts.joinToString(" • "),
                         style = MaterialTheme.typography.labelSmall,
-                        color = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer.copy(
-                            alpha = 0.7f
-                        ) else MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.7f),
+                        color =
+                            if (isIncome) {
+                                MaterialTheme.colorScheme.onSecondaryContainer.copy(
+                                    alpha = 0.7f,
+                                )
+                            } else {
+                                MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.7f)
+                            },
                     )
 
                     // Notes
@@ -1317,9 +1445,14 @@ private fun TransactionItem(
                         AppText(
                             text = transaction.notes,
                             style = MaterialTheme.typography.labelSmall,
-                            color = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer.copy(
-                                alpha = 0.6f
-                            ) else MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.6f),
+                            color =
+                                if (isIncome) {
+                                    MaterialTheme.colorScheme.onSecondaryContainer.copy(
+                                        alpha = 0.6f,
+                                    )
+                                } else {
+                                    MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.6f)
+                                },
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
@@ -1328,8 +1461,10 @@ private fun TransactionItem(
                     // Tags
                     if (transaction.tags.isNotBlank()) {
                         AppText(
-                            text = transaction.tags.split(",")
-                                .joinToString(" ") { "#${it.trim()}" },
+                            text =
+                                transaction.tags
+                                    .split(",")
+                                    .joinToString(" ") { "#${it.trim()}" },
                             style = MaterialTheme.typography.labelSmall,
                             color = if (isIncome) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onErrorContainer,
                             maxLines = 1,
@@ -1351,11 +1486,12 @@ private fun TransactionItem(
                             )
                             HorizontalSpacer(SpacingSize.XXXS)
                             AppText(
-                                text = if (transaction.recurrenceInterval.isNotBlank()) {
-                                    getRecurrenceIntervalLabel(transaction.recurrenceInterval)
-                                } else {
-                                    stringResource(R.string.transactions_recurring)
-                                },
+                                text =
+                                    if (transaction.recurrenceInterval.isNotBlank()) {
+                                        getRecurrenceIntervalLabel(transaction.recurrenceInterval)
+                                    } else {
+                                        stringResource(R.string.transactions_recurring)
+                                    },
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.tertiary,
                                 fontWeight = FontWeight.SemiBold,
@@ -1366,14 +1502,17 @@ private fun TransactionItem(
 
                 // Amount with background
                 Box(
-                    modifier = Modifier
-                        .padding(8.dp),
+                    modifier =
+                        Modifier
+                            .padding(8.dp),
                 ) {
                     TransactionAmountText(
                         amount = transaction.amount, // Amount will already be negative for expenses
-                        masked = LocalAmountsMasked.current && isProtectedSalaryTransaction(
-                            transaction
-                        ),
+                        masked =
+                            LocalAmountsMasked.current &&
+                                isProtectedSalaryTransaction(
+                                    transaction,
+                                ),
                     )
                 }
             }

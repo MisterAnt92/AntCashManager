@@ -24,7 +24,6 @@ public class ScanReceiptUseCase(
     private val ocrService: ReceiptOcrService,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : UseCase<ByteArray, ReceiptData>(dispatcher) {
-
     /**
      * Esegue la scansione OCR e il parsing del testo.
      *
@@ -46,9 +45,10 @@ public class ScanReceiptUseCase(
     override suspend fun execute(params: ByteArray): ReceiptData {
         if (params.isEmpty()) throw ReceiptScanException.InvalidImage
 
-        val text = ocrService.extractText(params).getOrElse { rootCause ->
-            throw ReceiptScanException.OcrFailed(rootCause)
-        }
+        val text =
+            ocrService.extractText(params).getOrElse { rootCause ->
+                throw ReceiptScanException.OcrFailed(rootCause)
+            }
 
         if (text.isBlank()) throw ReceiptScanException.NoTextExtracted
 
@@ -63,4 +63,3 @@ public class ScanReceiptUseCase(
         return receiptData
     }
 }
-

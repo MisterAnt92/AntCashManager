@@ -10,7 +10,6 @@ import co.touchlab.kermit.Logger
  * Lives in data layer (not domain) because it requires android.content.Context and Intent.
  */
 object FeedbackEmailHelper {
-
     /**
      * Sends a feedback email intent to the default email client.
      * @param context Application context
@@ -23,13 +22,14 @@ object FeedbackEmailHelper {
         emailBody: String,
         versionName: String,
     ): Boolean {
-        val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
-            data = Uri.parse("mailto:")
-            putExtra(Intent.EXTRA_EMAIL, arrayOf("misterant.developer@gmail.com"))
-            putExtra(Intent.EXTRA_SUBJECT, "AntCashManager Feedback - v$versionName")
-            putExtra(Intent.EXTRA_TEXT, emailBody)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
+        val emailIntent =
+            Intent(Intent.ACTION_SENDTO).apply {
+                data = Uri.parse("mailto:")
+                putExtra(Intent.EXTRA_EMAIL, arrayOf("misterant.developer@gmail.com"))
+                putExtra(Intent.EXTRA_SUBJECT, "AntCashManager Feedback - v$versionName")
+                putExtra(Intent.EXTRA_TEXT, emailBody)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
 
         return try {
             context.startActivity(emailIntent)

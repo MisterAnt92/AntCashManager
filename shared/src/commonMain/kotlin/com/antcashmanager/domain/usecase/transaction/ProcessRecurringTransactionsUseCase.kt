@@ -18,8 +18,7 @@ public class ProcessRecurringTransactionsUseCase(
     private val clock: Clock = Clock.System,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : NoParamsUseCase<Unit>(dispatcher) {
-
-    override suspend fun execute(params: Unit): Unit {
+    override suspend fun execute(params: Unit) {
         val recurring = transactionRepository.getRecurringTransactions().first()
         val now = clock.now().toEpochMilliseconds()
 
@@ -27,12 +26,13 @@ public class ProcessRecurringTransactionsUseCase(
         val toUpdate = mutableListOf<com.antcashmanager.domain.model.Transaction>()
 
         for (transaction in recurring) {
-            val interval = try {
-                RecurrenceInterval.valueOf(transaction.recurrenceInterval)
-            } catch (_: IllegalArgumentException) {
-                // Skip transaction with invalid recurrence interval
-                continue
-            }
+            val interval =
+                try {
+                    RecurrenceInterval.valueOf(transaction.recurrenceInterval)
+                } catch (_: IllegalArgumentException) {
+                    // Skip transaction with invalid recurrence interval
+                    continue
+                }
 
             val intervalMs = interval.toMillis()
             val elapsed = now - transaction.timestamp
@@ -49,7 +49,7 @@ public class ProcessRecurringTransactionsUseCase(
                                 timestamp = newTimestamp,
                                 isRecurring = false,
                                 recurrenceInterval = "",
-                            )
+                            ),
                         )
                     }
                 }
@@ -71,11 +71,11 @@ public class ProcessRecurringTransactionsUseCase(
         }
     }
 
-    private fun RecurrenceInterval.toMillis(): Long = when (this) {
-        RecurrenceInterval.DAILY -> 24L * 60 * 60 * 1000
-        RecurrenceInterval.WEEKLY -> 7L * 24 * 60 * 60 * 1000
-        RecurrenceInterval.MONTHLY -> 30L * 24 * 60 * 60 * 1000
-        RecurrenceInterval.YEARLY -> 365L * 24 * 60 * 60 * 1000
-    }
+    private fun RecurrenceInterval.toMillis(): Long =
+        when (this) {
+            RecurrenceInterval.DAILY -> 24L * 60 * 60 * 1000
+            RecurrenceInterval.WEEKLY -> 7L * 24 * 60 * 60 * 1000
+            RecurrenceInterval.MONTHLY -> 30L * 24 * 60 * 60 * 1000
+            RecurrenceInterval.YEARLY -> 365L * 24 * 60 * 60 * 1000
+        }
 }
-

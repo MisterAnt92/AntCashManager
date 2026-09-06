@@ -33,14 +33,15 @@ fun AppHelpDialog(
     onDismiss: () -> Unit,
     isVisible: Boolean = true,
 ) {
-    val localizedFeatures = features.map { feature ->
-        SimpleHelpFeature(
-            title = stringResource(feature.titleResId),
-            description = stringResource(feature.descriptionResId),
-            icon = feature.icon,
-            iconTint = feature.iconTint,
-        )
-    }
+    val localizedFeatures =
+        features.map { feature ->
+            SimpleHelpFeature(
+                title = stringResource(feature.titleResId),
+                description = stringResource(feature.descriptionResId),
+                icon = feature.icon,
+                iconTint = feature.iconTint,
+            )
+        }
 
     HelpDialogContent(
         isVisible = isVisible,
@@ -58,13 +59,14 @@ private fun AppHelpDialogPreviewLight() {
         AppHelpDialog(
             titleResId = R.string.help_home_title,
             descriptionResId = R.string.help_home_desc,
-            features = listOf(
-                HelpDialogFeatureSpec(
-                    titleResId = R.string.help_home_feature_date_filters_title,
-                    descriptionResId = R.string.help_home_feature_date_filters_desc,
-                    icon = Icons.Default.Info,
+            features =
+                listOf(
+                    HelpDialogFeatureSpec(
+                        titleResId = R.string.help_home_feature_date_filters_title,
+                        descriptionResId = R.string.help_home_feature_date_filters_desc,
+                        icon = Icons.Default.Info,
+                    ),
                 ),
-            ),
             onDismiss = {},
             isVisible = true,
         )

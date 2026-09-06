@@ -2,7 +2,6 @@ package com.antcashmanager.domain.model
 
 import com.antcashmanager.domain.model.SavedDateFilter.Companion.CUSTOM_PRESET_INDEX
 
-
 /**
  * Stato persistito del filtro temporale per uno screen.
  *
@@ -22,4 +21,3 @@ public data class SavedDateFilter(
         public const val CUSTOM_PRESET_INDEX: Int = -1
     }
 }
-

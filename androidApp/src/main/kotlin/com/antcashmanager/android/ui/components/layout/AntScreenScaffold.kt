@@ -52,18 +52,20 @@ fun AntScreenScaffold(
         floatingActionButton = { floatingActionButton?.invoke() },
     ) { innerPadding ->
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    start = adaptiveLayoutInfo.horizontalPadding,
-                    end = adaptiveLayoutInfo.horizontalPadding,
-                ),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(
+                        start = adaptiveLayoutInfo.horizontalPadding,
+                        end = adaptiveLayoutInfo.horizontalPadding,
+                    ),
             contentAlignment = Alignment.TopCenter,
         ) {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .widthIn(max = adaptiveLayoutInfo.maxContentWidth),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .widthIn(max = adaptiveLayoutInfo.maxContentWidth),
             ) {
                 content(innerPadding)
             }

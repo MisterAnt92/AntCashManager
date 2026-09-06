@@ -27,7 +27,6 @@ import java.io.IOException
  * This suite tests the underlying logic using pure unit test approach.
  */
 class AutoBackupWorkerTest {
-
     private val settingsRepository: SettingsRepository = mockk(relaxed = true)
     private val backupService: BackupService = mockk(relaxed = true)
 
@@ -41,134 +40,146 @@ class AutoBackupWorkerTest {
     }
 
     @Test
-    fun autoBackupEnabled_shouldReturnTrue_whenSettingIsEnabled() = runTest {
-        coEvery { settingsRepository.getAutoBackupEnabled() } returns flowOf(true)
+    fun autoBackupEnabled_shouldReturnTrue_whenSettingIsEnabled() =
+        runTest {
+            coEvery { settingsRepository.getAutoBackupEnabled() } returns flowOf(true)
 
-        val settings = settingsRepository.getAutoBackupEnabled()
-        settings.collect { enabled ->
-            assertTrue("Backup should be enabled", enabled == true)
+            val settings = settingsRepository.getAutoBackupEnabled()
+            settings.collect { enabled ->
+                assertTrue("Backup should be enabled", enabled == true)
+            }
+
+            coVerify(exactly = 1) { settingsRepository.getAutoBackupEnabled() }
         }
 
-        coVerify(exactly = 1) { settingsRepository.getAutoBackupEnabled() }
-    }
-
     @Test
-    fun autoBackupFolderUri_shouldReturnConfiguredUri_whenSet() = runTest {
-        coEvery { settingsRepository.getAutoBackupFolderUri() } returns flowOf("content://test/uri")
+    fun autoBackupFolderUri_shouldReturnConfiguredUri_whenSet() =
+        runTest {
+            coEvery { settingsRepository.getAutoBackupFolderUri() } returns flowOf("content://test/uri")
 
-        var capturedUri: String? = null
-        settingsRepository.getAutoBackupFolderUri().collect { uri ->
-            capturedUri = uri
+            var capturedUri: String? = null
+            settingsRepository.getAutoBackupFolderUri().collect { uri ->
+                capturedUri = uri
+            }
+
+            assertTrue("URI should match configured value", capturedUri == "content://test/uri")
         }
 
-        assertTrue("URI should match configured value", capturedUri == "content://test/uri")
-    }
-
     @Test
-    fun autoBackupFolderUri_shouldReturnNull_whenNotConfigured() = runTest {
-        coEvery { settingsRepository.getAutoBackupFolderUri() } returns flowOf(null)
+    fun autoBackupFolderUri_shouldReturnNull_whenNotConfigured() =
+        runTest {
+            coEvery { settingsRepository.getAutoBackupFolderUri() } returns flowOf(null)
 
-        var capturedUri: String? = "initial"
-        settingsRepository.getAutoBackupFolderUri().collect { uri ->
-            capturedUri = uri
+            var capturedUri: String? = "initial"
+            settingsRepository.getAutoBackupFolderUri().collect { uri ->
+                capturedUri = uri
+            }
+
+            assertTrue("URI should be null when not configured", capturedUri == null)
         }
 
-        assertTrue("URI should be null when not configured", capturedUri == null)
-    }
-
     @Test
-    fun createBackup_shouldReturnSuccess_whenBackupSucceeds() = runTest {
-        val backupData = "{\"data\":\"test\"}"
-        coEvery { backupService.createBackup() } returns Result.success(backupData)
+    fun createBackup_shouldReturnSuccess_whenBackupSucceeds() =
+        runTest {
+            val backupData = "{\"data\":\"test\"}"
+            coEvery { backupService.createBackup() } returns Result.success(backupData)
 
-        val result = backupService.createBackup()
+            val result = backupService.createBackup()
 
-        assertTrue("Backup should succeed", result.isSuccess)
-        assertTrue("Backup data should match", result.getOrNull() == backupData)
-    }
-
-    @Test
-    fun createBackup_shouldReturnFailure_whenIoExceptionOccurs() = runTest {
-        coEvery { backupService.createBackup() } returns Result.failure(IOException("IO error"))
-
-        val result = backupService.createBackup()
-
-        assertTrue("Backup should fail", result.isFailure)
-        assertTrue("Should be IO exception", result.exceptionOrNull() is IOException)
-    }
-
-    @Test
-    fun createBackup_shouldReturnFailure_whenNetworkErrorOccurs() = runTest {
-        coEvery { backupService.createBackup() } returns Result.failure(Exception("Network timeout"))
-
-        val result = backupService.createBackup()
-
-        assertTrue("Backup should fail", result.isFailure)
-        assertTrue("Should contain network error", result.exceptionOrNull()?.message?.contains("Network") == true)
-    }
-
-    @Test
-    fun dataEncryption_shouldBeEnabled_whenSettingIsTrue() = runTest {
-        coEvery { settingsRepository.getDataEncryptionEnabled() } returns flowOf(true)
-
-        var encryptionEnabled = false
-        settingsRepository.getDataEncryptionEnabled().collect { enabled ->
-            encryptionEnabled = enabled
+            assertTrue("Backup should succeed", result.isSuccess)
+            assertTrue("Backup data should match", result.getOrNull() == backupData)
         }
 
-        assertTrue("Encryption should be enabled", encryptionEnabled)
-    }
-
     @Test
-    fun dataEncryption_shouldBeDisabled_whenSettingIsFalse() = runTest {
-        coEvery { settingsRepository.getDataEncryptionEnabled() } returns flowOf(false)
+    fun createBackup_shouldReturnFailure_whenIoExceptionOccurs() =
+        runTest {
+            coEvery { backupService.createBackup() } returns Result.failure(IOException("IO error"))
 
-        var encryptionEnabled = true
-        settingsRepository.getDataEncryptionEnabled().collect { enabled ->
-            encryptionEnabled = enabled
+            val result = backupService.createBackup()
+
+            assertTrue("Backup should fail", result.isFailure)
+            assertTrue("Should be IO exception", result.exceptionOrNull() is IOException)
         }
 
-        assertTrue("Encryption should be disabled", !encryptionEnabled)
-    }
-
     @Test
-    fun lastBackupTimestamp_shouldBeUpdated_whenBackupCompletes() = runTest {
-        val timestamp = System.currentTimeMillis()
-        coEvery { settingsRepository.setLastBackupTimestamp(any()) } returns Unit
+    fun createBackup_shouldReturnFailure_whenNetworkErrorOccurs() =
+        runTest {
+            coEvery { backupService.createBackup() } returns Result.failure(Exception("Network timeout"))
 
-        settingsRepository.setLastBackupTimestamp(timestamp)
+            val result = backupService.createBackup()
 
-        coVerify(exactly = 1) { settingsRepository.setLastBackupTimestamp(timestamp) }
-    }
-
-    @Test
-    fun backupData_shouldHandleLargePayload_withoutTimeoutOrException() = runTest {
-        val largeBackupData = buildString {
-            append("{\"transactions\": [")
-            append((0..10000).joinToString(",") { "{\"id\":$it}" })
-            append("]}")
-        }
-        coEvery { backupService.createBackup() } returns Result.success(largeBackupData)
-
-        val result = backupService.createBackup()
-
-        assertTrue("Large backup should succeed", result.isSuccess)
-        assertTrue("Backup data should be non-empty", result.getOrNull()?.isNotEmpty() == true)
-    }
-
-    @Test
-    fun backupFlow_shouldBeChainingCorrectly_withMultipleCalls() = runTest {
-        var callCount = 0
-        coEvery { backupService.createBackup() } answers {
-            callCount++
-            Result.success("{\"backup\":\"data_$callCount\"}")
+            assertTrue("Backup should fail", result.isFailure)
+            assertTrue("Should contain network error", result.exceptionOrNull()?.message?.contains("Network") == true)
         }
 
-        backupService.createBackup()
-        backupService.createBackup()
-        backupService.createBackup()
+    @Test
+    fun dataEncryption_shouldBeEnabled_whenSettingIsTrue() =
+        runTest {
+            coEvery { settingsRepository.getDataEncryptionEnabled() } returns flowOf(true)
 
-        coVerify(exactly = 3) { backupService.createBackup() }
-        assertTrue("Should have been called 3 times", callCount == 3)
-    }
+            var encryptionEnabled = false
+            settingsRepository.getDataEncryptionEnabled().collect { enabled ->
+                encryptionEnabled = enabled
+            }
+
+            assertTrue("Encryption should be enabled", encryptionEnabled)
+        }
+
+    @Test
+    fun dataEncryption_shouldBeDisabled_whenSettingIsFalse() =
+        runTest {
+            coEvery { settingsRepository.getDataEncryptionEnabled() } returns flowOf(false)
+
+            var encryptionEnabled = true
+            settingsRepository.getDataEncryptionEnabled().collect { enabled ->
+                encryptionEnabled = enabled
+            }
+
+            assertTrue("Encryption should be disabled", !encryptionEnabled)
+        }
+
+    @Test
+    fun lastBackupTimestamp_shouldBeUpdated_whenBackupCompletes() =
+        runTest {
+            val timestamp = System.currentTimeMillis()
+            coEvery { settingsRepository.setLastBackupTimestamp(any()) } returns Unit
+
+            settingsRepository.setLastBackupTimestamp(timestamp)
+
+            coVerify(exactly = 1) { settingsRepository.setLastBackupTimestamp(timestamp) }
+        }
+
+    @Test
+    fun backupData_shouldHandleLargePayload_withoutTimeoutOrException() =
+        runTest {
+            val largeBackupData =
+                buildString {
+                    append("{\"transactions\": [")
+                    append((0..10000).joinToString(",") { "{\"id\":$it}" })
+                    append("]}")
+                }
+            coEvery { backupService.createBackup() } returns Result.success(largeBackupData)
+
+            val result = backupService.createBackup()
+
+            assertTrue("Large backup should succeed", result.isSuccess)
+            assertTrue("Backup data should be non-empty", result.getOrNull()?.isNotEmpty() == true)
+        }
+
+    @Test
+    fun backupFlow_shouldBeChainingCorrectly_withMultipleCalls() =
+        runTest {
+            var callCount = 0
+            coEvery { backupService.createBackup() } answers {
+                callCount++
+                Result.success("{\"backup\":\"data_$callCount\"}")
+            }
+
+            backupService.createBackup()
+            backupService.createBackup()
+            backupService.createBackup()
+
+            coVerify(exactly = 3) { backupService.createBackup() }
+            assertTrue("Should have been called 3 times", callCount == 3)
+        }
 }

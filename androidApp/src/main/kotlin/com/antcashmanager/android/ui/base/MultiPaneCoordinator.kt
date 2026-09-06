@@ -2,7 +2,6 @@ package com.antcashmanager.android.ui.base
 
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.Transaction
@@ -54,7 +53,10 @@ class MultiPaneCoordinator {
      * @param transaction Transaction to select, or null to deselect
      * @param navigateToDetailsPane Whether to show the details pane (for split-view)
      */
-    fun selectTransaction(transaction: Transaction?, navigateToDetailsPane: Boolean = false) {
+    fun selectTransaction(
+        transaction: Transaction?,
+        navigateToDetailsPane: Boolean = false,
+    ) {
         _selectedTransaction.value = transaction
         if (navigateToDetailsPane && transaction != null) {
             _showDetailsPane.value = true

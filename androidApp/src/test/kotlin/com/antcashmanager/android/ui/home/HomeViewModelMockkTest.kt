@@ -30,7 +30,6 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModelMockkTest : BaseUnitTest() {
-
     private lateinit var getTransactionsUseCase: GetTransactionsUseCase
     private lateinit var filterTransactionsUseCase: FilterTransactionsUseCase
     private lateinit var getTransactionSuggestionsUseCase: GetTransactionSuggestionsUseCase
@@ -56,156 +55,164 @@ class HomeViewModelMockkTest : BaseUnitTest() {
             val params = firstArg<FilterTransactionsUseCase.Params>()
             Result.success(params.transactions)
         }
-        every { getTransactionSuggestionsUseCase() } returns flowOf(
-            Result.success(
-                TransactionSuggestions()
-            )
-        )
-        every { getHomeDateFilterStateUseCase() } returns flowOf(
-            Result.success(
-                SavedDateFilter(
-                    presetIndex = 1,
-                    from = 1_700_000_000_000L,
-                    to = 1_700_100_000_000L,
+        every { getTransactionSuggestionsUseCase() } returns
+            flowOf(
+                Result.success(
+                    TransactionSuggestions(),
                 ),
-            ),
-        )
+            )
+        every { getHomeDateFilterStateUseCase() } returns
+            flowOf(
+                Result.success(
+                    SavedDateFilter(
+                        presetIndex = 1,
+                        from = 1_700_000_000_000L,
+                        to = 1_700_100_000_000L,
+                    ),
+                ),
+            )
         every { getCategoriesUseCase() } returns flowOf(Result.success(emptyList()))
         coEvery { setHomeDateFilterStateUseCase(any()) } returns Result.success(Unit)
     }
 
     @Test
-    fun onEvent_shouldPersistCustomFilter_whenSetDateRangeEventIsReceived() = runViewModelTest {
-        val viewModel = buildViewModel()
-        val collectJob = launch { viewModel.state.collect {} }
+    fun onEvent_shouldPersistCustomFilter_whenSetDateRangeEventIsReceived() =
+        runViewModelTest {
+            val viewModel = buildViewModel()
+            val collectJob = launch { viewModel.state.collect {} }
 
-        val from = 1_710_000_000_000L
-        val to = 1_710_100_000_000L
+            val from = 1_710_000_000_000L
+            val to = 1_710_100_000_000L
 
-        viewModel.onEvent(HomeEvent.SetDateRange(from = from, to = to))
-        advanceUntilIdle()
+            viewModel.onEvent(HomeEvent.SetDateRange(from = from, to = to))
+            advanceUntilIdle()
 
-        coVerify(atLeast = 1) {
-            setHomeDateFilterStateUseCase(
-                match {
-                    it.presetIndex == SavedDateFilter.CUSTOM_PRESET_INDEX &&
+            coVerify(atLeast = 1) {
+                setHomeDateFilterStateUseCase(
+                    match {
+                        it.presetIndex == SavedDateFilter.CUSTOM_PRESET_INDEX &&
                             it.from == from &&
                             it.to == to
-                },
-            )
+                    },
+                )
+            }
+            collectJob.cancel()
         }
-        collectJob.cancel()
-    }
 
     @Test
-    fun onEvent_shouldNormalizeRange_whenFromIsGreaterThanTo() = runViewModelTest {
-        val viewModel = buildViewModel()
-        val collectJob = launch { viewModel.state.collect {} }
+    fun onEvent_shouldNormalizeRange_whenFromIsGreaterThanTo() =
+        runViewModelTest {
+            val viewModel = buildViewModel()
+            val collectJob = launch { viewModel.state.collect {} }
 
-        val larger = 1_710_100_000_000L
-        val smaller = 1_710_000_000_000L
+            val larger = 1_710_100_000_000L
+            val smaller = 1_710_000_000_000L
 
-        viewModel.onEvent(HomeEvent.SetDateRange(from = larger, to = smaller))
-        advanceUntilIdle()
+            viewModel.onEvent(HomeEvent.SetDateRange(from = larger, to = smaller))
+            advanceUntilIdle()
 
-        coVerify(atLeast = 1) {
-            setHomeDateFilterStateUseCase(
-                match {
-                    it.presetIndex == SavedDateFilter.CUSTOM_PRESET_INDEX &&
+            coVerify(atLeast = 1) {
+                setHomeDateFilterStateUseCase(
+                    match {
+                        it.presetIndex == SavedDateFilter.CUSTOM_PRESET_INDEX &&
                             it.from == smaller &&
                             it.to == larger
-                },
-            )
+                    },
+                )
+            }
+            collectJob.cancel()
         }
-        collectJob.cancel()
-    }
 
     @Test
-    fun onEvent_shouldPersistPresetFilter_whenSelectPresetEventIsReceived() = runViewModelTest {
-        val viewModel = buildViewModel()
-        val collectJob = launch { viewModel.state.collect {} }
+    fun onEvent_shouldPersistPresetFilter_whenSelectPresetEventIsReceived() =
+        runViewModelTest {
+            val viewModel = buildViewModel()
+            val collectJob = launch { viewModel.state.collect {} }
 
-        val presetIndex = 2
-        viewModel.onEvent(HomeEvent.SelectPreset(presetIndex))
-        advanceUntilIdle()
+            val presetIndex = 2
+            viewModel.onEvent(HomeEvent.SelectPreset(presetIndex))
+            advanceUntilIdle()
 
-        coVerify(atLeast = 1) {
-            setHomeDateFilterStateUseCase(
-                match {
-                    it.presetIndex == presetIndex &&
+            coVerify(atLeast = 1) {
+                setHomeDateFilterStateUseCase(
+                    match {
+                        it.presetIndex == presetIndex &&
                             it.to >= it.from
-                },
-            )
+                    },
+                )
+            }
+            collectJob.cancel()
         }
-        collectJob.cancel()
-    }
 
     @Test
-    fun onEvent_shouldUpdateUiState_whenPersistDateFilterFails() = runViewModelTest {
-        coEvery { setHomeDateFilterStateUseCase(any()) } returns Result.failure(
-            IllegalStateException("persist-failed")
-        )
-        val viewModel = buildViewModel()
-        val collectJob = launch { viewModel.state.collect {} }
+    fun onEvent_shouldUpdateUiState_whenPersistDateFilterFails() =
+        runViewModelTest {
+            coEvery { setHomeDateFilterStateUseCase(any()) } returns
+                Result.failure(
+                    IllegalStateException("persist-failed"),
+                )
+            val viewModel = buildViewModel()
+            val collectJob = launch { viewModel.state.collect {} }
 
-        val from = 1_712_000_000_000L
-        val to = 1_712_100_000_000L
-        viewModel.onEvent(HomeEvent.SetDateRange(from = from, to = to))
-        advanceUntilIdle()
+            val from = 1_712_000_000_000L
+            val to = 1_712_100_000_000L
+            viewModel.onEvent(HomeEvent.SetDateRange(from = from, to = to))
+            advanceUntilIdle()
 
-        coVerify(atLeast = 1) {
-            setHomeDateFilterStateUseCase(
-                match {
-                    it.presetIndex == SavedDateFilter.CUSTOM_PRESET_INDEX &&
+            coVerify(atLeast = 1) {
+                setHomeDateFilterStateUseCase(
+                    match {
+                        it.presetIndex == SavedDateFilter.CUSTOM_PRESET_INDEX &&
                             it.from == minOf(from, to) &&
                             it.to == maxOf(from, to)
-                },
-            )
-        }
-        assertTrue(viewModel.state.value.dateRangeFrom <= viewModel.state.value.dateRangeTo)
-        coVerify(atLeast = 1) { setHomeDateFilterStateUseCase(any()) }
+                    },
+                )
+            }
+            assertTrue(viewModel.state.value.dateRangeFrom <= viewModel.state.value.dateRangeTo)
+            coVerify(atLeast = 1) { setHomeDateFilterStateUseCase(any()) }
 
-        collectJob.cancel()
-    }
+            collectJob.cancel()
+        }
 
     @Test
     fun totalsAndBalance_shouldBeCalculatedCorrectly_whenTransactionsContainIncomeAndExpense() =
         runViewModelTest {
             val now = 1_700_000_000_000L
-            val transactions = listOf(
-                Transaction(
-                    id = 1,
-                    title = "Salary",
-                    amount = 2000.0,
-                    category = "Work",
-                    type = TransactionType.INCOME,
-                    timestamp = now,
-                ),
-                Transaction(
-                    id = 2,
-                    title = "Freelance",
-                    amount = 500.0,
-                    category = "Work",
-                    type = TransactionType.INCOME,
-                    timestamp = now,
-                ),
-                Transaction(
-                    id = 3,
-                    title = "Rent",
-                    amount = 800.0,
-                    category = "Home",
-                    type = TransactionType.EXPENSE,
-                    timestamp = now,
-                ),
-                Transaction(
-                    id = 4,
-                    title = "Groceries",
-                    amount = 200.0,
-                    category = "Food",
-                    type = TransactionType.EXPENSE,
-                    timestamp = now,
-                ),
-            )
+            val transactions =
+                listOf(
+                    Transaction(
+                        id = 1,
+                        title = "Salary",
+                        amount = 2000.0,
+                        category = "Work",
+                        type = TransactionType.INCOME,
+                        timestamp = now,
+                    ),
+                    Transaction(
+                        id = 2,
+                        title = "Freelance",
+                        amount = 500.0,
+                        category = "Work",
+                        type = TransactionType.INCOME,
+                        timestamp = now,
+                    ),
+                    Transaction(
+                        id = 3,
+                        title = "Rent",
+                        amount = 800.0,
+                        category = "Home",
+                        type = TransactionType.EXPENSE,
+                        timestamp = now,
+                    ),
+                    Transaction(
+                        id = 4,
+                        title = "Groceries",
+                        amount = 200.0,
+                        category = "Food",
+                        type = TransactionType.EXPENSE,
+                        timestamp = now,
+                    ),
+                )
 
             every { getTransactionsUseCase() } returns flowOf(Result.success(transactions))
             coEvery { filterTransactionsUseCase(any()) } answers {
@@ -231,24 +238,25 @@ class HomeViewModelMockkTest : BaseUnitTest() {
     fun totals_shouldUseNormalizedAmountSigns_whenStoredTransactionSignsAreInconsistent() =
         runViewModelTest {
             val now = 1_700_000_000_000L
-            val transactions = listOf(
-                Transaction(
-                    id = 1,
-                    title = "Refund",
-                    amount = -120.0,
-                    category = "Other",
-                    type = TransactionType.INCOME,
-                    timestamp = now,
-                ),
-                Transaction(
-                    id = 2,
-                    title = "Coffee",
-                    amount = 20.0,
-                    category = "Food",
-                    type = TransactionType.EXPENSE,
-                    timestamp = now,
-                ),
-            )
+            val transactions =
+                listOf(
+                    Transaction(
+                        id = 1,
+                        title = "Refund",
+                        amount = -120.0,
+                        category = "Other",
+                        type = TransactionType.INCOME,
+                        timestamp = now,
+                    ),
+                    Transaction(
+                        id = 2,
+                        title = "Coffee",
+                        amount = 20.0,
+                        category = "Food",
+                        type = TransactionType.EXPENSE,
+                        timestamp = now,
+                    ),
+                )
 
             every { getTransactionsUseCase() } returns flowOf(Result.success(transactions))
             coEvery { filterTransactionsUseCase(any()) } answers {
@@ -270,16 +278,16 @@ class HomeViewModelMockkTest : BaseUnitTest() {
             collectJob.cancel()
         }
 
-
-    private fun buildViewModel(): HomeViewModel = HomeViewModel(
-        getTransactionsUseCase = getTransactionsUseCase,
-        filterTransactionsUseCase = filterTransactionsUseCase,
-        getTransactionSuggestionsUseCase = getTransactionSuggestionsUseCase,
-        getHomeDateFilterStateUseCase = getHomeDateFilterStateUseCase,
-        setHomeDateFilterStateUseCase = setHomeDateFilterStateUseCase,
-        getCategoriesUseCase = getCategoriesUseCase,
-        settingsRepository = settingsRepository,
-        searchDebounceMs = 0L,
-        segmentationTracker = segmentationTracker,
-    )
+    private fun buildViewModel(): HomeViewModel =
+        HomeViewModel(
+            getTransactionsUseCase = getTransactionsUseCase,
+            filterTransactionsUseCase = filterTransactionsUseCase,
+            getTransactionSuggestionsUseCase = getTransactionSuggestionsUseCase,
+            getHomeDateFilterStateUseCase = getHomeDateFilterStateUseCase,
+            setHomeDateFilterStateUseCase = setHomeDateFilterStateUseCase,
+            getCategoriesUseCase = getCategoriesUseCase,
+            settingsRepository = settingsRepository,
+            searchDebounceMs = 0L,
+            segmentationTracker = segmentationTracker,
+        )
 }

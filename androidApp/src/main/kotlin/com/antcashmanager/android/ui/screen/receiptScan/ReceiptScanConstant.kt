@@ -15,4 +15,3 @@ object ReceiptScanConstant {
     const val LABEL_RECEIPT_DETAILS = "Dettaglio scontrino:"
     const val EXPENSE_TYPE = "EXPENSE"
 }
-

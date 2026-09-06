@@ -40,25 +40,28 @@ fun ShimmerGradientBackground(
     val offset by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(2000, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse,
-        ),
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(2000, easing = LinearEasing),
+                repeatMode = RepeatMode.Reverse,
+            ),
         label = "offset",
     )
 
     val gradientColors = listOf(color1, color2, color1)
-    val brush = Brush.linearGradient(
-        colors = gradientColors,
-        start = Offset(offset * 500, 0f),
-        end = Offset(offset * 500 + 500, 0f),
-    )
+    val brush =
+        Brush.linearGradient(
+            colors = gradientColors,
+            start = Offset(offset * 500, 0f),
+            end = Offset(offset * 500 + 500, 0f),
+        )
 
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(height)
-            .background(brush, shape = RoundedCornerShape(16.dp)),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(height)
+                .background(brush, shape = RoundedCornerShape(16.dp)),
         contentAlignment = Alignment.Center,
     ) {
         content()
@@ -74,10 +77,11 @@ fun PulsingElement(
     val scale by infiniteTransition.animateFloat(
         initialValue = 1f,
         targetValue = 1.05f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1000, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse,
-        ),
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(1000, easing = LinearEasing),
+                repeatMode = RepeatMode.Reverse,
+            ),
         label = "pulse_scale",
     )
 

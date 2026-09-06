@@ -6,11 +6,10 @@ import com.antcashmanager.android.ui.screen.settings.SettingEvent
 import com.antcashmanager.android.ui.screen.settings.SettingsViewModel
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
-import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.service.WidgetUpdateNotifier
 import com.antcashmanager.domain.usecase.settings.GetSettingUseCase
-import com.antcashmanager.domain.usecase.settings.SetSettingUseCase
 import com.antcashmanager.domain.usecase.settings.ResetAllPreferencesUseCase
+import com.antcashmanager.domain.usecase.settings.SetSettingUseCase
 import com.antcashmanager.domain.usecase.settings.SettingsUseCasesProvider
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
@@ -30,7 +29,6 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsViewModelMockkTest : BaseUnitTest() {
-
     private lateinit var getThemeUseCase: GetSettingUseCase<String>
     private lateinit var setThemeUseCase: SetSettingUseCase<String>
     private lateinit var getLanguageUseCase: GetSettingUseCase<String>
@@ -142,72 +140,79 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
     }
 
     @Test
-    fun setTheme_shouldDelegateToUseCase_whenThemeChanges() = runViewModelTest {
-        val viewModel = buildViewModel()
+    fun setTheme_shouldDelegateToUseCase_whenThemeChanges() =
+        runViewModelTest {
+            val viewModel = buildViewModel()
 
-        viewModel.onEvent(SettingEvent.SetTheme(AppTheme.LIGHT))
-        advanceUntilIdle()
+            viewModel.onEvent(SettingEvent.SetTheme(AppTheme.LIGHT))
+            advanceUntilIdle()
 
-        coVerify(exactly = 1) { setThemeUseCase(any()) }
-    }
-
-    @Test
-    fun setLanguage_shouldDelegateToUseCase_whenLanguageChanges() = runViewModelTest {
-        val viewModel = buildViewModel()
-
-        viewModel.onEvent(SettingEvent.SetLanguage(AppLanguage.SPANISH))
-        advanceUntilIdle()
-
-        coVerify(exactly = 1) { setLanguageUseCase(any()) }
-    }
+            coVerify(exactly = 1) { setThemeUseCase(any()) }
+        }
 
     @Test
-    fun setShowCharts_shouldDelegateToUseCase_whenToggleChanges() = runViewModelTest {
-        val viewModel = buildViewModel()
+    fun setLanguage_shouldDelegateToUseCase_whenLanguageChanges() =
+        runViewModelTest {
+            val viewModel = buildViewModel()
 
-        viewModel.onEvent(SettingEvent.SetShowCharts(false))
-        advanceUntilIdle()
+            viewModel.onEvent(SettingEvent.SetLanguage(AppLanguage.SPANISH))
+            advanceUntilIdle()
 
-        coVerify(exactly = 1) { setShowChartsUseCase(any()) }
-    }
-
-    @Test
-    fun resetAllPreferences_shouldDelegateToUseCase_whenRequested() = runViewModelTest {
-        val viewModel = buildViewModel()
-
-        viewModel.onEvent(SettingEvent.ResetAllPreferences)
-        advanceUntilIdle()
-
-        coVerify(exactly = 1) { resetAllPreferencesUseCase() }
-    }
+            coVerify(exactly = 1) { setLanguageUseCase(any()) }
+        }
 
     @Test
-    fun state_shouldFallbackToDefaults_whenThemeAndLanguageUseCasesFail() = runViewModelTest {
-        every { getThemeUseCase() } returns flowOf(Result.failure(IllegalStateException("theme-failed")))
-        every { getLanguageUseCase() } returns flowOf(
-            Result.failure(IllegalStateException("language-failed")),
-        )
-        val viewModel = buildViewModel()
-        val collectJob = launch { viewModel.state.collect {} }
+    fun setShowCharts_shouldDelegateToUseCase_whenToggleChanges() =
+        runViewModelTest {
+            val viewModel = buildViewModel()
 
-        advanceUntilIdle()
+            viewModel.onEvent(SettingEvent.SetShowCharts(false))
+            advanceUntilIdle()
 
-        assertEquals(AppTheme.SYSTEM, viewModel.state.value.theme)
-        assertEquals(AppLanguage.SYSTEM, viewModel.state.value.language)
-        collectJob.cancel()
-    }
+            coVerify(exactly = 1) { setShowChartsUseCase(any()) }
+        }
 
     @Test
-    fun state_shouldReflectThemeUseCase_whenFlowEmits() = runViewModelTest {
-        every { getThemeUseCase() } returns flowOf(Result.success("light"))
-        val viewModel = buildViewModel()
-        val collectJob = launch { viewModel.state.collect {} }
+    fun resetAllPreferences_shouldDelegateToUseCase_whenRequested() =
+        runViewModelTest {
+            val viewModel = buildViewModel()
 
-        advanceUntilIdle()
+            viewModel.onEvent(SettingEvent.ResetAllPreferences)
+            advanceUntilIdle()
 
-        assertEquals(AppTheme.LIGHT, viewModel.state.value.theme)
-        collectJob.cancel()
-    }
+            coVerify(exactly = 1) { resetAllPreferencesUseCase() }
+        }
+
+    @Test
+    fun state_shouldFallbackToDefaults_whenThemeAndLanguageUseCasesFail() =
+        runViewModelTest {
+            every { getThemeUseCase() } returns flowOf(Result.failure(IllegalStateException("theme-failed")))
+            every { getLanguageUseCase() } returns
+                flowOf(
+                    Result.failure(IllegalStateException("language-failed")),
+                )
+            val viewModel = buildViewModel()
+            val collectJob = launch { viewModel.state.collect {} }
+
+            advanceUntilIdle()
+
+            assertEquals(AppTheme.SYSTEM, viewModel.state.value.theme)
+            assertEquals(AppLanguage.SYSTEM, viewModel.state.value.language)
+            collectJob.cancel()
+        }
+
+    @Test
+    fun state_shouldReflectThemeUseCase_whenFlowEmits() =
+        runViewModelTest {
+            every { getThemeUseCase() } returns flowOf(Result.success("light"))
+            val viewModel = buildViewModel()
+            val collectJob = launch { viewModel.state.collect {} }
+
+            advanceUntilIdle()
+
+            assertEquals(AppTheme.LIGHT, viewModel.state.value.theme)
+            collectJob.cancel()
+        }
 
     private fun buildViewModel(): SettingsViewModel {
         val settingsUseCasesProvider: SettingsUseCasesProvider = mockk()

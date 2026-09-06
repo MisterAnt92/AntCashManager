@@ -13,7 +13,5 @@ public class DeleteCategoryUseCase(
     private val categoryRepository: CategoryRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : UseCase<Category, Unit>(dispatcher) {
-
-    override suspend fun execute(params: Category): Unit =
-        categoryRepository.deleteCategory(params)
+    override suspend fun execute(params: Category): Unit = categoryRepository.deleteCategory(params)
 }

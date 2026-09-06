@@ -20,7 +20,6 @@ import kotlin.math.abs
 public class FilterTransactionsUseCase(
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : UseCase<FilterTransactionsUseCase.Params, List<Transaction>>(dispatcher) {
-
     public companion object {
         private const val AMOUNT_COMPARISON_EPSILON = 0.000001
     }
@@ -37,12 +36,12 @@ public class FilterTransactionsUseCase(
         if (transactions.isEmpty()) return emptyList()
 
         // Use sequence for lazy evaluation - avoids intermediate list allocations
-        return transactions.asSequence()
+        return transactions
+            .asSequence()
             .filter { transaction ->
                 // Date range filter (always applied, short-circuit first)
                 transaction.timestamp in filterParams.dateFrom..filterParams.dateTo
-            }
-            .filter { transaction ->
+            }.filter { transaction ->
                 // Search query filter (case-insensitive)
                 val rawQuery = filterParams.searchQuery.trim()
                 if (rawQuery.isBlank()) {
@@ -53,28 +52,25 @@ public class FilterTransactionsUseCase(
                     val absAmount = abs(transaction.amount)
 
                     transaction.title.contains(rawQuery, ignoreCase = true) ||
-                            transaction.amount.toString().contains(normalizedQuery) ||
-                            absAmount.toString().contains(normalizedQuery) ||
-                            (numericQuery != null &&
-                                    abs(absAmount - numericQuery) < AMOUNT_COMPARISON_EPSILON)
+                        transaction.amount.toString().contains(normalizedQuery) ||
+                        absAmount.toString().contains(normalizedQuery) ||
+                        (
+                            numericQuery != null &&
+                                abs(absAmount - numericQuery) < AMOUNT_COMPARISON_EPSILON
+                        )
                 }
-            }
-            .filter { transaction ->
+            }.filter { transaction ->
                 // Category filter (exact match)
                 filterParams.categoryName == null ||
-                        transaction.category == filterParams.categoryName
-            }
-            .filter { transaction ->
+                    transaction.category == filterParams.categoryName
+            }.filter { transaction ->
                 // Transaction type filter
                 filterParams.transactionType == null ||
-                        transaction.type == filterParams.transactionType
-            }
-            .filter { transaction ->
+                    transaction.type == filterParams.transactionType
+            }.filter { transaction ->
                 // Payment type filter
                 filterParams.paymentType == null ||
-                        transaction.paymentType == filterParams.paymentType
-            }
-            .toList()
+                    transaction.paymentType == filterParams.paymentType
+            }.toList()
     }
 }
-

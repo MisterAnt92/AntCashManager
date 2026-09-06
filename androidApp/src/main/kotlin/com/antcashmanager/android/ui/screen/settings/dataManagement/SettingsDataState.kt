@@ -55,20 +55,37 @@ data class RestoreSuccessInfo(
 
 sealed interface DeleteResult {
     data object Idle : DeleteResult
+
     data object Success : DeleteResult
-    data class Error(val message: String) : DeleteResult
+
+    data class Error(
+        val message: String,
+    ) : DeleteResult
 }
 
 sealed interface BackupResult {
     data object Idle : BackupResult
+
     data object Loading : BackupResult
+
     data object Success : BackupResult
-    data class Error(val message: String) : BackupResult
+
+    data class Error(
+        val message: String,
+    ) : BackupResult
 }
 
 sealed interface RestoreOperationResult {
     data object Idle : RestoreOperationResult
+
     data object Loading : RestoreOperationResult
-    data class Success(val transactions: Int, val categories: Int) : RestoreOperationResult
-    data class Error(val message: String) : RestoreOperationResult
+
+    data class Success(
+        val transactions: Int,
+        val categories: Int,
+    ) : RestoreOperationResult
+
+    data class Error(
+        val message: String,
+    ) : RestoreOperationResult
 }

@@ -49,22 +49,24 @@ fun MoneyText(
 ) {
     val fmt = LocalCurrencyFormat.current
 
-    val formattedAmount = if (showSign) {
-        formatTransactionAmount(amount, fmt)
-    } else {
-        formatAmountWithNegative(amount, fmt)
-    }.let { if (masked) maskDigits(it) else it }
+    val formattedAmount =
+        if (showSign) {
+            formatTransactionAmount(amount, fmt)
+        } else {
+            formatAmountWithNegative(amount, fmt)
+        }.let { if (masked) maskDigits(it) else it }
 
-    val finalStyle = style.let {
-        var updated = it
-        if (fontWeight != null) {
-            updated = updated.copy(fontWeight = fontWeight)
+    val finalStyle =
+        style.let {
+            var updated = it
+            if (fontWeight != null) {
+                updated = updated.copy(fontWeight = fontWeight)
+            }
+            if (fontSize != null) {
+                updated = updated.copy(fontSize = fontSize.sp)
+            }
+            updated
         }
-        if (fontSize != null) {
-            updated = updated.copy(fontSize = fontSize.sp)
-        }
-        updated
-    }
 
     AppText(
         text = formattedAmount,

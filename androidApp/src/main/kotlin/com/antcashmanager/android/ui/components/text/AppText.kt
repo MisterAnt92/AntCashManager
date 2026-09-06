@@ -57,7 +57,8 @@ import com.antcashmanager.android.R
  * - allCaps: se true, trasforma il testo in maiuscolo
  */
 enum class IconPosition {
-    Left, Right
+    Left,
+    Right,
 }
 
 @Composable
@@ -86,15 +87,16 @@ fun AppText(
     if (icon != null) {
         Row(
             modifier = modifier.then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             if (iconPosition == IconPosition.Left) {
                 Icon(
                     painter = icon,
                     contentDescription = null,
                     tint = finalColor,
-                    modifier = Modifier
-                        .size(iconSize ?: defaultIconSize)
+                    modifier =
+                        Modifier
+                            .size(iconSize ?: defaultIconSize),
                 )
                 Spacer(modifier = Modifier.width(iconPadding ?: defaultIconPadding))
                 Text(
@@ -103,7 +105,7 @@ fun AppText(
                     color = finalColor,
                     textAlign = textAlign,
                     maxLines = maxLines,
-                    overflow = overflow
+                    overflow = overflow,
                 )
             } else {
                 Text(
@@ -112,14 +114,14 @@ fun AppText(
                     color = finalColor,
                     textAlign = textAlign,
                     maxLines = maxLines,
-                    overflow = overflow
+                    overflow = overflow,
                 )
                 Spacer(modifier = Modifier.width(iconPadding ?: 0.dp))
                 Icon(
                     painter = icon,
                     contentDescription = null,
                     tint = finalColor,
-                    modifier = Modifier.size(iconSize ?: defaultIconSize)
+                    modifier = Modifier.size(iconSize ?: defaultIconSize),
                 )
             }
         }
@@ -131,7 +133,7 @@ fun AppText(
             color = finalColor,
             textAlign = textAlign,
             maxLines = maxLines,
-            overflow = overflow
+            overflow = overflow,
         )
     }
 }
@@ -162,7 +164,6 @@ fun AppText(
     )
 }
 
-
 @Preview(name = "AppText - Light", showBackground = true)
 @Composable
 private fun AppTextPreviewLight() {
@@ -170,7 +171,7 @@ private fun AppTextPreviewLight() {
         text = stringResource(R.string.preview_app_text_title),
         modifier = Modifier.fillMaxWidth(),
         style = MaterialTheme.typography.titleMedium,
-        textAlign = TextAlign.Center
+        textAlign = TextAlign.Center,
     )
 }
 
@@ -182,7 +183,7 @@ private fun AppTextPreviewDark() {
         modifier = Modifier.fillMaxWidth(),
         style = MaterialTheme.typography.titleMedium,
         textAlign = TextAlign.Center,
-        color = MaterialTheme.colorScheme.onBackground
+        color = MaterialTheme.colorScheme.onBackground,
     )
 }
 
@@ -193,7 +194,7 @@ private fun AppTextPreviewClickable() {
         text = stringResource(R.string.preview_app_text_clickable),
         modifier = Modifier.fillMaxWidth(),
         style = MaterialTheme.typography.bodyLarge,
-        onClick = { /* Do something */ }
+        onClick = { /* Do something */ },
     )
 }
 
@@ -204,7 +205,7 @@ private fun AppTextPreviewAllCaps() {
         text = stringResource(R.string.preview_app_text_all_caps),
         modifier = Modifier.fillMaxWidth(),
         style = MaterialTheme.typography.bodyLarge,
-        allCaps = true
+        allCaps = true,
     )
 }
 
@@ -213,4 +214,3 @@ private fun AppTextPreviewAllCaps() {
 private fun AppTextPreviewAccessibility() {
     AppTextPreviewLight()
 }
-

@@ -33,16 +33,20 @@ fun VisibilityToggleButton(
         modifier = modifier,
     ) {
         Icon(
-            imageVector = if (isVisible)
-                Icons.Default.Visibility
-            else
-                Icons.Default.VisibilityOff,
-            contentDescription = stringResource(
-                if (isVisible)
-                    R.string.home_move_up // TODO: Add specific string for visibility
-                else
-                    R.string.home_move_down // TODO: Add specific string for visibility
-            ),
+            imageVector =
+                if (isVisible) {
+                    Icons.Default.Visibility
+                } else {
+                    Icons.Default.VisibilityOff
+                },
+            contentDescription =
+                stringResource(
+                    if (isVisible) {
+                        R.string.home_move_up // TODO: Add specific string for visibility
+                    } else {
+                        R.string.home_move_down // TODO: Add specific string for visibility
+                    },
+                ),
         )
     }
 }

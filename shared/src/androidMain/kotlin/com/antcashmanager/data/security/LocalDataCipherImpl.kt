@@ -50,9 +50,10 @@ public class LocalDataCipherImpl(
         }
 
         return runCatching {
-            val cipher = Cipher.getInstance(TRANSFORMATION).apply {
-                init(Cipher.ENCRYPT_MODE, getOrCreateKey())
-            }
+            val cipher =
+                Cipher.getInstance(TRANSFORMATION).apply {
+                    init(Cipher.ENCRYPT_MODE, getOrCreateKey())
+                }
             val encrypted = cipher.doFinal(value.toByteArray(Charsets.UTF_8))
             val iv = Base64.encodeToString(cipher.iv, Base64.NO_WRAP)
             val payload = Base64.encodeToString(encrypted, Base64.NO_WRAP)
@@ -61,7 +62,7 @@ public class LocalDataCipherImpl(
             // Critical: do NOT persist plaintext when encryption is enabled.
             // This is a sign of key corruption or severe crypto failure.
             logger.e(error) { "CRITICAL: Encryption failed. User data will not be persisted in plaintext." }
-            throw error  // Fail fast: caller must handle the failure and not persist
+            throw error // Fail fast: caller must handle the failure and not persist
         }
     }
 
@@ -82,20 +83,21 @@ public class LocalDataCipherImpl(
             val encryptedBytes =
                 Base64.decode(payload.substring(separatorIndex + 1), Base64.NO_WRAP)
 
-            val cipher = Cipher.getInstance(TRANSFORMATION).apply {
-                init(
-                    Cipher.DECRYPT_MODE,
-                    getOrCreateKey(),
-                    GCMParameterSpec(GCM_TAG_LENGTH_BITS, ivBytes)
-                )
-            }
+            val cipher =
+                Cipher.getInstance(TRANSFORMATION).apply {
+                    init(
+                        Cipher.DECRYPT_MODE,
+                        getOrCreateKey(),
+                        GCMParameterSpec(GCM_TAG_LENGTH_BITS, ivBytes),
+                    )
+                }
             String(cipher.doFinal(encryptedBytes), Charsets.UTF_8)
         }.getOrElse { error ->
             // Critical: do NOT return ciphertext as plaintext.
             // If decryption fails, the data is corrupted/inaccessible. Return empty string.
             // This is safer than exposing encrypted material as if it were plaintext.
             logger.e(error) { "CRITICAL: Decrypt failed. Returning empty (data inaccessible, NOT plaintext fallback)." }
-            ""  // Return empty, not the ciphertext
+            "" // Return empty, not the ciphertext
         }
     }
 
@@ -117,9 +119,10 @@ public class LocalDataCipherImpl(
     override fun isEncryptionEnabled(): Boolean {
         cachedEncryptionEnabled?.let { return it }
 
-        val enabled = appContext
-            .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            .getBoolean(KEY_DESIRED_ENCRYPTION, false)
+        val enabled =
+            appContext
+                .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                .getBoolean(KEY_DESIRED_ENCRYPTION, false)
         cachedEncryptionEnabled = enabled
         return enabled
     }
@@ -139,14 +142,15 @@ public class LocalDataCipherImpl(
 
             val keyGenerator =
                 KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, KEYSTORE_PROVIDER)
-            val spec = KeyGenParameterSpec.Builder(
-                KEY_ALIAS,
-                KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT,
-            )
-                .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
-                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-                .setKeySize(AES_KEY_SIZE_BITS)
-                .build()
+            val spec =
+                KeyGenParameterSpec
+                    .Builder(
+                        KEY_ALIAS,
+                        KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT,
+                    ).setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                    .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                    .setKeySize(AES_KEY_SIZE_BITS)
+                    .build()
             keyGenerator.init(spec)
             val key = keyGenerator.generateKey()
             cachedKey = key
@@ -154,4 +158,3 @@ public class LocalDataCipherImpl(
         }
     }
 }
-

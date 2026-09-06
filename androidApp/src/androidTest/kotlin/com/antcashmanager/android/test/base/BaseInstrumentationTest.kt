@@ -48,7 +48,6 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 abstract class BaseInstrumentationTest {
-
     /**
      * Compose test rule with v2 API (StandardTestDispatcher)
      *
@@ -58,9 +57,7 @@ abstract class BaseInstrumentationTest {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-
     init {
-        
     }
 
     /**
@@ -77,8 +74,10 @@ abstract class BaseInstrumentationTest {
      * ```
      */
     protected fun getString(stringId: Int): String =
-        InstrumentationRegistry.getInstrumentation()
-            .targetContext.getString(stringId)
+        InstrumentationRegistry
+            .getInstrumentation()
+            .targetContext
+            .getString(stringId)
 
     /**
      * Get the test activity instance.
@@ -94,9 +93,7 @@ abstract class BaseInstrumentationTest {
      * assertEquals("MainActivity", activity::class.simpleName)
      * ```
      */
-    protected fun getActivity(): ComponentActivity =
-        composeTestRule.activity
-
+    protected fun getActivity(): ComponentActivity = composeTestRule.activity
 
     /**
      * Cleanup method called after each test.

@@ -5,39 +5,29 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,22 +40,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.antcashmanager.android.ui.components.layout.SpacingSize
-import com.antcashmanager.android.ui.components.layout.VerticalSpacer
-import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
-import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
-import com.antcashmanager.android.ui.components.layout.FoldableAwareLayout
-import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
-import androidx.window.layout.FoldingFeature
-import kotlinx.coroutines.flow.first
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
+import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
+import com.antcashmanager.android.navigation.ScreenHeaderConfig
+import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
 import com.antcashmanager.android.ui.components.animation.AntEasterEggAnimation
 import com.antcashmanager.android.ui.components.dialog.HelpButton
 import com.antcashmanager.android.ui.components.filter.DateRangeFilter
 import com.antcashmanager.android.ui.components.filter.SearchComponent
+import com.antcashmanager.android.ui.components.layout.FoldableAwareLayout
+import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.overlay.TutorialOverlay
 import com.antcashmanager.android.ui.components.state.AntEmptyState
@@ -73,8 +62,6 @@ import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.home.event.HomeEvent
 import com.antcashmanager.android.ui.screen.home.model.HomeTopCardType
 import com.antcashmanager.android.ui.screen.home.transactionDetail.TransactionDetailsDialog
-import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
-import com.antcashmanager.android.navigation.ScreenHeaderConfig
 import com.antcashmanager.android.ui.screen.home.view.BalanceCard
 import com.antcashmanager.android.ui.screen.home.view.HelpDialog
 import com.antcashmanager.android.ui.screen.home.view.HomeTopCardsOrderDialog
@@ -82,9 +69,6 @@ import com.antcashmanager.android.ui.screen.home.view.IncomeExpenseRow
 import com.antcashmanager.android.ui.screen.home.view.LoadingState
 import com.antcashmanager.android.ui.screen.home.view.QuickInsightsCard
 import com.antcashmanager.android.ui.screen.home.view.RecentTransactionItem
-import com.antcashmanager.android.ui.theme.AntCashManagerTheme
-import com.antcashmanager.domain.model.PaymentType
-import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.model.TransactionType
@@ -128,7 +112,6 @@ internal fun HomeContent(
     navController: androidx.navigation.NavController,
     modifier: Modifier = Modifier,
 ) {
-
     val analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager = koinInject()
 
     // Date picker state
@@ -153,11 +136,12 @@ internal fun HomeContent(
     val showPaymentTypeBreakdown = state.showPaymentTypeBreakdown
     val showQuickInsightsCard = state.showQuickInsightsCard
     val reduceMotion = state.reduceMotion
-    val transactionDisplayType = try {
-        TransactionDisplayType.valueOf(state.transactionDisplayType)
-    } catch (e: Exception) {
-        TransactionDisplayType.TREND
-    }
+    val transactionDisplayType =
+        try {
+            TransactionDisplayType.valueOf(state.transactionDisplayType)
+        } catch (e: Exception) {
+            TransactionDisplayType.TREND
+        }
     val isTutorialCompleted = state.isTutorialCompleted
     val isLoading = state.isLoading
 
@@ -170,43 +154,49 @@ internal fun HomeContent(
     val foldingFeature = adaptiveLayoutInfo.foldingFeature
 
     // Preserva scroll position durante navigazione back/forward
-    val listState = rememberSaveable(saver = androidx.compose.foundation.lazy.LazyListState.Saver) {
-        androidx.compose.foundation.lazy.LazyListState()
-    }
+    val listState =
+        rememberSaveable(saver = androidx.compose.foundation.lazy.LazyListState.Saver) {
+            androidx.compose.foundation.lazy
+                .LazyListState()
+        }
     val showScrollToTop by remember {
         derivedStateOf { listState.firstVisibleItemIndex > 2 }
     }
-    val biggestExpense = remember(state.filteredTransactions) {
-        state.filteredTransactions
-            .filter { it.type == TransactionType.EXPENSE }
-            .maxByOrNull { kotlin.math.abs(it.amount) }
-    }
+    val biggestExpense =
+        remember(state.filteredTransactions) {
+            state.filteredTransactions
+                .filter { it.type == TransactionType.EXPENSE }
+                .maxByOrNull { kotlin.math.abs(it.amount) }
+        }
 
     // Calcoli per Quick Insights Card
-    val netBalance = remember(state.totalIncome, state.totalExpense) {
-        state.totalIncome - state.totalExpense
-    }
-    val dailyAverageExpense = remember(state.totalExpense, state.dateRangeFrom, state.dateRangeTo) {
-        val daysInPeriod =
-            (state.dateRangeTo - state.dateRangeFrom) / 86400000.0 // Convert ms to days
-        if (daysInPeriod > 0) {
-            kotlin.math.abs(state.totalExpense) / daysInPeriod
-        } else {
-            0.0
+    val netBalance =
+        remember(state.totalIncome, state.totalExpense) {
+            state.totalIncome - state.totalExpense
         }
-    }
+    val dailyAverageExpense =
+        remember(state.totalExpense, state.dateRangeFrom, state.dateRangeTo) {
+            val daysInPeriod =
+                (state.dateRangeTo - state.dateRangeFrom) / 86400000.0 // Convert ms to days
+            if (daysInPeriod > 0) {
+                kotlin.math.abs(state.totalExpense) / daysInPeriod
+            } else {
+                0.0
+            }
+        }
 
     // Elenco delle top card effettivamente visibili: esclude Quick Insights quando
     // l'impostazione corrispondente è disattivata. Riusato sia per il rendering
     // (visibleTopCardsOrder) sia come base per il dialog di riordino
     // (editableTopCardsOrder) — prima erano due `remember` con logica identica.
-    val visibleTopCardsOrder = remember(topCardsOrder, showQuickInsightsCard) {
-        if (showQuickInsightsCard) {
-            topCardsOrder
-        } else {
-            topCardsOrder.filterNot { it == HomeTopCardType.QUICK_INSIGHTS }
+    val visibleTopCardsOrder =
+        remember(topCardsOrder, showQuickInsightsCard) {
+            if (showQuickInsightsCard) {
+                topCardsOrder
+            } else {
+                topCardsOrder.filterNot { it == HomeTopCardType.QUICK_INSIGHTS }
+            }
         }
-    }
     val editableTopCardsOrder = visibleTopCardsOrder
 
     // Configure screen header with actions
@@ -234,8 +224,8 @@ internal fun HomeContent(
                             onHelpClick = { showHelpDialog = true },
                         )
                     }
-                }
-            )
+                },
+            ),
         )
     }
 
@@ -315,16 +305,18 @@ internal fun HomeContent(
             order = editingTopCardsOrder,
             onMoveUp = { index ->
                 if (index > 0) {
-                    editingTopCardsOrder = editingTopCardsOrder.toMutableList().apply {
-                        add(index - 1, removeAt(index))
-                    }
+                    editingTopCardsOrder =
+                        editingTopCardsOrder.toMutableList().apply {
+                            add(index - 1, removeAt(index))
+                        }
                 }
             },
             onMoveDown = { index ->
                 if (index < editingTopCardsOrder.lastIndex) {
-                    editingTopCardsOrder = editingTopCardsOrder.toMutableList().apply {
-                        add(index + 1, removeAt(index))
-                    }
+                    editingTopCardsOrder =
+                        editingTopCardsOrder.toMutableList().apply {
+                            add(index + 1, removeAt(index))
+                        }
                 }
             },
             onDismiss = {
@@ -332,21 +324,22 @@ internal fun HomeContent(
                 editingTopCardsOrder = editableTopCardsOrder
             },
             onConfirm = {
-                val updatedOrder = if (showQuickInsightsCard) {
-                    editingTopCardsOrder
-                } else {
-                    val lockedIndex = topCardsOrder.indexOf(HomeTopCardType.QUICK_INSIGHTS)
-                    if (lockedIndex >= 0) {
+                val updatedOrder =
+                    if (showQuickInsightsCard) {
                         editingTopCardsOrder
-                            .toMutableList()
-                            .apply {
-                                val targetIndex = lockedIndex.coerceAtMost(size)
-                                add(targetIndex, HomeTopCardType.QUICK_INSIGHTS)
-                            }
                     } else {
-                        editingTopCardsOrder
+                        val lockedIndex = topCardsOrder.indexOf(HomeTopCardType.QUICK_INSIGHTS)
+                        if (lockedIndex >= 0) {
+                            editingTopCardsOrder
+                                .toMutableList()
+                                .apply {
+                                    val targetIndex = lockedIndex.coerceAtMost(size)
+                                    add(targetIndex, HomeTopCardType.QUICK_INSIGHTS)
+                                }
+                        } else {
+                            editingTopCardsOrder
+                        }
                     }
-                }
                 topCardsOrderRaw = HomeTopCardType.serialize(updatedOrder)
                 // Persist card order to settings for backup/restore
                 onEvent(HomeEvent.SetHomeTopCardsOrder(HomeTopCardType.serialize(updatedOrder)))
@@ -368,7 +361,7 @@ internal fun HomeContent(
     if (showVersionDialog) {
         AntEasterEggAnimation(
             versionName = com.antcashmanager.android.BuildConfig.VERSION_NAME,
-            onDismiss = { showVersionDialog = false }
+            onDismiss = { showVersionDialog = false },
         )
     }
 
@@ -376,76 +369,80 @@ internal fun HomeContent(
     @Composable
     fun HomeListPane() {
         Scaffold(
-                modifier = Modifier
+            modifier =
+                Modifier
                     .fillMaxSize()
                     .testTag("home_screen"),
-                contentWindowInsets = WindowInsets(0, 0, 0, 0),
-                floatingActionButton = {
-                    // Scroll to top button
-                    AnimatedVisibility(
-                        visible = showScrollToTop,
-                        enter = fadeIn() + scaleIn(),
-                        exit = fadeOut() + scaleOut()
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
+            floatingActionButton = {
+                // Scroll to top button
+                AnimatedVisibility(
+                    visible = showScrollToTop,
+                    enter = fadeIn() + scaleIn(),
+                    exit = fadeOut() + scaleOut(),
+                ) {
+                    FloatingActionButton(
+                        onClick = {
+                            coroutineScope.launch {
+                                listState.animateScrollToItem(0)
+                            }
+                        },
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        modifier = Modifier.padding(bottom = 8.dp), // Extra padding to avoid bottom bar
                     ) {
-                        FloatingActionButton(
-                            onClick = {
-                                coroutineScope.launch {
-                                    listState.animateScrollToItem(0)
-                                }
-                            },
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                            modifier = Modifier.padding(bottom = 8.dp) // Extra padding to avoid bottom bar
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowUpward,
-                                contentDescription = stringResource(R.string.home_scroll_to_top)
-                            )
-                        }
+                        Icon(
+                            imageVector = Icons.Default.ArrowUpward,
+                            contentDescription = stringResource(R.string.home_scroll_to_top),
+                        )
                     }
-                },
-            ) { innerPadding ->
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier
+                }
+            },
+        ) { innerPadding ->
+            LazyColumn(
+                state = listState,
+                modifier =
+                    Modifier
                         .fillMaxSize()
                         .padding(innerPadding)
                         .padding(
                             horizontal = adaptiveLayoutInfo.horizontalPadding,
                             vertical = if (adaptiveLayoutInfo.isExpanded) 16.dp else 12.dp,
                         ),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    // Date Range Filter - nascosto quando la ricerca è attiva
-                    if (!state.isSearchExpanded) {
-                        item {
-                            DateRangeFilter(
-                                selectedPresetIndex = state.selectedPresetIndex,
-                                presets = HomeState.PRESETS,
-                                dateRangeFrom = state.dateRangeFrom,
-                                dateRangeTo = state.dateRangeTo,
-                                expanded = dateFilterExpanded,
-                                onExpandedChange = { expanded ->
-                                    onEvent(HomeEvent.SetDateFilterExpanded(expanded))
-                                },
-                                onPresetSelected = { presetIndex ->
-                                    val params = android.os.Bundle().apply {
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                // Date Range Filter - nascosto quando la ricerca è attiva
+                if (!state.isSearchExpanded) {
+                    item {
+                        DateRangeFilter(
+                            selectedPresetIndex = state.selectedPresetIndex,
+                            presets = HomeState.PRESETS,
+                            dateRangeFrom = state.dateRangeFrom,
+                            dateRangeTo = state.dateRangeTo,
+                            expanded = dateFilterExpanded,
+                            onExpandedChange = { expanded ->
+                                onEvent(HomeEvent.SetDateFilterExpanded(expanded))
+                            },
+                            onPresetSelected = { presetIndex ->
+                                val params =
+                                    android.os.Bundle().apply {
                                         putString("preset", presetIndex.toString())
                                     }
-                                    analyticsManager.logEvent("home_date_filter_changed", params)
-                                    onEvent(HomeEvent.SelectPreset(presetIndex))
-                                },
-                                onFromDateEdit = { showFromDatePicker = true },
-                                onToDateEdit = { showToDatePicker = true },
-                            )
-                        }
+                                analyticsManager.logEvent("home_date_filter_changed", params)
+                                onEvent(HomeEvent.SelectPreset(presetIndex))
+                            },
+                            onFromDateEdit = { showFromDatePicker = true },
+                            onToDateEdit = { showToDatePicker = true },
+                        )
                     }
+                }
 
-                    // Top Cards (Saldo, Entrate/Uscite, Quick Insights) - nascosti quando la ricerca è attiva
-                    if (!state.isSearchExpanded) {
-                        visibleTopCardsOrder.forEach { topCardType ->
-                            when (topCardType) {
-                                HomeTopCardType.BALANCE -> item(key = topCardType.storageKey) {
+                // Top Cards (Saldo, Entrate/Uscite, Quick Insights) - nascosti quando la ricerca è attiva
+                if (!state.isSearchExpanded) {
+                    visibleTopCardsOrder.forEach { topCardType ->
+                        when (topCardType) {
+                            HomeTopCardType.BALANCE ->
+                                item(key = topCardType.storageKey) {
                                     BalanceCard(
                                         balance = state.balance,
                                         showPaymentTypeBreakdown = showPaymentTypeBreakdown,
@@ -454,14 +451,16 @@ internal fun HomeContent(
                                     )
                                 }
 
-                                HomeTopCardType.INCOME_EXPENSE -> item(key = topCardType.storageKey) {
+                            HomeTopCardType.INCOME_EXPENSE ->
+                                item(key = topCardType.storageKey) {
                                     IncomeExpenseRow(
                                         totalIncome = state.totalIncome,
                                         totalExpense = state.totalExpense,
                                     )
                                 }
 
-                                HomeTopCardType.QUICK_INSIGHTS -> item(key = topCardType.storageKey) {
+                            HomeTopCardType.QUICK_INSIGHTS ->
+                                item(key = topCardType.storageKey) {
                                     QuickInsightsCard(
                                         totalIncome = state.totalIncome,
                                         totalExpense = state.totalExpense,
@@ -472,98 +471,104 @@ internal fun HomeContent(
                                         biggestExpenseAmount = biggestExpense?.amount,
                                     )
                                 }
-                            }
                         }
                     }
+                }
 
-                    // Recent Transactions header
-                    item {
-                        AppText(
-                            text = stringResource(
+                // Recent Transactions header
+                item {
+                    AppText(
+                        text =
+                            stringResource(
                                 R.string.home_recent_transactions_count,
                                 state.filteredTransactions.size,
                             ),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            modifier = Modifier.testTag("recent_transactions_count"),
-                        )
-                    }
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.testTag("recent_transactions_count"),
+                    )
+                }
 
-                    // Search Component - renderizzato condizionalmente come item separato
-                    // Pattern replicato da TransactionsScreen per fix timing issue del FocusRequester
-                    if (state.isSearchExpanded) {
-                        item {
-                            SearchComponent(
-                                isVisible = true,
-                                searchQuery = state.searchQuery,
-                                onSearchQueryChange = { newQuery ->
-                                    if (newQuery.isNotEmpty() && state.searchQuery.isEmpty()) {
-                                        analyticsManager.logEvent("home_search_submitted")
-                                        // Track search query initiated
-                                        analyticsManager.logEvent("search_query_initiated", android.os.Bundle().apply {
+                // Search Component - renderizzato condizionalmente come item separato
+                // Pattern replicato da TransactionsScreen per fix timing issue del FocusRequester
+                if (state.isSearchExpanded) {
+                    item {
+                        SearchComponent(
+                            isVisible = true,
+                            searchQuery = state.searchQuery,
+                            onSearchQueryChange = { newQuery ->
+                                if (newQuery.isNotEmpty() && state.searchQuery.isEmpty()) {
+                                    analyticsManager.logEvent("home_search_submitted")
+                                    // Track search query initiated
+                                    analyticsManager.logEvent(
+                                        "search_query_initiated",
+                                        android.os.Bundle().apply {
                                             putInt("query_length", newQuery.length)
                                             putBoolean("filters_active", false)
-                                        })
-                                    } else if (newQuery.isEmpty() && state.searchQuery.isNotEmpty()) {
-                                        analyticsManager.logEvent("home_search_cleared")
-                                    }
-                                    onEvent(HomeEvent.UpdateSearchQuery(newQuery))
-                                },
-                                searchSuggestions = state.searchSuggestions,
-                                modifier = Modifier.testTag("search_component"),
-                            )
-                        }
+                                        },
+                                    )
+                                } else if (newQuery.isEmpty() && state.searchQuery.isNotEmpty()) {
+                                    analyticsManager.logEvent("home_search_cleared")
+                                }
+                                onEvent(HomeEvent.UpdateSearchQuery(newQuery))
+                            },
+                            searchSuggestions = state.searchSuggestions,
+                            modifier = Modifier.testTag("search_component"),
+                        )
                     }
+                }
 
-                    // Transactions content
-                    if (state.filteredTransactions.isEmpty()) {
-                        item {
-                            AntEmptyState(
-                                mascotRes = R.drawable.ic_piggy_bank,
-                                title = stringResource(R.string.empty_state_no_transactions),
-                                subtitle = stringResource(R.string.empty_state_no_transactions_subtitle),
-                            )
-                        }
-                    } else {
-                        items(
-                            items = state.recentTransactions,
-                            key = { it.id },
-                        ) { transaction ->
-                            RecentTransactionItem(
-                                transaction = transaction,
-                                onClick = {
-                                    val params = android.os.Bundle().apply {
+                // Transactions content
+                if (state.filteredTransactions.isEmpty()) {
+                    item {
+                        AntEmptyState(
+                            mascotRes = R.drawable.ic_piggy_bank,
+                            title = stringResource(R.string.empty_state_no_transactions),
+                            subtitle = stringResource(R.string.empty_state_no_transactions_subtitle),
+                        )
+                    }
+                } else {
+                    items(
+                        items = state.recentTransactions,
+                        key = { it.id },
+                    ) { transaction ->
+                        RecentTransactionItem(
+                            transaction = transaction,
+                            onClick = {
+                                val params =
+                                    android.os.Bundle().apply {
                                         putInt("index", state.recentTransactions.indexOf(transaction))
                                         putString("type", transaction.type.name)
                                     }
-                                    analyticsManager.logEvent("home_transaction_clicked", params)
-                                    analyticsManager.logEvent("home_transaction_detail_opened")
-                                    // Notify multi-pane coordinator for foldable split-view sync
-                                    multiPaneCoordinator?.selectTransaction(
-                                        transaction = transaction,
-                                        navigateToDetailsPane = foldingFeature?.isSeparating == true
-                                    )
-                                    onEvent(HomeEvent.ShowTransactionDetails(transaction))
-                                },
-                                displayType = transactionDisplayType,
-                            )
-                        }
+                                analyticsManager.logEvent("home_transaction_clicked", params)
+                                analyticsManager.logEvent("home_transaction_detail_opened")
+                                // Notify multi-pane coordinator for foldable split-view sync
+                                multiPaneCoordinator?.selectTransaction(
+                                    transaction = transaction,
+                                    navigateToDetailsPane = foldingFeature?.isSeparating == true,
+                                )
+                                onEvent(HomeEvent.ShowTransactionDetails(transaction))
+                            },
+                            displayType = transactionDisplayType,
+                        )
                     }
-
-                    // Bottom spacer
-                    item { VerticalSpacer(SpacingSize.XS) }
                 }
+
+                // Bottom spacer
+                item { VerticalSpacer(SpacingSize.XS) }
             }
+        }
     }
 
     // FASE 1: Composable for transaction details pane (used in split-pane layout on foldable)
     @Composable
     fun TransactionDetailsPane(transaction: Transaction) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             AppText(
@@ -625,7 +630,7 @@ internal fun HomeContent(
                         if (multiPaneCoordinator?.showDetailsPane?.value == true && state.selectedTransaction != null) {
                             TransactionDetailsPane(state.selectedTransaction!!)
                         }
-                    }
+                    },
                 )
             } else {
                 // Single-pane layout for phones and tablets without fold

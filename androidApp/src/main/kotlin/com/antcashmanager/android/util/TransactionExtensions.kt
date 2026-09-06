@@ -8,12 +8,14 @@ import com.antcashmanager.domain.model.TransactionType
  * - INCOME  -> always positive
  * - EXPENSE -> always negative
  */
-fun Transaction.withCorrectAmount(): Transaction = this.copy(
-    amount = when (this.type) {
-        TransactionType.INCOME -> kotlin.math.abs(this.amount)
-        TransactionType.EXPENSE -> -kotlin.math.abs(this.amount)
-    }
-)
+fun Transaction.withCorrectAmount(): Transaction =
+    this.copy(
+        amount =
+            when (this.type) {
+                TransactionType.INCOME -> kotlin.math.abs(this.amount)
+                TransactionType.EXPENSE -> -kotlin.math.abs(this.amount)
+            },
+    )
 
 /**
  * Transforms a list of transactions to have correct amounts (negative for expenses).

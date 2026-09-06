@@ -10,4 +10,3 @@ import androidx.compose.runtime.staticCompositionLocalOf
  * "Reduce Motion" setting.
  */
 val LocalReduceMotion = staticCompositionLocalOf { false }
-

@@ -25,4 +25,3 @@ object BackupConstants {
      */
     const val CURRENT_VERSION = 4
 }
-

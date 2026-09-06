@@ -37,8 +37,9 @@ fun CurrencySymbolDialog(
         title = { AppText(stringResource(R.string.dialog_choose_currency)) },
         text = {
             Column(
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState()),
+                modifier =
+                    Modifier
+                        .verticalScroll(rememberScrollState()),
             ) {
                 CurrencyFormat.SUPPORTED_CURRENCIES.forEach { (symbol, label) ->
                     AppListItem(
@@ -58,4 +59,3 @@ fun CurrencySymbolDialog(
         },
     )
 }
-

@@ -40,19 +40,20 @@ enum class ChartCardType(
          * 7. Monthly chart
          * 8. Yearly chart
          */
-        val defaultOrder = listOf(
-            SPENDING_FORECAST_CARD,
-            QUICK_STATS_CARD,
-            DAILY_EXPENSE_CHART_CARD,
-            WEEKDAY_DISTRIBUTION_CARD,
-            INCOME_CATEGORY_PIE_CHART,
-            EXPENSE_CATEGORY_PIE_CHART,
-            TOP_INCOME_CATEGORIES,
-            TOP_EXPENSE_CATEGORIES,
-            PAYMENT_TYPE_BREAKDOWN,
-            MONTHLY_BAR_CHART,
-            YEARLY_BAR_CHART,
-        )
+        val defaultOrder =
+            listOf(
+                SPENDING_FORECAST_CARD,
+                QUICK_STATS_CARD,
+                DAILY_EXPENSE_CHART_CARD,
+                WEEKDAY_DISTRIBUTION_CARD,
+                INCOME_CATEGORY_PIE_CHART,
+                EXPENSE_CATEGORY_PIE_CHART,
+                TOP_INCOME_CATEGORIES,
+                TOP_EXPENSE_CATEGORIES,
+                PAYMENT_TYPE_BREAKDOWN,
+                MONTHLY_BAR_CHART,
+                YEARLY_BAR_CHART,
+            )
 
         /**
          * Parse serialized order string (comma-separated storage keys).
@@ -61,12 +62,13 @@ enum class ChartCardType(
         fun parse(raw: String): List<ChartCardType> {
             if (raw.isBlank()) return defaultOrder
 
-            val ordered = raw
-                .split(',')
-                .map(String::trim)
-                .mapNotNull { key -> entries.find { it.storageKey == key } }
-                .distinct()
-                .toMutableList()
+            val ordered =
+                raw
+                    .split(',')
+                    .map(String::trim)
+                    .mapNotNull { key -> entries.find { it.storageKey == key } }
+                    .distinct()
+                    .toMutableList()
 
             // Append any missing types in default order
             defaultOrder.forEach { type ->
@@ -81,7 +83,6 @@ enum class ChartCardType(
         /**
          * Serialize order to comma-separated storage key string.
          */
-        fun serialize(order: List<ChartCardType>): String =
-            order.joinToString(separator = ",") { it.storageKey }
+        fun serialize(order: List<ChartCardType>): String = order.joinToString(separator = ",") { it.storageKey }
     }
 }

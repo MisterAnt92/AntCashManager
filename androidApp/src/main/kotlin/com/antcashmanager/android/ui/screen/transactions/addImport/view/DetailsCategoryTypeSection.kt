@@ -1,15 +1,12 @@
 package com.antcashmanager.android.ui.screen.transactions.addImport.view
 
-import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
-import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
-import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.selection.AppSelectionItemCard
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
@@ -56,8 +53,9 @@ internal fun DetailsCategoryTypeSection(
     // ── Categoria – sempre editabile al tap ──
     AppSelectionItemCard(
         label = stringResource(R.string.add_transaction_category),
-        value = selectedCategory?.name
-            ?: stringResource(R.string.add_transaction_none),
+        value =
+            selectedCategory?.name
+                ?: stringResource(R.string.add_transaction_none),
         icon = selectedCategory?.icon,
         isEditable = true,
         onClick = onEditCategory,
@@ -67,16 +65,18 @@ internal fun DetailsCategoryTypeSection(
     // ── Tipo Transazione – sempre editabile al tap ──
     AppSelectionItemCard(
         label = stringResource(R.string.add_transaction_type),
-        value = when (selectedType) {
-            TransactionType.INCOME -> stringResource(R.string.add_transaction_income_label)
-            TransactionType.EXPENSE -> stringResource(R.string.add_transaction_expense_label)
-            null -> stringResource(R.string.add_transaction_none)
-        },
-        icon = when (selectedType) {
-            TransactionType.INCOME -> "💰"
-            TransactionType.EXPENSE -> "💸"
-            null -> null
-        },
+        value =
+            when (selectedType) {
+                TransactionType.INCOME -> stringResource(R.string.add_transaction_income_label)
+                TransactionType.EXPENSE -> stringResource(R.string.add_transaction_expense_label)
+                null -> stringResource(R.string.add_transaction_none)
+            },
+        icon =
+            when (selectedType) {
+                TransactionType.INCOME -> "💰"
+                TransactionType.EXPENSE -> "💸"
+                null -> null
+            },
         isEditable = true,
         onClick = onEditType,
     )
@@ -85,10 +85,11 @@ internal fun DetailsCategoryTypeSection(
     // ── Data – sempre editabile al tap ──
     AppSelectionItemCard(
         label = stringResource(R.string.add_transaction_field_date),
-        value = SimpleDateFormat(
-            "dd/MM/yyyy",
-            LocalLocale.current.platformLocale,
-        ).format(Date(timestamp)),
+        value =
+            SimpleDateFormat(
+                "dd/MM/yyyy",
+                LocalLocale.current.platformLocale,
+            ).format(Date(timestamp)),
         isEditable = true,
         onClick = onEditDate,
     )
@@ -97,11 +98,12 @@ internal fun DetailsCategoryTypeSection(
     // ── Tipo di Pagamento – sempre editabile al tap ──
     AppSelectionItemCard(
         label = stringResource(R.string.add_transaction_payment_type),
-        value = when (selectedPaymentType) {
-            PaymentType.ELECTRONIC -> stringResource(R.string.add_transaction_payment_type_electronic)
-            PaymentType.CASH -> stringResource(R.string.add_transaction_payment_type_cash)
-            PaymentType.MEAL_VOUCHERS -> stringResource(R.string.add_transaction_payment_type_meal_vouchers)
-        },
+        value =
+            when (selectedPaymentType) {
+                PaymentType.ELECTRONIC -> stringResource(R.string.add_transaction_payment_type_electronic)
+                PaymentType.CASH -> stringResource(R.string.add_transaction_payment_type_cash)
+                PaymentType.MEAL_VOUCHERS -> stringResource(R.string.add_transaction_payment_type_meal_vouchers)
+            },
         isEditable = true,
         onClick = onEditPaymentType,
     )

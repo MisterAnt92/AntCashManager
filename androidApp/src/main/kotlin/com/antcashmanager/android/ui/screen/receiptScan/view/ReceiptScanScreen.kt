@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -32,7 +31,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -45,29 +43,29 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.antcashmanager.android.ui.components.layout.SpacingSize
-import com.antcashmanager.android.ui.components.layout.VerticalSpacer
-import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.button.AppButton
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.selection.AppSelectionItemCard
 import com.antcashmanager.android.ui.components.text.AppText
+import com.antcashmanager.android.ui.screen.receiptScan.ReceiptScanEvent
 import com.antcashmanager.android.ui.screen.receiptScan.ReceiptScanState
 import com.antcashmanager.android.ui.screen.receiptScan.ReceiptScanStep
 import com.antcashmanager.android.ui.screen.receiptScan.ReceiptScanViewModel
-import com.antcashmanager.android.ui.screen.receiptScan.ReceiptScanEvent
 import com.antcashmanager.android.ui.screen.transactions.addImport.view.CategorySelectionDialog
 import com.antcashmanager.android.ui.screen.transactions.addImport.view.PaymentTypeSelectionDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.ImageCompressionHelper
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
-import co.touchlab.kermit.Logger
 import kotlinx.coroutines.launch
-import androidx.navigation.NavController
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import java.io.File
@@ -171,9 +169,10 @@ internal fun ReceiptScanContent(
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
     ) { innerPadding ->
         val contentModifier = Modifier.padding(innerPadding)
         when (state.step) {
@@ -236,74 +235,91 @@ private fun CaptureStep(
 
     // Launcher per foto dalla fotocamera (salva in file temp)
     val tempFile = remember { File.createTempFile("receipt_", ".jpg", context.cacheDir) }
-    val tempUri = remember {
-        if (isPreview) {
-            Uri.EMPTY
-        } else {
-            FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", tempFile)
-        }
-    }
-
-    val cameraLauncher = if (isPreview) null else rememberLauncherForActivityResult(
-        ActivityResultContracts.TakePicture(),
-    ) { success ->
-        if (success && tempFile.exists()) {
-            val bytes = tempFile.readBytes()
-            if (bytes.isNotEmpty()) {
-                analyticsManager.logEvent("receipt_scan_captured")
-
-                // ▼ AGGIUNTO: Comprimi immagine prima di passare a OCR
-                try {
-                    val compressedBytes = ImageCompressionHelper.compressImage(bytes)
-                    onImageBytes(compressedBytes)
-                } catch (e: Exception) {
-                    Logger.e(throwable = e) { "Image compression failed, using original" }
-                    // Fallback: usa comunque l'immagine originale (downsampling in
-                    // MlKitReceiptOcrService gestirà il ridimensionamento)
-                    onImageBytes(bytes)
-                }
-                // ▲ FINE AGGIUNTO
+    val tempUri =
+        remember {
+            if (isPreview) {
+                Uri.EMPTY
+            } else {
+                FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", tempFile)
             }
         }
-    }
+
+    val cameraLauncher =
+        if (isPreview) {
+            null
+        } else {
+            rememberLauncherForActivityResult(
+                ActivityResultContracts.TakePicture(),
+            ) { success ->
+                if (success && tempFile.exists()) {
+                    val bytes = tempFile.readBytes()
+                    if (bytes.isNotEmpty()) {
+                        analyticsManager.logEvent("receipt_scan_captured")
+
+                        // ▼ AGGIUNTO: Comprimi immagine prima di passare a OCR
+                        try {
+                            val compressedBytes = ImageCompressionHelper.compressImage(bytes)
+                            onImageBytes(compressedBytes)
+                        } catch (e: Exception) {
+                            Logger.e(throwable = e) { "Image compression failed, using original" }
+                            // Fallback: usa comunque l'immagine originale (downsampling in
+                            // MlKitReceiptOcrService gestirà il ridimensionamento)
+                            onImageBytes(bytes)
+                        }
+                        // ▲ FINE AGGIUNTO
+                    }
+                }
+            }
+        }
 
     val requestCameraPermissionLauncher =
-        if (isPreview) null else rememberLauncherForActivityResult(
-            ActivityResultContracts.RequestPermission(),
-        ) { granted ->
-            if (granted) {
-                cameraLauncher?.launch(tempUri)
-            }
-        }
-
-    val galleryLauncher = if (isPreview) null else rememberLauncherForActivityResult(
-        ActivityResultContracts.GetContent(),
-    ) { uri: Uri? ->
-        uri?.let {
-            val bytes = context.contentResolver.openInputStream(it)?.use { stream ->
-                stream.readBytes()
-            }
-            if (bytes != null && bytes.isNotEmpty()) {
-                analyticsManager.logEvent("receipt_scan_captured")
-
-                // ▼ AGGIUNTO: Comprimi immagine prima di passare a OCR
-                try {
-                    val compressedBytes = ImageCompressionHelper.compressImage(bytes)
-                    onImageBytes(compressedBytes)
-                } catch (e: Exception) {
-                    Logger.e(throwable = e) { "Image compression failed, using original" }
-                    // Fallback: usa comunque l'immagine originale (downsampling in
-                    // MlKitReceiptOcrService gestirà il ridimensionamento)
-                    onImageBytes(bytes)
+        if (isPreview) {
+            null
+        } else {
+            rememberLauncherForActivityResult(
+                ActivityResultContracts.RequestPermission(),
+            ) { granted ->
+                if (granted) {
+                    cameraLauncher?.launch(tempUri)
                 }
-                // ▲ FINE AGGIUNTO
             }
         }
-    }
+
+    val galleryLauncher =
+        if (isPreview) {
+            null
+        } else {
+            rememberLauncherForActivityResult(
+                ActivityResultContracts.GetContent(),
+            ) { uri: Uri? ->
+                uri?.let {
+                    val bytes =
+                        context.contentResolver.openInputStream(it)?.use { stream ->
+                            stream.readBytes()
+                        }
+                    if (bytes != null && bytes.isNotEmpty()) {
+                        analyticsManager.logEvent("receipt_scan_captured")
+
+                        // ▼ AGGIUNTO: Comprimi immagine prima di passare a OCR
+                        try {
+                            val compressedBytes = ImageCompressionHelper.compressImage(bytes)
+                            onImageBytes(compressedBytes)
+                        } catch (e: Exception) {
+                            Logger.e(throwable = e) { "Image compression failed, using original" }
+                            // Fallback: usa comunque l'immagine originale (downsampling in
+                            // MlKitReceiptOcrService gestirà il ridimensionamento)
+                            onImageBytes(bytes)
+                        }
+                        // ▲ FINE AGGIUNTO
+                    }
+                }
+            }
+        }
 
     Column(
-        modifier = modifier
-            .fillMaxSize(),
+        modifier =
+            modifier
+                .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -390,9 +406,10 @@ private fun ReviewStep(
 ) {
     val analyticsManager: AnalyticsManager = koinInject()
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         // Importo estratto
@@ -409,8 +426,9 @@ private fun ReviewStep(
         // Selezione categoria (AppSelectionItemCard style)
         AppSelectionItemCard(
             label = stringResource(R.string.add_transaction_select_category),
-            value = state.selectedCategory?.name
-                ?: stringResource(R.string.add_transaction_none),
+            value =
+                state.selectedCategory?.name
+                    ?: stringResource(R.string.add_transaction_none),
             icon = state.selectedCategory?.icon,
             isEditable = true,
             onClick = onShowCategoryDialog,
@@ -419,16 +437,18 @@ private fun ReviewStep(
         // Selezione tipo pagamento (AppSelectionItemCard style)
         AppSelectionItemCard(
             label = stringResource(R.string.receipt_scan_select_payment_type),
-            value = when (state.selectedPaymentType) {
-                PaymentType.ELECTRONIC -> stringResource(R.string.payment_type_electronic)
-                PaymentType.CASH -> stringResource(R.string.payment_type_cash)
-                PaymentType.MEAL_VOUCHERS -> stringResource(R.string.payment_type_meal_vouchers)
-            },
-            icon = when (state.selectedPaymentType) {
-                PaymentType.ELECTRONIC -> "💳"
-                PaymentType.CASH -> "💵"
-                PaymentType.MEAL_VOUCHERS -> "🎫"
-            },
+            value =
+                when (state.selectedPaymentType) {
+                    PaymentType.ELECTRONIC -> stringResource(R.string.payment_type_electronic)
+                    PaymentType.CASH -> stringResource(R.string.payment_type_cash)
+                    PaymentType.MEAL_VOUCHERS -> stringResource(R.string.payment_type_meal_vouchers)
+                },
+            icon =
+                when (state.selectedPaymentType) {
+                    PaymentType.ELECTRONIC -> "💳"
+                    PaymentType.CASH -> "💵"
+                    PaymentType.MEAL_VOUCHERS -> "🎫"
+                },
             isEditable = true,
             onClick = onShowPaymentTypeDialog,
         )
@@ -507,16 +527,18 @@ private fun ReceiptAmountCard(
     val isEdited = editedAmount != null
 
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(
-                color = if (isEdited)
-                    MaterialTheme.colorScheme.secondaryContainer
-                else
-                    MaterialTheme.colorScheme.primaryContainer,
-                shape = MaterialTheme.shapes.medium,
-            )
-            .padding(16.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .background(
+                    color =
+                        if (isEdited) {
+                            MaterialTheme.colorScheme.secondaryContainer
+                        } else {
+                            MaterialTheme.colorScheme.primaryContainer
+                        },
+                    shape = MaterialTheme.shapes.medium,
+                ).padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
@@ -540,15 +562,18 @@ private fun ReceiptAmountCard(
             shape = RoundedCornerShape(12.dp),
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-            supportingText = if (isEdited) {
-                {
-                    AppText(
-                        text = stringResource(R.string.receipt_scan_amount_edited),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.secondary,
-                    )
-                }
-            } else null,
+            supportingText =
+                if (isEdited) {
+                    {
+                        AppText(
+                            text = stringResource(R.string.receipt_scan_amount_edited),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.secondary,
+                        )
+                    }
+                } else {
+                    null
+                },
         )
 
         if (vatNote.isNotBlank()) {
@@ -571,7 +596,7 @@ private fun ReceiptAmountCard(
     showBackground = true,
     name = "ReceiptScanScreen - 10 inch",
     widthDp = 840,
-    heightDp = 1280
+    heightDp = 1280,
 )
 @Composable
 fun ReceiptScanCapturePreview() {
@@ -606,24 +631,26 @@ fun ReceiptScanReviewPreview() {
         val category =
             Category(name = "Alimentari", type = "EXPENSE", icon = "🛒", color = 0xFF4CAF50)
         ReceiptScanContent(
-            state = ReceiptScanState(
-                step = ReceiptScanStep.REVIEW,
-                title = "Esselunga",
-                payee = "Esselunga S.p.A.",
-                location = "Via Roma 1, Milano",
-                vatNote = "IVA 22%: €12.50",
-                selectedCategory = category,
-                selectedPaymentType = PaymentType.ELECTRONIC,
-                categories = listOf(category),
-                receiptData = com.antcashmanager.domain.model.ReceiptData(
-                    totalAmount = 68.90,
-                    vatRate = 22.0,
-                    vatAmount = 12.50,
+            state =
+                ReceiptScanState(
+                    step = ReceiptScanStep.REVIEW,
+                    title = "Esselunga",
                     payee = "Esselunga S.p.A.",
                     location = "Via Roma 1, Milano",
-                    paymentType = PaymentType.ELECTRONIC,
+                    vatNote = "IVA 22%: €12.50",
+                    selectedCategory = category,
+                    selectedPaymentType = PaymentType.ELECTRONIC,
+                    categories = listOf(category),
+                    receiptData =
+                        com.antcashmanager.domain.model.ReceiptData(
+                            totalAmount = 68.90,
+                            vatRate = 22.0,
+                            vatAmount = 12.50,
+                            payee = "Esselunga S.p.A.",
+                            location = "Via Roma 1, Milano",
+                            paymentType = PaymentType.ELECTRONIC,
+                        ),
                 ),
-            ),
             onImageBytes = {},
             onUpdateTitle = {},
             onUpdatePayee = {},

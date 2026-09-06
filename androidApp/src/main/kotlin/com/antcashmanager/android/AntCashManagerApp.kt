@@ -20,7 +20,6 @@ import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
 
 class AntCashManagerApp : Application() {
-
     private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun onCreate() {
@@ -63,141 +62,143 @@ class AntCashManagerApp : Application() {
 
         Logger.d(tag = "AntCashManagerApp") { "Seeding default categories" }
 
-        val expenseCategories = (
+        val expenseCategories =
+            (
                 listOf(
                     Category(
                         name = "Non categorizzato",
                         icon = "more_horiz",
                         color = 0xFF90A4AE,
                         type = "EXPENSE",
-                        isDefault = true
+                        isDefault = true,
                     ),
                     Category(
                         name = "Casa",
                         icon = "home",
                         color = 0xFF4FC3F7,
                         type = "EXPENSE",
-                        isDefault = true
+                        isDefault = true,
                     ),
                     Category(
                         name = "Trasporti",
                         icon = "directions_car",
                         color = 0xFF64B5F6,
                         type = "EXPENSE",
-                        isDefault = true
+                        isDefault = true,
                     ),
                     Category(
                         name = "Cibo",
                         icon = "restaurant",
                         color = 0xFFE57373,
                         type = "EXPENSE",
-                        isDefault = true
+                        isDefault = true,
                     ),
                     Category(
                         name = "Bollette",
                         icon = "receipt_long",
                         color = 0xFFFFB74D,
                         type = "EXPENSE",
-                        isDefault = true
+                        isDefault = true,
                     ),
                     Category(
                         name = "Pranzi/Cene fuori",
                         icon = "local_dining",
                         color = 0xFFF06292,
                         type = "EXPENSE",
-                        isDefault = true
+                        isDefault = true,
                     ),
                     Category(
                         name = "Divertimento",
                         icon = "theater_comedy",
                         color = 0xFFBA68C8,
                         type = "EXPENSE",
-                        isDefault = true
+                        isDefault = true,
                     ),
                     Category(
                         name = "Salute",
                         icon = "local_hospital",
                         color = 0xFF81C784,
                         type = "EXPENSE",
-                        isDefault = true
+                        isDefault = true,
                     ),
                     Category(
                         name = "Shopping",
                         icon = "shopping_bag",
                         color = 0xFFDCE775,
                         type = "EXPENSE",
-                        isDefault = true
+                        isDefault = true,
                     ),
                     Category(
                         name = "Istruzione",
                         icon = "school",
                         color = 0xFF7986CB,
                         type = "EXPENSE",
-                        isDefault = true
+                        isDefault = true,
                     ),
                     Category(
                         name = "Altro",
                         icon = "more_horiz",
                         color = 0xFF90A4AE,
                         type = "EXPENSE",
-                        isDefault = true
+                        isDefault = true,
                     ),
                 ) + newDefaultExpenseCategories
-                ).mapIndexed { index, category -> category.copy(sortOrder = index) }
+            ).mapIndexed { index, category -> category.copy(sortOrder = index) }
 
-        val incomeCategories = (
+        val incomeCategories =
+            (
                 listOf(
                     Category(
                         name = "Non categorizzato",
                         icon = "more_horiz",
                         color = 0xFF90A4AE,
                         type = "INCOME",
-                        isDefault = true
+                        isDefault = true,
                     ),
                     Category(
                         name = "Stipendio",
                         icon = "payments",
                         color = 0xFF81C784,
                         type = "INCOME",
-                        isDefault = true
+                        isDefault = true,
                     ),
                     Category(
                         name = "Paghetta",
                         icon = "savings",
                         color = 0xFF4DB6AC,
                         type = "INCOME",
-                        isDefault = true
+                        isDefault = true,
                     ),
                     Category(
                         name = "Rimborso",
                         icon = "currency_exchange",
                         color = 0xFF64B5F6,
                         type = "INCOME",
-                        isDefault = true
+                        isDefault = true,
                     ),
                     Category(
                         name = "Investimenti",
                         icon = "trending_up",
                         color = 0xFFFFD54F,
                         type = "INCOME",
-                        isDefault = true
+                        isDefault = true,
                     ),
                     Category(
                         name = "Freelance",
                         icon = "work",
                         color = 0xFFA1887F,
                         type = "INCOME",
-                        isDefault = true
+                        isDefault = true,
                     ),
                     Category(
                         name = "Altro",
                         icon = "more_horiz",
                         color = 0xFF90A4AE,
                         type = "INCOME",
-                        isDefault = true
+                        isDefault = true,
                     ),
                 ) + newDefaultIncomeCategories
-                ).mapIndexed { index, category -> category.copy(sortOrder = index) }
+            ).mapIndexed { index, category -> category.copy(sortOrder = index) }
 
         (expenseCategories + incomeCategories).forEach { category ->
             categoryRepository.insertCategory(category)
@@ -224,7 +225,9 @@ class AntCashManagerApp : Application() {
         if (settingsRepository.getCategorySortOrderInitialized().first()) return
 
         val categoryRepository: CategoryRepository = get()
-        categoryRepository.getAllCategories().first()
+        categoryRepository
+            .getAllCategories()
+            .first()
             .groupBy { it.type }
             .values
             .forEach { categoriesOfType ->
@@ -244,46 +247,48 @@ class AntCashManagerApp : Application() {
      * primo avvio in assoluto (vedi [seedDefaultCategories]) e retro-inserite singolarmente per
      * chi ha già categorie esistenti (vedi [backfillNewDefaultCategories]).
      */
-    private val newDefaultExpenseCategories = listOf(
-        Category(
-            name = "Regali",
-            icon = "redeem",
-            color = 0xFFFF8A65,
-            type = "EXPENSE",
-            isDefault = true
-        ),
-        Category(
-            name = "Abbonamenti",
-            icon = "subscriptions",
-            color = 0xFFFFD54F,
-            type = "EXPENSE",
-            isDefault = true
-        ),
-        Category(
-            name = "Cura personale",
-            icon = "spa",
-            color = 0xFFA1887F,
-            type = "EXPENSE",
-            isDefault = true
-        ),
-    )
+    private val newDefaultExpenseCategories =
+        listOf(
+            Category(
+                name = "Regali",
+                icon = "redeem",
+                color = 0xFFFF8A65,
+                type = "EXPENSE",
+                isDefault = true,
+            ),
+            Category(
+                name = "Abbonamenti",
+                icon = "subscriptions",
+                color = 0xFFFFD54F,
+                type = "EXPENSE",
+                isDefault = true,
+            ),
+            Category(
+                name = "Cura personale",
+                icon = "spa",
+                color = 0xFFA1887F,
+                type = "EXPENSE",
+                isDefault = true,
+            ),
+        )
 
-    private val newDefaultIncomeCategories = listOf(
-        Category(
-            name = "Regalo",
-            icon = "redeem",
-            color = 0xFFFF8A65,
-            type = "INCOME",
-            isDefault = true
-        ),
-        Category(
-            name = "Buoni pasto",
-            icon = "card_giftcard",
-            color = 0xFF66BB6A,
-            type = "INCOME",
-            isDefault = true
-        ),
-    )
+    private val newDefaultIncomeCategories =
+        listOf(
+            Category(
+                name = "Regalo",
+                icon = "redeem",
+                color = 0xFFFF8A65,
+                type = "INCOME",
+                isDefault = true,
+            ),
+            Category(
+                name = "Buoni pasto",
+                icon = "card_giftcard",
+                color = 0xFF66BB6A,
+                type = "INCOME",
+                isDefault = true,
+            ),
+        )
 
     private suspend fun backfillNewDefaultCategories(categoryRepository: CategoryRepository) {
         newDefaultExpenseCategories.forEach { category ->

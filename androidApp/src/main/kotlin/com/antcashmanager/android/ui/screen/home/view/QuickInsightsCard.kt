@@ -44,20 +44,22 @@ fun QuickInsightsCard(
     biggestExpenseAmount: Double? = null,
     modifier: Modifier = Modifier,
 ) {
-    val averageAmount = if (transactionCount > 0) {
-        (abs(totalIncome) + abs(totalExpense)) / transactionCount
-    } else {
-        0.0
-    }
+    val averageAmount =
+        if (transactionCount > 0) {
+            (abs(totalIncome) + abs(totalExpense)) / transactionCount
+        } else {
+            0.0
+        }
 
     AnimatedCard(
         modifier = modifier.fillMaxWidth(),
         backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Row(
@@ -112,22 +114,24 @@ private fun InsightRow(
 ) {
     val fmt = LocalCurrencyFormat.current
     val masked = LocalAmountsMasked.current
-    val valueDescription = value ?: money?.let { formatAmount(it, fmt) }
-        ?.let { if (masked) maskDigits(it) else it }
-        .orEmpty()
+    val valueDescription =
+        value ?: money
+            ?.let { formatAmount(it, fmt) }
+            ?.let { if (masked) maskDigits(it) else it }
+            .orEmpty()
     val rowDescription = stringResource(R.string.home_insight_row_cd, label, valueDescription)
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.12f),
-                shape = RoundedCornerShape(10.dp),
-            )
-            .padding(horizontal = 12.dp, vertical = 10.dp)
-            .semantics(mergeDescendants = true) {
-                contentDescription = rowDescription
-            },
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .background(
+                    color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.12f),
+                    shape = RoundedCornerShape(10.dp),
+                ).padding(horizontal = 12.dp, vertical = 10.dp)
+                .semantics(mergeDescendants = true) {
+                    contentDescription = rowDescription
+                },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {

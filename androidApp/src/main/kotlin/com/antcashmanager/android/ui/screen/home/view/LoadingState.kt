@@ -10,9 +10,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 @Composable
-fun LoadingState(
-    modifier: Modifier = Modifier,
-) {
+fun LoadingState(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
@@ -28,4 +26,3 @@ private fun LoadingStatePreview() {
         LoadingState()
     }
 }
-

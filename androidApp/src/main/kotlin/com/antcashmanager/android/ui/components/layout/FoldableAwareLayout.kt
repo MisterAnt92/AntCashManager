@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -91,9 +90,7 @@ fun FoldableAwareLayout(
  * @param foldingFeature Fold information from androidx.window
  * @return True if layout should use split panes, False for single pane
  */
-fun shouldUseSplitPane(foldingFeature: FoldingFeature?): Boolean {
-    return foldingFeature != null && foldingFeature.isSeparating
-}
+fun shouldUseSplitPane(foldingFeature: FoldingFeature?): Boolean = foldingFeature != null && foldingFeature.isSeparating
 
 /**
  * Determine if fold is vertical (Z Fold) or horizontal (Z Flip).
@@ -101,9 +98,8 @@ fun shouldUseSplitPane(foldingFeature: FoldingFeature?): Boolean {
  * @param foldingFeature Fold information
  * @return True if vertical fold, False if horizontal or no fold
  */
-fun isFoldVertical(foldingFeature: FoldingFeature?): Boolean {
-    return foldingFeature?.orientation == FoldingFeature.Orientation.VERTICAL
-}
+fun isFoldVertical(foldingFeature: FoldingFeature?): Boolean =
+    foldingFeature?.orientation == FoldingFeature.Orientation.VERTICAL
 
 /**
  * Determine if fold is horizontal (Z Flip).
@@ -111,9 +107,8 @@ fun isFoldVertical(foldingFeature: FoldingFeature?): Boolean {
  * @param foldingFeature Fold information
  * @return True if horizontal fold, False if vertical or no fold
  */
-fun isFoldHorizontal(foldingFeature: FoldingFeature?): Boolean {
-    return foldingFeature?.orientation == FoldingFeature.Orientation.HORIZONTAL
-}
+fun isFoldHorizontal(foldingFeature: FoldingFeature?): Boolean =
+    foldingFeature?.orientation == FoldingFeature.Orientation.HORIZONTAL
 
 // Constants
-private val HINGE_WIDTH = 20.dp  // Approximate hinge/fold width for spacing
+private val HINGE_WIDTH = 20.dp // Approximate hinge/fold width for spacing

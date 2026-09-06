@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit
 class AutoBackupScheduler(
     private val application: Application,
 ) {
-
     companion object {
         private const val UNIQUE_WORK_NAME = "auto_backup_weekly"
         private const val BACKUP_INTERVAL_DAYS = 7L
@@ -38,16 +37,15 @@ class AutoBackupScheduler(
         try {
             Logger.d(tag = "AutoBackupScheduler") { "Scheduling auto backup (7-day interval)" }
 
-            val backupWorkRequest = PeriodicWorkRequestBuilder<AutoBackupWorker>(
-                BACKUP_INTERVAL_DAYS,
-                TimeUnit.DAYS,
-            )
-                .setBackoffCriteria(
+            val backupWorkRequest =
+                PeriodicWorkRequestBuilder<AutoBackupWorker>(
+                    BACKUP_INTERVAL_DAYS,
+                    TimeUnit.DAYS,
+                ).setBackoffCriteria(
                     BackoffPolicy.LINEAR,
                     INITIAL_BACKOFF_MINUTES,
                     TimeUnit.MINUTES,
-                )
-                .build()
+                ).build()
 
             WorkManager.getInstance(application).enqueueUniquePeriodicWork(
                 UNIQUE_WORK_NAME,

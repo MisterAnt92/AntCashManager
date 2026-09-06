@@ -34,7 +34,6 @@ import org.junit.Before
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 abstract class BaseUnitTest {
-
     protected lateinit var testDispatcher: TestDispatcher
 
     @Before
@@ -48,13 +47,10 @@ abstract class BaseUnitTest {
         Dispatchers.resetMain()
     }
 
-    protected fun runUnitTest(block: suspend TestScope.() -> Unit) =
-        runTest(testDispatcher) { block() }
+    protected fun runUnitTest(block: suspend TestScope.() -> Unit) = runTest(testDispatcher) { block() }
 
-    protected fun runViewModelTest(block: suspend TestScope.() -> Unit) =
-        runUnitTest(block)
+    protected fun runViewModelTest(block: suspend TestScope.() -> Unit) = runUnitTest(block)
 
     protected fun TestScope.launchInBackground(block: suspend CoroutineScope.() -> Unit): Job =
         backgroundScope.launch(testDispatcher) { block() }
 }
-

@@ -29,7 +29,7 @@ class MlKitReceiptOcrService : ReceiptOcrService {
     companion object {
         private const val MAX_BITMAP_WIDTH = 2048
         private const val MAX_BITMAP_HEIGHT = 2048
-        private const val MEMORY_WARNING_THRESHOLD = 50_000_000  // 50MB
+        private const val MEMORY_WARNING_THRESHOLD = 50_000_000 // 50MB
     }
 
     /**
@@ -50,8 +50,9 @@ class MlKitReceiptOcrService : ReceiptOcrService {
             // ═══════════════════════════════════════════════════════════════════
             // STEP 1: Check available heap memory (defensive)
             // ═══════════════════════════════════════════════════════════════════
-            val availableHeap = Runtime.getRuntime().maxMemory() -
-                (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())
+            val availableHeap =
+                Runtime.getRuntime().maxMemory() -
+                    (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())
 
             if (availableHeap < MEMORY_WARNING_THRESHOLD) {
                 Logger.w(tag = ReceiptConstants.TAG) {
@@ -62,9 +63,10 @@ class MlKitReceiptOcrService : ReceiptOcrService {
             // ═══════════════════════════════════════════════════════════════════
             // STEP 2: Decode dimensions WITHOUT allocating bitmap
             // ═══════════════════════════════════════════════════════════════════
-            val dimensionOptions = BitmapFactory.Options().apply {
-                inJustDecodeBounds = true
-            }
+            val dimensionOptions =
+                BitmapFactory.Options().apply {
+                    inJustDecodeBounds = true
+                }
             BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size, dimensionOptions)
 
             val imageWidth = dimensionOptions.outWidth
@@ -80,21 +82,23 @@ class MlKitReceiptOcrService : ReceiptOcrService {
             val inSampleSize = calculateInSampleSize(imageWidth, imageHeight)
 
             Logger.d(tag = ReceiptConstants.TAG) {
-                "Image dimensions: ${imageWidth}×${imageHeight}, " +
-                "inSampleSize=$inSampleSize, " +
-                "final size: ${imageWidth / inSampleSize}×${imageHeight / inSampleSize}"
+                "Image dimensions: $imageWidth×$imageHeight, " +
+                    "inSampleSize=$inSampleSize, " +
+                    "final size: ${imageWidth / inSampleSize}×${imageHeight / inSampleSize}"
             }
 
             // ═══════════════════════════════════════════════════════════════════
             // STEP 4: Decode bitmap WITH downsampling
             // ═══════════════════════════════════════════════════════════════════
-            val decodeOptions = BitmapFactory.Options().apply {
-                this.inSampleSize = inSampleSize
-                inPreferredConfig = Bitmap.Config.ARGB_8888  // ML Kit richiede ARGB
-            }
+            val decodeOptions =
+                BitmapFactory.Options().apply {
+                    this.inSampleSize = inSampleSize
+                    inPreferredConfig = Bitmap.Config.ARGB_8888 // ML Kit richiede ARGB
+                }
 
-            val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size, decodeOptions)
-                ?: return Result.failure(ReceiptScanException.InvalidImage)
+            val bitmap =
+                BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size, decodeOptions)
+                    ?: return Result.failure(ReceiptScanException.InvalidImage)
 
             try {
                 // ═════════════════════════════════════════════════════════════
@@ -103,17 +107,17 @@ class MlKitReceiptOcrService : ReceiptOcrService {
                 val inputImage = InputImage.fromBitmap(bitmap, 0)
 
                 return suspendCancellableCoroutine { continuation ->
-                    recognizer.process(inputImage)
+                    recognizer
+                        .process(inputImage)
                         .addOnSuccessListener { visionText ->
                             Logger.d(tag = ReceiptConstants.TAG) {
                                 "OCR success: ${visionText.text.length} chars extracted"
                             }
                             continuation.resume(Result.success(visionText.text))
-                        }
-                        .addOnFailureListener { exception ->
+                        }.addOnFailureListener { exception ->
                             Logger.e(throwable = exception, tag = ReceiptConstants.TAG) { "OCR failed" }
                             continuation.resume(
-                                Result.failure(ReceiptScanException.OcrFailed(exception))
+                                Result.failure(ReceiptScanException.OcrFailed(exception)),
                             )
                         }
 
@@ -151,17 +155,17 @@ class MlKitReceiptOcrService : ReceiptOcrService {
         imageWidth: Int,
         imageHeight: Int,
         maxWidth: Int = MAX_BITMAP_WIDTH,
-        maxHeight: Int = MAX_BITMAP_HEIGHT
+        maxHeight: Int = MAX_BITMAP_HEIGHT,
     ): Int {
         var inSampleSize = 1
 
         // Downsampling progressivo finché non rientra nei limiti
         while ((imageWidth / inSampleSize) > maxWidth ||
-            (imageHeight / inSampleSize) > maxHeight) {
+            (imageHeight / inSampleSize) > maxHeight
+        ) {
             inSampleSize *= 2
         }
 
         return inSampleSize
     }
 }
-

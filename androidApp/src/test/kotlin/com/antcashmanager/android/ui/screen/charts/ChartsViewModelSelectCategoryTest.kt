@@ -35,7 +35,6 @@ import java.util.Calendar
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
-
     private lateinit var fakeTransactionRepo: FakeTransactionRepository
     private lateinit var fakeSettingsRepo: FakeSettingsRepository
     private lateinit var performanceTracker: PerformanceTracker
@@ -49,211 +48,251 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
         performanceTracker = mockk(relaxed = true)
         segmentationTracker = mockk(relaxed = true)
         // Pass testDispatcher to ensure ViewModel uses the same dispatcher as the test
-        viewModel = ChartsViewModel(fakeTransactionRepo, fakeSettingsRepo, dispatcher = testDispatcher, performanceTracker = performanceTracker, segmentationTracker = segmentationTracker)
+        viewModel =
+            ChartsViewModel(
+                fakeTransactionRepo,
+                fakeSettingsRepo,
+                dispatcher = testDispatcher,
+                performanceTracker = performanceTracker,
+                segmentationTracker = segmentationTracker,
+            )
     }
 
     @Test
-    fun selectChartCategory_updatesSelectedChartDetails() = runViewModelTest {
-        val collectJob = launchInBackground {
-            viewModel.selectedChartDetails.collect { }
+    fun selectChartCategory_updatesSelectedChartDetails() =
+        runViewModelTest {
+            val collectJob =
+                launchInBackground {
+                    viewModel.selectedChartDetails.collect { }
+                }
+
+            viewModel.onEvent(
+                ChartEvent.SelectChartCategory(
+                    categoryName = "Food",
+                    amount = 250.0,
+                    colorHex = 0xFFE57373,
+                    isExpense = true,
+                ),
+            )
+            advanceUntilIdle()
+
+            val details = viewModel.selectedChartDetails.value
+            assertNotNull(details)
+            assertEquals("Food", details?.categoryName)
+            assertEquals(250.0, details?.amount ?: 0.0, 0.01)
+
+            collectJob.cancel()
         }
-
-        viewModel.onEvent(ChartEvent.SelectChartCategory(
-            categoryName = "Food",
-            amount = 250.0,
-            colorHex = 0xFFE57373,
-            isExpense = true,
-        ))
-        advanceUntilIdle()
-
-        val details = viewModel.selectedChartDetails.value
-        assertNotNull(details)
-        assertEquals("Food", details?.categoryName)
-        assertEquals(250.0, details?.amount ?: 0.0, 0.01)
-
-        collectJob.cancel()
-    }
 
     @Test
-    fun selectChartCategory_calculatesPercentageCorrectly() = runViewModelTest {
-        val cal = Calendar.getInstance()
-        cal.set(2024, 0, 1, 12, 0, 0)
-        val timestamp = cal.timeInMillis
+    fun selectChartCategory_calculatesPercentageCorrectly() =
+        runViewModelTest {
+            val cal = Calendar.getInstance()
+            cal.set(2024, 0, 1, 12, 0, 0)
+            val timestamp = cal.timeInMillis
 
-        fakeTransactionRepo.transactions.value = listOf(
-            Transaction(
-                id = 1,
-                title = "Food",
-                amount = -100.0,
-                timestamp = timestamp,
-                category = "Food",
-                type = TransactionType.EXPENSE,
-                paymentType = PaymentType.CASH
-            ),
-            Transaction(
-                id = 2,
-                title = "Transport",
-                amount = -150.0,
-                timestamp = timestamp,
-                category = "Transport",
-                type = TransactionType.EXPENSE,
-                paymentType = PaymentType.CASH
-            ),
-        )
+            fakeTransactionRepo.transactions.value =
+                listOf(
+                    Transaction(
+                        id = 1,
+                        title = "Food",
+                        amount = -100.0,
+                        timestamp = timestamp,
+                        category = "Food",
+                        type = TransactionType.EXPENSE,
+                        paymentType = PaymentType.CASH,
+                    ),
+                    Transaction(
+                        id = 2,
+                        title = "Transport",
+                        amount = -150.0,
+                        timestamp = timestamp,
+                        category = "Transport",
+                        type = TransactionType.EXPENSE,
+                        paymentType = PaymentType.CASH,
+                    ),
+                )
 
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            launch { viewModel.chartData.collect { } }
-            launch { viewModel.selectedChartDetails.collect { } }
+            val collectJob =
+                launch(UnconfinedTestDispatcher(testScheduler)) {
+                    launch { viewModel.chartData.collect { } }
+                    launch { viewModel.selectedChartDetails.collect { } }
+                }
+            advanceUntilIdle()
+
+            // Set date range to load transactions
+            viewModel.onEvent(ChartEvent.SetDateRange(timestamp - 86_400_000L, timestamp + 86_400_000L))
+            advanceUntilIdle()
+
+            // Select Food category (100 out of 250 total = 40%)
+            viewModel.onEvent(
+                ChartEvent.SelectChartCategory(
+                    categoryName = "Food",
+                    amount = 100.0,
+                    colorHex = 0xFFE57373,
+                    isExpense = true,
+                ),
+            )
+            advanceUntilIdle()
+
+            val details = viewModel.selectedChartDetails.value
+            assertEquals(40, details?.percentage)
+
+            collectJob.cancel()
         }
-        advanceUntilIdle()
-
-        // Set date range to load transactions
-        viewModel.onEvent(ChartEvent.SetDateRange(timestamp - 86_400_000L, timestamp + 86_400_000L))
-        advanceUntilIdle()
-
-        // Select Food category (100 out of 250 total = 40%)
-        viewModel.onEvent(ChartEvent.SelectChartCategory(
-            categoryName = "Food",
-            amount = 100.0,
-            colorHex = 0xFFE57373,
-            isExpense = true,
-        ))
-        advanceUntilIdle()
-
-        val details = viewModel.selectedChartDetails.value
-        assertEquals(40, details?.percentage)
-
-        collectJob.cancel()
-    }
 
     @Test
-    fun selectChartCategory_coercesPercentageBounds() = runViewModelTest {
-        val collectJob = launchInBackground {
-            viewModel.selectedChartDetails.collect { }
+    fun selectChartCategory_coercesPercentageBounds() =
+        runViewModelTest {
+            val collectJob =
+                launchInBackground {
+                    viewModel.selectedChartDetails.collect { }
+                }
+
+            viewModel.onEvent(
+                ChartEvent.SelectChartCategory(
+                    categoryName = "Test",
+                    amount = 1000.0,
+                    colorHex = 0xFFE57373,
+                    isExpense = true,
+                ),
+            )
+            advanceUntilIdle()
+
+            val details = viewModel.selectedChartDetails.value
+            // Percentage should be clamped to max 100
+            assertEquals(true, details?.percentage!! <= 100)
+
+            collectJob.cancel()
         }
-
-        viewModel.onEvent(ChartEvent.SelectChartCategory(
-            categoryName = "Test",
-            amount = 1000.0,
-            colorHex = 0xFFE57373,
-            isExpense = true,
-        ))
-        advanceUntilIdle()
-
-        val details = viewModel.selectedChartDetails.value
-        // Percentage should be clamped to max 100
-        assertEquals(true, details?.percentage!! <= 100)
-
-        collectJob.cancel()
-    }
 
     @Test
-    fun selectChartCategory_handleZeroTotalAmount() = runViewModelTest {
-        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
-            launch { viewModel.chartData.collect { } }
-            launch { viewModel.selectedChartDetails.collect { } }
+    fun selectChartCategory_handleZeroTotalAmount() =
+        runViewModelTest {
+            val collectJob =
+                launch(UnconfinedTestDispatcher(testScheduler)) {
+                    launch { viewModel.chartData.collect { } }
+                    launch { viewModel.selectedChartDetails.collect { } }
+                }
+            advanceUntilIdle()
+
+            viewModel.onEvent(
+                ChartEvent.SelectChartCategory(
+                    categoryName = "Empty",
+                    amount = 100.0,
+                    colorHex = 0xFFE57373,
+                    isExpense = true,
+                ),
+            )
+            advanceUntilIdle()
+
+            val details = viewModel.selectedChartDetails.value
+            // When total is 0, percentage should be 0
+            assertEquals(0, details?.percentage)
+
+            collectJob.cancel()
         }
-        advanceUntilIdle()
-
-        viewModel.onEvent(ChartEvent.SelectChartCategory(
-            categoryName = "Empty",
-            amount = 100.0,
-            colorHex = 0xFFE57373,
-            isExpense = true,
-        ))
-        advanceUntilIdle()
-
-        val details = viewModel.selectedChartDetails.value
-        // When total is 0, percentage should be 0
-        assertEquals(0, details?.percentage)
-
-        collectJob.cancel()
-    }
 
     @Test
-    fun selectChartCategory_storesColorHex() = runViewModelTest {
-        val collectJob = launchInBackground {
-            viewModel.selectedChartDetails.collect { }
+    fun selectChartCategory_storesColorHex() =
+        runViewModelTest {
+            val collectJob =
+                launchInBackground {
+                    viewModel.selectedChartDetails.collect { }
+                }
+
+            val colorHex = 0xFFE57373L
+            viewModel.onEvent(
+                ChartEvent.SelectChartCategory(
+                    categoryName = "Food",
+                    amount = 250.0,
+                    colorHex = colorHex,
+                    isExpense = true,
+                ),
+            )
+            advanceUntilIdle()
+
+            val details = viewModel.selectedChartDetails.value
+            assertEquals(colorHex, details?.colorHex)
+
+            collectJob.cancel()
         }
-
-        val colorHex = 0xFFE57373L
-        viewModel.onEvent(ChartEvent.SelectChartCategory(
-            categoryName = "Food",
-            amount = 250.0,
-            colorHex = colorHex,
-            isExpense = true,
-        ))
-        advanceUntilIdle()
-
-        val details = viewModel.selectedChartDetails.value
-        assertEquals(colorHex, details?.colorHex)
-
-        collectJob.cancel()
-    }
 
     @Test
-    fun clearChartSelection_setsDetailsToNull() = runViewModelTest {
-        val collectJob = launchInBackground {
-            viewModel.selectedChartDetails.collect { }
+    fun clearChartSelection_setsDetailsToNull() =
+        runViewModelTest {
+            val collectJob =
+                launchInBackground {
+                    viewModel.selectedChartDetails.collect { }
+                }
+
+            // First select a category
+            viewModel.onEvent(
+                ChartEvent.SelectChartCategory(
+                    categoryName = "Food",
+                    amount = 250.0,
+                    colorHex = 0xFFE57373,
+                    isExpense = true,
+                ),
+            )
+            advanceUntilIdle()
+            assertNotNull(viewModel.selectedChartDetails.value)
+
+            // Then clear
+            viewModel.onEvent(ChartEvent.ClearChartSelection)
+            advanceUntilIdle()
+
+            assertNull(viewModel.selectedChartDetails.value)
+
+            collectJob.cancel()
         }
-
-        // First select a category
-        viewModel.onEvent(ChartEvent.SelectChartCategory(
-            categoryName = "Food",
-            amount = 250.0,
-            colorHex = 0xFFE57373,
-            isExpense = true,
-        ))
-        advanceUntilIdle()
-        assertNotNull(viewModel.selectedChartDetails.value)
-
-        // Then clear
-        viewModel.onEvent(ChartEvent.ClearChartSelection)
-        advanceUntilIdle()
-
-        assertNull(viewModel.selectedChartDetails.value)
-
-        collectJob.cancel()
-    }
 
     @Test
-    fun selectChartCategory_handlesIncomeCategory() = runViewModelTest {
-        val collectJob = launchInBackground {
-            viewModel.selectedChartDetails.collect { }
+    fun selectChartCategory_handlesIncomeCategory() =
+        runViewModelTest {
+            val collectJob =
+                launchInBackground {
+                    viewModel.selectedChartDetails.collect { }
+                }
+
+            viewModel.onEvent(
+                ChartEvent.SelectChartCategory(
+                    categoryName = "Salary",
+                    amount = 5000.0,
+                    colorHex = 0xFF81C784,
+                    isExpense = false,
+                ),
+            )
+            advanceUntilIdle()
+
+            val details = viewModel.selectedChartDetails.value
+            assertEquals("Salary", details?.categoryName)
+            assertEquals(5000.0, details?.amount ?: 0.0, 0.01)
+
+            collectJob.cancel()
         }
-
-        viewModel.onEvent(ChartEvent.SelectChartCategory(
-            categoryName = "Salary",
-            amount = 5000.0,
-            colorHex = 0xFF81C784,
-            isExpense = false,
-        ))
-        advanceUntilIdle()
-
-        val details = viewModel.selectedChartDetails.value
-        assertEquals("Salary", details?.categoryName)
-        assertEquals(5000.0, details?.amount ?: 0.0, 0.01)
-
-        collectJob.cancel()
-    }
 
     @Test
-    fun selectChartCategory_defaultsTrendToNeutral() = runViewModelTest {
-        val collectJob = launchInBackground {
-            viewModel.selectedChartDetails.collect { }
+    fun selectChartCategory_defaultsTrendToNeutral() =
+        runViewModelTest {
+            val collectJob =
+                launchInBackground {
+                    viewModel.selectedChartDetails.collect { }
+                }
+
+            viewModel.onEvent(
+                ChartEvent.SelectChartCategory(
+                    categoryName = "Food",
+                    amount = 250.0,
+                    colorHex = 0xFFE57373,
+                    isExpense = true,
+                ),
+            )
+            advanceUntilIdle()
+
+            val details = viewModel.selectedChartDetails.value
+            assertEquals(TrendDirection.NEUTRAL, details?.trend)
+
+            collectJob.cancel()
         }
-
-        viewModel.onEvent(ChartEvent.SelectChartCategory(
-            categoryName = "Food",
-            amount = 250.0,
-            colorHex = 0xFFE57373,
-            isExpense = true,
-        ))
-        advanceUntilIdle()
-
-        val details = viewModel.selectedChartDetails.value
-        assertEquals(TrendDirection.NEUTRAL, details?.trend)
-
-        collectJob.cancel()
-    }
 }

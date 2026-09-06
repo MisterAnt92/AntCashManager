@@ -17,7 +17,6 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class SettingsDataScreenTest : BaseInstrumentationTest() {
-
     @Test
     fun restoreData_shouldReportError_whenFilePickerUnavailable() {
         val ctx = InstrumentationRegistry.getInstrumentation().targetContext
@@ -52,10 +51,11 @@ class SettingsDataScreenTest : BaseInstrumentationTest() {
             CompositionLocalProvider(LocalInspectionMode provides true) {
                 AntCashManagerTheme {
                     SettingsDataContent(
-                        state = SettingsDataState(
-                            pendingBackupData = "{\"version\":1}",
-                            pendingBackupFileName = "antcashmanager_backup_test.json",
-                        ),
+                        state =
+                            SettingsDataState(
+                                pendingBackupData = "{\"version\":1}",
+                                pendingBackupFileName = "antcashmanager_backup_test.json",
+                            ),
                         onBackupFileSaveError = { receivedError = it },
                     )
                 }
@@ -75,10 +75,11 @@ class SettingsDataScreenTest : BaseInstrumentationTest() {
         composeTestRule.setContent {
             AntCashManagerTheme {
                 SettingsDataContent(
-                    state = SettingsDataState(
-                        autoBackupEnabled = true,
-                        autoBackupFolderUri = "content://some/path",
-                    ),
+                    state =
+                        SettingsDataState(
+                            autoBackupEnabled = true,
+                            autoBackupFolderUri = "content://some/path",
+                        ),
                 )
             }
         }
@@ -94,9 +95,10 @@ class SettingsDataScreenTest : BaseInstrumentationTest() {
         composeTestRule.setContent {
             AntCashManagerTheme {
                 SettingsDataContent(
-                    state = SettingsDataState(
-                        autoBackupEnabled = false,
-                    ),
+                    state =
+                        SettingsDataState(
+                            autoBackupEnabled = false,
+                        ),
                 )
             }
         }
@@ -112,10 +114,11 @@ class SettingsDataScreenTest : BaseInstrumentationTest() {
         composeTestRule.setContent {
             AntCashManagerTheme {
                 SettingsDataContent(
-                    state = SettingsDataState(
-                        autoBackupEnabled = true,
-                        autoBackupFolderUri = null,
-                    ),
+                    state =
+                        SettingsDataState(
+                            autoBackupEnabled = true,
+                            autoBackupFolderUri = null,
+                        ),
                 )
             }
         }
@@ -132,10 +135,11 @@ class SettingsDataScreenTest : BaseInstrumentationTest() {
         composeTestRule.setContent {
             AntCashManagerTheme {
                 SettingsDataContent(
-                    state = SettingsDataState(
-                        autoBackupEnabled = true,
-                        autoBackupFolderUri = "content://some/path",
-                    ),
+                    state =
+                        SettingsDataState(
+                            autoBackupEnabled = true,
+                            autoBackupFolderUri = "content://some/path",
+                        ),
                     onSelectBackupPath = { callbackInvoked = true },
                 )
             }
@@ -147,4 +151,3 @@ class SettingsDataScreenTest : BaseInstrumentationTest() {
         assertEquals(true, callbackInvoked)
     }
 }
-

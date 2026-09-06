@@ -48,4 +48,3 @@ object SettingsConstant {
     const val DEFAULT_TRANSACTION_TYPE = "EXPENSE"
     const val DEFAULT_PAYMENT_TYPE = "ELECTRONIC"
 }
-
