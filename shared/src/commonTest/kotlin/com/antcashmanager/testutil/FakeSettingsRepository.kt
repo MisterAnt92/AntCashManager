@@ -47,7 +47,6 @@ open class FakeSettingsRepository : SettingsRepository {
     val showQuickInsightsCard = MutableStateFlow(true)
     val transactionDisplayType = MutableStateFlow(TransactionDisplayType.TREND)
     val transactionsTransactionDisplayType = MutableStateFlow(TransactionDisplayType.TREND)
-    val showInitialAnimation = MutableStateFlow(false)
     val isTutorialCompleted = MutableStateFlow(false)
     val categorySortOrderInitialized = MutableStateFlow(false)
     val dataEncryptionEnabled = MutableStateFlow(false)
@@ -212,11 +211,6 @@ open class FakeSettingsRepository : SettingsRepository {
         transactionsTransactionDisplayType.value = displayType
     }
 
-    override fun getShowInitialAnimation(): Flow<Boolean> = showInitialAnimation
-    override suspend fun setShowInitialAnimation(show: Boolean) {
-        showInitialAnimation.value = show
-    }
-
     override fun getIsTutorialCompleted(): Flow<Boolean> = isTutorialCompleted
     override suspend fun setIsTutorialCompleted(completed: Boolean) {
         isTutorialCompleted.value = completed
@@ -335,7 +329,6 @@ open class FakeSettingsRepository : SettingsRepository {
         defaultPaymentType.value = "ELECTRONIC"
         transactionDisplayType.value = TransactionDisplayType.TREND
         transactionsTransactionDisplayType.value = TransactionDisplayType.TREND
-        showInitialAnimation.value = false
         dataEncryptionEnabled.value = false
         suggestionsEnabled.value = true
         suggestionsClearedAt.value = null

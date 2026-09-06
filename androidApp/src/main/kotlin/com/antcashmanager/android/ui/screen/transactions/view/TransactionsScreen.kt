@@ -22,10 +22,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.TrendingDown
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
@@ -36,6 +42,7 @@ import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -67,6 +74,7 @@ import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
+import com.antcashmanager.android.ui.components.layout.FoldableAwareLayout
 import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
 import androidx.window.layout.FoldingFeature
 import androidx.navigation.NavController
@@ -102,7 +110,6 @@ import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.model.TransactionType
-import com.antcashmanager.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -125,11 +132,9 @@ fun TransactionsScreen(
 
     val viewModel: com.antcashmanager.android.ui.screen.transactions.TransactionsViewModel =
         koinViewModel()
-    val settingsRepository: SettingsRepository = koinInject()
 
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val transactionDisplayType by settingsRepository.getTransactionsTransactionDisplayType()
-        .collectAsStateWithLifecycle(initialValue = TransactionDisplayType.TREND)
+    val transactionDisplayType = state.transactionDisplayType
 
     TransactionsContent(
         params = TransactionsContentParams(
@@ -177,7 +182,6 @@ fun TransactionsScreen(
                 }
                 viewModel.onEvent(event)
             },
-            settingsRepository = settingsRepository,
             navController = navController,
             transactionDisplayType = transactionDisplayType,
             modifier = modifier,
@@ -197,7 +201,6 @@ internal fun TransactionsContent(
     val analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager = koinInject()
     val state = params.state
     val onEvent = params.onEvent
-    val settingsRepository = params.settingsRepository
     val navController = params.navController
     val transactionDisplayType = params.transactionDisplayType
     val modifier = params.modifier
@@ -207,16 +210,15 @@ internal fun TransactionsContent(
     var showToDatePicker by remember { mutableStateOf(false) }
     var showHelpDialog by remember { mutableStateOf(false) }
 
-    // DateRangeFilter expanded state from settings
-    val dateFilterExpanded by settingsRepository.getDateFilterExpanded()
-        .collectAsStateWithLifecycle(initialValue = true)
+    // DateRangeFilter expanded state from state (UDF)
+    val dateFilterExpanded = state.dateFilterExpanded
     val coroutineScope = rememberCoroutineScope()
-    val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
 
     // Foldable device support
     val displayFeatures = LocalDisplayFeatures.current
+    val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo(displayFeatures = displayFeatures)
     val multiPaneCoordinator = LocalMultiPaneCoordinator.current
-    val foldingFeature = displayFeatures.filterIsInstance<FoldingFeature>().firstOrNull()
+    val foldingFeature = adaptiveLayoutInfo.foldingFeature
 
     val listState = rememberLazyListState()
     val showScrollToTop by remember {
@@ -332,9 +334,143 @@ internal fun TransactionsContent(
         )
     }
 
-    Box(modifier = modifier
-        .fillMaxSize()
-        .testTag("transactions_screen")) {
+    // FASE 2: Shared header composable used in both grid and single-column layouts
+    @Composable
+    fun TransactionListHeaders() {
+        if (state.isSearchExpanded) {
+            SearchComponent(
+                isVisible = true,
+                searchQuery = state.searchQuery,
+                onSearchQueryChange = {
+                    onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.UpdateSearchQuery(it))
+                },
+                searchSuggestions = state.searchSuggestions,
+            )
+        }
+        if (state.isFiltersExpanded) {
+            VerticalSpacer(SpacingSize.SM)
+            FilterCard(
+                categories = state.categories,
+                selectedCategory = state.pendingCategory,
+                selectedTransactionType = state.pendingTransactionType,
+                selectedPaymentType = state.pendingPaymentType,
+                onCategorySelected = {
+                    onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.UpdateCategoryFilter(it))
+                },
+                onTransactionTypeSelected = {
+                    onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.UpdateTransactionTypeFilter(it))
+                },
+                onPaymentTypeSelected = {
+                    onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.UpdatePaymentTypeFilter(it))
+                },
+                onClearFilters = { onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ClearAllFilters) },
+                hasFilterChanges = state.hasFilterChanges,
+                onApplyFilters = {
+                    onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ApplyFilters)
+                    onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ToggleFiltersExpanded)
+                },
+                onCancelFilters = { onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.CancelFilterChanges) },
+            )
+        }
+        if (state.hasActiveFilters && !state.isFiltersExpanded) {
+            VerticalSpacer(SpacingSize.XS)
+            ActiveFiltersRow(
+                searchQuery = state.searchQuery,
+                selectedCategory = state.selectedCategory,
+                selectedTransactionType = state.selectedTransactionType,
+                selectedPaymentType = state.selectedPaymentType,
+                onClearAll = { onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ClearAllFilters) },
+            )
+        }
+        VerticalSpacer(SpacingSize.SM)
+        DateRangeFilter(
+            selectedPresetIndex = state.selectedPresetIndex,
+            presets = com.antcashmanager.android.ui.screen.transactions.TransactionsState.Companion.PRESETS,
+            dateRangeFrom = state.dateRangeFrom,
+            dateRangeTo = state.dateRangeTo,
+            expanded = dateFilterExpanded,
+            onExpandedChange = { expanded ->
+                onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.SetDateFilterExpanded(expanded))
+            },
+            onPresetSelected = {
+                onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.SelectPreset(it))
+            },
+            onFromDateEdit = { showFromDatePicker = true },
+            onToDateEdit = { showToDatePicker = true },
+        )
+        VerticalSpacer(SpacingSize.SM)
+        if (state.hasActiveFilters) {
+            AppText(
+                text = stringResource(R.string.transactions_results_count, state.filteredTransactions.size),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            VerticalSpacer(SpacingSize.XS)
+        }
+    }
+
+    // FASE 1: Composable for list pane (used in both single-pane and split-pane layouts)
+    @Composable
+    fun TransactionListPane() {
+        val isGridLayout = adaptiveLayoutInfo.isExpanded && !adaptiveLayoutInfo.hasFold
+        Box(modifier = modifier
+            .fillMaxSize()
+            .testTag("transactions_screen")) {
+        if (isGridLayout) {
+            // FASE 2: Tablet grid layout (2 columns) for expanded screens without fold
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(
+                        horizontal = adaptiveLayoutInfo.horizontalPadding,
+                        vertical = 16.dp,
+                    ),
+                horizontalArrangement = Arrangement.spacedBy(TransactionsScreenDefaults.CardSpacing),
+                verticalArrangement = Arrangement.spacedBy(TransactionsScreenDefaults.CardSpacing),
+                contentPadding = PaddingValues(bottom = TransactionsScreenDefaults.ListBottomSpacer)
+            ) {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Column { TransactionListHeaders() }
+                }
+                when {
+                    state.isLoading -> {
+                        items(6) {
+                            Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)) {
+                                SkeletonLoader(height = 16.dp, cornerRadius = 8)
+                                VerticalSpacer(SpacingSize.XS)
+                                SkeletonLoader(height = 20.dp, cornerRadius = 8)
+                            }
+                        }
+                    }
+                    state.filteredTransactions.isEmpty() -> {
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            AntEmptyState(
+                                mascotRes = R.drawable.ic_piggy_bank,
+                                title = stringResource(R.string.empty_state_no_transactions),
+                                subtitle = stringResource(R.string.empty_state_no_transactions_subtitle),
+                                modifier = Modifier.fillMaxWidth(),
+                            )
+                        }
+                    }
+                    else -> {
+                        items(state.filteredTransactions, key = { it.id }) { transaction ->
+                            TransactionItem(
+                                transaction = transaction,
+                                onClick = {
+                                    multiPaneCoordinator?.selectTransaction(
+                                        transaction = transaction,
+                                        navigateToDetailsPane = foldingFeature?.isSeparating == true
+                                    )
+                                    navController?.navigate(AppRoute.TransactionRoute.Edit.createRoute(transaction.id))
+                                },
+                                displayType = transactionDisplayType,
+                            )
+                        }
+                    }
+                }
+            }
+        } else {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -426,9 +562,7 @@ internal fun TransactionsContent(
                     dateRangeTo = state.dateRangeTo,
                     expanded = dateFilterExpanded,
                     onExpandedChange = { expanded ->
-                        coroutineScope.launch {
-                            settingsRepository.setDateFilterExpanded(expanded)
-                        }
+                        onEvent(com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.SetDateFilterExpanded(expanded))
                     },
                     onPresetSelected = {
                         onEvent(
@@ -525,6 +659,7 @@ internal fun TransactionsContent(
                 }
             }
         }
+        } // end else (single-column LazyColumn)
         Column(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -593,6 +728,86 @@ internal fun TransactionsContent(
             }
         }
     }
+    }
+
+    // FASE 1: Composable for transaction details pane (used in split-pane layout on foldable)
+    @Composable
+    fun TransactionDetailsPane(transaction: Transaction) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            AppText(
+                text = "Details",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+            )
+
+            AppText(
+                text = transaction.title,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+            )
+
+            AppText(
+                text = "${transaction.category} • ${transaction.type.name}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            AppText(
+                text = "€ ${String.format("%.2f", kotlin.math.abs(transaction.amount))}",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+            )
+
+            if (transaction.notes.isNotEmpty()) {
+                Divider(modifier = Modifier.padding(vertical = 8.dp))
+                AppText(
+                    text = "Notes",
+                    style = MaterialTheme.typography.labelMedium,
+                )
+                AppText(
+                    text = transaction.notes,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+        }
+    }
+
+    // FASE 1: Main layout logic - choose between split-pane and single-pane
+    if (adaptiveLayoutInfo.hasFold && adaptiveLayoutInfo.foldingFeature != null) {
+        // Split-pane layout for foldable devices
+        FoldableAwareLayout(
+            foldingFeature = adaptiveLayoutInfo.foldingFeature,
+            modifier = Modifier.fillMaxSize(),
+            topContent = { _, _ ->
+                TransactionListPane()
+            },
+            bottomContent = { _, _ ->
+                // Details pane (MVP: placeholder for foldable devices)
+                // Note: TransactionsScreen uses navigation for details, not split-pane
+                // This can be enhanced later when selectedTransaction is added to state
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AppText(
+                        text = "Select a transaction to view details",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        )
+    } else {
+        // Single-pane layout for phones and tablets without fold
+        TransactionListPane()
+    }
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -605,7 +820,6 @@ internal fun TransactionsContent(
 data class TransactionsContentParams(
     val state: com.antcashmanager.android.ui.screen.transactions.TransactionsState,
     val onEvent: (com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent) -> Unit,
-    val settingsRepository: SettingsRepository,
     val navController: NavController? = null,
     val transactionDisplayType: TransactionDisplayType = TransactionDisplayType.TREND,
     val modifier: Modifier = Modifier,
@@ -1028,7 +1242,7 @@ private fun TransactionItem(
                             contentAlignment = Alignment.Center,
                         ) {
                             Icon(
-                                imageVector = if (isIncome) Icons.Default.ArrowDownward else Icons.Default.ArrowUpward,
+                                imageVector = if (isIncome) Icons.AutoMirrored.Filled.TrendingUp else Icons.AutoMirrored.Filled.TrendingDown,
                                 contentDescription = null,
                                 tint = if (isIncome) IncomeGreen else ExpenseRed,
                                 modifier = Modifier.size(20.dp),
@@ -1165,297 +1379,4 @@ private fun TransactionItem(
             }
         }
     }
-}
-
-// ══════════════════════════════════════════════════════════════════════════════
-// PREVIEWS
-// ══════════════════════════════════════════════════════════════════════════════
-
-class MockSettingsRepository : SettingsRepository {
-    override fun getTheme() =
-        kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.AppTheme.SYSTEM)
-
-    override suspend fun setTheme(theme: com.antcashmanager.domain.model.AppTheme) {}
-    override fun getLanguage() =
-        kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.AppLanguage.SYSTEM)
-
-    override suspend fun setLanguage(language: com.antcashmanager.domain.model.AppLanguage) {}
-    override fun getShowCharts() = kotlinx.coroutines.flow.flowOf(true)
-    override suspend fun setShowCharts(show: Boolean) {}
-    override fun getHighContrast() = kotlinx.coroutines.flow.flowOf(false)
-    override suspend fun setHighContrast(enabled: Boolean) {}
-    override fun getLargeText() = kotlinx.coroutines.flow.flowOf(false)
-    override suspend fun setLargeText(enabled: Boolean) {}
-    override fun getReduceMotion() = kotlinx.coroutines.flow.flowOf(false)
-    override suspend fun setReduceMotion(enabled: Boolean) {}
-    override fun getShowTransactionNotes() = kotlinx.coroutines.flow.flowOf(true)
-    override suspend fun setShowTransactionNotes(show: Boolean) {}
-    override fun getMaskAmounts() = kotlinx.coroutines.flow.flowOf(false)
-    override suspend fun setMaskAmounts(mask: Boolean) {}
-    override fun getCurrencySymbol() = kotlinx.coroutines.flow.flowOf("€")
-    override suspend fun setCurrencySymbol(symbol: String) {}
-    override fun getDecimalDigits() = kotlinx.coroutines.flow.flowOf(2)
-    override suspend fun setDecimalDigits(digits: Int) {}
-    override fun getDecimalSeparator() = kotlinx.coroutines.flow.flowOf(",")
-    override suspend fun setDecimalSeparator(separator: String) {}
-    override fun getThousandsSeparator() = kotlinx.coroutines.flow.flowOf("")
-    override suspend fun setThousandsSeparator(separator: String) {}
-    override fun getMealVoucherValue() = kotlinx.coroutines.flow.flowOf(5.29)
-    override suspend fun setMealVoucherValue(value: Double) {}
-    override fun getDateFormat() = kotlinx.coroutines.flow.flowOf("dd/MM/yyyy")
-    override suspend fun setDateFormat(pattern: String) {}
-
-    override fun getDateFilterExpanded() = kotlinx.coroutines.flow.flowOf(true)
-    override suspend fun setDateFilterExpanded(expanded: Boolean) {}
-
-    override fun getHomeDateFilterPreset() = kotlinx.coroutines.flow.flowOf(1)
-    override suspend fun setHomeDateFilterPreset(index: Int) {}
-    override fun getHomeDateFilterState() = kotlinx.coroutines.flow.flowOf(
-        SavedDateFilter(
-            presetIndex = 1,
-            from = System.currentTimeMillis() - (7L * 24 * 60 * 60 * 1000),
-            to = System.currentTimeMillis(),
-        ),
-    )
-
-    override suspend fun setHomeDateFilterState(filter: SavedDateFilter) {}
-
-    override fun getTransactionsDateFilterPreset() = kotlinx.coroutines.flow.flowOf(1)
-    override suspend fun setTransactionsDateFilterPreset(index: Int) {}
-    override fun getTransactionsDateFilterState() = kotlinx.coroutines.flow.flowOf(
-        SavedDateFilter(
-            presetIndex = 1,
-            from = System.currentTimeMillis() - (7L * 24 * 60 * 60 * 1000),
-            to = System.currentTimeMillis(),
-        ),
-    )
-
-    override suspend fun setTransactionsDateFilterState(filter: SavedDateFilter) {}
-
-    override fun getChartsDateFilterPreset() = kotlinx.coroutines.flow.flowOf(1)
-    override suspend fun setChartsDateFilterPreset(index: Int) {}
-    override fun getChartsDateFilterState() = kotlinx.coroutines.flow.flowOf(
-        SavedDateFilter(
-            presetIndex = 1,
-            from = System.currentTimeMillis() - (30L * 24 * 60 * 60 * 1000),
-            to = System.currentTimeMillis(),
-        ),
-    )
-
-    override suspend fun setChartsDateFilterState(filter: SavedDateFilter) {}
-
-    override fun getChartsZoomEnabled() = kotlinx.coroutines.flow.flowOf(true)
-    override suspend fun setChartsZoomEnabled(enabled: Boolean) {}
-
-    override fun getShowPaymentTypeBreakdown() = kotlinx.coroutines.flow.flowOf(false)
-    override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {}
-    override fun getShowQuickInsightsCard() = kotlinx.coroutines.flow.flowOf(true)
-    override suspend fun setShowQuickInsightsCard(show: Boolean) {}
-    override fun getDefaultPaymentType() = kotlinx.coroutines.flow.flowOf("ELECTRONIC")
-    override suspend fun setDefaultPaymentType(paymentType: String) {}
-
-    override fun getShowInitialAnimation(): Flow<Boolean> =
-        kotlinx.coroutines.flow.flowOf(true)
-
-    override suspend fun setShowInitialAnimation(show: Boolean) {}
-
-    override fun getTransactionDisplayType(): Flow<TransactionDisplayType> =
-        kotlinx.coroutines.flow.flowOf(TransactionDisplayType.TREND)
-
-    override suspend fun setTransactionDisplayType(displayType: TransactionDisplayType) {}
-
-    override fun getTransactionsTransactionDisplayType(): Flow<TransactionDisplayType> =
-        kotlinx.coroutines.flow.flowOf(TransactionDisplayType.TREND)
-
-    override suspend fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType) {}
-
-    override fun getIsTutorialCompleted(): Flow<Boolean> = kotlinx.coroutines.flow.flowOf(true)
-    override suspend fun setIsTutorialCompleted(completed: Boolean) {}
-
-    override fun getDataEncryptionEnabled(): Flow<Boolean> = kotlinx.coroutines.flow.flowOf(false)
-
-    override suspend fun setDataEncryptionEnabled(enabled: Boolean) {}
-
-    override fun getCategorySortOrderInitialized(): Flow<Boolean> =
-        kotlinx.coroutines.flow.flowOf(true)
-
-    override suspend fun setCategorySortOrderInitialized(initialized: Boolean) {}
-
-    override fun getLastBackupTimestamp(): Flow<Long?> = kotlinx.coroutines.flow.flowOf(null)
-    override suspend fun setLastBackupTimestamp(timestamp: Long) {}
-    override fun getLastRestoreTimestamp(): Flow<Long?> = kotlinx.coroutines.flow.flowOf(null)
-    override suspend fun setLastRestoreTimestamp(timestamp: Long) {}
-
-    override fun getSuggestionsEnabled(): Flow<Boolean> = kotlinx.coroutines.flow.flowOf(true)
-    override suspend fun setSuggestionsEnabled(enabled: Boolean) {}
-    override fun getSuggestionsClearedAt(): Flow<Long?> = kotlinx.coroutines.flow.flowOf(null)
-    override suspend fun setSuggestionsClearedAt(timestamp: Long) {}
-
-    override fun getWidgetBackgroundColor(): Flow<Long> =
-        kotlinx.coroutines.flow.flowOf(0xFFFFFFFFL)
-
-    override suspend fun setWidgetBackgroundColor(color: Long) {}
-    override fun getWidgetOpacity(): Flow<Int> = kotlinx.coroutines.flow.flowOf(100)
-    override suspend fun setWidgetOpacity(opacity: Int) {}
-
-    override fun getChartCardsOrder(): Flow<String> = kotlinx.coroutines.flow.flowOf("")
-    override suspend fun setChartCardsOrder(order: String) {}
-    override fun getHomeTopCardsOrder(): Flow<String> = kotlinx.coroutines.flow.flowOf("")
-    override suspend fun setHomeTopCardsOrder(order: String) {}
-
-    // ── Google Drive Backup Configuration ──
-    override fun getAutoBackupEnabled(): Flow<Boolean> = kotlinx.coroutines.flow.flowOf(false)
-    override suspend fun setAutoBackupEnabled(enabled: Boolean) {}
-    override fun getAutoBackupFolderUri(): Flow<String?> = kotlinx.coroutines.flow.flowOf(null)
-    override suspend fun setAutoBackupFolderUri(uri: String?) {}
-    override fun getAutoBackupDestination(): Flow<com.antcashmanager.domain.model.BackupDestination> =
-        kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.BackupDestination.LOCAL)
-
-    override suspend fun setAutoBackupDestination(destination: com.antcashmanager.domain.model.BackupDestination) {}
-    override fun getGoogleDriveFolderId(): Flow<String?> = kotlinx.coroutines.flow.flowOf(null)
-    override suspend fun setGoogleDriveFolderId(folderId: String?) {}
-    override fun getGoogleDriveFolderName(): Flow<String?> = kotlinx.coroutines.flow.flowOf(null)
-    override suspend fun setGoogleDriveFolderName(folderName: String?) {}
-    override fun getGoogleDriveAuthToken(): Flow<String?> = kotlinx.coroutines.flow.flowOf(null)
-    override suspend fun setGoogleDriveAuthToken(token: String?) {}
-    override fun getGoogleDriveRefreshToken(): Flow<String?> = kotlinx.coroutines.flow.flowOf(null)
-    override suspend fun setGoogleDriveRefreshToken(token: String?) {}
-    override fun getGoogleDriveUserEmail(): Flow<String?> = kotlinx.coroutines.flow.flowOf(null)
-    override suspend fun setGoogleDriveUserEmail(email: String?) {}
-
-    override suspend fun resetAllPreferences() {}
-}
-
-@Preview(showBackground = true, name = "TransactionsScreen - With Data")
-@Preview(showBackground = true, name = "TransactionsScreen - 7 inch", widthDp = 600, heightDp = 960)
-@Preview(
-    showBackground = true,
-    name = "TransactionsScreen - 10 inch",
-    widthDp = 840,
-    heightDp = 1280
-)
-@Composable
-private fun TransactionsContentPreview() {
-    AntCashManagerTheme(dynamicColor = false) {
-        TransactionsContent(
-            params = TransactionsContentParams(
-                state = com.antcashmanager.android.ui.screen.transactions.TransactionsState(
-                    transactions = sampleTransactions,
-                    filteredTransactions = sampleTransactions,
-                ),
-                onEvent = {},
-                settingsRepository = MockSettingsRepository(),
-                modifier = Modifier,
-            ),
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "TransactionsScreen - Empty")
-@Composable
-private fun TransactionsContentEmptyPreview() {
-    AntCashManagerTheme(dynamicColor = false) {
-        TransactionsContent(
-            params = TransactionsContentParams(
-                state = com.antcashmanager.android.ui.screen.transactions.TransactionsState(),
-                onEvent = {},
-                settingsRepository = MockSettingsRepository(),
-                modifier = Modifier,
-            ),
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "TransactionsScreen - Loading")
-@Composable
-private fun TransactionsContentLoadingPreview() {
-    AntCashManagerTheme(dynamicColor = false) {
-        TransactionsContent(
-            params = TransactionsContentParams(
-                state = com.antcashmanager.android.ui.screen.transactions.TransactionsState(
-                    isLoading = true
-                ),
-                onEvent = {},
-                settingsRepository = MockSettingsRepository(),
-                modifier = Modifier,
-            ),
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "TransactionsScreen - Dark Theme")
-@Composable
-private fun TransactionsContentDarkPreview() {
-    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
-        TransactionsContent(
-            params = TransactionsContentParams(
-                state = com.antcashmanager.android.ui.screen.transactions.TransactionsState(
-                    transactions = sampleTransactions,
-                    filteredTransactions = sampleTransactions,
-                ),
-                onEvent = {},
-                settingsRepository = MockSettingsRepository(),
-                modifier = Modifier,
-            ),
-        )
-    }
-}
-
-private val sampleTransactions = listOf(
-    Transaction(
-        id = 1,
-        title = "Salary",
-        amount = 2500.0,
-        category = "Work",
-        type = TransactionType.INCOME,
-        timestamp = System.currentTimeMillis(),
-    ),
-    Transaction(
-        id = 2,
-        title = "Groceries",
-        amount = 85.50,
-        category = "Food",
-        type = TransactionType.EXPENSE,
-        timestamp = System.currentTimeMillis(),
-    ),
-    Transaction(
-        id = 3,
-        title = "Electric Bill",
-        amount = 120.0,
-        category = "Utilities",
-        type = TransactionType.EXPENSE,
-        timestamp = System.currentTimeMillis(),
-    ),
-)
-
-// ══════════════════════════════════════════════════════════════════════════════
-// HELP DIALOG
-// ══════════════════════════════════════════════════════════════════════════════
-
-@Composable
-private fun HelpDialog(onDismiss: () -> Unit) {
-    val helpFeatures = listOf(
-        HelpDialogFeatureSpec(
-            titleResId = R.string.help_transactions_feature_view_title,
-            descriptionResId = R.string.help_transactions_feature_view_desc,
-            icon = Icons.Default.ArrowDownward,
-        ),
-        HelpDialogFeatureSpec(
-            titleResId = R.string.help_transactions_feature_filters_title,
-            descriptionResId = R.string.help_transactions_feature_filters_desc,
-            icon = Icons.Default.ArrowUpward,
-        ),
-        HelpDialogFeatureSpec(
-            titleResId = R.string.help_transactions_feature_search_title,
-            descriptionResId = R.string.help_transactions_feature_search_desc,
-            icon = Icons.Default.Repeat,
-        ),
-    )
-
-    AppHelpDialog(
-        titleResId = R.string.help_transactions_title,
-        descriptionResId = R.string.help_transactions_desc,
-        features = helpFeatures,
-        onDismiss = onDismiss,
-    )
 }

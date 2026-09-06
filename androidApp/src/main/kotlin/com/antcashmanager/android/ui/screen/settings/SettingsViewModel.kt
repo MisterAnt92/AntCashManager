@@ -19,8 +19,10 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -64,6 +66,13 @@ class SettingsViewModel(
 
     private var setThemeJob: Job? = null
     private var setLanguageJob: Job? = null
+
+    // FIX 2: Track when language is changing to coordinate with exit dialog timing
+    // When language changes, the WithAppLocale recomposition creates a new LocalContext
+    // This flag allows AppExitConfirmationDialog to increase its delay from 300ms to 500ms
+    // to ensure the new context is fully established before Activity.finish() is called
+    private val _isLanguageChanging = MutableStateFlow(false)
+    val isLanguageChanging: StateFlow<Boolean> = _isLanguageChanging.asStateFlow()
 
     override fun onEvent(event: SettingEvent) {
         logDebug("Event: $event")
@@ -172,11 +181,13 @@ class SettingsViewModel(
                             )
                             try {
                                 insertTransactionUseCase(transaction)
-                            } catch (_: Exception) {
-                                // ignore individual insert failures in debug import
+                            } catch (insertError: Exception) {
+                                // FASE 5: Log individual insert failures in debug import
+                                logWarn("Failed to insert transaction: ${insertError.message}")
                             }
-                        } catch (_: Exception) {
-                            // ignore malformed entries
+                        } catch (entryError: Exception) {
+                            // FASE 5: Log malformed entries
+                            logWarn("Skipped malformed entry: ${entryError.message}")
                         }
                     }
                 }
@@ -330,6 +341,8 @@ class SettingsViewModel(
     private fun setLanguage(language: AppLanguage) {
         // Debounce: cancel previous job and schedule new one with 300ms delay
         setLanguageJob?.cancel()
+        // FIX 2: Set flag to indicate language is changing
+        _isLanguageChanging.value = true
         setLanguageJob = viewModelScope.launch {
             delay(300)
             updatePreference(
@@ -340,6 +353,10 @@ class SettingsViewModel(
                     result
                 },
             )
+            // Wait a bit more for WithAppLocale recomposition to complete
+            delay(100)
+            // FIX 2: Clear flag after language change and recomposition complete
+            _isLanguageChanging.value = false
         }
     }
 

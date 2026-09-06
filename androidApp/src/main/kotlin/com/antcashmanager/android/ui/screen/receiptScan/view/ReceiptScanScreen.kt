@@ -67,22 +67,23 @@ import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.launch
+import androidx.navigation.NavController
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import java.io.File
 
 // ══════════════════════════════════════════════════════════════════════════════
-// SCREEN ENTRY POINT
+// SCREEN ENTRY POINT (FASE 7c: Refactored to remove callbacks)
 // ══════════════════════════════════════════════════════════════════════════════
 
 /**
  * Schermata principale per la scansione scontrini.
  * Gestisce il ciclo fotocamera → OCR → revisione → salvataggio transazione EXPENSE.
+ * FASE 7c: Refactored to use navController directly instead of callbacks.
  */
 @Composable
 fun ReceiptScanScreen(
-    onNavigateBack: () -> Unit,
-    onTransactionSaved: () -> Unit,
+    navController: NavController? = null,
     modifier: Modifier = Modifier,
 ) {
     val viewModel: ReceiptScanViewModel = koinViewModel()
@@ -93,7 +94,7 @@ fun ReceiptScanScreen(
     LaunchedEffect(state.isTransactionSaved) {
         if (state.isTransactionSaved) {
             analyticsManager.logEvent("receipt_scan_saved")
-            onTransactionSaved()
+            navController?.popBackStack()
         }
     }
 
@@ -114,7 +115,7 @@ fun ReceiptScanScreen(
         onRetry = { viewModel.onEvent(ReceiptScanEvent.RetryCapture) },
         onSave = viewModel::saveTransaction,
         onClearError = viewModel::clearError,
-        onNavigateBack = onNavigateBack,
+        onNavigateBack = { navController?.popBackStack() },
         modifier = modifier,
     )
 }

@@ -3,8 +3,8 @@ package com.antcashmanager.android.ui.screen.settings.dataManagement
 import android.os.Build
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
-import com.antcashmanager.android.analytics.ErrorTracker
-import com.antcashmanager.android.analytics.PerformanceTracker
+import com.antcashmanager.android.analytics.tracker.ErrorTracker
+import com.antcashmanager.android.analytics.tracker.PerformanceTracker
 import com.antcashmanager.android.auth.GoogleSignInManager
 import com.antcashmanager.android.data.backup.BackupService
 import com.antcashmanager.android.security.BackupPayloadCipher
@@ -14,12 +14,14 @@ import com.antcashmanager.domain.model.BackupDestination
 import com.antcashmanager.domain.model.None
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
+import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -38,6 +40,7 @@ import java.util.Locale
 class SettingsDataViewModel(
     settingsRepository: SettingsRepository,
     private val categoryRepository: CategoryRepository,
+    private val transactionRepository: TransactionRepository,
     private val deleteAllTransactionsUseCase: DeleteAllTransactionsUseCase,
     private val backupService: BackupService,
     private val autoBackupScheduler: AutoBackupScheduler,
@@ -107,7 +110,54 @@ class SettingsDataViewModel(
     fun setDataEncryptionEnabled(enabled: Boolean) {
         logDebug("Setting data encryption enabled: $enabled")
         viewModelScope.launch {
-            settingsRepositoryRef.setDataEncryptionEnabled(enabled)
+            try {
+                // Apply encryption flag
+                settingsRepositoryRef.setDataEncryptionEnabled(enabled)
+
+                // Re-encrypt/decrypt all existing transactions
+                // CRITICAL: Must run AFTER flag is applied, so cipher respects new state
+                performReEncryption()
+            } catch (e: Exception) {
+                logError("Failed to toggle encryption: ${e.message}")
+                // Rollback the flag on error
+                try {
+                    settingsRepositoryRef.setDataEncryptionEnabled(!enabled)
+                } catch (rollbackError: Exception) {
+                    logError("CRITICAL: Failed to rollback encryption flag: ${rollbackError.message}")
+                    errorTracker.trackDatabaseError("encryption_toggle_rollback_failed", rollbackError.message ?: "unknown")
+                }
+                errorTracker.trackDatabaseError("encryption_toggle_failed", e.message ?: "unknown")
+            }
+        }
+    }
+
+    private suspend fun performReEncryption() {
+        try {
+            val allTransactions = transactionRepository.getAllTransactions().first()
+            if (allTransactions.isEmpty()) {
+                logDebug("No transactions to re-encrypt")
+                return
+            }
+
+            logDebug("Re-encrypting ${allTransactions.size} transactions...")
+            var reencrypted = 0
+            for (transaction in allTransactions) {
+                try {
+                    // Re-write each transaction: cipher will apply new encryption state
+                    transactionRepository.updateTransaction(transaction)
+                    reencrypted++
+                } catch (e: Exception) {
+                    logError("Failed to re-encrypt transaction ${transaction.id}: ${e.message}")
+                    throw e  // Fail fast: abort re-encryption on first error
+                }
+            }
+
+            logDebug("Successfully re-encrypted $reencrypted transactions")
+        } catch (e: CancellationException) {
+            throw e  // Propagate cancellation
+        } catch (e: Exception) {
+            logError("Re-encryption failed: ${e.message}")
+            throw e  // Propagate to caller for rollback handling
         }
     }
 
@@ -417,7 +467,17 @@ class SettingsDataViewModel(
                     // ✅ Enhanced error message mapping
                     val message = when (error) {
                         is IllegalArgumentException -> {
-                            "Payload di backup invalido o danneggiato"
+                            when {
+                                error.message?.contains("another device") == true -> {
+                                    "Questo backup è stato creato su un altro dispositivo. " +
+                                        "I backup con crittografia device-bound non possono essere ripristinati su telefoni diversi. " +
+                                        "Usa backup con password protetta (v1.8+) per trasferimenti tra dispositivi."
+                                }
+                                error.message?.contains("password-based") == true -> {
+                                    "Questo backup richiede una password. Aggiorna all'app v1.8+ per ripristinare backup con password."
+                                }
+                                else -> "Payload di backup invalido o danneggiato"
+                            }
                         }
                         is javax.crypto.BadPaddingException -> {
                             "Chiave di crittografia non corrisponde - password errata?"

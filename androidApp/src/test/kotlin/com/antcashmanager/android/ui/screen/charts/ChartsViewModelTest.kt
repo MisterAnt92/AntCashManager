@@ -1,8 +1,8 @@
 package com.antcashmanager.android.ui.screen.charts
 
 import com.antcashmanager.android.BaseUnitTest
-import com.antcashmanager.android.analytics.PerformanceTracker
-import com.antcashmanager.android.analytics.SegmentationTracker
+import com.antcashmanager.android.analytics.tracker.PerformanceTracker
+import com.antcashmanager.android.analytics.tracker.SegmentationTracker
 import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.testutil.FakeTransactionRepository
 import com.antcashmanager.domain.model.PaymentType
@@ -10,8 +10,6 @@ import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue

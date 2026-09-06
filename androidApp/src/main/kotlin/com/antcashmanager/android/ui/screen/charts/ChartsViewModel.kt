@@ -3,8 +3,8 @@ package com.antcashmanager.android.ui.screen.charts
 import androidx.annotation.StringRes
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.R
-import com.antcashmanager.android.analytics.PerformanceTracker
-import com.antcashmanager.android.analytics.SegmentationTracker
+import com.antcashmanager.android.analytics.tracker.PerformanceTracker
+import com.antcashmanager.android.analytics.tracker.SegmentationTracker
 import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.android.ui.screen.charts.view.ChartDetailsData
 import com.antcashmanager.android.ui.screen.charts.view.TrendDirection
@@ -40,6 +40,7 @@ class ChartsViewModel(
     private val setChartsDateFilterStateUseCase: SetChartsDateFilterStateUseCase,
     private val performanceTracker: PerformanceTracker,
     private val segmentationTracker: SegmentationTracker,
+    private val settingsRepository: SettingsRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : BaseViewModel<ChartEvent>(dispatcher) {
 
@@ -61,6 +62,7 @@ class ChartsViewModel(
         ),
         performanceTracker = performanceTracker,
         segmentationTracker = segmentationTracker,
+        settingsRepository = settingsRepository,
         dispatcher = dispatcher,
     )
 
@@ -86,6 +88,20 @@ class ChartsViewModel(
             initialValue = ChartData(),
         )
 
+    val chartsZoomEnabled: StateFlow<Boolean> = settingsRepository.getChartsZoomEnabled()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = false,
+        )
+
+    val chartsCardOrder: StateFlow<String> = settingsRepository.getChartCardsOrder()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = ChartsConstant.DEFAULT_CHARTS_CARDS_ORDER,
+        )
+
     init {
         observeSavedDateFilter()
     }
@@ -103,10 +119,17 @@ class ChartsViewModel(
             )
             is ChartEvent.ClearChartSelection -> clearChartSelection()
             is ChartEvent.RetryLastOperation -> logInfo("Retry requested")
+            is ChartEvent.SetChartCardsOrder -> setChartCardsOrder(event.order)
         }
     }
 
-    private fun setDateRange(from: Long, to: Long) {
+    private fun setChartCardsOrder(order: String) {
+        viewModelScope.launch {
+            settingsRepository.setChartCardsOrder(order)
+        }
+    }
+
+    fun setDateRange(from: Long, to: Long) {
         val normalizedFrom = minOf(from, to)
         val normalizedTo = maxOf(from, to)
         logDebug("Setting date range: $normalizedFrom - $normalizedTo")

@@ -1,6 +1,10 @@
-package com.antcashmanager.android.analytics
+package com.antcashmanager.android.analytics.tracker
 
 import android.os.Bundle
+import com.antcashmanager.android.analytics.AnalyticsManager
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import java.util.UUID
 
 /**
@@ -107,8 +111,8 @@ class SessionTracker(private val analyticsManager: AnalyticsManager) {
      * Implementazione: check la data dell'ultimo evento, se è diversa da oggi, log DAU.
      */
     private fun trackDailyActiveUser() {
-        val dateFormat = java.text.SimpleDateFormat("yyyyMMdd", java.util.Locale.US)
-        val today = dateFormat.format(java.util.Date())
+        val dateFormat = SimpleDateFormat("yyyyMMdd", Locale.US)
+        val today = dateFormat.format(Date())
 
         analyticsManager.logEvent("daily_active_user", Bundle().apply {
             putString("date", today)

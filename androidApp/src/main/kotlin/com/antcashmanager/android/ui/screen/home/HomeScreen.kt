@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -87,7 +88,6 @@ import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.model.TransactionType
-import com.antcashmanager.domain.repository.SettingsRepository
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -104,8 +104,6 @@ fun HomeScreen(
     Logger.d(tag = "HomeScreen") { "Displaying HomeScreen" }
 
     val viewModel: HomeViewModel = koinViewModel()
-    val settingsRepository: SettingsRepository = koinInject()
-
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     HomeContent(
@@ -113,7 +111,6 @@ fun HomeScreen(
         onEvent = { event ->
             viewModel.onEvent(event)
         },
-        settingsRepository = settingsRepository,
         navController = navController,
         modifier = modifier,
     )
@@ -128,7 +125,6 @@ fun HomeScreen(
 internal fun HomeContent(
     state: HomeState,
     onEvent: (HomeEvent) -> Unit,
-    settingsRepository: SettingsRepository,
     navController: androidx.navigation.NavController,
     modifier: Modifier = Modifier,
 ) {
@@ -145,37 +141,37 @@ internal fun HomeContent(
     var editingTopCardsOrder by remember { mutableStateOf(HomeTopCardType.parse(topCardsOrderRaw)) }
     val topCardsOrder = remember(topCardsOrderRaw) { HomeTopCardType.parse(topCardsOrderRaw) }
 
-    // Load persisted card order on composition
-    LaunchedEffect(Unit) {
-        val savedOrder = settingsRepository.getHomeTopCardsOrder().first()
-        if (savedOrder.isNotEmpty()) {
-            topCardsOrderRaw = savedOrder
+    // Load persisted card order on composition from state (populated by ViewModel)
+    LaunchedEffect(state.homeTopCardsOrder) {
+        if (state.homeTopCardsOrder.isNotEmpty()) {
+            topCardsOrderRaw = state.homeTopCardsOrder.joinToString(",")
         }
     }
 
-    // DateRangeFilter expanded state from settings
-    val dateFilterExpanded by settingsRepository.getDateFilterExpanded()
-        .collectAsStateWithLifecycle(initialValue = true)
-    val showPaymentTypeBreakdown by settingsRepository.getShowPaymentTypeBreakdown()
-        .collectAsStateWithLifecycle(initialValue = false)
-    val showQuickInsightsCard by settingsRepository.getShowQuickInsightsCard()
-        .collectAsStateWithLifecycle(initialValue = false)
-    val reduceMotion by settingsRepository.getReduceMotion()
-        .collectAsStateWithLifecycle(initialValue = false)
-    val transactionDisplayType by settingsRepository.getTransactionDisplayType()
-        .collectAsStateWithLifecycle(initialValue = TransactionDisplayType.TREND)
-    val isTutorialCompleted by settingsRepository.getIsTutorialCompleted()
-        .collectAsStateWithLifecycle(initialValue = true)
+    // Settings from state (populated by HomeViewModel)
+    val dateFilterExpanded = state.dateFilterExpanded
+    val showPaymentTypeBreakdown = state.showPaymentTypeBreakdown
+    val showQuickInsightsCard = state.showQuickInsightsCard
+    val reduceMotion = state.reduceMotion
+    val transactionDisplayType = try {
+        TransactionDisplayType.valueOf(state.transactionDisplayType)
+    } catch (e: Exception) {
+        TransactionDisplayType.TREND
+    }
+    val isTutorialCompleted = state.isTutorialCompleted
 
     val coroutineScope = rememberCoroutineScope()
-    val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
 
     // Foldable device support
     val displayFeatures = LocalDisplayFeatures.current
+    val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo(displayFeatures = displayFeatures)
     val multiPaneCoordinator = LocalMultiPaneCoordinator.current
-    val foldingFeature = displayFeatures.filterIsInstance<androidx.window.layout.FoldingFeature>().firstOrNull()
+    val foldingFeature = adaptiveLayoutInfo.foldingFeature
 
-    val listState = rememberLazyListState()
+    // Preserva scroll position durante navigazione back/forward
+    val listState = rememberSaveable(saver = androidx.compose.foundation.lazy.LazyListState.Saver) {
+        androidx.compose.foundation.lazy.LazyListState()
+    }
     val showScrollToTop by remember {
         derivedStateOf { listState.firstVisibleItemIndex > 2 }
     }
@@ -246,9 +242,7 @@ internal fun HomeContent(
     if (!isTutorialCompleted) {
         TutorialOverlay(
             onDismiss = {
-                coroutineScope.launch {
-                    settingsRepository.setIsTutorialCompleted(true)
-                }
+                onEvent(HomeEvent.SetIsTutorialCompleted(true))
             },
         )
         return
@@ -353,9 +347,7 @@ internal fun HomeContent(
                 }
                 topCardsOrderRaw = HomeTopCardType.serialize(updatedOrder)
                 // Persist card order to settings for backup/restore
-                coroutineScope.launch {
-                    settingsRepository.setHomeTopCardsOrder(HomeTopCardType.serialize(updatedOrder))
-                }
+                onEvent(HomeEvent.SetHomeTopCardsOrder(HomeTopCardType.serialize(updatedOrder)))
                 showTopCardsOrderDialog = false
                 analyticsManager.logEvent("home_top_cards_reordered")
             },
@@ -378,10 +370,10 @@ internal fun HomeContent(
         )
     }
 
-    when {
-        state.isLoading -> LoadingState()
-        else -> {
-            Scaffold(
+    // FASE 1: Composable for list pane (used in both single-pane and split-pane layouts)
+    @Composable
+    fun HomeListPane() {
+        Scaffold(
                 modifier = Modifier
                     .fillMaxSize()
                     .testTag("home_screen"),
@@ -432,9 +424,7 @@ internal fun HomeContent(
                                 dateRangeTo = state.dateRangeTo,
                                 expanded = dateFilterExpanded,
                                 onExpandedChange = { expanded ->
-                                    coroutineScope.launch {
-                                        settingsRepository.setDateFilterExpanded(expanded)
-                                    }
+                                    onEvent(HomeEvent.SetDateFilterExpanded(expanded))
                                 },
                                 onPresetSelected = { presetIndex ->
                                     val params = android.os.Bundle().apply {
@@ -563,388 +553,82 @@ internal fun HomeContent(
                     item { VerticalSpacer(SpacingSize.XS) }
                 }
             }
+    }
+
+    // FASE 1: Composable for transaction details pane (used in split-pane layout on foldable)
+    @Composable
+    fun TransactionDetailsPane(transaction: Transaction) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            AppText(
+                text = "Details",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+            )
+
+            // Transaction title
+            AppText(
+                text = transaction.title,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+            )
+
+            // Category and type
+            AppText(
+                text = "${transaction.category} • ${transaction.type.name}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            // Amount (formatted)
+            AppText(
+                text = "€ ${String.format("%.2f", kotlin.math.abs(transaction.amount))}",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+            )
+
+            // Notes if present
+            if (transaction.notes.isNotEmpty()) {
+                Divider(modifier = Modifier.padding(vertical = 8.dp))
+                AppText(
+                    text = "Notes",
+                    style = MaterialTheme.typography.labelMedium,
+                )
+                AppText(
+                    text = transaction.notes,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
         }
     }
-}
 
-
-// ══════════════════════════════════════════════════════════════════════════════
-// PREVIEWS
-// ══════════════════════════════════════════════════════════════════════════════
-
-class MockHomeSettingsRepository : SettingsRepository {
-    override fun getTheme() =
-        kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.AppTheme.SYSTEM)
-
-    override suspend fun setTheme(theme: com.antcashmanager.domain.model.AppTheme) {}
-    override fun getLanguage() =
-        kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.AppLanguage.SYSTEM)
-
-    override suspend fun setLanguage(language: com.antcashmanager.domain.model.AppLanguage) {}
-    override fun getShowCharts() = kotlinx.coroutines.flow.flowOf(true)
-    override suspend fun setShowCharts(show: Boolean) {}
-    override fun getHighContrast() = kotlinx.coroutines.flow.flowOf(false)
-    override suspend fun setHighContrast(enabled: Boolean) {}
-    override fun getLargeText() = kotlinx.coroutines.flow.flowOf(false)
-    override suspend fun setLargeText(enabled: Boolean) {}
-    override fun getReduceMotion() = kotlinx.coroutines.flow.flowOf(false)
-    override suspend fun setReduceMotion(enabled: Boolean) {}
-    override fun getShowTransactionNotes() = kotlinx.coroutines.flow.flowOf(true)
-    override suspend fun setShowTransactionNotes(show: Boolean) {}
-    override fun getMaskAmounts() = kotlinx.coroutines.flow.flowOf(false)
-    override suspend fun setMaskAmounts(mask: Boolean) {}
-    override fun getCurrencySymbol() = kotlinx.coroutines.flow.flowOf("€")
-    override suspend fun setCurrencySymbol(symbol: String) {}
-    override fun getDecimalDigits() = kotlinx.coroutines.flow.flowOf(2)
-    override suspend fun setDecimalDigits(digits: Int) {}
-    override fun getDecimalSeparator() = kotlinx.coroutines.flow.flowOf(",")
-    override suspend fun setDecimalSeparator(separator: String) {}
-    override fun getThousandsSeparator() = kotlinx.coroutines.flow.flowOf("")
-    override suspend fun setThousandsSeparator(separator: String) {}
-    override fun getMealVoucherValue() = kotlinx.coroutines.flow.flowOf(5.29)
-    override suspend fun setMealVoucherValue(value: Double) {}
-    override fun getDateFormat() = kotlinx.coroutines.flow.flowOf("dd/MM/yyyy")
-    override suspend fun setDateFormat(pattern: String) {}
-
-    override fun getDateFilterExpanded() = kotlinx.coroutines.flow.flowOf(true)
-    override suspend fun setDateFilterExpanded(expanded: Boolean) {}
-
-    override fun getHomeDateFilterPreset() = kotlinx.coroutines.flow.flowOf(1)
-    override suspend fun setHomeDateFilterPreset(index: Int) {}
-    override fun getHomeDateFilterState() = kotlinx.coroutines.flow.flowOf(
-        SavedDateFilter(
-            presetIndex = 1,
-            from = System.currentTimeMillis() - (7L * 24 * 60 * 60 * 1000),
-            to = System.currentTimeMillis(),
-        ),
-    )
-
-    override suspend fun setHomeDateFilterState(filter: SavedDateFilter) {}
-
-    override fun getTransactionsDateFilterPreset() = kotlinx.coroutines.flow.flowOf(1)
-    override suspend fun setTransactionsDateFilterPreset(index: Int) {}
-    override fun getTransactionsDateFilterState() = kotlinx.coroutines.flow.flowOf(
-        SavedDateFilter(
-            presetIndex = 1,
-            from = System.currentTimeMillis() - (7L * 24 * 60 * 60 * 1000),
-            to = System.currentTimeMillis(),
-        ),
-    )
-
-    override suspend fun setTransactionsDateFilterState(filter: SavedDateFilter) {}
-
-    override fun getChartsDateFilterPreset() = kotlinx.coroutines.flow.flowOf(1)
-    override suspend fun setChartsDateFilterPreset(index: Int) {}
-    override fun getChartsDateFilterState() = kotlinx.coroutines.flow.flowOf(
-        SavedDateFilter(
-            presetIndex = 1,
-            from = System.currentTimeMillis() - (30L * 24 * 60 * 60 * 1000),
-            to = System.currentTimeMillis(),
-        ),
-    )
-
-    override suspend fun setChartsDateFilterState(filter: SavedDateFilter) {}
-
-    override fun getChartsZoomEnabled() = kotlinx.coroutines.flow.flowOf(true)
-    override suspend fun setChartsZoomEnabled(enabled: Boolean) {}
-
-    override fun getShowPaymentTypeBreakdown() = kotlinx.coroutines.flow.flowOf(true)
-    override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {}
-    override fun getShowQuickInsightsCard() = kotlinx.coroutines.flow.flowOf(true)
-    override suspend fun setShowQuickInsightsCard(show: Boolean) {}
-    override fun getDefaultPaymentType() = kotlinx.coroutines.flow.flowOf("ELECTRONIC")
-    override suspend fun setDefaultPaymentType(paymentType: String) {}
-
-    override fun getShowInitialAnimation(): kotlinx.coroutines.flow.Flow<Boolean> =
-        kotlinx.coroutines.flow.flowOf(true)
-
-    override suspend fun setShowInitialAnimation(show: Boolean) {}
-
-    override fun getTransactionDisplayType() =
-        kotlinx.coroutines.flow.flowOf(TransactionDisplayType.TREND)
-
-    override suspend fun setTransactionDisplayType(displayType: TransactionDisplayType) {}
-
-    override fun getTransactionsTransactionDisplayType() =
-        kotlinx.coroutines.flow.flowOf(TransactionDisplayType.TREND)
-
-    override suspend fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType) {}
-
-    override fun getIsTutorialCompleted(): kotlinx.coroutines.flow.Flow<Boolean> =
-        kotlinx.coroutines.flow.flowOf(true)
-
-    override suspend fun setIsTutorialCompleted(completed: Boolean) {}
-
-    override fun getDataEncryptionEnabled(): kotlinx.coroutines.flow.Flow<Boolean> =
-        kotlinx.coroutines.flow.flowOf(false)
-
-    override suspend fun setDataEncryptionEnabled(enabled: Boolean) {}
-
-    override fun getCategorySortOrderInitialized(): kotlinx.coroutines.flow.Flow<Boolean> =
-        kotlinx.coroutines.flow.flowOf(true)
-
-    override suspend fun setCategorySortOrderInitialized(initialized: Boolean) {}
-
-    override fun getLastBackupTimestamp(): kotlinx.coroutines.flow.Flow<Long?> =
-        kotlinx.coroutines.flow.flowOf(null)
-
-    override suspend fun setLastBackupTimestamp(timestamp: Long) {}
-    override fun getLastRestoreTimestamp(): kotlinx.coroutines.flow.Flow<Long?> =
-        kotlinx.coroutines.flow.flowOf(null)
-
-    override suspend fun setLastRestoreTimestamp(timestamp: Long) {}
-
-    override fun getSuggestionsEnabled(): kotlinx.coroutines.flow.Flow<Boolean> =
-        kotlinx.coroutines.flow.flowOf(true)
-
-    override suspend fun setSuggestionsEnabled(enabled: Boolean) {}
-    override fun getSuggestionsClearedAt(): kotlinx.coroutines.flow.Flow<Long?> =
-        kotlinx.coroutines.flow.flowOf(null)
-
-    override suspend fun setSuggestionsClearedAt(timestamp: Long) {}
-
-    override fun getWidgetBackgroundColor(): kotlinx.coroutines.flow.Flow<Long> =
-        kotlinx.coroutines.flow.flowOf(0xFFFFFFFFL)
-
-    override suspend fun setWidgetBackgroundColor(color: Long) {}
-    override fun getWidgetOpacity(): kotlinx.coroutines.flow.Flow<Int> =
-        kotlinx.coroutines.flow.flowOf(100)
-
-    override suspend fun setWidgetOpacity(opacity: Int) {}
-
-    override fun getChartCardsOrder(): kotlinx.coroutines.flow.Flow<String> =
-        kotlinx.coroutines.flow.flowOf("")
-
-    override suspend fun setChartCardsOrder(order: String) {}
-    override fun getHomeTopCardsOrder(): kotlinx.coroutines.flow.Flow<String> =
-        kotlinx.coroutines.flow.flowOf("")
-
-    override suspend fun setHomeTopCardsOrder(order: String) {}
-
-    // ── Google Drive Backup Configuration ──
-    override fun getAutoBackupEnabled(): kotlinx.coroutines.flow.Flow<Boolean> =
-        kotlinx.coroutines.flow.flowOf(false)
-
-    override suspend fun setAutoBackupEnabled(enabled: Boolean) {}
-
-    override fun getAutoBackupFolderUri(): kotlinx.coroutines.flow.Flow<String?> =
-        kotlinx.coroutines.flow.flowOf(null)
-
-    override suspend fun setAutoBackupFolderUri(uri: String?) {}
-
-    override fun getAutoBackupDestination(): kotlinx.coroutines.flow.Flow<com.antcashmanager.domain.model.BackupDestination> =
-        kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.BackupDestination.LOCAL)
-
-    override suspend fun setAutoBackupDestination(destination: com.antcashmanager.domain.model.BackupDestination) {}
-
-    override fun getGoogleDriveFolderId(): kotlinx.coroutines.flow.Flow<String?> =
-        kotlinx.coroutines.flow.flowOf(null)
-
-    override suspend fun setGoogleDriveFolderId(folderId: String?) {}
-
-    override fun getGoogleDriveFolderName(): kotlinx.coroutines.flow.Flow<String?> =
-        kotlinx.coroutines.flow.flowOf(null)
-
-    override suspend fun setGoogleDriveFolderName(folderName: String?) {}
-
-    override fun getGoogleDriveAuthToken(): kotlinx.coroutines.flow.Flow<String?> =
-        kotlinx.coroutines.flow.flowOf(null)
-
-    override suspend fun setGoogleDriveAuthToken(token: String?) {}
-
-    override fun getGoogleDriveRefreshToken(): kotlinx.coroutines.flow.Flow<String?> =
-        kotlinx.coroutines.flow.flowOf(null)
-
-    override suspend fun setGoogleDriveRefreshToken(token: String?) {}
-
-    override fun getGoogleDriveUserEmail(): kotlinx.coroutines.flow.Flow<String?> =
-        kotlinx.coroutines.flow.flowOf(null)
-
-    override suspend fun setGoogleDriveUserEmail(email: String?) {}
-
-    override suspend fun resetAllPreferences() {}
-}
-
-private val sampleTransactions = listOf(
-    Transaction(
-        id = 1,
-        title = "Salary",
-        amount = 2500.0,
-        category = "Work",
-        type = TransactionType.INCOME,
-        timestamp = System.currentTimeMillis(),
-    ),
-    Transaction(
-        id = 2,
-        title = "Groceries",
-        amount = 85.50,
-        category = "Food",
-        type = TransactionType.EXPENSE,
-        timestamp = System.currentTimeMillis(),
-    ),
-    Transaction(
-        id = 3,
-        title = "Electric Bill",
-        amount = 120.0,
-        category = "Utilities",
-        type = TransactionType.EXPENSE,
-        timestamp = System.currentTimeMillis(),
-    ),
-)
-
-@Preview(showBackground = true, name = "HomeScreen - With Transactions")
-@Preview(showBackground = true, name = "HomeScreen - 7 inch", widthDp = 600, heightDp = 960)
-@Preview(showBackground = true, name = "HomeScreen - 10 inch", widthDp = 840, heightDp = 1280)
-@Composable
-private fun HomeContentPreview() {
-    AntCashManagerTheme(dynamicColor = false) {
-        val navController = androidx.navigation.compose.rememberNavController()
-        HomeContent(
-            state = HomeState(
-                transactions = sampleTransactions,
-                filteredTransactions = sampleTransactions,
-                recentTransactions = sampleTransactions,
-                totalIncome = 2500.0,
-                totalExpense = 205.5,
-                balance = 2294.5,
-                balanceByPaymentType = mapOf(
-                    PaymentType.ELECTRONIC to 1500.0,
-                    PaymentType.CASH to 794.5,
-                ),
-            ),
-            onEvent = {},
-            settingsRepository = MockHomeSettingsRepository(),
-            navController = navController,
-            modifier = Modifier,
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "HomeScreen - Empty")
-@Composable
-private fun HomeContentEmptyPreview() {
-    AntCashManagerTheme(dynamicColor = false) {
-        val navController = androidx.navigation.compose.rememberNavController()
-        HomeContent(
-            state = HomeState(),
-            onEvent = {},
-            settingsRepository = MockHomeSettingsRepository(),
-            navController = navController,
-            modifier = Modifier,
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "HomeScreen - Loading")
-@Composable
-private fun HomeContentLoadingPreview() {
-    AntCashManagerTheme(dynamicColor = false) {
-        val navController = androidx.navigation.compose.rememberNavController()
-        HomeContent(
-            state = HomeState(isLoading = true),
-            onEvent = {},
-            settingsRepository = MockHomeSettingsRepository(),
-            navController = navController,
-            modifier = Modifier,
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "HomeScreen - Dark Theme")
-@Composable
-private fun HomeContentDarkPreview() {
-    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
-        val navController = androidx.navigation.compose.rememberNavController()
-        HomeContent(
-            state = HomeState(
-                transactions = sampleTransactions,
-                filteredTransactions = sampleTransactions,
-                recentTransactions = sampleTransactions,
-                totalIncome = 2500.0,
-                totalExpense = 205.5,
-                balance = 2294.5,
-                balanceByPaymentType = mapOf(
-                    PaymentType.ELECTRONIC to 1500.0,
-                    PaymentType.CASH to 794.5,
-                ),
-            ),
-            onEvent = {},
-            settingsRepository = MockHomeSettingsRepository(),
-            navController = navController,
-            modifier = Modifier,
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Transaction Details Dialog - Income")
-@Composable
-private fun TransactionDetailsDialogIncomePreview() {
-    AntCashManagerTheme(dynamicColor = false) {
-        TransactionDetailsDialog(
-            transaction = Transaction(
-                id = 1,
-                title = "Salary Payment",
-                amount = 2500.0,
-                category = "Work",
-                type = TransactionType.INCOME,
-                timestamp = System.currentTimeMillis(),
-                notes = "Monthly salary",
-                payee = "Acme Corp",
-                location = "Office",
-                isRecurring = true,
-                recurrenceInterval = "monthly",
-                tags = "salary,income",
-            ),
-            onDismiss = {},
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Transaction Details Dialog - Expense")
-@Composable
-private fun TransactionDetailsDialogExpensePreview() {
-    AntCashManagerTheme(dynamicColor = false) {
-        TransactionDetailsDialog(
-            transaction = Transaction(
-                id = 2,
-                title = "Groceries",
-                amount = 85.50,
-                category = "Food",
-                type = TransactionType.EXPENSE,
-                timestamp = System.currentTimeMillis(),
-                notes = "Weekly shopping",
-                tags = "food,groceries",
-            ),
-            onDismiss = {},
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "HomeScreen - Search Expanded")
-@Composable
-private fun HomeContentSearchExpandedPreview() {
-    AntCashManagerTheme(dynamicColor = false) {
-        val navController = androidx.navigation.compose.rememberNavController()
-        HomeContent(
-            state = HomeState(
-                transactions = sampleTransactions,
-                filteredTransactions = sampleTransactions,
-                recentTransactions = sampleTransactions,
-                totalIncome = 2500.0,
-                totalExpense = 205.5,
-                balance = 2294.5,
-                isSearchExpanded = true,
-                searchQuery = "gro",
-                searchSuggestions = listOf("Groceries"),
-                balanceByPaymentType = mapOf(
-                    PaymentType.ELECTRONIC to 1500.0,
-                    PaymentType.CASH to 794.5,
-                ),
-            ),
-            onEvent = {},
-            settingsRepository = MockHomeSettingsRepository(),
-            navController = navController,
-            modifier = Modifier,
-        )
+    // FASE 1: Main layout logic - choose between split-pane and single-pane
+    when {
+        state.isLoading -> LoadingState()
+        else -> {
+            if (adaptiveLayoutInfo.hasFold && adaptiveLayoutInfo.foldingFeature != null) {
+                // Split-pane layout for foldable devices
+                FoldableAwareLayout(
+                    foldingFeature = adaptiveLayoutInfo.foldingFeature,
+                    modifier = Modifier.fillMaxSize(),
+                    topContent = { _, _ ->
+                        HomeListPane()
+                    },
+                    bottomContent = { _, _ ->
+                        // Details pane shown when transaction is selected on foldable
+                        if (multiPaneCoordinator?.showDetailsPane?.value == true && state.selectedTransaction != null) {
+                            TransactionDetailsPane(state.selectedTransaction!!)
+                        }
+                    }
+                )
+            } else {
+                // Single-pane layout for phones and tablets without fold
+                HomeListPane()
+            }
+        }
     }
 }

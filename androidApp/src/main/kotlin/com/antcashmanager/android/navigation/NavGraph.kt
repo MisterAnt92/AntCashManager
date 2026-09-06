@@ -5,8 +5,6 @@ import android.content.Context
 import android.content.ContextWrapper
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.core.tween
@@ -63,16 +61,17 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.analytics.AnalyticsManager
-import com.antcashmanager.android.analytics.PerformanceTracker
+import com.antcashmanager.android.analytics.tracker.PerformanceTracker
 import com.antcashmanager.android.util.AppExitManager.safeFinish
 import com.antcashmanager.android.ui.components.animation.AntEasterEggAnimation
-import com.antcashmanager.android.ui.components.animation.AntSplashScreen
 import com.antcashmanager.android.ui.components.dialog.AppExitConfirmationDialog
 import com.antcashmanager.android.ui.components.layout.AntScreenScaffold
 import com.antcashmanager.android.ui.components.layout.LeftSidebar
+import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.categories.view.CategoriesScreen
@@ -112,14 +111,6 @@ fun AntCashManagerNavHost() {
         .collectAsStateWithLifecycle(initialValue = "")
     val maskAmounts by settingsRepository.getMaskAmounts().collectAsStateWithLifecycle(initialValue = false)
 
-    val showInitialAnimation = false
-    var showSplash by rememberSaveable { mutableStateOf(true) }
-
-    if (showSplash && showInitialAnimation) {
-        AntSplashScreen(onAnimationFinished = { showSplash = false })
-        return
-    }
-
     val currencyFormat = CurrencyFormat(
         currencySymbol = currencySymbol,
         decimalDigits = decimalDigits,
@@ -131,7 +122,9 @@ fun AntCashManagerNavHost() {
         LocalCurrencyFormat provides currencyFormat,
         LocalAmountsMasked provides maskAmounts,
     ) {
-        val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
+        // FASE 1: Get display features from CompositionLocal and pass to adaptive layout
+        val displayFeatures = LocalDisplayFeatures.current
+        val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo(displayFeatures = displayFeatures)
         // ... existing AntScreenScaffold code ...
 
         val visibleNavItems = buildList {
@@ -161,6 +154,13 @@ fun AntCashManagerNavHost() {
         val currentDestination = navBackStackEntry?.destination
         val context = LocalContext.current
         var showExitDialog by rememberSaveable { mutableStateOf(false) }
+        // CRITICAL FIX: Capture context at the moment exit dialog is shown to prevent
+        // race conditions when language change causes WithAppLocale recomposition.
+        // Without this, the context becomes stale during the 300ms dismissal delay.
+        // Use remember (not rememberSaveable) because Context cannot be saved to Bundle.
+        // Capture the context value when showExitDialog becomes true via LaunchedEffect.
+        var exitDialogContext by remember { mutableStateOf(context) }
+
         var isSidebarOpen by rememberSaveable { mutableStateOf(false) }
         var showAntAnimation by rememberSaveable { mutableStateOf(false) }
         var screenHeaderConfig by remember { mutableStateOf(ScreenHeaderConfig()) }
@@ -171,14 +171,23 @@ fun AntCashManagerNavHost() {
             visibleNavItems.any { item -> item.route == currentRoute }
         } == true
 
-        val isOnTutorial = currentDestination?.route == BottomNavItem.Tutorial.route
+        val isOnTutorial = currentDestination?.route == AppRoute.BottomRoute.Tutorial.route
 
         BackHandler {
             when {
                 isSidebarOpen -> isSidebarOpen = false
                 showExitDialog -> showExitDialog = false
-                isOnTopLevelRoute -> showExitDialog = true
-                !navController.popBackStack() -> showExitDialog = true
+                isOnTopLevelRoute -> {
+                    showExitDialog = true
+                    // FIX 1: Capture stable context BEFORE dialog shows
+                    // This prevents race condition with language change recompositions
+                    exitDialogContext = context
+                }
+                !navController.popBackStack() -> {
+                    showExitDialog = true
+                    // FIX 1: Capture stable context BEFORE dialog shows
+                    exitDialogContext = context
+                }
             }
         }
 
@@ -197,9 +206,9 @@ fun AntCashManagerNavHost() {
                     // Bottom bar non visibile su Categories, Settings e Tutorial
                     val isOnCategoriesSettingsOrTutorial =
                         currentDestination?.route?.let { currentRoute ->
-                            currentRoute == BottomNavItem.Categories.route ||
-                                    currentRoute == BottomNavItem.Settings.route ||
-                                    currentRoute == BottomNavItem.Tutorial.route
+                            currentRoute == AppRoute.BottomRoute.Categories.route ||
+                                    AppRoute.isSettingsRoute(currentRoute) ||
+                                    currentRoute == AppRoute.BottomRoute.Tutorial.route
                         } == true
 
                     if (isTutorialCompleted && !adaptiveLayoutInfo.preferRailNavigation && !isSidebarOpen && !isOnCategoriesSettingsOrTutorial) {
@@ -224,13 +233,7 @@ fun AntCashManagerNavHost() {
                                                 putString("destination", item.route)
                                             }
                                             analyticsManager.logEvent("sidebar_navigation_clicked", params)
-                                            navController.navigate(item.route) {
-                                                popUpTo(navController.graph.findStartDestination().id) {
-                                                    saveState = true
-                                                }
-                                                launchSingleTop = true
-                                                restoreState = true
-                                            }
+                                            navController.navigateToBottomTab(item.route)
                                         },
                                         modifier = Modifier.testTag("nav_${item.route}"),
                                         icon = {
@@ -269,37 +272,74 @@ fun AntCashManagerNavHost() {
                 ) {
                     NavHost(
                         navController = navController,
-                        startDestination = BottomNavItem.Home.route,
+                        startDestination = AppRoute.BottomRoute.Home.route,
                         modifier = navModifier,
                     ) {
-                        composable(BottomNavItem.Home.route) {
+                        composable(
+                            route = AppRoute.BottomRoute.Home.route,
+                            deepLinks = listOf(
+                                androidx.navigation.navDeepLink {
+                                    uriPattern = "https://antcashmanager.com/app/home"
+                                },
+                                androidx.navigation.navDeepLink {
+                                    uriPattern = "antcashmanager://app/home"
+                                },
+                            ),
+                        ) {
                             HomeScreen(navController = navController)
                         }
-                        composable(BottomNavItem.Charts.route) {
+                        composable(AppRoute.BottomRoute.Charts.route) {
                             ChartsScreen()
                         }
-                        composable(BottomNavItem.Transactions.route) {
+                        composable(
+                            route = AppRoute.BottomRoute.Transactions.route,
+                            deepLinks = listOf(
+                                androidx.navigation.navDeepLink {
+                                    uriPattern = "https://antcashmanager.com/app/transactions"
+                                },
+                                androidx.navigation.navDeepLink {
+                                    uriPattern = "antcashmanager://app/transactions"
+                                },
+                            ),
+                        ) {
                             TransactionsScreen(navController = navController)
                         }
-                        composable(BottomNavItem.Categories.route) {
+                        composable(
+                            route = AppRoute.BottomRoute.Categories.route,
+                            deepLinks = listOf(
+                                androidx.navigation.navDeepLink {
+                                    uriPattern = "https://antcashmanager.com/app/categories"
+                                },
+                                androidx.navigation.navDeepLink {
+                                    uriPattern = "antcashmanager://app/categories"
+                                },
+                            ),
+                        ) {
                             CategoriesScreen()
                         }
-                        composable(BottomNavItem.Settings.route) {
-                            SettingsScreen(navController = navController)
+                        // Nested navigation graph per Settings e sub-screens
+                        navigation(
+                            startDestination = AppRoute.SettingsRoute.Main.route,
+                            route = "settings_graph",
+                        ) {
+                            composable(AppRoute.SettingsRoute.Main.route) {
+                                SettingsScreen(navController = navController)
+                            }
+                            composable(AppRoute.SettingsRoute.Display.route) {
+                                DisplayScreen(navController = navController)
+                            }
+                            composable(AppRoute.SettingsRoute.DataManagement.route) {
+                                SettingsDataScreen(navController = navController)
+                            }
                         }
-                        composable(BottomNavItem.Tutorial.route) {
+
+                        composable(AppRoute.BottomRoute.Tutorial.route) {
                             TutorialScreen(
-                                onNavigateBack = { navController.popBackStack() },
+                                navController = navController,
                             )
                         }
-                        composable("display") {
-                            DisplayScreen(navController = navController)
-                        }
-                        composable("settings_data") {
-                            SettingsDataScreen(navController = navController)
-                        }
                         composable(
-                            route = "add_transaction?transactionId={transactionId}",
+                            route = AppRoute.TransactionRoute.Add.route + "?transactionId={transactionId}",
                             arguments = listOf(
                                 androidx.navigation.navArgument("transactionId") {
                                     type = androidx.navigation.NavType.LongType
@@ -311,14 +351,12 @@ fun AntCashManagerNavHost() {
                                 backStackEntry.arguments?.getLong("transactionId")?.takeIf { it != -1L }
                             AddTransactionScreen(
                                 transactionId = transactionId,
-                                onNavigateBack = { navController.popBackStack() },
-                                onTransactionAdded = { navController.popBackStack() },
+                                navController = navController,
                             )
                         }
-                        composable("receipt_scan") {
+                        composable(AppRoute.TransactionRoute.ReceiptScan.route) {
                             ReceiptScanScreen(
-                                onNavigateBack = { navController.popBackStack() },
-                                onTransactionSaved = { navController.popBackStack() },
+                                navController = navController,
                             )
                         }
                     }
@@ -360,7 +398,7 @@ fun AntCashManagerNavHost() {
                                     IconButton(
                                         onClick = { screenHeaderConfig.onSearchClick?.invoke() },
                                         modifier = Modifier
-                                            .size(40.dp)
+                                            .size(48.dp)
                                             .testTag("header_search_icon"),
                                     ) {
                                         Icon(
@@ -376,7 +414,7 @@ fun AntCashManagerNavHost() {
                                 if (screenHeaderConfig.onFilterClick != null) {
                                     IconButton(
                                         onClick = { screenHeaderConfig.onFilterClick!!.invoke() },
-                                        modifier = Modifier.size(40.dp),
+                                        modifier = Modifier.size(48.dp),
                                     ) {
                                         Box {
                                             Icon(
@@ -413,7 +451,7 @@ fun AntCashManagerNavHost() {
                                 if (screenHeaderConfig.hasOrderOption) {
                                     IconButton(
                                         onClick = { screenHeaderConfig.onOrderClick?.invoke() },
-                                        modifier = Modifier.size(40.dp),
+                                        modifier = Modifier.size(48.dp),
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.Sort,
@@ -465,13 +503,7 @@ fun AntCashManagerNavHost() {
                                                 putString("destination", item.route)
                                             }
                                             analyticsManager.logEvent("sidebar_navigation_clicked", params)
-                                            navController.navigate(item.route) {
-                                                popUpTo(navController.graph.findStartDestination().id) {
-                                                    saveState = true
-                                                }
-                                                launchSingleTop = true
-                                                restoreState = true
-                                            }
+                                            navController.navigateToBottomTab(item.route)
                                         },
                                         icon = {
                                             Icon(
@@ -532,7 +564,7 @@ fun AntCashManagerNavHost() {
                                                 analyticsManager.logEvent("sidebar_toggled", params)
                                                 isSidebarOpen = !isSidebarOpen
                                             },
-                                            modifier = Modifier.size(40.dp),
+                                            modifier = Modifier.size(48.dp),
                                         ) {
                                             Icon(
                                                 imageVector = Icons.Default.Menu,
@@ -563,7 +595,7 @@ fun AntCashManagerNavHost() {
                                             IconButton(
                                                 onClick = { screenHeaderConfig.onSearchClick?.invoke() },
                                                 modifier = Modifier
-                                                    .size(40.dp)
+                                                    .size(48.dp)
                                                     .testTag("header_search_icon"),
                                             ) {
                                                 Icon(
@@ -579,7 +611,7 @@ fun AntCashManagerNavHost() {
                                         if (screenHeaderConfig.onFilterClick != null) {
                                             IconButton(
                                                 onClick = { screenHeaderConfig.onFilterClick!!.invoke() },
-                                                modifier = Modifier.size(40.dp),
+                                                modifier = Modifier.size(48.dp),
                                             ) {
                                                 Box {
                                                     Icon(
@@ -616,7 +648,7 @@ fun AntCashManagerNavHost() {
                                         if (screenHeaderConfig.hasOrderOption) {
                                             IconButton(
                                                 onClick = { screenHeaderConfig.onOrderClick?.invoke() },
-                                                modifier = Modifier.size(40.dp),
+                                                modifier = Modifier.size(48.dp),
                                             ) {
                                                 Icon(
                                                     imageVector = Icons.Default.Sort,
@@ -703,11 +735,18 @@ fun AntCashManagerNavHost() {
                 showExitDialog = false
             },
             onConfirmExit = {
-                // Dialog handles its own state and timing synchronization
-                // This callback is invoked after dialog dismissal delay (300ms)
-                // to prevent race conditions on Android 16 (API 35+)
+                // Dialog invokes this after a 500ms delay (handles WithAppLocale recomposition timing)
                 Logger.d(tag = "AppExit") { "Exit confirmed, calling Activity.safeFinish()" }
-                context.findActivity()?.safeFinish()
+                // FIX 1: Use captured context (exitDialogContext) to prevent race condition
+                // with language change. exitDialogContext is captured synchronously in BackHandler
+                // and is stable even if WithAppLocale recomposes LocalContext.
+                val activity = exitDialogContext.findActivity()
+                if (activity != null) {
+                    activity.safeFinish()
+                } else {
+                    Logger.e(tag = "AppExit") { "findActivity() returned null — falling back to System.exit(0)" }
+                    System.exit(0)
+                }
             },
         )
 

@@ -26,9 +26,23 @@ sealed interface TransactionsEvent {
     data object ApplyFilters : TransactionsEvent
     data object CancelFilterChanges : TransactionsEvent
     data object ClearAllFilters : TransactionsEvent
+    data class SetDateFilterExpanded(val expanded: Boolean) : TransactionsEvent
 
     // Transaction CRUD events
     data object AddTransactionClicked : TransactionsEvent
+    data class AddTransaction(
+        val title: String,
+        val amount: Double,
+        val category: String,
+        val type: TransactionType,
+        val timestamp: Long,
+        val notes: String = "",
+        val payee: String = "",
+        val location: String = "",
+        val tags: String = "",
+        val isRecurring: Boolean = false,
+        val recurrenceInterval: String = "",
+    ) : TransactionsEvent
     data class DeleteTransaction(val transaction: Transaction) : TransactionsEvent
     data class UpdateTransaction(val transaction: Transaction) : TransactionsEvent
 }

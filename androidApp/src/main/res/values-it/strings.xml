@@ -12,6 +12,14 @@
     <string name="common_add">Aggiungi</string>
     <string name="common_preview">Anteprima</string>
     <string name="help_dashboard_desc">Visualizza il saldo totale, entrate e uscite nel periodo selezionato.</string>
+
+    <!-- HelpDialog (Transactions) -->
+    <string name="transactions_help_filter_title">Filtra Transazioni</string>
+    <string name="transactions_help_filter_desc">Usa i filtri per trovare transazioni specifiche per tipo, categoria o metodo di pagamento.</string>
+    <string name="transactions_help_search_title">Cerca</string>
+    <string name="transactions_help_search_desc">Cerca transazioni per titolo o importo usando la barra di ricerca.</string>
+    <string name="transactions_help_display_title">Opzioni di Visualizzazione</string>
+    <string name="transactions_help_display_desc">Cambia il modo in cui le transazioni sono visualizzate nella lista dal menu impostazioni.</string>
     <string name="help_features_label">Caratteristiche:</string>
     <string name="common_help">Aiuto</string>
     <string name="help_home_title">Guida Home</string>

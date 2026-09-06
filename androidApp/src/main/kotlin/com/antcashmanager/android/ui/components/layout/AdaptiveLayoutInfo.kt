@@ -56,9 +56,11 @@ data class AdaptiveLayoutInfo(
  * - Compact: phones (< 600dp)
  * - Medium: 7" tablets (600..839dp)
  * - Expanded: 10" tablets and larger (>= 840dp)
+ *
+ * FASE 1: Now includes fold detection from displayFeatures (androidx.window)
  */
 @Composable
-fun rememberAdaptiveLayoutInfo(): AdaptiveLayoutInfo {
+fun rememberAdaptiveLayoutInfo(displayFeatures: List<DisplayFeature> = emptyList()): AdaptiveLayoutInfo {
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
     val screenHeightDp = configuration.screenHeightDp
@@ -66,6 +68,13 @@ fun rememberAdaptiveLayoutInfo(): AdaptiveLayoutInfo {
     val isLandscape = screenWidthDp > screenHeightDp
     val isTabletDevice = smallestScreenWidthDp >= TABLET_MEDIUM_BREAKPOINT_DP
     val isFoldableDevice = !isTabletDevice && screenWidthDp >= TABLET_MEDIUM_BREAKPOINT_DP
+
+    // FASE 1: Extract fold detection from displayFeatures
+    val foldingFeature = displayFeatures.filterIsInstance<FoldingFeature>().firstOrNull()
+    val hasFold = foldingFeature != null && foldingFeature.isSeparating
+    val isFoldHorizontal = foldingFeature?.orientation == FoldingFeature.Orientation.HORIZONTAL
+    val isFoldVertical = foldingFeature?.orientation == FoldingFeature.Orientation.VERTICAL
+    val foldBounds = foldingFeature?.bounds
 
     return when {
         screenWidthDp >= TABLET_EXPANDED_BREAKPOINT_DP -> AdaptiveLayoutInfo(
@@ -81,11 +90,12 @@ fun rememberAdaptiveLayoutInfo(): AdaptiveLayoutInfo {
             preferRailNavigation = true,
             horizontalPadding = 24.dp,
             maxContentWidth = 1200.dp,
-            foldingFeature = null,
-            hasFold = false,
-            isFoldHorizontal = false,
-            isFoldVertical = false,
-            foldBounds = null,
+            // FASE 1: Use fold detection fields
+            foldingFeature = foldingFeature,
+            hasFold = hasFold,
+            isFoldHorizontal = isFoldHorizontal,
+            isFoldVertical = isFoldVertical,
+            foldBounds = foldBounds,
         )
 
         screenWidthDp >= TABLET_MEDIUM_BREAKPOINT_DP -> AdaptiveLayoutInfo(
@@ -101,11 +111,12 @@ fun rememberAdaptiveLayoutInfo(): AdaptiveLayoutInfo {
             preferRailNavigation = isTabletDevice || isLandscape,
             horizontalPadding = if (isFoldableDevice && !isLandscape) 16.dp else 20.dp,
             maxContentWidth = if (isFoldableDevice) 880.dp else 960.dp,
-            foldingFeature = null,
-            hasFold = false,
-            isFoldHorizontal = false,
-            isFoldVertical = false,
-            foldBounds = null,
+            // FASE 1: Use fold detection fields
+            foldingFeature = foldingFeature,
+            hasFold = hasFold,
+            isFoldHorizontal = isFoldHorizontal,
+            isFoldVertical = isFoldVertical,
+            foldBounds = foldBounds,
         )
 
         else -> AdaptiveLayoutInfo(
@@ -121,11 +132,12 @@ fun rememberAdaptiveLayoutInfo(): AdaptiveLayoutInfo {
             preferRailNavigation = false,
             horizontalPadding = 8.dp,
             maxContentWidth = 680.dp,
-            foldingFeature = null,
-            hasFold = false,
-            isFoldHorizontal = false,
-            isFoldVertical = false,
-            foldBounds = null,
+            // FASE 1: Use fold detection fields (no fold on compact phones typically)
+            foldingFeature = foldingFeature,
+            hasFold = hasFold,
+            isFoldHorizontal = isFoldHorizontal,
+            isFoldVertical = isFoldVertical,
+            foldBounds = foldBounds,
         )
     }
 }

@@ -5,6 +5,7 @@ import androidx.room.Room
 
 public object DatabaseProvider {
     private const val DATABASE_NAME = "antcashmanager.db"
+    @Volatile
     private var database: AppDatabase? = null
 
     public fun getDatabase(context: Context): AppDatabase {

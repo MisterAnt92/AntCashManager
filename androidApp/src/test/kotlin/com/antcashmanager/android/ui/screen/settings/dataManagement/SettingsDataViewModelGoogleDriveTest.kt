@@ -1,9 +1,8 @@
 package com.antcashmanager.android.ui.screen.settings.dataManagement
 
-import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.BaseUnitTest
-import com.antcashmanager.android.analytics.ErrorTracker
-import com.antcashmanager.android.analytics.PerformanceTracker
+import com.antcashmanager.android.analytics.tracker.ErrorTracker
+import com.antcashmanager.android.analytics.tracker.PerformanceTracker
 import com.antcashmanager.android.auth.GoogleSignInManager
 import com.antcashmanager.android.auth.GoogleSignInResult
 import com.antcashmanager.android.data.backup.BackupService
@@ -11,12 +10,12 @@ import com.antcashmanager.android.work.AutoBackupScheduler
 import com.antcashmanager.domain.model.BackupDestination
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
+import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
-import org.junit.Before
 import org.junit.Test
 
 /**
@@ -52,6 +51,7 @@ class SettingsDataViewModelGoogleDriveTest : BaseUnitTest() {
         SettingsDataViewModel(
             settingsRepository = settingsRepository,
             categoryRepository = categoryRepository,
+            transactionRepository = mockk(relaxed = true),
             deleteAllTransactionsUseCase = deleteAllTransactionsUseCase,
             backupService = backupService,
             autoBackupScheduler = autoBackupScheduler,

@@ -8,7 +8,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.analytics.AnalyticsManager
-import com.antcashmanager.android.analytics.ErrorTracker
+import com.antcashmanager.android.analytics.tracker.ErrorTracker
 import com.antcashmanager.android.data.backup.BackupService
 import com.antcashmanager.android.drive.DriveUploadManager
 import com.antcashmanager.android.security.BackupPayloadCipher
@@ -22,7 +22,6 @@ import java.util.Date
 import java.util.Locale
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 
 /**

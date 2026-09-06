@@ -28,7 +28,9 @@ import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
-private const val EXIT_DIALOG_DELAY_MS = 300
+// 500ms ensures WithAppLocale recomposition always completes before Activity.finish(),
+// even if a language change is in progress (was 300ms + conditional 500ms via koinInject bug).
+private const val EXIT_DIALOG_DELAY_MS = 500
 private const val MASCOT_SCALE_ANIMATION_MS = 1000
 private const val MASCOT_FLOAT_ANIMATION_MS = 1400
 private const val MASCOT_SCALE_MIN = 0.94f
@@ -40,7 +42,8 @@ private const val MASCOT_FLOAT_MAX = 4f
  * Exit confirmation dialog with synchronized dismissal and exit handling.
  *
  * On Android 16 (API 35+), the dialog dismissal and Activity.finish() are properly
- * synchronized using LaunchedEffect with delay to prevent race conditions.
+ * synchronized using LaunchedEffect with a 500ms delay to prevent race conditions,
+ * including the case where a language change is in progress (WithAppLocale recomposition).
  *
  * @param onConfirmExit Called when user confirms exit. Must call Activity.safeFinish()
  * @param onDismiss Called when user cancels or dismisses the dialog
@@ -52,22 +55,24 @@ fun appExitConfirmationDialog(
     onDismiss: () -> Unit,
     isVisible: Boolean = true,
 ) {
-    if (!isVisible) {
-        return
-    }
-
     val logger = Logger.withTag("AppExitDialog")
     val (shouldExit, setShouldExit) = remember { mutableStateOf(false) }
 
     // Synchronized exit handler for Android 16+ (API 35+)
-    // Delay ensures Compose has time to process dialog dismissal before Activity.finish()
+    // 500ms delay ensures Compose finishes recomposition (including WithAppLocale locale changes)
+    // before Activity.finish() is called. Keep outside the isVisible check so the
+    // coroutine survives even after the parent sets showExitDialog = false.
     LaunchedEffect(shouldExit) {
         if (shouldExit) {
-            logger.d("Exit confirmed, waiting for dialog dismissal animation...")
+            logger.d("Exit confirmed, waiting ${EXIT_DIALOG_DELAY_MS}ms for dialog dismissal + recomposition...")
             delay(EXIT_DIALOG_DELAY_MS.milliseconds)
-            logger.d("Calling Activity.finish() after dialog dismissal delay")
+            logger.d("Calling Activity.finish() after delay")
             onConfirmExit()
         }
+    }
+
+    if (!isVisible) {
+        return
     }
 
     val mascotTransition = rememberInfiniteTransition(label = "exitMascotTransition")
@@ -121,6 +126,8 @@ fun appExitConfirmationDialog(
                 onClick = {
                     logger.d("Confirm button clicked, setting shouldExit = true")
                     setShouldExit(true)
+                    // Inform the parent to start the dismissal process immediately
+                    onDismiss()
                 }
             ) {
                 AppText(text = stringResource(R.string.exit_app_confirm))

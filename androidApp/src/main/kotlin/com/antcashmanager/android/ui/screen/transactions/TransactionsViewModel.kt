@@ -5,7 +5,7 @@ package com.antcashmanager.android.ui.screen.transactions
 // ══════════════════════════════════════════════════════════════════════════════
 
 import androidx.lifecycle.viewModelScope
-import com.antcashmanager.android.analytics.EngagementTracker
+import com.antcashmanager.android.analytics.tracker.EngagementTracker
 import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
 import com.antcashmanager.android.util.withCorrectAmounts
@@ -60,6 +60,7 @@ class TransactionsViewModel(
     private val getTransactionSuggestionsUseCase: GetTransactionSuggestionsUseCase,
     private val getTransactionsDateFilterStateUseCase: GetTransactionsDateFilterStateUseCase,
     private val setTransactionsDateFilterStateUseCase: SetTransactionsDateFilterStateUseCase,
+    private val settingsRepository: SettingsRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val engagementTracker: EngagementTracker,
 ) : BaseViewModel<TransactionsEvent>(dispatcher) {
@@ -107,6 +108,7 @@ class TransactionsViewModel(
             settingsRepository = settingsRepository,
             dispatcher = dispatcher,
         ),
+        settingsRepository = settingsRepository,
         dispatcher = dispatcher,
         engagementTracker = engagementTracker,
     )
@@ -224,14 +226,24 @@ class TransactionsViewModel(
             }
         }
 
-    // ── Combined UI State ──
-    val state: StateFlow<TransactionsState> = combine(
+    // ── Combined UI State (2-layer combine to avoid type inference issues) ──
+    // Layer 1: Combine data flows (transactions, categories, filtered)
+    private val dataLayer = combine(
         transactionsFlow,
         categoriesFlow,
         filteredTransactionsFlow,
+    ) { transactions, categories, filtered ->
+        Triple(transactions, categories, filtered)
+    }
+
+    // Layer 2: Combine Layer1 + filter + suggestions + displayType + dateFilterExpanded
+    val state: StateFlow<TransactionsState> = combine(
+        dataLayer,
         searchSuggestionsFlow,
         _filterState,
-    ) { transactions, categories, filtered, suggestions, filterState ->
+        settingsRepository.getTransactionDisplayType(),
+        settingsRepository.getDateFilterExpanded(),
+    ) { (transactions, categories, filtered), suggestions, filterState, displayType, dateFilterExpanded ->
         val categoryCache = categories.associateBy { it.name }
 
         // Enrich transactions with category icon and color from cache
@@ -267,6 +279,8 @@ class TransactionsViewModel(
             isSearchExpanded = filterState.isSearchExpanded,
             isFiltersExpanded = filterState.isFiltersExpanded,
             searchSuggestions = suggestions,
+            transactionDisplayType = displayType,
+            dateFilterExpanded = dateFilterExpanded,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -296,10 +310,25 @@ class TransactionsViewModel(
             is TransactionsEvent.ApplyFilters -> applyFilters()
             is TransactionsEvent.CancelFilterChanges -> cancelFilterChanges()
             is TransactionsEvent.ClearAllFilters -> clearAllFilters()
+            is TransactionsEvent.SetDateFilterExpanded -> setDateFilterExpanded(event.expanded)
 
             // Transaction CRUD events
             is TransactionsEvent.AddTransactionClicked -> { /* Navigation handled by Screen */
             }
+
+            is TransactionsEvent.AddTransaction -> addTransaction(
+                title = event.title,
+                amount = event.amount,
+                category = event.category,
+                type = event.type,
+                timestamp = event.timestamp,
+                notes = event.notes,
+                payee = event.payee,
+                location = event.location,
+                tags = event.tags,
+                isRecurring = event.isRecurring,
+                recurrenceInterval = event.recurrenceInterval,
+            )
 
             is TransactionsEvent.DeleteTransaction -> deleteTransaction(event.transaction)
             is TransactionsEvent.UpdateTransaction -> updateTransaction(event.transaction)
@@ -463,8 +492,14 @@ class TransactionsViewModel(
         }
     }
 
-    // ── Public Methods - Transaction CRUD ──
-    fun addTransaction(
+    private fun setDateFilterExpanded(expanded: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.setDateFilterExpanded(expanded)
+        }
+    }
+
+    // ── Private Methods - Transaction CRUD ──
+    private fun addTransaction(
         title: String,
         amount: Double,
         category: String,
@@ -504,7 +539,7 @@ class TransactionsViewModel(
         }
     }
 
-    fun updateTransaction(transaction: Transaction) {
+    private fun updateTransaction(transaction: Transaction) {
         logDebug("Updating transaction: ${transaction.title}")
         viewModelScope.launch {
             val result = updateTransactionUseCase(transaction)
@@ -518,7 +553,7 @@ class TransactionsViewModel(
         }
     }
 
-    fun deleteTransaction(transaction: Transaction) {
+    private fun deleteTransaction(transaction: Transaction) {
         logDebug("Deleting transaction: ${transaction.title}")
         viewModelScope.launch {
             val result = deleteTransactionUseCase(transaction)

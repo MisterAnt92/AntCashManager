@@ -6,6 +6,7 @@ package com.antcashmanager.domain.security
 public interface LocalDataCipher {
     public fun encryptString(value: String): String
     public fun decryptString(value: String): String
+    public fun isEncryptionEnabled(): Boolean
     public fun clearCache(): Unit
 }
 

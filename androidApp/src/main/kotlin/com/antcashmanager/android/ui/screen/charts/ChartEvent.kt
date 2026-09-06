@@ -19,4 +19,5 @@ sealed class ChartEvent {
     ) : ChartEvent()
     data object ClearChartSelection : ChartEvent()
     data object RetryLastOperation : ChartEvent()
+    data class SetChartCardsOrder(val order: String) : ChartEvent()
 }

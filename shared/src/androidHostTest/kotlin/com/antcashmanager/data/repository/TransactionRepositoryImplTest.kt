@@ -331,6 +331,8 @@ private class FakeLocalDataCipher : LocalDataCipher {
         if (value.startsWith(PREFIX)) value.removePrefix(PREFIX) else value
 
     override fun clearCache() = Unit
+
+    override fun isEncryptionEnabled(): Boolean = false
 }
 
 private class FakeWidgetUpdateNotifier : WidgetUpdateNotifier {

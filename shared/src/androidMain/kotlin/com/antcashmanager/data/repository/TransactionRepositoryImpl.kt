@@ -13,32 +13,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
-/**
- * Simple LRU cache for decrypted transactions.
- * Reduces redundant decryption operations (60-70% improvement).
- * Max 500 entries = ~5MB memory overhead.
- */
-private class DecryptionLRUCache(maxSize: Int = 500) : LinkedHashMap<Long, Pair<String, String>>(16, 0.75f, true) {
-    private val maxEntries = maxSize
-
-    override fun removeEldestEntry(eldest: Map.Entry<Long, Pair<String, String>>): Boolean =
-        size > maxEntries
-
-    fun get(id: Long, encryptedData: String, decryptor: (String) -> String): Pair<String, String> {
-        return getOrPut(id) {
-            decryptor(encryptedData) to ""  // Cache: first field (title) + empty second
-        }
-    }
-}
-
 public class TransactionRepositoryImpl(
     private val transactionDao: TransactionDao,
     private val localDataCipher: LocalDataCipher,
     private val widgetUpdateNotifier: WidgetUpdateNotifier = NoOpWidgetUpdateNotifier,
 ) : TransactionRepository {
-
-    // LRU Cache for decrypted transactions (improves performance 60-70%)
-    private val decryptionCache = DecryptionLRUCache(maxSize = 500)
+    // NOTE: DecryptionLRUCache was removed (never used via .get() method).
+    // Cache clearing on update was the only usage, which is now handled by individual methods.
 
     override fun getAllTransactions(): Flow<List<Transaction>> =
         transactionDao.getAllTransactions()
@@ -68,16 +49,38 @@ public class TransactionRepositoryImpl(
                 entities.map { decryptEntity(it).toDomain() }
             }
 
-    override fun searchTransactions(query: String, pageSize: Int, pageIndex: Int): Flow<List<Transaction>> =
-        transactionDao.searchTransactions(
-            query = "%$query%",  // LIKE wildcard pattern
-            limit = pageSize,
-            offset = pageIndex * pageSize
-        )
+    override fun searchTransactions(query: String, pageSize: Int, pageIndex: Int): Flow<List<Transaction>> {
+        // When encryption is ON, LIKE queries on ciphertext fail (random IV per row).
+        // Branch: if encrypted, load all transactions and filter in memory; if not, use fast DAO path.
+        if (!localDataCipher.isEncryptionEnabled()) {
+            // Fast path: use DAO LIKE query
+            return transactionDao.searchTransactions(
+                query = "%$query%",  // LIKE wildcard pattern
+                limit = pageSize,
+                offset = pageIndex * pageSize
+            )
+                .flowOn(Dispatchers.Default)
+                .map { entities ->
+                    entities.map { decryptEntity(it).toDomain() }
+                }
+        }
+
+        // Slow path: encryption enabled — load all, decrypt, filter in memory
+        return transactionDao.getAllTransactions()
             .flowOn(Dispatchers.Default)
             .map { entities ->
-                entities.map { decryptEntity(it).toDomain() }
+                entities
+                    .map { decryptEntity(it).toDomain() }
+                    .filter { transaction ->
+                        val lowerQuery = query.lowercase()
+                        transaction.title.lowercase().contains(lowerQuery) ||
+                                transaction.payee.lowercase().contains(lowerQuery) ||
+                                transaction.notes.lowercase().contains(lowerQuery)
+                    }
+                    .drop(pageIndex * pageSize)
+                    .take(pageSize)
             }
+    }
 
     override suspend fun getTransactionById(id: Long): Transaction? =
         transactionDao.getTransactionById(id)?.let { decryptEntity(it).toDomain() }
@@ -96,7 +99,6 @@ public class TransactionRepositoryImpl(
 
     override suspend fun updateTransaction(transaction: Transaction) {
         transactionDao.updateTransaction(encryptEntity(transaction.toEntity()))
-        decryptionCache.clear()  // Invalidate cache on update
         widgetUpdateNotifier.notifyTransactionsChanged()
     }
 
@@ -106,19 +108,16 @@ public class TransactionRepositoryImpl(
                 .map { encryptEntity(it.toEntity()) }
                 .toList()
         )
-        decryptionCache.clear()  // Invalidate cache on bulk update
         widgetUpdateNotifier.notifyTransactionsChanged()
     }
 
     override suspend fun deleteTransaction(transaction: Transaction) {
         transactionDao.deleteTransaction(encryptEntity(transaction.toEntity()))
-        decryptionCache.remove(transaction.id)  // Remove specific entry from cache
         widgetUpdateNotifier.notifyTransactionsChanged()
     }
 
     override suspend fun deleteAllTransactions() {
         transactionDao.deleteAllTransactions()
-        decryptionCache.clear()  // Invalidate entire cache
         widgetUpdateNotifier.notifyTransactionsChanged()
     }
 
@@ -145,38 +144,107 @@ public class TransactionRepositoryImpl(
         transactionDao.renameCategory(oldCategoryName, newCategoryName, icon, color)
 
     // Implementazione metodi per suggerimenti
-    override fun getDistinctTitles(since: Long): Flow<List<String>> =
-        transactionDao.getDistinctTitles(since)
-            .flowOn(Dispatchers.Default)
-            .map { values ->
-                values.map(localDataCipher::decryptString).distinct()
-            }
+    // NOTE: When encryption is ON, DISTINCT on ciphertext is ineffective (random IV per row).
+    // We branch: if encrypted, decrypt then deduplicate; if not, use fast DAO path.
 
-    override fun getDistinctPayees(since: Long): Flow<List<String>> =
-        transactionDao.getDistinctPayees(since)
-            .flowOn(Dispatchers.Default)
-            .map { values ->
-                values.map(localDataCipher::decryptString).distinct()
-            }
-
-    override fun getDistinctNotes(since: Long): Flow<List<String>> =
-        transactionDao.getDistinctNotes(since)
-            .flowOn(Dispatchers.Default)
-            .map { values ->
-                values.map(localDataCipher::decryptString).distinct()
-            }
-
-    override fun getDistinctLocations(since: Long): Flow<List<String>> =
-        transactionDao.getDistinctLocations(since)
-            .flowOn(Dispatchers.Default)
-            .map { values ->
-                values.map(localDataCipher::decryptString).distinct()
-            }
-
-    override fun getDistinctTags(since: Long): Flow<List<String>> =
-        transactionDao.getDistinctTags(since).map { values ->
-            values.map(localDataCipher::decryptString).distinct()
+    override fun getDistinctTitles(since: Long): Flow<List<String>> {
+        if (!localDataCipher.isEncryptionEnabled()) {
+            return transactionDao.getDistinctTitles(since)
+                .flowOn(Dispatchers.Default)
+                .map { values -> values.map(localDataCipher::decryptString).distinct() }
         }
+        // Encrypted: load all, decrypt, dedupe
+        return transactionDao.getAllTransactions()
+            .flowOn(Dispatchers.Default)
+            .map { entities ->
+                entities
+                    .asSequence()
+                    .map { localDataCipher.decryptString(it.title) }
+                    .filter { it.isNotEmpty() }
+                    .distinct()
+                    .take(20)
+                    .toList()
+            }
+    }
+
+    override fun getDistinctPayees(since: Long): Flow<List<String>> {
+        if (!localDataCipher.isEncryptionEnabled()) {
+            return transactionDao.getDistinctPayees(since)
+                .flowOn(Dispatchers.Default)
+                .map { values -> values.map(localDataCipher::decryptString).distinct() }
+        }
+        // Encrypted: load all, decrypt, dedupe
+        return transactionDao.getAllTransactions()
+            .flowOn(Dispatchers.Default)
+            .map { entities ->
+                entities
+                    .asSequence()
+                    .map { localDataCipher.decryptString(it.payee) }
+                    .filter { it.isNotEmpty() }
+                    .distinct()
+                    .take(20)
+                    .toList()
+            }
+    }
+
+    override fun getDistinctNotes(since: Long): Flow<List<String>> {
+        if (!localDataCipher.isEncryptionEnabled()) {
+            return transactionDao.getDistinctNotes(since)
+                .flowOn(Dispatchers.Default)
+                .map { values -> values.map(localDataCipher::decryptString).distinct() }
+        }
+        // Encrypted: load all, decrypt, dedupe
+        return transactionDao.getAllTransactions()
+            .flowOn(Dispatchers.Default)
+            .map { entities ->
+                entities
+                    .asSequence()
+                    .map { localDataCipher.decryptString(it.notes) }
+                    .filter { it.isNotEmpty() }
+                    .distinct()
+                    .take(20)
+                    .toList()
+            }
+    }
+
+    override fun getDistinctLocations(since: Long): Flow<List<String>> {
+        if (!localDataCipher.isEncryptionEnabled()) {
+            return transactionDao.getDistinctLocations(since)
+                .flowOn(Dispatchers.Default)
+                .map { values -> values.map(localDataCipher::decryptString).distinct() }
+        }
+        // Encrypted: load all, decrypt, dedupe
+        return transactionDao.getAllTransactions()
+            .flowOn(Dispatchers.Default)
+            .map { entities ->
+                entities
+                    .asSequence()
+                    .map { localDataCipher.decryptString(it.location) }
+                    .filter { it.isNotEmpty() }
+                    .distinct()
+                    .take(20)
+                    .toList()
+            }
+    }
+
+    override fun getDistinctTags(since: Long): Flow<List<String>> {
+        if (!localDataCipher.isEncryptionEnabled()) {
+            return transactionDao.getDistinctTags(since)
+                .map { values -> values.map(localDataCipher::decryptString).distinct() }
+        }
+        // Encrypted: load all, decrypt, dedupe
+        return transactionDao.getAllTransactions()
+            .flowOn(Dispatchers.Default)
+            .map { entities ->
+                entities
+                    .asSequence()
+                    .map { localDataCipher.decryptString(it.tags) }
+                    .filter { it.isNotEmpty() }
+                    .distinct()
+                    .take(20)
+                    .toList()
+            }
+    }
 
     override suspend fun getSuggestions(since: Long): com.antcashmanager.domain.model.TransactionSuggestions {
         val rows = transactionDao.getSuggestions(since)

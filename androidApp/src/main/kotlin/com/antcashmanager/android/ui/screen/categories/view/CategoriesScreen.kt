@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -21,10 +22,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ReceiptLong
@@ -101,6 +108,11 @@ import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
+import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
+import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
+import com.antcashmanager.android.ui.components.layout.FoldableAwareLayout
+import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
+import androidx.window.layout.FoldingFeature
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.dialog.HelpButton
@@ -203,21 +215,39 @@ val categoryColors = listOf(
 fun CategoriesScreen() {
     val viewModel: CategoriesViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
-    CategoriesContent(
-        state = state,
-        onAddCategory = { name, icon, color, type ->
-            viewModel.onEvent(CategoryEvent.AddCategory(name, icon, color, type))
-        },
-        onDeleteCategory = { category ->
-            viewModel.onEvent(CategoryEvent.DeleteCategory(category))
-        },
-        onSetCategoryHidden = { category, hidden ->
-            viewModel.onEvent(CategoryEvent.SetCategoryHidden(category, hidden))
-        },
-        onReorderCategories = { categories ->
-            viewModel.onEvent(CategoryEvent.ReorderCategories(categories))
-        },
-    )
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    // Show error snackbar when errorState changes
+    LaunchedEffect(state.errorState.isError) {
+        if (state.errorState.isError && state.errorState.message != null) {
+            snackbarHostState.showSnackbar(state.errorState.message!!)
+        }
+    }
+
+    Box {
+        CategoriesContent(
+            state = state,
+            onAddCategory = { name, icon, color, type ->
+                viewModel.onEvent(CategoryEvent.AddCategory(name, icon, color, type))
+            },
+            onDeleteCategory = { category ->
+                viewModel.onEvent(CategoryEvent.DeleteCategory(category))
+            },
+            onSetCategoryHidden = { category, hidden ->
+                viewModel.onEvent(CategoryEvent.SetCategoryHidden(category, hidden))
+            },
+            onReorderCategories = { categories ->
+                viewModel.onEvent(CategoryEvent.ReorderCategories(categories))
+            },
+        )
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(16.dp)
+        )
+    }
 }
 
 @Composable
@@ -236,6 +266,12 @@ internal fun CategoriesContent(
     var showHelpDialog by remember { mutableStateOf(false) }
     var showReorderDialog by remember { mutableStateOf(false) }
     var hiddenSectionExpanded by remember { mutableStateOf(false) }
+
+    // Foldable device support
+    val displayFeatures = LocalDisplayFeatures.current
+    val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo(displayFeatures = displayFeatures)
+    val multiPaneCoordinator = LocalMultiPaneCoordinator.current
+    val foldingFeature = adaptiveLayoutInfo.foldingFeature
 
     // Help dialog
     if (showHelpDialog) {
@@ -283,8 +319,11 @@ internal fun CategoriesContent(
         )
     }
 
-    Scaffold(
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+    // FASE 1: Composable for list pane
+    @Composable
+    fun CategoryListPane() {
+        Scaffold(
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showAddDialog = true },
@@ -325,6 +364,7 @@ internal fun CategoriesContent(
 
             VerticalSpacer(SpacingSize.SM)
 
+            val isGridLayout = adaptiveLayoutInfo.isExpanded && !adaptiveLayoutInfo.hasFold
             if (currentCategories.isEmpty() && currentHiddenCategories.isEmpty()) {
                 AntEmptyState(
                     mascotRes = R.drawable.ic_ant_mascot,
@@ -332,6 +372,58 @@ internal fun CategoriesContent(
                     subtitle = stringResource(R.string.categories_empty_subtitle),
                     modifier = Modifier.fillMaxSize(),
                 )
+            } else if (isGridLayout) {
+                // FASE 2: Tablet 3-column grid for expanded screens without fold
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(bottom = 80.dp),
+                ) {
+                    items(currentCategories, key = { it.id }) { category ->
+                        CategoryItem(
+                            category = category,
+                            onClick = {
+                                val params = android.os.Bundle().apply {
+                                    putString("category_name", category.name)
+                                    putInt("index", currentCategories.indexOf(category))
+                                }
+                                analyticsManager.logEvent("categories_list_item_clicked", params)
+                            },
+                            onDelete = {
+                                if (!category.isDefault) { categoryToDelete = category }
+                            },
+                            onToggleHidden = {
+                                analyticsManager.logEvent("category_hidden")
+                                onSetCategoryHidden(category, true)
+                            },
+                        )
+                    }
+                    if (currentHiddenCategories.isNotEmpty()) {
+                        item(key = "hidden_section_header", span = { GridItemSpan(maxLineSpan) }) {
+                            HiddenCategoriesSectionHeader(
+                                count = currentHiddenCategories.size,
+                                expanded = hiddenSectionExpanded,
+                                onExpandedChange = { hiddenSectionExpanded = it },
+                            )
+                        }
+                        if (hiddenSectionExpanded) {
+                            items(currentHiddenCategories, key = { "hidden_${it.id}" }) { category ->
+                                CategoryItem(
+                                    category = category,
+                                    onDelete = {
+                                        if (!category.isDefault) { categoryToDelete = category }
+                                    },
+                                    onToggleHidden = {
+                                        analyticsManager.logEvent("category_shown")
+                                        onSetCategoryHidden(category, false)
+                                    },
+                                )
+                            }
+                        }
+                    }
+                    item(span = { GridItemSpan(maxLineSpan) }) { VerticalSpacer(SpacingSize.XXXL) }
+                }
             } else {
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(currentCategories, key = { it.id }) { category ->
@@ -386,6 +478,80 @@ internal fun CategoriesContent(
                 }
             }
         }
+    }
+    }
+
+    // FASE 1: Composable for category details pane
+    @Composable
+    fun CategoryDetailsPane(category: Category) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            AppText(
+                text = "Details",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+            )
+
+            AppText(
+                text = translateCategory(category.name),
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+            )
+
+            AppText(
+                text = category.type,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape)
+                    .background(Color(category.color)),
+                contentAlignment = Alignment.Center,
+            ) {
+                categoryIconMap[category.icon]?.let { icon ->
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp),
+                    )
+                }
+            }
+        }
+    }
+
+    // FASE 1: Main layout logic - split-pane or single-pane
+    if (adaptiveLayoutInfo.hasFold && foldingFeature != null) {
+        FoldableAwareLayout(
+            foldingFeature = foldingFeature,
+            modifier = Modifier.fillMaxSize(),
+            topContent = { _, _ ->
+                CategoryListPane()
+            },
+            bottomContent = { _, _ ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AppText(
+                        text = "Select a category to view details",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        )
+    } else {
+        CategoryListPane()
     }
 
     if (showAddDialog) {

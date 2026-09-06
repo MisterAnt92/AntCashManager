@@ -76,7 +76,6 @@ data class SettingsBackup(
     val maskAmounts: Boolean = false,
     val showPaymentTypeBreakdown: Boolean = false,
     val showQuickInsightsCard: Boolean = false,
-    val showInitialAnimation: Boolean = false,
     val transactionDisplayType: String = "TREND",
     val transactionsTransactionDisplayType: String = "TREND",
     val currencySymbol: String = "€",

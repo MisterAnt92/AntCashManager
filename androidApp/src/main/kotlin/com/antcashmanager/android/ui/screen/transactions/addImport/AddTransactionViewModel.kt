@@ -1,10 +1,11 @@
 package com.antcashmanager.android.ui.screen.transactions.addImport
 
 import android.os.Bundle
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.analytics.AnalyticsManager
-import com.antcashmanager.android.analytics.ErrorTracker
-import com.antcashmanager.android.analytics.PerformanceTracker
+import com.antcashmanager.android.analytics.tracker.ErrorTracker
+import com.antcashmanager.android.analytics.tracker.PerformanceTracker
 import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.android.ui.screen.transactions.addImport.event.AddTransactionEvent
 import com.antcashmanager.android.ui.screen.transactions.addImport.manager.SuggestionsManager
@@ -38,9 +39,13 @@ class AddTransactionViewModel(
     private val performanceTracker: PerformanceTracker,
     private val errorTracker: ErrorTracker,
     private val transactionId: Long? = null,
+    private val savedStateHandle: SavedStateHandle,  // NEW: Preserva form state su rotation
 ) : BaseViewModel<AddTransactionEvent>() {
 
     // ── State ──
+    // Nota: SavedStateHandle è disponibile per future implementazioni di state recovery
+    // Per adesso usiamo MutableStateFlow standard; future: sincroniazzare con savedStateHandle per preservare
+    // lo stato del form durante reconfigurazioni (rotation, process death)
     private val _state = MutableStateFlow(AddTransactionState())
     val state: StateFlow<AddTransactionState> = _state.asStateFlow()
 
@@ -125,6 +130,10 @@ class AddTransactionViewModel(
                         )
                     }
                 }
+                    .onFailure { error ->
+                        // FASE 5: Log error (will surface to ErrorState in future)
+                        logError("Failed to load suggestions: ${error.message}")
+                    }
             }
         }
     }

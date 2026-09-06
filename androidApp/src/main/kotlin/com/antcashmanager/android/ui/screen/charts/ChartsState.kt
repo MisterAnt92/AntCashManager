@@ -1,26 +1,17 @@
 package com.antcashmanager.android.ui.screen.charts
 
-import com.antcashmanager.android.ui.base.ErrorState
 import com.antcashmanager.android.ui.screen.charts.view.ChartDetailsData
-import com.antcashmanager.domain.model.SavedDateFilter
+import com.antcashmanager.domain.usecase.transaction.DateRange
 
 /**
- * Stato UI completo per la schermata dei grafici.
+ * UDF Pattern: Consolidated state for Charts screen.
  *
- * Contiene:
- * - chartData: aggregazioni income/expense/monthly/yearly/daily
- * - dateRange: range selezionato
- * - selectedChartDetails: categoria selezionata per bottom sheet
- * - errorState: gestione errori centralizzata
- *
- * UDF Pattern:
- * - state: ChartsState (this)
- * - events: ChartEvent (sealed class)
- * - viewModel: ChartsViewModel (onEvent handler)
+ * Combines all chart screen state into a single data class for predictable state management
+ * and easier testing.
  */
 data class ChartsState(
-    val chartData: ChartData = ChartData(),
+    val dateRange: DateRange,
+    val selectedPresetIndex: Int,
     val selectedChartDetails: ChartDetailsData? = null,
-    val errorState: ErrorState = ErrorState(),
-    val isLoading: Boolean = false,
+    val chartData: ChartData = ChartData(),
 )

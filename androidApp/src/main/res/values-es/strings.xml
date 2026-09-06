@@ -1,6 +1,14 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
     <string name="help_dashboard_desc">Visualiza el saldo total, ingresos y gastos para el período seleccionado.</string>
+
+    <!-- HelpDialog (Transactions) -->
+    <string name="transactions_help_filter_title">Filtrar transacciones</string>
+    <string name="transactions_help_filter_desc">Usa filtros para encontrar transacciones específicas per tipo, categoría o método de pago.</string>
+    <string name="transactions_help_search_title">Buscar</string>
+    <string name="transactions_help_search_desc">Busca transacciones por nombre o importe usando la barra de búsqueda.</string>
+    <string name="transactions_help_display_title">Opciones de visualización</string>
+    <string name="transactions_help_display_desc">Cambia cómo se muestran las transacciones en la lista desde el menú de ajustes.</string>
     <string name="home_total_balance">Saldo Total</string>
     <string name="home_income">Ingresos</string>
     <string name="home_expenses">Gastos</string>

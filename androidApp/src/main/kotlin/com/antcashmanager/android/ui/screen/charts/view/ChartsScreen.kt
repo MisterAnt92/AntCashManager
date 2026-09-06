@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -95,7 +96,6 @@ import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.TransactionDisplayType
-import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.usecase.transaction.DateRange
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -111,22 +111,21 @@ import kotlin.math.abs
 fun ChartsScreen() {
     Logger.d(tag = "ChartsScreen") { "Displaying ChartsScreen" }
     val viewModel: ChartsViewModel = koinViewModel()
-    val settingsRepository: SettingsRepository = koinInject()
     val chartData by viewModel.chartData.collectAsStateWithLifecycle()
     val dateRange by viewModel.dateRange.collectAsStateWithLifecycle()
     val selectedPresetIndex by viewModel.selectedPresetIndex.collectAsStateWithLifecycle()
-
-    val chartsZoomEnabled by settingsRepository.getChartsZoomEnabled()
-        .collectAsStateWithLifecycle(initialValue = false)
+    val chartsZoomEnabled by viewModel.chartsZoomEnabled.collectAsStateWithLifecycle(initialValue = false)
+    val chartsCardOrder by viewModel.chartsCardOrder.collectAsStateWithLifecycle()
 
     ChartsContent(
         chartData = chartData,
         dateRange = dateRange,
         initialPresetIndex = selectedPresetIndex,
         zoomEnabled = chartsZoomEnabled,
-        settingsRepository = settingsRepository,
+        chartsCardOrderRaw = chartsCardOrder,
         onDateRangeChanged = { from, to -> viewModel.onEvent(ChartEvent.SetDateRange(from, to)) },
         onPresetSelected = { preset -> viewModel.onEvent(ChartEvent.SetPresetRange(preset)) },
+        onEvent = viewModel::onEvent
     )
 }
 
@@ -137,19 +136,20 @@ internal fun ChartsContent(
     dateRange: DateRange,
     initialPresetIndex: Int = 1,
     zoomEnabled: Boolean = false,
-    settingsRepository: SettingsRepository,
+    chartsCardOrderRaw: String,
     onDateRangeChanged: (Long, Long) -> Unit = { _, _ -> },
     onPresetSelected: (RangePreset) -> Unit = {},
+    onEvent: (ChartEvent) -> Unit = {},
 ) {
     val context = LocalContext.current
     val analyticsManager: AnalyticsManager = koinInject()
     val scope = rememberCoroutineScope()
-    val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
-
     // Foldable device support
     val displayFeatures = LocalDisplayFeatures.current
+    val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo(displayFeatures = displayFeatures)
     val multiPaneCoordinator = LocalMultiPaneCoordinator.current
-    val foldingFeature = displayFeatures.filterIsInstance<FoldingFeature>().firstOrNull()
+    val foldingFeature = adaptiveLayoutInfo.foldingFeature
+    val isGridLayout = adaptiveLayoutInfo.isExpanded && !adaptiveLayoutInfo.hasFold
 
     val dateFormat = remember { SimpleDateFormat("dd MMM yyyy", Locale.getDefault()) }
     val fmt = LocalCurrencyFormat.current
@@ -162,21 +162,13 @@ internal fun ChartsContent(
     var selectedChartDetails by remember { mutableStateOf<ChartDetailsData?>(null) }
 
     // Charts card ordering state - persists across session and restores from settings
-    var chartsCardOrderRaw by remember {
-        mutableStateOf(ChartsConstant.DEFAULT_CHARTS_CARDS_ORDER)
+    var localChartsCardOrderRaw by remember(chartsCardOrderRaw) {
+        mutableStateOf(chartsCardOrderRaw)
     }
-    val chartsCardOrder = remember(chartsCardOrderRaw) {
-        com.antcashmanager.android.ui.screen.charts.model.ChartCardType.parse(chartsCardOrderRaw)
+    val chartsCardOrder = remember(localChartsCardOrderRaw) {
+        com.antcashmanager.android.ui.screen.charts.model.ChartCardType.parse(localChartsCardOrderRaw)
     }
     var showChartsCardsOrderDialog by remember { mutableStateOf(false) }
-
-    // Load persisted card order on composition
-    LaunchedEffect(Unit) {
-        val savedOrder = settingsRepository.getChartCardsOrder().first()
-        if (savedOrder.isNotEmpty()) {
-            chartsCardOrderRaw = savedOrder
-        }
-    }
 
     val chartCardContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh
 
@@ -239,7 +231,7 @@ internal fun ChartsContent(
                     val temp = mutableOrder[index]
                     mutableOrder[index] = mutableOrder[index - 1]
                     mutableOrder[index - 1] = temp
-                    chartsCardOrderRaw = com.antcashmanager.android.ui.screen.charts.model.ChartCardType.serialize(mutableOrder)
+                    localChartsCardOrderRaw = com.antcashmanager.android.ui.screen.charts.model.ChartCardType.serialize(mutableOrder)
                 }
             },
             onMoveDown = { index ->
@@ -248,15 +240,13 @@ internal fun ChartsContent(
                     val temp = mutableOrder[index]
                     mutableOrder[index] = mutableOrder[index + 1]
                     mutableOrder[index + 1] = temp
-                    chartsCardOrderRaw = com.antcashmanager.android.ui.screen.charts.model.ChartCardType.serialize(mutableOrder)
+                    localChartsCardOrderRaw = com.antcashmanager.android.ui.screen.charts.model.ChartCardType.serialize(mutableOrder)
                 }
             },
             onDismiss = { showChartsCardsOrderDialog = false },
             onConfirm = {
                 // Persist card order to settings for backup/restore
-                scope.launch {
-                    settingsRepository.setChartCardsOrder(chartsCardOrderRaw)
-                }
+                onEvent(ChartEvent.SetChartCardsOrder(localChartsCardOrderRaw))
                 showChartsCardsOrderDialog = false
             }
         )
@@ -310,23 +300,23 @@ internal fun ChartsContent(
 
     // Function to render a single chart card based on type
     @Composable
-    fun RenderChartCard(cardType: com.antcashmanager.android.ui.screen.charts.model.ChartCardType) {
+    fun RenderChartCard(cardType: com.antcashmanager.android.ui.screen.charts.model.ChartCardType, showSpacer: Boolean = true) {
         when (cardType) {
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.SPENDING_FORECAST_CARD -> {
                 SpendingForecastCard(chartData = chartData)
-                VerticalSpacer(SpacingSize.MD)
+                if (showSpacer) VerticalSpacer(SpacingSize.MD)
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.QUICK_STATS_CARD -> {
                 QuickStatsCard(chartData = chartData)
-                VerticalSpacer(SpacingSize.MD)
+                if (showSpacer) VerticalSpacer(SpacingSize.MD)
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.DAILY_EXPENSE_CHART_CARD -> {
                 DailyExpenseLineChartCard(chartData = chartData)
-                VerticalSpacer(SpacingSize.MD)
+                if (showSpacer) VerticalSpacer(SpacingSize.MD)
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.WEEKDAY_DISTRIBUTION_CARD -> {
                 WeekdayExpenseCard(chartData = chartData)
-                VerticalSpacer(SpacingSize.MD)
+                if (showSpacer) VerticalSpacer(SpacingSize.MD)
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.INCOME_CATEGORY_PIE_CHART -> {
                 if (chartData.incomeByCategory.isNotEmpty()) {
@@ -361,7 +351,7 @@ internal fun ChartsContent(
                             )
                         },
                     )
-                    VerticalSpacer(SpacingSize.MD)
+                    if (showSpacer) VerticalSpacer(SpacingSize.MD)
                 }
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.EXPENSE_CATEGORY_PIE_CHART -> {
@@ -397,7 +387,7 @@ internal fun ChartsContent(
                             )
                         },
                     )
-                    VerticalSpacer(SpacingSize.MD)
+                    if (showSpacer) VerticalSpacer(SpacingSize.MD)
                 }
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.TOP_INCOME_CATEGORIES -> {
@@ -409,7 +399,7 @@ internal fun ChartsContent(
                         fmt = fmt,
                         chartCardContainerColor = chartCardContainerColor,
                     )
-                    VerticalSpacer(SpacingSize.MD)
+                    if (showSpacer) VerticalSpacer(SpacingSize.MD)
                 }
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.TOP_EXPENSE_CATEGORIES -> {
@@ -421,7 +411,7 @@ internal fun ChartsContent(
                         fmt = fmt,
                         chartCardContainerColor = chartCardContainerColor,
                     )
-                    VerticalSpacer(SpacingSize.MD)
+                    if (showSpacer) VerticalSpacer(SpacingSize.MD)
                 }
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.PAYMENT_TYPE_BREAKDOWN -> {
@@ -455,7 +445,7 @@ internal fun ChartsContent(
                             )
                         },
                     )
-                    VerticalSpacer(SpacingSize.MD)
+                    if (showSpacer) VerticalSpacer(SpacingSize.MD)
                 }
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.MONTHLY_BAR_CHART -> {
@@ -470,7 +460,7 @@ internal fun ChartsContent(
                         context = context,
                         onShared = { analyticsManager.logEvent("chart_shared") },
                     )
-                    VerticalSpacer(SpacingSize.MD)
+                    if (showSpacer) VerticalSpacer(SpacingSize.MD)
                 }
             }
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.YEARLY_BAR_CHART -> {
@@ -485,7 +475,7 @@ internal fun ChartsContent(
                         context = context,
                         onShared = { analyticsManager.logEvent("chart_shared") },
                     )
-                    VerticalSpacer(SpacingSize.MD)
+                    if (showSpacer) VerticalSpacer(SpacingSize.MD)
                 }
             }
         }
@@ -532,8 +522,26 @@ internal fun ChartsContent(
             VerticalSpacer(SpacingSize.MD)
 
             // Render all charts cards in custom order
-            chartsCardOrder.forEach { cardType ->
-                RenderChartCard(cardType)
+            // FASE 2: 2-column layout for expanded screens without fold
+            if (isGridLayout) {
+                chartsCardOrder.chunked(2).forEach { pair ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        pair.forEach { cardType ->
+                            Box(modifier = Modifier.weight(1f)) {
+                                RenderChartCard(cardType, showSpacer = false)
+                            }
+                        }
+                        if (pair.size == 1) Spacer(modifier = Modifier.weight(1f))
+                    }
+                    VerticalSpacer(SpacingSize.MD)
+                }
+            } else {
+                chartsCardOrder.forEach { cardType ->
+                    RenderChartCard(cardType)
+                }
             }
 
             // Empty state - shown when no data is available
@@ -675,7 +683,7 @@ private fun PeriodFilterCard(
                 )
                 IconButton(
                     onClick = onShowFromPicker,
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(48.dp)
                 ) {
                     Icon(
                         Icons.Default.CalendarMonth,
@@ -694,7 +702,7 @@ private fun PeriodFilterCard(
                 )
                 IconButton(
                     onClick = onShowToPicker,
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(48.dp)
                 ) {
                     Icon(
                         Icons.Default.CalendarMonth,
@@ -908,7 +916,7 @@ private fun CategoryPieChartCard(
                         onShared()
                         context.startActivity(Intent.createChooser(intent, shareLabel))
                     },
-                    modifier = Modifier.size(32.dp),
+                    modifier = Modifier.size(48.dp),
                 ) {
                     Icon(
                         imageVector = Icons.Default.Share,
@@ -1099,7 +1107,7 @@ private fun MonthlyBarChartCard(
                         onShared()
                         context.startActivity(Intent.createChooser(intent, shareLabel))
                     },
-                    modifier = Modifier.size(32.dp),
+                    modifier = Modifier.size(48.dp),
                 ) {
                     Icon(
                         imageVector = Icons.Default.Share,
@@ -1195,7 +1203,7 @@ private fun YearlyBarChartCard(
                         onShared()
                         context.startActivity(Intent.createChooser(intent, shareLabel))
                     },
-                    modifier = Modifier.size(32.dp),
+                    modifier = Modifier.size(48.dp),
                 ) {
                     Icon(
                         imageVector = Icons.Default.Share,
@@ -1293,249 +1301,5 @@ private data class SummaryCardState(
     val contentColor: Color,
     val fmt: CurrencyFormat,
     val isBalance: Boolean = false,
-    // Le uscite pure non possono contenere lo stipendio, quindi mostrano sempre la cifra reale;
-    // saldo ed entrate restano mascherati per intero perché potrebbero includerlo.
-    val includesIncome: Boolean = false,
+    val includesIncome: Boolean = true
 )
-
-// ══════════════════════════════════════════════════════════════════════════════
-// PREVIEWS
-// ══════════════════════════════════════════════════════════════════════════════
-
-private class MockChartsSettingsRepository : SettingsRepository {
-    override fun getTheme() = kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.AppTheme.SYSTEM)
-    override suspend fun setTheme(theme: com.antcashmanager.domain.model.AppTheme) {}
-    override fun getLanguage() = kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.AppLanguage.SYSTEM)
-    override suspend fun setLanguage(language: com.antcashmanager.domain.model.AppLanguage) {}
-    override fun getShowCharts() = kotlinx.coroutines.flow.flowOf(true)
-    override suspend fun setShowCharts(show: Boolean) {}
-    override fun getHighContrast() = kotlinx.coroutines.flow.flowOf(false)
-    override suspend fun setHighContrast(enabled: Boolean) {}
-    override fun getLargeText() = kotlinx.coroutines.flow.flowOf(false)
-    override suspend fun setLargeText(enabled: Boolean) {}
-    override fun getReduceMotion() = kotlinx.coroutines.flow.flowOf(false)
-    override suspend fun setReduceMotion(enabled: Boolean) {}
-    override fun getShowTransactionNotes() = kotlinx.coroutines.flow.flowOf(true)
-    override suspend fun setShowTransactionNotes(show: Boolean) {}
-    override fun getMaskAmounts() = kotlinx.coroutines.flow.flowOf(false)
-    override suspend fun setMaskAmounts(mask: Boolean) {}
-    override fun getCurrencySymbol() = kotlinx.coroutines.flow.flowOf("€")
-    override suspend fun setCurrencySymbol(symbol: String) {}
-    override fun getDecimalDigits() = kotlinx.coroutines.flow.flowOf(2)
-    override suspend fun setDecimalDigits(digits: Int) {}
-    override fun getDecimalSeparator() = kotlinx.coroutines.flow.flowOf(",")
-    override suspend fun setDecimalSeparator(separator: String) {}
-    override fun getThousandsSeparator() = kotlinx.coroutines.flow.flowOf("")
-    override suspend fun setThousandsSeparator(separator: String) {}
-    override fun getMealVoucherValue() = kotlinx.coroutines.flow.flowOf(5.29)
-    override suspend fun setMealVoucherValue(value: Double) {}
-    override fun getDateFormat() = kotlinx.coroutines.flow.flowOf("dd/MM/yyyy")
-    override suspend fun setDateFormat(pattern: String) {}
-    override fun getDateFilterExpanded() = kotlinx.coroutines.flow.flowOf(true)
-    override suspend fun setDateFilterExpanded(expanded: Boolean) {}
-    override fun getHomeDateFilterPreset() = kotlinx.coroutines.flow.flowOf(1)
-    override suspend fun setHomeDateFilterPreset(index: Int) {}
-    override fun getHomeDateFilterState(): kotlinx.coroutines.flow.Flow<com.antcashmanager.domain.model.SavedDateFilter> =
-        kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.SavedDateFilter(1, 0, 0))
-    override suspend fun setHomeDateFilterState(filter: com.antcashmanager.domain.model.SavedDateFilter) {}
-    override fun getTransactionsDateFilterPreset() = kotlinx.coroutines.flow.flowOf(1)
-    override suspend fun setTransactionsDateFilterPreset(index: Int) {}
-    override fun getTransactionsDateFilterState(): kotlinx.coroutines.flow.Flow<com.antcashmanager.domain.model.SavedDateFilter> =
-        kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.SavedDateFilter(1, 0, 0))
-    override suspend fun setTransactionsDateFilterState(filter: SavedDateFilter) {}
-    override fun getChartsDateFilterPreset() = kotlinx.coroutines.flow.flowOf(1)
-    override suspend fun setChartsDateFilterPreset(index: Int) {}
-    override fun getChartsDateFilterState(): kotlinx.coroutines.flow.Flow<com.antcashmanager.domain.model.SavedDateFilter> =
-        kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.SavedDateFilter(1, 0, 0))
-    override suspend fun setChartsDateFilterState(filter: com.antcashmanager.domain.model.SavedDateFilter) {}
-    override fun getChartsZoomEnabled() = kotlinx.coroutines.flow.flowOf(false)
-    override suspend fun setChartsZoomEnabled(enabled: Boolean) {}
-    override fun getShowPaymentTypeBreakdown() = kotlinx.coroutines.flow.flowOf(false)
-    override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {}
-    override fun getShowQuickInsightsCard() = kotlinx.coroutines.flow.flowOf(false)
-    override suspend fun setShowQuickInsightsCard(show: Boolean) {}
-    override fun getDefaultPaymentType() = kotlinx.coroutines.flow.flowOf("ELECTRONIC")
-    override suspend fun setDefaultPaymentType(paymentType: String) {}
-    override fun getShowInitialAnimation() = kotlinx.coroutines.flow.flowOf(false)
-    override suspend fun setShowInitialAnimation(show: Boolean) {}
-    override fun getTransactionDisplayType() = kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.TransactionDisplayType.TREND)
-    override suspend fun setTransactionDisplayType(displayType: TransactionDisplayType) {}
-    override fun getTransactionsTransactionDisplayType() = kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.TransactionDisplayType.TREND)
-    override suspend fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType) {}
-    override fun getIsTutorialCompleted() = kotlinx.coroutines.flow.flowOf(true)
-    override suspend fun setIsTutorialCompleted(completed: Boolean) {}
-    override fun getDataEncryptionEnabled() = kotlinx.coroutines.flow.flowOf(false)
-    override suspend fun setDataEncryptionEnabled(enabled: Boolean) {}
-    override fun getCategorySortOrderInitialized() = kotlinx.coroutines.flow.flowOf(true)
-    override suspend fun setCategorySortOrderInitialized(initialized: Boolean) {}
-    override fun getLastBackupTimestamp() = kotlinx.coroutines.flow.flowOf(null)
-    override suspend fun setLastBackupTimestamp(timestamp: Long) {}
-    override fun getLastRestoreTimestamp() = kotlinx.coroutines.flow.flowOf(null)
-    override suspend fun setLastRestoreTimestamp(timestamp: Long) {}
-    override fun getSuggestionsEnabled() = kotlinx.coroutines.flow.flowOf(true)
-    override suspend fun setSuggestionsEnabled(enabled: Boolean) {}
-    override fun getSuggestionsClearedAt() = kotlinx.coroutines.flow.flowOf(null)
-    override suspend fun setSuggestionsClearedAt(timestamp: Long) {}
-    override fun getWidgetBackgroundColor() = kotlinx.coroutines.flow.flowOf(0xFFFFFFFFL)
-    override suspend fun setWidgetBackgroundColor(color: Long) {}
-    override fun getWidgetOpacity() = kotlinx.coroutines.flow.flowOf(100)
-    override suspend fun setWidgetOpacity(opacity: Int) {}
-    override fun getChartCardsOrder() = kotlinx.coroutines.flow.flowOf("")
-    override suspend fun setChartCardsOrder(order: String) {}
-    override fun getHomeTopCardsOrder() = kotlinx.coroutines.flow.flowOf("")
-    override suspend fun setHomeTopCardsOrder(order: String) {}
-
-    // ── Google Drive Backup Configuration ──
-    override fun getAutoBackupEnabled(): Flow<Boolean> = kotlinx.coroutines.flow.flowOf(false)
-    override suspend fun setAutoBackupEnabled(enabled: Boolean) {}
-    override fun getAutoBackupFolderUri(): Flow<String?> = kotlinx.coroutines.flow.flowOf(null)
-    override suspend fun setAutoBackupFolderUri(uri: String?) {}
-    override fun getAutoBackupDestination(): Flow<com.antcashmanager.domain.model.BackupDestination> =
-        kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.BackupDestination.LOCAL)
-
-    override suspend fun setAutoBackupDestination(destination: com.antcashmanager.domain.model.BackupDestination) {}
-    override fun getGoogleDriveFolderId(): Flow<String?> = kotlinx.coroutines.flow.flowOf(null)
-    override suspend fun setGoogleDriveFolderId(folderId: String?) {}
-    override fun getGoogleDriveFolderName(): Flow<String?> = kotlinx.coroutines.flow.flowOf(null)
-    override suspend fun setGoogleDriveFolderName(folderName: String?) {}
-    override fun getGoogleDriveAuthToken(): Flow<String?> = kotlinx.coroutines.flow.flowOf(null)
-    override suspend fun setGoogleDriveAuthToken(token: String?) {}
-    override fun getGoogleDriveRefreshToken(): Flow<String?> = kotlinx.coroutines.flow.flowOf(null)
-    override suspend fun setGoogleDriveRefreshToken(token: String?) {}
-    override fun getGoogleDriveUserEmail(): Flow<String?> = kotlinx.coroutines.flow.flowOf(null)
-    override suspend fun setGoogleDriveUserEmail(email: String?) {}
-
-    override suspend fun resetAllPreferences() {}
-}
-
-@Preview(showBackground = true, name = "ChartsScreen - Default")
-@Preview(showBackground = true, name = "ChartsScreen - 7 inch", widthDp = 600, heightDp = 960)
-@Preview(showBackground = true, name = "ChartsScreen - 10 inch", widthDp = 840, heightDp = 1280)
-@Composable
-private fun ChartsContentPreviewDefault() {
-    AntCashManagerTheme(dynamicColor = false) {
-        ChartsContent(
-            chartData = ChartData(
-                expenseByCategory = mapOf("Food" to 350.0, "Transport" to 120.0),
-                totalIncome = 2000.0,
-                totalExpense = 470.0,
-                monthlyData = listOf(MonthlyAmount("Feb 26", 2000.0, 470.0))
-            ),
-            dateRange = DateRange(
-                System.currentTimeMillis() - 30L * 24 * 60 * 60 * 1000,
-                System.currentTimeMillis()
-            ),
-            settingsRepository = MockChartsSettingsRepository(),
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "ChartsScreen - Empty")
-@Composable
-private fun ChartsContentPreviewEmpty() {
-    AntCashManagerTheme(dynamicColor = false) {
-        ChartsContent(
-            chartData = ChartData(),
-            dateRange = DateRange(System.currentTimeMillis(), System.currentTimeMillis()),
-            settingsRepository = MockChartsSettingsRepository(),
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "ChartsScreen - Dark")
-@Composable
-private fun ChartsContentPreviewDark() {
-    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
-        ChartsContent(
-            chartData = ChartData(
-                expenseByCategory = mapOf("Food" to 350.0, "Transport" to 120.0),
-                totalIncome = 2000.0,
-                totalExpense = 470.0,
-                monthlyData = listOf(MonthlyAmount("Feb 26", 2000.0, 470.0))
-            ),
-            dateRange = DateRange(
-                System.currentTimeMillis() - 30L * 24 * 60 * 60 * 1000,
-                System.currentTimeMillis()
-            ),
-            settingsRepository = MockChartsSettingsRepository(),
-        )
-    }
-}
-
-
-// ══════════════════════════════════════════════════════════════════════════════
-// ADDITIONAL PREVIEW - WITH FULL DATA
-// ══════════════════════════════════════════════════════════════════════════════
-
-@Preview(showBackground = true, name = "ChartsScreen - With Data")
-@Preview(
-    showBackground = true,
-    name = "ChartsScreen - With Data - 7 inch",
-    widthDp = 600,
-    heightDp = 960
-)
-@Preview(
-    showBackground = true,
-    name = "ChartsScreen - With Data - 10 inch",
-    widthDp = 840,
-    heightDp = 1280
-)
-@Composable
-private fun ChartsContentPreview() {
-    AntCashManagerTheme(dynamicColor = false) {
-        ChartsContent(
-            chartData = ChartData(
-                incomeByCategory = mapOf("Work" to 2500.0, "Freelance" to 800.0),
-                expenseByCategory = mapOf(
-                    "Food" to 350.0,
-                    "Transport" to 120.0,
-                    "Entertainment" to 80.0,
-                    "Utilities" to 200.0
-                ),
-                totalIncome = 3300.0,
-                totalExpense = 750.0,
-                monthlyData = listOf(
-                    MonthlyAmount("Jan 26", 2000.0, 800.0),
-                    MonthlyAmount("Feb 26", 2500.0, 650.0),
-                    MonthlyAmount("Mar 26", 3300.0, 750.0)
-                ),
-                yearlyData = listOf(
-                    YearlyAmount(2024, "2024", 15000.0, 8500.0),
-                    YearlyAmount(2025, "2025", 18000.0, 9200.0),
-                    YearlyAmount(2026, "2026", 12000.0, 6500.0)
-                ),
-                paymentTypeBreakdown = mapOf(
-                    PaymentType.ELECTRONIC to 500.0,
-                    PaymentType.CASH to 150.0,
-                    PaymentType.MEAL_VOUCHERS to 100.0,
-                ),
-                // New data for visualization cards
-                dailyTimeline = listOf(
-                    com.antcashmanager.android.ui.screen.charts.DailyAmount("2026-08-01", 45.50),
-                    com.antcashmanager.android.ui.screen.charts.DailyAmount("2026-08-02", 62.30),
-                    com.antcashmanager.android.ui.screen.charts.DailyAmount("2026-08-03", 38.90),
-                    com.antcashmanager.android.ui.screen.charts.DailyAmount("2026-08-04", 72.15),
-                    com.antcashmanager.android.ui.screen.charts.DailyAmount("2026-08-05", 55.00),
-                    com.antcashmanager.android.ui.screen.charts.DailyAmount("2026-08-06", 68.45),
-                    com.antcashmanager.android.ui.screen.charts.DailyAmount("2026-08-07", 41.80),
-                    com.antcashmanager.android.ui.screen.charts.DailyAmount("2026-08-08", 85.20),
-                    com.antcashmanager.android.ui.screen.charts.DailyAmount("2026-08-09", 52.60),
-                ),
-                expenseByWeekday = mapOf(
-                    1 to 48.5,  // Monday
-                    2 to 65.3,  // Tuesday
-                    3 to 42.1,  // Wednesday
-                    4 to 58.9,  // Thursday
-                    5 to 72.4,  // Friday
-                    6 to 35.2,  // Saturday
-                    7 to 39.8   // Sunday
-                ),
-            ),
-            dateRange = DateRange(
-                System.currentTimeMillis() - 30L * 24 * 60 * 60 * 1000,
-                System.currentTimeMillis()
-            ),
-            settingsRepository = MockChartsSettingsRepository(),
-        )
-    }
-}

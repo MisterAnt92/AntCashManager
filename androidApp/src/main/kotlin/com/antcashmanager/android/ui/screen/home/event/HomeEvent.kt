@@ -14,4 +14,9 @@ sealed interface HomeEvent {
     // Search events
     data class UpdateSearchQuery(val query: String) : HomeEvent
     data object ToggleSearchExpanded : HomeEvent
+
+    // Settings events
+    data class SetIsTutorialCompleted(val completed: Boolean) : HomeEvent
+    data class SetHomeTopCardsOrder(val order: String) : HomeEvent
+    data class SetDateFilterExpanded(val expanded: Boolean) : HomeEvent
 }

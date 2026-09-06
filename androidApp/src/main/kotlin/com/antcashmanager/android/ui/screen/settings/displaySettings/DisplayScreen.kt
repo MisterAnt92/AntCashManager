@@ -158,7 +158,7 @@ fun DisplayScreen(
         onTransactionDisplayTypeSelected = { viewModel.onEvent(DisplayEvent.SetTransactionDisplayType(it)) },
         transactionsTransactionDisplayType = transactionsTransactionDisplayType,
         onTransactionsTransactionDisplayTypeSelected = {
-            viewModel.onEvent(DisplayEvent.SetTransactionDisplayType(it))
+            viewModel.onEvent(DisplayEvent.SetTransactionsTransactionDisplayType(it))
         },
         widgetBackgroundColor = widgetBackgroundColor,
         onWidgetBackgroundColorSelected = { viewModel.onEvent(DisplayEvent.SetWidgetBackgroundColor(it)) },
