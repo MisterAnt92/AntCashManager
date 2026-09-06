@@ -85,8 +85,37 @@ android {
                     "META-INF/LICENSE-notice.md",
                     "META-INF/INDEX.LIST",
                     "META-INF/DEPENDENCIES",
+                    // Java-desktop trust store / resource files not needed on Android
+                    "mozilla/public-suffix-list.txt",
+                    "com/google/api/client/googleapis/google.p12",
+                    "com/google/api/client/googleapis/google.jks",
+                    "org/apache/commons/codec/language/bm/**",
+                    // Metadata files unused at runtime
+                    "META-INF/*.version",
+                    "META-INF/proguard/**",
+                    "kotlin/**",
+                    "**/*.kotlin_builtins",
                 )
         }
+    }
+
+    // ── Locale Filters: strip library locales not declared by the app ──
+    androidResources {
+        localeFilters +=
+            listOf("en", "it", "fr", "de", "es", "hi", "ja", "ko", "pl", "ru", "uk", "zh", "zh-rTW")
+    }
+
+    // ── AAB split config (Play delivers per-ABI/density/language slice) ──
+    bundle {
+        language { enableSplit = true }
+        density { enableSplit = true }
+        abi { enableSplit = true }
+    }
+
+    // ── Dependencies metadata: remove from APK (useless outside Play), keep in AAB ──
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = true
     }
 
     testOptions {
