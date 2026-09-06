@@ -589,6 +589,14 @@
     <string name="chart_average">औसत</string>
     <string name="chart_weekday_distribution_title">सप्ताह के दिन का वितरण</string>
 
+    <!-- Weekday names (1=Monday, 7=Sunday - EU convention) -->
+    <string name="weekday_1">सोम</string>
+    <string name="weekday_2">मंगल</string>
+    <string name="weekday_3">बुध</string>
+    <string name="weekday_4">गुरु</string>
+    <string name="weekday_5">शुक्र</string>
+    <string name="weekday_6">शनि</string>
+    <string name="weekday_7">रवि</string>
 
     <!-- Charts Customization -->
     <string name="charts_customize_cards_title">कार्ड ऑर्डर कस्टमाइज़ करें</string>

@@ -24,6 +24,7 @@ import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.charts.ChartData
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.android.util.formatAmount
+import com.antcashmanager.android.util.translateWeekday
 
 @Composable
 internal fun SpendingForecastCard(
@@ -223,7 +224,6 @@ internal fun WeekdayExpenseCard(
 ) {
     if (chartData.expenseByWeekday.isEmpty()) return
 
-    val weekdayLabels = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
     val format = LocalCurrencyFormat.current
 
     Card(
@@ -248,7 +248,7 @@ internal fun WeekdayExpenseCard(
             ) {
                 (1..7).forEach { day ->
                     val expense = chartData.expenseByWeekday[day] ?: 0.0
-                    val dayLabel = weekdayLabels.getOrNull(day - 1) ?: "?"
+                    val dayLabel = translateWeekday(day)
                     val amountFormatted = if (expense > 0.0) formatAmount(expense, format) else "—"
 
                     Column(

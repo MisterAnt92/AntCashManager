@@ -588,6 +588,14 @@
     <string name="chart_average">平均值</string>
     <string name="chart_weekday_distribution_title">按星期分布</string>
 
+    <!-- Weekday names (1=Monday, 7=Sunday - EU convention) -->
+    <string name="weekday_1">週一</string>
+    <string name="weekday_2">週二</string>
+    <string name="weekday_3">週三</string>
+    <string name="weekday_4">週四</string>
+    <string name="weekday_5">週五</string>
+    <string name="weekday_6">週六</string>
+    <string name="weekday_7">週日</string>
 
     <!-- Charts Customization -->
     <string name="charts_customize_cards_title">自訂卡片順序</string>

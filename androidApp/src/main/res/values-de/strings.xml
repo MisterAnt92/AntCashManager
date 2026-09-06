@@ -588,6 +588,15 @@
     <string name="chart_average">Durchschnitt</string>
      <string name="chart_weekday_distribution_title">Wochentagverteilung</string>
 
+     <!-- Weekday names (1=Monday, 7=Sunday - EU convention) -->
+     <string name="weekday_1">Mo</string>
+     <string name="weekday_2">Di</string>
+     <string name="weekday_3">Mi</string>
+     <string name="weekday_4">Do</string>
+     <string name="weekday_5">Fr</string>
+     <string name="weekday_6">Sa</string>
+     <string name="weekday_7">So</string>
+
      <!-- Charts Customization -->
      <string name="charts_customize_cards_title">Kartensortierung anpassen</string>
 

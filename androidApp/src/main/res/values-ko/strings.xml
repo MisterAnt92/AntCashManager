@@ -592,6 +592,14 @@
     <string name="chart_average">평균</string>
     <string name="chart_weekday_distribution_title">요일별 분포</string>
 
+    <!-- Weekday names (1=Monday, 7=Sunday - EU convention) -->
+    <string name="weekday_1">월</string>
+    <string name="weekday_2">화</string>
+    <string name="weekday_3">수</string>
+    <string name="weekday_4">목</string>
+    <string name="weekday_5">금</string>
+    <string name="weekday_6">토</string>
+    <string name="weekday_7">일</string>
 
     <!-- Charts Customization -->
     <string name="charts_customize_cards_title">카드 순서 사용자 정의</string>

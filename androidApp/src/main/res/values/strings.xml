@@ -614,6 +614,14 @@
     <string name="chart_average">Average</string>
     <string name="chart_weekday_distribution_title">Weekday Distribution</string>
 
+    <!-- Weekday names (1=Monday, 7=Sunday - EU convention) -->
+    <string name="weekday_1">Mon</string>
+    <string name="weekday_2">Tue</string>
+    <string name="weekday_3">Wed</string>
+    <string name="weekday_4">Thu</string>
+    <string name="weekday_5">Fri</string>
+    <string name="weekday_6">Sat</string>
+    <string name="weekday_7">Sun</string>
 
     <!-- Charts Customization -->
     <string name="charts_customize_cards_title">Customize Card Order</string>

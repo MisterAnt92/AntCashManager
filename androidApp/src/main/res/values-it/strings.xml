@@ -540,6 +540,16 @@
     <string name="chart_last_14_days">Ultimi 14 giorni</string>
     <string name="chart_average">Media</string>
      <string name="chart_weekday_distribution_title">Distribuzione per Giorno</string>
+
+     <!-- Weekday names (1=Monday, 7=Sunday - EU convention) -->
+     <string name="weekday_1">Lun</string>
+     <string name="weekday_2">Mar</string>
+     <string name="weekday_3">Mer</string>
+     <string name="weekday_4">Gio</string>
+     <string name="weekday_5">Ven</string>
+     <string name="weekday_6">Sab</string>
+     <string name="weekday_7">Dom</string>
+
      <string name="error_generic">Si è verificato un errore</string>
 
      <!-- Charts Customization -->

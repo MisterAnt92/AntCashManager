@@ -593,6 +593,14 @@
     <string name="chart_average">Średnia</string>
     <string name="chart_weekday_distribution_title">Rozkład dni tygodnia</string>
 
+    <!-- Weekday names (1=Monday, 7=Sunday - EU convention) -->
+    <string name="weekday_1">Pon</string>
+    <string name="weekday_2">Wto</string>
+    <string name="weekday_3">Śro</string>
+    <string name="weekday_4">Czw</string>
+    <string name="weekday_5">Pią</string>
+    <string name="weekday_6">Sob</string>
+    <string name="weekday_7">Nie</string>
 
     <!-- Charts Customization -->
     <string name="charts_customize_cards_title">Dostosuj kolejność kart</string>

@@ -592,6 +592,14 @@
     <string name="chart_average">平均</string>
     <string name="chart_weekday_distribution_title">曜日別分布</string>
 
+    <!-- Weekday names (1=Monday, 7=Sunday - EU convention) -->
+    <string name="weekday_1">月</string>
+    <string name="weekday_2">火</string>
+    <string name="weekday_3">水</string>
+    <string name="weekday_4">木</string>
+    <string name="weekday_5">金</string>
+    <string name="weekday_6">土</string>
+    <string name="weekday_7">日</string>
 
     <!-- Charts Customization -->
     <string name="charts_customize_cards_title">カードの順序をカスタマイズ</string>
