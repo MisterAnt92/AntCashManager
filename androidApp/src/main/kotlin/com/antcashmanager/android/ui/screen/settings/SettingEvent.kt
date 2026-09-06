@@ -77,4 +77,9 @@ sealed class SettingEvent {
     ) : SettingEvent()
 
     data object RetryLastOperation : SettingEvent()
+
+    // Analytics / Privacy
+    data class SetAnalyticsConsent(
+        val granted: Boolean,
+    ) : SettingEvent()
 }

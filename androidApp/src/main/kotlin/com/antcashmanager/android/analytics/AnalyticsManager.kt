@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import co.touchlab.kermit.Logger
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 /**
  * Wrapper centralizzato per Firebase Analytics.
@@ -12,11 +13,34 @@ import com.google.firebase.analytics.FirebaseAnalytics
 open class AnalyticsManager {
     private val firebaseAnalytics: FirebaseAnalytics?
 
+    @Volatile private var consentGranted: Boolean = false
+
     constructor(context: Context) {
         firebaseAnalytics = FirebaseAnalytics.getInstance(context.applicationContext)
     }
 
+    /**
+     * Apply GDPR consent decision at runtime.
+     * Called from AntCashManagerApp whenever the DataStore value changes.
+     * Enables/disables Analytics collection and sets Consent Mode signals.
+     */
+    fun applyConsent(granted: Boolean) {
+        consentGranted = granted
+        firebaseAnalytics?.setAnalyticsCollectionEnabled(granted)
+        firebaseAnalytics?.setConsent(
+            mapOf(
+                FirebaseAnalytics.ConsentType.ANALYTICS_STORAGE to
+                    if (granted) FirebaseAnalytics.ConsentStatus.GRANTED else FirebaseAnalytics.ConsentStatus.DENIED,
+                FirebaseAnalytics.ConsentType.AD_STORAGE to FirebaseAnalytics.ConsentStatus.DENIED,
+                FirebaseAnalytics.ConsentType.AD_USER_DATA to FirebaseAnalytics.ConsentStatus.DENIED,
+                FirebaseAnalytics.ConsentType.AD_PERSONALIZATION to FirebaseAnalytics.ConsentStatus.DENIED,
+            ),
+        )
+        runCatching { FirebaseCrashlytics.getInstance().isCrashlyticsCollectionEnabled = granted }
+    }
+
     fun logScreenView(route: String) {
+        if (!consentGranted) return
         val screenName = sanitizeName(route.toAnalyticsName())
         if (screenName.isBlank()) return
 
@@ -42,6 +66,7 @@ open class AnalyticsManager {
         eventName: String,
         params: Bundle = Bundle(),
     ) {
+        if (!consentGranted) return
         val sanitizedName = sanitizeName(eventName)
         if (sanitizedName.isBlank()) return
         if (sanitizedName !in AnalyticsConstants.ALLOWED_USAGE_EVENTS) {

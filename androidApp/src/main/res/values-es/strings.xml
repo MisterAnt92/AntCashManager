@@ -562,4 +562,14 @@
     <string name="settings_default_payment_type_desc">Elige el método de pago predeterminado para nuevas transacciones</string>
     <string name="dialog_payment_type_title">Seleccionar método de pago</string>
 
+
+
+    <!-- Analytics Consent Dialog (GDPR) -->
+    <string name="consent_title">Ayúdanos a mejorar</string>
+    <string name="consent_body">Recopilamos estadísticas de uso anónimas (pantallas visitadas, errores) para mejorar la aplicación. No se envían datos financieros. Puedes cambiarlo en Configuración en cualquier momento.</string>
+    <string name="consent_accept">Aceptar</string>
+    <string name="consent_decline">Rechazar</string>
+    <!-- Settings: Analytics consent toggle -->
+    <string name="settings_analytics_consent_title">Compartir estadísticas de uso anónimas</string>
+    <string name="settings_analytics_consent_desc">Solo pantallas visitadas y errores. No se envían datos financieros.</string>
 </resources>

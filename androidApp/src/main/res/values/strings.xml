@@ -632,4 +632,13 @@
 
     <!-- App Description -->
     <string name="app_description">This app was born from the need to track family expenses for free and compare price increases.</string>
+
+    <!-- Analytics Consent Dialog (GDPR) -->
+    <string name="consent_title">Help us improve</string>
+    <string name="consent_body">We collect anonymous usage statistics (screens visited, errors) to improve the app. No financial data is ever sent. You can change this at any time in Settings.</string>
+    <string name="consent_accept">Accept</string>
+    <string name="consent_decline">Decline</string>
+    <!-- Settings: Analytics consent toggle -->
+    <string name="settings_analytics_consent_title">Share anonymous usage statistics</string>
+    <string name="settings_analytics_consent_desc">Screens visited and errors only. No financial data is ever sent.</string>
 </resources>

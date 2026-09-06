@@ -606,4 +606,14 @@
 
     <!-- App Description -->
     <string name="app_description">這個應用的誕生源於無需訂閱的情況下追蹤家庭支出的需要，並能夠查看支出並比較價格上漲。</string>
+
+
+    <!-- Analytics Consent Dialog (GDPR) -->
+    <string name="consent_title">幫助我們改善應用程式</string>
+    <string name="consent_body">我們收集匿名使用統計資料（造訪的畫面、錯誤）以改善應用程式。不會傳送任何財務資料。您可以隨時在設定中更改此選項。</string>
+    <string name="consent_accept">接受</string>
+    <string name="consent_decline">拒絕</string>
+    <!-- Settings: Analytics consent toggle -->
+    <string name="settings_analytics_consent_title">共享匿名使用統計資料</string>
+    <string name="settings_analytics_consent_desc">僅造訪的畫面和錯誤。不會傳送任何財務資料。</string>
 </resources>

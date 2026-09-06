@@ -75,6 +75,7 @@ fun SettingsScreen(
     val noEmailAppInstalledMessage = stringResource(R.string.no_email_app_installed)
     val viewModel: SettingsViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val analyticsConsent by viewModel.analyticsConsent.collectAsStateWithLifecycle()
 
     SettingsContent(
         currentTheme = state.theme,
@@ -98,6 +99,8 @@ fun SettingsScreen(
         onDecimalSeparatorSelected = { viewModel.onEvent(SettingEvent.SetDecimalSeparator(it)) },
         thousandsSeparator = state.thousandsSeparator,
         onThousandsSeparatorSelected = { viewModel.onEvent(SettingEvent.SetThousandsSeparator(it)) },
+        analyticsConsent = analyticsConsent,
+        onAnalyticsConsentChanged = { viewModel.onEvent(SettingEvent.SetAnalyticsConsent(it)) },
         onImportDebugData = { ctx -> viewModel.onEvent(SettingEvent.ImportDebugData(ctx)) },
         onSendFeedbackEmail = { emailBody ->
             viewModel.onEvent(SettingEvent.SendFeedbackEmail(emailBody, context))
@@ -131,6 +134,8 @@ internal fun SettingsContent(
     onDecimalSeparatorSelected: (String) -> Unit = {},
     thousandsSeparator: String = "",
     onThousandsSeparatorSelected: (String) -> Unit = {},
+    analyticsConsent: Boolean? = null,
+    onAnalyticsConsentChanged: (Boolean) -> Unit = {},
     onImportDebugData: (Context) -> Unit = {},
     onSendFeedbackEmail: (String) -> Unit = {},
     navController: NavController? = null,
@@ -357,6 +362,23 @@ internal fun SettingsContent(
                         onSendFeedbackEmail(feedbackEmailBody)
                     },
                 )
+                // Analytics consent toggle (GDPR — user can revoke at any time)
+                if (analyticsConsent != null) {
+                    AppCard(
+                        title = stringResource(R.string.settings_analytics_consent_title),
+                        subtitle = stringResource(R.string.settings_analytics_consent_desc),
+                        leadingIcon = Icons.Default.PrivacyTip,
+                        iconBackgroundColor = MaterialTheme.colorScheme.secondaryContainer,
+                        iconTint = MaterialTheme.colorScheme.onSecondaryContainer,
+                        trailingContent = {
+                            AppSwitch(
+                                checked = analyticsConsent == true,
+                                onCheckedChange = { onAnalyticsConsentChanged(it) },
+                            )
+                        },
+                        onClick = { onAnalyticsConsentChanged(analyticsConsent != true) },
+                    )
+                }
                 AppCard(
                     title = stringResource(R.string.settings_privacy_policy),
                     subtitle = stringResource(R.string.settings_privacy_policy_subtitle),

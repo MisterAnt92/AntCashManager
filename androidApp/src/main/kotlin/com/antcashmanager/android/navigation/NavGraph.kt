@@ -67,6 +67,7 @@ import co.touchlab.kermit.Logger
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.analytics.tracker.PerformanceTracker
 import com.antcashmanager.android.ui.components.animation.AntEasterEggAnimation
+import com.antcashmanager.android.ui.components.dialog.AnalyticsConsentDialog
 import com.antcashmanager.android.ui.components.dialog.AppExitConfirmationDialog
 import com.antcashmanager.android.ui.components.layout.AntScreenScaffold
 import com.antcashmanager.android.ui.components.layout.LeftSidebar
@@ -89,6 +90,9 @@ import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.repository.SettingsRepository
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 /**
@@ -113,6 +117,10 @@ fun AntCashManagerNavHost() {
         .getThousandsSeparator()
         .collectAsStateWithLifecycle(initialValue = "")
     val maskAmounts by settingsRepository.getMaskAmounts().collectAsStateWithLifecycle(initialValue = false)
+    // null = never asked (loading/undecided); false = denied; true = granted
+    val analyticsConsent by settingsRepository
+        .getAnalyticsConsent()
+        .collectAsStateWithLifecycle(initialValue = false)
 
     val currencyFormat =
         CurrencyFormat(
@@ -128,6 +136,25 @@ fun AntCashManagerNavHost() {
             LocalCurrencyFormat provides currencyFormat,
             LocalAmountsMasked provides maskAmounts,
         ) {
+            // GDPR consent dialog: shown once after tutorial, before any analytics event.
+            // analyticsConsent == null means never asked (loading sentinel = false keeps it
+            // from flashing during first composition while DataStore initialises).
+            val consentScope = rememberCoroutineScope()
+            if (isTutorialCompleted == true && analyticsConsent == null) {
+                AnalyticsConsentDialog(
+                    onAccept = {
+                        consentScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                            settingsRepository.setAnalyticsConsent(true)
+                        }
+                    },
+                    onDecline = {
+                        consentScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                            settingsRepository.setAnalyticsConsent(false)
+                        }
+                    },
+                )
+            }
+
             // FASE 1: Get display features from CompositionLocal and pass to adaptive layout
             val displayFeatures = LocalDisplayFeatures.current
             val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo(displayFeatures = displayFeatures)

@@ -618,4 +618,14 @@
     <string name="settings_default_payment_type_desc">新しいトランザクションのデフォルト支払い方法を選択してください</string>
     <string name="dialog_payment_type_title">支払い方法を選択</string>
 
+
+
+    <!-- Analytics Consent Dialog (GDPR) -->
+    <string name="consent_title">アプリの改善にご協力ください</string>
+    <string name="consent_body">アプリを改善するために、匿名の使用統計情報（訪問した画面、エラー）を収集します。財務データは送信されません。設定からいつでも変更できます。</string>
+    <string name="consent_accept">同意する</string>
+    <string name="consent_decline">拒否する</string>
+    <!-- Settings: Analytics consent toggle -->
+    <string name="settings_analytics_consent_title">匿名使用統計を共有する</string>
+    <string name="settings_analytics_consent_desc">訪問した画面とエラーのみ。財務データは送信されません。</string>
 </resources>

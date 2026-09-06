@@ -618,4 +618,14 @@
     <string name="settings_default_payment_type_desc">새 거래의 기본 결제 방법을 선택하세요</string>
     <string name="dialog_payment_type_title">결제 방법 선택</string>
 
+
+
+    <!-- Analytics Consent Dialog (GDPR) -->
+    <string name="consent_title">앱 개선에 도움을 주세요</string>
+    <string name="consent_body">앱 개선을 위해 익명 사용 통계(방문한 화면, 오류)를 수집합니다. 금융 데이터는 전송되지 않습니다. 설정에서 언제든지 변경할 수 있습니다.</string>
+    <string name="consent_accept">수락</string>
+    <string name="consent_decline">거부</string>
+    <!-- Settings: Analytics consent toggle -->
+    <string name="settings_analytics_consent_title">익명 사용 통계 공유</string>
+    <string name="settings_analytics_consent_desc">방문한 화면과 오류만. 금융 데이터는 전송되지 않습니다.</string>
 </resources>

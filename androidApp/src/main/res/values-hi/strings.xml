@@ -615,4 +615,14 @@
     <string name="settings_default_payment_type_desc">नए लेनदेन के लिए डिफ़ॉल्ट भुगतान विधि चुनें</string>
     <string name="dialog_payment_type_title">भुगतान विधि चुनें</string>
 
+
+
+    <!-- Analytics Consent Dialog (GDPR) -->
+    <string name="consent_title">हमें बेहतर बनाने में मदद करें</string>
+    <string name="consent_body">हम ऐप को बेहतर बनाने के लिए अज्ञात उपयोग आंकड़े (देखे गए पृष्ठ, त्रुटियाँ) एकत्र करते हैं। कोई वित्तीय डेटा नहीं भेजा जाता। आप इसे सेटिंग में कभी भी बदल सकते हैं।</string>
+    <string name="consent_accept">स्वीकार करें</string>
+    <string name="consent_decline">अस्वीकार करें</string>
+    <!-- Settings: Analytics consent toggle -->
+    <string name="settings_analytics_consent_title">अज्ञात उपयोग सांख्यिकी साझा करें</string>
+    <string name="settings_analytics_consent_desc">केवल देखे गए पृष्ठ और त्रुटियाँ। कोई वित्तीय डेटा कभी नहीं भेजा जाता।</string>
 </resources>

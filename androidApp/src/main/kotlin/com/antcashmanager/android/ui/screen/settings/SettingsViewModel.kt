@@ -11,6 +11,7 @@ import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.model.TransactionType
+import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.service.WidgetUpdateNotifier
 import com.antcashmanager.domain.usecase.settings.SettingsUseCasesProvider
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
@@ -32,6 +33,7 @@ import org.json.JSONObject
 
 class SettingsViewModel(
     private val settingsUseCases: SettingsUseCasesProvider,
+    private val settingsRepository: SettingsRepository,
     private val deleteAllTransactionsUseCase: DeleteAllTransactionsUseCase,
     private val insertTransactionUseCase: InsertTransactionUseCase,
     private val widgetUpdateNotifier: WidgetUpdateNotifier,
@@ -92,6 +94,7 @@ class SettingsViewModel(
             is SettingEvent.ImportDebugData -> importDebugData(event.context)
             is SettingEvent.SendFeedbackEmail -> sendFeedbackEmail(event.emailBody, event.context)
             is SettingEvent.RetryLastOperation -> logInfo("Retry requested")
+            is SettingEvent.SetAnalyticsConsent -> setAnalyticsConsent(event.granted)
         }
     }
 
@@ -349,6 +352,11 @@ class SettingsViewModel(
             SettingsState(),
         )
 
+    /** Separate flow for analytics consent — not included in the heavy combine() above. */
+    val analyticsConsent: StateFlow<Boolean?> =
+        settingsRepository.getAnalyticsConsent()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT), null)
+
     /**
      * Funzione di utilità per loggare e lanciare l'azione in coroutine.
      */
@@ -469,6 +477,13 @@ class SettingsViewModel(
             logMsg = "Setting tutorial completed: $completed",
             action = { setTutorialCompletedUseCase(completed) },
         )
+
+    private fun setAnalyticsConsent(granted: Boolean) {
+        viewModelScope.launch {
+            logDebug("Setting analytics consent: $granted")
+            settingsRepository.setAnalyticsConsent(granted)
+        }
+    }
 
     private fun resetAllPreferences() =
         updatePreference(

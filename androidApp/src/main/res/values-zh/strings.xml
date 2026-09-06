@@ -620,4 +620,14 @@
     <string name="auto_backup_notification_failure_title">自动备份失败</string>
     <string name="auto_backup_notification_failure_message">无法完成自动备份。请检查您的存储权限。</string>
 
+
+
+    <!-- Analytics Consent Dialog (GDPR) -->
+    <string name="consent_title">帮助我们改进应用</string>
+    <string name="consent_body">我们收集匿名使用统计数据（访问的界面、错误）以改进应用。不会发送任何财务数据。您可以随时在设置中更改此选项。</string>
+    <string name="consent_accept">接受</string>
+    <string name="consent_decline">拒绝</string>
+    <!-- Settings: Analytics consent toggle -->
+    <string name="settings_analytics_consent_title">共享匿名使用统计</string>
+    <string name="settings_analytics_consent_desc">仅访问的界面和错误。不会发送任何财务数据。</string>
 </resources>

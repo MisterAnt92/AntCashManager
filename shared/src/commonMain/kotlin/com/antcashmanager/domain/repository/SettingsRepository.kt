@@ -128,6 +128,12 @@ public interface SettingsRepository {
 
     public suspend fun setIsTutorialCompleted(completed: Boolean): Unit
 
+    // ── Analytics Consent (GDPR) ──
+    /** Returns null = never asked, true = granted, false = denied. */
+    public fun getAnalyticsConsent(): Flow<Boolean?>
+
+    public suspend fun setAnalyticsConsent(granted: Boolean): Unit
+
     /**
      * Flag one-shot: indica se il backfill di [com.antcashmanager.domain.model.Category.sortOrder]
      * per le categorie già esistenti (migrazione DB) è già stato eseguito. Stato locale del

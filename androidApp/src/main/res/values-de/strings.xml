@@ -612,5 +612,15 @@
     <string name="settings_default_payment_type_desc">Wählen Sie die Standard-Zahlungsart für neue Transaktionen</string>
     <string name="dialog_payment_type_title">Zahlungsart auswählen</string>
 
-</resources>
 
+
+
+    <!-- Analytics Consent Dialog (GDPR) -->
+    <string name="consent_title">Helfen Sie uns, die App zu verbessern</string>
+    <string name="consent_body">Wir erheben anonyme Nutzungsstatistiken (besuchte Bildschirme, Fehler), um die App zu verbessern. Es werden keine Finanzdaten übermittelt. Sie können dies jederzeit in den Einstellungen ändern.</string>
+    <string name="consent_accept">Akzeptieren</string>
+    <string name="consent_decline">Ablehnen</string>
+    <!-- Settings: Analytics consent toggle -->
+    <string name="settings_analytics_consent_title">Anonyme Nutzungsstatistiken teilen</string>
+    <string name="settings_analytics_consent_desc">Nur besuchte Bildschirme und Fehler. Keine Finanzdaten werden je gesendet.</string>
+</resources>

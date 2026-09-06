@@ -3,6 +3,7 @@ package com.antcashmanager.android
 import android.app.Application
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.Severity
+import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.di.appModules
 import com.antcashmanager.android.work.AutoBackupNotifier
 import com.antcashmanager.domain.model.Category
@@ -36,8 +37,16 @@ class AntCashManagerApp : Application() {
             modules(appModules)
         }
 
-        // Crea il notification channel per i fallimenti del backup automatico
-        AutoBackupNotifier.ensureChannel(this)
+        appScope.launch {
+            // Crea il notification channel per i fallimenti del backup automatico
+            AutoBackupNotifier.ensureChannel(this@AntCashManagerApp)
+
+            // Apply analytics consent whenever the stored preference changes (GDPR).
+            // collect is infinite; SupervisorJob keeps it alive for the app's lifetime.
+            get<SettingsRepository>().getAnalyticsConsent().collect { consent ->
+                get<AnalyticsManager>().applyConsent(consent == true)
+            }
+        }
 
         appScope.launch {
             seedDefaultCategories()

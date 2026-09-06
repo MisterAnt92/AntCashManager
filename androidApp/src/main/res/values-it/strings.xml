@@ -558,4 +558,13 @@
 
     <!-- App Description -->
     <string name="app_description">Questa app nasce dall\'esigenza di tracciare le spese familiari gratuitamente e di confrontare gli aumenti dei prezzi.</string>
+
+    <!-- Analytics Consent Dialog (GDPR) -->
+    <string name="consent_title">Aiutaci a migliorare</string>
+    <string name="consent_body">Raccogliamo statistiche di utilizzo anonime (schermate visitate, errori) per migliorare l\'app. Non vengono mai inviati dati finanziari. Puoi modificarlo in qualsiasi momento nelle Impostazioni.</string>
+    <string name="consent_accept">Accetta</string>
+    <string name="consent_decline">Rifiuta</string>
+    <!-- Settings: Analytics consent toggle -->
+    <string name="settings_analytics_consent_title">Condividi statistiche d\'uso anonime</string>
+    <string name="settings_analytics_consent_desc">Solo schermate visitate ed errori. Non vengono mai inviati dati finanziari.</string>
 </resources>

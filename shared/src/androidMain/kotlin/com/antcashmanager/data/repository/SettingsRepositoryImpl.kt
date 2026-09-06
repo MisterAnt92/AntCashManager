@@ -61,6 +61,7 @@ public class SettingsRepositoryImpl(
     private val transactionsTransactionDisplayTypeKey =
         stringPreferencesKey("transactions_transaction_display_type")
     private val isTutorialCompletedKey = booleanPreferencesKey("is_tutorial_completed")
+    private val analyticsConsentKey = booleanPreferencesKey("analytics_consent")
     private val categorySortOrderInitializedKey =
         booleanPreferencesKey("category_sort_order_initialized")
     private val dataEncryptionEnabledKey = booleanPreferencesKey("data_encryption_enabled")
@@ -416,6 +417,13 @@ public class SettingsRepositoryImpl(
 
     override suspend fun setIsTutorialCompleted(completed: Boolean) {
         dataStore.edit { it[isTutorialCompletedKey] = completed }
+    }
+
+    /** null = never asked; true = granted; false = denied. Not reset by resetAllPreferences(). */
+    override fun getAnalyticsConsent(): Flow<Boolean?> = dataStore.data.map { it[analyticsConsentKey] }
+
+    override suspend fun setAnalyticsConsent(granted: Boolean) {
+        dataStore.edit { it[analyticsConsentKey] = granted }
     }
 
     override fun getCategorySortOrderInitialized(): Flow<Boolean> =
