@@ -109,10 +109,9 @@ fun TutorialOverlay(
         ),
     )
 
-    var welcomeVisible by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) {
+    var welcomeVisible by remember { mutableStateOf(true) }
+    LaunchedEffect(true) {
         analyticsManager.logEvent("tutorial_started")
-        welcomeVisible = true
     }
 
     // Il tasto/gesture back di sistema deve muoversi indietro nel tutorial invece di

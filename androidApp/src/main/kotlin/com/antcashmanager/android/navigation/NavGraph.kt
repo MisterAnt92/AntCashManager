@@ -81,6 +81,7 @@ import com.antcashmanager.android.ui.screen.receiptScan.view.ReceiptScanScreen
 import com.antcashmanager.android.ui.screen.settings.dataManagement.SettingsDataScreen
 import com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayScreen
 import com.antcashmanager.android.ui.screen.settings.view.SettingsScreen
+import com.antcashmanager.android.ui.screen.splash.SplashScreen
 import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionScreen
 import com.antcashmanager.android.ui.screen.transactions.view.TransactionsScreen
 import com.antcashmanager.android.ui.screen.tutorial.TutorialScreen
@@ -103,7 +104,7 @@ fun AntCashManagerNavHost() {
     val navController = rememberNavController()
     val showCharts by settingsRepository.getShowCharts().collectAsStateWithLifecycle(initialValue = true)
     val isTutorialCompleted by settingsRepository.getIsTutorialCompleted()
-        .collectAsStateWithLifecycle(initialValue = true)
+        .collectAsStateWithLifecycle(initialValue = null)
     val currencySymbol by settingsRepository.getCurrencySymbol().collectAsStateWithLifecycle(initialValue = "\u20ac")
     val decimalDigits by settingsRepository.getDecimalDigits().collectAsStateWithLifecycle(initialValue = 2)
     val decimalSeparator by settingsRepository.getDecimalSeparator().collectAsStateWithLifecycle(initialValue = ",")
@@ -118,14 +119,16 @@ fun AntCashManagerNavHost() {
         thousandsSeparator = thousandsSeparator,
     )
 
-    CompositionLocalProvider(
-        LocalCurrencyFormat provides currencyFormat,
-        LocalAmountsMasked provides maskAmounts,
-    ) {
-        // FASE 1: Get display features from CompositionLocal and pass to adaptive layout
-        val displayFeatures = LocalDisplayFeatures.current
-        val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo(displayFeatures = displayFeatures)
-        // ... existing AntScreenScaffold code ...
+    if (isTutorialCompleted != null) {
+        // Mostra il contenuto principale solo dopo che i dati critici sono caricati
+        CompositionLocalProvider(
+            LocalCurrencyFormat provides currencyFormat,
+            LocalAmountsMasked provides maskAmounts,
+        ) {
+            // FASE 1: Get display features from CompositionLocal and pass to adaptive layout
+            val displayFeatures = LocalDisplayFeatures.current
+            val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo(displayFeatures = displayFeatures)
+            // ... existing AntScreenScaffold code ...
 
         val visibleNavItems = buildList {
             add(BottomNavItem.Home)
@@ -211,7 +214,7 @@ fun AntCashManagerNavHost() {
                                     currentRoute == AppRoute.BottomRoute.Tutorial.route
                         } == true
 
-                    if (isTutorialCompleted && !adaptiveLayoutInfo.preferRailNavigation && !isSidebarOpen && !isOnCategoriesSettingsOrTutorial) {
+                    if (isTutorialCompleted == true && !adaptiveLayoutInfo.preferRailNavigation && !isSidebarOpen && !isOnCategoriesSettingsOrTutorial) {
                         Surface(
                             color = MaterialTheme.colorScheme.surface,
                             tonalElevation = 6.dp,
@@ -363,7 +366,7 @@ fun AntCashManagerNavHost() {
                 }
             }
 
-            if (isTutorialCompleted && adaptiveLayoutInfo.preferRailNavigation && !isOnTutorial) {
+            if (isTutorialCompleted == true && adaptiveLayoutInfo.preferRailNavigation && !isOnTutorial) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -527,7 +530,7 @@ fun AntCashManagerNavHost() {
                         navHostContent(Modifier.weight(1f))
                     }
                 }
-            } else if (isTutorialCompleted) {
+            } else if (isTutorialCompleted == true) {
                 // Per dispositivi NON tablet: Sidebar scorrevole (drawer-style) + Content con BottomBar
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -756,6 +759,10 @@ fun AntCashManagerNavHost() {
                 onDismiss = { showAntAnimation = false },
             )
         }
+        }
+    } else {
+        // Mostra il splash screen mentre i dati critici vengono caricati
+        SplashScreen()
     }
 }
 

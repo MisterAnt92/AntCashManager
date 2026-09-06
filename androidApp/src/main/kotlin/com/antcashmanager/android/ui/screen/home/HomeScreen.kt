@@ -159,6 +159,7 @@ internal fun HomeContent(
         TransactionDisplayType.TREND
     }
     val isTutorialCompleted = state.isTutorialCompleted
+    val isLoading = state.isLoading
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -238,8 +239,9 @@ internal fun HomeContent(
         )
     }
 
-    // Tutorial full-screen
-    if (!isTutorialCompleted) {
+    // Tutorial full-screen (non mostrare durante il caricamento iniziale)
+    // Questo previene il flickering causato dalla race condition dello stato asincrono
+    if (!isTutorialCompleted && !isLoading) {
         TutorialOverlay(
             onDismiss = {
                 onEvent(HomeEvent.SetIsTutorialCompleted(true))
