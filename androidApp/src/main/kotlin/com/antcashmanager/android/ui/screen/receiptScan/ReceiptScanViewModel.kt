@@ -6,6 +6,7 @@ import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.analytics.tracker.ErrorTracker
 import com.antcashmanager.android.analytics.tracker.PerformanceTracker
 import com.antcashmanager.android.ui.base.BaseViewModel
+import com.antcashmanager.domain.exception.ReceiptScanException
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.ReceiptData
@@ -134,11 +135,16 @@ class ReceiptScanViewModel(
                         val duration = System.currentTimeMillis() - scanStartTime
                         performanceTracker.trackReceiptOcrProcessingTime(duration, pages = 1, success = false)
                         val errorCode =
-                            when {
-                                error.message?.contains("timeout") == true -> "network_timeout"
-                                error.message?.contains("image") == true -> "invalid_image"
-                                error.message?.contains("text") == true -> "text_not_found"
-                                else -> "processing_failed"
+                            when (error) {
+                                is ReceiptScanException.ModelNotReady -> "model_not_ready"
+                                is ReceiptScanException.InvalidImage -> "invalid_image"
+                                is ReceiptScanException.NoTextExtracted -> "text_not_found"
+                                is ReceiptScanException.AmountNotFound -> "amount_not_found"
+                                else ->
+                                    when {
+                                        error.message?.contains("timeout") == true -> "network_timeout"
+                                        else -> "processing_failed"
+                                    }
                             }
                         errorTracker.trackReceiptOcrError(errorCode, retryCount = 0)
                         analyticsManager.logEvent(
@@ -147,11 +153,16 @@ class ReceiptScanViewModel(
                                 putString("failure_reason", error.message?.take(40) ?: "unknown")
                             },
                         )
+                        val userMessage =
+                            when (error) {
+                                is ReceiptScanException.ModelNotReady -> ReceiptScanConstant.ERROR_MODEL_NOT_READY
+                                else -> error.message ?: ReceiptScanConstant.ERROR_SCAN
+                            }
                         _state.update {
                             it.copy(
                                 step = ReceiptScanStep.CAPTURE,
                                 isLoading = false,
-                                error = error.message ?: ReceiptScanConstant.ERROR_SCAN,
+                                error = userMessage,
                             )
                         }
                     }

@@ -128,12 +128,14 @@
 }
 
 # ------------------------------------------------------------------------------
-# 8. ML KIT – TEXT RECOGNITION
+# 8. ML KIT – TEXT RECOGNITION (unbundled via play-services-mlkit-text-recognition)
+# Model downloaded at install time via Play Services; no native .so bundled in APK.
 # ------------------------------------------------------------------------------
 
 -keep class com.google.mlkit.vision.text.** { *; }
 -keep class com.google.mlkit.** { *; }
 -dontwarn com.google.mlkit.**
+-dontwarn com.google.android.gms.internal.mlkit_**
 -keep class com.google.android.gms.internal.mlkit_vision_text_common.** { *; }
 
 # ------------------------------------------------------------------------------

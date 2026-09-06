@@ -20,7 +20,7 @@ googleServices = "4.5.0"
 firebaseCrashlyticsGradle = "3.0.7"
 firebaseBom = "34.17.0"
 googleFonts = "1.11.4"
-mlkitTextRecognition = "16.0.1"
+mlkitTextRecognition = "19.0.1"
 koin = "4.2.2"
 mockk = "1.14.11"
 kotlinxDatetime = "0.6.0"
@@ -69,7 +69,7 @@ firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.r
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
 androidx-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "googleFonts" }
-mlkit-text-recognition = { group = "com.google.mlkit", name = "text-recognition", version.ref = "mlkitTextRecognition" }
+mlkit-text-recognition = { group = "com.google.android.gms", name = "play-services-mlkit-text-recognition", version.ref = "mlkitTextRecognition" }
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
 koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koin" }
 koin-compose = { group = "io.insert-koin", name = "koin-compose", version.ref = "koin" }

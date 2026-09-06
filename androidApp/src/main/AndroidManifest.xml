@@ -10,6 +10,10 @@
     <uses-permission
         android:name="com.google.android.gms.permission.AD_ID"
         tools:node="remove" />
+    <!-- Remove ad-services permission injected transitively by GMS libraries -->
+    <uses-permission
+        android:name="android.permission.ACCESS_ADSERVICES_AD_ID"
+        tools:node="remove" />
 
     <!-- Storage permissions for Android 8-9 (API 26-28) backup/restore compatibility -->
     <uses-permission
@@ -110,6 +114,11 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/category_breakdown_widget_info" />
         </receiver>
+
+        <!-- Trigger Play Services to download the OCR model at install time -->
+        <meta-data
+            android:name="com.google.mlkit.vision.DEPENDENCIES"
+            android:value="ocr" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

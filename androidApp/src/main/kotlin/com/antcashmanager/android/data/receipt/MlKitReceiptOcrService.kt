@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import co.touchlab.kermit.Logger
 import com.antcashmanager.domain.exception.ReceiptScanException
 import com.antcashmanager.domain.service.ReceiptOcrService
+import com.google.mlkit.common.MlKitException
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
@@ -116,9 +117,16 @@ class MlKitReceiptOcrService : ReceiptOcrService {
                             continuation.resume(Result.success(visionText.text))
                         }.addOnFailureListener { exception ->
                             Logger.e(throwable = exception, tag = ReceiptConstants.TAG) { "OCR failed" }
-                            continuation.resume(
-                                Result.failure(ReceiptScanException.OcrFailed(exception)),
-                            )
+                            // Unbundled ML Kit: model may still be downloading via Play Services
+                            val failure =
+                                if (exception is MlKitException &&
+                                    exception.errorCode == MlKitException.UNAVAILABLE
+                                ) {
+                                    ReceiptScanException.ModelNotReady
+                                } else {
+                                    ReceiptScanException.OcrFailed(exception)
+                                }
+                            continuation.resume(Result.failure(failure))
                         }
 
                     continuation.invokeOnCancellation {

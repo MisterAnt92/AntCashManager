@@ -23,4 +23,11 @@ public sealed class ReceiptScanException(
     /** Nessuna categoria di spesa disponibile per creare la transazione. */
     public object NoCategoryAvailable :
         ReceiptScanException("No expense category available to create transaction")
+
+    /**
+     * Il modello OCR è ancora in download via Play Services (unbundled ML Kit).
+     * Mostrare all'utente di riprovare tra qualche secondo.
+     */
+    public object ModelNotReady :
+        ReceiptScanException("OCR model is not yet available, please retry in a moment")
 }
