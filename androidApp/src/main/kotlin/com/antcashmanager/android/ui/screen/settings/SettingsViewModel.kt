@@ -13,6 +13,7 @@ import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.service.WidgetUpdateNotifier
+import com.antcashmanager.domain.usecase.SendFeedbackEmailUseCase
 import com.antcashmanager.domain.usecase.settings.SettingsUseCasesProvider
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
@@ -37,6 +38,7 @@ class SettingsViewModel(
     private val deleteAllTransactionsUseCase: DeleteAllTransactionsUseCase,
     private val insertTransactionUseCase: InsertTransactionUseCase,
     private val widgetUpdateNotifier: WidgetUpdateNotifier,
+    private val sendFeedbackEmailUseCase: SendFeedbackEmailUseCase,
 ) : BaseViewModel<SettingEvent>() {
     // Convenience properties for readability (delegate to provider)
     private val getThemeUseCase get() = settingsUseCases.getTheme
@@ -92,7 +94,7 @@ class SettingsViewModel(
             is SettingEvent.SetTutorialCompleted -> setIsTutorialCompleted(event.completed)
             is SettingEvent.ResetAllPreferences -> resetAllPreferences()
             is SettingEvent.ImportDebugData -> importDebugData(event.context)
-            is SettingEvent.SendFeedbackEmail -> sendFeedbackEmail(event.emailBody, event.context)
+            is SettingEvent.SendFeedbackEmail -> sendFeedbackEmail(event.emailBody)
             is SettingEvent.RetryLastOperation -> logInfo("Retry requested")
             is SettingEvent.SetAnalyticsConsent -> setAnalyticsConsent(event.granted)
         }
@@ -495,22 +497,21 @@ class SettingsViewModel(
             },
         )
 
-    private fun sendFeedbackEmail(
-        emailBody: String,
-        applicationContext: Context,
-    ): Boolean {
-        val success =
-            FeedbackEmailHelper.sendFeedbackEmail(
-                applicationContext,
-                emailBody,
-                BuildConfig.VERSION_NAME,
-            )
-        if (success) {
-            logDebug("Feedback email intent launched successfully")
-        } else {
-            logWarn("No email app available to send feedback")
+    private fun sendFeedbackEmail(emailBody: String) {
+        viewModelScope.launch {
+            sendFeedbackEmailUseCase(SendFeedbackEmailUseCase.Params(emailBody))
+                .onSuccess {
+                    if (it) {
+                        logDebug("Feedback email intent launched successfully")
+                    } else {
+                        logWarn("No email app available to send feedback")
+                    }
+                }
+                .onFailure { error ->
+                    if (error is CancellationException) throw error
+                    logError("Error sending feedback email: ${error.message}")
+                }
         }
-        return success
     }
 }
 

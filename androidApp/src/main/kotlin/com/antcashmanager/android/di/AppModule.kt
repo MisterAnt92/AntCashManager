@@ -9,6 +9,7 @@ import com.antcashmanager.android.analytics.tracker.SessionTracker
 import com.antcashmanager.android.auth.GoogleSignInManager
 import com.antcashmanager.android.data.backup.BackupService
 import com.antcashmanager.android.data.receipt.MlKitReceiptOcrService
+import com.antcashmanager.android.data.repository.AndroidFeedbackRepository
 import com.antcashmanager.android.drive.DriveUploadManager
 import com.antcashmanager.android.ui.screen.categories.CategoriesViewModel
 import com.antcashmanager.android.ui.screen.charts.ChartsViewModel
@@ -35,11 +36,13 @@ import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.CategoryRepository
+import com.antcashmanager.domain.repository.FeedbackRepository
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.security.LocalDataCipher
 import com.antcashmanager.domain.service.ReceiptOcrService
 import com.antcashmanager.domain.service.WidgetUpdateNotifier
+import com.antcashmanager.domain.usecase.SendFeedbackEmailUseCase
 import com.antcashmanager.domain.usecase.ShareTransactionUseCase
 import com.antcashmanager.domain.usecase.category.DeleteCategoryUseCase
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
@@ -135,6 +138,7 @@ val dataModule =
             )
         }
         single { AnalyticsManager(androidApplication()) }
+        single<FeedbackRepository> { AndroidFeedbackRepository(androidApplication()) }
 
         // PHASE 2: Performance & Session & Error Tracking
         single { PerformanceTracker(get<AnalyticsManager>()) }
@@ -211,6 +215,7 @@ val useCaseModule =
         // - Single point of maintenance (generics)
 
         factory { ScanReceiptUseCase(ocrService = get()) }
+        factory { SendFeedbackEmailUseCase(feedbackRepository = get()) }
 
         // ─────────────────────────────────────────────────────────────────────────────
         // RESTORED: Settings use cases (Legacy support during migration)
@@ -396,6 +401,7 @@ val presentationModule =
                 deleteAllTransactionsUseCase = get(),
                 insertTransactionUseCase = get(),
                 widgetUpdateNotifier = get(),
+                sendFeedbackEmailUseCase = get(),
             )
         }
         viewModel {

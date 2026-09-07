@@ -103,7 +103,7 @@ fun SettingsScreen(
         onAnalyticsConsentChanged = { viewModel.onEvent(SettingEvent.SetAnalyticsConsent(it)) },
         onImportDebugData = { ctx -> viewModel.onEvent(SettingEvent.ImportDebugData(ctx)) },
         onSendFeedbackEmail = { emailBody ->
-            viewModel.onEvent(SettingEvent.SendFeedbackEmail(emailBody, context))
+            viewModel.onEvent(SettingEvent.SendFeedbackEmail(emailBody))
             // TODO: handle success/failure via errorState in state (FASE 5)
         },
         navController = navController,

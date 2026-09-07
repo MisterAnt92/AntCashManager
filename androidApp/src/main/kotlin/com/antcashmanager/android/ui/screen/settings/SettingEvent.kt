@@ -73,7 +73,6 @@ sealed class SettingEvent {
 
     data class SendFeedbackEmail(
         val emailBody: String,
-        val context: Context,
     ) : SettingEvent()
 
     data object RetryLastOperation : SettingEvent()
