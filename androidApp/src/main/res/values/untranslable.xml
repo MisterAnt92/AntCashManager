@@ -45,4 +45,7 @@
     <string name="date_format_mmddyyyy" translatable="false">MM/DD/YYYY</string>
     <string name="date_format_yyyymmdd" translatable="false">YYYY-MM-DD</string>
     <string name="date_format_ddmmmyyyy" translatable="false">DD MMM YYYY</string>
+
+    <string name="settings_theme_anna" translatable="false">Anna</string>
+    <string name="settings_date_format_subtitle" translatable="false">%s</string>
 </resources>

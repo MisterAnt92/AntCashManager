@@ -17,7 +17,7 @@
     <string name="home_income">Доходы</string>
     <string name="home_expenses">Расходы</string>
     <string name="home_income_expense_card_title">Доходы и расходы</string>
-    <string name="home_recent_transactions">Последние транзакции</string>
+    <string name="home_recent_transactions">Последние т��анзакции</string>
     <string name="home_customize_top_cards_action">Настроить верхние карточки</string>
     <string name="home_customize_top_cards_title">Настроить верхние карточки</string>
     <string name="home_quick_insights_title">Быстрые выводы</string>
@@ -69,7 +69,7 @@
     <string name="categories_tab_income">Доход</string>
     <string name="categories_default_badge">По умолчанию</string>
     <string name="categories_icon_label">Значок</string>
-    <string name="categories_hide">Скрыть категорию</string>
+    <string name="categories_hide">Скрыть кат��горию</string>
     <string name="categories_show">Показать категорию</string>
     <string name="categories_hidden_section_title">Скрытые категории (%d)</string>
     <string name="categories_reorder">Изменить порядок категорий</string>
@@ -190,7 +190,6 @@
     <string name="settings_separator_space">Пробел</string>
     <string name="settings_separator_none">Нет</string>
     <string name="settings_date_format">Формат даты</string>
-    <string name="settings_date_format_subtitle">%s</string>
     <string name="settings_section_currency">Валюта</string>
     <string name="settings_section_dates">Даты</string>
     <string name="settings_section_other">Другое</string>
@@ -258,7 +257,7 @@
     <string name="dialog_add">Добавить</string>
     <string name="exit_app_title">Выйти из приложения?</string>
     <string name="exit_app_message">Вы хотите закрыть AntCashManager?</string>
-    <string name="exit_app_confirm">Выйти</string>
+    <string name="exit_app_confirm">В��йти</string>
 
     <!-- Common Actions -->
     <string name="common_confirm">Подтвердить</string>
@@ -285,7 +284,7 @@
     <string name="dialog_reset_preferences_title">Сбросить все настройки</string>
     <string name="dialog_reset_preferences_message">Это восстановит все настройки до их значений по умолчанию. Продолжить?</string>
     <string name="dialog_delete_suggestions_title">Удалить все предложения?</string>
-    <string name="dialog_delete_suggestions_message">Предложения на основе истории (названия, плательщики и т.д.) будут забыты. Новые накопятся со временем. Продолжить?</string>
+    <string name="dialog_delete_suggestions_message">Предложения на основе истории (названия, плательщики и т.д.) будут забыты. Новые накопятся со временем. П��одолжить?</string>
     <string name="dialog_reset">Сбросить</string>
 
     <!-- Automatic Backup (Phase 1 & 2) -->
@@ -459,7 +458,7 @@
     <string name="tutorial_dashboard_title">Панель управления</string>
     <string name="tutorial_dashboard_desc">Здесь вы видите общий баланс, доходы и расходы за месяц.</string>
     <string name="tutorial_transactions_title">Транзакции</string>
-    <string name="tutorial_transactions_desc">Управляйте всеми движениями средств здесь. Поиск, фильтры и добавление записей — это просто.</string>
+    <string name="tutorial_transactions_desc">Управляйте вс��ми движениями средств здесь. Поиск, фильтры и добавление записей — это просто.</string>
     <string name="tutorial_charts_title">Графики и аналитика</string>
     <string name="tutorial_charts_desc">Визуализируйте свои привычки с помощью интерактивных графиков. Посмотрите, куда уходят деньги!</string>
     <string name="tutorial_categories_title">Категории</string>
@@ -521,7 +520,7 @@
     <string name="help_home_feature_date_filters_title">Фильтры дат</string>
     <string name="help_home_feature_date_filters_desc">Фильтруйте транзакции по датам или используйте пресеты.</string>
     <string name="help_home_feature_recent_transactions_title">Последние транзакции</string>
-    <string name="help_home_feature_recent_transactions_desc">Просматривайте последние записи с деталями и категориями.</string>
+    <string name="help_home_feature_recent_transactions_desc">Просматривайте последние записи с деталями и катег��риями.</string>
 
     <!-- Charts Help Dialog -->
     <string name="help_charts_title">Руководство по графикам</string>
@@ -637,4 +636,14 @@
     <!-- Settings: Analytics consent toggle -->
     <string name="settings_analytics_consent_title">Делиться анонимной статистикой использования</string>
     <string name="settings_analytics_consent_desc">Только посещённые экраны и ошибки. Финансовые данные никогда не отправляются.</string>
+
+    <!-- HelpDialog (Transactions) - missing aliases -->
+    <string name="transactions_help_title">@string/help_transactions_title</string>
+    <string name="transactions_help_desc">@string/help_transactions_desc</string>
+    <string name="transactions_help_filter_title">@string/help_transactions_feature_filters_title</string>
+    <string name="transactions_help_filter_desc">@string/help_transactions_feature_filters_desc</string>
+    <string name="transactions_help_search_title">@string/help_transactions_feature_search_title</string>
+    <string name="transactions_help_search_desc">@string/help_transactions_feature_search_desc</string>
+    <string name="transactions_help_display_title">@string/settings_transaction_display</string>
+    <string name="transactions_help_display_desc">@string/settings_transaction_display_desc</string>
 </resources>

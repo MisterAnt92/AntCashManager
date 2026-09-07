@@ -190,7 +190,6 @@
     <string name="settings_separator_space">Spacja</string>
     <string name="settings_separator_none">Brak</string>
     <string name="settings_date_format">Format daty</string>
-    <string name="settings_date_format_subtitle">%s</string>
     <string name="settings_section_currency">Waluta</string>
     <string name="settings_section_dates">Daty</string>
     <string name="settings_section_other">Inne</string>
@@ -586,7 +585,7 @@
     <string name="chart_last_3_months">Ostatnie 3 miesiące</string>
     <string name="chart_quick_stats_title">Szybkie statystyki</string>
     <string name="chart_days_tracked">Śledzone dni</string>
-    <string name="chart_max_daily">Maks. dzienne</string>
+    <string name="chart_max_daily">Maks. dzienny</string>
     <string name="chart_avg_daily">Średnia dzienna</string>
     <string name="chart_daily_expenses_title">Dzienne wydatki</string>
     <string name="chart_last_14_days">Ostatnie 14 dni</string>
@@ -637,4 +636,14 @@
     <!-- Settings: Analytics consent toggle -->
     <string name="settings_analytics_consent_title">Udostępnij anonimowe statystyki użytkowania</string>
     <string name="settings_analytics_consent_desc">Tylko odwiedzone ekrany i błędy. Żadne dane finansowe nie są wysyłane.</string>
+
+    <!-- HelpDialog (Transactions) - missing aliases -->
+    <string name="transactions_help_title">@string/help_transactions_title</string>
+    <string name="transactions_help_desc">@string/help_transactions_desc</string>
+    <string name="transactions_help_filter_title">@string/help_transactions_feature_filters_title</string>
+    <string name="transactions_help_filter_desc">@string/help_transactions_feature_filters_desc</string>
+    <string name="transactions_help_search_title">@string/help_transactions_feature_search_title</string>
+    <string name="transactions_help_search_desc">@string/help_transactions_feature_search_desc</string>
+    <string name="transactions_help_display_title">@string/settings_transaction_display</string>
+    <string name="transactions_help_display_desc">@string/settings_transaction_display_desc</string>
 </resources>

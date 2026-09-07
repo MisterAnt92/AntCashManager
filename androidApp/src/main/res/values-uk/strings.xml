@@ -192,12 +192,11 @@
     <string name="settings_separator_space">Пробіл</string>
     <string name="settings_separator_none">Немає</string>
     <string name="settings_date_format">Формат дати</string>
-    <string name="settings_date_format_subtitle">%s</string>
     <string name="settings_section_currency">Валюта</string>
     <string name="settings_section_dates">Дати</string>
     <string name="settings_section_other">Інше</string>
     <string name="settings_reset_preferences">Скинути всі налаштування</string>
-    <string name="settings_reset_preferences_subtitle">Відновити всі налаштування до значень за замовчуванням</string>
+    <string name="settings_reset_preferences_subtitle">Відновити всі налаштування до значень за замо��чуванням</string>
     <string name="settings_section_widgets">Віджети</string>
     <string name="settings_widget_background_color">Колір фону</string>
     <string name="dialog_choose_widget_background_color">Виберіть колір фону віджета</string>
@@ -245,7 +244,7 @@
     <string name="settings_app_version">Версія додатка</string>
     <string name="settings_third_party">Сторонні розробники</string>
     <string name="settings_third_party_author">від %s</string>
-    <string name="settings_third_party_libraries">Бібліотеки з відкритим кодом</string>
+    <string name="settings_third_party_libraries">Біб��іотеки з відкритим кодом</string>
     <string name="settings_third_party_subtitle">Переглянути бібліотеки з відкритим кодом, використані в додатку</string>
 
     <!-- Dialogs -->
@@ -354,7 +353,7 @@
     <!-- Recurrence intervals -->
     <string name="recurrence_interval_label">Інтервал повторення</string>
     <string name="recurrence_interval_daily">Щодня</string>
-    <string name="recurrence_interval_weekly">Щотижня</string>
+    <string name="recurrence_interval_weekly">Щотижн��</string>
     <string name="recurrence_interval_monthly">Щомісяця</string>
     <string name="recurrence_interval_yearly">Щорічно</string>
 
@@ -459,7 +458,7 @@
     <string name="tutorial_welcome_point_categories">Організовуйте витрати за допомогою розумних категорій.</string>
     <string name="tutorial_welcome_point_customize">Налаштовуйте мову, тему та формати.</string>
     <string name="tutorial_dashboard_title">Панель керування</string>
-    <string name="tutorial_dashboard_desc">Тут ви бачите свій загальний баланс, місячні доходи та видатки.</string>
+    <string name="tutorial_dashboard_desc">Тут ви бачите свій загаль��ий баланс, місячні доходи та видатки.</string>
     <string name="tutorial_transactions_title">Транзакції</string>
     <string name="tutorial_transactions_desc">Керуйте всіма рухами коштів тут. Пошук, фільтри та додавання записів — це просто.</string>
     <string name="tutorial_charts_title">Графіки та аналітика</string>
@@ -536,7 +535,7 @@
     <string name="help_charts_feature_analysis_desc">Місячні огляди та аналіз за категоріями.</string>
 
     <!-- Transactions Help Dialog -->
-    <string name="help_transactions_title">Посібник по транзакціях</string>
+    <string name="help_transactions_title">Посібник по транз��кціях</string>
     <string name="help_transactions_desc">Керуйте всіма операціями: перегляд, пошук, фільтрація.</string>
     <string name="help_transactions_feature_view_title">Перегляд записів</string>
     <string name="help_transactions_feature_view_desc">Усі ваші доходи та видатки з деталями.</string>
@@ -579,7 +578,7 @@
     <string name="charts_title">Графіки</string>
     <string name="chart_customize_order">Налаштувати порядок карток графіків</string>
     <string name="chart_cards_order_dialog_title">Змінити порядок</string>
-    <string name="chart_cards_order_dialog_description">Перетягуйте картки вгору або вниз. Примітка: фільтр періоду та підсумок зафіксовані.</string>
+    <string name="chart_cards_order_dialog_description">Перетягуйте картки вгору або вниз. Примітка: ��ільтр періоду та підсумок зафіксовані.</string>
     <string name="settings_project_by">Проєкт створений з любов\'ю Formica Simone @MisterAnt92</string>
     <!-- Chart Cards - New Visualizations -->
     <string name="chart_spending_forecast_title">Прогноз витрат</string>
@@ -639,4 +638,14 @@
     <!-- Settings: Analytics consent toggle -->
     <string name="settings_analytics_consent_title">Ділитися анонімною статистикою використання</string>
     <string name="settings_analytics_consent_desc">Лише відвідані екрани та помилки. Фінансові дані ніколи не надсилаються.</string>
+
+    <!-- HelpDialog (Transactions) - missing aliases -->
+    <string name="transactions_help_title">@string/help_transactions_title</string>
+    <string name="transactions_help_desc">@string/help_transactions_desc</string>
+    <string name="transactions_help_filter_title">@string/help_transactions_feature_filters_title</string>
+    <string name="transactions_help_filter_desc">@string/help_transactions_feature_filters_desc</string>
+    <string name="transactions_help_search_title">@string/help_transactions_feature_search_title</string>
+    <string name="transactions_help_search_desc">@string/help_transactions_feature_search_desc</string>
+    <string name="transactions_help_display_title">@string/settings_transaction_display</string>
+    <string name="transactions_help_display_desc">@string/settings_transaction_display_desc</string>
 </resources>

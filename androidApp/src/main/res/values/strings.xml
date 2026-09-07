@@ -207,7 +207,6 @@
     <string name="settings_separator_space">Space</string>
     <string name="settings_separator_none">None</string>
     <string name="settings_date_format">Date Format</string>
-    <string name="settings_date_format_subtitle">%s</string>
     <string name="settings_section_currency">Currency</string>
     <string name="settings_section_dates">Dates</string>
     <string name="settings_section_other">Other</string>

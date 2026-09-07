@@ -193,7 +193,6 @@
     <string name="settings_reduce_motion">R\u00e9duire les mouvements</string>
     <string name="settings_reduce_motion_subtitle">Minimise les animations et les transitions. Utile pour les utilisateurs sensibles au mouvement.</string>
     <string name="settings_date_format">Format de date</string>
-    <string name="settings_date_format_subtitle">%s</string>
     <string name="settings_section_currency">Devise</string>
     <string name="settings_section_dates">Dates</string>
     <string name="settings_section_other">Autre</string>
@@ -582,5 +581,9 @@
     <string name="consent_decline">Refuser</string>
     <!-- Settings: Analytics consent toggle -->
     <string name="settings_analytics_consent_title">Partager les statistiques d\'utilisation anonymes</string>
-    <string name="settings_analytics_consent_desc">Uniquement les écrans visités et les erreurs. Aucune donnée financière n\'est envoyée.</string>
+    <string name="settings_analytics_consent_desc">Uniquement les crans visits et les erreurs. Aucune donne financire n\'est envoye.</string>
+
+    <!-- HelpDialog (Transactions) - missing aliases -->
+    <string name="transactions_help_title">@string/help_transactions_title</string>
+    <string name="transactions_help_desc">@string/help_transactions_desc</string>
 </resources>

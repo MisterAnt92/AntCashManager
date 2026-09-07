@@ -61,7 +61,7 @@
     <string name="categories_add">카테고리 추가</string>
     <string name="categories_name_label">카테고리 이름</string>
     <string name="categories_color_label">색상</string>
-    <string name="categories_delete_title">카테고리를 삭제하시겠습니까?</string>
+    <string name="categories_delete_title">카��고리를 삭제하시겠습니까?</string>
     <string name="categories_delete_message">\"%s\"을(를) 정말로 삭제하시겠습니까?</string>
     <string name="categories_add_content_desc">카테고리 추가</string>
     <string name="categories_selected">선택됨</string>
@@ -190,7 +190,6 @@
     <string name="settings_separator_space">공백</string>
     <string name="settings_separator_none">없음</string>
     <string name="settings_date_format">날짜 형식</string>
-    <string name="settings_date_format_subtitle">%s</string>
     <string name="settings_section_currency">통화</string>
     <string name="settings_section_dates">날짜</string>
     <string name="settings_section_other">기타</string>
@@ -303,7 +302,7 @@
     <string name="settings_auto_backup_path_not_selected">선택된 폴더 없음</string>
     <string name="settings_auto_backup_path_subtitle">자동 백업을 저장할 위치 선택</string>
     <string name="settings_auto_backup_path_selected">선택된 경로: %s</string>
-    <string name="settings_auto_backup_google_drive_configured">Google Drive에 대해 구성된 백업</string>
+    <string name="settings_auto_backup_google_drive_configured">Google Drive에 대��� 구성된 백업</string>
 
 
     <!-- Privacy Policy -->
@@ -321,7 +320,7 @@
     <!-- Add Transaction Steps -->
     <string name="add_transaction_select_category">카테고리 선택</string>
     <string name="add_transaction_choose_category">거래를 위한 카테고리를 선택하세요</string>
-    <string name="add_transaction_no_categories_available">사용 가능한 카테고리가 없습니다</string>
+    <string name="add_transaction_no_categories_available">��용 가능한 카테고리가 없습니다</string>
     <string name="add_transaction_cancel">취소</string>
     <string name="add_transaction_previous">이전</string>
     <string name="add_transaction_select_type">유형 선택</string>
@@ -407,7 +406,7 @@
     <string name="settings_show_payment_breakdown">결제 유형별 잔액 표시</string>
     <string name="settings_show_payment_breakdown_desc">홈 화면에 결제 수단별 잔액 분석을 표시합니다</string>
     <string name="settings_show_quick_insights_card">빠른 인사이트 카드 표시</string>
-    <string name="settings_show_quick_insights_card_desc">홈 화면에 빠른 인사이트 요약 카드를 표시합니다</string>
+    <string name="settings_show_quick_insights_card_desc">홈 화면에 빠른 인사이트 ���약 카드를 표시합니다</string>
     <string name="settings_show_initial_animation">시작 애니메이션 표시</string>
     <string name="settings_show_initial_animation_desc">앱 시작 시 짧은 애니메이션을 표시합니다</string>
 
@@ -456,7 +455,7 @@
     <string name="tutorial_welcome_point_categories">스마트 카테고리로 지출을 정리하세요.</string>
     <string name="tutorial_welcome_point_customize">언어, 테마, 형식을 사용자 정의하세요.</string>
     <string name="tutorial_dashboard_title">대시보드</string>
-    <string name="tutorial_dashboard_desc">여기에서 총 잔액, 월간 수입 및 지출을 한눈에 볼 수 있습니다.</string>
+    <string name="tutorial_dashboard_desc">여기에서 총 잔액, 월간 수입 및 ��출을 한눈에 볼 수 있습니다.</string>
     <string name="tutorial_transactions_title">거래 내역</string>
     <string name="tutorial_transactions_desc">모든 내역을 여기에서 관리하세요. 검색, 필터링 및 새 항목 추가가 쉽습니다.</string>
     <string name="tutorial_charts_title">차트 및 인사이트</string>
@@ -470,7 +469,7 @@
     <string name="tutorial_next">다음</string>
     <string name="tutorial_skip">건너뛰기</string>
     <string name="tutorial_finish">확인!</string>
-    <string name="tutorial_progress_cd">튜토리얼 %1$d단계 / %2$d단계</string>
+    <string name="tutorial_progress_cd">튜토리��� %1$d단계 / %2$d단계</string>
 
     <string name="settings_about">설정</string>
 
@@ -560,7 +559,7 @@
     <string name="help_categories_feature_income_expense_title">수입 및 지출</string>
     <string name="help_categories_feature_income_expense_desc">거래를 수입 또는 지출로 분류합니다.</string>
     <string name="help_categories_feature_delete_title">카테고리 삭제</string>
-    <string name="help_categories_feature_delete_desc">더 이상 필요하지 않은 사용자 정의 카테고리를 삭제합니다.</string>
+    <string name="help_categories_feature_delete_desc">더 이상 필요하지 않은 사용자 정의 카���고리를 삭제합니다.</string>
     <string name="common_close">닫기</string>
     <string name="common_click_here">여기를 클릭</string>
     <string name="preview_app_text_title">예제 제목</string>
@@ -636,4 +635,14 @@
     <!-- Settings: Analytics consent toggle -->
     <string name="settings_analytics_consent_title">익명 사용 통계 공유</string>
     <string name="settings_analytics_consent_desc">방문한 화면과 오류만. 금융 데이터는 전송되지 않습니다.</string>
+
+    <!-- HelpDialog (Transactions) - missing aliases -->
+    <string name="transactions_help_title">@string/help_transactions_title</string>
+    <string name="transactions_help_desc">@string/help_transactions_desc</string>
+    <string name="transactions_help_filter_title">@string/help_transactions_feature_filters_title</string>
+    <string name="transactions_help_filter_desc">@string/help_transactions_feature_filters_desc</string>
+    <string name="transactions_help_search_title">@string/help_transactions_feature_search_title</string>
+    <string name="transactions_help_search_desc">@string/help_transactions_feature_search_desc</string>
+    <string name="transactions_help_display_title">@string/settings_transaction_display</string>
+    <string name="transactions_help_display_desc">@string/settings_transaction_display_desc</string>
 </resources>
