@@ -351,6 +351,7 @@ class HomeViewModel(
                 reduceMotion = reduceMotion,
                 transactionDisplayType = transactionDisplayType,
                 isTutorialCompleted = isTutorialCompleted,
+                errorState = com.antcashmanager.android.ui.base.ErrorState(),
             )
         }.stateIn(
             scope = viewModelScope,

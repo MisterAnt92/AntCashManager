@@ -29,6 +29,7 @@ import com.antcashmanager.android.navigation.ScreenHeaderConfig
 import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
 import com.antcashmanager.android.ui.components.animation.AntEasterEggAnimation
 import com.antcashmanager.android.ui.components.dialog.HelpButton
+import com.antcashmanager.android.ui.components.state.AntErrorState
 import com.antcashmanager.android.ui.components.layout.FoldableAwareLayout
 import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
@@ -113,6 +114,19 @@ internal fun HomeContent(
     // Tutorial full-screen (non durante il caricamento iniziale, per evitare flickering)
     if (!state.isTutorialCompleted && !state.isLoading) {
         TutorialOverlay(onDismiss = { onEvent(HomeEvent.SetIsTutorialCompleted(true)) })
+        return
+    }
+
+    // Error state overlay (FASE 5: Error Feedback UX)
+    if (state.errorState.isError) {
+        AntErrorState(
+            mascotRes = R.drawable.ic_piggy_bank,
+            title = state.errorState.message ?: "An error occurred",
+            subtitle = "Please try again",
+            modifier = modifier.fillMaxSize(),
+            retryLabel = null, // TODO: add RetryLastOperation event to HomeEvent
+            onRetry = null,
+        )
         return
     }
 

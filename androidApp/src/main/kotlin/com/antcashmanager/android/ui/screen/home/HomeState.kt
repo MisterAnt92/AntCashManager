@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.home
 
+import com.antcashmanager.android.ui.base.ErrorState
 import com.antcashmanager.android.ui.mapper.TransactionUi
 import com.antcashmanager.android.ui.screen.home.model.HomeTopCardType
 import com.antcashmanager.domain.model.PaymentType
@@ -37,6 +38,8 @@ data class HomeState(
     val reduceMotion: Boolean = false,
     val transactionDisplayType: TransactionDisplayType = TransactionDisplayType.TREND,
     val isTutorialCompleted: Boolean = false,
+    // Error handling (FASE 5: Error Feedback UX)
+    val errorState: ErrorState = ErrorState(),
 ) {
     /** Top cards actually rendered: Quick Insights is dropped when its setting is off. */
     val visibleTopCards: List<HomeTopCardType> =
