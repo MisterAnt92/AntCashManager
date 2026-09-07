@@ -37,7 +37,7 @@ enum class InputType {
     Decimal,
     Email,
     Phone,
-    Password
+    Password,
 }
 
 /**
@@ -80,43 +80,50 @@ fun AppTextField(
     var passwordVisibility by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
 
-    val actualKeyboardOptions = if (keyboardOptions != KeyboardOptions.Default) {
-        keyboardOptions
-    } else {
-        when (inputType) {
-            InputType.Text -> KeyboardOptions.Default
-            InputType.Number -> KeyboardOptions(
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Done
-            )
+    val actualKeyboardOptions =
+        if (keyboardOptions != KeyboardOptions.Default) {
+            keyboardOptions
+        } else {
+            when (inputType) {
+                InputType.Text -> KeyboardOptions.Default
+                InputType.Number ->
+                    KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done,
+                    )
 
-            InputType.Decimal -> KeyboardOptions(
-                keyboardType = KeyboardType.Decimal,
-                imeAction = ImeAction.Done
-            )
+                InputType.Decimal ->
+                    KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal,
+                        imeAction = ImeAction.Done,
+                    )
 
-            InputType.Email -> KeyboardOptions(
-                keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Done
-            )
+                InputType.Email ->
+                    KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Done,
+                    )
 
-            InputType.Phone -> KeyboardOptions(
-                keyboardType = KeyboardType.Phone,
-                imeAction = ImeAction.Done
-            )
+                InputType.Phone ->
+                    KeyboardOptions(
+                        keyboardType = KeyboardType.Phone,
+                        imeAction = ImeAction.Done,
+                    )
 
-            InputType.Password -> KeyboardOptions(
-                keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
-            )
+                InputType.Password ->
+                    KeyboardOptions(
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Done,
+                    )
+            }
         }
-    }
 
-    val actualVisualTransformation = if (isPassword || inputType == InputType.Password) {
-        if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation()
-    } else {
-        visualTransformation
-    }
+    val actualVisualTransformation =
+        if (isPassword || inputType == InputType.Password) {
+            if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation()
+        } else {
+            visualTransformation
+        }
 
     val actualTrailingIcon: @Composable (() -> Unit)? =
         if (isPassword || inputType == InputType.Password) {
@@ -125,7 +132,7 @@ fun AppTextField(
                     Icon(
                         imageVector = if (passwordVisibility) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
                         contentDescription = if (passwordVisibility) "Hide password" else "Show password",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
@@ -149,7 +156,7 @@ fun AppTextField(
         readOnly = readOnly,
         singleLine = singleLine,
         maxLines = maxLines,
-        textStyle = textStyle.copy(fontWeight = fontWeight ?: textStyle.fontWeight)
+        textStyle = textStyle.copy(fontWeight = fontWeight ?: textStyle.fontWeight),
     )
 }
 
@@ -160,7 +167,7 @@ fun PreviewAppTextField() {
         value = "Sample Text",
         onValueChange = {},
         label = { AppText("Label") },
-        placeholder = { AppText("Placeholder") }
+        placeholder = { AppText("Placeholder") },
     )
 }
 
@@ -171,7 +178,7 @@ fun PreviewAppTextFieldPassword() {
         value = "password123",
         onValueChange = {},
         label = { AppText("Password") },
-        isPassword = true
+        isPassword = true,
     )
 }
 
@@ -183,7 +190,7 @@ fun PreviewAppTextFieldWithStyle() {
         onValueChange = {},
         label = { AppText("Styled Label") },
         textStyle = MaterialTheme.typography.bodyLarge,
-        fontWeight = FontWeight.Bold
+        fontWeight = FontWeight.Bold,
     )
 }
 

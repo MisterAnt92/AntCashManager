@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Splash screen background (dark mode): matches MaterialTheme.colorScheme.background dark -->
+    <color name="splash_background">#1C1B1F</color>
+</resources>

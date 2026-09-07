@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -42,12 +41,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.antcashmanager.android.ui.components.layout.SpacingSize
-import com.antcashmanager.android.ui.components.layout.VerticalSpacer
-import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.animation.AnimatedCard
 import com.antcashmanager.android.ui.components.animation.FadeInOnAppear
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.text.BalanceText
 import com.antcashmanager.android.ui.components.text.MoneyText
@@ -75,15 +73,16 @@ fun BalanceCard(
         label = "balance_color",
     )
     val balanceStateContainerColor by animateColorAsState(
-        targetValue = if (balance >= 0) {
-            MaterialTheme.colorScheme.tertiaryContainer.copy(
-                alpha = ThemeConstants.BALANCE_STATUS_POSITIVE_CONTAINER_ALPHA,
-            )
-        } else {
-            MaterialTheme.colorScheme.errorContainer.copy(
-                alpha = ThemeConstants.BALANCE_STATUS_NEGATIVE_CONTAINER_ALPHA,
-            )
-        },
+        targetValue =
+            if (balance >= 0) {
+                MaterialTheme.colorScheme.tertiaryContainer.copy(
+                    alpha = ThemeConstants.BALANCE_STATUS_POSITIVE_CONTAINER_ALPHA,
+                )
+            } else {
+                MaterialTheme.colorScheme.errorContainer.copy(
+                    alpha = ThemeConstants.BALANCE_STATUS_NEGATIVE_CONTAINER_ALPHA,
+                )
+            },
         animationSpec = tween(600),
         label = "balance_state_container_color",
     )
@@ -93,40 +92,46 @@ fun BalanceCard(
             modifier = modifier.fillMaxWidth(),
             backgroundColor = MaterialTheme.colorScheme.primaryContainer,
         ) {
-            val balanceStatusText = if (balance >= 0) {
-                stringResource(R.string.home_balance_positive)
-            } else {
-                stringResource(R.string.home_balance_negative)
-            }
-            val formattedBalance = formatAmount(balance, LocalCurrencyFormat.current).let {
-                if (LocalAmountsMasked.current) maskDigits(it) else it
-            }
-            val balanceSummaryDescription = stringResource(
-                R.string.home_balance_summary_cd,
-                stringResource(R.string.home_total_balance),
-                formattedBalance,
-                balanceStatusText,
-            )
+            val balanceStatusText =
+                if (balance >= 0) {
+                    stringResource(R.string.home_balance_positive)
+                } else {
+                    stringResource(R.string.home_balance_negative)
+                }
+            val formattedBalance =
+                formatAmount(balance, LocalCurrencyFormat.current).let {
+                    if (LocalAmountsMasked.current) maskDigits(it) else it
+                }
+            val balanceSummaryDescription =
+                stringResource(
+                    R.string.home_balance_summary_cd,
+                    stringResource(R.string.home_total_balance),
+                    formattedBalance,
+                    balanceStatusText,
+                )
 
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(28.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(28.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Column(
-                    modifier = Modifier.semantics(mergeDescendants = true) {
-                        contentDescription = balanceSummaryDescription
-                    },
+                    modifier =
+                        Modifier.semantics(mergeDescendants = true) {
+                            contentDescription = balanceSummaryDescription
+                        },
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     // Title
                     AppText(
                         text = stringResource(R.string.home_total_balance),
                         style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(
-                            alpha = ThemeConstants.HIGH_EMPHASIS_TEXT_ALPHA,
-                        ),
+                        color =
+                            MaterialTheme.colorScheme.onPrimaryContainer.copy(
+                                alpha = ThemeConstants.HIGH_EMPHASIS_TEXT_ALPHA,
+                            ),
                         fontWeight = FontWeight.SemiBold,
                     )
                     VerticalSpacer(SpacingSize.SM)
@@ -142,10 +147,11 @@ fun BalanceCard(
                     ) {
                         AppText(
                             text = balanceStatusText,
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(balanceStateContainerColor)
-                                .padding(horizontal = 8.dp, vertical = 4.dp),
+                            modifier =
+                                Modifier
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(balanceStateContainerColor)
+                                    .padding(horizontal = 8.dp, vertical = 4.dp),
                             style = MaterialTheme.typography.labelSmall,
                             color = balanceStateColor,
                             fontWeight = FontWeight.Bold,
@@ -158,16 +164,18 @@ fun BalanceCard(
                 // il caso di default per ogni installazione nuova).
                 AnimatedVisibility(
                     visible = showPaymentTypeBreakdown && balanceByPaymentType.isNotEmpty(),
-                    enter = if (reduceMotion) {
-                        EnterTransition.None
-                    } else {
-                        fadeIn(animationSpec = tween(400)) + expandVertically()
-                    },
-                    exit = if (reduceMotion) {
-                        ExitTransition.None
-                    } else {
-                        fadeOut(animationSpec = tween(400)) + shrinkVertically()
-                    },
+                    enter =
+                        if (reduceMotion) {
+                            EnterTransition.None
+                        } else {
+                            fadeIn(animationSpec = tween(400)) + expandVertically()
+                        },
+                    exit =
+                        if (reduceMotion) {
+                            ExitTransition.None
+                        } else {
+                            fadeOut(animationSpec = tween(400)) + shrinkVertically()
+                        },
                 ) {
                     Column {
                         VerticalSpacer(SpacingSize.ML)
@@ -188,9 +196,10 @@ private fun PaymentTypeBreakdown(
     reduceMotion: Boolean,
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 0.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 0.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         AppText(
@@ -202,9 +211,10 @@ private fun PaymentTypeBreakdown(
         VerticalSpacer(SpacingSize.XS)
 
         // Get ordered payment types (ELECTRONIC, CASH, MEAL_VOUCHERS)
-        val orderedPaymentTypes = PaymentType.values().mapNotNull { type ->
-            balanceByPaymentType[type]?.let { type to it }
-        }
+        val orderedPaymentTypes =
+            PaymentType.values().mapNotNull { type ->
+                balanceByPaymentType[type]?.let { type to it }
+            }
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -230,33 +240,38 @@ private fun PaymentTypeItem(
     paymentType: PaymentType,
     amount: Double,
 ) {
-    val (icon, labelRes) = when (paymentType) {
-        PaymentType.ELECTRONIC -> Icons.Default.CreditCard to R.string.payment_type_electronic
-        PaymentType.CASH -> Icons.Default.Money to R.string.payment_type_cash
-        PaymentType.MEAL_VOUCHERS -> Icons.Default.Restaurant to R.string.payment_type_meal_vouchers
-    }
+    val (icon, labelRes) =
+        when (paymentType) {
+            PaymentType.ELECTRONIC -> Icons.Default.CreditCard to R.string.payment_type_electronic
+            PaymentType.CASH -> Icons.Default.Money to R.string.payment_type_cash
+            PaymentType.MEAL_VOUCHERS -> Icons.Default.Restaurant to R.string.payment_type_meal_vouchers
+        }
 
     val paymentTypeName = stringResource(labelRes)
-    val contentDesc = stringResource(
-        R.string.payment_breakdown_item_desc,
-        paymentTypeName,
-        amount,
-    )
+    val contentDesc =
+        stringResource(
+            R.string.payment_breakdown_item_desc,
+            paymentTypeName,
+            amount,
+        )
 
     Card(
-        modifier = Modifier.semantics {
-            contentDescription = contentDesc
-            role = Role.Button
-        },
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-        ),
+        modifier =
+            Modifier.semantics {
+                contentDescription = contentDesc
+                role = Role.Button
+            },
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+            ),
         shape = RoundedCornerShape(12.dp),
     ) {
         Column(
-            modifier = Modifier
-                .padding(horizontal = 12.dp, vertical = 10.dp)
-                .width(100.dp),
+            modifier =
+                Modifier
+                    .padding(horizontal = 12.dp, vertical = 10.dp)
+                    .width(100.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Icon(
@@ -316,11 +331,12 @@ private fun BalanceCardWithBreakdownPreview() {
         BalanceCard(
             balance = 3500.75,
             showPaymentTypeBreakdown = true,
-            balanceByPaymentType = mapOf(
-                PaymentType.ELECTRONIC to 2000.50,
-                PaymentType.CASH to 1200.25,
-                PaymentType.MEAL_VOUCHERS to 300.0,
-            ),
+            balanceByPaymentType =
+                mapOf(
+                    PaymentType.ELECTRONIC to 2000.50,
+                    PaymentType.CASH to 1200.25,
+                    PaymentType.MEAL_VOUCHERS to 300.0,
+                ),
         )
     }
 }
@@ -332,9 +348,10 @@ private fun BalanceCardWithBreakdownOneTypePreview() {
         BalanceCard(
             balance = 1500.00,
             showPaymentTypeBreakdown = true,
-            balanceByPaymentType = mapOf(
-                PaymentType.ELECTRONIC to 1500.0,
-            ),
+            balanceByPaymentType =
+                mapOf(
+                    PaymentType.ELECTRONIC to 1500.0,
+                ),
         )
     }
 }
@@ -346,9 +363,10 @@ private fun BalanceCardWithBreakdownCashOnlyPreview() {
         BalanceCard(
             balance = 850.50,
             showPaymentTypeBreakdown = true,
-            balanceByPaymentType = mapOf(
-                PaymentType.CASH to 850.50,
-            ),
+            balanceByPaymentType =
+                mapOf(
+                    PaymentType.CASH to 850.50,
+                ),
         )
     }
 }
@@ -360,10 +378,11 @@ private fun BalanceCardDarkWithBreakdownPreview() {
         BalanceCard(
             balance = 2500.75,
             showPaymentTypeBreakdown = true,
-            balanceByPaymentType = mapOf(
-                PaymentType.ELECTRONIC to 1800.50,
-                PaymentType.CASH to 700.25,
-            ),
+            balanceByPaymentType =
+                mapOf(
+                    PaymentType.ELECTRONIC to 1800.50,
+                    PaymentType.CASH to 700.25,
+                ),
         )
     }
 }
@@ -375,10 +394,11 @@ private fun BalanceCardReduceMotionPreview() {
         BalanceCard(
             balance = 1250.00,
             showPaymentTypeBreakdown = true,
-            balanceByPaymentType = mapOf(
-                PaymentType.ELECTRONIC to 1000.0,
-                PaymentType.MEAL_VOUCHERS to 250.0,
-            ),
+            balanceByPaymentType =
+                mapOf(
+                    PaymentType.ELECTRONIC to 1000.0,
+                    PaymentType.MEAL_VOUCHERS to 250.0,
+                ),
             reduceMotion = true,
         )
     }
@@ -403,11 +423,12 @@ private fun BalanceCardLongLabelsPreview() {
         BalanceCard(
             balance = 4500.00,
             showPaymentTypeBreakdown = true,
-            balanceByPaymentType = mapOf(
-                PaymentType.ELECTRONIC to 2500.0,
-                PaymentType.CASH to 1500.0,
-                PaymentType.MEAL_VOUCHERS to 500.0,
-            ),
+            balanceByPaymentType =
+                mapOf(
+                    PaymentType.ELECTRONIC to 2500.0,
+                    PaymentType.CASH to 1500.0,
+                    PaymentType.MEAL_VOUCHERS to 500.0,
+                ),
         )
     }
 }
@@ -419,11 +440,12 @@ private fun BalanceCardLargeAmountsPreview() {
         BalanceCard(
             balance = 125450.75,
             showPaymentTypeBreakdown = true,
-            balanceByPaymentType = mapOf(
-                PaymentType.ELECTRONIC to 99999.99,
-                PaymentType.CASH to 12345.50,
-                PaymentType.MEAL_VOUCHERS to 13105.26,
-            ),
+            balanceByPaymentType =
+                mapOf(
+                    PaymentType.ELECTRONIC to 99999.99,
+                    PaymentType.CASH to 12345.50,
+                    PaymentType.MEAL_VOUCHERS to 13105.26,
+                ),
         )
     }
 }
@@ -435,10 +457,11 @@ private fun BalanceCardTwoTypesPreview() {
         BalanceCard(
             balance = 5500.00,
             showPaymentTypeBreakdown = true,
-            balanceByPaymentType = mapOf(
-                PaymentType.ELECTRONIC to 3500.0,
-                PaymentType.MEAL_VOUCHERS to 2000.0,
-            ),
+            balanceByPaymentType =
+                mapOf(
+                    PaymentType.ELECTRONIC to 3500.0,
+                    PaymentType.MEAL_VOUCHERS to 2000.0,
+                ),
         )
     }
 }

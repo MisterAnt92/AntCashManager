@@ -14,9 +14,10 @@ import com.antcashmanager.android.MainActivity
  * prima della navigazione) per entrambi i widget della home screen.
  */
 private fun openApp(context: Context) {
-    val intent = Intent(context, MainActivity::class.java).apply {
-        flags = Intent.FLAG_ACTIVITY_NEW_TASK
-    }
+    val intent =
+        Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
     context.startActivity(intent)
 }
 
@@ -24,13 +25,16 @@ class RecentTransactionsWidgetTapAction : ActionCallback {
     override suspend fun onAction(
         context: Context,
         glanceId: GlanceId,
-        parameters: ActionParameters
+        parameters: ActionParameters,
     ) {
         WidgetDependencies.analyticsManager.logEvent("widget_recent_transactions_opened")
         // Track widget tap action
-        WidgetDependencies.analyticsManager.logEvent("widget_tap_action_triggered", Bundle().apply {
-            putString("action", "view_recent")
-        })
+        WidgetDependencies.analyticsManager.logEvent(
+            "widget_tap_action_triggered",
+            Bundle().apply {
+                putString("action", "view_recent")
+            },
+        )
         openApp(context)
     }
 }
@@ -39,13 +43,16 @@ class CategoryBreakdownWidgetTapAction : ActionCallback {
     override suspend fun onAction(
         context: Context,
         glanceId: GlanceId,
-        parameters: ActionParameters
+        parameters: ActionParameters,
     ) {
         WidgetDependencies.analyticsManager.logEvent("widget_category_breakdown_opened")
         // Track widget tap action
-        WidgetDependencies.analyticsManager.logEvent("widget_tap_action_triggered", Bundle().apply {
-            putString("action", "view_breakdown")
-        })
+        WidgetDependencies.analyticsManager.logEvent(
+            "widget_tap_action_triggered",
+            Bundle().apply {
+                putString("action", "view_breakdown")
+            },
+        )
         openApp(context)
     }
 }

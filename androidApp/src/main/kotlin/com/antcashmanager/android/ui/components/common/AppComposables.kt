@@ -53,11 +53,12 @@ fun ScreenHeader(
     actions: @Composable (() -> Unit)? = null,
 ) {
     val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
-    val titleStyle = if (adaptiveLayoutInfo.isExpanded) {
-        MaterialTheme.typography.headlineMedium
-    } else {
-        MaterialTheme.typography.headlineSmall
-    }
+    val titleStyle =
+        if (adaptiveLayoutInfo.isExpanded) {
+            MaterialTheme.typography.headlineMedium
+        } else {
+            MaterialTheme.typography.headlineSmall
+        }
 
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -70,9 +71,10 @@ fun ScreenHeader(
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground,
             maxLines = if (adaptiveLayoutInfo.isCompact) 1 else 2,
-            modifier = Modifier
-                .weight(1f)
-                .padding(end = if (actions != null) 12.dp else 0.dp),
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .padding(end = if (actions != null) 12.dp else 0.dp),
         )
         if (actions != null) {
             actions()
@@ -148,18 +150,19 @@ fun AppSlider(
     val disabledColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
     val disabledInactiveColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
 
-    val colors = SliderDefaults.colors(
-        thumbColor = activeColor,
-        activeTrackColor = activeColor,
-        activeTickColor = activeColor,
-        inactiveTrackColor = inactiveColor,
-        inactiveTickColor = inactiveColor,
-        disabledThumbColor = disabledColor,
-        disabledActiveTrackColor = disabledColor,
-        disabledActiveTickColor = disabledColor,
-        disabledInactiveTrackColor = disabledInactiveColor,
-        disabledInactiveTickColor = disabledInactiveColor,
-    )
+    val colors =
+        SliderDefaults.colors(
+            thumbColor = activeColor,
+            activeTrackColor = activeColor,
+            activeTickColor = activeColor,
+            inactiveTrackColor = inactiveColor,
+            inactiveTickColor = inactiveColor,
+            disabledThumbColor = disabledColor,
+            disabledActiveTrackColor = disabledColor,
+            disabledActiveTickColor = disabledColor,
+            disabledInactiveTrackColor = disabledInactiveColor,
+            disabledInactiveTickColor = disabledInactiveColor,
+        )
 
     Slider(
         value = value,
@@ -172,9 +175,10 @@ fun AppSlider(
         colors = colors,
         thumb = {
             Box(
-                modifier = Modifier
-                    .size(AppSliderThumbSize)
-                    .background(if (enabled) activeColor else disabledColor, CircleShape),
+                modifier =
+                    Modifier
+                        .size(AppSliderThumbSize)
+                        .background(if (enabled) activeColor else disabledColor, CircleShape),
             )
         },
         track = { sliderState ->
@@ -245,7 +249,7 @@ private fun AppComposablesPreviewLight() {
             )
             Row(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 AppRadioButton(selected = true, onClick = {})
                 AppText("Radio")

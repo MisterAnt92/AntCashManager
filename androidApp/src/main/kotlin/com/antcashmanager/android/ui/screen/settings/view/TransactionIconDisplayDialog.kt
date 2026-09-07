@@ -26,11 +26,12 @@ fun TransactionIconDisplayDialog(
     onDisplayTypeSelected: (TransactionDisplayType) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val options = listOf(
-        TransactionDisplayType.TREND to stringResource(R.string.settings_transaction_icon_display_trend),
-        TransactionDisplayType.CATEGORY to stringResource(R.string.settings_transaction_icon_display_category),
-        TransactionDisplayType.NONE to stringResource(R.string.settings_transaction_icon_display_none),
-    )
+    val options =
+        listOf(
+            TransactionDisplayType.TREND to stringResource(R.string.settings_transaction_icon_display_trend),
+            TransactionDisplayType.CATEGORY to stringResource(R.string.settings_transaction_icon_display_category),
+            TransactionDisplayType.NONE to stringResource(R.string.settings_transaction_icon_display_none),
+        )
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -65,4 +66,3 @@ fun TransactionIconDisplayDialog(
         },
     )
 }
-

@@ -4,7 +4,6 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import io.mockk.mockk
-import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
 
@@ -21,7 +20,6 @@ import org.junit.Test
  * This suite tests the notification logic using mocked Context.
  */
 class AutoBackupNotifierTest {
-
     private lateinit var mockContext: Context
 
     @Before
@@ -99,9 +97,10 @@ class AutoBackupNotifierTest {
     @Test
     fun notifyFailure_shouldUseMockedContext_forNotificationManager() {
         val notificationManager = mockk<NotificationManager>(relaxed = true)
-        val contextWithManager = mockk<Context> {
-            io.mockk.every { getSystemService(Context.NOTIFICATION_SERVICE) } returns notificationManager
-        }
+        val contextWithManager =
+            mockk<Context> {
+                io.mockk.every { getSystemService(Context.NOTIFICATION_SERVICE) } returns notificationManager
+            }
 
         try {
             AutoBackupNotifier.notifyFailure(contextWithManager)

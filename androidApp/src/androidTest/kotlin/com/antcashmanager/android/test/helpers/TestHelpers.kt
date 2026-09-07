@@ -1,8 +1,8 @@
 package com.antcashmanager.android.test.helpers
 
+import android.os.Build
 import androidx.activity.ComponentActivity
 import androidx.test.platform.app.InstrumentationRegistry
-import android.os.Build
 import org.junit.Assume
 
 /**
@@ -21,7 +21,6 @@ import org.junit.Assume
  * ```
  */
 object TestHelpers {
-
     /**
      * Get string resource from application context
      *
@@ -34,10 +33,11 @@ object TestHelpers {
      * @param stringId The string resource ID
      * @return The string value of the resource
      */
-    fun getResourceString(stringId: Int): String {
-        return InstrumentationRegistry.getInstrumentation()
-            .targetContext.getString(stringId)
-    }
+    fun getResourceString(stringId: Int): String =
+        InstrumentationRegistry
+            .getInstrumentation()
+            .targetContext
+            .getString(stringId)
 
     /**
      * Access ComposeTestRule activity via reflection
@@ -82,13 +82,14 @@ object TestHelpers {
             }
 
             throw IllegalStateException(
-                "Cannot access activity from ComposeTestRule: No compatible field found"
+                "Cannot access activity from ComposeTestRule: No compatible field found",
             )
         } catch (e: IllegalStateException) {
             throw e
         } catch (e: Exception) {
             throw IllegalStateException(
-                "Cannot access activity from ComposeTestRule: ${e.message}", e
+                "Cannot access activity from ComposeTestRule: ${e.message}",
+                e,
             )
         }
     }
@@ -117,7 +118,7 @@ object TestHelpers {
         if (!isRunningOnTargetSdk) {
             Assume.assumeTrue(
                 "Test skipped for SDK level $currentSdk (required: ${sdkLevels.joinToString(",")})",
-                false
+                false,
             )
         }
     }
@@ -135,7 +136,6 @@ object TestHelpers {
      * }
      * ```
      */
-    fun isDeviceManufacturer(manufacturer: String): Boolean {
-        return Build.MANUFACTURER?.equals(manufacturer, ignoreCase = true) == true
-    }
+    fun isDeviceManufacturer(manufacturer: String): Boolean =
+        Build.MANUFACTURER?.equals(manufacturer, ignoreCase = true) == true
 }

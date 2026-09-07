@@ -13,7 +13,6 @@ import com.antcashmanager.domain.model.CurrencyFormat
  * Lives in data layer (not domain) because it requires android.content.Context.
  */
 object ShareTextFormatter {
-
     fun buildCategoryShareText(
         context: Context,
         data: Map<String, Double>,
@@ -53,25 +52,25 @@ object ShareTextFormatter {
                 "  💰 ${context.getString(R.string.share_income)}: ${
                     formatAmount(
                         item.income,
-                        fmt
+                        fmt,
                     )
-                }"
+                }",
             )
             sb.appendLine(
                 "  💸 ${context.getString(R.string.share_expense)}: ${
                     formatAmount(
                         item.expense,
-                        fmt
+                        fmt,
                     )
-                }"
+                }",
             )
             sb.appendLine(
                 "  $balanceSymbol ${context.getString(R.string.share_balance)}: ${
                     formatAmount(
                         balance,
-                        fmt
+                        fmt,
                     )
-                }"
+                }",
             )
         }
         sb.appendLine("━━━━━━━━━━━━━━━━━━━━")
@@ -79,25 +78,25 @@ object ShareTextFormatter {
             "📊 ${context.getString(R.string.share_total_income)}: ${
                 formatAmount(
                     totalIncome,
-                    fmt
+                    fmt,
                 )
-            }"
+            }",
         )
         sb.appendLine(
             "📊 ${context.getString(R.string.share_total_expense)}: ${
                 formatAmount(
                     totalExpense,
-                    fmt
+                    fmt,
                 )
-            }"
+            }",
         )
         sb.appendLine(
             "📊 ${context.getString(R.string.share_final_balance)}: ${
                 formatAmount(
                     totalIncome - totalExpense,
-                    fmt
+                    fmt,
                 )
-            }"
+            }",
         )
         sb.appendLine("\n— AntCashManager 🐜")
         return sb.toString()
@@ -123,25 +122,25 @@ object ShareTextFormatter {
                 "  💰 ${context.getString(R.string.share_income)}: ${
                     formatAmount(
                         item.income,
-                        fmt
+                        fmt,
                     )
-                }"
+                }",
             )
             sb.appendLine(
                 "  💸 ${context.getString(R.string.share_expense)}: ${
                     formatAmount(
                         item.expense,
-                        fmt
+                        fmt,
                     )
-                }"
+                }",
             )
             sb.appendLine(
                 "  $balanceSymbol ${context.getString(R.string.share_balance)}: ${
                     formatAmount(
                         balance,
-                        fmt
+                        fmt,
                     )
-                }"
+                }",
             )
         }
         sb.appendLine("━━━━━━━━━━━━━━━━━━━━")
@@ -149,25 +148,25 @@ object ShareTextFormatter {
             "📊 ${context.getString(R.string.share_total_income)}: ${
                 formatAmount(
                     totalIncome,
-                    fmt
+                    fmt,
                 )
-            }"
+            }",
         )
         sb.appendLine(
             "📊 ${context.getString(R.string.share_total_expense)}: ${
                 formatAmount(
                     totalExpense,
-                    fmt
+                    fmt,
                 )
-            }"
+            }",
         )
         sb.appendLine(
             "📊 ${context.getString(R.string.share_final_balance)}: ${
                 formatAmount(
                     totalIncome - totalExpense,
-                    fmt
+                    fmt,
                 )
-            }"
+            }",
         )
         sb.appendLine("\n— AntCashManager 🐜")
         return sb.toString()

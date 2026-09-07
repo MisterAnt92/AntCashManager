@@ -40,7 +40,6 @@ import kotlinx.serialization.json.Json
  * ```
  */
 public interface PreferencesStorage {
-
     // ── String preferences ──
 
     /**
@@ -50,7 +49,10 @@ public interface PreferencesStorage {
      * @param defaultValue Value returned if key not found
      * @return Stored value or defaultValue
      */
-    public suspend fun getString(key: String, defaultValue: String = ""): String
+    public suspend fun getString(
+        key: String,
+        defaultValue: String = "",
+    ): String
 
     /**
      * Get a string preference as a Flow for reactive updates.
@@ -61,7 +63,10 @@ public interface PreferencesStorage {
      * @param defaultValue Value returned if key not found
      * @return Flow that emits stored value and changes
      */
-    public fun getStringAsFlow(key: String, defaultValue: String = ""): Flow<String>
+    public fun getStringAsFlow(
+        key: String,
+        defaultValue: String = "",
+    ): Flow<String>
 
     /**
      * Store a string preference.
@@ -69,39 +74,78 @@ public interface PreferencesStorage {
      * @param key Preference key
      * @param value Value to store
      */
-    public suspend fun putString(key: String, value: String): Unit
+    public suspend fun putString(
+        key: String,
+        value: String,
+    ): Unit
 
     // ── Integer preferences ──
 
-    public suspend fun getInt(key: String, defaultValue: Int = 0): Int
+    public suspend fun getInt(
+        key: String,
+        defaultValue: Int = 0,
+    ): Int
 
-    public fun getIntAsFlow(key: String, defaultValue: Int = 0): Flow<Int>
+    public fun getIntAsFlow(
+        key: String,
+        defaultValue: Int = 0,
+    ): Flow<Int>
 
-    public suspend fun putInt(key: String, value: Int): Unit
+    public suspend fun putInt(
+        key: String,
+        value: Int,
+    ): Unit
 
     // ── Boolean preferences ──
 
-    public suspend fun getBoolean(key: String, defaultValue: Boolean = false): Boolean
+    public suspend fun getBoolean(
+        key: String,
+        defaultValue: Boolean = false,
+    ): Boolean
 
-    public fun getBooleanAsFlow(key: String, defaultValue: Boolean = false): Flow<Boolean>
+    public fun getBooleanAsFlow(
+        key: String,
+        defaultValue: Boolean = false,
+    ): Flow<Boolean>
 
-    public suspend fun putBoolean(key: String, value: Boolean): Unit
+    public suspend fun putBoolean(
+        key: String,
+        value: Boolean,
+    ): Unit
 
     // ── Long preferences ──
 
-    public suspend fun getLong(key: String, defaultValue: Long = 0L): Long
+    public suspend fun getLong(
+        key: String,
+        defaultValue: Long = 0L,
+    ): Long
 
-    public fun getLongAsFlow(key: String, defaultValue: Long = 0L): Flow<Long>
+    public fun getLongAsFlow(
+        key: String,
+        defaultValue: Long = 0L,
+    ): Flow<Long>
 
-    public suspend fun putLong(key: String, value: Long): Unit
+    public suspend fun putLong(
+        key: String,
+        value: Long,
+    ): Unit
 
     // ── Double preferences ──
 
-    public suspend fun getDouble(key: String, defaultValue: Double = 0.0): Double
+    public suspend fun getDouble(
+        key: String,
+        defaultValue: Double = 0.0,
+    ): Double
 
-    public fun getDoubleAsFlow(key: String, defaultValue: Double = 0.0): Flow<Double>
+    public fun getDoubleAsFlow(
+        key: String,
+        defaultValue: Double = 0.0,
+    ): Flow<Double>
 
-    public suspend fun putDouble(key: String, value: Double): Unit
+    public suspend fun putDouble(
+        key: String,
+        value: Double,
+    ): Unit
 
     // ── Key operations ──
 
@@ -134,69 +178,102 @@ public interface PreferencesStorage {
 public class InMemoryPreferencesStorage : PreferencesStorage {
     private val data = mutableMapOf<String, Any?>()
 
-    override suspend fun getString(key: String, defaultValue: String): String =
-        (data[key] as? String) ?: defaultValue
+    override suspend fun getString(
+        key: String,
+        defaultValue: String,
+    ): String = (data[key] as? String) ?: defaultValue
 
-    override fun getStringAsFlow(key: String, defaultValue: String): Flow<String> =
-        flow { emit(getString(key, defaultValue)) }
+    override fun getStringAsFlow(
+        key: String,
+        defaultValue: String,
+    ): Flow<String> = flow { emit(getString(key, defaultValue)) }
 
-    override suspend fun putString(key: String, value: String): Unit {
+    override suspend fun putString(
+        key: String,
+        value: String,
+    ) {
         data[key] = value
     }
 
-    override suspend fun getInt(key: String, defaultValue: Int): Int =
-        (data[key] as? Int) ?: defaultValue
+    override suspend fun getInt(
+        key: String,
+        defaultValue: Int,
+    ): Int = (data[key] as? Int) ?: defaultValue
 
-    override fun getIntAsFlow(key: String, defaultValue: Int): Flow<Int> =
-        flow { emit(getInt(key, defaultValue)) }
+    override fun getIntAsFlow(
+        key: String,
+        defaultValue: Int,
+    ): Flow<Int> = flow { emit(getInt(key, defaultValue)) }
 
-    override suspend fun putInt(key: String, value: Int): Unit {
+    override suspend fun putInt(
+        key: String,
+        value: Int,
+    ) {
         data[key] = value
     }
 
-    override suspend fun getBoolean(key: String, defaultValue: Boolean): Boolean =
-        (data[key] as? Boolean) ?: defaultValue
+    override suspend fun getBoolean(
+        key: String,
+        defaultValue: Boolean,
+    ): Boolean = (data[key] as? Boolean) ?: defaultValue
 
-    override fun getBooleanAsFlow(key: String, defaultValue: Boolean): Flow<Boolean> =
-        flow { emit(getBoolean(key, defaultValue)) }
+    override fun getBooleanAsFlow(
+        key: String,
+        defaultValue: Boolean,
+    ): Flow<Boolean> = flow { emit(getBoolean(key, defaultValue)) }
 
-    override suspend fun putBoolean(key: String, value: Boolean): Unit {
+    override suspend fun putBoolean(
+        key: String,
+        value: Boolean,
+    ) {
         data[key] = value
     }
 
-    override suspend fun getLong(key: String, defaultValue: Long): Long =
-        (data[key] as? Long) ?: defaultValue
+    override suspend fun getLong(
+        key: String,
+        defaultValue: Long,
+    ): Long = (data[key] as? Long) ?: defaultValue
 
-    override fun getLongAsFlow(key: String, defaultValue: Long): Flow<Long> =
-        flow { emit(getLong(key, defaultValue)) }
+    override fun getLongAsFlow(
+        key: String,
+        defaultValue: Long,
+    ): Flow<Long> = flow { emit(getLong(key, defaultValue)) }
 
-    override suspend fun putLong(key: String, value: Long): Unit {
+    override suspend fun putLong(
+        key: String,
+        value: Long,
+    ) {
         data[key] = value
     }
 
-    override suspend fun getDouble(key: String, defaultValue: Double): Double =
-        (data[key] as? Double) ?: defaultValue
+    override suspend fun getDouble(
+        key: String,
+        defaultValue: Double,
+    ): Double = (data[key] as? Double) ?: defaultValue
 
-    override fun getDoubleAsFlow(key: String, defaultValue: Double): Flow<Double> =
-        flow { emit(getDouble(key, defaultValue)) }
+    override fun getDoubleAsFlow(
+        key: String,
+        defaultValue: Double,
+    ): Flow<Double> = flow { emit(getDouble(key, defaultValue)) }
 
-    override suspend fun putDouble(key: String, value: Double): Unit {
+    override suspend fun putDouble(
+        key: String,
+        value: Double,
+    ) {
         data[key] = value
     }
 
-    override suspend fun contains(key: String): Boolean =
-        data.containsKey(key)
+    override suspend fun contains(key: String): Boolean = data.containsKey(key)
 
-    override suspend fun remove(key: String): Unit {
+    override suspend fun remove(key: String) {
         data.remove(key)
     }
 
-    override suspend fun clear(): Unit {
+    override suspend fun clear() {
         data.clear()
     }
 
-    override suspend fun getAllKeys(): Set<String> =
-        data.keys.toSet()
+    override suspend fun getAllKeys(): Set<String> = data.keys.toSet()
 }
 
 // ── Generic JSON serialization extensions ──
@@ -211,7 +288,10 @@ internal val jsonInstance: Json = Json { ignoreUnknownKeys = true }
  * @param defaultValue Value returned if key not found or parsing fails
  * @return Stored value or defaultValue
  */
-public suspend inline fun <reified T> PreferencesStorage.getJson(key: String, defaultValue: T? = null): T? {
+public suspend inline fun <reified T> PreferencesStorage.getJson(
+    key: String,
+    defaultValue: T? = null,
+): T? {
     val jsonString = getString(key, "")
     if (jsonString.isEmpty()) return defaultValue
     return try {
@@ -226,20 +306,27 @@ public suspend inline fun <reified T> PreferencesStorage.getJson(key: String, de
  */
 public inline fun <reified T> PreferencesStorage.getJsonAsFlow(
     key: String,
-    defaultValue: T? = null
-): Flow<T?> = getStringAsFlow(key, "").map { jsonString ->
-    if (jsonString.isEmpty()) defaultValue
-    else try {
-        jsonInstance.decodeFromString<T>(jsonString)
-    } catch (e: Exception) {
-        defaultValue
+    defaultValue: T? = null,
+): Flow<T?> =
+    getStringAsFlow(key, "").map { jsonString ->
+        if (jsonString.isEmpty()) {
+            defaultValue
+        } else {
+            try {
+                jsonInstance.decodeFromString<T>(jsonString)
+            } catch (e: Exception) {
+                defaultValue
+            }
+        }
     }
-}
 
 /**
  * Store a preference serialized as JSON.
  */
-public suspend inline fun <reified T> PreferencesStorage.putJson(key: String, value: T): Unit {
+public suspend inline fun <reified T> PreferencesStorage.putJson(
+    key: String,
+    value: T,
+) {
     val jsonString = jsonInstance.encodeToString(value)
     putString(key, jsonString)
 }

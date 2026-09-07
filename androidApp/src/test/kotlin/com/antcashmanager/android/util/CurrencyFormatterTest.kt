@@ -9,15 +9,15 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class CurrencyFormatterTest {
-
     @Test
     fun formatAmount_shouldDisableThousandsSeparator_whenSameAsDecimalSeparator() {
-        val format = CurrencyFormat(
-            currencySymbol = "€",
-            decimalDigits = 2,
-            decimalSeparator = ",",
-            thousandsSeparator = ",",
-        )
+        val format =
+            CurrencyFormat(
+                currencySymbol = "€",
+                decimalDigits = 2,
+                decimalSeparator = ",",
+                thousandsSeparator = ",",
+            )
 
         val formatted = formatAmount(1234.56, format)
         // thousands separator should be disabled because it equals decimal separator
@@ -26,12 +26,13 @@ class CurrencyFormatterTest {
 
     @Test
     fun formatAmount_shouldApplyThousandsSeparator_whenDifferentFromDecimalSeparator() {
-        val format = CurrencyFormat(
-            currencySymbol = "€",
-            decimalDigits = 2,
-            decimalSeparator = ",",
-            thousandsSeparator = ".",
-        )
+        val format =
+            CurrencyFormat(
+                currencySymbol = "€",
+                decimalDigits = 2,
+                decimalSeparator = ",",
+                thousandsSeparator = ".",
+            )
 
         val formatted = formatAmount(1234.56, format)
         assertEquals("€1.234,56", formatted)
@@ -39,12 +40,13 @@ class CurrencyFormatterTest {
 
     @Test
     fun formatAmount_shouldNotApplyThousandsSeparator_whenValueIsUnderOneThousand() {
-        val format = CurrencyFormat(
-            currencySymbol = "€",
-            decimalDigits = 2,
-            decimalSeparator = ",",
-            thousandsSeparator = ".",
-        )
+        val format =
+            CurrencyFormat(
+                currencySymbol = "€",
+                decimalDigits = 2,
+                decimalSeparator = ",",
+                thousandsSeparator = ".",
+            )
 
         val formatted = formatAmount(999.99, format)
         assertEquals("€999,99", formatted)
@@ -52,12 +54,13 @@ class CurrencyFormatterTest {
 
     @Test
     fun formatAmount_shouldReturnRoundedIntegerAndKeepThousandsSeparator_whenDecimalDigitsAreZero() {
-        val format = CurrencyFormat(
-            currencySymbol = "€",
-            decimalDigits = 0,
-            decimalSeparator = ",",
-            thousandsSeparator = ".",
-        )
+        val format =
+            CurrencyFormat(
+                currencySymbol = "€",
+                decimalDigits = 0,
+                decimalSeparator = ",",
+                thousandsSeparator = ".",
+            )
 
         val formatted = formatAmount(1234.56, format)
         // with 0 decimal digits the value is rounded and still grouped by thousands
@@ -66,12 +69,13 @@ class CurrencyFormatterTest {
 
     @Test
     fun formatAmountWithNegative_shouldPrefixMinusBeforeCurrency_whenAmountIsNegative() {
-        val format = CurrencyFormat(
-            currencySymbol = "€",
-            decimalDigits = 2,
-            decimalSeparator = ",",
-            thousandsSeparator = ".",
-        )
+        val format =
+            CurrencyFormat(
+                currencySymbol = "€",
+                decimalDigits = 2,
+                decimalSeparator = ",",
+                thousandsSeparator = ".",
+            )
 
         val formatted = formatAmountWithNegative(-1234.56, format)
         assertEquals("-€1.234,56", formatted)
@@ -103,34 +107,37 @@ class CurrencyFormatterTest {
 
     @Test
     fun isProtectedSalaryTransaction_shouldReturnTrue_whenIncomeCategoryIsStipendio() {
-        val transaction = Transaction(
-            title = "Paga",
-            amount = 1500.0,
-            category = "Stipendio",
-            type = TransactionType.INCOME
-        )
+        val transaction =
+            Transaction(
+                title = "Paga",
+                amount = 1500.0,
+                category = "Stipendio",
+                type = TransactionType.INCOME,
+            )
         assertTrue(isProtectedSalaryTransaction(transaction))
     }
 
     @Test
     fun isProtectedSalaryTransaction_shouldReturnFalse_whenSameCategoryNameButExpense() {
-        val transaction = Transaction(
-            title = "Rimborso stipendio",
-            amount = 100.0,
-            category = "Stipendio",
-            type = TransactionType.EXPENSE
-        )
+        val transaction =
+            Transaction(
+                title = "Rimborso stipendio",
+                amount = 100.0,
+                category = "Stipendio",
+                type = TransactionType.EXPENSE,
+            )
         assertFalse(isProtectedSalaryTransaction(transaction))
     }
 
     @Test
     fun isProtectedSalaryTransaction_shouldReturnFalse_whenIncomeButDifferentCategory() {
-        val transaction = Transaction(
-            title = "Bonus",
-            amount = 200.0,
-            category = "Freelance",
-            type = TransactionType.INCOME
-        )
+        val transaction =
+            Transaction(
+                title = "Bonus",
+                amount = 200.0,
+                category = "Freelance",
+                type = TransactionType.INCOME,
+            )
         assertFalse(isProtectedSalaryTransaction(transaction))
     }
 
@@ -154,4 +161,3 @@ class CurrencyFormatterTest {
         assertFalse(isProtectedSalaryCategory("Freelance", TransactionType.INCOME))
     }
 }
-

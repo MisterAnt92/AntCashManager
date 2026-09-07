@@ -1,7 +1,6 @@
 package com.antcashmanager.domain.exception
 
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -15,7 +14,6 @@ import kotlin.test.assertTrue
  * - Exception inheritance
  */
 class AppErrorTest {
-
     @Test
     fun categoryException_notFound_shouldStoreMessage() {
         val categoryName = "Unknown"

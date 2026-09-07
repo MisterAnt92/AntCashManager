@@ -25,20 +25,20 @@ import org.junit.Before
 import org.junit.Test
 
 class TransactionDetailsViewModelMockkTest : BaseUnitTest() {
-
     private lateinit var shareTransactionUseCase: ShareTransactionUseCase
     private lateinit var context: Context
     private lateinit var chooserIntent: Intent
     private lateinit var viewModel: TransactionDetailsViewModel
 
-    private val expenseTransaction = Transaction(
-        id = 1L,
-        title = "Groceries",
-        amount = 42.0,
-        category = "Food",
-        type = TransactionType.EXPENSE,
-        timestamp = 1_700_000_000_000L,
-    )
+    private val expenseTransaction =
+        Transaction(
+            id = 1L,
+            title = "Groceries",
+            amount = 42.0,
+            category = "Food",
+            type = TransactionType.EXPENSE,
+            timestamp = 1_700_000_000_000L,
+        )
 
     private val incomeTransaction = expenseTransaction.copy(type = TransactionType.INCOME)
 
@@ -52,9 +52,10 @@ class TransactionDetailsViewModelMockkTest : BaseUnitTest() {
         mockkStatic(Intent::class)
 
         every { anyConstructed<Intent>().setAction(any()) } returns mockk(relaxed = true)
-        every { anyConstructed<Intent>().putExtra(any<String>(), any<String>()) } returns mockk(
-            relaxed = true
-        )
+        every { anyConstructed<Intent>().putExtra(any<String>(), any<String>()) } returns
+            mockk(
+                relaxed = true,
+            )
         every { anyConstructed<Intent>().setType(any()) } returns mockk(relaxed = true)
         every { context.getString(R.string.transaction_details_share) } returns "Share transaction"
         every { context.startActivity(any()) } just Runs
@@ -84,25 +85,27 @@ class TransactionDetailsViewModelMockkTest : BaseUnitTest() {
         }
 
     @Test
-    fun shareTransaction_shouldDelegateWholeTransaction_whenTransactionTypeIsIncome() = runTest {
-        coEvery {
-            shareTransactionUseCase(ShareTransactionUseCase.Params(incomeTransaction))
-        } returns Result.success("formatted income")
+    fun shareTransaction_shouldDelegateWholeTransaction_whenTransactionTypeIsIncome() =
+        runTest {
+            coEvery {
+                shareTransactionUseCase(ShareTransactionUseCase.Params(incomeTransaction))
+            } returns Result.success("formatted income")
 
-        viewModel.shareTransaction(incomeTransaction, context)
+            viewModel.shareTransaction(incomeTransaction, context)
 
-        coVerify { shareTransactionUseCase(ShareTransactionUseCase.Params(incomeTransaction)) }
-    }
+            coVerify { shareTransactionUseCase(ShareTransactionUseCase.Params(incomeTransaction)) }
+        }
 
     @Test
-    fun shareTransaction_shouldStartChooserActivity_whenIntentIsBuilt() = runTest {
-        coEvery {
-            shareTransactionUseCase(ShareTransactionUseCase.Params(expenseTransaction))
-        } returns Result.success("formatted expense")
+    fun shareTransaction_shouldStartChooserActivity_whenIntentIsBuilt() =
+        runTest {
+            coEvery {
+                shareTransactionUseCase(ShareTransactionUseCase.Params(expenseTransaction))
+            } returns Result.success("formatted expense")
 
-        viewModel.shareTransaction(expenseTransaction, context)
+            viewModel.shareTransaction(expenseTransaction, context)
 
-        verify { Intent.createChooser(any(), "Share transaction") }
-        verify { context.startActivity(chooserIntent) }
-    }
+            verify { Intent.createChooser(any(), "Share transaction") }
+            verify { context.startActivity(chooserIntent) }
+        }
 }

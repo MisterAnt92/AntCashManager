@@ -20,7 +20,9 @@ import com.antcashmanager.android.ui.theme.AntCashManagerTheme
  * Standardized spacing system following Material Design 8dp grid.
  * All spacing values are multiples of 4dp for consistency.
  */
-enum class SpacingSize(val dp: Dp) {
+enum class SpacingSize(
+    val dp: Dp,
+) {
     /** 4.dp - Extra small spacing (tight layouts, compact elements) */
     XXXS(4.dp),
 
@@ -206,4 +208,3 @@ private fun HorizontalSpacerPreviewLight() {
 private fun HorizontalSpacerPreviewDark() {
     HorizontalSpacerPreviewLight()
 }
-

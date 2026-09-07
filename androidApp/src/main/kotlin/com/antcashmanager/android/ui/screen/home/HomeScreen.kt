@@ -5,38 +5,29 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,22 +40,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.antcashmanager.android.ui.components.layout.SpacingSize
-import com.antcashmanager.android.ui.components.layout.VerticalSpacer
-import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
-import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
-import com.antcashmanager.android.ui.components.layout.FoldableAwareLayout
-import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
-import androidx.window.layout.FoldingFeature
-import kotlinx.coroutines.flow.first
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
+import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
+import com.antcashmanager.android.navigation.ScreenHeaderConfig
+import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
 import com.antcashmanager.android.ui.components.animation.AntEasterEggAnimation
 import com.antcashmanager.android.ui.components.dialog.HelpButton
 import com.antcashmanager.android.ui.components.filter.DateRangeFilter
 import com.antcashmanager.android.ui.components.filter.SearchComponent
+import com.antcashmanager.android.ui.components.layout.FoldableAwareLayout
+import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.overlay.TutorialOverlay
 import com.antcashmanager.android.ui.components.state.AntEmptyState
@@ -72,8 +62,6 @@ import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.home.event.HomeEvent
 import com.antcashmanager.android.ui.screen.home.model.HomeTopCardType
 import com.antcashmanager.android.ui.screen.home.transactionDetail.TransactionDetailsDialog
-import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
-import com.antcashmanager.android.navigation.ScreenHeaderConfig
 import com.antcashmanager.android.ui.screen.home.view.BalanceCard
 import com.antcashmanager.android.ui.screen.home.view.HelpDialog
 import com.antcashmanager.android.ui.screen.home.view.HomeTopCardsOrderDialog
@@ -81,13 +69,9 @@ import com.antcashmanager.android.ui.screen.home.view.IncomeExpenseRow
 import com.antcashmanager.android.ui.screen.home.view.LoadingState
 import com.antcashmanager.android.ui.screen.home.view.QuickInsightsCard
 import com.antcashmanager.android.ui.screen.home.view.RecentTransactionItem
-import com.antcashmanager.android.ui.theme.AntCashManagerTheme
-import com.antcashmanager.domain.model.PaymentType
-import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.model.TransactionType
-import com.antcashmanager.domain.repository.SettingsRepository
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -104,16 +88,13 @@ fun HomeScreen(
     Logger.d(tag = "HomeScreen") { "Displaying HomeScreen" }
 
     val viewModel: HomeViewModel = koinViewModel()
-    val settingsRepository: SettingsRepository = koinInject()
-
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     HomeContent(
         state = state,
         onEvent = { event ->
             viewModel.onEvent(event)
         },
-        settingsRepository = settingsRepository,
         navController = navController,
         modifier = modifier,
     )
@@ -128,11 +109,9 @@ fun HomeScreen(
 internal fun HomeContent(
     state: HomeState,
     onEvent: (HomeEvent) -> Unit,
-    settingsRepository: SettingsRepository,
     navController: androidx.navigation.NavController,
     modifier: Modifier = Modifier,
 ) {
-
     val analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager = koinInject()
 
     // Date picker state
@@ -145,71 +124,79 @@ internal fun HomeContent(
     var editingTopCardsOrder by remember { mutableStateOf(HomeTopCardType.parse(topCardsOrderRaw)) }
     val topCardsOrder = remember(topCardsOrderRaw) { HomeTopCardType.parse(topCardsOrderRaw) }
 
-    // Load persisted card order on composition
-    LaunchedEffect(Unit) {
-        val savedOrder = settingsRepository.getHomeTopCardsOrder().first()
-        if (savedOrder.isNotEmpty()) {
-            topCardsOrderRaw = savedOrder
+    // Load persisted card order on composition from state (populated by ViewModel)
+    LaunchedEffect(state.homeTopCardsOrder) {
+        if (state.homeTopCardsOrder.isNotEmpty()) {
+            topCardsOrderRaw = state.homeTopCardsOrder.joinToString(",")
         }
     }
 
-    // DateRangeFilter expanded state from settings
-    val dateFilterExpanded by settingsRepository.getDateFilterExpanded()
-        .collectAsState(initial = true)
-    val showPaymentTypeBreakdown by settingsRepository.getShowPaymentTypeBreakdown()
-        .collectAsState(initial = false)
-    val showQuickInsightsCard by settingsRepository.getShowQuickInsightsCard()
-        .collectAsState(initial = false)
-    val reduceMotion by settingsRepository.getReduceMotion()
-        .collectAsState(initial = false)
-    val transactionDisplayType by settingsRepository.getTransactionDisplayType()
-        .collectAsState(initial = TransactionDisplayType.TREND)
-    val isTutorialCompleted by settingsRepository.getIsTutorialCompleted()
-        .collectAsState(initial = true)
+    // Settings from state (populated by HomeViewModel)
+    val dateFilterExpanded = state.dateFilterExpanded
+    val showPaymentTypeBreakdown = state.showPaymentTypeBreakdown
+    val showQuickInsightsCard = state.showQuickInsightsCard
+    val reduceMotion = state.reduceMotion
+    val transactionDisplayType =
+        try {
+            TransactionDisplayType.valueOf(state.transactionDisplayType)
+        } catch (e: Exception) {
+            TransactionDisplayType.TREND
+        }
+    val isTutorialCompleted = state.isTutorialCompleted
+    val isLoading = state.isLoading
 
     val coroutineScope = rememberCoroutineScope()
-    val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
 
     // Foldable device support
     val displayFeatures = LocalDisplayFeatures.current
+    val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo(displayFeatures = displayFeatures)
     val multiPaneCoordinator = LocalMultiPaneCoordinator.current
-    val foldingFeature = displayFeatures.filterIsInstance<androidx.window.layout.FoldingFeature>().firstOrNull()
+    val foldingFeature = adaptiveLayoutInfo.foldingFeature
 
-    val listState = rememberLazyListState()
+    // Preserva scroll position durante navigazione back/forward
+    val listState =
+        rememberSaveable(saver = androidx.compose.foundation.lazy.LazyListState.Saver) {
+            androidx.compose.foundation.lazy
+                .LazyListState()
+        }
     val showScrollToTop by remember {
         derivedStateOf { listState.firstVisibleItemIndex > 2 }
     }
-    val biggestExpense = remember(state.filteredTransactions) {
-        state.filteredTransactions
-            .filter { it.type == TransactionType.EXPENSE }
-            .maxByOrNull { kotlin.math.abs(it.amount) }
-    }
+    val biggestExpense =
+        remember(state.filteredTransactions) {
+            state.filteredTransactions
+                .filter { it.type == TransactionType.EXPENSE }
+                .maxByOrNull { kotlin.math.abs(it.amount) }
+        }
 
     // Calcoli per Quick Insights Card
-    val netBalance = remember(state.totalIncome, state.totalExpense) {
-        state.totalIncome - state.totalExpense
-    }
-    val dailyAverageExpense = remember(state.totalExpense, state.dateRangeFrom, state.dateRangeTo) {
-        val daysInPeriod =
-            (state.dateRangeTo - state.dateRangeFrom) / 86400000.0 // Convert ms to days
-        if (daysInPeriod > 0) {
-            kotlin.math.abs(state.totalExpense) / daysInPeriod
-        } else {
-            0.0
+    val netBalance =
+        remember(state.totalIncome, state.totalExpense) {
+            state.totalIncome - state.totalExpense
         }
-    }
+    val dailyAverageExpense =
+        remember(state.totalExpense, state.dateRangeFrom, state.dateRangeTo) {
+            val daysInPeriod =
+                (state.dateRangeTo - state.dateRangeFrom) / 86400000.0 // Convert ms to days
+            if (daysInPeriod > 0) {
+                kotlin.math.abs(state.totalExpense) / daysInPeriod
+            } else {
+                0.0
+            }
+        }
 
     // Elenco delle top card effettivamente visibili: esclude Quick Insights quando
     // l'impostazione corrispondente è disattivata. Riusato sia per il rendering
     // (visibleTopCardsOrder) sia come base per il dialog di riordino
     // (editableTopCardsOrder) — prima erano due `remember` con logica identica.
-    val visibleTopCardsOrder = remember(topCardsOrder, showQuickInsightsCard) {
-        if (showQuickInsightsCard) {
-            topCardsOrder
-        } else {
-            topCardsOrder.filterNot { it == HomeTopCardType.QUICK_INSIGHTS }
+    val visibleTopCardsOrder =
+        remember(topCardsOrder, showQuickInsightsCard) {
+            if (showQuickInsightsCard) {
+                topCardsOrder
+            } else {
+                topCardsOrder.filterNot { it == HomeTopCardType.QUICK_INSIGHTS }
+            }
         }
-    }
     val editableTopCardsOrder = visibleTopCardsOrder
 
     // Configure screen header with actions
@@ -237,18 +224,17 @@ internal fun HomeContent(
                             onHelpClick = { showHelpDialog = true },
                         )
                     }
-                }
-            )
+                },
+            ),
         )
     }
 
-    // Tutorial full-screen
-    if (!isTutorialCompleted) {
+    // Tutorial full-screen (non mostrare durante il caricamento iniziale)
+    // Questo previene il flickering causato dalla race condition dello stato asincrono
+    if (!isTutorialCompleted && !isLoading) {
         TutorialOverlay(
             onDismiss = {
-                coroutineScope.launch {
-                    settingsRepository.setIsTutorialCompleted(true)
-                }
+                onEvent(HomeEvent.SetIsTutorialCompleted(true))
             },
         )
         return
@@ -319,16 +305,18 @@ internal fun HomeContent(
             order = editingTopCardsOrder,
             onMoveUp = { index ->
                 if (index > 0) {
-                    editingTopCardsOrder = editingTopCardsOrder.toMutableList().apply {
-                        add(index - 1, removeAt(index))
-                    }
+                    editingTopCardsOrder =
+                        editingTopCardsOrder.toMutableList().apply {
+                            add(index - 1, removeAt(index))
+                        }
                 }
             },
             onMoveDown = { index ->
                 if (index < editingTopCardsOrder.lastIndex) {
-                    editingTopCardsOrder = editingTopCardsOrder.toMutableList().apply {
-                        add(index + 1, removeAt(index))
-                    }
+                    editingTopCardsOrder =
+                        editingTopCardsOrder.toMutableList().apply {
+                            add(index + 1, removeAt(index))
+                        }
                 }
             },
             onDismiss = {
@@ -336,26 +324,25 @@ internal fun HomeContent(
                 editingTopCardsOrder = editableTopCardsOrder
             },
             onConfirm = {
-                val updatedOrder = if (showQuickInsightsCard) {
-                    editingTopCardsOrder
-                } else {
-                    val lockedIndex = topCardsOrder.indexOf(HomeTopCardType.QUICK_INSIGHTS)
-                    if (lockedIndex >= 0) {
+                val updatedOrder =
+                    if (showQuickInsightsCard) {
                         editingTopCardsOrder
-                            .toMutableList()
-                            .apply {
-                                val targetIndex = lockedIndex.coerceAtMost(size)
-                                add(targetIndex, HomeTopCardType.QUICK_INSIGHTS)
-                            }
                     } else {
-                        editingTopCardsOrder
+                        val lockedIndex = topCardsOrder.indexOf(HomeTopCardType.QUICK_INSIGHTS)
+                        if (lockedIndex >= 0) {
+                            editingTopCardsOrder
+                                .toMutableList()
+                                .apply {
+                                    val targetIndex = lockedIndex.coerceAtMost(size)
+                                    add(targetIndex, HomeTopCardType.QUICK_INSIGHTS)
+                                }
+                        } else {
+                            editingTopCardsOrder
+                        }
                     }
-                }
                 topCardsOrderRaw = HomeTopCardType.serialize(updatedOrder)
                 // Persist card order to settings for backup/restore
-                coroutineScope.launch {
-                    settingsRepository.setHomeTopCardsOrder(HomeTopCardType.serialize(updatedOrder))
-                }
+                onEvent(HomeEvent.SetHomeTopCardsOrder(HomeTopCardType.serialize(updatedOrder)))
                 showTopCardsOrderDialog = false
                 analyticsManager.logEvent("home_top_cards_reordered")
             },
@@ -374,86 +361,88 @@ internal fun HomeContent(
     if (showVersionDialog) {
         AntEasterEggAnimation(
             versionName = com.antcashmanager.android.BuildConfig.VERSION_NAME,
-            onDismiss = { showVersionDialog = false }
+            onDismiss = { showVersionDialog = false },
         )
     }
 
-    when {
-        state.isLoading -> LoadingState()
-        else -> {
-            Scaffold(
-                modifier = Modifier
+    // FASE 1: Composable for list pane (used in both single-pane and split-pane layouts)
+    @Composable
+    fun HomeListPane() {
+        Scaffold(
+            modifier =
+                Modifier
                     .fillMaxSize()
                     .testTag("home_screen"),
-                contentWindowInsets = WindowInsets(0, 0, 0, 0),
-                floatingActionButton = {
-                    // Scroll to top button
-                    AnimatedVisibility(
-                        visible = showScrollToTop,
-                        enter = fadeIn() + scaleIn(),
-                        exit = fadeOut() + scaleOut()
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
+            floatingActionButton = {
+                // Scroll to top button
+                AnimatedVisibility(
+                    visible = showScrollToTop,
+                    enter = fadeIn() + scaleIn(),
+                    exit = fadeOut() + scaleOut(),
+                ) {
+                    FloatingActionButton(
+                        onClick = {
+                            coroutineScope.launch {
+                                listState.animateScrollToItem(0)
+                            }
+                        },
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        modifier = Modifier.padding(bottom = 8.dp), // Extra padding to avoid bottom bar
                     ) {
-                        FloatingActionButton(
-                            onClick = {
-                                coroutineScope.launch {
-                                    listState.animateScrollToItem(0)
-                                }
-                            },
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                            modifier = Modifier.padding(bottom = 8.dp) // Extra padding to avoid bottom bar
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowUpward,
-                                contentDescription = stringResource(R.string.home_scroll_to_top)
-                            )
-                        }
+                        Icon(
+                            imageVector = Icons.Default.ArrowUpward,
+                            contentDescription = stringResource(R.string.home_scroll_to_top),
+                        )
                     }
-                },
-            ) { innerPadding ->
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier
+                }
+            },
+        ) { innerPadding ->
+            LazyColumn(
+                state = listState,
+                modifier =
+                    Modifier
                         .fillMaxSize()
                         .padding(innerPadding)
                         .padding(
                             horizontal = adaptiveLayoutInfo.horizontalPadding,
                             vertical = if (adaptiveLayoutInfo.isExpanded) 16.dp else 12.dp,
                         ),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    // Date Range Filter - nascosto quando la ricerca è attiva
-                    if (!state.isSearchExpanded) {
-                        item {
-                            DateRangeFilter(
-                                selectedPresetIndex = state.selectedPresetIndex,
-                                presets = HomeState.PRESETS,
-                                dateRangeFrom = state.dateRangeFrom,
-                                dateRangeTo = state.dateRangeTo,
-                                expanded = dateFilterExpanded,
-                                onExpandedChange = { expanded ->
-                                    coroutineScope.launch {
-                                        settingsRepository.setDateFilterExpanded(expanded)
-                                    }
-                                },
-                                onPresetSelected = { presetIndex ->
-                                    val params = android.os.Bundle().apply {
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                // Date Range Filter - nascosto quando la ricerca è attiva
+                if (!state.isSearchExpanded) {
+                    item {
+                        DateRangeFilter(
+                            selectedPresetIndex = state.selectedPresetIndex,
+                            presets = HomeState.PRESETS,
+                            dateRangeFrom = state.dateRangeFrom,
+                            dateRangeTo = state.dateRangeTo,
+                            expanded = dateFilterExpanded,
+                            onExpandedChange = { expanded ->
+                                onEvent(HomeEvent.SetDateFilterExpanded(expanded))
+                            },
+                            onPresetSelected = { presetIndex ->
+                                val params =
+                                    android.os.Bundle().apply {
                                         putString("preset", presetIndex.toString())
                                     }
-                                    analyticsManager.logEvent("home_date_filter_changed", params)
-                                    onEvent(HomeEvent.SelectPreset(presetIndex))
-                                },
-                                onFromDateEdit = { showFromDatePicker = true },
-                                onToDateEdit = { showToDatePicker = true },
-                            )
-                        }
+                                analyticsManager.logEvent("home_date_filter_changed", params)
+                                onEvent(HomeEvent.SelectPreset(presetIndex))
+                            },
+                            onFromDateEdit = { showFromDatePicker = true },
+                            onToDateEdit = { showToDatePicker = true },
+                        )
                     }
+                }
 
-                    // Top Cards (Saldo, Entrate/Uscite, Quick Insights) - nascosti quando la ricerca è attiva
-                    if (!state.isSearchExpanded) {
-                        visibleTopCardsOrder.forEach { topCardType ->
-                            when (topCardType) {
-                                HomeTopCardType.BALANCE -> item(key = topCardType.storageKey) {
+                // Top Cards (Saldo, Entrate/Uscite, Quick Insights) - nascosti quando la ricerca è attiva
+                if (!state.isSearchExpanded) {
+                    visibleTopCardsOrder.forEach { topCardType ->
+                        when (topCardType) {
+                            HomeTopCardType.BALANCE ->
+                                item(key = topCardType.storageKey) {
                                     BalanceCard(
                                         balance = state.balance,
                                         showPaymentTypeBreakdown = showPaymentTypeBreakdown,
@@ -462,14 +451,16 @@ internal fun HomeContent(
                                     )
                                 }
 
-                                HomeTopCardType.INCOME_EXPENSE -> item(key = topCardType.storageKey) {
+                            HomeTopCardType.INCOME_EXPENSE ->
+                                item(key = topCardType.storageKey) {
                                     IncomeExpenseRow(
                                         totalIncome = state.totalIncome,
                                         totalExpense = state.totalExpense,
                                     )
                                 }
 
-                                HomeTopCardType.QUICK_INSIGHTS -> item(key = topCardType.storageKey) {
+                            HomeTopCardType.QUICK_INSIGHTS ->
+                                item(key = topCardType.storageKey) {
                                     QuickInsightsCard(
                                         totalIncome = state.totalIncome,
                                         totalExpense = state.totalExpense,
@@ -480,471 +471,171 @@ internal fun HomeContent(
                                         biggestExpenseAmount = biggestExpense?.amount,
                                     )
                                 }
-                            }
                         }
                     }
+                }
 
-                    // Recent Transactions header
-                    item {
-                        AppText(
-                            text = stringResource(
+                // Recent Transactions header
+                item {
+                    AppText(
+                        text =
+                            stringResource(
                                 R.string.home_recent_transactions_count,
                                 state.filteredTransactions.size,
                             ),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            modifier = Modifier.testTag("recent_transactions_count"),
-                        )
-                    }
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.testTag("recent_transactions_count"),
+                    )
+                }
 
-                    // Search Component - renderizzato condizionalmente come item separato
-                    // Pattern replicato da TransactionsScreen per fix timing issue del FocusRequester
-                    if (state.isSearchExpanded) {
-                        item {
-                            SearchComponent(
-                                isVisible = true,
-                                searchQuery = state.searchQuery,
-                                onSearchQueryChange = { newQuery ->
-                                    if (newQuery.isNotEmpty() && state.searchQuery.isEmpty()) {
-                                        analyticsManager.logEvent("home_search_submitted")
-                                        // Track search query initiated
-                                        analyticsManager.logEvent("search_query_initiated", android.os.Bundle().apply {
+                // Search Component - renderizzato condizionalmente come item separato
+                // Pattern replicato da TransactionsScreen per fix timing issue del FocusRequester
+                if (state.isSearchExpanded) {
+                    item {
+                        SearchComponent(
+                            isVisible = true,
+                            searchQuery = state.searchQuery,
+                            onSearchQueryChange = { newQuery ->
+                                if (newQuery.isNotEmpty() && state.searchQuery.isEmpty()) {
+                                    analyticsManager.logEvent("home_search_submitted")
+                                    // Track search query initiated
+                                    analyticsManager.logEvent(
+                                        "search_query_initiated",
+                                        android.os.Bundle().apply {
                                             putInt("query_length", newQuery.length)
                                             putBoolean("filters_active", false)
-                                        })
-                                    } else if (newQuery.isEmpty() && state.searchQuery.isNotEmpty()) {
-                                        analyticsManager.logEvent("home_search_cleared")
-                                    }
-                                    onEvent(HomeEvent.UpdateSearchQuery(newQuery))
-                                },
-                                searchSuggestions = state.searchSuggestions,
-                                modifier = Modifier.testTag("search_component"),
-                            )
-                        }
+                                        },
+                                    )
+                                } else if (newQuery.isEmpty() && state.searchQuery.isNotEmpty()) {
+                                    analyticsManager.logEvent("home_search_cleared")
+                                }
+                                onEvent(HomeEvent.UpdateSearchQuery(newQuery))
+                            },
+                            searchSuggestions = state.searchSuggestions,
+                            modifier = Modifier.testTag("search_component"),
+                        )
                     }
+                }
 
-                    // Transactions content
-                    if (state.filteredTransactions.isEmpty()) {
-                        item {
-                            AntEmptyState(
-                                mascotRes = R.drawable.ic_piggy_bank,
-                                title = stringResource(R.string.empty_state_no_transactions),
-                                subtitle = stringResource(R.string.empty_state_no_transactions_subtitle),
-                            )
-                        }
-                    } else {
-                        items(
-                            items = state.recentTransactions,
-                            key = { it.id },
-                        ) { transaction ->
-                            RecentTransactionItem(
-                                transaction = transaction,
-                                onClick = {
-                                    val params = android.os.Bundle().apply {
+                // Transactions content
+                if (state.filteredTransactions.isEmpty()) {
+                    item {
+                        AntEmptyState(
+                            mascotRes = R.drawable.ic_piggy_bank,
+                            title = stringResource(R.string.empty_state_no_transactions),
+                            subtitle = stringResource(R.string.empty_state_no_transactions_subtitle),
+                        )
+                    }
+                } else {
+                    items(
+                        items = state.recentTransactions,
+                        key = { it.id },
+                    ) { transaction ->
+                        RecentTransactionItem(
+                            transaction = transaction,
+                            onClick = {
+                                val params =
+                                    android.os.Bundle().apply {
                                         putInt("index", state.recentTransactions.indexOf(transaction))
                                         putString("type", transaction.type.name)
                                     }
-                                    analyticsManager.logEvent("home_transaction_clicked", params)
-                                    analyticsManager.logEvent("home_transaction_detail_opened")
-                                    // Notify multi-pane coordinator for foldable split-view sync
-                                    multiPaneCoordinator?.selectTransaction(
-                                        transaction = transaction,
-                                        navigateToDetailsPane = foldingFeature?.isSeparating == true
-                                    )
-                                    onEvent(HomeEvent.ShowTransactionDetails(transaction))
-                                },
-                                displayType = transactionDisplayType,
-                            )
-                        }
+                                analyticsManager.logEvent("home_transaction_clicked", params)
+                                analyticsManager.logEvent("home_transaction_detail_opened")
+                                // Notify multi-pane coordinator for foldable split-view sync
+                                multiPaneCoordinator?.selectTransaction(
+                                    transaction = transaction,
+                                    navigateToDetailsPane = foldingFeature?.isSeparating == true,
+                                )
+                                onEvent(HomeEvent.ShowTransactionDetails(transaction))
+                            },
+                            displayType = transactionDisplayType,
+                        )
                     }
-
-                    // Bottom spacer
-                    item { VerticalSpacer(SpacingSize.XS) }
                 }
+
+                // Bottom spacer
+                item { VerticalSpacer(SpacingSize.XS) }
             }
         }
     }
-}
 
+    // FASE 1: Composable for transaction details pane (used in split-pane layout on foldable)
+    @Composable
+    fun TransactionDetailsPane(transaction: Transaction) {
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            AppText(
+                text = "Details",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+            )
 
-// ══════════════════════════════════════════════════════════════════════════════
-// PREVIEWS
-// ══════════════════════════════════════════════════════════════════════════════
+            // Transaction title
+            AppText(
+                text = transaction.title,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+            )
 
-class MockHomeSettingsRepository : SettingsRepository {
-    override fun getTheme() =
-        kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.AppTheme.SYSTEM)
+            // Category and type
+            AppText(
+                text = "${transaction.category} • ${transaction.type.name}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
 
-    override suspend fun setTheme(theme: com.antcashmanager.domain.model.AppTheme) {}
-    override fun getLanguage() =
-        kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.AppLanguage.SYSTEM)
+            // Amount (formatted)
+            AppText(
+                text = "€ ${String.format("%.2f", kotlin.math.abs(transaction.amount))}",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+            )
 
-    override suspend fun setLanguage(language: com.antcashmanager.domain.model.AppLanguage) {}
-    override fun getShowCharts() = kotlinx.coroutines.flow.flowOf(true)
-    override suspend fun setShowCharts(show: Boolean) {}
-    override fun getHighContrast() = kotlinx.coroutines.flow.flowOf(false)
-    override suspend fun setHighContrast(enabled: Boolean) {}
-    override fun getLargeText() = kotlinx.coroutines.flow.flowOf(false)
-    override suspend fun setLargeText(enabled: Boolean) {}
-    override fun getReduceMotion() = kotlinx.coroutines.flow.flowOf(false)
-    override suspend fun setReduceMotion(enabled: Boolean) {}
-    override fun getShowTransactionNotes() = kotlinx.coroutines.flow.flowOf(true)
-    override suspend fun setShowTransactionNotes(show: Boolean) {}
-    override fun getMaskAmounts() = kotlinx.coroutines.flow.flowOf(false)
-    override suspend fun setMaskAmounts(mask: Boolean) {}
-    override fun getCurrencySymbol() = kotlinx.coroutines.flow.flowOf("€")
-    override suspend fun setCurrencySymbol(symbol: String) {}
-    override fun getDecimalDigits() = kotlinx.coroutines.flow.flowOf(2)
-    override suspend fun setDecimalDigits(digits: Int) {}
-    override fun getDecimalSeparator() = kotlinx.coroutines.flow.flowOf(",")
-    override suspend fun setDecimalSeparator(separator: String) {}
-    override fun getThousandsSeparator() = kotlinx.coroutines.flow.flowOf("")
-    override suspend fun setThousandsSeparator(separator: String) {}
-    override fun getMealVoucherValue() = kotlinx.coroutines.flow.flowOf(5.29)
-    override suspend fun setMealVoucherValue(value: Double) {}
-    override fun getDateFormat() = kotlinx.coroutines.flow.flowOf("dd/MM/yyyy")
-    override suspend fun setDateFormat(pattern: String) {}
-
-    override fun getDateFilterExpanded() = kotlinx.coroutines.flow.flowOf(true)
-    override suspend fun setDateFilterExpanded(expanded: Boolean) {}
-
-    override fun getHomeDateFilterPreset() = kotlinx.coroutines.flow.flowOf(1)
-    override suspend fun setHomeDateFilterPreset(index: Int) {}
-    override fun getHomeDateFilterState() = kotlinx.coroutines.flow.flowOf(
-        SavedDateFilter(
-            presetIndex = 1,
-            from = System.currentTimeMillis() - (7L * 24 * 60 * 60 * 1000),
-            to = System.currentTimeMillis(),
-        ),
-    )
-
-    override suspend fun setHomeDateFilterState(filter: SavedDateFilter) {}
-
-    override fun getTransactionsDateFilterPreset() = kotlinx.coroutines.flow.flowOf(1)
-    override suspend fun setTransactionsDateFilterPreset(index: Int) {}
-    override fun getTransactionsDateFilterState() = kotlinx.coroutines.flow.flowOf(
-        SavedDateFilter(
-            presetIndex = 1,
-            from = System.currentTimeMillis() - (7L * 24 * 60 * 60 * 1000),
-            to = System.currentTimeMillis(),
-        ),
-    )
-
-    override suspend fun setTransactionsDateFilterState(filter: SavedDateFilter) {}
-
-    override fun getChartsDateFilterPreset() = kotlinx.coroutines.flow.flowOf(1)
-    override suspend fun setChartsDateFilterPreset(index: Int) {}
-    override fun getChartsDateFilterState() = kotlinx.coroutines.flow.flowOf(
-        SavedDateFilter(
-            presetIndex = 1,
-            from = System.currentTimeMillis() - (30L * 24 * 60 * 60 * 1000),
-            to = System.currentTimeMillis(),
-        ),
-    )
-
-    override suspend fun setChartsDateFilterState(filter: SavedDateFilter) {}
-
-    override fun getChartsZoomEnabled() = kotlinx.coroutines.flow.flowOf(true)
-    override suspend fun setChartsZoomEnabled(enabled: Boolean) {}
-
-    override fun getShowPaymentTypeBreakdown() = kotlinx.coroutines.flow.flowOf(true)
-    override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {}
-    override fun getShowQuickInsightsCard() = kotlinx.coroutines.flow.flowOf(true)
-    override suspend fun setShowQuickInsightsCard(show: Boolean) {}
-    override fun getDefaultPaymentType() = kotlinx.coroutines.flow.flowOf("ELECTRONIC")
-    override suspend fun setDefaultPaymentType(paymentType: String) {}
-
-    override fun getShowInitialAnimation(): kotlinx.coroutines.flow.Flow<Boolean> =
-        kotlinx.coroutines.flow.flowOf(true)
-
-    override suspend fun setShowInitialAnimation(show: Boolean) {}
-
-    override fun getTransactionDisplayType() =
-        kotlinx.coroutines.flow.flowOf(TransactionDisplayType.TREND)
-
-    override suspend fun setTransactionDisplayType(displayType: TransactionDisplayType) {}
-
-    override fun getTransactionsTransactionDisplayType() =
-        kotlinx.coroutines.flow.flowOf(TransactionDisplayType.TREND)
-
-    override suspend fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType) {}
-
-    override fun getIsTutorialCompleted(): kotlinx.coroutines.flow.Flow<Boolean> =
-        kotlinx.coroutines.flow.flowOf(true)
-
-    override suspend fun setIsTutorialCompleted(completed: Boolean) {}
-
-    override fun getDataEncryptionEnabled(): kotlinx.coroutines.flow.Flow<Boolean> =
-        kotlinx.coroutines.flow.flowOf(false)
-
-    override suspend fun setDataEncryptionEnabled(enabled: Boolean) {}
-
-    override fun getCategorySortOrderInitialized(): kotlinx.coroutines.flow.Flow<Boolean> =
-        kotlinx.coroutines.flow.flowOf(true)
-
-    override suspend fun setCategorySortOrderInitialized(initialized: Boolean) {}
-
-    override fun getLastBackupTimestamp(): kotlinx.coroutines.flow.Flow<Long?> =
-        kotlinx.coroutines.flow.flowOf(null)
-
-    override suspend fun setLastBackupTimestamp(timestamp: Long) {}
-    override fun getLastRestoreTimestamp(): kotlinx.coroutines.flow.Flow<Long?> =
-        kotlinx.coroutines.flow.flowOf(null)
-
-    override suspend fun setLastRestoreTimestamp(timestamp: Long) {}
-
-    override fun getSuggestionsEnabled(): kotlinx.coroutines.flow.Flow<Boolean> =
-        kotlinx.coroutines.flow.flowOf(true)
-
-    override suspend fun setSuggestionsEnabled(enabled: Boolean) {}
-    override fun getSuggestionsClearedAt(): kotlinx.coroutines.flow.Flow<Long?> =
-        kotlinx.coroutines.flow.flowOf(null)
-
-    override suspend fun setSuggestionsClearedAt(timestamp: Long) {}
-
-    override fun getWidgetBackgroundColor(): kotlinx.coroutines.flow.Flow<Long> =
-        kotlinx.coroutines.flow.flowOf(0xFFFFFFFFL)
-
-    override suspend fun setWidgetBackgroundColor(color: Long) {}
-    override fun getWidgetOpacity(): kotlinx.coroutines.flow.Flow<Int> =
-        kotlinx.coroutines.flow.flowOf(100)
-
-    override suspend fun setWidgetOpacity(opacity: Int) {}
-
-    override fun getChartCardsOrder(): kotlinx.coroutines.flow.Flow<String> =
-        kotlinx.coroutines.flow.flowOf("")
-
-    override suspend fun setChartCardsOrder(order: String) {}
-    override fun getHomeTopCardsOrder(): kotlinx.coroutines.flow.Flow<String> =
-        kotlinx.coroutines.flow.flowOf("")
-
-    override suspend fun setHomeTopCardsOrder(order: String) {}
-
-    // ── Google Drive Backup Configuration ──
-    override fun getAutoBackupEnabled(): kotlinx.coroutines.flow.Flow<Boolean> =
-        kotlinx.coroutines.flow.flowOf(false)
-
-    override suspend fun setAutoBackupEnabled(enabled: Boolean) {}
-
-    override fun getAutoBackupFolderUri(): kotlinx.coroutines.flow.Flow<String?> =
-        kotlinx.coroutines.flow.flowOf(null)
-
-    override suspend fun setAutoBackupFolderUri(uri: String?) {}
-
-    override fun getAutoBackupDestination(): kotlinx.coroutines.flow.Flow<com.antcashmanager.domain.model.BackupDestination> =
-        kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.BackupDestination.LOCAL)
-
-    override suspend fun setAutoBackupDestination(destination: com.antcashmanager.domain.model.BackupDestination) {}
-
-    override fun getGoogleDriveFolderId(): kotlinx.coroutines.flow.Flow<String?> =
-        kotlinx.coroutines.flow.flowOf(null)
-
-    override suspend fun setGoogleDriveFolderId(folderId: String?) {}
-
-    override fun getGoogleDriveFolderName(): kotlinx.coroutines.flow.Flow<String?> =
-        kotlinx.coroutines.flow.flowOf(null)
-
-    override suspend fun setGoogleDriveFolderName(folderName: String?) {}
-
-    override fun getGoogleDriveAuthToken(): kotlinx.coroutines.flow.Flow<String?> =
-        kotlinx.coroutines.flow.flowOf(null)
-
-    override suspend fun setGoogleDriveAuthToken(token: String?) {}
-
-    override fun getGoogleDriveRefreshToken(): kotlinx.coroutines.flow.Flow<String?> =
-        kotlinx.coroutines.flow.flowOf(null)
-
-    override suspend fun setGoogleDriveRefreshToken(token: String?) {}
-
-    override fun getGoogleDriveUserEmail(): kotlinx.coroutines.flow.Flow<String?> =
-        kotlinx.coroutines.flow.flowOf(null)
-
-    override suspend fun setGoogleDriveUserEmail(email: String?) {}
-
-    override suspend fun resetAllPreferences() {}
-}
-
-private val sampleTransactions = listOf(
-    Transaction(
-        id = 1,
-        title = "Salary",
-        amount = 2500.0,
-        category = "Work",
-        type = TransactionType.INCOME,
-        timestamp = System.currentTimeMillis(),
-    ),
-    Transaction(
-        id = 2,
-        title = "Groceries",
-        amount = 85.50,
-        category = "Food",
-        type = TransactionType.EXPENSE,
-        timestamp = System.currentTimeMillis(),
-    ),
-    Transaction(
-        id = 3,
-        title = "Electric Bill",
-        amount = 120.0,
-        category = "Utilities",
-        type = TransactionType.EXPENSE,
-        timestamp = System.currentTimeMillis(),
-    ),
-)
-
-@Preview(showBackground = true, name = "HomeScreen - With Transactions")
-@Preview(showBackground = true, name = "HomeScreen - 7 inch", widthDp = 600, heightDp = 960)
-@Preview(showBackground = true, name = "HomeScreen - 10 inch", widthDp = 840, heightDp = 1280)
-@Composable
-private fun HomeContentPreview() {
-    AntCashManagerTheme(dynamicColor = false) {
-        val navController = androidx.navigation.compose.rememberNavController()
-        HomeContent(
-            state = HomeState(
-                transactions = sampleTransactions,
-                filteredTransactions = sampleTransactions,
-                recentTransactions = sampleTransactions,
-                totalIncome = 2500.0,
-                totalExpense = 205.5,
-                balance = 2294.5,
-                balanceByPaymentType = mapOf(
-                    PaymentType.ELECTRONIC to 1500.0,
-                    PaymentType.CASH to 794.5,
-                ),
-            ),
-            onEvent = {},
-            settingsRepository = MockHomeSettingsRepository(),
-            navController = navController,
-            modifier = Modifier,
-        )
+            // Notes if present
+            if (transaction.notes.isNotEmpty()) {
+                Divider(modifier = Modifier.padding(vertical = 8.dp))
+                AppText(
+                    text = "Notes",
+                    style = MaterialTheme.typography.labelMedium,
+                )
+                AppText(
+                    text = transaction.notes,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+        }
     }
-}
 
-@Preview(showBackground = true, name = "HomeScreen - Empty")
-@Composable
-private fun HomeContentEmptyPreview() {
-    AntCashManagerTheme(dynamicColor = false) {
-        val navController = androidx.navigation.compose.rememberNavController()
-        HomeContent(
-            state = HomeState(),
-            onEvent = {},
-            settingsRepository = MockHomeSettingsRepository(),
-            navController = navController,
-            modifier = Modifier,
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "HomeScreen - Loading")
-@Composable
-private fun HomeContentLoadingPreview() {
-    AntCashManagerTheme(dynamicColor = false) {
-        val navController = androidx.navigation.compose.rememberNavController()
-        HomeContent(
-            state = HomeState(isLoading = true),
-            onEvent = {},
-            settingsRepository = MockHomeSettingsRepository(),
-            navController = navController,
-            modifier = Modifier,
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "HomeScreen - Dark Theme")
-@Composable
-private fun HomeContentDarkPreview() {
-    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
-        val navController = androidx.navigation.compose.rememberNavController()
-        HomeContent(
-            state = HomeState(
-                transactions = sampleTransactions,
-                filteredTransactions = sampleTransactions,
-                recentTransactions = sampleTransactions,
-                totalIncome = 2500.0,
-                totalExpense = 205.5,
-                balance = 2294.5,
-                balanceByPaymentType = mapOf(
-                    PaymentType.ELECTRONIC to 1500.0,
-                    PaymentType.CASH to 794.5,
-                ),
-            ),
-            onEvent = {},
-            settingsRepository = MockHomeSettingsRepository(),
-            navController = navController,
-            modifier = Modifier,
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Transaction Details Dialog - Income")
-@Composable
-private fun TransactionDetailsDialogIncomePreview() {
-    AntCashManagerTheme(dynamicColor = false) {
-        TransactionDetailsDialog(
-            transaction = Transaction(
-                id = 1,
-                title = "Salary Payment",
-                amount = 2500.0,
-                category = "Work",
-                type = TransactionType.INCOME,
-                timestamp = System.currentTimeMillis(),
-                notes = "Monthly salary",
-                payee = "Acme Corp",
-                location = "Office",
-                isRecurring = true,
-                recurrenceInterval = "monthly",
-                tags = "salary,income",
-            ),
-            onDismiss = {},
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Transaction Details Dialog - Expense")
-@Composable
-private fun TransactionDetailsDialogExpensePreview() {
-    AntCashManagerTheme(dynamicColor = false) {
-        TransactionDetailsDialog(
-            transaction = Transaction(
-                id = 2,
-                title = "Groceries",
-                amount = 85.50,
-                category = "Food",
-                type = TransactionType.EXPENSE,
-                timestamp = System.currentTimeMillis(),
-                notes = "Weekly shopping",
-                tags = "food,groceries",
-            ),
-            onDismiss = {},
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "HomeScreen - Search Expanded")
-@Composable
-private fun HomeContentSearchExpandedPreview() {
-    AntCashManagerTheme(dynamicColor = false) {
-        val navController = androidx.navigation.compose.rememberNavController()
-        HomeContent(
-            state = HomeState(
-                transactions = sampleTransactions,
-                filteredTransactions = sampleTransactions,
-                recentTransactions = sampleTransactions,
-                totalIncome = 2500.0,
-                totalExpense = 205.5,
-                balance = 2294.5,
-                isSearchExpanded = true,
-                searchQuery = "gro",
-                searchSuggestions = listOf("Groceries"),
-                balanceByPaymentType = mapOf(
-                    PaymentType.ELECTRONIC to 1500.0,
-                    PaymentType.CASH to 794.5,
-                ),
-            ),
-            onEvent = {},
-            settingsRepository = MockHomeSettingsRepository(),
-            navController = navController,
-            modifier = Modifier,
-        )
+    // FASE 1: Main layout logic - choose between split-pane and single-pane
+    when {
+        state.isLoading -> LoadingState()
+        else -> {
+            if (adaptiveLayoutInfo.hasFold && adaptiveLayoutInfo.foldingFeature != null) {
+                // Split-pane layout for foldable devices
+                FoldableAwareLayout(
+                    foldingFeature = adaptiveLayoutInfo.foldingFeature,
+                    modifier = Modifier.fillMaxSize(),
+                    topContent = { _, _ ->
+                        HomeListPane()
+                    },
+                    bottomContent = { _, _ ->
+                        // Details pane shown when transaction is selected on foldable
+                        if (multiPaneCoordinator?.showDetailsPane?.value == true && state.selectedTransaction != null) {
+                            TransactionDetailsPane(state.selectedTransaction!!)
+                        }
+                    },
+                )
+            } else {
+                // Single-pane layout for phones and tablets without fold
+                HomeListPane()
+            }
+        }
     }
 }

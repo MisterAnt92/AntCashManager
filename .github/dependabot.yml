@@ -1,0 +1,67 @@
+version: 2
+
+updates:
+  # Monitor Gradle dependencies (gradle/libs.versions.toml)
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "03:00"
+    pull-request-branch-name:
+      separator: "/"
+    reviewers:
+      - "MisterAnt92"
+    labels:
+      - "dependencies"
+      - "gradle"
+    commit-message:
+      prefix: "chore(deps)"
+      prefix-development: "chore(deps-dev)"
+      include: "scope"
+    # Open PRs for minor and patch updates automatically
+    allow:
+      - dependency-type: "direct"
+      - dependency-type: "indirect"
+    # Group similar dependency updates
+    groups:
+      testing-dependencies:
+        patterns:
+          - "mockk"
+          - "robolectric"
+          - "junit*"
+          - "androidx-test*"
+          - "kotlinx-coroutines-test"
+      firebase-dependencies:
+        patterns:
+          - "firebase*"
+      google-dependencies:
+        patterns:
+          - "google-*"
+      androidx-dependencies:
+        patterns:
+          - "androidx-*"
+      kotlin-dependencies:
+        patterns:
+          - "kotlin*"
+          - "kotlinx*"
+    # Limit update frequency to avoid noise
+    open-pull-requests-limit: 10
+    # Rebase when needed to keep branches up-to-date
+    rebase-strategy: "auto"
+    # Require status checks to pass (must pass build)
+    reviewers:
+      - "MisterAnt92"
+
+  # Monitor GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    pull-request-branch-name:
+      separator: "/"
+    labels:
+      - "ci/cd"
+      - "github-actions"
+    commit-message:
+      prefix: "ci(actions)"

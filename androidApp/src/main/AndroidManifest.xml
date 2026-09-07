@@ -10,6 +10,10 @@
     <uses-permission
         android:name="com.google.android.gms.permission.AD_ID"
         tools:node="remove" />
+    <!-- Remove ad-services permission injected transitively by GMS libraries -->
+    <uses-permission
+        android:name="android.permission.ACCESS_ADSERVICES_AD_ID"
+        tools:node="remove" />
 
     <!-- Storage permissions for Android 8-9 (API 26-28) backup/restore compatibility -->
     <uses-permission
@@ -36,6 +40,7 @@
     <application
         android:name="com.antcashmanager.android.AntCashManagerApp"
         android:allowBackup="true"
+        android:enableOnBackInvokedCallback="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:localeConfig="@xml/locales_config"
@@ -46,10 +51,43 @@
             android:name="com.antcashmanager.android.MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.AntCashManager">
+            android:theme="@style/Theme.AntCashManager.Starting">
+            <!-- App launcher intent filter -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- Deep linking support via HTTPS
+                 Abilita navigazione da notifiche, app shortcuts, dynamic links.
+                 Pattern: https://antcashmanager.com/app/{route}
+                 Esempio: https://antcashmanager.com/app/transactions
+            -->
+            <intent-filter
+                android:autoVerify="true"
+                tools:ignore="AppLinkUrlError">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="antcashmanager.com"
+                    android:pathPrefix="/app/"
+                    android:scheme="https" />
+            </intent-filter>
+
+            <!-- Alternative custom scheme for testing (app-specific link)
+                 Può essere usato per testing senza HTTPS verification.
+                 Pattern: antcashmanager://app/{route}
+                 Nota: Non richiede domain verification.
+            -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="app"
+                    android:pathPrefix="/"
+                    android:scheme="antcashmanager" />
             </intent-filter>
         </activity>
 
@@ -76,6 +114,26 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/category_breakdown_widget_info" />
         </receiver>
+
+        <!-- Trigger Play Services to download the OCR model at install time -->
+        <meta-data
+            android:name="com.google.mlkit.vision.DEPENDENCIES"
+            android:value="ocr" />
+
+        <!-- GDPR: disable Firebase data collection until user consents.
+             AnalyticsManager.applyConsent(true) re-enables at runtime. -->
+        <meta-data
+            android:name="firebase_analytics_collection_enabled"
+            android:value="false" />
+        <meta-data
+            android:name="firebase_crashlytics_collection_enabled"
+            android:value="false" />
+        <meta-data
+            android:name="google_analytics_adid_collection_enabled"
+            android:value="false" />
+        <meta-data
+            android:name="google_analytics_default_allow_ad_personalization_signals"
+            android:value="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

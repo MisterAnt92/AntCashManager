@@ -30,12 +30,12 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 class CategorySelectionStepTest : BaseInstrumentationTest() {
-
-    private val mockCategories = listOf(
-        Category(1, "Food", "🍔", 0xFFFF6B6B, "EXPENSE"),
-        Category(2, "Salary", "💰", 0xFF51CF66, "INCOME"),
-        Category(3, "Entertainment", "🎬", 0xFF339AF0, "EXPENSE"),
-    )
+    private val mockCategories =
+        listOf(
+            Category(1, "Food", "🍔", 0xFFFF6B6B, "EXPENSE"),
+            Category(2, "Salary", "💰", 0xFF51CF66, "INCOME"),
+            Category(3, "Entertainment", "🎬", 0xFF339AF0, "EXPENSE"),
+        )
 
     @Test
     fun categorySelectionStep_shouldDisplayAllCategories() {
@@ -122,8 +122,11 @@ class CategorySelectionStepTest : BaseInstrumentationTest() {
         }
 
         // Clicca il back button usando content description (IconButton non ha testo)
-        val backButtonDescription = InstrumentationRegistry.getInstrumentation().targetContext
-            .getString(R.string.common_back)
+        val backButtonDescription =
+            InstrumentationRegistry
+                .getInstrumentation()
+                .targetContext
+                .getString(R.string.common_back)
         composeTestRule.onNodeWithContentDescription(backButtonDescription).performClick()
         composeTestRule.waitForIdle()
 

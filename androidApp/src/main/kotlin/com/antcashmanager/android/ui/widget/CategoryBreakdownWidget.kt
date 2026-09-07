@@ -47,30 +47,38 @@ import java.util.Locale
 
 private const val MAX_CATEGORIES_PER_SECTION = 4
 
-internal data class CategoryTotal(val category: String, val total: Double, val color: Long)
+internal data class CategoryTotal(
+    val category: String,
+    val total: Double,
+    val color: Long,
+)
 
 class CategoryBreakdownWidget : GlanceAppWidget() {
+    override val sizeMode =
+        SizeMode.Responsive(
+            setOf(
+                DpSize(180.dp, 180.dp),
+                DpSize(250.dp, 180.dp),
+                DpSize(250.dp, 320.dp),
+            ),
+        )
 
-    override val sizeMode = SizeMode.Responsive(
-        setOf(
-            DpSize(180.dp, 180.dp),
-            DpSize(250.dp, 180.dp),
-            DpSize(250.dp, 320.dp),
-        ),
-    )
-
-    override suspend fun provideGlance(context: Context, id: GlanceId) {
+    override suspend fun provideGlance(
+        context: Context,
+        id: GlanceId,
+    ) {
         try {
             val transactionRepository = WidgetDependencies.transactionRepository
             val settingsRepository = WidgetDependencies.settingsRepository
 
-            val calendar = Calendar.getInstance().apply {
-                set(Calendar.DAY_OF_MONTH, 1)
-                set(Calendar.HOUR_OF_DAY, 0)
-                set(Calendar.MINUTE, 0)
-                set(Calendar.SECOND, 0)
-                set(Calendar.MILLISECOND, 0)
-            }
+            val calendar =
+                Calendar.getInstance().apply {
+                    set(Calendar.DAY_OF_MONTH, 1)
+                    set(Calendar.HOUR_OF_DAY, 0)
+                    set(Calendar.MINUTE, 0)
+                    set(Calendar.SECOND, 0)
+                    set(Calendar.MILLISECOND, 0)
+                }
             val from = calendar.timeInMillis
             val to = System.currentTimeMillis()
 
@@ -79,15 +87,17 @@ class CategoryBreakdownWidget : GlanceAppWidget() {
             val palette = loadWidgetPalette(settingsRepository)
             val language = loadLanguage(settingsRepository)
 
-            val localizedContext = if (language != AppLanguage.SYSTEM) {
-                val locale = Locale.forLanguageTag(language.code)
-                val config = Configuration(context.resources.configuration).apply {
-                    setLocale(locale)
+            val localizedContext =
+                if (language != AppLanguage.SYSTEM) {
+                    val locale = Locale.forLanguageTag(language.code)
+                    val config =
+                        Configuration(context.resources.configuration).apply {
+                            setLocale(locale)
+                        }
+                    context.createConfigurationContext(config)
+                } else {
+                    context
                 }
-                context.createConfigurationContext(config)
-            } else {
-                context
-            }
 
             val income =
                 aggregateByCategory(transactions.filter { it.type == TransactionType.INCOME })
@@ -117,25 +127,25 @@ private fun ErrorWidgetContent(context: Context) {
     Column(
         modifier = GlanceModifier.fillMaxSize().padding(16.dp),
         horizontalAlignment = Alignment.Horizontal.CenterHorizontally,
-        verticalAlignment = Alignment.Vertical.CenterVertically
+        verticalAlignment = Alignment.Vertical.CenterVertically,
     ) {
         Text(
             text = context.getString(R.string.error_generic),
-            style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium)
+            style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Medium),
         )
     }
 }
 
 private fun aggregateByCategory(transactions: List<Transaction>): List<CategoryTotal> =
-    transactions.groupBy { it.category }
+    transactions
+        .groupBy { it.category }
         .map { (category, txs) ->
             CategoryTotal(
                 category,
                 txs.sumOf { it.amount },
-                txs.first().categoryColor
+                txs.first().categoryColor,
             )
-        }
-        .sortedByDescending { it.total }
+        }.sortedByDescending { it.total }
         .take(MAX_CATEGORIES_PER_SECTION)
 
 @Composable
@@ -147,20 +157,22 @@ private fun CategoryBreakdownContent(
 ) {
     val context = LocalContext.current
     Column(
-        modifier = GlanceModifier
-            .fillMaxSize()
-            .background(palette.background)
-            .cornerRadius(16.dp)
-            .padding(12.dp)
-            .clickable(actionRunCallback<CategoryBreakdownWidgetTapAction>()),
+        modifier =
+            GlanceModifier
+                .fillMaxSize()
+                .background(palette.background)
+                .cornerRadius(16.dp)
+                .padding(12.dp)
+                .clickable(actionRunCallback<CategoryBreakdownWidgetTapAction>()),
     ) {
         Text(
             text = context.getString(R.string.widget_category_breakdown_title),
-            style = TextStyle(
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                color = ColorProvider(palette.primaryText)
-            ),
+            style =
+                TextStyle(
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = ColorProvider(palette.primaryText),
+                ),
         )
         Spacer(modifier = GlanceModifier.height(8.dp))
 
@@ -204,11 +216,12 @@ private fun CategorySection(
     Column(modifier = GlanceModifier.fillMaxWidth()) {
         Text(
             text = title,
-            style = TextStyle(
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Medium,
-                color = ColorProvider(palette.secondaryText)
-            ),
+            style =
+                TextStyle(
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = ColorProvider(palette.secondaryText),
+                ),
         )
         categories.forEach { categoryTotal ->
             CategoryBar(
@@ -231,7 +244,7 @@ private fun CategoryBar(
     amountLabel: String,
     color: Color,
     fraction: Float,
-    palette: WidgetPalette
+    palette: WidgetPalette,
 ) {
     Column(modifier = GlanceModifier.fillMaxWidth().padding(vertical = 3.dp)) {
         Row(modifier = GlanceModifier.fillMaxWidth()) {
@@ -244,31 +257,34 @@ private fun CategoryBar(
             Text(
                 text = amountLabel,
                 maxLines = 1,
-                style = TextStyle(
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = ColorProvider(palette.primaryText)
-                ),
+                style =
+                    TextStyle(
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = ColorProvider(palette.primaryText),
+                    ),
             )
         }
         Spacer(modifier = GlanceModifier.height(4.dp))
         Box(
-            modifier = GlanceModifier
-                .width(BAR_MAX_WIDTH_DP.dp)
-                .height(4.dp)
-                .background(palette.trackBackground)
-                .cornerRadius(2.dp),
+            modifier =
+                GlanceModifier
+                    .width(BAR_MAX_WIDTH_DP.dp)
+                    .height(4.dp)
+                    .background(palette.trackBackground)
+                    .cornerRadius(2.dp),
         ) {
             val barFraction = fraction.coerceIn(0f, 1f)
             if (barFraction > 0f) {
                 val barWidth =
                     (BAR_MAX_WIDTH_DP * barFraction).toInt().coerceAtLeast(BAR_MIN_WIDTH_DP)
                 Box(
-                    modifier = GlanceModifier
-                        .width(barWidth.dp)
-                        .height(4.dp)
-                        .background(color)
-                        .cornerRadius(2.dp),
+                    modifier =
+                        GlanceModifier
+                            .width(barWidth.dp)
+                            .height(4.dp)
+                            .background(color)
+                            .cornerRadius(2.dp),
                 ) {}
             }
         }

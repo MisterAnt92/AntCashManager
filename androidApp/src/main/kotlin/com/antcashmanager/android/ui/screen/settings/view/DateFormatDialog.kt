@@ -23,12 +23,13 @@ fun DateFormatDialog(
     onFormatSelected: (String) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val formats = listOf(
-        DateFormatType.DD_MM_YYYY.pattern to stringResource(R.string.date_format_ddmmyyyy),
-        DateFormatType.MM_DD_YYYY.pattern to stringResource(R.string.date_format_mmddyyyy),
-        DateFormatType.YYYY_MM_DD.pattern to stringResource(R.string.date_format_yyyymmdd),
-        DateFormatType.DD_MMM_YYYY.pattern to stringResource(R.string.date_format_ddmmmyyyy),
-    )
+    val formats =
+        listOf(
+            DateFormatType.DD_MM_YYYY.pattern to stringResource(R.string.date_format_ddmmyyyy),
+            DateFormatType.MM_DD_YYYY.pattern to stringResource(R.string.date_format_mmddyyyy),
+            DateFormatType.YYYY_MM_DD.pattern to stringResource(R.string.date_format_yyyymmdd),
+            DateFormatType.DD_MMM_YYYY.pattern to stringResource(R.string.date_format_ddmmmyyyy),
+        )
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -38,9 +39,11 @@ fun DateFormatDialog(
             val locale = LocalLocale.current.platformLocale
             Column {
                 formats.forEach { (pattern, label) ->
-                    val exampleDate = kotlin.runCatching {
-                        SimpleDateFormat(pattern, locale).format(Date())
-                    }.getOrElse { pattern }
+                    val exampleDate =
+                        kotlin
+                            .runCatching {
+                                SimpleDateFormat(pattern, locale).format(Date())
+                            }.getOrElse { pattern }
 
                     AppListItem(
                         headlineContent = { AppText(label) },
@@ -48,7 +51,8 @@ fun DateFormatDialog(
                         leadingContent = {
                             AppRadioButton(
                                 selected = pattern == currentFormat,
-                                onClick = { onFormatSelected(pattern) })
+                                onClick = { onFormatSelected(pattern) },
+                            )
                         },
                     )
                 }

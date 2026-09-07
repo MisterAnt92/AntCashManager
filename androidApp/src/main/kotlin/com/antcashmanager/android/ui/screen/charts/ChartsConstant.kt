@@ -32,6 +32,6 @@ object ChartsConstant {
     // Note: PERIOD FILTER is NOT included here - it's always fixed at the top
     const val DEFAULT_CHARTS_CARDS_ORDER =
         "spending_forecast,quick_stats,daily_expense_chart,weekday_distribution," +
-        "income_pie,expense_pie,top_income,top_expense,payment_breakdown," +
-        "monthly_bar,yearly_bar"
+            "income_pie,expense_pie,top_income,top_expense,payment_breakdown," +
+            "monthly_bar,yearly_bar"
 }

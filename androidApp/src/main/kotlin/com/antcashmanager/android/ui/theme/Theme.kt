@@ -18,89 +18,92 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 
-private val LightColorScheme = lightColorScheme(
-    primary = PrimaryLight,
-    onPrimary = OnPrimaryLight,
-    primaryContainer = PrimaryContainerLight,
-    onPrimaryContainer = OnPrimaryContainerLight,
-    secondary = SecondaryLight,
-    onSecondary = OnSecondaryLight,
-    secondaryContainer = SecondaryContainerLight,
-    onSecondaryContainer = OnSecondaryContainerLight,
-    tertiary = TertiaryLight,
-    onTertiary = OnTertiaryLight,
-    tertiaryContainer = TertiaryContainerLight,
-    onTertiaryContainer = OnTertiaryContainerLight,
-    error = ErrorLight,
-    onError = OnErrorLight,
-    errorContainer = ErrorContainerLight,
-    onErrorContainer = OnErrorContainerLight,
-    background = BackgroundLight,
-    onBackground = OnBackgroundLight,
-    surface = SurfaceLight,
-    onSurface = OnSurfaceLight,
-    surfaceVariant = SurfaceVariantLight,
-    onSurfaceVariant = OnSurfaceVariantLight,
-    outline = OutlineLight,
-    outlineVariant = OutlineVariantLight,
-    scrim = ScrimLight,
-    inverseSurface = InverseSurfaceLight,
-    inverseOnSurface = InverseOnSurfaceLight,
-    inversePrimary = InversePrimaryLight,
-    surfaceDim = SurfaceDimLight,
-    surfaceBright = SurfaceBrightLight,
-    surfaceContainerLowest = SurfaceContainerLowestLight,
-    surfaceContainerLow = SurfaceContainerLowLight,
-    surfaceContainer = SurfaceContainerLight,
-    surfaceContainerHigh = SurfaceContainerHighLight,
-    surfaceContainerHighest = SurfaceContainerHighestLight,
-)
+private val LightColorScheme =
+    lightColorScheme(
+        primary = PrimaryLight,
+        onPrimary = OnPrimaryLight,
+        primaryContainer = PrimaryContainerLight,
+        onPrimaryContainer = OnPrimaryContainerLight,
+        secondary = SecondaryLight,
+        onSecondary = OnSecondaryLight,
+        secondaryContainer = SecondaryContainerLight,
+        onSecondaryContainer = OnSecondaryContainerLight,
+        tertiary = TertiaryLight,
+        onTertiary = OnTertiaryLight,
+        tertiaryContainer = TertiaryContainerLight,
+        onTertiaryContainer = OnTertiaryContainerLight,
+        error = ErrorLight,
+        onError = OnErrorLight,
+        errorContainer = ErrorContainerLight,
+        onErrorContainer = OnErrorContainerLight,
+        background = BackgroundLight,
+        onBackground = OnBackgroundLight,
+        surface = SurfaceLight,
+        onSurface = OnSurfaceLight,
+        surfaceVariant = SurfaceVariantLight,
+        onSurfaceVariant = OnSurfaceVariantLight,
+        outline = OutlineLight,
+        outlineVariant = OutlineVariantLight,
+        scrim = ScrimLight,
+        inverseSurface = InverseSurfaceLight,
+        inverseOnSurface = InverseOnSurfaceLight,
+        inversePrimary = InversePrimaryLight,
+        surfaceDim = SurfaceDimLight,
+        surfaceBright = SurfaceBrightLight,
+        surfaceContainerLowest = SurfaceContainerLowestLight,
+        surfaceContainerLow = SurfaceContainerLowLight,
+        surfaceContainer = SurfaceContainerLight,
+        surfaceContainerHigh = SurfaceContainerHighLight,
+        surfaceContainerHighest = SurfaceContainerHighestLight,
+    )
 
-private val DarkColorScheme = darkColorScheme(
-    primary = PrimaryDark,
-    onPrimary = OnPrimaryDark,
-    primaryContainer = PrimaryContainerDark,
-    onPrimaryContainer = OnPrimaryContainerDark,
-    secondary = SecondaryDark,
-    onSecondary = OnSecondaryDark,
-    secondaryContainer = SecondaryContainerDark,
-    onSecondaryContainer = OnSecondaryContainerDark,
-    tertiary = TertiaryDark,
-    onTertiary = OnTertiaryDark,
-    tertiaryContainer = TertiaryContainerDark,
-    onTertiaryContainer = OnTertiaryContainerDark,
-    error = ErrorDark,
-    onError = OnErrorDark,
-    errorContainer = ErrorContainerDark,
-    onErrorContainer = OnErrorContainerDark,
-    background = BackgroundDark,
-    onBackground = OnBackgroundDark,
-    surface = SurfaceDark,
-    onSurface = OnSurfaceDark,
-    surfaceVariant = SurfaceVariantDark,
-    onSurfaceVariant = OnSurfaceVariantDark,
-    outline = OutlineDark,
-    outlineVariant = OutlineVariantDark,
-    scrim = ScrimDark,
-    inverseSurface = InverseSurfaceDark,
-    inverseOnSurface = InverseOnSurfaceDark,
-    inversePrimary = InversePrimaryDark,
-    surfaceDim = SurfaceDimDark,
-    surfaceBright = SurfaceBrightDark,
-    surfaceContainerLowest = SurfaceContainerLowestDark,
-    surfaceContainerLow = SurfaceContainerLowDark,
-    surfaceContainer = SurfaceContainerDark,
-    surfaceContainerHigh = SurfaceContainerHighDark,
-    surfaceContainerHighest = SurfaceContainerHighestDark,
-)
+private val DarkColorScheme =
+    darkColorScheme(
+        primary = PrimaryDark,
+        onPrimary = OnPrimaryDark,
+        primaryContainer = PrimaryContainerDark,
+        onPrimaryContainer = OnPrimaryContainerDark,
+        secondary = SecondaryDark,
+        onSecondary = OnSecondaryDark,
+        secondaryContainer = SecondaryContainerDark,
+        onSecondaryContainer = OnSecondaryContainerDark,
+        tertiary = TertiaryDark,
+        onTertiary = OnTertiaryDark,
+        tertiaryContainer = TertiaryContainerDark,
+        onTertiaryContainer = OnTertiaryContainerDark,
+        error = ErrorDark,
+        onError = OnErrorDark,
+        errorContainer = ErrorContainerDark,
+        onErrorContainer = OnErrorContainerDark,
+        background = BackgroundDark,
+        onBackground = OnBackgroundDark,
+        surface = SurfaceDark,
+        onSurface = OnSurfaceDark,
+        surfaceVariant = SurfaceVariantDark,
+        onSurfaceVariant = OnSurfaceVariantDark,
+        outline = OutlineDark,
+        outlineVariant = OutlineVariantDark,
+        scrim = ScrimDark,
+        inverseSurface = InverseSurfaceDark,
+        inverseOnSurface = InverseOnSurfaceDark,
+        inversePrimary = InversePrimaryDark,
+        surfaceDim = SurfaceDimDark,
+        surfaceBright = SurfaceBrightDark,
+        surfaceContainerLowest = SurfaceContainerLowestDark,
+        surfaceContainerLow = SurfaceContainerLowDark,
+        surfaceContainer = SurfaceContainerDark,
+        surfaceContainerHigh = SurfaceContainerHighDark,
+        surfaceContainerHighest = SurfaceContainerHighestDark,
+    )
 
-private val AppShapes = Shapes(
-    extraSmall = RoundedCornerShape(4.dp),
-    small = RoundedCornerShape(8.dp),
-    medium = RoundedCornerShape(12.dp),
-    large = RoundedCornerShape(16.dp),
-    extraLarge = RoundedCornerShape(28.dp),
-)
+private val AppShapes =
+    Shapes(
+        extraSmall = RoundedCornerShape(4.dp),
+        small = RoundedCornerShape(8.dp),
+        medium = RoundedCornerShape(12.dp),
+        large = RoundedCornerShape(16.dp),
+        extraLarge = RoundedCornerShape(28.dp),
+    )
 
 @Composable
 fun AntCashManagerTheme(
@@ -111,46 +114,48 @@ fun AntCashManagerTheme(
     reduceMotion: Boolean = false,
     content: @Composable () -> Unit,
 ) {
-    val baseColorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
+    val baseColorScheme =
+        when {
+            dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+                val context = LocalContext.current
+                if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            }
 
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
+            darkTheme -> DarkColorScheme
+            else -> LightColorScheme
+        }
 
     // Apply high-contrast overrides when enabled
-    val colorScheme = if (highContrast) {
-        if (darkTheme) {
-            baseColorScheme.copy(
-                primary = HighContrastPrimaryDark,
-                onPrimary = HighContrastOnPrimaryDark,
-                primaryContainer = HighContrastPrimaryContainerDark,
-                onPrimaryContainer = HighContrastOnPrimaryContainerDark,
-                background = HighContrastBackgroundDark,
-                onBackground = HighContrastOnBackgroundDark,
-                surface = HighContrastSurfaceDark,
-                onSurface = HighContrastOnSurfaceDark,
-                outline = HighContrastOutlineDark,
-            )
+    val colorScheme =
+        if (highContrast) {
+            if (darkTheme) {
+                baseColorScheme.copy(
+                    primary = HighContrastPrimaryDark,
+                    onPrimary = HighContrastOnPrimaryDark,
+                    primaryContainer = HighContrastPrimaryContainerDark,
+                    onPrimaryContainer = HighContrastOnPrimaryContainerDark,
+                    background = HighContrastBackgroundDark,
+                    onBackground = HighContrastOnBackgroundDark,
+                    surface = HighContrastSurfaceDark,
+                    onSurface = HighContrastOnSurfaceDark,
+                    outline = HighContrastOutlineDark,
+                )
+            } else {
+                baseColorScheme.copy(
+                    primary = HighContrastPrimaryLight,
+                    onPrimary = HighContrastOnPrimaryLight,
+                    primaryContainer = HighContrastPrimaryContainerLight,
+                    onPrimaryContainer = HighContrastOnPrimaryContainerLight,
+                    background = HighContrastBackgroundLight,
+                    onBackground = HighContrastOnBackgroundLight,
+                    surface = HighContrastSurfaceLight,
+                    onSurface = HighContrastOnSurfaceLight,
+                    outline = HighContrastOutlineLight,
+                )
+            }
         } else {
-            baseColorScheme.copy(
-                primary = HighContrastPrimaryLight,
-                onPrimary = HighContrastOnPrimaryLight,
-                primaryContainer = HighContrastPrimaryContainerLight,
-                onPrimaryContainer = HighContrastOnPrimaryContainerLight,
-                background = HighContrastBackgroundLight,
-                onBackground = HighContrastOnBackgroundLight,
-                surface = HighContrastSurfaceLight,
-                onSurface = HighContrastOnSurfaceLight,
-                outline = HighContrastOutlineLight,
-            )
+            baseColorScheme
         }
-    } else {
-        baseColorScheme
-    }
 
     val typography = if (largeText) scaledTypography() else AppTypography
     val responsiveTypography = rememberResponsiveTypography()

@@ -14,8 +14,5 @@ public class UpdateTransactionUseCase(
     private val transactionRepository: TransactionRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : UseCase<Transaction, Unit>(dispatcher) {
-
-    override suspend fun execute(params: Transaction): Unit =
-        transactionRepository.updateTransaction(params)
+    override suspend fun execute(params: Transaction): Unit = transactionRepository.updateTransaction(params)
 }
-

@@ -25,32 +25,36 @@ fun TextLink(
     text: String,
     onClick: () -> Unit,
 ) {
-    val linkStyles = TextLinkStyles(
-        style = SpanStyle(
-            color = Color.Blue,
-            fontSize = 14.sp,
-            textDecoration = TextDecoration.Underline,
-        ),
-    )
-    val annotatedString = buildAnnotatedString {
-        withLink(
-            LinkAnnotation.Clickable(
-                tag = "URL",
-                styles = linkStyles,
-                linkInteractionListener = { onClick() },
-            ),
-        ) {
-            append(text)
+    val linkStyles =
+        TextLinkStyles(
+            style =
+                SpanStyle(
+                    color = Color.Blue,
+                    fontSize = 14.sp,
+                    textDecoration = TextDecoration.Underline,
+                ),
+        )
+    val annotatedString =
+        buildAnnotatedString {
+            withLink(
+                LinkAnnotation.Clickable(
+                    tag = "URL",
+                    styles = linkStyles,
+                    linkInteractionListener = { onClick() },
+                ),
+            ) {
+                append(text)
+            }
         }
-    }
 
     AppText(
         text = annotatedString,
         maxLines = 1,
-        modifier = modifier.padding(
-            horizontal = 12.dp,
-            vertical = 8.dp,
-        ),
+        modifier =
+            modifier.padding(
+                horizontal = 12.dp,
+                vertical = 8.dp,
+            ),
         style = TextStyle(fontSize = 16.sp),
     )
 }

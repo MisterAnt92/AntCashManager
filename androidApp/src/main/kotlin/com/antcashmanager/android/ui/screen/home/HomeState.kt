@@ -22,21 +22,30 @@ data class HomeState(
     val searchQuery: String = "",
     val isSearchExpanded: Boolean = false,
     val searchSuggestions: List<String> = emptyList(),
+    // Settings (remove direct repo injection from HomeScreen)
+    val homeTopCardsOrder: List<String> = emptyList(),
+    val dateFilterExpanded: Boolean = false,
+    val showPaymentTypeBreakdown: Boolean = false,
+    val showQuickInsightsCard: Boolean = true,
+    val reduceMotion: Boolean = false,
+    val transactionDisplayType: String = "TREND",
+    val isTutorialCompleted: Boolean = false,
 ) {
     companion object {
         val PRESETS = HomeConstant.PRESETS
 
-        fun getDateFromForPreset(index: Int): Long = when (index) {
-            0 -> System.currentTimeMillis() - HomeConstant.ONE_DAY_MS
-            1 -> System.currentTimeMillis() - HomeConstant.ONE_WEEK_MS
-            2 -> System.currentTimeMillis() - HomeConstant.THIRTY_DAYS_MS
-            3 -> System.currentTimeMillis() - HomeConstant.ONE_YEAR_MS
-            4 -> System.currentTimeMillis() - HomeConstant.TWO_YEARS_MS
-            5 -> System.currentTimeMillis() - HomeConstant.THREE_YEARS_MS
-            6 -> System.currentTimeMillis() - HomeConstant.FIVE_YEARS_MS
-            7 -> System.currentTimeMillis() - HomeConstant.SIX_YEARS_MS
-            8 -> System.currentTimeMillis() - HomeConstant.ALL_TIME_MS
-            else -> System.currentTimeMillis() - HomeConstant.ONE_WEEK_MS
-        }
+        fun getDateFromForPreset(index: Int): Long =
+            when (index) {
+                0 -> System.currentTimeMillis() - HomeConstant.ONE_DAY_MS
+                1 -> System.currentTimeMillis() - HomeConstant.ONE_WEEK_MS
+                2 -> System.currentTimeMillis() - HomeConstant.THIRTY_DAYS_MS
+                3 -> System.currentTimeMillis() - HomeConstant.ONE_YEAR_MS
+                4 -> System.currentTimeMillis() - HomeConstant.TWO_YEARS_MS
+                5 -> System.currentTimeMillis() - HomeConstant.THREE_YEARS_MS
+                6 -> System.currentTimeMillis() - HomeConstant.FIVE_YEARS_MS
+                7 -> System.currentTimeMillis() - HomeConstant.SIX_YEARS_MS
+                8 -> System.currentTimeMillis() - HomeConstant.ALL_TIME_MS
+                else -> System.currentTimeMillis() - HomeConstant.ONE_WEEK_MS
+            }
     }
 }

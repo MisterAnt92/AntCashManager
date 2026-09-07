@@ -31,8 +31,6 @@ import org.junit.Test
  */
 
 class ChartCardsTest : BaseComposeUnitTest() {
-
-
     // ============== QuickStatsCard Tests ==============
 
     @Test
@@ -123,13 +121,15 @@ class ChartCardsTest : BaseComposeUnitTest() {
 
     @Test
     fun quickStatsCard_handlesLargeNumbersWithoutTruncation() {
-        val largeChartData = ChartData(
-            dailyTimeline = listOf(
-                DailyAmount("Day 1", 5000.50),
-                DailyAmount("Day 2", 3500.75),
-                DailyAmount("Day 3", 7200.00),
+        val largeChartData =
+            ChartData(
+                dailyTimeline =
+                    listOf(
+                        DailyAmount("Day 1", 5000.50),
+                        DailyAmount("Day 2", 3500.75),
+                        DailyAmount("Day 3", 7200.00),
+                    ),
             )
-        )
 
         composeTestRule.setContent {
             AntCashManagerTheme {
@@ -213,14 +213,16 @@ class ChartCardsTest : BaseComposeUnitTest() {
 
     @Test
     fun weekdayExpenseCard_handlesDaysWithoutExpenses() {
-        val chartData = ChartData(
-            expenseByWeekday = mapOf(
-                1 to 100.0,  // Monday
-                2 to 0.0,    // Tuesday (no expense)
-                3 to 250.50, // Wednesday
-                // Thursday-Sunday have no entries
+        val chartData =
+            ChartData(
+                expenseByWeekday =
+                    mapOf(
+                        1 to 100.0, // Monday
+                        2 to 0.0, // Tuesday (no expense)
+                        3 to 250.50, // Wednesday
+                        // Thursday-Sunday have no entries
+                    ),
             )
-        )
 
         composeTestRule.setContent {
             AntCashManagerTheme {
@@ -237,17 +239,19 @@ class ChartCardsTest : BaseComposeUnitTest() {
 
     @Test
     fun weekdayExpenseCard_handlesLargeCurrencyAmounts() {
-        val chartData = ChartData(
-            expenseByWeekday = mapOf(
-                1 to 5000.50,
-                2 to 3500.75,
-                3 to 7200.00,
-                4 to 2150.25,
-                5 to 4800.10,
-                6 to 1200.00,
-                7 to 3300.00,
+        val chartData =
+            ChartData(
+                expenseByWeekday =
+                    mapOf(
+                        1 to 5000.50,
+                        2 to 3500.75,
+                        3 to 7200.00,
+                        4 to 2150.25,
+                        5 to 4800.10,
+                        6 to 1200.00,
+                        7 to 3300.00,
+                    ),
             )
-        )
 
         composeTestRule.setContent {
             AntCashManagerTheme {
@@ -266,29 +270,29 @@ class ChartCardsTest : BaseComposeUnitTest() {
 
     // ============== Helper Functions ==============
 
-    private fun createSampleChartData(): ChartData {
-        return ChartData(
-            dailyTimeline = listOf(
-                DailyAmount("Day 1", 50.0),
-                DailyAmount("Day 2", 75.50),
-                DailyAmount("Day 3", 60.0),
-                DailyAmount("Day 4", 85.25),
-                DailyAmount("Day 5", 55.0),
-            )
+    private fun createSampleChartData(): ChartData =
+        ChartData(
+            dailyTimeline =
+                listOf(
+                    DailyAmount("Day 1", 50.0),
+                    DailyAmount("Day 2", 75.50),
+                    DailyAmount("Day 3", 60.0),
+                    DailyAmount("Day 4", 85.25),
+                    DailyAmount("Day 5", 55.0),
+                ),
         )
-    }
 
-    private fun createSampleChartDataWithWeekday(): ChartData {
-        return ChartData(
-            expenseByWeekday = mapOf(
-                1 to 150.0,  // Monday
-                2 to 200.50, // Tuesday
-                3 to 120.0,  // Wednesday
-                4 to 180.75, // Thursday
-                5 to 250.0,  // Friday
-                6 to 100.0,  // Saturday
-                7 to 175.25, // Sunday
-            )
+    private fun createSampleChartDataWithWeekday(): ChartData =
+        ChartData(
+            expenseByWeekday =
+                mapOf(
+                    1 to 150.0, // Monday
+                    2 to 200.50, // Tuesday
+                    3 to 120.0, // Wednesday
+                    4 to 180.75, // Thursday
+                    5 to 250.0, // Friday
+                    6 to 100.0, // Saturday
+                    7 to 175.25, // Sunday
+                ),
         )
-    }
 }

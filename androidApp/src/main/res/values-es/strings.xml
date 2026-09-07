@@ -1,6 +1,14 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
     <string name="help_dashboard_desc">Visualiza el saldo total, ingresos y gastos para el período seleccionado.</string>
+
+    <!-- HelpDialog (Transactions) -->
+    <string name="transactions_help_filter_title">Filtrar transacciones</string>
+    <string name="transactions_help_filter_desc">Usa filtros para encontrar transacciones específicas per tipo, categoría o método de pago.</string>
+    <string name="transactions_help_search_title">Buscar</string>
+    <string name="transactions_help_search_desc">Busca transacciones por nombre o importe usando la barra de búsqueda.</string>
+    <string name="transactions_help_display_title">Opciones de visualización</string>
+    <string name="transactions_help_display_desc">Cambia cómo se muestran las transacciones en la lista desde el menú de ajustes.</string>
     <string name="home_total_balance">Saldo Total</string>
     <string name="home_income">Ingresos</string>
     <string name="home_expenses">Gastos</string>
@@ -528,6 +536,16 @@
     <string name="chart_last_14_days">Últimos 14 días</string>
     <string name="chart_average">Promedio</string>
      <string name="chart_weekday_distribution_title">Distribución por Día</string>
+
+     <!-- Weekday names (1=Monday, 7=Sunday - EU convention) -->
+     <string name="weekday_1">Lun</string>
+     <string name="weekday_2">Mar</string>
+     <string name="weekday_3">Mié</string>
+     <string name="weekday_4">Jue</string>
+     <string name="weekday_5">Vie</string>
+     <string name="weekday_6">Sáb</string>
+     <string name="weekday_7">Dom</string>
+
      <string name="error_generic">Ocurrió un error</string>
 
      <!-- Charts Customization -->
@@ -554,4 +572,14 @@
     <string name="settings_default_payment_type_desc">Elige el método de pago predeterminado para nuevas transacciones</string>
     <string name="dialog_payment_type_title">Seleccionar método de pago</string>
 
+
+
+    <!-- Analytics Consent Dialog (GDPR) -->
+    <string name="consent_title">Ayúdanos a mejorar</string>
+    <string name="consent_body">Recopilamos estadísticas de uso anónimas (pantallas visitadas, errores) para mejorar la aplicación. No se envían datos financieros. Puedes cambiarlo en Configuración en cualquier momento.</string>
+    <string name="consent_accept">Aceptar</string>
+    <string name="consent_decline">Rechazar</string>
+    <!-- Settings: Analytics consent toggle -->
+    <string name="settings_analytics_consent_title">Compartir estadísticas de uso anónimas</string>
+    <string name="settings_analytics_consent_desc">Solo pantallas visitadas y errores. No se envían datos financieros.</string>
 </resources>

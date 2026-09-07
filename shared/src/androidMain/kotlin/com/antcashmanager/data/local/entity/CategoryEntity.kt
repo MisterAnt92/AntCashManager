@@ -8,9 +8,9 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = "categories",
     indices = [
-        Index("type"),  // WHERE type = :type in getCategoriesByType
-        Index("name")   // Potential unique constraint
-    ]
+        Index("type"), // WHERE type = :type in getCategoriesByType
+        Index("name"), // Potential unique constraint
+    ],
 )
 public data class CategoryEntity(
     @PrimaryKey(autoGenerate = true)

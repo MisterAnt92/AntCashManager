@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -30,9 +29,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.antcashmanager.android.ui.components.layout.SpacingSize
-import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
+import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
@@ -77,19 +75,21 @@ fun AppCard(
 
     Card(
         modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-            disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = 0.6f),
-        ),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = 0.6f),
+            ),
         shape = MaterialTheme.shapes.medium,
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
         enabled = enabled,
         onClick = onClick ?: {},
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(contentPadding),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(contentPadding),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -102,10 +102,11 @@ fun AppCard(
                 ) {
                     if (leadingIcon != null) {
                         Box(
-                            modifier = Modifier
-                                .size(iconContainerSize)
-                                .clip(CircleShape)
-                                .background(iconBackgroundColor),
+                            modifier =
+                                Modifier
+                                    .size(iconContainerSize)
+                                    .clip(CircleShape)
+                                    .background(iconBackgroundColor),
                             contentAlignment = Alignment.Center,
                         ) {
                             Icon(
@@ -121,11 +122,12 @@ fun AppCard(
                         AppText(
                             text = title,
                             style = MaterialTheme.typography.titleMedium,
-                            color = if (enabled) {
-                                MaterialTheme.colorScheme.onSurface
-                            } else {
-                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                            },
+                            color =
+                                if (enabled) {
+                                    MaterialTheme.colorScheme.onSurface
+                                } else {
+                                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                                },
                             maxLines = titleMaxLines,
                             overflow = TextOverflow.Ellipsis,
                         )
@@ -133,11 +135,12 @@ fun AppCard(
                             AppText(
                                 text = subtitle,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = if (enabled) {
-                                    MaterialTheme.colorScheme.onSurfaceVariant
-                                } else {
-                                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
-                                },
+                                color =
+                                    if (enabled) {
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                                    },
                                 maxLines = subtitleMaxLines,
                                 overflow = TextOverflow.Ellipsis,
                             )
@@ -192,7 +195,7 @@ private fun AppCardBasicPreview() {
     AntCashManagerTheme(dynamicColor = false) {
         Column(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             AppCard(
                 title = "Theme",
@@ -210,7 +213,7 @@ private fun AppCardWithSwitchPreview() {
     AntCashManagerTheme(dynamicColor = false) {
         Column(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             AppCard(
                 title = "Auto Backup",
@@ -231,7 +234,7 @@ private fun AppCardDestructivePreview() {
     AntCashManagerTheme(dynamicColor = false) {
         Column(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             AppCard(
                 title = "Delete All Data",
@@ -256,7 +259,7 @@ private fun AppCardDarkPreview() {
     AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
         Column(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             AppCardSectionHeader(title = "Appearance")
             AppCard(
@@ -275,7 +278,7 @@ private fun AppCardLongTextPreview() {
     AntCashManagerTheme(dynamicColor = false) {
         Column(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             AppCard(
                 title = "This is a very long title that spans multiple lines to test wrapping behavior",
@@ -293,7 +296,7 @@ private fun AppCardAccessibilityPreview() {
     AntCashManagerTheme(dynamicColor = false) {
         Column(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             AppCard(
                 title = "Theme Settings",

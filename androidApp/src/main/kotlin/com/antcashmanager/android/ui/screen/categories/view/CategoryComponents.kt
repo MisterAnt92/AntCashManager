@@ -11,23 +11,24 @@ import com.antcashmanager.android.ui.components.dialog.HelpDialogFeatureSpec
 
 @Composable
 internal fun HelpDialog(onDismiss: () -> Unit) {
-    val helpFeatures = listOf(
-        HelpDialogFeatureSpec(
-            titleResId = R.string.help_categories_feature_management_title,
-            descriptionResId = R.string.help_categories_feature_management_desc,
-            icon = Icons.Default.Add,
-        ),
-        HelpDialogFeatureSpec(
-            titleResId = R.string.help_categories_feature_income_expense_title,
-            descriptionResId = R.string.help_categories_feature_income_expense_desc,
-            icon = Icons.AutoMirrored.Filled.List,
-        ),
-        HelpDialogFeatureSpec(
-            titleResId = R.string.help_categories_feature_delete_title,
-            descriptionResId = R.string.help_categories_feature_delete_desc,
-            icon = Icons.Default.Delete,
-        ),
-    )
+    val helpFeatures =
+        listOf(
+            HelpDialogFeatureSpec(
+                titleResId = R.string.help_categories_feature_management_title,
+                descriptionResId = R.string.help_categories_feature_management_desc,
+                icon = Icons.Default.Add,
+            ),
+            HelpDialogFeatureSpec(
+                titleResId = R.string.help_categories_feature_income_expense_title,
+                descriptionResId = R.string.help_categories_feature_income_expense_desc,
+                icon = Icons.AutoMirrored.Filled.List,
+            ),
+            HelpDialogFeatureSpec(
+                titleResId = R.string.help_categories_feature_delete_title,
+                descriptionResId = R.string.help_categories_feature_delete_desc,
+                icon = Icons.Default.Delete,
+            ),
+        )
 
     AppHelpDialog(
         titleResId = R.string.help_categories_title,

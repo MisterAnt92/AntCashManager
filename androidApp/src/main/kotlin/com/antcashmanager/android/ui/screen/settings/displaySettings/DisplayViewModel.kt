@@ -3,9 +3,8 @@ package com.antcashmanager.android.ui.screen.settings.displaySettings
 import android.os.Bundle
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.analytics.AnalyticsManager
-import com.antcashmanager.android.analytics.EngagementTracker
+import com.antcashmanager.android.analytics.tracker.EngagementTracker
 import com.antcashmanager.android.ui.base.BaseViewModel
-import com.antcashmanager.domain.model.None
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.service.NoOpWidgetUpdateNotifier
@@ -15,7 +14,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-
 
 /**
  * ViewModel per la gestione delle preferenze di visualizzazione.
@@ -27,221 +25,277 @@ class DisplayViewModel(
     private val widgetUpdateNotifier: WidgetUpdateNotifier = NoOpWidgetUpdateNotifier,
     private val analyticsManager: AnalyticsManager,
     private val engagementTracker: EngagementTracker,
-) : BaseViewModel<None>() {
-
+) : BaseViewModel<DisplayEvent>() {
     private var settingsModifiedCount = 0
 
     // Espone il simbolo valuta attuale
-    val currencySymbol = settingsRepository.getCurrencySymbol()
-        .map(::sanitizeCurrencySymbol)
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
-            DisplayConstant.DEFAULT_CURRENCY_SYMBOL,
-        )
+    val currencySymbol =
+        settingsRepository
+            .getCurrencySymbol()
+            .map(::sanitizeCurrencySymbol)
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+                DisplayConstant.DEFAULT_CURRENCY_SYMBOL,
+            )
 
     // Espone il numero di cifre decimali
-    val decimalDigits = settingsRepository.getDecimalDigits()
-        .map(::sanitizeDecimalDigits)
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
-            DisplayConstant.DEFAULT_DECIMAL_DIGITS,
-        )
+    val decimalDigits =
+        settingsRepository
+            .getDecimalDigits()
+            .map(::sanitizeDecimalDigits)
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+                DisplayConstant.DEFAULT_DECIMAL_DIGITS,
+            )
 
     // Espone il separatore decimale
-    val decimalSeparator = settingsRepository.getDecimalSeparator()
-        .map(::sanitizeDecimalSeparator)
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
-            DisplayConstant.DEFAULT_DECIMAL_SEPARATOR,
-        )
+    val decimalSeparator =
+        settingsRepository
+            .getDecimalSeparator()
+            .map(::sanitizeDecimalSeparator)
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+                DisplayConstant.DEFAULT_DECIMAL_SEPARATOR,
+            )
 
     // Espone il separatore delle migliaia
-    val thousandsSeparator = combine(
-        settingsRepository.getThousandsSeparator(),
-        settingsRepository.getDecimalSeparator().map(::sanitizeDecimalSeparator),
-    ) { thousands, decimal ->
-        sanitizeThousandsSeparator(thousands, decimal)
-    }
-        .stateIn(
+    val thousandsSeparator =
+        combine(
+            settingsRepository.getThousandsSeparator(),
+            settingsRepository.getDecimalSeparator().map(::sanitizeDecimalSeparator),
+        ) { thousands, decimal ->
+            sanitizeThousandsSeparator(thousands, decimal)
+        }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
             DisplayConstant.DEFAULT_THOUSANDS_SEPARATOR,
         )
 
-
     // Espone il valore del buono pasto
-    val mealVoucherValue = settingsRepository.getMealVoucherValue()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
-            DisplayConstant.DEFAULT_MEAL_VOUCHER_VALUE,
-        )
+    val mealVoucherValue =
+        settingsRepository
+            .getMealVoucherValue()
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+                DisplayConstant.DEFAULT_MEAL_VOUCHER_VALUE,
+            )
 
     // Espone la preferenza per mostrare la sezione grafici
-    val showChartsSection = settingsRepository.getShowCharts()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
-            DisplayConstant.DEFAULT_SHOW_CHARTS_SECTION,
-        )
+    val showChartsSection =
+        settingsRepository
+            .getShowCharts()
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+                DisplayConstant.DEFAULT_SHOW_CHARTS_SECTION,
+            )
 
     // Espone la preferenza per lo zoom nei grafici
-    val chartsZoomEnabled = settingsRepository.getChartsZoomEnabled()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
-            DisplayConstant.DEFAULT_SHOW_CHARTS_ZOOM,
-        )
+    val chartsZoomEnabled =
+        settingsRepository
+            .getChartsZoomEnabled()
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+                DisplayConstant.DEFAULT_SHOW_CHARTS_ZOOM,
+            )
 
     // Espone il formato data
-    val dateFormat = settingsRepository.getDateFormat()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
-            DisplayConstant.DEFAULT_DATE_FORMAT,
-        )
+    val dateFormat =
+        settingsRepository
+            .getDateFormat()
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+                DisplayConstant.DEFAULT_DATE_FORMAT,
+            )
 
     // Espone la preferenza per mostrare le note delle transazioni
-    val showTransactionNotes = settingsRepository.getShowTransactionNotes()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
-            DisplayConstant.DEFAULT_SHOW_TRANSACTION_NOTES,
-        )
+    val showTransactionNotes =
+        settingsRepository
+            .getShowTransactionNotes()
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+                DisplayConstant.DEFAULT_SHOW_TRANSACTION_NOTES,
+            )
 
     // Espone la preferenza per mascherare gli importi con asterischi
-    val maskAmounts = settingsRepository.getMaskAmounts()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
-            DisplayConstant.DEFAULT_MASK_AMOUNTS,
-        )
+    val maskAmounts =
+        settingsRepository
+            .getMaskAmounts()
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+                DisplayConstant.DEFAULT_MASK_AMOUNTS,
+            )
 
     // Espone la preferenza per mostrare il breakdown dei pagamenti
-    val showPaymentTypeBreakdown = settingsRepository.getShowPaymentTypeBreakdown()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
-            DisplayConstant.DEFAULT_SHOW_PAYMENT_BREAKDOWN,
-        )
+    val showPaymentTypeBreakdown =
+        settingsRepository
+            .getShowPaymentTypeBreakdown()
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+                DisplayConstant.DEFAULT_SHOW_PAYMENT_BREAKDOWN,
+            )
 
     // Espone la preferenza per mostrare la card Insight rapidi
-    val showQuickInsightsCard = settingsRepository.getShowQuickInsightsCard()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
-            DisplayConstant.DEFAULT_SHOW_QUICK_INSIGHTS_CARD,
-        )
+    val showQuickInsightsCard =
+        settingsRepository
+            .getShowQuickInsightsCard()
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+                DisplayConstant.DEFAULT_SHOW_QUICK_INSIGHTS_CARD,
+            )
 
     // Espone il tipo di pagamento predefinito
-    val defaultPaymentType = settingsRepository.getDefaultPaymentType()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
-            DisplayConstant.DEFAULT_PAYMENT_TYPE,
-        )
+    val defaultPaymentType =
+        settingsRepository
+            .getDefaultPaymentType()
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+                DisplayConstant.DEFAULT_PAYMENT_TYPE,
+            )
 
     // Espone il tipo di visualizzazione delle transazioni (Home)
-    val transactionDisplayType = settingsRepository.getTransactionDisplayType()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
-            DisplayConstant.DEFAULT_TRANSACTION_DISPLAY_TYPE,
-        )
-
-    // Espone il tipo di visualizzazione delle transazioni (Transazioni)
-    val transactionsTransactionDisplayType =
-        settingsRepository.getTransactionsTransactionDisplayType()
+    val transactionDisplayType =
+        settingsRepository
+            .getTransactionDisplayType()
             .stateIn(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
                 DisplayConstant.DEFAULT_TRANSACTION_DISPLAY_TYPE,
             )
 
-    val showInitialAnimation = settingsRepository.getShowInitialAnimation()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
-            true,
-        )
+    // Espone il tipo di visualizzazione delle transazioni (Transazioni)
+    val transactionsTransactionDisplayType =
+        settingsRepository
+            .getTransactionsTransactionDisplayType()
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+                DisplayConstant.DEFAULT_TRANSACTION_DISPLAY_TYPE,
+            )
 
     // Espone il colore di sfondo dei widget della home screen
-    val widgetBackgroundColor = settingsRepository.getWidgetBackgroundColor()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
-            DisplayConstant.DEFAULT_WIDGET_BACKGROUND_COLOR,
-        )
+    val widgetBackgroundColor =
+        settingsRepository
+            .getWidgetBackgroundColor()
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+                DisplayConstant.DEFAULT_WIDGET_BACKGROUND_COLOR,
+            )
 
     // Espone l'opacità dei widget della home screen (0-100)
-    val widgetOpacity = settingsRepository.getWidgetOpacity()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
-            DisplayConstant.DEFAULT_WIDGET_OPACITY,
-        )
+    val widgetOpacity =
+        settingsRepository
+            .getWidgetOpacity()
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+                DisplayConstant.DEFAULT_WIDGET_OPACITY,
+            )
+
+    override fun onEvent(event: DisplayEvent) {
+        logDebug("Event: $event")
+        when (event) {
+            is DisplayEvent.SetCurrencySymbol -> setCurrencySymbol(event.symbol)
+            is DisplayEvent.SetDecimalDigits -> setDecimalDigits(event.digits)
+            is DisplayEvent.SetDecimalSeparator -> setDecimalSeparator(event.separator)
+            is DisplayEvent.SetThousandsSeparator -> setThousandsSeparator(event.separator)
+            is DisplayEvent.SetMealVoucherValue -> setMealVoucherValue(event.value)
+            is DisplayEvent.SetShowChartsSection -> setShowChartsSection(event.show)
+            is DisplayEvent.SetChartsZoomEnabled -> setChartsZoomEnabled(event.enabled)
+            is DisplayEvent.SetDateFormat -> setDateFormat(event.pattern)
+            is DisplayEvent.SetShowTransactionNotes -> setShowTransactionNotes(event.show)
+            is DisplayEvent.SetMaskAmounts -> setMaskAmounts(event.mask)
+            is DisplayEvent.SetShowPaymentTypeBreakdown -> setShowPaymentTypeBreakdown(event.show)
+            is DisplayEvent.SetShowQuickInsightsCard -> setShowQuickInsightsCard(event.show)
+            is DisplayEvent.SetDefaultPaymentType -> setDefaultPaymentType(event.paymentType)
+            is DisplayEvent.SetTransactionDisplayType -> setTransactionDisplayType(event.displayType)
+            is DisplayEvent.SetTransactionsTransactionDisplayType ->
+                setTransactionsTransactionDisplayType(
+                    event.displayType,
+                )
+            is DisplayEvent.SetWidgetBackgroundColor -> setWidgetBackgroundColor(event.color)
+            is DisplayEvent.SetWidgetOpacity -> setWidgetOpacity(event.opacity)
+            is DisplayEvent.RetryLastOperation -> logInfo("Retry requested")
+        }
+    }
 
     /**
      * Aggiorna il simbolo valuta.
      */
-    fun setCurrencySymbol(symbol: String) = updatePreference(
-        logMsg = "Setting currency symbol: $symbol",
-        action = {
-            settingsRepository.setCurrencySymbol(sanitizeCurrencySymbol(symbol))
-        },
-    )
+    private fun setCurrencySymbol(symbol: String) =
+        updatePreference(
+            logMsg = "Setting currency symbol: $symbol",
+            action = {
+                settingsRepository.setCurrencySymbol(sanitizeCurrencySymbol(symbol))
+            },
+        )
 
     /**
      * Aggiorna il numero di cifre decimali.
      */
-    fun setDecimalDigits(digits: Int) = updatePreference(
-        logMsg = "Setting decimal digits: $digits",
-        action = {
-            settingsRepository.setDecimalDigits(sanitizeDecimalDigits(digits))
-        },
-    )
+    private fun setDecimalDigits(digits: Int) =
+        updatePreference(
+            logMsg = "Setting decimal digits: $digits",
+            action = {
+                settingsRepository.setDecimalDigits(sanitizeDecimalDigits(digits))
+            },
+        )
 
     /**
      * Aggiorna il separatore decimale.
      */
-    fun setDecimalSeparator(separator: String) = updatePreference(
-        logMsg = "Setting decimal separator: $separator",
-        action = {
-            val safeDecimal = sanitizeDecimalSeparator(separator)
-            settingsRepository.setDecimalSeparator(safeDecimal)
-            if (safeDecimal == thousandsSeparator.value) {
-                settingsRepository.setThousandsSeparator(DisplayConstant.DEFAULT_THOUSANDS_SEPARATOR)
-            }
-        },
-    )
+    private fun setDecimalSeparator(separator: String) =
+        updatePreference(
+            logMsg = "Setting decimal separator: $separator",
+            action = {
+                val safeDecimal = sanitizeDecimalSeparator(separator)
+                settingsRepository.setDecimalSeparator(safeDecimal)
+                if (safeDecimal == thousandsSeparator.value) {
+                    settingsRepository.setThousandsSeparator(DisplayConstant.DEFAULT_THOUSANDS_SEPARATOR)
+                }
+            },
+        )
 
     /**
      * Aggiorna il separatore delle migliaia.
      */
-    fun setThousandsSeparator(separator: String) = updatePreference(
-        logMsg = "Setting thousands separator: $separator",
-        action = {
-            val safeThousands = if (separator in DisplayConstant.SUPPORTED_THOUSANDS_SEPARATORS) {
-                separator
-            } else {
-                DisplayConstant.DEFAULT_THOUSANDS_SEPARATOR
-            }
-            settingsRepository.setThousandsSeparator(safeThousands)
-        },
-    )
-
+    private fun setThousandsSeparator(separator: String) =
+        updatePreference(
+            logMsg = "Setting thousands separator: $separator",
+            action = {
+                val safeThousands =
+                    if (separator in DisplayConstant.SUPPORTED_THOUSANDS_SEPARATORS) {
+                        separator
+                    } else {
+                        DisplayConstant.DEFAULT_THOUSANDS_SEPARATOR
+                    }
+                settingsRepository.setThousandsSeparator(safeThousands)
+            },
+        )
 
     /**
      * Aggiorna il valore del buono pasto.
      */
-    fun setMealVoucherValue(value: Double) {
+    private fun setMealVoucherValue(value: Double) {
         // Track meal voucher details update
-        analyticsManager.logEvent("meal_voucher_details_updated", Bundle().apply {
-            putDouble("value", value)
-        })
+        analyticsManager.logEvent(
+            "meal_voucher_details_updated",
+            Bundle().apply {
+                putDouble("value", value)
+            },
+        )
         updatePreference(
             logMsg = "Setting meal voucher value: $value",
             action = {
@@ -253,123 +307,133 @@ class DisplayViewModel(
     /**
      * Aggiorna la preferenza per la visualizzazione della sezione grafici.
      */
-    fun setShowChartsSection(show: Boolean) = updatePreference(
-        logMsg = "Setting show charts section: $show",
-        action = { settingsRepository.setShowCharts(show) },
-    )
+    private fun setShowChartsSection(show: Boolean) =
+        updatePreference(
+            logMsg = "Setting show charts section: $show",
+            action = { settingsRepository.setShowCharts(show) },
+        )
 
     /**
      * Aggiorna la preferenza per lo zoom nei grafici.
      */
-    fun setChartsZoomEnabled(enabled: Boolean) = updatePreference(
-        logMsg = "Setting charts zoom enabled: $enabled",
-        action = { settingsRepository.setChartsZoomEnabled(enabled) },
-    )
+    private fun setChartsZoomEnabled(enabled: Boolean) =
+        updatePreference(
+            logMsg = "Setting charts zoom enabled: $enabled",
+            action = { settingsRepository.setChartsZoomEnabled(enabled) },
+        )
 
     /**
      * Aggiorna il formato data.
      */
-    fun setDateFormat(pattern: String) = updatePreference(
-        logMsg = "Setting date format: $pattern",
-        action = { settingsRepository.setDateFormat(pattern) },
-    )
+    private fun setDateFormat(pattern: String) =
+        updatePreference(
+            logMsg = "Setting date format: $pattern",
+            action = { settingsRepository.setDateFormat(pattern) },
+        )
 
     /**
      * Aggiorna la preferenza per mostrare le note delle transazioni.
      */
-    fun setShowTransactionNotes(show: Boolean) = updatePreference(
-        logMsg = "Setting show transaction notes: $show",
-        action = { settingsRepository.setShowTransactionNotes(show) },
-    )
+    private fun setShowTransactionNotes(show: Boolean) =
+        updatePreference(
+            logMsg = "Setting show transaction notes: $show",
+            action = { settingsRepository.setShowTransactionNotes(show) },
+        )
 
     /**
      * Aggiorna la preferenza per mascherare gli importi con asterischi.
      */
-    fun setMaskAmounts(mask: Boolean) = updatePreference(
-        logMsg = "Setting mask amounts: $mask",
-        action = { settingsRepository.setMaskAmounts(mask) },
-    )
+    private fun setMaskAmounts(mask: Boolean) =
+        updatePreference(
+            logMsg = "Setting mask amounts: $mask",
+            action = { settingsRepository.setMaskAmounts(mask) },
+        )
 
     /**
      * Aggiorna la preferenza per mostrare il breakdown dei pagamenti.
      */
-    fun setShowPaymentTypeBreakdown(show: Boolean) = updatePreference(
-        logMsg = "Setting show payment type breakdown: $show",
-        action = { settingsRepository.setShowPaymentTypeBreakdown(show) },
-    )
+    private fun setShowPaymentTypeBreakdown(show: Boolean) =
+        updatePreference(
+            logMsg = "Setting show payment type breakdown: $show",
+            action = { settingsRepository.setShowPaymentTypeBreakdown(show) },
+        )
 
     /**
      * Aggiorna la preferenza per mostrare la card Insight rapidi in Home.
      */
-    fun setShowQuickInsightsCard(show: Boolean) = updatePreference(
-        logMsg = "Setting show quick insights card: $show",
-        action = { settingsRepository.setShowQuickInsightsCard(show) },
-    )
+    private fun setShowQuickInsightsCard(show: Boolean) =
+        updatePreference(
+            logMsg = "Setting show quick insights card: $show",
+            action = { settingsRepository.setShowQuickInsightsCard(show) },
+        )
 
     /**
      * Aggiorna il tipo di pagamento predefinito.
      */
-    fun setDefaultPaymentType(paymentType: String) = updatePreference(
-        logMsg = "Setting default payment type: $paymentType",
-        action = { settingsRepository.setDefaultPaymentType(paymentType) },
-    )
+    private fun setDefaultPaymentType(paymentType: String) =
+        updatePreference(
+            logMsg = "Setting default payment type: $paymentType",
+            action = { settingsRepository.setDefaultPaymentType(paymentType) },
+        )
 
     /**
      * Aggiorna il tipo di visualizzazione delle transazioni (Home).
      */
-    fun setTransactionDisplayType(displayType: TransactionDisplayType) = updatePreference(
-        logMsg = "Setting home transaction display type: $displayType",
-        action = { settingsRepository.setTransactionDisplayType(displayType) },
-    )
+    private fun setTransactionDisplayType(displayType: TransactionDisplayType) =
+        updatePreference(
+            logMsg = "Setting home transaction display type: $displayType",
+            action = { settingsRepository.setTransactionDisplayType(displayType) },
+        )
 
     /**
      * Aggiorna il tipo di visualizzazione delle transazioni (Transazioni).
      */
-    fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType) =
+    private fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType) =
         updatePreference(
             logMsg = "Setting transactions transaction display type: $displayType",
             action = { settingsRepository.setTransactionsTransactionDisplayType(displayType) },
         )
 
-    fun setShowInitialAnimation(show: Boolean) = updatePreference(
-        logMsg = "Setting show initial animation: $show",
-        action = { settingsRepository.setShowInitialAnimation(show) },
-    )
-
     /**
      * Aggiorna il colore di sfondo dei widget e ne forza il refresh immediato.
      */
-    fun setWidgetBackgroundColor(color: Long) = updatePreference(
-        logMsg = "Setting widget background color: $color",
-        action = {
-            settingsRepository.setWidgetBackgroundColor(color)
-            widgetUpdateNotifier.notifyTransactionsChanged()
-        },
-    )
+    private fun setWidgetBackgroundColor(color: Long) =
+        updatePreference(
+            logMsg = "Setting widget background color: $color",
+            action = {
+                settingsRepository.setWidgetBackgroundColor(color)
+                widgetUpdateNotifier.notifyTransactionsChanged()
+            },
+        )
 
     /**
      * Aggiorna l'opacità dei widget e ne forza il refresh immediato.
      */
-    fun setWidgetOpacity(opacity: Int) = updatePreference(
-        logMsg = "Setting widget opacity: $opacity",
-        action = {
-            settingsRepository.setWidgetOpacity(opacity.coerceIn(0, 100))
-            widgetUpdateNotifier.notifyTransactionsChanged()
-        },
-    )
+    private fun setWidgetOpacity(opacity: Int) =
+        updatePreference(
+            logMsg = "Setting widget opacity: $opacity",
+            action = {
+                settingsRepository.setWidgetOpacity(opacity.coerceIn(0, 100))
+                widgetUpdateNotifier.notifyTransactionsChanged()
+            },
+        )
 
     /**
      * Ripristina tutte le preferenze ai valori di default.
      */
-    fun resetAllPreferences() = updatePreference(
-        logMsg = "Resetting all preferences",
-        action = { settingsRepository.resetAllPreferences() },
-    )
+    fun resetAllPreferences() =
+        updatePreference(
+            logMsg = "Resetting all preferences",
+            action = { settingsRepository.resetAllPreferences() },
+        )
 
     /**
      * Funzione di utilità per loggare e lanciare l'azione in coroutine.
      */
-    private fun updatePreference(logMsg: String, action: suspend () -> Unit) {
+    private fun updatePreference(
+        logMsg: String,
+        action: suspend () -> Unit,
+    ) {
         logDebug(logMsg)
         settingsModifiedCount++
         viewModelScope.launch {
@@ -377,7 +441,7 @@ class DisplayViewModel(
             // Track settings customization score after each preference update
             engagementTracker.trackSettingsCustomizationScore(
                 settingsModifiedCount = settingsModifiedCount,
-                accessibilityEnabled = maskAmounts.value // Use mask amounts as proxy for accessibility
+                accessibilityEnabled = maskAmounts.value, // Use mask amounts as proxy for accessibility
             )
         }
     }
@@ -398,12 +462,16 @@ class DisplayViewModel(
             DisplayConstant.DEFAULT_DECIMAL_SEPARATOR
         }
 
-    private fun sanitizeThousandsSeparator(thousands: String, decimal: String): String {
-        val normalized = if (thousands in DisplayConstant.SUPPORTED_THOUSANDS_SEPARATORS) {
-            thousands
-        } else {
-            DisplayConstant.DEFAULT_THOUSANDS_SEPARATOR
-        }
+    private fun sanitizeThousandsSeparator(
+        thousands: String,
+        decimal: String,
+    ): String {
+        val normalized =
+            if (thousands in DisplayConstant.SUPPORTED_THOUSANDS_SEPARATORS) {
+                thousands
+            } else {
+                DisplayConstant.DEFAULT_THOUSANDS_SEPARATOR
+            }
 
         return if (normalized == decimal) {
             DisplayConstant.DEFAULT_THOUSANDS_SEPARATOR

@@ -67,12 +67,13 @@ internal fun RecurrenceIntervalDropdown(
 
         // Dropdown
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .clickable { expanded = !expanded }
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .clickable { expanded = !expanded }
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -80,20 +81,22 @@ internal fun RecurrenceIntervalDropdown(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 AppText(
-                    text = if (selectedInterval.isNotBlank()) {
-                        intervalDisplayName(selectedInterval)
-                    } else {
-                        dailyLabel
-                    },
+                    text =
+                        if (selectedInterval.isNotBlank()) {
+                            intervalDisplayName(selectedInterval)
+                        } else {
+                            dailyLabel
+                        },
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 // Icona dropdown
                 Icon(
-                    imageVector = if (expanded) {
-                        Icons.Filled.KeyboardArrowUp
-                    } else {
-                        Icons.Filled.KeyboardArrowDown
-                    },
+                    imageVector =
+                        if (expanded) {
+                            Icons.Filled.KeyboardArrowUp
+                        } else {
+                            Icons.Filled.KeyboardArrowDown
+                        },
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -124,4 +127,3 @@ internal fun RecurrenceIntervalDropdown(
         }
     }
 }
-

@@ -26,7 +26,9 @@ public class Migration_9_10 : Migration(9, 10) {
 
         // Add the column if it doesn't exist
         if (!columnExists) {
-            database.execSQL("ALTER TABLE `transactions` ADD COLUMN `meal_voucher_difference` REAL NOT NULL DEFAULT 0.0")
+            database.execSQL(
+                "ALTER TABLE `transactions` ADD COLUMN `meal_voucher_difference` REAL NOT NULL DEFAULT 0.0",
+            )
         }
 
         // The auto-migration mechanism will handle any other potential changes,

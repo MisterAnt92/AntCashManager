@@ -14,6 +14,5 @@ public class GetCategoriesUseCase(
     private val categoryRepository: CategoryRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : NoParamsObservableUseCase<List<Category>>(dispatcher) {
-
     override fun execute(params: Unit): Flow<List<Category>> = categoryRepository.getAllCategories()
 }

@@ -15,12 +15,13 @@ enum class HomeTopCardType(
         val defaultOrder = listOf(BALANCE, INCOME_EXPENSE, QUICK_INSIGHTS)
 
         fun parse(raw: String): List<HomeTopCardType> {
-            val ordered = raw
-                .split(',')
-                .map(String::trim)
-                .mapNotNull { key -> entries.find { it.storageKey == key } }
-                .distinct()
-                .toMutableList()
+            val ordered =
+                raw
+                    .split(',')
+                    .map(String::trim)
+                    .mapNotNull { key -> entries.find { it.storageKey == key } }
+                    .distinct()
+                    .toMutableList()
 
             defaultOrder.forEach { type ->
                 if (type !in ordered) {
@@ -31,7 +32,6 @@ enum class HomeTopCardType(
             return ordered
         }
 
-        fun serialize(order: List<HomeTopCardType>): String =
-            order.joinToString(separator = ",") { it.storageKey }
+        fun serialize(order: List<HomeTopCardType>): String = order.joinToString(separator = ",") { it.storageKey }
     }
 }

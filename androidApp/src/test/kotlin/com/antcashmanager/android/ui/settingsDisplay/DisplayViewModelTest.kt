@@ -2,8 +2,9 @@ package com.antcashmanager.android.ui.settingsDisplay
 
 import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.analytics.AnalyticsManager
-import com.antcashmanager.android.analytics.EngagementTracker
+import com.antcashmanager.android.analytics.tracker.EngagementTracker
 import com.antcashmanager.android.testutil.FakeSettingsRepository
+import com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayEvent
 import com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayViewModel
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.service.WidgetUpdateNotifier
@@ -20,7 +21,6 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DisplayViewModelTest : BaseUnitTest() {
-
     private lateinit var fakeSettingsRepo: FakeSettingsRepository
     private lateinit var fakeWidgetUpdateNotifier: FakeWidgetUpdateNotifier
     private lateinit var analyticsManager: AnalyticsManager
@@ -37,310 +37,323 @@ class DisplayViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun defaultsAreExposedCorrectly() = runViewModelTest {
-        val collectJob = launch(
-            UnconfinedTestDispatcher(testScheduler)
-        ) {
-            // subscribe to flows to ensure stateIn is active
-            launch { viewModel.currencySymbol.collect { } }
-            launch { viewModel.decimalDigits.collect { } }
-            launch { viewModel.decimalSeparator.collect { } }
-            launch { viewModel.thousandsSeparator.collect { } }
+    fun defaultsAreExposedCorrectly() =
+        runViewModelTest {
+            val collectJob =
+                launch(
+                    UnconfinedTestDispatcher(testScheduler),
+                ) {
+                    // subscribe to flows to ensure stateIn is active
+                    launch { viewModel.currencySymbol.collect { } }
+                    launch { viewModel.decimalDigits.collect { } }
+                    launch { viewModel.decimalSeparator.collect { } }
+                    launch { viewModel.thousandsSeparator.collect { } }
+                }
+
+            advanceUntilIdle()
+
+            assertEquals("\u20ac", viewModel.currencySymbol.value)
+            assertEquals(2, viewModel.decimalDigits.value)
+            assertEquals(",", viewModel.decimalSeparator.value)
+            assertEquals("", viewModel.thousandsSeparator.value)
+
+            collectJob.cancel()
         }
 
-        advanceUntilIdle()
-
-        assertEquals("\u20ac", viewModel.currencySymbol.value)
-        assertEquals(2, viewModel.decimalDigits.value)
-        assertEquals(",", viewModel.decimalSeparator.value)
-        assertEquals("", viewModel.thousandsSeparator.value)
-
-        collectJob.cancel()
-    }
-
     @Test
-    fun setCurrencySymbolUpdatesValue() = runViewModelTest {
-        val collectJob = launch(
-            UnconfinedTestDispatcher(testScheduler)
-        ) { launch { viewModel.currencySymbol.collect { } } }
-        advanceUntilIdle()
+    fun setCurrencySymbolUpdatesValue() =
+        runViewModelTest {
+            val collectJob =
+                launch(
+                    UnconfinedTestDispatcher(testScheduler),
+                ) { launch { viewModel.currencySymbol.collect { } } }
+            advanceUntilIdle()
 
-        viewModel.setCurrencySymbol("$")
-        advanceUntilIdle()
+            viewModel.onEvent(DisplayEvent.SetCurrencySymbol("$"))
+            advanceUntilIdle()
 
-        assertEquals("$", viewModel.currencySymbol.value)
-        collectJob.cancel()
-    }
-
-    @Test
-    fun setDecimalDigitsUpdatesValue() = runViewModelTest {
-        val collectJob = launch(
-            UnconfinedTestDispatcher(testScheduler)
-        ) { launch { viewModel.decimalDigits.collect { } } }
-        advanceUntilIdle()
-
-        viewModel.setDecimalDigits(0)
-        advanceUntilIdle()
-
-        assertEquals(0, viewModel.decimalDigits.value)
-        collectJob.cancel()
-    }
-
-    @Test
-    fun setSeparatorsUpdateValuesAndResetRestoresDefaults() = runViewModelTest {
-        val collectJob = launch(
-            UnconfinedTestDispatcher(testScheduler)
-        ) {
-            launch { viewModel.decimalSeparator.collect { } }
-            launch { viewModel.thousandsSeparator.collect { } }
+            assertEquals("$", viewModel.currencySymbol.value)
+            collectJob.cancel()
         }
-        advanceUntilIdle()
-
-        viewModel.setDecimalSeparator(".")
-        viewModel.setThousandsSeparator(",")
-        advanceUntilIdle()
-
-        assertEquals(".", viewModel.decimalSeparator.value)
-        assertEquals(",", viewModel.thousandsSeparator.value)
-
-        viewModel.resetAllPreferences()
-        advanceUntilIdle()
-
-        // reset should restore to the repository defaults used in Fake
-        assertEquals("\u20ac", viewModel.currencySymbol.value)
-        assertEquals(2, viewModel.decimalDigits.value)
-        assertEquals(",", viewModel.decimalSeparator.value)
-        assertEquals("", viewModel.thousandsSeparator.value)
-
-        collectJob.cancel()
-    }
 
     @Test
-    fun currencyInputsAreSanitized() = runViewModelTest {
-        val collectJob = launch(
-            UnconfinedTestDispatcher(testScheduler)
-        ) {
-            launch { viewModel.currencySymbol.collect { } }
-            launch { viewModel.decimalDigits.collect { } }
-            launch { viewModel.decimalSeparator.collect { } }
-            launch { viewModel.thousandsSeparator.collect { } }
+    fun setDecimalDigitsUpdatesValue() =
+        runViewModelTest {
+            val collectJob =
+                launch(
+                    UnconfinedTestDispatcher(testScheduler),
+                ) { launch { viewModel.decimalDigits.collect { } } }
+            advanceUntilIdle()
+
+            viewModel.onEvent(DisplayEvent.SetDecimalDigits(0))
+            advanceUntilIdle()
+
+            assertEquals(0, viewModel.decimalDigits.value)
+            collectJob.cancel()
         }
-        advanceUntilIdle()
-
-        viewModel.setCurrencySymbol("INVALID")
-        viewModel.setDecimalDigits(9)
-        viewModel.setThousandsSeparator("INVALID")
-        advanceUntilIdle()
-
-        assertEquals("\u20ac", viewModel.currencySymbol.value)
-        assertEquals(4, viewModel.decimalDigits.value)
-        assertEquals("", viewModel.thousandsSeparator.value)
-
-        viewModel.setDecimalDigits(-5)
-        advanceUntilIdle()
-        assertEquals(0, viewModel.decimalDigits.value)
-
-        collectJob.cancel()
-    }
 
     @Test
-    fun decimalAndThousandsSeparatorsCannotBeEqual() = runViewModelTest {
-        val collectJob = launch(
-            UnconfinedTestDispatcher(testScheduler)
-        ) {
-            launch { viewModel.decimalSeparator.collect { } }
-            launch { viewModel.thousandsSeparator.collect { } }
+    fun setSeparatorsUpdateValuesAndResetRestoresDefaults() =
+        runViewModelTest {
+            val collectJob =
+                launch(
+                    UnconfinedTestDispatcher(testScheduler),
+                ) {
+                    launch { viewModel.decimalSeparator.collect { } }
+                    launch { viewModel.thousandsSeparator.collect { } }
+                }
+            advanceUntilIdle()
+
+            viewModel.onEvent(DisplayEvent.SetDecimalSeparator("."))
+            viewModel.onEvent(DisplayEvent.SetThousandsSeparator(","))
+            advanceUntilIdle()
+
+            assertEquals(".", viewModel.decimalSeparator.value)
+            assertEquals(",", viewModel.thousandsSeparator.value)
+
+            viewModel.resetAllPreferences()
+            advanceUntilIdle()
+
+            // reset should restore to the repository defaults used in Fake
+            assertEquals("\u20ac", viewModel.currencySymbol.value)
+            assertEquals(2, viewModel.decimalDigits.value)
+            assertEquals(",", viewModel.decimalSeparator.value)
+            assertEquals("", viewModel.thousandsSeparator.value)
+
+            collectJob.cancel()
         }
-        advanceUntilIdle()
-
-        // 1. Setting thousands same as current decimal -> should result in default (empty)
-        viewModel.setThousandsSeparator(",")
-        advanceUntilIdle()
-        assertEquals(",", viewModel.decimalSeparator.value)
-        assertEquals("", viewModel.thousandsSeparator.value)
-
-        // 2. Setting thousands different -> should work
-        viewModel.setThousandsSeparator(".")
-        advanceUntilIdle()
-        assertEquals(".", viewModel.thousandsSeparator.value)
-
-        // 3. Setting decimal same as current thousands -> should reset thousands to default (empty)
-        viewModel.setDecimalSeparator(".")
-        advanceUntilIdle()
-
-        assertEquals(".", viewModel.decimalSeparator.value)
-        assertEquals("", viewModel.thousandsSeparator.value)
-
-        collectJob.cancel()
-    }
 
     @Test
-    fun setMealVoucherValueUpdatesValueAndHandlesNegative() = runViewModelTest {
-        val collectJob = launch(
-            UnconfinedTestDispatcher(testScheduler)
-        ) { launch { viewModel.mealVoucherValue.collect { } } }
-        advanceUntilIdle()
+    fun currencyInputsAreSanitized() =
+        runViewModelTest {
+            val collectJob =
+                launch(
+                    UnconfinedTestDispatcher(testScheduler),
+                ) {
+                    launch { viewModel.currencySymbol.collect { } }
+                    launch { viewModel.decimalDigits.collect { } }
+                    launch { viewModel.decimalSeparator.collect { } }
+                    launch { viewModel.thousandsSeparator.collect { } }
+                }
+            advanceUntilIdle()
 
-        viewModel.setMealVoucherValue(7.5)
-        advanceUntilIdle()
-        assertEquals(7.5, viewModel.mealVoucherValue.value, 0.0)
+            viewModel.onEvent(DisplayEvent.SetCurrencySymbol("INVALID"))
+            viewModel.onEvent(DisplayEvent.SetDecimalDigits(9))
+            viewModel.onEvent(DisplayEvent.SetThousandsSeparator("INVALID"))
+            advanceUntilIdle()
 
-        viewModel.setMealVoucherValue(-1.0)
-        advanceUntilIdle()
-        assertEquals(0.0, viewModel.mealVoucherValue.value, 0.0)
+            assertEquals("\u20ac", viewModel.currencySymbol.value)
+            assertEquals(4, viewModel.decimalDigits.value)
+            assertEquals("", viewModel.thousandsSeparator.value)
 
-        collectJob.cancel()
-    }
+            viewModel.onEvent(DisplayEvent.SetDecimalDigits(-5))
+            advanceUntilIdle()
+            assertEquals(0, viewModel.decimalDigits.value)
 
-    @Test
-    fun setDateFormatUpdatesValue() = runViewModelTest {
-        val collectJob = launch(
-            UnconfinedTestDispatcher(testScheduler)
-        ) { launch { viewModel.dateFormat.collect { } } }
-        advanceUntilIdle()
-
-        viewModel.setDateFormat("yyyy-MM-dd")
-        advanceUntilIdle()
-        assertEquals("yyyy-MM-dd", viewModel.dateFormat.value)
-
-        collectJob.cancel()
-    }
-
-    @Test
-    fun displaySwitchesUpdateValues() = runViewModelTest {
-        val collectJob = launch(
-            UnconfinedTestDispatcher(testScheduler)
-        ) {
-            launch { viewModel.showChartsSection.collect { } }
-            launch { viewModel.chartsZoomEnabled.collect { } }
-            launch { viewModel.showTransactionNotes.collect { } }
-            launch { viewModel.showPaymentTypeBreakdown.collect { } }
-            launch { viewModel.showQuickInsightsCard.collect { } }
-            launch { viewModel.maskAmounts.collect { } }
+            collectJob.cancel()
         }
-        advanceUntilIdle()
-
-        viewModel.setShowChartsSection(false)
-        viewModel.setChartsZoomEnabled(true)
-        viewModel.setShowTransactionNotes(false)
-        viewModel.setShowPaymentTypeBreakdown(true)
-        viewModel.setShowQuickInsightsCard(true)
-        viewModel.setMaskAmounts(true)
-        advanceUntilIdle()
-
-        assertFalse(viewModel.showChartsSection.value)
-        assertTrue(viewModel.chartsZoomEnabled.value)
-        assertFalse(viewModel.showTransactionNotes.value)
-        assertTrue(viewModel.showPaymentTypeBreakdown.value)
-        assertTrue(viewModel.showQuickInsightsCard.value)
-        assertTrue(viewModel.maskAmounts.value)
-
-        collectJob.cancel()
-    }
 
     @Test
-    fun transactionDisplayTypesUpdateValues() = runViewModelTest {
-        val collectJob = launch(
-            UnconfinedTestDispatcher(testScheduler)
-        ) {
-            launch { viewModel.transactionDisplayType.collect { } }
-            launch { viewModel.transactionsTransactionDisplayType.collect { } }
+    fun decimalAndThousandsSeparatorsCannotBeEqual() =
+        runViewModelTest {
+            val collectJob =
+                launch(
+                    UnconfinedTestDispatcher(testScheduler),
+                ) {
+                    launch { viewModel.decimalSeparator.collect { } }
+                    launch { viewModel.thousandsSeparator.collect { } }
+                }
+            advanceUntilIdle()
+
+            // 1. Setting thousands same as current decimal -> should result in default (empty)
+            viewModel.onEvent(DisplayEvent.SetThousandsSeparator(","))
+            advanceUntilIdle()
+            assertEquals(",", viewModel.decimalSeparator.value)
+            assertEquals("", viewModel.thousandsSeparator.value)
+
+            // 2. Setting thousands different -> should work
+            viewModel.onEvent(DisplayEvent.SetThousandsSeparator("."))
+            advanceUntilIdle()
+            assertEquals(".", viewModel.thousandsSeparator.value)
+
+            // 3. Setting decimal same as current thousands -> should reset thousands to default (empty)
+            viewModel.onEvent(DisplayEvent.SetDecimalSeparator("."))
+            advanceUntilIdle()
+
+            assertEquals(".", viewModel.decimalSeparator.value)
+            assertEquals("", viewModel.thousandsSeparator.value)
+
+            collectJob.cancel()
         }
-        advanceUntilIdle()
-
-        viewModel.setTransactionDisplayType(TransactionDisplayType.CATEGORY)
-        viewModel.setTransactionsTransactionDisplayType(TransactionDisplayType.CATEGORY)
-        advanceUntilIdle()
-
-        assertEquals(TransactionDisplayType.CATEGORY, viewModel.transactionDisplayType.value)
-        assertEquals(
-            TransactionDisplayType.CATEGORY,
-            viewModel.transactionsTransactionDisplayType.value
-        )
-
-        collectJob.cancel()
-    }
 
     @Test
-    fun setShowInitialAnimationUpdatesValue() = runViewModelTest {
-        val collectJob = launch(
-            UnconfinedTestDispatcher(testScheduler)
-        ) { launch { viewModel.showInitialAnimation.collect { } } }
-        advanceUntilIdle()
+    fun setMealVoucherValueUpdatesValueAndHandlesNegative() =
+        runViewModelTest {
+            val collectJob =
+                launch(
+                    UnconfinedTestDispatcher(testScheduler),
+                ) { launch { viewModel.mealVoucherValue.collect { } } }
+            advanceUntilIdle()
 
-        viewModel.setShowInitialAnimation(false)
-        advanceUntilIdle()
-        assertFalse(viewModel.showInitialAnimation.value)
+            viewModel.onEvent(DisplayEvent.SetMealVoucherValue(7.5))
+            advanceUntilIdle()
+            assertEquals(7.5, viewModel.mealVoucherValue.value, 0.0)
 
-        collectJob.cancel()
-    }
+            viewModel.onEvent(DisplayEvent.SetMealVoucherValue(-1.0))
+            advanceUntilIdle()
+            assertEquals(0.0, viewModel.mealVoucherValue.value, 0.0)
 
-    @Test
-    fun widgetAppearanceDefaultsAreExposedCorrectly() = runViewModelTest {
-        val collectJob = launch(
-            UnconfinedTestDispatcher(testScheduler)
-        ) {
-            launch { viewModel.widgetBackgroundColor.collect { } }
-            launch { viewModel.widgetOpacity.collect { } }
+            collectJob.cancel()
         }
-        advanceUntilIdle()
-
-        assertEquals(0xFFFFFFFFL, viewModel.widgetBackgroundColor.value)
-        assertEquals(100, viewModel.widgetOpacity.value)
-
-        collectJob.cancel()
-    }
 
     @Test
-    fun setWidgetBackgroundColorUpdatesValueAndNotifiesWidgets() = runViewModelTest {
-        val collectJob = launch(
-            UnconfinedTestDispatcher(testScheduler)
-        ) { launch { viewModel.widgetBackgroundColor.collect { } } }
-        advanceUntilIdle()
+    fun setDateFormatUpdatesValue() =
+        runViewModelTest {
+            val collectJob =
+                launch(
+                    UnconfinedTestDispatcher(testScheduler),
+                ) { launch { viewModel.dateFormat.collect { } } }
+            advanceUntilIdle()
 
-        viewModel.setWidgetBackgroundColor(0xFF212121L)
-        advanceUntilIdle()
+            viewModel.onEvent(DisplayEvent.SetDateFormat("yyyy-MM-dd"))
+            advanceUntilIdle()
+            assertEquals("yyyy-MM-dd", viewModel.dateFormat.value)
 
-        assertEquals(0xFF212121L, viewModel.widgetBackgroundColor.value)
-        assertEquals(1, fakeWidgetUpdateNotifier.notifyCount)
-
-        collectJob.cancel()
-    }
-
-    @Test
-    fun setWidgetOpacityUpdatesValueAndNotifiesWidgets() = runViewModelTest {
-        val collectJob = launch(
-            UnconfinedTestDispatcher(testScheduler)
-        ) { launch { viewModel.widgetOpacity.collect { } } }
-        advanceUntilIdle()
-
-        viewModel.setWidgetOpacity(40)
-        advanceUntilIdle()
-
-        assertEquals(40, viewModel.widgetOpacity.value)
-        assertEquals(1, fakeWidgetUpdateNotifier.notifyCount)
-
-        collectJob.cancel()
-    }
+            collectJob.cancel()
+        }
 
     @Test
-    fun setWidgetOpacityCoercesOutOfRangeValues() = runViewModelTest {
-        val collectJob = launch(
-            UnconfinedTestDispatcher(testScheduler)
-        ) { launch { viewModel.widgetOpacity.collect { } } }
-        advanceUntilIdle()
+    fun displaySwitchesUpdateValues() =
+        runViewModelTest {
+            val collectJob =
+                launch(
+                    UnconfinedTestDispatcher(testScheduler),
+                ) {
+                    launch { viewModel.showChartsSection.collect { } }
+                    launch { viewModel.chartsZoomEnabled.collect { } }
+                    launch { viewModel.showTransactionNotes.collect { } }
+                    launch { viewModel.showPaymentTypeBreakdown.collect { } }
+                    launch { viewModel.showQuickInsightsCard.collect { } }
+                    launch { viewModel.maskAmounts.collect { } }
+                }
+            advanceUntilIdle()
 
-        viewModel.setWidgetOpacity(150)
-        advanceUntilIdle()
-        assertEquals(100, viewModel.widgetOpacity.value)
+            viewModel.onEvent(DisplayEvent.SetShowChartsSection(false))
+            viewModel.onEvent(DisplayEvent.SetChartsZoomEnabled(true))
+            viewModel.onEvent(DisplayEvent.SetShowTransactionNotes(false))
+            viewModel.onEvent(DisplayEvent.SetShowPaymentTypeBreakdown(true))
+            viewModel.onEvent(DisplayEvent.SetShowQuickInsightsCard(true))
+            viewModel.onEvent(DisplayEvent.SetMaskAmounts(true))
+            advanceUntilIdle()
 
-        viewModel.setWidgetOpacity(-20)
-        advanceUntilIdle()
-        assertEquals(0, viewModel.widgetOpacity.value)
+            assertFalse(viewModel.showChartsSection.value)
+            assertTrue(viewModel.chartsZoomEnabled.value)
+            assertFalse(viewModel.showTransactionNotes.value)
+            assertTrue(viewModel.showPaymentTypeBreakdown.value)
+            assertTrue(viewModel.showQuickInsightsCard.value)
+            assertTrue(viewModel.maskAmounts.value)
 
-        collectJob.cancel()
-    }
+            collectJob.cancel()
+        }
 
+    @Test
+    fun transactionDisplayTypesUpdateValues() =
+        runViewModelTest {
+            val collectJob =
+                launch(
+                    UnconfinedTestDispatcher(testScheduler),
+                ) {
+                    launch { viewModel.transactionDisplayType.collect { } }
+                    launch { viewModel.transactionsTransactionDisplayType.collect { } }
+                }
+            advanceUntilIdle()
+
+            viewModel.onEvent(DisplayEvent.SetTransactionDisplayType(TransactionDisplayType.CATEGORY))
+            viewModel.onEvent(DisplayEvent.SetTransactionsTransactionDisplayType(TransactionDisplayType.CATEGORY))
+            advanceUntilIdle()
+
+            assertEquals(TransactionDisplayType.CATEGORY, viewModel.transactionDisplayType.value)
+            assertEquals(
+                TransactionDisplayType.CATEGORY,
+                viewModel.transactionsTransactionDisplayType.value,
+            )
+
+            collectJob.cancel()
+        }
+
+    @Test
+    fun widgetAppearanceDefaultsAreExposedCorrectly() =
+        runViewModelTest {
+            val collectJob =
+                launch(
+                    UnconfinedTestDispatcher(testScheduler),
+                ) {
+                    launch { viewModel.widgetBackgroundColor.collect { } }
+                    launch { viewModel.widgetOpacity.collect { } }
+                }
+            advanceUntilIdle()
+
+            assertEquals(0xFFFFFFFFL, viewModel.widgetBackgroundColor.value)
+            assertEquals(100, viewModel.widgetOpacity.value)
+
+            collectJob.cancel()
+        }
+
+    @Test
+    fun setWidgetBackgroundColorUpdatesValueAndNotifiesWidgets() =
+        runViewModelTest {
+            val collectJob =
+                launch(
+                    UnconfinedTestDispatcher(testScheduler),
+                ) { launch { viewModel.widgetBackgroundColor.collect { } } }
+            advanceUntilIdle()
+
+            viewModel.onEvent(DisplayEvent.SetWidgetBackgroundColor(0xFF212121L))
+            advanceUntilIdle()
+
+            assertEquals(0xFF212121L, viewModel.widgetBackgroundColor.value)
+            assertEquals(1, fakeWidgetUpdateNotifier.notifyCount)
+
+            collectJob.cancel()
+        }
+
+    @Test
+    fun setWidgetOpacityUpdatesValueAndNotifiesWidgets() =
+        runViewModelTest {
+            val collectJob =
+                launch(
+                    UnconfinedTestDispatcher(testScheduler),
+                ) { launch { viewModel.widgetOpacity.collect { } } }
+            advanceUntilIdle()
+
+            viewModel.onEvent(DisplayEvent.SetWidgetOpacity(40))
+            advanceUntilIdle()
+
+            assertEquals(40, viewModel.widgetOpacity.value)
+            assertEquals(1, fakeWidgetUpdateNotifier.notifyCount)
+
+            collectJob.cancel()
+        }
+
+    @Test
+    fun setWidgetOpacityCoercesOutOfRangeValues() =
+        runViewModelTest {
+            val collectJob =
+                launch(
+                    UnconfinedTestDispatcher(testScheduler),
+                ) { launch { viewModel.widgetOpacity.collect { } } }
+            advanceUntilIdle()
+
+            viewModel.onEvent(DisplayEvent.SetWidgetOpacity(150))
+            advanceUntilIdle()
+            assertEquals(100, viewModel.widgetOpacity.value)
+
+            viewModel.onEvent(DisplayEvent.SetWidgetOpacity(-20))
+            advanceUntilIdle()
+            assertEquals(0, viewModel.widgetOpacity.value)
+
+            collectJob.cancel()
+        }
 }
 
 private class FakeWidgetUpdateNotifier : WidgetUpdateNotifier {

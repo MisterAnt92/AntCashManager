@@ -21,7 +21,6 @@ import co.touchlab.kermit.Logger
  * ```
  */
 object DrawableLoader {
-
     private const val TAG = "DrawableLoader"
     private const val MAX_BITMAP_WIDTH = 1226
     private const val MAX_BITMAP_HEIGHT = 2559
@@ -33,12 +32,16 @@ object DrawableLoader {
      * @param drawableRes Resource ID del drawable
      * @return ImageBitmap scaricato e downsampled
      */
-    fun loadDrawableAsBitmap(context: Context, drawableRes: Int): ImageBitmap? {
+    fun loadDrawableAsBitmap(
+        context: Context,
+        drawableRes: Int,
+    ): ImageBitmap? {
         return try {
             // Decodi dimensions prima (no allocation)
-            val dimensionOptions = BitmapFactory.Options().apply {
-                inJustDecodeBounds = true
-            }
+            val dimensionOptions =
+                BitmapFactory.Options().apply {
+                    inJustDecodeBounds = true
+                }
 
             val inputStream = context.resources.openRawResource(drawableRes)
             BitmapFactory.decodeStream(inputStream, null, dimensionOptions)
@@ -48,7 +51,7 @@ object DrawableLoader {
             val originalHeight = dimensionOptions.outHeight
 
             if (originalWidth <= 0 || originalHeight <= 0) {
-                Logger.w(tag = TAG) { "Invalid drawable dimensions: ${originalWidth}×${originalHeight}" }
+                Logger.w(tag = TAG) { "Invalid drawable dimensions: $originalWidth×$originalHeight" }
                 return null
             }
 
@@ -56,15 +59,16 @@ object DrawableLoader {
             val inSampleSize = calculateInSampleSize(originalWidth, originalHeight)
 
             Logger.d(tag = TAG) {
-                "Loading drawable: ${originalWidth}×${originalHeight} " +
-                "→ ${originalWidth / inSampleSize}×${originalHeight / inSampleSize} " +
-                "(inSampleSize=$inSampleSize)"
+                "Loading drawable: $originalWidth×$originalHeight " +
+                    "→ ${originalWidth / inSampleSize}×${originalHeight / inSampleSize} " +
+                    "(inSampleSize=$inSampleSize)"
             }
 
             // Decodifica con downsampling
-            val decodeOptions = BitmapFactory.Options().apply {
-                this.inSampleSize = inSampleSize
-            }
+            val decodeOptions =
+                BitmapFactory.Options().apply {
+                    this.inSampleSize = inSampleSize
+                }
 
             val inputStream2 = context.resources.openRawResource(drawableRes)
             val bitmap = BitmapFactory.decodeStream(inputStream2, null, decodeOptions)
@@ -90,12 +94,13 @@ object DrawableLoader {
         width: Int,
         height: Int,
         maxWidth: Int = MAX_BITMAP_WIDTH,
-        maxHeight: Int = MAX_BITMAP_HEIGHT
+        maxHeight: Int = MAX_BITMAP_HEIGHT,
     ): Int {
         var inSampleSize = 1
 
         while ((width / inSampleSize) > maxWidth ||
-            (height / inSampleSize) > maxHeight) {
+            (height / inSampleSize) > maxHeight
+        ) {
             inSampleSize *= 2
         }
 

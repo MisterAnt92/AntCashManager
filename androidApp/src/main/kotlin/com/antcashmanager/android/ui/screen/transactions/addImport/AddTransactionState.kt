@@ -24,11 +24,9 @@ data class AddTransactionState(
     val currentStep: AddTransactionStep = AddTransactionStep.CATEGORY_SELECTION,
     val isModifying: Boolean = false,
     val transactionId: Long? = null,
-
     // Dati categoria e tipo
     val selectedCategory: Category? = null,
     val selectedType: TransactionType? = null,
-
     // Dettagli transazione
     val title: String = "",
     val amount: String = "",
@@ -43,20 +41,17 @@ data class AddTransactionState(
     val mealVoucherCount: String = "0",
     val mealVoucherValue: Double = 5.29,
     val mealVoucherDifference: String = "0",
-
     // Dati disponibili
     val categories: List<Category> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null,
     val isTransactionSaved: Boolean = false,
-
     // Suggerimenti per campi
     val titleSuggestions: List<String> = emptyList(),
     val payeeSuggestions: List<String> = emptyList(),
     val notesSuggestions: List<String> = emptyList(),
     val locationSuggestions: List<String> = emptyList(),
     val tagsSuggestions: List<String> = emptyList(),
-
     // Dialog states
     val showCategoryDialog: Boolean = false,
     val showTypeDialog: Boolean = false,
@@ -68,7 +63,8 @@ data class AddTransactionState(
         get() = selectedPaymentType == PaymentType.MEAL_VOUCHERS
 
     val isFormValid: Boolean
-        get() = title.isNotBlank() &&
+        get() =
+            title.isNotBlank() &&
                 selectedCategory != null &&
                 selectedType != null &&
                 // Ricorrenza: se abilitata, richiede intervallo
@@ -89,13 +85,14 @@ data class AddTransactionState(
      * - Altro: amount (inserito direttamente)
      */
     val totalAmount: Double
-        get() = if (isMealVouchersPayment) {
-            val voucherSubtotal = (mealVoucherCount.toIntOrNull() ?: 0) * mealVoucherValue
-            val difference = mealVoucherDifference.toDoubleOrNull() ?: 0.0
-            voucherSubtotal + difference
-        } else {
-            amount.toDoubleOrNull() ?: 0.0
-        }
+        get() =
+            if (isMealVouchersPayment) {
+                val voucherSubtotal = (mealVoucherCount.toIntOrNull() ?: 0) * mealVoucherValue
+                val difference = mealVoucherDifference.toDoubleOrNull() ?: 0.0
+                voucherSubtotal + difference
+            } else {
+                amount.toDoubleOrNull() ?: 0.0
+            }
 
     /**
      * Differenza pagata con altri mezzi rispetto al valore coperto dai buoni pasto.
@@ -104,4 +101,3 @@ data class AddTransactionState(
     val mealVoucherDifferencePaid: Double
         get() = totalAmount - (mealVoucherCount.toIntOrNull() ?: 0) * mealVoucherValue
 }
-

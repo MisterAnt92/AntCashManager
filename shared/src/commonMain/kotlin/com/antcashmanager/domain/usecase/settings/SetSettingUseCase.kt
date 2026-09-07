@@ -3,7 +3,6 @@ package com.antcashmanager.domain.usecase.settings
 import com.antcashmanager.domain.usecase.base.UseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.flowOf
 
 /**
  * Generic UseCase for updating settings/preferences of type [T].
@@ -35,7 +34,6 @@ public class SetSettingUseCase<T>(
     private val setter: suspend (T) -> Unit,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : UseCase<T, Unit>(dispatcher) {
-
     override suspend fun execute(params: T) {
         setter(params)
     }

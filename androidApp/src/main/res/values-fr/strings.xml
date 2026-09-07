@@ -1,6 +1,14 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
     <string name="help_dashboard_desc">Affichez le solde total, les revenus et les dépenses pour la période sélectionnée.</string>
+
+    <!-- HelpDialog (Transactions) -->
+    <string name="transactions_help_filter_title">Filtrer les transactions</string>
+    <string name="transactions_help_filter_desc">Utilisez des filtres pour trouver des transactions spécifiques par type, catégorie ou mode de paiement.</string>
+    <string name="transactions_help_search_title">Recherche</string>
+    <string name="transactions_help_search_desc">Recherchez des transactions par nom ou par montant à l\'aide de la barre de recherche.</string>
+    <string name="transactions_help_display_title">Options d\'affichage</string>
+    <string name="transactions_help_display_desc">Modifiez la façon dont les transactions sont affichées dans la liste à partir du menu des paramètres.</string>
     <string name="home_total_balance">Solde Total</string>
     <string name="home_income">Revenus</string>
     <string name="home_expenses">D\u00e9penses</string>
@@ -530,6 +538,16 @@
     <string name="chart_last_14_days">14 derniers jours</string>
     <string name="chart_average">Moyenne</string>
      <string name="chart_weekday_distribution_title">Distribution par Jour</string>
+
+     <!-- Weekday names (1=Monday, 7=Sunday - EU convention) -->
+     <string name="weekday_1">Lun</string>
+     <string name="weekday_2">Mar</string>
+     <string name="weekday_3">Mer</string>
+     <string name="weekday_4">Jeu</string>
+     <string name="weekday_5">Ven</string>
+     <string name="weekday_6">Sam</string>
+     <string name="weekday_7">Dim</string>
+
      <string name="error_generic">Une erreur est survenue</string>
 
      <!-- Charts Customization -->
@@ -555,4 +573,14 @@
     <string name="settings_default_payment_type_desc">Choisissez la méthode de paiement par défaut pour les nouvelles transactions</string>
     <string name="dialog_payment_type_title">Sélectionner la méthode de paiement</string>
 
+
+
+    <!-- Analytics Consent Dialog (GDPR) -->
+    <string name="consent_title">Aidez-nous à améliorer l\'application</string>
+    <string name="consent_body">Nous collectons des statistiques d\'utilisation anonymes (écrans visités, erreurs) pour améliorer l\'application. Aucune donnée financière n\'est envoyée. Vous pouvez modifier cela à tout moment dans les Paramètres.</string>
+    <string name="consent_accept">Accepter</string>
+    <string name="consent_decline">Refuser</string>
+    <!-- Settings: Analytics consent toggle -->
+    <string name="settings_analytics_consent_title">Partager les statistiques d\'utilisation anonymes</string>
+    <string name="settings_analytics_consent_desc">Uniquement les écrans visités et les erreurs. Aucune donnée financière n\'est envoyée.</string>
 </resources>

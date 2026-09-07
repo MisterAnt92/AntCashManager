@@ -2,7 +2,6 @@ package com.antcashmanager.android.test.base
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
-import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.After
@@ -48,7 +47,6 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 abstract class BaseScreenTest {
-
     /**
      * Compose test rule with v2 API (StandardTestDispatcher)
      *
@@ -78,8 +76,10 @@ abstract class BaseScreenTest {
      * ```
      */
     protected fun getString(stringId: Int): String =
-        InstrumentationRegistry.getInstrumentation()
-            .targetContext.getString(stringId)
+        InstrumentationRegistry
+            .getInstrumentation()
+            .targetContext
+            .getString(stringId)
 
     /**
      * Get the test activity instance
@@ -95,9 +95,7 @@ abstract class BaseScreenTest {
      * assertEquals("MainActivity", activity::class.simpleName)
      * ```
      */
-    protected fun getActivity(): ComponentActivity =
-        composeTestRule.activity
-
+    protected fun getActivity(): ComponentActivity = composeTestRule.activity
 
     /**
      * Common cleanup after each test

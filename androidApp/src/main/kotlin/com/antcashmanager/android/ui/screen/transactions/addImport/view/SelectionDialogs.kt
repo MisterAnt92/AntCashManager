@@ -54,10 +54,11 @@ internal fun CategorySelectionDialog(
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 items(categories) { category ->
-                    val typeLabel = when (category.type.uppercase(Locale.ROOT)) {
-                        "INCOME" -> stringResource(R.string.add_transaction_income_label)
-                        else -> stringResource(R.string.add_transaction_expense_label)
-                    }
+                    val typeLabel =
+                        when (category.type.uppercase(Locale.ROOT)) {
+                            "INCOME" -> stringResource(R.string.add_transaction_income_label)
+                            else -> stringResource(R.string.add_transaction_expense_label)
+                        }
 
                     AppCategoryCard(
                         category = category,
@@ -119,23 +120,27 @@ internal fun TypeRadioButton(
     onClick: () -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
-            .background(
-                if (isSelected) MaterialTheme.colorScheme.primaryContainer
-                else MaterialTheme.colorScheme.surfaceVariant,
-            )
-            .clickable(onClick = onClick)
-            .padding(16.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(8.dp))
+                .background(
+                    if (isSelected) {
+                        MaterialTheme.colorScheme.primaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.surfaceVariant
+                    },
+                ).clickable(onClick = onClick)
+                .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         RadioButton(selected = isSelected, onClick = onClick)
-        val typeLabel = when (type) {
-            TransactionType.INCOME -> stringResource(R.string.add_transaction_income_label)
-            TransactionType.EXPENSE -> stringResource(R.string.add_transaction_expense_label)
-        }
+        val typeLabel =
+            when (type) {
+                TransactionType.INCOME -> stringResource(R.string.add_transaction_income_label)
+                TransactionType.EXPENSE -> stringResource(R.string.add_transaction_expense_label)
+            }
         AppText(
             text = typeLabel,
             style = MaterialTheme.typography.bodyLarge,
@@ -186,24 +191,28 @@ internal fun PaymentTypeRadioButton(
     onClick: () -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
-            .background(
-                if (isSelected) MaterialTheme.colorScheme.primaryContainer
-                else MaterialTheme.colorScheme.surfaceVariant,
-            )
-            .clickable(onClick = onClick)
-            .padding(16.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(8.dp))
+                .background(
+                    if (isSelected) {
+                        MaterialTheme.colorScheme.primaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.surfaceVariant
+                    },
+                ).clickable(onClick = onClick)
+                .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         RadioButton(selected = isSelected, onClick = onClick)
-        val paymentTypeLabel = when (paymentType) {
-            PaymentType.CASH -> stringResource(R.string.add_transaction_payment_type_cash)
-            PaymentType.ELECTRONIC -> stringResource(R.string.add_transaction_payment_type_electronic)
-            PaymentType.MEAL_VOUCHERS -> stringResource(R.string.add_transaction_payment_type_meal_vouchers)
-        }
+        val paymentTypeLabel =
+            when (paymentType) {
+                PaymentType.CASH -> stringResource(R.string.add_transaction_payment_type_cash)
+                PaymentType.ELECTRONIC -> stringResource(R.string.add_transaction_payment_type_electronic)
+                PaymentType.MEAL_VOUCHERS -> stringResource(R.string.add_transaction_payment_type_meal_vouchers)
+            }
         AppText(
             text = paymentTypeLabel,
             style = MaterialTheme.typography.bodyLarge,
@@ -211,4 +220,3 @@ internal fun PaymentTypeRadioButton(
         )
     }
 }
-

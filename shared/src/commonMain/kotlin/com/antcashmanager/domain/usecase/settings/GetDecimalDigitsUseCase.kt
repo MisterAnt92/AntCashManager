@@ -4,9 +4,12 @@ import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.usecase.base.NoParamsObservableUseCase
 import kotlinx.coroutines.flow.Flow
 
+@Deprecated(
+    message = "Use GetSettingUseCase<T> or SetSettingUseCase<T> instead. This class is pure boilerplate and will be removed in v1.8.",
+    replaceWith = ReplaceWith("GetSettingUseCase<T>() or SetSettingUseCase<T>()"),
+)
 public class GetDecimalDigitsUseCase(
     private val settingsRepository: SettingsRepository,
 ) : NoParamsObservableUseCase<Int>() {
-
     override fun execute(params: Unit): Flow<Int> = settingsRepository.getDecimalDigits()
 }

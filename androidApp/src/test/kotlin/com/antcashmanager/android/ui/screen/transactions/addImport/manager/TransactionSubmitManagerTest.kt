@@ -30,47 +30,49 @@ import org.junit.Test
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class TransactionSubmitManagerTest : BaseUnitTest() {
-
     private lateinit var transactionRepository: FakeTransactionRepository
     private lateinit var insertUseCase: InsertTransactionUseCase
     private lateinit var updateUseCase: UpdateTransactionUseCase
     private lateinit var manager: TransactionSubmitManager
 
-    private val mockCategory = Category(
-        id = 1,
-        name = "Food",
-        icon = "🍔",
-        color = 0xFFFF6B6B,
-        type = "EXPENSE"
-    )
+    private val mockCategory =
+        Category(
+            id = 1,
+            name = "Food",
+            icon = "🍔",
+            color = 0xFFFF6B6B,
+            type = "EXPENSE",
+        )
 
-    private val validState = AddTransactionState(
-        selectedCategory = mockCategory,
-        selectedType = TransactionType.EXPENSE,
-        title = "Lunch",
-        amount = "25.50",
-        notes = "Test notes",
-        payee = "Restaurant",
-        location = "Downtown",
-        tags = "food,lunch",
-        timestamp = System.currentTimeMillis(),
-        isRecurring = false,
-        recurrenceInterval = "",
-        selectedPaymentType = PaymentType.CASH,
-        mealVoucherCount = "0",
-        isModifying = false,
-        categories = listOf(mockCategory),
-    )
+    private val validState =
+        AddTransactionState(
+            selectedCategory = mockCategory,
+            selectedType = TransactionType.EXPENSE,
+            title = "Lunch",
+            amount = "25.50",
+            notes = "Test notes",
+            payee = "Restaurant",
+            location = "Downtown",
+            tags = "food,lunch",
+            timestamp = System.currentTimeMillis(),
+            isRecurring = false,
+            recurrenceInterval = "",
+            selectedPaymentType = PaymentType.CASH,
+            mealVoucherCount = "0",
+            isModifying = false,
+            categories = listOf(mockCategory),
+        )
 
     @Before
     fun setup() {
         transactionRepository = FakeTransactionRepository(emptyList())
         insertUseCase = InsertTransactionUseCase(transactionRepository)
         updateUseCase = UpdateTransactionUseCase(transactionRepository)
-        manager = TransactionSubmitManager(
-            insertTransactionUseCase = insertUseCase,
-            updateTransactionUseCase = updateUseCase,
-        )
+        manager =
+            TransactionSubmitManager(
+                insertTransactionUseCase = insertUseCase,
+                updateTransactionUseCase = updateUseCase,
+            )
     }
 
     // ── Validation Tests ──
@@ -118,40 +120,44 @@ class TransactionSubmitManagerTest : BaseUnitTest() {
 
     @Test
     fun `validateTransactionState returns error for MEAL_VOUCHERS with invalid count`() {
-        val state = validState.copy(
-            selectedPaymentType = PaymentType.MEAL_VOUCHERS,
-            mealVoucherCount = "0"
-        )
+        val state =
+            validState.copy(
+                selectedPaymentType = PaymentType.MEAL_VOUCHERS,
+                mealVoucherCount = "0",
+            )
         val error = manager.validateTransactionState(state)
         assertEquals("Numero buoni pasto non valido", error)
     }
 
     @Test
     fun `validateTransactionState returns error for MEAL_VOUCHERS with non-numeric count`() {
-        val state = validState.copy(
-            selectedPaymentType = PaymentType.MEAL_VOUCHERS,
-            mealVoucherCount = "abc"
-        )
+        val state =
+            validState.copy(
+                selectedPaymentType = PaymentType.MEAL_VOUCHERS,
+                mealVoucherCount = "abc",
+            )
         val error = manager.validateTransactionState(state)
         assertEquals("Numero buoni pasto non valido", error)
     }
 
     @Test
     fun `validateTransactionState passes for MEAL_VOUCHERS with valid count`() {
-        val state = validState.copy(
-            selectedPaymentType = PaymentType.MEAL_VOUCHERS,
-            mealVoucherCount = "5"
-        )
+        val state =
+            validState.copy(
+                selectedPaymentType = PaymentType.MEAL_VOUCHERS,
+                mealVoucherCount = "5",
+            )
         val error = manager.validateTransactionState(state)
         assertNull("Validation should pass for valid MEAL_VOUCHERS state", error)
     }
 
     @Test
     fun `validateTransactionState returns error when amount is blank`() {
-        val state = validState.copy(
-            selectedPaymentType = PaymentType.CASH,
-            amount = ""
-        )
+        val state =
+            validState.copy(
+                selectedPaymentType = PaymentType.CASH,
+                amount = "",
+            )
         val error = manager.validateTransactionState(state)
         assertEquals(AddTransactionConstant.ERROR_REQUIRED_TITLE_AMOUNT, error)
     }
@@ -198,11 +204,12 @@ class TransactionSubmitManagerTest : BaseUnitTest() {
 
     @Test
     fun `buildTransaction creates correct Transaction for INCOME`() {
-        val incomeState = validState.copy(
-            selectedType = TransactionType.INCOME,
-            selectedCategory = mockCategory.copy(type = "INCOME"),
-            amount = "1500.00"
-        )
+        val incomeState =
+            validState.copy(
+                selectedType = TransactionType.INCOME,
+                selectedCategory = mockCategory.copy(type = "INCOME"),
+                amount = "1500.00",
+            )
         val transaction = manager.buildTransaction(incomeState, transactionId = null)
 
         assertEquals("Lunch", transaction.title)
@@ -212,11 +219,12 @@ class TransactionSubmitManagerTest : BaseUnitTest() {
 
     @Test
     fun `buildTransaction handles MEAL_VOUCHERS payment type`() {
-        val mealVoucherState = validState.copy(
-            selectedPaymentType = PaymentType.MEAL_VOUCHERS,
-            mealVoucherCount = "5",
-            amount = "50.00"
-        )
+        val mealVoucherState =
+            validState.copy(
+                selectedPaymentType = PaymentType.MEAL_VOUCHERS,
+                mealVoucherCount = "5",
+                amount = "50.00",
+            )
         val transaction = manager.buildTransaction(mealVoucherState, transactionId = null)
 
         assertEquals(PaymentType.MEAL_VOUCHERS, transaction.paymentType)
@@ -266,83 +274,92 @@ class TransactionSubmitManagerTest : BaseUnitTest() {
     // ── Save Transaction Tests ──
 
     @Test
-    fun `saveTransaction inserts new transaction`() = runUnitTest {
-        val transaction = Transaction(
-            id = 0,
-            title = "Test",
-            amount = 100.0,
-            category = "Food",
-            type = TransactionType.EXPENSE,
-            timestamp = System.currentTimeMillis(),
-        )
+    fun `saveTransaction inserts new transaction`() =
+        runUnitTest {
+            val transaction =
+                Transaction(
+                    id = 0,
+                    title = "Test",
+                    amount = 100.0,
+                    category = "Food",
+                    type = TransactionType.EXPENSE,
+                    timestamp = System.currentTimeMillis(),
+                )
 
-        val result = manager.saveTransaction(transaction, isModifying = false)
+            val result = manager.saveTransaction(transaction, isModifying = false)
 
-        assertTrue("Save should succeed", result.isSuccess)
-        val allTransactions = transactionRepository.getAllTransactions().first()
-        assertEquals(1, allTransactions.size)
-    }
+            assertTrue("Save should succeed", result.isSuccess)
+            val allTransactions = transactionRepository.getAllTransactions().first()
+            assertEquals(1, allTransactions.size)
+        }
 
     @Test
-    fun `saveTransaction updates existing transaction`() = runUnitTest {
-        val originalTransaction = Transaction(
-            id = 1,
-            title = "Original",
-            amount = 100.0,
-            category = "Food",
-            type = TransactionType.EXPENSE,
-            timestamp = System.currentTimeMillis(),
-        )
-        insertUseCase(originalTransaction).getOrNull() ?: 0L
+    fun `saveTransaction updates existing transaction`() =
+        runUnitTest {
+            val originalTransaction =
+                Transaction(
+                    id = 1,
+                    title = "Original",
+                    amount = 100.0,
+                    category = "Food",
+                    type = TransactionType.EXPENSE,
+                    timestamp = System.currentTimeMillis(),
+                )
+            insertUseCase(originalTransaction).getOrNull() ?: 0L
 
-        val updatedTransaction = originalTransaction.copy(
-            title = "Updated",
-            amount = 200.0
-        )
-        val result = manager.saveTransaction(updatedTransaction, isModifying = true)
+            val updatedTransaction =
+                originalTransaction.copy(
+                    title = "Updated",
+                    amount = 200.0,
+                )
+            val result = manager.saveTransaction(updatedTransaction, isModifying = true)
 
-        assertTrue("Update should succeed", result.isSuccess)
-        val saved = transactionRepository.getTransactionById(1L)
-        assertNotNull("Saved transaction should not be null", saved)
-        assertEquals("Updated", saved!!.title)
-        assertEquals(200.0, saved.amount, 0.01)
-    }
+            assertTrue("Update should succeed", result.isSuccess)
+            val saved = transactionRepository.getTransactionById(1L)
+            assertNotNull("Saved transaction should not be null", saved)
+            assertEquals("Updated", saved!!.title)
+            assertEquals(200.0, saved.amount, 0.01)
+        }
 
     // ── Complete Submit Flow Tests ──
 
     @Test
-    fun `submitTransaction validates and saves successfully`() = runUnitTest {
-        val result = manager.submitTransaction(validState, transactionId = null)
+    fun `submitTransaction validates and saves successfully`() =
+        runUnitTest {
+            val result = manager.submitTransaction(validState, transactionId = null)
 
-        assertTrue("Submit should succeed", result.isSuccess)
-        val allTransactions = transactionRepository.getAllTransactions().first()
-        assertEquals(1, allTransactions.size)
-    }
-
-    @Test
-    fun `submitTransaction fails validation when title is empty`() = runUnitTest {
-        val invalidState = validState.copy(title = "")
-
-        val result = manager.submitTransaction(invalidState, transactionId = null)
-
-        assertTrue("Submit should fail", result.isFailure)
-        assertEquals(
-            AddTransactionConstant.ERROR_REQUIRED_TITLE_AMOUNT,
-            result.exceptionOrNull()?.message
-        )
-    }
+            assertTrue("Submit should succeed", result.isSuccess)
+            val allTransactions = transactionRepository.getAllTransactions().first()
+            assertEquals(1, allTransactions.size)
+        }
 
     @Test
-    fun `submitTransaction respects amount sign based on type`() = runUnitTest {
-        val expenseState = validState.copy(
-            selectedType = TransactionType.EXPENSE,
-            amount = "50.00"
-        )
+    fun `submitTransaction fails validation when title is empty`() =
+        runUnitTest {
+            val invalidState = validState.copy(title = "")
 
-        manager.submitTransaction(expenseState, transactionId = null).getOrNull()
+            val result = manager.submitTransaction(invalidState, transactionId = null)
 
-        val allTransactions = transactionRepository.getAllTransactions().first()
-        val saved = allTransactions.first()
-        assertEquals(-50.0, saved.amount, 0.01)
-    }
+            assertTrue("Submit should fail", result.isFailure)
+            assertEquals(
+                AddTransactionConstant.ERROR_REQUIRED_TITLE_AMOUNT,
+                result.exceptionOrNull()?.message,
+            )
+        }
+
+    @Test
+    fun `submitTransaction respects amount sign based on type`() =
+        runUnitTest {
+            val expenseState =
+                validState.copy(
+                    selectedType = TransactionType.EXPENSE,
+                    amount = "50.00",
+                )
+
+            manager.submitTransaction(expenseState, transactionId = null).getOrNull()
+
+            val allTransactions = transactionRepository.getAllTransactions().first()
+            val saved = allTransactions.first()
+            assertEquals(-50.0, saved.amount, 0.01)
+        }
 }

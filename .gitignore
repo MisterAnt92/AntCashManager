@@ -8,6 +8,8 @@ dist/
 target/
 release/
 debug/
+# Exception: src/debug is a source set (not a build output)
+!**/src/debug/
 
 # ============================================================================
 # Kotlin / KMP outputs and caches

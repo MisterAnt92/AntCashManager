@@ -1,17 +1,13 @@
 package com.antcashmanager.android.ui.screen.settings.view
 
 import android.content.Context
-import android.widget.Toast
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -31,38 +27,37 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import com.antcashmanager.android.ui.components.layout.SpacingSize
-import com.antcashmanager.android.ui.components.layout.VerticalSpacer
-import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.BuildConfig
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
+import com.antcashmanager.android.navigation.AppRoute
+import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
+import com.antcashmanager.android.navigation.ScreenHeaderConfig
 import com.antcashmanager.android.ui.components.animation.AntEasterEggAnimation
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
 import com.antcashmanager.android.ui.components.common.AppSwitch
 import com.antcashmanager.android.ui.components.dialog.HelpButton
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.text.AppText
+import com.antcashmanager.android.ui.screen.settings.SettingEvent
 import com.antcashmanager.android.ui.screen.settings.SettingsViewModel
-import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
-import com.antcashmanager.android.navigation.ScreenHeaderConfig
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
@@ -79,40 +74,37 @@ fun SettingsScreen(
     val context = LocalContext.current
     val noEmailAppInstalledMessage = stringResource(R.string.no_email_app_installed)
     val viewModel: SettingsViewModel = koinViewModel()
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val analyticsConsent by viewModel.analyticsConsent.collectAsStateWithLifecycle()
 
     SettingsContent(
         currentTheme = state.theme,
-        onThemeSelected = { viewModel.setTheme(it) },
+        onThemeSelected = { viewModel.onEvent(SettingEvent.SetTheme(it)) },
         currentLanguage = state.language,
-        onLanguageSelected = { viewModel.setLanguage(it) },
+        onLanguageSelected = { viewModel.onEvent(SettingEvent.SetLanguage(it)) },
         versionName = BuildConfig.VERSION_NAME,
         showCharts = state.showCharts,
-        onShowChartsChanged = { viewModel.setShowCharts(it) },
+        onShowChartsChanged = { viewModel.onEvent(SettingEvent.SetShowCharts(it)) },
         highContrast = state.highContrast,
-        onHighContrastChanged = { viewModel.setHighContrast(it) },
+        onHighContrastChanged = { viewModel.onEvent(SettingEvent.SetHighContrast(it)) },
         largeText = state.largeText,
-        onLargeTextChanged = { viewModel.setLargeText(it) },
+        onLargeTextChanged = { viewModel.onEvent(SettingEvent.SetLargeText(it)) },
         reduceMotion = state.reduceMotion,
-        onReduceMotionChanged = { viewModel.setReduceMotion(it) },
+        onReduceMotionChanged = { viewModel.onEvent(SettingEvent.SetReduceMotion(it)) },
         currencySymbol = state.currencySymbol,
-        onCurrencySymbolSelected = { viewModel.setCurrencySymbol(it) },
+        onCurrencySymbolSelected = { viewModel.onEvent(SettingEvent.SetCurrencySymbol(it)) },
         decimalDigits = state.decimalDigits,
-        onDecimalDigitsSelected = { viewModel.setDecimalDigits(it) },
+        onDecimalDigitsSelected = { viewModel.onEvent(SettingEvent.SetDecimalDigits(it)) },
         decimalSeparator = state.decimalSeparator,
-        onDecimalSeparatorSelected = { viewModel.setDecimalSeparator(it) },
+        onDecimalSeparatorSelected = { viewModel.onEvent(SettingEvent.SetDecimalSeparator(it)) },
         thousandsSeparator = state.thousandsSeparator,
-        onThousandsSeparatorSelected = { viewModel.setThousandsSeparator(it) },
-        onImportDebugData = { ctx -> viewModel.importDebugData(ctx) },
+        onThousandsSeparatorSelected = { viewModel.onEvent(SettingEvent.SetThousandsSeparator(it)) },
+        analyticsConsent = analyticsConsent,
+        onAnalyticsConsentChanged = { viewModel.onEvent(SettingEvent.SetAnalyticsConsent(it)) },
+        onImportDebugData = { ctx -> viewModel.onEvent(SettingEvent.ImportDebugData(ctx)) },
         onSendFeedbackEmail = { emailBody ->
-            val success = viewModel.sendFeedbackEmail(emailBody, context)
-            if (!success) {
-                Toast.makeText(
-                    context,
-                    noEmailAppInstalledMessage,
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+            viewModel.onEvent(SettingEvent.SendFeedbackEmail(emailBody, context))
+            // TODO: handle success/failure via errorState in state (FASE 5)
         },
         navController = navController,
         modifier = modifier,
@@ -142,6 +134,8 @@ internal fun SettingsContent(
     onDecimalSeparatorSelected: (String) -> Unit = {},
     thousandsSeparator: String = "",
     onThousandsSeparatorSelected: (String) -> Unit = {},
+    analyticsConsent: Boolean? = null,
+    onAnalyticsConsentChanged: (Boolean) -> Unit = {},
     onImportDebugData: (Context) -> Unit = {},
     onSendFeedbackEmail: (String) -> Unit = {},
     navController: NavController? = null,
@@ -161,26 +155,35 @@ internal fun SettingsContent(
     val analyticsManager: AnalyticsManager = koinInject()
     val handleHighContrastChanged: (Boolean) -> Unit = { enabled ->
         analyticsManager.logEvent("settings_high_contrast_toggled")
-        analyticsManager.logEvent("settings_accessibility_change", android.os.Bundle().apply {
-            putString("setting", "high_contrast")
-            putBoolean("enabled", enabled)
-        })
+        analyticsManager.logEvent(
+            "settings_accessibility_change",
+            android.os.Bundle().apply {
+                putString("setting", "high_contrast")
+                putBoolean("enabled", enabled)
+            },
+        )
         onHighContrastChanged(enabled)
     }
     val handleLargeTextChanged: (Boolean) -> Unit = { enabled ->
         analyticsManager.logEvent("settings_large_text_toggled")
-        analyticsManager.logEvent("settings_accessibility_change", android.os.Bundle().apply {
-            putString("setting", "large_text")
-            putBoolean("enabled", enabled)
-        })
+        analyticsManager.logEvent(
+            "settings_accessibility_change",
+            android.os.Bundle().apply {
+                putString("setting", "large_text")
+                putBoolean("enabled", enabled)
+            },
+        )
         onLargeTextChanged(enabled)
     }
     val handleReduceMotionChanged: (Boolean) -> Unit = { enabled ->
         analyticsManager.logEvent("settings_reduce_motion_toggled")
-        analyticsManager.logEvent("settings_accessibility_change", android.os.Bundle().apply {
-            putString("setting", "reduce_motion")
-            putBoolean("enabled", enabled)
-        })
+        analyticsManager.logEvent(
+            "settings_accessibility_change",
+            android.os.Bundle().apply {
+                putString("setting", "reduce_motion")
+                putBoolean("enabled", enabled)
+            },
+        )
         onReduceMotionChanged(enabled)
     }
 
@@ -203,27 +206,27 @@ internal fun SettingsContent(
                             showHelpDialog = true
                         },
                     )
-                }
-            )
+                },
+            ),
         )
     }
 
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
-        modifier = modifier.testTag("settings_screen")
+        modifier = modifier.testTag("settings_screen"),
     ) { padding ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    start = padding.calculateStartPadding(LayoutDirection.Ltr) + 16.dp,
-                    top = 0.dp,
-                    end = padding.calculateEndPadding(LayoutDirection.Ltr) + 16.dp,
-                    bottom = padding.calculateBottomPadding(),
-                )
-                .padding(vertical = 12.dp)
-                .verticalScroll(rememberScrollState())
-                .padding(bottom = 24.dp),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(
+                        start = padding.calculateStartPadding(LayoutDirection.Ltr) + 16.dp,
+                        top = 0.dp,
+                        end = padding.calculateEndPadding(LayoutDirection.Ltr) + 16.dp,
+                        bottom = padding.calculateBottomPadding(),
+                    ).padding(vertical = 12.dp)
+                    .verticalScroll(rememberScrollState())
+                    .padding(bottom = 24.dp),
         ) {
             // ── Appearance Section ──
             // ... rest of Column content ...
@@ -231,11 +234,12 @@ internal fun SettingsContent(
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 AppCard(
                     title = stringResource(R.string.settings_theme),
-                    subtitle = when (currentTheme) {
-                        AppTheme.LIGHT -> stringResource(R.string.settings_theme_light)
-                        AppTheme.DARK -> stringResource(R.string.settings_theme_dark)
-                        AppTheme.SYSTEM -> stringResource(R.string.settings_theme_system)
-                    },
+                    subtitle =
+                        when (currentTheme) {
+                            AppTheme.LIGHT -> stringResource(R.string.settings_theme_light)
+                            AppTheme.DARK -> stringResource(R.string.settings_theme_dark)
+                            AppTheme.SYSTEM -> stringResource(R.string.settings_theme_system)
+                        },
                     leadingIcon = Icons.Default.Palette,
                     onClick = { showThemeDialog = true },
                 )
@@ -255,15 +259,15 @@ internal fun SettingsContent(
                     subtitle = stringResource(R.string.settings_display_subtitle),
                     leadingIcon = Icons.Default.TextFields,
                     onClick = {
-                        val params = android.os.Bundle().apply {
-                            putString("submenu", "display")
-                        }
+                        val params =
+                            android.os.Bundle().apply {
+                                putString("submenu", "display")
+                            }
                         analyticsManager.logEvent("settings_submenu_opened", params)
-                        navController?.navigate("display")
+                        navController?.navigate(AppRoute.SettingsRoute.Display.route)
                     },
                 )
             }
-
 
             // ── Accessibility Section ──
             AppCardSectionHeader(title = stringResource(R.string.settings_accessibility))
@@ -315,35 +319,37 @@ internal fun SettingsContent(
                     iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
                     iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
                     onClick = {
-                        val params = android.os.Bundle().apply {
-                            putString("submenu", "data_management")
-                        }
+                        val params =
+                            android.os.Bundle().apply {
+                                putString("submenu", "data_management")
+                            }
                         analyticsManager.logEvent("settings_submenu_opened", params)
-                        navController?.navigate("settings_data")
+                        navController?.navigate(AppRoute.SettingsRoute.DataManagement.route)
                     },
                 )
             }
 
             // ── Support Section ──
             AppCardSectionHeader(title = stringResource(R.string.settings_support))
-            val feedbackEmailBody = stringResource(
-                when (currentLanguage) {
-                    AppLanguage.ITALIAN -> R.string.feedback_email_body_italian
-                    AppLanguage.ENGLISH -> R.string.feedback_email_body_english
-                    AppLanguage.FRENCH -> R.string.feedback_email_body_french
-                    AppLanguage.GERMAN -> R.string.feedback_email_body_german
-                    AppLanguage.SPANISH -> R.string.feedback_email_body_spanish
-                    AppLanguage.CHINESE_SIMPLIFIED -> R.string.feedback_email_body_english
-                    AppLanguage.CHINESE_TRADITIONAL -> R.string.feedback_email_body_english
-                    AppLanguage.JAPANESE -> R.string.feedback_email_body_english
-                    AppLanguage.POLISH -> R.string.feedback_email_body_english
-                    AppLanguage.HINDI -> R.string.feedback_email_body_english
-                    AppLanguage.RUSSIAN -> R.string.feedback_email_body_english
-                    AppLanguage.UKRAINIAN -> R.string.feedback_email_body_english
-                    AppLanguage.KOREAN -> R.string.feedback_email_body_english
-                    AppLanguage.SYSTEM -> R.string.feedback_email_body_english
-                }
-            )
+            val feedbackEmailBody =
+                stringResource(
+                    when (currentLanguage) {
+                        AppLanguage.ITALIAN -> R.string.feedback_email_body_italian
+                        AppLanguage.ENGLISH -> R.string.feedback_email_body_english
+                        AppLanguage.FRENCH -> R.string.feedback_email_body_french
+                        AppLanguage.GERMAN -> R.string.feedback_email_body_german
+                        AppLanguage.SPANISH -> R.string.feedback_email_body_spanish
+                        AppLanguage.CHINESE_SIMPLIFIED -> R.string.feedback_email_body_english
+                        AppLanguage.CHINESE_TRADITIONAL -> R.string.feedback_email_body_english
+                        AppLanguage.JAPANESE -> R.string.feedback_email_body_english
+                        AppLanguage.POLISH -> R.string.feedback_email_body_english
+                        AppLanguage.HINDI -> R.string.feedback_email_body_english
+                        AppLanguage.RUSSIAN -> R.string.feedback_email_body_english
+                        AppLanguage.UKRAINIAN -> R.string.feedback_email_body_english
+                        AppLanguage.KOREAN -> R.string.feedback_email_body_english
+                        AppLanguage.SYSTEM -> R.string.feedback_email_body_english
+                    },
+                )
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 AppCard(
                     title = stringResource(R.string.settings_send_feedback),
@@ -356,6 +362,23 @@ internal fun SettingsContent(
                         onSendFeedbackEmail(feedbackEmailBody)
                     },
                 )
+                // Analytics consent toggle (GDPR — user can revoke at any time)
+                if (analyticsConsent != null) {
+                    AppCard(
+                        title = stringResource(R.string.settings_analytics_consent_title),
+                        subtitle = stringResource(R.string.settings_analytics_consent_desc),
+                        leadingIcon = Icons.Default.PrivacyTip,
+                        iconBackgroundColor = MaterialTheme.colorScheme.secondaryContainer,
+                        iconTint = MaterialTheme.colorScheme.onSecondaryContainer,
+                        trailingContent = {
+                            AppSwitch(
+                                checked = analyticsConsent == true,
+                                onCheckedChange = { onAnalyticsConsentChanged(it) },
+                            )
+                        },
+                        onClick = { onAnalyticsConsentChanged(analyticsConsent != true) },
+                    )
+                }
                 AppCard(
                     title = stringResource(R.string.settings_privacy_policy),
                     subtitle = stringResource(R.string.settings_privacy_policy_subtitle),
@@ -401,7 +424,7 @@ internal fun SettingsContent(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
         }
     } // Closing Scaffold
@@ -416,9 +439,12 @@ internal fun SettingsContent(
                 showThemeDialog = false
             },
             onDismiss = {
-                analyticsManager.logEvent("settings_dialog_dismissed", android.os.Bundle().apply {
-                    putString("dialog_type", "theme_selection")
-                })
+                analyticsManager.logEvent(
+                    "settings_dialog_dismissed",
+                    android.os.Bundle().apply {
+                        putString("dialog_type", "theme_selection")
+                    },
+                )
                 showThemeDialog = false
             },
         )
@@ -433,9 +459,12 @@ internal fun SettingsContent(
                 showLanguageDialog = false
             },
             onDismiss = {
-                analyticsManager.logEvent("settings_dialog_dismissed", android.os.Bundle().apply {
-                    putString("dialog_type", "language_selection")
-                })
+                analyticsManager.logEvent(
+                    "settings_dialog_dismissed",
+                    android.os.Bundle().apply {
+                        putString("dialog_type", "language_selection")
+                    },
+                )
                 showLanguageDialog = false
             },
         )
@@ -443,21 +472,26 @@ internal fun SettingsContent(
 
     if (showPrivacyDialog) {
         PrivacyPolicyDialog(onDismiss = {
-            analyticsManager.logEvent("settings_dialog_dismissed", android.os.Bundle().apply {
-                putString("dialog_type", "privacy_policy")
-            })
+            analyticsManager.logEvent(
+                "settings_dialog_dismissed",
+                android.os.Bundle().apply {
+                    putString("dialog_type", "privacy_policy")
+                },
+            )
             showPrivacyDialog = false
         })
     }
-
 
     if (showLibrariesDialog) {
         ThirdPartyLibrariesDialog(
             context = context,
             onDismiss = {
-                analyticsManager.logEvent("settings_dialog_dismissed", android.os.Bundle().apply {
-                    putString("dialog_type", "third_party_libraries")
-                })
+                analyticsManager.logEvent(
+                    "settings_dialog_dismissed",
+                    android.os.Bundle().apply {
+                        putString("dialog_type", "third_party_libraries")
+                    },
+                )
                 showLibrariesDialog = false
             },
         )
@@ -472,9 +506,12 @@ internal fun SettingsContent(
                 showCurrencyDialog = false
             },
             onDismiss = {
-                analyticsManager.logEvent("settings_dialog_dismissed", android.os.Bundle().apply {
-                    putString("dialog_type", "currency_symbol")
-                })
+                analyticsManager.logEvent(
+                    "settings_dialog_dismissed",
+                    android.os.Bundle().apply {
+                        putString("dialog_type", "currency_symbol")
+                    },
+                )
                 showCurrencyDialog = false
             },
         )
@@ -483,11 +520,17 @@ internal fun SettingsContent(
     if (showDecimalDigitsDialog) {
         DecimalDigitsDialog(
             currentDigits = decimalDigits,
-            onDigitsSelected = { onDecimalDigitsSelected(it); showDecimalDigitsDialog = false },
+            onDigitsSelected = {
+                onDecimalDigitsSelected(it)
+                showDecimalDigitsDialog = false
+            },
             onDismiss = {
-                analyticsManager.logEvent("settings_dialog_dismissed", android.os.Bundle().apply {
-                    putString("dialog_type", "decimal_digits")
-                })
+                analyticsManager.logEvent(
+                    "settings_dialog_dismissed",
+                    android.os.Bundle().apply {
+                        putString("dialog_type", "decimal_digits")
+                    },
+                )
                 showDecimalDigitsDialog = false
             },
         )
@@ -496,13 +539,25 @@ internal fun SettingsContent(
     if (showDecimalSeparatorDialog) {
         SeparatorDialog(
             title = stringResource(R.string.dialog_choose_decimal_separator),
-            options = translateSeparatorOptions(CurrencyFormat.DECIMAL_SEPARATORS.filter { it.first != thousandsSeparator }),
+            options =
+                translateSeparatorOptions(
+                    CurrencyFormat.DECIMAL_SEPARATORS.filter {
+                        it.first !=
+                            thousandsSeparator
+                    },
+                ),
             currentValue = decimalSeparator,
-            onSelected = { onDecimalSeparatorSelected(it); showDecimalSeparatorDialog = false },
+            onSelected = {
+                onDecimalSeparatorSelected(it)
+                showDecimalSeparatorDialog = false
+            },
             onDismiss = {
-                analyticsManager.logEvent("settings_dialog_dismissed", android.os.Bundle().apply {
-                    putString("dialog_type", "decimal_separator")
-                })
+                analyticsManager.logEvent(
+                    "settings_dialog_dismissed",
+                    android.os.Bundle().apply {
+                        putString("dialog_type", "decimal_separator")
+                    },
+                )
                 showDecimalSeparatorDialog = false
             },
         )
@@ -511,13 +566,25 @@ internal fun SettingsContent(
     if (showThousandsSeparatorDialog) {
         SeparatorDialog(
             title = stringResource(R.string.dialog_choose_thousands_separator),
-            options = translateSeparatorOptions(CurrencyFormat.THOUSANDS_SEPARATORS.filter { it.first != decimalSeparator }),
+            options =
+                translateSeparatorOptions(
+                    CurrencyFormat.THOUSANDS_SEPARATORS.filter {
+                        it.first !=
+                            decimalSeparator
+                    },
+                ),
             currentValue = thousandsSeparator,
-            onSelected = { onThousandsSeparatorSelected(it); showThousandsSeparatorDialog = false },
+            onSelected = {
+                onThousandsSeparatorSelected(it)
+                showThousandsSeparatorDialog = false
+            },
             onDismiss = {
-                analyticsManager.logEvent("settings_dialog_dismissed", android.os.Bundle().apply {
-                    putString("dialog_type", "thousands_separator")
-                })
+                analyticsManager.logEvent(
+                    "settings_dialog_dismissed",
+                    android.os.Bundle().apply {
+                        putString("dialog_type", "thousands_separator")
+                    },
+                )
                 showThousandsSeparatorDialog = false
             },
         )
@@ -526,28 +593,29 @@ internal fun SettingsContent(
     if (showAntAnimation) {
         AntEasterEggAnimation(
             versionName = versionName,
-            onDismiss = { showAntAnimation = false }
+            onDismiss = { showAntAnimation = false },
         )
     }
 }
 
 @Composable
-private fun languageDisplayName(language: AppLanguage): String = when (language) {
-    AppLanguage.SYSTEM -> stringResource(R.string.language_system)
-    AppLanguage.ENGLISH -> stringResource(R.string.language_english)
-    AppLanguage.ITALIAN -> stringResource(R.string.language_italian)
-    AppLanguage.FRENCH -> stringResource(R.string.language_french)
-    AppLanguage.GERMAN -> stringResource(R.string.language_german)
-    AppLanguage.SPANISH -> stringResource(R.string.language_spanish)
-    AppLanguage.CHINESE_SIMPLIFIED -> stringResource(R.string.language_system)
-    AppLanguage.CHINESE_TRADITIONAL -> stringResource(R.string.language_system)
-    AppLanguage.JAPANESE -> stringResource(R.string.language_system)
-    AppLanguage.POLISH -> stringResource(R.string.language_system)
-    AppLanguage.HINDI -> stringResource(R.string.language_system)
-    AppLanguage.RUSSIAN -> stringResource(R.string.language_system)
-    AppLanguage.UKRAINIAN -> stringResource(R.string.language_system)
-    AppLanguage.KOREAN -> stringResource(R.string.language_system)
-}
+private fun languageDisplayName(language: AppLanguage): String =
+    when (language) {
+        AppLanguage.SYSTEM -> stringResource(R.string.language_system)
+        AppLanguage.ENGLISH -> stringResource(R.string.language_english)
+        AppLanguage.ITALIAN -> stringResource(R.string.language_italian)
+        AppLanguage.FRENCH -> stringResource(R.string.language_french)
+        AppLanguage.GERMAN -> stringResource(R.string.language_german)
+        AppLanguage.SPANISH -> stringResource(R.string.language_spanish)
+        AppLanguage.CHINESE_SIMPLIFIED -> stringResource(R.string.language_system)
+        AppLanguage.CHINESE_TRADITIONAL -> stringResource(R.string.language_system)
+        AppLanguage.JAPANESE -> stringResource(R.string.language_system)
+        AppLanguage.POLISH -> stringResource(R.string.language_system)
+        AppLanguage.HINDI -> stringResource(R.string.language_system)
+        AppLanguage.RUSSIAN -> stringResource(R.string.language_system)
+        AppLanguage.UKRAINIAN -> stringResource(R.string.language_system)
+        AppLanguage.KOREAN -> stringResource(R.string.language_system)
+    }
 
 @Composable
 fun translateSeparatorOptions(options: List<Pair<String, String>>): List<Pair<String, String>> {
@@ -557,13 +625,14 @@ fun translateSeparatorOptions(options: List<Pair<String, String>>): List<Pair<St
     val none = stringResource(R.string.settings_separator_none)
 
     return options.map { (value, label) ->
-        value to when (label) {
-            "Comma (,)" -> comma
-            "Period (.)" -> period
-            "Space" -> space
-            "None" -> none
-            else -> label
-        }
+        value to
+            when (label) {
+                "Comma (,)" -> comma
+                "Period (.)" -> period
+                "Space" -> space
+                "None" -> none
+                else -> label
+            }
     }
 }
 

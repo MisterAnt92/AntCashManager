@@ -18,7 +18,6 @@ import java.nio.charset.StandardCharsets
  */
 @RunWith(AndroidJUnit4::class)
 class CharsetHandlingTest {
-
     @Test
     fun readBackupFile_shouldHandleUTF8Encoding() {
         val jsonContent = """{"version":1,"transactions":[],"categories":[]}"""
@@ -49,11 +48,12 @@ class CharsetHandlingTest {
         val bytes = jsonContent.toByteArray(StandardCharsets.ISO_8859_1)
         val inputStream = ByteArrayInputStream(bytes)
 
-        val result = runCatching {
-            inputStream.bufferedReader(StandardCharsets.UTF_8).use { it.readText() }
-        }.recoverCatching {
-            ByteArrayInputStream(bytes).bufferedReader(StandardCharsets.ISO_8859_1).use { it.readText() }
-        }.getOrNull()
+        val result =
+            runCatching {
+                inputStream.bufferedReader(StandardCharsets.UTF_8).use { it.readText() }
+            }.recoverCatching {
+                ByteArrayInputStream(bytes).bufferedReader(StandardCharsets.ISO_8859_1).use { it.readText() }
+            }.getOrNull()
 
         assertEquals("UTF-8 content should match", jsonContent, result)
     }
@@ -88,14 +88,15 @@ class CharsetHandlingTest {
     @Test
     fun readBackupFile_shouldHandleLargeBackupFile() {
         // Simula un file backup grande con molte transazioni
-        val largeJson = buildString {
-            append("""{"transactions":[""")
-            repeat(100) { i ->
-                if (i > 0) append(",")
-                append("""{"id":$i,"title":"Transazione $i","amount":$i.5}""")
+        val largeJson =
+            buildString {
+                append("""{"transactions":[""")
+                repeat(100) { i ->
+                    if (i > 0) append(",")
+                    append("""{"id":$i,"title":"Transazione $i","amount":$i.5}""")
+                }
+                append("]}")
             }
-            append("]}")
-        }
         val bytes = largeJson.toByteArray(StandardCharsets.UTF_8)
         val inputStream = ByteArrayInputStream(bytes)
 

@@ -13,7 +13,5 @@ public class InsertCategoryUseCase(
     private val categoryRepository: CategoryRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : UseCase<Category, Long>(dispatcher) {
-
-    override suspend fun execute(params: Category): Long =
-        categoryRepository.insertCategory(params)
+    override suspend fun execute(params: Category): Long = categoryRepository.insertCategory(params)
 }

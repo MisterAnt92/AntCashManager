@@ -24,7 +24,6 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 class HomeScreenE2ESearchTest : BaseInstrumentationTest() {
-
     @Test
     fun completeSearchFlow_shouldWorkEndToEnd_fromInitialStateToFiltering() {
         composeTestRule.setContent {
@@ -37,11 +36,13 @@ class HomeScreenE2ESearchTest : BaseInstrumentationTest() {
 
         // E2E Flow:
         // 1. Home screen is displayed
-        composeTestRule.onNodeWithTag("home_screen")
+        composeTestRule
+            .onNodeWithTag("home_screen")
             .assertIsDisplayed()
 
         // 2. Search component is initially hidden
-        composeTestRule.onNodeWithTag("search_input")
+        composeTestRule
+            .onNodeWithTag("search_input")
             .assertDoesNotExist()
 
         // 3. (In full e2e test) Click search icon → SearchComponent expands

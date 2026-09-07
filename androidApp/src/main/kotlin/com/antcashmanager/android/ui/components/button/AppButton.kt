@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
-import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
+import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
 
 /**
@@ -66,22 +66,28 @@ fun AppButton(
     useDefaultSize: Boolean = true,
     content: (@Composable () -> Unit)? = null,
 ) {
+    // Adaptive touch target: 48dp on phones, 56dp on tablets (WCAG 2.5.8)
+    val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
+    val touchTargetHeight = if (adaptiveLayoutInfo.isExpanded) 56.dp else 48.dp
+
     // Animazione di scala al press
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     val scale by animateFloatAsState(
         targetValue = if (isPressed) 0.96f else 1f,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessHigh,
-        ),
+        animationSpec =
+            spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+                stiffness = Spring.StiffnessHigh,
+            ),
         label = "buttonPressScale",
     )
 
-    val resolvedElevation = elevation ?: ButtonDefaults.buttonElevation(
-        defaultElevation = 4.dp,
-        pressedElevation = 8.dp,
-    )
+    val resolvedElevation =
+        elevation ?: ButtonDefaults.buttonElevation(
+            defaultElevation = 4.dp,
+            pressedElevation = 8.dp,
+        )
     val resolvedIconSize = iconSize ?: 24.dp
     val resolvedTextStyle =
         textStyle ?: androidx.compose.material3.MaterialTheme.typography.labelLarge
@@ -89,22 +95,46 @@ fun AppButton(
     // Clean text
     val cleanedText = text.trim().replace(Regex("\\s+"), " ")
 
-    val sizeModifier = if (useDefaultSize) {
-        modifier
-            .height(48.dp)
-            .defaultMinSize(minWidth = 90.dp)
-            .graphicsLayer { scaleX = scale; scaleY = scale }
-    } else modifier.graphicsLayer { scaleX = scale; scaleY = scale }
+    val sizeModifier =
+        if (useDefaultSize) {
+            modifier
+                .height(touchTargetHeight)
+                .defaultMinSize(minWidth = 90.dp)
+                .graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                }
+        } else {
+            modifier.graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            }
+        }
 
     Button(
         onClick = onClick,
         modifier = sizeModifier,
         shape = shape,
         elevation = resolvedElevation,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = if (buttonColor != Color.Unspecified) buttonColor else ButtonDefaults.buttonColors().containerColor,
-            contentColor = if (contentColor != Color.Unspecified) contentColor else ButtonDefaults.buttonColors().contentColor,
-        ),
+        colors =
+            ButtonDefaults.buttonColors(
+                containerColor =
+                    if (buttonColor !=
+                        Color.Unspecified
+                    ) {
+                        buttonColor
+                    } else {
+                        ButtonDefaults.buttonColors().containerColor
+                    },
+                contentColor =
+                    if (contentColor !=
+                        Color.Unspecified
+                    ) {
+                        contentColor
+                    } else {
+                        ButtonDefaults.buttonColors().contentColor
+                    },
+            ),
         enabled = enabled,
         contentPadding = contentPadding,
         interactionSource = interactionSource,
@@ -114,7 +144,7 @@ fun AppButton(
         } else {
             Row(
                 horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (icon != 0) {
                     Image(
@@ -123,7 +153,7 @@ fun AppButton(
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.size(resolvedIconSize),
                         // apply tint if provided
-                        colorFilter = iconTint?.let { ColorFilter.tint(it) }
+                        colorFilter = iconTint?.let { ColorFilter.tint(it) },
                     )
                 }
 
@@ -153,7 +183,8 @@ fun AppButtonPreviews() {
         AppButton(
             text = "With Icon",
             icon = android.R.drawable.ic_menu_add,
-            onClick = {})
+            onClick = {},
+        )
 
         VerticalSpacer(SpacingSize.XS)
 
@@ -167,7 +198,7 @@ fun AppButtonPreviews() {
             text = "Custom Color",
             buttonColor = Color.Red,
             textColor = Color.White,
-            onClick = {}
+            onClick = {},
         )
 
         VerticalSpacer(SpacingSize.XS)
@@ -176,7 +207,8 @@ fun AppButtonPreviews() {
         AppButton(
             text = "No Default Size",
             useDefaultSize = false,
-            onClick = {})
+            onClick = {},
+        )
 
         VerticalSpacer(SpacingSize.XS)
 
@@ -260,7 +292,7 @@ private fun AppButtonStylesPreviewDark() {
     name = "AppButton Styles - Accessibility",
     showBackground = true,
     widthDp = 360,
-    fontScale = 1.5f
+    fontScale = 1.5f,
 )
 @Composable
 private fun AppButtonStylesPreviewAccessibility() {

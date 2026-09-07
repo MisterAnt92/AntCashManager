@@ -50,7 +50,6 @@ class GoogleSignInManager(
     private val context: Context,
     private val settingsRepository: SettingsRepository,
 ) {
-
     private val logger = Logger
     private val googleSignInClient: GoogleSignInClient = createGoogleSignInClient()
 
@@ -67,11 +66,13 @@ class GoogleSignInManager(
      * Non specificare manualmente — viene risolto automaticamente.
      */
     private fun createGoogleSignInClient(): GoogleSignInClient {
-        val signInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestProfile()
-            .requestEmail()
-            .requestScopes(Scope(DriveScopes.DRIVE_FILE))
-            .build()
+        val signInOptions =
+            GoogleSignInOptions
+                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestProfile()
+                .requestEmail()
+                .requestScopes(Scope(DriveScopes.DRIVE_FILE))
+                .build()
 
         return GoogleSignIn.getClient(context, signInOptions)
     }
@@ -137,7 +138,9 @@ class GoogleSignInManager(
     private fun getSignedInAccountFromUI(): GoogleSignInAccount? {
         // TODO: Implementare via Activity.registerForActivityResult()
         // Per ora ritorna null (caller gestirà il launch della Activity)
-        logger.w(tag = "GoogleSignInManager") { "getSignedInAccountFromUI is a placeholder — implement via registerForActivityResult()" }
+        logger.w(tag = "GoogleSignInManager") {
+            "getSignedInAccountFromUI is a placeholder — implement via registerForActivityResult()"
+        }
         return null
     }
 
@@ -154,7 +157,7 @@ class GoogleSignInManager(
         // Salva token cifrati
         val storage = getEncryptedStorage()
         storage.saveAccessToken(accessToken)
-        storage.saveRefreshToken(accessToken)  // TODO: In fase 2, implementare proper refresh token extraction
+        storage.saveRefreshToken(accessToken) // TODO: In fase 2, implementare proper refresh token extraction
 
         // Aggiorna settings
         settingsRepository.setGoogleDriveUserEmail(email)
@@ -166,15 +169,15 @@ class GoogleSignInManager(
             email = email,
             accessToken = accessToken,
             idToken = account.idToken ?: "",
-            driveFolder = null  // TODO: Implementare folder creation in DriveUploadManager
+            driveFolder = null, // TODO: Implementare folder creation in DriveUploadManager
         )
     }
 
     /**
      * Verifica se l'utente è già loggato.
      */
-    fun isSignedIn(): Boolean {
-        return try {
+    fun isSignedIn(): Boolean =
+        try {
             val account = GoogleSignIn.getLastSignedInAccount(context)
             val isSignedIn = account != null && account.isExpired.not()
             logger.d(tag = "GoogleSignInManager") { "Sign-in status: $isSignedIn" }
@@ -183,7 +186,6 @@ class GoogleSignInManager(
             logger.e(tag = "GoogleSignInManager") { "Error checking sign-in status: ${e.message}" }
             false
         }
-    }
 
     /**
      * Richiede un nuovo access token (token refresh).
@@ -195,9 +197,10 @@ class GoogleSignInManager(
     suspend fun refreshAccessToken(): Result<String> {
         return try {
             logger.d(tag = "GoogleSignInManager") { "Refreshing access token" }
-            val account = GoogleSignIn.getLastSignedInAccount(context) ?: return Result.failure(
-                Exception("No signed-in account")
-            )
+            val account =
+                GoogleSignIn.getLastSignedInAccount(context) ?: return Result.failure(
+                    Exception("No signed-in account"),
+                )
 
             // Google Play Services refresh automaticamente se validità < 1 minuto
             // Questo è un manual refresh fallback
@@ -224,8 +227,8 @@ class GoogleSignInManager(
      * - Cancella token dal device
      * - Aggiorna settings (disabilita Google Drive backup, cancella email)
      */
-    suspend fun signOut(): Result<Unit> {
-        return try {
+    suspend fun signOut(): Result<Unit> =
+        try {
             logger.d(tag = "GoogleSignInManager") { "Initiating sign-out" }
 
             // Rivoca accesso
@@ -246,14 +249,11 @@ class GoogleSignInManager(
             logger.e(tag = "GoogleSignInManager") { "Sign-out error: ${e.message}" }
             Result.failure(e)
         }
-    }
 
     /**
      * Ottiene l'EncryptedGoogleDriveStorage per gestione token.
      */
-    private fun getEncryptedStorage(): EncryptedGoogleDriveStorage {
-        return EncryptedGoogleDriveStorage(context)
-    }
+    private fun getEncryptedStorage(): EncryptedGoogleDriveStorage = EncryptedGoogleDriveStorage(context)
 }
 
 /**
@@ -263,5 +263,5 @@ data class GoogleSignInResult(
     val email: String,
     val accessToken: String,
     val idToken: String,
-    val driveFolder: String? = null,  // Folder ID se già creata
+    val driveFolder: String? = null, // Folder ID se già creata
 )

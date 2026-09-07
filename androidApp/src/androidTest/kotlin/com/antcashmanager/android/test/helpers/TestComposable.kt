@@ -1,10 +1,10 @@
 package com.antcashmanager.android.test.helpers
 
 import androidx.compose.ui.test.SemanticsNodeInteraction
+import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
 
 /**
  * Extension functions for common Compose test patterns
@@ -31,7 +31,7 @@ import androidx.compose.ui.test.junit4.ComposeContentTestRule
  */
 fun SemanticsNodeInteraction.clickAndWait(
     composeTestRule: ComposeContentTestRule,
-    afterClickWaitMs: Long = 500
+    afterClickWaitMs: Long = 500,
 ) {
     this.performClick()
     composeTestRule.waitForIdle()
@@ -56,7 +56,7 @@ fun SemanticsNodeInteraction.clickAndWait(
  */
 fun SemanticsNodeInteraction.typeAndWait(
     text: String,
-    composeTestRule: ComposeContentTestRule
+    composeTestRule: ComposeContentTestRule,
 ) {
     this.performTextInput(text)
     composeTestRule.waitForIdle()
@@ -73,7 +73,7 @@ fun SemanticsNodeInteraction.typeAndWait(
  */
 fun SemanticsNodeInteraction.replaceText(
     newText: String,
-    composeTestRule: ComposeContentTestRule
+    composeTestRule: ComposeContentTestRule,
 ) {
     this.performTextClearance()
     this.typeAndWait(newText, composeTestRule)

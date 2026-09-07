@@ -142,8 +142,8 @@ object TestErrorMessages {
  * Regular expressions used in tests
  */
 object TestPatterns {
-    const val CURRENCY_REGEX = "\\$?\\d+\\.\\d{2}"  // Matches "100.00" or "$100.00"
-    const val DATE_REGEX = "\\d{1,2}/\\d{1,2}/\\d{4}"  // Matches "1/1/2024"
-    const val TIME_REGEX = "\\d{1,2}:\\d{2}"  // Matches "12:30"
+    const val CURRENCY_REGEX = "\\$?\\d+\\.\\d{2}" // Matches "100.00" or "$100.00"
+    const val DATE_REGEX = "\\d{1,2}/\\d{1,2}/\\d{4}" // Matches "1/1/2024"
+    const val TIME_REGEX = "\\d{1,2}:\\d{2}" // Matches "12:30"
     const val EMAIL_REGEX = "[A-Za-z0-9+_.-]+@([A-Za-z0-9.-]+\\.[A-Za-z]{2,})"
 }

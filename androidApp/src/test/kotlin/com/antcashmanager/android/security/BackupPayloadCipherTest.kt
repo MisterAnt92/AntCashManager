@@ -1,16 +1,12 @@
 package com.antcashmanager.android.security
 
-import android.util.Base64
 import com.antcashmanager.android.BaseUnitTest
-import io.mockk.every
-import io.mockk.mockkStatic
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class BackupPayloadCipherTest : BaseUnitTest() {
-
     @Test
     fun isEncryptedPayload_shouldReturnTrue_whenPayloadStartsWithPrefix() {
         val encrypted = "ACM_ENC_V1:abc123:def456"
@@ -57,14 +53,15 @@ class BackupPayloadCipherTest : BaseUnitTest() {
     @Test
     fun encryptThenDecrypt_shouldHandleLargePayload_roundTrip() {
         // Simula un backup con molte transazioni
-        val largePayload = buildString {
-            append("""{"transactions":[""")
-            repeat(1000) { i ->
-                if (i > 0) append(",")
-                append("""{"id":$i,"title":"Transazione $i","amount":$i.5}""")
+        val largePayload =
+            buildString {
+                append("""{"transactions":[""")
+                repeat(1000) { i ->
+                    if (i > 0) append(",")
+                    append("""{"id":$i,"title":"Transazione $i","amount":$i.5}""")
+                }
+                append("]}")
             }
-            append("]}")
-        }
 
         val encrypted = BackupPayloadCipher.encrypt(largePayload)
         val decrypted = BackupPayloadCipher.decrypt(encrypted)

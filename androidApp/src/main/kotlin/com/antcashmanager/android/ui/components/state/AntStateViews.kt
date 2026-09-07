@@ -1,6 +1,7 @@
 package com.antcashmanager.android.ui.components.state
 
 import android.content.res.Configuration
+import android.os.Bundle
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -10,7 +11,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -32,11 +32,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import android.os.Bundle
+import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
-import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
-import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.LocalReduceMotion
@@ -67,16 +65,18 @@ fun AntEmptyState(
 
     AnimatedVisibility(
         visible = visible,
-        enter = fadeIn(animationSpec = tween(enterDuration)) +
+        enter =
+            fadeIn(animationSpec = tween(enterDuration)) +
                 scaleIn(
                     initialScale = 0.85f,
                     animationSpec = tween(enterDuration),
                 ),
     ) {
         Column(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(vertical = 32.dp),
+            modifier =
+                modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
@@ -107,13 +107,14 @@ fun AntEmptyState(
                     onClick = {
                         // Track empty state action
                         if (actionAnalyticsLabel != null) {
-                            val params = Bundle().apply {
-                                putString("action", actionAnalyticsLabel)
-                            }
+                            val params =
+                                Bundle().apply {
+                                    putString("action", actionAnalyticsLabel)
+                                }
                             analyticsManager.logEvent("empty_state_action_taken", params)
                         }
                         onAction()
-                    }
+                    },
                 ) {
                     AppText(actionLabel)
                 }
@@ -147,9 +148,10 @@ fun AntErrorState(
         enter = fadeIn(animationSpec = tween(enterDuration)),
     ) {
         Column(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(vertical = 32.dp),
+            modifier =
+                modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
