@@ -62,6 +62,7 @@ class TransactionsViewModel(
     private val settingsRepository: SettingsRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val engagementTracker: EngagementTracker,
+    private val analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager,
 ) : BaseViewModel<TransactionsEvent>(dispatcher) {
     constructor(
         transactionRepository: TransactionRepository,
@@ -69,6 +70,7 @@ class TransactionsViewModel(
         settingsRepository: SettingsRepository,
         dispatcher: CoroutineDispatcher = Dispatchers.Default,
         engagementTracker: EngagementTracker,
+        analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager,
     ) : this(
         getTransactionsUseCase =
             GetTransactionsUseCase(
@@ -118,6 +120,7 @@ class TransactionsViewModel(
         settingsRepository = settingsRepository,
         dispatcher = dispatcher,
         engagementTracker = engagementTracker,
+        analyticsManager = analyticsManager,
     )
 
     // ── Internal filter state ──
