@@ -648,4 +648,5 @@
     <!-- Settings: Analytics consent toggle -->
     <string name="settings_analytics_consent_title">Share anonymous usage statistics</string>
     <string name="settings_analytics_consent_desc">Screens visited and errors only. No financial data is ever sent.</string>
+    <string name="transactions_details_empty">Select a transaction to view details</string>
 </resources>

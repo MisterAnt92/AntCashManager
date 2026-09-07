@@ -646,4 +646,5 @@
     <string name="settings_analytics_consent_title">共享匿名使用统计</string>
     <string name="settings_analytics_consent_desc">仅访问的界面和错误。不会发送任何财务数据。</string>
 
+    <string name="transactions_details_empty">选择一笔交易以查看详情</string>
 </resources>

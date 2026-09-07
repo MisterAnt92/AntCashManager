@@ -642,4 +642,5 @@
     <string name="transactions_help_search_desc">@string/help_transactions_feature_search_desc</string>
     <string name="transactions_help_display_title">@string/settings_transaction_display</string>
     <string name="transactions_help_display_desc">@string/settings_transaction_display_desc</string>
+    <string name="transactions_details_empty">विवरण देखने के लिए एक लेन-देन चुनें</string>
 </resources>

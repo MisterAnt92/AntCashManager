@@ -633,4 +633,5 @@
     <!-- HelpDialog (Transactions) - missing aliases -->
     <string name="transactions_help_title">@string/help_transactions_title</string>
     <string name="transactions_help_desc">@string/help_transactions_desc</string>
+    <string name="transactions_details_empty">Wählen Sie eine Transaktion aus, um Details anzuzeigen</string>
 </resources>
