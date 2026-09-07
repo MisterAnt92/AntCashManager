@@ -337,17 +337,18 @@ val presentationModule =
         }
         viewModel {
             TransactionsViewModel(
-                getTransactionsUseCase = get(),
-                insertTransactionUseCase = get(),
-                updateTransactionUseCase = get(),
-                deleteTransactionUseCase = get(),
-                getCategoriesUseCase = get(),
-                filterTransactionsUseCase = get(),
-                getTransactionSuggestionsUseCase = get(),
-                getTransactionsDateFilterStateUseCase = get(),
-                setTransactionsDateFilterStateUseCase = get(),
-                settingsRepository = get(),
+                getTransactionsUseCase = get<GetTransactionsUseCase>(),
+                insertTransactionUseCase = get<InsertTransactionUseCase>(),
+                updateTransactionUseCase = get<UpdateTransactionUseCase>(),
+                deleteTransactionUseCase = get<DeleteTransactionUseCase>(),
+                getCategoriesUseCase = get<GetCategoriesUseCase>(),
+                filterTransactionsUseCase = get<FilterTransactionsUseCase>(),
+                getTransactionSuggestionsUseCase = get<GetTransactionSuggestionsUseCase>(),
+                getTransactionsDateFilterStateUseCase = get<GetTransactionsDateFilterStateUseCase>(),
+                setTransactionsDateFilterStateUseCase = get<SetTransactionsDateFilterStateUseCase>(),
+                settingsRepository = get<SettingsRepository>(),
                 engagementTracker = get<EngagementTracker>(),
+                analyticsManager = get<AnalyticsManager>(),
             )
         }
 
