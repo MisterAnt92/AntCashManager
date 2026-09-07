@@ -65,6 +65,7 @@ fun ThemeSelectionDialog(
                                         AppTheme.LIGHT -> R.string.settings_theme_light
                                         AppTheme.DARK -> R.string.settings_theme_dark
                                         AppTheme.SYSTEM -> R.string.settings_theme_system
+                                        AppTheme.ANNA -> R.string.settings_theme_anna
                                     },
                                 ),
                             modifier = Modifier.padding(start = 8.dp),

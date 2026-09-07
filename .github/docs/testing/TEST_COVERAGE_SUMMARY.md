@@ -196,8 +196,8 @@ Fixed 6 compilation errors in test files:
 6. `shared/src/androidHostTest/.../repository/TransactionRepositoryEdgeCaseTest.kt` (278 lines)
 
 ### Files Fixed (8)
-1. `AGENTS.md` – Clarifications on Roboelectric, v2 Compose, BaseUnitTest
-2. `.github/agents/agent-android-clean-architecture.agent.md` – UseCase names, SettingsRepository exception
+1. `AGENTS.md` – Clarifications on Robolectric, v2 Compose, BaseUnitTest
+2. `AGENTS.md` §6-7 – UseCase base classes, SettingsRepository exception
 3. `COVERAGE_STRATEGY.md` – New: 5-phase coverage plan
 4. `extra/scripts/measure-coverage.sh` – New: coverage measurement script
 5. `shared/src/commonTest/.../SavedDateFilterTest.kt` – Timestamp conversion

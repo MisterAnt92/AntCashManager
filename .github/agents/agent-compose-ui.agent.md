@@ -1,374 +1,77 @@
-# Agent: Compose UI & Screen Implementation
-
-**Purpose**: Specialized guidance for Screen composables, component reuse, and UI patterns.
-
-**See Also**: [AGENTS.md](../../AGENTS.md) for complete UI rules, i18n, and component guidelines.
-
+---
+description: "Compose Screen and UI components: koinViewModel + state + onEvent wiring, component inventory to reuse, previews, navigation extensions, 13-locale i18n. Use when creating or editing Screens, view/ sub-composables or ui/components."
 ---
 
-## Screen Composable Pattern
+# Agent: Compose UI
 
-All feature screens follow this structure:
+Rules live in [AGENTS.md §8, §9, §11](../../AGENTS.md). This file gives the real wiring and the component inventory.
+
+## Screen wiring (from `home/HomeScreen.kt`)
 
 ```kotlin
-package com.antcashmanager.android.ui.screen.yourfeature
-
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsStateWithLifecycle
-import androidx.compose.material3.MaterialTheme
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.ui.res.stringResource
-import com.antcashmanager.android.R
-
 @Composable
-fun YourFeatureScreen(
-    modifier: Modifier = Modifier,
-    viewModel: YourFeatureViewModel = viewModel(),
-) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
+    val viewModel: HomeViewModel = koinViewModel()               // org.koin.androidx.compose
+    val state by viewModel.state.collectAsStateWithLifecycle()   // androidx.lifecycle.compose
 
-    YourFeatureContent(
+    HomeContent(
         state = state,
-        onAction = { action -> viewModel.handleAction(action) },
+        onEvent = viewModel::onEvent,
+        onAddTransaction = { navController.navigateToAddTransaction() },
         modifier = modifier,
     )
 }
 
 @Composable
-private fun YourFeatureContent(
-    state: YourFeatureState,
-    onAction: (YourFeatureAction) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(modifier = modifier.padding(16.dp)) {
-        // UI composition here
-        if (state.isLoading) {
-            LoadingIndicator()
-        } else if (state.error != null) {
-            ErrorMessage(state.error, onRetry = { onAction(YourFeatureAction.Retry) })
-        } else {
-            // Content
-        }
-    }
-}
+internal fun HomeContent(state: HomeState, onEvent: (HomeEvent) -> Unit, onAddTransaction: () -> Unit, modifier: Modifier = Modifier) { … }
 ```
+- `Content` gets plain values + lambdas → previewable and testable. Sub-composables in `view/`.
+- Navigation: only `NavigationExtensions.kt` (`navigateToHome/Charts/Transactions/Categories/SettingsMain/DisplaySettings/DataManagement/Tutorial/ReceiptScan/AddTransaction()`, `navigateToTransaction(route)`, `safePopBackStack()`) and `AppRoute`. No string literals.
+- Header: `LocalScreenHeaderConfigCallback` + `ScreenHeaderConfig` (see HomeScreen) instead of a custom top bar.
 
-**Rules**:
-- ✅ One composable per screen
-- ✅ Accept ViewModel as parameter (for testability)
-- ✅ Extract sub-composables to `view/` sub-package
-- ✅ NO business logic in composable
-- ✅ All strings via `stringResource(R.string.key)`
-- ✅ All colors via `MaterialTheme.colorScheme`
-- ❌ NO hardcoded strings, colors, dimensions
+## Component inventory — `ui/components/` (reuse, never recreate)
 
----
+| Need | Use |
+|---|---|
+| Screen scaffold / header | `AntScreenScaffold`, `ScreenHeader`, `OptimizedScaffold` |
+| Cards | `AppCard`, `AppCardSectionHeader`, `AppCategoryCard`, `AppSelectionItemCard`, `AnimatedCard`, `ExpandableAnimatedCard` |
+| Buttons / links | `AppButton`, `TextLink`, `VisibilityToggleButton`, `ReorderButtons`, `HelpButton` |
+| Inputs | `AppTextField`, `AutocompleteTextField`, `AppSwitch`, `AppRadioButton`, `AppSlider`, `AppUnitDropdown` |
+| Lists | `AppListItem`, `AppCategoryListItem`, `AnimatedListItem` |
+| Text / money | `AppText`, `MoneyText`, `CompactMoneyText`, `TransactionAmountText`, `BalanceText`, `AnimatedCounter` |
+| State | `AntEmptyState`, `AntErrorState`, `SkeletonLoader`, `TransactionSkeletonLoader`, `BlockingProgressDialog` |
+| Filters / search | `SearchComponent`, `DateRangeFilter` |
+| Dialogs | `AppHelpDialog`, `HelpDialogContent`, `AppExitConfirmationDialog`, `AnalyticsConsentDialog` |
+| Layout | `FoldableAwareLayout`, `rememberAdaptiveLayoutInfo()`, `VerticalSpacer`, `HorizontalSpacer`, `AppDivider`, `NavigationRailTablet`, `LeftSidebar` |
+| Motion | `FadeInOnAppear`, `SlideInOnAppear`, `PulsingElement`, `BouncingElement` (respect `LocalReduceMotion`) |
 
-## Code Organization
+Regenerate: `grep -rhoE "^(internal )?fun [A-Z]\w+\(" androidApp/src/main/kotlin/com/antcashmanager/android/ui/components | sort -u`
 
-```
-ui/screen/<feature>/
-  <Feature>Screen.kt          # Main screen + root composable
-  <Feature>ViewModel.kt       # State management
-  <Feature>State.kt           # UI state data class
-  <Feature>Constants.kt       # Feature constants (if needed)
-  model/                      # Reusable feature data classes
-  view/                       # Sub-composables
-    <Component>View.kt
-    <AnotherComponent>View.kt
-```
+## Theme & spacing
 
-**Max line limits**:
-- Screen composable: **400 lines** (including sub-composables if in same file)
-- If larger: split into multiple files in `view/`
+- `MaterialTheme.colorScheme.*` / `MaterialTheme.typography.*` only. Semantic exceptions: `IncomeGreen`, `ExpenseRed` (`ui/theme/Color.kt`). Never `Color(0x…)` or `fontSize = N.sp` in screens.
+- Spacing: 8 dp between items, 16 dp screen padding, 24 dp section breaks. `Arrangement.spacedBy(8.dp)` for card lists.
+- Touch targets via `AppButton` / `clickable(indication = ripple())`.
 
----
+## Previews
 
-## Component Reuse (CRITICAL)
-
-**Before creating a NEW component, check if one exists**:
-
-```bash
-# Search for similar components
-find androidApp/src/main/kotlin/com/antcashmanager/android/ui/components -name "*Card*"
-find androidApp/src/main/kotlin/com/antcashmanager/android/ui/components -name "*Button*"
-```
-
-**Common reusable components** (DO NOT recreate):
-- `AppCard` - Elevated card with consistent styling
-- `AppButton` - Styled button with ripple
-- `ScreenHeader` - Screen title + back button
-- `LoadingIndicator` - Circular progress
-- `ErrorMessage` - Error display with retry
-- `EmptyState` - Empty list placeholder
-
-**Pattern**:
+- Required (light + dark) for composables in `ui/components/` and `screen/<feature>/view/`. Root `*Screen` composables have **no** previews (removed in FASE 7a — do not add them back).
 ```kotlin
-// ✅ CORRECT - Reuse existing component
-Column {
-    ScreenHeader(
-        title = stringResource(R.string.transactions_title),
-        onBack = { navController.navigateUp() },
-    )
-    AppCard {
-        // Content
-    }
-}
-
-// ❌ WRONG - Recreate existing component
-Column {
-    Row {
-        Text("Transactions", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        IconButton(onClick = { navController.navigateUp() }) {
-            Icon(Icons.Default.Back, contentDescription = null)
-        }
-    }
-    Surface(elevation = 4.dp, shape = RoundedCornerShape(8.dp)) {
-        // Content
-    }
-}
+@Preview(name = "Light") @Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable private fun IncomeExpenseRowPreview() { AntCashManagerTheme { IncomeExpenseRow(income = 100.0, expense = 40.0) } }
 ```
 
----
+## Strings — 13 locales
 
-## Preview Requirements
+`values/` + `values-{it,fr,de,es,hi,ja,ko,pl,ru,uk,zh,zh-rTW}`. `grep` first. Translatable → all 13 `strings.xml`; untranslatable (names, symbols, patterns) → only `values/untranslable.xml` with `translatable="false"` (AGENTS.md §11).
 
-Every composable MUST have 2+ previews:
+## Checklist
 
-```kotlin
-@Preview(name = "Light Mode", uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Preview(name = "Dark Mode", uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-private fun YourFeatureScreenPreview() {
-    AntCashManagerTheme {
-        YourFeatureScreen()
-    }
-}
-
-// Additional preview for different states
-@Preview
-@Composable
-private fun YourFeatureScreenLoadingPreview() {
-    AntCashManagerTheme {
-        YourFeatureContent(
-            state = YourFeatureState(isLoading = true),
-            onAction = {},
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun YourFeatureScreenErrorPreview() {
-    AntCashManagerTheme {
-        YourFeatureContent(
-            state = YourFeatureState(error = "Failed to load"),
-            onAction = {},
-        )
-    }
-}
-```
-
-**Rules**:
-- ✅ At least 2: Light + Dark mode
-- ✅ Additional previews for key states (loading, error, empty)
-- ✅ Wrap with `AntCashManagerTheme`
-- ❌ NO hardcoded preview data - use state builders
-
----
-
-## Material Design 3 Compliance
-
-Use ONLY MaterialTheme colors/typography:
-
-```kotlin
-// ✅ CORRECT - MaterialTheme
-Text(
-    text = "Amount",
-    color = MaterialTheme.colorScheme.onSurface,
-    style = MaterialTheme.typography.bodyMedium,
-)
-
-// ❌ WRONG - Hardcoded colors
-Text(
-    text = "Amount",
-    color = Color(0xFF000000),
-    fontSize = 16.sp,
-)
-```
-
-**Available colors**:
-- `primary`, `onPrimary`
-- `secondary`, `onSecondary`
-- `surface`, `onSurface`
-- `background`, `onBackground`
-- `error`, `onError`
-- `primaryContainer`, `secondaryContainer`
-- `outlineVariant`
-
-**Available typography**:
-- `displayLarge`, `displayMedium`, `displaySmall`
-- `headlineLarge`, `headlineMedium`, `headlineSmall`
-- `titleLarge`, `titleMedium`, `titleSmall`
-- `bodyLarge`, `bodyMedium`, `bodySmall`
-- `labelLarge`, `labelMedium`, `labelSmall`
-
----
-
-## Localization (5 Languages Required)
-
-**CRITICAL**: ALL user-facing strings in `strings.xml`
-
-```kotlin
-// ✅ CORRECT - Localized string
-Text(text = stringResource(R.string.amount_label))
-
-// ❌ WRONG - Hardcoded string
-Text(text = "Amount")
-```
-
-**Before adding NEW string**:
-```bash
-# Check if string already exists in any locale
-grep -r "amount_label" androidApp/src/main/res/values*/
-
-# If not found, add to ALL 5 files:
-# values/strings.xml (English)
-# values-it/strings.xml (Italian)
-# values-fr/strings.xml (French)
-# values-de/strings.xml (German)
-# values-es/strings.xml (Spanish)
-```
-
----
-
-## Common UI Patterns
-
-### Loading State
-```kotlin
-if (state.isLoading) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator()
-    }
-}
-```
-
-### Error State
-```kotlin
-if (state.error != null) {
-    ErrorMessage(
-        message = state.error,
-        onRetry = { viewModel.retry() },
-    )
-}
-```
-
-### Empty State
-```kotlin
-if (state.items.isEmpty()) {
-    EmptyState(
-        title = stringResource(R.string.no_transactions),
-        subtitle = stringResource(R.string.add_first_transaction),
-        icon = Icons.Default.Info,
-    )
-}
-```
-
-### List with Lazy Column
-```kotlin
-LazyColumn(
-    modifier = Modifier.fillMaxSize(),
-    contentPadding = PaddingValues(16.dp),
-    verticalArrangement = Arrangement.spacedBy(8.dp),
-) {
-    items(state.items.size) { index ->
-        ItemCard(item = state.items[index])
-    }
-}
-```
-
----
-
-## Spacing & Layout
-
-Use MaterialTheme spacing:
-
-```kotlin
-// ✅ CORRECT - Consistent spacing
-Column(
-    modifier = Modifier
-        .fillMaxWidth()
-        .padding(16.dp),
-    verticalArrangement = Arrangement.spacedBy(8.dp),
-) {
-    // Items
-}
-
-// ❌ WRONG - Hardcoded spacing
-Column(
-    modifier = Modifier
-        .fillMaxWidth()
-        .padding(15.dp), // Inconsistent
-    verticalArrangement = Arrangement.spacedBy(7.dp),
-) {
-    // Items
-}
-```
-
-**Standard spacing**:
-- `8.dp` - Tight spacing (between list items)
-- `16.dp` - Standard padding (screen edges, sections)
-- `24.dp` - Large spacing (section breaks)
-
----
-
-## Touch Interaction & Ripples
-
-```kotlin
-// ✅ CORRECT - Proper ripple feedback
-Row(
-    modifier = Modifier
-        .fillMaxWidth()
-        .clickable(
-            interactionSource = remember { MutableInteractionSource() },
-            indication = ripple(),
-            onClick = { viewModel.onItemClick(item.id) },
-        )
-) {
-    // Content
-}
-
-// Use AppButton for buttons
-AppButton(
-    text = stringResource(R.string.save),
-    onClick = { viewModel.save() },
-)
-```
-
----
-
-## Pre-Commit Checklist
-
-- [ ] Screen composable under 400 lines
-- [ ] All user strings via `stringResource()`
-- [ ] All colors via `MaterialTheme.colorScheme`
-- [ ] All typography via `MaterialTheme.typography`
-- [ ] At least 2 previews (light + dark)
-- [ ] Reused existing components (no recreated buttons/cards)
-- [ ] NO hardcoded strings, colors, dimensions
-- [ ] NO business logic in composable
-- [ ] Proper spacing (8/16/24.dp)
-- [ ] Ripple feedback on clickable items
-- [ ] State data class passed as parameter
-- [ ] ViewModel injected as parameter
-- [ ] Sub-composables extracted to `view/`
-- [ ] Imports clean, package correct
-
----
-
-## Quick Links
-
-- **Full UI Rules**: [AGENTS.md](../../AGENTS.md)
-- **ViewModel Pattern**: [agent-viewmodel-stateflow.agent.md](agent-viewmodel-stateflow.agent.md)
-- **Testing Guide**: [agent-unit-tests-mockk.agent.md](agent-unit-tests-mockk.agent.md)
-- **Component Library**: `androidApp/src/main/kotlin/com/antcashmanager/android/ui/components/`
+- [ ] `koinViewModel()`, `collectAsStateWithLifecycle()`, `viewModel::onEvent`; no repository/business logic
+- [ ] Navigation via `NavigationExtensions` / `AppRoute`
+- [ ] Reused inventory components; new component only if none fits, placed in `ui/components/<kind>/`
+- [ ] Strings via `stringResource`, present in all 13 locales
+- [ ] Colors/typography from `MaterialTheme`; spacing 8/16/24
+- [ ] Previews light+dark for components and `view/` composables
+- [ ] Screen ≤ 400 lines; sub-composables in `view/`
+- [ ] Imports clean, package matches directory

@@ -94,6 +94,7 @@ import com.antcashmanager.android.ui.screen.categories.view.categoryIconMap
 import com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
 import com.antcashmanager.android.ui.theme.ExpenseRed
 import com.antcashmanager.android.ui.theme.IncomeGreen
+import com.antcashmanager.android.ui.theme.LocalAnnaTheme
 import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.isProtectedSalaryTransaction
 import com.antcashmanager.android.util.isValidNote
@@ -1323,8 +1324,13 @@ private fun TransactionItem(
     displayType: TransactionDisplayType = TransactionDisplayType.TREND,
 ) {
     val isIncome = transaction.type == TransactionType.INCOME
-    val cardBackgroundColor =
-        if (isIncome) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer
+    val isAnnaTheme = LocalAnnaTheme.current
+    val cardBackgroundColor = when {
+        isAnnaTheme && isIncome  -> MaterialTheme.colorScheme.primaryContainer
+        isAnnaTheme && !isIncome -> MaterialTheme.colorScheme.secondaryContainer
+        isIncome                 -> MaterialTheme.colorScheme.secondaryContainer
+        else                     -> MaterialTheme.colorScheme.errorContainer
+    }
 
     AnimatedListItem(index = transaction.id.toInt()) {
         AnimatedCard(

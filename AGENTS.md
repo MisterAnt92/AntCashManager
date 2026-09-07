@@ -1,958 +1,136 @@
-# AGENTS.md – AntCashManager
+# AGENTS.md — AntCashManager
 
-**Complete guide for AI coding agents working in this codebase.**
-
-**🚀 New to the project?** Start with [ARCHITECTURE_OVERVIEW.md](.github/docs/architecture/ARCHITECTURE_OVERVIEW.md) for a visual guide.  
-**📚 Need specialized guidance?** See [.github/agents/README.md](.github/agents/README.md) for agent selection.
+Single source of rules for AI coding agents. Specialized agents in `.github/agents/` add layer-specific templates only; they never repeat what is here.
 
 ---
 
----
+## 1. Git policy (zero exceptions)
 
-## ⚠️ CRITICAL: Never Commit Changes Without Asking
+- **Never** run `git add`, `git commit`, `git push` without explicit approval **in the current message**.
+- Valid approval: `procedi`, `vai`, `sì`, `yes`, `commit`, `push`, `go ahead`. **Not** valid: `ok`, `looks good`, silence, approval from an earlier message.
+- Before asking: show `git diff --stat`, list files, propose the commit message, report test/build result.
+- Complete the whole task first; never commit partial work. Never commit to `main`.
 
-**AGENTS (AI assistants) MUST NEVER create git commits or push changes without explicit human authorization. NEVER. EVER.**
+## 2. Workflow — step by step (mandatory)
 
-### Non-Negotiable Policy:
-1. **ALWAYS ASK FIRST** – Before executing ANY git operation, ask the human for explicit permission
-   - Show what changes will be staged
-   - Show the proposed commit message
-   - Wait for clear approval (e.g., "procedi", "vai", "sì", "yes", "commit")
-   - Do NOT assume approval from unrelated prior messages
+1. **Analyze** — `grep`/`rg` first, then `Read` only the files you will touch. Reuse existing code before writing new.
+2. **Plan** — list the files to change, one line each. For multi-step tasks, state the steps and wait for confirmation.
+3. **Implement one file at a time.** After each file: check imports and `package` match the directory.
+4. **Verify light** — re-read only the edited region, not the whole file. Compile **once per logical group** with `compileFullDebugKotlin`, not after every edit.
+5. **Confirm** — summarize what changed and stop; wait before the next step of a multi-step task.
 
-2. **NO `git add`** – Do not stage any files automatically without asking
-3. **NO `git commit`** – Do not create commits under any circumstances without asking
-4. **NO `git push`** – Do not push to remote or any branch without asking
-5. **NO automated commits** – Even if authorized for a task, ask first before committing
-6. **NO exceptions** – This rule has zero exceptions, zero edge cases
+## 3. Token discipline
 
-### Correct Workflow:
-1. **WRITE & TEST** – Write code, edit files, create new files as needed for the task
-2. **VERIFY** – Run tests and verify changes locally
-3. **DESCRIBE** – Describe changes clearly to the human user with:
-   - Summary of what was changed
-   - Why each change was made
-   - Any potential side effects or risks
-4. **SHOW DIFFS** – Show `git diff` or detailed explanation of modifications
-5. **ASK FOR PERMISSION** – Before ANY git operation, explicitly ask:
-   - "Ready to commit these changes. Here's what will be staged: [list files]"
-   - "Proposed commit message: [show message]"
-   - "Should I proceed with commit? (yes/no)"
-6. **WAIT FOR CLEAR APPROVAL** – Only after explicit human approval like:
-   - "procedi" (Italian: proceed)
-   - "vai" (Italian: go)
-   - "yes" / "sì" (English/Italian: yes)
-   - "commit" / "push"
-   - "go ahead"
-7. **EXECUTE** – Only then execute `git add`/`git commit`/`git push`
+- Do not re-read a file you just wrote or edited.
+- Gradle output: always `2>&1 | tail -30`. Never paste full logs.
+- Run targeted tests (`--tests "*ClassName*"`), not the whole suite, unless asked.
+- In replies show the relevant diff, never whole files.
+- Do not spawn subagents, write summary/README/report files, or add docs unless asked.
+- Do not narrate what you are about to do; do it, then report the outcome.
 
-**IMPORTANT:** Do not assume approval from context or prior messages. If unsure, ask again.
-
-### Why This Rule Exists:
-- **Human Oversight**: All code changes must be reviewed and approved by a human
-- **Repository Integrity**: Prevents accidental, unreviewed, or conflicting commits
-- **Accountability**: Clear audit trail of who authorized what changes
-- **Quality Control**: Humans can verify intent and correctness before commits
-- **Safety**: Prevents automated commits that might break the build or introduce bugs
-
-### Example Scenarios:
-- ❌ WRONG: "Task complete, changes committed and pushed"
-- ✅ RIGHT: "Task complete. Changes made to file.kt and test.kt. Ready for your review before committing?"
-
-- ❌ WRONG: Commits made during multi-step task execution
-- ✅ RIGHT: Collects all changes, presents them, waits for human "go ahead" signal
-
-- ❌ WRONG: "I'll commit these changes as part of the refactoring"
-- ✅ RIGHT: "Here are the refactored components. Ready to commit when you approve?"
-
-This ensures human oversight on all code changes and maintains repository integrity.
-
----
-
-## 🔒 Agent Git Operations Checklist
-
-**EVERY agent MUST follow this checklist before ANY git operation (commit/push).**
-
-### Pre-Commit Checklist (REQUIRED):
-
-1. **Collect all changes** – Complete the task, don't commit incrementally
-2. **Run tests** – Execute `./gradlew :androidApp:testDebugUnitTest` and `./gradlew :shared:testAndroidHostTest`
-3. **Verify compilation** – Ensure no Kotlin/build errors
-4. **Check git status** – Run `git status` to see what changed
-5. **Prepare description** – Write clear summary of ALL changes:
-   - What was changed
-   - Why it was changed
-   - Files affected
-   - Test results
-   - Any breaking changes or risks
-
-6. **Show changes to human** – Display:
-   ```bash
-   git diff --stat              # Summary of file changes
-   git diff <file>              # Show actual changes for review
-   ```
-
-### Commit Authorization (REQUIRED BEFORE EXECUTION):
-
-**YOU MUST EXPLICITLY ASK THE HUMAN BEFORE COMMITTING:**
-
-```
-"Ready to commit the following changes:
-
-CHANGED FILES:
-- file1.kt (added new function X)
-- file2.kt (modified Y to fix bug Z)
-- new_file.kt (new component)
-
-PROPOSED COMMIT MESSAGE:
-'feat: Add feature X and fix bug Y
-
-- Change 1 description
-- Change 2 description
-
-Closes #123'
-
-TEST RESULTS:
-✅ Unit tests: 489 passed, 0 failed
-✅ Build: Success
-✅ Git status clean: 5 files changed
-
-Should I proceed with commit and push? (yes/no)"
-```
-
-### Valid Approval Signals (Human Must Say One):
-
-- ✅ "procedi" (Italian: proceed)
-- ✅ "vai" (Italian: go)
-- ✅ "sì" (Italian: yes)
-- ✅ "yes"
-- ✅ "commit"
-- ✅ "go ahead"
-- ✅ "push"
-- ✅ Any clear affirmation to commit
-
-### Invalid/Ambiguous Signals (DO NOT COMMIT):
-
-- ❌ "ok" (too vague)
-- ❌ Silence/no response (wait for explicit approval)
-- ❌ "looks good" (not explicit commit approval)
-- ❌ Previous approval from unrelated conversation
-- ❌ "when you're ready" (ask again, don't assume)
-
-### Execution (ONLY AFTER EXPLICIT APPROVAL):
-
-```bash
-git add <files>
-git commit -m "commit message"
-git push origin <branch>
-```
-
-### Post-Push Verification:
-
-```bash
-git log -1                    # Verify commit was created
-git status                    # Verify push succeeded
-git branch -v                 # Verify branch tracking
-```
-
-### CRITICAL REMINDERS:
-
-| DO NOT | REASON | CORRECT APPROACH |
-|--------|--------|------------------|
-| Auto-commit during task | Humans need to review | Ask for approval first |
-| Commit without asking | No oversight | Always ask explicitly |
-| Assume approval | Dangerous | Wait for clear "yes" |
-| Push without asking | Repository integrity | Ask before push too |
-| Commit partial work | Incomplete, untested | Complete task first |
-| Skip tests before commit | May break build | Run full test suite |
-| Commit directly to main | No code review | Use feature branch |
-
----
-
-## Architecture Overview
-
-3-layer **Clean Architecture** with strict dependency direction:
+## 4. Architecture
 
 ```
 Presentation (androidApp)  →  Domain (shared/commonMain)  →  Data (shared/androidMain)
 ```
+- Package-by-feature. Domain is pure Kotlin: no Android imports in `commonMain`.
+- **KMP scope: Android only.** iOS is out of scope — do not create `iosMain`, iOS targets, or `expect/actual` for iOS. Keep `commonMain` platform-free so iOS can be added later.
+- Reference features: `ui/screen/home`, `ui/screen/categories`, `ui/screen/settings`.
 
-- **`androidApp/`** – Compose UI, ViewModels, Navigation, DI wiring (Koin), Android-specific utilities, Glance Widgets.
-- **`shared/src/commonMain/`** – Pure Kotlin domain: models, use case base classes, repository interfaces, domain exceptions.
-- **`shared/src/androidMain/`** – Android data layer: Room DB, DataStore, repository implementations.
-
-Code is organized **package-by-feature**, not by technical type. Reference screens: `HomeScreen`, `SettingsScreen`, `DisplayScreen`, `ReceiptScanScreen`.
-
-**Recent Optimizations** (Week 1-2, 2026):
-- **Performance**: 90% faster load times (5-10s → 0.5-1s for 10k+ transactions) via pagination and database-level filtering
-- **Memory**: 85% reduction (50-80MB → 5-10MB) using LRU cache for decryption operations
-- **Boilerplate Reduction**: Generic `GetSettingUseCase<T>` and `SetSettingUseCase<T>` eliminate 33 redundant classes (2600 lines). See [`SETTINGS_CONSOLIDATION_MIGRATION.md`](SETTINGS_CONSOLIDATION_MIGRATION.md) for ongoing consolidation roadmap.
-
-**Widget Layer** (`androidApp/.../ui/widget/`): Glance API home screen widgets:
-- `RecentTransactionsWidget` – displays latest transactions
-- `CategoryBreakdownWidget` – displays category spending breakdown
-- `GlanceWidgetUpdateNotifier` – implementation of domain's `WidgetUpdateNotifier` interface
-
-### UDF (Unidirectional Data Flow) + Layer Separation (FASE 6, 2026-08-31)
-
-**Complete architecture refactor for production readiness:**
-
-1. **Layer Separation (FASE 6.0a)**: All repository injections removed from composables
-   - Screens read settings from ViewModel state instead of direct repo
-   - Rules: `HomeScreen`, `ChartsScreen`, `TransactionsScreen` use `state.settingX` not `settingsRepository.getX()`
-   - Exception: Components in `src/debug` (previews) can mock repos for Compose preview
-
-2. **State Population (FASE 6.0b)**: All settings flows wired to ViewModel state
-   - HomeViewModel: 7 settings flows (homeTopCardsOrder, dateFilterExpanded, etc.)
-   - ChartsViewModel: chartsZoomEnabled StateFlow exposed
-   - TransactionsViewModel: transactionDisplayType from repository flow
-   - Pattern: combine() at ViewModel level; UI reads immutable state
-
-3. **Event-Based Writes (FASE 6.0c)**: All settings changes routed through onEvent()
-   - No direct repository.set*() calls from UI
-   - Events: HomeEvent (SetIsTutorialCompleted, SetHomeTopCardsOrder, SetDateFilterExpanded)
-   - Events: TransactionsEvent.SetDateFilterExpanded, ChartEvent.SetChartCardsOrder
-   - DisplayViewModel: 17 pre-implemented event handlers (setCurrencySymbol, setMealVoucherValue, etc.)
-   - ThemeViewModel: SetTheme event + onEvent handler
-   - All writes happen in ViewModel.viewModelScope.launch { repository.set*() }
-
-**Result**: 100% layer separation enforced. UI → Event → ViewModel → Repository. No exceptions.
-
----
-
-## Key Commands
+## 5. Commands
 
 ```bash
-# Build debug APK
-./gradlew :androidApp:assembleDebug
-
-# Run unit tests (shared domain layer)
-./gradlew :shared:testAndroidHostTest
-
-# Run unit tests (androidApp ViewModel layer)
-./gradlew :androidApp:testDebugUnitTest
-
-# Instrumentation tests (requires device/emulator)
-./gradlew :androidApp:connectedDebugAndroidTest
-
-# Release build
-./gradlew :androidApp:assembleRelease
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64      # required, build fails without it
+./gradlew :androidApp:compileFullDebugKotlin 2>&1 | tail -30      # fast check
+./gradlew :androidApp:testFullDebugUnitTest --tests "*HomeViewModel*" 2>&1 | tail -30
+./gradlew :shared:testAndroidHostTest 2>&1 | tail -30
+./gradlew :androidApp:assembleDebug 2>&1 | tail -30               # end of task only
 ```
+Flavors: `full` / `lite` (dimension `variant`). Use `Full` in task names.
 
-Build **only after all changes are complete** – avoid incremental builds during implementation.
+## 6. UseCase (domain)
 
----
+Base classes in `shared/commonMain/.../domain/usecase/base/`:
 
-## UseCase Pattern
+| Params | Flow | Base class | Implement |
+|---|---|---|---|
+| yes | no | `UseCase<P, R>` | `suspend fun execute(params: P): R` |
+| no | no | `NoParamsUseCase<R>` | `suspend fun execute(): R` |
+| yes | yes | `ObservableUseCase<P, R>` | `fun execute(params: P): Flow<R>` |
+| no | yes | `NoParamsObservableUseCase<R>` | `fun execute(): Flow<R>` |
 
-All use cases extend one of these base classes from `shared/commonMain/domain/usecase/base/`:
+- `execute()` returns the **raw** `R` and may throw. `invoke()` (final) wraps it in `Result<R>`, runs on the injected dispatcher, preserves `CancellationException`, logs via Kermit. **Never** return `Result` from `execute()` (double wrap), never override `invoke()`.
+- Constructor: `dispatcher: CoroutineDispatcher = Dispatchers.Default` (no `Dispatchers.IO` in `commonMain`).
+- Domain exceptions: sealed classes in `domain/exception/` only.
+- Settings get/set: use generic `GetSettingUseCase<T>` / `SetSettingUseCase<T>` registered in DI with a lambda — do not create per-setting classes.
+- Max 250 lines, KDoc on the class.
 
-### UseCase Base Class Selection Matrix
+## 7. ViewModel — UDF (presentation)
 
-| Need Params? | Need Flow/Stream? | Base Class | Method | Example |
-|---|---|---|---|---|
-| ✅ Yes | ❌ No | `UseCase<P, R>` | `suspend fun execute(params: P): R` | Insert transaction |
-| ❌ No | ❌ No | `NoParamsUseCase<R>` | `suspend fun execute(): R` | Get current balance |
-| ✅ Yes | ✅ Yes | `ObservableUseCase<P, R>` | `fun execute(params: P): Flow<R>` | Observe filtered transactions |
-| ❌ No | ✅ Yes | `NoParamsObservableUseCase<R>` | `fun execute(): Flow<R>` | Observe all settings changes |
+All ViewModels extend `ui/base/BaseViewModel<E>` (`E` = `<Feature>Event` sealed class, or `Nothing`).
 
-### Generic UseCase Pattern (Settings & Configuration)
+- **Single public entry point: `override fun onEvent(event: E)`** with a `when` that delegates to **private** methods. No other public mutators.
+- State: one `private val _state = MutableStateFlow(<Feature>State())`, exposed as `val state: StateFlow<...>`; update with `_state.update { it.copy(...) }`. Reactive sources: `combine(...)` + `stateIn(viewModelScope, WhileSubscribed(5_000), default)`.
+- Results: `useCase(p).handleError { err -> _state.update { it.copy(errorState = err) } }` (returns value or `null`). For `Flow<Result<R>>`: `.onSuccess { } .onFailure { if (it is CancellationException) throw it; logError(...) }`.
+- Logging: `logDebug/logInfo/logWarn/logError` from the base (tag is automatic). Never `Log`, `println`, or a manual `TAG`.
+- Dependencies: business data through **UseCases**. **Documented exception:** `SettingsRepository` may be injected directly **only** to read preference flows / write preferences in `viewModelScope.launch`. No other repository in a ViewModel. No `Context`.
+- `activeJob?.cancel()` for restartable operations. Max 300 lines. State class ≤ 100 lines, in `<Feature>State.kt`, no `typealias`.
 
-For settings-related operations, use **generic type-parameterized** use cases instead of creating individual classes for each setting. This eliminates boilerplate and unifies settings handling.
-
-**When to use**:
-- Reading/writing user preferences (theme, language, display settings, etc.)
-- Any simple get/set pattern where logic is identical across multiple settings
-
-**Generic Classes**:
+## 8. Screen (Compose)
 
 ```kotlin
-// GetSettingUseCase<T> - for reading reactive settings
-class GetSettingUseCase<T>(
-    private val getter: () -> Flow<T>,
-    dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : NoParamsObservableUseCase<T>(dispatcher) {
-    override fun execute(params: Unit): Flow<T> = getter()
-}
-
-// SetSettingUseCase<T> - for updating settings
-class SetSettingUseCase<T>(
-    private val setter: suspend (T) -> Unit,
-    dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : UseCase<T, Unit>(dispatcher) {
-    override suspend fun execute(params: T) = setter(params)
+@Composable
+fun FeatureScreen(navController: NavController, modifier: Modifier = Modifier) {
+    val viewModel: FeatureViewModel = koinViewModel()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    FeatureContent(state = state, onEvent = viewModel::onEvent, navController = navController, modifier = modifier)
 }
 ```
+- UI reads `state`, emits `onEvent(...)`. Zero repository access, zero business logic.
+- Navigation only via `navigation/NavigationExtensions.kt` (`navigateToHome()`, `navigateToAddTransaction()`, `safePopBackStack()`, …) and `AppRoute` — never string literals.
+- Root-only exception: `AntCashManagerNavHost` may inject `SettingsRepository` via Koin for global display prefs.
+- Colors/typography from `MaterialTheme`. Only allowed semantic colors outside it: `IncomeGreen`/`ExpenseRed` (`ui/theme/Color.kt`). Spacing 8/16/24 dp.
+- Reuse `ui/components/` (inventory in `agent-compose-ui.agent.md`). `@Preview` light+dark for components in `components/` and `view/`; root Screens have no previews.
 
-**DI Registration Example**:
-```kotlin
-// In AppModule.kt
-factory<GetSettingUseCase<String>> { 
-    GetSettingUseCase(getter = { get<SettingsRepository>().getTheme() }) 
-}
-factory<SetSettingUseCase<String>> { 
-    SetSettingUseCase(setter = { get<SettingsRepository>().setTheme(it) }) 
-}
-```
-
-**Note**: ~33 legacy boilerplate settings use cases are being consolidated into these generics. See [`SETTINGS_CONSOLIDATION_MIGRATION.md`](SETTINGS_CONSOLIDATION_MIGRATION.md) for the migration roadmap.
-
-
-**Quick Decision Flow**:
-1. Does it need input parameters? → YES: use Params variant, NO: use NoParams variant
-2. Does it need continuous stream (Flow)? → YES: use Observable variant, NO: use regular variant
-
-**Rules**:
-- Implement `execute()`, never override `invoke()`.
-- Always inject a `CoroutineDispatcher` (default: `Dispatchers.Default`).
-- `execute()` returns the raw value type `R`; `invoke()` wraps it in `Result<R>`.
-- Never throw domain exceptions directly from `execute()` – they're caught by `invoke()` and wrapped in `Result.failure`.
-- Custom exceptions live **only** in `shared/commonMain/domain/exception/`.
-- Use `runSuspendCatching` utility (in `domain/util/`) which preserves `CancellationException` propagation.
-
-```kotlin
-class InsertTransactionUseCase(
-    private val transactionRepository: TransactionRepository,
-    dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : UseCase<Transaction, Unit>(dispatcher) {
-    override suspend fun execute(params: Transaction): Unit = 
-        transactionRepository.insert(params)
-}
-// Consumer calls: insertUseCase(transaction).onSuccess { }.onFailure { }
-```
-
----
-
-## Data Layer Optimization Patterns
-
-### Pagination & Database-Level Filtering
-
-For large datasets (1000+ records), implement pagination at the **database level** (DAOs/queries) rather than loading all data in memory:
-
-**Pattern**:
-```kotlin
-// TransactionRepository.kt (interface)
-fun getTransactionsPaginated(pageSize: Int = 100, pageIndex: Int = 0): Flow<List<Transaction>>
-fun getTransactionsByCategory(category: String, pageSize: Int, pageIndex: Int): Flow<List<Transaction>>
-fun searchTransactions(query: String, pageSize: Int, pageIndex: Int): Flow<List<Transaction>>
-
-// TransactionDao.kt (SQL queries with LIMIT/OFFSET)
-@Query("SELECT * FROM transactions ORDER BY timestamp DESC LIMIT :pageSize OFFSET :offset")
-suspend fun getPaginatedTransactions(pageSize: Int, offset: Int): List<Transaction>
-
-@Query("SELECT * FROM transactions WHERE category = :category ORDER BY timestamp DESC LIMIT :pageSize OFFSET :offset")
-suspend fun getByCategory(category: String, pageSize: Int, offset: Int): List<Transaction>
-```
-
-**Why**: 
-- Reduces initial load time by 90% (load 100 items vs 10,000)
-- Constant memory usage regardless of dataset size
-- Search/filter at database level eliminates client-side iteration
-
-**Special Pattern for Encrypted Data**: When encryption is enabled, fall back to in-memory filtering since database LIKE queries cannot search encrypted values:
-```kotlin
-// Encrypted: fetch all, filter in-memory
-// Not encrypted: use SQL LIKE query (fast)
-val results = if (isEncryptionEnabled) {
-    repo.getAllTransactions().filter { it.title.contains(query) }
-} else {
-    repo.searchTransactions(query)  // database-level LIKE query
-}
-```
-
-### Decryption LRU Cache
-
-When handling encrypted data (e.g., transaction notes), use an **LRU (Least Recently Used) cache** to avoid redundant decryption operations:
-
-```kotlin
-// In TransactionRepositoryImpl.kt
-private class DecryptionLRUCache(maxSize: Int = 500) : LinkedHashMap<Long, Pair<String, String>>() {
-    override fun removeEldestEntry(eldest: MutableMap.MutableEntry<Long, Pair<String, String>>?): Boolean {
-        return size > maxSize  // Auto-evict oldest entry when cache is full
-    }
-}
-
-// Cache invalidation on mutations
-override suspend fun updateTransaction(transaction: Transaction) {
-    decryptionCache.clear()  // Clear cache to prevent stale data
-    transactionDao.update(transaction.toEntity())
-}
-```
-
-**Benefits**:
-- 60-70% reduction in decryption overhead
-- ~90% cache hit ratio for typical workflows
-- Memory overhead: ~5MB for 500 entries
-
----
-
-## ViewModel Pattern
-
-- Expose **only** `StateFlow` (public), keep `MutableStateFlow` private.
-- Consume `Result<T>` via `onSuccess`/`onFailure`.
-- Use **Kermit** for logging (`co.touchlab:kermit`) – never use `Log` or `println`.
-- No `Context` references, no business logic.
-- Use `activeJob?.cancel()` pattern for cancellable operations.
-- **IMPORTANT**: ViewModel constructor accepts **UseCase instances only**, never Repository or other data-layer classes directly.
-  - ViewModel receives fully-formed, testable UseCase dependencies via DI (Koin).
-  - If you need data access in ViewModel, create a corresponding UseCase and inject it.
-  - This ensures Clean Architecture separation: presentation layer depends on domain (UseCase), not on data layer.
-
----
-
-## Feature File Structure (Consolidated)
-
-**Single source of truth for organizing features** (organized by-feature, not by-type):
+## 9. Feature layout & limits
 
 ```
 ui/screen/<feature>/
-│
-├── <Feature>Screen.kt              # Main Composable (max 400 lines)
-├── <Feature>ViewModel.kt           # State management (max 300 lines)
-├── <Feature>State.kt               # UI state data class (max 100 lines)
-├── <Feature>Constants.kt           # Feature constants (if needed)
-│
-├── model/                          # Feature-specific reusable data classes
-│   ├── <Model1>.kt
-│   └── <Model2>.kt
-│
-└── view/                           # Sub-composables (if Screen > 150 lines)
-    ├── <Component1>View.kt
-    ├── <Component2>View.kt
-    └── <Component3>View.kt
+  <Feature>Screen.kt   ≤ 400 lines     <Feature>ViewModel.kt  ≤ 300
+  <Feature>State.kt    ≤ 100           <Feature>Event.kt      (sealed)
+  <Feature>Constant.kt (shared consts) model/  view/ (sub-composables)
 ```
 
-### Rules (CRITICAL)
+## 10. DI (Koin) — `androidApp/.../di/AppModule.kt`
 
-| Rule | Requirement | Impact |
-|------|---|---|
-| **State location** | `<Feature>State` lives in `<Feature>State.kt` ONLY | Single source of truth |
-| **No typealias** | Never alias state with `typealias` | Type safety, IDE navigation |
-| **Line limits** | Screen ≤400, ViewModel ≤300, State ≤100 | Maintainability, testability |
-| **Sub-composables** | Extract to `view/` if Screen > 150 lines | Code organization |
-| **Constants** | Create `<Feature>Constants.kt` if shared across files | Avoid string duplication |
-| **Models** | Reusable feature classes → `model/` | Modularity |
+`dataModule` (Room, repositories, services) · `useCaseModule` (`factory { }`) · `presentationModule` (`viewModel { }` / `viewModelOf(::X)`; parameterized: `viewModel { (id: Long?) -> ... }`). Register every new UseCase and ViewModel.
 
-### Example: TransactionsScreen Feature Structure
+## 11. Localization — 13 locales
 
-```
-ui/screen/transactions/
-├── TransactionsScreen.kt           (175 lines)
-├── TransactionsViewModel.kt        (240 lines)
-├── TransactionsState.kt            (45 lines)
-├── TransactionsConstants.kt        (8 lines)
-├── model/
-│   ├── TransactionFilterOption.kt
-│   └── TransactionListItem.kt
-└── view/
-    ├── TransactionItemView.kt
-    ├── FilterDialogView.kt
-    └── EmptyStateView.kt
-```
+`values/` (en) + `values-{it,fr,de,es,hi,ja,ko,pl,ru,uk,zh,zh-rTW}/strings.xml`. Every user string via `stringResource(R.string.key)`.
 
----
+1. `grep -rn "candidate_key\|Candidate text" androidApp/src/main/res/values*/` — reuse if it exists; never create semantic duplicates.
+2. **Untranslatable** value (proper noun, symbol, format pattern): add **once** to `values/untranslable.xml` with `translatable="false"`. Never copy it into the locale files (duplicate resource → merge error).
+3. **Translatable** text: add a translated value to **all 13** `strings.xml`.
+4. Key naming: `<screen>_<component>_<description>`.
 
-## Dependency Injection (Koin)
+## 12. Testing
 
-All DI is wired in `androidApp/.../di/AppModule.kt` with three modules aggregated as `appModules`:
-- `dataModule` – Room DB, repositories, services (`BackupService`, `MlKitReceiptOcrService`), `GlanceWidgetUpdateNotifier`
-- `useCaseModule` – use case factories
-- `presentationModule` – ViewModel registrations
+| Scope | Source set | Base class / helpers |
+|---|---|---|
+| ViewModel, Android host | `androidApp/src/test/kotlin` | `BaseUnitTest` → `runViewModelTest { }`, `testDispatcher`, `advanceUntilIdle()` |
+| Compose component | `androidApp/src/test/kotlin` | `BaseComposeUnitTest` → `composeTestRule` (`junit4.v2`), extends `BaseUnitTest` |
+| UseCase / domain | `shared/src/commonTest/kotlin` | `BaseUseCaseTest` → `runUnitTest { }`; `TestDataBuilder`; `Fake*Repository` in `testutil/` |
+| Repository / data | `shared/src/androidHostTest/kotlin` | JUnit4 + MockK |
+| Instrumentation | `androidApp/src/androidTest/kotlin` | `AndroidJUnit4`, `createAndroidComposeRule`; Robolectric allowed here only |
 
-**ViewModel registration patterns**:
-- Standard: `viewModel { ClassName(...) }` – explicit constructor with injected dependencies
-- Shorthand: `viewModelOf(::ClassName)` – for ViewModels with no extra parameters (e.g., `DisplayViewModel`, `ThemeViewModel`)
-- Parameterized: `viewModel { (param: Type?) -> ... }` – `AddTransactionViewModel` uses `parametersOf(transactionId)` for optional parameter injection
+- **MockK only** (`mockk`, `every`, `coEvery`, `coVerify`). Mockito/PowerMock/EasyMock forbidden. Fakes from `testutil/` when stateful/Flow behaviour is clearer.
+- Never `Dispatchers.setMain`, `StandardTestDispatcher()`, or `runTest` by hand in `androidApp` tests — the base classes do it.
+- No Robolectric, Room, DataStore, `Context`, file I/O in `src/test`.
+- Naming: `method_shouldExpectedBehavior_whenCondition`, **no backticks**. Keep the original intent when updating a test.
+- Test ViewModels through `viewModel.onEvent(Event.X)` + `advanceUntilIdle()`, then assert `state.value`.
 
----
+## 13. Analytics & protected files
 
-## Navigation
-
-Routes are string literals defined inline in `NavGraph.kt`. `BottomNavItem` is a `sealed class` (not enum) with `data object` instances for each top-level tab (Home, Charts, Transactions, Categories, Settings). 
-
-Sub-routes use query parameters:
-- `"add_transaction?transactionId={transactionId}"` – create new or edit existing transaction
-- `"display"` – display settings screen
-- `"settings_data"` – data management (backup/restore)
-- `"receipt_scan"` – ML Kit OCR receipt scanning
-
-**Adaptive Navigation**: `NavGraph.kt` uses `rememberAdaptiveLayoutInfo()` to switch between bottom bar (phones) and navigation rail (tablets/foldables) based on screen size and form factor.
-
-**Special case**: The root composable (`AntCashManagerNavHost`) directly injects `SettingsRepository` via Koin to read reactive display preferences – this is an intentional exception to the "ViewModels-only consume UseCases" rule for composition-level configuration.
-
-### Exit Dialog Synchronization (Android 16+ Fix)
-
-On Android 16+ (API 35+), especially Samsung devices, there's a race condition between dialog dismissal animations and `Activity.finish()`. Solve this using **`LaunchedEffect` with a 300ms delay**:
-
-**Problem**: Dialog dismissal animation (~250ms) races with `Activity.finish()`, causing the finish call to be ignored.
-
-**Solution Pattern**:
-```kotlin
-// AppExitConfirmationDialog.kt
-val (shouldExit, setShouldExit) = remember { mutableStateOf(false) }
-
-LaunchedEffect(shouldExit) {
-    if (shouldExit) {
-        delay(300.milliseconds)  // Wait for dialog dismissal animation + recomposition
-        onConfirmExit()  // Call finish() AFTER delay
-    }
-}
-
-// NavGraph.kt - invoke safeFinish()
-onConfirmExit = {
-    context.findActivity()?.safeFinish()
-}
-
-// AppExitManager.kt - robust exit with fallback chain
-fun Activity.safeFinish() {
-    try {
-        when {
-            Build.VERSION.SDK_INT >= API_LEVEL_35 -> finishAndRemoveTask()
-            else -> finish()
-        }
-    } catch (e: Exception) {
-        try { finish() }  // Fallback 1
-        catch (e2: Exception) { System.exit(0) }  // Fallback 2
-    }
-}
-```
-
-**Why 300ms?** Material3 AlertDialog dismissal animation is ~250ms; 300ms provides a safety margin for Compose recomposition and UI thread stabilization.
-
-
----
-
-## Receipt Scanning (ML Kit OCR)
-
-The app includes receipt scanning via Google ML Kit Text Recognition v2:
-- **Feature screen**: `ReceiptScanScreen` (route: `"receipt_scan"`)
-- **Domain service interface**: `ReceiptOcrService` in `shared/commonMain/domain/service/`
-- **Implementation**: `MlKitReceiptOcrService` in `androidApp/.../data/receipt/`
-- **Use cases**:
-  - `ScanReceiptUseCase` – extracts text from image bitmap
-  - `CreateTransactionFromReceiptUseCase` – parses OCR result into transaction data
-- **ViewModel**: `ReceiptScanViewModel` orchestrates camera capture → OCR → transaction creation flow
-- **ProGuard**: ML Kit rules included in `androidApp/proguard-rules.pro` for R8 compatibility
-
----
-
-## UI / Compose Rules
-
-- All user-facing strings in `strings.xml` – **5 locales required**: `en`, `it`, `fr`, `de`, `es`. Never hardcode strings.
-- **Before adding a new string**: verify it doesn't already exist in any of the `values*/strings.xml` files using `grep`. Example: `grep -r "string_key_name" androidApp/src/main/res/values*/`.
-- Use `stringResource(R.string.*)` everywhere.
-- Reuse existing components from `androidApp/.../ui/components/` before creating new ones.
-- Every new `@Composable` **must** have at least two `@Preview`s: one light, one dark (`uiMode = Configuration.UI_MODE_NIGHT_YES`).
-- Apply `MaterialTheme` for all colors, typography, and spacing (8.dp between cards).
-
-### Common Reusable Components (Check Before Creating New)
-
-| Component | Location | Use Case | Example |
-|---|---|---|---|
-| `AppCard` | `ui/components/card/` | Elevated card with consistent styling | List item container |
-| `AppButton` | `ui/components/button/` | Styled button with ripple feedback | Save/Delete actions |
-| `ScreenHeader` | `ui/components/layout/` | Screen title + navigation | Top of screen |
-| `LoadingIndicator` | `ui/components/` | Circular progress | Data loading |
-| `ErrorMessage` | `ui/components/` | Error display + retry | Failed operations |
-| `EmptyState` | `ui/components/` | Empty list placeholder | No transactions |
-| `BalanceCard` | `ui/components/card/` | Transaction/category display | Home dashboard |
-
-**RULE**: Search components directory BEFORE creating new ones. Reuse saves ~20% codebase size.
-
----
-
-## Testing
-
-| Scope | Source Set | Base Class | Framework |
-|---|---|---|---|
-| ViewModel | `androidApp/src/test/kotlin` | `com.antcashmanager.android.BaseUnitTest` | JUnit 4 + MockK + Compose UI Test |
-| Domain (commonMain) | `shared/src/commonTest/kotlin` | — | JUnit 4 + MockK |
-| Data/Repository | `shared/src/androidHostTest/kotlin` | — | JUnit 4 + MockK |
-| Instrumentation (UI) | `androidApp/src/androidTest/kotlin` | — | AndroidJUnit4 + Compose UI Test |
-
-### 🔴 CRITICAL: Mocking & Test Libraries Rule
-
-**ALWAYS use ONLY MockK for all test mocking. NO exceptions.**
-
-- ✅ **MockK ONLY** – All unit tests, domain tests, repository tests use `io.mockk:mockk`
-- ❌ **Mockito is COMPLETELY FORBIDDEN** – Never use `mockito-core`, `mockito-kotlin`, or any Mockito variant
-- ❌ **No other mocking libraries** – No PowerMock, no EasyMock, no manual test doubles (unless Fake repositories)
-- ✅ **Use Fake repositories** from `com.antcashmanager.testutil.Fake*` package for data layer isolation when mocking is insufficient
-- ❌ Never import real database libraries (Room, DataStore) in unit tests – use Fakes or MockK
-
-### Unit Test Rules
-
-**MockK Usage Pattern:**
-```kotlin
-// ✅ CORRECT - MockK only
-private val repo = mockk<TransactionRepository>()
-coEvery { repo.getTransaction(any()) } returns Result.success(mockTransaction)
-coVerify { repo.getTransaction(1L) }
-
-// ❌ WRONG - Any other mocking library is forbidden
-@Mock private lateinit var repo: TransactionRepository  // Mockito - FORBIDDEN
-```
-
-**Roboelectric Strategy: Instrumentation Tests Only**
-- ❌ **DO NOT use in unit tests** (`src/test`) – Use Compose UI Test v2 instead (simpler, faster)
-- ✅ **CAN use in instrumentation tests** (`src/androidTest`) – When simulating Android Framework without real device
-  - Faster than device emulator (seconds vs minutes)
-  - Good for integration testing data layer with Android framework
-  - Use `@RunWith(RobolectricTestRunner::class)` with Compose UI Test v2 for framework simulation
-  - Example: Repository tests with Room/DataStore, navigation flows, settings integration
-- ✅ **COMPLEMENT with real instrumentation tests** (`src/androidTest` on device/emulator) – For critical user flows
-  - Test actual user interactions (tap, swipe, real touch handling)
-  - GPU rendering validation
-  - Performance profiling on real hardware
-  - Accessibility testing (screen reader, contrast)
-  - Example: "Add Transaction" full flow, "Navigation" flow, "Search" flow
-
-**Test Data:**
-- ✅ Use `TestDataBuilder` pattern for creating test data (`shared/src/commonTest/testutil/TestDataBuilder.kt`)
-- ✅ Create builder-style APIs: `testTransaction { title = "Lunch"; amount = -50.0 }`
-- ❌ Never hardcode complex test data directly in test methods
-
-**Compose UI Testing Strategy:**
-
-**Unit Tests** (`src/test`):
-- ✅ **Use `androidx.compose.ui.test.junit4.v2.createComposeRule()`** (v2 API with StandardTestDispatcher)
-- ❌ **DO NOT use Roboelectric** – Use Compose UI Test v2 assertions only (simpler, faster, sufficient for unit testing)
-  - Compose UI Test v2 handles state verification, callback testing, layout assertions
-  - No Android Framework needed for unit test component verification
-  - Fast feedback (milliseconds) without Roboelectric overhead
-- ❌ **NEVER use deprecated v1** (`androidx.compose.ui.test.junit4.createComposeRule()`)
-- ❌ Never use Roboelectric for complex touch interactions (drag, swipe, multi-touch)
-
-**Instrumentation Tests** (`src/androidTest`, real device/emulator):
-- ✅ Use `createAndroidComposeRule<ComponentActivity>()` for full interaction testing
-- ✅ Test actual user interactions: tap, drag, swipe, long-press
-- ✅ Verify visual rendering, animations, color/layout correctness
-- ✅ Test integration with Android framework (navigation, system bars, dialogs)
-- ✅ Primary use case: end-to-end user flows ("Add Transaction flow", "Navigation", "Search")
-
-**Roboelectric-based Instrumentation Tests** (`src/androidTest` with `@RunWith(RobolectricTestRunner::class)`):
-- ✅ Fast alternative to real device when full interaction testing not needed
-- ✅ Test Android Framework integration (SharedPreferences, DataStore, Bundle, Resources)
-- ✅ Test navigation flows, screen transitions
-- ⚠️ NOT suitable for: Touch events, gestures, GPU rendering, performance profiling, sensors
-
-**Test Naming:**
-- ✅ Pattern: `method_shouldExpectedBehavior_whenCondition` (no backticks)
-- Example: `insertTransaction_shouldPersistAndRetrieve_whenValidDataProvided`
-
-### Dispatcher Decision Matrix
-
-When to use which dispatcher in tests:
-
-| Scenario | Dispatcher | Use Case | Example |
-|----------|-----------|----------|---------|
-| **Default (eager execution)** | `UnconfinedTestDispatcher` | Flow collectors, background jobs, most ViewModel tests | StateFlow emission before assertions |
-| **Deferred execution** | `StandardTestDispatcher` | Debounce, delay, retry with backoff | Testing 500ms debounce operator |
-| **Override in test** | Change in test method | Special timing needs | `testDispatcher = StandardTestDispatcher()` + `advanceUntilIdle()` |
-| **Production code** | `Dispatchers.Default` | UseCase async work | Default dispatcher in UseCase constructor |
-
-**Quick Decision**: Use `BaseUnitTest` (UnconfinedTestDispatcher) by default. Only override if test needs `.advanceUntilIdle()`.
-
-### Testing Strategy Quick Reference
-
-| Test Type | Source Set | Base Class | Framework | Device? |
-|---|---|---|---|---|
-| **ViewModel** | `androidApp/src/test/` | `BaseUnitTest` | JUnit 4 + MockK + Compose v2 | ❌ |
-| **Domain UseCase** | `shared/src/commonTest/` | `BaseUseCaseTest` | JUnit 4 + MockK | ❌ |
-| **Repository** | `shared/src/androidHostTest/` | — | JUnit 4 + MockK | ❌ |
-| **UI Integration** | `androidApp/src/androidTest/` | — | AndroidJUnit4 + Compose | ✅ or Roboelectric |
-| **Full E2E** | `androidApp/src/androidTest/` | — | AndroidJUnit4 | ✅ Real device |
-
-**Key Points**:
-- ✅ Unit test: MockK only, Compose UI Test v2 (NO Roboelectric)
-- ✅ Instrumentation: Roboelectric OK for simulation OR real device for E2E
-- ✅ Naming: `method_shouldExpectedBehavior_whenCondition`
-
-### Exception Handling Quick Reference
-
-| Layer | Exception Type | Location | Pattern |
-|---|---|---|---|
-| **Domain** | Custom sealed class | `domain/exception/` | Define & throw from UseCase |
-| **Data** | Standard exceptions | Repository | Catch, map to domain exception |
-| **Presentation** | Never thrown | ViewModel | Consume Result only |
-| **Coroutines** | `CancellationException` | Any async | **ALWAYS re-throw** |
-
-**Critical Pattern**:
-```kotlin
-// ✅ CORRECT - Re-throw CancellationException
-try { repository.operation() }
-catch (e: Exception) {
-    if (e is CancellationException) throw e // RE-THROW!
-    throw DomainException.Failed(e)
-}
-
-// ❌ WRONG - Swallows CancellationException
-catch (e: Exception) { throw DomainException.Failed(e) }
-```
-
-### Specific Exception Handling (Batch Operations)
-
-For operations that process multiple items (e.g., recurring transactions), catch specific exception types to avoid masking unexpected errors:
-
-```kotlin
-// ✅ CORRECT - ProcessRecurringTransactionsUseCase
-try {
-    val recurring = transactionRepository.getRecurringTransactions()
-    recurring.forEach { transaction ->
-        // Process each transaction
-    }
-} catch (e: IllegalArgumentException) {
-    // Only catch enum parsing errors from recurring type conversion
-    logger.w { "Invalid recurring transaction type: ${e.message}" }
-} 
-// Other exceptions (DB errors, IO, etc.) will propagate
-
-// ❌ WRONG - Masks all errors
-catch (_: Exception) { 
-    // Hides database errors, IO errors, etc.
-}
-```
-
-**BaseUnitTest Utilities** (`androidApp/src/test/kotlin/com/antcashmanager/android/BaseUnitTest.kt`):
-- **Always extend `BaseUnitTest`** in `androidApp/src/test/kotlin` for ViewModel and Android host-side tests
-- `BaseUnitTest` automatically provides:
-  - `testDispatcher: TestDispatcher` – pre-configured as `Dispatchers.Main` for the test scope
-  - `runUnitTest { ... }` – shorthand for `runTest(testDispatcher) { ... }` (wraps coroutine with test dispatcher)
-  - `runViewModelTest { ... }` – semantic alias of `runUnitTest` for ViewModel-specific tests
-  - `launchInBackground { ... }` – launches coroutines in `backgroundScope` for Flow collectors, LiveData observers, or long-running background jobs that need to complete before test ends
-  - `advanceUntilIdle()` – available inside test block to advance dispatcher until all pending coroutines complete
-- **Do NOT manually set up:**
-  - ❌ `Dispatchers.setMain()` / `Dispatchers.resetMain()` – `BaseUnitTest` handles this in `setUp()`/`tearDown()`
-  - ❌ `StandardTestDispatcher()` – already created and assigned as Main dispatcher
-  - ❌ `runTest()` – use `runViewModelTest()` instead for consistency
-
-**Example:**
-```kotlin
-class MyViewModelTest : BaseUnitTest() {
-    private val repo = mockk<Repository>()
-    private lateinit var viewModel: MyViewModel
-
-    @Before
-    fun setup() {
-        viewModel = MyViewModel(repo)
-    }
-
-    @Test
-    fun loadData_shouldUpdateState() = runViewModelTest {
-        coEvery { repo.getData() } returns Result.success(listOf("item1"))
-        
-        viewModel.loadData()
-        advanceUntilIdle()
-        
-        assertEquals(listOf("item1"), viewModel.state.value)
-    }
-}
-```
-
-### Instrumentation Test Rules (Hybrid Strategy)
-
-**For REAL Device/Emulator Testing** (`src/androidTest` on actual Android environment):
-- ✅ Use `@RunWith(AndroidJUnit4::class)` for tests running on device/emulator
-- ✅ Use `createAndroidComposeRule<ComponentActivity>()` for full Compose UI interaction testing
-- ✅ Test real database operations, file I/O, GPS, camera, sensors
-- ✅ Test actual touch events, gestures (swipe, long-press, drag)
-- ✅ Test performance on real hardware (frame rate, memory, battery impact)
-- ✅ Focus on critical user flows: "Add Transaction" → "Save" → "Verify in List", "Navigation", "Search/Filter", "Settings Changes"
-- ✅ Use for accessibility testing (screen reader, font scaling, contrast)
-
-**For Framework Simulation Testing** (Roboelectric, `src/androidTest` or `src/test`):
-- ✅ Use `@RunWith(RobolectricTestRunner::class)` for Android Framework simulation without device
-- ✅ Faster execution for integration testing (~seconds vs minutes)
-- ✅ Use `createComposeRule()` or `createAndroidComposeRule<ComponentActivity>()` for Compose UI testing
-- ✅ Good for data layer integration + Android Framework operations (SharedPreferences, DataStore, Bundle)
-- ❌ Do NOT use for testing touch events, sensors, or performance on real hardware
-- ⚠️ Remember: Roboelectric simulates SDK 34-35, app compileSdk is 37 (some SDK 37 features may not be fully simulated)
-
-### Forbidden Imports in Tests
-
-**STRICTLY FORBIDDEN - ZERO TOLERANCE:**
-- ❌ `org.mockito.*` – use MockK (`io.mockk`) ONLY
-- ❌ `com.nhaarman.mockitokotlin2.*` – use MockK ONLY
-- ❌ `org.powermock.*` – never use PowerMock
-- ❌ `org.easymock.*` – never use EasyMock
-- ❌ Any mocking library except MockK – zero exceptions
-
-**Best Practices:**
-- ❌ Real Room database/DataStore implementations in unit tests – use Fakes
-- ❌ Direct `Context`, `SharedPreferences`, or `File` I/O in unit tests
-- ❌ `org.robolectric.*` in unit test files – move to instrumentation tests if needed
-- ❌ `android.` imports in domain layer tests (`shared/src/commonTest/`)
-
----
-
----
-
-## Current Development Status & Migration Path
-
-**Active Refactoring**: Settings use case consolidation is in progress. Context for agents:
-
-| Phase | Status | Details |
-|-------|--------|---------|
-| **Week 1** | ✅ Complete | Performance optimization (pagination, LRU cache, exception handling) |
-| **Week 2** | 🔄 In Progress | Generic use cases created; ViewModel migration pending. Legacy + new classes coexist in DI. |
-| **Week 3** | 📋 Planned | Domain validation layer, iOS abstraction preparation |
-
-**For agents**: When updating settings-related ViewModels or use cases, refer to [`SETTINGS_CONSOLIDATION_MIGRATION.md`](SETTINGS_CONSOLIDATION_MIGRATION.md) for:
-- Complete list of 33 use cases being consolidated
-- Phase-by-phase migration strategy
-- DI registration pattern (both old + new in parallel)
-- Incremental ViewModel migration checklist
-
-**Key Principle**: During migration, both old boilerplate classes and new generics coexist to avoid breaking changes. Delete old classes only after ViewModel migration is complete.
-
----
-
-## Quick Implementation Checklist
-
-Use this checklist when implementing a new feature. For detailed guidance, refer to relevant sections above.
-
-### 1. Feature Structure Setup
-- [ ] Create UseCase in `shared/commonMain/domain/usecase/<feature>/`
-- [ ] Create ViewModel in `androidApp/ui/screen/<feature>/`
-- [ ] Create State data class in `androidApp/ui/screen/<feature>/<Feature>State.kt`
-- [ ] Create Screen composable in `androidApp/ui/screen/<feature>/<Feature>Screen.kt`
-- [ ] Add UI components to `androidApp/ui/components/` (reusable) or `view/` sub-package (feature-specific)
-
-### 2. Clean Architecture Verification
-- [ ] UseCase: NO dependency on ViewModel or Presentation layer
-- [ ] ViewModel: Depends ONLY on UseCase(s), NOT on Repository directly
-- [ ] Domain layer: Pure Kotlin ONLY, NO Android imports
-- [ ] No reversed dependencies (Data → Domain, Presentation → Domain)
-
-### 3. UseCase Implementation
-
-**Settings Use Cases** (PREFERRED for get/set patterns):
-- [ ] Use generic `GetSettingUseCase<T>` and `SetSettingUseCase<T>` instead of creating individual classes
-- [ ] Register in DI with lambda: `GetSettingUseCase(getter = { repo.getSetting() })`
-- [ ] No need for separate use case file; configured entirely in DI
-
-**Domain Use Cases** (transactions, filtering, processing):
-- [ ] Extend appropriate base class (`UseCase<P,R>`, `NoParamsUseCase<R>`, `ObservableUseCase<P,R>`, or `NoParamsObservableUseCase<R>`)
-- [ ] Accept `CoroutineDispatcher` parameter (default: `Dispatchers.Default`)
-- [ ] Implement `execute()` method ONLY (NOT `invoke()`)
-- [ ] Return value directly; base class wraps in `Result<T>`
-- [ ] For batch operations, use specific exception handling (not blanket `catch (e: Exception)`)
-- [ ] Add KDoc documentation
-- [ ] Keep under 250 lines
-
-**For Large Datasets**:
-- [ ] Implement pagination at repository/DAO level (not in use case)
-- [ ] Use database LIMIT/OFFSET queries instead of loading all data
-- [ ] Document page size defaults and query performance expectations
-
-### 4. ViewModel Implementation
-- [ ] Expose `StateFlow` (public)
-- [ ] Keep `MutableStateFlow` private
-- [ ] Accept UseCase instances as constructor parameters
-- [ ] Consume `Result<T>` with `.onSuccess { }` and `.onFailure { }`
-- [ ] Use Kermit for logging (never `Log.d()` or `println()`)
-- [ ] Keep under 300 lines
-- [ ] Add `viewModelScope.cancel()` cleanup in tests (if `@After` method needed)
-
-### 5. State & Screen
-- [ ] `<Feature>State` data class stays in dedicated file (`<Feature>State.kt`)
-- [ ] NO typealias or aliases for state
-- [ ] Screen composable: NO business logic, only UI composition
-- [ ] Add at least 2 `@Preview` functions (light mode + dark mode)
-- [ ] Keep Screen under 400 lines
-- [ ] Reuse components from `androidApp/ui/components/` before creating new ones
-
-### 6. Localization
-- [ ] ALL user-facing strings in `strings.xml` (NOT hardcoded)
-- [ ] Check for existing strings: `grep -r "your_key" androidApp/src/main/res/values*/`
-- [ ] Add translations to ALL 5 locale files:
-  - `values/strings.xml` (English)
-  - `values-it/strings.xml` (Italian)
-  - `values-fr/strings.xml` (French)
-  - `values-de/strings.xml` (German)
-  - `values-es/strings.xml` (Spanish)
-- [ ] Use `stringResource(R.string.key)` in Compose
-
-### 7. Testing
-- [ ] Create ViewModel test in `androidApp/src/test/kotlin/com/antcashmanager/android/ui/screen/<feature>/<Feature>ViewModelTest.kt`
-- [ ] Extend `BaseUnitTest`
-- [ ] Use test naming: `method_shouldExpectedBehavior_whenCondition` (no backticks)
-- [ ] Mock UseCase with MockK (`mockk()`, `coEvery`, `coVerify`)
-- [ ] Test both happy path AND failure scenarios
-- [ ] Create UseCase test in `shared/src/commonTest/`
-- [ ] Use `TestDataBuilder` for test data
-
-### 8. Pre-Commit Verification
-- [ ] Imports: all used, no unused imports
-- [ ] Package name: matches directory structure
-- [ ] Build succeeds: `./gradlew build`
-- [ ] Tests pass: `./gradlew :androidApp:testDebugUnitTest` and `./gradlew :shared:testAndroidHostTest`
-- [ ] No hardcoded strings/colors/fonts
-- [ ] No `runBlocking()` outside tests
-- [ ] Code under line limits (UseCase 250, ViewModel 300, Screen 400, State 100)
-- [ ] Material Design compliance (colors from MaterialTheme, proper spacing)
-- [ ] If modifying settings use cases: check if generic `GetSettingUseCase<T>` or `SetSettingUseCase<T>` should be used instead
-- [ ] If implementing large dataset queries: verify pagination/filtering at database level (not in-memory)
-
----
-
-## Analytics
-
-Only log the usage events listed in `README.md`. Never include user content (notes, amounts, payee names, etc.) in analytics events. Firebase standard `screen_view` is tracked automatically via `NavGraph.kt`.
-
----
-
-## R8 Minification & PlayStore Release
-
-### Configuration
-- **R8 enabled** with `proguard-android-optimize.txt` (most aggressive preset)
-- **Resource shrinking enabled** – removes unused XML, drawable, layout resources
-- **ProGuard rules:** `androidApp/proguard-rules.pro` (comprehensive coverage: Kotlin, Room, Firebase, Koin, Compose, ML Kit, security)
-- **Crashlytics mapping upload** – automatic via Firebase (stack trace deobfuscation in production)
-
-### Pre-Release Checklist
-
-Before submitting to PlayStore:
-
-```bash
-# 1. Run all tests
-./gradlew test connectedAndroidTest
-
-# 2. Build release bundle
-./gradlew clean :androidApp:bundleRelease
-
-# 3. Test on real device/emulator
-# Deploy the AAB to a physical device and verify:
-# - App launches without crash
-# - Koin DI resolves all dependencies
-# - Room database queries work correctly
-# - ML Kit OCR functions properly
-# - Serialization deserializes JSON payloads
-# - No unexpected crashes in Crashlytics console
-```
-
-### PlayStore Upload
-1. **Google Play Console** → App → **Release** → **Create New Release**
-2. Upload `androidApp/build/outputs/bundle/release/app-release.aab`
-3. Verify **App Signing** (Google Play manages keys)
-4. Add **Release Notes** and review content policies
-5. Submit for review or internal testing first
-
-### Post-Release Monitoring
-- Check **Crashlytics** console for deobfuscated stack traces (should resolve within 24h)
-- Monitor **Play Console** → **Quality** → **Crashes and ANRs** for production issues
-- Watch user reviews for crashes in first 48 hours
-
-### Size Optimization Tips
-- `proguard-rules.pro` includes log stripping (`Log.d/v/i` removed in release)
-- If size still > 100 MB, check for unused dependencies using `./gradlew :androidApp:dependencies`
-- Use `bundletool` to analyze bundle: `bundletool inspect-bundle --bundle=app-release.aab --mode=summary`
-
----
-
-## Files to Ignore
-
-Never modify files matching `.gitignore` patterns: `build/`, `.gradle/`, `.idea/`, `*.jks`, `google-services.json`, `local.properties`, `secrets.properties`.
-
-
-
+- Log only events whitelisted in `analytics/`; never user content (notes, amounts, payees).
+- Never modify: `build/`, `.gradle/`, `.idea/`, `*.jks`, `google-services.json`, `local.properties`, `secrets.properties`.

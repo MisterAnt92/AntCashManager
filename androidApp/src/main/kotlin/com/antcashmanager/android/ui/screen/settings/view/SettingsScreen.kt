@@ -239,6 +239,7 @@ internal fun SettingsContent(
                             AppTheme.LIGHT -> stringResource(R.string.settings_theme_light)
                             AppTheme.DARK -> stringResource(R.string.settings_theme_dark)
                             AppTheme.SYSTEM -> stringResource(R.string.settings_theme_system)
+                            AppTheme.ANNA -> stringResource(R.string.settings_theme_anna)
                         },
                     leadingIcon = Icons.Default.Palette,
                     onClick = { showThemeDialog = true },
