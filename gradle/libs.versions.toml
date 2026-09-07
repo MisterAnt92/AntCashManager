@@ -34,7 +34,7 @@ playServicesAuth = "21.1.1"
 googleDriveApi = "v3-rev20260720-2.0.0"
 googleHttpClient = "1.44.1"
 googleOAuthClient = "1.36.0"
-securityCrypto = "1.1.0-alpha06"
+securityCrypto = "1.1.0"
 testOrchestrator = "1.4.2"
 ktlint = "14.2.0"
 
