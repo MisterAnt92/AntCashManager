@@ -89,6 +89,7 @@ import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.state.AntEmptyState
+import com.antcashmanager.android.ui.components.state.AntErrorState
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.text.TransactionAmountText
 import com.antcashmanager.android.ui.screen.categories.view.categoryIconMap
@@ -764,6 +765,19 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
                 )
             }
         }
+    }
+
+    // Error state overlay (FASE 5: Error Feedback UX)
+    if (state.errorState.isError) {
+        AntErrorState(
+            mascotRes = R.drawable.ic_piggy_bank,
+            title = state.errorState.message ?: "An error occurred",
+            subtitle = "Please try again",
+            modifier = modifier.fillMaxSize(),
+            retryLabel = null, // TODO: add RetryLastOperation event to TransactionsEvent
+            onRetry = null,
+        )
+        return
     }
 
     // FASE 1: Main layout logic - choose between split-pane and single-pane
