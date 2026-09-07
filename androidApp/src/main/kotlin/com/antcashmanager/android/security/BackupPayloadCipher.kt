@@ -21,7 +21,7 @@ object BackupPayloadCipher {
     private const val TRANSFORMATION = "AES/GCM/NoPadding"
     private const val GCM_TAG_LENGTH_BITS = 128
     private const val ENCRYPTED_PREFIX = "ACM_ENC_V1:"
-    private const val ENCRYPTED_PREFIX_V2 = "ACM_ENC_V2:"  // PBKDF2-derived key version
+    private const val ENCRYPTED_PREFIX_V2 = "ACM_ENC_V2:" // PBKDF2-derived key version
 
     // PBKDF2 parameters
     private const val PBKDF2_ALGORITHM = "PBKDF2WithHmacSHA256"
@@ -36,9 +36,10 @@ object BackupPayloadCipher {
 
     fun encrypt(plainText: String): String {
         val secretKey = getOrCreateSecretKey()
-        val cipher = Cipher.getInstance(TRANSFORMATION).apply {
-            init(Cipher.ENCRYPT_MODE, secretKey)
-        }
+        val cipher =
+            Cipher.getInstance(TRANSFORMATION).apply {
+                init(Cipher.ENCRYPT_MODE, secretKey)
+            }
 
         val iv = cipher.iv
         val encryptedBytes = cipher.doFinal(plainText.toByteArray(Charsets.UTF_8))
@@ -53,7 +54,9 @@ object BackupPayloadCipher {
 
         return if (isV2Payload(payload)) {
             // V2: PBKDF2-based (but we can't decrypt without password from older method)
-            throw IllegalArgumentException("This backup uses password-based encryption (V2). Use decryptWithPassword() instead.")
+            throw IllegalArgumentException(
+                "This backup uses password-based encryption (V2). Use decryptWithPassword() instead.",
+            )
         } else {
             // V1: Legacy Keystore-based (device-bound)
             decryptV1Legacy(payload)
@@ -64,15 +67,20 @@ object BackupPayloadCipher {
      * Encrypt backup with password-derived key (V2: portable across devices).
      * Format: "ACM_ENC_V2:salt:iv:data" (all base64-encoded)
      */
-    fun encryptWithPassword(plainText: String, password: String): String {
-        val salt = ByteArray(SALT_LENGTH_BYTES).apply {
-            SecureRandom().nextBytes(this)
-        }
+    fun encryptWithPassword(
+        plainText: String,
+        password: String,
+    ): String {
+        val salt =
+            ByteArray(SALT_LENGTH_BYTES).apply {
+                SecureRandom().nextBytes(this)
+            }
 
         val secretKey = deriveKeyFromPassword(password, salt)
-        val cipher = Cipher.getInstance(TRANSFORMATION).apply {
-            init(Cipher.ENCRYPT_MODE, secretKey)
-        }
+        val cipher =
+            Cipher.getInstance(TRANSFORMATION).apply {
+                init(Cipher.ENCRYPT_MODE, secretKey)
+            }
 
         val iv = cipher.iv
         val encryptedBytes = cipher.doFinal(plainText.toByteArray(Charsets.UTF_8))
@@ -86,7 +94,10 @@ object BackupPayloadCipher {
     /**
      * Decrypt backup with password-derived key (V2: portable across devices).
      */
-    fun decryptWithPassword(payload: String, password: String): String {
+    fun decryptWithPassword(
+        payload: String,
+        password: String,
+    ): String {
         require(isV2Payload(payload)) { "Payload is not encrypted with V2 format" }
 
         val encoded = payload.removePrefix(ENCRYPTED_PREFIX_V2)
@@ -98,9 +109,10 @@ object BackupPayloadCipher {
         val encryptedBytes = Base64.decode(parts[2], Base64.NO_WRAP)
 
         val secretKey = deriveKeyFromPassword(password, salt)
-        val cipher = Cipher.getInstance(TRANSFORMATION).apply {
-            init(Cipher.DECRYPT_MODE, secretKey, GCMParameterSpec(GCM_TAG_LENGTH_BITS, iv))
-        }
+        val cipher =
+            Cipher.getInstance(TRANSFORMATION).apply {
+                init(Cipher.DECRYPT_MODE, secretKey, GCMParameterSpec(GCM_TAG_LENGTH_BITS, iv))
+            }
 
         val plainBytes = cipher.doFinal(encryptedBytes)
         return String(plainBytes, Charsets.UTF_8)
@@ -115,9 +127,10 @@ object BackupPayloadCipher {
         val encryptedBytes = Base64.decode(parts[1], Base64.NO_WRAP)
 
         val secretKey = getOrCreateSecretKey()
-        val cipher = Cipher.getInstance(TRANSFORMATION).apply {
-            init(Cipher.DECRYPT_MODE, secretKey, GCMParameterSpec(GCM_TAG_LENGTH_BITS, iv))
-        }
+        val cipher =
+            Cipher.getInstance(TRANSFORMATION).apply {
+                init(Cipher.DECRYPT_MODE, secretKey, GCMParameterSpec(GCM_TAG_LENGTH_BITS, iv))
+            }
 
         return try {
             val plainBytes = cipher.doFinal(encryptedBytes)
@@ -129,18 +142,22 @@ object BackupPayloadCipher {
                 "Failed to decrypt backup: This backup was created on another device. " +
                     "Device-bound backups cannot be restored across different phones. " +
                     "Use password-protected backups (v1.8+) for cross-device portability.",
-                e
+                e,
             )
         }
     }
 
-    private fun deriveKeyFromPassword(password: String, salt: ByteArray): SecretKey {
-        val keySpec = PBEKeySpec(
-            password.toCharArray(),
-            salt,
-            PBKDF2_ITERATIONS,
-            PBKDF2_KEY_LENGTH_BITS
-        )
+    private fun deriveKeyFromPassword(
+        password: String,
+        salt: ByteArray,
+    ): SecretKey {
+        val keySpec =
+            PBEKeySpec(
+                password.toCharArray(),
+                salt,
+                PBKDF2_ITERATIONS,
+                PBKDF2_KEY_LENGTH_BITS,
+            )
         val keyFactory = SecretKeyFactory.getInstance(PBKDF2_ALGORITHM)
         return keyFactory.generateSecret(keySpec)
     }
@@ -152,17 +169,17 @@ object BackupPayloadCipher {
 
         val keyGenerator =
             KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, KEYSTORE_PROVIDER)
-        val spec = KeyGenParameterSpec.Builder(
-            KEY_ALIAS,
-            KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT,
-        )
-            .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
-            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-            .setKeySize(256)
-            .build()
+        val spec =
+            KeyGenParameterSpec
+                .Builder(
+                    KEY_ALIAS,
+                    KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT,
+                ).setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                .setKeySize(256)
+                .build()
 
         keyGenerator.init(spec)
         return keyGenerator.generateKey()
     }
 }
-

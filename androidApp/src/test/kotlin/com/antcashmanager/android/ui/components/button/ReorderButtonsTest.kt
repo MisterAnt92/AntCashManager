@@ -21,7 +21,6 @@ import org.robolectric.RobolectricTestRunner
  */
 @RunWith(RobolectricTestRunner::class)
 class ReorderButtonsTest : BaseComposeUnitTest() {
-
     private val testUpDescription = "Test Move Up"
     private val testDownDescription = "Test Move Down"
 
@@ -38,7 +37,8 @@ class ReorderButtonsTest : BaseComposeUnitTest() {
             )
         }
 
-        composeTestRule.onNodeWithContentDescription(testUpDescription)
+        composeTestRule
+            .onNodeWithContentDescription(testUpDescription)
             .assertIsEnabled()
     }
 
@@ -55,7 +55,8 @@ class ReorderButtonsTest : BaseComposeUnitTest() {
             )
         }
 
-        composeTestRule.onNodeWithContentDescription(testUpDescription)
+        composeTestRule
+            .onNodeWithContentDescription(testUpDescription)
             .assertIsNotEnabled()
     }
 
@@ -72,7 +73,8 @@ class ReorderButtonsTest : BaseComposeUnitTest() {
             )
         }
 
-        composeTestRule.onNodeWithContentDescription(testDownDescription)
+        composeTestRule
+            .onNodeWithContentDescription(testDownDescription)
             .assertIsEnabled()
     }
 
@@ -89,7 +91,8 @@ class ReorderButtonsTest : BaseComposeUnitTest() {
             )
         }
 
-        composeTestRule.onNodeWithContentDescription(testDownDescription)
+        composeTestRule
+            .onNodeWithContentDescription(testDownDescription)
             .assertIsNotEnabled()
     }
 
@@ -107,7 +110,8 @@ class ReorderButtonsTest : BaseComposeUnitTest() {
             )
         }
 
-        composeTestRule.onNodeWithContentDescription(testUpDescription)
+        composeTestRule
+            .onNodeWithContentDescription(testUpDescription)
             .performClick()
 
         assert(upClicked)
@@ -127,7 +131,8 @@ class ReorderButtonsTest : BaseComposeUnitTest() {
             )
         }
 
-        composeTestRule.onNodeWithContentDescription(testDownDescription)
+        composeTestRule
+            .onNodeWithContentDescription(testDownDescription)
             .performClick()
 
         assert(downClicked)
@@ -149,9 +154,11 @@ class ReorderButtonsTest : BaseComposeUnitTest() {
         }
 
         // Tentare di cliccare pulsanti disabilitati (non dovrebbe funzionare)
-        composeTestRule.onNodeWithContentDescription(testUpDescription)
+        composeTestRule
+            .onNodeWithContentDescription(testUpDescription)
             .performClick()
-        composeTestRule.onNodeWithContentDescription(testDownDescription)
+        composeTestRule
+            .onNodeWithContentDescription(testDownDescription)
             .performClick()
 
         assert(!upClicked)
@@ -173,9 +180,11 @@ class ReorderButtonsTest : BaseComposeUnitTest() {
             )
         }
 
-        composeTestRule.onNodeWithContentDescription(testUpDescription)
+        composeTestRule
+            .onNodeWithContentDescription(testUpDescription)
             .performClick()
-        composeTestRule.onNodeWithContentDescription(testDownDescription)
+        composeTestRule
+            .onNodeWithContentDescription(testDownDescription)
             .performClick()
 
         assert(upClicked)
@@ -197,7 +206,8 @@ class ReorderButtonsTest : BaseComposeUnitTest() {
         }
 
         repeat(3) {
-            composeTestRule.onNodeWithContentDescription(testUpDescription)
+            composeTestRule
+                .onNodeWithContentDescription(testUpDescription)
                 .performClick()
         }
 

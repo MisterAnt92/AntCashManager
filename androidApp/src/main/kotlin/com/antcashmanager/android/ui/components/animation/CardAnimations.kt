@@ -48,12 +48,15 @@ fun AnimatedCard(
     }
 
     Card(
-        modifier = modifier
-            .scale(scale.value)
-            .alpha(alpha.value),
+        modifier =
+            modifier
+                .scale(scale.value)
+                .alpha(alpha.value),
         colors = CardDefaults.cardColors(containerColor = backgroundColor),
         border = border,
-        shape = androidx.compose.foundation.shape.RoundedCornerShape(borderRadius.dp),
+        shape =
+            androidx.compose.foundation.shape
+                .RoundedCornerShape(borderRadius.dp),
     ) {
         content()
     }
@@ -68,14 +71,16 @@ fun ExpandableAnimatedCard(
     content: @Composable () -> Unit,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .animateContentSize(animationSpec = tween(300)),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .animateContentSize(animationSpec = tween(300)),
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
             contentAlignment = Alignment.CenterStart,
         ) {
             title()

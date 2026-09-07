@@ -97,10 +97,10 @@ data class SettingsBackup(
     // ── Backup Destination & Google Drive Config (v4+) ──
     val autoBackupEnabled: Boolean = false,
     val autoBackupDestination: String = "LOCAL", // Enum serializzato come String
-    val autoBackupFolderUri: String? = null,     // SAF URI della cartella locale
-    val googleDriveFolderId: String? = null,     // ID della cartella Google Drive
-    val googleDriveFolderName: String? = null,   // Nome leggibile della cartella Google Drive
-    val googleDriveUserEmail: String? = null,    // Email del account Google
+    val autoBackupFolderUri: String? = null, // SAF URI della cartella locale
+    val googleDriveFolderId: String? = null, // ID della cartella Google Drive
+    val googleDriveFolderName: String? = null, // Nome leggibile della cartella Google Drive
+    val googleDriveUserEmail: String? = null, // Email del account Google
     // ── Payment Type Config (v4+) ──
     val defaultPaymentType: String = "ELECTRONIC", // Tipo di pagamento predefinito
 )

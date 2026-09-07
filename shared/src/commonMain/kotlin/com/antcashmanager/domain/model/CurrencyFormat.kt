@@ -11,36 +11,38 @@ public data class CurrencyFormat(
         public val DEFAULT: CurrencyFormat = CurrencyFormat()
 
         /** Symbol to display-label pairs for all supported currencies. */
-        public val SUPPORTED_CURRENCIES: List<Pair<String, String>> = listOf(
-            "\u20ac" to "Euro (\u20ac)",
-            "$" to "US Dollar ($)",
-            "\u00a3" to "British Pound (\u00a3)",
-            "\u00a5" to "Japanese Yen / Chinese Yuan (\u00a5)",
-            "\u20b9" to "Indian Rupee (\u20b9)",
-            "CHF" to "Swiss Franc (CHF)",
-            "kr" to "Krona - SEK / NOK / DKK (kr)",
-            "R\$" to "Brazilian Real (R\$)",
-            "A\$" to "Australian Dollar (A\$)",
-            "C\$" to "Canadian Dollar (C\$)",
-            "\u20a9" to "Korean Won (\u20a9)",
-            "\u20ba" to "Turkish Lira (\u20ba)",
-            "z\u0142" to "Polish Zloty (z\u0142)",
-            "\u20b1" to "Philippine Peso (\u20b1)",
-            "\u0e3f" to "Thai Baht (\u0e3f)",
-        )
+        public val SUPPORTED_CURRENCIES: List<Pair<String, String>> =
+            listOf(
+                "\u20ac" to "Euro (\u20ac)",
+                "$" to "US Dollar ($)",
+                "\u00a3" to "British Pound (\u00a3)",
+                "\u00a5" to "Japanese Yen / Chinese Yuan (\u00a5)",
+                "\u20b9" to "Indian Rupee (\u20b9)",
+                "CHF" to "Swiss Franc (CHF)",
+                "kr" to "Krona - SEK / NOK / DKK (kr)",
+                "R\$" to "Brazilian Real (R\$)",
+                "A\$" to "Australian Dollar (A\$)",
+                "C\$" to "Canadian Dollar (C\$)",
+                "\u20a9" to "Korean Won (\u20a9)",
+                "\u20ba" to "Turkish Lira (\u20ba)",
+                "z\u0142" to "Polish Zloty (z\u0142)",
+                "\u20b1" to "Philippine Peso (\u20b1)",
+                "\u0e3f" to "Thai Baht (\u0e3f)",
+            )
 
-        public val DECIMAL_SEPARATORS: List<Pair<String, String>> = listOf(
-            "," to "Comma (,)",
-            "." to "Period (.)",
-        )
+        public val DECIMAL_SEPARATORS: List<Pair<String, String>> =
+            listOf(
+                "," to "Comma (,)",
+                "." to "Period (.)",
+            )
 
         /** Empty string = no thousands separator. */
-        public val THOUSANDS_SEPARATORS: List<Pair<String, String>> = listOf(
-            "." to "Period (.)",
-            "," to "Comma (,)",
-            " " to "Space",
-            "" to "None",
-        )
+        public val THOUSANDS_SEPARATORS: List<Pair<String, String>> =
+            listOf(
+                "." to "Period (.)",
+                "," to "Comma (,)",
+                " " to "Space",
+                "" to "None",
+            )
     }
 }
-

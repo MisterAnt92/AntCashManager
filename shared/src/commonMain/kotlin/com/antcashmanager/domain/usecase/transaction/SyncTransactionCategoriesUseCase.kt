@@ -22,8 +22,7 @@ public class SyncTransactionCategoriesUseCase(
     private val transactionRepository: TransactionRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : UseCase<SyncTransactionCategoriesUseCase.Params, Unit>(dispatcher) {
-
-    override suspend fun execute(params: Params): Unit {
+    override suspend fun execute(params: Params) {
         Logger.d(tag = "SyncTransactionCategoriesUseCase") {
             "Syncing category data: ${params.oldCategoryName} -> ${params.category.name}"
         }

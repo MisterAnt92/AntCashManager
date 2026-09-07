@@ -13,7 +13,6 @@ import com.antcashmanager.android.ui.screen.settings.dataManagement.RestoreSucce
 import com.antcashmanager.android.ui.screen.settings.dataManagement.SettingsDataViewModel
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
-import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -34,7 +33,6 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsDataViewModelMockkTest : BaseUnitTest() {
-
     private lateinit var settingsRepository: SettingsRepository
     private lateinit var categoryRepository: CategoryRepository
     private lateinit var deleteAllTransactionsUseCase: DeleteAllTransactionsUseCase
@@ -71,55 +69,60 @@ class SettingsDataViewModelMockkTest : BaseUnitTest() {
     // ── Toggle encryption ──
 
     @Test
-    fun setDataEncryptionEnabled_shouldDelegateToRepository_whenToggled() = runViewModelTest {
-        val viewModel = buildViewModel()
+    fun setDataEncryptionEnabled_shouldDelegateToRepository_whenToggled() =
+        runViewModelTest {
+            val viewModel = buildViewModel()
 
-        viewModel.setDataEncryptionEnabled(true)
-        advanceUntilIdle()
+            viewModel.setDataEncryptionEnabled(true)
+            advanceUntilIdle()
 
-        coVerify(exactly = 1) { settingsRepository.setDataEncryptionEnabled(true) }
-    }
+            coVerify(exactly = 1) { settingsRepository.setDataEncryptionEnabled(true) }
+        }
 
     // ── Suggestions ──
 
     @Test
-    fun setSuggestionsEnabled_shouldDelegateToRepository_whenToggled() = runViewModelTest {
-        val viewModel = buildViewModel()
+    fun setSuggestionsEnabled_shouldDelegateToRepository_whenToggled() =
+        runViewModelTest {
+            val viewModel = buildViewModel()
 
-        viewModel.setSuggestionsEnabled(false)
-        advanceUntilIdle()
+            viewModel.setSuggestionsEnabled(false)
+            advanceUntilIdle()
 
-        coVerify(exactly = 1) { settingsRepository.setSuggestionsEnabled(false) }
-    }
-
-    @Test
-    fun state_shouldReflectSuggestionsEnabledFromRepository_whenCollected() = runViewModelTest {
-        every { settingsRepository.getSuggestionsEnabled() } returns flowOf(false)
-
-        val viewModel = buildViewModel()
-        advanceUntilIdle()
-
-        assertFalse(viewModel.state.value.suggestionsEnabled)
-    }
+            coVerify(exactly = 1) { settingsRepository.setSuggestionsEnabled(false) }
+        }
 
     @Test
-    fun showDeleteSuggestionsDialog_shouldSetDialogVisible_whenCalled() = runViewModelTest {
-        val viewModel = buildViewModel()
+    fun state_shouldReflectSuggestionsEnabledFromRepository_whenCollected() =
+        runViewModelTest {
+            every { settingsRepository.getSuggestionsEnabled() } returns flowOf(false)
 
-        viewModel.showDeleteSuggestionsDialog()
+            val viewModel = buildViewModel()
+            advanceUntilIdle()
 
-        assertTrue(viewModel.state.value.showDeleteSuggestionsDialog)
-    }
+            assertFalse(viewModel.state.value.suggestionsEnabled)
+        }
 
     @Test
-    fun dismissDeleteSuggestionsDialog_shouldHideDialog_whenCalled() = runViewModelTest {
-        val viewModel = buildViewModel()
-        viewModel.showDeleteSuggestionsDialog()
+    fun showDeleteSuggestionsDialog_shouldSetDialogVisible_whenCalled() =
+        runViewModelTest {
+            val viewModel = buildViewModel()
 
-        viewModel.dismissDeleteSuggestionsDialog()
+            viewModel.showDeleteSuggestionsDialog()
 
-        assertFalse(viewModel.state.value.showDeleteSuggestionsDialog)
-    }
+            assertTrue(viewModel.state.value.showDeleteSuggestionsDialog)
+        }
+
+    @Test
+    fun dismissDeleteSuggestionsDialog_shouldHideDialog_whenCalled() =
+        runViewModelTest {
+            val viewModel = buildViewModel()
+            viewModel.showDeleteSuggestionsDialog()
+
+            viewModel.dismissDeleteSuggestionsDialog()
+
+            assertFalse(viewModel.state.value.showDeleteSuggestionsDialog)
+        }
 
     @Test
     fun deleteAllSuggestions_shouldPersistClearedTimestampAndHideDialog_whenCalled() =
@@ -137,70 +140,76 @@ class SettingsDataViewModelMockkTest : BaseUnitTest() {
     // ── Dialog show/dismiss ──
 
     @Test
-    fun showDeleteConfirmDialog_shouldSetDialogVisible_whenCalled() = runViewModelTest {
-        val viewModel = buildViewModel()
+    fun showDeleteConfirmDialog_shouldSetDialogVisible_whenCalled() =
+        runViewModelTest {
+            val viewModel = buildViewModel()
 
-        viewModel.showDeleteConfirmDialog()
+            viewModel.showDeleteConfirmDialog()
 
-        assertTrue(viewModel.state.value.showDeleteConfirmDialog)
-    }
-
-    @Test
-    fun dismissDeleteConfirmDialog_shouldHideDialog_whenCalled() = runViewModelTest {
-        val viewModel = buildViewModel()
-        viewModel.showDeleteConfirmDialog()
-
-        viewModel.dismissDeleteConfirmDialog()
-
-        assertFalse(viewModel.state.value.showDeleteConfirmDialog)
-    }
+            assertTrue(viewModel.state.value.showDeleteConfirmDialog)
+        }
 
     @Test
-    fun dismissDeleteSuccessDialog_shouldResetDeleteResultToIdle_whenCalled() = runViewModelTest {
-        coEvery { deleteAllTransactionsUseCase() } returns Result.success(Unit)
-        val viewModel = buildViewModel()
-        viewModel.deleteAllData()
-        advanceUntilIdle()
+    fun dismissDeleteConfirmDialog_shouldHideDialog_whenCalled() =
+        runViewModelTest {
+            val viewModel = buildViewModel()
+            viewModel.showDeleteConfirmDialog()
 
-        viewModel.dismissDeleteSuccessDialog()
+            viewModel.dismissDeleteConfirmDialog()
 
-        val state = viewModel.state.value
-        assertFalse(state.showDeleteSuccessDialog)
-        assertEquals(DeleteResult.Idle, state.deleteResult)
-    }
+            assertFalse(viewModel.state.value.showDeleteConfirmDialog)
+        }
 
     @Test
-    fun showResetPreferencesDialog_shouldSetDialogVisible_whenCalled() = runViewModelTest {
-        val viewModel = buildViewModel()
+    fun dismissDeleteSuccessDialog_shouldResetDeleteResultToIdle_whenCalled() =
+        runViewModelTest {
+            coEvery { deleteAllTransactionsUseCase() } returns Result.success(Unit)
+            val viewModel = buildViewModel()
+            viewModel.deleteAllData()
+            advanceUntilIdle()
 
-        viewModel.showResetPreferencesDialog()
+            viewModel.dismissDeleteSuccessDialog()
 
-        assertTrue(viewModel.state.value.showResetPreferencesDialog)
-    }
-
-    @Test
-    fun dismissResetPreferencesDialog_shouldHideDialog_whenCalled() = runViewModelTest {
-        val viewModel = buildViewModel()
-        viewModel.showResetPreferencesDialog()
-
-        viewModel.dismissResetPreferencesDialog()
-
-        assertFalse(viewModel.state.value.showResetPreferencesDialog)
-    }
+            val state = viewModel.state.value
+            assertFalse(state.showDeleteSuccessDialog)
+            assertEquals(DeleteResult.Idle, state.deleteResult)
+        }
 
     @Test
-    fun dismissBackupSuccessDialog_shouldResetBackupResultToIdle_whenCalled() = runViewModelTest {
-        coEvery { backupService.createBackup() } returns Result.success("{}")
-        val viewModel = buildViewModel()
-        viewModel.createBackup()
-        advanceUntilIdle()
+    fun showResetPreferencesDialog_shouldSetDialogVisible_whenCalled() =
+        runViewModelTest {
+            val viewModel = buildViewModel()
 
-        viewModel.dismissBackupSuccessDialog()
+            viewModel.showResetPreferencesDialog()
 
-        val state = viewModel.state.value
-        assertFalse(state.showBackupSuccessDialog)
-        assertEquals(BackupResult.Idle, state.backupResult)
-    }
+            assertTrue(viewModel.state.value.showResetPreferencesDialog)
+        }
+
+    @Test
+    fun dismissResetPreferencesDialog_shouldHideDialog_whenCalled() =
+        runViewModelTest {
+            val viewModel = buildViewModel()
+            viewModel.showResetPreferencesDialog()
+
+            viewModel.dismissResetPreferencesDialog()
+
+            assertFalse(viewModel.state.value.showResetPreferencesDialog)
+        }
+
+    @Test
+    fun dismissBackupSuccessDialog_shouldResetBackupResultToIdle_whenCalled() =
+        runViewModelTest {
+            coEvery { backupService.createBackup() } returns Result.success("{}")
+            val viewModel = buildViewModel()
+            viewModel.createBackup()
+            advanceUntilIdle()
+
+            viewModel.dismissBackupSuccessDialog()
+
+            val state = viewModel.state.value
+            assertFalse(state.showBackupSuccessDialog)
+            assertEquals(BackupResult.Idle, state.backupResult)
+        }
 
     @Test
     fun dismissBackupErrorDialog_shouldClearErrorMessageAndHideDialog_whenCalled() =
@@ -222,12 +231,13 @@ class SettingsDataViewModelMockkTest : BaseUnitTest() {
     fun dismissRestoreSuccessDialog_shouldClearSuccessInfoAndHideDialog_whenCalled() =
         runViewModelTest {
             every { BackupPayloadCipher.isEncryptedPayload(any()) } returns false
-            coEvery { backupService.restoreBackup(any()) } returns Result.success(
-                RestoreResult(
-                    3,
-                    2
+            coEvery { backupService.restoreBackup(any()) } returns
+                Result.success(
+                    RestoreResult(
+                        3,
+                        2,
+                    ),
                 )
-            )
             val viewModel = buildViewModel()
             viewModel.restoreBackup("{}")
             advanceUntilIdle()
@@ -243,9 +253,10 @@ class SettingsDataViewModelMockkTest : BaseUnitTest() {
     fun dismissRestoreErrorDialog_shouldClearErrorMessageAndHideDialog_whenCalled() =
         runViewModelTest {
             every { BackupPayloadCipher.isEncryptedPayload(any()) } returns false
-            coEvery { backupService.restoreBackup(any()) } returns Result.failure(
-                IllegalStateException("restore failed")
-            )
+            coEvery { backupService.restoreBackup(any()) } returns
+                Result.failure(
+                    IllegalStateException("restore failed"),
+                )
             val viewModel = buildViewModel()
             viewModel.restoreBackup("{}")
             advanceUntilIdle()
@@ -274,17 +285,18 @@ class SettingsDataViewModelMockkTest : BaseUnitTest() {
         }
 
     @Test
-    fun onBackupFileSaved_shouldPersistLastBackupTimestamp_whenCalled() = runViewModelTest {
-        coEvery { backupService.createBackup() } returns Result.success("{}")
-        val viewModel = buildViewModel()
-        viewModel.createBackup()
-        advanceUntilIdle()
+    fun onBackupFileSaved_shouldPersistLastBackupTimestamp_whenCalled() =
+        runViewModelTest {
+            coEvery { backupService.createBackup() } returns Result.success("{}")
+            val viewModel = buildViewModel()
+            viewModel.createBackup()
+            advanceUntilIdle()
 
-        viewModel.onBackupFileSaved()
-        advanceUntilIdle()
+            viewModel.onBackupFileSaved()
+            advanceUntilIdle()
 
-        coVerify(exactly = 1) { settingsRepository.setLastBackupTimestamp(any()) }
-    }
+            coVerify(exactly = 1) { settingsRepository.setLastBackupTimestamp(any()) }
+        }
 
     @Test
     fun clearPendingBackupRequest_shouldClearPendingBackupDataWithoutShowingDialog_whenCalled() =
@@ -349,11 +361,12 @@ class SettingsDataViewModelMockkTest : BaseUnitTest() {
     @Test
     fun deleteAllData_shouldSetErrorResult_whenDeleteAllTransactionsUseCaseFails() =
         runViewModelTest {
-            coEvery { deleteAllTransactionsUseCase() } returns Result.failure(
-                IllegalStateException(
-                    "delete failed"
+            coEvery { deleteAllTransactionsUseCase() } returns
+                Result.failure(
+                    IllegalStateException(
+                        "delete failed",
+                    ),
                 )
-            )
             val viewModel = buildViewModel()
 
             viewModel.deleteAllData()
@@ -386,47 +399,50 @@ class SettingsDataViewModelMockkTest : BaseUnitTest() {
         }
 
     @Test
-    fun createBackup_shouldEncryptPendingPayload_whenEncryptionEnabled() = runViewModelTest {
-        every { settingsRepository.getDataEncryptionEnabled() } returns flowOf(true)
-        coEvery { backupService.createBackup() } returns Result.success("{\"json\":true}")
-        every { BackupPayloadCipher.encrypt("{\"json\":true}") } returns "ACM_ENC_V1:encrypted"
-        val viewModel = buildViewModel()
-        advanceUntilIdle()
+    fun createBackup_shouldEncryptPendingPayload_whenEncryptionEnabled() =
+        runViewModelTest {
+            every { settingsRepository.getDataEncryptionEnabled() } returns flowOf(true)
+            coEvery { backupService.createBackup() } returns Result.success("{\"json\":true}")
+            every { BackupPayloadCipher.encrypt("{\"json\":true}") } returns "ACM_ENC_V1:encrypted"
+            val viewModel = buildViewModel()
+            advanceUntilIdle()
 
-        viewModel.createBackup()
-        advanceUntilIdle()
+            viewModel.createBackup()
+            advanceUntilIdle()
 
-        assertEquals("ACM_ENC_V1:encrypted", viewModel.state.value.pendingBackupData)
-    }
-
-    @Test
-    fun createBackup_shouldShowErrorDialog_whenBackupServiceFails() = runViewModelTest {
-        coEvery { backupService.createBackup() } returns Result.failure(IllegalStateException("backup failed"))
-        val viewModel = buildViewModel()
-
-        viewModel.createBackup()
-        advanceUntilIdle()
-
-        val state = viewModel.state.value
-        assertTrue(state.showBackupErrorDialog)
-        assertEquals(BackupResult.Error("backup failed"), state.backupResult)
-    }
+            assertEquals("ACM_ENC_V1:encrypted", viewModel.state.value.pendingBackupData)
+        }
 
     @Test
-    fun createBackup_shouldShowErrorDialog_whenEncryptionThrows() = runViewModelTest {
-        every { settingsRepository.getDataEncryptionEnabled() } returns flowOf(true)
-        coEvery { backupService.createBackup() } returns Result.success("{\"json\":true}")
-        every { BackupPayloadCipher.encrypt(any()) } throws IllegalStateException("keystore error")
-        val viewModel = buildViewModel()
-        advanceUntilIdle()
+    fun createBackup_shouldShowErrorDialog_whenBackupServiceFails() =
+        runViewModelTest {
+            coEvery { backupService.createBackup() } returns Result.failure(IllegalStateException("backup failed"))
+            val viewModel = buildViewModel()
 
-        viewModel.createBackup()
-        advanceUntilIdle()
+            viewModel.createBackup()
+            advanceUntilIdle()
 
-        val state = viewModel.state.value
-        assertTrue(state.showBackupErrorDialog)
-        assertNull(state.pendingBackupData)
-    }
+            val state = viewModel.state.value
+            assertTrue(state.showBackupErrorDialog)
+            assertEquals(BackupResult.Error("backup failed"), state.backupResult)
+        }
+
+    @Test
+    fun createBackup_shouldShowErrorDialog_whenEncryptionThrows() =
+        runViewModelTest {
+            every { settingsRepository.getDataEncryptionEnabled() } returns flowOf(true)
+            coEvery { backupService.createBackup() } returns Result.success("{\"json\":true}")
+            every { BackupPayloadCipher.encrypt(any()) } throws IllegalStateException("keystore error")
+            val viewModel = buildViewModel()
+            advanceUntilIdle()
+
+            viewModel.createBackup()
+            advanceUntilIdle()
+
+            val state = viewModel.state.value
+            assertTrue(state.showBackupErrorDialog)
+            assertNull(state.pendingBackupData)
+        }
 
     // ── restoreBackup ──
 
@@ -434,9 +450,10 @@ class SettingsDataViewModelMockkTest : BaseUnitTest() {
     fun restoreBackup_shouldShowSuccessDialogWithCounts_whenUnencryptedPayloadRestoresSuccessfully() =
         runViewModelTest {
             every { BackupPayloadCipher.isEncryptedPayload(any()) } returns false
-            coEvery { backupService.restoreBackup("{\"json\":true}") } returns Result.success(
-                RestoreResult(3, 2)
-            )
+            coEvery { backupService.restoreBackup("{\"json\":true}") } returns
+                Result.success(
+                    RestoreResult(3, 2),
+                )
             val viewModel = buildViewModel()
 
             viewModel.restoreBackup("{\"json\":true}")
@@ -448,30 +465,33 @@ class SettingsDataViewModelMockkTest : BaseUnitTest() {
         }
 
     @Test
-    fun restoreBackup_shouldPersistLastRestoreTimestamp_whenSuccessful() = runViewModelTest {
-        every { BackupPayloadCipher.isEncryptedPayload(any()) } returns false
-        coEvery { backupService.restoreBackup("{\"json\":true}") } returns Result.success(
-            RestoreResult(3, 2)
-        )
-        val viewModel = buildViewModel()
+    fun restoreBackup_shouldPersistLastRestoreTimestamp_whenSuccessful() =
+        runViewModelTest {
+            every { BackupPayloadCipher.isEncryptedPayload(any()) } returns false
+            coEvery { backupService.restoreBackup("{\"json\":true}") } returns
+                Result.success(
+                    RestoreResult(3, 2),
+                )
+            val viewModel = buildViewModel()
 
-        viewModel.restoreBackup("{\"json\":true}")
-        advanceUntilIdle()
+            viewModel.restoreBackup("{\"json\":true}")
+            advanceUntilIdle()
 
-        coVerify(exactly = 1) { settingsRepository.setLastRestoreTimestamp(any()) }
-    }
+            coVerify(exactly = 1) { settingsRepository.setLastRestoreTimestamp(any()) }
+        }
 
     @Test
     fun restoreBackup_shouldDecryptPayloadBeforeDelegating_whenPayloadIsEncrypted() =
         runViewModelTest {
             every { BackupPayloadCipher.isEncryptedPayload("ACM_ENC_V1:encrypted") } returns true
             every { BackupPayloadCipher.decrypt("ACM_ENC_V1:encrypted") } returns "{\"json\":true}"
-            coEvery { backupService.restoreBackup(any()) } returns Result.success(
-                RestoreResult(
-                    1,
-                    1
+            coEvery { backupService.restoreBackup(any()) } returns
+                Result.success(
+                    RestoreResult(
+                        1,
+                        1,
+                    ),
                 )
-            )
             val viewModel = buildViewModel()
 
             viewModel.restoreBackup("ACM_ENC_V1:encrypted")
@@ -481,34 +501,37 @@ class SettingsDataViewModelMockkTest : BaseUnitTest() {
         }
 
     @Test
-    fun restoreBackup_shouldShowErrorDialog_whenBackupServiceFails() = runViewModelTest {
-        every { BackupPayloadCipher.isEncryptedPayload(any()) } returns false
-        coEvery { backupService.restoreBackup(any()) } returns Result.failure(
-            IllegalStateException(
-                "restore failed"
-            )
-        )
-        val viewModel = buildViewModel()
+    fun restoreBackup_shouldShowErrorDialog_whenBackupServiceFails() =
+        runViewModelTest {
+            every { BackupPayloadCipher.isEncryptedPayload(any()) } returns false
+            coEvery { backupService.restoreBackup(any()) } returns
+                Result.failure(
+                    IllegalStateException(
+                        "restore failed",
+                    ),
+                )
+            val viewModel = buildViewModel()
 
-        viewModel.restoreBackup("{\"json\":true}")
-        advanceUntilIdle()
+            viewModel.restoreBackup("{\"json\":true}")
+            advanceUntilIdle()
 
-        assertTrue(viewModel.state.value.showRestoreErrorDialog)
-        coVerify(exactly = 0) { settingsRepository.setLastRestoreTimestamp(any()) }
-    }
+            assertTrue(viewModel.state.value.showRestoreErrorDialog)
+            coVerify(exactly = 0) { settingsRepository.setLastRestoreTimestamp(any()) }
+        }
 
     @Test
-    fun restoreBackup_shouldShowErrorDialog_whenDecryptionThrows() = runViewModelTest {
-        every { BackupPayloadCipher.isEncryptedPayload(any()) } returns true
-        every { BackupPayloadCipher.decrypt(any()) } throws IllegalStateException("bad payload")
-        val viewModel = buildViewModel()
+    fun restoreBackup_shouldShowErrorDialog_whenDecryptionThrows() =
+        runViewModelTest {
+            every { BackupPayloadCipher.isEncryptedPayload(any()) } returns true
+            every { BackupPayloadCipher.decrypt(any()) } throws IllegalStateException("bad payload")
+            val viewModel = buildViewModel()
 
-        viewModel.restoreBackup("ACM_ENC_V1:corrupted")
-        advanceUntilIdle()
+            viewModel.restoreBackup("ACM_ENC_V1:corrupted")
+            advanceUntilIdle()
 
-        assertTrue(viewModel.state.value.showRestoreErrorDialog)
-        coVerify(exactly = 0) { backupService.restoreBackup(any()) }
-    }
+            assertTrue(viewModel.state.value.showRestoreErrorDialog)
+            coVerify(exactly = 0) { backupService.restoreBackup(any()) }
+        }
 
     // ── resetAllPreferences ──
 

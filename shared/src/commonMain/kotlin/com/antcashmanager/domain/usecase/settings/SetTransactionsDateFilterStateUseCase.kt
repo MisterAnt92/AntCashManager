@@ -8,14 +8,12 @@ import kotlinx.coroutines.Dispatchers
 
 @Deprecated(
     message = "Use GetSettingUseCase<T> or SetSettingUseCase<T> instead. This class is pure boilerplate and will be removed in v1.8.",
-    replaceWith = ReplaceWith("GetSettingUseCase<T>() or SetSettingUseCase<T>()")
+    replaceWith = ReplaceWith("GetSettingUseCase<T>() or SetSettingUseCase<T>()"),
 )
 public class SetTransactionsDateFilterStateUseCase(
     private val settingsRepository: SettingsRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : UseCase<SavedDateFilter, Unit>(dispatcher) {
-
     override suspend fun execute(params: SavedDateFilter): Unit =
         settingsRepository.setTransactionsDateFilterState(params)
 }
-

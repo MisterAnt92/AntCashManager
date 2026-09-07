@@ -24,8 +24,9 @@ import java.util.UUID
  *
  * Privacy: Session IDs sono UUIDs anonimizzati, nessun user identification
  */
-class SessionTracker(private val analyticsManager: AnalyticsManager) {
-
+class SessionTracker(
+    private val analyticsManager: AnalyticsManager,
+) {
     private val sessionId = UUID.randomUUID().toString()
     private var sessionStartTime: Long = 0L
 
@@ -37,11 +38,17 @@ class SessionTracker(private val analyticsManager: AnalyticsManager) {
      * @param appVersion Versione dell'app (es: "1.7.4")
      * @param isFirstLaunch Se è il primo lancio dell'app
      */
-    fun onAppLaunched(appVersion: String, isFirstLaunch: Boolean = false) {
-        analyticsManager.logEvent("app_launched", Bundle().apply {
-            putString("version", appVersion)
-            putBoolean("is_first_launch", isFirstLaunch)
-        })
+    fun onAppLaunched(
+        appVersion: String,
+        isFirstLaunch: Boolean = false,
+    ) {
+        analyticsManager.logEvent(
+            "app_launched",
+            Bundle().apply {
+                putString("version", appVersion)
+                putBoolean("is_first_launch", isFirstLaunch)
+            },
+        )
     }
 
     /**
@@ -53,12 +60,15 @@ class SessionTracker(private val analyticsManager: AnalyticsManager) {
      */
     fun onSessionStarted(screenName: String? = null) {
         sessionStartTime = System.currentTimeMillis()
-        analyticsManager.logEvent("session_started", Bundle().apply {
-            putString("session_id", sessionId)
-            if (screenName != null) {
-                putString("screen", screenName)
-            }
-        })
+        analyticsManager.logEvent(
+            "session_started",
+            Bundle().apply {
+                putString("session_id", sessionId)
+                if (screenName != null) {
+                    putString("screen", screenName)
+                }
+            },
+        )
 
         // Traccia Daily Active User se è il primo evento della giornata
         trackDailyActiveUser()
@@ -72,19 +82,23 @@ class SessionTracker(private val analyticsManager: AnalyticsManager) {
      * @param screenName Nome della schermata finale (opzionale)
      */
     fun onSessionEnded(screenName: String? = null) {
-        val durationSecs = if (sessionStartTime > 0) {
-            (System.currentTimeMillis() - sessionStartTime) / 1000
-        } else {
-            0L
-        }
-
-        analyticsManager.logEvent("session_ended", Bundle().apply {
-            putString("session_id", sessionId)
-            putLong("duration_secs", durationSecs)
-            if (screenName != null) {
-                putString("screen", screenName)
+        val durationSecs =
+            if (sessionStartTime > 0) {
+                (System.currentTimeMillis() - sessionStartTime) / 1000
+            } else {
+                0L
             }
-        })
+
+        analyticsManager.logEvent(
+            "session_ended",
+            Bundle().apply {
+                putString("session_id", sessionId)
+                putLong("duration_secs", durationSecs)
+                if (screenName != null) {
+                    putString("screen", screenName)
+                }
+            },
+        )
 
         sessionStartTime = 0L
     }
@@ -97,11 +111,17 @@ class SessionTracker(private val analyticsManager: AnalyticsManager) {
      * @param oldVersion Versione precedente (es: "1.7.3")
      * @param newVersion Nuova versione (es: "1.7.4")
      */
-    fun onVersionUpdated(oldVersion: String, newVersion: String) {
-        analyticsManager.logEvent("app_version_updated", Bundle().apply {
-            putString("old_version", oldVersion)
-            putString("new_version", newVersion)
-        })
+    fun onVersionUpdated(
+        oldVersion: String,
+        newVersion: String,
+    ) {
+        analyticsManager.logEvent(
+            "app_version_updated",
+            Bundle().apply {
+                putString("old_version", oldVersion)
+                putString("new_version", newVersion)
+            },
+        )
     }
 
     /**
@@ -114,9 +134,12 @@ class SessionTracker(private val analyticsManager: AnalyticsManager) {
         val dateFormat = SimpleDateFormat("yyyyMMdd", Locale.US)
         val today = dateFormat.format(Date())
 
-        analyticsManager.logEvent("daily_active_user", Bundle().apply {
-            putString("date", today)
-        })
+        analyticsManager.logEvent(
+            "daily_active_user",
+            Bundle().apply {
+                putString("date", today)
+            },
+        )
     }
 
     /**

@@ -2,10 +2,8 @@
 
 package com.antcashmanager.android.ui.components.layout
 
-import androidx.compose.ui.test.assertIsDisplayed
 import com.antcashmanager.android.BaseComposeUnitTest
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -22,7 +20,6 @@ import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class LeftSidebarTest : BaseComposeUnitTest() {
-
     @Test
     fun leftSidebar_shouldDisplayNavigation() {
         composeTestRule.setContent {

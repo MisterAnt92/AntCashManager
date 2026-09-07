@@ -2,12 +2,8 @@
 
 package com.antcashmanager.android.ui.components.card
 
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
 import com.antcashmanager.android.BaseComposeUnitTest
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -23,7 +19,6 @@ import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class AppCategoryCardTest : BaseComposeUnitTest() {
-
     @Test
     fun categoryCard_shouldDisplayCategoryName() {
         val categoryName = "Alimentari"

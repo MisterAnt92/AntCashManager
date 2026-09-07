@@ -45,9 +45,10 @@ fun ChartsCardsOrderDialog(
             ) {
                 itemsIndexed(order) { index, item ->
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -65,14 +66,16 @@ fun ChartsCardsOrderDialog(
                             onMoveDown = { onMoveDown(index) },
                             canMoveUp = index > 0,
                             canMoveDown = index < order.lastIndex,
-                            upDescription = stringResource(
-                                R.string.home_move_up,
-                                stringResource(item.titleResId)
-                            ),
-                            downDescription = stringResource(
-                                R.string.home_move_down,
-                                stringResource(item.titleResId)
-                            ),
+                            upDescription =
+                                stringResource(
+                                    R.string.home_move_up,
+                                    stringResource(item.titleResId),
+                                ),
+                            downDescription =
+                                stringResource(
+                                    R.string.home_move_down,
+                                    stringResource(item.titleResId),
+                                ),
                             modifier = Modifier.padding(horizontal = 4.dp),
                         )
                     }

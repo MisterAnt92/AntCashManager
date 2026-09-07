@@ -37,36 +37,41 @@ class BackupService(
     private val settingsRepository: SettingsRepository,
     private val widgetUpdateNotifier: WidgetUpdateNotifier = NoOpWidgetUpdateNotifier,
 ) {
-    private val json = Json {
-        prettyPrint = true
-        ignoreUnknownKeys = true
-        encodeDefaults = true
-    }
+    private val json =
+        Json {
+            prettyPrint = true
+            ignoreUnknownKeys = true
+            encodeDefaults = true
+        }
 
     /**
      * Creates a backup of all app data and returns it as a JSON string.
      */
-    suspend fun createBackup(): Result<String> = withContext(Dispatchers.IO) {
-        try {
-            Logger.d(tag = "BackupService") { "Creating backup..." }
+    suspend fun createBackup(): Result<String> =
+        withContext(Dispatchers.IO) {
+            try {
+                Logger.d(tag = "BackupService") { "Creating backup..." }
 
-            val transactions = transactionRepository.getAllTransactions().first()
-            val categories = categoryRepository.getAllCategories().first()
+                val transactions = transactionRepository.getAllTransactions().first()
+                val categories = categoryRepository.getAllCategories().first()
 
-            val backupData = BackupData(
-                transactions = transactions.map { it.toBackup() },
-                categories = categories.map { it.toBackup() },
-                settings = buildSettingsBackup(),
-            )
+                val backupData =
+                    BackupData(
+                        transactions = transactions.map { it.toBackup() },
+                        categories = categories.map { it.toBackup() },
+                        settings = buildSettingsBackup(),
+                    )
 
-            val jsonString = json.encodeToString(backupData)
-            Logger.d(tag = "BackupService") { "Backup created: ${transactions.size} transactions, ${categories.size} categories" }
-            Result.success(jsonString)
-        } catch (e: Exception) {
-            Logger.e(tag = "BackupService") { "Error creating backup: ${e.message}" }
-            Result.failure(e)
+                val jsonString = json.encodeToString(backupData)
+                Logger.d(
+                    tag = "BackupService",
+                ) { "Backup created: ${transactions.size} transactions, ${categories.size} categories" }
+                Result.success(jsonString)
+            } catch (e: Exception) {
+                Logger.e(tag = "BackupService") { "Error creating backup: ${e.message}" }
+                Result.failure(e)
+            }
         }
-    }
 
     /**
      * Restores app data from a JSON string backup.
@@ -88,22 +93,25 @@ class BackupService(
      */
     suspend fun restoreBackup(jsonString: String): Result<RestoreResult> =
         withContext(Dispatchers.IO) {
-            val backupData = try {
-                json.decodeFromString<BackupData>(jsonString)
-            } catch (e: Exception) {
-                Logger.w(tag = "BackupService") { "Strict backup parsing failed, falling back to lenient per-field parsing: ${e.message}" }
+            val backupData =
                 try {
-                    parseBackupDataLeniently(jsonString)
-                } catch (fallbackError: Exception) {
-                    Logger.e(tag = "BackupService") { "Lenient parsing also failed: ${fallbackError.message}" }
-                    return@withContext Result.failure(e)
+                    json.decodeFromString<BackupData>(jsonString)
+                } catch (e: Exception) {
+                    Logger.w(tag = "BackupService") {
+                        "Strict backup parsing failed, falling back to lenient per-field parsing: ${e.message}"
+                    }
+                    try {
+                        parseBackupDataLeniently(jsonString)
+                    } catch (fallbackError: Exception) {
+                        Logger.e(tag = "BackupService") { "Lenient parsing also failed: ${fallbackError.message}" }
+                        return@withContext Result.failure(e)
+                    }
                 }
-            }
 
             if (backupData.version > BackupConstants.CURRENT_VERSION) {
                 Logger.w(tag = "BackupService") {
                     "Backup version ${backupData.version} is newer than supported (${BackupConstants.CURRENT_VERSION}); " +
-                            "importing best-effort using only the fields this app version understands."
+                        "importing best-effort using only the fields this app version understands."
                 }
             }
 
@@ -120,11 +128,13 @@ class BackupService(
                 // Restore categories first (transactions reference them).
                 // deleteAllCategories() preserva le categorie isDefault: bisogna quindi
                 // ripartire dalle categorie effettivamente sopravvissute, non da un set vuoto.
-                val existingCategoryKeys = categoryRepository.getAllCategories()
-                    .first()
-                    .mapTo(mutableSetOf()) { category ->
-                        toCategoryKey(category.name, category.type)
-                    }
+                val existingCategoryKeys =
+                    categoryRepository
+                        .getAllCategories()
+                        .first()
+                        .mapTo(mutableSetOf()) { category ->
+                            toCategoryKey(category.name, category.type)
+                        }
                 var categoriesRestored = 0
                 for (categoryBackup in backupData.categories) {
                     val categoryKey = toCategoryKey(categoryBackup.name, categoryBackup.type)
@@ -164,7 +174,9 @@ class BackupService(
                     widgetUpdateNotifier.notifyTransactionsChanged()
                 }
 
-                Logger.d(tag = "BackupService") { "Restore completed: $transactionsRestored transactions, $categoriesRestored categories" }
+                Logger.d(tag = "BackupService") {
+                    "Restore completed: $transactionsRestored transactions, $categoriesRestored categories"
+                }
                 Result.success(
                     RestoreResult(
                         transactionsRestored = transactionsRestored,
@@ -178,16 +190,19 @@ class BackupService(
                     // già alla cancellazione, quindi vanno escluse dal reinserimento per non
                     // duplicarle.
                     categoryRepository.deleteAllCategories()
-                    existingCategoriesSnapshot.filterNot { it.isDefault }
+                    existingCategoriesSnapshot
+                        .filterNot { it.isDefault }
                         .forEach { categoryRepository.insertCategory(it) }
                     transactionRepository.deleteAllTransactions()
                     existingTransactionsSnapshot.forEach {
                         transactionRepository.insertTransaction(
-                            it
+                            it,
                         )
                     }
                 }.onFailure { rollbackError ->
-                    Logger.e(tag = "BackupService") { "Rollback also failed — data may be inconsistent: ${rollbackError.message}" }
+                    Logger.e(
+                        tag = "BackupService",
+                    ) { "Rollback also failed — data may be inconsistent: ${rollbackError.message}" }
                 }
                 Result.failure(e)
             }
@@ -206,25 +221,37 @@ class BackupService(
         val version = root["version"]?.jsonPrimitive?.intOrNull ?: 1
         val timestamp = root["timestamp"]?.jsonPrimitive?.longOrNull ?: System.currentTimeMillis()
 
-        val transactions = root["transactions"]?.jsonArray.orEmpty().mapNotNull { element ->
-            runCatching { json.decodeFromJsonElement<TransactionBackup>(element) }
-                .onFailure { Logger.w(tag = "BackupService") { "Skipping unreadable transaction entry: ${it.message}" } }
-                .getOrNull()
-        }
-
-        val categories = root["categories"]?.jsonArray.orEmpty().mapNotNull { element ->
-            runCatching { json.decodeFromJsonElement<CategoryBackup>(element) }
-                .onFailure { Logger.w(tag = "BackupService") { "Skipping unreadable category entry: ${it.message}" } }
-                .getOrNull()
-        }
-
-        val settings = root["settings"]
-            ?.takeIf { it != JsonNull }
-            ?.let { element ->
-                runCatching { json.decodeFromJsonElement<SettingsBackup>(element) }
-                    .onFailure { Logger.w(tag = "BackupService") { "Skipping unreadable settings block: ${it.message}" } }
-                    .getOrNull()
+        val transactions =
+            root["transactions"]?.jsonArray.orEmpty().mapNotNull { element ->
+                runCatching { json.decodeFromJsonElement<TransactionBackup>(element) }
+                    .onFailure {
+                        Logger.w(
+                            tag = "BackupService",
+                        ) { "Skipping unreadable transaction entry: ${it.message}" }
+                    }.getOrNull()
             }
+
+        val categories =
+            root["categories"]?.jsonArray.orEmpty().mapNotNull { element ->
+                runCatching { json.decodeFromJsonElement<CategoryBackup>(element) }
+                    .onFailure {
+                        Logger.w(
+                            tag = "BackupService",
+                        ) { "Skipping unreadable category entry: ${it.message}" }
+                    }.getOrNull()
+            }
+
+        val settings =
+            root["settings"]
+                ?.takeIf { it != JsonNull }
+                ?.let { element ->
+                    runCatching { json.decodeFromJsonElement<SettingsBackup>(element) }
+                        .onFailure {
+                            Logger.w(
+                                tag = "BackupService",
+                            ) { "Skipping unreadable settings block: ${it.message}" }
+                        }.getOrNull()
+                }
 
         return BackupData(
             version = version,
@@ -235,42 +262,46 @@ class BackupService(
         )
     }
 
-    private suspend fun buildSettingsBackup(): SettingsBackup = SettingsBackup(
-        theme = settingsRepository.getTheme().first().name,
-        language = settingsRepository.getLanguage().first().name,
-        highContrast = settingsRepository.getHighContrast().first(),
-        largeText = settingsRepository.getLargeText().first(),
-        reduceMotion = settingsRepository.getReduceMotion().first(),
-        showCharts = settingsRepository.getShowCharts().first(),
-        showTransactionNotes = settingsRepository.getShowTransactionNotes().first(),
-        maskAmounts = settingsRepository.getMaskAmounts().first(),
-        showPaymentTypeBreakdown = settingsRepository.getShowPaymentTypeBreakdown().first(),
-        showQuickInsightsCard = settingsRepository.getShowQuickInsightsCard().first(),
-        transactionDisplayType = settingsRepository.getTransactionDisplayType().first().name,
-        transactionsTransactionDisplayType = settingsRepository.getTransactionsTransactionDisplayType()
-            .first().name,
-        currencySymbol = settingsRepository.getCurrencySymbol().first(),
-        decimalDigits = settingsRepository.getDecimalDigits().first(),
-        decimalSeparator = settingsRepository.getDecimalSeparator().first(),
-        thousandsSeparator = settingsRepository.getThousandsSeparator().first(),
-        mealVoucherValue = settingsRepository.getMealVoucherValue().first(),
-        dateFormat = settingsRepository.getDateFormat().first(),
-        chartsZoomEnabled = settingsRepository.getChartsZoomEnabled().first(),
-        suggestionsEnabled = settingsRepository.getSuggestionsEnabled().first(),
-        suggestionsClearedAt = settingsRepository.getSuggestionsClearedAt().first(),
-        widgetBackgroundColor = settingsRepository.getWidgetBackgroundColor().first(),
-        widgetOpacity = settingsRepository.getWidgetOpacity().first(),
-        // ── v3+ fields ──
-        chartCardsOrder = settingsRepository.getChartCardsOrder().first(),
-        homeTopCardsOrder = settingsRepository.getHomeTopCardsOrder().first(),
-        dataEncryptionEnabled = settingsRepository.getDataEncryptionEnabled().first(),
-        // ── v4+ fields (Backup Destination & Google Drive Config) ──
-        autoBackupEnabled = settingsRepository.getAutoBackupEnabled().first(),
-        autoBackupDestination = settingsRepository.getAutoBackupDestination().first().name,
-        autoBackupFolderUri = settingsRepository.getAutoBackupFolderUri().first(),
-        googleDriveFolderId = settingsRepository.getGoogleDriveFolderId().first(),
-        googleDriveUserEmail = settingsRepository.getGoogleDriveUserEmail().first(),
-    )
+    private suspend fun buildSettingsBackup(): SettingsBackup =
+        SettingsBackup(
+            theme = settingsRepository.getTheme().first().name,
+            language = settingsRepository.getLanguage().first().name,
+            highContrast = settingsRepository.getHighContrast().first(),
+            largeText = settingsRepository.getLargeText().first(),
+            reduceMotion = settingsRepository.getReduceMotion().first(),
+            showCharts = settingsRepository.getShowCharts().first(),
+            showTransactionNotes = settingsRepository.getShowTransactionNotes().first(),
+            maskAmounts = settingsRepository.getMaskAmounts().first(),
+            showPaymentTypeBreakdown = settingsRepository.getShowPaymentTypeBreakdown().first(),
+            showQuickInsightsCard = settingsRepository.getShowQuickInsightsCard().first(),
+            transactionDisplayType = settingsRepository.getTransactionDisplayType().first().name,
+            transactionsTransactionDisplayType =
+                settingsRepository
+                    .getTransactionsTransactionDisplayType()
+                    .first()
+                    .name,
+            currencySymbol = settingsRepository.getCurrencySymbol().first(),
+            decimalDigits = settingsRepository.getDecimalDigits().first(),
+            decimalSeparator = settingsRepository.getDecimalSeparator().first(),
+            thousandsSeparator = settingsRepository.getThousandsSeparator().first(),
+            mealVoucherValue = settingsRepository.getMealVoucherValue().first(),
+            dateFormat = settingsRepository.getDateFormat().first(),
+            chartsZoomEnabled = settingsRepository.getChartsZoomEnabled().first(),
+            suggestionsEnabled = settingsRepository.getSuggestionsEnabled().first(),
+            suggestionsClearedAt = settingsRepository.getSuggestionsClearedAt().first(),
+            widgetBackgroundColor = settingsRepository.getWidgetBackgroundColor().first(),
+            widgetOpacity = settingsRepository.getWidgetOpacity().first(),
+            // ── v3+ fields ──
+            chartCardsOrder = settingsRepository.getChartCardsOrder().first(),
+            homeTopCardsOrder = settingsRepository.getHomeTopCardsOrder().first(),
+            dataEncryptionEnabled = settingsRepository.getDataEncryptionEnabled().first(),
+            // ── v4+ fields (Backup Destination & Google Drive Config) ──
+            autoBackupEnabled = settingsRepository.getAutoBackupEnabled().first(),
+            autoBackupDestination = settingsRepository.getAutoBackupDestination().first().name,
+            autoBackupFolderUri = settingsRepository.getAutoBackupFolderUri().first(),
+            googleDriveFolderId = settingsRepository.getGoogleDriveFolderId().first(),
+            googleDriveUserEmail = settingsRepository.getGoogleDriveUserEmail().first(),
+        )
 
     private suspend fun applySettings(settings: SettingsBackup) {
         settingsRepository.setTheme(enumValueOfOrDefault(settings.theme, AppTheme.SYSTEM))
@@ -289,7 +320,7 @@ class BackupService(
         settingsRepository.setTransactionsTransactionDisplayType(
             enumValueOfOrDefault(
                 settings.transactionsTransactionDisplayType,
-                TransactionDisplayType.TREND
+                TransactionDisplayType.TREND,
             ),
         )
         settingsRepository.setCurrencySymbol(settings.currencySymbol)
@@ -320,92 +351,103 @@ class BackupService(
         // ── v4+ fields (Backup Destination & Google Drive Config) ──
         settingsRepository.setAutoBackupEnabled(settings.autoBackupEnabled)
         settingsRepository.setAutoBackupDestination(
-            enumValueOfOrDefault(settings.autoBackupDestination, BackupDestination.LOCAL)
+            enumValueOfOrDefault(settings.autoBackupDestination, BackupDestination.LOCAL),
         )
         settings.autoBackupFolderUri?.let { settingsRepository.setAutoBackupFolderUri(it) }
         settings.googleDriveFolderId?.let { settingsRepository.setGoogleDriveFolderId(it) }
         settings.googleDriveUserEmail?.let { settingsRepository.setGoogleDriveUserEmail(it) }
     }
 
-    private inline fun <reified T : Enum<T>> enumValueOfOrDefault(name: String, default: T): T =
+    private inline fun <reified T : Enum<T>> enumValueOfOrDefault(
+        name: String,
+        default: T,
+    ): T =
         try {
             enumValueOf<T>(name)
         } catch (e: IllegalArgumentException) {
             default
         }
 
-    private fun Transaction.toBackup() = TransactionBackup(
-        id = id,
-        title = title,
-        amount = amount,
-        category = category,
-        type = type.name,
-        timestamp = timestamp,
-        notes = notes,
-        payee = payee,
-        location = location,
-        isRecurring = isRecurring,
-        tags = tags,
-        recurrenceInterval = recurrenceInterval,
-        paymentType = paymentType.name,
-        mealVoucherCount = mealVoucherCount,
-        mealVoucherDifference = mealVoucherDifference,
-        categoryIcon = categoryIcon,
-        categoryColor = categoryColor,
-    )
+    private fun Transaction.toBackup() =
+        TransactionBackup(
+            id = id,
+            title = title,
+            amount = amount,
+            category = category,
+            type = type.name,
+            timestamp = timestamp,
+            notes = notes,
+            payee = payee,
+            location = location,
+            isRecurring = isRecurring,
+            tags = tags,
+            recurrenceInterval = recurrenceInterval,
+            paymentType = paymentType.name,
+            mealVoucherCount = mealVoucherCount,
+            mealVoucherDifference = mealVoucherDifference,
+            categoryIcon = categoryIcon,
+            categoryColor = categoryColor,
+        )
 
-    private fun TransactionBackup.toTransaction() = Transaction(
-        id = 0, // Let Room auto-generate new IDs
-        title = title,
-        amount = amount,
-        category = category,
-        type = try {
-            TransactionType.valueOf(type)
-        } catch (e: Exception) {
-            TransactionType.EXPENSE
-        },
-        timestamp = timestamp,
-        notes = notes,
-        payee = payee,
-        location = location,
-        isRecurring = isRecurring,
-        tags = tags,
-        recurrenceInterval = recurrenceInterval,
-        paymentType = try {
-            PaymentType.valueOf(paymentType)
-        } catch (e: Exception) {
-            PaymentType.ELECTRONIC
-        },
-        mealVoucherCount = mealVoucherCount,
-        mealVoucherDifference = mealVoucherDifference,
-        categoryIcon = categoryIcon,
-        categoryColor = categoryColor,
-    )
+    private fun TransactionBackup.toTransaction() =
+        Transaction(
+            id = 0, // Let Room auto-generate new IDs
+            title = title,
+            amount = amount,
+            category = category,
+            type =
+                try {
+                    TransactionType.valueOf(type)
+                } catch (e: Exception) {
+                    TransactionType.EXPENSE
+                },
+            timestamp = timestamp,
+            notes = notes,
+            payee = payee,
+            location = location,
+            isRecurring = isRecurring,
+            tags = tags,
+            recurrenceInterval = recurrenceInterval,
+            paymentType =
+                try {
+                    PaymentType.valueOf(paymentType)
+                } catch (e: Exception) {
+                    PaymentType.ELECTRONIC
+                },
+            mealVoucherCount = mealVoucherCount,
+            mealVoucherDifference = mealVoucherDifference,
+            categoryIcon = categoryIcon,
+            categoryColor = categoryColor,
+        )
 
-    private fun Category.toBackup() = CategoryBackup(
-        id = id,
-        name = name,
-        icon = icon,
-        color = color,
-        type = type,
-        isDefault = isDefault,
-        sortOrder = sortOrder,
-        isHidden = isHidden,
-    )
+    private fun Category.toBackup() =
+        CategoryBackup(
+            id = id,
+            name = name,
+            icon = icon,
+            color = color,
+            type = type,
+            isDefault = isDefault,
+            sortOrder = sortOrder,
+            isHidden = isHidden,
+        )
 
-    private fun CategoryBackup.toCategory() = Category(
-        id = 0, // Let Room auto-generate new IDs
-        name = name,
-        icon = icon,
-        color = color,
-        type = type,
-        isDefault = isDefault,
-        sortOrder = sortOrder,
-        isHidden = isHidden,
-    )
+    private fun CategoryBackup.toCategory() =
+        Category(
+            id = 0, // Let Room auto-generate new IDs
+            name = name,
+            icon = icon,
+            color = color,
+            type = type,
+            isDefault = isDefault,
+            sortOrder = sortOrder,
+            isHidden = isHidden,
+        )
 
-    private fun toCategoryKey(name: String, type: String): String =
-        "${name.trim().lowercase(Locale.ROOT)}|${type.trim().uppercase(Locale.ROOT)}"
+    private fun toCategoryKey(
+        name: String,
+        type: String,
+    ): String = "${name.trim().lowercase(Locale.ROOT)}|${type.trim().uppercase(Locale.ROOT)}"
 }
 
 /**

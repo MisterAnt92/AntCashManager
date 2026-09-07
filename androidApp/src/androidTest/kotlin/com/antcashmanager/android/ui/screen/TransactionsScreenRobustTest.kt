@@ -29,7 +29,6 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 class TransactionsScreenRobustTest : BaseInstrumentationTest() {
-
     @Test
     fun transactionsScreen_shouldBeNavigable() {
         composeTestRule.setContent {
@@ -41,13 +40,15 @@ class TransactionsScreenRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Navigate to transactions
-        composeTestRule.onNodeWithTag("nav_transactions")
+        composeTestRule
+            .onNodeWithTag("nav_transactions")
             .performClick()
 
         composeTestRule.waitForIdle()
 
         // Verify transactions screen is displayed
-        composeTestRule.onNodeWithTag("transactions_screen")
+        composeTestRule
+            .onNodeWithTag("transactions_screen")
             .assertIsDisplayed()
     }
 
@@ -62,13 +63,15 @@ class TransactionsScreenRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Navigate to transactions
-        composeTestRule.onNodeWithTag("nav_transactions")
+        composeTestRule
+            .onNodeWithTag("nav_transactions")
             .performClick()
 
         composeTestRule.waitForIdle()
 
         // Verify transaction list is visible
-        composeTestRule.onNodeWithTag("transactions_list")
+        composeTestRule
+            .onNodeWithTag("transactions_list")
             .assertIsDisplayed()
     }
 
@@ -83,13 +86,15 @@ class TransactionsScreenRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Navigate to transactions
-        composeTestRule.onNodeWithTag("nav_transactions")
+        composeTestRule
+            .onNodeWithTag("nav_transactions")
             .performClick()
 
         composeTestRule.waitForIdle()
 
         // Verify search bar is visible
-        composeTestRule.onNodeWithTag("search_bar")
+        composeTestRule
+            .onNodeWithTag("search_bar")
             .assertIsDisplayed()
     }
 
@@ -104,13 +109,15 @@ class TransactionsScreenRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Navigate to transactions
-        composeTestRule.onNodeWithTag("nav_transactions")
+        composeTestRule
+            .onNodeWithTag("nav_transactions")
             .performClick()
 
         composeTestRule.waitForIdle()
 
         // Verify filter button is visible
-        composeTestRule.onNodeWithTag("filter_button")
+        composeTestRule
+            .onNodeWithTag("filter_button")
             .assertIsDisplayed()
     }
 
@@ -125,13 +132,15 @@ class TransactionsScreenRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Navigate to transactions
-        composeTestRule.onNodeWithTag("nav_transactions")
+        composeTestRule
+            .onNodeWithTag("nav_transactions")
             .performClick()
 
         composeTestRule.waitForIdle()
 
         // Verify sort button is visible
-        composeTestRule.onNodeWithTag("sort_button")
+        composeTestRule
+            .onNodeWithTag("sort_button")
             .assertIsDisplayed()
     }
 }

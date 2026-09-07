@@ -10,13 +10,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -41,7 +41,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -57,11 +56,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.window.layout.FoldingFeature
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
@@ -77,13 +75,12 @@ import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInf
 import com.antcashmanager.android.ui.components.state.AntEmptyState
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.charts.ChartData
-import com.antcashmanager.android.ui.screen.charts.ChartsConstant
 import com.antcashmanager.android.ui.screen.charts.ChartEvent
+import com.antcashmanager.android.ui.screen.charts.ChartsConstant
 import com.antcashmanager.android.ui.screen.charts.ChartsViewModel
 import com.antcashmanager.android.ui.screen.charts.MonthlyAmount
 import com.antcashmanager.android.ui.screen.charts.RangePreset
 import com.antcashmanager.android.ui.screen.charts.YearlyAmount
-import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.ThemeConstants
 import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.LocalCurrencyFormat
@@ -94,12 +91,7 @@ import com.antcashmanager.android.util.translateCategory
 import com.antcashmanager.android.util.translateCategoryPlain
 import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.model.PaymentType
-import com.antcashmanager.domain.model.SavedDateFilter
-import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.usecase.transaction.DateRange
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import java.text.SimpleDateFormat
@@ -125,7 +117,7 @@ fun ChartsScreen() {
         chartsCardOrderRaw = chartsCardOrder,
         onDateRangeChanged = { from, to -> viewModel.onEvent(ChartEvent.SetDateRange(from, to)) },
         onPresetSelected = { preset -> viewModel.onEvent(ChartEvent.SetPresetRange(preset)) },
-        onEvent = viewModel::onEvent
+        onEvent = viewModel::onEvent,
     )
 }
 
@@ -165,9 +157,11 @@ internal fun ChartsContent(
     var localChartsCardOrderRaw by remember(chartsCardOrderRaw) {
         mutableStateOf(chartsCardOrderRaw)
     }
-    val chartsCardOrder = remember(localChartsCardOrderRaw) {
-        com.antcashmanager.android.ui.screen.charts.model.ChartCardType.parse(localChartsCardOrderRaw)
-    }
+    val chartsCardOrder =
+        remember(localChartsCardOrderRaw) {
+            com.antcashmanager.android.ui.screen.charts.model.ChartCardType
+                .parse(localChartsCardOrderRaw)
+        }
     var showChartsCardsOrderDialog by remember { mutableStateOf(false) }
 
     val chartCardContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh
@@ -186,11 +180,14 @@ internal fun ChartsContent(
     LaunchedEffect(chartData) {
         if (chartData.incomeByCategory.isNotEmpty() || chartData.expenseByCategory.isNotEmpty()) {
             val totalDataPoints =
-                (chartData.incomeByCategory.size + chartData.expenseByCategory.size +
-                        chartData.monthlyData.size + chartData.yearlyData.size)
-            val params = android.os.Bundle().apply {
-                putInt("data_points", totalDataPoints)
-            }
+                (
+                    chartData.incomeByCategory.size + chartData.expenseByCategory.size +
+                        chartData.monthlyData.size + chartData.yearlyData.size
+                )
+            val params =
+                android.os.Bundle().apply {
+                    putInt("data_points", totalDataPoints)
+                }
             analyticsManager.logEvent("chart_loading_completed", params)
         }
     }
@@ -217,7 +214,7 @@ internal fun ChartsContent(
                         },
                     )
                 },
-            )
+            ),
         )
     }
 
@@ -231,7 +228,9 @@ internal fun ChartsContent(
                     val temp = mutableOrder[index]
                     mutableOrder[index] = mutableOrder[index - 1]
                     mutableOrder[index - 1] = temp
-                    localChartsCardOrderRaw = com.antcashmanager.android.ui.screen.charts.model.ChartCardType.serialize(mutableOrder)
+                    localChartsCardOrderRaw =
+                        com.antcashmanager.android.ui.screen.charts.model.ChartCardType
+                            .serialize(mutableOrder)
                 }
             },
             onMoveDown = { index ->
@@ -240,7 +239,9 @@ internal fun ChartsContent(
                     val temp = mutableOrder[index]
                     mutableOrder[index] = mutableOrder[index + 1]
                     mutableOrder[index + 1] = temp
-                    localChartsCardOrderRaw = com.antcashmanager.android.ui.screen.charts.model.ChartCardType.serialize(mutableOrder)
+                    localChartsCardOrderRaw =
+                        com.antcashmanager.android.ui.screen.charts.model.ChartCardType
+                            .serialize(mutableOrder)
                 }
             },
             onDismiss = { showChartsCardsOrderDialog = false },
@@ -248,7 +249,7 @@ internal fun ChartsContent(
                 // Persist card order to settings for backup/restore
                 onEvent(ChartEvent.SetChartCardsOrder(localChartsCardOrderRaw))
                 showChartsCardsOrderDialog = false
-            }
+            },
         )
     }
 
@@ -269,38 +270,46 @@ internal fun ChartsContent(
         }
 
     // Categorie principali per importo assoluto, calcolate qui (nessun dato nuovo dal ViewModel).
-    val topIncomeCategories = remember(chartData.incomeByCategory) {
-        chartData.incomeByCategory.entries
-            .sortedByDescending { abs(it.value) }
-            .take(ChartsConstant.TOP_CATEGORIES_MAX_ENTRIES)
-            .map { it.key to it.value }
-    }
-    val topExpenseCategories = remember(chartData.expenseByCategory) {
-        chartData.expenseByCategory.entries
-            .sortedByDescending { abs(it.value) }
-            .take(ChartsConstant.TOP_CATEGORIES_MAX_ENTRIES)
-            .map { it.key to it.value }
-    }
+    val topIncomeCategories =
+        remember(chartData.incomeByCategory) {
+            chartData.incomeByCategory.entries
+                .sortedByDescending { abs(it.value) }
+                .take(ChartsConstant.TOP_CATEGORIES_MAX_ENTRIES)
+                .map { it.key to it.value }
+        }
+    val topExpenseCategories =
+        remember(chartData.expenseByCategory) {
+            chartData.expenseByCategory.entries
+                .sortedByDescending { abs(it.value) }
+                .take(ChartsConstant.TOP_CATEGORIES_MAX_ENTRIES)
+                .map { it.key to it.value }
+        }
 
-    val pieChartHeight = if (adaptiveLayoutInfo.isCompact) {
-        ChartsConstant.PIE_CHART_HEIGHT_COMPACT_DP.dp
-    } else {
-        ChartsConstant.PIE_CHART_HEIGHT_TABLET_DP.dp
-    }
-    val monthlyBarChartHeight = if (adaptiveLayoutInfo.isCompact) {
-        ChartsConstant.BAR_CHART_HEIGHT_COMPACT_DP.dp
-    } else {
-        ChartsConstant.BAR_CHART_HEIGHT_TABLET_DP.dp
-    }
-    val yearlyBarChartHeight = if (adaptiveLayoutInfo.isCompact) {
-        ChartsConstant.YEARLY_BAR_CHART_HEIGHT_COMPACT_DP.dp
-    } else {
-        ChartsConstant.YEARLY_BAR_CHART_HEIGHT_TABLET_DP.dp
-    }
+    val pieChartHeight =
+        if (adaptiveLayoutInfo.isCompact) {
+            ChartsConstant.PIE_CHART_HEIGHT_COMPACT_DP.dp
+        } else {
+            ChartsConstant.PIE_CHART_HEIGHT_TABLET_DP.dp
+        }
+    val monthlyBarChartHeight =
+        if (adaptiveLayoutInfo.isCompact) {
+            ChartsConstant.BAR_CHART_HEIGHT_COMPACT_DP.dp
+        } else {
+            ChartsConstant.BAR_CHART_HEIGHT_TABLET_DP.dp
+        }
+    val yearlyBarChartHeight =
+        if (adaptiveLayoutInfo.isCompact) {
+            ChartsConstant.YEARLY_BAR_CHART_HEIGHT_COMPACT_DP.dp
+        } else {
+            ChartsConstant.YEARLY_BAR_CHART_HEIGHT_TABLET_DP.dp
+        }
 
     // Function to render a single chart card based on type
     @Composable
-    fun RenderChartCard(cardType: com.antcashmanager.android.ui.screen.charts.model.ChartCardType, showSpacer: Boolean = true) {
+    fun RenderChartCard(
+        cardType: com.antcashmanager.android.ui.screen.charts.model.ChartCardType,
+        showSpacer: Boolean = true,
+    ) {
         when (cardType) {
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.SPENDING_FORECAST_CARD -> {
                 SpendingForecastCard(chartData = chartData)
@@ -334,21 +343,26 @@ internal fun ChartsContent(
                         context = context,
                         onShared = { analyticsManager.logEvent("chart_shared") },
                         onCategorySelected = { category, amount, color ->
-                            val params = android.os.Bundle().apply {
-                                putString("chart_type", "pie_income")
-                                putString("category", category)
-                            }
+                            val params =
+                                android.os.Bundle().apply {
+                                    putString("chart_type", "pie_income")
+                                    putString("category", category)
+                                }
                             analyticsManager.logEvent("chart_item_clicked", params)
-                            selectedChartDetails = ChartDetailsData(
-                                categoryName = category,
-                                amount = amount,
-                                percentage = if (chartData.totalIncome != 0.0) {
-                                    ((abs(amount) / chartData.totalIncome) * 100).toInt().coerceIn(0, 100)
-                                } else 0,
-                                colorHex = color,
-                                transactionCount = 0,
-                                trend = TrendDirection.NEUTRAL,
-                            )
+                            selectedChartDetails =
+                                ChartDetailsData(
+                                    categoryName = category,
+                                    amount = amount,
+                                    percentage =
+                                        if (chartData.totalIncome != 0.0) {
+                                            ((abs(amount) / chartData.totalIncome) * 100).toInt().coerceIn(0, 100)
+                                        } else {
+                                            0
+                                        },
+                                    colorHex = color,
+                                    transactionCount = 0,
+                                    trend = TrendDirection.NEUTRAL,
+                                )
                         },
                     )
                     if (showSpacer) VerticalSpacer(SpacingSize.MD)
@@ -370,21 +384,26 @@ internal fun ChartsContent(
                         context = context,
                         onShared = { analyticsManager.logEvent("chart_shared") },
                         onCategorySelected = { category, amount, color ->
-                            val params = android.os.Bundle().apply {
-                                putString("chart_type", "pie_expense")
-                                putString("category", category)
-                            }
+                            val params =
+                                android.os.Bundle().apply {
+                                    putString("chart_type", "pie_expense")
+                                    putString("category", category)
+                                }
                             analyticsManager.logEvent("chart_item_clicked", params)
-                            selectedChartDetails = ChartDetailsData(
-                                categoryName = category,
-                                amount = amount,
-                                percentage = if (chartData.totalExpense != 0.0) {
-                                    ((abs(amount) / chartData.totalExpense) * 100).toInt().coerceIn(0, 100)
-                                } else 0,
-                                colorHex = color,
-                                transactionCount = 0,
-                                trend = TrendDirection.NEUTRAL,
-                            )
+                            selectedChartDetails =
+                                ChartDetailsData(
+                                    categoryName = category,
+                                    amount = amount,
+                                    percentage =
+                                        if (chartData.totalExpense != 0.0) {
+                                            ((abs(amount) / chartData.totalExpense) * 100).toInt().coerceIn(0, 100)
+                                        } else {
+                                            0
+                                        },
+                                    colorHex = color,
+                                    transactionCount = 0,
+                                    trend = TrendDirection.NEUTRAL,
+                                )
                         },
                     )
                     if (showSpacer) VerticalSpacer(SpacingSize.MD)
@@ -430,19 +449,21 @@ internal fun ChartsContent(
                         context = context,
                         onShared = { analyticsManager.logEvent("chart_shared") },
                         onCategorySelected = { paymentLabel, amount, color ->
-                            val params = android.os.Bundle().apply {
-                                putString("chart_type", "payment_breakdown")
-                                putString("payment_type", paymentLabel)
-                            }
+                            val params =
+                                android.os.Bundle().apply {
+                                    putString("chart_type", "payment_breakdown")
+                                    putString("payment_type", paymentLabel)
+                                }
                             analyticsManager.logEvent("chart_item_clicked", params)
-                            selectedChartDetails = ChartDetailsData(
-                                categoryName = paymentLabel,
-                                amount = amount,
-                                percentage = 0,
-                                colorHex = color,
-                                transactionCount = 0,
-                                trend = TrendDirection.NEUTRAL,
-                            )
+                            selectedChartDetails =
+                                ChartDetailsData(
+                                    categoryName = paymentLabel,
+                                    amount = amount,
+                                    percentage = 0,
+                                    colorHex = color,
+                                    transactionCount = 0,
+                                    trend = TrendDirection.NEUTRAL,
+                                )
                         },
                     )
                     if (showSpacer) VerticalSpacer(SpacingSize.MD)
@@ -486,18 +507,18 @@ internal fun ChartsContent(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { padding ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    start = padding.calculateStartPadding(LayoutDirection.Ltr) + 16.dp,
-                    top = 12.dp,
-                    end = padding.calculateEndPadding(LayoutDirection.Ltr) + 16.dp,
-                    bottom = padding.calculateBottomPadding(),
-                )
-                .verticalScroll(rememberScrollState())
-                .padding(bottom = 80.dp), // Extra space for visibility
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(
+                        start = padding.calculateStartPadding(LayoutDirection.Ltr) + 16.dp,
+                        top = 12.dp,
+                        end = padding.calculateEndPadding(LayoutDirection.Ltr) + 16.dp,
+                        bottom = padding.calculateBottomPadding(),
+                    ).verticalScroll(rememberScrollState())
+                    .padding(bottom = 80.dp),
+            // Extra space for visibility
         ) {
-
             PeriodFilterCard(
                 chartCardContainerColor = chartCardContainerColor,
                 selectedPreset = selectedPreset,
@@ -507,10 +528,13 @@ internal fun ChartsContent(
                     selectedPreset = index
                     analyticsManager.logEvent("chart_date_filter_changed")
                     // Track filter combination
-                    analyticsManager.logEvent("filter_combination_applied", android.os.Bundle().apply {
-                        putInt("filter_count", 1)
-                        putString("types", "date")
-                    })
+                    analyticsManager.logEvent(
+                        "filter_combination_applied",
+                        android.os.Bundle().apply {
+                            putInt("filter_count", 1)
+                            putString("types", "date")
+                        },
+                    )
                     onPresetSelected(preset)
                 },
                 onShowFromPicker = { showFromPicker = true },
@@ -545,7 +569,10 @@ internal fun ChartsContent(
             }
 
             // Empty state - shown when no data is available
-            if (chartData.expenseByCategory.isEmpty() && chartData.monthlyData.isEmpty() && chartData.incomeByCategory.isEmpty()) {
+            if (chartData.expenseByCategory.isEmpty() &&
+                chartData.monthlyData.isEmpty() &&
+                chartData.incomeByCategory.isEmpty()
+            ) {
                 VerticalSpacer(SpacingSize.XXL)
                 AntEmptyState(
                     mascotRes = R.drawable.ic_ant_mascot,
@@ -572,10 +599,13 @@ internal fun ChartsContent(
                     state.selectedDateMillis?.let {
                         analyticsManager.logEvent("chart_custom_date_range_set")
                         // Track filter combination
-                        analyticsManager.logEvent("filter_combination_applied", android.os.Bundle().apply {
-                            putInt("filter_count", 1)
-                            putString("types", "date")
-                        })
+                        analyticsManager.logEvent(
+                            "filter_combination_applied",
+                            android.os.Bundle().apply {
+                                putInt("filter_count", 1)
+                                putString("types", "date")
+                            },
+                        )
                         onDateRangeChanged(it, dateRange.to)
                     }
                     selectedPreset = -1
@@ -598,10 +628,13 @@ internal fun ChartsContent(
                     state.selectedDateMillis?.let {
                         analyticsManager.logEvent("chart_custom_date_range_set")
                         // Track filter combination
-                        analyticsManager.logEvent("filter_combination_applied", android.os.Bundle().apply {
-                            putInt("filter_count", 1)
-                            putString("types", "date")
-                        })
+                        analyticsManager.logEvent(
+                            "filter_combination_applied",
+                            android.os.Bundle().apply {
+                                putInt("filter_count", 1)
+                                putString("types", "date")
+                            },
+                        )
                         onDateRangeChanged(dateRange.from, it)
                     }
                     selectedPreset = -1
@@ -634,9 +667,10 @@ private fun PeriodFilterCard(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = chartCardContainerColor,
-        ),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = chartCardContainerColor,
+            ),
         shape = MaterialTheme.shapes.medium,
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -647,9 +681,10 @@ private fun PeriodFilterCard(
             )
             VerticalSpacer(SpacingSize.XS)
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState()),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 RangePreset.entries.forEachIndexed { index, preset ->
@@ -673,41 +708,43 @@ private fun PeriodFilterCard(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 AppText(
-                    text = stringResource(
-                        R.string.charts_from,
-                        dateFormat.format(Date(dateRange.from))
-                    ),
+                    text =
+                        stringResource(
+                            R.string.charts_from,
+                            dateFormat.format(Date(dateRange.from)),
+                        ),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.weight(1f),
                 )
                 IconButton(
                     onClick = onShowFromPicker,
-                    modifier = Modifier.size(48.dp)
+                    modifier = Modifier.size(48.dp),
                 ) {
                     Icon(
                         Icons.Default.CalendarMonth,
                         contentDescription = stringResource(R.string.charts_pick_start_date),
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(20.dp),
                     )
                 }
                 AppText(
-                    text = stringResource(
-                        R.string.charts_to,
-                        dateFormat.format(Date(dateRange.to))
-                    ),
+                    text =
+                        stringResource(
+                            R.string.charts_to,
+                            dateFormat.format(Date(dateRange.to)),
+                        ),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.weight(1f),
                 )
                 IconButton(
                     onClick = onShowToPicker,
-                    modifier = Modifier.size(48.dp)
+                    modifier = Modifier.size(48.dp),
                 ) {
                     Icon(
                         Icons.Default.CalendarMonth,
                         contentDescription = stringResource(R.string.charts_pick_end_date),
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(20.dp),
                     )
                 }
             }
@@ -723,10 +760,11 @@ private fun NewVisualizationsSection(
     if (adaptiveLayoutInfo.isCompact) {
         // Phone: single column
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             SpendingForecastCard(chartData = chartData)
             QuickStatsCard(chartData = chartData)
@@ -736,10 +774,11 @@ private fun NewVisualizationsSection(
     } else if (adaptiveLayoutInfo.isExpanded) {
         // Tablet 10"+: 3-column layout for maximum screen utilization
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -747,13 +786,13 @@ private fun NewVisualizationsSection(
             ) {
                 Column(
                     modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     SpendingForecastCard(chartData = chartData)
                 }
                 Column(
                     modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     QuickStatsCard(chartData = chartData)
                 }
@@ -765,10 +804,11 @@ private fun NewVisualizationsSection(
     } else {
         // Tablet 7" (medium): 2-column layout
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -788,52 +828,62 @@ private fun NewVisualizationsSection(
 }
 
 @Composable
-private fun ChartsSummaryRow(chartData: ChartData, fmt: CurrencyFormat) {
+private fun ChartsSummaryRow(
+    chartData: ChartData,
+    fmt: CurrencyFormat,
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         val balance = chartData.totalIncome - chartData.totalExpense
 
         SummaryCard(
             modifier = Modifier.weight(1f),
-            state = SummaryCardState(
-                label = stringResource(R.string.charts_income),
-                amount = chartData.totalIncome,
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                fmt = fmt,
-                includesIncome = true,
-            )
+            state =
+                SummaryCardState(
+                    label = stringResource(R.string.charts_income),
+                    amount = chartData.totalIncome,
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    fmt = fmt,
+                    includesIncome = true,
+                ),
         )
         SummaryCard(
             modifier = Modifier.weight(1f),
-            state = SummaryCardState(
-                label = stringResource(R.string.charts_expenses),
-                amount = chartData.totalExpense,
-                containerColor = MaterialTheme.colorScheme.errorContainer,
-                contentColor = MaterialTheme.colorScheme.onErrorContainer,
-                fmt = fmt,
-                includesIncome = false,
-            )
+            state =
+                SummaryCardState(
+                    label = stringResource(R.string.charts_expenses),
+                    amount = chartData.totalExpense,
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                    contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                    fmt = fmt,
+                    includesIncome = false,
+                ),
         )
         SummaryCard(
             modifier = Modifier.weight(1f),
-            state = SummaryCardState(
-                label = stringResource(R.string.share_balance),
-                amount = balance,
-                containerColor = if (balance >= 0)
-                    MaterialTheme.colorScheme.secondaryContainer
-                else
-                    MaterialTheme.colorScheme.errorContainer,
-                contentColor = if (balance >= 0)
-                    MaterialTheme.colorScheme.onSecondaryContainer
-                else
-                    MaterialTheme.colorScheme.onErrorContainer,
-                fmt = fmt,
-                isBalance = true,
-                includesIncome = true,
-            )
+            state =
+                SummaryCardState(
+                    label = stringResource(R.string.share_balance),
+                    amount = balance,
+                    containerColor =
+                        if (balance >= 0) {
+                            MaterialTheme.colorScheme.secondaryContainer
+                        } else {
+                            MaterialTheme.colorScheme.errorContainer
+                        },
+                    contentColor =
+                        if (balance >= 0) {
+                            MaterialTheme.colorScheme.onSecondaryContainer
+                        } else {
+                            MaterialTheme.colorScheme.onErrorContainer
+                        },
+                    fmt = fmt,
+                    isBalance = true,
+                    includesIncome = true,
+                ),
         )
     }
 }
@@ -866,28 +916,31 @@ private fun CategoryPieChartCard(
     // L'aggregato totale del breakdown resta mascherato in blocco se può contenere entrate
     // (PROTECT_SALARY/ALL), anche se le singole voci non-stipendio sotto sono mostrate in chiaro.
     val masked = LocalAmountsMasked.current && maskMode != AmountMaskMode.NONE
-    val displayData = if (translateKeys) {
-        data.entries.associate { (key, value) -> translateCategory(key) to value }
-    } else {
-        data
-    }
+    val displayData =
+        if (translateKeys) {
+            data.entries.associate { (key, value) -> translateCategory(key) to value }
+        } else {
+            data
+        }
     val protectedCategoryLabel =
         if (translateKeys) translateCategory(PROTECTED_INCOME_CATEGORY) else PROTECTED_INCOME_CATEGORY
-    val chartSummaryDescription = stringResource(
-        R.string.charts_chart_summary_cd,
-        title,
-        displayData.size,
-        formatAmount(
-            displayData.values.sumOf { abs(it) },
-            fmt
-        ).let { if (masked) maskDigits(it) else it },
-    )
+    val chartSummaryDescription =
+        stringResource(
+            R.string.charts_chart_summary_cd,
+            title,
+            displayData.size,
+            formatAmount(
+                displayData.values.sumOf { abs(it) },
+                fmt,
+            ).let { if (masked) maskDigits(it) else it },
+        )
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = chartCardContainerColor,
-        ),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = chartCardContainerColor,
+            ),
         shape = MaterialTheme.shapes.medium,
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -903,16 +956,18 @@ private fun CategoryPieChartCard(
                 )
                 IconButton(
                     onClick = {
-                        val shareText = ShareTextFormatter.buildCategoryShareText(
-                            context = context,
-                            data = displayData,
-                            fmt = fmt,
-                        )
-                        val intent = Intent(Intent.ACTION_SEND).apply {
-                            type = "text/plain"
-                            putExtra(Intent.EXTRA_SUBJECT, shareSubject)
-                            putExtra(Intent.EXTRA_TEXT, shareText)
-                        }
+                        val shareText =
+                            ShareTextFormatter.buildCategoryShareText(
+                                context = context,
+                                data = displayData,
+                                fmt = fmt,
+                            )
+                        val intent =
+                            Intent(Intent.ACTION_SEND).apply {
+                                type = "text/plain"
+                                putExtra(Intent.EXTRA_SUBJECT, shareSubject)
+                                putExtra(Intent.EXTRA_TEXT, shareText)
+                            }
                         onShared()
                         context.startActivity(Intent.createChooser(intent, shareLabel))
                     },
@@ -933,26 +988,29 @@ private fun CategoryPieChartCard(
                 data = displayData,
                 onCategorySelected = { category, amount, colorHex ->
                     // Map translated category back to original if needed
-                    val originalCategory = if (translateKeys) {
-                        data.entries.find {
-                            translateCategoryPlain(context, it.key) == category
-                        }?.key ?: category
-                    } else {
-                        category
-                    }
+                    val originalCategory =
+                        if (translateKeys) {
+                            data.entries
+                                .find {
+                                    translateCategoryPlain(context, it.key) == category
+                                }?.key ?: category
+                        } else {
+                            category
+                        }
                     onCategorySelected(originalCategory, amount, colorHex)
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(chartHeight)
-                    .semantics { contentDescription = chartSummaryDescription }
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(chartHeight)
+                        .semantics { contentDescription = chartSummaryDescription },
             )
 
             VerticalSpacer(SpacingSize.SM)
             PieLegend(
                 data = displayData,
                 maskMode = maskMode,
-                protectedCategoryLabel = protectedCategoryLabel
+                protectedCategoryLabel = protectedCategoryLabel,
             )
         }
     }
@@ -975,9 +1033,10 @@ private fun TopCategoriesCard(
     val maskEnabled = LocalAmountsMasked.current
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = chartCardContainerColor,
-        ),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = chartCardContainerColor,
+            ),
         shape = MaterialTheme.shapes.medium,
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -992,33 +1051,38 @@ private fun TopCategoriesCard(
                     val categoryLabel = translateCategory(category)
                     val percent = if (total > 0) (abs(amount) / total) * 100 else 0.0
                     val percentText = "%.0f".format(percent)
-                    val masked = maskEnabled && when (maskMode) {
-                        AmountMaskMode.NONE -> false
-                        AmountMaskMode.PROTECT_SALARY -> category == PROTECTED_INCOME_CATEGORY
-                        AmountMaskMode.ALL -> true
-                    }
-                    val itemDescription = stringResource(
-                        R.string.charts_category_item_cd,
-                        categoryLabel,
-                        formatAmount(abs(amount), fmt).let { if (masked) maskDigits(it) else it },
-                        percentText,
-                    )
+                    val masked =
+                        maskEnabled &&
+                            when (maskMode) {
+                                AmountMaskMode.NONE -> false
+                                AmountMaskMode.PROTECT_SALARY -> category == PROTECTED_INCOME_CATEGORY
+                                AmountMaskMode.ALL -> true
+                            }
+                    val itemDescription =
+                        stringResource(
+                            R.string.charts_category_item_cd,
+                            categoryLabel,
+                            formatAmount(abs(amount), fmt).let { if (masked) maskDigits(it) else it },
+                            percentText,
+                        )
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .semantics(mergeDescendants = true) {
-                                contentDescription = itemDescription
-                            },
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .semantics(mergeDescendants = true) {
+                                    contentDescription = itemDescription
+                                },
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
                     ) {
                         Box(
-                            modifier = Modifier
-                                .size(24.dp)
-                                .background(
-                                    MaterialTheme.colorScheme.primaryContainer,
-                                    CircleShape
-                                ),
+                            modifier =
+                                Modifier
+                                    .size(24.dp)
+                                    .background(
+                                        MaterialTheme.colorScheme.primaryContainer,
+                                        CircleShape,
+                                    ),
                             contentAlignment = Alignment.Center,
                         ) {
                             AppText(
@@ -1035,10 +1099,11 @@ private fun TopCategoriesCard(
                             modifier = Modifier.weight(1f),
                         )
                         AppText(
-                            text = formatAmount(
-                                abs(amount),
-                                fmt
-                            ).let { if (masked) maskDigits(it) else it },
+                            text =
+                                formatAmount(
+                                    abs(amount),
+                                    fmt,
+                                ).let { if (masked) maskDigits(it) else it },
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurface,
@@ -1064,21 +1129,23 @@ private fun MonthlyBarChartCard(
     val monthlyShareSubject = stringResource(R.string.share_monthly_subject)
     val title = stringResource(R.string.charts_monthly_overview)
     val masked = LocalAmountsMasked.current
-    val chartSummaryDescription = stringResource(
-        R.string.charts_chart_summary_cd,
-        title,
-        data.size,
-        formatAmount(
-            data.sumOf { it.income - it.expense },
-            fmt
-        ).let { if (masked) maskDigits(it) else it },
-    )
+    val chartSummaryDescription =
+        stringResource(
+            R.string.charts_chart_summary_cd,
+            title,
+            data.size,
+            formatAmount(
+                data.sumOf { it.income - it.expense },
+                fmt,
+            ).let { if (masked) maskDigits(it) else it },
+        )
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = chartCardContainerColor,
-        ),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = chartCardContainerColor,
+            ),
         shape = MaterialTheme.shapes.medium,
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -1094,16 +1161,18 @@ private fun MonthlyBarChartCard(
                 )
                 IconButton(
                     onClick = {
-                        val shareText = ShareTextFormatter.buildMonthlyShareText(
-                            context = context,
-                            data = data,
-                            fmt = fmt,
-                        )
-                        val intent = Intent(Intent.ACTION_SEND).apply {
-                            type = "text/plain"
-                            putExtra(Intent.EXTRA_SUBJECT, monthlyShareSubject)
-                            putExtra(Intent.EXTRA_TEXT, shareText)
-                        }
+                        val shareText =
+                            ShareTextFormatter.buildMonthlyShareText(
+                                context = context,
+                                data = data,
+                                fmt = fmt,
+                            )
+                        val intent =
+                            Intent(Intent.ACTION_SEND).apply {
+                                type = "text/plain"
+                                putExtra(Intent.EXTRA_SUBJECT, monthlyShareSubject)
+                                putExtra(Intent.EXTRA_TEXT, shareText)
+                            }
                         onShared()
                         context.startActivity(Intent.createChooser(intent, shareLabel))
                     },
@@ -1127,17 +1196,19 @@ private fun MonthlyBarChartCard(
             // Scrollable bar chart for many months
             val chartWidth = (data.size * 80).coerceAtLeast(300)
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState())
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
             ) {
                 ZoomableBarChart(
                     data = data,
                     zoomEnabled = zoomEnabled,
-                    modifier = Modifier
-                        .width(chartWidth.dp)
-                        .height(chartHeight)
-                        .semantics { contentDescription = chartSummaryDescription }
+                    modifier =
+                        Modifier
+                            .width(chartWidth.dp)
+                            .height(chartHeight)
+                            .semantics { contentDescription = chartSummaryDescription },
                 )
             }
 
@@ -1160,21 +1231,23 @@ private fun YearlyBarChartCard(
     val yearlyShareSubject = stringResource(R.string.share_yearly_subject)
     val title = stringResource(R.string.charts_yearly_overview)
     val masked = LocalAmountsMasked.current
-    val chartSummaryDescription = stringResource(
-        R.string.charts_chart_summary_cd,
-        title,
-        data.size,
-        formatAmount(
-            data.sumOf { it.income - it.expense },
-            fmt
-        ).let { if (masked) maskDigits(it) else it },
-    )
+    val chartSummaryDescription =
+        stringResource(
+            R.string.charts_chart_summary_cd,
+            title,
+            data.size,
+            formatAmount(
+                data.sumOf { it.income - it.expense },
+                fmt,
+            ).let { if (masked) maskDigits(it) else it },
+        )
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = chartCardContainerColor,
-        ),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = chartCardContainerColor,
+            ),
         shape = MaterialTheme.shapes.medium,
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -1190,16 +1263,18 @@ private fun YearlyBarChartCard(
                 )
                 IconButton(
                     onClick = {
-                        val shareText = ShareTextFormatter.buildYearlyShareText(
-                            context = context,
-                            data = data,
-                            fmt = fmt,
-                        )
-                        val intent = Intent(Intent.ACTION_SEND).apply {
-                            type = "text/plain"
-                            putExtra(Intent.EXTRA_SUBJECT, yearlyShareSubject)
-                            putExtra(Intent.EXTRA_TEXT, shareText)
-                        }
+                        val shareText =
+                            ShareTextFormatter.buildYearlyShareText(
+                                context = context,
+                                data = data,
+                                fmt = fmt,
+                            )
+                        val intent =
+                            Intent(Intent.ACTION_SEND).apply {
+                                type = "text/plain"
+                                putExtra(Intent.EXTRA_SUBJECT, yearlyShareSubject)
+                                putExtra(Intent.EXTRA_TEXT, shareText)
+                            }
                         onShared()
                         context.startActivity(Intent.createChooser(intent, shareLabel))
                     },
@@ -1223,17 +1298,19 @@ private fun YearlyBarChartCard(
             // Scrollable bar chart for years
             val yearlyChartWidth = (data.size * 100).coerceAtLeast(300)
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState())
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
             ) {
                 ZoomableYearlyBarChart(
                     data = data,
                     zoomEnabled = zoomEnabled,
-                    modifier = Modifier
-                        .width(yearlyChartWidth.dp)
-                        .height(chartHeight)
-                        .semantics { contentDescription = chartSummaryDescription }
+                    modifier =
+                        Modifier
+                            .width(yearlyChartWidth.dp)
+                            .height(chartHeight)
+                            .semantics { contentDescription = chartSummaryDescription },
                 )
             }
 
@@ -1245,46 +1322,49 @@ private fun YearlyBarChartCard(
 @Composable
 private fun SummaryCard(
     state: SummaryCardState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(containerColor = state.containerColor),
         shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 12.dp, horizontal = 8.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 12.dp, horizontal = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             AppText(
                 text = state.label,
                 style = MaterialTheme.typography.labelSmall,
                 color = state.contentColor.copy(alpha = ThemeConstants.HIGH_EMPHASIS_TEXT_ALPHA),
                 fontWeight = FontWeight.Medium,
-                maxLines = 1
+                maxLines = 1,
             )
             VerticalSpacer(SpacingSize.XXXS)
             AppText(
-                text = formatAmount(abs(state.amount), state.fmt)
-                    .let { if (LocalAmountsMasked.current && state.includesIncome) maskDigits(it) else it },
+                text =
+                    formatAmount(abs(state.amount), state.fmt)
+                        .let { if (LocalAmountsMasked.current && state.includesIncome) maskDigits(it) else it },
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = state.contentColor,
-                maxLines = 1
+                maxLines = 1,
             )
             if (state.isBalance) {
                 Box(
-                    modifier = Modifier
-                        .padding(top = 4.dp)
-                        .size(6.dp)
-                        .background(
-                            if (state.amount >= 0) Color(0xFF4CAF50) else Color(0xFFF44336),
-                            CircleShape
-                        )
+                    modifier =
+                        Modifier
+                            .padding(top = 4.dp)
+                            .size(6.dp)
+                            .background(
+                                if (state.amount >= 0) Color(0xFF4CAF50) else Color(0xFFF44336),
+                                CircleShape,
+                            ),
                 )
             } else {
                 // Spacer to maintain same height across all cards
@@ -1301,5 +1381,5 @@ private data class SummaryCardState(
     val contentColor: Color,
     val fmt: CurrencyFormat,
     val isBalance: Boolean = false,
-    val includesIncome: Boolean = true
+    val includesIncome: Boolean = true,
 )

@@ -10,10 +10,29 @@ import com.antcashmanager.domain.model.Category
  * provides a clear audit trail of all actions.
  */
 sealed class CategoryEvent {
-    data class AddCategory(val name: String, val icon: String, val color: Long, val type: String = "EXPENSE") : CategoryEvent()
-    data class UpdateCategory(val category: Category) : CategoryEvent()
-    data class DeleteCategory(val category: Category) : CategoryEvent()
-    data class SetCategoryHidden(val category: Category, val hidden: Boolean) : CategoryEvent()
-    data class ReorderCategories(val reordered: List<Category>) : CategoryEvent()
+    data class AddCategory(
+        val name: String,
+        val icon: String,
+        val color: Long,
+        val type: String = "EXPENSE",
+    ) : CategoryEvent()
+
+    data class UpdateCategory(
+        val category: Category,
+    ) : CategoryEvent()
+
+    data class DeleteCategory(
+        val category: Category,
+    ) : CategoryEvent()
+
+    data class SetCategoryHidden(
+        val category: Category,
+        val hidden: Boolean,
+    ) : CategoryEvent()
+
+    data class ReorderCategories(
+        val reordered: List<Category>,
+    ) : CategoryEvent()
+
     data object RetryLastOperation : CategoryEvent()
 }

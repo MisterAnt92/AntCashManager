@@ -5,7 +5,6 @@ package com.antcashmanager.domain.service
  * L'implementazione è platform-specific (es. ML Kit su Android).
  */
 public interface ReceiptOcrService {
-
     /**
      * Estrae il testo da un'immagine fornita come array di byte.
      *
@@ -14,4 +13,3 @@ public interface ReceiptOcrService {
      */
     public suspend fun extractText(imageBytes: ByteArray): Result<String>
 }
-

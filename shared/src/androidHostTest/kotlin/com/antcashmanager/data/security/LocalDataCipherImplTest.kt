@@ -12,7 +12,6 @@ import org.junit.Ignore
 import org.junit.Test
 
 class LocalDataCipherImplTest {
-
     private lateinit var cipher: LocalDataCipherImpl
     private lateinit var mockContext: Context
 
@@ -30,7 +29,7 @@ class LocalDataCipherImplTest {
         every {
             mockContext.getSharedPreferences(
                 "db_security_prefs",
-                Context.MODE_PRIVATE
+                Context.MODE_PRIVATE,
             )
         } returns mockPrefs
 
@@ -93,13 +92,14 @@ class LocalDataCipherImplTest {
 
     @Test
     fun roundTripEncryptDecrypt_shouldPreserveOriginalValue_whenMultipleOperations() {
-        val values = listOf(
-            "Simple text",
-            "123456",
-            "Special chars: !@#$%^&*()",
-            "Unicode: 你好世界",
-            "Very long text that spans multiple lines and contains lots of information",
-        )
+        val values =
+            listOf(
+                "Simple text",
+                "123456",
+                "Special chars: !@#$%^&*()",
+                "Unicode: 你好世界",
+                "Very long text that spans multiple lines and contains lots of information",
+            )
 
         for (value in values) {
             val encrypted = cipher.encryptString(value)
@@ -201,4 +201,3 @@ class LocalDataCipherImplTest {
         assertTrue(result.isNotEmpty())
     }
 }
-

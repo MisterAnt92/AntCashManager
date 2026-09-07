@@ -27,5 +27,6 @@ import com.antcashmanager.data.local.entity.TransactionEntity
 )
 public abstract class AppDatabase : RoomDatabase() {
     public abstract fun transactionDao(): TransactionDao
+
     public abstract fun categoryDao(): CategoryDao
 }

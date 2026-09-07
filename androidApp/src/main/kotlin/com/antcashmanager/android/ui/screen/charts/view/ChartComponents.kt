@@ -48,14 +48,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.antcashmanager.android.ui.components.layout.SpacingSize
-import com.antcashmanager.android.ui.components.layout.VerticalSpacer
-import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.charts.MonthlyAmount
 import com.antcashmanager.android.ui.screen.charts.YearlyAmount
-import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.theme.LocalReduceMotion
 import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.LocalCurrencyFormat
@@ -75,37 +74,45 @@ import androidx.compose.ui.graphics.PathEffect as ComposePathEffect
 enum class AmountMaskMode { NONE, PROTECT_SALARY, ALL }
 
 // Utility functions for safe float operations and crash prevention
-private fun Float.safeValue(fallback: Float = 0f): Float =
-    if (isFinite() && !isNaN()) this else fallback
+private fun Float.safeValue(fallback: Float = 0f): Float = if (isFinite() && !isNaN()) this else fallback
 
-private fun Double.safeValue(fallback: Double = 0.0): Double =
-    if (isFinite() && !isNaN()) this else fallback
+private fun Double.safeValue(fallback: Double = 0.0): Double = if (isFinite() && !isNaN()) this else fallback
 
-private fun safeCalculation(calculation: () -> Float): Float {
-    return try {
+private fun safeCalculation(calculation: () -> Float): Float =
+    try {
         calculation().takeIf { it.isFinite() } ?: 0f
     } catch (_: Exception) {
         0f
     }
-}
 
-private fun safeCalculationDouble(calculation: () -> Double): Double {
-    return try {
+private fun safeCalculationDouble(calculation: () -> Double): Double =
+    try {
         calculation().takeIf { it.isFinite() } ?: 0.0
     } catch (_: Exception) {
         0.0
     }
-}
 
-private val pieColors = listOf(
-    Color(0xFFE57373), Color(0xFF81C784), Color(0xFF64B5F6),
-    Color(0xFFFFB74D), Color(0xFFBA68C8), Color(0xFF4FC3F7),
-    Color(0xFFF06292), Color(0xFFDCE775), Color(0xFF4DB6AC),
-    Color(0xFF7986CB), Color(0xFFA1887F), Color(0xFF90A4AE),
-)
+private val pieColors =
+    listOf(
+        Color(0xFFE57373),
+        Color(0xFF81C784),
+        Color(0xFF64B5F6),
+        Color(0xFFFFB74D),
+        Color(0xFFBA68C8),
+        Color(0xFF4FC3F7),
+        Color(0xFFF06292),
+        Color(0xFFDCE775),
+        Color(0xFF4DB6AC),
+        Color(0xFF7986CB),
+        Color(0xFFA1887F),
+        Color(0xFF90A4AE),
+    )
 
 @Composable
-internal fun PieChart(data: Map<String, Double>, modifier: Modifier = Modifier) {
+internal fun PieChart(
+    data: Map<String, Double>,
+    modifier: Modifier = Modifier,
+) {
     val total = data.values.sum()
     if (total == 0.0) return
     val reduceMotion = LocalReduceMotion.current
@@ -113,7 +120,7 @@ internal fun PieChart(data: Map<String, Double>, modifier: Modifier = Modifier) 
     val animatedProgress by animateFloatAsState(
         targetValue = 1f,
         animationSpec = tween(animDuration),
-        label = "pie"
+        label = "pie",
     )
 
     Canvas(modifier = modifier) {
@@ -126,7 +133,7 @@ internal fun PieChart(data: Map<String, Double>, modifier: Modifier = Modifier) 
         drawCircle(
             color = Color.Black.copy(alpha = 0.1f),
             radius = shadowRadius,
-            center = center.copy(x = center.x + 4f, y = center.y + 6f)
+            center = center.copy(x = center.x + 4f, y = center.y + 6f),
         )
 
         var startAngle = -90f
@@ -135,15 +142,17 @@ internal fun PieChart(data: Map<String, Double>, modifier: Modifier = Modifier) 
             val baseColor = pieColors[index % pieColors.size]
 
             // Outer arc with gradient
-            val outerBrush = Brush.radialGradient(
-                colors = listOf(
-                    baseColor.copy(alpha = 0.9f),
-                    baseColor.copy(alpha = 0.7f),
-                    baseColor.copy(alpha = 0.8f)
-                ),
-                center = center,
-                radius = outerRadius
-            )
+            val outerBrush =
+                Brush.radialGradient(
+                    colors =
+                        listOf(
+                            baseColor.copy(alpha = 0.9f),
+                            baseColor.copy(alpha = 0.7f),
+                            baseColor.copy(alpha = 0.8f),
+                        ),
+                    center = center,
+                    radius = outerRadius,
+                )
 
             // Draw outer arc
             drawArc(
@@ -153,7 +162,7 @@ internal fun PieChart(data: Map<String, Double>, modifier: Modifier = Modifier) 
                 useCenter = false,
                 topLeft = Offset(center.x - outerRadius, center.y - outerRadius),
                 size = Size(outerRadius * 2, outerRadius * 2),
-                style = Stroke(width = outerRadius - innerRadius)
+                style = Stroke(width = outerRadius - innerRadius),
             )
 
             // Highlight effect on the outer edge
@@ -164,26 +173,28 @@ internal fun PieChart(data: Map<String, Double>, modifier: Modifier = Modifier) 
                 useCenter = false,
                 topLeft = Offset(center.x - outerRadius - 2f, center.y - outerRadius - 2f),
                 size = Size((outerRadius + 2f) * 2, (outerRadius + 2f) * 2),
-                style = Stroke(width = 2f)
+                style = Stroke(width = 2f),
             )
 
             startAngle += sweep
         }
 
         // Center circle with gradient
-        val centerBrush = Brush.radialGradient(
-            colors = listOf(
-                Color.White.copy(alpha = 0.95f),
-                Color.White.copy(alpha = 0.8f),
-                Color.Gray.copy(alpha = 0.1f)
-            ),
-            center = center,
-            radius = innerRadius
-        )
+        val centerBrush =
+            Brush.radialGradient(
+                colors =
+                    listOf(
+                        Color.White.copy(alpha = 0.95f),
+                        Color.White.copy(alpha = 0.8f),
+                        Color.Gray.copy(alpha = 0.1f),
+                    ),
+                center = center,
+                radius = innerRadius,
+            )
         drawCircle(
             brush = centerBrush,
             radius = innerRadius,
-            center = center
+            center = center,
         )
 
         // Center border
@@ -191,7 +202,7 @@ internal fun PieChart(data: Map<String, Double>, modifier: Modifier = Modifier) 
             color = Color.Gray.copy(alpha = 0.2f),
             radius = innerRadius,
             center = center,
-            style = Stroke(width = 1f)
+            style = Stroke(width = 1f),
         )
     }
 }
@@ -209,36 +220,41 @@ internal fun PieLegend(
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         data.entries.forEachIndexed { index, (category, value) ->
             val percentage = (value / total * 100)
-            val masked = maskEnabled && when (maskMode) {
-                AmountMaskMode.NONE -> false
-                AmountMaskMode.PROTECT_SALARY -> category == protectedCategoryLabel
-                AmountMaskMode.ALL -> true
-            }
+            val masked =
+                maskEnabled &&
+                    when (maskMode) {
+                        AmountMaskMode.NONE -> false
+                        AmountMaskMode.PROTECT_SALARY -> category == protectedCategoryLabel
+                        AmountMaskMode.ALL -> true
+                    }
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 // Enhanced color indicator with shadow
                 Box(
-                    modifier = Modifier
-                        .size(16.dp)
-                        .clip(CircleShape)
-                        .background(
-                            Brush.radialGradient(
-                                colors = listOf(
-                                    pieColors[index % pieColors.size],
-                                    pieColors[index % pieColors.size].copy(alpha = 0.8f)
-                                )
-                            )
-                        )
+                    modifier =
+                        Modifier
+                            .size(16.dp)
+                            .clip(CircleShape)
+                            .background(
+                                Brush.radialGradient(
+                                    colors =
+                                        listOf(
+                                            pieColors[index % pieColors.size],
+                                            pieColors[index % pieColors.size].copy(alpha = 0.8f),
+                                        ),
+                                ),
+                            ),
                 ) {
                     Box(
-                        modifier = Modifier
-                            .size(12.dp)
-                            .clip(CircleShape)
-                            .background(Color.White.copy(alpha = 0.3f))
-                            .align(Alignment.TopStart)
+                        modifier =
+                            Modifier
+                                .size(12.dp)
+                                .clip(CircleShape)
+                                .background(Color.White.copy(alpha = 0.3f))
+                                .align(Alignment.TopStart),
                     )
                 }
 
@@ -249,14 +265,15 @@ internal fun PieLegend(
                         text = translateCategory(category),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                     AppText(
-                        text = stringResource(
-                            R.string.home_transaction_item_subtitle,
-                            formatAmount(value, fmt).let { if (masked) maskDigits(it) else it },
-                            "%.1f%%".format(percentage)
-                        ),
+                        text =
+                            stringResource(
+                                R.string.home_transaction_item_subtitle,
+                                formatAmount(value, fmt).let { if (masked) maskDigits(it) else it },
+                                "%.1f%%".format(percentage),
+                            ),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -264,25 +281,28 @@ internal fun PieLegend(
 
                 // Progress bar for visual representation
                 Box(
-                    modifier = Modifier
-                        .width(60.dp)
-                        .height(4.dp)
-                        .clip(RoundedCornerShape(2.dp))
-                        .background(Color.Gray.copy(alpha = 0.2f))
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth(fraction = (percentage / 100f).toFloat().coerceIn(0f, 1f))
+                    modifier =
+                        Modifier
+                            .width(60.dp)
                             .height(4.dp)
                             .clip(RoundedCornerShape(2.dp))
-                            .background(
-                                Brush.horizontalGradient(
-                                    colors = listOf(
-                                        pieColors[index % pieColors.size].copy(alpha = 0.8f),
-                                        pieColors[index % pieColors.size]
-                                    )
-                                )
-                            )
+                            .background(Color.Gray.copy(alpha = 0.2f)),
+                ) {
+                    Box(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth(fraction = (percentage / 100f).toFloat().coerceIn(0f, 1f))
+                                .height(4.dp)
+                                .clip(RoundedCornerShape(2.dp))
+                                .background(
+                                    Brush.horizontalGradient(
+                                        colors =
+                                            listOf(
+                                                pieColors[index % pieColors.size].copy(alpha = 0.8f),
+                                                pieColors[index % pieColors.size],
+                                            ),
+                                    ),
+                                ),
                     )
                 }
             }
@@ -298,42 +318,46 @@ internal fun BarChartLegend() {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         // Income legend
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .clip(RoundedCornerShape(20.dp))
-                .background(
-                    Brush.horizontalGradient(
-                        colors = listOf(
-                            incomeColor.copy(alpha = 0.1f),
-                            incomeColor.copy(alpha = 0.05f)
-                        )
-                    )
-                )
-                .padding(horizontal = 12.dp, vertical = 6.dp)
+            modifier =
+                Modifier
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(
+                        Brush.horizontalGradient(
+                            colors =
+                                listOf(
+                                    incomeColor.copy(alpha = 0.1f),
+                                    incomeColor.copy(alpha = 0.05f),
+                                ),
+                        ),
+                    ).padding(horizontal = 12.dp, vertical = 6.dp),
         ) {
             Box(
-                modifier = Modifier
-                    .size(14.dp)
-                    .clip(RoundedCornerShape(4.dp))
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                incomeColor.copy(alpha = 0.9f),
-                                incomeColor
-                            )
-                        )
-                    )
+                modifier =
+                    Modifier
+                        .size(14.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(
+                            Brush.verticalGradient(
+                                colors =
+                                    listOf(
+                                        incomeColor.copy(alpha = 0.9f),
+                                        incomeColor,
+                                    ),
+                            ),
+                        ),
             ) {
                 Box(
-                    modifier = Modifier
-                        .size(10.dp)
-                        .clip(RoundedCornerShape(3.dp))
-                        .background(Color.White.copy(alpha = 0.3f))
-                        .align(Alignment.TopStart)
+                    modifier =
+                        Modifier
+                            .size(10.dp)
+                            .clip(RoundedCornerShape(3.dp))
+                            .background(Color.White.copy(alpha = 0.3f))
+                            .align(Alignment.TopStart),
                 )
             }
 
@@ -342,7 +366,7 @@ internal fun BarChartLegend() {
                 text = stringResource(R.string.charts_income),
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.SemiBold,
-                color = incomeColor
+                color = incomeColor,
             )
         }
 
@@ -351,37 +375,41 @@ internal fun BarChartLegend() {
         // Expense legend
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .clip(RoundedCornerShape(20.dp))
-                .background(
-                    Brush.horizontalGradient(
-                        colors = listOf(
-                            expenseColor.copy(alpha = 0.1f),
-                            expenseColor.copy(alpha = 0.05f)
-                        )
-                    )
-                )
-                .padding(horizontal = 12.dp, vertical = 6.dp)
+            modifier =
+                Modifier
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(
+                        Brush.horizontalGradient(
+                            colors =
+                                listOf(
+                                    expenseColor.copy(alpha = 0.1f),
+                                    expenseColor.copy(alpha = 0.05f),
+                                ),
+                        ),
+                    ).padding(horizontal = 12.dp, vertical = 6.dp),
         ) {
             Box(
-                modifier = Modifier
-                    .size(14.dp)
-                    .clip(RoundedCornerShape(4.dp))
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                expenseColor.copy(alpha = 0.9f),
-                                expenseColor
-                            )
-                        )
-                    )
+                modifier =
+                    Modifier
+                        .size(14.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(
+                            Brush.verticalGradient(
+                                colors =
+                                    listOf(
+                                        expenseColor.copy(alpha = 0.9f),
+                                        expenseColor,
+                                    ),
+                            ),
+                        ),
             ) {
                 Box(
-                    modifier = Modifier
-                        .size(10.dp)
-                        .clip(RoundedCornerShape(3.dp))
-                        .background(Color.White.copy(alpha = 0.3f))
-                        .align(Alignment.TopStart)
+                    modifier =
+                        Modifier
+                            .size(10.dp)
+                            .clip(RoundedCornerShape(3.dp))
+                            .background(Color.White.copy(alpha = 0.3f))
+                            .align(Alignment.TopStart),
                 )
             }
 
@@ -390,7 +418,7 @@ internal fun BarChartLegend() {
                 text = stringResource(R.string.charts_expenses),
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.SemiBold,
-                color = expenseColor
+                color = expenseColor,
             )
         }
     }
@@ -404,7 +432,7 @@ private fun DrawScope.drawGrid(
     chartWidth: Float,
     chartHeight: Float,
     baseY: Float,
-    gridColor: Color
+    gridColor: Color,
 ) {
     val gridLineCount = 5
     val heightStep = chartHeight / gridLineCount
@@ -421,7 +449,7 @@ private fun DrawScope.drawGrid(
             end = Offset(chartWidth, y),
             strokeWidth = 1f,
             pathEffect = dashPathEffect,
-            cap = StrokeCap.Round
+            cap = StrokeCap.Round,
         )
     }
 
@@ -436,7 +464,7 @@ private fun DrawScope.drawGrid(
             end = Offset(x, baseY),
             strokeWidth = 1f,
             pathEffect = dashPathEffect,
-            cap = StrokeCap.Round
+            cap = StrokeCap.Round,
         )
     }
 }
@@ -451,11 +479,15 @@ private fun DrawScope.drawZoomAwareGrid(
     chartHeight: Float,
     baseY: Float,
     gridColor: Color,
-    scale: Float = 1f
+    scale: Float = 1f,
 ) {
     // Safety checks to prevent crashes
-    if (!scale.isFinite() || scale <= 0f || !chartWidth.isFinite() || !chartHeight.isFinite() ||
-        chartWidth <= 0f || chartHeight <= 0f
+    if (!scale.isFinite() ||
+        scale <= 0f ||
+        !chartWidth.isFinite() ||
+        !chartHeight.isFinite() ||
+        chartWidth <= 0f ||
+        chartHeight <= 0f
     ) {
         return
     }
@@ -483,7 +515,7 @@ private fun DrawScope.drawZoomAwareGrid(
                     end = Offset(chartWidth, y),
                     strokeWidth = strokeWidth,
                     pathEffect = dashPathEffect,
-                    cap = StrokeCap.Round
+                    cap = StrokeCap.Round,
                 )
             } catch (_: Exception) {
                 // Silently ignore drawing errors to prevent crash
@@ -505,7 +537,7 @@ private fun DrawScope.drawZoomAwareGrid(
                         end = Offset(x, baseY),
                         strokeWidth = strokeWidth,
                         pathEffect = dashPathEffect,
-                        cap = StrokeCap.Round
+                        cap = StrokeCap.Round,
                     )
                 } catch (_: Exception) {
                     // Silently ignore drawing errors to prevent crash
@@ -516,7 +548,10 @@ private fun DrawScope.drawZoomAwareGrid(
 }
 
 @Composable
-internal fun BarChart(data: List<MonthlyAmount>, modifier: Modifier = Modifier) {
+internal fun BarChart(
+    data: List<MonthlyAmount>,
+    modifier: Modifier = Modifier,
+) {
     val reduceMotion = LocalReduceMotion.current
     val animDuration = if (reduceMotion) 0 else 1000
     val incomeColor = MaterialTheme.colorScheme.primary
@@ -527,7 +562,7 @@ internal fun BarChart(data: List<MonthlyAmount>, modifier: Modifier = Modifier) 
     val animatedProgress by animateFloatAsState(
         targetValue = 1f,
         animationSpec = tween(animDuration),
-        label = "barAnim"
+        label = "barAnim",
     )
 
     Canvas(modifier = modifier) {
@@ -547,18 +582,20 @@ internal fun BarChart(data: List<MonthlyAmount>, modifier: Modifier = Modifier) 
             val x = spacing + index * (barWidth * 2 + spacing * 1.5f)
 
             // Income bar with gradient
-            val incomeBrush = Brush.verticalGradient(
-                colors = listOf(
-                    incomeColor.copy(alpha = 0.9f),
-                    incomeColor.copy(alpha = 0.7f),
-                    incomeColor
+            val incomeBrush =
+                Brush.verticalGradient(
+                    colors =
+                        listOf(
+                            incomeColor.copy(alpha = 0.9f),
+                            incomeColor.copy(alpha = 0.7f),
+                            incomeColor,
+                        ),
                 )
-            )
             drawRoundRect(
                 brush = incomeBrush,
                 topLeft = Offset(x, baseY - incomeHeight),
                 size = Size(barWidth, incomeHeight),
-                cornerRadius = CornerRadius(6f, 6f)
+                cornerRadius = CornerRadius(6f, 6f),
             )
 
             // Income bar highlight
@@ -566,22 +603,24 @@ internal fun BarChart(data: List<MonthlyAmount>, modifier: Modifier = Modifier) 
                 color = Color.White.copy(alpha = 0.3f),
                 topLeft = Offset(x + 2f, baseY - incomeHeight + 2f),
                 size = Size(barWidth - 4f, incomeHeight * 0.3f),
-                cornerRadius = CornerRadius(4f, 4f)
+                cornerRadius = CornerRadius(4f, 4f),
             )
 
             // Expense bar with gradient
-            val expenseBrush = Brush.verticalGradient(
-                colors = listOf(
-                    expenseColor.copy(alpha = 0.9f),
-                    expenseColor.copy(alpha = 0.7f),
-                    expenseColor
+            val expenseBrush =
+                Brush.verticalGradient(
+                    colors =
+                        listOf(
+                            expenseColor.copy(alpha = 0.9f),
+                            expenseColor.copy(alpha = 0.7f),
+                            expenseColor,
+                        ),
                 )
-            )
             drawRoundRect(
                 brush = expenseBrush,
                 topLeft = Offset(x + barWidth + spacing * 0.5f, baseY - expenseHeight),
                 size = Size(barWidth, expenseHeight),
-                cornerRadius = CornerRadius(6f, 6f)
+                cornerRadius = CornerRadius(6f, 6f),
             )
 
             // Expense bar highlight
@@ -589,7 +628,7 @@ internal fun BarChart(data: List<MonthlyAmount>, modifier: Modifier = Modifier) 
                 color = Color.White.copy(alpha = 0.3f),
                 topLeft = Offset(x + barWidth + spacing * 0.5f + 2f, baseY - expenseHeight + 2f),
                 size = Size(barWidth - 4f, expenseHeight * 0.3f),
-                cornerRadius = CornerRadius(4f, 4f)
+                cornerRadius = CornerRadius(4f, 4f),
             )
 
             // Month label with improved styling
@@ -604,7 +643,7 @@ internal fun BarChart(data: List<MonthlyAmount>, modifier: Modifier = Modifier) 
                         textAlign = Paint.Align.CENTER
                         isAntiAlias = true
                         setShadowLayer(2f, 1f, 1f, Color.Black.copy(alpha = 0.1f).toArgb())
-                    }
+                    },
                 )
             }
         }
@@ -612,7 +651,10 @@ internal fun BarChart(data: List<MonthlyAmount>, modifier: Modifier = Modifier) 
 }
 
 @Composable
-internal fun YearlyBarChart(data: List<YearlyAmount>, modifier: Modifier = Modifier) {
+internal fun YearlyBarChart(
+    data: List<YearlyAmount>,
+    modifier: Modifier = Modifier,
+) {
     val reduceMotion = LocalReduceMotion.current
     val animDuration = if (reduceMotion) 0 else 1200
     val incomeColor = MaterialTheme.colorScheme.primary
@@ -623,7 +665,7 @@ internal fun YearlyBarChart(data: List<YearlyAmount>, modifier: Modifier = Modif
     val animatedProgress by animateFloatAsState(
         targetValue = 1f,
         animationSpec = tween(animDuration),
-        label = "yearlyAnim"
+        label = "yearlyAnim",
     )
 
     Canvas(modifier = modifier) {
@@ -643,20 +685,22 @@ internal fun YearlyBarChart(data: List<YearlyAmount>, modifier: Modifier = Modif
             val x = spacing + index * (barWidth * 2 + spacing * 1.8f)
 
             // Income bar with gradient and shadow
-            val incomeBrush = Brush.verticalGradient(
-                colors = listOf(
-                    incomeColor.copy(alpha = 0.95f),
-                    incomeColor.copy(alpha = 0.8f),
-                    incomeColor
+            val incomeBrush =
+                Brush.verticalGradient(
+                    colors =
+                        listOf(
+                            incomeColor.copy(alpha = 0.95f),
+                            incomeColor.copy(alpha = 0.8f),
+                            incomeColor,
+                        ),
                 )
-            )
 
             // Shadow for income bar
             drawRoundRect(
                 color = Color.Black.copy(alpha = 0.08f),
                 topLeft = Offset(x + 3f, baseY - incomeHeight + 3f),
                 size = Size(barWidth, incomeHeight),
-                cornerRadius = CornerRadius(8f, 8f)
+                cornerRadius = CornerRadius(8f, 8f),
             )
 
             // Income bar
@@ -664,7 +708,7 @@ internal fun YearlyBarChart(data: List<YearlyAmount>, modifier: Modifier = Modif
                 brush = incomeBrush,
                 topLeft = Offset(x, baseY - incomeHeight),
                 size = Size(barWidth, incomeHeight),
-                cornerRadius = CornerRadius(8f, 8f)
+                cornerRadius = CornerRadius(8f, 8f),
             )
 
             // Income bar top highlight
@@ -672,24 +716,26 @@ internal fun YearlyBarChart(data: List<YearlyAmount>, modifier: Modifier = Modif
                 color = Color.White.copy(alpha = 0.4f),
                 topLeft = Offset(x + 3f, baseY - incomeHeight + 3f),
                 size = Size(barWidth - 6f, incomeHeight * 0.25f),
-                cornerRadius = CornerRadius(6f, 6f)
+                cornerRadius = CornerRadius(6f, 6f),
             )
 
             // Expense bar with gradient and shadow
-            val expenseBrush = Brush.verticalGradient(
-                colors = listOf(
-                    expenseColor.copy(alpha = 0.95f),
-                    expenseColor.copy(alpha = 0.8f),
-                    expenseColor
+            val expenseBrush =
+                Brush.verticalGradient(
+                    colors =
+                        listOf(
+                            expenseColor.copy(alpha = 0.95f),
+                            expenseColor.copy(alpha = 0.8f),
+                            expenseColor,
+                        ),
                 )
-            )
 
             // Shadow for expense bar
             drawRoundRect(
                 color = Color.Black.copy(alpha = 0.08f),
                 topLeft = Offset(x + barWidth + spacing * 0.7f + 3f, baseY - expenseHeight + 3f),
                 size = Size(barWidth, expenseHeight),
-                cornerRadius = CornerRadius(8f, 8f)
+                cornerRadius = CornerRadius(8f, 8f),
             )
 
             // Expense bar
@@ -697,7 +743,7 @@ internal fun YearlyBarChart(data: List<YearlyAmount>, modifier: Modifier = Modif
                 brush = expenseBrush,
                 topLeft = Offset(x + barWidth + spacing * 0.7f, baseY - expenseHeight),
                 size = Size(barWidth, expenseHeight),
-                cornerRadius = CornerRadius(8f, 8f)
+                cornerRadius = CornerRadius(8f, 8f),
             )
 
             // Expense bar top highlight
@@ -705,7 +751,7 @@ internal fun YearlyBarChart(data: List<YearlyAmount>, modifier: Modifier = Modif
                 color = Color.White.copy(alpha = 0.4f),
                 topLeft = Offset(x + barWidth + spacing * 0.7f + 3f, baseY - expenseHeight + 3f),
                 size = Size(barWidth - 6f, expenseHeight * 0.25f),
-                cornerRadius = CornerRadius(6f, 6f)
+                cornerRadius = CornerRadius(6f, 6f),
             )
 
             // Year label with enhanced styling
@@ -721,7 +767,7 @@ internal fun YearlyBarChart(data: List<YearlyAmount>, modifier: Modifier = Modif
                         isAntiAlias = true
                         isFakeBoldText = true
                         setShadowLayer(3f, 1f, 2f, Color.Black.copy(alpha = 0.15f).toArgb())
-                    }
+                    },
                 )
             }
         }
@@ -732,7 +778,7 @@ internal fun YearlyBarChart(data: List<YearlyAmount>, modifier: Modifier = Modif
             start = Offset(0f, baseY),
             end = Offset(size.width, baseY),
             strokeWidth = 2f,
-            cap = StrokeCap.Round
+            cap = StrokeCap.Round,
         )
     }
 }
@@ -760,7 +806,7 @@ internal fun ZoomablePieChart(
     val animatedProgress by animateFloatAsState(
         targetValue = 1f,
         animationSpec = tween(animDuration),
-        label = "pie"
+        label = "pie",
     )
 
     // Zoom and pan state with safe initial values
@@ -770,38 +816,38 @@ internal fun ZoomablePieChart(
 
     Box(modifier = modifier) {
         Canvas(
-            modifier = Modifier
-                .matchParentSize()
-                .pointerInput(zoomEnabled) {
-                    if (!zoomEnabled) return@pointerInput
-                    detectTransformGestures { _, pan, zoom, _ ->
-                        try {
-                            // Safe zoom calculation with validation
-                            val newScale = (scale * zoom).takeIf { it.isFinite() } ?: scale
-                            scale = newScale.coerceIn(zoomMin, zoomMax)
+            modifier =
+                Modifier
+                    .matchParentSize()
+                    .pointerInput(zoomEnabled) {
+                        if (!zoomEnabled) return@pointerInput
+                        detectTransformGestures { _, pan, zoom, _ ->
+                            try {
+                                // Safe zoom calculation with validation
+                                val newScale = (scale * zoom).takeIf { it.isFinite() } ?: scale
+                                scale = newScale.coerceIn(zoomMin, zoomMax)
 
-                            // Safe pan calculation with validation
-                            val newOffsetX = (offsetX + pan.x).takeIf { it.isFinite() } ?: offsetX
-                            val newOffsetY = (offsetY + pan.y).takeIf { it.isFinite() } ?: offsetY
+                                // Safe pan calculation with validation
+                                val newOffsetX = (offsetX + pan.x).takeIf { it.isFinite() } ?: offsetX
+                                val newOffsetY = (offsetY + pan.y).takeIf { it.isFinite() } ?: offsetY
 
-                            // Constrain pan to reasonable bounds
-                            val maxOffset = (size.width * 0.3f).takeIf { it.isFinite() } ?: 100f
-                            offsetX = newOffsetX.coerceIn(-maxOffset, maxOffset)
-                            offsetY = newOffsetY.coerceIn(-maxOffset, maxOffset)
-                        } catch (_: Exception) {
-                            // Reset to safe values on any calculation error
-                            scale = 1f
-                            offsetX = 0f
-                            offsetY = 0f
+                                // Constrain pan to reasonable bounds
+                                val maxOffset = (size.width * 0.3f).takeIf { it.isFinite() } ?: 100f
+                                offsetX = newOffsetX.coerceIn(-maxOffset, maxOffset)
+                                offsetY = newOffsetY.coerceIn(-maxOffset, maxOffset)
+                            } catch (_: Exception) {
+                                // Reset to safe values on any calculation error
+                                scale = 1f
+                                offsetX = 0f
+                                offsetY = 0f
+                            }
                         }
-                    }
-                }
-                .graphicsLayer(
-                    scaleX = scale.takeIf { it.isFinite() && it > 0f } ?: 1f,
-                    scaleY = scale.takeIf { it.isFinite() && it > 0f } ?: 1f,
-                    translationX = offsetX.takeIf { it.isFinite() } ?: 0f,
-                    translationY = offsetY.takeIf { it.isFinite() } ?: 0f
-                )
+                    }.graphicsLayer(
+                        scaleX = scale.takeIf { it.isFinite() && it > 0f } ?: 1f,
+                        scaleY = scale.takeIf { it.isFinite() && it > 0f } ?: 1f,
+                        translationX = offsetX.takeIf { it.isFinite() } ?: 0f,
+                        translationY = offsetY.takeIf { it.isFinite() } ?: 0f,
+                    ),
         ) {
             if (size.width <= 0f || size.height <= 0f) return@Canvas
 
@@ -818,7 +864,7 @@ internal fun ZoomablePieChart(
                     drawCircle(
                         color = Color.Black.copy(alpha = 0.1f),
                         radius = shadowRadius,
-                        center = center.copy(x = center.x + 4f, y = center.y + 6f)
+                        center = center.copy(x = center.x + 4f, y = center.y + 6f),
                     )
                 } catch (_: Exception) {
                     // Skip shadow on error
@@ -828,22 +874,25 @@ internal fun ZoomablePieChart(
             var startAngle = -90f
             data.entries.forEachIndexed { index, (_, value) ->
                 try {
-                    val sweep = ((value / total * 360f * animatedProgress).toFloat())
-                        .takeIf { it.isFinite() } ?: 0f
+                    val sweep =
+                        ((value / total * 360f * animatedProgress).toFloat())
+                            .takeIf { it.isFinite() } ?: 0f
                     if (sweep <= 0f) return@forEachIndexed
 
                     val baseColor = pieColors[index % pieColors.size]
 
                     // Outer arc with gradient
-                    val outerBrush = Brush.radialGradient(
-                        colors = listOf(
-                            baseColor.copy(alpha = 0.9f),
-                            baseColor.copy(alpha = 0.7f),
-                            baseColor.copy(alpha = 0.8f)
-                        ),
-                        center = center,
-                        radius = outerRadius
-                    )
+                    val outerBrush =
+                        Brush.radialGradient(
+                            colors =
+                                listOf(
+                                    baseColor.copy(alpha = 0.9f),
+                                    baseColor.copy(alpha = 0.7f),
+                                    baseColor.copy(alpha = 0.8f),
+                                ),
+                            center = center,
+                            radius = outerRadius,
+                        )
 
                     // Draw outer arc with safe parameters
                     drawArc(
@@ -853,7 +902,7 @@ internal fun ZoomablePieChart(
                         useCenter = false,
                         topLeft = Offset(center.x - outerRadius, center.y - outerRadius),
                         size = Size(outerRadius * 2, outerRadius * 2),
-                        style = Stroke(width = (outerRadius - innerRadius).coerceAtLeast(1f))
+                        style = Stroke(width = (outerRadius - innerRadius).coerceAtLeast(1f)),
                     )
 
                     // Highlight effect on the outer edge
@@ -864,7 +913,7 @@ internal fun ZoomablePieChart(
                         useCenter = false,
                         topLeft = Offset(center.x - outerRadius - 2f, center.y - outerRadius - 2f),
                         size = Size((outerRadius + 2f) * 2, (outerRadius + 2f) * 2),
-                        style = Stroke(width = 2f)
+                        style = Stroke(width = 2f),
                     )
 
                     startAngle += sweep
@@ -876,19 +925,21 @@ internal fun ZoomablePieChart(
             // Center circle with gradient
             if (innerRadius > 0f) {
                 try {
-                    val centerBrush = Brush.radialGradient(
-                        colors = listOf(
-                            Color.White.copy(alpha = 0.95f),
-                            Color.White.copy(alpha = 0.8f),
-                            Color.Gray.copy(alpha = 0.1f)
-                        ),
-                        center = center,
-                        radius = innerRadius
-                    )
+                    val centerBrush =
+                        Brush.radialGradient(
+                            colors =
+                                listOf(
+                                    Color.White.copy(alpha = 0.95f),
+                                    Color.White.copy(alpha = 0.8f),
+                                    Color.Gray.copy(alpha = 0.1f),
+                                ),
+                            center = center,
+                            radius = innerRadius,
+                        )
                     drawCircle(
                         brush = centerBrush,
                         radius = innerRadius,
-                        center = center
+                        center = center,
                     )
 
                     // Center border
@@ -896,7 +947,7 @@ internal fun ZoomablePieChart(
                         color = Color.Gray.copy(alpha = 0.2f),
                         radius = innerRadius,
                         center = center,
-                        style = Stroke(width = 1f)
+                        style = Stroke(width = 1f),
                     )
                 } catch (_: Exception) {
                     // Skip center circle on error
@@ -906,7 +957,9 @@ internal fun ZoomablePieChart(
 
         // Reset zoom button with validation
         if ((scale != 1f || offsetX != 0f || offsetY != 0f) &&
-            scale.isFinite() && offsetX.isFinite() && offsetY.isFinite()
+            scale.isFinite() &&
+            offsetX.isFinite() &&
+            offsetY.isFinite()
         ) {
             FloatingActionButton(
                 onClick = {
@@ -914,17 +967,18 @@ internal fun ZoomablePieChart(
                     offsetX = 0f
                     offsetY = 0f
                 },
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(8.dp)
-                    .size(40.dp),
-                containerColor = MaterialTheme.colorScheme.secondaryContainer
+                modifier =
+                    Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp)
+                        .size(40.dp),
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
             ) {
                 Icon(
                     imageVector = Icons.Default.ZoomOutMap,
                     contentDescription = stringResource(R.string.chart_reset_zoom),
                     modifier = Modifier.size(20.dp),
-                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                    tint = MaterialTheme.colorScheme.onSecondaryContainer,
                 )
             }
         }
@@ -951,7 +1005,7 @@ internal fun ZoomableBarChart(
     val animatedProgress by animateFloatAsState(
         targetValue = 1f,
         animationSpec = tween(animDuration),
-        label = "barAnim"
+        label = "barAnim",
     )
 
     // Zoom and pan state with safe initial values
@@ -961,37 +1015,38 @@ internal fun ZoomableBarChart(
 
     Box(modifier = modifier) {
         Canvas(
-            modifier = Modifier
-                .matchParentSize()
-                .pointerInput(zoomEnabled) {
-                    if (!zoomEnabled) return@pointerInput
-                    detectTransformGestures { _, pan, zoom, _ ->
-                        try {
-                            // Safe zoom calculation with validation
-                            val newScale = (scale * zoom).takeIf { it.isFinite() } ?: scale
-                            scale = newScale.coerceIn(0.3f, 4f)
+            modifier =
+                Modifier
+                    .matchParentSize()
+                    .pointerInput(zoomEnabled) {
+                        if (!zoomEnabled) return@pointerInput
+                        detectTransformGestures { _, pan, zoom, _ ->
+                            try {
+                                // Safe zoom calculation with validation
+                                val newScale = (scale * zoom).takeIf { it.isFinite() } ?: scale
+                                scale = newScale.coerceIn(0.3f, 4f)
 
-                            // Safe pan calculation with validation and scale division protection
-                            val safeDivisor = scale.takeIf { it > 0.01f } ?: 1f
-                            val newOffsetX =
-                                (offsetX + pan.x / safeDivisor).takeIf { it.isFinite() } ?: offsetX
-                            val newOffsetY =
-                                (offsetY + pan.y / safeDivisor).takeIf { it.isFinite() } ?: offsetY
+                                // Safe pan calculation with validation and scale division protection
+                                val safeDivisor = scale.takeIf { it > 0.01f } ?: 1f
+                                val newOffsetX =
+                                    (offsetX + pan.x / safeDivisor).takeIf { it.isFinite() } ?: offsetX
+                                val newOffsetY =
+                                    (offsetY + pan.y / safeDivisor).takeIf { it.isFinite() } ?: offsetY
 
-                            // Constrain pan to chart bounds with safety checks
-                            val maxOffsetX =
-                                (size.width * (scale - 1) / 2).takeIf { it.isFinite() } ?: 0f
-                            val maxOffsetY = (size.height * 0.2f).takeIf { it.isFinite() } ?: 100f
-                            offsetX = newOffsetX.coerceIn(-maxOffsetX, maxOffsetX)
-                            offsetY = newOffsetY.coerceIn(-maxOffsetY, maxOffsetY)
-                        } catch (_: Exception) {
-                            // Reset to safe values on any calculation error
-                            scale = 1f
-                            offsetX = 0f
-                            offsetY = 0f
+                                // Constrain pan to chart bounds with safety checks
+                                val maxOffsetX =
+                                    (size.width * (scale - 1) / 2).takeIf { it.isFinite() } ?: 0f
+                                val maxOffsetY = (size.height * 0.2f).takeIf { it.isFinite() } ?: 100f
+                                offsetX = newOffsetX.coerceIn(-maxOffsetX, maxOffsetX)
+                                offsetY = newOffsetY.coerceIn(-maxOffsetY, maxOffsetY)
+                            } catch (_: Exception) {
+                                // Reset to safe values on any calculation error
+                                scale = 1f
+                                offsetX = 0f
+                                offsetY = 0f
+                            }
                         }
-                    }
-                }
+                    },
         ) {
             try {
                 val safeScale = scale.takeIf { it.isFinite() && it > 0f } ?: 1f
@@ -1005,8 +1060,10 @@ internal fun ZoomableBarChart(
                     translate(safeOffsetX, safeOffsetY) {
                         if (data.isEmpty()) return@translate
 
-                        val maxValue = data.maxOfOrNull { maxOf(it.income, it.expense) }
-                            ?.takeIf { it > 0.0 } ?: 1.0
+                        val maxValue =
+                            data
+                                .maxOfOrNull { maxOf(it.income, it.expense) }
+                                ?.takeIf { it > 0.0 } ?: 1.0
 
                         if (data.size <= 0) return@translate
                         val barWidth =
@@ -1023,7 +1080,7 @@ internal fun ZoomableBarChart(
                             maxHeight,
                             baseY,
                             gridColor,
-                            safeScale
+                            safeScale,
                         )
 
                         data.forEachIndexed { index, month ->
@@ -1040,18 +1097,20 @@ internal fun ZoomableBarChart(
 
                                 // Income bar with gradient
                                 if (incomeHeight > 0f) {
-                                    val incomeBrush = Brush.verticalGradient(
-                                        colors = listOf(
-                                            incomeColor.copy(alpha = 0.9f),
-                                            incomeColor.copy(alpha = 0.7f),
-                                            incomeColor
+                                    val incomeBrush =
+                                        Brush.verticalGradient(
+                                            colors =
+                                                listOf(
+                                                    incomeColor.copy(alpha = 0.9f),
+                                                    incomeColor.copy(alpha = 0.7f),
+                                                    incomeColor,
+                                                ),
                                         )
-                                    )
                                     drawRoundRect(
                                         brush = incomeBrush,
                                         topLeft = Offset(x, baseY - incomeHeight),
                                         size = Size(barWidth, incomeHeight),
-                                        cornerRadius = CornerRadius(6f, 6f)
+                                        cornerRadius = CornerRadius(6f, 6f),
                                     )
 
                                     // Income bar highlight
@@ -1059,54 +1118,61 @@ internal fun ZoomableBarChart(
                                         drawRoundRect(
                                             color = Color.White.copy(alpha = 0.3f),
                                             topLeft = Offset(x + 2f, baseY - incomeHeight + 2f),
-                                            size = Size(
-                                                (barWidth - 4f).coerceAtLeast(0f),
-                                                incomeHeight * 0.3f
-                                            ),
-                                            cornerRadius = CornerRadius(4f, 4f)
+                                            size =
+                                                Size(
+                                                    (barWidth - 4f).coerceAtLeast(0f),
+                                                    incomeHeight * 0.3f,
+                                                ),
+                                            cornerRadius = CornerRadius(4f, 4f),
                                         )
                                     }
                                 }
 
                                 // Expense bar with gradient
                                 if (expenseHeight > 0f) {
-                                    val expenseBrush = Brush.verticalGradient(
-                                        colors = listOf(
-                                            expenseColor.copy(alpha = 0.9f),
-                                            expenseColor.copy(alpha = 0.7f),
-                                            expenseColor
+                                    val expenseBrush =
+                                        Brush.verticalGradient(
+                                            colors =
+                                                listOf(
+                                                    expenseColor.copy(alpha = 0.9f),
+                                                    expenseColor.copy(alpha = 0.7f),
+                                                    expenseColor,
+                                                ),
                                         )
-                                    )
                                     drawRoundRect(
                                         brush = expenseBrush,
-                                        topLeft = Offset(
-                                            x + barWidth + spacing * 0.5f,
-                                            baseY - expenseHeight
-                                        ),
+                                        topLeft =
+                                            Offset(
+                                                x + barWidth + spacing * 0.5f,
+                                                baseY - expenseHeight,
+                                            ),
                                         size = Size(barWidth, expenseHeight),
-                                        cornerRadius = CornerRadius(6f, 6f)
+                                        cornerRadius = CornerRadius(6f, 6f),
                                     )
 
                                     // Expense bar highlight
                                     if (expenseHeight > 6f) {
                                         drawRoundRect(
                                             color = Color.White.copy(alpha = 0.3f),
-                                            topLeft = Offset(
-                                                x + barWidth + spacing * 0.5f + 2f,
-                                                baseY - expenseHeight + 2f
-                                            ),
-                                            size = Size(
-                                                (barWidth - 4f).coerceAtLeast(0f),
-                                                expenseHeight * 0.3f
-                                            ),
-                                            cornerRadius = CornerRadius(4f, 4f)
+                                            topLeft =
+                                                Offset(
+                                                    x + barWidth + spacing * 0.5f + 2f,
+                                                    baseY - expenseHeight + 2f,
+                                                ),
+                                            size =
+                                                Size(
+                                                    (barWidth - 4f).coerceAtLeast(0f),
+                                                    expenseHeight * 0.3f,
+                                                ),
+                                            cornerRadius = CornerRadius(4f, 4f),
                                         )
                                     }
                                 }
 
                                 // Month label with zoom-aware sizing
-                                val scaledTextSize = (11.sp.toPx() * min(safeScale, 1.5f))
-                                    .takeIf { it.isFinite() && it > 0f } ?: 11.sp.toPx()
+                                val scaledTextSize =
+                                    (11.sp.toPx() * min(safeScale, 1.5f))
+                                        .takeIf { it.isFinite() && it > 0f } ?: 11.sp.toPx()
 
                                 if (month.label.isNotBlank()) {
                                     try {
@@ -1124,9 +1190,9 @@ internal fun ZoomableBarChart(
                                                         2f,
                                                         1f,
                                                         1f,
-                                                        Color.Black.copy(alpha = 0.1f).toArgb()
+                                                        Color.Black.copy(alpha = 0.1f).toArgb(),
                                                     )
-                                                }
+                                                },
                                             )
                                         }
                                     } catch (_: Exception) {
@@ -1146,7 +1212,9 @@ internal fun ZoomableBarChart(
 
         // Reset zoom button with validation
         if ((scale != 1f || offsetX != 0f || offsetY != 0f) &&
-            scale.isFinite() && offsetX.isFinite() && offsetY.isFinite()
+            scale.isFinite() &&
+            offsetX.isFinite() &&
+            offsetY.isFinite()
         ) {
             FloatingActionButton(
                 onClick = {
@@ -1154,17 +1222,18 @@ internal fun ZoomableBarChart(
                     offsetX = 0f
                     offsetY = 0f
                 },
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(8.dp)
-                    .size(40.dp),
-                containerColor = MaterialTheme.colorScheme.secondaryContainer
+                modifier =
+                    Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp)
+                        .size(40.dp),
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
             ) {
                 Icon(
                     imageVector = Icons.Default.ZoomOutMap,
                     contentDescription = stringResource(R.string.chart_reset_zoom),
                     modifier = Modifier.size(20.dp),
-                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                    tint = MaterialTheme.colorScheme.onSecondaryContainer,
                 )
             }
         }
@@ -1191,7 +1260,7 @@ internal fun ZoomableYearlyBarChart(
     val animatedProgress by animateFloatAsState(
         targetValue = 1f,
         animationSpec = tween(animDuration),
-        label = "yearlyAnim"
+        label = "yearlyAnim",
     )
 
     // Zoom and pan state with safe initial values
@@ -1201,37 +1270,38 @@ internal fun ZoomableYearlyBarChart(
 
     Box(modifier = modifier) {
         Canvas(
-            modifier = Modifier
-                .matchParentSize()
-                .pointerInput(zoomEnabled) {
-                    if (!zoomEnabled) return@pointerInput
-                    detectTransformGestures { _, pan, zoom, _ ->
-                        try {
-                            // Safe zoom calculation with validation
-                            val newScale = (scale * zoom).takeIf { it.isFinite() } ?: scale
-                            scale = newScale.coerceIn(0.3f, 5f)
+            modifier =
+                Modifier
+                    .matchParentSize()
+                    .pointerInput(zoomEnabled) {
+                        if (!zoomEnabled) return@pointerInput
+                        detectTransformGestures { _, pan, zoom, _ ->
+                            try {
+                                // Safe zoom calculation with validation
+                                val newScale = (scale * zoom).takeIf { it.isFinite() } ?: scale
+                                scale = newScale.coerceIn(0.3f, 5f)
 
-                            // Safe pan calculation with validation and scale division protection
-                            val safeDivisor = scale.takeIf { it > 0.01f } ?: 1f
-                            val newOffsetX =
-                                (offsetX + pan.x / safeDivisor).takeIf { it.isFinite() } ?: offsetX
-                            val newOffsetY =
-                                (offsetY + pan.y / safeDivisor).takeIf { it.isFinite() } ?: offsetY
+                                // Safe pan calculation with validation and scale division protection
+                                val safeDivisor = scale.takeIf { it > 0.01f } ?: 1f
+                                val newOffsetX =
+                                    (offsetX + pan.x / safeDivisor).takeIf { it.isFinite() } ?: offsetX
+                                val newOffsetY =
+                                    (offsetY + pan.y / safeDivisor).takeIf { it.isFinite() } ?: offsetY
 
-                            // Constrain pan to chart bounds with safety checks
-                            val maxOffsetX =
-                                (size.width * (scale - 1) / 2).takeIf { it.isFinite() } ?: 0f
-                            val maxOffsetY = (size.height * 0.2f).takeIf { it.isFinite() } ?: 100f
-                            offsetX = newOffsetX.coerceIn(-maxOffsetX, maxOffsetX)
-                            offsetY = newOffsetY.coerceIn(-maxOffsetY, maxOffsetY)
-                        } catch (_: Exception) {
-                            // Reset to safe values on any calculation error
-                            scale = 1f
-                            offsetX = 0f
-                            offsetY = 0f
+                                // Constrain pan to chart bounds with safety checks
+                                val maxOffsetX =
+                                    (size.width * (scale - 1) / 2).takeIf { it.isFinite() } ?: 0f
+                                val maxOffsetY = (size.height * 0.2f).takeIf { it.isFinite() } ?: 100f
+                                offsetX = newOffsetX.coerceIn(-maxOffsetX, maxOffsetX)
+                                offsetY = newOffsetY.coerceIn(-maxOffsetY, maxOffsetY)
+                            } catch (_: Exception) {
+                                // Reset to safe values on any calculation error
+                                scale = 1f
+                                offsetX = 0f
+                                offsetY = 0f
+                            }
                         }
-                    }
-                }
+                    },
         ) {
             try {
                 val safeScale = scale.takeIf { it.isFinite() && it > 0f } ?: 1f
@@ -1245,8 +1315,10 @@ internal fun ZoomableYearlyBarChart(
                     translate(safeOffsetX, safeOffsetY) {
                         if (data.isEmpty()) return@translate
 
-                        val maxValue = data.maxOfOrNull { maxOf(it.income, it.expense) }
-                            ?.takeIf { it > 0.0 } ?: 1.0
+                        val maxValue =
+                            data
+                                .maxOfOrNull { maxOf(it.income, it.expense) }
+                                ?.takeIf { it > 0.0 } ?: 1.0
 
                         if (data.size <= 0) return@translate
                         val barWidth =
@@ -1263,7 +1335,7 @@ internal fun ZoomableYearlyBarChart(
                             maxHeight,
                             baseY,
                             gridColor,
-                            safeScale
+                            safeScale,
                         )
 
                         data.forEachIndexed { index, year ->
@@ -1280,13 +1352,15 @@ internal fun ZoomableYearlyBarChart(
 
                                 // Income bar with gradient and shadow
                                 if (incomeHeight > 0f) {
-                                    val incomeBrush = Brush.verticalGradient(
-                                        colors = listOf(
-                                            incomeColor.copy(alpha = 0.95f),
-                                            incomeColor.copy(alpha = 0.8f),
-                                            incomeColor
+                                    val incomeBrush =
+                                        Brush.verticalGradient(
+                                            colors =
+                                                listOf(
+                                                    incomeColor.copy(alpha = 0.95f),
+                                                    incomeColor.copy(alpha = 0.8f),
+                                                    incomeColor,
+                                                ),
                                         )
-                                    )
 
                                     // Shadow for income bar
                                     if (incomeHeight > 3f) {
@@ -1295,7 +1369,7 @@ internal fun ZoomableYearlyBarChart(
                                                 color = Color.Black.copy(alpha = 0.08f),
                                                 topLeft = Offset(x + 3f, baseY - incomeHeight + 3f),
                                                 size = Size(barWidth, incomeHeight),
-                                                cornerRadius = CornerRadius(8f, 8f)
+                                                cornerRadius = CornerRadius(8f, 8f),
                                             )
                                         } catch (_: Exception) {
                                             // Skip shadow on error
@@ -1307,7 +1381,7 @@ internal fun ZoomableYearlyBarChart(
                                         brush = incomeBrush,
                                         topLeft = Offset(x, baseY - incomeHeight),
                                         size = Size(barWidth, incomeHeight),
-                                        cornerRadius = CornerRadius(8f, 8f)
+                                        cornerRadius = CornerRadius(8f, 8f),
                                     )
 
                                     // Income bar top highlight
@@ -1316,11 +1390,12 @@ internal fun ZoomableYearlyBarChart(
                                             drawRoundRect(
                                                 color = Color.White.copy(alpha = 0.4f),
                                                 topLeft = Offset(x + 3f, baseY - incomeHeight + 3f),
-                                                size = Size(
-                                                    (barWidth - 6f).coerceAtLeast(0f),
-                                                    incomeHeight * 0.25f
-                                                ),
-                                                cornerRadius = CornerRadius(6f, 6f)
+                                                size =
+                                                    Size(
+                                                        (barWidth - 6f).coerceAtLeast(0f),
+                                                        incomeHeight * 0.25f,
+                                                    ),
+                                                cornerRadius = CornerRadius(6f, 6f),
                                             )
                                         } catch (_: Exception) {
                                             // Skip highlight on error
@@ -1330,25 +1405,28 @@ internal fun ZoomableYearlyBarChart(
 
                                 // Expense bar with gradient and shadow
                                 if (expenseHeight > 0f) {
-                                    val expenseBrush = Brush.verticalGradient(
-                                        colors = listOf(
-                                            expenseColor.copy(alpha = 0.95f),
-                                            expenseColor.copy(alpha = 0.8f),
-                                            expenseColor
+                                    val expenseBrush =
+                                        Brush.verticalGradient(
+                                            colors =
+                                                listOf(
+                                                    expenseColor.copy(alpha = 0.95f),
+                                                    expenseColor.copy(alpha = 0.8f),
+                                                    expenseColor,
+                                                ),
                                         )
-                                    )
 
                                     // Shadow for expense bar
                                     if (expenseHeight > 3f) {
                                         try {
                                             drawRoundRect(
                                                 color = Color.Black.copy(alpha = 0.08f),
-                                                topLeft = Offset(
-                                                    x + barWidth + spacing * 0.7f + 3f,
-                                                    baseY - expenseHeight + 3f
-                                                ),
+                                                topLeft =
+                                                    Offset(
+                                                        x + barWidth + spacing * 0.7f + 3f,
+                                                        baseY - expenseHeight + 3f,
+                                                    ),
                                                 size = Size(barWidth, expenseHeight),
-                                                cornerRadius = CornerRadius(8f, 8f)
+                                                cornerRadius = CornerRadius(8f, 8f),
                                             )
                                         } catch (_: Exception) {
                                             // Skip shadow on error
@@ -1358,12 +1436,13 @@ internal fun ZoomableYearlyBarChart(
                                     // Expense bar
                                     drawRoundRect(
                                         brush = expenseBrush,
-                                        topLeft = Offset(
-                                            x + barWidth + spacing * 0.7f,
-                                            baseY - expenseHeight
-                                        ),
+                                        topLeft =
+                                            Offset(
+                                                x + barWidth + spacing * 0.7f,
+                                                baseY - expenseHeight,
+                                            ),
                                         size = Size(barWidth, expenseHeight),
-                                        cornerRadius = CornerRadius(8f, 8f)
+                                        cornerRadius = CornerRadius(8f, 8f),
                                     )
 
                                     // Expense bar top highlight
@@ -1371,15 +1450,17 @@ internal fun ZoomableYearlyBarChart(
                                         try {
                                             drawRoundRect(
                                                 color = Color.White.copy(alpha = 0.4f),
-                                                topLeft = Offset(
-                                                    x + barWidth + spacing * 0.7f + 3f,
-                                                    baseY - expenseHeight + 3f
-                                                ),
-                                                size = Size(
-                                                    (barWidth - 6f).coerceAtLeast(0f),
-                                                    expenseHeight * 0.25f
-                                                ),
-                                                cornerRadius = CornerRadius(6f, 6f)
+                                                topLeft =
+                                                    Offset(
+                                                        x + barWidth + spacing * 0.7f + 3f,
+                                                        baseY - expenseHeight + 3f,
+                                                    ),
+                                                size =
+                                                    Size(
+                                                        (barWidth - 6f).coerceAtLeast(0f),
+                                                        expenseHeight * 0.25f,
+                                                    ),
+                                                cornerRadius = CornerRadius(6f, 6f),
                                             )
                                         } catch (_: Exception) {
                                             // Skip highlight on error
@@ -1388,8 +1469,9 @@ internal fun ZoomableYearlyBarChart(
                                 }
 
                                 // Year label with enhanced zoom-aware styling
-                                val scaledTextSize = (13.sp.toPx() * min(safeScale, 2f))
-                                    .takeIf { it.isFinite() && it > 0f } ?: 13.sp.toPx()
+                                val scaledTextSize =
+                                    (13.sp.toPx() * min(safeScale, 2f))
+                                        .takeIf { it.isFinite() && it > 0f } ?: 13.sp.toPx()
 
                                 if (year.label.isNotBlank()) {
                                     try {
@@ -1408,9 +1490,9 @@ internal fun ZoomableYearlyBarChart(
                                                         3f,
                                                         1f,
                                                         2f,
-                                                        Color.Black.copy(alpha = 0.15f).toArgb()
+                                                        Color.Black.copy(alpha = 0.15f).toArgb(),
                                                     )
-                                                }
+                                                },
                                             )
                                         }
                                     } catch (_: Exception) {
@@ -1429,7 +1511,7 @@ internal fun ZoomableYearlyBarChart(
                                 start = Offset(0f, baseY),
                                 end = Offset(size.width, baseY),
                                 strokeWidth = 2f,
-                                cap = StrokeCap.Round
+                                cap = StrokeCap.Round,
                             )
                         } catch (_: Exception) {
                             // Skip border on error
@@ -1443,7 +1525,9 @@ internal fun ZoomableYearlyBarChart(
 
         // Reset zoom button with validation
         if ((scale != 1f || offsetX != 0f || offsetY != 0f) &&
-            scale.isFinite() && offsetX.isFinite() && offsetY.isFinite()
+            scale.isFinite() &&
+            offsetX.isFinite() &&
+            offsetY.isFinite()
         ) {
             FloatingActionButton(
                 onClick = {
@@ -1451,17 +1535,18 @@ internal fun ZoomableYearlyBarChart(
                     offsetX = 0f
                     offsetY = 0f
                 },
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(8.dp)
-                    .size(40.dp),
-                containerColor = MaterialTheme.colorScheme.secondaryContainer
+                modifier =
+                    Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp)
+                        .size(40.dp),
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
             ) {
                 Icon(
                     imageVector = Icons.Default.ZoomOutMap,
                     contentDescription = stringResource(R.string.chart_reset_zoom),
                     modifier = Modifier.size(20.dp),
-                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                    tint = MaterialTheme.colorScheme.onSecondaryContainer,
                 )
             }
         }

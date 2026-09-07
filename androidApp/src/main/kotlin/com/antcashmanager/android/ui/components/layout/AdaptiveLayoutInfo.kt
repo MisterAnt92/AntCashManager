@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.components.layout
 
+import android.graphics.Rect
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,8 +18,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
-import androidx.window.layout.WindowInfoTracker
-import android.graphics.Rect
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 private const val TABLET_MEDIUM_BREAKPOINT_DP = 600
@@ -46,9 +44,9 @@ data class AdaptiveLayoutInfo(
     // Fold detection (androidx.window)
     val foldingFeature: FoldingFeature? = null,
     val hasFold: Boolean = false,
-    val isFoldHorizontal: Boolean = false,  // Horizontal fold (Z Flip)
-    val isFoldVertical: Boolean = false,    // Vertical fold (Z Fold)
-    val foldBounds: Rect? = null,  // Pixel coordinates of fold
+    val isFoldHorizontal: Boolean = false, // Horizontal fold (Z Flip)
+    val isFoldVertical: Boolean = false, // Vertical fold (Z Fold)
+    val foldBounds: Rect? = null, // Pixel coordinates of fold
 )
 
 /**
@@ -77,68 +75,71 @@ fun rememberAdaptiveLayoutInfo(displayFeatures: List<DisplayFeature> = emptyList
     val foldBounds = foldingFeature?.bounds
 
     return when {
-        screenWidthDp >= TABLET_EXPANDED_BREAKPOINT_DP -> AdaptiveLayoutInfo(
-            screenWidthDp = screenWidthDp,
-            screenHeightDp = screenHeightDp,
-            smallestScreenWidthDp = smallestScreenWidthDp,
-            isCompact = false,
-            isMedium = false,
-            isExpanded = true,
-            isLandscape = isLandscape,
-            isTabletDevice = isTabletDevice,
-            isFoldableDevice = isFoldableDevice,
-            preferRailNavigation = true,
-            horizontalPadding = 24.dp,
-            maxContentWidth = 1200.dp,
-            // FASE 1: Use fold detection fields
-            foldingFeature = foldingFeature,
-            hasFold = hasFold,
-            isFoldHorizontal = isFoldHorizontal,
-            isFoldVertical = isFoldVertical,
-            foldBounds = foldBounds,
-        )
+        screenWidthDp >= TABLET_EXPANDED_BREAKPOINT_DP ->
+            AdaptiveLayoutInfo(
+                screenWidthDp = screenWidthDp,
+                screenHeightDp = screenHeightDp,
+                smallestScreenWidthDp = smallestScreenWidthDp,
+                isCompact = false,
+                isMedium = false,
+                isExpanded = true,
+                isLandscape = isLandscape,
+                isTabletDevice = isTabletDevice,
+                isFoldableDevice = isFoldableDevice,
+                preferRailNavigation = true,
+                horizontalPadding = 24.dp,
+                maxContentWidth = 1200.dp,
+                // FASE 1: Use fold detection fields
+                foldingFeature = foldingFeature,
+                hasFold = hasFold,
+                isFoldHorizontal = isFoldHorizontal,
+                isFoldVertical = isFoldVertical,
+                foldBounds = foldBounds,
+            )
 
-        screenWidthDp >= TABLET_MEDIUM_BREAKPOINT_DP -> AdaptiveLayoutInfo(
-            screenWidthDp = screenWidthDp,
-            screenHeightDp = screenHeightDp,
-            smallestScreenWidthDp = smallestScreenWidthDp,
-            isCompact = false,
-            isMedium = true,
-            isExpanded = false,
-            isLandscape = isLandscape,
-            isTabletDevice = isTabletDevice,
-            isFoldableDevice = isFoldableDevice,
-            preferRailNavigation = isTabletDevice || isLandscape,
-            horizontalPadding = if (isFoldableDevice && !isLandscape) 16.dp else 20.dp,
-            maxContentWidth = if (isFoldableDevice) 880.dp else 960.dp,
-            // FASE 1: Use fold detection fields
-            foldingFeature = foldingFeature,
-            hasFold = hasFold,
-            isFoldHorizontal = isFoldHorizontal,
-            isFoldVertical = isFoldVertical,
-            foldBounds = foldBounds,
-        )
+        screenWidthDp >= TABLET_MEDIUM_BREAKPOINT_DP ->
+            AdaptiveLayoutInfo(
+                screenWidthDp = screenWidthDp,
+                screenHeightDp = screenHeightDp,
+                smallestScreenWidthDp = smallestScreenWidthDp,
+                isCompact = false,
+                isMedium = true,
+                isExpanded = false,
+                isLandscape = isLandscape,
+                isTabletDevice = isTabletDevice,
+                isFoldableDevice = isFoldableDevice,
+                preferRailNavigation = isTabletDevice || isLandscape,
+                horizontalPadding = if (isFoldableDevice && !isLandscape) 16.dp else 20.dp,
+                maxContentWidth = if (isFoldableDevice) 880.dp else 960.dp,
+                // FASE 1: Use fold detection fields
+                foldingFeature = foldingFeature,
+                hasFold = hasFold,
+                isFoldHorizontal = isFoldHorizontal,
+                isFoldVertical = isFoldVertical,
+                foldBounds = foldBounds,
+            )
 
-        else -> AdaptiveLayoutInfo(
-            screenWidthDp = screenWidthDp,
-            screenHeightDp = screenHeightDp,
-            smallestScreenWidthDp = smallestScreenWidthDp,
-            isCompact = true,
-            isMedium = false,
-            isExpanded = false,
-            isLandscape = isLandscape,
-            isTabletDevice = isTabletDevice,
-            isFoldableDevice = false,
-            preferRailNavigation = false,
-            horizontalPadding = 8.dp,
-            maxContentWidth = 680.dp,
-            // FASE 1: Use fold detection fields (no fold on compact phones typically)
-            foldingFeature = foldingFeature,
-            hasFold = hasFold,
-            isFoldHorizontal = isFoldHorizontal,
-            isFoldVertical = isFoldVertical,
-            foldBounds = foldBounds,
-        )
+        else ->
+            AdaptiveLayoutInfo(
+                screenWidthDp = screenWidthDp,
+                screenHeightDp = screenHeightDp,
+                smallestScreenWidthDp = smallestScreenWidthDp,
+                isCompact = true,
+                isMedium = false,
+                isExpanded = false,
+                isLandscape = isLandscape,
+                isTabletDevice = isTabletDevice,
+                isFoldableDevice = false,
+                preferRailNavigation = false,
+                horizontalPadding = 8.dp,
+                maxContentWidth = 680.dp,
+                // FASE 1: Use fold detection fields (no fold on compact phones typically)
+                foldingFeature = foldingFeature,
+                hasFold = hasFold,
+                isFoldHorizontal = isFoldHorizontal,
+                isFoldVertical = isFoldVertical,
+                foldBounds = foldBounds,
+            )
     }
 }
 
@@ -158,11 +159,12 @@ private fun AdaptiveLayoutInfoPreview() {
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = info.horizontalPadding)
-                    .height(24.dp)
-                    .background(MaterialTheme.colorScheme.primary),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = info.horizontalPadding)
+                        .height(24.dp)
+                        .background(MaterialTheme.colorScheme.primary),
             )
         }
     }

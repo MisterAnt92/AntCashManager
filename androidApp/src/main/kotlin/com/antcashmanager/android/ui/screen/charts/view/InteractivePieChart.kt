@@ -9,13 +9,11 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import com.antcashmanager.android.ui.theme.LocalReduceMotion
@@ -54,43 +52,48 @@ internal fun InteractivePieChart(
     val animatedProgress by animateFloatAsState(
         targetValue = 1f,
         animationSpec = tween(animDuration),
-        label = "interactivePie"
+        label = "interactivePie",
     )
 
     // Pre-calculate slice angles and categories for tap detection
-    val sliceInfo: List<SliceInfo> = run {
-        var startAngle = -90f
-        data.entries.map { (category, value) ->
-            val sweep = (value / total * 360f).toFloat()
-            val sliceData = SliceInfo(
-                category = category,
-                amount = value,
-                startAngle = startAngle,
-                sweepAngle = sweep,
-                colorIndex = data.keys.indexOf(category)
-            )
-            startAngle += sweep
-            sliceData
+    val sliceInfo: List<SliceInfo> =
+        run {
+            var startAngle = -90f
+            data.entries.map { (category, value) ->
+                val sweep = (value / total * 360f).toFloat()
+                val sliceData =
+                    SliceInfo(
+                        category = category,
+                        amount = value,
+                        startAngle = startAngle,
+                        sweepAngle = sweep,
+                        colorIndex = data.keys.indexOf(category),
+                    )
+                startAngle += sweep
+                sliceData
+            }
         }
-    }
 
-    Box(modifier = modifier.pointerInput(data) {
-        detectTapGestures { tapOffset ->
-            // Calculate canvas size from drag area
-            val canvasWidth = size.width.toFloat()
-            val canvasHeight = size.height.toFloat()
-            handlePieChartTap(
-                tapOffset = tapOffset,
-                canvasWidth = canvasWidth,
-                canvasHeight = canvasHeight,
-                slices = sliceInfo,
-                onCategorySelected = onCategorySelected
-            )
-        }
-    }) {
+    Box(
+        modifier =
+            modifier.pointerInput(data) {
+                detectTapGestures { tapOffset ->
+                    // Calculate canvas size from drag area
+                    val canvasWidth = size.width.toFloat()
+                    val canvasHeight = size.height.toFloat()
+                    handlePieChartTap(
+                        tapOffset = tapOffset,
+                        canvasWidth = canvasWidth,
+                        canvasHeight = canvasHeight,
+                        slices = sliceInfo,
+                        onCategorySelected = onCategorySelected,
+                    )
+                }
+            },
+    ) {
         Canvas(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
             val outerRadius = minOf(size.width, size.height) * 0.38f
-            val innerRadius = outerRadius * 0.5f  // Creates donut effect (hole in center)
+            val innerRadius = outerRadius * 0.5f // Creates donut effect (hole in center)
             val center = Offset(size.width / 2f, size.height / 2f)
 
             // Shadow layer
@@ -98,7 +101,7 @@ internal fun InteractivePieChart(
             drawCircle(
                 color = Color.Black.copy(alpha = 0.1f),
                 radius = shadowRadius,
-                center = center.copy(x = center.x + 4f, y = center.y + 6f)
+                center = center.copy(x = center.x + 4f, y = center.y + 6f),
             )
 
             // Draw each slice (donut chart style - no divisor lines)
@@ -107,15 +110,17 @@ internal fun InteractivePieChart(
                 val sweep = slice.sweepAngle * animatedProgress
 
                 // Draw outer arc with gradient for visual depth
-                val arcBrush = Brush.radialGradient(
-                    colors = listOf(
-                        baseColor.copy(alpha = 0.9f),
-                        baseColor.copy(alpha = 0.7f),
-                        baseColor.copy(alpha = 0.8f)
-                    ),
-                    center = center,
-                    radius = outerRadius
-                )
+                val arcBrush =
+                    Brush.radialGradient(
+                        colors =
+                            listOf(
+                                baseColor.copy(alpha = 0.9f),
+                                baseColor.copy(alpha = 0.7f),
+                                baseColor.copy(alpha = 0.8f),
+                            ),
+                        center = center,
+                        radius = outerRadius,
+                    )
 
                 drawArc(
                     brush = arcBrush,
@@ -124,24 +129,26 @@ internal fun InteractivePieChart(
                     useCenter = false,
                     topLeft = Offset(center.x - outerRadius, center.y - outerRadius),
                     size = Size(outerRadius * 2, outerRadius * 2),
-                    style = Stroke(width = outerRadius - innerRadius)
+                    style = Stroke(width = outerRadius - innerRadius),
                 )
             }
 
             // Center circle (hole in donut) with gradient
-            val centerBrush = Brush.radialGradient(
-                colors = listOf(
-                    Color.White.copy(alpha = 0.95f),
-                    Color.White.copy(alpha = 0.8f),
-                    Color.Gray.copy(alpha = 0.1f)
-                ),
-                center = center,
-                radius = innerRadius
-            )
+            val centerBrush =
+                Brush.radialGradient(
+                    colors =
+                        listOf(
+                            Color.White.copy(alpha = 0.95f),
+                            Color.White.copy(alpha = 0.8f),
+                            Color.Gray.copy(alpha = 0.1f),
+                        ),
+                    center = center,
+                    radius = innerRadius,
+                )
             drawCircle(
                 brush = centerBrush,
                 radius = innerRadius,
-                center = center
+                center = center,
             )
 
             // Center circle border
@@ -149,7 +156,7 @@ internal fun InteractivePieChart(
                 color = Color.Gray.copy(alpha = 0.2f),
                 radius = innerRadius,
                 center = center,
-                style = Stroke(width = 1f)
+                style = Stroke(width = 1f),
             )
         }
     }
@@ -219,11 +226,12 @@ private fun handlePieChartTap(
     for (slice in slices) {
         if (slice.containsAngle(tapAngle)) {
             val colorIndex = slice.colorIndex
-            val colorHex = pieColors[colorIndex % pieColors.size].let { color ->
-                // Convert Compose Color to hex long
-                val argb = color.value.toLong()
-                argb
-            }
+            val colorHex =
+                pieColors[colorIndex % pieColors.size].let { color ->
+                    // Convert Compose Color to hex long
+                    val argb = color.value.toLong()
+                    argb
+                }
             onCategorySelected(slice.category, slice.amount, colorHex)
             return
         }
@@ -231,9 +239,18 @@ private fun handlePieChartTap(
 }
 
 // Color palette used for slices (matches ChartComponents)
-private val pieColors = listOf(
-    Color(0xFFE57373), Color(0xFF81C784), Color(0xFF64B5F6),
-    Color(0xFFFFB74D), Color(0xFFBA68C8), Color(0xFF4FC3F7),
-    Color(0xFFF06292), Color(0xFFDCE775), Color(0xFF4DB6AC),
-    Color(0xFF7986CB), Color(0xFFA1887F), Color(0xFF90A4AE),
-)
+private val pieColors =
+    listOf(
+        Color(0xFFE57373),
+        Color(0xFF81C784),
+        Color(0xFF64B5F6),
+        Color(0xFFFFB74D),
+        Color(0xFFBA68C8),
+        Color(0xFF4FC3F7),
+        Color(0xFFF06292),
+        Color(0xFFDCE775),
+        Color(0xFF4DB6AC),
+        Color(0xFF7986CB),
+        Color(0xFFA1887F),
+        Color(0xFF90A4AE),
+    )

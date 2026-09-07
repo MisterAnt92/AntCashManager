@@ -1,7 +1,6 @@
 package com.antcashmanager.android.ui.components.button
 
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
@@ -48,10 +47,12 @@ fun ReorderButtons(
             Icon(
                 imageVector = Icons.Default.ArrowUpward,
                 contentDescription = upDescription,
-                tint = if (canMoveUp)
-                    MaterialTheme.colorScheme.primary
-                else
-                    MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                tint =
+                    if (canMoveUp) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
+                    },
             )
         }
         IconButton(
@@ -61,10 +62,12 @@ fun ReorderButtons(
             Icon(
                 imageVector = Icons.Default.ArrowDownward,
                 contentDescription = downDescription,
-                tint = if (canMoveDown)
-                    MaterialTheme.colorScheme.primary
-                else
-                    MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                tint =
+                    if (canMoveDown) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
+                    },
             )
         }
     }

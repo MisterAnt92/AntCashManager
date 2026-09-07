@@ -24,7 +24,6 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 class HomeScreenSearchIntegrationTest : BaseInstrumentationTest() {
-
     @Test
     fun homeScreen_shouldDisplayWithoutSearchExpanded() {
         composeTestRule.setContent {
@@ -36,12 +35,14 @@ class HomeScreenSearchIntegrationTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Verify home screen is displayed
-        composeTestRule.onNodeWithTag("home_screen")
+        composeTestRule
+            .onNodeWithTag("home_screen")
             .assertIsDisplayed()
 
         // Search input should not be visible initially
         try {
-            composeTestRule.onNodeWithTag("search_input")
+            composeTestRule
+                .onNodeWithTag("search_input")
                 .assertIsDisplayed()
             // If this passes, search is visible (unexpected for initial state)
             throw AssertionError("Search input should not be visible initially")
@@ -66,25 +67,29 @@ class HomeScreenSearchIntegrationTest : BaseInstrumentationTest() {
 
         // Initially, search input should not be visible
         try {
-            composeTestRule.onNodeWithTag("search_input")
+            composeTestRule
+                .onNodeWithTag("search_input")
                 .assertDoesNotExist()
         } catch (e: Exception) {
             // Expected - search_input doesn't exist when search is not expanded
         }
 
         // Find and click search icon in the header
-        composeTestRule.onNodeWithTag("header_search_icon")
+        composeTestRule
+            .onNodeWithTag("header_search_icon")
             .performClick()
 
         composeTestRule.waitForIdle()
 
         // After click, search input should be visible
-        composeTestRule.onNodeWithTag("search_input")
+        composeTestRule
+            .onNodeWithTag("search_input")
             .assertIsDisplayed()
 
         // Clear button should not be visible (empty query)
         try {
-            composeTestRule.onNodeWithTag("search_clear_button")
+            composeTestRule
+                .onNodeWithTag("search_clear_button")
                 .assertDoesNotExist()
         } catch (e: Exception) {
             // Expected - clear button doesn't exist when query is empty

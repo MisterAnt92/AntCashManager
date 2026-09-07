@@ -36,10 +36,11 @@ fun AnimatedCounter(
     ) { targetValue ->
         AppText(
             text = targetValue,
-            modifier = Modifier
-                .animateContentSize(
-                    animationSpec = tween(animationDurationMillis, easing = FastOutSlowInEasing)
-                ),
+            modifier =
+                Modifier
+                    .animateContentSize(
+                        animationSpec = tween(animationDurationMillis, easing = FastOutSlowInEasing),
+                    ),
         )
     }
 }
@@ -52,10 +53,11 @@ fun AnimatedListItem(
 ) {
     AnimatedVisibility(
         visible = true,
-        enter = slideInVertically(
-            initialOffsetY = { 50 },
-            animationSpec = tween(300 + index * 50),
-        ) + fadeIn(animationSpec = tween(300 + index * 50)),
+        enter =
+            slideInVertically(
+                initialOffsetY = { 50 },
+                animationSpec = tween(300 + index * 50),
+            ) + fadeIn(animationSpec = tween(300 + index * 50)),
         label = "list_item",
     ) {
         content()
@@ -87,10 +89,11 @@ fun SlideInOnAppear(
 ) {
     AnimatedVisibility(
         visible = true,
-        enter = slideInVertically(
-            initialOffsetY = { 50 },
-            animationSpec = tween(durationMillis, easing = FastOutSlowInEasing),
-        ) + fadeIn(animationSpec = tween(durationMillis)),
+        enter =
+            slideInVertically(
+                initialOffsetY = { 50 },
+                animationSpec = tween(durationMillis, easing = FastOutSlowInEasing),
+            ) + fadeIn(animationSpec = tween(durationMillis)),
         label = "slide_in",
     ) {
         content()

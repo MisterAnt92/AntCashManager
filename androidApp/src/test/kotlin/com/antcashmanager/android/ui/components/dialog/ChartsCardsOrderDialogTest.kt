@@ -1,13 +1,11 @@
 package com.antcashmanager.android.ui.components.dialog
-import com.antcashmanager.android.BaseComposeUnitTest
-import org.junit.Ignore
-
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.onNodeWithContentDescription
-import com.antcashmanager.android.ui.screen.charts.view.ChartsCardsOrderDialog
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import com.antcashmanager.android.BaseComposeUnitTest
 import com.antcashmanager.android.ui.screen.charts.model.ChartCardType
+import com.antcashmanager.android.ui.screen.charts.view.ChartsCardsOrderDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import org.junit.Test
 
@@ -26,11 +24,11 @@ import org.junit.Test
  * For now, we keep them as unit test placeholders - they document the test structure.
  */
 class ChartsCardsOrderDialogTest : BaseComposeUnitTest() {
-
-    private val testOrder = listOf(
-        ChartCardType.SPENDING_FORECAST_CARD,
-        ChartCardType.QUICK_STATS_CARD,
-    )
+    private val testOrder =
+        listOf(
+            ChartCardType.SPENDING_FORECAST_CARD,
+            ChartCardType.QUICK_STATS_CARD,
+        )
 
     @Test
     fun dialog_shouldDisplayAllOrderItems() {
@@ -47,7 +45,8 @@ class ChartsCardsOrderDialogTest : BaseComposeUnitTest() {
         }
 
         // Verificare che la dialog è visualizzata
-        composeTestRule.onNodeWithText("", substring = true)
+        composeTestRule
+            .onNodeWithText("", substring = true)
             .assertIsDisplayed()
     }
 
@@ -72,7 +71,8 @@ class ChartsCardsOrderDialogTest : BaseComposeUnitTest() {
         }
 
         // Il secondo elemento ha move up abilitato
-        composeTestRule.onNodeWithContentDescription("Move up", substring = true)
+        composeTestRule
+            .onNodeWithContentDescription("Move up", substring = true)
             .performClick()
 
         assert(moveUpCalled)
@@ -95,7 +95,8 @@ class ChartsCardsOrderDialogTest : BaseComposeUnitTest() {
         }
 
         // Il primo elemento ha move down abilitato
-        composeTestRule.onNodeWithContentDescription("Move down", substring = true)
+        composeTestRule
+            .onNodeWithContentDescription("Move down", substring = true)
             .performClick()
 
         assert(moveDownCalled)
@@ -118,7 +119,8 @@ class ChartsCardsOrderDialogTest : BaseComposeUnitTest() {
         }
 
         // Cliccare cancel
-        composeTestRule.onNodeWithText("Cancel", substring = true)
+        composeTestRule
+            .onNodeWithText("Cancel", substring = true)
             .performClick()
 
         assert(dismissCalled)
@@ -141,7 +143,8 @@ class ChartsCardsOrderDialogTest : BaseComposeUnitTest() {
         }
 
         // Cliccare confirm
-        composeTestRule.onNodeWithText("Confirm", substring = true)
+        composeTestRule
+            .onNodeWithText("Confirm", substring = true)
             .performClick()
 
         assert(confirmCalled)
@@ -185,11 +188,12 @@ class ChartsCardsOrderDialogTest : BaseComposeUnitTest() {
 
     @Test
     fun dialog_withThreeElements_middleElement_hasAllButtonsEnabled() {
-        val threeElementOrder = listOf(
-            ChartCardType.SPENDING_FORECAST_CARD,
-            ChartCardType.QUICK_STATS_CARD,
-            ChartCardType.DAILY_EXPENSE_CHART_CARD,
-        )
+        val threeElementOrder =
+            listOf(
+                ChartCardType.SPENDING_FORECAST_CARD,
+                ChartCardType.QUICK_STATS_CARD,
+                ChartCardType.DAILY_EXPENSE_CHART_CARD,
+            )
 
         composeTestRule.setContent {
             AntCashManagerTheme {

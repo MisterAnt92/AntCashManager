@@ -86,9 +86,10 @@ private fun TransactionDetailsDialogContent(
         },
         text = {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState()),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 // Title
@@ -101,14 +102,16 @@ private fun TransactionDetailsDialogContent(
                 val amountText = "${String.format("%.2f", abs(transaction.amount))}€"
                 TransactionDetailRow(
                     label = stringResource(R.string.transaction_details_amount),
-                    value = if (LocalAmountsMasked.current && isProtectedSalaryTransaction(
-                            transaction
-                        )
-                    ) {
-                        maskDigits(amountText)
-                    } else {
-                        amountText
-                    },
+                    value =
+                        if (LocalAmountsMasked.current &&
+                            isProtectedSalaryTransaction(
+                                transaction,
+                            )
+                        ) {
+                            maskDigits(amountText)
+                        } else {
+                            amountText
+                        },
                 )
 
                 // Category
@@ -120,21 +123,23 @@ private fun TransactionDetailsDialogContent(
                 // Type
                 TransactionDetailRow(
                     label = stringResource(R.string.transaction_details_type),
-                    value = if (isIncome) {
-                        stringResource(R.string.transactions_type_income)
-                    } else {
-                        stringResource(R.string.transactions_type_expense)
-                    },
+                    value =
+                        if (isIncome) {
+                            stringResource(R.string.transactions_type_income)
+                        } else {
+                            stringResource(R.string.transactions_type_expense)
+                        },
                 )
 
                 // Payment Type
                 TransactionDetailRow(
                     label = stringResource(R.string.transaction_details_payment_type),
-                    value = when (transaction.paymentType) {
-                        PaymentType.ELECTRONIC -> stringResource(R.string.payment_type_electronic)
-                        PaymentType.CASH -> stringResource(R.string.payment_type_cash)
-                        PaymentType.MEAL_VOUCHERS -> stringResource(R.string.payment_type_meal_vouchers)
-                    },
+                    value =
+                        when (transaction.paymentType) {
+                            PaymentType.ELECTRONIC -> stringResource(R.string.payment_type_electronic)
+                            PaymentType.CASH -> stringResource(R.string.payment_type_cash)
+                            PaymentType.MEAL_VOUCHERS -> stringResource(R.string.payment_type_meal_vouchers)
+                        },
                 )
 
                 // Date
@@ -177,13 +182,14 @@ private fun TransactionDetailsDialogContent(
                 if (transaction.isRecurring) {
                     TransactionDetailRow(
                         label = stringResource(R.string.transaction_details_recurrence),
-                        value = if (transaction.recurrenceInterval.isNotBlank()) {
-                            getRecurrenceIntervalLabel(
-                                transaction.recurrenceInterval
-                            )
-                        } else {
-                            stringResource(R.string.transactions_recurring)
-                        },
+                        value =
+                            if (transaction.recurrenceInterval.isNotBlank()) {
+                                getRecurrenceIntervalLabel(
+                                    transaction.recurrenceInterval,
+                                )
+                            } else {
+                                stringResource(R.string.transactions_recurring)
+                            },
                     )
                 }
 
@@ -204,8 +210,11 @@ private fun TransactionDetailsDialogContent(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalArrangement = Arrangement.spacedBy(4.dp),
                         ) {
-                            val tagsList = transaction.tags.split(",").map { it.trim() }
-                                .filter { it.isNotBlank() }
+                            val tagsList =
+                                transaction.tags
+                                    .split(",")
+                                    .map { it.trim() }
+                                    .filter { it.isNotBlank() }
                             tagsList.forEach { tag ->
                                 AssistChip(
                                     onClick = { },
@@ -220,17 +229,19 @@ private fun TransactionDetailsDialogContent(
                                             imageVector = Icons.Default.Tag,
                                             contentDescription = null,
                                             modifier = Modifier.size(14.dp),
-                                            tint = MaterialTheme.colorScheme.primary
+                                            tint = MaterialTheme.colorScheme.primary,
                                         )
                                     },
                                     shape = RoundedCornerShape(16.dp),
-                                    colors = AssistChipDefaults.assistChipColors(
-                                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(
-                                            alpha = 0.4f
+                                    colors =
+                                        AssistChipDefaults.assistChipColors(
+                                            containerColor =
+                                                MaterialTheme.colorScheme.primaryContainer.copy(
+                                                    alpha = 0.4f,
+                                                ),
+                                            labelColor = MaterialTheme.colorScheme.onPrimaryContainer,
                                         ),
-                                        labelColor = MaterialTheme.colorScheme.onPrimaryContainer
-                                    ),
-                                    border = null
+                                    border = null,
                                 )
                             }
                         }
@@ -251,7 +262,7 @@ private fun TransactionDetailsDialogContent(
                 onClick = {
                     analyticsManager.logEvent("transaction_shared")
                     onShareTransaction(transaction, context)
-                }
+                },
             ) {
                 AppText(
                     text = stringResource(R.string.transaction_details_share),
@@ -268,21 +279,22 @@ private fun TransactionDetailsDialogContent(
 private fun TransactionDetailsDialogIncomePreview() {
     AntCashManagerTheme(dynamicColor = false) {
         TransactionDetailsDialogContent(
-            transaction = Transaction(
-                id = 1,
-                title = "Salary Payment",
-                amount = 2500.0,
-                category = "Work",
-                type = TransactionType.INCOME,
-                timestamp = System.currentTimeMillis(),
-                notes = "Monthly salary",
-                payee = "Acme Corp",
-                location = "Office",
-                isRecurring = true,
-                recurrenceInterval = "monthly",
-                tags = "salary, income, work",
-                paymentType = PaymentType.ELECTRONIC,
-            ),
+            transaction =
+                Transaction(
+                    id = 1,
+                    title = "Salary Payment",
+                    amount = 2500.0,
+                    category = "Work",
+                    type = TransactionType.INCOME,
+                    timestamp = System.currentTimeMillis(),
+                    notes = "Monthly salary",
+                    payee = "Acme Corp",
+                    location = "Office",
+                    isRecurring = true,
+                    recurrenceInterval = "monthly",
+                    tags = "salary, income, work",
+                    paymentType = PaymentType.ELECTRONIC,
+                ),
             onDismiss = {},
             onShareTransaction = { _, _ -> },
         )
@@ -294,17 +306,18 @@ private fun TransactionDetailsDialogIncomePreview() {
 private fun TransactionDetailsDialogExpensePreview() {
     AntCashManagerTheme(dynamicColor = false) {
         TransactionDetailsDialogContent(
-            transaction = Transaction(
-                id = 2,
-                title = "Groceries",
-                amount = 85.50,
-                category = "Food",
-                type = TransactionType.EXPENSE,
-                timestamp = System.currentTimeMillis(),
-                notes = "Weekly shopping",
-                tags = "food, groceries, shopping",
-                paymentType = PaymentType.CASH,
-            ),
+            transaction =
+                Transaction(
+                    id = 2,
+                    title = "Groceries",
+                    amount = 85.50,
+                    category = "Food",
+                    type = TransactionType.EXPENSE,
+                    timestamp = System.currentTimeMillis(),
+                    notes = "Weekly shopping",
+                    tags = "food, groceries, shopping",
+                    paymentType = PaymentType.CASH,
+                ),
             onDismiss = {},
             onShareTransaction = { _, _ -> },
         )

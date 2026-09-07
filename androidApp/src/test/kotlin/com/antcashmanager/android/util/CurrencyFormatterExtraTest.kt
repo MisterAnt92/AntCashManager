@@ -7,39 +7,41 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class CurrencyFormatterExtraTest {
-
     @Test
     fun spaceThousandsSeparatorFormatting() {
-        val fmt = CurrencyFormat(
-            currencySymbol = "€",
-            decimalDigits = 2,
-            decimalSeparator = ",",
-            thousandsSeparator = " "
-        )
+        val fmt =
+            CurrencyFormat(
+                currencySymbol = "€",
+                decimalDigits = 2,
+                decimalSeparator = ",",
+                thousandsSeparator = " ",
+            )
         val formatted = formatAmount(1234567.89, fmt)
         assertEquals("€1 234 567,89", formatted)
     }
 
     @Test
     fun swappedSeparatorsDotDecimalAndCommaThousands() {
-        val fmt = CurrencyFormat(
-            currencySymbol = "$",
-            decimalDigits = 2,
-            decimalSeparator = ".",
-            thousandsSeparator = ","
-        )
+        val fmt =
+            CurrencyFormat(
+                currencySymbol = "$",
+                decimalDigits = 2,
+                decimalSeparator = ".",
+                thousandsSeparator = ",",
+            )
         val formatted = formatAmount(1234.56, fmt)
         assertEquals("$1,234.56", formatted)
     }
 
     @Test
     fun formatAmountWithSignPositiveAndNegative() {
-        val fmt = CurrencyFormat(
-            currencySymbol = "€",
-            decimalDigits = 2,
-            decimalSeparator = ",",
-            thousandsSeparator = "."
-        )
+        val fmt =
+            CurrencyFormat(
+                currencySymbol = "€",
+                decimalDigits = 2,
+                decimalSeparator = ",",
+                thousandsSeparator = ".",
+            )
         val pos = formatAmountWithSign(1234.56, fmt, isIncome = true)
         val neg = formatAmountWithSign(1234.56, fmt, isIncome = false)
         assertEquals("+€1.234,56", pos)
@@ -48,12 +50,13 @@ class CurrencyFormatterExtraTest {
 
     @Test
     fun formatTransactionAmountUsesSignFromValue() {
-        val fmt = CurrencyFormat(
-            currencySymbol = "€",
-            decimalDigits = 2,
-            decimalSeparator = ",",
-            thousandsSeparator = "."
-        )
+        val fmt =
+            CurrencyFormat(
+                currencySymbol = "€",
+                decimalDigits = 2,
+                decimalSeparator = ",",
+                thousandsSeparator = ".",
+            )
         assertEquals("+€1.234,56", formatTransactionAmount(1234.56, fmt))
         assertEquals("-€1.234,56", formatTransactionAmount(-1234.56, fmt))
     }
@@ -70,12 +73,13 @@ class CurrencyFormatterExtraTest {
 
     @Test
     fun thousandsDisabledWhenEqualToDecimalSeparator() {
-        val fmt = CurrencyFormat(
-            currencySymbol = "€",
-            decimalDigits = 2,
-            decimalSeparator = ",",
-            thousandsSeparator = ","
-        )
+        val fmt =
+            CurrencyFormat(
+                currencySymbol = "€",
+                decimalDigits = 2,
+                decimalSeparator = ",",
+                thousandsSeparator = ",",
+            )
         val formatted = formatAmount(1234.56, fmt)
         // thousands separator should be disabled when equal to decimal separator
         assertEquals("€1234,56", formatted)
@@ -87,12 +91,13 @@ class CurrencyFormatterExtraTest {
         // as decimal separator. If the formatter is not locale-aware internally, the chunking
         // algorithm processes the comma as part of the integer digits, producing "1.234.,56"
         // instead of the correct "€1.234,56".
-        val fmt = CurrencyFormat(
-            currencySymbol = "€",
-            decimalDigits = 2,
-            decimalSeparator = ",",
-            thousandsSeparator = ".",
-        )
+        val fmt =
+            CurrencyFormat(
+                currencySymbol = "€",
+                decimalDigits = 2,
+                decimalSeparator = ",",
+                thousandsSeparator = ".",
+            )
         val values = listOf(1000.0, 1234.56, 10000.0, 1000000.5)
         values.forEach { amount ->
             val result = formatAmount(amount, fmt)
@@ -105,17 +110,16 @@ class CurrencyFormatterExtraTest {
 
     @Test
     fun formatAmount_shouldReturnCorrectResult_whenThousandsSeparatorIsDotAndDecimalIsComma() {
-        val fmt = CurrencyFormat(
-            currencySymbol = "€",
-            decimalDigits = 2,
-            decimalSeparator = ",",
-            thousandsSeparator = ".",
-        )
+        val fmt =
+            CurrencyFormat(
+                currencySymbol = "€",
+                decimalDigits = 2,
+                decimalSeparator = ",",
+                thousandsSeparator = ".",
+            )
         assertEquals("€1.000,00", formatAmount(1000.0, fmt))
         assertEquals("€1.234,56", formatAmount(1234.56, fmt))
         assertEquals("€10.000,00", formatAmount(10000.0, fmt))
         assertEquals("€1.000.000,50", formatAmount(1000000.5, fmt))
     }
-
 }
-

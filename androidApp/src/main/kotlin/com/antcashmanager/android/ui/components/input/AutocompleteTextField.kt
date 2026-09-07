@@ -48,15 +48,17 @@ fun AutocompleteTextField(
     var hasFocus by remember { mutableStateOf(false) }
 
     // Filtra i suggerimenti in base al testo inserito
-    val filteredSuggestions = remember(value, suggestions) {
-        if (value.isBlank()) {
-            suggestions.take(5) // Mostra i primi 5 quando vuoto
-        } else {
-            suggestions.filter {
-                it.contains(value, ignoreCase = true)
-            }.take(5)
+    val filteredSuggestions =
+        remember(value, suggestions) {
+            if (value.isBlank()) {
+                suggestions.take(5) // Mostra i primi 5 quando vuoto
+            } else {
+                suggestions
+                    .filter {
+                        it.contains(value, ignoreCase = true)
+                    }.take(5)
+            }
         }
-    }
 
     Column(modifier = modifier) {
         OutlinedTextField(
@@ -67,37 +69,38 @@ fun AutocompleteTextField(
             },
             label = { AppText(label) },
             shape = RoundedCornerShape(16.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .onFocusChanged { focusState ->
-                    hasFocus = focusState.isFocused
-                    expanded = hasFocus && filteredSuggestions.isNotEmpty()
-                },
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .onFocusChanged { focusState ->
+                        hasFocus = focusState.isFocused
+                        expanded = hasFocus && filteredSuggestions.isNotEmpty()
+                    },
         )
 
         // Dropdown con suggerimenti
         AnimatedVisibility(visible = expanded && hasFocus) {
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(max = 200.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.surfaceVariant,
-                        shape = RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp)
-                    )
-                    .padding(vertical = 4.dp)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 200.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.surfaceVariant,
+                            shape = RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp),
+                        ).padding(vertical = 4.dp),
             ) {
                 items(filteredSuggestions) { suggestion ->
                     AppText(
                         text = suggestion,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                onValueChange(suggestion)
-                                onSuggestionSelected?.invoke(suggestion)
-                                expanded = false
-                            }
-                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    onValueChange(suggestion)
+                                    onSuggestionSelected?.invoke(suggestion)
+                                    expanded = false
+                                }.padding(horizontal = 16.dp, vertical = 12.dp),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )

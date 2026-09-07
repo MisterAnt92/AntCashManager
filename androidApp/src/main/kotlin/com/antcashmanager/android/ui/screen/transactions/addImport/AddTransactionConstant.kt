@@ -13,4 +13,3 @@ object AddTransactionConstant {
     const val ERROR_SAVE = "Errore durante il salvataggio"
     const val ERROR_DELETE = "Errore durante l'eliminazione"
 }
-

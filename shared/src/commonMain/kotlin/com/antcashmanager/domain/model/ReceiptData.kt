@@ -31,6 +31,3 @@ public data class ReceiptItem(
     public val name: String,
     public val price: Double,
 )
-
-
-

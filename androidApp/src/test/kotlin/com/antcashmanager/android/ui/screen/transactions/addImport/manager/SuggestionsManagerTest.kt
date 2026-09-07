@@ -24,61 +24,61 @@ import org.junit.Test
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class SuggestionsManagerTest : BaseUnitTest() {
-
     private lateinit var transactionRepository: FakeTransactionRepository
     private lateinit var settingsRepository: FakeSettingsRepository
     private lateinit var getSuggestionsUseCase: GetTransactionSuggestionsUseCase
     private lateinit var manager: SuggestionsManager
 
-    private val mockTransactions = listOf(
-        Transaction(
-            id = 1,
-            title = "Lunch at McDonald's",
-            amount = -15.00,
-            category = "Food",
-            type = TransactionType.EXPENSE,
-            timestamp = System.currentTimeMillis(),
-            notes = "Quick lunch",
-            payee = "McDonald's",
-            location = "Downtown",
-            tags = "food,fast-food",
-        ),
-        Transaction(
-            id = 2,
-            title = "Lunch at Subway",
-            amount = -12.00,
-            category = "Food",
-            type = TransactionType.EXPENSE,
-            timestamp = System.currentTimeMillis(),
-            notes = "Healthy lunch",
-            payee = "Subway",
-            location = "Mall",
-            tags = "food,healthy",
-        ),
-        Transaction(
-            id = 3,
-            title = "Dinner at Italian Restaurant",
-            amount = -45.00,
-            category = "Food",
-            type = TransactionType.EXPENSE,
-            timestamp = System.currentTimeMillis(),
-            notes = "Pasta night",
-            payee = "Italian Restaurant",
-            location = "Downtown",
-            tags = "food,restaurant",
-        ),
-        Transaction(
-            id = 4,
-            title = "Coffee",
-            amount = -4.50,
-            category = "Food",
-            type = TransactionType.EXPENSE,
-            timestamp = System.currentTimeMillis(),
-            payee = "Starbucks",
-            location = "Office",
-            tags = "food,coffee",
-        ),
-    )
+    private val mockTransactions =
+        listOf(
+            Transaction(
+                id = 1,
+                title = "Lunch at McDonald's",
+                amount = -15.00,
+                category = "Food",
+                type = TransactionType.EXPENSE,
+                timestamp = System.currentTimeMillis(),
+                notes = "Quick lunch",
+                payee = "McDonald's",
+                location = "Downtown",
+                tags = "food,fast-food",
+            ),
+            Transaction(
+                id = 2,
+                title = "Lunch at Subway",
+                amount = -12.00,
+                category = "Food",
+                type = TransactionType.EXPENSE,
+                timestamp = System.currentTimeMillis(),
+                notes = "Healthy lunch",
+                payee = "Subway",
+                location = "Mall",
+                tags = "food,healthy",
+            ),
+            Transaction(
+                id = 3,
+                title = "Dinner at Italian Restaurant",
+                amount = -45.00,
+                category = "Food",
+                type = TransactionType.EXPENSE,
+                timestamp = System.currentTimeMillis(),
+                notes = "Pasta night",
+                payee = "Italian Restaurant",
+                location = "Downtown",
+                tags = "food,restaurant",
+            ),
+            Transaction(
+                id = 4,
+                title = "Coffee",
+                amount = -4.50,
+                category = "Food",
+                type = TransactionType.EXPENSE,
+                timestamp = System.currentTimeMillis(),
+                payee = "Starbucks",
+                location = "Office",
+                tags = "food,coffee",
+            ),
+        )
 
     @Before
     fun setup() {
@@ -86,110 +86,117 @@ class SuggestionsManagerTest : BaseUnitTest() {
         settingsRepository = FakeSettingsRepository()
         getSuggestionsUseCase =
             GetTransactionSuggestionsUseCase(transactionRepository, settingsRepository)
-        manager = SuggestionsManager(
-            getTransactionSuggestionsUseCase = getSuggestionsUseCase,
-        )
+        manager =
+            SuggestionsManager(
+                getTransactionSuggestionsUseCase = getSuggestionsUseCase,
+            )
     }
 
     // ── Get Suggestions Tests ──
 
     @Test
-    fun `getSuggestions returns flow of suggestions`() = runUnitTest {
-        val suggestionsFlow = manager.getSuggestions()
-        val result = suggestionsFlow.first()
+    fun `getSuggestions returns flow of suggestions`() =
+        runUnitTest {
+            val suggestionsFlow = manager.getSuggestions()
+            val result = suggestionsFlow.first()
 
-        assertTrue("Should return success", result.isSuccess)
-        val suggestions = result.getOrNull()
-        assertNotNull("Suggestions should not be null", suggestions)
-        assertTrue("Should have title suggestions", suggestions!!.titles.isNotEmpty())
-        assertTrue("Should have payee suggestions", suggestions.payees.isNotEmpty())
-    }
-
-    @Test
-    fun `getSuggestions includes all unique titles`() = runUnitTest {
-        val suggestionsFlow = manager.getSuggestions()
-        val result = suggestionsFlow.first()
-        val suggestions = result.getOrThrow()
-
-        assertTrue(
-            "Should contain 'Lunch at McDonald\\'s'",
-            suggestions.titles.contains("Lunch at McDonald's")
-        )
-        assertTrue(
-            "Should contain 'Lunch at Subway'",
-            suggestions.titles.contains("Lunch at Subway")
-        )
-        assertTrue(
-            "Should contain 'Dinner at Italian Restaurant'",
-            suggestions.titles.contains("Dinner at Italian Restaurant")
-        )
-        assertTrue(
-            "Should contain 'Coffee'",
-            suggestions.titles.contains("Coffee")
-        )
-    }
+            assertTrue("Should return success", result.isSuccess)
+            val suggestions = result.getOrNull()
+            assertNotNull("Suggestions should not be null", suggestions)
+            assertTrue("Should have title suggestions", suggestions!!.titles.isNotEmpty())
+            assertTrue("Should have payee suggestions", suggestions.payees.isNotEmpty())
+        }
 
     @Test
-    fun `getSuggestions includes all unique payees`() = runUnitTest {
-        val suggestionsFlow = manager.getSuggestions()
-        val result = suggestionsFlow.first()
-        val suggestions = result.getOrThrow()
+    fun `getSuggestions includes all unique titles`() =
+        runUnitTest {
+            val suggestionsFlow = manager.getSuggestions()
+            val result = suggestionsFlow.first()
+            val suggestions = result.getOrThrow()
 
-        assertTrue(
-            "Should contain 'McDonald\\'s'",
-            suggestions.payees.contains("McDonald's")
-        )
-        assertTrue(
-            "Should contain 'Subway'",
-            suggestions.payees.contains("Subway")
-        )
-        assertTrue(
-            "Should contain 'Italian Restaurant'",
-            suggestions.payees.contains("Italian Restaurant")
-        )
-        assertTrue(
-            "Should contain 'Starbucks'",
-            suggestions.payees.contains("Starbucks")
-        )
-    }
-
-    @Test
-    fun `getSuggestions includes all unique notes`() = runUnitTest {
-        val suggestionsFlow = manager.getSuggestions()
-        val result = suggestionsFlow.first()
-        val suggestions = result.getOrThrow()
-
-        assertTrue(
-            "Should contain 'Quick lunch'",
-            suggestions.notes.contains("Quick lunch")
-        )
-        assertTrue(
-            "Should contain 'Healthy lunch'",
-            suggestions.notes.contains("Healthy lunch")
-        )
-        assertTrue(
-            "Should contain 'Pasta night'",
-            suggestions.notes.contains("Pasta night")
-        )
-    }
+            assertTrue(
+                "Should contain 'Lunch at McDonald\\'s'",
+                suggestions.titles.contains("Lunch at McDonald's"),
+            )
+            assertTrue(
+                "Should contain 'Lunch at Subway'",
+                suggestions.titles.contains("Lunch at Subway"),
+            )
+            assertTrue(
+                "Should contain 'Dinner at Italian Restaurant'",
+                suggestions.titles.contains("Dinner at Italian Restaurant"),
+            )
+            assertTrue(
+                "Should contain 'Coffee'",
+                suggestions.titles.contains("Coffee"),
+            )
+        }
 
     @Test
-    fun `getSuggestions includes all unique tags`() = runUnitTest {
-        val suggestionsFlow = manager.getSuggestions()
-        val result = suggestionsFlow.first()
-        val suggestions = result.getOrThrow()
+    fun `getSuggestions includes all unique payees`() =
+        runUnitTest {
+            val suggestionsFlow = manager.getSuggestions()
+            val result = suggestionsFlow.first()
+            val suggestions = result.getOrThrow()
 
-        // Tags are returned as comma-separated strings, not split
-        assertTrue(
-            "Should contain comma-separated tags from first transaction",
-            suggestions.tags.contains("food,fast-food")
-        )
-        assertTrue(
-            "Should contain tags from other transactions",
-            suggestions.tags.any { it.contains("food") })
-        // Verify we have multiple distinct tag combinations
-        assertTrue("Should have multiple distinct tag strings", suggestions.tags.size >= 2)
-    }
+            assertTrue(
+                "Should contain 'McDonald\\'s'",
+                suggestions.payees.contains("McDonald's"),
+            )
+            assertTrue(
+                "Should contain 'Subway'",
+                suggestions.payees.contains("Subway"),
+            )
+            assertTrue(
+                "Should contain 'Italian Restaurant'",
+                suggestions.payees.contains("Italian Restaurant"),
+            )
+            assertTrue(
+                "Should contain 'Starbucks'",
+                suggestions.payees.contains("Starbucks"),
+            )
+        }
+
+    @Test
+    fun `getSuggestions includes all unique notes`() =
+        runUnitTest {
+            val suggestionsFlow = manager.getSuggestions()
+            val result = suggestionsFlow.first()
+            val suggestions = result.getOrThrow()
+
+            assertTrue(
+                "Should contain 'Quick lunch'",
+                suggestions.notes.contains("Quick lunch"),
+            )
+            assertTrue(
+                "Should contain 'Healthy lunch'",
+                suggestions.notes.contains("Healthy lunch"),
+            )
+            assertTrue(
+                "Should contain 'Pasta night'",
+                suggestions.notes.contains("Pasta night"),
+            )
+        }
+
+    @Test
+    fun `getSuggestions includes all unique tags`() =
+        runUnitTest {
+            val suggestionsFlow = manager.getSuggestions()
+            val result = suggestionsFlow.first()
+            val suggestions = result.getOrThrow()
+
+            // Tags are returned as comma-separated strings, not split
+            assertTrue(
+                "Should contain comma-separated tags from first transaction",
+                suggestions.tags.contains("food,fast-food"),
+            )
+            assertTrue(
+                "Should contain tags from other transactions",
+                suggestions.tags.any { it.contains("food") },
+            )
+            // Verify we have multiple distinct tag combinations
+            assertTrue("Should have multiple distinct tag strings", suggestions.tags.size >= 2)
+        }
 
     // ── Filter Suggestions Tests ──
 
@@ -230,7 +237,7 @@ class SuggestionsManagerTest : BaseUnitTest() {
         assertEquals(2, result.size)
         assertTrue(
             "Should contain Lunch suggestions",
-            result.contains("Lunch at McDonald's") && result.contains("Lunch at Subway")
+            result.contains("Lunch at McDonald's") && result.contains("Lunch at Subway"),
         )
     }
 
@@ -303,15 +310,16 @@ class SuggestionsManagerTest : BaseUnitTest() {
 
     @Test
     fun `getTopFilteredSuggestions filters and limits correctly`() {
-        val suggestions = listOf(
-            "Lunch",
-            "Lunch at McDonald's",
-            "Lunch at Subway",
-            "Lunch at Restaurant",
-            "Lunch at Home",
-            "Dinner",
-            "Breakfast"
-        )
+        val suggestions =
+            listOf(
+                "Lunch",
+                "Lunch at McDonald's",
+                "Lunch at Subway",
+                "Lunch at Restaurant",
+                "Lunch at Home",
+                "Dinner",
+                "Breakfast",
+            )
 
         val result = manager.getTopFilteredSuggestions(suggestions, "Lunch", limit = 3)
 

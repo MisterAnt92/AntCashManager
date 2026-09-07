@@ -2,16 +2,9 @@ package com.antcashmanager.android.data.storage
 
 import android.content.Context
 import android.os.Build
-import android.security.keystore.KeyGenParameterSpec
-import android.security.keystore.KeyProperties
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import co.touchlab.kermit.Logger
-import java.security.KeyStore
-import javax.crypto.Cipher
-import javax.crypto.KeyGenerator
-import javax.crypto.SecretKey
-import javax.crypto.spec.GCMParameterSpec
 
 /**
  * Gestisce la cifratura e decifratura dei token Google Drive usando AndroidKeyStore.
@@ -37,7 +30,6 @@ import javax.crypto.spec.GCMParameterSpec
 class EncryptedGoogleDriveStorage(
     private val context: Context,
 ) {
-
     companion object {
         private const val PREFS_NAME = "google_drive_tokens"
         private const val KEY_ACCESS_TOKEN = "access_token"
@@ -66,17 +58,18 @@ class EncryptedGoogleDriveStorage(
     /**
      * Recupera l'access token (decifratura AES-GCM).
      */
-    suspend fun getAccessToken(): String? {
-        return try {
+    suspend fun getAccessToken(): String? =
+        try {
             val prefs = getEncryptedSharedPreferences()
             val token = prefs.getString(KEY_ACCESS_TOKEN, null)
-            logger.d(tag = "GoogleDriveStorage") { "Access token retrieved (${if (token != null) "present" else "null"})" }
+            logger.d(
+                tag = "GoogleDriveStorage",
+            ) { "Access token retrieved (${if (token != null) "present" else "null"})" }
             token
         } catch (e: Exception) {
             logger.e(tag = "GoogleDriveStorage") { "Error retrieving access token: ${e.message}" }
             null
         }
-    }
 
     /**
      * Salva il refresh token (cifratura AES-GCM robusta).
@@ -98,17 +91,18 @@ class EncryptedGoogleDriveStorage(
     /**
      * Recupera il refresh token (decifratura AES-GCM).
      */
-    suspend fun getRefreshToken(): String? {
-        return try {
+    suspend fun getRefreshToken(): String? =
+        try {
             val prefs = getEncryptedSharedPreferences()
             val token = prefs.getString(KEY_REFRESH_TOKEN, null)
-            logger.d(tag = "GoogleDriveStorage") { "Refresh token retrieved (${if (token != null) "present" else "null"})" }
+            logger.d(
+                tag = "GoogleDriveStorage",
+            ) { "Refresh token retrieved (${if (token != null) "present" else "null"})" }
             token
         } catch (e: Exception) {
             logger.e(tag = "GoogleDriveStorage") { "Error retrieving refresh token: ${e.message}" }
             null
         }
-    }
 
     /**
      * Cancella tutti i token (access + refresh).
@@ -118,7 +112,8 @@ class EncryptedGoogleDriveStorage(
     suspend fun clearAllTokens() {
         try {
             val prefs = getEncryptedSharedPreferences()
-            prefs.edit()
+            prefs
+                .edit()
                 .remove(KEY_ACCESS_TOKEN)
                 .remove(KEY_REFRESH_TOKEN)
                 .apply()
@@ -137,37 +132,42 @@ class EncryptedGoogleDriveStorage(
      * - API 21-27: Genera MasterKey con EncryptedSharedPreferences (supportato da androidx.security)
      * - API <21: Eccezione — non supportato
      */
-    private fun getEncryptedSharedPreferences(): android.content.SharedPreferences {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+    private fun getEncryptedSharedPreferences(): android.content.SharedPreferences =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             // API 28+: MasterKey nativo con AndroidKeyStore
-            val masterKey = MasterKey.Builder(context)
-                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                .build()
+            val masterKey =
+                MasterKey
+                    .Builder(context)
+                    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                    .build()
 
             EncryptedSharedPreferences.create(
                 context,
                 PREFS_NAME,
                 masterKey,
                 EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM,
             )
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             // API 21-27: Fallback a EncryptedSharedPreferences con MasterKey automatico
-            logger.w(tag = "GoogleDriveStorage") { "Using EncryptedSharedPreferences fallback for API ${Build.VERSION.SDK_INT}" }
+            logger.w(
+                tag = "GoogleDriveStorage",
+            ) { "Using EncryptedSharedPreferences fallback for API ${Build.VERSION.SDK_INT}" }
 
-            val masterKey = MasterKey.Builder(context)
-                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                .build()
+            val masterKey =
+                MasterKey
+                    .Builder(context)
+                    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                    .build()
 
             EncryptedSharedPreferences.create(
                 context,
                 PREFS_NAME,
                 masterKey,
                 EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM,
             )
         } else {
             throw UnsupportedOperationException("EncryptedGoogleDriveStorage requires API 21+")
         }
-    }
 }

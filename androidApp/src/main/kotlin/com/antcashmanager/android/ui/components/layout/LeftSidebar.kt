@@ -31,12 +31,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.antcashmanager.android.BuildConfig
+import com.antcashmanager.android.R
+import com.antcashmanager.android.navigation.BottomNavItem
+import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
-import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
-import com.antcashmanager.android.R
-import com.antcashmanager.android.BuildConfig
-import com.antcashmanager.android.navigation.BottomNavItem
 import com.antcashmanager.android.ui.components.text.AppText
 
 /**
@@ -63,28 +63,30 @@ fun LeftSidebar(
     onHeaderClick: () -> Unit = {},
 ) {
     Surface(
-        modifier = modifier
-            .width(280.dp)
-            .fillMaxHeight()
-            .clickable(
-                enabled = true,
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() },
-                onClick = {
-                    // Block click propagation to parent (dimming overlay)
-                    // This prevents closing sidebar when clicking on sidebar itself
-                },
-            ),
+        modifier =
+            modifier
+                .width(280.dp)
+                .fillMaxHeight()
+                .clickable(
+                    enabled = true,
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() },
+                    onClick = {
+                        // Block click propagation to parent (dimming overlay)
+                        // This prevents closing sidebar when clicking on sidebar itself
+                    },
+                ),
         color = MaterialTheme.colorScheme.surface,
         tonalElevation = 6.dp,
         shadowElevation = 8.dp,
         shape = RoundedCornerShape(topEnd = 24.dp, bottomEnd = 24.dp),
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp),
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             // ── Header Card: Logo + App Name ──
@@ -118,13 +120,13 @@ fun LeftSidebar(
 @Composable
 private fun SidebarHeader(onHeaderClick: () -> Unit = {}) {
     Column(
-        modifier = Modifier
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = onHeaderClick,
-            )
-            .padding(vertical = 16.dp),
+        modifier =
+            Modifier
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = onHeaderClick,
+                ).padding(vertical = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
@@ -149,9 +151,10 @@ private fun SidebarHeader(onHeaderClick: () -> Unit = {}) {
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth(0.75f)
-                .padding(horizontal = 12.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth(0.75f)
+                    .padding(horizontal = 12.dp),
             maxLines = 8,
             fontWeight = FontWeight.Normal,
         )
@@ -168,69 +171,80 @@ private fun SidebarMenuItem(
     onClick: () -> Unit,
 ) {
     // Animazioni
-    val backgroundColor = animateColorAsState(
-        targetValue = if (isSelected)
-            MaterialTheme.colorScheme.primaryContainer
-        else
-            androidx.compose.material3.LocalContentColor.current.copy(alpha = 0f),
-        label = "menuItemBgColor",
-    )
+    val backgroundColor =
+        animateColorAsState(
+            targetValue =
+                if (isSelected) {
+                    MaterialTheme.colorScheme.primaryContainer
+                } else {
+                    androidx.compose.material3.LocalContentColor.current
+                        .copy(alpha = 0f)
+                },
+            label = "menuItemBgColor",
+        )
 
-    val textColor = animateColorAsState(
-        targetValue = if (isSelected)
-            MaterialTheme.colorScheme.primary
-        else
-            MaterialTheme.colorScheme.onSurface,
-        label = "menuItemTextColor",
-    )
+    val textColor =
+        animateColorAsState(
+            targetValue =
+                if (isSelected) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.onSurface
+                },
+            label = "menuItemTextColor",
+        )
 
-    val iconScale = animateFloatAsState(
-        targetValue = if (isSelected) 1.1f else 1f,
-        label = "menuItemIconScale",
-    )
+    val iconScale =
+        animateFloatAsState(
+            targetValue = if (isSelected) 1.1f else 1f,
+            label = "menuItemIconScale",
+        )
 
-    val borderOpacity = animateFloatAsState(
-        targetValue = if (isSelected) 1f else 0f,
-        label = "menuItemBorderOpacity",
-    )
+    val borderOpacity =
+        animateFloatAsState(
+            targetValue = if (isSelected) 1f else 0f,
+            label = "menuItemBorderOpacity",
+        )
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .clickable(
-                enabled = true,
-                onClick = onClick,
-                interactionSource = remember { MutableInteractionSource() },
-            )
-            .background(
-                color = backgroundColor.value,
-                shape = RoundedCornerShape(14.dp),
-            )
-            .padding(horizontal = 20.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .clickable(
+                    enabled = true,
+                    onClick = onClick,
+                    interactionSource = remember { MutableInteractionSource() },
+                ).background(
+                    color = backgroundColor.value,
+                    shape = RoundedCornerShape(14.dp),
+                ).padding(horizontal = 20.dp),
         horizontalArrangement = Arrangement.spacedBy(14.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         // Left Border Indicator (animato)
         Spacer(
-            modifier = Modifier
-                .width(4.dp)
-                .height(32.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.primary.copy(
-                        alpha = borderOpacity.value,
+            modifier =
+                Modifier
+                    .width(4.dp)
+                    .height(32.dp)
+                    .background(
+                        color =
+                            MaterialTheme.colorScheme.primary.copy(
+                                alpha = borderOpacity.value,
+                            ),
+                        shape = RoundedCornerShape(2.dp),
                     ),
-                    shape = RoundedCornerShape(2.dp),
-                )
         )
 
         // Icon with scale animation
         Icon(
             imageVector = item.icon,
             contentDescription = stringResource(item.titleResId),
-            modifier = Modifier
-                .size(24.dp)
-                .width(24.dp * iconScale.value),
+            modifier =
+                Modifier
+                    .size(24.dp)
+                    .width(24.dp * iconScale.value),
             tint = textColor.value,
         )
 
@@ -261,9 +275,10 @@ private fun SidebarMenuItem(
 @Composable
 private fun SidebarFooter() {
     Column(
-        modifier = Modifier
-            .fillMaxHeight()
-            .padding(top = 8.dp),
+        modifier =
+            Modifier
+                .fillMaxHeight()
+                .padding(top = 8.dp),
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -271,9 +286,10 @@ private fun SidebarFooter() {
 
         // Elegant divider line
         Surface(
-            modifier = Modifier
-                .fillMaxHeight(0.001f)
-                .height(1.dp),
+            modifier =
+                Modifier
+                    .fillMaxHeight(0.001f)
+                    .height(1.dp),
             color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
         ) {}
 
@@ -298,12 +314,13 @@ private fun SidebarPreview() {
     LeftSidebar(
         selectedRoute = "home",
         onNavigate = {},
-        visibleNavItems = listOf(
-            BottomNavItem.Home,
-            BottomNavItem.Charts,
-            BottomNavItem.Transactions,
-            BottomNavItem.Categories,
-            BottomNavItem.Settings,
-        ),
+        visibleNavItems =
+            listOf(
+                BottomNavItem.Home,
+                BottomNavItem.Charts,
+                BottomNavItem.Transactions,
+                BottomNavItem.Categories,
+                BottomNavItem.Settings,
+            ),
     )
 }

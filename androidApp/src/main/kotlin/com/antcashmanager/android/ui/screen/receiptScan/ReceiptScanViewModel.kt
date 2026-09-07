@@ -6,6 +6,7 @@ import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.analytics.tracker.ErrorTracker
 import com.antcashmanager.android.analytics.tracker.PerformanceTracker
 import com.antcashmanager.android.ui.base.BaseViewModel
+import com.antcashmanager.domain.exception.ReceiptScanException
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.ReceiptData
@@ -45,7 +46,6 @@ class ReceiptScanViewModel(
     private val performanceTracker: PerformanceTracker,
     private val errorTracker: ErrorTracker,
 ) : BaseViewModel<ReceiptScanEvent>() {
-
     // ── State ─────────────────────────────────────────────────────────────────
     private val _state = MutableStateFlow(ReceiptScanState())
     val state: StateFlow<ReceiptScanState> = _state.asStateFlow()
@@ -88,69 +88,85 @@ class ReceiptScanViewModel(
      */
     private fun scanReceipt(imageBytes: ByteArray) {
         activeJob?.cancel()
-        activeJob = viewModelScope.launch {
-            val scanStartTime = System.currentTimeMillis()
-            logDebug("Starting receipt scan, bytes=${imageBytes.size}")
-            _state.update {
-                it.copy(
-                    step = ReceiptScanStep.PROCESSING,
-                    isLoading = true,
-                    error = null
-                )
+        activeJob =
+            viewModelScope.launch {
+                val scanStartTime = System.currentTimeMillis()
+                logDebug("Starting receipt scan, bytes=${imageBytes.size}")
+                _state.update {
+                    it.copy(
+                        step = ReceiptScanStep.PROCESSING,
+                        isLoading = true,
+                        error = null,
+                    )
+                }
+
+                scanReceiptUseCase(imageBytes)
+                    .onSuccess { receiptData ->
+                        logInfo("Scan OK: amount=${receiptData.totalAmount}, payee=${receiptData.payee}")
+                        val duration = System.currentTimeMillis() - scanStartTime
+                        performanceTracker.trackReceiptOcrProcessingTime(duration, pages = 1, success = true)
+
+                        val refinedTitle =
+                            matchSuggestion(receiptData.payee, distinctTitles)
+                                ?: matchAgainstRawText(receiptData.rawText, distinctTitles)
+                                ?: receiptData.payee.ifBlank { ReceiptScanConstant.DEFAULT_TITLE_FALLBACK }
+
+                        val refinedLocation =
+                            matchSuggestion(receiptData.location, distinctLocations)
+                                ?: matchAgainstRawText(receiptData.rawText, distinctLocations)
+                                ?: receiptData.location
+
+                        _state.update { current ->
+                            current.copy(
+                                step = ReceiptScanStep.REVIEW,
+                                receiptData = receiptData,
+                                title = refinedTitle,
+                                payee = receiptData.payee,
+                                location = refinedLocation,
+                                notes = buildDetailedNotes(receiptData),
+                                selectedPaymentType = receiptData.paymentType,
+                                vatNote = buildVatNote(receiptData),
+                                isLoading = false,
+                            )
+                        }
+                    }.onFailure { error ->
+                        if (error is CancellationException) throw error
+                        logError("Scan failed", error)
+                        val duration = System.currentTimeMillis() - scanStartTime
+                        performanceTracker.trackReceiptOcrProcessingTime(duration, pages = 1, success = false)
+                        val errorCode =
+                            when (error) {
+                                is ReceiptScanException.ModelNotReady -> "model_not_ready"
+                                is ReceiptScanException.InvalidImage -> "invalid_image"
+                                is ReceiptScanException.NoTextExtracted -> "text_not_found"
+                                is ReceiptScanException.AmountNotFound -> "amount_not_found"
+                                else ->
+                                    when {
+                                        error.message?.contains("timeout") == true -> "network_timeout"
+                                        else -> "processing_failed"
+                                    }
+                            }
+                        errorTracker.trackReceiptOcrError(errorCode, retryCount = 0)
+                        analyticsManager.logEvent(
+                            "receipt_scan_failed",
+                            Bundle().apply {
+                                putString("failure_reason", error.message?.take(40) ?: "unknown")
+                            },
+                        )
+                        val userMessage =
+                            when (error) {
+                                is ReceiptScanException.ModelNotReady -> ReceiptScanConstant.ERROR_MODEL_NOT_READY
+                                else -> error.message ?: ReceiptScanConstant.ERROR_SCAN
+                            }
+                        _state.update {
+                            it.copy(
+                                step = ReceiptScanStep.CAPTURE,
+                                isLoading = false,
+                                error = userMessage,
+                            )
+                        }
+                    }
             }
-
-            scanReceiptUseCase(imageBytes)
-                .onSuccess { receiptData ->
-                    logInfo("Scan OK: amount=${receiptData.totalAmount}, payee=${receiptData.payee}")
-                    val duration = System.currentTimeMillis() - scanStartTime
-                    performanceTracker.trackReceiptOcrProcessingTime(duration, pages = 1, success = true)
-
-                    val refinedTitle = matchSuggestion(receiptData.payee, distinctTitles)
-                        ?: matchAgainstRawText(receiptData.rawText, distinctTitles)
-                        ?: receiptData.payee.ifBlank { ReceiptScanConstant.DEFAULT_TITLE_FALLBACK }
-
-                    val refinedLocation = matchSuggestion(receiptData.location, distinctLocations)
-                        ?: matchAgainstRawText(receiptData.rawText, distinctLocations)
-                        ?: receiptData.location
-
-                    _state.update { current ->
-                        current.copy(
-                            step = ReceiptScanStep.REVIEW,
-                            receiptData = receiptData,
-                            title = refinedTitle,
-                            payee = receiptData.payee,
-                            location = refinedLocation,
-                            notes = buildDetailedNotes(receiptData),
-                            selectedPaymentType = receiptData.paymentType,
-                            vatNote = buildVatNote(receiptData),
-                            isLoading = false,
-                        )
-                    }
-                }
-                .onFailure { error ->
-                    if (error is CancellationException) throw error
-                    logError("Scan failed", error)
-                    val duration = System.currentTimeMillis() - scanStartTime
-                    performanceTracker.trackReceiptOcrProcessingTime(duration, pages = 1, success = false)
-                    val errorCode = when {
-                        error.message?.contains("timeout") == true -> "network_timeout"
-                        error.message?.contains("image") == true -> "invalid_image"
-                        error.message?.contains("text") == true -> "text_not_found"
-                        else -> "processing_failed"
-                    }
-                    errorTracker.trackReceiptOcrError(errorCode, retryCount = 0)
-                    analyticsManager.logEvent("receipt_scan_failed", Bundle().apply {
-                        putString("failure_reason", error.message?.take(40) ?: "unknown")
-                    })
-                    _state.update {
-                        it.copy(
-                            step = ReceiptScanStep.CAPTURE,
-                            isLoading = false,
-                            error = error.message ?: ReceiptScanConstant.ERROR_SCAN,
-                        )
-                    }
-                }
-        }
     }
 
     /** Aggiorna il titolo della transazione. */
@@ -221,60 +237,64 @@ class ReceiptScanViewModel(
      */
     fun saveTransaction() {
         val current = _state.value
-        val receipt = current.receiptData ?: run {
-            _state.update { it.copy(error = ReceiptScanConstant.ERROR_NO_RECEIPT_DATA) }
-            return
-        }
-        val category = current.selectedCategory ?: run {
-            _state.update { it.copy(error = ReceiptScanConstant.ERROR_SELECT_CATEGORY) }
-            return
-        }
+        val receipt =
+            current.receiptData ?: run {
+                _state.update { it.copy(error = ReceiptScanConstant.ERROR_NO_RECEIPT_DATA) }
+                return
+            }
+        val category =
+            current.selectedCategory ?: run {
+                _state.update { it.copy(error = ReceiptScanConstant.ERROR_SELECT_CATEGORY) }
+                return
+            }
         if (receipt.totalAmount <= 0.0) {
             _state.update { it.copy(error = ReceiptScanConstant.ERROR_INVALID_AMOUNT) }
             return
         }
 
         activeJob?.cancel()
-        activeJob = viewModelScope.launch {
-            logDebug("Saving transaction from receipt: ${current.title}")
-            _state.update { it.copy(isLoading = true, error = null) }
+        activeJob =
+            viewModelScope.launch {
+                logDebug("Saving transaction from receipt: ${current.title}")
+                _state.update { it.copy(isLoading = true, error = null) }
 
-            val effectiveAmount = current.editedAmount ?: receipt.totalAmount
-            if (current.editedAmount != null) {
-                logDebug("Amount edited by user: ${receipt.totalAmount} → ${current.editedAmount}")
-                analyticsManager.logEvent("receipt_scan_manual_entry")
-            }
-
-            val params = CreateTransactionFromReceiptParams(
-                receiptData = receipt.copy(
-                    payee = current.payee,
-                    location = current.location,
-                    totalAmount = effectiveAmount,
-                ),
-                title = current.title,
-                categoryName = category.name,
-                categoryIcon = category.icon,
-                categoryColor = category.color,
-                notes = current.notes,
-                paymentType = current.selectedPaymentType, // override utente sul rilevamento OCR
-            )
-
-            createTransactionUseCase(params)
-                .onSuccess { id ->
-                    logInfo("Transaction saved, id=$id")
-                    _state.update { it.copy(isTransactionSaved = true, isLoading = false) }
+                val effectiveAmount = current.editedAmount ?: receipt.totalAmount
+                if (current.editedAmount != null) {
+                    logDebug("Amount edited by user: ${receipt.totalAmount} → ${current.editedAmount}")
+                    analyticsManager.logEvent("receipt_scan_manual_entry")
                 }
-                .onFailure { error ->
-                    if (error is CancellationException) throw error
-                    logError("Failed to save transaction", error)
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            error = error.message ?: ReceiptScanConstant.ERROR_SAVE,
-                        )
+
+                val params =
+                    CreateTransactionFromReceiptParams(
+                        receiptData =
+                            receipt.copy(
+                                payee = current.payee,
+                                location = current.location,
+                                totalAmount = effectiveAmount,
+                            ),
+                        title = current.title,
+                        categoryName = category.name,
+                        categoryIcon = category.icon,
+                        categoryColor = category.color,
+                        notes = current.notes,
+                        paymentType = current.selectedPaymentType, // override utente sul rilevamento OCR
+                    )
+
+                createTransactionUseCase(params)
+                    .onSuccess { id ->
+                        logInfo("Transaction saved, id=$id")
+                        _state.update { it.copy(isTransactionSaved = true, isLoading = false) }
+                    }.onFailure { error ->
+                        if (error is CancellationException) throw error
+                        logError("Failed to save transaction", error)
+                        _state.update {
+                            it.copy(
+                                isLoading = false,
+                                error = error.message ?: ReceiptScanConstant.ERROR_SAVE,
+                            )
+                        }
                     }
-                }
-        }
+            }
     }
 
     /** Azzera l'errore corrente. */
@@ -285,11 +305,11 @@ class ReceiptScanViewModel(
     private fun loadSuggestions() {
         viewModelScope.launch {
             getTransactionSuggestionsUseCase().collect { result ->
-                result.onSuccess { suggestions ->
-                    distinctTitles = suggestions.titles
-                    distinctLocations = suggestions.locations
-                }
-                    .onFailure { error ->
+                result
+                    .onSuccess { suggestions ->
+                        distinctTitles = suggestions.titles
+                        distinctLocations = suggestions.locations
+                    }.onFailure { error ->
                         // FASE 5: Log error for debugging (will be surfaced to user via ErrorState in future)
                         logError("Failed to load transaction suggestions: ${error.message}")
                     }
@@ -297,12 +317,18 @@ class ReceiptScanViewModel(
         }
     }
 
-    private fun matchSuggestion(input: String, suggestions: List<String>): String? {
+    private fun matchSuggestion(
+        input: String,
+        suggestions: List<String>,
+    ): String? {
         if (input.isBlank()) return null
         return suggestions.find { it.equals(input, ignoreCase = true) }
     }
 
-    private fun matchAgainstRawText(rawText: String, suggestions: List<String>): String? {
+    private fun matchAgainstRawText(
+        rawText: String,
+        suggestions: List<String>,
+    ): String? {
         val lines = rawText.lines().map { it.trim().uppercase() }
         // Cerca se qualcuna delle suggerite è presente come sottostringa intera in una riga
         suggestions.forEach { suggestion ->
@@ -312,8 +338,8 @@ class ReceiptScanViewModel(
         return null
     }
 
-    private fun buildDetailedNotes(receipt: ReceiptData): String {
-        return buildString {
+    private fun buildDetailedNotes(receipt: ReceiptData): String =
+        buildString {
             // 1. IVA
             if (receipt.vatRate > 0.0 || receipt.vatAmount > 0.0) {
                 append(ReceiptScanConstant.LABEL_VAT)
@@ -330,29 +356,33 @@ class ReceiptScanViewModel(
                 }
             }
         }.trim()
-    }
 
     private fun loadExpenseCategories() {
         viewModelScope.launch {
             getCategoriesUseCase().collect { result ->
-                result.onSuccess { categories ->
-                    val expenseCategories = categories.filter {
-                        it.type.equals(
-                            ReceiptScanConstant.EXPENSE_TYPE,
-                            ignoreCase = true
-                        ) && !it.isHidden
-                    }.sortedBy { it.sortOrder }
-                    _state.update { current ->
-                        current.copy(
-                            categories = expenseCategories,
-                            selectedCategory = current.selectedCategory
-                                ?: expenseCategories.firstOrNull(),
-                        )
+                result
+                    .onSuccess { categories ->
+                        val expenseCategories =
+                            categories
+                                .filter {
+                                    it.type.equals(
+                                        ReceiptScanConstant.EXPENSE_TYPE,
+                                        ignoreCase = true,
+                                    ) &&
+                                        !it.isHidden
+                                }.sortedBy { it.sortOrder }
+                        _state.update { current ->
+                            current.copy(
+                                categories = expenseCategories,
+                                selectedCategory =
+                                    current.selectedCategory
+                                        ?: expenseCategories.firstOrNull(),
+                            )
+                        }
+                    }.onFailure { error ->
+                        if (error is CancellationException) throw error
+                        logError("Failed to load categories", error)
                     }
-                }.onFailure { error ->
-                    if (error is CancellationException) throw error
-                    logError("Failed to load categories", error)
-                }
             }
         }
     }

@@ -11,7 +11,6 @@ package com.antcashmanager.android.ui.screen.transactions.addImport.validator
  * Pattern: Service pattern - metodi statici per validazione pura
  */
 object TransactionValidator {
-
     /**
      * Normalizza l'importo inserito dall'utente.
      *
@@ -37,7 +36,7 @@ object TransactionValidator {
             // Mantieni solo il primo punto
             val firstDotIndex = normalized.indexOf('.')
             normalized.substring(0, firstDotIndex + 1) +
-                    normalized.substring(firstDotIndex + 1).replace(".", "")
+                normalized.substring(firstDotIndex + 1).replace(".", "")
         }
     }
 
@@ -96,7 +95,7 @@ object TransactionValidator {
             // Mantieni solo il primo punto
             val firstDotIndex = normalized.indexOf('.')
             normalized.substring(0, firstDotIndex + 1) +
-                    normalized.substring(firstDotIndex + 1).replace(".", "")
+                normalized.substring(firstDotIndex + 1).replace(".", "")
         }
     }
 }

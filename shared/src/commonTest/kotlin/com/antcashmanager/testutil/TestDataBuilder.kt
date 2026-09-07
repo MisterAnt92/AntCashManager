@@ -36,30 +36,32 @@ class TransactionTestDataBuilder {
     var categoryIcon: String = ""
     var categoryColor: Long = 0xFF000000L
 
-    fun build(): Transaction = Transaction(
-        id = id,
-        title = title,
-        amount = amount,
-        category = category,
-        type = type,
-        timestamp = timestamp,
-        notes = notes,
-        payee = payee,
-        location = location,
-        isRecurring = isRecurring,
-        tags = tags,
-        recurrenceInterval = recurrenceInterval,
-        paymentType = paymentType,
-        mealVoucherCount = mealVoucherCount,
-        mealVoucherDifference = mealVoucherDifference,
-        categoryIcon = categoryIcon,
-        categoryColor = categoryColor,
-    )
+    fun build(): Transaction =
+        Transaction(
+            id = id,
+            title = title,
+            amount = amount,
+            category = category,
+            type = type,
+            timestamp = timestamp,
+            notes = notes,
+            payee = payee,
+            location = location,
+            isRecurring = isRecurring,
+            tags = tags,
+            recurrenceInterval = recurrenceInterval,
+            paymentType = paymentType,
+            mealVoucherCount = mealVoucherCount,
+            mealVoucherDifference = mealVoucherDifference,
+            categoryIcon = categoryIcon,
+            categoryColor = categoryColor,
+        )
 }
 
-fun testTransaction(block: TransactionTestDataBuilder.() -> Unit = {}): Transaction {
-    return TransactionTestDataBuilder().apply(block).build()
-}
+fun testTransaction(
+    block: TransactionTestDataBuilder.() -> Unit = {
+    },
+): Transaction = TransactionTestDataBuilder().apply(block).build()
 
 /**
  * Builder for Category test data.
@@ -74,21 +76,23 @@ class CategoryTestDataBuilder {
     var sortOrder: Int = 0
     var isHidden: Boolean = false
 
-    fun build(): Category = Category(
-        id = id,
-        name = name,
-        icon = icon,
-        color = color,
-        type = type,
-        isDefault = isDefault,
-        sortOrder = sortOrder,
-        isHidden = isHidden,
-    )
+    fun build(): Category =
+        Category(
+            id = id,
+            name = name,
+            icon = icon,
+            color = color,
+            type = type,
+            isDefault = isDefault,
+            sortOrder = sortOrder,
+            isHidden = isHidden,
+        )
 }
 
-fun testCategory(block: CategoryTestDataBuilder.() -> Unit = {}): Category {
-    return CategoryTestDataBuilder().apply(block).build()
-}
+fun testCategory(
+    block: CategoryTestDataBuilder.() -> Unit = {
+    },
+): Category = CategoryTestDataBuilder().apply(block).build()
 
 /**
  * Builder for SavedDateFilter test data.
@@ -98,16 +102,18 @@ class SavedDateFilterTestDataBuilder {
     var from: Long = System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000L
     var to: Long = System.currentTimeMillis()
 
-    fun build(): SavedDateFilter = SavedDateFilter(
-        presetIndex = presetIndex,
-        from = from,
-        to = to,
-    )
+    fun build(): SavedDateFilter =
+        SavedDateFilter(
+            presetIndex = presetIndex,
+            from = from,
+            to = to,
+        )
 }
 
-fun testSavedDateFilter(block: SavedDateFilterTestDataBuilder.() -> Unit = {}): SavedDateFilter {
-    return SavedDateFilterTestDataBuilder().apply(block).build()
-}
+fun testSavedDateFilter(
+    block: SavedDateFilterTestDataBuilder.() -> Unit = {
+    },
+): SavedDateFilter = SavedDateFilterTestDataBuilder().apply(block).build()
 
 /**
  * Common test data constants.

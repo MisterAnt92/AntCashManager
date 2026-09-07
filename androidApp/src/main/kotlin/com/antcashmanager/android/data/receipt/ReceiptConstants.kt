@@ -6,4 +6,3 @@ package com.antcashmanager.android.data.receipt
 object ReceiptConstants {
     const val TAG = "MlKitReceiptOcrService"
 }
-

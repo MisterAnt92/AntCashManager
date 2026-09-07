@@ -50,7 +50,6 @@ data class ErrorState(
 abstract class BaseViewModel<E : Any>(
     protected val dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : ViewModel() {
-
     protected val tag: String = this::class.simpleName ?: "ViewModel"
 
     /**
@@ -76,7 +75,10 @@ abstract class BaseViewModel<E : Any>(
         Logger.w(tag = tag) { message }
     }
 
-    protected fun logError(message: String, throwable: Throwable? = null) {
+    protected fun logError(
+        message: String,
+        throwable: Throwable? = null,
+    ) {
         if (throwable != null) {
             Logger.e(throwable = throwable, tag = tag) { message }
         } else {
@@ -99,17 +101,17 @@ abstract class BaseViewModel<E : Any>(
      * @return the successful value or null if error occurred
      */
     protected fun <T> Result<T>.handleError(
-        onError: (error: ErrorState) -> Unit = { logError(it.message ?: "Unknown error") }
-    ): T? {
-        return onFailure { error ->
+        onError: (error: ErrorState) -> Unit = { logError(it.message ?: "Unknown error") },
+    ): T? =
+        onFailure { error ->
             if (error is CancellationException) throw error
-            val errorState = ErrorState(
-                isError = true,
-                message = error.message ?: error::class.simpleName,
-                throwable = error,
-                retryable = error is IOException
-            )
+            val errorState =
+                ErrorState(
+                    isError = true,
+                    message = error.message ?: error::class.simpleName,
+                    throwable = error,
+                    retryable = error is IOException,
+                )
             onError(errorState)
         }.getOrNull()
-    }
 }

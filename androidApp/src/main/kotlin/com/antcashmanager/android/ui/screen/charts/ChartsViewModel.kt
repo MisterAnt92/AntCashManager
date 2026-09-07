@@ -43,7 +43,6 @@ class ChartsViewModel(
     private val settingsRepository: SettingsRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : BaseViewModel<ChartEvent>(dispatcher) {
-
     constructor(
         transactionRepository: TransactionRepository,
         settingsRepository: SettingsRepository,
@@ -51,15 +50,17 @@ class ChartsViewModel(
         performanceTracker: PerformanceTracker,
         segmentationTracker: SegmentationTracker,
     ) : this(
-        getTransactionsByDateRangeUseCase = GetTransactionsByDateRangeUseCase(
-            transactionRepository = transactionRepository,
-            dispatcher = dispatcher,
-        ),
+        getTransactionsByDateRangeUseCase =
+            GetTransactionsByDateRangeUseCase(
+                transactionRepository = transactionRepository,
+                dispatcher = dispatcher,
+            ),
         getChartsDateFilterStateUseCase = GetChartsDateFilterStateUseCase(settingsRepository),
-        setChartsDateFilterStateUseCase = SetChartsDateFilterStateUseCase(
-            settingsRepository = settingsRepository,
-            dispatcher = dispatcher,
-        ),
+        setChartsDateFilterStateUseCase =
+            SetChartsDateFilterStateUseCase(
+                settingsRepository = settingsRepository,
+                dispatcher = dispatcher,
+            ),
         performanceTracker = performanceTracker,
         segmentationTracker = segmentationTracker,
         settingsRepository = settingsRepository,
@@ -75,32 +76,36 @@ class ChartsViewModel(
     private val _selectedChartDetails = MutableStateFlow<ChartDetailsData?>(null)
     val selectedChartDetails: StateFlow<ChartDetailsData?> = _selectedChartDetails.asStateFlow()
 
-    val chartData: StateFlow<ChartData> = _dateRange
-        .flatMapLatest { range ->
-            getTransactionsByDateRangeUseCase(range).map { result ->
-                // Apply amount correction for EXPENSE transactions
-                buildChartData(result.getOrElse { emptyList() }.withCorrectAmounts())
-            }
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = ChartData(),
-        )
+    val chartData: StateFlow<ChartData> =
+        _dateRange
+            .flatMapLatest { range ->
+                getTransactionsByDateRangeUseCase(range).map { result ->
+                    // Apply amount correction for EXPENSE transactions
+                    buildChartData(result.getOrElse { emptyList() }.withCorrectAmounts())
+                }
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = ChartData(),
+            )
 
-    val chartsZoomEnabled: StateFlow<Boolean> = settingsRepository.getChartsZoomEnabled()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = false,
-        )
+    val chartsZoomEnabled: StateFlow<Boolean> =
+        settingsRepository
+            .getChartsZoomEnabled()
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = false,
+            )
 
-    val chartsCardOrder: StateFlow<String> = settingsRepository.getChartCardsOrder()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = ChartsConstant.DEFAULT_CHARTS_CARDS_ORDER,
-        )
+    val chartsCardOrder: StateFlow<String> =
+        settingsRepository
+            .getChartCardsOrder()
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = ChartsConstant.DEFAULT_CHARTS_CARDS_ORDER,
+            )
 
     init {
         observeSavedDateFilter()
@@ -111,12 +116,13 @@ class ChartsViewModel(
         when (event) {
             is ChartEvent.SetDateRange -> setDateRange(event.from, event.to)
             is ChartEvent.SetPresetRange -> setPresetRange(event.preset)
-            is ChartEvent.SelectChartCategory -> selectChartCategory(
-                event.categoryName,
-                event.amount,
-                event.colorHex,
-                event.isExpense
-            )
+            is ChartEvent.SelectChartCategory ->
+                selectChartCategory(
+                    event.categoryName,
+                    event.amount,
+                    event.colorHex,
+                    event.isExpense,
+                )
             is ChartEvent.ClearChartSelection -> clearChartSelection()
             is ChartEvent.RetryLastOperation -> logInfo("Retry requested")
             is ChartEvent.SetChartCardsOrder -> setChartCardsOrder(event.order)
@@ -129,7 +135,10 @@ class ChartsViewModel(
         }
     }
 
-    fun setDateRange(from: Long, to: Long) {
+    fun setDateRange(
+        from: Long,
+        to: Long,
+    ) {
         val normalizedFrom = minOf(from, to)
         val normalizedTo = maxOf(from, to)
         logDebug("Setting date range: $normalizedFrom - $normalizedTo")
@@ -159,7 +168,8 @@ class ChartsViewModel(
 
     private fun observeSavedDateFilter() {
         viewModelScope.launch {
-            getChartsDateFilterStateUseCase().mapNotNull { result: Result<SavedDateFilter> -> result.getOrNull() }
+            getChartsDateFilterStateUseCase()
+                .mapNotNull { result: Result<SavedDateFilter> -> result.getOrNull() }
                 .collect { savedFilter: SavedDateFilter ->
                     _selectedPresetIndex.value = savedFilter.presetIndex
                     _dateRange.value = DateRange(savedFilter.from, savedFilter.to)
@@ -231,13 +241,15 @@ class ChartsViewModel(
 
         logDebug("Income transactions: ${incomeTransactions.size}, Expense transactions: ${expenseTransactions.size}")
 
-        val incomeByCategory = incomeTransactions
-            .groupBy { it.category }
-            .mapValues { (_, txs) -> txs.sumOf { it.amount } }
+        val incomeByCategory =
+            incomeTransactions
+                .groupBy { it.category }
+                .mapValues { (_, txs) -> txs.sumOf { it.amount } }
 
-        val expenseByCategory = expenseTransactions
-            .groupBy { it.category }
-            .mapValues { (_, txs) -> kotlin.math.abs(txs.sumOf { it.amount }) } // Use absolute value for pie chart
+        val expenseByCategory =
+            expenseTransactions
+                .groupBy { it.category }
+                .mapValues { (_, txs) -> kotlin.math.abs(txs.sumOf { it.amount }) } // Use absolute value for pie chart
 
         val totalIncome = incomeByCategory.values.sum()
         val totalExpense =
@@ -248,31 +260,43 @@ class ChartsViewModel(
         // Build monthly aggregation
         val cal = Calendar.getInstance()
         val monthlyMap = mutableMapOf<String, Pair<Double, Double>>()
-        val monthNames = arrayOf(
-            "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-        )
+        val monthNames =
+            arrayOf(
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May",
+                "Jun",
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec",
+            )
 
         transactions.forEach { tx ->
             cal.timeInMillis = tx.timestamp
             val key = "${monthNames[cal.get(Calendar.MONTH)]} ${cal.get(Calendar.YEAR) % 100}"
             val current = monthlyMap.getOrDefault(key, 0.0 to 0.0)
-            monthlyMap[key] = when (tx.type) {
-                TransactionType.INCOME -> (current.first + tx.amount) to current.second
-                TransactionType.EXPENSE -> current.first to (current.second + kotlin.math.abs(tx.amount)) // Use absolute value
-            }
+            monthlyMap[key] =
+                when (tx.type) {
+                    TransactionType.INCOME -> (current.first + tx.amount) to current.second
+                    TransactionType.EXPENSE -> current.first to (current.second + kotlin.math.abs(tx.amount)) // Use absolute value
+                }
         }
 
-        val monthlyData = monthlyMap.entries
-            .sortedBy { entry ->
-                val parts = entry.key.split(" ")
-                val monthIdx = monthNames.indexOf(parts[0])
-                val year = parts[1].toIntOrNull() ?: 0
-                year * 100 + monthIdx
-            }
-            .map { (label, amounts) ->
-                MonthlyAmount(label, amounts.first, amounts.second) // Both are positive
-            }
+        val monthlyData =
+            monthlyMap.entries
+                .sortedBy { entry ->
+                    val parts = entry.key.split(" ")
+                    val monthIdx = monthNames.indexOf(parts[0])
+                    val year = parts[1].toIntOrNull() ?: 0
+                    year * 100 + monthIdx
+                }.map { (label, amounts) ->
+                    MonthlyAmount(label, amounts.first, amounts.second) // Both are positive
+                }
 
         logDebug("Monthly data: ${monthlyData.map { "${it.label}: income=${it.income}, expense=${it.expense}" }}")
 
@@ -283,46 +307,51 @@ class ChartsViewModel(
             cal.timeInMillis = tx.timestamp
             val year = cal.get(Calendar.YEAR)
             val current = yearlyMap.getOrDefault(year, 0.0 to 0.0)
-            yearlyMap[year] = when (tx.type) {
-                TransactionType.INCOME -> (current.first + tx.amount) to current.second
-                TransactionType.EXPENSE -> current.first to (current.second + kotlin.math.abs(tx.amount)) // Use absolute value
-            }
+            yearlyMap[year] =
+                when (tx.type) {
+                    TransactionType.INCOME -> (current.first + tx.amount) to current.second
+                    TransactionType.EXPENSE -> current.first to (current.second + kotlin.math.abs(tx.amount)) // Use absolute value
+                }
         }
 
-        val yearlyData = yearlyMap.entries
-            .sortedBy { it.key }
-            .map { (year, amounts) ->
-                YearlyAmount(
-                    year = year,
-                    label = year.toString(),
-                    income = amounts.first,
-                    expense = amounts.second, // Positive
-                )
-            }
+        val yearlyData =
+            yearlyMap.entries
+                .sortedBy { it.key }
+                .map { (year, amounts) ->
+                    YearlyAmount(
+                        year = year,
+                        label = year.toString(),
+                        income = amounts.first,
+                        expense = amounts.second, // Positive
+                    )
+                }
 
         logDebug("Yearly data: ${yearlyData.map { "${it.label}: income=${it.income}, expense=${it.expense}" }}")
 
         // Ripartizione per metodo di pagamento (entrate + uscite nette, come HomeViewModel).
-        val paymentTypeBreakdown = transactions
-            .groupBy { it.paymentType }
-            .mapValues { (_, txs) -> kotlin.math.abs(txs.sumOf { it.amount }) }
-            .filterValues { it != 0.0 }
+        val paymentTypeBreakdown =
+            transactions
+                .groupBy { it.paymentType }
+                .mapValues { (_, txs) -> kotlin.math.abs(txs.sumOf { it.amount }) }
+                .filterValues { it != 0.0 }
 
         // Calculate expense by weekday (1=Mon...7=Sun per EU convention)
         // Returns total expense amount per weekday, not average
-        val expenseByWeekday = expenseTransactions
-            .groupBy { tx ->
-                cal.timeInMillis = tx.timestamp
-                // Calendar.DAY_OF_WEEK: 1=Sun, 2=Mon, ..., 7=Sat
-                // Convert to EU convention: 1=Mon, 2=Tue, ..., 7=Sun
-                val calendarDayOfWeek = cal.get(Calendar.DAY_OF_WEEK)
-                if (calendarDayOfWeek == 1) 7 else calendarDayOfWeek - 1
-            }
-            .mapValues { (_, txs) ->
-                if (txs.isNotEmpty()) {
-                    kotlin.math.abs(txs.sumOf { it.amount })
-                } else 0.0
-            }
+        val expenseByWeekday =
+            expenseTransactions
+                .groupBy { tx ->
+                    cal.timeInMillis = tx.timestamp
+                    // Calendar.DAY_OF_WEEK: 1=Sun, 2=Mon, ..., 7=Sat
+                    // Convert to EU convention: 1=Mon, 2=Tue, ..., 7=Sun
+                    val calendarDayOfWeek = cal.get(Calendar.DAY_OF_WEEK)
+                    if (calendarDayOfWeek == 1) 7 else calendarDayOfWeek - 1
+                }.mapValues { (_, txs) ->
+                    if (txs.isNotEmpty()) {
+                        kotlin.math.abs(txs.sumOf { it.amount })
+                    } else {
+                        0.0
+                    }
+                }
 
         // Calculate daily timeline (sorted by date, only expenses)
         val dateFormat = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)
@@ -334,11 +363,12 @@ class ChartsViewModel(
             dailyMap[dateLabel] = current + kotlin.math.abs(tx.amount)
         }
 
-        val dailyTimeline = dailyMap.entries
-            .sortedBy { it.key }
-            .map { (dateLabel, expense) ->
-                DailyAmount(dateLabel = dateLabel, expense = expense)
-            }
+        val dailyTimeline =
+            dailyMap.entries
+                .sortedBy { it.key }
+                .map { (dateLabel, expense) ->
+                    DailyAmount(dateLabel = dateLabel, expense = expense)
+                }
 
         val duration = System.currentTimeMillis() - startTime
         performanceTracker.trackChartRenderingTime(duration, transactions.size)
@@ -347,7 +377,9 @@ class ChartsViewModel(
         if (expenseByCategory.isNotEmpty()) {
             val maxExpenseCategory = expenseByCategory.maxByOrNull { it.value }
             if (maxExpenseCategory != null) {
-                val avgExpense = maxExpenseCategory.value / kotlin.math.max(1, expenseTransactions.count { it.category == maxExpenseCategory.key })
+                val avgExpense =
+                    maxExpenseCategory.value /
+                        kotlin.math.max(1, expenseTransactions.count { it.category == maxExpenseCategory.key })
                 segmentationTracker.trackSpendingPatternDetected("category_focus", maxExpenseCategory.key, avgExpense)
             }
         }
@@ -356,7 +388,9 @@ class ChartsViewModel(
         if (incomeByCategory.isNotEmpty()) {
             val maxIncomeCategory = incomeByCategory.maxByOrNull { it.value }
             if (maxIncomeCategory != null) {
-                val avgIncome = maxIncomeCategory.value / kotlin.math.max(1, incomeTransactions.count { it.category == maxIncomeCategory.key })
+                val avgIncome =
+                    maxIncomeCategory.value /
+                        kotlin.math.max(1, incomeTransactions.count { it.category == maxIncomeCategory.key })
                 segmentationTracker.trackIncomeSourceTracking(maxIncomeCategory.key, "monthly", avgIncome)
             }
         }
@@ -391,26 +425,29 @@ class ChartsViewModel(
         val currentData = chartData.value
         val totalAmount = if (isExpense) currentData.totalExpense else currentData.totalIncome
 
-        val percentage = if (totalAmount != 0.0) {
-            ((abs(amount) / totalAmount) * 100).toInt().coerceIn(0, 100)
-        } else {
-            0
-        }
+        val percentage =
+            if (totalAmount != 0.0) {
+                ((abs(amount) / totalAmount) * 100).toInt().coerceIn(0, 100)
+            } else {
+                0
+            }
 
         // Calculate trend based on transaction count for this category
-        val transactionCount = when {
-            isExpense -> currentData.expenseByCategory[categoryName]?.let { 1 } ?: 0
-            else -> currentData.incomeByCategory[categoryName]?.let { 1 } ?: 0
-        }
+        val transactionCount =
+            when {
+                isExpense -> currentData.expenseByCategory[categoryName]?.let { 1 } ?: 0
+                else -> currentData.incomeByCategory[categoryName]?.let { 1 } ?: 0
+            }
 
-        val details = ChartDetailsData(
-            categoryName = categoryName,
-            amount = amount,
-            percentage = percentage,
-            colorHex = colorHex,
-            transactionCount = transactionCount,
-            trend = TrendDirection.NEUTRAL, // Can be enhanced with trend analysis
-        )
+        val details =
+            ChartDetailsData(
+                categoryName = categoryName,
+                amount = amount,
+                percentage = percentage,
+                colorHex = colorHex,
+                transactionCount = transactionCount,
+                trend = TrendDirection.NEUTRAL, // Can be enhanced with trend analysis
+            )
 
         _selectedChartDetails.value = details
         logDebug("Selected chart category: $categoryName (${abs(amount)}, $percentage%)")
@@ -425,7 +462,9 @@ class ChartsViewModel(
     }
 }
 
-enum class RangePreset(@StringRes val labelResId: Int) {
+enum class RangePreset(
+    @StringRes val labelResId: Int,
+) {
     WEEK(R.string.range_week),
     MONTH(R.string.range_month),
     THREE_MONTHS(R.string.range_three_months),

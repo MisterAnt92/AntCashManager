@@ -1,15 +1,11 @@
 package com.antcashmanager.android.ui.components.dialog
-import com.antcashmanager.android.BaseComposeUnitTest
-import org.junit.Ignore
-
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.onNodeWithContentDescription
-import androidx.compose.ui.test.assertIsEnabled
-import androidx.compose.ui.test.assertIsNotEnabled
-import com.antcashmanager.android.ui.screen.home.view.HomeTopCardsOrderDialog
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import com.antcashmanager.android.BaseComposeUnitTest
 import com.antcashmanager.android.ui.screen.home.model.HomeTopCardType
+import com.antcashmanager.android.ui.screen.home.view.HomeTopCardsOrderDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import org.junit.Test
 
@@ -27,11 +23,11 @@ import org.junit.Test
  * For now, we keep them as unit test placeholders - they document the test structure.
  */
 class HomeTopCardsOrderDialogTest : BaseComposeUnitTest() {
-
-    private val testOrder = listOf(
-        HomeTopCardType.BALANCE,
-        HomeTopCardType.INCOME_EXPENSE,
-    )
+    private val testOrder =
+        listOf(
+            HomeTopCardType.BALANCE,
+            HomeTopCardType.INCOME_EXPENSE,
+        )
 
     @Test
     fun dialog_shouldDisplayAllOrderItems() {
@@ -49,7 +45,8 @@ class HomeTopCardsOrderDialogTest : BaseComposeUnitTest() {
 
         // Verificare che entrambi gli elementi sono visualizzati
         for (item in testOrder) {
-            composeTestRule.onNodeWithText(text = "", substring = true)
+            composeTestRule
+                .onNodeWithText(text = "", substring = true)
                 .assertIsDisplayed()
         }
     }
@@ -75,7 +72,8 @@ class HomeTopCardsOrderDialogTest : BaseComposeUnitTest() {
         }
 
         // Cliccare il pulsante move up per il secondo elemento (che ha move up abilitato)
-        composeTestRule.onNodeWithContentDescription("Move up", substring = true)
+        composeTestRule
+            .onNodeWithContentDescription("Move up", substring = true)
             .performClick()
 
         assert(moveUpCalled)
@@ -102,7 +100,8 @@ class HomeTopCardsOrderDialogTest : BaseComposeUnitTest() {
         }
 
         // Cliccare il pulsante move down per il primo elemento (che ha move down abilitato)
-        composeTestRule.onNodeWithContentDescription("Move down", substring = true)
+        composeTestRule
+            .onNodeWithContentDescription("Move down", substring = true)
             .performClick()
 
         assert(moveDownCalled)
@@ -161,7 +160,8 @@ class HomeTopCardsOrderDialogTest : BaseComposeUnitTest() {
         }
 
         // Cliccare il pulsante cancel
-        composeTestRule.onNodeWithText("Cancel", substring = true)
+        composeTestRule
+            .onNodeWithText("Cancel", substring = true)
             .performClick()
 
         assert(dismissCalled)
@@ -184,7 +184,8 @@ class HomeTopCardsOrderDialogTest : BaseComposeUnitTest() {
         }
 
         // Cliccare il pulsante confirm
-        composeTestRule.onNodeWithText("Confirm", substring = true)
+        composeTestRule
+            .onNodeWithText("Confirm", substring = true)
             .performClick()
 
         assert(confirmCalled)
@@ -211,11 +212,12 @@ class HomeTopCardsOrderDialogTest : BaseComposeUnitTest() {
 
     @Test
     fun dialog_withMultipleElements_shouldEnableMiddleButtons() {
-        val multipleOrder = listOf(
-            HomeTopCardType.BALANCE,
-            HomeTopCardType.INCOME_EXPENSE,
-            HomeTopCardType.QUICK_INSIGHTS,
-        )
+        val multipleOrder =
+            listOf(
+                HomeTopCardType.BALANCE,
+                HomeTopCardType.INCOME_EXPENSE,
+                HomeTopCardType.QUICK_INSIGHTS,
+            )
 
         composeTestRule.setContent {
             AntCashManagerTheme {

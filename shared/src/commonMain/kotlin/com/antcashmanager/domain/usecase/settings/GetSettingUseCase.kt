@@ -35,6 +35,5 @@ public class GetSettingUseCase<T>(
     private val getter: () -> Flow<T>,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : NoParamsObservableUseCase<T>(dispatcher) {
-
     override fun execute(params: Unit): Flow<T> = getter()
 }

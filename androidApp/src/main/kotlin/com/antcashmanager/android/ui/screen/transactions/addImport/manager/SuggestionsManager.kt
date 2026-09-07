@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.Flow
 class SuggestionsManager(
     private val getTransactionSuggestionsUseCase: GetTransactionSuggestionsUseCase,
 ) {
-
     /**
      * Carica i suggerimenti per tutti i campi di input.
      *
@@ -30,9 +29,7 @@ class SuggestionsManager(
      *
      * @return Flow di Result<TransactionSuggestions> che emette i suggerimenti al caricamento
      */
-    fun getSuggestions(): Flow<Result<TransactionSuggestions>> {
-        return getTransactionSuggestionsUseCase()
-    }
+    fun getSuggestions(): Flow<Result<TransactionSuggestions>> = getTransactionSuggestionsUseCase()
 
     /**
      * Filtra i suggerimenti in base a un termine di ricerca.
@@ -41,7 +38,10 @@ class SuggestionsManager(
      * @param query Il termine di ricerca
      * @return Lista di suggerimenti filtrati che contengono la query (case-insensitive)
      */
-    fun filterSuggestions(suggestions: List<String>, query: String): List<String> {
+    fun filterSuggestions(
+        suggestions: List<String>,
+        query: String,
+    ): List<String> {
         if (query.isBlank()) return emptyList()
         return suggestions.filter { it.contains(query, ignoreCase = true) }
     }
@@ -57,8 +57,6 @@ class SuggestionsManager(
     fun getTopFilteredSuggestions(
         suggestions: List<String>,
         query: String,
-        limit: Int = 5
-    ): List<String> {
-        return filterSuggestions(suggestions, query).take(limit)
-    }
+        limit: Int = 5,
+    ): List<String> = filterSuggestions(suggestions, query).take(limit)
 }

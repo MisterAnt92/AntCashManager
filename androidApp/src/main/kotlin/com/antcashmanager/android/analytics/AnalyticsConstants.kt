@@ -8,168 +8,156 @@ object AnalyticsConstants {
     const val MAX_NAME_LENGTH = 40
     const val SCREEN_CLASS_COMPOSE_NAV_HOST = "ComposeNavHost"
 
-    val ALLOWED_USAGE_EVENTS = setOf(
-        // Existing events
-        "transactions_filter_applied",
-        "transactions_filter_cleared",
-        "transaction_add_opened",
-        "receipt_scan_opened",
-        "transaction_form_opened",
-        "transaction_form_cancelled",
-        "transaction_submit_success",
-        "transaction_deleted",
-        "transaction_shared",
-        "backup_create_requested",
-        "backup_file_saved",
-        "backup_file_save_error",
-        "restore_open_requested",
-        "restore_file_selected",
-        "delete_all_data_confirmed",
-        "reset_preferences_confirmed",
-        "delete_suggestions_confirmed",
-        "category_created",
-        "category_deleted",
-        "categories_reordered",
-        "categories_reorder_opened",
-        "category_hidden",
-        "category_shown",
-        "chart_date_filter_changed",
-        "chart_custom_date_range_set",
-        "chart_shared",
-        "chart_help_opened",
-        "home_top_cards_reordered",
-        "home_date_filter_changed",
-        "home_search_opened",
-        "home_help_opened",
-        "receipt_scan_captured",
-        "receipt_scan_saved",
-        "receipt_scan_amount_edited",
-        "data_encryption_toggled",
-        "suggestions_toggled",
-        "home_quick_insights_toggled",
-        "date_format_changed",
-        "transaction_display_type_changed",
-        "theme_changed",
-        "language_changed",
-        "currency_format_changed",
-        "feedback_email_sent",
-        "tutorial_replay_requested",
-        "decimal_digits_changed",
-        "decimal_separator_changed",
-        "thousands_separator_changed",
-        "meal_voucher_value_changed",
-        "mask_amounts_toggled",
-        "show_charts_section_toggled",
-        "charts_zoom_toggled",
-        "show_payment_breakdown_toggled",
-        "show_transaction_notes_toggled",
-        "widget_background_color_changed",
-        "widget_opacity_changed",
-        "widget_recent_transactions_opened",
-        "widget_category_breakdown_opened",
-        "settings_help_opened",
-        "settings_privacy_policy_opened",
-        "settings_third_party_libraries_opened",
-        "settings_high_contrast_toggled",
-        "settings_large_text_toggled",
-        "settings_reduce_motion_toggled",
-        "transactions_filter_opened",
-        "transactions_help_opened",
-        "categories_help_opened",
-        "receipt_scan_retry",
-        "transaction_recurring_toggled",
-        "home_transaction_detail_opened",
-        "home_search_submitted",
-        "home_search_cleared",
-        "transaction_form_validation_failed",
-        "receipt_scan_failed",
-        "receipt_scan_manual_entry",
-        "empty_state_action_taken",
-        "chart_loading_completed",
-        "settings_dialog_dismissed",
-
-        // NEW: Dialog dismissals & selections (Priority 2)
-        "date_picker_selected",
-        "category_selection_dialog_dismissed",
-        "transaction_type_selected",
-        "payment_type_selected",
-        "currency_format_dialog_dismissed",
-
-        // NEW: Navigation & Menu actions (Priority 2)
-        "sidebar_navigation_clicked",
-        "settings_submenu_opened",
-        "sidebar_toggled",
-
-        // NEW: List item actions (Priority 3)
-        "transactions_list_item_clicked",
-        "categories_list_item_clicked",
-        "chart_item_clicked",
-
-        // NEW: Easter egg (Priority 3)
-        "easter_egg_animation_opened",
-
-        // NEW: Tutorial progress tracking (Priority 4)
-        "tutorial_started",
-        "tutorial_step_completed",
-        "tutorial_step_skipped",
-        "tutorial_completed",
-        "tutorial_step_help_opened",
-
-        // PHASE 1: Priority Analytics Events (Coverage 45% → 55%)
-        "category_type_distribution",           // CategoriesScreen - income vs expense distribution
-        "meal_voucher_details_updated",         // DisplayViewModel - value changes
-        "recurring_interval_selected",          // AddTransactionViewModel - frequency selection
-        "search_query_initiated",               // HomeScreen - search box usage
-        "filter_combination_applied",           // TransactionsScreen/ChartsScreen - multi-filter tracking
-        "category_crud_operation",              // CategoriesViewModel - create/update/delete/reorder
-        "form_field_first_interaction",         // AddTransactionViewModel - first field touched
-        "app_auto_backup_executed",             // SettingsDataViewModel - auto-backup result
-        "widget_tap_action_triggered",          // WidgetTapActions - widget interactions
-        "transaction_duplicate_suggestion_accepted", // AddTransactionViewModel - suggestion acceptance
-
-        // PHASE 2: Infrastructure Tracking (Coverage 55% → 65%)
-        // Performance Metrics
-        "screen_load_time",                     // NavGraph - screen loading latency
-        "transaction_form_submit_latency",      // AddTransactionViewModel - form submission time
-        "chart_rendering_time",                 // ChartsViewModel - chart rendering performance
-        "receipt_ocr_processing_time",          // ReceiptScanViewModel - OCR processing duration
-        "backup_restore_duration",              // SettingsDataViewModel - backup/restore time
-
-        // Session Tracking
-        "app_launched",                         // Application.onCreate - app startup
-        "session_started",                      // Activity.onResume - session beginning
-        "session_ended",                        // Activity.onPause - session end with duration
-        "app_version_updated",                  // SharedPreferences - version change detection
-        "daily_active_user",                    // First event of day - DAU tracking
-
-        // Error Tracking
-        "database_error",                       // Repository layer - database operation failures
-        "sync_error",                           // Backup/Restore - synchronization errors
-        "payment_method_error",                 // Payment processing - payment type errors
-
-        // PHASE 3: Advanced Analytics (Coverage 65% → 75%+)
-        // User Segmentation & Cohorts
-        "user_cohort_identified",               // First app launch - cohort assignment
-        "spending_pattern_detected",            // Transaction analysis - spending behavior
-        "income_source_tracking",               // Income categorization - user income sources
-        "budget_exceeded_alert",                // Expense detection - over-budget alerts
-        "category_preference_shift",            // Category analysis - preference changes
-        "payment_method_preference",            // Payment distribution - user method preference
-        "transaction_search_effectiveness",     // Search conversion - search quality metrics
-        "chart_interaction_depth",              // Chart engagement - interaction frequency
-        "widget_engagement_session",            // Widget usage - active time tracking
-        "settings_customization_score",         // Settings adoption - customization level
-
-        // TIER C: Lifecycle & Infrastructure Tracking
-        "viewmodel_created",                    // BaseViewModel init - ViewModel creation tracking
-        "viewmodel_cleared",                    // BaseViewModel onCleared - ViewModel destruction tracking
-
-        // Error Tracking Events (ErrorTracker)
-        "transaction_validation_error",         // Form validation failures (AddTransactionViewModel)
-        "receipt_ocr_error",                    // OCR processing failures (ReceiptScanViewModel)
-        "database_error",                       // Database operation failures (Repository layer)
-        "sync_error",                           // Backup/restore sync failures (BackupWorker)
-        "payment_method_error",                 // Payment processing failures (PaymentProcessor)
-    )
+    val ALLOWED_USAGE_EVENTS =
+        setOf(
+            // Existing events
+            "transactions_filter_applied",
+            "transactions_filter_cleared",
+            "transaction_add_opened",
+            "receipt_scan_opened",
+            "transaction_form_opened",
+            "transaction_form_cancelled",
+            "transaction_submit_success",
+            "transaction_deleted",
+            "transaction_shared",
+            "backup_create_requested",
+            "backup_file_saved",
+            "backup_file_save_error",
+            "restore_open_requested",
+            "restore_file_selected",
+            "delete_all_data_confirmed",
+            "reset_preferences_confirmed",
+            "delete_suggestions_confirmed",
+            "category_created",
+            "category_deleted",
+            "categories_reordered",
+            "categories_reorder_opened",
+            "category_hidden",
+            "category_shown",
+            "chart_date_filter_changed",
+            "chart_custom_date_range_set",
+            "chart_shared",
+            "chart_help_opened",
+            "home_top_cards_reordered",
+            "home_date_filter_changed",
+            "home_search_opened",
+            "home_help_opened",
+            "receipt_scan_captured",
+            "receipt_scan_saved",
+            "receipt_scan_amount_edited",
+            "data_encryption_toggled",
+            "suggestions_toggled",
+            "home_quick_insights_toggled",
+            "date_format_changed",
+            "transaction_display_type_changed",
+            "theme_changed",
+            "language_changed",
+            "currency_format_changed",
+            "feedback_email_sent",
+            "tutorial_replay_requested",
+            "decimal_digits_changed",
+            "decimal_separator_changed",
+            "thousands_separator_changed",
+            "meal_voucher_value_changed",
+            "mask_amounts_toggled",
+            "show_charts_section_toggled",
+            "charts_zoom_toggled",
+            "show_payment_breakdown_toggled",
+            "show_transaction_notes_toggled",
+            "widget_background_color_changed",
+            "widget_opacity_changed",
+            "widget_recent_transactions_opened",
+            "widget_category_breakdown_opened",
+            "settings_help_opened",
+            "settings_privacy_policy_opened",
+            "settings_third_party_libraries_opened",
+            "settings_high_contrast_toggled",
+            "settings_large_text_toggled",
+            "settings_reduce_motion_toggled",
+            "transactions_filter_opened",
+            "transactions_help_opened",
+            "categories_help_opened",
+            "receipt_scan_retry",
+            "transaction_recurring_toggled",
+            "home_transaction_detail_opened",
+            "home_search_submitted",
+            "home_search_cleared",
+            "transaction_form_validation_failed",
+            "receipt_scan_failed",
+            "receipt_scan_manual_entry",
+            "empty_state_action_taken",
+            "chart_loading_completed",
+            "settings_dialog_dismissed",
+            // NEW: Dialog dismissals & selections (Priority 2)
+            "date_picker_selected",
+            "category_selection_dialog_dismissed",
+            "transaction_type_selected",
+            "payment_type_selected",
+            "currency_format_dialog_dismissed",
+            // NEW: Navigation & Menu actions (Priority 2)
+            "sidebar_navigation_clicked",
+            "settings_submenu_opened",
+            "sidebar_toggled",
+            // NEW: List item actions (Priority 3)
+            "transactions_list_item_clicked",
+            "categories_list_item_clicked",
+            "chart_item_clicked",
+            // NEW: Easter egg (Priority 3)
+            "easter_egg_animation_opened",
+            // NEW: Tutorial progress tracking (Priority 4)
+            "tutorial_started",
+            "tutorial_step_completed",
+            "tutorial_step_skipped",
+            "tutorial_completed",
+            "tutorial_step_help_opened",
+            // PHASE 1: Priority Analytics Events (Coverage 45% → 55%)
+            "category_type_distribution", // CategoriesScreen - income vs expense distribution
+            "meal_voucher_details_updated", // DisplayViewModel - value changes
+            "recurring_interval_selected", // AddTransactionViewModel - frequency selection
+            "search_query_initiated", // HomeScreen - search box usage
+            "filter_combination_applied", // TransactionsScreen/ChartsScreen - multi-filter tracking
+            "category_crud_operation", // CategoriesViewModel - create/update/delete/reorder
+            "form_field_first_interaction", // AddTransactionViewModel - first field touched
+            "app_auto_backup_executed", // SettingsDataViewModel - auto-backup result
+            "widget_tap_action_triggered", // WidgetTapActions - widget interactions
+            "transaction_duplicate_suggestion_accepted", // AddTransactionViewModel - suggestion acceptance
+            // PHASE 2: Infrastructure Tracking (Coverage 55% → 65%)
+            // Performance Metrics
+            "screen_load_time", // NavGraph - screen loading latency
+            "transaction_form_submit_latency", // AddTransactionViewModel - form submission time
+            "chart_rendering_time", // ChartsViewModel - chart rendering performance
+            "receipt_ocr_processing_time", // ReceiptScanViewModel - OCR processing duration
+            "backup_restore_duration", // SettingsDataViewModel - backup/restore time
+            // Session Tracking
+            "app_launched", // Application.onCreate - app startup
+            "session_started", // Activity.onResume - session beginning
+            "session_ended", // Activity.onPause - session end with duration
+            "app_version_updated", // SharedPreferences - version change detection
+            "daily_active_user", // First event of day - DAU tracking
+            // Error Tracking
+            "database_error", // Repository layer - database operation failures
+            "sync_error", // Backup/Restore - synchronization errors
+            "payment_method_error", // Payment processing - payment type errors
+            // PHASE 3: Advanced Analytics (Coverage 65% → 75%+)
+            // User Segmentation & Cohorts
+            "user_cohort_identified", // First app launch - cohort assignment
+            "spending_pattern_detected", // Transaction analysis - spending behavior
+            "income_source_tracking", // Income categorization - user income sources
+            "budget_exceeded_alert", // Expense detection - over-budget alerts
+            "category_preference_shift", // Category analysis - preference changes
+            "payment_method_preference", // Payment distribution - user method preference
+            "transaction_search_effectiveness", // Search conversion - search quality metrics
+            "chart_interaction_depth", // Chart engagement - interaction frequency
+            "widget_engagement_session", // Widget usage - active time tracking
+            "settings_customization_score", // Settings adoption - customization level
+            // TIER C: Lifecycle & Infrastructure Tracking
+            "viewmodel_created", // BaseViewModel init - ViewModel creation tracking
+            "viewmodel_cleared", // BaseViewModel onCleared - ViewModel destruction tracking
+            // Error Tracking Events (ErrorTracker)
+            "transaction_validation_error", // Form validation failures (AddTransactionViewModel)
+            "receipt_ocr_error", // OCR processing failures (ReceiptScanViewModel)
+            "database_error", // Database operation failures (Repository layer)
+            "sync_error", // Backup/restore sync failures (BackupWorker)
+            "payment_method_error", // Payment processing failures (PaymentProcessor)
+        )
 }
-

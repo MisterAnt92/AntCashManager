@@ -70,14 +70,13 @@ fun NavController.navigateToTransaction(route: String) {
  *
  * @return true se il pop è riuscito, false se il back stack era vuoto
  */
-fun NavController.safePopBackStack(): Boolean {
-    return if (previousBackStackEntry != null) {
+fun NavController.safePopBackStack(): Boolean =
+    if (previousBackStackEntry != null) {
         popBackStack()
         true
     } else {
         false
     }
-}
 
 // ══════════════════════════════════════════════════════════════════════════════
 // TYPE-SAFE NAVIGATION FUNCTIONS (FASE 7b Enhancement)

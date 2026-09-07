@@ -47,40 +47,43 @@ fun AppCategoryListItem(
     subtitle: String? = null,
     modifier: Modifier = Modifier,
 ) {
-    val backgroundColor = if (isSelected) {
-        MaterialTheme.colorScheme.primaryContainer
-    } else {
-        MaterialTheme.colorScheme.surface
-    }
+    val backgroundColor =
+        if (isSelected) {
+            MaterialTheme.colorScheme.primaryContainer
+        } else {
+            MaterialTheme.colorScheme.surface
+        }
 
-    val borderColor = if (isSelected) {
-        MaterialTheme.colorScheme.primary
-    } else {
-        MaterialTheme.colorScheme.outlineVariant
-    }
+    val borderColor =
+        if (isSelected) {
+            MaterialTheme.colorScheme.primary
+        } else {
+            MaterialTheme.colorScheme.outlineVariant
+        }
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .background(backgroundColor)
-            .border(
-                width = if (isSelected) 2.dp else 1.dp,
-                color = borderColor,
-                shape = RoundedCornerShape(16.dp)
-            )
-            .clickable(onClick = onClick)
-            .padding(horizontal = 20.dp, vertical = 16.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+                .background(backgroundColor)
+                .border(
+                    width = if (isSelected) 2.dp else 1.dp,
+                    color = borderColor,
+                    shape = RoundedCornerShape(16.dp),
+                ).clickable(onClick = onClick)
+                .padding(horizontal = 20.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         // Icona della categoria con sfondo colorato circolare
         val iconVector = categoryIconMap[category.icon]
         Box(
-            modifier = Modifier
-                .size(32.dp)
-                .clip(CircleShape)
-                .background(Color(category.color)),
+            modifier =
+                Modifier
+                    .size(32.dp)
+                    .clip(CircleShape)
+                    .background(Color(category.color)),
             contentAlignment = Alignment.Center,
         ) {
             if (iconVector != null) {
@@ -128,7 +131,7 @@ fun AppCategoryListItem(
                 imageVector = Icons.Default.Check,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(24.dp),
             )
         }
     }
@@ -139,15 +142,16 @@ fun AppCategoryListItem(
 private fun AppCategoryListItemPreviewNonSelected() {
     AntCashManagerTheme {
         AppCategoryListItem(
-            category = Category(
-                id = 1,
-                name = "Food & Dining",
-                icon = "restaurant",
-                color = 0xFFFF6B6B,
-                type = "EXPENSE"
-            ),
+            category =
+                Category(
+                    id = 1,
+                    name = "Food & Dining",
+                    icon = "restaurant",
+                    color = 0xFFFF6B6B,
+                    type = "EXPENSE",
+                ),
             isSelected = false,
-            onClick = {}
+            onClick = {},
         )
     }
 }
@@ -157,15 +161,16 @@ private fun AppCategoryListItemPreviewNonSelected() {
 private fun AppCategoryListItemPreviewSelected() {
     AntCashManagerTheme {
         AppCategoryListItem(
-            category = Category(
-                id = 2,
-                name = "Salary & Wages",
-                icon = "payments",
-                color = 0xFF51CF66,
-                type = "INCOME"
-            ),
+            category =
+                Category(
+                    id = 2,
+                    name = "Salary & Wages",
+                    icon = "payments",
+                    color = 0xFF51CF66,
+                    type = "INCOME",
+                ),
             isSelected = true,
-            onClick = {}
+            onClick = {},
         )
     }
 }
@@ -179,13 +184,14 @@ private fun AppCategoryListItemPreviewSelected() {
 private fun AppCategoryListItemPreviewDark() {
     AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
         AppCategoryListItem(
-            category = Category(
-                id = 3,
-                name = "Transport",
-                icon = "directions_car",
-                color = 0xFF4DABF7,
-                type = "EXPENSE",
-            ),
+            category =
+                Category(
+                    id = 3,
+                    name = "Transport",
+                    icon = "directions_car",
+                    color = 0xFF4DABF7,
+                    type = "EXPENSE",
+                ),
             isSelected = true,
             onClick = {},
             subtitle = "Expense",

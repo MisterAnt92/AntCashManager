@@ -22,8 +22,9 @@ import com.antcashmanager.android.analytics.AnalyticsManager
  *
  * Privacy: Solo error codes e types, nessun stack trace o user data
  */
-class ErrorTracker(private val analyticsManager: AnalyticsManager) {
-
+class ErrorTracker(
+    private val analyticsManager: AnalyticsManager,
+) {
     /**
      * Traccia un errore di validazione del form di transazione.
      *
@@ -32,11 +33,17 @@ class ErrorTracker(private val analyticsManager: AnalyticsManager) {
      * @param fieldName Nome del campo che ha fallito (es: "title", "amount", "category")
      * @param errorCode Codice di errore (es: "missing_field", "invalid_format", "out_of_range")
      */
-    fun trackTransactionValidationError(fieldName: String, errorCode: String) {
-        analyticsManager.logEvent("transaction_validation_error", Bundle().apply {
-            putString("field_name", fieldName)
-            putString("error_code", errorCode)
-        })
+    fun trackTransactionValidationError(
+        fieldName: String,
+        errorCode: String,
+    ) {
+        analyticsManager.logEvent(
+            "transaction_validation_error",
+            Bundle().apply {
+                putString("field_name", fieldName)
+                putString("error_code", errorCode)
+            },
+        )
     }
 
     /**
@@ -47,11 +54,17 @@ class ErrorTracker(private val analyticsManager: AnalyticsManager) {
      * @param errorCode Codice di errore (es: "invalid_image", "text_not_found", "network_timeout")
      * @param retryCount Numero di retry effettuati
      */
-    fun trackReceiptOcrError(errorCode: String, retryCount: Int = 0) {
-        analyticsManager.logEvent("receipt_ocr_error", Bundle().apply {
-            putString("error_code", errorCode)
-            putInt("retry_count", retryCount)
-        })
+    fun trackReceiptOcrError(
+        errorCode: String,
+        retryCount: Int = 0,
+    ) {
+        analyticsManager.logEvent(
+            "receipt_ocr_error",
+            Bundle().apply {
+                putString("error_code", errorCode)
+                putInt("retry_count", retryCount)
+            },
+        )
     }
 
     /**
@@ -62,11 +75,17 @@ class ErrorTracker(private val analyticsManager: AnalyticsManager) {
      * @param operation Nome dell'operazione (es: "insert", "update", "delete", "query")
      * @param errorCode Codice di errore (es: "constraint_violation", "schema_mismatch", "access_denied")
      */
-    fun trackDatabaseError(operation: String, errorCode: String) {
-        analyticsManager.logEvent("database_error", Bundle().apply {
-            putString("operation", operation)
-            putString("error_code", errorCode)
-        })
+    fun trackDatabaseError(
+        operation: String,
+        errorCode: String,
+    ) {
+        analyticsManager.logEvent(
+            "database_error",
+            Bundle().apply {
+                putString("operation", operation)
+                putString("error_code", errorCode)
+            },
+        )
     }
 
     /**
@@ -77,11 +96,17 @@ class ErrorTracker(private val analyticsManager: AnalyticsManager) {
      * @param operation Tipo di operazione (es: "backup_local", "backup_google_drive", "restore_local")
      * @param errorCode Codice di errore (es: "permission_denied", "network_error", "token_expired")
      */
-    fun trackSyncError(operation: String, errorCode: String) {
-        analyticsManager.logEvent("sync_error", Bundle().apply {
-            putString("operation", operation)
-            putString("error_code", errorCode)
-        })
+    fun trackSyncError(
+        operation: String,
+        errorCode: String,
+    ) {
+        analyticsManager.logEvent(
+            "sync_error",
+            Bundle().apply {
+                putString("operation", operation)
+                putString("error_code", errorCode)
+            },
+        )
     }
 
     /**
@@ -92,10 +117,16 @@ class ErrorTracker(private val analyticsManager: AnalyticsManager) {
      * @param paymentType Tipo di pagamento (es: "ELECTRONIC", "CASH", "MEAL_VOUCHERS")
      * @param errorCode Codice di errore (es: "invalid_amount", "method_not_available", "processing_failed")
      */
-    fun trackPaymentMethodError(paymentType: String, errorCode: String) {
-        analyticsManager.logEvent("payment_method_error", Bundle().apply {
-            putString("payment_type", paymentType)
-            putString("error_code", errorCode)
-        })
+    fun trackPaymentMethodError(
+        paymentType: String,
+        errorCode: String,
+    ) {
+        analyticsManager.logEvent(
+            "payment_method_error",
+            Bundle().apply {
+                putString("payment_type", paymentType)
+                putString("error_code", errorCode)
+            },
+        )
     }
 }

@@ -62,14 +62,15 @@ internal fun CategorySelectionStep(
         },
     ) { innerPadding ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    start = innerPadding.calculateStartPadding(LayoutDirection.Ltr) + 16.dp,
-                    top = innerPadding.calculateTopPadding() + 12.dp,
-                    end = innerPadding.calculateEndPadding(LayoutDirection.Ltr) + 16.dp,
-                    bottom = innerPadding.calculateBottomPadding(),
-                ),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(
+                        start = innerPadding.calculateStartPadding(LayoutDirection.Ltr) + 16.dp,
+                        top = innerPadding.calculateTopPadding() + 12.dp,
+                        end = innerPadding.calculateEndPadding(LayoutDirection.Ltr) + 16.dp,
+                        bottom = innerPadding.calculateBottomPadding(),
+                    ),
         ) {
             AppText(
                 stringResource(R.string.add_transaction_choose_category),
@@ -80,9 +81,10 @@ internal fun CategorySelectionStep(
 
             if (categories.isEmpty()) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .fillMaxWidth(),
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .fillMaxWidth(),
                     contentAlignment = Alignment.Center,
                 ) {
                     AppText(
@@ -93,15 +95,17 @@ internal fun CategorySelectionStep(
             } else {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp),
                 ) {
                     items(categories) { category ->
-                        val typeLabel = when (category.type.uppercase(Locale.ROOT)) {
-                            "INCOME" -> stringResource(R.string.add_transaction_income_label)
-                            else -> stringResource(R.string.add_transaction_expense_label)
-                        }
+                        val typeLabel =
+                            when (category.type.uppercase(Locale.ROOT)) {
+                                "INCOME" -> stringResource(R.string.add_transaction_income_label)
+                                else -> stringResource(R.string.add_transaction_expense_label)
+                            }
 
                         AppCategoryListItem(
                             category = category,
@@ -115,4 +119,3 @@ internal fun CategorySelectionStep(
         }
     }
 }
-

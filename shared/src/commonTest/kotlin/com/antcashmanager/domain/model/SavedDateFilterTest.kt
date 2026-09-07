@@ -4,7 +4,6 @@ import com.antcashmanager.domain.model.SavedDateFilter
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 /**
  * Unit tests for SavedDateFilter domain model.
@@ -16,19 +15,33 @@ import kotlin.test.assertTrue
  * - Date range bounds
  */
 class SavedDateFilterTest {
-
-    private fun toTimestamp(year: Int, month: Int, day: Int): Long {
+    private fun toTimestamp(
+        year: Int,
+        month: Int,
+        day: Int,
+    ): Long {
         // Convert date to timestamp (milliseconds since epoch)
         // Jan 1 2024 = 1704067200000L (baseline for calculations)
         val baseYear = 2024
         val baseTimestamp = 1704067200000L
 
         val isLeapYear = (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)
-        val daysInMonths = intArrayOf(
-            0, 31,
-            if (isLeapYear) 29 else 28,
-            31, 30, 31, 30, 31, 31, 30, 31, 30, 31
-        )
+        val daysInMonths =
+            intArrayOf(
+                0,
+                31,
+                if (isLeapYear) 29 else 28,
+                31,
+                30,
+                31,
+                30,
+                31,
+                31,
+                30,
+                31,
+                30,
+                31,
+            )
 
         // Calculate total days from year difference
         var totalDays = 0
@@ -59,11 +72,12 @@ class SavedDateFilterTest {
 
     @Test
     fun savedDateFilter_shouldStorePresetIndex() {
-        val filter = SavedDateFilter(
-            presetIndex = 0,
-            from = toTimestamp(2024, 1, 1),
-            to = toTimestamp(2024, 12, 31)
-        )
+        val filter =
+            SavedDateFilter(
+                presetIndex = 0,
+                from = toTimestamp(2024, 1, 1),
+                to = toTimestamp(2024, 12, 31),
+            )
 
         assertEquals(0, filter.presetIndex)
     }
@@ -71,11 +85,12 @@ class SavedDateFilterTest {
     @Test
     fun savedDateFilter_shouldStoreFromDate() {
         val fromDate = toTimestamp(2024, 6, 1)
-        val filter = SavedDateFilter(
-            presetIndex = 1,
-            from = fromDate,
-            to = toTimestamp(2024, 12, 31)
-        )
+        val filter =
+            SavedDateFilter(
+                presetIndex = 1,
+                from = fromDate,
+                to = toTimestamp(2024, 12, 31),
+            )
 
         assertEquals(fromDate, filter.from)
     }
@@ -83,11 +98,12 @@ class SavedDateFilterTest {
     @Test
     fun savedDateFilter_shouldStoreToDate() {
         val toDate = toTimestamp(2024, 12, 31)
-        val filter = SavedDateFilter(
-            presetIndex = 1,
-            from = toTimestamp(2024, 1, 1),
-            to = toDate
-        )
+        val filter =
+            SavedDateFilter(
+                presetIndex = 1,
+                from = toTimestamp(2024, 1, 1),
+                to = toDate,
+            )
 
         assertEquals(toDate, filter.to)
     }
@@ -95,11 +111,12 @@ class SavedDateFilterTest {
     @Test
     fun savedDateFilter_shouldAllowSameDateRange() {
         val today = toTimestamp(2024, 6, 15)
-        val filter = SavedDateFilter(
-            presetIndex = -1,
-            from = today,
-            to = today
-        )
+        val filter =
+            SavedDateFilter(
+                presetIndex = -1,
+                from = today,
+                to = today,
+            )
 
         assertEquals(today, filter.from)
         assertEquals(today, filter.to)
@@ -107,11 +124,12 @@ class SavedDateFilterTest {
 
     @Test
     fun savedDateFilter_shouldAllowMultiYearRange() {
-        val filter = SavedDateFilter(
-            presetIndex = -1,
-            from = toTimestamp(2020, 1, 1),
-            to = toTimestamp(2024, 12, 31)
-        )
+        val filter =
+            SavedDateFilter(
+                presetIndex = -1,
+                from = toTimestamp(2020, 1, 1),
+                to = toTimestamp(2024, 12, 31),
+            )
 
         assertEquals(toTimestamp(2020, 1, 1), filter.from)
         assertEquals(toTimestamp(2024, 12, 31), filter.to)
@@ -120,11 +138,12 @@ class SavedDateFilterTest {
     @Test
     fun savedDateFilter_shouldHandleNegativePresetIndex() {
         // -1 typically means custom date range
-        val filter = SavedDateFilter(
-            presetIndex = -1,
-            from = toTimestamp(2024, 1, 1),
-            to = toTimestamp(2024, 12, 31)
-        )
+        val filter =
+            SavedDateFilter(
+                presetIndex = -1,
+                from = toTimestamp(2024, 1, 1),
+                to = toTimestamp(2024, 12, 31),
+            )
 
         assertEquals(-1, filter.presetIndex)
     }
@@ -133,11 +152,12 @@ class SavedDateFilterTest {
     fun savedDateFilter_shouldHandlePresetIndices() {
         // Test various preset indices (0 = today, 1 = week, 2 = month, etc.)
         for (index in 0..4) {
-            val filter = SavedDateFilter(
-                presetIndex = index,
-                from = toTimestamp(2024, 1, 1),
-                to = toTimestamp(2024, 12, 31)
-            )
+            val filter =
+                SavedDateFilter(
+                    presetIndex = index,
+                    from = toTimestamp(2024, 1, 1),
+                    to = toTimestamp(2024, 12, 31),
+                )
 
             assertEquals(index, filter.presetIndex)
         }
@@ -148,11 +168,12 @@ class SavedDateFilterTest {
         val firstDay = toTimestamp(2024, 6, 1)
         val lastDay = toTimestamp(2024, 6, 30)
 
-        val filter = SavedDateFilter(
-            presetIndex = -1,
-            from = firstDay,
-            to = lastDay
-        )
+        val filter =
+            SavedDateFilter(
+                presetIndex = -1,
+                from = firstDay,
+                to = lastDay,
+            )
 
         assertEquals(firstDay, filter.from)
         assertEquals(lastDay, filter.to)
@@ -161,62 +182,69 @@ class SavedDateFilterTest {
     @Test
     fun savedDateFilter_shouldHandleLeapYearDate() {
         val leapDay = toTimestamp(2024, 2, 29)
-        val filter = SavedDateFilter(
-            presetIndex = -1,
-            from = leapDay,
-            to = leapDay
-        )
+        val filter =
+            SavedDateFilter(
+                presetIndex = -1,
+                from = leapDay,
+                to = leapDay,
+            )
 
         assertEquals(leapDay, filter.from)
     }
 
     @Test
     fun savedDateFilter_equalityTest() {
-        val filter1 = SavedDateFilter(
-            presetIndex = 1,
-            from = toTimestamp(2024, 1, 1),
-            to = toTimestamp(2024, 12, 31)
-        )
+        val filter1 =
+            SavedDateFilter(
+                presetIndex = 1,
+                from = toTimestamp(2024, 1, 1),
+                to = toTimestamp(2024, 12, 31),
+            )
 
-        val filter2 = SavedDateFilter(
-            presetIndex = 1,
-            from = toTimestamp(2024, 1, 1),
-            to = toTimestamp(2024, 12, 31)
-        )
+        val filter2 =
+            SavedDateFilter(
+                presetIndex = 1,
+                from = toTimestamp(2024, 1, 1),
+                to = toTimestamp(2024, 12, 31),
+            )
 
         assertEquals(filter1, filter2)
     }
 
     @Test
     fun savedDateFilter_inequalityByIndexTest() {
-        val filter1 = SavedDateFilter(
-            presetIndex = 0,
-            from = toTimestamp(2024, 1, 1),
-            to = toTimestamp(2024, 12, 31)
-        )
+        val filter1 =
+            SavedDateFilter(
+                presetIndex = 0,
+                from = toTimestamp(2024, 1, 1),
+                to = toTimestamp(2024, 12, 31),
+            )
 
-        val filter2 = SavedDateFilter(
-            presetIndex = 1,
-            from = toTimestamp(2024, 1, 1),
-            to = toTimestamp(2024, 12, 31)
-        )
+        val filter2 =
+            SavedDateFilter(
+                presetIndex = 1,
+                from = toTimestamp(2024, 1, 1),
+                to = toTimestamp(2024, 12, 31),
+            )
 
         assertFalse(filter1 == filter2)
     }
 
     @Test
     fun savedDateFilter_inequalityByDateTest() {
-        val filter1 = SavedDateFilter(
-            presetIndex = 1,
-            from = toTimestamp(2024, 1, 1),
-            to = toTimestamp(2024, 12, 31)
-        )
+        val filter1 =
+            SavedDateFilter(
+                presetIndex = 1,
+                from = toTimestamp(2024, 1, 1),
+                to = toTimestamp(2024, 12, 31),
+            )
 
-        val filter2 = SavedDateFilter(
-            presetIndex = 1,
-            from = toTimestamp(2024, 6, 1),
-            to = toTimestamp(2024, 12, 31)
-        )
+        val filter2 =
+            SavedDateFilter(
+                presetIndex = 1,
+                from = toTimestamp(2024, 6, 1),
+                to = toTimestamp(2024, 12, 31),
+            )
 
         assertFalse(filter1 == filter2)
     }

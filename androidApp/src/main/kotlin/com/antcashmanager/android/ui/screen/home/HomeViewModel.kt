@@ -56,7 +56,6 @@ class HomeViewModel(
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val segmentationTracker: SegmentationTracker,
 ) : BaseViewModel<HomeEvent>(dispatcher) {
-
     constructor(
         transactionRepository: TransactionRepository,
         settingsRepository: SettingsRepository,
@@ -65,30 +64,36 @@ class HomeViewModel(
         searchDebounceMs: Long = 300L,
         segmentationTracker: SegmentationTracker,
     ) : this(
-        getTransactionsUseCase = GetTransactionsUseCase(
-            transactionRepository = transactionRepository,
-            dispatcher = dispatcher,
-        ),
-        filterTransactionsUseCase = FilterTransactionsUseCase(
-            dispatcher = dispatcher,
-        ),
-        getTransactionSuggestionsUseCase = GetTransactionSuggestionsUseCase(
-            repository = transactionRepository,
-            settingsRepository = settingsRepository,
-            dispatcher = dispatcher,
-        ),
-        getHomeDateFilterStateUseCase = GetHomeDateFilterStateUseCase(
-            settingsRepository = settingsRepository,
-            dispatcher = dispatcher,
-        ),
-        setHomeDateFilterStateUseCase = SetHomeDateFilterStateUseCase(
-            settingsRepository = settingsRepository,
-            dispatcher = dispatcher,
-        ),
-        getCategoriesUseCase = GetCategoriesUseCase(
-            categoryRepository = categoryRepository,
-            dispatcher = dispatcher,
-        ),
+        getTransactionsUseCase =
+            GetTransactionsUseCase(
+                transactionRepository = transactionRepository,
+                dispatcher = dispatcher,
+            ),
+        filterTransactionsUseCase =
+            FilterTransactionsUseCase(
+                dispatcher = dispatcher,
+            ),
+        getTransactionSuggestionsUseCase =
+            GetTransactionSuggestionsUseCase(
+                repository = transactionRepository,
+                settingsRepository = settingsRepository,
+                dispatcher = dispatcher,
+            ),
+        getHomeDateFilterStateUseCase =
+            GetHomeDateFilterStateUseCase(
+                settingsRepository = settingsRepository,
+                dispatcher = dispatcher,
+            ),
+        setHomeDateFilterStateUseCase =
+            SetHomeDateFilterStateUseCase(
+                settingsRepository = settingsRepository,
+                dispatcher = dispatcher,
+            ),
+        getCategoriesUseCase =
+            GetCategoriesUseCase(
+                categoryRepository = categoryRepository,
+                dispatcher = dispatcher,
+            ),
         settingsRepository = settingsRepository,
         searchDebounceMs = searchDebounceMs,
         dispatcher = dispatcher,
@@ -102,7 +107,7 @@ class HomeViewModel(
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000),
-                initialValue = emptyMap()
+                initialValue = emptyMap(),
             )
 
     // ── Internal filter state ──
@@ -113,218 +118,239 @@ class HomeViewModel(
         MutableStateFlow<com.antcashmanager.domain.model.Transaction?>(null)
 
     // ── Transactions Flow ──
-    private val transactionsFlow = getTransactionsUseCase()
-        .map { it.getOrElse { emptyList() }.withCorrectAmounts() }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    private val transactionsFlow =
+        getTransactionsUseCase()
+            .map { it.getOrElse { emptyList() }.withCorrectAmounts() }
+            .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     // ── Search query with debounce for performance ──
-    private val debouncedSearchQuery = _filterState
-        .map { it.searchQuery }
-        .distinctUntilChanged()
-        .debounce(searchDebounceMs)
+    private val debouncedSearchQuery =
+        _filterState
+            .map { it.searchQuery }
+            .distinctUntilChanged()
+            .debounce(searchDebounceMs)
 
     // ── Filtered Transactions Flow ──
     // Per i preset relativi (non-custom), "from" e "to" vengono ricalcolati dinamicamente
     // ogni volta che il combine viene rieseguito (es. quando Room emette dopo un insert).
     // Questo garantisce che le transazioni appena inserite siano immediatamente visibili
     // senza bisogno di aggiornare manualmente il filtro.
-    private val filteredTransactionsFlow = combine(
-        transactionsFlow,
-        debouncedSearchQuery,
-        _filterState.map { it.dateRangeFrom }.distinctUntilChanged(),
-        _filterState.map { it.dateRangeTo }.distinctUntilChanged(),
-        _filterState.map { it.selectedPresetIndex }.distinctUntilChanged(),
-    ) { transactions, query, storedFrom, storedTo, presetIndex ->
-        // Per i preset relativi, ricalcola i bound dinamicamente al momento dell'esecuzione.
-        val from = if (presetIndex != SavedDateFilter.CUSTOM_PRESET_INDEX) {
-            HomeState.getDateFromForPreset(presetIndex)
-        } else {
-            storedFrom
+    private val filteredTransactionsFlow =
+        combine(
+            transactionsFlow,
+            debouncedSearchQuery,
+            _filterState.map { it.dateRangeFrom }.distinctUntilChanged(),
+            _filterState.map { it.dateRangeTo }.distinctUntilChanged(),
+            _filterState.map { it.selectedPresetIndex }.distinctUntilChanged(),
+        ) { transactions, query, storedFrom, storedTo, presetIndex ->
+            // Per i preset relativi, ricalcola i bound dinamicamente al momento dell'esecuzione.
+            val from =
+                if (presetIndex != SavedDateFilter.CUSTOM_PRESET_INDEX) {
+                    HomeState.getDateFromForPreset(presetIndex)
+                } else {
+                    storedFrom
+                }
+            val to =
+                if (presetIndex != SavedDateFilter.CUSTOM_PRESET_INDEX) {
+                    // End of current day (start of next day at 00:00:00)
+                    val calendar = java.util.Calendar.getInstance()
+                    calendar.timeInMillis = System.currentTimeMillis()
+                    calendar.set(java.util.Calendar.HOUR_OF_DAY, 23)
+                    calendar.set(java.util.Calendar.MINUTE, 59)
+                    calendar.set(java.util.Calendar.SECOND, 59)
+                    calendar.set(java.util.Calendar.MILLISECOND, 999)
+                    calendar.timeInMillis
+                } else {
+                    storedTo
+                }
+            val filterParams =
+                TransactionFilterParams(
+                    searchQuery = query,
+                    dateFrom = from,
+                    dateTo = to,
+                )
+            filterTransactionsUseCase(
+                FilterTransactionsUseCase.Params(transactions, filterParams),
+            ).getOrElse { emptyList() }
         }
-        val to = if (presetIndex != SavedDateFilter.CUSTOM_PRESET_INDEX) {
-            // End of current day (start of next day at 00:00:00)
-            val calendar = java.util.Calendar.getInstance()
-            calendar.timeInMillis = System.currentTimeMillis()
-            calendar.set(java.util.Calendar.HOUR_OF_DAY, 23)
-            calendar.set(java.util.Calendar.MINUTE, 59)
-            calendar.set(java.util.Calendar.SECOND, 59)
-            calendar.set(java.util.Calendar.MILLISECOND, 999)
-            calendar.timeInMillis
-        } else {
-            storedTo
-        }
-        val filterParams = TransactionFilterParams(
-            searchQuery = query,
-            dateFrom = from,
-            dateTo = to,
-        )
-        filterTransactionsUseCase(
-            FilterTransactionsUseCase.Params(transactions, filterParams)
-        ).getOrElse { emptyList() }
-    }
 
     // ── Search Suggestions Flow ──
-    private val searchSuggestionsFlow = _filterState
-        .map { it.searchQuery }
-        .distinctUntilChanged()
-        .flatMapLatest { query ->
-            if (query.isBlank()) {
-                flowOf(emptyList<String>())
-            } else {
-                combine(
-                    transactionsFlow,
-                    getTransactionSuggestionsUseCase().map { it.getOrDefault(TransactionSuggestions()) }
-                ) { transactions, suggestions ->
-                    val matchingFromHistory = transactions
-                        .asSequence()
-                        .map { it.title }
-                        .filter {
-                            it.contains(query, ignoreCase = true) &&
-                                    !it.equals(query, ignoreCase = true)
-                        }
-                        .distinct()
-                        .take(3)
-                        .toList()
+    private val searchSuggestionsFlow =
+        _filterState
+            .map { it.searchQuery }
+            .distinctUntilChanged()
+            .flatMapLatest { query ->
+                if (query.isBlank()) {
+                    flowOf(emptyList<String>())
+                } else {
+                    combine(
+                        transactionsFlow,
+                        getTransactionSuggestionsUseCase().map { it.getOrDefault(TransactionSuggestions()) },
+                    ) { transactions, suggestions ->
+                        val matchingFromHistory =
+                            transactions
+                                .asSequence()
+                                .map { it.title }
+                                .filter {
+                                    it.contains(query, ignoreCase = true) &&
+                                        !it.equals(query, ignoreCase = true)
+                                }.distinct()
+                                .take(3)
+                                .toList()
 
-                    val matchingFromSuggestions = suggestions.titles
-                        .filter {
-                            it.contains(query, ignoreCase = true) &&
-                                    !it.equals(query, ignoreCase = true) &&
-                                    it !in matchingFromHistory
-                        }
-                        .take(3)
+                        val matchingFromSuggestions =
+                            suggestions.titles
+                                .filter {
+                                    it.contains(query, ignoreCase = true) &&
+                                        !it.equals(query, ignoreCase = true) &&
+                                        it !in matchingFromHistory
+                                }.take(3)
 
-                    (matchingFromHistory + matchingFromSuggestions).distinct()
+                        (matchingFromHistory + matchingFromSuggestions).distinct()
+                    }
                 }
             }
-        }
 
     // ── State tracking for budget and preference detection ──
     private var previousExpenseTotal = 0.0
     private var previousTopCategory: String? = null
 
     // ── Combined UI State ──
-    val state: StateFlow<HomeState> = combine(
-        transactionsFlow,
-        filteredTransactionsFlow,
-        searchSuggestionsFlow,
-        _filterState,
-        _selectedTransactionState,
-        categoriesCache,
-        settingsRepository.getHomeTopCardsOrder(),
-        settingsRepository.getDateFilterExpanded(),
-        settingsRepository.getShowPaymentTypeBreakdown(),
-        settingsRepository.getShowQuickInsightsCard(),
-        settingsRepository.getReduceMotion(),
-        settingsRepository.getTransactionDisplayType(),
-        settingsRepository.getIsTutorialCompleted(),
-    ) { args: Array<Any?> ->
-        val transactions = args[0] as List<com.antcashmanager.domain.model.Transaction>
-        val filtered = args[1] as List<com.antcashmanager.domain.model.Transaction>
-        val suggestions = args[2] as List<String>
-        val filterState = args[3] as FilterState
-        val selectedTransaction = args[4] as com.antcashmanager.domain.model.Transaction?
-        val categoryCache = args[5] as Map<String, com.antcashmanager.domain.model.Category>
-        val homeTopCardsOrderRaw = args[6] as String
-        val homeTopCardsOrder = if (homeTopCardsOrderRaw.isEmpty()) {
-            emptyList()
-        } else {
-            homeTopCardsOrderRaw.split(",")
-        }
-        val dateFilterExpanded = args[7] as Boolean
-        val showPaymentTypeBreakdown = args[8] as Boolean
-        val showQuickInsightsCard = args[9] as Boolean
-        val reduceMotion = args[10] as Boolean
-        val transactionDisplayType = (args[11] as TransactionDisplayType).name
-        val isTutorialCompleted = args[12] as Boolean
+    val state: StateFlow<HomeState> =
+        combine(
+            transactionsFlow,
+            filteredTransactionsFlow,
+            searchSuggestionsFlow,
+            _filterState,
+            _selectedTransactionState,
+            categoriesCache,
+            settingsRepository.getHomeTopCardsOrder(),
+            settingsRepository.getDateFilterExpanded(),
+            settingsRepository.getShowPaymentTypeBreakdown(),
+            settingsRepository.getShowQuickInsightsCard(),
+            settingsRepository.getReduceMotion(),
+            settingsRepository.getTransactionDisplayType(),
+            settingsRepository.getIsTutorialCompleted(),
+        ) { args: Array<Any?> ->
+            val transactions = args[0] as List<com.antcashmanager.domain.model.Transaction>
+            val filtered = args[1] as List<com.antcashmanager.domain.model.Transaction>
+            val suggestions = args[2] as List<String>
+            val filterState = args[3] as FilterState
+            val selectedTransaction = args[4] as com.antcashmanager.domain.model.Transaction?
+            val categoryCache = args[5] as Map<String, com.antcashmanager.domain.model.Category>
+            val homeTopCardsOrderRaw = args[6] as String
+            val homeTopCardsOrder =
+                if (homeTopCardsOrderRaw.isEmpty()) {
+                    emptyList()
+                } else {
+                    homeTopCardsOrderRaw.split(",")
+                }
+            val dateFilterExpanded = args[7] as Boolean
+            val showPaymentTypeBreakdown = args[8] as Boolean
+            val showQuickInsightsCard = args[9] as Boolean
+            val reduceMotion = args[10] as Boolean
+            val transactionDisplayType = (args[11] as TransactionDisplayType).name
+            val isTutorialCompleted = args[12] as Boolean
 
-        // Enrich transactions with category icon and color from cache
-        val enrichedFiltered = filtered.map { transaction ->
-            val category = categoryCache[transaction.category]
-            if (category != null && (transaction.categoryIcon.isEmpty() || transaction.categoryColor == 0xFF90A4AE)) {
-                // Update transaction with category data
-                transaction.copy(
-                    categoryIcon = category.icon,
-                    categoryColor = category.color
-                )
-            } else {
-                transaction
+            // Enrich transactions with category icon and color from cache
+            val enrichedFiltered =
+                filtered.map { transaction ->
+                    val category = categoryCache[transaction.category]
+                    if (category != null &&
+                        (transaction.categoryIcon.isEmpty() || transaction.categoryColor == 0xFF90A4AE)
+                    ) {
+                        // Update transaction with category data
+                        transaction.copy(
+                            categoryIcon = category.icon,
+                            categoryColor = category.color,
+                        )
+                    } else {
+                        transaction
+                    }
+                }
+
+            val totalIncome = enrichedFiltered.calculateTotalIncome()
+            val totalExpense = enrichedFiltered.calculateTotalExpense() // This will be negative
+            val balance = enrichedFiltered.calculateBalance() // Sum of all amounts
+
+            // Calculate balance by payment type (optimized with Map, excluding zeros)
+            val balanceByPaymentType =
+                enrichedFiltered
+                    .groupBy { it.paymentType }
+                    .mapValues { (_, txs) -> txs.sumOf { it.amount } }
+                    .filterValues { it != 0.0 }
+
+            // Track budget exceeded: when expense increases significantly
+            val expenseAbsoluteValue = kotlin.math.abs(totalExpense)
+            if (expenseAbsoluteValue > previousExpenseTotal && previousExpenseTotal > 0) {
+                val increasePercent =
+                    ((expenseAbsoluteValue - previousExpenseTotal) / previousExpenseTotal * 100)
+                        .toInt()
+                if (increasePercent > 20) {
+                    segmentationTracker.trackBudgetExceededAlert(
+                        category = "All_Categories",
+                        budget = previousExpenseTotal,
+                        spent = expenseAbsoluteValue,
+                    )
+                }
             }
-        }
+            previousExpenseTotal = expenseAbsoluteValue
 
-        val totalIncome = enrichedFiltered.calculateTotalIncome()
-        val totalExpense = enrichedFiltered.calculateTotalExpense() // This will be negative
-        val balance = enrichedFiltered.calculateBalance() // Sum of all amounts
+            // Track category preference shift: detect top category changes
+            val categoryExpenses =
+                enrichedFiltered
+                    .filter { it.amount < 0 } // Only expenses
+                    .groupBy { it.category }
+                    .mapValues { (_, txs) -> kotlin.math.abs(txs.sumOf { it.amount }) }
 
-        // Calculate balance by payment type (optimized with Map, excluding zeros)
-        val balanceByPaymentType = enrichedFiltered
-            .groupBy { it.paymentType }
-            .mapValues { (_, txs) -> txs.sumOf { it.amount } }
-            .filterValues { it != 0.0 }
-
-        // Track budget exceeded: when expense increases significantly
-        val expenseAbsoluteValue = kotlin.math.abs(totalExpense)
-        if (expenseAbsoluteValue > previousExpenseTotal && previousExpenseTotal > 0) {
-            val increasePercent = ((expenseAbsoluteValue - previousExpenseTotal) / previousExpenseTotal * 100).toInt()
-            if (increasePercent > 20) {
-                segmentationTracker.trackBudgetExceededAlert(
-                    category = "All_Categories",
-                    budget = previousExpenseTotal,
-                    spent = expenseAbsoluteValue
+            val currentTopCategory = categoryExpenses.maxByOrNull { it.value }?.key
+            if (previousTopCategory != null &&
+                previousTopCategory != currentTopCategory &&
+                currentTopCategory != null
+            ) {
+                segmentationTracker.trackCategoryPreferenceShift(
+                    oldCategory = previousTopCategory ?: "Unknown",
+                    newCategory = currentTopCategory,
+                    daysDiff = 1,
                 )
             }
-        }
-        previousExpenseTotal = expenseAbsoluteValue
+            previousTopCategory = currentTopCategory
 
-        // Track category preference shift: detect top category changes
-        val categoryExpenses = enrichedFiltered
-            .filter { it.amount < 0 } // Only expenses
-            .groupBy { it.category }
-            .mapValues { (_, txs) -> kotlin.math.abs(txs.sumOf { it.amount }) }
-
-        val currentTopCategory = categoryExpenses.maxByOrNull { it.value }?.key
-        if (previousTopCategory != null && previousTopCategory != currentTopCategory && currentTopCategory != null) {
-            segmentationTracker.trackCategoryPreferenceShift(
-                oldCategory = previousTopCategory ?: "Unknown",
-                newCategory = currentTopCategory,
-                daysDiff = 1
+            HomeState(
+                transactions = transactions,
+                filteredTransactions = enrichedFiltered,
+                recentTransactions = enrichedFiltered,
+                totalIncome = totalIncome,
+                totalExpense = totalExpense, // Will be negative for display
+                balance = balance,
+                balanceByPaymentType = balanceByPaymentType,
+                isLoading = false,
+                selectedPresetIndex = filterState.selectedPresetIndex,
+                dateRangeFrom = filterState.dateRangeFrom,
+                dateRangeTo = filterState.dateRangeTo,
+                selectedTransaction = selectedTransaction,
+                searchQuery = filterState.searchQuery,
+                isSearchExpanded = filterState.isSearchExpanded,
+                searchSuggestions = suggestions,
+                homeTopCardsOrder = homeTopCardsOrder,
+                dateFilterExpanded = dateFilterExpanded,
+                showPaymentTypeBreakdown = showPaymentTypeBreakdown,
+                showQuickInsightsCard = showQuickInsightsCard,
+                reduceMotion = reduceMotion,
+                transactionDisplayType = transactionDisplayType,
+                isTutorialCompleted = isTutorialCompleted,
             )
-        }
-        previousTopCategory = currentTopCategory
-
-        HomeState(
-            transactions = transactions,
-            filteredTransactions = enrichedFiltered,
-            recentTransactions = enrichedFiltered,
-            totalIncome = totalIncome,
-            totalExpense = totalExpense, // Will be negative for display
-            balance = balance,
-            balanceByPaymentType = balanceByPaymentType,
-            isLoading = false,
-            selectedPresetIndex = filterState.selectedPresetIndex,
-            dateRangeFrom = filterState.dateRangeFrom,
-            dateRangeTo = filterState.dateRangeTo,
-            selectedTransaction = selectedTransaction,
-            searchQuery = filterState.searchQuery,
-            isSearchExpanded = filterState.isSearchExpanded,
-            searchSuggestions = suggestions,
-            homeTopCardsOrder = homeTopCardsOrder,
-            dateFilterExpanded = dateFilterExpanded,
-            showPaymentTypeBreakdown = showPaymentTypeBreakdown,
-            showQuickInsightsCard = showQuickInsightsCard,
-            reduceMotion = reduceMotion,
-            transactionDisplayType = transactionDisplayType,
-            isTutorialCompleted = isTutorialCompleted,
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = HomeState(isLoading = true),
         )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = HomeState(isLoading = true),
-    )
 
     // Convenience StateFlows used by UI/tests: expose transactions and recentTransactions directly
-    val transactions = state.map { it.filteredTransactions }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+    val transactions =
+        state
+            .map { it.filteredTransactions }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     init {
         observeSavedDateFilter()
@@ -337,8 +363,9 @@ class HomeViewModel(
         when (event) {
             is HomeEvent.SelectPreset -> selectPreset(event.index)
             is HomeEvent.SetDateRange -> setDateRange(event.from, event.to)
-            is HomeEvent.ShowTransactionDetails -> _selectedTransactionState.value =
-                event.transaction
+            is HomeEvent.ShowTransactionDetails ->
+                _selectedTransactionState.value =
+                    event.transaction
 
             HomeEvent.DismissTransactionDetails -> _selectedTransactionState.value = null
             is HomeEvent.UpdateSearchQuery -> updateSearchQuery(event.query)
@@ -359,7 +386,7 @@ class HomeViewModel(
                 isSearchExpanded = !it.isSearchExpanded,
                 // Cancella il searchQuery quando la ricerca viene disabilitata
                 // per tornare ai dati completi filtrati solo per data
-                searchQuery = if (it.isSearchExpanded) "" else it.searchQuery
+                searchQuery = if (it.isSearchExpanded) "" else it.searchQuery,
             )
         }
     }
@@ -392,12 +419,13 @@ class HomeViewModel(
                     // dinamico: "to" deve essere "adesso" per includere le transazioni appena
                     // inserite, "from" deve retrocedere dal momento corrente.
                     // Per il range personalizzato si rispettano le date fisse salvate.
-                    val (from, to) = if (savedFilter.isCustom) {
-                        savedFilter.from to savedFilter.to
-                    } else {
-                        HomeState.getDateFromForPreset(savedFilter.presetIndex) to
+                    val (from, to) =
+                        if (savedFilter.isCustom) {
+                            savedFilter.from to savedFilter.to
+                        } else {
+                            HomeState.getDateFromForPreset(savedFilter.presetIndex) to
                                 System.currentTimeMillis()
-                    }
+                        }
                     _filterState.update {
                         it.copy(
                             selectedPresetIndex = savedFilter.presetIndex,
@@ -428,7 +456,10 @@ class HomeViewModel(
         )
     }
 
-    private fun setDateRange(from: Long, to: Long) {
+    private fun setDateRange(
+        from: Long,
+        to: Long,
+    ) {
         val normalizedFrom = minOf(from, to)
         val normalizedTo = maxOf(from, to)
         _filterState.update {

@@ -17,6 +17,5 @@ public enum class TransactionDisplayType {
     /**
      * Don't show any icon.
      */
-    NONE
+    NONE,
 }
-

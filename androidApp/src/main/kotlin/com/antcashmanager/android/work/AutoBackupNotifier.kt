@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat
 import com.antcashmanager.android.R
 
 /**
@@ -15,7 +14,6 @@ import com.antcashmanager.android.R
  * [notifyFailure] quando il backup automatico fallisce.
  */
 object AutoBackupNotifier {
-
     private const val CHANNEL_ID = "auto_backup_errors"
     private const val NOTIFICATION_ID = 1001
 
@@ -28,9 +26,10 @@ object AutoBackupNotifier {
             val name = context.getString(R.string.auto_backup_notification_channel_name)
             val description = context.getString(R.string.auto_backup_notification_channel_description)
             val importance = android.app.NotificationManager.IMPORTANCE_DEFAULT
-            val channel = android.app.NotificationChannel(CHANNEL_ID, name, importance).apply {
-                this.description = description
-            }
+            val channel =
+                android.app.NotificationChannel(CHANNEL_ID, name, importance).apply {
+                    this.description = description
+                }
             val notificationManager = context.getSystemService(android.app.NotificationManager::class.java)
             notificationManager?.createNotificationChannel(channel)
         }
@@ -46,13 +45,15 @@ object AutoBackupNotifier {
             val title = context.getString(R.string.auto_backup_notification_failure_title)
             val message = context.getString(R.string.auto_backup_notification_failure_message)
 
-            val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_launcher)  // Icona app
-                .setContentTitle(title)
-                .setContentText(message)
-                .setAutoCancel(true)
-                .setStyle(NotificationCompat.BigTextStyle().bigText(message))
-                .build()
+            val notification =
+                NotificationCompat
+                    .Builder(context, CHANNEL_ID)
+                    .setSmallIcon(R.mipmap.ic_launcher) // Icona app
+                    .setContentTitle(title)
+                    .setContentText(message)
+                    .setAutoCancel(true)
+                    .setStyle(NotificationCompat.BigTextStyle().bigText(message))
+                    .build()
 
             // Prova a mostrare la notifica; su API 33+ con permesso mancante, fallirà gracefully
             try {

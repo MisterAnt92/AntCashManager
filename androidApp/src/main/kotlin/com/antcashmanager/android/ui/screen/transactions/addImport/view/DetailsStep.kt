@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -33,13 +32,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import com.antcashmanager.android.ui.components.layout.SpacingSize
-import com.antcashmanager.android.ui.components.layout.VerticalSpacer
-import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.button.AppButton
 import com.antcashmanager.android.ui.components.input.AutocompleteTextField
+import com.antcashmanager.android.ui.components.layout.SpacingSize
+import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionState
 import com.antcashmanager.android.ui.screen.transactions.addImport.event.AddTransactionEvent
@@ -137,11 +135,11 @@ internal fun DetailsStep(
                     onClick = {
                         analyticsManager.logEvent("transaction_deleted")
                         onEvent(AddTransactionEvent.ConfirmDelete)
-                    }
+                    },
                 ) {
                     AppText(
                         stringResource(R.string.dialog_delete),
-                        color = MaterialTheme.colorScheme.error
+                        color = MaterialTheme.colorScheme.error,
                     )
                 }
             },
@@ -159,10 +157,11 @@ internal fun DetailsStep(
             TopAppBar(
                 title = {
                     AppText(
-                        if (state.isModifying)
+                        if (state.isModifying) {
                             stringResource(R.string.edit_transaction_title)
-                        else
-                            stringResource(R.string.add_transaction_details),
+                        } else {
+                            stringResource(R.string.add_transaction_details)
+                        },
                         fontWeight = FontWeight.Bold,
                     )
                 },
@@ -178,7 +177,7 @@ internal fun DetailsStep(
                     // Pulsante elimina (solo in modalità modifica)
                     if (state.isModifying) {
                         IconButton(
-                            onClick = { onEvent(AddTransactionEvent.ShowDeleteConfirmDialog) }
+                            onClick = { onEvent(AddTransactionEvent.ShowDeleteConfirmDialog) },
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
@@ -192,15 +191,15 @@ internal fun DetailsStep(
         },
     ) { innerPadding ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    start = innerPadding.calculateStartPadding(LayoutDirection.Ltr) + 16.dp,
-                    top = innerPadding.calculateTopPadding() + 12.dp,
-                    end = innerPadding.calculateEndPadding(LayoutDirection.Ltr) + 16.dp,
-                    bottom = innerPadding.calculateBottomPadding(),
-                )
-                .verticalScroll(rememberScrollState()),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(
+                        start = innerPadding.calculateStartPadding(LayoutDirection.Ltr) + 16.dp,
+                        top = innerPadding.calculateTopPadding() + 12.dp,
+                        end = innerPadding.calculateEndPadding(LayoutDirection.Ltr) + 16.dp,
+                        bottom = innerPadding.calculateBottomPadding(),
+                    ).verticalScroll(rememberScrollState()),
         ) {
             // ── Categoria, Tipo, Data, Payment Type ──
             DetailsCategoryTypeSection(
@@ -224,11 +223,14 @@ internal fun DetailsStep(
                 modifier = Modifier.fillMaxWidth(),
                 onSuggestionSelected = { suggestion ->
                     // Track transaction duplicate suggestion accepted
-                    analyticsManager.logEvent("transaction_duplicate_suggestion_accepted", android.os.Bundle().apply {
-                        putString("suggestion_type", "title")
-                        putInt("suggestion_length", suggestion.length)
-                    })
-                }
+                    analyticsManager.logEvent(
+                        "transaction_duplicate_suggestion_accepted",
+                        android.os.Bundle().apply {
+                            putString("suggestion_type", "title")
+                            putInt("suggestion_length", suggestion.length)
+                        },
+                    )
+                },
             )
             VerticalSpacer(SpacingSize.SM)
 
@@ -278,7 +280,7 @@ internal fun DetailsStep(
             DetailsTagsSection(
                 tags = state.tags,
                 onTagsChange = { onEvent(AddTransactionEvent.UpdateTags(it)) },
-                suggestions = state.tagsSuggestions
+                suggestions = state.tagsSuggestions,
             )
             VerticalSpacer(SpacingSize.SM)
 
@@ -316,13 +318,20 @@ internal fun DetailsStep(
                     )
                 }
                 AppButton(
-                    text = if (state.isModifying)
-                        stringResource(R.string.add_transaction_update)
-                    else
-                        stringResource(R.string.add_transaction_save),
-                    modifier = if (state.isModifying) Modifier.fillMaxWidth() else Modifier.weight(
-                        1f
-                    ),
+                    text =
+                        if (state.isModifying) {
+                            stringResource(R.string.add_transaction_update)
+                        } else {
+                            stringResource(R.string.add_transaction_save)
+                        },
+                    modifier =
+                        if (state.isModifying) {
+                            Modifier.fillMaxWidth()
+                        } else {
+                            Modifier.weight(
+                                1f,
+                            )
+                        },
                     enabled = state.isFormValid,
                     onClick = { onEvent(AddTransactionEvent.Submit) },
                 )
@@ -331,4 +340,3 @@ internal fun DetailsStep(
         }
     }
 }
-

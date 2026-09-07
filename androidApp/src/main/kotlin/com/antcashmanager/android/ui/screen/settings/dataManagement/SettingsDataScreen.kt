@@ -19,9 +19,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Backup
+import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DeleteSweep
-import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Refresh
@@ -37,7 +37,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -47,6 +46,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
@@ -54,9 +54,9 @@ import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
 import com.antcashmanager.android.ui.components.common.AppSwitch
 import com.antcashmanager.android.ui.components.dialog.BlockingProgressDialog
-import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.BackupDestination
@@ -69,9 +69,7 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsDataScreen(
-    navController: NavController,
-) {
+fun SettingsDataScreen(navController: NavController) {
     val viewModel: SettingsDataViewModel = koinViewModel()
 
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -175,34 +173,39 @@ internal fun SettingsDataContent(
         onSuggestionsEnabledChange(enabled)
     }
     val backupLauncher =
-        if (isPreview) null else rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.CreateDocument("application/json"),
-        ) { uri ->
-            if (uri == null) {
-                onClearPendingBackupRequest()
-                return@rememberLauncherForActivityResult
-            }
-
-            val jsonData = state.pendingBackupData
-            if (jsonData.isNullOrBlank()) {
-                onBackupFileSaveError(SettingsDataConstant.UNKNOWN_ERROR)
-                return@rememberLauncherForActivityResult
-            }
-
-            try {
-                val outputStream = context.contentResolver.openOutputStream(uri)
-                    ?: throw IllegalStateException("Unable to open destination file")
-
-                outputStream.use { stream ->
-                    stream.write(jsonData.toByteArray(StandardCharsets.UTF_8))
-                    stream.flush()
+        if (isPreview) {
+            null
+        } else {
+            rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.CreateDocument("application/json"),
+            ) { uri ->
+                if (uri == null) {
+                    onClearPendingBackupRequest()
+                    return@rememberLauncherForActivityResult
                 }
 
-                analyticsManager.logEvent("backup_file_saved")
-                onBackupFileSaved()
-            } catch (error: Exception) {
-                analyticsManager.logEvent("backup_file_save_error")
-                onBackupFileSaveError(error.message ?: SettingsDataConstant.UNKNOWN_ERROR)
+                val jsonData = state.pendingBackupData
+                if (jsonData.isNullOrBlank()) {
+                    onBackupFileSaveError(SettingsDataConstant.UNKNOWN_ERROR)
+                    return@rememberLauncherForActivityResult
+                }
+
+                try {
+                    val outputStream =
+                        context.contentResolver.openOutputStream(uri)
+                            ?: throw IllegalStateException("Unable to open destination file")
+
+                    outputStream.use { stream ->
+                        stream.write(jsonData.toByteArray(StandardCharsets.UTF_8))
+                        stream.flush()
+                    }
+
+                    analyticsManager.logEvent("backup_file_saved")
+                    onBackupFileSaved()
+                } catch (error: Exception) {
+                    analyticsManager.logEvent("backup_file_save_error")
+                    onBackupFileSaveError(error.message ?: SettingsDataConstant.UNKNOWN_ERROR)
+                }
             }
         }
 
@@ -217,8 +220,11 @@ internal fun SettingsDataContent(
     }
 
     // Helper function to read backup file with charset fallback
-    fun readBackupFileContent(inputStream: java.io.InputStream, fileName: String?): String? {
-        return try {
+    fun readBackupFileContent(
+        inputStream: java.io.InputStream,
+        fileName: String?,
+    ): String? =
+        try {
             // Attempt 1: UTF-8 (standard)
             inputStream.bufferedReader(StandardCharsets.UTF_8).use { reader ->
                 reader.readText()
@@ -238,37 +244,42 @@ internal fun SettingsDataContent(
                 } catch (fallbackError: Exception) {
                     analyticsManager.logEvent("backup_file_read_charset_error")
                     onRestoreFileReadError(
-                        "Impossibile leggere il file: ${fallbackError.message ?: "Charset error"}"
+                        "Impossibile leggere il file: ${fallbackError.message ?: "Charset error"}",
                     )
                     null
                 }
             }
         }
-    }
 
     val restoreLauncher =
-        if (isPreview) null else rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.OpenDocument(),
-        ) { uri ->
-            if (uri == null) return@rememberLauncherForActivityResult
-            analyticsManager.logEvent("restore_file_selected")
+        if (isPreview) {
+            null
+        } else {
+            rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.OpenDocument(),
+            ) { uri ->
+                if (uri == null) return@rememberLauncherForActivityResult
+                analyticsManager.logEvent("restore_file_selected")
 
-            try {
-                val inputStream = context.contentResolver.openInputStream(uri)
-                    ?: throw IllegalStateException("Unable to open selected backup file")
+                try {
+                    val inputStream =
+                        context.contentResolver.openInputStream(uri)
+                            ?: throw IllegalStateException("Unable to open selected backup file")
 
-                // ✅ Use new function with charset fallback
-                val payload = readBackupFileContent(inputStream, uri.lastPathSegment)
-                    ?: return@rememberLauncherForActivityResult
+                    // ✅ Use new function with charset fallback
+                    val payload =
+                        readBackupFileContent(inputStream, uri.lastPathSegment)
+                            ?: return@rememberLauncherForActivityResult
 
-                if (payload.isBlank()) {
-                    throw IllegalArgumentException("Selected backup file is empty")
+                    if (payload.isBlank()) {
+                        throw IllegalArgumentException("Selected backup file is empty")
+                    }
+
+                    onRestoreBackup(payload)
+                } catch (error: Exception) {
+                    analyticsManager.logEvent("backup_file_read_error")
+                    onRestoreFileReadError(error.message ?: SettingsDataConstant.UNKNOWN_ERROR)
                 }
-
-                onRestoreBackup(payload)
-            } catch (error: Exception) {
-                analyticsManager.logEvent("backup_file_read_error")
-                onRestoreFileReadError(error.message ?: SettingsDataConstant.UNKNOWN_ERROR)
             }
         }
 
@@ -290,32 +301,36 @@ internal fun SettingsDataContent(
 
     // Launcher per il picker della cartella di backup automatico (SAF)
     val folderPickerLauncher =
-        if (isPreview) null else rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.OpenDocumentTree(),
-        ) { uri ->
-            if (uri == null) {
-                // Utente ha annullato: il toggle rimane OFF, niente viene persistito
-                return@rememberLauncherForActivityResult
-            }
+        if (isPreview) {
+            null
+        } else {
+            rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.OpenDocumentTree(),
+            ) { uri ->
+                if (uri == null) {
+                    // Utente ha annullato: il toggle rimane OFF, niente viene persistito
+                    return@rememberLauncherForActivityResult
+                }
 
-            // Utente ha selezionato una cartella: persisti il permesso e il URI
-            try {
-                context.contentResolver.takePersistableUriPermission(
-                    uri,
-                    android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                    android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                )
-            } catch (e: Exception) {
-                // Se takePersistableUriPermission fallisce, continua comunque
-                // (il permesso potrebbe non essere necessario su alcuni device)
-            }
+                // Utente ha selezionato una cartella: persisti il permesso e il URI
+                try {
+                    context.contentResolver.takePersistableUriPermission(
+                        uri,
+                        android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                            android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
+                    )
+                } catch (e: Exception) {
+                    // Se takePersistableUriPermission fallisce, continua comunque
+                    // (il permesso potrebbe non essere necessario su alcuni device)
+                }
 
-            onAutoBackupFolderSelected(uri.toString())
-            analyticsManager.logEvent("auto_backup_folder_selected")
+                onAutoBackupFolderSelected(uri.toString())
+                analyticsManager.logEvent("auto_backup_folder_selected")
 
-            // Opzionale: richiedi il permesso POST_NOTIFICATIONS su API 33+ dopo il folder
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                notificationPermissionLauncher?.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                // Opzionale: richiedi il permesso POST_NOTIFICATIONS su API 33+ dopo il folder
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    notificationPermissionLauncher?.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                }
             }
         }
 
@@ -350,14 +365,18 @@ internal fun SettingsDataContent(
         if (adaptiveLayoutInfo.isCompact) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(
-                    start = innerPadding.calculateStartPadding(LayoutDirection.Ltr) +
-                            SettingsDataConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
-                    top = innerPadding.calculateTopPadding() + SettingsDataConstant.CONTENT_TOP_PADDING_DP.dp,
-                    end = innerPadding.calculateEndPadding(LayoutDirection.Ltr) +
-                            SettingsDataConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
-                    bottom = innerPadding.calculateBottomPadding() + SettingsDataConstant.CONTENT_BOTTOM_PADDING_DP.dp,
-                ),
+                contentPadding =
+                    PaddingValues(
+                        start =
+                            innerPadding.calculateStartPadding(LayoutDirection.Ltr) +
+                                SettingsDataConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
+                        top = innerPadding.calculateTopPadding() + SettingsDataConstant.CONTENT_TOP_PADDING_DP.dp,
+                        end =
+                            innerPadding.calculateEndPadding(LayoutDirection.Ltr) +
+                                SettingsDataConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
+                        bottom =
+                            innerPadding.calculateBottomPadding() + SettingsDataConstant.CONTENT_BOTTOM_PADDING_DP.dp,
+                    ),
                 verticalArrangement = Arrangement.spacedBy(SettingsDataConstant.CARD_SPACING_DP.dp),
             ) {
                 item {
@@ -373,11 +392,11 @@ internal fun SettingsDataContent(
                                 analyticsManager.logEvent("restore_open_requested")
                                 restoreLauncher.launch(
                                     arrayOf(
-                                        "application/json",      // Standard JSON
-                                        "application/backup",    // Custom MIME type for .backup
-                                        "text/plain",           // Generic text file
-                                        "text/json",            // JSON as text
-                                        "*/*",                  // Fallback: accept any file type
+                                        "application/json", // Standard JSON
+                                        "application/backup", // Custom MIME type for .backup
+                                        "text/plain", // Generic text file
+                                        "text/json", // JSON as text
+                                        "*/*", // Fallback: accept any file type
                                     ),
                                 )
                             } else {
@@ -421,18 +440,21 @@ internal fun SettingsDataContent(
             }
         } else {
             Row(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(
-                        start = innerPadding.calculateStartPadding(LayoutDirection.Ltr) +
-                                SettingsDataConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
-                        top = innerPadding.calculateTopPadding() + SettingsDataConstant.CONTENT_TOP_PADDING_DP.dp,
-                        end = innerPadding.calculateEndPadding(LayoutDirection.Ltr) +
-                                SettingsDataConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
-                        bottom = innerPadding.calculateBottomPadding() +
-                                SettingsDataConstant.CONTENT_BOTTOM_PADDING_DP.dp,
-                    )
-                    .verticalScroll(rememberScrollState()),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(
+                            start =
+                                innerPadding.calculateStartPadding(LayoutDirection.Ltr) +
+                                    SettingsDataConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
+                            top = innerPadding.calculateTopPadding() + SettingsDataConstant.CONTENT_TOP_PADDING_DP.dp,
+                            end =
+                                innerPadding.calculateEndPadding(LayoutDirection.Ltr) +
+                                    SettingsDataConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
+                            bottom =
+                                innerPadding.calculateBottomPadding() +
+                                    SettingsDataConstant.CONTENT_BOTTOM_PADDING_DP.dp,
+                        ).verticalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(SettingsDataConstant.TABLET_COLUMNS_SPACING_DP.dp),
             ) {
                 Column(
@@ -451,11 +473,11 @@ internal fun SettingsDataContent(
                                 analyticsManager.logEvent("restore_open_requested")
                                 restoreLauncher.launch(
                                     arrayOf(
-                                        "application/json",      // Standard JSON
-                                        "application/backup",    // Custom MIME type for .backup
-                                        "text/plain",           // Generic text file
-                                        "text/json",            // JSON as text
-                                        "*/*",                  // Fallback: accept any file type
+                                        "application/json", // Standard JSON
+                                        "application/backup", // Custom MIME type for .backup
+                                        "text/plain", // Generic text file
+                                        "text/json", // JSON as text
+                                        "*/*", // Fallback: accept any file type
                                     ),
                                 )
                             } else {
@@ -567,7 +589,7 @@ internal fun SettingsDataContent(
                     stringResource(
                         R.string.backup_error_message,
                         state.backupErrorMessage,
-                    )
+                    ),
                 )
             },
             confirmButton = {
@@ -589,7 +611,7 @@ internal fun SettingsDataContent(
                             R.string.restore_success_message,
                             info.transactions,
                             info.categories,
-                        )
+                        ),
                     )
                 }
             },
@@ -610,7 +632,7 @@ internal fun SettingsDataContent(
                     stringResource(
                         R.string.restore_error_message,
                         state.restoreErrorMessage,
-                    )
+                    ),
                 )
             },
             confirmButton = {
@@ -869,11 +891,12 @@ private fun LastOperationLabel(
     @StringRes neverRes: Int,
 ) {
     val dateFormat = remember { SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()) }
-    val text = if (timestamp != null) {
-        stringResource(labelRes, dateFormat.format(Date(timestamp)))
-    } else {
-        stringResource(neverRes)
-    }
+    val text =
+        if (timestamp != null) {
+            stringResource(labelRes, dateFormat.format(Date(timestamp)))
+        } else {
+            stringResource(neverRes)
+        }
     AppText(
         text = text,
         style = MaterialTheme.typography.labelSmall,
@@ -981,12 +1004,13 @@ private fun AutoBackupPathLabel(
     googleDriveFolderName: String? = null,
     googleDriveEmail: String? = null,
 ) {
-    val selectedPathText = formatAutoBackupPath(
-        destination = destination,
-        localFolderUri = localFolderUri,
-        googleDriveFolderName = googleDriveFolderName,
-        googleDriveEmail = googleDriveEmail,
-    )
+    val selectedPathText =
+        formatAutoBackupPath(
+            destination = destination,
+            localFolderUri = localFolderUri,
+            googleDriveFolderName = googleDriveFolderName,
+            googleDriveEmail = googleDriveEmail,
+        )
     val labelText = stringResource(R.string.settings_auto_backup_path_selected, selectedPathText)
 
     AppText(
@@ -1002,9 +1026,7 @@ private fun AutoBackupPathLabel(
  * Visualizza: "Backup configurato per Google Drive (email@gmail.com)"
  */
 @Composable
-private fun AutoBackupGoogleDriveStatusSection(
-    googleDriveUserEmail: String? = null,
-) {
+private fun AutoBackupGoogleDriveStatusSection(googleDriveUserEmail: String? = null) {
     if (googleDriveUserEmail.isNullOrBlank()) return
 
     AppCard(
@@ -1040,8 +1062,8 @@ private fun formatAutoBackupPath(
     localFolderUri: String? = null,
     googleDriveFolderName: String? = null,
     googleDriveEmail: String? = null,
-): String {
-    return when (destination) {
+): String =
+    when (destination) {
         BackupDestination.LOCAL -> {
             if (localFolderUri.isNullOrBlank()) {
                 stringResource(R.string.settings_auto_backup_path_not_selected)
@@ -1068,7 +1090,6 @@ private fun formatAutoBackupPath(
             }
         }
     }
-}
 
 @Preview(showBackground = true)
 @Preview(showBackground = true, name = "SettingsDataScreen - 7 inch", widthDp = 600, heightDp = 960)
@@ -1076,7 +1097,7 @@ private fun formatAutoBackupPath(
     showBackground = true,
     name = "SettingsDataScreen - 10 inch",
     widthDp = 840,
-    heightDp = 1280
+    heightDp = 1280,
 )
 @Composable
 private fun SettingsDataContentPreview() {

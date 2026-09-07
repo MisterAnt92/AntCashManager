@@ -48,7 +48,9 @@ package com.antcashmanager.android.test.annotations
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
-annotation class RequiresApi(val level: Int)
+annotation class RequiresApi(
+    val level: Int,
+)
 
 /**
  * Marks test as flaky (known to fail intermittently)
@@ -74,7 +76,9 @@ annotation class RequiresApi(val level: Int)
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
-annotation class FlakyTest(val reason: String = "")
+annotation class FlakyTest(
+    val reason: String = "",
+)
 
 /**
  * Marks test as slow (takes > 2 seconds to complete)
@@ -99,7 +103,9 @@ annotation class FlakyTest(val reason: String = "")
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
-annotation class SlowTest(val estimatedMs: Int = 5000)
+annotation class SlowTest(
+    val estimatedMs: Int = 5000,
+)
 
 /**
  * Indicates test requires actual device (not emulator)
@@ -122,7 +128,9 @@ annotation class SlowTest(val estimatedMs: Int = 5000)
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
-annotation class RequiresDevice(val reason: String = "")
+annotation class RequiresDevice(
+    val reason: String = "",
+)
 
 /**
  * Indicates test requires specific manufacturer device
@@ -144,7 +152,9 @@ annotation class RequiresDevice(val reason: String = "")
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
-annotation class RequiresDeviceManufacturer(val manufacturer: String)
+annotation class RequiresDeviceManufacturer(
+    val manufacturer: String,
+)
 
 /**
  * Marks test as integration test (tests multiple components together)

@@ -39,14 +39,15 @@ class HomeViewModelTest : BaseUnitTest() {
         fakeCategoryRepo = FakeCategoryRepository()
         fakeSettingsRepository = FakeSettingsRepository()
         segmentationTracker = mockk(relaxed = true)
-        viewModel = HomeViewModel(
-            transactionRepository = fakeRepo,
-            settingsRepository = fakeSettingsRepository,
-            categoryRepository = fakeCategoryRepo,
-            dispatcher = testDispatcher,
-            searchDebounceMs = 0L,
-            segmentationTracker = segmentationTracker,
-        )
+        viewModel =
+            HomeViewModel(
+                transactionRepository = fakeRepo,
+                settingsRepository = fakeSettingsRepository,
+                categoryRepository = fakeCategoryRepo,
+                dispatcher = testDispatcher,
+                searchDebounceMs = 0L,
+                segmentationTracker = segmentationTracker,
+            )
     }
 
     @After
@@ -57,50 +58,54 @@ class HomeViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun transactions_shouldBeEmpty_whenViewModelIsInitialized() = runViewModelTest {
-        val collectJob = launch {
-            viewModel.transactions.collect {}
-        }
-        advanceUntilIdle()
+    fun transactions_shouldBeEmpty_whenViewModelIsInitialized() =
+        runViewModelTest {
+            val collectJob =
+                launch {
+                    viewModel.transactions.collect {}
+                }
+            advanceUntilIdle()
 
-        assertTrue(viewModel.transactions.value.isEmpty())
-        collectJob.cancel()
-    }
+            assertTrue(viewModel.transactions.value.isEmpty())
+            collectJob.cancel()
+        }
 
     @Test
     fun transactions_shouldReflectRepositoryData_whenDateRangeIncludesAllTransactions() =
         runViewModelTest {
             // Use safe timestamp that won't have timing issues
             val now = 1_700_000_000_000L
-            fakeRepo.transactions.value = listOf(
-                Transaction(
-                    id = 1,
-                    title = "Salary",
-                    amount = 2000.0,
-                    category = "Work",
-                    type = TransactionType.INCOME,
-                    timestamp = now,
-                ),
-                Transaction(
-                    id = 2,
-                    title = "Groceries",
-                    amount = 50.0,
-                    category = "Food",
-                    type = TransactionType.EXPENSE,
-                    timestamp = now,
-                ),
-            )
+            fakeRepo.transactions.value =
+                listOf(
+                    Transaction(
+                        id = 1,
+                        title = "Salary",
+                        amount = 2000.0,
+                        category = "Work",
+                        type = TransactionType.INCOME,
+                        timestamp = now,
+                    ),
+                    Transaction(
+                        id = 2,
+                        title = "Groceries",
+                        amount = 50.0,
+                        category = "Food",
+                        type = TransactionType.EXPENSE,
+                        timestamp = now,
+                    ),
+                )
 
-            val collectJob = launch {
-                viewModel.transactions.collect {}
-            }
+            val collectJob =
+                launch {
+                    viewModel.transactions.collect {}
+                }
             advanceUntilIdle()
 
             viewModel.onEvent(
                 HomeEvent.SetDateRange(
                     0L,
-                    Long.MAX_VALUE
-                )
+                    Long.MAX_VALUE,
+                ),
             )
             advanceUntilIdle()
 
@@ -111,80 +116,94 @@ class HomeViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun stateTransactions_shouldUpdate_whenRepositoryEmitsNewData() = runViewModelTest {
-        fun awaitTransactionsSize(expected: Int) {
-            repeat(10) {
-                advanceUntilIdle()
-                if (viewModel.state.value.transactions.size == expected) {
-                    return
+    fun stateTransactions_shouldUpdate_whenRepositoryEmitsNewData() =
+        runViewModelTest {
+            fun awaitTransactionsSize(expected: Int) {
+                repeat(10) {
+                    advanceUntilIdle()
+                    if (viewModel.state.value.transactions.size == expected) {
+                        return
+                    }
                 }
+                fail("Expected transactions size=$expected but was ${viewModel.state.value.transactions.size}")
             }
-            fail("Expected transactions size=$expected but was ${viewModel.state.value.transactions.size}")
+
+            val collectJob =
+                launch {
+                    viewModel.state.collect {}
+                }
+            advanceUntilIdle()
+            assertTrue(
+                viewModel.state.value.transactions
+                    .isEmpty(),
+            )
+
+            val now = fakeSettingsRepository.homeDateFilterState.value.to - 1L
+            fakeRepo.transactions.value =
+                listOf(
+                    Transaction(
+                        id = 1,
+                        title = "Bonus",
+                        amount = 500.0,
+                        category = "Work",
+                        type = TransactionType.INCOME,
+                        timestamp = now,
+                    ),
+                )
+            awaitTransactionsSize(1)
+
+            assertEquals(1, viewModel.state.value.transactions.size)
+            assertEquals(
+                "Bonus",
+                viewModel.state.value.transactions
+                    .first()
+                    .title,
+            )
+            collectJob.cancel()
         }
-
-        val collectJob = launch {
-            viewModel.state.collect {}
-        }
-        advanceUntilIdle()
-        assertTrue(viewModel.state.value.transactions.isEmpty())
-
-        val now = fakeSettingsRepository.homeDateFilterState.value.to - 1L
-        fakeRepo.transactions.value = listOf(
-            Transaction(
-                id = 1,
-                title = "Bonus",
-                amount = 500.0,
-                category = "Work",
-                type = TransactionType.INCOME,
-                timestamp = now,
-            ),
-        )
-        awaitTransactionsSize(1)
-
-        assertEquals(1, viewModel.state.value.transactions.size)
-        assertEquals("Bonus", viewModel.state.value.transactions.first().title)
-        collectJob.cancel()
-    }
 
     @Test
     fun transactions_shouldContainIncomeAndExpenseWithNormalizedAmounts_whenRepositoryHasMixedTypes() =
         runViewModelTest {
-            fakeSettingsRepository.homeDateFilterState.value = SavedDateFilter(
-                presetIndex = SavedDateFilter.CUSTOM_PRESET_INDEX,
-                from = 0L,
-                to = Long.MAX_VALUE,
-            )
+            fakeSettingsRepository.homeDateFilterState.value =
+                SavedDateFilter(
+                    presetIndex = SavedDateFilter.CUSTOM_PRESET_INDEX,
+                    from = 0L,
+                    to = Long.MAX_VALUE,
+                )
 
             val now = 1_700_000_000_000L
-            fakeRepo.transactions.value = listOf(
-                Transaction(
-                    id = 1,
-                    title = "Salary",
-                    amount = 3000.0,
-                    category = "Work",
-                    type = TransactionType.INCOME,
-                    timestamp = now,
-                ),
-                Transaction(
-                    id = 2,
-                    title = "Rent",
-                    amount = 800.0,
-                    category = "Housing",
-                    type = TransactionType.EXPENSE,
-                    timestamp = now,
-                ),
-            )
+            fakeRepo.transactions.value =
+                listOf(
+                    Transaction(
+                        id = 1,
+                        title = "Salary",
+                        amount = 3000.0,
+                        category = "Work",
+                        type = TransactionType.INCOME,
+                        timestamp = now,
+                    ),
+                    Transaction(
+                        id = 2,
+                        title = "Rent",
+                        amount = 800.0,
+                        category = "Housing",
+                        type = TransactionType.EXPENSE,
+                        timestamp = now,
+                    ),
+                )
 
-            val collectJob = launch {
-                viewModel.transactions.collect {}
-            }
+            val collectJob =
+                launch {
+                    viewModel.transactions.collect {}
+                }
             advanceUntilIdle()
 
             viewModel.onEvent(
                 HomeEvent.SetDateRange(
                     0L,
-                    Long.MAX_VALUE
-                )
+                    Long.MAX_VALUE,
+                ),
             )
             advanceUntilIdle()
 
@@ -203,25 +222,27 @@ class HomeViewModelTest : BaseUnitTest() {
         runViewModelTest {
             // Use timestamp within default filter range
             val now = fakeSettingsRepository.homeDateFilterState.value.to - 1_000L
-            val transaction = Transaction(
-                id = 1,
-                title = "Test Transaction",
-                amount = 100.0,
-                category = "Test",
-                type = TransactionType.INCOME,
-                timestamp = now,
-            )
+            val transaction =
+                Transaction(
+                    id = 1,
+                    title = "Test Transaction",
+                    amount = 100.0,
+                    category = "Test",
+                    type = TransactionType.INCOME,
+                    timestamp = now,
+                )
             fakeRepo.transactions.value = listOf(transaction)
 
-            val collectJob = launch {
-                viewModel.state.collect {}
-            }
+            val collectJob =
+                launch {
+                    viewModel.state.collect {}
+                }
             advanceUntilIdle()
 
             viewModel.onEvent(
                 HomeEvent.ShowTransactionDetails(
-                    transaction
-                )
+                    transaction,
+                ),
             )
             advanceUntilIdle()
 
@@ -234,25 +255,27 @@ class HomeViewModelTest : BaseUnitTest() {
         runViewModelTest {
             // Use timestamp within default filter range
             val now = fakeSettingsRepository.homeDateFilterState.value.to - 1_000L
-            val transaction = Transaction(
-                id = 1,
-                title = "Test Transaction",
-                amount = 100.0,
-                category = "Test",
-                type = TransactionType.INCOME,
-                timestamp = now,
-            )
+            val transaction =
+                Transaction(
+                    id = 1,
+                    title = "Test Transaction",
+                    amount = 100.0,
+                    category = "Test",
+                    type = TransactionType.INCOME,
+                    timestamp = now,
+                )
             fakeRepo.transactions.value = listOf(transaction)
 
-            val collectJob = launch {
-                viewModel.state.collect {}
-            }
+            val collectJob =
+                launch {
+                    viewModel.state.collect {}
+                }
             advanceUntilIdle()
 
             viewModel.onEvent(
                 HomeEvent.ShowTransactionDetails(
-                    transaction
-                )
+                    transaction,
+                ),
             )
             advanceUntilIdle()
             assertEquals(transaction, viewModel.state.value.selectedTransaction)
@@ -271,57 +294,60 @@ class HomeViewModelTest : BaseUnitTest() {
 
             // Use timestamp within the default filter range to ensure transactions are included
             val now = fakeSettingsRepository.homeDateFilterState.value.to - 1_000L
-            fakeRepo.transactions.value = listOf(
-                Transaction(
-                    id = 1,
-                    title = "Salary",
-                    amount = 2000.0,
-                    category = "Work",
-                    type = TransactionType.INCOME,
-                    timestamp = now,
-                    paymentType = PaymentType.ELECTRONIC,
-                ),
-                Transaction(
-                    id = 2,
-                    title = "Cash Bonus",
-                    amount = 300.0,
-                    category = "Work",
-                    type = TransactionType.INCOME,
-                    timestamp = now,
-                    paymentType = PaymentType.CASH,
-                ),
-                Transaction(
-                    id = 3,
-                    title = "Groceries",
-                    amount = 150.0,  // Will become -150 after transformation
-                    category = "Food",
-                    type = TransactionType.EXPENSE,
-                    timestamp = now,
-                    paymentType = PaymentType.CASH,
-                ),
-                Transaction(
-                    id = 4,
-                    title = "Meal Voucher",
-                    amount = 50.0,  // Will become -50 after transformation
-                    category = "Food",
-                    type = TransactionType.EXPENSE,
-                    timestamp = now,
-                    paymentType = PaymentType.MEAL_VOUCHERS,
-                ),
-            )
+            fakeRepo.transactions.value =
+                listOf(
+                    Transaction(
+                        id = 1,
+                        title = "Salary",
+                        amount = 2000.0,
+                        category = "Work",
+                        type = TransactionType.INCOME,
+                        timestamp = now,
+                        paymentType = PaymentType.ELECTRONIC,
+                    ),
+                    Transaction(
+                        id = 2,
+                        title = "Cash Bonus",
+                        amount = 300.0,
+                        category = "Work",
+                        type = TransactionType.INCOME,
+                        timestamp = now,
+                        paymentType = PaymentType.CASH,
+                    ),
+                    Transaction(
+                        id = 3,
+                        title = "Groceries",
+                        amount = 150.0, // Will become -150 after transformation
+                        category = "Food",
+                        type = TransactionType.EXPENSE,
+                        timestamp = now,
+                        paymentType = PaymentType.CASH,
+                    ),
+                    Transaction(
+                        id = 4,
+                        title = "Meal Voucher",
+                        amount = 50.0, // Will become -50 after transformation
+                        category = "Food",
+                        type = TransactionType.EXPENSE,
+                        timestamp = now,
+                        paymentType = PaymentType.MEAL_VOUCHERS,
+                    ),
+                )
 
-            val testViewModel = HomeViewModel(
-                transactionRepository = fakeRepo,
-                settingsRepository = fakeSettingsRepository,
-                categoryRepository = fakeCategoryRepo,
-                dispatcher = testDispatcher,
-                searchDebounceMs = 0L,
-                segmentationTracker = segmentationTracker,
-            )
+            val testViewModel =
+                HomeViewModel(
+                    transactionRepository = fakeRepo,
+                    settingsRepository = fakeSettingsRepository,
+                    categoryRepository = fakeCategoryRepo,
+                    dispatcher = testDispatcher,
+                    searchDebounceMs = 0L,
+                    segmentationTracker = segmentationTracker,
+                )
 
-            val collectJob = launch {
-                testViewModel.state.collect {}
-            }
+            val collectJob =
+                launch {
+                    testViewModel.state.collect {}
+                }
             advanceUntilIdle()
 
             val balanceByPaymentType = testViewModel.state.value.balanceByPaymentType
@@ -335,53 +361,58 @@ class HomeViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun balanceByPaymentType_shouldExcludePaymentType_whenNetBalanceIsZero() = runViewModelTest {
-        val now = fakeSettingsRepository.homeDateFilterState.value.to - 1_000L
-        fakeRepo.transactions.value = listOf(
-            Transaction(
-                id = 1,
-                title = "Income",
-                amount = 100.0,
-                category = "Work",
-                type = TransactionType.INCOME,
-                timestamp = now,
-                paymentType = PaymentType.ELECTRONIC,
-            ),
-            Transaction(
-                id = 2,
-                title = "Expense",
-                amount = 100.0,
-                category = "Food",
-                type = TransactionType.EXPENSE,
-                timestamp = now,
-                paymentType = PaymentType.ELECTRONIC,
-            ),
-        )
+    fun balanceByPaymentType_shouldExcludePaymentType_whenNetBalanceIsZero() =
+        runViewModelTest {
+            val now = fakeSettingsRepository.homeDateFilterState.value.to - 1_000L
+            fakeRepo.transactions.value =
+                listOf(
+                    Transaction(
+                        id = 1,
+                        title = "Income",
+                        amount = 100.0,
+                        category = "Work",
+                        type = TransactionType.INCOME,
+                        timestamp = now,
+                        paymentType = PaymentType.ELECTRONIC,
+                    ),
+                    Transaction(
+                        id = 2,
+                        title = "Expense",
+                        amount = 100.0,
+                        category = "Food",
+                        type = TransactionType.EXPENSE,
+                        timestamp = now,
+                        paymentType = PaymentType.ELECTRONIC,
+                    ),
+                )
 
-        val collectJob = launch {
-            viewModel.state.collect {}
+            val collectJob =
+                launch {
+                    viewModel.state.collect {}
+                }
+            advanceUntilIdle()
+
+            val balanceByPaymentType = viewModel.state.value.balanceByPaymentType
+            // ELECTRONIC should be 0 (100 - 100), so it should be excluded from map
+            assertFalse(balanceByPaymentType.containsKey(PaymentType.ELECTRONIC))
+            collectJob.cancel()
         }
-        advanceUntilIdle()
-
-        val balanceByPaymentType = viewModel.state.value.balanceByPaymentType
-        // ELECTRONIC should be 0 (100 - 100), so it should be excluded from map
-        assertFalse(balanceByPaymentType.containsKey(PaymentType.ELECTRONIC))
-        collectJob.cancel()
-    }
 
     @Test
-    fun balanceByPaymentType_shouldBeEmpty_whenThereAreNoTransactions() = runViewModelTest {
-        fakeRepo.transactions.value = emptyList()
+    fun balanceByPaymentType_shouldBeEmpty_whenThereAreNoTransactions() =
+        runViewModelTest {
+            fakeRepo.transactions.value = emptyList()
 
-        val collectJob = launch {
-            viewModel.state.collect {}
+            val collectJob =
+                launch {
+                    viewModel.state.collect {}
+                }
+            advanceUntilIdle()
+
+            val balanceByPaymentType = viewModel.state.value.balanceByPaymentType
+            assertTrue(balanceByPaymentType.isEmpty())
+            collectJob.cancel()
         }
-        advanceUntilIdle()
-
-        val balanceByPaymentType = viewModel.state.value.balanceByPaymentType
-        assertTrue(balanceByPaymentType.isEmpty())
-        collectJob.cancel()
-    }
 
     @Test
     fun balanceByPaymentType_shouldIncludeOnlyTransactionsWithinDefaultDateFilter_whenInitialized() =
@@ -393,39 +424,42 @@ class HomeViewModelTest : BaseUnitTest() {
             val inRangeTimestamp = defaultFilter.to - 1_000L
             val outOfRangeTimestamp = defaultFilter.from - 1_000L
 
-            fakeRepo.transactions.value = listOf(
-                Transaction(
-                    id = 1,
-                    title = "Recent Income",
-                    amount = 1000.0,
-                    category = "Work",
-                    type = TransactionType.INCOME,
-                    timestamp = inRangeTimestamp,
-                    paymentType = PaymentType.ELECTRONIC,
-                ),
-                Transaction(
-                    id = 2,
-                    title = "Old Income",
-                    amount = 500.0,
-                    category = "Work",
-                    type = TransactionType.INCOME,
-                    timestamp = outOfRangeTimestamp,
-                    paymentType = PaymentType.CASH,
-                ),
-            )
+            fakeRepo.transactions.value =
+                listOf(
+                    Transaction(
+                        id = 1,
+                        title = "Recent Income",
+                        amount = 1000.0,
+                        category = "Work",
+                        type = TransactionType.INCOME,
+                        timestamp = inRangeTimestamp,
+                        paymentType = PaymentType.ELECTRONIC,
+                    ),
+                    Transaction(
+                        id = 2,
+                        title = "Old Income",
+                        amount = 500.0,
+                        category = "Work",
+                        type = TransactionType.INCOME,
+                        timestamp = outOfRangeTimestamp,
+                        paymentType = PaymentType.CASH,
+                    ),
+                )
 
-            val testViewModel = HomeViewModel(
-                transactionRepository = fakeRepo,
-                settingsRepository = fakeSettingsRepository,
-                categoryRepository = fakeCategoryRepo,
-                dispatcher = testDispatcher,
-                searchDebounceMs = 0L,
-            segmentationTracker = mockk(relaxed = true),
-            )
+            val testViewModel =
+                HomeViewModel(
+                    transactionRepository = fakeRepo,
+                    settingsRepository = fakeSettingsRepository,
+                    categoryRepository = fakeCategoryRepo,
+                    dispatcher = testDispatcher,
+                    searchDebounceMs = 0L,
+                    segmentationTracker = mockk(relaxed = true),
+                )
 
-            val collectJob = launch {
-                testViewModel.state.collect {}
-            }
+            val collectJob =
+                launch {
+                    testViewModel.state.collect {}
+                }
             advanceUntilIdle()
 
             // Default filter is last 7 days, so only the recent transaction should be included
@@ -433,7 +467,7 @@ class HomeViewModelTest : BaseUnitTest() {
             assertEquals(1000.0, balanceByPaymentType[PaymentType.ELECTRONIC] ?: 0.0, 0.01)
             assertFalse(
                 "Old Income should be excluded by date filter",
-                balanceByPaymentType.containsKey(PaymentType.CASH)
+                balanceByPaymentType.containsKey(PaymentType.CASH),
             )
             collectJob.cancel()
         }
@@ -445,61 +479,64 @@ class HomeViewModelTest : BaseUnitTest() {
             viewModel.viewModelScope.cancel()
 
             val now = System.currentTimeMillis() - 1000L
-            fakeRepo.transactions.value = listOf(
-                Transaction(
-                    id = 1,
-                    title = "Salary",
-                    amount = 2000.0,
-                    category = "Work",
-                    type = TransactionType.INCOME,
-                    timestamp = now,
-                ),
-                Transaction(
-                    id = 2,
-                    title = "Freelance",
-                    amount = 500.0,
-                    category = "Work",
-                    type = TransactionType.INCOME,
-                    timestamp = now,
-                ),
-                Transaction(
-                    id = 3,
-                    title = "Rent",
-                    amount = 800.0,
-                    category = "Home",
-                    type = TransactionType.EXPENSE,
-                    timestamp = now,
-                ),
-                Transaction(
-                    id = 4,
-                    title = "Groceries",
-                    amount = 200.0,
-                    category = "Food",
-                    type = TransactionType.EXPENSE,
-                    timestamp = now,
-                ),
-            )
+            fakeRepo.transactions.value =
+                listOf(
+                    Transaction(
+                        id = 1,
+                        title = "Salary",
+                        amount = 2000.0,
+                        category = "Work",
+                        type = TransactionType.INCOME,
+                        timestamp = now,
+                    ),
+                    Transaction(
+                        id = 2,
+                        title = "Freelance",
+                        amount = 500.0,
+                        category = "Work",
+                        type = TransactionType.INCOME,
+                        timestamp = now,
+                    ),
+                    Transaction(
+                        id = 3,
+                        title = "Rent",
+                        amount = 800.0,
+                        category = "Home",
+                        type = TransactionType.EXPENSE,
+                        timestamp = now,
+                    ),
+                    Transaction(
+                        id = 4,
+                        title = "Groceries",
+                        amount = 200.0,
+                        category = "Food",
+                        type = TransactionType.EXPENSE,
+                        timestamp = now,
+                    ),
+                )
 
-            val testViewModel = HomeViewModel(
-                transactionRepository = fakeRepo,
-                settingsRepository = fakeSettingsRepository,
-                categoryRepository = fakeCategoryRepo,
-                dispatcher = testDispatcher,
-                searchDebounceMs = 0L,
-            segmentationTracker = mockk(relaxed = true),
-            )
+            val testViewModel =
+                HomeViewModel(
+                    transactionRepository = fakeRepo,
+                    settingsRepository = fakeSettingsRepository,
+                    categoryRepository = fakeCategoryRepo,
+                    dispatcher = testDispatcher,
+                    searchDebounceMs = 0L,
+                    segmentationTracker = mockk(relaxed = true),
+                )
 
-            val collectJob = launch {
-                testViewModel.state.collect {}
-            }
+            val collectJob =
+                launch {
+                    testViewModel.state.collect {}
+                }
             advanceUntilIdle()
 
             // Ensure we are using CUSTOM filter with full range for this test
             testViewModel.onEvent(
                 HomeEvent.SetDateRange(
                     0L,
-                    Long.MAX_VALUE
-                )
+                    Long.MAX_VALUE,
+                ),
             )
             advanceUntilIdle()
 
@@ -515,38 +552,40 @@ class HomeViewModelTest : BaseUnitTest() {
     fun totals_shouldUseNormalizedAmountSigns_whenStoredTransactionSignsAreInconsistent() =
         runViewModelTest {
             val now = 1_700_000_000_000L
-            fakeRepo.transactions.value = listOf(
-                // Wrong sign for INCOME in storage -> should be normalized to positive
-                Transaction(
-                    id = 1,
-                    title = "Refund",
-                    amount = -120.0,
-                    category = "Other",
-                    type = TransactionType.INCOME,
-                    timestamp = now,
-                ),
-                // Wrong sign for EXPENSE in storage -> should be normalized to negative
-                Transaction(
-                    id = 2,
-                    title = "Coffee",
-                    amount = 20.0,
-                    category = "Food",
-                    type = TransactionType.EXPENSE,
-                    timestamp = now,
-                ),
-            )
+            fakeRepo.transactions.value =
+                listOf(
+                    // Wrong sign for INCOME in storage -> should be normalized to positive
+                    Transaction(
+                        id = 1,
+                        title = "Refund",
+                        amount = -120.0,
+                        category = "Other",
+                        type = TransactionType.INCOME,
+                        timestamp = now,
+                    ),
+                    // Wrong sign for EXPENSE in storage -> should be normalized to negative
+                    Transaction(
+                        id = 2,
+                        title = "Coffee",
+                        amount = 20.0,
+                        category = "Food",
+                        type = TransactionType.EXPENSE,
+                        timestamp = now,
+                    ),
+                )
 
-            val collectJob = launch {
-                viewModel.state.collect {}
-            }
+            val collectJob =
+                launch {
+                    viewModel.state.collect {}
+                }
             advanceUntilIdle()
 
             // Ensure we are using CUSTOM filter with full range for this test
             viewModel.onEvent(
                 HomeEvent.SetDateRange(
                     0L,
-                    Long.MAX_VALUE
-                )
+                    Long.MAX_VALUE,
+                ),
             )
             advanceUntilIdle()
 
@@ -559,158 +598,172 @@ class HomeViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun onEvent_shouldUpdateTotals_whenSetDateRangeIsReceived() = runViewModelTest {
-        // Cancel shared viewModel
-        viewModel.viewModelScope.cancel()
+    fun onEvent_shouldUpdateTotals_whenSetDateRangeIsReceived() =
+        runViewModelTest {
+            // Cancel shared viewModel
+            viewModel.viewModelScope.cancel()
 
-        val recentTimestamp = 1_720_000_000_000L
-        val rangeFrom = 1_719_800_000_000L
-        val rangeTo = 1_720_100_000_000L
-        val oldTimestamp = 1_718_000_000_000L
+            val recentTimestamp = 1_720_000_000_000L
+            val rangeFrom = 1_719_800_000_000L
+            val rangeTo = 1_720_100_000_000L
+            val oldTimestamp = 1_718_000_000_000L
 
-        fakeRepo.transactions.value = listOf(
-            Transaction(
-                id = 1,
-                title = "Recent Income",
-                amount = 1000.0,
-                category = "Work",
-                type = TransactionType.INCOME,
-                timestamp = recentTimestamp,
-            ),
-            Transaction(
-                id = 2,
-                title = "Recent Expense",
-                amount = 300.0,
-                category = "Food",
-                type = TransactionType.EXPENSE,
-                timestamp = recentTimestamp,
-            ),
-            Transaction(
-                id = 3,
-                title = "Old Income",
-                amount = 900.0,
-                category = "Work",
-                type = TransactionType.INCOME,
-                timestamp = oldTimestamp,
-            ),
-        )
+            fakeRepo.transactions.value =
+                listOf(
+                    Transaction(
+                        id = 1,
+                        title = "Recent Income",
+                        amount = 1000.0,
+                        category = "Work",
+                        type = TransactionType.INCOME,
+                        timestamp = recentTimestamp,
+                    ),
+                    Transaction(
+                        id = 2,
+                        title = "Recent Expense",
+                        amount = 300.0,
+                        category = "Food",
+                        type = TransactionType.EXPENSE,
+                        timestamp = recentTimestamp,
+                    ),
+                    Transaction(
+                        id = 3,
+                        title = "Old Income",
+                        amount = 900.0,
+                        category = "Work",
+                        type = TransactionType.INCOME,
+                        timestamp = oldTimestamp,
+                    ),
+                )
 
-        val testViewModel = HomeViewModel(
-            transactionRepository = fakeRepo,
-            settingsRepository = fakeSettingsRepository,
-            categoryRepository = fakeCategoryRepo,
-            dispatcher = testDispatcher,
-            searchDebounceMs = 0L,
-            segmentationTracker = segmentationTracker,
-        )
+            val testViewModel =
+                HomeViewModel(
+                    transactionRepository = fakeRepo,
+                    settingsRepository = fakeSettingsRepository,
+                    categoryRepository = fakeCategoryRepo,
+                    dispatcher = testDispatcher,
+                    searchDebounceMs = 0L,
+                    segmentationTracker = segmentationTracker,
+                )
 
-        val collectJob = launch {
-            testViewModel.state.collect {}
-        }
-        advanceUntilIdle()
+            val collectJob =
+                launch {
+                    testViewModel.state.collect {}
+                }
+            advanceUntilIdle()
 
-        testViewModel.onEvent(
-            HomeEvent.SetDateRange(
-                rangeFrom,
-                rangeTo,
+            testViewModel.onEvent(
+                HomeEvent.SetDateRange(
+                    rangeFrom,
+                    rangeTo,
+                ),
             )
-        )
-        advanceUntilIdle()
+            advanceUntilIdle()
 
-        val uiState = testViewModel.state.value
-        assertEquals(1000.0, uiState.totalIncome, 0.01)
-        assertEquals(-300.0, uiState.totalExpense, 0.01)
-        assertEquals(700.0, uiState.balance, 0.01)
+            val uiState = testViewModel.state.value
+            assertEquals(1000.0, uiState.totalIncome, 0.01)
+            assertEquals(-300.0, uiState.totalExpense, 0.01)
+            assertEquals(700.0, uiState.balance, 0.01)
 
-        collectJob.cancel()
-    }
+            collectJob.cancel()
+        }
 
     @Test
-    fun onEvent_shouldPersistCustomFilterState_whenSetDateRangeIsReceived() = runViewModelTest {
-        val from = 1_700_000_000_000L
-        val to = 1_700_100_000_000L
+    fun onEvent_shouldPersistCustomFilterState_whenSetDateRangeIsReceived() =
+        runViewModelTest {
+            val from = 1_700_000_000_000L
+            val to = 1_700_100_000_000L
 
-        val collectJob = launch {
-            viewModel.state.collect {}
+            val collectJob =
+                launch {
+                    viewModel.state.collect {}
+                }
+            advanceUntilIdle()
+
+            viewModel.onEvent(
+                HomeEvent.SetDateRange(from, to),
+            )
+            advanceUntilIdle()
+
+            assertEquals(SavedDateFilter.CUSTOM_PRESET_INDEX, viewModel.state.value.selectedPresetIndex)
+            assertEquals(from, fakeSettingsRepository.homeDateFilterState.value.from)
+            assertEquals(to, fakeSettingsRepository.homeDateFilterState.value.to)
+            collectJob.cancel()
         }
-        advanceUntilIdle()
-
-        viewModel.onEvent(
-            HomeEvent.SetDateRange(from, to)
-        )
-        advanceUntilIdle()
-
-        assertEquals(SavedDateFilter.CUSTOM_PRESET_INDEX, viewModel.state.value.selectedPresetIndex)
-        assertEquals(from, fakeSettingsRepository.homeDateFilterState.value.from)
-        assertEquals(to, fakeSettingsRepository.homeDateFilterState.value.to)
-        collectJob.cancel()
-    }
 
     @Test
-    fun state_shouldRestoreSavedCustomHomeFilter_whenViewModelIsRecreated() = runViewModelTest {
-        val from = 1_701_000_000_000L
-        val to = 1_701_500_000_000L
-        fakeSettingsRepository.homeDateFilterState.value = SavedDateFilter(
-            presetIndex = SavedDateFilter.CUSTOM_PRESET_INDEX,
-            from = from,
-            to = to,
-        )
+    fun state_shouldRestoreSavedCustomHomeFilter_whenViewModelIsRecreated() =
+        runViewModelTest {
+            val from = 1_701_000_000_000L
+            val to = 1_701_500_000_000L
+            fakeSettingsRepository.homeDateFilterState.value =
+                SavedDateFilter(
+                    presetIndex = SavedDateFilter.CUSTOM_PRESET_INDEX,
+                    from = from,
+                    to = to,
+                )
 
-        val restoredViewModel = HomeViewModel(
-            transactionRepository = fakeRepo,
-            settingsRepository = fakeSettingsRepository,
-            categoryRepository = fakeCategoryRepo,
-            dispatcher = testDispatcher,
-            searchDebounceMs = 0L,
-            segmentationTracker = mockk(relaxed = true),
-        )
+            val restoredViewModel =
+                HomeViewModel(
+                    transactionRepository = fakeRepo,
+                    settingsRepository = fakeSettingsRepository,
+                    categoryRepository = fakeCategoryRepo,
+                    dispatcher = testDispatcher,
+                    searchDebounceMs = 0L,
+                    segmentationTracker = mockk(relaxed = true),
+                )
 
-        val collectJob = launch {
-            restoredViewModel.state.collect {}
+            val collectJob =
+                launch {
+                    restoredViewModel.state.collect {}
+                }
+            advanceUntilIdle()
+
+            assertEquals(
+                SavedDateFilter.CUSTOM_PRESET_INDEX,
+                restoredViewModel.state.value.selectedPresetIndex,
+            )
+            assertEquals(from, restoredViewModel.state.value.dateRangeFrom)
+            assertEquals(to, restoredViewModel.state.value.dateRangeTo)
+            collectJob.cancel()
         }
-        advanceUntilIdle()
-
-        assertEquals(
-            SavedDateFilter.CUSTOM_PRESET_INDEX,
-            restoredViewModel.state.value.selectedPresetIndex
-        )
-        assertEquals(from, restoredViewModel.state.value.dateRangeFrom)
-        assertEquals(to, restoredViewModel.state.value.dateRangeTo)
-        collectJob.cancel()
-    }
 
     @Test
-    fun init_shouldUseDynamicDateRangeTo_whenRestoringNonCustomPreset() = runViewModelTest {
-        // Simula un filtro salvato con preset non-custom e un "to" stantio (passato di 1 ora)
-        val staleStoredTo = System.currentTimeMillis() - (60L * 60 * 1000)
-        val staleStoredFrom = staleStoredTo - (7L * 24 * 60 * 60 * 1000)
-        fakeSettingsRepository.homeDateFilterState.value = SavedDateFilter(
-            presetIndex = 1, // "Last 7 days" preset, non-custom
-            from = staleStoredFrom,
-            to = staleStoredTo,
-        )
+    fun init_shouldUseDynamicDateRangeTo_whenRestoringNonCustomPreset() =
+        runViewModelTest {
+            // Simula un filtro salvato con preset non-custom e un "to" stantio (passato di 1 ora)
+            val staleStoredTo = System.currentTimeMillis() - (60L * 60 * 1000)
+            val staleStoredFrom = staleStoredTo - (7L * 24 * 60 * 60 * 1000)
+            fakeSettingsRepository.homeDateFilterState.value =
+                SavedDateFilter(
+                    presetIndex = 1, // "Last 7 days" preset, non-custom
+                    from = staleStoredFrom,
+                    to = staleStoredTo,
+                )
 
-        val restoredViewModel = HomeViewModel(
-            transactionRepository = fakeRepo,
-            settingsRepository = fakeSettingsRepository,
-            categoryRepository = fakeCategoryRepo,
-            dispatcher = testDispatcher,
-            searchDebounceMs = 0L,
-            segmentationTracker = mockk(relaxed = true),
-        )
+            val restoredViewModel =
+                HomeViewModel(
+                    transactionRepository = fakeRepo,
+                    settingsRepository = fakeSettingsRepository,
+                    categoryRepository = fakeCategoryRepo,
+                    dispatcher = testDispatcher,
+                    searchDebounceMs = 0L,
+                    segmentationTracker = mockk(relaxed = true),
+                )
 
-        val collectJob = launch {
-            restoredViewModel.state.collect {}
+            val collectJob =
+                launch {
+                    restoredViewModel.state.collect {}
+                }
+            advanceUntilIdle()
+
+            // dateRangeTo deve essere >= staleStoredTo (cioè ricalcolato dinamicamente come "adesso")
+            assertTrue(
+                "dateRangeTo deve essere > staleStoredTo per i preset non-custom",
+                restoredViewModel.state.value.dateRangeTo > staleStoredTo,
+            )
+            // Il presetIndex deve essere mantenuto correttamente
+            assertEquals(1, restoredViewModel.state.value.selectedPresetIndex)
+            collectJob.cancel()
         }
-        advanceUntilIdle()
-
-        // dateRangeTo deve essere >= staleStoredTo (cioè ricalcolato dinamicamente come "adesso")
-        assertTrue(
-            "dateRangeTo deve essere > staleStoredTo per i preset non-custom",
-            restoredViewModel.state.value.dateRangeTo > staleStoredTo,
-        )
-        // Il presetIndex deve essere mantenuto correttamente
-        assertEquals(1, restoredViewModel.state.value.selectedPresetIndex)
-        collectJob.cancel()
-    }
 }

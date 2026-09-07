@@ -22,8 +22,9 @@ import com.antcashmanager.android.analytics.AnalyticsManager
  *
  * Privacy: Solo metriche aggregate, nessun dato personale
  */
-class SegmentationTracker(private val analyticsManager: AnalyticsManager) {
-
+class SegmentationTracker(
+    private val analyticsManager: AnalyticsManager,
+) {
     /**
      * Traccia l'assegnazione della cohort al primo lancio dell'app.
      *
@@ -33,12 +34,19 @@ class SegmentationTracker(private val analyticsManager: AnalyticsManager) {
      * @param appVersion Versione dell'app al primo lancio
      * @param deviceType Tipo di device (es: "phone", "tablet")
      */
-    fun trackUserCohortIdentified(cohortDate: String, appVersion: String, deviceType: String = "phone") {
-        analyticsManager.logEvent("user_cohort_identified", Bundle().apply {
-            putString("cohort_date", cohortDate)
-            putString("app_version", appVersion)
-            putString("device_type", deviceType)
-        })
+    fun trackUserCohortIdentified(
+        cohortDate: String,
+        appVersion: String,
+        deviceType: String = "phone",
+    ) {
+        analyticsManager.logEvent(
+            "user_cohort_identified",
+            Bundle().apply {
+                putString("cohort_date", cohortDate)
+                putString("app_version", appVersion)
+                putString("device_type", deviceType)
+            },
+        )
     }
 
     /**
@@ -50,12 +58,19 @@ class SegmentationTracker(private val analyticsManager: AnalyticsManager) {
      * @param category Categoria principale del pattern
      * @param avgAmount Importo medio del pattern
      */
-    fun trackSpendingPatternDetected(pattern: String, category: String, avgAmount: Double) {
-        analyticsManager.logEvent("spending_pattern_detected", Bundle().apply {
-            putString("pattern", pattern)
-            putString("category", category)
-            putDouble("avg_amount", avgAmount)
-        })
+    fun trackSpendingPatternDetected(
+        pattern: String,
+        category: String,
+        avgAmount: Double,
+    ) {
+        analyticsManager.logEvent(
+            "spending_pattern_detected",
+            Bundle().apply {
+                putString("pattern", pattern)
+                putString("category", category)
+                putDouble("avg_amount", avgAmount)
+            },
+        )
     }
 
     /**
@@ -67,12 +82,19 @@ class SegmentationTracker(private val analyticsManager: AnalyticsManager) {
      * @param frequency Frequenza (es: "monthly", "weekly", "daily")
      * @param avgAmount Importo medio per transazione
      */
-    fun trackIncomeSourceTracking(sourceCategory: String, frequency: String, avgAmount: Double) {
-        analyticsManager.logEvent("income_source_tracking", Bundle().apply {
-            putString("source_category", sourceCategory)
-            putString("frequency", frequency)
-            putDouble("avg_amount", avgAmount)
-        })
+    fun trackIncomeSourceTracking(
+        sourceCategory: String,
+        frequency: String,
+        avgAmount: Double,
+    ) {
+        analyticsManager.logEvent(
+            "income_source_tracking",
+            Bundle().apply {
+                putString("source_category", sourceCategory)
+                putString("frequency", frequency)
+                putDouble("avg_amount", avgAmount)
+            },
+        )
     }
 
     /**
@@ -84,14 +106,21 @@ class SegmentationTracker(private val analyticsManager: AnalyticsManager) {
      * @param budget Importo del budget
      * @param spent Importo speso
      */
-    fun trackBudgetExceededAlert(category: String, budget: Double, spent: Double) {
+    fun trackBudgetExceededAlert(
+        category: String,
+        budget: Double,
+        spent: Double,
+    ) {
         val percentageOver = ((spent - budget) / budget * 100).toInt()
-        analyticsManager.logEvent("budget_exceeded_alert", Bundle().apply {
-            putString("category", category)
-            putDouble("budget", budget)
-            putDouble("spent", spent)
-            putInt("percentage_over", percentageOver)
-        })
+        analyticsManager.logEvent(
+            "budget_exceeded_alert",
+            Bundle().apply {
+                putString("category", category)
+                putDouble("budget", budget)
+                putDouble("spent", spent)
+                putInt("percentage_over", percentageOver)
+            },
+        )
     }
 
     /**
@@ -103,12 +132,19 @@ class SegmentationTracker(private val analyticsManager: AnalyticsManager) {
      * @param newCategory Nuova categoria
      * @param daysDiff Giorni tra i due periodi
      */
-    fun trackCategoryPreferenceShift(oldCategory: String, newCategory: String, daysDiff: Int) {
-        analyticsManager.logEvent("category_preference_shift", Bundle().apply {
-            putString("old_category", oldCategory)
-            putString("new_category", newCategory)
-            putInt("days_diff", daysDiff)
-        })
+    fun trackCategoryPreferenceShift(
+        oldCategory: String,
+        newCategory: String,
+        daysDiff: Int,
+    ) {
+        analyticsManager.logEvent(
+            "category_preference_shift",
+            Bundle().apply {
+                putString("old_category", oldCategory)
+                putString("new_category", newCategory)
+                putInt("days_diff", daysDiff)
+            },
+        )
     }
 
     /**
@@ -119,10 +155,16 @@ class SegmentationTracker(private val analyticsManager: AnalyticsManager) {
      * @param preferredMethod Metodo di pagamento preferito (ELECTRONIC, CASH, MEAL_VOUCHERS)
      * @param usagePercent Percentuale di utilizzo (0-100)
      */
-    fun trackPaymentMethodPreference(preferredMethod: String, usagePercent: Int) {
-        analyticsManager.logEvent("payment_method_preference", Bundle().apply {
-            putString("preferred_method", preferredMethod)
-            putInt("usage_percent", usagePercent)
-        })
+    fun trackPaymentMethodPreference(
+        preferredMethod: String,
+        usagePercent: Int,
+    ) {
+        analyticsManager.logEvent(
+            "payment_method_preference",
+            Bundle().apply {
+                putString("preferred_method", preferredMethod)
+                putInt("usage_percent", usagePercent)
+            },
+        )
     }
 }

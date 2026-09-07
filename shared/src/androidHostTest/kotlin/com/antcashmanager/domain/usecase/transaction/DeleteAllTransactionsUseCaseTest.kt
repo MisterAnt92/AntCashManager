@@ -20,18 +20,18 @@ import org.junit.Test
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class DeleteAllTransactionsUseCaseTest {
-
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var fakeRepo: FakeTransactionRepository
     private lateinit var useCase: DeleteAllTransactionsUseCase
 
-    private val sampleTransaction = Transaction(
-        id = 1L,
-        title = "Spesa",
-        amount = 10.0,
-        category = "Cibo",
-        type = TransactionType.EXPENSE,
-    )
+    private val sampleTransaction =
+        Transaction(
+            id = 1L,
+            title = "Spesa",
+            amount = 10.0,
+            category = "Cibo",
+            type = TransactionType.EXPENSE,
+        )
 
     @Before
     fun setup() {
@@ -42,49 +42,53 @@ class DeleteAllTransactionsUseCaseTest {
     // ── Happy Path ───────────────────────────────────────────────────────────
 
     @Test
-    fun invokeDeletesAllTransactions() = runTest(testDispatcher) {
-        fakeRepo.transactions.value = listOf(sampleTransaction)
+    fun invokeDeletesAllTransactions() =
+        runTest(testDispatcher) {
+            fakeRepo.transactions.value = listOf(sampleTransaction)
 
-        useCase()
+            useCase()
 
-        assertTrue(fakeRepo.transactions.value.isEmpty())
-    }
+            assertTrue(fakeRepo.transactions.value.isEmpty())
+        }
 
     @Test
-    fun invokeIsIdempotentOnEmptyRepository() = runTest(testDispatcher) {
-        val first = useCase()
-        val second = useCase()
+    fun invokeIsIdempotentOnEmptyRepository() =
+        runTest(testDispatcher) {
+            val first = useCase()
+            val second = useCase()
 
-        assertTrue(first.isSuccess)
-        assertTrue(second.isSuccess)
-        assertTrue(fakeRepo.transactions.value.isEmpty())
-    }
+            assertTrue(first.isSuccess)
+            assertTrue(second.isSuccess)
+            assertTrue(fakeRepo.transactions.value.isEmpty())
+        }
 
     // ── Error Handling ───────────────────────────────────────────────────────
 
     @Test
-    fun invokeReturnsFailureResultWhenRepositoryThrows() = runTest(testDispatcher) {
-        fakeRepo.errorToThrow = RuntimeException("DB error")
+    fun invokeReturnsFailureResultWhenRepositoryThrows() =
+        runTest(testDispatcher) {
+            fakeRepo.errorToThrow = RuntimeException("DB error")
 
-        val result = useCase()
+            val result = useCase()
 
-        assertTrue(result.isFailure)
-        assertTrue(result.exceptionOrNull() is RuntimeException)
-    }
+            assertTrue(result.isFailure)
+            assertTrue(result.exceptionOrNull() is RuntimeException)
+        }
 
     // ── Cancellazione ────────────────────────────────────────────────────────
 
     @Test
-    fun invoke_shouldBeCancellable() = runTest(testDispatcher) {
-        fakeRepo.transactions.value = listOf(sampleTransaction)
-        fakeRepo.operationDelayMs = 10_000L
+    fun invoke_shouldBeCancellable() =
+        runTest(testDispatcher) {
+            fakeRepo.transactions.value = listOf(sampleTransaction)
+            fakeRepo.operationDelayMs = 10_000L
 
-        val job: Job = launch { useCase() }
-        job.cancel()
-        advanceUntilIdle()
+            val job: Job = launch { useCase() }
+            job.cancel()
+            advanceUntilIdle()
 
-        assertTrue(job.isCancelled)
-        assertEquals(1, fakeRepo.transactions.value.size)
-        assertFalse(fakeRepo.transactions.value.isEmpty())
-    }
+            assertTrue(job.isCancelled)
+            assertEquals(1, fakeRepo.transactions.value.size)
+            assertFalse(fakeRepo.transactions.value.isEmpty())
+        }
 }

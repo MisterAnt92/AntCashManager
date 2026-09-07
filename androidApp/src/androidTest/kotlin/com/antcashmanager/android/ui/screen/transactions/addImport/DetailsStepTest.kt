@@ -38,7 +38,6 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 class DetailsStepTest : BaseInstrumentationTest() {
-
     private val mockCategory = Category(1, "Food", "🍔", 0xFFFF6B6B, "EXPENSE")
     private val mockCategoryMealVouchers =
         Category(4, "Buoni pasto", "🍽️", 0xFFFFD93D, "INCOME")
@@ -50,12 +49,13 @@ class DetailsStepTest : BaseInstrumentationTest() {
         composeTestRule.setContent {
             AntCashManagerTheme {
                 DetailsStep(
-                    state = AddTransactionState(
-                        currentStep = AddTransactionStep.DETAILS,
-                        selectedCategory = mockCategory,
-                        selectedType = TransactionType.EXPENSE,
-                        categories = listOf(mockCategory),
-                    ),
+                    state =
+                        AddTransactionState(
+                            currentStep = AddTransactionStep.DETAILS,
+                            selectedCategory = mockCategory,
+                            selectedType = TransactionType.EXPENSE,
+                            categories = listOf(mockCategory),
+                        ),
                     onEvent = {},
                     onNavigateBack = {},
                 )
@@ -78,13 +78,14 @@ class DetailsStepTest : BaseInstrumentationTest() {
         composeTestRule.setContent {
             AntCashManagerTheme {
                 DetailsStep(
-                    state = AddTransactionState(
-                        currentStep = AddTransactionStep.DETAILS,
-                        selectedCategory = mockCategoryMealVouchers,
-                        selectedType = TransactionType.INCOME,
-                        selectedPaymentType = PaymentType.MEAL_VOUCHERS,
-                        categories = listOf(mockCategoryMealVouchers),
-                    ),
+                    state =
+                        AddTransactionState(
+                            currentStep = AddTransactionStep.DETAILS,
+                            selectedCategory = mockCategoryMealVouchers,
+                            selectedType = TransactionType.INCOME,
+                            selectedPaymentType = PaymentType.MEAL_VOUCHERS,
+                            categories = listOf(mockCategoryMealVouchers),
+                        ),
                     onEvent = {},
                     onNavigateBack = {},
                 )
@@ -107,15 +108,16 @@ class DetailsStepTest : BaseInstrumentationTest() {
         composeTestRule.setContent {
             AntCashManagerTheme {
                 DetailsStep(
-                    state = AddTransactionState(
-                        currentStep = AddTransactionStep.DETAILS,
-                        selectedCategory = mockCategoryMealVouchers,
-                        selectedType = TransactionType.INCOME,
-                        selectedPaymentType = PaymentType.MEAL_VOUCHERS,
-                        categories = listOf(mockCategoryMealVouchers),
-                        mealVoucherCount = "3",
-                        amount = "15.87",
-                    ),
+                    state =
+                        AddTransactionState(
+                            currentStep = AddTransactionStep.DETAILS,
+                            selectedCategory = mockCategoryMealVouchers,
+                            selectedType = TransactionType.INCOME,
+                            selectedPaymentType = PaymentType.MEAL_VOUCHERS,
+                            categories = listOf(mockCategoryMealVouchers),
+                            mealVoucherCount = "3",
+                            amount = "15.87",
+                        ),
                     onEvent = {},
                     onNavigateBack = {},
                 )
@@ -137,13 +139,14 @@ class DetailsStepTest : BaseInstrumentationTest() {
         composeTestRule.setContent {
             AntCashManagerTheme {
                 DetailsStep(
-                    state = AddTransactionState(
-                        currentStep = AddTransactionStep.DETAILS,
-                        selectedCategory = mockCategory,
-                        selectedType = TransactionType.EXPENSE,
-                        isRecurring = true,
-                        categories = listOf(mockCategory),
-                    ),
+                    state =
+                        AddTransactionState(
+                            currentStep = AddTransactionStep.DETAILS,
+                            selectedCategory = mockCategory,
+                            selectedType = TransactionType.EXPENSE,
+                            isRecurring = true,
+                            categories = listOf(mockCategory),
+                        ),
                     onEvent = {},
                     onNavigateBack = {},
                 )
@@ -162,12 +165,13 @@ class DetailsStepTest : BaseInstrumentationTest() {
         composeTestRule.setContent {
             AntCashManagerTheme {
                 DetailsStep(
-                    state = AddTransactionState(
-                        currentStep = AddTransactionStep.DETAILS,
-                        selectedCategory = mockCategory,
-                        selectedType = TransactionType.EXPENSE,
-                        categories = listOf(mockCategory),
-                    ),
+                    state =
+                        AddTransactionState(
+                            currentStep = AddTransactionStep.DETAILS,
+                            selectedCategory = mockCategory,
+                            selectedType = TransactionType.EXPENSE,
+                            categories = listOf(mockCategory),
+                        ),
                     onEvent = {},
                     onNavigateBack = { backClicked = true },
                 )
@@ -175,8 +179,11 @@ class DetailsStepTest : BaseInstrumentationTest() {
         }
 
         // Clicca il back button usando content description (IconButton non ha testo)
-        val backButtonDescription = InstrumentationRegistry.getInstrumentation().targetContext
-            .getString(R.string.common_back)
+        val backButtonDescription =
+            InstrumentationRegistry
+                .getInstrumentation()
+                .targetContext
+                .getString(R.string.common_back)
         composeTestRule.onNodeWithContentDescription(backButtonDescription).performClick()
         composeTestRule.waitForIdle()
 
@@ -191,12 +198,13 @@ class DetailsStepTest : BaseInstrumentationTest() {
         composeTestRule.setContent {
             AntCashManagerTheme {
                 DetailsStep(
-                    state = AddTransactionState(
-                        currentStep = AddTransactionStep.DETAILS,
-                        selectedCategory = mockCategory,
-                        selectedType = TransactionType.EXPENSE,
-                        categories = listOf(mockCategory),
-                    ),
+                    state =
+                        AddTransactionState(
+                            currentStep = AddTransactionStep.DETAILS,
+                            selectedCategory = mockCategory,
+                            selectedType = TransactionType.EXPENSE,
+                            categories = listOf(mockCategory),
+                        ),
                     onEvent = { event -> eventReceived = event },
                     onNavigateBack = {},
                 )
@@ -223,12 +231,13 @@ class DetailsStepTest : BaseInstrumentationTest() {
         composeTestRule.setContent {
             AntCashManagerTheme {
                 DetailsStep(
-                    state = AddTransactionState(
-                        currentStep = AddTransactionStep.DETAILS,
-                        selectedCategory = mockCategory,
-                        selectedType = TransactionType.EXPENSE,
-                        categories = listOf(mockCategory),
-                    ),
+                    state =
+                        AddTransactionState(
+                            currentStep = AddTransactionStep.DETAILS,
+                            selectedCategory = mockCategory,
+                            selectedType = TransactionType.EXPENSE,
+                            categories = listOf(mockCategory),
+                        ),
                     onEvent = {},
                     onNavigateBack = {},
                 )

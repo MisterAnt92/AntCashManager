@@ -33,7 +33,6 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 class NavigationRobustTest : BaseInstrumentationTest() {
-
     @Test
     fun navigation_bottomNavBar_shouldBeVisible() {
         composeTestRule.setContent {
@@ -45,7 +44,8 @@ class NavigationRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Verify bottom nav bar is visible
-        composeTestRule.onNodeWithTag("bottom_nav_bar")
+        composeTestRule
+            .onNodeWithTag("bottom_nav_bar")
             .assertIsDisplayed()
     }
 
@@ -60,7 +60,8 @@ class NavigationRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Home should be visible by default
-        composeTestRule.onNodeWithTag("home_screen")
+        composeTestRule
+            .onNodeWithTag("home_screen")
             .assertIsDisplayed()
     }
 
@@ -75,13 +76,15 @@ class NavigationRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Click transactions nav button
-        composeTestRule.onNodeWithTag("nav_transactions")
+        composeTestRule
+            .onNodeWithTag("nav_transactions")
             .performClick()
 
         composeTestRule.waitForIdle()
 
         // Verify transactions screen is displayed
-        composeTestRule.onNodeWithTag("transactions_screen")
+        composeTestRule
+            .onNodeWithTag("transactions_screen")
             .assertIsDisplayed()
     }
 
@@ -96,13 +99,15 @@ class NavigationRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Click categories nav button
-        composeTestRule.onNodeWithTag("nav_categories")
+        composeTestRule
+            .onNodeWithTag("nav_categories")
             .performClick()
 
         composeTestRule.waitForIdle()
 
         // Verify categories screen is displayed
-        composeTestRule.onNodeWithTag("categories_screen")
+        composeTestRule
+            .onNodeWithTag("categories_screen")
             .assertIsDisplayed()
     }
 
@@ -117,13 +122,15 @@ class NavigationRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Click charts nav button
-        composeTestRule.onNodeWithTag("nav_charts")
+        composeTestRule
+            .onNodeWithTag("nav_charts")
             .performClick()
 
         composeTestRule.waitForIdle()
 
         // Verify charts screen is displayed
-        composeTestRule.onNodeWithTag("charts_screen")
+        composeTestRule
+            .onNodeWithTag("charts_screen")
             .assertIsDisplayed()
     }
 
@@ -138,13 +145,15 @@ class NavigationRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Click settings nav button
-        composeTestRule.onNodeWithTag("nav_settings")
+        composeTestRule
+            .onNodeWithTag("nav_settings")
             .performClick()
 
         composeTestRule.waitForIdle()
 
         // Verify settings screen is displayed
-        composeTestRule.onNodeWithTag("settings_screen")
+        composeTestRule
+            .onNodeWithTag("settings_screen")
             .assertIsDisplayed()
     }
 
@@ -159,20 +168,23 @@ class NavigationRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Navigate: Home → Transactions → Categories → Settings → Home
-        val navSequence = listOf(
-            "nav_transactions" to "transactions_screen",
-            "nav_categories" to "categories_screen",
-            "nav_settings" to "settings_screen",
-            "nav_home" to "home_screen"
-        )
+        val navSequence =
+            listOf(
+                "nav_transactions" to "transactions_screen",
+                "nav_categories" to "categories_screen",
+                "nav_settings" to "settings_screen",
+                "nav_home" to "home_screen",
+            )
 
         for ((navButton, screenTag) in navSequence) {
-            composeTestRule.onNodeWithTag(navButton)
+            composeTestRule
+                .onNodeWithTag(navButton)
                 .performClick()
 
             composeTestRule.waitForIdle()
 
-            composeTestRule.onNodeWithTag(screenTag)
+            composeTestRule
+                .onNodeWithTag(screenTag)
                 .assertIsDisplayed()
         }
     }
@@ -188,16 +200,18 @@ class NavigationRobustTest : BaseInstrumentationTest() {
         composeTestRule.waitForIdle()
 
         // Verify all navigation buttons are visible
-        val navButtons = listOf(
-            "nav_home",
-            "nav_transactions",
-            "nav_categories",
-            "nav_charts",
-            "nav_settings"
-        )
+        val navButtons =
+            listOf(
+                "nav_home",
+                "nav_transactions",
+                "nav_categories",
+                "nav_charts",
+                "nav_settings",
+            )
 
         for (navButton in navButtons) {
-            composeTestRule.onNodeWithTag(navButton)
+            composeTestRule
+                .onNodeWithTag(navButton)
                 .assertIsDisplayed()
         }
     }

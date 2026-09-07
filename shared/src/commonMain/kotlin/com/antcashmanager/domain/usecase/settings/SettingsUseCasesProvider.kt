@@ -44,7 +44,6 @@ public data class SettingsUseCasesProvider(
     val setTheme: SetSettingUseCase<String>,
     val getLanguage: GetSettingUseCase<String>,
     val setLanguage: SetSettingUseCase<String>,
-
     // Display preferences (accessibility)
     val getShowCharts: GetSettingUseCase<Boolean>,
     val setShowCharts: SetSettingUseCase<Boolean>,
@@ -55,7 +54,6 @@ public data class SettingsUseCasesProvider(
     val getReduceMotion: GetSettingUseCase<Boolean>,
     val setReduceMotion: SetSettingUseCase<Boolean>,
     val getShowTransactionNotes: GetSettingUseCase<Boolean>,
-
     // Number formatting
     val getCurrencySymbol: GetSettingUseCase<String>,
     val setCurrencySymbol: SetSettingUseCase<String>,
@@ -65,11 +63,9 @@ public data class SettingsUseCasesProvider(
     val setDecimalSeparator: SetSettingUseCase<String>,
     val getThousandsSeparator: GetSettingUseCase<String>,
     val setThousandsSeparator: SetSettingUseCase<String>,
-
     // Date filtering & display
     val getTransactionDisplayType: GetSettingUseCase<String>,
     val setTransactionDisplayType: SetSettingUseCase<String>,
-
     // Other settings
     val setTutorialCompleted: SetSettingUseCase<Boolean>,
     val resetAllPreferences: ResetAllPreferencesUseCase,
