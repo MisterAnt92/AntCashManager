@@ -1,15 +1,21 @@
 package com.antcashmanager.android.ui.screen.home
 
+import com.antcashmanager.android.ui.mapper.TransactionUi
+import com.antcashmanager.android.ui.screen.home.model.HomeTopCardType
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
+import com.antcashmanager.domain.model.TransactionDisplayType
+import com.antcashmanager.domain.model.TransactionType
+import kotlin.math.abs
 
 /**
- * UI State for Home screen.
+ * UI State for Home screen. Derived values are computed once per emission so the screen
+ * only reads them.
  */
 data class HomeState(
     val transactions: List<Transaction> = emptyList(),
     val filteredTransactions: List<Transaction> = emptyList(),
-    val recentTransactions: List<Transaction> = emptyList(),
+    val recentTransactions: List<TransactionUi> = emptyList(),
     val totalIncome: Double = 0.0,
     val totalExpense: Double = 0.0,
     val balance: Double = 0.0,
@@ -22,15 +28,43 @@ data class HomeState(
     val searchQuery: String = "",
     val isSearchExpanded: Boolean = false,
     val searchSuggestions: List<String> = emptyList(),
-    // Settings (remove direct repo injection from HomeScreen)
-    val homeTopCardsOrder: List<String> = emptyList(),
+    // Settings (populated by HomeViewModel from SettingsRepository)
+    val topCardsOrder: List<HomeTopCardType> = HomeTopCardType.defaultOrder,
+    val editingTopCardsOrder: List<HomeTopCardType>? = null,
     val dateFilterExpanded: Boolean = false,
     val showPaymentTypeBreakdown: Boolean = false,
     val showQuickInsightsCard: Boolean = true,
     val reduceMotion: Boolean = false,
-    val transactionDisplayType: String = "TREND",
+    val transactionDisplayType: TransactionDisplayType = TransactionDisplayType.TREND,
     val isTutorialCompleted: Boolean = false,
 ) {
+    /** Top cards actually rendered: Quick Insights is dropped when its setting is off. */
+    val visibleTopCards: List<HomeTopCardType> =
+        if (showQuickInsightsCard) topCardsOrder else topCardsOrder.filterNot { it == HomeTopCardType.QUICK_INSIGHTS }
+
+    val isTopCardsOrderDialogVisible: Boolean get() = editingTopCardsOrder != null
+
+    val netBalance: Double = totalIncome - totalExpense
+
+    val transactionCount: Int = filteredTransactions.size
+
+    /** Average absolute amount per transaction in the current filter. */
+    val averageAmount: Double =
+        if (transactionCount > 0) (abs(totalIncome) + abs(totalExpense)) / transactionCount else 0.0
+
+    val dailyAverageExpense: Double =
+        run {
+            val days = (dateRangeTo - dateRangeFrom).toDouble() / HomeConstant.ONE_DAY_MS
+            if (days > 0) abs(totalExpense) / days else 0.0
+        }
+
+    val biggestExpense: Transaction? =
+        filteredTransactions.filter { it.type == TransactionType.EXPENSE }.maxByOrNull { abs(it.amount) }
+
+    /** Payment-type balances in enum order, zero entries already removed. */
+    val balanceByPaymentTypeOrdered: List<Pair<PaymentType, Double>> =
+        PaymentType.entries.mapNotNull { type -> balanceByPaymentType[type]?.let { type to it } }
+
     companion object {
         val PRESETS = HomeConstant.PRESETS
 

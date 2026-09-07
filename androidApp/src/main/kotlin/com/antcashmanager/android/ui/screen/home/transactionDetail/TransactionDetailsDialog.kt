@@ -26,10 +26,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.mapper.recurrenceIntervalLabelRes
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.home.transactionDetail.view.TransactionDetailRow
-import com.antcashmanager.android.ui.screen.home.view.getRecurrenceIntervalLabel
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.isProtectedSalaryTransaction
@@ -183,13 +183,7 @@ private fun TransactionDetailsDialogContent(
                     TransactionDetailRow(
                         label = stringResource(R.string.transaction_details_recurrence),
                         value =
-                            if (transaction.recurrenceInterval.isNotBlank()) {
-                                getRecurrenceIntervalLabel(
-                                    transaction.recurrenceInterval,
-                                )
-                            } else {
-                                stringResource(R.string.transactions_recurring)
-                            },
+                            stringResource(recurrenceIntervalLabelRes(transaction.recurrenceInterval)),
                     )
                 }
 

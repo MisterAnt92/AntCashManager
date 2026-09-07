@@ -70,6 +70,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.mapper.recurrenceIntervalLabelRes
 import com.antcashmanager.android.navigation.AppRoute
 import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
 import com.antcashmanager.android.navigation.ScreenHeaderConfig
@@ -1493,11 +1494,7 @@ private fun TransactionItem(
                             HorizontalSpacer(SpacingSize.XXXS)
                             AppText(
                                 text =
-                                    if (transaction.recurrenceInterval.isNotBlank()) {
-                                        getRecurrenceIntervalLabel(transaction.recurrenceInterval)
-                                    } else {
-                                        stringResource(R.string.transactions_recurring)
-                                    },
+                                    stringResource(recurrenceIntervalLabelRes(transaction.recurrenceInterval)),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.tertiary,
                                 fontWeight = FontWeight.SemiBold,

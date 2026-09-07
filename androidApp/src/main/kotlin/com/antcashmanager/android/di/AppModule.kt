@@ -312,6 +312,7 @@ val presentationModule =
                 getCategoriesUseCase = get(),
                 settingsRepository = get(),
                 segmentationTracker = get<SegmentationTracker>(),
+                analyticsManager = get(),
             )
         }
         viewModel {

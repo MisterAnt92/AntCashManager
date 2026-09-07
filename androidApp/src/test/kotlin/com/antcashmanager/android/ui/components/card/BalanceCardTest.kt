@@ -64,7 +64,7 @@ class BalanceCardTest : BaseComposeUnitTest() {
 
     @Test
     fun balanceCard_withPaymentTypeBreakdown_shouldDisplay() {
-        val paymentBreakdown: Map<com.antcashmanager.domain.model.PaymentType, Double> = mapOf()
+        val paymentBreakdown: List<Pair<com.antcashmanager.domain.model.PaymentType, Double>> = emptyList()
 
         composeTestRule.setContent {
             AntCashManagerTheme {
