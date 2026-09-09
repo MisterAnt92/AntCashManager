@@ -1,6 +1,5 @@
 package com.antcashmanager.android.ui.screen.settings
 
-import android.content.Context
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.TransactionDisplayType
@@ -67,9 +66,7 @@ sealed class SettingEvent {
     // Utilities
     data object ResetAllPreferences : SettingEvent()
 
-    data class ImportDebugData(
-        val context: Context,
-    ) : SettingEvent()
+    data object ImportDebugData : SettingEvent()
 
     data class SendFeedbackEmail(
         val emailBody: String,

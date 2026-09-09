@@ -1,9 +1,6 @@
 package com.antcashmanager.android.ui.screen.settings
 
-import android.content.Context
 import androidx.lifecycle.viewModelScope
-import com.antcashmanager.android.BuildConfig
-import com.antcashmanager.android.data.feedback.FeedbackEmailHelper
 import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
@@ -14,6 +11,7 @@ import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.service.WidgetUpdateNotifier
 import com.antcashmanager.domain.usecase.SendFeedbackEmailUseCase
+import com.antcashmanager.domain.usecase.settings.ImportDebugDataUseCase
 import com.antcashmanager.domain.usecase.settings.SettingsUseCasesProvider
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
@@ -29,8 +27,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.json.JSONObject
 
 class SettingsViewModel(
     private val settingsUseCases: SettingsUseCasesProvider,
@@ -39,6 +35,7 @@ class SettingsViewModel(
     private val insertTransactionUseCase: InsertTransactionUseCase,
     private val widgetUpdateNotifier: WidgetUpdateNotifier,
     private val sendFeedbackEmailUseCase: SendFeedbackEmailUseCase,
+    private val importDebugDataUseCase: ImportDebugDataUseCase,
 ) : BaseViewModel<SettingEvent>() {
     // Convenience properties for readability (delegate to provider)
     private val getThemeUseCase get() = settingsUseCases.getTheme
@@ -93,7 +90,7 @@ class SettingsViewModel(
             is SettingEvent.SetTransactionDisplayType -> setTransactionDisplayType(event.displayType)
             is SettingEvent.SetTutorialCompleted -> setIsTutorialCompleted(event.completed)
             is SettingEvent.ResetAllPreferences -> resetAllPreferences()
-            is SettingEvent.ImportDebugData -> importDebugData(event.context)
+            SettingEvent.ImportDebugData -> importDebugData()
             is SettingEvent.SendFeedbackEmail -> sendFeedbackEmail(event.emailBody)
             is SettingEvent.RetryLastOperation -> logInfo("Retry requested")
             is SettingEvent.SetAnalyticsConsent -> setAnalyticsConsent(event.granted)
@@ -102,116 +99,25 @@ class SettingsViewModel(
 
     /**
      * Import debug data from asset `debug_initial_data.json`.
-     * This runs only when the app is built in DEBUG. It reads the asset and inserts
-     * transactions using the provided UseCase. Errors are logged and
-     * ignored to keep this safe for debug usage.
+     * This runs only when the app is built in DEBUG. Uses the ImportDebugDataUseCase
+     * to handle all the heavy lifting (Context, asset reading, transaction insertion).
+     * Errors are logged and ignored to keep this safe for debug usage.
      */
-    private fun importDebugData(context: Context) {
-        if (!BuildConfig.DEBUG) return
-        logDebug("Importing debug data from assets")
+    private fun importDebugData() {
+        logDebug("Importing debug data via usecase")
         viewModelScope.launch {
-            try {
-                withContext(Dispatchers.IO) {
-                    val assetName = SettingsConstant.DEBUG_ASSET_NAME
-                    val json =
-                        try {
-                            context.assets
-                                .open(assetName)
-                                .bufferedReader()
-                                .use { it.readText() }
-                        } catch (ex: Exception) {
-                            logError("Cannot open debug asset: ${ex.message}")
-                            return@withContext
-                        }
-                    val obj = JSONObject(json)
-                    val transactions =
-                        obj.optJSONArray(SettingsConstant.JSON_KEY_TRANSACTIONS)
-                            ?: return@withContext
-                    // Clear existing data for demo
-                    deleteAllTransactionsUseCase()
-                    for (i in 0 until transactions.length()) {
-                        try {
-                            val t = transactions.getJSONObject(i)
-                            val transaction =
-                                Transaction(
-                                    id = t.optLong(SettingsConstant.JSON_KEY_ID, 0L),
-                                    title =
-                                        t.optString(
-                                            SettingsConstant.JSON_KEY_TITLE,
-                                            SettingsConstant.DEFAULT_TRANSACTION_TITLE,
-                                        ),
-                                    amount = t.optDouble(SettingsConstant.JSON_KEY_AMOUNT, 0.0),
-                                    category =
-                                        t.optString(
-                                            SettingsConstant.JSON_KEY_CATEGORY,
-                                            SettingsConstant.DEFAULT_TRANSACTION_CATEGORY,
-                                        ),
-                                    type =
-                                        try {
-                                            TransactionType.valueOf(
-                                                t.optString(
-                                                    SettingsConstant.JSON_KEY_TYPE,
-                                                    SettingsConstant.DEFAULT_TRANSACTION_TYPE,
-                                                ),
-                                            )
-                                        } catch (_: Exception) {
-                                            TransactionType.EXPENSE
-                                        },
-                                    timestamp =
-                                        t.optLong(
-                                            SettingsConstant.JSON_KEY_TIMESTAMP,
-                                            System.currentTimeMillis(),
-                                        ),
-                                    notes = t.optString(SettingsConstant.JSON_KEY_NOTES, ""),
-                                    payee = t.optString(SettingsConstant.JSON_KEY_PAYEE, ""),
-                                    location = t.optString(SettingsConstant.JSON_KEY_LOCATION, ""),
-                                    isRecurring =
-                                        t.optBoolean(
-                                            SettingsConstant.JSON_KEY_IS_RECURRING,
-                                            false,
-                                        ),
-                                    tags =
-                                        if (t.has(SettingsConstant.JSON_KEY_TAGS)) {
-                                            t.optJSONArray(SettingsConstant.JSON_KEY_TAGS)?.let { arr ->
-                                                val list = mutableListOf<String>()
-                                                for (j in 0 until arr.length()) list.add(arr.optString(j))
-                                                list.joinToString(",")
-                                            } ?: t.optString(SettingsConstant.JSON_KEY_TAGS, "")
-                                        } else {
-                                            ""
-                                        },
-                                    recurrenceInterval =
-                                        t.optString(
-                                            SettingsConstant.JSON_KEY_RECURRENCE_RULE,
-                                            "",
-                                        ),
-                                    paymentType =
-                                        try {
-                                            PaymentType.valueOf(
-                                                t.optString(
-                                                    SettingsConstant.JSON_KEY_PAYMENT_TYPE,
-                                                    SettingsConstant.DEFAULT_PAYMENT_TYPE,
-                                                ),
-                                            )
-                                        } catch (_: Exception) {
-                                            PaymentType.ELECTRONIC
-                                        },
-                                )
-                            try {
-                                insertTransactionUseCase(transaction)
-                            } catch (insertError: Exception) {
-                                // FASE 5: Log individual insert failures in debug import
-                                logWarn("Failed to insert transaction: ${insertError.message}")
-                            }
-                        } catch (entryError: Exception) {
-                            // FASE 5: Log malformed entries
-                            logWarn("Skipped malformed entry: ${entryError.message}")
-                        }
+            importDebugDataUseCase()
+                .onSuccess { success ->
+                    if (success) {
+                        logDebug("Debug data imported successfully")
+                    } else {
+                        logWarn("Debug data import returned false (not DEBUG build?)")
                     }
                 }
-            } catch (ex: Exception) {
-                logError("Error importing debug data: ${ex.message}")
-            }
+                .onFailure { error ->
+                    if (error is CancellationException) throw error
+                    logError("Error importing debug data: ${error.message}")
+                }
         }
     }
 
