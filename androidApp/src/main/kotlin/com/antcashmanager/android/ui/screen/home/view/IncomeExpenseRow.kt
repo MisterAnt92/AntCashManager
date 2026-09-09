@@ -28,6 +28,7 @@ import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.text.CompactMoneyText
+import com.antcashmanager.android.ui.screen.home.HomeConstant
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.ExpenseRed
 import com.antcashmanager.android.ui.theme.IncomeGreen
@@ -38,7 +39,7 @@ fun IncomeExpenseRow(
     totalExpense: Double,
     modifier: Modifier = Modifier,
 ) {
-    FadeInOnAppear(durationMillis = 800) {
+    FadeInOnAppear(durationMillis = HomeConstant.ROW_FADE_IN_MS) {
         Row(
             modifier = modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -62,8 +63,8 @@ fun IncomeExpenseRow(
                                 Modifier
                                     .size(40.dp)
                                     .background(
-                                        IncomeGreen.copy(alpha = 0.25f),
-                                        shape = RoundedCornerShape(32.dp),
+                                        IncomeGreen.copy(alpha = HomeConstant.ICON_BADGE_ALPHA),
+                                        shape = RoundedCornerShape(HomeConstant.ICON_BADGE_CORNER_DP.dp),
                                     ).padding(8.dp),
                             contentAlignment = Alignment.Center,
                         ) {
@@ -110,8 +111,8 @@ fun IncomeExpenseRow(
                                 Modifier
                                     .size(40.dp)
                                     .background(
-                                        ExpenseRed.copy(alpha = 0.25f),
-                                        shape = RoundedCornerShape(32.dp),
+                                        ExpenseRed.copy(alpha = HomeConstant.ICON_BADGE_ALPHA),
+                                        shape = RoundedCornerShape(HomeConstant.ICON_BADGE_CORNER_DP.dp),
                                     ).padding(8.dp),
                             contentAlignment = Alignment.Center,
                         ) {

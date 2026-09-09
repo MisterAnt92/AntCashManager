@@ -19,7 +19,7 @@
     <string name="home_income_expense_card_title">収入と支出</string>
     <string name="home_recent_transactions">最近の取引</string>
     <string name="home_customize_top_cards_action">トップカードをカスタマイズ</string>
-    <string name="home_customize_top_cards_title">トップカードをカスタマイズ</string>
+    <string name="home_customize_top_cards_title">トップカー���をカスタマイズ</string>
     <string name="home_quick_insights_title">クイックインサイト</string>
     <string name="home_quick_insights_net_balance">純残高</string>
     <string name="home_quick_insights_transactions_count">期間内の取引</string>
@@ -38,7 +38,7 @@
     <string name="transactions_interval_daily">毎日</string>
     <string name="transactions_interval_weekly">毎週</string>
     <string name="transactions_interval_monthly">毎月</string>
-    <string name="transactions_interval_yearly">毎年</string>
+    <string name="transactions_interval_yearly">���年</string>
     <!-- Transactions Filters -->
     <string name="transactions_search">検索</string>
     <string name="transactions_filter">フィルター</string>
@@ -80,7 +80,7 @@
     <string name="icon_directions_car">交通</string>
     <string name="icon_restaurant">外食</string>
     <string name="icon_receipt_long">レシート</string>
-    <string name="icon_local_dining">ファストフード</string>
+    <string name="icon_local_dining">ファス��フード</string>
     <string name="icon_theater_comedy">エンタメ</string>
     <string name="icon_local_hospital">医療</string>
     <string name="icon_shopping_bag">ショッピング</string>
@@ -190,7 +190,6 @@
     <string name="settings_separator_space">スペース</string>
     <string name="settings_separator_none">なし</string>
     <string name="settings_date_format">日付形式</string>
-    <string name="settings_date_format_subtitle">%s</string>
     <string name="settings_section_currency">通貨</string>
     <string name="settings_section_dates">日付</string>
     <string name="settings_reset_preferences">すべての設定をリセット</string>
@@ -247,7 +246,7 @@
     <string name="settings_third_party_subtitle">使用されているライブラリを表示します</string>
 
     <!-- Dialogs -->
-    <string name="dialog_choose_theme">テーマを選択</string>
+    <string name="dialog_choose_theme">テ��マを選択</string>
     <string name="dialog_choose_language">言語を選択</string>
     <string name="dialog_choose_currency">通貨記号を選択</string>
     <string name="dialog_choose_decimal_digits">小数点以下の桁数を選択</string>
@@ -295,7 +294,7 @@
     <string name="settings_auto_backup_destination_local">ローカル</string>
     <string name="settings_auto_backup_google_drive_coming_soon">近日公開予定</string>
     <string name="settings_auto_backup_google_drive_sign_in_title">Google Driveバックアップを有効にする</string>
-    <string name="settings_auto_backup_google_drive_sign_in_message">Googleアカウントにサインインして、Google Driveへの自動バックアップを有効にしてください。データは暗号化され安全に保存されます。</string>
+    <string name="settings_auto_backup_google_drive_sign_in_message">Googleアカウントにサインインして、Google Driveへの自動バックアップを有効にしてください。データは暗号化され安全���保存されます。</string>
     <string name="settings_auto_backup_google_drive_sign_in">Googleでサインイン</string>
     <string name="settings_auto_backup_google_drive_signing_in">Googleにサインイン中…</string>
     <string name="settings_auto_backup_google_drive_sign_out">Googleからサインアウト</string>
@@ -399,7 +398,7 @@
     <string name="widget_recent_transactions_description">最近の取引を自動的に更新して表示します</string>
     <string name="widget_category_breakdown_title">収入と支出</string>
     <string name="widget_category_breakdown_description">今月のカテゴリ別収支を自動的に更新して表示します</string>
-    <string name="empty_state_no_transactions_subtitle">貯金箱があなたを待っています！</string>
+    <string name="empty_state_no_transactions_subtitle">貯金箱があなた���待っています！</string>
 
     <!-- Payment Breakdown -->
     <string name="payment_breakdown_label">支払い方法別残高</string>
@@ -448,7 +447,7 @@
     <!-- Tutorial -->
     <string name="settings_tutorial">チュートリアル</string>
     <string name="settings_show_tutorial">チュートリアルを表示</string>
-    <string name="settings_show_tutorial_subtitle">初期チュートリアルをもう一度見ます</string>
+    <string name="settings_show_tutorial_subtitle">初期チュートリア���をもう一度見ます</string>
     <string name="tutorial_welcome_title">AntCashManagerへようこそ！ 🐜</string>
     <string name="tutorial_welcome_desc">小さな蟻があなたのお金の管理をどのようにお手伝いするか、ツアーで見に行きましょう。</string>
     <string name="tutorial_welcome_point_track">数秒で収支を記録できます。</string>
@@ -518,7 +517,7 @@
     <string name="help_home_title">ホームガイド</string>
     <string name="help_home_desc">ホームへようこそ！ここでは家計のサマリーと最近の取引を確認できます。</string>
     <string name="help_home_feature_date_filters_title">期間フィルター</string>
-    <string name="help_home_feature_date_filters_desc">特定の日付やプリセットを使用して取引をフィルタリングできます。</string>
+    <string name="help_home_feature_date_filters_desc">特定の���付やプリセットを使用して取引をフィルタリングできます。</string>
     <string name="help_home_feature_recent_transactions_title">最近の取引</string>
     <string name="help_home_feature_recent_transactions_desc">詳細とカテゴリが含まれた最新の取引を表示します。</string>
 
@@ -534,7 +533,7 @@
 
     <!-- Transactions Help Dialog -->
     <string name="help_transactions_title">取引ガイド</string>
-    <string name="help_transactions_desc">すべての取引を管理します。閲覧、検索、フィルターが可能です。</string>
+    <string name="help_transactions_desc">��べての取引を管理します。閲覧、検索、フィルターが可能です。</string>
     <string name="help_transactions_feature_view_title">取引の閲覧</string>
     <string name="help_transactions_feature_view_desc">収入と支出の全詳細を確認できます。</string>
     <string name="help_transactions_feature_filters_title">日付フィルター</string>
@@ -630,10 +629,21 @@
 
     <!-- Analytics Consent Dialog (GDPR) -->
     <string name="consent_title">アプリの改善にご協力ください</string>
-    <string name="consent_body">アプリを改善するために、匿名の使用統計情報（訪問した画面、エラー）を収集します。財務データは送信されません。設定からいつでも変更できます。</string>
+    <string name="consent_body">��プリを改善するために、匿名の使用統計情報（訪問した画面、エラー）を収集します。財務データは送信されません。設定からいつでも変更できます。</string>
     <string name="consent_accept">同意する</string>
     <string name="consent_decline">拒否する</string>
     <!-- Settings: Analytics consent toggle -->
     <string name="settings_analytics_consent_title">匿名使用統計を共有する</string>
     <string name="settings_analytics_consent_desc">訪問した画面とエラーのみ。財務データは送信されません。</string>
+
+    <!-- HelpDialog (Transactions) - missing aliases -->
+    <string name="transactions_help_title">@string/help_transactions_title</string>
+    <string name="transactions_help_desc">@string/help_transactions_desc</string>
+    <string name="transactions_help_filter_title">@string/help_transactions_feature_filters_title</string>
+    <string name="transactions_help_filter_desc">@string/help_transactions_feature_filters_desc</string>
+    <string name="transactions_help_search_title">@string/help_transactions_feature_search_title</string>
+    <string name="transactions_help_search_desc">@string/help_transactions_feature_search_desc</string>
+    <string name="transactions_help_display_title">@string/settings_transaction_display</string>
+    <string name="transactions_help_display_desc">@string/settings_transaction_display_desc</string>
+    <string name="transactions_details_empty">詳細を表示するには取引を選択してください</string>
 </resources>

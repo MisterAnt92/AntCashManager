@@ -35,22 +35,14 @@ import kotlin.math.abs
 
 @Composable
 fun QuickInsightsCard(
-    totalIncome: Double,
-    totalExpense: Double,
     transactionCount: Int,
     netBalance: Double,
+    averageAmount: Double,
     dailyAverageExpense: Double,
     biggestExpenseCategory: String? = null,
     biggestExpenseAmount: Double? = null,
     modifier: Modifier = Modifier,
 ) {
-    val averageAmount =
-        if (transactionCount > 0) {
-            (abs(totalIncome) + abs(totalExpense)) / transactionCount
-        } else {
-            0.0
-        }
-
     AnimatedCard(
         modifier = modifier.fillMaxWidth(),
         backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
@@ -163,10 +155,9 @@ private fun InsightRow(
 private fun QuickInsightsCardPreviewLight() {
     AntCashManagerTheme(dynamicColor = false) {
         QuickInsightsCard(
-            totalIncome = 2500.0,
-            totalExpense = 1200.0,
             transactionCount = 24,
             netBalance = 1300.0,
+            averageAmount = 154.17,
             dailyAverageExpense = 171.43,
         )
     }

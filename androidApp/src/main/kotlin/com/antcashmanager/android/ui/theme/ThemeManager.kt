@@ -35,6 +35,8 @@ fun AppThemeProvider(
     val largeText by viewModel.largeText.collectAsStateWithLifecycle(initialValue = false)
     val reduceMotion by viewModel.reduceMotion.collectAsStateWithLifecycle(initialValue = false)
 
+    val useAnnaTheme = appTheme == AppTheme.ANNA
+
     val darkTheme =
         when (appTheme) {
             AppTheme.DARK -> {
@@ -45,6 +47,12 @@ fun AppThemeProvider(
             AppTheme.LIGHT -> {
                 Logger.d(tag = "Theme") { "AppThemeProvider applying: LIGHT" }
                 false
+            }
+
+            AppTheme.ANNA -> {
+                val isDark = isSystemInDarkTheme()
+                Logger.d(tag = "Theme") { "AppThemeProvider applying: ANNA (isDark=$isDark)" }
+                isDark
             }
 
             AppTheme.SYSTEM -> {
@@ -61,6 +69,7 @@ fun AppThemeProvider(
             highContrast = highContrast,
             largeText = largeText,
             reduceMotion = reduceMotion,
+            useAnnaTheme = useAnnaTheme,
         ) {
             content()
         }

@@ -47,6 +47,7 @@ class HomeViewModelTest : BaseUnitTest() {
                 dispatcher = testDispatcher,
                 searchDebounceMs = 0L,
                 segmentationTracker = segmentationTracker,
+                analyticsManager = mockk(relaxed = true),
             )
     }
 
@@ -342,6 +343,7 @@ class HomeViewModelTest : BaseUnitTest() {
                     dispatcher = testDispatcher,
                     searchDebounceMs = 0L,
                     segmentationTracker = segmentationTracker,
+                    analyticsManager = mockk(relaxed = true),
                 )
 
             val collectJob =
@@ -454,6 +456,7 @@ class HomeViewModelTest : BaseUnitTest() {
                     dispatcher = testDispatcher,
                     searchDebounceMs = 0L,
                     segmentationTracker = mockk(relaxed = true),
+                    analyticsManager = mockk(relaxed = true),
                 )
 
             val collectJob =
@@ -523,6 +526,7 @@ class HomeViewModelTest : BaseUnitTest() {
                     dispatcher = testDispatcher,
                     searchDebounceMs = 0L,
                     segmentationTracker = mockk(relaxed = true),
+                    analyticsManager = mockk(relaxed = true),
                 )
 
             val collectJob =
@@ -644,6 +648,7 @@ class HomeViewModelTest : BaseUnitTest() {
                     dispatcher = testDispatcher,
                     searchDebounceMs = 0L,
                     segmentationTracker = segmentationTracker,
+                    analyticsManager = mockk(relaxed = true),
                 )
 
             val collectJob =
@@ -711,6 +716,7 @@ class HomeViewModelTest : BaseUnitTest() {
                     dispatcher = testDispatcher,
                     searchDebounceMs = 0L,
                     segmentationTracker = mockk(relaxed = true),
+                    analyticsManager = mockk(relaxed = true),
                 )
 
             val collectJob =
@@ -749,6 +755,7 @@ class HomeViewModelTest : BaseUnitTest() {
                     dispatcher = testDispatcher,
                     searchDebounceMs = 0L,
                     segmentationTracker = mockk(relaxed = true),
+                    analyticsManager = mockk(relaxed = true),
                 )
 
             val collectJob =

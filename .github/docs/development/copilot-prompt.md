@@ -52,11 +52,11 @@ ui/screen/<feature>/
 - **Framework**: JUnit 4 + MockK (Mockito forbidden)
 - **Base Class**: `BaseUnitTest` (ViewModel tests), `BaseUseCaseTest` (domain tests)
 - **Naming**: `method_shouldExpectedBehavior_whenCondition` (no backticks)
-- **Roboelectric**: ONLY instrumentation tests (`src/androidTest`) - NOT unit tests
+- **Robolectric**: ONLY instrumentation tests (`src/androidTest`) - NOT unit tests
 - **See AGENTS.md lines 227-354**
 
 ### String Localization
-- ALL user-facing strings → `strings.xml` (5 locales: en, it, fr, de, es)
+- ALL user-facing strings → `strings.xml` (13 locales, see AGENTS.md §11; untranslatable → values/untranslable.xml)
 - Use `stringResource(R.string.key)` everywhere
 - Check for duplicates: `grep -r "string_key" androidApp/src/main/res/values*/`
 - **See AGENTS.md lines 217-224**
@@ -65,7 +65,7 @@ ui/screen/<feature>/
 
 - **Complete Architecture Guide**: [AGENTS.md](../../AGENTS.md)
 - **Testing Agent**: [.github/agents/agent-unit-tests-mockk.agent.md](.github/agents/agent-unit-tests-mockk.agent.md)
-- **Clean Architecture Agent**: [.github/agents/agent-android-clean-architecture.agent.md](.github/agents/agent-android-clean-architecture.agent.md)
+- **Clean Architecture Agent**: [AGENTS.md](../../../AGENTS.md)
 - **Agent Index**: [.github/agents/README.md](.github/agents/README.md)
 
 ## When in Doubt

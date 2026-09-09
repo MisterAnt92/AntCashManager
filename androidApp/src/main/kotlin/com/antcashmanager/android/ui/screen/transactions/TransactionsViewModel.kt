@@ -62,6 +62,7 @@ class TransactionsViewModel(
     private val settingsRepository: SettingsRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val engagementTracker: EngagementTracker,
+    private val analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager,
 ) : BaseViewModel<TransactionsEvent>(dispatcher) {
     constructor(
         transactionRepository: TransactionRepository,
@@ -69,6 +70,7 @@ class TransactionsViewModel(
         settingsRepository: SettingsRepository,
         dispatcher: CoroutineDispatcher = Dispatchers.Default,
         engagementTracker: EngagementTracker,
+        analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager,
     ) : this(
         getTransactionsUseCase =
             GetTransactionsUseCase(
@@ -118,6 +120,7 @@ class TransactionsViewModel(
         settingsRepository = settingsRepository,
         dispatcher = dispatcher,
         engagementTracker = engagementTracker,
+        analyticsManager = analyticsManager,
     )
 
     // ── Internal filter state ──
@@ -353,6 +356,13 @@ class TransactionsViewModel(
 
             is TransactionsEvent.DeleteTransaction -> deleteTransaction(event.transaction)
             is TransactionsEvent.UpdateTransaction -> updateTransaction(event.transaction)
+
+            // New UI state events (for split-pane & navigation)
+            is TransactionsEvent.ShowTransactionDetails -> { /* Handled by Screen for foldable sync */ }
+            is TransactionsEvent.DismissTransactionDetails -> { /* Handled by Screen */ }
+            is TransactionsEvent.HelpOpened -> { /* Navigation handled by Screen */ }
+            is TransactionsEvent.ReceiptScanOpened -> { /* Navigation handled by Screen */ }
+            is TransactionsEvent.AddTransactionOpened -> { /* Navigation handled by Screen */ }
         }
     }
 

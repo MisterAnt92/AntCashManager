@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.charts
 
+import com.antcashmanager.android.ui.base.ErrorState
 import com.antcashmanager.android.ui.screen.charts.view.ChartDetailsData
 import com.antcashmanager.domain.usecase.transaction.DateRange
 
@@ -14,4 +15,6 @@ data class ChartsState(
     val selectedPresetIndex: Int,
     val selectedChartDetails: ChartDetailsData? = null,
     val chartData: ChartData = ChartData(),
+    // Error handling (FASE 5: Error Feedback UX)
+    val errorState: ErrorState = ErrorState(),
 )

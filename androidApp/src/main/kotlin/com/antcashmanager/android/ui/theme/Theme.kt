@@ -13,6 +13,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
@@ -96,6 +97,84 @@ private val DarkColorScheme =
         surfaceContainerHighest = SurfaceContainerHighestDark,
     )
 
+private val AnnaLightColorScheme =
+    lightColorScheme(
+        primary = AnnaPrimaryLight,
+        onPrimary = AnnaOnPrimaryLight,
+        primaryContainer = AnnaPrimaryContainerLight,
+        onPrimaryContainer = AnnaOnPrimaryContainerLight,
+        secondary = AnnaSecondaryLight,
+        onSecondary = AnnaOnSecondaryLight,
+        secondaryContainer = AnnaSecondaryContainerLight,
+        onSecondaryContainer = AnnaOnSecondaryContainerLight,
+        tertiary = AnnaTertiaryLight,
+        onTertiary = AnnaOnTertiaryLight,
+        tertiaryContainer = AnnaTertiaryContainerLight,
+        onTertiaryContainer = AnnaOnTertiaryContainerLight,
+        error = ErrorLight,
+        onError = OnErrorLight,
+        errorContainer = ErrorContainerLight,
+        onErrorContainer = OnErrorContainerLight,
+        background = BackgroundLight,
+        onBackground = OnBackgroundLight,
+        surface = SurfaceLight,
+        onSurface = OnSurfaceLight,
+        surfaceVariant = SurfaceVariantLight,
+        onSurfaceVariant = OnSurfaceVariantLight,
+        outline = OutlineLight,
+        outlineVariant = OutlineVariantLight,
+        scrim = ScrimLight,
+        inverseSurface = InverseSurfaceLight,
+        inverseOnSurface = InverseOnSurfaceLight,
+        inversePrimary = AnnaInversePrimaryLight,
+        surfaceDim = SurfaceDimLight,
+        surfaceBright = SurfaceBrightLight,
+        surfaceContainerLowest = SurfaceContainerLowestLight,
+        surfaceContainerLow = SurfaceContainerLowLight,
+        surfaceContainer = SurfaceContainerLight,
+        surfaceContainerHigh = SurfaceContainerHighLight,
+        surfaceContainerHighest = SurfaceContainerHighestLight,
+    )
+
+private val AnnaDarkColorScheme =
+    darkColorScheme(
+        primary = AnnaPrimaryDark,
+        onPrimary = AnnaOnPrimaryDark,
+        primaryContainer = AnnaPrimaryContainerDark,
+        onPrimaryContainer = AnnaOnPrimaryContainerDark,
+        secondary = AnnaSecondaryDark,
+        onSecondary = AnnaOnSecondaryDark,
+        secondaryContainer = AnnaSecondaryContainerDark,
+        onSecondaryContainer = AnnaOnSecondaryContainerDark,
+        tertiary = AnnaTertiaryDark,
+        onTertiary = AnnaOnTertiaryDark,
+        tertiaryContainer = AnnaTertiaryContainerDark,
+        onTertiaryContainer = AnnaOnTertiaryContainerDark,
+        error = ErrorDark,
+        onError = OnErrorDark,
+        errorContainer = ErrorContainerDark,
+        onErrorContainer = OnErrorContainerDark,
+        background = BackgroundDark,
+        onBackground = OnBackgroundDark,
+        surface = SurfaceDark,
+        onSurface = OnSurfaceDark,
+        surfaceVariant = SurfaceVariantDark,
+        onSurfaceVariant = OnSurfaceVariantDark,
+        outline = OutlineDark,
+        outlineVariant = OutlineVariantDark,
+        scrim = ScrimDark,
+        inverseSurface = InverseSurfaceDark,
+        inverseOnSurface = InverseOnSurfaceDark,
+        inversePrimary = AnnaInversePrimaryDark,
+        surfaceDim = SurfaceDimDark,
+        surfaceBright = SurfaceBrightDark,
+        surfaceContainerLowest = SurfaceContainerLowestDark,
+        surfaceContainerLow = SurfaceContainerLowDark,
+        surfaceContainer = SurfaceContainerDark,
+        surfaceContainerHigh = SurfaceContainerHighDark,
+        surfaceContainerHighest = SurfaceContainerHighestDark,
+    )
+
 private val AppShapes =
     Shapes(
         extraSmall = RoundedCornerShape(4.dp),
@@ -105,6 +184,9 @@ private val AppShapes =
         extraLarge = RoundedCornerShape(28.dp),
     )
 
+/** True when the Anna theme is active — read by transaction card composables to apply green/red backgrounds. */
+val LocalAnnaTheme = compositionLocalOf { false }
+
 @Composable
 fun AntCashManagerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -112,10 +194,13 @@ fun AntCashManagerTheme(
     highContrast: Boolean = false,
     largeText: Boolean = false,
     reduceMotion: Boolean = false,
+    useAnnaTheme: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val baseColorScheme =
         when {
+            useAnnaTheme -> if (darkTheme) AnnaDarkColorScheme else AnnaLightColorScheme
+
             dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
                 val context = LocalContext.current
                 if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
@@ -176,6 +261,7 @@ fun AntCashManagerTheme(
         CompositionLocalProvider(
             LocalReduceMotion provides reduceMotion,
             LocalResponsiveTypography provides responsiveTypography,
+            LocalAnnaTheme provides useAnnaTheme,
         ) {
             content()
         }

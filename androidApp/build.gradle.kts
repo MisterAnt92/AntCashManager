@@ -37,8 +37,8 @@ android {
         applicationId = "com.sformica.ant_cashmanager"
         minSdk = 26
         targetSdk = 37
-        versionCode = 25
-        versionName = "1.7.7"
+        versionCode = 26
+        versionName = "1.7.8"
     }
 
     // ── Product Flavors for Optimization ──
@@ -207,7 +207,6 @@ dependencies {
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.work.testing)
     androidTestImplementation(libs.androidx.junit.ext)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
 
     // Android Test Orchestrator for better test isolation and parallelism
@@ -216,6 +215,7 @@ dependencies {
 
 // ── Jacoco Coverage Report Tasks ──
 tasks.register("jacocoTestDebugUnitTestReport", JacocoReport::class) {
+    description = "Generates Jacoco coverage report for unit tests"
     dependsOn("testDebugUnitTest")
 
     reports {
@@ -240,6 +240,7 @@ tasks.register("jacocoTestDebugUnitTestReport", JacocoReport::class) {
 }
 
 tasks.register("jacocoConnectedDebugAndroidTestReport", JacocoReport::class) {
+    description = "Generates Jacoco coverage report for connected Android tests"
     dependsOn("connectedDebugAndroidTest")
 
     reports {
@@ -265,6 +266,7 @@ tasks.register("jacocoConnectedDebugAndroidTestReport", JacocoReport::class) {
 
 // Convenience task to generate all coverage reports
 tasks.register("testCoverageReport") {
+    description = "Generates Jacoco coverage reports for all tests"
     dependsOn("jacocoTestDebugUnitTestReport", "jacocoConnectedDebugAndroidTestReport")
     doLast {
         println("\n✅ Jacoco coverage reports generated:")

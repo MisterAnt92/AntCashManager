@@ -131,7 +131,7 @@
     <string name="share">分享</string>
     <string name="share_categories_subject">AntCashManager - 按分类划分的支出</string>
     <string name="share_monthly_subject">AntCashManager - 月度概览</string>
-    <string name="share_yearly_subject">AntCashManager - 年度概览</string>
+    <string name="share_yearly_subject">AntCashManager - 年度概��</string>
     <string name="share_category_title">按分类划分的支出</string>
     <string name="share_monthly_title">月度概览</string>
     <string name="share_yearly_title">年度概览</string>
@@ -190,7 +190,6 @@
     <string name="settings_separator_space">空格</string>
     <string name="settings_separator_none">无</string>
     <string name="settings_date_format">日期格式</string>
-    <string name="settings_date_format_subtitle">%s</string>
     <string name="settings_section_currency">货币</string>
     <string name="settings_section_dates">日期</string>
     <string name="settings_section_other">其他</string>
@@ -214,7 +213,7 @@
     <string name="settings_reduce_motion_subtitle">尽量减少动画和过渡效果。对动态效果敏感的用户很有帮助。</string>
     <string name="settings_data_management">数据管理</string>
     <string name="settings_security">安全</string>
-    <string name="settings_security_data_encryption">数据保护 - 加密</string>
+    <string name="settings_security_data_encryption">数据保�� - 加密</string>
     <string name="settings_security_data_encryption_subtitle">加密并保护本地应用数据</string>
     <string name="settings_suggestions">建议</string>
     <string name="settings_suggestions_enable">自动建议</string>
@@ -289,7 +288,7 @@
     <string name="settings_auto_backup_subtitle">每周自动备份</string>
     <string name="settings_auto_backup_weekly_label">自动备份每周进行一次</string>
     <string name="settings_auto_backup_destination_local">本地</string>
-    <string name="settings_auto_backup_google_drive_coming_soon">即将推出</string>
+    <string name="settings_auto_backup_google_drive_coming_soon">即将推���</string>
     <string name="settings_auto_backup_google_drive_sign_in_title">启用Google Drive备份</string>
     <string name="settings_auto_backup_google_drive_sign_in_message">使用您的Google账户登录以启用Google Drive自动备份。您的数据将被加密并安全存储。</string>
     <string name="settings_auto_backup_google_drive_sign_in">使用Google登录</string>
@@ -538,6 +537,14 @@
     <string name="help_transactions_feature_filters_desc">按日期范围过滤交易或使用预设范围。</string>
     <string name="help_transactions_feature_search_title">搜索交易</string>
     <string name="help_transactions_feature_search_desc">按标题、金额、分类或其他属性搜索交易。</string>
+    <string name="transactions_help_title">@string/help_transactions_title</string>
+    <string name="transactions_help_desc">@string/help_transactions_desc</string>
+    <string name="transactions_help_filter_title">@string/help_transactions_feature_filters_title</string>
+    <string name="transactions_help_filter_desc">@string/help_transactions_feature_filters_desc</string>
+    <string name="transactions_help_search_title">@string/help_transactions_feature_search_title</string>
+    <string name="transactions_help_search_desc">@string/help_transactions_feature_search_desc</string>
+    <string name="transactions_help_display_title">@string/settings_transaction_display</string>
+    <string name="transactions_help_display_desc">@string/settings_transaction_display_desc</string>
 
     <!-- Settings Help Dialog -->
     <string name="help_settings_title">设置指南</string>
@@ -556,7 +563,7 @@
     <string name="help_categories_feature_management_desc">创建并自定义分类以整理您的交易。</string>
     <string name="help_categories_feature_income_expense_title">收入与支出</string>
     <string name="help_categories_feature_income_expense_desc">将交易分类为收入或支出。</string>
-    <string name="help_categories_feature_delete_title">删除分类</string>
+    <string name="help_categories_feature_delete_title">删��分类</string>
     <string name="help_categories_feature_delete_desc">当不再需要自定义分类时将其删除。</string>
     <string name="common_close">关闭</string>
     <string name="common_click_here">点击这里</string>
@@ -602,7 +609,7 @@
     <string name="charts_customize_cards_title">自定义卡片顺序</string>
 
     <!-- Chart Details Bottom Sheet -->
-    <string name="chart_details_title">详情</string>
+    <string name="chart_details_title">��情</string>
     <string name="chart_details_percentage">占总额的 %d%%</string>
     <string name="chart_details_amount">金额</string>
     <string name="chart_details_transactions">交易记录</string>
@@ -638,4 +645,6 @@
     <!-- Settings: Analytics consent toggle -->
     <string name="settings_analytics_consent_title">共享匿名使用统计</string>
     <string name="settings_analytics_consent_desc">仅访问的界面和错误。不会发送任何财务数据。</string>
+
+    <string name="transactions_details_empty">选择一笔交易以查看详情</string>
 </resources>

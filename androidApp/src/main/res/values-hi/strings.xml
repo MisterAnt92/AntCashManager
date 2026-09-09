@@ -103,7 +103,7 @@
     <string name="icon_volunteer_activism">दान</string>
     <string name="icon_directions_bike">खेल</string>
     <string name="icon_shopping_cart">किराने का सामान</string>
-    <string name="icon_coffee">कॉफी</string>
+    <string name="icon_coffee">कॉफ��</string>
     <string name="icon_spa">व्यक्तिगत देखभाल</string>
     <string name="icon_card_giftcard">भोजन वाउचर</string>
 
@@ -172,7 +172,7 @@
     <string name="settings_display_subtitle">मुद्रा, दशमलव और स्वरूपण कस्टमाइज़ करें</string>
     <string name="settings_show_charts_section">चार्ट अनुभाग दिखाएं</string>
     <string name="settings_show_charts_section_visible">नेविगेशन में चार्ट अनुभाग दिखाई दे रहा है</string>
-    <string name="settings_show_charts_section_hidden">नेविगेशन से चार्ट अनुभाग छिपा हुआ है</string>
+    <string name="settings_show_charts_section_hidden">नेविगेशन से चार्ट अनुभाग ��िपा हुआ है</string>
     <string name="settings_currency_symbol">मुद्रा प्रतीक</string>
     <string name="settings_decimal_digits">दशमलव अंक</string>
     <string name="settings_decimal_digits_subtitle">%d दशमलव स्थान</string>
@@ -189,7 +189,6 @@
     <string name="settings_separator_space">स्पेस</string>
     <string name="settings_separator_none">कोई नहीं</string>
     <string name="settings_date_format">तिथि प्रारूप</string>
-    <string name="settings_date_format_subtitle">%s</string>
     <string name="settings_section_currency">मुद्रा</string>
     <string name="settings_section_dates">तिथियाँ</string>
     <string name="settings_section_other">अन्य</string>
@@ -210,7 +209,7 @@
     <string name="settings_large_text">बड़े अक्षर</string>
     <string name="settings_large_text_subtitle">आसान पढ़ने के लिए पूरे ऐप में फ़ॉन्ट आकार बढ़ाएँ।</string>
     <string name="settings_reduce_motion">मोशन कम करें</string>
-    <string name="settings_reduce_motion_subtitle">एनिमेशन और ट्रांज़िशन को कम करें। मोशन के प्रति संवेदनशील उपयोगकर्ताओं के लिए सहायक।</string>
+    <string name="settings_reduce_motion_subtitle">एनिमेशन और ट्रांज़िशन को कम करें। मोश�� के प्रति संवेदनशील उपयोगकर्ताओं के लिए सहायक।</string>
     <string name="settings_data_management">डेटा प्रबंधन</string>
     <string name="settings_security">सुरक्षा</string>
     <string name="settings_security_data_encryption">डेटा सुरक्षा - एन्क्रिप्शन</string>
@@ -230,7 +229,7 @@
     <string name="settings_restore_subtitle">बैकअप फ़ाइल से डेटा आयात करें</string>
     <string name="settings_last_restore_label">अंतिम बहाली: %s</string>
     <string name="settings_last_restore_never">अभी तक कोई बहाली नहीं हुई</string>
-    <string name="auto_backup_notification_channel_name">स्वचालित बैकअप त्रुटियां</string>
+    <string name="auto_backup_notification_channel_name">स्वचालित बैकअप त्रुटिया���</string>
     <string name="auto_backup_notification_channel_description">स्वचालित बैकअप विफलताओं के लिए सूचनाएं</string>
     <string name="auto_backup_notification_failure_title">स्वचालित बैकअप विफल</string>
     <string name="auto_backup_notification_failure_message">स्वचालित बैकअप पूरा नहीं किया जा सका। अपनी स्टोरेज अनुमतियां जांचें।</string>
@@ -270,7 +269,7 @@
     <string name="backup_success_message">आपका डेटा सफलतापूर्वक निर्यात कर दिया गया है।</string>
     <string name="backup_error_title">बैकअप विफल</string>
     <string name="backup_error_message">बैकअप नहीं बनाया जा सका: %s</string>
-    <string name="backup_in_progress_message">आपका बैकअप बनाया जा रहा है…</string>
+    <string name="backup_in_progress_message">आपका बैकअप बनाया जा रहा ह���…</string>
     <string name="settings_data_file_picker_unavailable">इस डिवाइस पर फ़ाइल पिकर उपलब्ध नहीं है।</string>
     <string name="restore_success_title">पुनर्प्राप्ति पूर्ण</string>
     <string name="restore_success_message">सफलतापूर्वक %1$d लेनदेन और %2$d श्रेणियां पुनर्स्थापित की गईं।</string>
@@ -279,7 +278,7 @@
     <string name="restore_in_progress_message">आपका डेटा पुनर्स्थापित किया जा रहा है…</string>
     <string name="dialog_delete_all_title">सारा डेटा हटाएं?</string>
     <string name="dialog_delete_all_message">यह क्रिया सभी लेनदेन और श्रेणियों को स्थायी रूप से हटा देगी। इसे वापस नहीं लाया जा सकता।</string>
-    <string name="dialog_data_deleted">डेटा हटा दिया गया</string>
+    <string name="dialog_data_deleted">डेट�� हटा दिया गया</string>
     <string name="dialog_data_deleted_message">सारा डेटा सफलतापूर्वक हटा दिया गया है।</string>
     <string name="dialog_reset_preferences_title">सभी प्राथमिकताएं रीसेट करें</string>
     <string name="dialog_reset_preferences_message">यह सभी सेटिंग्स को उनके डिफ़ॉल्ट मानों पर पुनर्स्थापित कर देगा। जारी रखें?</string>
@@ -307,7 +306,7 @@
 
     <!-- Privacy Policy -->
     <string name="privacy_policy_title">गोपनीयता नीति</string>
-    <string name="privacy_policy_content">AntCashManager आपकी गोपनीयता की रक्षा के लिए प्रतिबद्ध है। यह एप्लिकेशन तीसरे पक्षों के साथ व्यक्तिगत डेटा एकत्र या साझा नहीं करता है। सारा वित्तीय डेटा आपके डिवाइस पर स्थानीय रूप से संग्रहीत किया जाता है और बाहरी सर्वरों पर कभी भी प्रेषित नहीं किया जाता है।\n\nआपका डेटा पूरी तरह से आपके डिवाइस पर और आपके नियंत्रण में रहता है। हम विश्लेषण, ट्रैकिंग या विज्ञापन सेवाओं का उपयोग नहीं करते हैं।\n\nगोपनीयता के बारे में किसी भी प्रश्न के लिए, कृपया ऐप स्टोर लिस्टिंग के माध्यम से हमसे संपर्क करें।</string>
+    <string name="privacy_policy_content">AntCashManager आपकी गोपनीयता की रक्षा के लिए प्रतिबद्ध है। यह एप्लिकेशन तीसरे पक्षों के साथ व्यक्तिगत डेटा एकत्र या साझा नहीं करता है। सारा वित्तीय डेटा आपके डिवाइस पर स्थानीय ��ूप से संग्रहीत किया जाता है और बाहरी सर्वरों पर कभी भी प्रेषित नहीं किया जाता है।\n\nआपका डेटा पूरी तरह से आपके डिवाइस पर और आपके नियंत्रण में रहता है। हम विश्लेषण, ट्रैकिंग या विज्ञापन सेवाओं का उपयोग नहीं करते हैं।\n\nगोपनीयता के बारे में किसी भी प्रश्न के लिए, कृपया ऐप स्टोर लिस्टिंग के माध्यम से हमसे संपर्क करें।</string>
 
     <!-- Languages -->
     <string name="language_system">सिस्टम डिफ़ॉल्ट</string>
@@ -330,7 +329,7 @@
     <string name="add_transaction_title_required">शीर्षक *</string>
     <string name="add_transaction_amount_required">राशि *</string>
     <string name="add_transaction_amount_total_meal_vouchers">कुल भुगतान राशि</string>
-    <string name="add_transaction_amount_total_meal_vouchers_description">भुगतान की गई पूरी राशि दर्ज करें: उपयोग किए गए भोजन वाउचर का मूल्य और अन्य माध्यमों से भुगतान किया गया कोई अंतर।</string>
+    <string name="add_transaction_amount_total_meal_vouchers_description">भुगतान की गई पूरी राशि दर्ज करें: उपयोग किए गए भोजन वाउचर का मूल्य और अन्य माध्यमों से भुगतान किया गया कोई ��ंतर।</string>
     <string name="add_transaction_notes_label">नोट्स</string>
     <string name="add_transaction_payee_label">भुगतानकर्ता</string>
     <string name="add_transaction_location_label">स्थान</string>
@@ -383,7 +382,7 @@
     <string name="add_transaction_payment_type_meal_vouchers">भोजन वाउचर</string>
 
     <!-- Add Transaction - Meal Vouchers -->
-    <string name="add_transaction_meal_voucher_section_title">भोजन वाउचर</string>
+    <string name="add_transaction_meal_voucher_section_title">��ोजन वाउचर</string>
     <string name="add_transaction_meal_voucher_unit_value">इकाई मूल्य: %s€</string>
     <string name="add_transaction_meal_voucher_count">वाउचर की संख्या</string>
     <string name="add_transaction_meal_voucher_subtotal">वाउचर उप-योग: %s€</string>
@@ -395,7 +394,7 @@
     <string name="widget_recent_transactions_title">हाल के लेनदेन</string>
     <string name="widget_recent_transactions_description">आपके हाल के लेनदेन दिखाता है, स्वचालित रूप से अपडेट किया जाता है</string>
     <string name="widget_category_breakdown_title">आय और खर्च</string>
-    <string name="widget_category_breakdown_description">इस महीने की आय और खर्च श्रेणी के अनुसार दिखाता है, स्वचालित रूप से अपडेट किया जाता है</string>
+    <string name="widget_category_breakdown_description">इस महीने की आय और खर्च श्रेण��� के अनुसार दिखाता है, स्वचालित रूप से अपडेट किया जाता है</string>
     <string name="empty_state_no_transactions_subtitle">पिगी बैंक आपका इंतज़ार कर रहा है!</string>
 
     <!-- Payment Breakdown -->
@@ -440,7 +439,7 @@
     <string name="settings_transaction_icon_display_trend">ट्रेंड तीर</string>
     <string name="settings_transaction_icon_display_category">श्रेणी</string>
     <string name="settings_transaction_icon_display_none">कोई नहीं</string>
-    <string name="dialog_choose_transaction_icon_display">आइकन डिस्प्ले प्रकार चुनें</string>
+    <string name="dialog_choose_transaction_icon_display">आइकन डिस्प्ल�� प्रकार चुनें</string>
 
     <!-- Tutorial -->
     <string name="settings_tutorial">ट्यूटोरियल</string>
@@ -493,7 +492,7 @@
     <string name="category_personal_care">व्यक्तिगत देखभाल</string>
 
     <!-- Receipt Scan Screen -->
-    <string name="receipt_scan_title">रसीद स्कैन करें</string>
+    <string name="receipt_scan_title">रसीद स्कै��� करें</string>
     <string name="receipt_scan_capture_hint">राशि, वैट, भुगतानकर्ता और स्थान को स्वचालित रूप से निकालने के लिए अपनी रसीद का फोटो लें या गैलरी से चुनें।</string>
     <string name="receipt_scan_take_photo">फोटो लें</string>
     <string name="receipt_scan_pick_gallery">गैलरी से चुनें</string>
@@ -615,7 +614,7 @@
 
 
     <!-- App Description -->
-    <string name="app_description">यह ऐप पारिवारिक खर्चों को सदस्यता के बिना ट्रैक करने की आवश्यकता से पैदा हुआ था, और खर्चों को देखने और मूल्य वृद्धि की तुलना करने के लिए।</string>
+    <string name="app_description">यह ऐप पारिवारिक खर्चों को सदस्यता के बिना ट्रैक करने की आवश्यकता से पैदा हुआ था, और ���र्चों को देखने और मूल्य वृद्धि की तुलना करने के लिए।</string>
 
     <!-- Payment Type Settings -->
     <string name="settings_payment_type_section">भुगतान विधियाँ</string>
@@ -628,9 +627,20 @@
     <!-- Analytics Consent Dialog (GDPR) -->
     <string name="consent_title">हमें बेहतर बनाने में मदद करें</string>
     <string name="consent_body">हम ऐप को बेहतर बनाने के लिए अज्ञात उपयोग आंकड़े (देखे गए पृष्ठ, त्रुटियाँ) एकत्र करते हैं। कोई वित्तीय डेटा नहीं भेजा जाता। आप इसे सेटिंग में कभी भी बदल सकते हैं।</string>
-    <string name="consent_accept">स्वीकार करें</string>
+    <string name="consent_accept">��्वीकार करें</string>
     <string name="consent_decline">अस्वीकार करें</string>
     <!-- Settings: Analytics consent toggle -->
     <string name="settings_analytics_consent_title">अज्ञात उपयोग सांख्यिकी साझा करें</string>
     <string name="settings_analytics_consent_desc">केवल देखे गए पृष्ठ और त्रुटियाँ। कोई वित्तीय डेटा कभी नहीं भेजा जाता।</string>
+
+    <!-- HelpDialog (Transactions) - missing aliases -->
+    <string name="transactions_help_title">@string/help_transactions_title</string>
+    <string name="transactions_help_desc">@string/help_transactions_desc</string>
+    <string name="transactions_help_filter_title">@string/help_transactions_feature_filters_title</string>
+    <string name="transactions_help_filter_desc">@string/help_transactions_feature_filters_desc</string>
+    <string name="transactions_help_search_title">@string/help_transactions_feature_search_title</string>
+    <string name="transactions_help_search_desc">@string/help_transactions_feature_search_desc</string>
+    <string name="transactions_help_display_title">@string/settings_transaction_display</string>
+    <string name="transactions_help_display_desc">@string/settings_transaction_display_desc</string>
+    <string name="transactions_details_empty">विवरण देखने के लिए एक लेन-देन चुनें</string>
 </resources>

@@ -1,6 +1,5 @@
 package com.antcashmanager.android.ui.screen.home.transactionDetail
 
-import android.content.Context
 import com.antcashmanager.domain.model.Transaction
 
 /**
@@ -12,11 +11,10 @@ import com.antcashmanager.domain.model.Transaction
 sealed class TransactionDetailsEvent {
     /**
      * Richiesta di condivisione della transazione tramite share sheet Android.
-     * Il [context] serve per avviare l'intent di condivisione.
+     * Il Context per avviare l'intent viene fornito separatamente dalla composable.
      */
     data class ShareTransaction(
         val transaction: Transaction,
-        val context: Context,
     ) : TransactionDetailsEvent()
 
     data object RetryLastOperation : TransactionDetailsEvent()

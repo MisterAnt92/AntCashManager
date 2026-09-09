@@ -1,5 +1,7 @@
 package com.antcashmanager.android.ui.screen.transactions
 
+import com.antcashmanager.android.ui.base.ErrorState
+import com.antcashmanager.android.ui.screen.common.DateRangePreset
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
@@ -31,6 +33,8 @@ data class TransactionsState(
     val searchSuggestions: List<String> = emptyList(),
     val transactionDisplayType: TransactionDisplayType = TransactionDisplayType.TREND,
     val dateFilterExpanded: Boolean = false,
+    // Error handling (FASE 5: Error Feedback UX)
+    val errorState: ErrorState = ErrorState(),
 ) {
     val hasActiveFilters: Boolean
         get() =
@@ -70,17 +74,6 @@ data class TransactionsState(
         val PRESETS = TransactionsConstant.PRESETS
 
         fun getDateFromForPreset(index: Int): Long =
-            when (index) {
-                0 -> System.currentTimeMillis() - TransactionsConstant.ONE_DAY_MS
-                1 -> System.currentTimeMillis() - TransactionsConstant.ONE_WEEK_MS
-                2 -> System.currentTimeMillis() - TransactionsConstant.THIRTY_DAYS_MS
-                3 -> System.currentTimeMillis() - TransactionsConstant.ONE_YEAR_MS
-                4 -> System.currentTimeMillis() - TransactionsConstant.TWO_YEARS_MS
-                5 -> System.currentTimeMillis() - TransactionsConstant.THREE_YEARS_MS
-                6 -> System.currentTimeMillis() - TransactionsConstant.FIVE_YEARS_MS
-                7 -> System.currentTimeMillis() - TransactionsConstant.SIX_YEARS_MS
-                8 -> System.currentTimeMillis() - TransactionsConstant.ALL_TIME_MS
-                else -> System.currentTimeMillis() - TransactionsConstant.ONE_WEEK_MS
-            }
+            DateRangePreset.dateFromForPreset(index)
     }
 }

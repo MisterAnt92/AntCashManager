@@ -1,6 +1,5 @@
 package com.antcashmanager.android.ui.screen.settings.view
 
-import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -101,9 +100,9 @@ fun SettingsScreen(
         onThousandsSeparatorSelected = { viewModel.onEvent(SettingEvent.SetThousandsSeparator(it)) },
         analyticsConsent = analyticsConsent,
         onAnalyticsConsentChanged = { viewModel.onEvent(SettingEvent.SetAnalyticsConsent(it)) },
-        onImportDebugData = { ctx -> viewModel.onEvent(SettingEvent.ImportDebugData(ctx)) },
+        onImportDebugData = { viewModel.onEvent(SettingEvent.ImportDebugData) },
         onSendFeedbackEmail = { emailBody ->
-            viewModel.onEvent(SettingEvent.SendFeedbackEmail(emailBody, context))
+            viewModel.onEvent(SettingEvent.SendFeedbackEmail(emailBody))
             // TODO: handle success/failure via errorState in state (FASE 5)
         },
         navController = navController,
@@ -136,7 +135,7 @@ internal fun SettingsContent(
     onThousandsSeparatorSelected: (String) -> Unit = {},
     analyticsConsent: Boolean? = null,
     onAnalyticsConsentChanged: (Boolean) -> Unit = {},
-    onImportDebugData: (Context) -> Unit = {},
+    onImportDebugData: () -> Unit = {},
     onSendFeedbackEmail: (String) -> Unit = {},
     navController: NavController? = null,
     modifier: Modifier = Modifier,
@@ -239,6 +238,7 @@ internal fun SettingsContent(
                             AppTheme.LIGHT -> stringResource(R.string.settings_theme_light)
                             AppTheme.DARK -> stringResource(R.string.settings_theme_dark)
                             AppTheme.SYSTEM -> stringResource(R.string.settings_theme_system)
+                            AppTheme.ANNA -> stringResource(R.string.settings_theme_anna)
                         },
                     leadingIcon = Icons.Default.Palette,
                     onClick = { showThemeDialog = true },

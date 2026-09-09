@@ -1,265 +1,106 @@
-# Agent: UseCase Pattern Implementation
-
-**Purpose**: Specialized guidance for implementing domain UseCase classes with proper patterns.
-
-**See Also**: [AGENTS.md](../../AGENTS.md) for complete architecture rules and testing standards.
-
+---
+description: "Domain UseCase implementation: base class choice, execute() returning raw value, dispatcher injection, domain exceptions, BaseUseCaseTest. Use when creating or testing a UseCase in shared/commonMain."
 ---
 
-## UseCase Base Class Selection
+# Agent: UseCase
 
-| Scenario | Base Class | Method | Example |
-|----------|-----------|--------|---------|
-| Single suspend call + params | `UseCase<Params, T>` | `override suspend fun execute(params: Params): T` | Insert transaction |
-| Single suspend call, no params | `NoParamsUseCase<T>` | `override suspend fun execute(): T` | Get current balance |
-| Flow-based stream + params | `ObservableUseCase<Params, T>` | `override fun execute(params): Flow<T>` | Observe transactions |
-| Flow-based stream, no params | `NoParamsObservableUseCase<T>` | `override fun execute(): Flow<T>` | Observe settings |
+Rules live in [AGENTS.md §6](../../AGENTS.md). Base classes: `shared/src/commonMain/kotlin/com/antcashmanager/domain/usecase/base/`.
 
----
+## Choose the base class
 
-## Implementation Pattern
+| Params | Flow | Base class | You implement |
+|---|---|---|---|
+| yes | no | `UseCase<P, R>` | `override suspend fun execute(params: P): R` |
+| no | no | `NoParamsUseCase<R>` | `override suspend fun execute(): R` |
+| yes | yes | `ObservableUseCase<P, R>` | `override fun execute(params: P): Flow<R>` |
+| no | yes | `NoParamsObservableUseCase<R>` | `override fun execute(): Flow<R>` |
+
+Multiple params → a nested `data class Params(...)` inside the UseCase (see `SyncTransactionCategoriesUseCase.Params`).
+
+## Template
 
 ```kotlin
-package com.antcashmanager.domain.usecase.yourfeature
-
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
+package com.antcashmanager.domain.usecase.transaction
 
 /**
- * [Purpose description].
- * Returns [Result.success] with [ExpectedType] or [Result.failure] with [DomainException].
- * 
- * @param repository Required dependency
- * @param dispatcher Dispatcher for execution (default: Dispatchers.Default)
+ * Inserts [Transaction]; fails with [TransactionException.InvalidAmount] when amount is 0.
  */
-class YourFeatureUseCase(
-    private val repository: YourRepository,
+class InsertTransactionUseCase(
+    private val repository: TransactionRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : UseCase<InputParams, OutputType>(dispatcher) {
-
-    override suspend fun execute(params: InputParams): OutputType {
-        // Business logic here
-        return repository.operation(params)
+) : UseCase<Transaction, Long>(dispatcher) {
+    override suspend fun execute(params: Transaction): Long {
+        if (params.amount == 0.0) throw TransactionException.InvalidAmount(params.amount)
+        return repository.insert(params)
     }
 }
+// Caller: insertTransactionUseCase(tx).onSuccess { id -> } .onFailure { e -> }
 ```
-
-**CRITICAL**: Implement `execute()` ONLY. Base class provides:
-- `invoke()` - wraps execute() result in `Result<T>`
-- Dispatcher management - executes on provided dispatcher
-- CancellationException preservation - never swallowed
-
----
-
-## Result<T> Pattern (MANDATORY)
-
-**All UseCase must return Result<T>**
 
 ```kotlin
-// ✅ CORRECT - Base class wraps return value
-class GetUserUseCase(...) : UseCase<Long, User>(dispatcher) {
-    override suspend fun execute(params: Long): User {
-        return repository.getUser(params) 
-            ?: throw UserException.NotFound(params)
-    }
-    // invoke() automatically wraps in Result<User>
+class GetCategoriesUseCase(
+    private val repository: CategoryRepository,
+    dispatcher: CoroutineDispatcher = Dispatchers.Default,
+) : NoParamsObservableUseCase<List<Category>>(dispatcher) {
+    override fun execute(): Flow<List<Category>> = repository.getAll()
 }
-
-// ❌ WRONG - Returning Result from execute()
-class GetUserUseCase(...) : UseCase<Long, Result<User>>(dispatcher) {
-    override suspend fun execute(params: Long): Result<User> = runCatching {
-        repository.getUser(params) ?: throw UserException.NotFound(params)
-    } // Double-wrapped!
-}
+// Caller collects Flow<Result<List<Category>>>
 ```
 
----
+## What the base already does (do not re-implement)
 
-## Custom Domain Exceptions
+- `invoke()` is final: runs `execute()` on the dispatcher, wraps in `Result`, preserves `CancellationException` (`runSuspendCatching` / `catch` operator), logs start/success/failure with Kermit (`log` field available).
+- ⚠️ **Never** `execute(): Result<R> = runCatching { }` — double wrap. **Never** `try/catch` a `CancellationException` yourself.
+- No logging inside `execute()` unless it adds domain context.
 
-Define in `shared/commonMain/domain/exception/`:
+## Domain exceptions — `domain/exception/`
 
 ```kotlin
 sealed class TransactionException(message: String) : Exception(message) {
     class NotFound(id: Long) : TransactionException("Transaction $id not found")
-    class InvalidAmount(amount: Double) : TransactionException("Amount must be > 0")
-    class InsertFailed(cause: Throwable? = null) : TransactionException("Insert failed")
-}
-
-// Usage in UseCase
-override suspend fun execute(params: Transaction): Unit {
-    if (params.amount <= 0) throw TransactionException.InvalidAmount(params.amount)
-    repository.insert(params)
+    class InvalidAmount(amount: Double) : TransactionException("Invalid amount: $amount")
 }
 ```
 
-**Rules**:
-- ✅ Sealed classes for type safety
-- ✅ Domain-specific names (TransactionException, not DataException)
-- ✅ Live in Domain layer ONLY
-- ❌ Generic exceptions (Exception, RuntimeException)
-
----
-
-## Dispatcher Injection (MANDATORY)
-
-All UseCase must accept dispatcher for testability:
+## Settings get/set → generics, no new class
 
 ```kotlin
-// ✅ CORRECT
-class MyUseCase(
-    private val repo: Repository,
-    dispatcher: CoroutineDispatcher = Dispatchers.Default, // Testable default
-) : UseCase<Params, Result>(dispatcher)
-
-// ❌ WRONG - No dispatcher injection
-class MyUseCase(
-    private val repo: Repository,
-) : UseCase<Params, Result>() // Can't override in tests!
+// AppModule.kt
+factory<GetSettingUseCase<AppTheme>> { GetSettingUseCase(getter = { get<SettingsRepository>().getTheme() }) }
+factory<SetSettingUseCase<AppTheme>> { SetSettingUseCase(setter = { get<SettingsRepository>().setTheme(it) }) }
 ```
 
-**Why**: Allows tests to inject TestDispatcher for deterministic execution.
-
----
-
-## Flow-Based UseCase
-
-For reactive, continuous data streams:
+## Test — `shared/src/commonTest`, extends `BaseUseCaseTest`
 
 ```kotlin
-// ✅ CORRECT - Flow UseCase
-class GetTransactionsUseCase(
-    private val repository: TransactionRepository,
-    dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : NoParamsObservableUseCase<List<Transaction>>(dispatcher) {
-
-    override fun execute(): Flow<List<Transaction>> =
-        repository.getAllTransactions()
-}
-
-// Usage in ViewModel
-val transactions = getTransactionsUseCase()
-    .map { result -> 
-        result.onSuccess { setState { copy(transactions = it) } }
-                .onFailure { setState { copy(error = it) } }
-    }
-    .stateIn(...)
-```
-
----
-
-## Cancellation Safety (CRITICAL)
-
-Never swallow `CancellationException`:
-
-```kotlin
-// ✅ CORRECT - CancellationException propagates
-class GetDataUseCase(...) : UseCase<Unit, Data>(dispatcher) {
-    override suspend fun execute(params: Unit): Data {
-        try {
-            return repository.getData()
-        } catch (e: Exception) {
-            if (e is CancellationException) throw e // RE-THROW!
-            throw DataException.FetchFailed(e)
-        }
-    }
-}
-
-// ❌ WRONG - Swallows CancellationException
-try {
-    return repository.getData()
-} catch (e: Exception) {
-    throw DataException.FetchFailed(e) // CancellationException caught!
-}
-```
-
----
-
-## Code Length & Quality
-
-- **Max 250 lines**: UseCase should be focused, single responsibility
-- **KDoc mandatory**: Document purpose, params, exceptions, return value
-- **No UI logic**: UseCase is domain-only
-- **No direct DB/Network**: Use injected repository
-- **No logging in execute()**: ViewModel handles logging
-
-```kotlin
-/**
- * Retrieves transaction by ID from repository.
- * 
- * @param params Transaction ID to fetch
- * @return [Transaction] if found
- * @throws [TransactionException.NotFound] if transaction doesn't exist
- * @throws [TransactionException.FetchFailed] if repository fails
- * 
- * **Usage**:
- * ```
- * getTransactionUseCase(123L)
- *     .onSuccess { transaction -> ... }
- *     .onFailure { error -> ... }
- * ```
- */
-class GetTransactionUseCase(
-    private val repository: TransactionRepository,
-    dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : UseCase<Long, Transaction>(dispatcher) { ... }
-```
-
----
-
-## Testing UseCase
-
-Use `BaseUseCaseTest` in shared module:
-
-```kotlin
-class GetTransactionUseCaseTest : BaseUseCaseTest() {
-    private val mockRepository = mockk<TransactionRepository>()
-    private val useCase = GetTransactionUseCase(mockRepository)
+class InsertTransactionUseCaseTest : BaseUseCaseTest() {
+    private val repository = mockk<TransactionRepository>()
+    private val useCase = InsertTransactionUseCase(repository, testDispatcher)
 
     @Test
-    fun invoke_shouldReturnTransaction_whenRepositorySucceeds() = runUnitTest {
-        val expected = testTransaction(id = 123)
-        coEvery { mockRepository.get(123) } returns expected
-        
-        val result = useCase(123)
-        
-        assertTrue(result.isSuccess)
-        assertEquals(expected, result.getOrNull())
-        coVerify(exactly = 1) { mockRepository.get(123) }
+    fun invoke_shouldReturnId_whenRepositoryInserts() = runUnitTest {
+        coEvery { repository.insert(any()) } returns 42L
+        val result = useCase(testTransaction { amount = 10.0 })
+        assertEquals(42L, result.getOrThrow())
     }
 
     @Test
-    fun invoke_shouldReturnFailure_whenRepositoryThrows() = runUnitTest {
-        coEvery { mockRepository.get(any()) } throws SQLException()
-        
-        val result = useCase(999)
-        
-        assertTrue(result.isFailure)
+    fun invoke_shouldFailWithInvalidAmount_whenAmountIsZero() = runUnitTest {
+        val result = useCase(testTransaction { amount = 0.0 })
+        assertIs<TransactionException.InvalidAmount>(result.exceptionOrNull())
+        coVerify(exactly = 0) { repository.insert(any()) }
     }
 }
 ```
+Use `TestDataBuilder` (`testTransaction { }`, `testCategory { }`) and `Fake*Repository` from `shared/src/commonTest/.../testutil/` when a stateful fake reads better than a mock.
 
----
+## Checklist
 
-## Pre-Commit Checklist
-
-- [ ] Extends correct base class (UseCase, NoParamsUseCase, ObservableUseCase, etc.)
-- [ ] `execute()` implemented, `invoke()` NOT overridden
-- [ ] Accepts `CoroutineDispatcher` parameter with default
-- [ ] Returns Result&lt;T&gt; (or T if using Flow)
-- [ ] Custom exceptions in Domain layer only
-- [ ] CancellationException never swallowed
-- [ ] KDoc documentation complete
-- [ ] Under 250 lines
-- [ ] No UI logic
-- [ ] No direct repository operations (use injected repository)
-- [ ] Tests cover happy path + failure scenarios
-- [ ] Imports clean, package correct
-
----
-
-## Quick Links
-
-- **Full Testing Guide**: [agent-unit-tests-mockk.agent.md](agent-unit-tests-mockk.agent.md)
-- **Architecture Overview**: [AGENTS.md](../../AGENTS.md)
-- **Example UseCase**: `shared/src/commonMain/kotlin/com/antcashmanager/domain/usecase/`
+- [ ] Correct base class; `execute()` only, returns raw `R` / `Flow<R>`
+- [ ] `dispatcher: CoroutineDispatcher = Dispatchers.Default` in constructor
+- [ ] Exceptions from `domain/exception/`, never generic `RuntimeException`
+- [ ] No Android imports, no UI, no direct DB/network
+- [ ] Registered in `AppModule.useCaseModule`
+- [ ] KDoc on class; ≤ 250 lines
+- [ ] Test: happy path + failure with exact exception type; name `invoke_shouldX_whenY`
+- [ ] Imports clean, package matches directory
