@@ -289,5 +289,6 @@ class HomeViewModelMockkTest : BaseUnitTest() {
             settingsRepository = settingsRepository,
             searchDebounceMs = 0L,
             segmentationTracker = segmentationTracker,
+            analyticsManager = mockk(relaxed = true),
         )
 }

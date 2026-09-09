@@ -19,10 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CreditCard
-import androidx.compose.material.icons.filled.Money
-import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -49,6 +45,9 @@ import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.text.BalanceText
 import com.antcashmanager.android.ui.components.text.MoneyText
+import com.antcashmanager.android.ui.mapper.icon
+import com.antcashmanager.android.ui.mapper.labelRes
+import com.antcashmanager.android.ui.screen.home.HomeConstant
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.ExpenseRed
 import com.antcashmanager.android.ui.theme.IncomeGreen
@@ -64,12 +63,12 @@ fun BalanceCard(
     balance: Double,
     modifier: Modifier = Modifier,
     showPaymentTypeBreakdown: Boolean = false,
-    balanceByPaymentType: Map<PaymentType, Double> = emptyMap(),
+    balanceByPaymentType: List<Pair<PaymentType, Double>> = emptyList(),
     reduceMotion: Boolean = false,
 ) {
     val balanceStateColor by animateColorAsState(
         targetValue = if (balance >= 0) IncomeGreen else ExpenseRed,
-        animationSpec = tween(600),
+        animationSpec = tween(HomeConstant.BALANCE_COLOR_ANIM_MS),
         label = "balance_color",
     )
     val balanceStateContainerColor by animateColorAsState(
@@ -83,11 +82,11 @@ fun BalanceCard(
                     alpha = ThemeConstants.BALANCE_STATUS_NEGATIVE_CONTAINER_ALPHA,
                 )
             },
-        animationSpec = tween(600),
+        animationSpec = tween(HomeConstant.BALANCE_COLOR_ANIM_MS),
         label = "balance_state_container_color",
     )
 
-    FadeInOnAppear(durationMillis = 600) {
+    FadeInOnAppear(durationMillis = HomeConstant.BALANCE_COLOR_ANIM_MS) {
         AnimatedCard(
             modifier = modifier.fillMaxWidth(),
             backgroundColor = MaterialTheme.colorScheme.primaryContainer,
@@ -168,13 +167,13 @@ fun BalanceCard(
                         if (reduceMotion) {
                             EnterTransition.None
                         } else {
-                            fadeIn(animationSpec = tween(400)) + expandVertically()
+                            fadeIn(animationSpec = tween(HomeConstant.BALANCE_BREAKDOWN_ANIM_MS)) + expandVertically()
                         },
                     exit =
                         if (reduceMotion) {
                             ExitTransition.None
                         } else {
-                            fadeOut(animationSpec = tween(400)) + shrinkVertically()
+                            fadeOut(animationSpec = tween(HomeConstant.BALANCE_BREAKDOWN_ANIM_MS)) + shrinkVertically()
                         },
                 ) {
                     Column {
@@ -192,7 +191,7 @@ fun BalanceCard(
 
 @Composable
 private fun PaymentTypeBreakdown(
-    balanceByPaymentType: Map<PaymentType, Double>,
+    balanceByPaymentType: List<Pair<PaymentType, Double>>,
     reduceMotion: Boolean,
 ) {
     Column(
@@ -210,20 +209,14 @@ private fun PaymentTypeBreakdown(
         )
         VerticalSpacer(SpacingSize.XS)
 
-        // Get ordered payment types (ELECTRONIC, CASH, MEAL_VOUCHERS)
-        val orderedPaymentTypes =
-            PaymentType.values().mapNotNull { type ->
-                balanceByPaymentType[type]?.let { type to it }
-            }
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            orderedPaymentTypes.forEach { (paymentType, amount) ->
+            balanceByPaymentType.forEach { (paymentType, amount) ->
                 FadeInOnAppear(
-                    durationMillis = if (reduceMotion) 0 else 300,
+                    durationMillis = if (reduceMotion) 0 else HomeConstant.BREAKDOWN_ITEM_FADE_MS,
                 ) {
                     PaymentTypeItem(
                         paymentType = paymentType,
@@ -240,14 +233,7 @@ private fun PaymentTypeItem(
     paymentType: PaymentType,
     amount: Double,
 ) {
-    val (icon, labelRes) =
-        when (paymentType) {
-            PaymentType.ELECTRONIC -> Icons.Default.CreditCard to R.string.payment_type_electronic
-            PaymentType.CASH -> Icons.Default.Money to R.string.payment_type_cash
-            PaymentType.MEAL_VOUCHERS -> Icons.Default.Restaurant to R.string.payment_type_meal_vouchers
-        }
-
-    val paymentTypeName = stringResource(labelRes)
+    val paymentTypeName = stringResource(paymentType.labelRes())
     val contentDesc =
         stringResource(
             R.string.payment_breakdown_item_desc,
@@ -275,7 +261,7 @@ private fun PaymentTypeItem(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Icon(
-                imageVector = icon,
+                imageVector = paymentType.icon(),
                 contentDescription = null,
                 modifier = Modifier.size(22.dp),
                 tint = MaterialTheme.colorScheme.onSurface,
@@ -332,7 +318,7 @@ private fun BalanceCardWithBreakdownPreview() {
             balance = 3500.75,
             showPaymentTypeBreakdown = true,
             balanceByPaymentType =
-                mapOf(
+                listOf(
                     PaymentType.ELECTRONIC to 2000.50,
                     PaymentType.CASH to 1200.25,
                     PaymentType.MEAL_VOUCHERS to 300.0,
@@ -349,7 +335,7 @@ private fun BalanceCardWithBreakdownOneTypePreview() {
             balance = 1500.00,
             showPaymentTypeBreakdown = true,
             balanceByPaymentType =
-                mapOf(
+                listOf(
                     PaymentType.ELECTRONIC to 1500.0,
                 ),
         )
@@ -364,7 +350,7 @@ private fun BalanceCardWithBreakdownCashOnlyPreview() {
             balance = 850.50,
             showPaymentTypeBreakdown = true,
             balanceByPaymentType =
-                mapOf(
+                listOf(
                     PaymentType.CASH to 850.50,
                 ),
         )
@@ -379,7 +365,7 @@ private fun BalanceCardDarkWithBreakdownPreview() {
             balance = 2500.75,
             showPaymentTypeBreakdown = true,
             balanceByPaymentType =
-                mapOf(
+                listOf(
                     PaymentType.ELECTRONIC to 1800.50,
                     PaymentType.CASH to 700.25,
                 ),
@@ -395,7 +381,7 @@ private fun BalanceCardReduceMotionPreview() {
             balance = 1250.00,
             showPaymentTypeBreakdown = true,
             balanceByPaymentType =
-                mapOf(
+                listOf(
                     PaymentType.ELECTRONIC to 1000.0,
                     PaymentType.MEAL_VOUCHERS to 250.0,
                 ),
@@ -411,7 +397,7 @@ private fun BalanceCardBreakdownHiddenPreview() {
         BalanceCard(
             balance = 500.00,
             showPaymentTypeBreakdown = true,
-            balanceByPaymentType = emptyMap(),
+            balanceByPaymentType = emptyList(),
         )
     }
 }
@@ -424,7 +410,7 @@ private fun BalanceCardLongLabelsPreview() {
             balance = 4500.00,
             showPaymentTypeBreakdown = true,
             balanceByPaymentType =
-                mapOf(
+                listOf(
                     PaymentType.ELECTRONIC to 2500.0,
                     PaymentType.CASH to 1500.0,
                     PaymentType.MEAL_VOUCHERS to 500.0,
@@ -441,7 +427,7 @@ private fun BalanceCardLargeAmountsPreview() {
             balance = 125450.75,
             showPaymentTypeBreakdown = true,
             balanceByPaymentType =
-                mapOf(
+                listOf(
                     PaymentType.ELECTRONIC to 99999.99,
                     PaymentType.CASH to 12345.50,
                     PaymentType.MEAL_VOUCHERS to 13105.26,
@@ -458,7 +444,7 @@ private fun BalanceCardTwoTypesPreview() {
             balance = 5500.00,
             showPaymentTypeBreakdown = true,
             balanceByPaymentType =
-                mapOf(
+                listOf(
                     PaymentType.ELECTRONIC to 3500.0,
                     PaymentType.MEAL_VOUCHERS to 2000.0,
                 ),

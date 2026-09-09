@@ -1,334 +1,137 @@
-# Agent: ViewModel & StateFlow Pattern
-
-**Purpose**: Specialized guidance for implementing ViewModel with StateFlow state management.
-
-**See Also**: [AGENTS.md](../../AGENTS.md) for complete testing rules and architecture.
-
+---
+description: "ViewModel UDF pattern: BaseViewModel<Event>, onEvent() routing, single StateFlow<State>, handleError. Use when creating or refactoring a ViewModel, its Event or State."
 ---
 
-## StateFlow State Management Pattern
+# Agent: ViewModel (UDF)
 
-**Golden Rule**: ViewModel exposes immutable UI state via StateFlow.
+Rules live in [AGENTS.md §7](../../AGENTS.md). This file gives the templates, copied from real code.
+
+## Files to create
+
+```
+ui/screen/<feature>/<Feature>Event.kt      sealed class, one type per user action
+ui/screen/<feature>/<Feature>State.kt      immutable data class, includes errorState: ErrorState
+ui/screen/<feature>/<Feature>ViewModel.kt  BaseViewModel<<Feature>Event>
+di/AppModule.kt                            viewModel { FeatureViewModel(get(), get()) }
+```
+
+## Event (from `categories/CategoryEvent.kt`)
 
 ```kotlin
-package com.antcashmanager.android.ui.screen.yourfeature
+sealed class CategoryEvent {
+    data class AddCategory(val name: String, val icon: String, val color: Long, val type: String = "EXPENSE") : CategoryEvent()
+    data class UpdateCategory(val category: Category) : CategoryEvent()
+    data class DeleteCategory(val category: Category) : CategoryEvent()
+    data object RetryLastOperation : CategoryEvent()
+}
+```
 
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import androidx.lifecycle.ViewModel
+## State (from `categories/CategoriesState.kt`)
 
-data class YourFeatureState(
-    val items: List<Item> = emptyList(),
+```kotlin
+data class CategoriesState(
+    val categories: List<Category> = emptyList(),
     val isLoading: Boolean = false,
-    val error: String? = null,
+    val errorState: ErrorState = ErrorState(),   // com.antcashmanager.android.ui.base.ErrorState
 )
+```
 
-class YourFeatureViewModel(
-    private val useCase1: YourFeatureUseCase,
-    private val useCase2: AnotherUseCase,
-) : ViewModel() {
+## ViewModel (from `categories/CategoriesViewModel.kt`, trimmed)
 
-    private val _state = MutableStateFlow(YourFeatureState())
-    val state: StateFlow<YourFeatureState> = _state.asStateFlow()
+```kotlin
+class CategoriesViewModel(
+    private val getCategoriesUseCase: GetCategoriesUseCase,
+    private val insertCategoryUseCase: InsertCategoryUseCase,
+) : BaseViewModel<CategoryEvent>() {
+    private val _state = MutableStateFlow(CategoriesState())
+    val state: StateFlow<CategoriesState> = _state
 
-    fun loadData() {
+    init {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
-            
-            useCase1(params)
-                .onSuccess { items ->
-                    _state.update { it.copy(items = items, isLoading = false) }
-                }
-                .onFailure { error ->
-                    _state.update { it.copy(error = error.message, isLoading = false) }
-                }
+            getCategoriesUseCase().collect { result ->          // Flow<Result<List<Category>>>
+                result
+                    .onSuccess { cats -> _state.update { it.copy(categories = cats) } }
+                    .onFailure { error ->
+                        if (error is CancellationException) throw error
+                        logError("Error loading categories", error)
+                    }
+            }
         }
     }
-}
-```
 
-**Critical**:
-- ✅ MutableStateFlow PRIVATE (`_state`)
-- ✅ StateFlow PUBLIC (`state`)
-- ✅ Use `.asStateFlow()` to expose immutable view
-- ✅ Use `.update { }` to modify state (safe, non-blocking)
-- ❌ Never expose MutableStateFlow
-
----
-
-## Constructor Requirements (CRITICAL)
-
-ViewModel accepts **UseCase instances ONLY**, never repositories:
-
-```kotlin
-// ✅ CORRECT - UseCase dependencies
-class TransactionsViewModel(
-    private val getTransactionsUseCase: GetTransactionsUseCase,
-    private val deleteTransactionUseCase: DeleteTransactionUseCase,
-) : ViewModel()
-
-// ❌ WRONG - Direct repository dependency
-class TransactionsViewModel(
-    private val repository: TransactionRepository, // FORBIDDEN!
-)
-```
-
-**Why**: Maintains Clean Architecture - Presentation layer depends on Domain (UseCase), not Data layer.
-
----
-
-## Result<T> Consumption Pattern
-
-```kotlin
-fun insertTransaction(transaction: Transaction) {
-    viewModelScope.launch {
-        insertTransactionUseCase(transaction)
-            .onSuccess { id ->
-                Logger.i(TAG) { "Insert successful: $id" }
-                _state.update { it.copy(lastInsertedId = id, error = null) }
-            }
-            .onFailure { error ->
-                if (error is CancellationException) throw error // RE-THROW!
-                Logger.e(TAG, error) { "Insert failed" }
-                
-                val message = when (error) {
-                    is TransactionException.InvalidAmount -> "Invalid amount"
-                    is TransactionException.DuplicateId -> "Transaction exists"
-                    else -> error.message ?: "Unknown error"
-                }
-                _state.update { it.copy(error = message) }
-            }
-    }
-}
-```
-
-**Critical**:
-- ✅ Handle both onSuccess and onFailure
-- ✅ Re-throw CancellationException
-- ✅ Map domain exceptions to user-friendly messages
-- ✅ Always update state for UI reflection
-
----
-
-## Flow-Based State Collection
-
-For continuous reactive data:
-
-```kotlin
-// ✅ CORRECT - Flow UseCase creates StateFlow
-class TransactionsViewModel(
-    private val getTransactionsUseCase: GetTransactionsUseCase,
-) : ViewModel() {
-
-    val transactions: StateFlow<List<Transaction>> = getTransactionsUseCase()
-        .map { result ->
-            result.getOrElse { emptyList() }
+    override fun onEvent(event: CategoryEvent) {
+        logDebug("Event: $event")
+        when (event) {
+            is CategoryEvent.AddCategory -> addCategory(event.name, event.icon, event.color, event.type)
+            is CategoryEvent.UpdateCategory -> updateCategory(event.category)
+            is CategoryEvent.DeleteCategory -> deleteCategory(event.category)
+            is CategoryEvent.RetryLastOperation -> logInfo("Retry requested")
         }
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5_000),
-            emptyList()
-        )
-}
-
-// ✅ CORRECT - Combining multiple flows
-val uiState: StateFlow<MyState> = combine(
-    transactionsUseCase(),
-    settingsRepository.displayMode(),
-) { transactions, displayMode ->
-    MyState(
-        transactions = transactions.getOrElse { emptyList() },
-        displayMode = displayMode,
-    )
-}.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), MyState())
-```
-
----
-
-## Cancellation & Cleanup
-
-Handle coroutine cancellation properly:
-
-```kotlin
-// Option 1: Track active jobs
-private var activeJob: Job? = null
-
-fun cancelOperation() {
-    activeJob?.cancel()
-    activeJob = null
-}
-
-fun loadData() {
-    activeJob?.cancel()
-    activeJob = viewModelScope.launch {
-        // ...
-    }
-}
-
-// Option 2: Simple viewModelScope (no cleanup needed)
-fun loadData() {
-    viewModelScope.launch {
-        // Automatically cancelled when ViewModel destroyed
-    }
-}
-```
-
----
-
-## Logging with Kermit
-
-Never use `Log.d()` or `println()`:
-
-```kotlin
-import co.touchlab.kermit.Logger
-
-class YourViewModel(...) : ViewModel() {
-    companion object {
-        private const val TAG = "YourViewModel"
     }
 
-    fun someAction() {
-        Logger.d(TAG) { "Action started" }
-        
+    private fun addCategory(name: String, icon: String, color: Long, type: String) {
         viewModelScope.launch {
-            useCase()
-                .onSuccess { result ->
-                    Logger.i(TAG) { "Success: $result" }
-                }
-                .onFailure { error ->
-                    Logger.e(TAG, error) { "Failed with error" }
-                }
+            insertCategoryUseCase(Category(name = name, icon = icon, color = color, type = type))
+                .handleError { err -> _state.update { it.copy(errorState = err) } }
+        }
+    }
+    // updateCategory / deleteCategory: same shape
+}
+```
+
+## Preference-only ViewModel (from `theme/ThemeViewModel.kt`)
+
+Allowed exception: `SettingsRepository` injected directly for preferences.
+
+```kotlin
+class ThemeViewModel(private val settingsRepository: SettingsRepository) : BaseViewModel<ThemeEvent>() {
+    val appTheme = settingsRepository.getTheme()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000L), AppTheme.SYSTEM)
+
+    override fun onEvent(event: ThemeEvent) {
+        when (event) {
+            is ThemeEvent.SetTheme -> viewModelScope.launch { settingsRepository.setTheme(event.theme) }
         }
     }
 }
 ```
+Prefer a single `state: StateFlow<State>` built with `combine(...)` when there are 2+ flows (see `DisplayViewModel`).
 
-**Kermit advantages**:
-- Works across KMP platforms
-- Structured logging
-- Tag-based filtering
-- Production-ready
-
----
-
-## State Data Class
-
-Keep state simple, flat, and UI-focused:
+## Test (from `BaseUnitTest`)
 
 ```kotlin
-// ✅ CORRECT - Flat, UI-focused state
-data class TransactionsState(
-    val transactions: List<Transaction> = emptyList(),
-    val isLoading: Boolean = false,
-    val error: String? = null,
-    val sortBy: SortOption = SortOption.DATE,
-    val selectedTransactionId: Long? = null,
-)
-
-// ❌ WRONG - Nested, complex state
-data class TransactionsState(
-    val data: TransactionData = TransactionData(),
-    val metadata: MetadataInfo = MetadataInfo(),
-    val ui: UiState = UiState(),
-)
-
-// ❌ WRONG - Duplicates ViewModel field
-data class TransactionsState(
-    val repository: TransactionRepository, // WHY?
-)
-```
-
-**Rules**:
-- ✅ Keep &lt;100 lines
-- ✅ All fields related to UI
-- ✅ NO repository or UseCase references
-- ✅ Stay in `<Feature>State.kt` file only
-- ❌ NO typealias
-- ❌ NO nested data classes
-
----
-
-## Code Size Limits
-
-- **ViewModel: Max 300 lines** - if growing larger, extract UseCase or split screen
-- **State: Max 100 lines** - keep simple
-- **Single responsibility** - one feature per ViewModel
-
----
-
-## Testing ViewModel
-
-Use `BaseUnitTest` in `androidApp/src/test/`:
-
-```kotlin
-class TransactionsViewModelTest : BaseUnitTest() {
-    private val mockUseCase = mockk<GetTransactionsUseCase>()
-    private lateinit var viewModel: TransactionsViewModel
+class CategoriesViewModelTest : BaseUnitTest() {
+    private val getCategories = mockk<GetCategoriesUseCase>()
+    private val insertCategory = mockk<InsertCategoryUseCase>()
+    private lateinit var viewModel: CategoriesViewModel
 
     @Before
     fun setup() {
-        viewModel = TransactionsViewModel(mockUseCase)
-    }
-
-    @After
-    fun tearDown() {
-        viewModel.viewModelScope.cancel()
+        every { getCategories() } returns flowOf(Result.success(listOf(testCategory(name = "Food"))))
+        viewModel = CategoriesViewModel(getCategories, insertCategory)
     }
 
     @Test
-    fun loadTransactions_shouldUpdateState_whenUseCaseSucceeds() = runViewModelTest {
-        val expected = listOf(testTransaction(id = 1))
-        coEvery { mockUseCase(Unit) } returns Result.success(expected)
-        
-        val collectJob = launch { viewModel.state.collect {} }
-        viewModel.loadTransactions()
-        advanceUntilIdle()
-        
-        assertEquals(expected, viewModel.state.value.transactions)
-        assertFalse(viewModel.state.value.isLoading)
-        collectJob.cancel()
-    }
+    fun onEvent_shouldInsertCategory_whenAddCategoryReceived() = runViewModelTest {
+        coEvery { insertCategory(any()) } returns Result.success(Unit)
 
-    @Test
-    fun loadTransactions_shouldSetError_whenUseCaseFails() = runViewModelTest {
-        val error = TransactionException.FetchFailed()
-        coEvery { mockUseCase(Unit) } returns Result.failure(error)
-        
-        val collectJob = launch { viewModel.state.collect {} }
-        viewModel.loadTransactions()
+        viewModel.onEvent(CategoryEvent.AddCategory("Rent", "home", 0xFF0000L))
         advanceUntilIdle()
-        
-        assertNull(viewModel.state.value.transactions)
-        assertNotNull(viewModel.state.value.error)
-        collectJob.cancel()
+
+        coVerify(exactly = 1) { insertCategory(match { it.name == "Rent" }) }
+        assertFalse(viewModel.state.value.errorState.isError)
     }
 }
 ```
 
----
+## Checklist
 
-## Pre-Commit Checklist
-
-- [ ] Extends `ViewModel`
-- [ ] Constructor accepts UseCase instances ONLY
-- [ ] Exposes public `StateFlow&lt;State&gt;`
-- [ ] Keeps `MutableStateFlow` private
-- [ ] Uses `.update { }` for state changes
-- [ ] Uses `onSuccess`/`onFailure` for Result handling
-- [ ] Re-throws CancellationException
-- [ ] Uses Kermit for logging (never Log/println)
-- [ ] Handles cancellation properly
-- [ ] Under 300 lines
-- [ ] State data class exists and under 100 lines
-- [ ] Tests cover success + failure paths
-- [ ] No UI logic in ViewModel
-- [ ] Imports clean, package correct
-
----
-
-## Quick Links
-
-- **Full Architecture Guide**: [AGENTS.md](../../AGENTS.md)
-- **UseCase Patterns**: [agent-usecase-pattern.agent.md](agent-usecase-pattern.agent.md)
-- **UI/Screen Guide**: [agent-compose-ui.agent.md](agent-compose-ui.agent.md)
+- [ ] Extends `BaseViewModel<FeatureEvent>`; only `onEvent()` is public
+- [ ] `_state` private `MutableStateFlow`, `state` public `StateFlow`, updates via `update { copy() }`
+- [ ] Business data via UseCases; `SettingsRepository` only for preferences
+- [ ] `handleError { }` for `Result`, re-throw `CancellationException` in flow collectors
+- [ ] `logDebug/logError` from base — no `TAG`, `Log`, `println`
+- [ ] No `Context`; ≤ 300 lines; State ≤ 100 lines in its own file
+- [ ] Registered in `AppModule.presentationModule`
+- [ ] Test extends `BaseUnitTest`, drives via `onEvent`, name `method_shouldX_whenY`
+- [ ] Imports clean, package matches directory

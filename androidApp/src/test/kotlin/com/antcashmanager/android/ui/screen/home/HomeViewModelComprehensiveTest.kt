@@ -47,6 +47,7 @@ class HomeViewModelComprehensiveTest : BaseUnitTest() {
                 dispatcher = testDispatcher,
                 searchDebounceMs = 0L,
                 segmentationTracker = mockk(relaxed = true),
+                analyticsManager = mockk(relaxed = true),
             )
     }
 

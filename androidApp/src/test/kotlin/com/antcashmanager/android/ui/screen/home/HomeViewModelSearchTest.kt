@@ -53,6 +53,7 @@ class HomeViewModelSearchTest : BaseUnitTest() {
                 dispatcher = testDispatcher,
                 searchDebounceMs = 0L, // Disable debounce for unit tests
                 segmentationTracker = mockk(relaxed = true),
+                analyticsManager = mockk(relaxed = true),
             )
     }
 

@@ -77,4 +77,16 @@ sealed interface TransactionsEvent {
     data class UpdateTransaction(
         val transaction: Transaction,
     ) : TransactionsEvent
+
+    data class ShowTransactionDetails(
+        val index: Int,
+    ) : TransactionsEvent
+
+    data object DismissTransactionDetails : TransactionsEvent
+
+    data object HelpOpened : TransactionsEvent
+
+    data object ReceiptScanOpened : TransactionsEvent
+
+    data object AddTransactionOpened : TransactionsEvent
 }

@@ -207,7 +207,6 @@
     <string name="settings_separator_space">Space</string>
     <string name="settings_separator_none">None</string>
     <string name="settings_date_format">Date Format</string>
-    <string name="settings_date_format_subtitle">%s</string>
     <string name="settings_section_currency">Currency</string>
     <string name="settings_section_dates">Dates</string>
     <string name="settings_section_other">Other</string>
@@ -649,4 +648,5 @@
     <!-- Settings: Analytics consent toggle -->
     <string name="settings_analytics_consent_title">Share anonymous usage statistics</string>
     <string name="settings_analytics_consent_desc">Screens visited and errors only. No financial data is ever sent.</string>
+    <string name="transactions_details_empty">Select a transaction to view details</string>
 </resources>

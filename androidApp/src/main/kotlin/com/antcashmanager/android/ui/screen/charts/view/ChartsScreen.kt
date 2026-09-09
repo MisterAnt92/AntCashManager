@@ -61,6 +61,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.touchlab.kermit.Logger
+import kotlinx.coroutines.flow.map
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.data.formatter.ShareTextFormatter
@@ -73,6 +74,7 @@ import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.state.AntEmptyState
+import com.antcashmanager.android.ui.components.state.AntErrorState
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.charts.ChartData
 import com.antcashmanager.android.ui.screen.charts.ChartEvent
@@ -108,6 +110,7 @@ fun ChartsScreen() {
     val selectedPresetIndex by viewModel.selectedPresetIndex.collectAsStateWithLifecycle()
     val chartsZoomEnabled by viewModel.chartsZoomEnabled.collectAsStateWithLifecycle(initialValue = false)
     val chartsCardOrder by viewModel.chartsCardOrder.collectAsStateWithLifecycle()
+    val errorState by viewModel.state.map { it.errorState }.collectAsStateWithLifecycle(initialValue = com.antcashmanager.android.ui.base.ErrorState())
 
     ChartsContent(
         chartData = chartData,
@@ -115,6 +118,7 @@ fun ChartsScreen() {
         initialPresetIndex = selectedPresetIndex,
         zoomEnabled = chartsZoomEnabled,
         chartsCardOrderRaw = chartsCardOrder,
+        errorState = errorState,
         onDateRangeChanged = { from, to -> viewModel.onEvent(ChartEvent.SetDateRange(from, to)) },
         onPresetSelected = { preset -> viewModel.onEvent(ChartEvent.SetPresetRange(preset)) },
         onEvent = viewModel::onEvent,
@@ -129,10 +133,23 @@ internal fun ChartsContent(
     initialPresetIndex: Int = 1,
     zoomEnabled: Boolean = false,
     chartsCardOrderRaw: String,
+    errorState: com.antcashmanager.android.ui.base.ErrorState = com.antcashmanager.android.ui.base.ErrorState(),
     onDateRangeChanged: (Long, Long) -> Unit = { _, _ -> },
     onPresetSelected: (RangePreset) -> Unit = {},
     onEvent: (ChartEvent) -> Unit = {},
 ) {
+    // Error state overlay (FASE 5: Error Feedback UX)
+    if (errorState.isError) {
+        AntErrorState(
+            mascotRes = R.drawable.ic_piggy_bank,
+            title = errorState.message ?: "An error occurred",
+            subtitle = "Please try again",
+            modifier = Modifier.fillMaxSize(),
+            retryLabel = null,
+            onRetry = null,
+        )
+        return
+    }
     val context = LocalContext.current
     val analyticsManager: AnalyticsManager = koinInject()
     val scope = rememberCoroutineScope()

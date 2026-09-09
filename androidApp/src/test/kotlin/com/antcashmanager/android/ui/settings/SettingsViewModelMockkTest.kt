@@ -246,6 +246,7 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
 
         return SettingsViewModel(
             settingsUseCases = settingsUseCasesProvider,
+            settingsRepository = mockk(relaxed = true),
             deleteAllTransactionsUseCase = deleteAllTransactionsUseCase,
             insertTransactionUseCase = insertTransactionUseCase,
             widgetUpdateNotifier = widgetUpdateNotifier,

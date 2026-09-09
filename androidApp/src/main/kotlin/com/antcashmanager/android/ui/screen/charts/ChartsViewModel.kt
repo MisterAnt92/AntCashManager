@@ -107,6 +107,34 @@ class ChartsViewModel(
                 initialValue = ChartsConstant.DEFAULT_CHARTS_CARDS_ORDER,
             )
 
+    // ── Unified State (FASE 5: Error Feedback UX) ──
+    val state: StateFlow<ChartsState> =
+        kotlinx.coroutines.flow.combine(
+            _dateRange,
+            _selectedPresetIndex,
+            _selectedChartDetails,
+            chartData,
+            chartsZoomEnabled,
+            chartsCardOrder,
+        ) { args ->
+            @Suppress("UNCHECKED_CAST")
+            val values = args as Array<Any?>
+            ChartsState(
+                dateRange = values[0] as DateRange,
+                selectedPresetIndex = values[1] as Int,
+                selectedChartDetails = values[2] as ChartDetailsData?,
+                chartData = values[3] as ChartData,
+                errorState = com.antcashmanager.android.ui.base.ErrorState(),
+            )
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5_000),
+            ChartsState(
+                dateRange = getDefaultDateRange(),
+                selectedPresetIndex = 1,
+            ),
+        )
+
     init {
         observeSavedDateFilter()
     }

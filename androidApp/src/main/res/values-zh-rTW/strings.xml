@@ -190,7 +190,6 @@
     <string name="settings_separator_space">空格</string>
     <string name="settings_separator_none">無</string>
     <string name="settings_date_format">日期格式</string>
-    <string name="settings_date_format_subtitle">%s</string>
     <string name="settings_section_currency">貨幣</string>
     <string name="settings_section_dates">日期</string>
     <string name="settings_section_other">其他</string>
@@ -214,7 +213,7 @@
     <string name="settings_reduce_motion_subtitle">盡量減少動畫和過渡效果。對動態效果敏感的使用者很有幫助。</string>
     <string name="settings_data_management">資料管理</string>
     <string name="settings_security">安全</string>
-    <string name="settings_security_data_encryption">資料保護 - 加密</string>
+    <string name="settings_security_data_encryption">資��保護 - 加密</string>
     <string name="settings_security_data_encryption_subtitle">加密並保護本地應用資料</string>
     <string name="settings_suggestions">建議</string>
     <string name="settings_suggestions_enable">自動建議</string>
@@ -273,7 +272,7 @@
     <string name="restore_success_message">成功恢復 %1$d 條交易和 %2$d 個分類。</string>
     <string name="restore_error_title">恢復失敗</string>
     <string name="restore_error_message">無法恢復備份：%s</string>
-    <string name="restore_in_progress_message">正在恢復您的資料...</string>
+    <string name="restore_in_progress_message">正在恢復您的��料...</string>
     <string name="dialog_delete_all_title">刪除所有資料？</string>
     <string name="dialog_delete_all_message">此操作將永久刪除所有交易和分類。此操作無法撤銷。</string>
     <string name="dialog_data_deleted">資料已刪除</string>
@@ -303,7 +302,7 @@
 
     <!-- Privacy Policy -->
     <string name="privacy_policy_title">隱私權政策</string>
-    <string name="privacy_policy_content">AntCashManager 致力於保護您的隱私。本應用程式不會向第三方收集或共享個人資料。所有財務資料都存儲在您的設備本地，絕不會傳輸到外部伺服器。\n\n您的資料完全保留在您的設備上，並受您控制。我們不使用分析、追蹤或廣告服務。\n\n如有任何關於隱私的問題，請通過應用商店列表聯繫我們。</string>
+    <string name="privacy_policy_content">AntCashManager 致力於保護您的隱私。本應用程式不會向第三方收集或共享個人資料。所有財務資料都存儲在您的設備本地，絕不會傳輸��外部伺服器。\n\n您的資料完全保留在您的設備上，並受您控制。我們不使用分析、追蹤或廣告服務。\n\n如有任何關於隱私的問題，請通過應用商店列表聯繫我們。</string>
 
     <!-- Languages -->
     <string name="language_system">系統預設</string>
@@ -444,7 +443,7 @@
     <!-- Tutorial -->
     <string name="settings_tutorial">教程</string>
     <string name="settings_show_tutorial">顯示教程</string>
-    <string name="settings_show_tutorial_subtitle">重新觀看應用程式初始教程</string>
+    <string name="settings_show_tutorial_subtitle">重新觀看應用程式初始���程</string>
     <string name="tutorial_welcome_title">歡迎使用 AntCashManager！🐜</string>
     <string name="tutorial_welcome_desc">讓我們快速瀏覽一下，看看我們的小螞蟻如何幫助您理財。</string>
     <string name="tutorial_welcome_point_track">在幾秒鐘內追蹤收入和支出。</string>
@@ -573,7 +572,7 @@
     <string name="chart_customize_order">自訂圖表卡片順序</string>
     <string name="chart_cards_order_dialog_title">重新排序圖表卡片</string>
     <string name="chart_cards_order_dialog_description">上下拖動以重新排序卡片。注意：時間範圍篩選器和摘要行是固定的。</string>
-    <string name="settings_project_by">一個由 Formica Simone @MisterAnt92 傾情製作的專案</string>
+    <string name="settings_project_by">一個由 Formica Simone @MisterAnt92 ��情製作的專案</string>
     <!-- Chart Cards - New Visualizations -->
     <string name="chart_spending_forecast_title">消費預測</string>
     <string name="chart_avg_monthly">月平均額</string>
@@ -624,4 +623,15 @@
     <!-- Settings: Analytics consent toggle -->
     <string name="settings_analytics_consent_title">共享匿名使用統計資料</string>
     <string name="settings_analytics_consent_desc">僅造訪的畫面和錯誤。不會傳送任何財務資料。</string>
+
+    <!-- HelpDialog (Transactions) - missing aliases -->
+    <string name="transactions_help_title">@string/help_transactions_title</string>
+    <string name="transactions_help_desc">@string/help_transactions_desc</string>
+    <string name="transactions_help_filter_title">@string/help_transactions_feature_filters_title</string>
+    <string name="transactions_help_filter_desc">@string/help_transactions_feature_filters_desc</string>
+    <string name="transactions_help_search_title">@string/help_transactions_feature_search_title</string>
+    <string name="transactions_help_search_desc">@string/help_transactions_feature_search_desc</string>
+    <string name="transactions_help_display_title">@string/settings_transaction_display</string>
+    <string name="transactions_help_display_desc">@string/settings_transaction_display_desc</string>
+    <string name="transactions_details_empty">選擇一筆交易以查看詳情</string>
 </resources>

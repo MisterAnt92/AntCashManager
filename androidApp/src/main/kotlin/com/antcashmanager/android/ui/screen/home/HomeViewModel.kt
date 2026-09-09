@@ -1,9 +1,16 @@
 package com.antcashmanager.android.ui.screen.home
 
+import android.os.Bundle
 import androidx.lifecycle.viewModelScope
+import com.antcashmanager.android.analytics.AnalyticsConstants.Events
+import com.antcashmanager.android.analytics.AnalyticsConstants.Params
+import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.analytics.tracker.SegmentationTracker
 import com.antcashmanager.android.ui.base.BaseViewModel
+import com.antcashmanager.android.ui.mapper.toUi
 import com.antcashmanager.android.ui.screen.home.event.HomeEvent
+import com.antcashmanager.android.ui.screen.home.model.HomeTopCardType
+import com.antcashmanager.android.util.moved
 import com.antcashmanager.android.util.calculateBalance
 import com.antcashmanager.android.util.calculateTotalExpense
 import com.antcashmanager.android.util.calculateTotalIncome
@@ -55,6 +62,7 @@ class HomeViewModel(
     searchDebounceMs: Long = 300L,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val segmentationTracker: SegmentationTracker,
+    private val analyticsManager: AnalyticsManager,
 ) : BaseViewModel<HomeEvent>(dispatcher) {
     constructor(
         transactionRepository: TransactionRepository,
@@ -63,6 +71,7 @@ class HomeViewModel(
         dispatcher: CoroutineDispatcher = Dispatchers.Default,
         searchDebounceMs: Long = 300L,
         segmentationTracker: SegmentationTracker,
+        analyticsManager: AnalyticsManager,
     ) : this(
         getTransactionsUseCase =
             GetTransactionsUseCase(
@@ -98,6 +107,7 @@ class HomeViewModel(
         searchDebounceMs = searchDebounceMs,
         dispatcher = dispatcher,
         segmentationTracker = segmentationTracker,
+        analyticsManager = analyticsManager,
     )
 
     // ── Categories cache for enriching transactions ──
@@ -116,6 +126,9 @@ class HomeViewModel(
     // ── Internal transaction selection state ──
     private val _selectedTransactionState =
         MutableStateFlow<com.antcashmanager.domain.model.Transaction?>(null)
+
+    // ── Top cards order being edited in the reorder dialog (null = dialog closed) ──
+    private val _editingTopCardsOrder = MutableStateFlow<List<HomeTopCardType>?>(null)
 
     // ── Transactions Flow ──
     private val transactionsFlow =
@@ -231,6 +244,7 @@ class HomeViewModel(
             settingsRepository.getReduceMotion(),
             settingsRepository.getTransactionDisplayType(),
             settingsRepository.getIsTutorialCompleted(),
+            _editingTopCardsOrder,
         ) { args: Array<Any?> ->
             val transactions = args[0] as List<com.antcashmanager.domain.model.Transaction>
             val filtered = args[1] as List<com.antcashmanager.domain.model.Transaction>
@@ -238,19 +252,16 @@ class HomeViewModel(
             val filterState = args[3] as FilterState
             val selectedTransaction = args[4] as com.antcashmanager.domain.model.Transaction?
             val categoryCache = args[5] as Map<String, com.antcashmanager.domain.model.Category>
-            val homeTopCardsOrderRaw = args[6] as String
-            val homeTopCardsOrder =
-                if (homeTopCardsOrderRaw.isEmpty()) {
-                    emptyList()
-                } else {
-                    homeTopCardsOrderRaw.split(",")
-                }
+            val topCardsOrder = HomeTopCardType.parse(args[6] as String)
             val dateFilterExpanded = args[7] as Boolean
             val showPaymentTypeBreakdown = args[8] as Boolean
             val showQuickInsightsCard = args[9] as Boolean
             val reduceMotion = args[10] as Boolean
-            val transactionDisplayType = (args[11] as TransactionDisplayType).name
+            val transactionDisplayType = args[11] as TransactionDisplayType
             val isTutorialCompleted = args[12] as Boolean
+
+            @Suppress("UNCHECKED_CAST")
+            val editingTopCardsOrder = args[13] as List<HomeTopCardType>?
 
             // Enrich transactions with category icon and color from cache
             val enrichedFiltered =
@@ -319,7 +330,7 @@ class HomeViewModel(
             HomeState(
                 transactions = transactions,
                 filteredTransactions = enrichedFiltered,
-                recentTransactions = enrichedFiltered,
+                recentTransactions = enrichedFiltered.toUi(HomeConstant.ITEM_DATE_PATTERN),
                 totalIncome = totalIncome,
                 totalExpense = totalExpense, // Will be negative for display
                 balance = balance,
@@ -332,13 +343,15 @@ class HomeViewModel(
                 searchQuery = filterState.searchQuery,
                 isSearchExpanded = filterState.isSearchExpanded,
                 searchSuggestions = suggestions,
-                homeTopCardsOrder = homeTopCardsOrder,
+                topCardsOrder = topCardsOrder,
+                editingTopCardsOrder = editingTopCardsOrder,
                 dateFilterExpanded = dateFilterExpanded,
                 showPaymentTypeBreakdown = showPaymentTypeBreakdown,
                 showQuickInsightsCard = showQuickInsightsCard,
                 reduceMotion = reduceMotion,
                 transactionDisplayType = transactionDisplayType,
                 isTutorialCompleted = isTutorialCompleted,
+                errorState = com.antcashmanager.android.ui.base.ErrorState(),
             )
         }.stateIn(
             scope = viewModelScope,
@@ -363,21 +376,79 @@ class HomeViewModel(
         when (event) {
             is HomeEvent.SelectPreset -> selectPreset(event.index)
             is HomeEvent.SetDateRange -> setDateRange(event.from, event.to)
-            is HomeEvent.ShowTransactionDetails ->
-                _selectedTransactionState.value =
-                    event.transaction
-
+            is HomeEvent.ShowTransactionDetails -> showTransactionDetails(event.transaction)
             HomeEvent.DismissTransactionDetails -> _selectedTransactionState.value = null
             is HomeEvent.UpdateSearchQuery -> updateSearchQuery(event.query)
             HomeEvent.ToggleSearchExpanded -> toggleSearchExpanded()
             is HomeEvent.SetIsTutorialCompleted -> setIsTutorialCompleted(event.completed)
-            is HomeEvent.SetHomeTopCardsOrder -> setHomeTopCardsOrder(event.order)
+            HomeEvent.StartTopCardsReorder -> _editingTopCardsOrder.value = state.value.visibleTopCards
+            is HomeEvent.MoveTopCard -> moveTopCard(event.index, event.up)
+            HomeEvent.CancelTopCardsReorder -> _editingTopCardsOrder.value = null
+            HomeEvent.ConfirmTopCardsOrder -> confirmTopCardsOrder()
             is HomeEvent.SetDateFilterExpanded -> setDateFilterExpanded(event.expanded)
         }
     }
 
+    private fun showTransactionDetails(transaction: com.antcashmanager.domain.model.Transaction) {
+        _selectedTransactionState.value = transaction
+        val index = state.value.recentTransactions.indexOfFirst { it.id == transaction.id }
+        analyticsManager.logEvent(
+            Events.HOME_TRANSACTION_CLICKED,
+            Bundle().apply {
+                putInt(Params.INDEX, index)
+                putString(Params.TYPE, transaction.type.name)
+            },
+        )
+        analyticsManager.logEvent(Events.HOME_TRANSACTION_DETAIL_OPENED)
+    }
+
     private fun updateSearchQuery(query: String) {
+        val previous = _filterState.value.searchQuery
+        when {
+            query.isNotEmpty() && previous.isEmpty() -> {
+                analyticsManager.logEvent(Events.HOME_SEARCH_SUBMITTED)
+                analyticsManager.logEvent(
+                    Events.SEARCH_QUERY_INITIATED,
+                    Bundle().apply {
+                        putInt(Params.QUERY_LENGTH, query.length)
+                        putBoolean(Params.FILTERS_ACTIVE, false)
+                    },
+                )
+            }
+
+            query.isEmpty() && previous.isNotEmpty() -> analyticsManager.logEvent(Events.HOME_SEARCH_CLEARED)
+        }
         _filterState.update { it.copy(searchQuery = query) }
+    }
+
+    private fun moveTopCard(
+        index: Int,
+        up: Boolean,
+    ) {
+        _editingTopCardsOrder.update { it?.moved(index, if (up) index - 1 else index + 1) }
+    }
+
+    /**
+     * Persists the edited order. When Quick Insights is hidden it is not part of the editable
+     * list, so it is re-inserted at its previous position to keep the stored order complete.
+     */
+    private fun confirmTopCardsOrder() {
+        val current = state.value
+        val edited = _editingTopCardsOrder.value ?: return
+        val updated =
+            if (current.showQuickInsightsCard || HomeTopCardType.QUICK_INSIGHTS in edited) {
+                edited
+            } else {
+                val lockedIndex = current.topCardsOrder.indexOf(HomeTopCardType.QUICK_INSIGHTS)
+                if (lockedIndex >= 0) {
+                    edited.toMutableList().apply { add(lockedIndex.coerceAtMost(size), HomeTopCardType.QUICK_INSIGHTS) }
+                } else {
+                    edited
+                }
+            }
+        _editingTopCardsOrder.value = null
+        setHomeTopCardsOrder(HomeTopCardType.serialize(updated))
+        analyticsManager.logEvent(Events.HOME_TOP_CARDS_REORDERED)
     }
 
     private fun toggleSearchExpanded() {
@@ -438,6 +509,10 @@ class HomeViewModel(
     }
 
     private fun selectPreset(index: Int) {
+        analyticsManager.logEvent(
+            Events.HOME_DATE_FILTER_CHANGED,
+            Bundle().apply { putString(Params.PRESET, index.toString()) },
+        )
         val dateRangeTo = System.currentTimeMillis()
         val dateRangeFrom = HomeState.getDateFromForPreset(index)
         _filterState.update {

@@ -203,6 +203,7 @@
     <string name="settings_theme_light">Chiaro</string>
     <string name="settings_theme_dark">Scuro</string>
     <string name="settings_theme_system">Predefinito di sistema</string>
+
     <string name="settings_language">Lingua</string>
     <string name="settings_display">Visualizzazione</string>
     <string name="settings_display_subtitle">Personalizza valuta, decimali e formattazione</string>
@@ -225,7 +226,7 @@
     <string name="settings_separator_space">Spazio</string>
     <string name="settings_separator_none">Nessuno</string>
     <string name="settings_date_format">Formato Data</string>
-    <string name="settings_date_format_subtitle">%s</string>
+
     <string name="settings_section_currency">Valuta</string>
     <string name="settings_section_dates">Data</string>
     <string name="settings_section_other">Altro</string>
@@ -577,4 +578,9 @@
     <!-- Settings: Analytics consent toggle -->
     <string name="settings_analytics_consent_title">Condividi statistiche d\'uso anonime</string>
     <string name="settings_analytics_consent_desc">Solo schermate visitate ed errori. Non vengono mai inviati dati finanziari.</string>
+
+    <!-- HelpDialog (Transactions) - missing aliases -->
+    <string name="transactions_help_title">@string/help_transactions_title</string>
+    <string name="transactions_help_desc">@string/help_transactions_desc</string>
+    <string name="transactions_details_empty">Seleziona una transazione per vedere i dettagli</string>
 </resources>

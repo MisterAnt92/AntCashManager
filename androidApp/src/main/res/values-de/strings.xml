@@ -206,7 +206,6 @@
     <string name="settings_reduce_motion">Bewegung reduzieren</string>
     <string name="settings_reduce_motion_subtitle">Minimiert Animationen und \u00dcberg\u00e4nge. Hilfreich f\u00fcr bewegungsempfindliche Nutzer.</string>
     <string name="settings_date_format">Datumsformat</string>
-    <string name="settings_date_format_subtitle">%s</string>
     <string name="settings_section_currency">W\u00e4hrung</string>
     <string name="settings_section_dates">Daten</string>
     <string name="settings_section_other">Sonstiges</string>
@@ -622,8 +621,6 @@
     <string name="dialog_payment_type_title">Zahlungsart auswählen</string>
 
 
-
-
     <!-- Analytics Consent Dialog (GDPR) -->
     <string name="consent_title">Helfen Sie uns, die App zu verbessern</string>
     <string name="consent_body">Wir erheben anonyme Nutzungsstatistiken (besuchte Bildschirme, Fehler), um die App zu verbessern. Es werden keine Finanzdaten übermittelt. Sie können dies jederzeit in den Einstellungen ändern.</string>
@@ -632,4 +629,9 @@
     <!-- Settings: Analytics consent toggle -->
     <string name="settings_analytics_consent_title">Anonyme Nutzungsstatistiken teilen</string>
     <string name="settings_analytics_consent_desc">Nur besuchte Bildschirme und Fehler. Keine Finanzdaten werden je gesendet.</string>
+
+    <!-- HelpDialog (Transactions) - missing aliases -->
+    <string name="transactions_help_title">@string/help_transactions_title</string>
+    <string name="transactions_help_desc">@string/help_transactions_desc</string>
+    <string name="transactions_details_empty">Wählen Sie eine Transaktion aus, um Details anzuzeigen</string>
 </resources>

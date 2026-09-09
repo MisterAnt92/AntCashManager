@@ -101,6 +101,38 @@ val AccentCyan = Color(0xFF06B6D4)
 val AccentYellow = Color(0xFFFCD34D)
 val AccentGreen = Color(0xFF10B981)
 
+// ── Anna theme — Green primary (income), Red secondary (expense) ──
+
+// Anna Light
+val AnnaPrimaryLight = Color(0xFF1B8A3C)
+val AnnaOnPrimaryLight = Color(0xFFFFFFFF)
+val AnnaPrimaryContainerLight = Color(0xFFB7F5C8)
+val AnnaOnPrimaryContainerLight = Color(0xFF002110)
+val AnnaSecondaryLight = Color(0xFFC62828)
+val AnnaOnSecondaryLight = Color(0xFFFFFFFF)
+val AnnaSecondaryContainerLight = Color(0xFFFFDAD6)
+val AnnaOnSecondaryContainerLight = Color(0xFF410002)
+val AnnaTertiaryLight = Color(0xFFA05C00)
+val AnnaOnTertiaryLight = Color(0xFFFFFFFF)
+val AnnaTertiaryContainerLight = Color(0xFFFFDDB3)
+val AnnaOnTertiaryContainerLight = Color(0xFF341A00)
+val AnnaInversePrimaryLight = Color(0xFF6EE891)
+
+// Anna Dark
+val AnnaPrimaryDark = Color(0xFF6EE891)
+val AnnaOnPrimaryDark = Color(0xFF00391B)
+val AnnaPrimaryContainerDark = Color(0xFF005227)
+val AnnaOnPrimaryContainerDark = Color(0xFFB7F5C8)
+val AnnaSecondaryDark = Color(0xFFFF8C7F)
+val AnnaOnSecondaryDark = Color(0xFF690005)
+val AnnaSecondaryContainerDark = Color(0xFF93000A)
+val AnnaOnSecondaryContainerDark = Color(0xFFFFDAD6)
+val AnnaTertiaryDark = Color(0xFFFFB869)
+val AnnaOnTertiaryDark = Color(0xFF562D00)
+val AnnaTertiaryContainerDark = Color(0xFF7A4300)
+val AnnaOnTertiaryContainerDark = Color(0xFFFFDDB3)
+val AnnaInversePrimaryDark = Color(0xFF1B8A3C)
+
 // ── High-contrast overrides ──
 
 val HighContrastPrimaryLight = Color(0xFFD84315)
