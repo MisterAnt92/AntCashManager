@@ -13,6 +13,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
+import org.koin.core.context.stopKoin
 
 /**
  * Classe base condivisa per i test unitari Android host-side.
@@ -38,6 +39,12 @@ abstract class BaseUnitTest {
 
     @Before
     open fun setUpDispatchers() {
+        // Clean up Koin before test to prevent KoinApplicationAlreadyStartedException
+        try {
+            stopKoin()
+        } catch (e: Exception) {
+            // Koin might not be started yet, which is fine
+        }
         testDispatcher = UnconfinedTestDispatcher()
         Dispatchers.setMain(testDispatcher)
     }
@@ -45,6 +52,12 @@ abstract class BaseUnitTest {
     @After
     open fun tearDownDispatchers() {
         Dispatchers.resetMain()
+        // Clean up Koin to prevent KoinApplicationAlreadyStartedException between tests
+        try {
+            stopKoin()
+        } catch (e: Exception) {
+            // Koin might not be started in this test, which is fine
+        }
     }
 
     protected fun runUnitTest(block: suspend TestScope.() -> Unit) = runTest(testDispatcher) { block() }
