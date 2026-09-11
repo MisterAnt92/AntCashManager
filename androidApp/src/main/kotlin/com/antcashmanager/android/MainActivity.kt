@@ -1,5 +1,6 @@
 package com.antcashmanager.android
 
+import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,6 +11,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,6 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.window.layout.DisplayFeature
+import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoTracker
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.analytics.tracker.SessionTracker
@@ -110,6 +113,20 @@ class MainActivity : ComponentActivity() {
 
                 // Create multi-pane coordinator for synchronized state across panes
                 val multiPaneCoordinator = remember { MultiPaneCoordinator() }
+
+                // ── Orientation lock ─────────────────────────────────────────────────────
+                // Phones (sw < 600dp): portrait only.
+                // Tablets and foldables: free rotation.
+                val configuration = LocalConfiguration.current
+                val hasFoldingFeature = displayFeatures.filterIsInstance<FoldingFeature>().isNotEmpty()
+                val isTabletOrFoldable = configuration.smallestScreenWidthDp >= 600 || hasFoldingFeature
+                SideEffect {
+                    requestedOrientation = if (isTabletOrFoldable) {
+                        ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+                    } else {
+                        ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                    }
+                }
 
                 WithAppLocale(language = settingsState.language) {
                     AppThemeProvider(currentTheme = settingsState.theme) {
