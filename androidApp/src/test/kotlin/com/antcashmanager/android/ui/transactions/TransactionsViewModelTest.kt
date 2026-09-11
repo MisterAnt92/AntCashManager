@@ -491,6 +491,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
                     settingsRepository = fakeSettingsRepository,
                     dispatcher = testDispatcher,
                     engagementTracker = mockk(relaxed = true),
+                    analyticsManager = analyticsManager,
                 )
 
             val collectJob =
@@ -533,6 +534,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
                     settingsRepository = fakeSettingsRepository,
                     dispatcher = testDispatcher,
                     engagementTracker = mockk(relaxed = true),
+                    analyticsManager = analyticsManager,
                 )
 
             val collectJob =
@@ -582,6 +584,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
                     settingsRepository = fakeSettingsRepository,
                     dispatcher = testDispatcher,
                     engagementTracker = mockk(relaxed = true),
+                    analyticsManager = analyticsManager,
                 )
 
             val collectJob =
