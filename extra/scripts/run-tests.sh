@@ -32,12 +32,12 @@ BUILD_STATUS=0
 if [ "$TEST_TYPE" = "all" ] || [ "$TEST_TYPE" = "unit" ]; then
     echo "▶️  Running Unit Tests..."
     echo "   • :shared:testAndroidHostTest"
-    echo "   • :androidApp:testDebugUnitTest"
+    echo "   • :androidApp:testFullDebugUnitTest"
     echo ""
 
     ./gradlew \
       :shared:testAndroidHostTest \
-      :androidApp:testDebugUnitTest \
+      :androidApp:testFullDebugUnitTest \
       --info 2>&1 | tee "$TEST_OUTPUT" || BUILD_STATUS=$?
 fi
 
@@ -138,13 +138,13 @@ if [ "$TEST_TYPE" = "all" ] || [ "$TEST_TYPE" = "coverage" ]; then
     echo ""
     echo "▶️  Generating Coverage Reports (JaCoCo)..."
     echo "   • :shared:testAndroidHostTest (with coverage)"
-    echo "   • :androidApp:testDebugUnitTest (with coverage)"
+    echo "   • :androidApp:testFullDebugUnitTest (with coverage)"
     echo "   • jacocoTestDebugUnitTestReport"
     echo ""
 
     ./gradlew \
       :shared:testAndroidHostTest \
-      :androidApp:testDebugUnitTest \
+      :androidApp:testFullDebugUnitTest \
       :shared:testCoverageReport \
       :androidApp:jacocoTestDebugUnitTestReport \
       :androidApp:testCoverageReport \
@@ -220,9 +220,9 @@ if [ "$TEST_TYPE" = "all" ] || [ "$TEST_TYPE" = "unit" ] || [ "$TEST_TYPE" = "co
 
     echo ""
 
-    ANDROID_XML_DIR="$PROJECT_ROOT/androidApp/build/intermediates/unit_test_results/debug/testDebugUnitTest"
-    ANDROID_HTML="$PROJECT_ROOT/androidApp/build/reports/tests/testDebugUnitTest/index.html"
-    print_module_summary ":androidApp:testDebugUnitTest (Presentation)" "$ANDROID_XML_DIR" "$ANDROID_HTML"
+    ANDROID_XML_DIR="$PROJECT_ROOT/androidApp/build/intermediates/unit_test_results/debug/testFullDebugUnitTest"
+    ANDROID_HTML="$PROJECT_ROOT/androidApp/build/reports/tests/testFullDebugUnitTest/index.html"
+    print_module_summary ":androidApp:testFullDebugUnitTest (Presentation)" "$ANDROID_XML_DIR" "$ANDROID_HTML"
 
     echo ""
 fi
@@ -299,7 +299,7 @@ if [ "$TEST_TYPE" = "all" ] || [ "$TEST_TYPE" = "coverage" ]; then
         echo "    💡 Tips to generate coverage reports:"
         echo "       1. Make sure JaCoCo is enabled in build.gradle"
         echo "       2. Run tests with coverage generation:"
-        echo "          ./gradlew :androidApp:testDebugUnitTest --info"
+        echo "          ./gradlew :androidApp:testFullDebugUnitTest --info"
         echo "          ./gradlew :shared:testAndroidHostTest --info"
         echo ""
         echo "       3. Look for 'Creating coverage report' in build output"
@@ -353,7 +353,7 @@ echo "  # Test only shared data layer:"
 echo "  ./gradlew :shared:testAndroidHostTest"
 echo ""
 echo "  # Test only Android app:"
-echo "  ./gradlew :androidApp:testDebugUnitTest"
+echo "  ./gradlew :androidApp:testFullDebugUnitTest"
 echo ""
 echo "  # Run instrumentation tests:"
 echo "  ./gradlew :androidApp:connectedDebugAndroidTest"

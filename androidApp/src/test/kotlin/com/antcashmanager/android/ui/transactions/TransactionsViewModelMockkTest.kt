@@ -268,5 +268,6 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
             setTransactionsDateFilterStateUseCase = setTransactionsDateFilterStateUseCase,
             settingsRepository = settingsRepository,
             engagementTracker = engagementTracker,
+            analyticsManager = analyticsManager,
         )
 }

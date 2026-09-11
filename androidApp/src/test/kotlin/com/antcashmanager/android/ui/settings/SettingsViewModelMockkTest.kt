@@ -1,13 +1,14 @@
 package com.antcashmanager.android.ui.settings
 
 import com.antcashmanager.android.BaseUnitTest
-import com.antcashmanager.android.data.feedback.FeedbackEmailHelper
 import com.antcashmanager.android.ui.screen.settings.SettingEvent
 import com.antcashmanager.android.ui.screen.settings.SettingsViewModel
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.service.WidgetUpdateNotifier
+import com.antcashmanager.domain.usecase.SendFeedbackEmailUseCase
 import com.antcashmanager.domain.usecase.settings.GetSettingUseCase
+import com.antcashmanager.domain.usecase.settings.ImportDebugDataUseCase
 import com.antcashmanager.domain.usecase.settings.ResetAllPreferencesUseCase
 import com.antcashmanager.domain.usecase.settings.SetSettingUseCase
 import com.antcashmanager.domain.usecase.settings.SettingsUseCasesProvider
@@ -17,7 +18,6 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.unmockkObject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
@@ -56,6 +56,8 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
     private lateinit var resetAllPreferencesUseCase: ResetAllPreferencesUseCase
     private lateinit var deleteAllTransactionsUseCase: DeleteAllTransactionsUseCase
     private lateinit var insertTransactionUseCase: InsertTransactionUseCase
+    private lateinit var sendFeedbackEmailUseCase: SendFeedbackEmailUseCase
+    private lateinit var importDebugDataUseCase: ImportDebugDataUseCase
 
     @Before
     fun setup() {
@@ -101,6 +103,8 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
         resetAllPreferencesUseCase = mockk()
         deleteAllTransactionsUseCase = mockk()
         insertTransactionUseCase = mockk()
+        sendFeedbackEmailUseCase = mockk(relaxed = true)
+        importDebugDataUseCase = mockk(relaxed = true)
 
         // Default behavior for all getters: return success
         every { getThemeUseCase() } returns flowOf(Result.success("dark"))
@@ -132,11 +136,6 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
         coEvery { resetAllPreferencesUseCase() } returns Result.success(Unit)
         coEvery { deleteAllTransactionsUseCase() } returns Result.success(Unit)
         coEvery { insertTransactionUseCase(any()) } returns Result.success(0L)
-    }
-
-    @After
-    fun tearDown() {
-        unmockkObject(FeedbackEmailHelper)
     }
 
     @Test
@@ -250,6 +249,8 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
             deleteAllTransactionsUseCase = deleteAllTransactionsUseCase,
             insertTransactionUseCase = insertTransactionUseCase,
             widgetUpdateNotifier = widgetUpdateNotifier,
+            sendFeedbackEmailUseCase = sendFeedbackEmailUseCase,
+            importDebugDataUseCase = importDebugDataUseCase,
         )
     }
 }

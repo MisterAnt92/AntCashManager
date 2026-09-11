@@ -71,6 +71,8 @@ open class FakeSettingsRepository : SettingsRepository {
     val autoBackupFolderUri = MutableStateFlow<String?>(null)
     val googleDriveFolderId = MutableStateFlow<String?>(null)
     val googleDriveFolderName = MutableStateFlow<String?>(null)
+    val googleDriveAuthToken = MutableStateFlow<String?>(null)
+    val googleDriveRefreshToken = MutableStateFlow<String?>(null)
     val googleDriveUserEmail = MutableStateFlow<String?>(null)
     val defaultPaymentType = MutableStateFlow("ELECTRONIC")
 
@@ -301,20 +303,16 @@ open class FakeSettingsRepository : SettingsRepository {
         googleDriveFolderName.value = folderName
     }
 
-    override fun getGoogleDriveAuthToken(): Flow<String?> {
-        TODO("Not yet implemented")
-    }
+    override fun getGoogleDriveAuthToken(): Flow<String?> = googleDriveAuthToken
 
     override suspend fun setGoogleDriveAuthToken(token: String?) {
-        TODO("Not yet implemented")
+        googleDriveAuthToken.value = token
     }
 
-    override fun getGoogleDriveRefreshToken(): Flow<String?> {
-        TODO("Not yet implemented")
-    }
+    override fun getGoogleDriveRefreshToken(): Flow<String?> = googleDriveRefreshToken
 
     override suspend fun setGoogleDriveRefreshToken(token: String?) {
-        TODO("Not yet implemented")
+        googleDriveRefreshToken.value = token
     }
 
     override fun getGoogleDriveUserEmail(): Flow<String?> = googleDriveUserEmail
