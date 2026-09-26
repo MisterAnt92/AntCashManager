@@ -22,7 +22,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import android.content.res.Configuration
+import androidx.compose.ui.tooling.preview.Preview
 import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.mapper.recurrenceIntervalLabelRes
 import com.antcashmanager.android.ui.components.animation.AnimatedCard
 import com.antcashmanager.android.ui.components.animation.AnimatedListItem
@@ -248,5 +251,62 @@ fun TransactionItem(
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true, name = "TransactionItem - Light")
+@Composable
+private fun TransactionItemLightPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        TransactionItem(
+            transaction = Transaction(
+                id = 1L,
+                amount = 50.0,
+                type = TransactionType.EXPENSE,
+                title = "Caffè",
+                category = "Food",
+                timestamp = System.currentTimeMillis(),
+            ),
+            displayType = TransactionDisplayType.TREND,
+            onClick = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "TransactionItem - Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun TransactionItemDarkPreview() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        TransactionItem(
+            transaction = Transaction(
+                id = 1L,
+                amount = 100.0,
+                type = TransactionType.INCOME,
+                title = "Pagamento",
+                category = "Salary",
+                timestamp = System.currentTimeMillis(),
+            ),
+            displayType = TransactionDisplayType.CATEGORY,
+            onClick = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "TransactionItem - 2x", fontScale = 2.0f)
+@Composable
+private fun TransactionItemLargeTextPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        TransactionItem(
+            transaction = Transaction(
+                id = 1L,
+                amount = 30.50,
+                type = TransactionType.EXPENSE,
+                title = "Spesa alimentare",
+                category = "Food",
+                timestamp = System.currentTimeMillis(),
+            ),
+            displayType = TransactionDisplayType.CATEGORY,
+            onClick = {},
+        )
     }
 }
