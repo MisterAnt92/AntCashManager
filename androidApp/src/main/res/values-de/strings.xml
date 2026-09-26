@@ -233,6 +233,10 @@
     <string name="settings_auto_backup">Automatische Sicherung</string>
     <string name="settings_auto_backup_subtitle">Wöchentliche automatische Sicherung auf lokalem Speicher</string>
     <string name="settings_auto_backup_weekly_label">Die automatische Sicherung ist wöchentlich</string>
+    <string name="settings_auto_backup_frequency_label">Backup-Häufigkeit</string>
+    <string name="settings_backup_frequency_weekly">Wöchentlich</string>
+    <string name="settings_backup_frequency_biweekly">Alle zwei Wochen</string>
+    <string name="settings_backup_frequency_monthly">Monatlich</string>
     <string name="settings_auto_backup_destination_local">Lokaler Speicher</string>
     <string name="settings_auto_backup_google_drive_coming_soon">Demnächst</string>
     <string name="auto_backup_notification_channel_name">Fehler bei automatischem Backup</string>

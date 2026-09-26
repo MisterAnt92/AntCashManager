@@ -291,6 +291,10 @@
     <string name="settings_auto_backup">자동 백업</string>
     <string name="settings_auto_backup_subtitle">주간 자동 백업</string>
     <string name="settings_auto_backup_weekly_label">자동 백업은 매주 진행됩니다</string>
+    <string name="settings_auto_backup_frequency_label">백업 빈도</string>
+    <string name="settings_backup_frequency_weekly">주간</string>
+    <string name="settings_backup_frequency_biweekly">2주마다</string>
+    <string name="settings_backup_frequency_monthly">월간</string>
     <string name="settings_auto_backup_destination_local">로컬</string>
     <string name="settings_auto_backup_google_drive_coming_soon">곧 출시 예정</string>
     <string name="settings_auto_backup_google_drive_sign_in_title">Google Drive 백업 활성화</string>

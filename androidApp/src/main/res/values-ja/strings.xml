@@ -291,6 +291,10 @@
     <string name="settings_auto_backup">自動バックアップ</string>
     <string name="settings_auto_backup_subtitle">毎週自動バックアップ</string>
     <string name="settings_auto_backup_weekly_label">自動バックアップは毎週実行されます</string>
+    <string name="settings_auto_backup_frequency_label">バックアップ頻度</string>
+    <string name="settings_backup_frequency_weekly">週次</string>
+    <string name="settings_backup_frequency_biweekly">隔週</string>
+    <string name="settings_backup_frequency_monthly">月次</string>
     <string name="settings_auto_backup_destination_local">ローカル</string>
     <string name="settings_auto_backup_google_drive_coming_soon">近日公開予定</string>
     <string name="settings_auto_backup_google_drive_sign_in_title">Google Driveバックアップを有効にする</string>

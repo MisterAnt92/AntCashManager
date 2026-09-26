@@ -290,6 +290,10 @@
     <string name="settings_auto_backup">स्वचालित बैकअप</string>
     <string name="settings_auto_backup_subtitle">साप्ताहिक स्वचालित बैकअप</string>
     <string name="settings_auto_backup_weekly_label">स्वचालित बैकअप साप्ताहिक है</string>
+    <string name="settings_auto_backup_frequency_label">बैकअप आवृत्ति</string>
+    <string name="settings_backup_frequency_weekly">साप्ताहिक</string>
+    <string name="settings_backup_frequency_biweekly">हर दो सप्ताह</string>
+    <string name="settings_backup_frequency_monthly">मासिक</string>
     <string name="settings_auto_backup_destination_local">स्थानीय</string>
     <string name="settings_auto_backup_google_drive_coming_soon">जल्द आ रहा है</string>
     <string name="settings_auto_backup_google_drive_sign_in_title">Google Drive बैकअप सक्षम करें</string>

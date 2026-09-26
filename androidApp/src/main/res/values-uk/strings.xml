@@ -293,6 +293,10 @@
     <string name="settings_auto_backup">Автоматичне резервне копіювання</string>
     <string name="settings_auto_backup_subtitle">Автоматичне резервне копіювання щотижня</string>
     <string name="settings_auto_backup_weekly_label">Автоматичне резервне копіювання щотижня</string>
+    <string name="settings_auto_backup_frequency_label">Частота резервного копіювання</string>
+    <string name="settings_backup_frequency_weekly">Щотижня</string>
+    <string name="settings_backup_frequency_biweekly">Кожні два тижні</string>
+    <string name="settings_backup_frequency_monthly">Щомісяця</string>
     <string name="settings_auto_backup_destination_local">Локально</string>
     <string name="settings_auto_backup_google_drive_coming_soon">Найближчим часом</string>
     <string name="settings_auto_backup_google_drive_sign_in_title">Увімкнути резервне копіювання на Google Drive</string>

@@ -218,6 +218,10 @@
     <string name="settings_auto_backup">Copia de Seguridad Automática</string>
     <string name="settings_auto_backup_subtitle">Copia de seguridad automática semanal en almacenamiento local</string>
     <string name="settings_auto_backup_weekly_label">La copia de seguridad automática es semanal</string>
+    <string name="settings_auto_backup_frequency_label">Frecuencia de copia</string>
+    <string name="settings_backup_frequency_weekly">Semanal</string>
+    <string name="settings_backup_frequency_biweekly">Cada dos semanas</string>
+    <string name="settings_backup_frequency_monthly">Mensual</string>
     <string name="settings_auto_backup_destination_local">Almacenamiento Local</string>
     <string name="settings_auto_backup_google_drive_coming_soon">Próximamente</string>
     <string name="auto_backup_notification_channel_name">Errores de Copia de Seguridad Automática</string>

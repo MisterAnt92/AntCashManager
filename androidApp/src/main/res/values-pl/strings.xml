@@ -291,6 +291,10 @@
     <string name="settings_auto_backup">Automatyczna Kopia Zapasowa</string>
     <string name="settings_auto_backup_subtitle">Automatyczne kopie zapasowe cotygodniowo</string>
     <string name="settings_auto_backup_weekly_label">Automatyczna kopia zapasowa jest cotygodniowa</string>
+    <string name="settings_auto_backup_frequency_label">Częstotliwość kopii</string>
+    <string name="settings_backup_frequency_weekly">Co tydzień</string>
+    <string name="settings_backup_frequency_biweekly">Co dwa tygodnie</string>
+    <string name="settings_backup_frequency_monthly">Co miesiąc</string>
     <string name="settings_auto_backup_destination_local">Lokalnie</string>
     <string name="settings_auto_backup_google_drive_coming_soon">Wkrótce</string>
     <string name="settings_auto_backup_google_drive_sign_in_title">Włącz Kopię Zapasową na Google Drive</string>
