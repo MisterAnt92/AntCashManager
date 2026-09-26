@@ -25,6 +25,7 @@ import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.UpdateTransactionUseCase
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -1375,6 +1376,138 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             val state = viewModel.state.value
             assertTrue("Should have suggestions loaded", state.titleSuggestions.isNotEmpty())
             assertTrue("Should have payee suggestions", state.payeeSuggestions.isNotEmpty())
+        }
+
+    // ── Meal Voucher Fix: Derive Unit Value on Edit ──
+
+    @Test
+    fun updateMealVoucherCount_shouldAutoCalculateAmount_whenInMealVouchersMode() =
+        runViewModelTest {
+            // Setup: switch to MEAL_VOUCHERS mode
+            viewModel = createViewModel()
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            viewModel.onEvent(AddTransactionEvent.SelectCategory(mockCategories[0])) // Food
+            viewModel.onEvent(AddTransactionEvent.UpdateTitle("Test"))
+            viewModel.onEvent(AddTransactionEvent.SelectPaymentType(PaymentType.MEAL_VOUCHERS))
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            // Settings voucher value is 5.29
+            assertEquals(
+                "Initial voucher value should be 5.29",
+                5.29,
+                viewModel.state.value.mealVoucherValue,
+                0.001,
+            )
+
+            // Update count to 3
+            viewModel.onEvent(AddTransactionEvent.UpdateMealVoucherCount("3"))
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            // Verify: amount should be auto-calculated (3 * 5.29 = 15.87)
+            assertEquals(
+                "Amount should be auto-calculated from count",
+                "15.87",
+                viewModel.state.value.amount,
+            )
+        }
+
+    @Test
+    fun updateMealVoucherDifference_shouldAutoCalculateAmount_whenInMealVouchersMode() =
+        runViewModelTest {
+            // Setup: MEAL_VOUCHERS with count 3, initial amount 15.87 (3*5.29)
+            viewModel = createViewModel()
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            viewModel.onEvent(AddTransactionEvent.SelectCategory(mockCategories[0])) // Food
+            viewModel.onEvent(AddTransactionEvent.UpdateTitle("Test"))
+            viewModel.onEvent(AddTransactionEvent.SelectPaymentType(PaymentType.MEAL_VOUCHERS))
+            viewModel.onEvent(AddTransactionEvent.UpdateMealVoucherCount("3"))
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            assertEquals("Initial amount should be 15.87", "15.87", viewModel.state.value.amount)
+
+            // Add difference of 1.50
+            viewModel.onEvent(AddTransactionEvent.UpdateMealVoucherDifference("1.50"))
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            // Verify: amount should be 15.87 + 1.50 = 17.37
+            assertEquals(
+                "Amount should be recalculated with difference",
+                "17.37",
+                viewModel.state.value.amount,
+            )
+        }
+
+    @Test
+    fun selectPaymentType_shouldUseSettingsVoucherValue_whenSwitchingToMealVouchersInEdit() =
+        runViewModelTest {
+            // Setup: create a regular expense, then switch to MEAL_VOUCHERS
+            viewModel = createViewModel()
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            // Settings has 5.29
+            val settingsVoucherValue = settingsRepository.getMealVoucherValue().first()
+            assertEquals("Settings voucher value should be 5.29", 5.29, settingsVoucherValue, 0.001)
+
+            viewModel.onEvent(AddTransactionEvent.SelectCategory(mockCategories[0])) // Food
+            viewModel.onEvent(AddTransactionEvent.UpdateTitle("Snack"))
+            viewModel.onEvent(AddTransactionEvent.SelectPaymentType(PaymentType.ELECTRONIC))
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            // Switch to MEAL_VOUCHERS
+            viewModel.onEvent(AddTransactionEvent.SelectPaymentType(PaymentType.MEAL_VOUCHERS))
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            // Verify: mealVoucherValue should reset to settings value (5.29), not a derived value
+            assertEquals(
+                "Should use settings voucher value when entering MEAL_VOUCHERS",
+                5.29,
+                viewModel.state.value.mealVoucherValue,
+                0.001,
+            )
+            // amount and count should be reset
+            assertEquals("Amount should be reset", "", viewModel.state.value.amount)
+            assertEquals("Count should be reset", "0", viewModel.state.value.mealVoucherCount)
+        }
+
+    @Test
+    fun loadMealVoucherValue_shouldNotOverrideDerivedValue_whenEditingMealVoucherTransaction() =
+        runViewModelTest {
+            // Setup: transazione con valore custom 6.00 € caricata
+            val mealVoucherTx =
+                Transaction(
+                    id = 3L,
+                    title = "Riunione lavoro",
+                    amount = 12.00,
+                    category = "Food",
+                    type = TransactionType.EXPENSE,
+                    paymentType = PaymentType.MEAL_VOUCHERS,
+                    mealVoucherCount = 2,
+                    mealVoucherDifference = 0.0,
+                )
+            transactionRepository.insertTransaction(mealVoucherTx)
+
+            // Settings has been updated to 5.29 (different from historical 6.00)
+            settingsRepository.setMealVoucherValue(5.29)
+
+            // Load for edit
+            viewModel = createViewModel(transactionId = 3L)
+            advanceUntilLoaded()
+
+            // Verify: mealVoucherValue should remain derived (6.00), NOT override to settings (5.29)
+            assertEquals(
+                "Derived voucher value should NOT be overridden by async load",
+                6.0,
+                viewModel.state.value.mealVoucherValue,
+                0.001,
+            )
+            // amount must remain unchanged (12.00)
+            assertEquals(
+                "Amount should remain unchanged when derived value is preserved",
+                "12.0",
+                viewModel.state.value.amount,
+            )
         }
 
     // ── Helper ──
