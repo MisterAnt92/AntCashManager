@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.home.transactionDetail.view
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,10 +39,21 @@ fun TransactionDetailRow(
     }
 }
 
-@Preview(showBackground = true, name = "Transaction Detail Row")
+@Preview(showBackground = true, name = "Transaction Detail Row - Light")
 @Composable
-private fun TransactionDetailRowPreview() {
+private fun TransactionDetailRowLightPreview() {
     AntCashManagerTheme(dynamicColor = false) {
+        TransactionDetailRow(
+            label = stringResource(R.string.transaction_details_category),
+            value = "Food & Groceries",
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Transaction Detail Row - Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun TransactionDetailRowDarkPreview() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
         TransactionDetailRow(
             label = stringResource(R.string.transaction_details_category),
             value = "Food & Groceries",

@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.home.view
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -330,6 +331,26 @@ private fun TransactionItemNonePreview() {
                     timestamp = System.currentTimeMillis(),
                 ).toUi(HomeConstant.ITEM_DATE_PATTERN),
             displayType = TransactionDisplayType.NONE,
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Recent Transaction Item - Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun RecentTransactionItemDarkPreview() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        RecentTransactionItem(
+            transaction =
+                Transaction(
+                    id = 1,
+                    title = "Salary",
+                    amount = 2500.0,
+                    category = "Work",
+                    type = TransactionType.INCOME,
+                    timestamp = System.currentTimeMillis(),
+                    categoryIcon = "payments",
+                    categoryColor = 0xFF81C784,
+                ).toUi(HomeConstant.ITEM_DATE_PATTERN),
         )
     }
 }

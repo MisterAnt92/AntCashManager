@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.home.view
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -143,10 +144,21 @@ fun IncomeExpenseRow(
     }
 }
 
-@Preview(showBackground = true, name = "Income Expense Row")
+@Preview(showBackground = true, name = "Income Expense Row - Light")
 @Composable
-private fun IncomeExpenseRowPreview() {
+private fun IncomeExpenseRowLightPreview() {
     AntCashManagerTheme(dynamicColor = false) {
+        IncomeExpenseRow(
+            totalIncome = 2500.0,
+            totalExpense = 205.5,
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Income Expense Row - Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun IncomeExpenseRowDarkPreview() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
         IncomeExpenseRow(
             totalIncome = 2500.0,
             totalExpense = 205.5,

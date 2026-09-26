@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.home.view
 
+import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -357,7 +358,7 @@ private fun BalanceCardWithBreakdownCashOnlyPreview() {
     }
 }
 
-@Preview(showBackground = true, name = "Balance Card - Dark Theme with Breakdown")
+@Preview(showBackground = true, name = "Balance Card - Dark Theme with Breakdown", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun BalanceCardDarkWithBreakdownPreview() {
     AntCashManagerTheme(darkTheme = true, dynamicColor = false) {

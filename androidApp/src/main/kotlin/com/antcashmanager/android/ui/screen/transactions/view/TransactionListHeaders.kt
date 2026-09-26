@@ -1,8 +1,10 @@
 package com.antcashmanager.android.ui.screen.transactions.view
 
+import android.content.res.Configuration
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.filter.DateRangeFilter
@@ -12,6 +14,7 @@ import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.screen.transactions.TransactionsState
 import com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 /**
  * Renders transaction list headers including search, filters, and date range filter.
@@ -128,5 +131,33 @@ fun TransactionListHeaders(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         VerticalSpacer(SpacingSize.XS)
+    }
+}
+
+@Preview(showBackground = true, name = "TransactionListHeaders - Light")
+@Composable
+private fun TransactionListHeadersLightPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        TransactionListHeaders(
+            state = TransactionsState(),
+            onEvent = {},
+            dateFilterExpanded = false,
+            onShowFromDatePicker = {},
+            onShowToDatePicker = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "TransactionListHeaders - Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun TransactionListHeadersDarkPreview() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        TransactionListHeaders(
+            state = TransactionsState(),
+            onEvent = {},
+            dateFilterExpanded = false,
+            onShowFromDatePicker = {},
+            onShowToDatePicker = {},
+        )
     }
 }
