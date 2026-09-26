@@ -5,9 +5,12 @@ import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.runtime.Composable
+import android.content.res.Configuration
+import androidx.compose.ui.tooling.preview.Preview
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.dialog.AppHelpDialog
 import com.antcashmanager.android.ui.components.dialog.HelpDialogFeatureSpec
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 // ══════════════════════════════════════════════════════════════════════════════
 // HELP DIALOG
@@ -40,4 +43,28 @@ fun HelpDialog(onDismiss: () -> Unit) {
         features = helpFeatures,
         onDismiss = onDismiss,
     )
+}
+
+@Preview(showBackground = true, name = "HomeHelpDialog - Light")
+@Composable
+private fun HomeHelpDialogLightPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        HelpDialog(onDismiss = {})
+    }
+}
+
+@Preview(showBackground = true, name = "HomeHelpDialog - Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun HomeHelpDialogDarkPreview() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        HelpDialog(onDismiss = {})
+    }
+}
+
+@Preview(showBackground = true, name = "HomeHelpDialog - 2x", fontScale = 2.0f)
+@Composable
+private fun HomeHelpDialogLargeTextPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        HelpDialog(onDismiss = {})
+    }
 }

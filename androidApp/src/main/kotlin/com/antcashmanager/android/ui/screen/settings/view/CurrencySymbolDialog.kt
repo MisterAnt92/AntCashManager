@@ -11,10 +11,13 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import android.content.res.Configuration
+import androidx.compose.ui.tooling.preview.Preview
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.common.AppListItem
 import com.antcashmanager.android.ui.components.common.AppRadioButton
 import com.antcashmanager.android.ui.components.text.AppText
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.CurrencyFormat
 
 /**
@@ -58,4 +61,28 @@ fun CurrencySymbolDialog(
             TextButton(onClick = onDismiss) { AppText(stringResource(R.string.common_cancel)) }
         },
     )
+}
+
+@Preview(showBackground = true, name = "CurrencySymbolDialog - Light")
+@Composable
+private fun CurrencySymbolDialogLightPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        CurrencySymbolDialog(currentSymbol = "€", onSymbolSelected = {}, onDismiss = {})
+    }
+}
+
+@Preview(showBackground = true, name = "CurrencySymbolDialog - Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun CurrencySymbolDialogDarkPreview() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        CurrencySymbolDialog(currentSymbol = "€", onSymbolSelected = {}, onDismiss = {})
+    }
+}
+
+@Preview(showBackground = true, name = "CurrencySymbolDialog - 2x", fontScale = 2.0f)
+@Composable
+private fun CurrencySymbolDialogLargeTextPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        CurrencySymbolDialog(currentSymbol = "€", onSymbolSelected = {}, onDismiss = {})
+    }
 }

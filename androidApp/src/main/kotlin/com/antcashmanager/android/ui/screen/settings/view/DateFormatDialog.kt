@@ -8,11 +8,14 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
+import android.content.res.Configuration
+import androidx.compose.ui.tooling.preview.Preview
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.common.AppIcon
 import com.antcashmanager.android.ui.components.common.AppListItem
 import com.antcashmanager.android.ui.components.common.AppRadioButton
 import com.antcashmanager.android.ui.components.text.AppText
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.DateFormatType
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -60,4 +63,28 @@ fun DateFormatDialog(
         },
         confirmButton = { TextButton(onClick = onDismiss) { AppText(stringResource(R.string.common_cancel)) } },
     )
+}
+
+@Preview(showBackground = true, name = "DateFormatDialog - Light")
+@Composable
+private fun DateFormatDialogLightPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        DateFormatDialog(currentFormat = "dd/MM/yyyy", onFormatSelected = {}, onDismiss = {})
+    }
+}
+
+@Preview(showBackground = true, name = "DateFormatDialog - Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun DateFormatDialogDarkPreview() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        DateFormatDialog(currentFormat = "dd/MM/yyyy", onFormatSelected = {}, onDismiss = {})
+    }
+}
+
+@Preview(showBackground = true, name = "DateFormatDialog - 2x", fontScale = 2.0f)
+@Composable
+private fun DateFormatDialogLargeTextPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        DateFormatDialog(currentFormat = "dd/MM/yyyy", onFormatSelected = {}, onDismiss = {})
+    }
 }
