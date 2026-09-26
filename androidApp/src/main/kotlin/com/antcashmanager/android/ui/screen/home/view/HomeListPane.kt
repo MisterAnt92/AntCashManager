@@ -23,6 +23,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import kotlin.math.abs
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -177,7 +178,7 @@ private fun TopCard(
             )
 
         HomeTopCardType.INCOME_EXPENSE ->
-            IncomeExpenseRow(totalIncome = state.totalIncome, totalExpense = state.totalExpense)
+            IncomeExpenseRow(totalIncome = state.totalIncome, totalExpense = abs(state.totalExpense))
 
         HomeTopCardType.QUICK_INSIGHTS ->
             QuickInsightsCard(

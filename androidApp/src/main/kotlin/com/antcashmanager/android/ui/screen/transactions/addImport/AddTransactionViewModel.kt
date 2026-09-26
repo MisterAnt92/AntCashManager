@@ -1,6 +1,7 @@
 package com.antcashmanager.android.ui.screen.transactions.addImport
 
 import android.os.Bundle
+import java.util.Locale
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.analytics.AnalyticsManager
@@ -241,7 +242,7 @@ class AddTransactionViewModel(
                             val subtotal = count * currentState.mealVoucherValue
                             val difference = currentState.mealVoucherDifference.toDoubleOrNull() ?: 0.0
                             val total = subtotal + difference
-                            String.format("%.2f", total)
+                            String.format(Locale.US, "%.2f", total)
                         } else {
                             currentState.amount
                         }
@@ -259,7 +260,7 @@ class AddTransactionViewModel(
                             val subtotal = count * currentState.mealVoucherValue
                             val difference = newDifference.toDoubleOrNull() ?: 0.0
                             val total = subtotal + difference
-                            String.format("%.2f", total)
+                            String.format(Locale.US, "%.2f", total)
                         } else {
                             currentState.amount
                         }
