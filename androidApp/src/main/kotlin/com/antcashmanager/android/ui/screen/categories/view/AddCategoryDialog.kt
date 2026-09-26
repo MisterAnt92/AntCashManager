@@ -34,10 +34,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import android.content.res.Configuration
+import androidx.compose.ui.tooling.preview.Preview
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.text.AppText
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -192,4 +195,40 @@ fun AddCategoryDialog(
             TextButton(onClick = onDismiss) { AppText(stringResource(R.string.common_cancel)) }
         },
     )
+}
+
+@Preview(showBackground = true, name = "AddCategoryDialog - Light")
+@Composable
+private fun AddCategoryDialogLightPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        AddCategoryDialog(
+            currentType = "EXPENSE",
+            onConfirm = { _, _, _ -> },
+            onDismiss = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "AddCategoryDialog - Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun AddCategoryDialogDarkPreview() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        AddCategoryDialog(
+            currentType = "EXPENSE",
+            onConfirm = { _, _, _ -> },
+            onDismiss = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "AddCategoryDialog - 2x", fontScale = 2.0f)
+@Composable
+private fun AddCategoryDialogLargeTextPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        AddCategoryDialog(
+            currentType = "EXPENSE",
+            onConfirm = { _, _, _ -> },
+            onDismiss = {},
+        )
+    }
 }

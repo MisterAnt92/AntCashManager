@@ -26,10 +26,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import android.content.res.Configuration
+import androidx.compose.ui.tooling.preview.Preview
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.text.AppText
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.translateCategory
 import com.antcashmanager.domain.model.Category
 
@@ -122,5 +125,62 @@ fun CategoryItem(
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true, name = "CategoryItem - Light")
+@Composable
+private fun CategoryItemLightPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        CategoryItem(
+            category = Category(
+                id = 1,
+                name = "Food",
+                icon = "restaurant",
+                color = 0xFFFF9800,
+                isDefault = false,
+                isHidden = false,
+            ),
+            onDelete = {},
+            onToggleHidden = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "CategoryItem - Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun CategoryItemDarkPreview() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        CategoryItem(
+            category = Category(
+                id = 1,
+                name = "Transport",
+                icon = "directions_car",
+                color = 0xFF2196F3,
+                isDefault = true,
+                isHidden = false,
+            ),
+            onDelete = {},
+            onToggleHidden = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "CategoryItem - 2x", fontScale = 2.0f)
+@Composable
+private fun CategoryItemLargeTextPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        CategoryItem(
+            category = Category(
+                id = 1,
+                name = "Utilities",
+                icon = "home",
+                color = 0xFF4CAF50,
+                isDefault = false,
+                isHidden = true,
+            ),
+            onDelete = {},
+            onToggleHidden = {},
+        )
     }
 }

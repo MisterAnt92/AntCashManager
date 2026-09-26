@@ -31,8 +31,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import android.content.res.Configuration
+import androidx.compose.ui.tooling.preview.Preview
 import com.antcashmanager.android.BuildConfig
 import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.navigation.BottomNavItem
 import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.ui.components.layout.SpacingSize
@@ -306,21 +309,59 @@ private fun SidebarFooter() {
     }
 }
 
-/**
- * Preview della sidebar per lo sviluppo.
- */
+@Preview(showBackground = true, name = "LeftSidebar - Light")
 @Composable
-private fun SidebarPreview() {
-    LeftSidebar(
-        selectedRoute = "home",
-        onNavigate = {},
-        visibleNavItems =
-            listOf(
-                BottomNavItem.Home,
-                BottomNavItem.Charts,
-                BottomNavItem.Transactions,
-                BottomNavItem.Categories,
-                BottomNavItem.Settings,
-            ),
-    )
+private fun LeftSidebarLightPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        LeftSidebar(
+            selectedRoute = "home",
+            onNavigate = {},
+            visibleNavItems =
+                listOf(
+                    BottomNavItem.Home,
+                    BottomNavItem.Charts,
+                    BottomNavItem.Transactions,
+                    BottomNavItem.Categories,
+                    BottomNavItem.Settings,
+                ),
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "LeftSidebar - Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun LeftSidebarDarkPreview() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        LeftSidebar(
+            selectedRoute = "home",
+            onNavigate = {},
+            visibleNavItems =
+                listOf(
+                    BottomNavItem.Home,
+                    BottomNavItem.Charts,
+                    BottomNavItem.Transactions,
+                    BottomNavItem.Categories,
+                    BottomNavItem.Settings,
+                ),
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "LeftSidebar - 2x", fontScale = 2.0f)
+@Composable
+private fun LeftSidebarLargeTextPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        LeftSidebar(
+            selectedRoute = "home",
+            onNavigate = {},
+            visibleNavItems =
+                listOf(
+                    BottomNavItem.Home,
+                    BottomNavItem.Charts,
+                    BottomNavItem.Transactions,
+                    BottomNavItem.Categories,
+                    BottomNavItem.Settings,
+                ),
+        )
+    }
 }
