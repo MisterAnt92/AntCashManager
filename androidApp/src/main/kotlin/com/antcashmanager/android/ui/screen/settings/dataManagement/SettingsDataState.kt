@@ -1,6 +1,7 @@
 package com.antcashmanager.android.ui.screen.settings.dataManagement
 
 import com.antcashmanager.domain.model.BackupDestination
+import com.antcashmanager.domain.model.BackupFrequency
 
 /**
  * Stato UI per la schermata Gestione Dati.
@@ -39,6 +40,7 @@ data class SettingsDataState(
     val autoBackupEnabled: Boolean = false,
     val autoBackupDestination: BackupDestination = BackupDestination.LOCAL,
     val autoBackupFolderUri: String? = null,
+    val autoBackupFrequency: BackupFrequency = BackupFrequency.WEEKLY,
     // ── Google Drive Backup (Phase 2) ──
     val googleDriveUserEmail: String? = null,
     val googleDriveFolderId: String? = null,

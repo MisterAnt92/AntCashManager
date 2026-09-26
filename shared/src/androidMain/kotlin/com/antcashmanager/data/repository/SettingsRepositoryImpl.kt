@@ -16,6 +16,7 @@ import com.antcashmanager.data.security.LocalDataCipherImpl
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.BackupDestination
+import com.antcashmanager.domain.model.BackupFrequency
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.SettingsRepository
@@ -69,6 +70,7 @@ public class SettingsRepositoryImpl(
     private val lastRestoreTimestampKey = longPreferencesKey("last_restore_timestamp")
     private val autoBackupEnabledKey = booleanPreferencesKey("auto_backup_enabled")
     private val autoBackupFolderUriKey = stringPreferencesKey("auto_backup_folder_uri")
+    private val backupFrequencyKey = stringPreferencesKey("backup_frequency")
     private val suggestionsEnabledKey = booleanPreferencesKey("suggestions_enabled")
     private val suggestionsClearedAtKey = longPreferencesKey("suggestions_cleared_at")
     private val widgetBackgroundColorKey = longPreferencesKey("widget_background_color")
@@ -471,6 +473,17 @@ public class SettingsRepositoryImpl(
                 preferences[autoBackupFolderUriKey] = uri
             }
         }
+    }
+
+    override fun getBackupFrequency(): Flow<BackupFrequency> =
+        dataStore.data.map { prefs ->
+            prefs[backupFrequencyKey]
+                ?.let { runCatching { BackupFrequency.valueOf(it) }.getOrNull() }
+                ?: BackupFrequency.WEEKLY
+        }
+
+    override suspend fun setBackupFrequency(frequency: BackupFrequency) {
+        dataStore.edit { it[backupFrequencyKey] = frequency.name }
     }
 
     override fun getSuggestionsEnabled(): Flow<Boolean> = dataStore.data.map { it[suggestionsEnabledKey] ?: true }

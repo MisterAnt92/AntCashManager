@@ -308,6 +308,10 @@
     <string name="settings_auto_backup">Automatic Backup</string>
     <string name="settings_auto_backup_subtitle">Weekly automatic backups</string>
     <string name="settings_auto_backup_weekly_label">Automatic backup is weekly</string>
+    <string name="settings_auto_backup_frequency_label">Backup frequency</string>
+    <string name="settings_backup_frequency_weekly">Weekly</string>
+    <string name="settings_backup_frequency_biweekly">Every two weeks</string>
+    <string name="settings_backup_frequency_monthly">Monthly</string>
     <string name="settings_auto_backup_destination_local">Local</string>
     <string name="settings_auto_backup_google_drive_coming_soon">Coming soon</string>
     <string name="settings_auto_backup_google_drive_sign_in_title">Enable Google Drive Backup</string>

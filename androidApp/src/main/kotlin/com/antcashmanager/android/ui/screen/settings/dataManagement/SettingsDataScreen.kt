@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -52,6 +53,8 @@ import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
+import com.antcashmanager.android.ui.components.common.AppListItem
+import com.antcashmanager.android.ui.components.common.AppRadioButton
 import com.antcashmanager.android.ui.components.common.AppSwitch
 import com.antcashmanager.android.ui.components.dialog.BlockingProgressDialog
 import com.antcashmanager.android.ui.components.layout.SpacingSize
@@ -60,6 +63,7 @@ import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInf
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.BackupDestination
+import com.antcashmanager.domain.model.BackupFrequency
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import java.nio.charset.StandardCharsets
@@ -104,11 +108,13 @@ fun SettingsDataScreen(navController: NavController) {
         autoBackupEnabled = state.autoBackupEnabled,
         autoBackupFolderUri = state.autoBackupFolderUri,
         autoBackupDestination = state.autoBackupDestination,
+        autoBackupFrequency = state.autoBackupFrequency,
         googleDriveUserEmail = state.googleDriveUserEmail,
         isGoogleDriveSignedIn = state.isGoogleDriveSignedIn,
         showGoogleSignInDialog = state.showGoogleSignInDialog,
         googleDriveSignInLoading = state.googleDriveSignInLoading,
         onAutoBackupDestinationChange = viewModel::setAutoBackupDestination,
+        onAutoBackupFrequencyChange = viewModel::setBackupFrequency,
         onGoogleSignInClick = viewModel::initiateGoogleSignIn,
         onGoogleSignOutClick = viewModel::signOutFromGoogle,
         onDismissGoogleSignInDialog = viewModel::dismissGoogleSignInDialog,
@@ -148,11 +154,13 @@ internal fun SettingsDataContent(
     autoBackupEnabled: Boolean = false,
     autoBackupFolderUri: String? = null,
     autoBackupDestination: BackupDestination = BackupDestination.LOCAL,
+    autoBackupFrequency: BackupFrequency = BackupFrequency.WEEKLY,
     googleDriveUserEmail: String? = null,
     isGoogleDriveSignedIn: Boolean = false,
     showGoogleSignInDialog: Boolean = false,
     googleDriveSignInLoading: Boolean = false,
     onAutoBackupDestinationChange: (BackupDestination) -> Unit = {},
+    onAutoBackupFrequencyChange: (BackupFrequency) -> Unit = {},
     onGoogleSignInClick: () -> Unit = {},
     onGoogleSignOutClick: () -> Unit = {},
     onDismissGoogleSignInDialog: () -> Unit = {},
@@ -408,12 +416,14 @@ internal fun SettingsDataContent(
                         autoBackupEnabled = state.autoBackupEnabled,
                         autoBackupFolderUri = state.autoBackupFolderUri,
                         autoBackupDestination = autoBackupDestination,
+                        autoBackupFrequency = autoBackupFrequency,
                         googleDriveFolderId = state.googleDriveFolderId,
                         googleDriveFolderName = state.googleDriveFolderName,
                         googleDriveUserEmail = googleDriveUserEmail,
                         isGoogleDriveSignedIn = isGoogleDriveSignedIn,
                         onAutoBackupEnabledChange = handleAutoBackupToggle,
                         onAutoBackupDestinationChange = onAutoBackupDestinationChange,
+                        onAutoBackupFrequencyChange = onAutoBackupFrequencyChange,
                         onGoogleSignInClick = onGoogleSignInClick,
                         onGoogleSignOutClick = onGoogleSignOutClick,
                         onSelectBackupPathAction = {
@@ -775,12 +785,14 @@ private fun DataManagementSection(
     autoBackupEnabled: Boolean = false,
     autoBackupFolderUri: String? = null,
     autoBackupDestination: BackupDestination = BackupDestination.LOCAL,
+    autoBackupFrequency: BackupFrequency = BackupFrequency.WEEKLY,
     googleDriveFolderId: String? = null,
     googleDriveFolderName: String? = null,
     googleDriveUserEmail: String? = null,
     isGoogleDriveSignedIn: Boolean = false,
     onAutoBackupEnabledChange: (Boolean) -> Unit = {},
     onAutoBackupDestinationChange: (BackupDestination) -> Unit = {},
+    onAutoBackupFrequencyChange: (BackupFrequency) -> Unit = {},
     onGoogleSignInClick: () -> Unit = {},
     onGoogleSignOutClick: () -> Unit = {},
     onSelectBackupPathAction: () -> Unit = {},
@@ -831,13 +843,31 @@ private fun DataManagementSection(
             onClick = { onAutoBackupEnabledChange(!autoBackupEnabled) },
         )
 
-        // Weekly label (always shown)
-        AppText(
-            text = stringResource(R.string.settings_auto_backup_weekly_label),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(start = 4.dp, top = 2.dp, bottom = 4.dp),
-        )
+        // Frequency selector (only when enabled)
+        if (autoBackupEnabled) {
+            VerticalSpacer(SpacingSize.XXXS)
+            AppText(
+                text = stringResource(R.string.settings_auto_backup_frequency_label),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(start = 4.dp),
+            )
+            BackupFrequency.entries.forEach { freq ->
+                AppListItem(
+                    headlineContent = { AppText(stringResource(freq.labelResId())) },
+                    leadingContent = {
+                        AppRadioButton(
+                            selected = autoBackupFrequency == freq,
+                            onClick = { onAutoBackupFrequencyChange(freq) },
+                        )
+                    },
+                    modifier = Modifier.clickable {
+                        onAutoBackupFrequencyChange(freq)
+                    },
+                )
+            }
+            VerticalSpacer(SpacingSize.XS)
+        }
 
         // Backup Path section (only when enabled)
         if (autoBackupEnabled) {
@@ -1089,6 +1119,13 @@ private fun formatAutoBackupPath(
                 }
             }
         }
+    }
+
+private fun BackupFrequency.labelResId(): Int =
+    when (this) {
+        BackupFrequency.WEEKLY -> R.string.settings_backup_frequency_weekly
+        BackupFrequency.BIWEEKLY -> R.string.settings_backup_frequency_biweekly
+        BackupFrequency.MONTHLY -> R.string.settings_backup_frequency_monthly
     }
 
 @Preview(showBackground = true)

@@ -24,22 +24,23 @@ class AutoBackupScheduler(
     private val application: Application,
 ) {
     companion object {
-        private const val UNIQUE_WORK_NAME = "auto_backup_weekly"
-        private const val BACKUP_INTERVAL_DAYS = 7L
+        private const val UNIQUE_WORK_NAME = "auto_backup"
         private const val INITIAL_BACKOFF_MINUTES = 15L
     }
 
     /**
-     * Schedula il backup automatico settimanale.
+     * Schedula il backup automatico.
      * Se già schedulato, aggiorna la configurazione (ExistingPeriodicWorkPolicy.UPDATE).
+     *
+     * @param frequencyDays intervallo di backup in giorni (default: 7 = settimanale)
      */
-    fun schedule() {
+    fun schedule(frequencyDays: Long = 7L) {
         try {
-            Logger.d(tag = "AutoBackupScheduler") { "Scheduling auto backup (7-day interval)" }
+            Logger.d(tag = "AutoBackupScheduler") { "Scheduling auto backup (${frequencyDays}-day interval)" }
 
             val backupWorkRequest =
                 PeriodicWorkRequestBuilder<AutoBackupWorker>(
-                    BACKUP_INTERVAL_DAYS,
+                    frequencyDays,
                     TimeUnit.DAYS,
                 ).setBackoffCriteria(
                     BackoffPolicy.LINEAR,
