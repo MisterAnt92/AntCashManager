@@ -209,6 +209,11 @@ fun AntCashManagerNavHost() {
 
             val isOnTutorial = currentDestination?.route == AppRoute.BottomRoute.Tutorial.route
 
+            val isOnSubScreen =
+                currentDestination?.route?.let {
+                    AppRoute.isSubScreen(it)
+                } == true
+
             BackHandler {
                 when {
                     isSidebarOpen -> isSidebarOpen = false
@@ -250,7 +255,8 @@ fun AntCashManagerNavHost() {
                         if (isTutorialCompleted == true &&
                             !adaptiveLayoutInfo.preferRailNavigation &&
                             !isSidebarOpen &&
-                            !isOnCategoriesSettingsOrTutorial
+                            !isOnCategoriesSettingsOrTutorial &&
+                            !isOnSubScreen
                         ) {
                             Surface(
                                 color = MaterialTheme.colorScheme.surface,
@@ -409,7 +415,7 @@ fun AntCashManagerNavHost() {
                         }
                     }
 
-                    if (isTutorialCompleted == true && adaptiveLayoutInfo.preferRailNavigation && !isOnTutorial) {
+                    if (isTutorialCompleted == true && adaptiveLayoutInfo.preferRailNavigation && !isOnTutorial && !isOnSubScreen) {
                         Column(
                             modifier =
                                 Modifier
@@ -417,7 +423,7 @@ fun AntCashManagerNavHost() {
                                     .padding(innerPadding),
                         ) {
                             // Top bar con pulsanti (Search, Filter, Sort, Helper) - senza Hamburger menu su tablet
-                            if (!isOnTutorial) {
+                            if (!isOnTutorial && !isOnSubScreen) {
                                 Row(
                                     modifier =
                                         Modifier
@@ -598,8 +604,8 @@ fun AntCashManagerNavHost() {
                                 Column(
                                     modifier = Modifier.fillMaxSize(),
                                 ) {
-                                    // Top bar con hamburger menu - nascosto su Tutorial
-                                    if (!isOnTutorial) {
+                                    // Top bar con hamburger menu - nascosto su Tutorial e sub-screens
+                                    if (!isOnTutorial && !isOnSubScreen) {
                                         Row(
                                             modifier =
                                                 Modifier

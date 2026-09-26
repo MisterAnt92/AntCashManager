@@ -100,5 +100,21 @@ sealed class AppRoute(
                 -> true
                 else -> false
             }
+
+        /**
+         * Returns true for sub-screens that provide their own navigation header and
+         * should not show the global top bar (hamburger, filter, search, helper) nor
+         * the bottom navigation bar.
+         *
+         * Note: uses startsWith for add_transaction to cover both the bare route and
+         * the optional-argument pattern ("add_transaction?transactionId={transactionId}").
+         */
+        fun isSubScreen(route: String?): Boolean {
+            if (route == null) return false
+            return route.startsWith(TransactionRoute.Add.route) ||
+                route == TransactionRoute.ReceiptScan.route ||
+                route == SettingsRoute.Display.route ||
+                route == SettingsRoute.DataManagement.route
+        }
     }
 }
