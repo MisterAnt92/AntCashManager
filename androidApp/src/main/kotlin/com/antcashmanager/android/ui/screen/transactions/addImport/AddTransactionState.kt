@@ -81,15 +81,22 @@ data class AddTransactionState(
      * Importo da persistere sulla transazione.
      *
      * Calcolo dipende dal tipo di pagamento:
-     * - MEAL_VOUCHERS: (mealVoucherCount × mealVoucherValue) + mealVoucherDifference
+     * - MEAL_VOUCHERS: Se mealVoucherDifference è disponibile, usa (voucherSubtotal + difference).
+     *                  Altrimenti, usa amount come fallback (rappresenta il totale già inserito).
      * - Altro: amount (inserito direttamente)
      */
     val totalAmount: Double
         get() =
             if (isMealVouchersPayment) {
-                val voucherSubtotal = (mealVoucherCount.toIntOrNull() ?: 0) * mealVoucherValue
-                val difference = mealVoucherDifference.toDoubleOrNull() ?: 0.0
-                voucherSubtotal + difference
+                // Prova a usare mealVoucherDifference esplicito
+                val difference = mealVoucherDifference.toDoubleOrNull()
+                if (difference != null) {
+                    val voucherSubtotal = (mealVoucherCount.toIntOrNull() ?: 0) * mealVoucherValue
+                    voucherSubtotal + difference
+                } else {
+                    // Se difference non è impostato, usa amount come totale (fallback)
+                    amount.toDoubleOrNull() ?: 0.0
+                }
             } else {
                 amount.toDoubleOrNull() ?: 0.0
             }

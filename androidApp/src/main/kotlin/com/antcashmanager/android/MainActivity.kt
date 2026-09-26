@@ -62,7 +62,7 @@ class MainActivity : ComponentActivity() {
         val appVersion =
             try {
                 packageManager.getPackageInfo(packageName, 0).versionName ?: "unknown"
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 "unknown"
             }
         sessionTracker.onAppLaunched(appVersion, isFirstLaunch = false)
