@@ -149,7 +149,8 @@ private fun HelpFeatureItemRow(
                 .background(
                     color = MaterialTheme.colorScheme.surfaceContainerLow,
                     shape = RoundedCornerShape(8.dp),
-                ).padding(12.dp),
+                )
+                .padding(12.dp),
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {

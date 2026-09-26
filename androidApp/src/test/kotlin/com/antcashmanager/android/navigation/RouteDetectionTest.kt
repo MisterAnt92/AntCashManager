@@ -1,6 +1,5 @@
 package com.antcashmanager.android.navigation
 
-import io.mockk.mockk
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test

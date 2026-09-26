@@ -1,17 +1,17 @@
 package com.antcashmanager.android.ui.screen.transactions.view
 
+import android.content.res.Configuration
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ViewList
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.dialog.AppHelpDialog
 import com.antcashmanager.android.ui.components.dialog.HelpDialogFeatureSpec
-
-import android.content.res.Configuration
-import androidx.compose.ui.tooling.preview.Preview
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+
 /**
  * Dialog di aiuto specifico per la schermata delle transazioni.
  */

@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.categories.view
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -33,9 +34,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.unit.dp
-import android.content.res.Configuration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
@@ -98,7 +98,8 @@ fun AddCategoryDialog(
                                         } else {
                                             MaterialTheme.colorScheme.surfaceVariant
                                         },
-                                    ).then(
+                                    )
+                                    .then(
                                         if (isSelected) {
                                             Modifier.border(
                                                 2.dp,
@@ -108,7 +109,8 @@ fun AddCategoryDialog(
                                         } else {
                                             Modifier
                                         },
-                                    ).selectable(
+                                    )
+                                    .selectable(
                                         selected = isSelected,
                                         onClick = { selectedIcon = iconKey },
                                         role = Role.RadioButton,
@@ -159,7 +161,8 @@ fun AddCategoryDialog(
                                         } else {
                                             Modifier
                                         },
-                                    ).clickable { selectedColor = color },
+                                    )
+                                    .clickable { selectedColor = color },
                             contentAlignment = Alignment.Center,
                         ) {
                             if (color == selectedColor) {

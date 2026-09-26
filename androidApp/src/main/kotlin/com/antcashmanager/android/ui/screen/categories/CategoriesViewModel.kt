@@ -94,7 +94,7 @@ class CategoriesViewModel(
                     .filter { it.type == type }
                     .maxOfOrNull { it.sortOrder }
                     ?: -1
-            ) + 1
+                ) + 1
         viewModelScope.launch {
             insertCategoryUseCase(
                 Category(

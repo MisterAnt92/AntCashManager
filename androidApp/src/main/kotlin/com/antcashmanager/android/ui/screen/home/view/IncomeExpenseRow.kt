@@ -66,7 +66,8 @@ fun IncomeExpenseRow(
                                     .background(
                                         IncomeGreen.copy(alpha = HomeConstant.ICON_BADGE_ALPHA),
                                         shape = RoundedCornerShape(HomeConstant.ICON_BADGE_CORNER_DP.dp),
-                                    ).padding(8.dp),
+                                    )
+                                    .padding(8.dp),
                             contentAlignment = Alignment.Center,
                         ) {
                             Icon(
@@ -114,7 +115,8 @@ fun IncomeExpenseRow(
                                     .background(
                                         ExpenseRed.copy(alpha = HomeConstant.ICON_BADGE_ALPHA),
                                         shape = RoundedCornerShape(HomeConstant.ICON_BADGE_CORNER_DP.dp),
-                                    ).padding(8.dp),
+                                    )
+                                    .padding(8.dp),
                             contentAlignment = Alignment.Center,
                         ) {
                             Icon(

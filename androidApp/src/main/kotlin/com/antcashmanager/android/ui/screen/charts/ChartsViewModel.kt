@@ -151,6 +151,7 @@ class ChartsViewModel(
                     event.colorHex,
                     event.isExpense,
                 )
+
             is ChartEvent.ClearChartSelection -> clearChartSelection()
             is ChartEvent.RetryLastOperation -> logInfo("Retry requested")
             is ChartEvent.SetChartCardsOrder -> setChartCardsOrder(event.order)

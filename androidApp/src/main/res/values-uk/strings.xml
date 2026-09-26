@@ -637,7 +637,6 @@
     <string name="dialog_payment_type_title">Виберіть спосіб оплати</string>
 
 
-
     <!-- Analytics Consent Dialog (GDPR) -->
     <string name="consent_title">Допоможіть нам покращити застосунок</string>
     <string name="consent_body">Ми збираємо анонімну статистику використання (відвідані екрани, помилки) для покращення застосунку. Фінансові дані ніколи не надсилаються. Ви можете змінити це в Налаштуваннях будь-коли.</string>

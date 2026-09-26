@@ -29,11 +29,11 @@ import com.antcashmanager.android.navigation.ScreenHeaderConfig
 import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
 import com.antcashmanager.android.ui.components.animation.AntEasterEggAnimation
 import com.antcashmanager.android.ui.components.dialog.HelpButton
-import com.antcashmanager.android.ui.components.state.AntErrorState
 import com.antcashmanager.android.ui.components.layout.FoldableAwareLayout
 import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.overlay.TutorialOverlay
+import com.antcashmanager.android.ui.components.state.AntErrorState
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.transaction.TransactionDetailsPane
 import com.antcashmanager.android.ui.screen.home.event.HomeEvent

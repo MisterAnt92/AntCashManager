@@ -199,7 +199,8 @@ internal fun DetailsStep(
                         top = innerPadding.calculateTopPadding() + 12.dp,
                         end = innerPadding.calculateEndPadding(LayoutDirection.Ltr) + 16.dp,
                         bottom = innerPadding.calculateBottomPadding(),
-                    ).verticalScroll(rememberScrollState()),
+                    )
+                    .verticalScroll(rememberScrollState()),
         ) {
             // ── Categoria, Tipo, Data, Payment Type ──
             DetailsCategoryTypeSection(

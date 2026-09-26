@@ -57,10 +57,10 @@ fun RecentTransactionItem(
     val isIncome = transaction.isIncome
     val isAnnaTheme = LocalAnnaTheme.current
     val cardBackgroundColor = when {
-        isAnnaTheme && isIncome  -> MaterialTheme.colorScheme.primaryContainer
+        isAnnaTheme && isIncome -> MaterialTheme.colorScheme.primaryContainer
         isAnnaTheme && !isIncome -> MaterialTheme.colorScheme.secondaryContainer
-        isIncome                 -> MaterialTheme.colorScheme.secondaryContainer
-        else                     -> MaterialTheme.colorScheme.errorContainer
+        isIncome -> MaterialTheme.colorScheme.secondaryContainer
+        else -> MaterialTheme.colorScheme.errorContainer
     }
 
     AnimatedListItem(index = transaction.id.toInt()) {
@@ -89,7 +89,8 @@ fun RecentTransactionItem(
                                     .background(
                                         (if (isIncome) IncomeGreen else ExpenseRed).copy(alpha = HomeConstant.ICON_BADGE_ALPHA),
                                         shape = RoundedCornerShape(HomeConstant.ICON_BADGE_CORNER_DP.dp),
-                                    ).padding(8.dp),
+                                    )
+                                    .padding(8.dp),
                             contentAlignment = Alignment.Center,
                         ) {
                             Icon(

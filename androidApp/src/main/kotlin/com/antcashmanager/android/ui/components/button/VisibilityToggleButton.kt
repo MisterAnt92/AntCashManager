@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.components.button
 
+import android.content.res.Configuration
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -8,7 +9,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import android.content.res.Configuration
 import androidx.compose.ui.tooling.preview.Preview
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
@@ -62,7 +62,11 @@ private fun VisibilityToggleButtonVisibleLightPreview() {
     }
 }
 
-@Preview(showBackground = true, name = "VisibilityToggleButton Visible - Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(
+    showBackground = true,
+    name = "VisibilityToggleButton Visible - Dark",
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
 @Composable
 private fun VisibilityToggleButtonVisibleDarkPreview() {
     AntCashManagerTheme(darkTheme = true, dynamicColor = false) {

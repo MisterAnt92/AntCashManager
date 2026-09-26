@@ -23,7 +23,6 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import kotlin.math.abs
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -43,6 +42,7 @@ import com.antcashmanager.android.ui.screen.home.HomeState
 import com.antcashmanager.android.ui.screen.home.event.HomeEvent
 import com.antcashmanager.android.ui.screen.home.model.HomeTopCardType
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 
 private const val HOME_SCREEN_TAG = "home_screen"
 private const val RECENT_COUNT_TAG = "recent_transactions_count"
@@ -67,7 +67,9 @@ fun HomeListPane(
     }
 
     Scaffold(
-        modifier = modifier.fillMaxSize().testTag(HOME_SCREEN_TAG),
+        modifier = modifier
+            .fillMaxSize()
+            .testTag(HOME_SCREEN_TAG),
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         floatingActionButton = {
             AnimatedVisibility(

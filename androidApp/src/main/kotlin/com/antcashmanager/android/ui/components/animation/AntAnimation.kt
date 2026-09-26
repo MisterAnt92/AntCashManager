@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.components.animation
 
+import android.content.res.Configuration
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -30,19 +31,16 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import android.content.res.Configuration
-import androidx.compose.material3.Surface
-import androidx.compose.runtime.remember
 import com.antcashmanager.android.R
-import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.text.AppText
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import kotlinx.coroutines.delay
-import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun AntSplashScreen(

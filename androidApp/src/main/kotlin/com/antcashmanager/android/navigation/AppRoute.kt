@@ -97,7 +97,8 @@ sealed class AppRoute(
                 SettingsRoute.Main.route,
                 SettingsRoute.Display.route,
                 SettingsRoute.DataManagement.route,
-                -> true
+                    -> true
+
                 else -> false
             }
 

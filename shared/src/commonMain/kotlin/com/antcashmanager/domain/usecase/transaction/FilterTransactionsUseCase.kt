@@ -57,7 +57,7 @@ public class FilterTransactionsUseCase(
                         (
                             numericQuery != null &&
                                 abs(absAmount - numericQuery) < AMOUNT_COMPARISON_EPSILON
-                        )
+                            )
                 }
             }.filter { transaction ->
                 // Category filter (exact match)

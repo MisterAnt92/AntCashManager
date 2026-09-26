@@ -71,7 +71,8 @@ fun AppCategoryListItem(
                     width = if (isSelected) 2.dp else 1.dp,
                     color = borderColor,
                     shape = RoundedCornerShape(16.dp),
-                ).clickable(onClick = onClick)
+                )
+                .clickable(onClick = onClick)
                 .padding(horizontal = 20.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),

@@ -1,11 +1,11 @@
 package com.antcashmanager.android.ui.screen.categories.view
 
+import android.content.res.Configuration
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
-import android.content.res.Configuration
 import androidx.compose.ui.tooling.preview.Preview
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.dialog.AppHelpDialog

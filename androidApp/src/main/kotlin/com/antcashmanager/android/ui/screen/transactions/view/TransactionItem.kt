@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.transactions.view
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -21,19 +22,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import android.content.res.Configuration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
-import com.antcashmanager.android.ui.theme.AntCashManagerTheme
-import com.antcashmanager.android.ui.mapper.recurrenceIntervalLabelRes
 import com.antcashmanager.android.ui.components.animation.AnimatedCard
 import com.antcashmanager.android.ui.components.animation.AnimatedListItem
 import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.text.TransactionAmountText
+import com.antcashmanager.android.ui.mapper.recurrenceIntervalLabelRes
 import com.antcashmanager.android.ui.screen.categories.view.categoryIconMap
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.ExpenseRed
 import com.antcashmanager.android.ui.theme.IncomeGreen
 import com.antcashmanager.android.ui.theme.LocalAnnaTheme
@@ -58,10 +58,10 @@ fun TransactionItem(
     val isIncome = transaction.type == TransactionType.INCOME
     val isAnnaTheme = LocalAnnaTheme.current
     val cardBackgroundColor = when {
-        isAnnaTheme && isIncome  -> MaterialTheme.colorScheme.primaryContainer
+        isAnnaTheme && isIncome -> MaterialTheme.colorScheme.primaryContainer
         isAnnaTheme && !isIncome -> MaterialTheme.colorScheme.secondaryContainer
-        isIncome                 -> MaterialTheme.colorScheme.secondaryContainer
-        else                     -> MaterialTheme.colorScheme.errorContainer
+        isIncome -> MaterialTheme.colorScheme.secondaryContainer
+        else -> MaterialTheme.colorScheme.errorContainer
     }
 
     AnimatedListItem(index = transaction.id.toInt()) {
@@ -95,7 +95,8 @@ fun TransactionItem(
                                             )
                                         },
                                         shape = RoundedCornerShape(32.dp),
-                                    ).padding(8.dp),
+                                    )
+                                    .padding(8.dp),
                             contentAlignment = Alignment.Center,
                         ) {
                             Icon(

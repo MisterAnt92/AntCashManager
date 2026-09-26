@@ -1,6 +1,5 @@
 package com.antcashmanager.domain.model
 
-import com.antcashmanager.domain.model.AppTheme
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull

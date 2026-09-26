@@ -73,7 +73,8 @@ fun WidgetBackgroundColorDialog(
                                     } else {
                                         Modifier
                                     },
-                                ).clickable { onColorSelected(color) },
+                                )
+                                .clickable { onColorSelected(color) },
                         contentAlignment = Alignment.Center,
                     ) {
                         if (isSelected) {

@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.components.button
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDownward
@@ -10,7 +11,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import android.content.res.Configuration
 import androidx.compose.ui.tooling.preview.Preview
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme

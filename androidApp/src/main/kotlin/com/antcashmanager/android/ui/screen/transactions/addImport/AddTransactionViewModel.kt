@@ -1,7 +1,6 @@
 package com.antcashmanager.android.ui.screen.transactions.addImport
 
 import android.os.Bundle
-import java.util.Locale
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.analytics.AnalyticsManager
@@ -25,6 +24,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 // ══════════════════════════════════════════════════════════════════════════════
 // VIEWMODEL
@@ -223,6 +223,7 @@ class AddTransactionViewModel(
                 }
                 _state.update { it.copy(title = event.title) }
             }
+
             is AddTransactionEvent.UpdateAmount -> {
                 // Permetti input libero durante la digitazione, validazione al salvataggio
                 _state.update { it.copy(amount = event.amount) }

@@ -409,7 +409,8 @@ fun TutorialOverlay(onDismiss: () -> Unit) {
                                     } else {
                                         MaterialTheme.colorScheme.outlineVariant
                                     },
-                                ).clickable(enabled = !isActiveDot) { currentStep = index },
+                                )
+                                .clickable(enabled = !isActiveDot) { currentStep = index },
                     )
                 }
             }
@@ -437,32 +438,38 @@ fun TutorialOverlay(onDismiss: () -> Unit) {
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        TextButton(onClick = {
-                            val params =
-                                android.os.Bundle().apply {
-                                    putInt("step", currentStep)
-                                }
-                            analyticsManager.logEvent("tutorial_step_skipped", params)
-                            onDismiss()
-                        }) {
+                        TextButton(
+                            onClick = {
+                                val params =
+                                    android.os.Bundle().apply {
+                                        putInt("step", currentStep)
+                                    }
+                                analyticsManager.logEvent("tutorial_step_skipped", params)
+                                onDismiss()
+                            },
+                        ) {
                             AppText(text = stringResource(R.string.tutorial_skip))
                         }
-                        AppButton(onClick = {
-                            val params =
-                                android.os.Bundle().apply {
-                                    putInt("step", currentStep)
-                                }
-                            analyticsManager.logEvent("tutorial_step_completed", params)
-                            currentStep += 1
-                        }) {
+                        AppButton(
+                            onClick = {
+                                val params =
+                                    android.os.Bundle().apply {
+                                        putInt("step", currentStep)
+                                    }
+                                analyticsManager.logEvent("tutorial_step_completed", params)
+                                currentStep += 1
+                            },
+                        ) {
                             AppText(text = stringResource(R.string.tutorial_next))
                         }
                     }
                 } else {
-                    AppButton(onClick = {
-                        analyticsManager.logEvent("tutorial_completed")
-                        onDismiss()
-                    }) {
+                    AppButton(
+                        onClick = {
+                            analyticsManager.logEvent("tutorial_completed")
+                            onDismiss()
+                        },
+                    ) {
                         AppText(text = stringResource(R.string.tutorial_finish))
                     }
                 }

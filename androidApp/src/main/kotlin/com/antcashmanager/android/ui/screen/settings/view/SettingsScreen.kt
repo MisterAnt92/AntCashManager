@@ -223,7 +223,8 @@ internal fun SettingsContent(
                         top = 0.dp,
                         end = padding.calculateEndPadding(LayoutDirection.Ltr) + 16.dp,
                         bottom = padding.calculateBottomPadding(),
-                    ).padding(vertical = 12.dp)
+                    )
+                    .padding(vertical = 12.dp)
                     .verticalScroll(rememberScrollState())
                     .padding(bottom = 24.dp),
         ) {
@@ -465,15 +466,17 @@ internal fun SettingsContent(
     }
 
     if (showPrivacyDialog) {
-        PrivacyPolicyDialog(onDismiss = {
-            analyticsManager.logEvent(
-                "settings_dialog_dismissed",
-                android.os.Bundle().apply {
-                    putString("dialog_type", "privacy_policy")
-                },
-            )
-            showPrivacyDialog = false
-        })
+        PrivacyPolicyDialog(
+            onDismiss = {
+                analyticsManager.logEvent(
+                    "settings_dialog_dismissed",
+                    android.os.Bundle().apply {
+                        putString("dialog_type", "privacy_policy")
+                    },
+                )
+                showPrivacyDialog = false
+            },
+        )
     }
 
     if (showLibrariesDialog) {

@@ -4,10 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
-import com.antcashmanager.domain.model.PaymentType
-import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionDisplayType
-import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.service.WidgetUpdateNotifier
 import com.antcashmanager.domain.usecase.SendFeedbackEmailUseCase
@@ -16,7 +13,6 @@ import com.antcashmanager.domain.usecase.settings.SettingsUseCasesProvider
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -120,7 +120,8 @@ private fun InsightRow(
                 .background(
                     color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.12f),
                     shape = RoundedCornerShape(10.dp),
-                ).padding(horizontal = 12.dp, vertical = 10.dp)
+                )
+                .padding(horizontal = 12.dp, vertical = 10.dp)
                 .semantics(mergeDescendants = true) {
                     contentDescription = rowDescription
                 },

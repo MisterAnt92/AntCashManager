@@ -542,32 +542,32 @@
     <string name="chart_daily_expenses_title">Gastos Diarios</string>
     <string name="chart_last_14_days">Últimos 14 días</string>
     <string name="chart_average">Promedio</string>
-     <string name="chart_weekday_distribution_title">Distribución por Día</string>
+    <string name="chart_weekday_distribution_title">Distribución por Día</string>
 
-     <!-- Weekday names (1=Monday, 7=Sunday - EU convention) -->
-     <string name="weekday_1">Lun</string>
-     <string name="weekday_2">Mar</string>
-     <string name="weekday_3">Mié</string>
-     <string name="weekday_4">Jue</string>
-     <string name="weekday_5">Vie</string>
-     <string name="weekday_6">Sáb</string>
-     <string name="weekday_7">Dom</string>
+    <!-- Weekday names (1=Monday, 7=Sunday - EU convention) -->
+    <string name="weekday_1">Lun</string>
+    <string name="weekday_2">Mar</string>
+    <string name="weekday_3">Mié</string>
+    <string name="weekday_4">Jue</string>
+    <string name="weekday_5">Vie</string>
+    <string name="weekday_6">Sáb</string>
+    <string name="weekday_7">Dom</string>
 
-     <string name="error_generic">Ocurrió un error</string>
+    <string name="error_generic">Ocurrió un error</string>
 
-     <!-- Charts Customization -->
-     <string name="charts_customize_cards_title">Personalizar orden de tarjetas</string>
+    <!-- Charts Customization -->
+    <string name="charts_customize_cards_title">Personalizar orden de tarjetas</string>
 
-     <!-- Chart Details Bottom Sheet -->
-     <string name="chart_details_title">Detalles</string>
-     <string name="chart_details_percentage">%d%% del total</string>
-     <string name="chart_details_amount">Cantidad</string>
-     <string name="chart_details_transactions">Transacciones</string>
-     <string name="chart_details_info_title">Información de Categoría</string>
-     <string name="chart_details_info_description">Toca cualquier sección del gráfico para ver más detalles sobre esa categoría</string>
-     <string name="chart_trend_increasing">Tendencia de gastos: Aumentando</string>
-     <string name="chart_trend_decreasing">Tendencia de gastos: Disminuyendo</string>
-     <string name="chart_trend_stable">Tendencia de gastos: Estable</string>
+    <!-- Chart Details Bottom Sheet -->
+    <string name="chart_details_title">Detalles</string>
+    <string name="chart_details_percentage">%d%% del total</string>
+    <string name="chart_details_amount">Cantidad</string>
+    <string name="chart_details_transactions">Transacciones</string>
+    <string name="chart_details_info_title">Información de Categoría</string>
+    <string name="chart_details_info_description">Toca cualquier sección del gráfico para ver más detalles sobre esa categoría</string>
+    <string name="chart_trend_increasing">Tendencia de gastos: Aumentando</string>
+    <string name="chart_trend_decreasing">Tendencia de gastos: Disminuyendo</string>
+    <string name="chart_trend_stable">Tendencia de gastos: Estable</string>
 
 
     <!-- App Description -->
@@ -578,7 +578,6 @@
     <string name="settings_default_payment_type">Método de pago predeterminado</string>
     <string name="settings_default_payment_type_desc">Elige el método de pago predeterminado para nuevas transacciones</string>
     <string name="dialog_payment_type_title">Seleccionar método de pago</string>
-
 
 
     <!-- Analytics Consent Dialog (GDPR) -->

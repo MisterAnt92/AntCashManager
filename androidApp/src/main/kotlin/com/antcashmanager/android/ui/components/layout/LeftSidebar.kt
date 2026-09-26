@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.components.layout
 
+import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
@@ -30,17 +31,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import android.content.res.Configuration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.BuildConfig
 import com.antcashmanager.android.R
-import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.navigation.BottomNavItem
-import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
-import com.antcashmanager.android.ui.components.layout.SpacingSize
-import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.text.AppText
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 /**
  * Sidebar di navigazione laterale sinistra con UX migliorata.
@@ -129,7 +126,8 @@ private fun SidebarHeader(onHeaderClick: () -> Unit = {}) {
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
                     onClick = onHeaderClick,
-                ).padding(vertical = 16.dp),
+                )
+                .padding(vertical = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
@@ -218,10 +216,12 @@ private fun SidebarMenuItem(
                     enabled = true,
                     onClick = onClick,
                     interactionSource = remember { MutableInteractionSource() },
-                ).background(
+                )
+                .background(
                     color = backgroundColor.value,
                     shape = RoundedCornerShape(14.dp),
-                ).padding(horizontal = 20.dp),
+                )
+                .padding(horizontal = 20.dp),
         horizontalArrangement = Arrangement.spacedBy(14.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

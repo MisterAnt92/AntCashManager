@@ -249,7 +249,9 @@ open class FakeSettingsRepository : SettingsRepository {
 
     val analyticsConsent = MutableStateFlow<Boolean?>(null)
     override fun getAnalyticsConsent(): Flow<Boolean?> = analyticsConsent
-    override suspend fun setAnalyticsConsent(granted: Boolean) { analyticsConsent.value = granted }
+    override suspend fun setAnalyticsConsent(granted: Boolean) {
+        analyticsConsent.value = granted
+    }
 
     override fun getCategorySortOrderInitialized(): Flow<Boolean> = categorySortOrderInitialized
 

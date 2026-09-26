@@ -544,32 +544,32 @@
     <string name="chart_daily_expenses_title">Dépenses Quotidiennes</string>
     <string name="chart_last_14_days">14 derniers jours</string>
     <string name="chart_average">Moyenne</string>
-     <string name="chart_weekday_distribution_title">Distribution par Jour</string>
+    <string name="chart_weekday_distribution_title">Distribution par Jour</string>
 
-     <!-- Weekday names (1=Monday, 7=Sunday - EU convention) -->
-     <string name="weekday_1">Lun</string>
-     <string name="weekday_2">Mar</string>
-     <string name="weekday_3">Mer</string>
-     <string name="weekday_4">Jeu</string>
-     <string name="weekday_5">Ven</string>
-     <string name="weekday_6">Sam</string>
-     <string name="weekday_7">Dim</string>
+    <!-- Weekday names (1=Monday, 7=Sunday - EU convention) -->
+    <string name="weekday_1">Lun</string>
+    <string name="weekday_2">Mar</string>
+    <string name="weekday_3">Mer</string>
+    <string name="weekday_4">Jeu</string>
+    <string name="weekday_5">Ven</string>
+    <string name="weekday_6">Sam</string>
+    <string name="weekday_7">Dim</string>
 
-     <string name="error_generic">Une erreur est survenue</string>
+    <string name="error_generic">Une erreur est survenue</string>
 
-     <!-- Charts Customization -->
-     <string name="charts_customize_cards_title">Personnaliser l\'ordre des cartes</string>
+    <!-- Charts Customization -->
+    <string name="charts_customize_cards_title">Personnaliser l\'ordre des cartes</string>
 
-     <!-- Chart Details Bottom Sheet -->
-     <string name="chart_details_title">Détails</string>
-     <string name="chart_details_percentage">%d%% du total</string>
-     <string name="chart_details_amount">Montant</string>
-     <string name="chart_details_transactions">Transactions</string>
-     <string name="chart_details_info_title">Information Catégorie</string>
-     <string name="chart_details_info_description">Appuyez sur une partie du graphique pour voir plus de détails sur cette catégorie</string>
-     <string name="chart_trend_increasing">Tendance dépenses: En augmentation</string>
-     <string name="chart_trend_decreasing">Tendance dépenses: En diminution</string>
-     <string name="chart_trend_stable">Tendance dépenses: Stable</string>
+    <!-- Chart Details Bottom Sheet -->
+    <string name="chart_details_title">Détails</string>
+    <string name="chart_details_percentage">%d%% du total</string>
+    <string name="chart_details_amount">Montant</string>
+    <string name="chart_details_transactions">Transactions</string>
+    <string name="chart_details_info_title">Information Catégorie</string>
+    <string name="chart_details_info_description">Appuyez sur une partie du graphique pour voir plus de détails sur cette catégorie</string>
+    <string name="chart_trend_increasing">Tendance dépenses: En augmentation</string>
+    <string name="chart_trend_decreasing">Tendance dépenses: En diminution</string>
+    <string name="chart_trend_stable">Tendance dépenses: Stable</string>
 
     <!-- App Description -->
     <string name="app_description">Cette application est née du besoin de suivre les dépenses familiales gratuitement et de comparer les augmentations de prix.</string>
@@ -579,7 +579,6 @@
     <string name="settings_default_payment_type">Méthode de paiement par défaut</string>
     <string name="settings_default_payment_type_desc">Choisissez la méthode de paiement par défaut pour les nouvelles transactions</string>
     <string name="dialog_payment_type_title">Sélectionner la méthode de paiement</string>
-
 
 
     <!-- Analytics Consent Dialog (GDPR) -->

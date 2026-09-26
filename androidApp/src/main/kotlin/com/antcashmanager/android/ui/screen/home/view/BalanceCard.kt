@@ -358,7 +358,11 @@ private fun BalanceCardWithBreakdownCashOnlyPreview() {
     }
 }
 
-@Preview(showBackground = true, name = "Balance Card - Dark Theme with Breakdown", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(
+    showBackground = true,
+    name = "Balance Card - Dark Theme with Breakdown",
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
 @Composable
 private fun BalanceCardDarkWithBreakdownPreview() {
     AntCashManagerTheme(darkTheme = true, dynamicColor = false) {

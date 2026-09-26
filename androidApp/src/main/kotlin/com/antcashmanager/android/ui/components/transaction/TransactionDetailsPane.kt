@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.components.transaction
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,13 +13,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import android.content.res.Configuration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.text.AppText
-import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.mapper.labelRes
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.android.util.formatAmount
@@ -52,7 +52,9 @@ fun TransactionDetailsPane(
     val masked = LocalAmountsMasked.current && isProtectedSalaryTransaction(transaction)
 
     Column(
-        modifier = modifier.fillMaxSize().padding(16.dp),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         AppText(
@@ -103,7 +105,7 @@ private fun TransactionDetailsPaneLightPreview() {
                 timestamp = System.currentTimeMillis(),
                 notes = "",
                 mealVoucherDifference = 0.0,
-            )
+            ),
         )
     }
 }
@@ -122,7 +124,7 @@ private fun TransactionDetailsPaneDarkPreview() {
                 timestamp = System.currentTimeMillis(),
                 notes = "Stipendio mensile",
                 mealVoucherDifference = 0.0,
-            )
+            ),
         )
     }
 }
@@ -141,7 +143,7 @@ private fun TransactionDetailsPaneLargeTextPreview() {
                 timestamp = System.currentTimeMillis(),
                 notes = "Con colleghi",
                 mealVoucherDifference = 0.0,
-            )
+            ),
         )
     }
 }

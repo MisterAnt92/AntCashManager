@@ -18,7 +18,11 @@ import com.antcashmanager.android.ui.theme.AntCashManagerTheme
  */
 @Composable
 fun TransactionSkeletonItem() {
-    Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 4.dp),
+    ) {
         SkeletonLoader(height = 16.dp, cornerRadius = 8)
         VerticalSpacer(SpacingSize.XS)
         SkeletonLoader(height = 20.dp, cornerRadius = 8)

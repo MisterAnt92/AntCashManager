@@ -1,4 +1,5 @@
 package com.antcashmanager.android.ui.components.dialog
+
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText

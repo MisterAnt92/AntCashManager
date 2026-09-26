@@ -5,8 +5,6 @@ import com.antcashmanager.android.analytics.tracker.PerformanceTracker
 import com.antcashmanager.android.analytics.tracker.SegmentationTracker
 import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.testutil.FakeTransactionRepository
-import com.antcashmanager.android.ui.screen.charts.ChartEvent
-import com.antcashmanager.android.ui.screen.charts.ChartsViewModel
 import com.antcashmanager.android.ui.screen.charts.view.TrendDirection
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction

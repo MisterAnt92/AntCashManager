@@ -246,7 +246,7 @@ class AddTransactionIntegrationTest : BaseUnitTest() {
                     (
                         viewModel.state.value.amount
                             .toDoubleOrNull() ?: 0.0
-                    ) - 25.50,
+                        ) - 25.50,
                 ) < 0.01,
             )
             assertEquals("Initial notes", viewModel.state.value.notes)

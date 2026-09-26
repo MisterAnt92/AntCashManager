@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -25,6 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.Exposure
 import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material.icons.filled.MoreHoriz
@@ -37,7 +37,6 @@ import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material.icons.filled.TipsAndUpdates
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -78,7 +77,6 @@ import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
-import com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayEvent
 import com.antcashmanager.android.ui.screen.settings.view.CurrencySymbolDialog
 import com.antcashmanager.android.ui.screen.settings.view.DateFormatDialog
 import com.antcashmanager.android.ui.screen.settings.view.DecimalDigitsDialog
@@ -390,7 +388,8 @@ internal fun DisplayContent(
                                     DisplayConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
                             bottom =
                                 innerPadding.calculateBottomPadding() + DisplayConstant.CONTENT_BOTTOM_PADDING_DP.dp,
-                        ).verticalScroll(rememberScrollState()),
+                        )
+                        .verticalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(DisplayConstant.TABLET_COLUMNS_SPACING_DP.dp),
             ) {
                 Column(
@@ -530,10 +529,12 @@ internal fun DisplayContent(
                 )
             },
             confirmButton = {
-                TextButton(onClick = {
-                    onResetAllPreferences()
-                    showResetPreferencesDialog = false
-                }) {
+                TextButton(
+                    onClick = {
+                        onResetAllPreferences()
+                        showResetPreferencesDialog = false
+                    },
+                ) {
                     AppText(
                         stringResource(R.string.dialog_reset),
                         color = MaterialTheme.colorScheme.error,
@@ -1092,7 +1093,8 @@ private fun TrendPreviewCard() {
                     width = 1.dp,
                     color = MaterialTheme.colorScheme.outlineVariant,
                     shape = RoundedCornerShape(12.dp),
-                ).padding(12.dp),
+                )
+                .padding(12.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         AppText(
@@ -1168,7 +1170,8 @@ private fun CategoryPreviewCard() {
                     width = 1.dp,
                     color = MaterialTheme.colorScheme.outlineVariant,
                     shape = RoundedCornerShape(12.dp),
-                ).padding(12.dp),
+                )
+                .padding(12.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         AppText(
@@ -1228,7 +1231,8 @@ private fun NoIconPreviewCard() {
                     width = 1.dp,
                     color = MaterialTheme.colorScheme.outlineVariant,
                     shape = RoundedCornerShape(12.dp),
-                ).padding(12.dp),
+                )
+                .padding(12.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         AppText(
@@ -1398,7 +1402,8 @@ private fun WidgetPreviewMock(
                     Brush.linearGradient(
                         listOf(Color(0xFF90A4AE), Color(0xFF64B5F6)),
                     ),
-                ).padding(10.dp),
+                )
+                .padding(10.dp),
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Column(

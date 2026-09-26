@@ -136,7 +136,8 @@ class TransactionLoadManager(
             // per preservare il totale storico anche se l'impostazione è cambiata.
             val derivedVoucherValue =
                 if (transaction.paymentType == PaymentType.MEAL_VOUCHERS && transaction.mealVoucherCount > 0) {
-                    val raw = (abs(transaction.amount) - transaction.mealVoucherDifference) / transaction.mealVoucherCount
+                    val raw =
+                        (abs(transaction.amount) - transaction.mealVoucherDifference) / transaction.mealVoucherCount
                     (Math.round(raw * 10_000.0) / 10_000.0).takeIf { it.isFinite() && it > 0 }
                 } else {
                     null

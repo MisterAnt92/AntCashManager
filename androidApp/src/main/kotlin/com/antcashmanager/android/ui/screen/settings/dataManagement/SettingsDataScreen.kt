@@ -464,7 +464,8 @@ internal fun SettingsDataContent(
                             bottom =
                                 innerPadding.calculateBottomPadding() +
                                     SettingsDataConstant.CONTENT_BOTTOM_PADDING_DP.dp,
-                        ).verticalScroll(rememberScrollState()),
+                        )
+                        .verticalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(SettingsDataConstant.TABLET_COLUMNS_SPACING_DP.dp),
             ) {
                 Column(
@@ -671,10 +672,12 @@ internal fun SettingsDataContent(
                 )
             },
             confirmButton = {
-                TextButton(onClick = {
-                    analyticsManager.logEvent("reset_preferences_confirmed")
-                    onResetAllPreferences()
-                }) {
+                TextButton(
+                    onClick = {
+                        analyticsManager.logEvent("reset_preferences_confirmed")
+                        onResetAllPreferences()
+                    },
+                ) {
                     AppText(
                         stringResource(R.string.dialog_reset),
                         color = MaterialTheme.colorScheme.error,
@@ -707,10 +710,12 @@ internal fun SettingsDataContent(
                 )
             },
             confirmButton = {
-                TextButton(onClick = {
-                    analyticsManager.logEvent("delete_suggestions_confirmed")
-                    onDeleteAllSuggestions()
-                }) {
+                TextButton(
+                    onClick = {
+                        analyticsManager.logEvent("delete_suggestions_confirmed")
+                        onDeleteAllSuggestions()
+                    },
+                ) {
                     AppText(
                         stringResource(R.string.dialog_delete),
                         color = MaterialTheme.colorScheme.error,
@@ -1108,6 +1113,7 @@ private fun formatAutoBackupPath(
                 }
             }
         }
+
         BackupDestination.GOOGLE_DRIVE -> {
             if (googleDriveFolderName.isNullOrBlank()) {
                 stringResource(R.string.settings_auto_backup_path_not_selected)

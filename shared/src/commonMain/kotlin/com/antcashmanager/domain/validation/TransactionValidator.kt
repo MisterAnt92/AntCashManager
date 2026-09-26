@@ -113,8 +113,8 @@ public data class ValidationError(
 public class ValidationException(
     public val errors: List<ValidationError>,
 ) : Exception(
-        "Transaction validation failed: ${errors.joinToString(", ") { it.code }}",
-    )
+    "Transaction validation failed: ${errors.joinToString(", ") { it.code }}",
+)
 
 /**
  * Default implementation of [TransactionValidator].

@@ -5,7 +5,6 @@ import android.content.Intent
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.base.BaseViewModel
-import com.antcashmanager.domain.model.None
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.usecase.ShareTransactionUseCase
 import kotlinx.coroutines.launch

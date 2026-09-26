@@ -88,7 +88,8 @@ fun AutocompleteTextField(
                         .background(
                             color = MaterialTheme.colorScheme.surfaceVariant,
                             shape = RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp),
-                        ).padding(vertical = 4.dp),
+                        )
+                        .padding(vertical = 4.dp),
             ) {
                 items(filteredSuggestions) { suggestion ->
                     AppText(
@@ -100,7 +101,8 @@ fun AutocompleteTextField(
                                     onValueChange(suggestion)
                                     onSuggestionSelected?.invoke(suggestion)
                                     expanded = false
-                                }.padding(horizontal = 16.dp, vertical = 12.dp),
+                                }
+                                .padding(horizontal = 16.dp, vertical = 12.dp),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )

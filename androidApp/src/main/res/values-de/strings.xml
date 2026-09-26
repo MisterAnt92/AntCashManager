@@ -305,9 +305,9 @@
     <string name="settings_auto_backup_google_drive_sign_out">Von Google abmelden</string>
     <string name="settings_auto_backup_path_button">Sicherungspfad</string>
     <string name="settings_auto_backup_path_not_selected">Kein Ordner ausgewählt</string>
-     <string name="settings_auto_backup_path_subtitle">Wählen Sie, wo automatische Sicherungen gespeichert werden sollen</string>
-     <string name="settings_auto_backup_path_selected">Ausgewählter Pfad: %s</string>
-     <string name="settings_auto_backup_google_drive_configured">Sicherung für Google Drive konfiguriert</string>
+    <string name="settings_auto_backup_path_subtitle">Wählen Sie, wo automatische Sicherungen gespeichert werden sollen</string>
+    <string name="settings_auto_backup_path_selected">Ausgewählter Pfad: %s</string>
+    <string name="settings_auto_backup_google_drive_configured">Sicherung für Google Drive konfiguriert</string>
 
 
     <string name="privacy_policy_title">Datenschutzrichtlinie</string>
@@ -411,18 +411,18 @@
     <string name="settings_show_initial_animation">Anfängliche Animation anzeigen</string>
     <string name="settings_show_initial_animation_desc">Zeigt eine kurze Animation beim Start der App an</string>
 
-     <!-- Transaction Display -->
-     <string name="settings_transaction_display">Icon auf Transaktionen</string>
+    <!-- Transaction Display -->
+    <string name="settings_transaction_display">Icon auf Transaktionen</string>
     <string name="settings_transaction_display_home">Transaction Icon (Home)</string>
     <string name="settings_transaction_display_list">Transaction Icon (List)</string>
-     <string name="settings_transaction_display_desc">Wähle aus, welches Symbol für jede Transaktion angezeigt werden soll</string>
-     <string name="settings_transaction_display_trend">Trendsymbole</string>
-     <string name="settings_transaction_display_trend_desc">Zeigt Pfeil nach oben für Einnahmen, nach unten für Ausgaben</string>
-     <string name="settings_transaction_display_category">Kategoriesymbol</string>
-     <string name="settings_transaction_display_category_desc">Zeigt das Kategoriesymbol für jede Transaktion</string>
-     <string name="settings_transaction_display_none">Kein Symbol</string>
-     <string name="settings_transaction_display_none_desc">Es wird kein zusätzliches Symbol angezeigt</string>
-     <string name="dialog_choose_transaction_display">Symboltyp wählen</string>
+    <string name="settings_transaction_display_desc">Wähle aus, welches Symbol für jede Transaktion angezeigt werden soll</string>
+    <string name="settings_transaction_display_trend">Trendsymbole</string>
+    <string name="settings_transaction_display_trend_desc">Zeigt Pfeil nach oben für Einnahmen, nach unten für Ausgaben</string>
+    <string name="settings_transaction_display_category">Kategoriesymbol</string>
+    <string name="settings_transaction_display_category_desc">Zeigt das Kategoriesymbol für jede Transaktion</string>
+    <string name="settings_transaction_display_none">Kein Symbol</string>
+    <string name="settings_transaction_display_none_desc">Es wird kein zusätzliches Symbol angezeigt</string>
+    <string name="dialog_choose_transaction_display">Symboltyp wählen</string>
 
     <!-- Feedback Error Messages -->
     <string name="no_email_app_installed">Keine E-Mail-App verfügbar</string>
@@ -593,31 +593,31 @@
     <string name="chart_daily_expenses_title">Tägliche Ausgaben</string>
     <string name="chart_last_14_days">Letzte 14 Tage</string>
     <string name="chart_average">Durchschnitt</string>
-     <string name="chart_weekday_distribution_title">Wochentagverteilung</string>
+    <string name="chart_weekday_distribution_title">Wochentagverteilung</string>
 
-     <!-- Weekday names (1=Monday, 7=Sunday - EU convention) -->
-     <string name="weekday_1">Mo</string>
-     <string name="weekday_2">Di</string>
-     <string name="weekday_3">Mi</string>
-     <string name="weekday_4">Do</string>
-     <string name="weekday_5">Fr</string>
-     <string name="weekday_6">Sa</string>
-     <string name="weekday_7">So</string>
+    <!-- Weekday names (1=Monday, 7=Sunday - EU convention) -->
+    <string name="weekday_1">Mo</string>
+    <string name="weekday_2">Di</string>
+    <string name="weekday_3">Mi</string>
+    <string name="weekday_4">Do</string>
+    <string name="weekday_5">Fr</string>
+    <string name="weekday_6">Sa</string>
+    <string name="weekday_7">So</string>
 
-     <!-- Charts Customization -->
-     <string name="charts_customize_cards_title">Kartensortierung anpassen</string>
+    <!-- Charts Customization -->
+    <string name="charts_customize_cards_title">Kartensortierung anpassen</string>
 
-     <!-- Chart Details Bottom Sheet -->
-     <string name="chart_details_title">Details</string>
-     <string name="chart_details_percentage">%d%% der Summe</string>
-     <string name="chart_details_amount">Betrag</string>
-     <string name="chart_details_transactions">Transaktionen</string>
-     <string name="chart_details_info_title">Kategorieinformation</string>
-     <string name="chart_details_info_description">Tippen Sie auf einen Diagrammsektor, um weitere Details zu dieser Kategorie anzuzeigen</string>
-     <string name="chart_trend_increasing">Ausgabenlauf: Steigernd</string>
-     <string name="chart_trend_decreasing">Ausgabenlauf: Fallend</string>
-     <string name="chart_trend_stable">Ausgabenlauf: Stabil</string>
-     <string name="error_generic">Ein Fehler ist aufgetreten</string>
+    <!-- Chart Details Bottom Sheet -->
+    <string name="chart_details_title">Details</string>
+    <string name="chart_details_percentage">%d%% der Summe</string>
+    <string name="chart_details_amount">Betrag</string>
+    <string name="chart_details_transactions">Transaktionen</string>
+    <string name="chart_details_info_title">Kategorieinformation</string>
+    <string name="chart_details_info_description">Tippen Sie auf einen Diagrammsektor, um weitere Details zu dieser Kategorie anzuzeigen</string>
+    <string name="chart_trend_increasing">Ausgabenlauf: Steigernd</string>
+    <string name="chart_trend_decreasing">Ausgabenlauf: Fallend</string>
+    <string name="chart_trend_stable">Ausgabenlauf: Stabil</string>
+    <string name="error_generic">Ein Fehler ist aufgetreten</string>
 
     <!-- App Description -->
     <string name="app_description">Diese App entstand aus der Notwendigkeit, Familienausgaben kostenlos zu verfolgen und Preiserhöhungen zu vergleichen.</string>

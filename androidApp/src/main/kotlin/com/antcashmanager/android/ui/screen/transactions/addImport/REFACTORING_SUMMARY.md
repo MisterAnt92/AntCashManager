@@ -5,8 +5,8 @@
 Questo documento descrive il refactoring completo del flusso di aggiunta transazioni dell'app
 AntCashManager, implementato nella versione v1.6.3.
 
-**Data**: Agosto 2026  
-**Versione**: 1.6.3  
+**Data**: Agosto 2026
+**Versione**: 1.6.3
 **Stato**: ✅ Completato e testato
 
 ---
@@ -142,8 +142,8 @@ DetailsStep (353 linee)
 
 ### DetailsMealVoucherSection (Composable Specializzato)
 
-**File**: `view/DetailsMealVoucherSection.kt`  
-**Linee**: 180+  
+**File**: `view/DetailsMealVoucherSection.kt`
+**Linee**: 180+
 **Responsabilità**:
 
 - Renderizzare sezione buoni pasto con numero voucher + valore unitario
@@ -172,9 +172,9 @@ fun DetailsMealVoucherSection(
 **Specifiche Critiche**:
 
 - ⚠️ **REGOLA FONDAMENTALE**: Campo "Differenza pagata" è visibile SOLO quando:
-  - `isMealVouchersPayment == true` AND
-  - `isExpenseType == true` (EXPENSE transactions)
-  - **NON** deve essere mostrato per INCOME (entrate)
+    - `isMealVouchersPayment == true` AND
+    - `isExpenseType == true` (EXPENSE transactions)
+    - **NON** deve essere mostrato per INCOME (entrate)
 - Calcolo totalAmount: `(count × valore_unitario) + differenza_pagata`
 - Differenza pagata opzionale (default "0" quando non mostrato)
 - Reset differenza a "0" quando cambi da MEAL_VOUCHERS a altro PaymentType
@@ -195,8 +195,8 @@ Se EXPENSE + MEAL_VOUCHERS:
 
 ### DetailsTagsSection (Nuovo Composable)
 
-**File**: `view/DetailsTagsSection.kt`  
-**Linee**: 113  
+**File**: `view/DetailsTagsSection.kt`
+**Linee**: 113
 **Responsabilità**:
 
 - Renderizzare campo input per tag
@@ -345,7 +345,7 @@ Edge Cases:
 └── Tag handling
 ```
 
-**Status**: 8/11 passano ✅  
+**Status**: 8/11 passano ✅
 **Pending**: 3 test ignorati (richiedono Robolectric per Bundle mocking)
 
 ---
@@ -366,7 +366,7 @@ Edge Cases:
 
 ### Test Profiling
 
-**File**: `PerformanceProfilingTest.kt`  
+**File**: `PerformanceProfilingTest.kt`
 **Metodi**: 6
 
 - `performance_measure_loadCategories_operation`
@@ -566,12 +566,12 @@ private fun submitTransaction() {
         state = state.value,
         isNew = !isModifying
     )
-    
+
     result.onSuccess { transactionId ->
         _state.value = state.value.copy(isTransactionSaved = true)
         analyticsManager.logEvent("transaction_submit_success")
     }
-    
+
     result.onFailure { error ->
         _state.value = state.value.copy(error = error.message)
     }
@@ -679,12 +679,14 @@ Guida completa per il testing manuale della feature "Meal Vouchers con Differenz
 - ✅ Tutte le 13 lingue hanno traduzione corretta
 
 **Negative Tests**:
+
 - Differenza negativa → Rifiutata
 - 3+ decimali → Normalizzata o rifiutata
 - Non-numerico → Rifiutato
 - INCOME con differenza visibile → Bug critico
 
 **Checklist Pre-Commit**:
+
 - [ ] Tutti 10 scenari superati
 - [ ] Layout responsive (phone, tablet)
 - [ ] Accessibilità conforme
@@ -704,28 +706,33 @@ Checklist dettagliata per la verifica visiva, layout e accessibilità della feat
 ### Contenuti
 
 **Layout & Styling**:
+
 - Verifica struttura visiva per EXPENSE vs INCOME
 - Card styling, field styling, spacing verification
 - Visual consistency across light/dark themes
 
 **Responsive Design**:
+
 - Test su 360dp (small phone) - nessuna truncation
 - Test su 800dp (tablet) - layout ok
 - Test su foldable/dual-screen
 - Tutti i campi accessibili senza scroll orizzontale
 
 **Text & Translation**:
+
 - Verifica string per ogni lingua (13 totali)
 - Nessun mojibake o corrupted text
 - Currency symbol display corretto
 
 **Keyboard & Input Behavior**:
+
 - Numero buoni: numeric keyboard only
 - Differenza pagata: decimal keyboard
 - Negative values rejected
 - Precision enforced (max 2 decimals)
 
 **Accessibility**:
+
 - TalkBack screen reader verification
 - Logical tab order
 - Focus visibility
@@ -733,12 +740,14 @@ Checklist dettagliata per la verifica visiva, layout e accessibilità della feat
 - **CRITICAL**: Differenza field NOT announced on INCOME
 
 **Calculation Display**:
+
 - Subtotale display: count × 5.29
 - Differenza display: only if EXPENSE
 - Total Amount display: subtotal + difference
 - Currency formatting: "X.XX€"
 
 **State Persistence**:
+
 - Rotation (portrait ↔ landscape) preserves data
 - Navigation away/back behavior
 - App lifecycle state preservation
@@ -754,17 +763,20 @@ Overview completo della strategia di testing e piano di esecuzione.
 ### Contenuti
 
 **Testing Status**:
+
 - ✅ Implementation complete
 - ✅ Unit tests complete
 - ✅ Documentation complete
 - ⏳ Manual testing pending
 
 **Test Environment Requirements**:
+
 - Devices: Android 8.0+, 12+, 15+ (or emulators)
 - App setup: DEBUG build, database initialized
 - Languages: IT (primary), EN (secondary), +1 additional
 
 **Recommended Test Sequence** (70 min total):
+
 1. Phase 1: Core Functionality (15 min) - Scenarios 1-3
 2. Phase 2: Editing & State (10 min) - Scenarios 4-5
 3. Phase 3: Validation (5 min) - Scenario 6
@@ -774,12 +786,14 @@ Overview completo della strategia di testing e piano di esecuzione.
 7. Phase 7: Languages (15 min) - Scenario 10
 
 **Bug Severity Levels**:
+
 - CRITICAL: Difference field on INCOME, calculation wrong, app crashes
 - HIGH: Reset not working, negative accepted, accessibility broken
 - MEDIUM: UI overflow, string missing, spacing inconsistent
 - LOW: Minor visual issues
 
 **Pass Criteria**:
+
 - All 10 scenarios pass on ≥2 devices
 - Zero critical bugs
 - EXPENSE-only constraint verified
@@ -788,6 +802,7 @@ Overview completo della strategia di testing e piano di esecuzione.
 - Accessibility OK
 
 **Testing Artifacts**:
+
 - MANUAL_TESTING_GUIDE.md → Execute all 10 scenarios
 - UI_VERIFICATION_CHECKLIST.md → Verify visual & layout
 - TESTING_SUMMARY.md → Overall coordination & tracking
@@ -801,14 +816,14 @@ Testing Documentation for v1.7.2:
 
 ├── REFACTORING_SUMMARY.md (this file)
 │   └── Architecture & feature specification
-│   
+│
 ├── MANUAL_TESTING_GUIDE.md ⭐
 │   ├── 10 detailed test scenarios
 │   ├── Calculation verification matrix
 │   ├── Negative test cases
 │   ├── Pre-commit checklist
 │   └── Estimated time: 70 min per device
-│   
+│
 ├── UI_VERIFICATION_CHECKLIST.md ⭐
 │   ├── Visual structure diagrams
 │   ├── Responsive layout tests
@@ -816,7 +831,7 @@ Testing Documentation for v1.7.2:
 │   ├── Keyboard & accessibility
 │   ├── Data persistence tests
 │   └── Sign-off checklist
-│   
+│
 └── TESTING_SUMMARY.md ⭐
     ├── Testing overview & status
     ├── Environment requirements

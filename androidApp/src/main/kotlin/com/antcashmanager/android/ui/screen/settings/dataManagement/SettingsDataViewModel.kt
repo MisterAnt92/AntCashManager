@@ -497,18 +497,23 @@ class SettingsDataViewModel(
                                                 "I backup con crittografia device-bound non possono essere ripristinati su telefoni diversi. " +
                                                 "Usa backup con password protetta (v1.8+) per trasferimenti tra dispositivi."
                                         }
+
                                         error.message?.contains("password-based") == true -> {
                                             "Questo backup richiede una password. Aggiorna all'app v1.8+ per ripristinare backup con password."
                                         }
+
                                         else -> "Payload di backup invalido o danneggiato"
                                     }
                                 }
+
                                 is javax.crypto.BadPaddingException -> {
                                     "Chiave di crittografia non corrisponde - password errata?"
                                 }
+
                                 is java.security.InvalidKeyException -> {
                                     "Chiave di crittografia non valida"
                                 }
+
                                 else -> {
                                     error.message ?: SettingsDataConstant.UNKNOWN_ERROR
                                 }
@@ -601,6 +606,7 @@ class SettingsDataViewModel(
                     settingsRepositoryRef.setAutoBackupDestination(BackupDestination.LOCAL)
                     _state.update { it.copy(showGoogleSignInDialog = false) }
                 }
+
                 BackupDestination.GOOGLE_DRIVE -> {
                     // Seleziona GOOGLE_DRIVE: verifica se già loggato
                     val isSignedIn = googleSignInManager.isSignedIn()

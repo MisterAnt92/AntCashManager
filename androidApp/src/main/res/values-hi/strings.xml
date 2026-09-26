@@ -631,7 +631,6 @@
     <string name="dialog_payment_type_title">भुगतान विधि चुनें</string>
 
 
-
     <!-- Analytics Consent Dialog (GDPR) -->
     <string name="consent_title">हमें बेहतर बनाने में मदद करें</string>
     <string name="consent_body">हम ऐप को बेहतर बनाने के लिए अज्ञात उपयोग आंकड़े (देखे गए पृष्ठ, त्रुटियाँ) एकत्र करते हैं। कोई वित्तीय डेटा नहीं भेजा जाता। आप इसे सेटिंग में कभी भी बदल सकते हैं।</string>
