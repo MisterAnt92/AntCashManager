@@ -172,7 +172,7 @@
     <string name="settings_theme_system">Системна за замовчуванням</string>
     <string name="settings_language">Мова</string>
     <string name="settings_display">Дисплей</string>
-    <string name="settings_display_subtitle">Налаштуйте валюту, десяткові знаки та форматування</string>
+    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
     <string name="settings_show_charts_section">Показати розділ графіків</string>
     <string name="settings_show_charts_section_visible">Розділ графіків видимий у навігації</string>
     <string name="settings_show_charts_section_hidden">Розділ графіків прихований у навігації</string>
@@ -193,8 +193,10 @@
     <string name="settings_separator_none">Немає</string>
     <string name="settings_date_format">Формат дати</string>
     <string name="settings_section_currency">Валюта</string>
+    <string name="settings_section_formatting">Formatting</string>
     <string name="settings_section_dates">Дати</string>
     <string name="settings_section_other">Інше</string>
+    <string name="settings_section_data_privacy">Data &amp; Privacy</string>
     <string name="settings_reset_preferences">Скинути всі налаштування</string>
     <string name="settings_reset_preferences_subtitle">Відновити всі налаштування до значень за замо��чуванням</string>
     <string name="settings_section_widgets">Віджети</string>
@@ -416,6 +418,8 @@
 
     <!-- Transaction Display -->
     <string name="settings_transaction_display">Значок транзакцій</string>
+    <string name="settings_transaction_display_home">Transaction Icon (Home)</string>
+    <string name="settings_transaction_display_list">Transaction Icon (List)</string>
     <string name="settings_transaction_display_desc">Виберіть значок для відображення кожної транзакції</string>
     <string name="settings_transaction_display_trend">Стрілки тренду</string>
     <string name="settings_transaction_display_trend_desc">Стрілка вгору для доходів, вниз — для видатків</string>
@@ -478,7 +482,7 @@
     <string name="tutorial_finish">Зрозуміло!</string>
     <string name="tutorial_progress_cd">Крок навчання %1$d з %2$d</string>
 
-    <string name="settings_about">Налаштування</string>
+    <string name="settings_about">Information</string>
 
     <!-- Category Translations (Keys) -->
     <string name="category_uncategorized">Без категорії</string>

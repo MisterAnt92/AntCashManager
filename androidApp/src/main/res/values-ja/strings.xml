@@ -170,7 +170,7 @@
     <string name="settings_theme_system">システム設定</string>
     <string name="settings_language">言語</string>
     <string name="settings_display">表示</string>
-    <string name="settings_display_subtitle">通貨、小数点、書式をカスタマイズ</string>
+    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
     <string name="settings_show_charts_section">グラフセクションを表示</string>
     <string name="settings_show_charts_section_visible">ナビゲーションにグラフセクションを表示</string>
     <string name="settings_show_charts_section_hidden">ナビゲーションからグラフセクションを隠す</string>
@@ -191,10 +191,12 @@
     <string name="settings_separator_none">なし</string>
     <string name="settings_date_format">日付形式</string>
     <string name="settings_section_currency">通貨</string>
+    <string name="settings_section_formatting">Formatting</string>
     <string name="settings_section_dates">日付</string>
     <string name="settings_reset_preferences">すべての設定をリセット</string>
     <string name="settings_reset_preferences_subtitle">すべての設定をデフォルトに戻します</string>
     <string name="settings_section_other">その他</string>
+    <string name="settings_section_data_privacy">Data &amp; Privacy</string>
     <string name="settings_section_widgets">ウィジェット</string>
     <string name="settings_widget_background_color">背景色</string>
     <string name="dialog_choose_widget_background_color">背景色を選択</string>
@@ -416,6 +418,8 @@
 
     <!-- Transaction Display -->
     <string name="settings_transaction_display">取引のアイコン</string>
+    <string name="settings_transaction_display_home">Transaction Icon (Home)</string>
+    <string name="settings_transaction_display_list">Transaction Icon (List)</string>
     <string name="settings_transaction_display_desc">取引一覧に表示するアイコンを選択します</string>
     <string name="settings_transaction_display_trend">トレンド矢印</string>
     <string name="settings_transaction_display_trend_desc">収入は上向き、支出は下向きの矢印を表示します</string>
@@ -475,7 +479,7 @@
     <string name="tutorial_finish">了解！</string>
     <string name="tutorial_progress_cd">チュートリアル ステップ %1$d / %2$d</string>
 
-    <string name="settings_about">設定</string>
+    <string name="settings_about">Information</string>
 
     <!-- Category Translations (Keys) -->
     <string name="category_uncategorized">未分類</string>

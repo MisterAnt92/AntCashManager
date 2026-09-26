@@ -249,11 +249,6 @@ internal fun SettingsContent(
                     leadingIcon = Icons.Default.Language,
                     onClick = { showLanguageDialog = true },
                 )
-            }
-
-            // ── Display Section ──
-            AppCardSectionHeader(title = stringResource(R.string.settings_display))
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 AppCard(
                     title = stringResource(R.string.settings_display),
                     subtitle = stringResource(R.string.settings_display_subtitle),
@@ -310,8 +305,8 @@ internal fun SettingsContent(
                 )
             }
 
-            // ── Data Management Section ──
-            AppCardSectionHeader(title = stringResource(R.string.settings_data_management))
+            // ── Data & Privacy Section ──
+            AppCardSectionHeader(title = stringResource(R.string.settings_section_data_privacy))
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 AppCard(
                     title = stringResource(R.string.settings_data_management),
@@ -327,6 +322,23 @@ internal fun SettingsContent(
                         navController?.navigate(AppRoute.SettingsRoute.DataManagement.route)
                     },
                 )
+                // Analytics consent toggle (GDPR — user can revoke at any time)
+                if (analyticsConsent != null) {
+                    AppCard(
+                        title = stringResource(R.string.settings_analytics_consent_title),
+                        subtitle = stringResource(R.string.settings_analytics_consent_desc),
+                        leadingIcon = Icons.Default.PrivacyTip,
+                        iconBackgroundColor = MaterialTheme.colorScheme.secondaryContainer,
+                        iconTint = MaterialTheme.colorScheme.onSecondaryContainer,
+                        trailingContent = {
+                            AppSwitch(
+                                checked = analyticsConsent == true,
+                                onCheckedChange = { onAnalyticsConsentChanged(it) },
+                            )
+                        },
+                        onClick = { onAnalyticsConsentChanged(analyticsConsent != true) },
+                    )
+                }
             }
 
             // ── Support Section ──
@@ -362,23 +374,6 @@ internal fun SettingsContent(
                         onSendFeedbackEmail(feedbackEmailBody)
                     },
                 )
-                // Analytics consent toggle (GDPR — user can revoke at any time)
-                if (analyticsConsent != null) {
-                    AppCard(
-                        title = stringResource(R.string.settings_analytics_consent_title),
-                        subtitle = stringResource(R.string.settings_analytics_consent_desc),
-                        leadingIcon = Icons.Default.PrivacyTip,
-                        iconBackgroundColor = MaterialTheme.colorScheme.secondaryContainer,
-                        iconTint = MaterialTheme.colorScheme.onSecondaryContainer,
-                        trailingContent = {
-                            AppSwitch(
-                                checked = analyticsConsent == true,
-                                onCheckedChange = { onAnalyticsConsentChanged(it) },
-                            )
-                        },
-                        onClick = { onAnalyticsConsentChanged(analyticsConsent != true) },
-                    )
-                }
                 AppCard(
                     title = stringResource(R.string.settings_privacy_policy),
                     subtitle = stringResource(R.string.settings_privacy_policy_subtitle),
@@ -392,30 +387,29 @@ internal fun SettingsContent(
                 )
             }
 
-            // ── About Section ──
+            // ── Information Section ──
             AppCardSectionHeader(title = stringResource(R.string.settings_about))
-            AppCard(
-                title = stringResource(R.string.settings_app_version),
-                subtitle = versionName,
-                leadingIcon = Icons.Default.Info,
-                showChevron = false,
-                onClick = {
-                    analyticsManager.logEvent("easter_egg_animation_opened")
-                    showAntAnimation = true
-                },
-            )
-
-            // ── Third-party Libraries Section ──
-            AppCardSectionHeader(title = stringResource(R.string.settings_third_party))
-            AppCard(
-                title = stringResource(R.string.settings_third_party_libraries),
-                subtitle = stringResource(R.string.settings_third_party_subtitle),
-                leadingIcon = Icons.AutoMirrored.Filled.LibraryBooks,
-                onClick = {
-                    analyticsManager.logEvent("settings_third_party_libraries_opened")
-                    showLibrariesDialog = true
-                },
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                AppCard(
+                    title = stringResource(R.string.settings_app_version),
+                    subtitle = versionName,
+                    leadingIcon = Icons.Default.Info,
+                    showChevron = false,
+                    onClick = {
+                        analyticsManager.logEvent("easter_egg_animation_opened")
+                        showAntAnimation = true
+                    },
+                )
+                AppCard(
+                    title = stringResource(R.string.settings_third_party_libraries),
+                    subtitle = stringResource(R.string.settings_third_party_subtitle),
+                    leadingIcon = Icons.AutoMirrored.Filled.LibraryBooks,
+                    onClick = {
+                        analyticsManager.logEvent("settings_third_party_libraries_opened")
+                        showLibrariesDialog = true
+                    },
+                )
+            }
 
             VerticalSpacer(SpacingSize.LG)
 

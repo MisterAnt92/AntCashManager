@@ -206,7 +206,7 @@
 
     <string name="settings_language">Lingua</string>
     <string name="settings_display">Visualizzazione</string>
-    <string name="settings_display_subtitle">Personalizza valuta, decimali e formattazione</string>
+    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
     <string name="settings_show_charts_section">Mostra sezione grafici</string>
     <string name="settings_show_charts_section_visible">Sezione grafici visibile nella navigazione</string>
     <string name="settings_show_charts_section_hidden">Sezione grafici nascosta dalla navigazione</string>
@@ -228,8 +228,10 @@
     <string name="settings_date_format">Formato Data</string>
 
     <string name="settings_section_currency">Valuta</string>
+    <string name="settings_section_formatting">Formatting</string>
     <string name="settings_section_dates">Data</string>
     <string name="settings_section_other">Altro</string>
+    <string name="settings_section_data_privacy">Data &amp; Privacy</string>
     <string name="settings_reset_preferences">Ripristina Tutte le Preferenze</string>
     <string name="settings_reset_preferences_subtitle">Ripristina tutte le impostazioni ai valori predefiniti</string>
     <string name="settings_section_widgets">Widget</string>
@@ -276,7 +278,7 @@
     <string name="settings_send_feedback_subtitle">Aiutaci a migliorare l\'app</string>
     <string name="settings_privacy_policy">Informativa sulla Privacy</string>
     <string name="settings_privacy_policy_subtitle">Come gestiamo i tuoi dati</string>
-    <string name="settings_about">Informazioni</string>
+    <string name="settings_about">Information</string>
     <string name="settings_app_version">Versione App</string>
     <string name="settings_third_party">Terze parti</string>
     <string name="settings_third_party_libraries">Librerie Open-source</string>
@@ -427,6 +429,8 @@
     <string name="payment_breakdown_label">Saldo per Tipo di Pagamento</string>
     <string name="payment_breakdown_item_desc">Saldo con %1$s: %2$.2f</string>
     <string name="settings_transaction_display">Icona sulla transazione</string>
+    <string name="settings_transaction_display_home">Transaction Icon (Home)</string>
+    <string name="settings_transaction_display_list">Transaction Icon (List)</string>
     <string name="settings_transaction_display_desc">Scegli quale icona visualizzare per ogni transazione</string>
     <string name="settings_transaction_display_trend">Andamento</string>
     <string name="settings_transaction_display_trend_desc">Freccia su per entrate, giù per uscite</string>

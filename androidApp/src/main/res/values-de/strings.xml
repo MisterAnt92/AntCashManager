@@ -169,7 +169,7 @@
     <string name="settings_theme_system">Systemstandard</string>
     <string name="settings_language">Sprache</string>
     <string name="settings_display">Anzeige</string>
-    <string name="settings_display_subtitle">Passe Währung, Dezimalstellen und Formatierung an</string>
+    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
     <string name="settings_show_charts_section">Diagramm-Bereich anzeigen</string>
     <string name="settings_show_charts_section_visible">Diagramm-Bereich in der Navigation sichtbar</string>
     <string name="settings_show_charts_section_hidden">Diagramm-Bereich in der Navigation ausgeblendet</string>
@@ -207,8 +207,10 @@
     <string name="settings_reduce_motion_subtitle">Minimiert Animationen und \u00dcberg\u00e4nge. Hilfreich f\u00fcr bewegungsempfindliche Nutzer.</string>
     <string name="settings_date_format">Datumsformat</string>
     <string name="settings_section_currency">W\u00e4hrung</string>
+    <string name="settings_section_formatting">Formatting</string>
     <string name="settings_section_dates">Daten</string>
     <string name="settings_section_other">Sonstiges</string>
+    <string name="settings_section_data_privacy">Data &amp; Privacy</string>
 
     <string name="dialog_choose_date_format">Datumsformat w\u00e4hlen</string>
     <string name="settings_data_management">Datenverwaltung</string>
@@ -248,7 +250,7 @@
     <string name="settings_send_feedback_subtitle">Hilf uns die App zu verbessern</string>
     <string name="settings_privacy_policy">Datenschutzrichtlinie</string>
     <string name="settings_privacy_policy_subtitle">Wie wir mit deinen Daten umgehen</string>
-    <string name="settings_about">Über</string>
+    <string name="settings_about">Information</string>
     <string name="settings_app_version">App-Version</string>
     <string name="settings_third_party">Drittanbieter</string>
     <string name="settings_third_party_libraries">Open-Source-Bibliotheken</string>
@@ -411,6 +413,8 @@
 
      <!-- Transaction Display -->
      <string name="settings_transaction_display">Icon auf Transaktionen</string>
+    <string name="settings_transaction_display_home">Transaction Icon (Home)</string>
+    <string name="settings_transaction_display_list">Transaction Icon (List)</string>
      <string name="settings_transaction_display_desc">Wähle aus, welches Symbol für jede Transaktion angezeigt werden soll</string>
      <string name="settings_transaction_display_trend">Trendsymbole</string>
      <string name="settings_transaction_display_trend_desc">Zeigt Pfeil nach oben für Einnahmen, nach unten für Ausgaben</string>

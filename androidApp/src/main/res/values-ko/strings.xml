@@ -170,7 +170,7 @@
     <string name="settings_theme_system">시스템 설정값</string>
     <string name="settings_language">언어</string>
     <string name="settings_display">표시 설정</string>
-    <string name="settings_display_subtitle">통화, 소수점 및 형식 설정</string>
+    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
     <string name="settings_show_charts_section">차트 섹션 표시</string>
     <string name="settings_show_charts_section_visible">탐색 메뉴에 차트 섹션 표시됨</string>
     <string name="settings_show_charts_section_hidden">탐색 메뉴에서 차트 섹션 숨겨짐</string>
@@ -191,8 +191,10 @@
     <string name="settings_separator_none">없음</string>
     <string name="settings_date_format">날짜 형식</string>
     <string name="settings_section_currency">통화</string>
+    <string name="settings_section_formatting">Formatting</string>
     <string name="settings_section_dates">날짜</string>
     <string name="settings_section_other">기타</string>
+    <string name="settings_section_data_privacy">Data &amp; Privacy</string>
     <string name="settings_reset_preferences">모든 설정 초기화</string>
     <string name="settings_reset_preferences_subtitle">모든 설정을 기본값으로 복원</string>
     <string name="settings_section_widgets">위젯</string>
@@ -416,6 +418,8 @@
 
     <!-- Transaction Display -->
     <string name="settings_transaction_display">거래 항목 아이콘</string>
+    <string name="settings_transaction_display_home">Transaction Icon (Home)</string>
+    <string name="settings_transaction_display_list">Transaction Icon (List)</string>
     <string name="settings_transaction_display_desc">거래 내역에 표시할 아이콘 선택</string>
     <string name="settings_transaction_display_trend">추세 화살표</string>
     <string name="settings_transaction_display_trend_desc">수입은 위쪽, 지출은 아래쪽 화살표 표시</string>
@@ -475,7 +479,7 @@
     <string name="tutorial_finish">확인!</string>
     <string name="tutorial_progress_cd">튜토리��� %1$d단계 / %2$d단계</string>
 
-    <string name="settings_about">설정</string>
+    <string name="settings_about">Information</string>
 
     <!-- Category Translations (Keys) -->
     <string name="category_uncategorized">미분류</string>

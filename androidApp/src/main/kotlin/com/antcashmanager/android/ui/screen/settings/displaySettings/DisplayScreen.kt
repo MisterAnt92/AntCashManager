@@ -37,6 +37,7 @@ import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material.icons.filled.TipsAndUpdates
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -69,6 +70,7 @@ import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
+import com.antcashmanager.android.ui.components.common.AppDivider
 import com.antcashmanager.android.ui.components.common.AppSlider
 import com.antcashmanager.android.ui.components.common.AppSwitch
 import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
@@ -296,7 +298,7 @@ internal fun DisplayContent(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 item {
-                    CurrencySection(
+                    FormattingSection(
                         currencySymbol = currencySymbol,
                         decimalDigits = decimalDigits,
                         decimalSeparator = decimalSeparator,
@@ -305,6 +307,8 @@ internal fun DisplayContent(
                         onShowDecimalDigitsDialog = { showDecimalDigitsDialog = true },
                         onShowDecimalSeparatorDialog = { showDecimalSeparatorDialog = true },
                         onShowThousandsSeparatorDialog = { showThousandsSeparatorDialog = true },
+                        dateFormat = dateFormat,
+                        onShowDateFormatDialog = { showDateFormatDialog = true },
                     )
                 }
 
@@ -318,13 +322,6 @@ internal fun DisplayContent(
                         onShowMealVoucherDialog = { showMealVoucherDialog = true },
                         defaultPaymentType = defaultPaymentType,
                         onShowPaymentTypeDialog = { showPaymentTypeDialog = true },
-                    )
-                }
-
-                item {
-                    DateSection(
-                        dateFormat = dateFormat,
-                        onShowDateFormatDialog = { showDateFormatDialog = true },
                     )
                 }
 
@@ -400,7 +397,7 @@ internal fun DisplayContent(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    CurrencySection(
+                    FormattingSection(
                         currencySymbol = currencySymbol,
                         decimalDigits = decimalDigits,
                         decimalSeparator = decimalSeparator,
@@ -409,6 +406,8 @@ internal fun DisplayContent(
                         onShowDecimalDigitsDialog = { showDecimalDigitsDialog = true },
                         onShowDecimalSeparatorDialog = { showDecimalSeparatorDialog = true },
                         onShowThousandsSeparatorDialog = { showThousandsSeparatorDialog = true },
+                        dateFormat = dateFormat,
+                        onShowDateFormatDialog = { showDateFormatDialog = true },
                     )
                     PaymentTypeSection(
                         currencySymbol = currencySymbol,
@@ -419,10 +418,6 @@ internal fun DisplayContent(
                         onShowMealVoucherDialog = { showMealVoucherDialog = true },
                         defaultPaymentType = defaultPaymentType,
                         onShowPaymentTypeDialog = { showPaymentTypeDialog = true },
-                    )
-                    DateSection(
-                        dateFormat = dateFormat,
-                        onShowDateFormatDialog = { showDateFormatDialog = true },
                     )
                     TransactionsDisplaySection(
                         transactionDisplayType = transactionsTransactionDisplayType,
@@ -770,7 +765,7 @@ private fun separatorLabel(
 }
 
 @Composable
-private fun CurrencySection(
+private fun FormattingSection(
     currencySymbol: String,
     decimalDigits: Int,
     decimalSeparator: String,
@@ -779,8 +774,10 @@ private fun CurrencySection(
     onShowDecimalDigitsDialog: () -> Unit,
     onShowDecimalSeparatorDialog: () -> Unit,
     onShowThousandsSeparatorDialog: () -> Unit,
+    dateFormat: String,
+    onShowDateFormatDialog: () -> Unit,
 ) {
-    AppCardSectionHeader(title = stringResource(R.string.settings_section_currency))
+    AppCardSectionHeader(title = stringResource(R.string.settings_section_formatting))
     VerticalSpacer(SpacingSize.XS)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -843,6 +840,23 @@ private fun CurrencySection(
             color = MaterialTheme.colorScheme.primary,
         )
     }
+
+    VerticalSpacer(SpacingSize.SM)
+
+    val currentDateExample =
+        remember(dateFormat) {
+            runCatching {
+                val formatter = SimpleDateFormat(dateFormat, Locale.getDefault())
+                formatter.format(Date())
+            }.getOrElse { dateFormat }
+        }
+
+    AppCard(
+        title = stringResource(R.string.settings_date_format),
+        subtitle = stringResource(R.string.settings_date_format_subtitle, currentDateExample),
+        leadingIcon = Icons.Default.CalendarMonth,
+        onClick = onShowDateFormatDialog,
+    )
 }
 
 @Composable
@@ -886,44 +900,38 @@ private fun PaymentTypeSection(
                 else -> stringResource(R.string.payment_type_electronic)
             }
 
+        val paymentTypeIcon =
+            when (defaultPaymentType) {
+                "CASH" -> Icons.Default.MonetizationOn
+                "MEAL_VOUCHERS" -> Icons.Default.Restaurant
+                else -> Icons.Default.CreditCard
+            }
+
         AppCard(
             title = stringResource(R.string.settings_default_payment_type),
             subtitle = stringResource(R.string.settings_default_payment_type_desc),
             leadingIcon = Icons.Default.Payment,
             onClick = onShowPaymentTypeDialog,
             trailingContent = {
-                AppText(
-                    text = paymentTypeLabel,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.primary,
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    Icon(
+                        imageVector = paymentTypeIcon,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    AppText(
+                        text = paymentTypeLabel,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             },
         )
     }
-}
-
-@Composable
-private fun DateSection(
-    dateFormat: String,
-    onShowDateFormatDialog: () -> Unit,
-) {
-    AppCardSectionHeader(title = stringResource(R.string.settings_section_dates))
-    VerticalSpacer(SpacingSize.XS)
-
-    val currentDateExample =
-        remember(dateFormat) {
-            runCatching {
-                val formatter = SimpleDateFormat(dateFormat, Locale.getDefault())
-                formatter.format(Date())
-            }.getOrElse { dateFormat }
-        }
-
-    AppCard(
-        title = stringResource(R.string.settings_date_format),
-        subtitle = stringResource(R.string.settings_date_format_subtitle, currentDateExample),
-        leadingIcon = Icons.Default.CalendarMonth,
-        onClick = onShowDateFormatDialog,
-    )
 }
 
 @Composable
@@ -1006,7 +1014,7 @@ private fun HomeDisplaySection(
         )
 
         AppCard(
-            title = stringResource(R.string.settings_transaction_display),
+            title = stringResource(R.string.settings_transaction_display_home),
             subtitle = stringResource(R.string.settings_transaction_display_desc),
             leadingIcon = Icons.Default.Visibility,
             onClick = onShowTransactionDisplayDialog,
@@ -1026,7 +1034,7 @@ private fun TransactionsDisplaySection(
     VerticalSpacer(SpacingSize.XS)
 
     AppCard(
-        title = stringResource(R.string.settings_transaction_display),
+        title = stringResource(R.string.settings_transaction_display_list),
         subtitle = stringResource(R.string.settings_transaction_display_desc),
         leadingIcon = Icons.Default.Visibility,
         onClick = onShowTransactionDisplayDialog,
@@ -1297,6 +1305,10 @@ private fun OtherSection(
             },
             onClick = { onMaskAmountsChanged(!maskAmounts) },
         )
+
+        VerticalSpacer(SpacingSize.SM)
+        AppDivider()
+        VerticalSpacer(SpacingSize.SM)
 
         AppCard(
             title = stringResource(R.string.settings_reset_preferences),

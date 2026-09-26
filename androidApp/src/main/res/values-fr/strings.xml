@@ -156,7 +156,7 @@
     <string name="settings_theme_system">Par d\u00e9faut du syst\u00e8me</string>
     <string name="settings_language">Langue</string>
     <string name="settings_display">Affichage</string>
-    <string name="settings_display_subtitle">Personnalisez la devise, les décimales et le formatage</string>
+    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
     <string name="settings_show_charts_section">Afficher la section Graphiques</string>
     <string name="settings_show_charts_section_visible">Section Graphiques visible dans la navigation</string>
     <string name="settings_show_charts_section_hidden">Section Graphiques masquée de la navigation</string>
@@ -194,8 +194,10 @@
     <string name="settings_reduce_motion_subtitle">Minimise les animations et les transitions. Utile pour les utilisateurs sensibles au mouvement.</string>
     <string name="settings_date_format">Format de date</string>
     <string name="settings_section_currency">Devise</string>
+    <string name="settings_section_formatting">Formatting</string>
     <string name="settings_section_dates">Dates</string>
     <string name="settings_section_other">Autre</string>
+    <string name="settings_section_data_privacy">Data &amp; Privacy</string>
     <string name="dialog_choose_date_format">Choisir le format de date</string>
     <string name="settings_data_management">Gestion des donn\u00e9es</string>
     <string name="settings_security">S\u00e9curit\u00e9</string>
@@ -234,7 +236,7 @@
     <string name="settings_send_feedback_subtitle">Aidez-nous \u00e0 am\u00e9liorer l\'application</string>
     <string name="settings_privacy_policy">Politique de confidentialit\u00e9</string>
     <string name="settings_privacy_policy_subtitle">Comment nous traitons vos donn\u00e9es</string>
-    <string name="settings_about">À propos</string>
+    <string name="settings_about">Information</string>
     <string name="settings_app_version">Version de l\'application</string>
     <string name="settings_third_party">Tiers</string>
     <string name="settings_third_party_libraries">Biblioth\u00e8ques open-source</string>
@@ -376,6 +378,8 @@
     <string name="payment_breakdown_label">Solde par Type de Paiement</string>
     <string name="payment_breakdown_item_desc">Solde avec %1$s : %2$.2f</string>
     <string name="settings_transaction_display">Icône sur la transaction</string>
+    <string name="settings_transaction_display_home">Transaction Icon (Home)</string>
+    <string name="settings_transaction_display_list">Transaction Icon (List)</string>
     <string name="settings_transaction_display_desc">Choisissez quelle icône afficher pour chaque transaction</string>
     <string name="settings_transaction_display_trend">Tendance</string>
     <string name="settings_transaction_display_trend_desc">Flèche vers le haut pour les revenus, vers le bas pour les dépenses</string>

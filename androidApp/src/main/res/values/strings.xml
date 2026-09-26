@@ -187,7 +187,7 @@
     <string name="settings_theme_system">System Default</string>
     <string name="settings_language">Language</string>
     <string name="settings_display">Display</string>
-    <string name="settings_display_subtitle">Customize currency, decimals, and formatting</string>
+    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
     <string name="settings_show_charts_section">Show Charts Section</string>
     <string name="settings_show_charts_section_visible">Charts section visible in navigation</string>
     <string name="settings_show_charts_section_hidden">Charts section hidden from navigation</string>
@@ -208,8 +208,10 @@
     <string name="settings_separator_none">None</string>
     <string name="settings_date_format">Date Format</string>
     <string name="settings_section_currency">Currency</string>
+    <string name="settings_section_formatting">Formatting</string>
     <string name="settings_section_dates">Dates</string>
     <string name="settings_section_other">Other</string>
+    <string name="settings_section_data_privacy">Data &amp; Privacy</string>
     <string name="settings_reset_preferences">Reset All Preferences</string>
     <string name="settings_reset_preferences_subtitle">Restore all settings to their default values</string>
     <string name="settings_section_widgets">Widgets</string>
@@ -438,6 +440,8 @@
 
     <!-- Transaction Display -->
     <string name="settings_transaction_display">Icon on transactions</string>
+    <string name="settings_transaction_display_home">Transaction Icon (Home)</string>
+    <string name="settings_transaction_display_list">Transaction Icon (List)</string>
     <string name="settings_transaction_display_desc">Choose which icon to display for each transaction</string>
     <string name="settings_transaction_display_trend">Trend Arrows</string>
     <string name="settings_transaction_display_trend_desc">Displays arrow up for income, down for expenses</string>
@@ -497,7 +501,7 @@
     <string name="tutorial_finish">Got it!</string>
     <string name="tutorial_progress_cd">Tutorial step %1$d of %2$d</string>
 
-    <string name="settings_about">Settings</string>
+    <string name="settings_about">Information</string>
 
     <!-- Category Translations (Keys) -->
     <string name="category_uncategorized">Uncategorized</string>
