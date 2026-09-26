@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.transactions.view
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -26,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.animation.AnimatedCard
@@ -33,6 +35,7 @@ import com.antcashmanager.android.ui.components.button.AppButton
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.text.AppText
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.ExpenseRed
 import com.antcashmanager.android.ui.theme.IncomeGreen
 import com.antcashmanager.domain.model.Category
@@ -391,5 +394,73 @@ fun ActiveFiltersRow(
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
+    }
+}
+
+@Preview(showBackground = true, name = "FilterCard - Light")
+@Composable
+private fun FilterCardLightPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        FilterCard(
+            categories = emptyList(),
+            selectedCategory = null,
+            selectedTransactionType = null,
+            selectedPaymentType = null,
+            onCategorySelected = {},
+            onTransactionTypeSelected = {},
+            onPaymentTypeSelected = {},
+            onClearFilters = {},
+            hasFilterChanges = false,
+            onApplyFilters = {},
+            onCancelFilters = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "FilterCard - Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun FilterCardDarkPreview() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        FilterCard(
+            categories = emptyList(),
+            selectedCategory = null,
+            selectedTransactionType = null,
+            selectedPaymentType = null,
+            onCategorySelected = {},
+            onTransactionTypeSelected = {},
+            onPaymentTypeSelected = {},
+            onClearFilters = {},
+            hasFilterChanges = false,
+            onApplyFilters = {},
+            onCancelFilters = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "ActiveFiltersRow - Light")
+@Composable
+private fun ActiveFiltersRowLightPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        ActiveFiltersRow(
+            searchQuery = "pizza",
+            selectedCategory = null,
+            selectedTransactionType = null,
+            selectedPaymentType = null,
+            onClearAll = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "ActiveFiltersRow - Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun ActiveFiltersRowDarkPreview() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        ActiveFiltersRow(
+            searchQuery = "pizza",
+            selectedCategory = null,
+            selectedTransactionType = null,
+            selectedPaymentType = null,
+            onClearAll = {},
+        )
     }
 }

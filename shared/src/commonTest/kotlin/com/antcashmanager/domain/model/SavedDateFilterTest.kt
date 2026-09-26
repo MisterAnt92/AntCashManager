@@ -1,6 +1,5 @@
 package com.antcashmanager.domain.model
 
-import com.antcashmanager.domain.model.SavedDateFilter
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

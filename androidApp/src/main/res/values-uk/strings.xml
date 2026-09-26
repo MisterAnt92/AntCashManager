@@ -172,7 +172,7 @@
     <string name="settings_theme_system">Системна за замовчуванням</string>
     <string name="settings_language">Мова</string>
     <string name="settings_display">Дисплей</string>
-    <string name="settings_display_subtitle">Налаштуйте валюту, десяткові знаки та форматування</string>
+    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
     <string name="settings_show_charts_section">Показати розділ графіків</string>
     <string name="settings_show_charts_section_visible">Розділ графіків видимий у навігації</string>
     <string name="settings_show_charts_section_hidden">Розділ графіків прихований у навігації</string>
@@ -193,8 +193,10 @@
     <string name="settings_separator_none">Немає</string>
     <string name="settings_date_format">Формат дати</string>
     <string name="settings_section_currency">Валюта</string>
+    <string name="settings_section_formatting">Formatting</string>
     <string name="settings_section_dates">Дати</string>
     <string name="settings_section_other">Інше</string>
+    <string name="settings_section_data_privacy">Data &amp; Privacy</string>
     <string name="settings_reset_preferences">Скинути всі налаштування</string>
     <string name="settings_reset_preferences_subtitle">Відновити всі налаштування до значень за замо��чуванням</string>
     <string name="settings_section_widgets">Віджети</string>
@@ -293,6 +295,10 @@
     <string name="settings_auto_backup">Автоматичне резервне копіювання</string>
     <string name="settings_auto_backup_subtitle">Автоматичне резервне копіювання щотижня</string>
     <string name="settings_auto_backup_weekly_label">Автоматичне резервне копіювання щотижня</string>
+    <string name="settings_auto_backup_frequency_label">Частота резервного копіювання</string>
+    <string name="settings_backup_frequency_weekly">Щотижня</string>
+    <string name="settings_backup_frequency_biweekly">Кожні два тижні</string>
+    <string name="settings_backup_frequency_monthly">Щомісяця</string>
     <string name="settings_auto_backup_destination_local">Локально</string>
     <string name="settings_auto_backup_google_drive_coming_soon">Найближчим часом</string>
     <string name="settings_auto_backup_google_drive_sign_in_title">Увімкнути резервне копіювання на Google Drive</string>
@@ -412,6 +418,8 @@
 
     <!-- Transaction Display -->
     <string name="settings_transaction_display">Значок транзакцій</string>
+    <string name="settings_transaction_display_home">Transaction Icon (Home)</string>
+    <string name="settings_transaction_display_list">Transaction Icon (List)</string>
     <string name="settings_transaction_display_desc">Виберіть значок для відображення кожної транзакції</string>
     <string name="settings_transaction_display_trend">Стрілки тренду</string>
     <string name="settings_transaction_display_trend_desc">Стрілка вгору для доходів, вниз — для видатків</string>
@@ -474,7 +482,7 @@
     <string name="tutorial_finish">Зрозуміло!</string>
     <string name="tutorial_progress_cd">Крок навчання %1$d з %2$d</string>
 
-    <string name="settings_about">Налаштування</string>
+    <string name="settings_about">Information</string>
 
     <!-- Category Translations (Keys) -->
     <string name="category_uncategorized">Без категорії</string>
@@ -627,7 +635,6 @@
     <string name="settings_default_payment_type">Спосіб оплати за замовчуванням</string>
     <string name="settings_default_payment_type_desc">Виберіть спосіб оплати за замовчуванням для нових операцій</string>
     <string name="dialog_payment_type_title">Виберіть спосіб оплати</string>
-
 
 
     <!-- Analytics Consent Dialog (GDPR) -->

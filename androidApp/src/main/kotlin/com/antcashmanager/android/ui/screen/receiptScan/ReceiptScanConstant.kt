@@ -10,6 +10,7 @@ object ReceiptScanConstant {
     const val ERROR_SELECT_CATEGORY = "Seleziona una categoria"
     const val ERROR_INVALID_AMOUNT = "Importo non valido"
     const val ERROR_SAVE = "Errore durante il salvataggio"
+
     /** Modello OCR ancora in download via Play Services (unbundled ML Kit). */
     const val ERROR_MODEL_NOT_READY = "Modello OCR in download, riprova tra qualche secondo"
 

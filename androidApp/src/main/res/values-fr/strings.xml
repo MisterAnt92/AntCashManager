@@ -156,7 +156,7 @@
     <string name="settings_theme_system">Par d\u00e9faut du syst\u00e8me</string>
     <string name="settings_language">Langue</string>
     <string name="settings_display">Affichage</string>
-    <string name="settings_display_subtitle">Personnalisez la devise, les décimales et le formatage</string>
+    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
     <string name="settings_show_charts_section">Afficher la section Graphiques</string>
     <string name="settings_show_charts_section_visible">Section Graphiques visible dans la navigation</string>
     <string name="settings_show_charts_section_hidden">Section Graphiques masquée de la navigation</string>
@@ -194,8 +194,10 @@
     <string name="settings_reduce_motion_subtitle">Minimise les animations et les transitions. Utile pour les utilisateurs sensibles au mouvement.</string>
     <string name="settings_date_format">Format de date</string>
     <string name="settings_section_currency">Devise</string>
+    <string name="settings_section_formatting">Formatting</string>
     <string name="settings_section_dates">Dates</string>
     <string name="settings_section_other">Autre</string>
+    <string name="settings_section_data_privacy">Data &amp; Privacy</string>
     <string name="dialog_choose_date_format">Choisir le format de date</string>
     <string name="settings_data_management">Gestion des donn\u00e9es</string>
     <string name="settings_security">S\u00e9curit\u00e9</string>
@@ -219,6 +221,10 @@
     <string name="settings_auto_backup">Sauvegarde automatique</string>
     <string name="settings_auto_backup_subtitle">Sauvegarde automatique hebdomadaire sur le stockage local</string>
     <string name="settings_auto_backup_weekly_label">La sauvegarde automatique est hebdomadaire</string>
+    <string name="settings_auto_backup_frequency_label">Fréquence de sauvegarde</string>
+    <string name="settings_backup_frequency_weekly">Hebdomadaire</string>
+    <string name="settings_backup_frequency_biweekly">Toutes les deux semaines</string>
+    <string name="settings_backup_frequency_monthly">Mensuel</string>
     <string name="settings_auto_backup_destination_local">Stockage local</string>
     <string name="settings_auto_backup_google_drive_coming_soon">\u00c0 venir bient\u00f4t</string>
     <string name="auto_backup_notification_channel_name">Erreurs de sauvegarde automatique</string>
@@ -230,7 +236,7 @@
     <string name="settings_send_feedback_subtitle">Aidez-nous \u00e0 am\u00e9liorer l\'application</string>
     <string name="settings_privacy_policy">Politique de confidentialit\u00e9</string>
     <string name="settings_privacy_policy_subtitle">Comment nous traitons vos donn\u00e9es</string>
-    <string name="settings_about">À propos</string>
+    <string name="settings_about">Information</string>
     <string name="settings_app_version">Version de l\'application</string>
     <string name="settings_third_party">Tiers</string>
     <string name="settings_third_party_libraries">Biblioth\u00e8ques open-source</string>
@@ -372,6 +378,8 @@
     <string name="payment_breakdown_label">Solde par Type de Paiement</string>
     <string name="payment_breakdown_item_desc">Solde avec %1$s : %2$.2f</string>
     <string name="settings_transaction_display">Icône sur la transaction</string>
+    <string name="settings_transaction_display_home">Transaction Icon (Home)</string>
+    <string name="settings_transaction_display_list">Transaction Icon (List)</string>
     <string name="settings_transaction_display_desc">Choisissez quelle icône afficher pour chaque transaction</string>
     <string name="settings_transaction_display_trend">Tendance</string>
     <string name="settings_transaction_display_trend_desc">Flèche vers le haut pour les revenus, vers le bas pour les dépenses</string>
@@ -536,32 +544,32 @@
     <string name="chart_daily_expenses_title">Dépenses Quotidiennes</string>
     <string name="chart_last_14_days">14 derniers jours</string>
     <string name="chart_average">Moyenne</string>
-     <string name="chart_weekday_distribution_title">Distribution par Jour</string>
+    <string name="chart_weekday_distribution_title">Distribution par Jour</string>
 
-     <!-- Weekday names (1=Monday, 7=Sunday - EU convention) -->
-     <string name="weekday_1">Lun</string>
-     <string name="weekday_2">Mar</string>
-     <string name="weekday_3">Mer</string>
-     <string name="weekday_4">Jeu</string>
-     <string name="weekday_5">Ven</string>
-     <string name="weekday_6">Sam</string>
-     <string name="weekday_7">Dim</string>
+    <!-- Weekday names (1=Monday, 7=Sunday - EU convention) -->
+    <string name="weekday_1">Lun</string>
+    <string name="weekday_2">Mar</string>
+    <string name="weekday_3">Mer</string>
+    <string name="weekday_4">Jeu</string>
+    <string name="weekday_5">Ven</string>
+    <string name="weekday_6">Sam</string>
+    <string name="weekday_7">Dim</string>
 
-     <string name="error_generic">Une erreur est survenue</string>
+    <string name="error_generic">Une erreur est survenue</string>
 
-     <!-- Charts Customization -->
-     <string name="charts_customize_cards_title">Personnaliser l\'ordre des cartes</string>
+    <!-- Charts Customization -->
+    <string name="charts_customize_cards_title">Personnaliser l\'ordre des cartes</string>
 
-     <!-- Chart Details Bottom Sheet -->
-     <string name="chart_details_title">Détails</string>
-     <string name="chart_details_percentage">%d%% du total</string>
-     <string name="chart_details_amount">Montant</string>
-     <string name="chart_details_transactions">Transactions</string>
-     <string name="chart_details_info_title">Information Catégorie</string>
-     <string name="chart_details_info_description">Appuyez sur une partie du graphique pour voir plus de détails sur cette catégorie</string>
-     <string name="chart_trend_increasing">Tendance dépenses: En augmentation</string>
-     <string name="chart_trend_decreasing">Tendance dépenses: En diminution</string>
-     <string name="chart_trend_stable">Tendance dépenses: Stable</string>
+    <!-- Chart Details Bottom Sheet -->
+    <string name="chart_details_title">Détails</string>
+    <string name="chart_details_percentage">%d%% du total</string>
+    <string name="chart_details_amount">Montant</string>
+    <string name="chart_details_transactions">Transactions</string>
+    <string name="chart_details_info_title">Information Catégorie</string>
+    <string name="chart_details_info_description">Appuyez sur une partie du graphique pour voir plus de détails sur cette catégorie</string>
+    <string name="chart_trend_increasing">Tendance dépenses: En augmentation</string>
+    <string name="chart_trend_decreasing">Tendance dépenses: En diminution</string>
+    <string name="chart_trend_stable">Tendance dépenses: Stable</string>
 
     <!-- App Description -->
     <string name="app_description">Cette application est née du besoin de suivre les dépenses familiales gratuitement et de comparer les augmentations de prix.</string>
@@ -571,7 +579,6 @@
     <string name="settings_default_payment_type">Méthode de paiement par défaut</string>
     <string name="settings_default_payment_type_desc">Choisissez la méthode de paiement par défaut pour les nouvelles transactions</string>
     <string name="dialog_payment_type_title">Sélectionner la méthode de paiement</string>
-
 
 
     <!-- Analytics Consent Dialog (GDPR) -->

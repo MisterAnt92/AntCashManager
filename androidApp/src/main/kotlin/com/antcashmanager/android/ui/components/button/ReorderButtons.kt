@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.components.button
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDownward
@@ -10,7 +11,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 /**
  * Reusable component for up/down reordering buttons with dynamic tint feedback.
@@ -70,5 +73,83 @@ fun ReorderButtons(
                     },
             )
         }
+    }
+}
+
+@Preview(showBackground = true, name = "ReorderButtons - Light")
+@Composable
+private fun ReorderButtonsLightPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        ReorderButtons(
+            onMoveUp = {},
+            onMoveDown = {},
+            canMoveUp = true,
+            canMoveDown = true,
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "ReorderButtons - Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun ReorderButtonsDarkPreview() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        ReorderButtons(
+            onMoveUp = {},
+            onMoveDown = {},
+            canMoveUp = true,
+            canMoveDown = true,
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "ReorderButtons - 2x", fontScale = 2.0f)
+@Composable
+private fun ReorderButtonsLargeTextPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        ReorderButtons(
+            onMoveUp = {},
+            onMoveDown = {},
+            canMoveUp = true,
+            canMoveDown = true,
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "ReorderButtons Disabled - Light")
+@Composable
+private fun ReorderButtonsDisabledLightPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        ReorderButtons(
+            onMoveUp = {},
+            onMoveDown = {},
+            canMoveUp = false,
+            canMoveDown = false,
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "ReorderButtons Disabled - Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun ReorderButtonsDisabledDarkPreview() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        ReorderButtons(
+            onMoveUp = {},
+            onMoveDown = {},
+            canMoveUp = false,
+            canMoveDown = false,
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "ReorderButtons Disabled - 2x", fontScale = 2.0f)
+@Composable
+private fun ReorderButtonsDisabledLargeTextPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        ReorderButtons(
+            onMoveUp = {},
+            onMoveDown = {},
+            canMoveUp = false,
+            canMoveDown = false,
+        )
     }
 }

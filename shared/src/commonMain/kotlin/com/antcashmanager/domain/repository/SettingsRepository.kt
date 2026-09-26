@@ -3,6 +3,7 @@ package com.antcashmanager.domain.repository
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.BackupDestination
+import com.antcashmanager.domain.model.BackupFrequency
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.TransactionDisplayType
 import kotlinx.coroutines.flow.Flow
@@ -168,6 +169,11 @@ public interface SettingsRepository {
     public fun getAutoBackupFolderUri(): Flow<String?>
 
     public suspend fun setAutoBackupFolderUri(uri: String?): Unit
+
+    // ── Backup Frequency ──
+    public fun getBackupFrequency(): Flow<BackupFrequency>
+
+    public suspend fun setBackupFrequency(frequency: BackupFrequency): Unit
 
     // ── Google Drive Backup Configuration ──
     public fun getAutoBackupDestination(): Flow<BackupDestination>

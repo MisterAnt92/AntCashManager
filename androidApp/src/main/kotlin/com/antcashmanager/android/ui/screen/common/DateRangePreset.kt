@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.common
 
+import android.icu.util.Calendar
 import com.antcashmanager.android.R
 
 /**
@@ -31,19 +32,26 @@ object DateRangePreset {
     const val DEFAULT_PRESET_INDEX = 1
 
     /**
-     * Compute the start of the date range for a given preset index.
+     * Compute the start of the date range for a given preset index using calendar-aware arithmetic.
+     * Month and year presets use Calendar.add() to handle varying month lengths and leap years.
      */
-    fun dateFromForPreset(index: Int, now: Long = System.currentTimeMillis()): Long =
+    fun dateFromForPreset(index: Int, now: Long = System.currentTimeMillis()): Long {
+        val fromCal = Calendar.getInstance()
+        fromCal.timeInMillis = now
+
         when (index) {
-            0 -> now - ONE_DAY_MS
-            1 -> now - ONE_WEEK_MS
-            2 -> now - THIRTY_DAYS_MS
-            3 -> now - ONE_YEAR_MS
-            4 -> now - TWO_YEARS_MS
-            5 -> now - THREE_YEARS_MS
-            6 -> now - FIVE_YEARS_MS
-            7 -> now - SIX_YEARS_MS
-            8 -> now - ALL_TIME_MS
-            else -> now - ONE_WEEK_MS
+            0 -> fromCal.add(Calendar.DAY_OF_YEAR, -1) // today -> -1 day
+            1 -> fromCal.add(Calendar.DAY_OF_YEAR, -7) // week -> -7 days
+            2 -> fromCal.add(Calendar.MONTH, -1) // month -> -1 calendar month
+            3 -> fromCal.add(Calendar.YEAR, -1) // year -> -1 calendar year
+            4 -> fromCal.add(Calendar.YEAR, -2)
+            5 -> fromCal.add(Calendar.YEAR, -3)
+            6 -> fromCal.add(Calendar.YEAR, -5)
+            7 -> fromCal.add(Calendar.YEAR, -6)
+            8 -> fromCal.set(2000, 0, 1) // all time
+            else -> fromCal.add(Calendar.DAY_OF_YEAR, -7)
         }
+
+        return fromCal.timeInMillis
+    }
 }

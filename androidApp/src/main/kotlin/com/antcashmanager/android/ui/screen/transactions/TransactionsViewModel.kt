@@ -358,11 +358,20 @@ class TransactionsViewModel(
             is TransactionsEvent.UpdateTransaction -> updateTransaction(event.transaction)
 
             // New UI state events (for split-pane & navigation)
-            is TransactionsEvent.ShowTransactionDetails -> { /* Handled by Screen for foldable sync */ }
-            is TransactionsEvent.DismissTransactionDetails -> { /* Handled by Screen */ }
-            is TransactionsEvent.HelpOpened -> { /* Navigation handled by Screen */ }
-            is TransactionsEvent.ReceiptScanOpened -> { /* Navigation handled by Screen */ }
-            is TransactionsEvent.AddTransactionOpened -> { /* Navigation handled by Screen */ }
+            is TransactionsEvent.ShowTransactionDetails -> { /* Handled by Screen for foldable sync */
+            }
+
+            is TransactionsEvent.DismissTransactionDetails -> { /* Handled by Screen */
+            }
+
+            is TransactionsEvent.HelpOpened -> { /* Navigation handled by Screen */
+            }
+
+            is TransactionsEvent.ReceiptScanOpened -> { /* Navigation handled by Screen */
+            }
+
+            is TransactionsEvent.AddTransactionOpened -> { /* Navigation handled by Screen */
+            }
         }
     }
 

@@ -1,8 +1,8 @@
 # UI Verification Checklist - Meal Vouchers Feature
 
-**Feature**: Meal Vouchers with "Differenza Pagata" (Difference Paid)  
-**Version**: v1.7.2  
-**Date**: 2026-08-15  
+**Feature**: Meal Vouchers with "Differenza Pagata" (Difference Paid)
+**Version**: v1.7.2
+**Date**: 2026-08-15
 **Objective**: Comprehensive visual and interaction verification
 
 ---
@@ -126,9 +126,9 @@
 - [ ] Shape: `RoundedCornerShape(16.dp)`
 - [ ] Label: Visible and clear
 - [ ] Placeholder: Shown when empty (e.g., "0.00")
-- [ ] Keyboard type: 
-  - Number for "Numero buoni"
-  - Decimal for "Differenza pagata"
+- [ ] Keyboard type:
+    - Number for "Numero buoni"
+    - Decimal for "Differenza pagata"
 - [ ] Single line: true (no line breaks)
 - [ ] Width: `fillMaxWidth()` (full width)
 
@@ -141,14 +141,17 @@
 ### Spacing (SpacingSize enum)
 
 **Between Numero buoni and Differenza pagata**:
+
 - [ ] Changed from `SpacingSize.XS` to `SpacingSize.MD` ← IMPORTANT
 - [ ] Visual separation clear and not cramped
 - [ ] Not excessive (not `SpacingSize.LG`)
 
 **Between Differenza pagata and Importo totale**:
+
 - [ ] `SpacingSize.XS` (minimal - just visual separation)
 
 **Between Importo totale and Subtotale display**:
+
 - [ ] `SpacingSize.XS` (minimal)
 
 ---
@@ -219,6 +222,7 @@
 ```
 
 **Character Encoding**:
+
 - [ ] Special characters (è, à, ì, ù) display correctly
 - [ ] No mojibake or corrupted text
 - [ ] Currency symbol (€) displays correctly
@@ -263,6 +267,7 @@ Subtotale buoni: 26.45€
 ```
 
 **Verify**:
+
 - [ ] Calculation correct: count × 5.29
 - [ ] Format: "X.XX€" with 2 decimals
 - [ ] Currency symbol properly positioned
@@ -277,6 +282,7 @@ Differenza pagata: 3.55€
 ```
 
 **Verify**:
+
 - [ ] Only shown when EXPENSE type
 - [ ] Format: "X.XX€" with 2 decimals
 - [ ] Displayed in secondary color
@@ -290,6 +296,7 @@ Always displayed when `isMealVouchersPayment`:
 ```
 
 **Verify**:
+
 - [ ] Value = subtotal + difference
 - [ ] Read-only (disabled appearance)
 - [ ] Alpha reduced (0.7f) to show disabled state
@@ -305,6 +312,7 @@ Always displayed when `isMealVouchersPayment`:
 **Setup**: Focus on Numero buoni field
 
 **Verify**:
+
 - [ ] Keyboard type: Numeric (0-9 only)
 - [ ] No decimal point allowed
 - [ ] Max 3 digits (999 limit enforced)
@@ -312,6 +320,7 @@ Always displayed when `isMealVouchersPayment`:
 - [ ] Clear/backspace works
 
 **Test Values**:
+
 - [ ] Input "0" → Accepted
 - [ ] Input "5" → Accepted
 - [ ] Input "999" → Accepted
@@ -323,12 +332,14 @@ Always displayed when `isMealVouchersPayment`:
 **Setup**: Focus on Differenza pagata field
 
 **Verify**:
+
 - [ ] Keyboard type: Decimal (0-9 and . allowed)
 - [ ] Allows comma or point for decimal separator
 - [ ] Max 2 decimal places enforced
 - [ ] Negative values rejected or normalized
 
 **Test Values**:
+
 - [ ] Input "0.00" → Accepted
 - [ ] Input "3.55" → Accepted
 - [ ] Input "3,55" → Normalized to "3.55"
@@ -345,6 +356,7 @@ Always displayed when `isMealVouchersPayment`:
 **Setup**: Use Tab key to navigate (or accessibility focus)
 
 **Expected Tab Order**:
+
 1. Categoria button
 2. Tipo button
 3. Data button
@@ -361,6 +373,7 @@ Always displayed when `isMealVouchersPayment`:
 14. Save button
 
 **Verify**:
+
 - [ ] Tab order logical and predictable
 - [ ] No skipping of fields
 - [ ] Focus visible (ring/highlight)
@@ -381,33 +394,39 @@ Always displayed when `isMealVouchersPayment`:
 ### Screen Reader Announcements
 
 **Numero buoni Field**:
+
 - [ ] Announced: "Numero buoni pasto, edit box, value 5"
 - [ ] Keyboard type announced: "numeric"
 - [ ] Label clearly associated
 
 **Differenza pagata Field** (EXPENSE only):
+
 - [ ] Announced: "Differenza pagata, edit box, value 3.55"
 - [ ] Keyboard type announced: "decimal" or "numeric with decimal"
 - [ ] Label clearly associated
 - [ ] **NOT announced on INCOME type** ← Critical
 
 **Importo totale Field**:
+
 - [ ] Announced: "Importo totale buoni pasto, read-only, value 30.00"
 - [ ] Disabled state announced clearly
 
 **Card Container**:
+
 - [ ] Announced: "Buoni Pasto" (section title)
 - [ ] Card structure understandable
 
 ### Navigation with TalkBack
 
 **Test**:
+
 1. Navigate down through all fields
 2. [ ] All fields reachable
 3. [ ] Logical order maintained
 4. [ ] No redundant announcements
 
 **Input with TalkBack**:
+
 1. Double-tap Numero buoni field
 2. [ ] Keyboard opens
 3. [ ] Can type using keyboard
@@ -426,12 +445,14 @@ Always displayed when `isMealVouchersPayment`:
 
 ### Rotation (Portrait ↔ Landscape)
 
-**Setup**: 
+**Setup**:
+
 1. Enter EXPENSE + Meal Vouchers
 2. Fill in: Numero buoni = "5", Differenza pagata = "3.55"
 3. Rotate device 90°
 
 **Verify**:
+
 - [ ] Numero buoni value preserved: "5"
 - [ ] Differenza pagata value preserved: "3.55"
 - [ ] Total recalculated correctly: "30.00"
@@ -441,30 +462,36 @@ Always displayed when `isMealVouchersPayment`:
 ### Navigation Away & Back
 
 **Setup**:
+
 1. Enter partial transaction data
 2. Tap back button (don't save)
 
 **Verify**:
+
 - [ ] Dialog: "Discard changes?" shown
 - [ ] Options: Cancel / Discard
 
 **If Cancel**:
+
 - [ ] Return to form
 - [ ] Data preserved
 
 **If Discard**:
+
 - [ ] Return to previous screen
 - [ ] Data cleared
 
 ### App Lifecycle
 
 **Setup**:
+
 1. Enter transaction with meal vouchers
 2. Press Home (minimize app)
 3. Wait 30 seconds
 4. Return to app (recent apps)
 
 **Verify**:
+
 - [ ] App restored to same state
 - [ ] Form data preserved
 - [ ] No crashes
@@ -476,35 +503,42 @@ Always displayed when `isMealVouchersPayment`:
 ### Color Verification
 
 **Card Background**:
+
 - [ ] Light secondary container color
 - [ ] Semi-transparent (alpha 0.3)
 - [ ] Consistent across light/dark theme
 
 **Text Colors**:
+
 - [ ] Labels: Primary color or strong contrast
 - [ ] Values: `onSecondaryContainer` for card text
 - [ ] Disabled fields: Reduced contrast (alpha 0.7f)
 
 **Total Amount Display**:
+
 - [ ] Primary color emphasizing calculation
 - [ ] Bold or SemiBold font weight
 
 **Subtotale Display**:
+
 - [ ] Secondary color distinguishing from total
 - [ ] SemiBold weight
 
 ### Font Verification
 
 **Title ("Buoni Pasto")**:
+
 - [ ] `titleSmall` style
 - [ ] FontWeight.Bold
 - [ ] Appropriate size hierarchy
 
 **Field Labels**:
+
 - [ ] `labelMedium` or equivalent
 - [ ] Clear and readable
 
 **Values/Calculations**:
+
 - [ ] `bodyMedium` for balance
 - [ ] `bodySmall` for secondary info
 
@@ -515,14 +549,15 @@ Always displayed when `isMealVouchersPayment`:
 ### Calculation Tests (with Calculator)
 
 | Count | Value | Difference | Expected Total | Actual | Status |
-|-------|-------|------------|-----------------|--------|--------|
-| 5 | 5.29 | 0.00 | 26.45 | __ | [ ] |
-| 5 | 5.29 | 3.55 | 30.00 | __ | [ ] |
-| 10 | 5.29 | 0.00 | 52.90 | __ | [ ] |
-| 1 | 5.29 | 0.01 | 5.30 | __ | [ ] |
-| 99 | 5.29 | 99.99 | 624.43 | __ | [ ] |
+|-------|-------|------------|----------------|--------|--------|
+| 5     | 5.29  | 0.00       | 26.45          | __     | [ ]    |
+| 5     | 5.29  | 3.55       | 30.00          | __     | [ ]    |
+| 10    | 5.29  | 0.00       | 52.90          | __     | [ ]    |
+| 1     | 5.29  | 0.01       | 5.30           | __     | [ ]    |
+| 99    | 5.29  | 99.99      | 624.43         | __     | [ ]    |
 
 **Verification Method**:
+
 1. Enter each scenario
 2. Compare screen total with calculator
 3. Mark [ ] if match, [✗] if mismatch
@@ -531,16 +566,16 @@ Always displayed when `isMealVouchersPayment`:
 
 ## 🐛 Known Issues to Monitor
 
-| Issue | Impact | How to Spot |
-|-------|--------|-----------|
-| Difference field shows on INCOME | CRITICAL | Create INCOME + vouchers, see field |
-| Calculation off by 0.01€ | High | 5×5.29 = 26.45 not 26.44 |
-| Field truncation on small screen | Medium | 360dp phone width, check overflow |
-| String not translated | Medium | Change language, see missing key |
-| TalkBack doesn't read field | High | Enable TalkBack, navigate with focus |
-| Keyboard type wrong | Medium | Numeric field allows decimals |
-| Total field editable | CRITICAL | Try to tap/type in total field |
-| Negative difference accepted | High | Enter -5.00, should reject |
+| Issue                            | Impact   | How to Spot                          |
+|----------------------------------|----------|--------------------------------------|
+| Difference field shows on INCOME | CRITICAL | Create INCOME + vouchers, see field  |
+| Calculation off by 0.01€         | High     | 5×5.29 = 26.45 not 26.44             |
+| Field truncation on small screen | Medium   | 360dp phone width, check overflow    |
+| String not translated            | Medium   | Change language, see missing key     |
+| TalkBack doesn't read field      | High     | Enable TalkBack, navigate with focus |
+| Keyboard type wrong              | Medium   | Numeric field allows decimals        |
+| Total field editable             | CRITICAL | Try to tap/type in total field       |
+| Negative difference accepted     | High     | Enter -5.00, should reject           |
 
 ---
 
@@ -549,18 +584,21 @@ Always displayed when `isMealVouchersPayment`:
 Complete this checklist before marking feature as "UI Verified":
 
 ### Layout & Styling
+
 - [ ] Card styling correct (background, radius, padding)
 - [ ] Field styling consistent (shapes, sizes)
 - [ ] Spacing correct (SpacingSize.MD between key fields)
 - [ ] No visual glitches or overlaps
 
 ### Responsive Design
+
 - [ ] Layout OK on 360dp (small phone)
 - [ ] Layout OK on 800dp (tablet)
 - [ ] Layout OK on foldable/split-screen
 - [ ] All fields accessible without horizontal scroll
 
 ### Text & Translation
+
 - [ ] Italian (IT) strings correct
 - [ ] English (EN) strings correct
 - [ ] Sample language (e.g., FR) correct
@@ -568,30 +606,35 @@ Complete this checklist before marking feature as "UI Verified":
 - [ ] Currency display correct
 
 ### Keyboard & Input
+
 - [ ] Numero buoni: numeric keyboard only
 - [ ] Differenza pagata: decimal keyboard
 - [ ] Negative values rejected
 - [ ] Precision enforced (2 decimals max)
 
 ### Accessibility
+
 - [ ] TalkBack reads all fields
 - [ ] Logical tab order maintained
 - [ ] Focus visible on all interactive elements
 - [ ] Screen reader announces field values
 
 ### Calculation
+
 - [ ] Subtotal calculated: count × 5.29
 - [ ] Total calculated: subtotal + difference
 - [ ] Display shows correct currency format
 - [ ] Sample calculations verified with calculator
 
 ### Critical Specification (EXPENSE-only)
+
 - [ ] EXPENSE transaction: Differenza pagata field VISIBLE
 - [ ] INCOME transaction: Differenza pagata field HIDDEN
 - [ ] Edit EXPENSE: Field populated correctly
 - [ ] Edit INCOME: Field not shown
 
 ### Data Persistence
+
 - [ ] Rotation preserves data
 - [ ] Navigation away/back works
 - [ ] App lifecycle state preserved
@@ -599,18 +642,18 @@ Complete this checklist before marking feature as "UI Verified":
 
 ---
 
-**Tester Name**: ___________________  
-**Date**: ___________________  
-**Device**: ___________________  
-**API Level**: ___________________  
-**Language**: ___________________  
+**Tester Name**: ___________________
+**Date**: ___________________
+**Device**: ___________________
+**API Level**: ___________________
+**Language**: ___________________
 
-**Overall Result**: ✅ PASS / ❌ FAIL  
-**Issues Found**: ____________________  
+**Overall Result**: ✅ PASS / ❌ FAIL
+**Issues Found**: ____________________
 **Sign-Off**: ✅ Ready for Release / ❌ Needs Fixes
 
 ---
 
-**Document Version**: 1.0  
-**Last Updated**: 2026-08-15  
+**Document Version**: 1.0
+**Last Updated**: 2026-08-15
 **Status**: Ready for Testing

@@ -1,13 +1,16 @@
 package com.antcashmanager.android.ui.screen.transactions.view
 
+import android.content.res.Configuration
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ViewList
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.dialog.AppHelpDialog
 import com.antcashmanager.android.ui.components.dialog.HelpDialogFeatureSpec
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 /**
  * Dialog di aiuto specifico per la schermata delle transazioni.
@@ -39,4 +42,23 @@ internal fun HelpDialog(onDismiss: () -> Unit) {
         onDismiss = onDismiss,
         features = features,
     )
+}
+
+
+@Preview(showBackground = true, name = "HelpDialog - Light")
+@Composable
+private fun HelpDialogLightPreview() {
+    AntCashManagerTheme(dynamicColor = false) { HelpDialog(onDismiss = {}) }
+}
+
+@Preview(showBackground = true, name = "HelpDialog - Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun HelpDialogDarkPreview() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) { HelpDialog(onDismiss = {}) }
+}
+
+@Preview(showBackground = true, name = "HelpDialog - 2x", fontScale = 2.0f)
+@Composable
+private fun HelpDialogLargeTextPreview() {
+    AntCashManagerTheme(dynamicColor = false) { HelpDialog(onDismiss = {}) }
 }

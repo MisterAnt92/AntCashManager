@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.categories.view
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -33,11 +34,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.text.AppText
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -95,7 +98,8 @@ fun AddCategoryDialog(
                                         } else {
                                             MaterialTheme.colorScheme.surfaceVariant
                                         },
-                                    ).then(
+                                    )
+                                    .then(
                                         if (isSelected) {
                                             Modifier.border(
                                                 2.dp,
@@ -105,7 +109,8 @@ fun AddCategoryDialog(
                                         } else {
                                             Modifier
                                         },
-                                    ).selectable(
+                                    )
+                                    .selectable(
                                         selected = isSelected,
                                         onClick = { selectedIcon = iconKey },
                                         role = Role.RadioButton,
@@ -156,7 +161,8 @@ fun AddCategoryDialog(
                                         } else {
                                             Modifier
                                         },
-                                    ).clickable { selectedColor = color },
+                                    )
+                                    .clickable { selectedColor = color },
                             contentAlignment = Alignment.Center,
                         ) {
                             if (color == selectedColor) {
@@ -192,4 +198,40 @@ fun AddCategoryDialog(
             TextButton(onClick = onDismiss) { AppText(stringResource(R.string.common_cancel)) }
         },
     )
+}
+
+@Preview(showBackground = true, name = "AddCategoryDialog - Light")
+@Composable
+private fun AddCategoryDialogLightPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        AddCategoryDialog(
+            currentType = "EXPENSE",
+            onConfirm = { _, _, _ -> },
+            onDismiss = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "AddCategoryDialog - Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun AddCategoryDialogDarkPreview() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        AddCategoryDialog(
+            currentType = "EXPENSE",
+            onConfirm = { _, _, _ -> },
+            onDismiss = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "AddCategoryDialog - 2x", fontScale = 2.0f)
+@Composable
+private fun AddCategoryDialogLargeTextPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        AddCategoryDialog(
+            currentType = "EXPENSE",
+            onConfirm = { _, _, _ -> },
+            onDismiss = {},
+        )
+    }
 }

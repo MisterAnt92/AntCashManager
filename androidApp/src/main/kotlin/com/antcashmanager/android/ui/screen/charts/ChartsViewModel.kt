@@ -151,6 +151,7 @@ class ChartsViewModel(
                     event.colorHex,
                     event.isExpense,
                 )
+
             is ChartEvent.ClearChartSelection -> clearChartSelection()
             is ChartEvent.RetryLastOperation -> logInfo("Retry requested")
             is ChartEvent.SetChartCardsOrder -> setChartCardsOrder(event.order)
@@ -278,6 +279,16 @@ class ChartsViewModel(
             expenseTransactions
                 .groupBy { it.category }
                 .mapValues { (_, txs) -> kotlin.math.abs(txs.sumOf { it.amount }) } // Use absolute value for pie chart
+
+        val incomeCountByCategory =
+            incomeTransactions
+                .groupBy { it.category }
+                .mapValues { (_, txs) -> txs.size }
+
+        val expenseCountByCategory =
+            expenseTransactions
+                .groupBy { it.category }
+                .mapValues { (_, txs) -> txs.size }
 
         val totalIncome = incomeByCategory.values.sum()
         val totalExpense =
@@ -426,8 +437,10 @@ class ChartsViewModel(
         return ChartData(
             incomeByCategory = incomeByCategory,
             expenseByCategory = expenseByCategory,
+            incomeCountByCategory = incomeCountByCategory,
+            expenseCountByCategory = expenseCountByCategory,
             totalIncome = totalIncome,
-            totalExpense = totalExpense, // Will be negative
+            totalExpense = totalExpense, // Positive absolute value (sum of |expense| per category)
             monthlyData = monthlyData,
             yearlyData = yearlyData,
             paymentTypeBreakdown = paymentTypeBreakdown,
@@ -463,8 +476,8 @@ class ChartsViewModel(
         // Calculate trend based on transaction count for this category
         val transactionCount =
             when {
-                isExpense -> currentData.expenseByCategory[categoryName]?.let { 1 } ?: 0
-                else -> currentData.incomeByCategory[categoryName]?.let { 1 } ?: 0
+                isExpense -> currentData.expenseCountByCategory[categoryName] ?: 0
+                else -> currentData.incomeCountByCategory[categoryName] ?: 0
             }
 
         val details =

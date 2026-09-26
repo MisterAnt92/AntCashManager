@@ -58,7 +58,8 @@ internal fun DetailsRecurrenceSection(
                     } else {
                         MaterialTheme.colorScheme.surfaceVariant
                     },
-                ).clickable { onRecurringChanged(!isRecurring) }
+                )
+                .clickable { onRecurringChanged(!isRecurring) }
                 .padding(horizontal = 16.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,

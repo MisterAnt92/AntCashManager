@@ -31,14 +31,14 @@ echo "────────────────────────�
 cd "${PROJECT_ROOT}"
 
 # Run unit tests with Jacoco
-./gradlew :androidApp:testDebugUnitTest -x :androidApp:connectedDebugAndroidTest --info 2>&1 | grep -E "testDebugUnitTest|PASSED|FAILED" || true
+./gradlew :androidApp:testFullDebugUnitTest -x :androidApp:connectedDebugAndroidTest --info 2>&1 | grep -E "testFullDebugUnitTest|PASSED|FAILED" || true
 
 echo ""
 echo "📦 Unit Test Coverage Report"
 echo "────────────────────────────────────────────────────────────────────"
 
-if [ -f "${PROJECT_ROOT}/androidApp/build/reports/jacoco/testDebugUnitTest/html/index.html" ]; then
-    echo "✅ Unit Test Report: file://${PROJECT_ROOT}/androidApp/build/reports/jacoco/testDebugUnitTest/html/index.html"
+if [ -f "${PROJECT_ROOT}/androidApp/build/reports/jacoco/testFullDebugUnitTest/html/index.html" ]; then
+    echo "✅ Unit Test Report: file://${PROJECT_ROOT}/androidApp/build/reports/jacoco/testFullDebugUnitTest/html/index.html"
 else
     echo "⚠️  Unit Test Report not generated"
 fi

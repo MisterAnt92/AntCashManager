@@ -49,6 +49,7 @@ object AppExitManager {
                     finishAndRemoveTask()
                     logExit("finishAndRemoveTask", isSamsung, apiLevel, manufacturer)
                 }
+
                 else -> {
                     // API < 35: Use standard finish()
                     logger.d("Attempting finish() on API < 35")

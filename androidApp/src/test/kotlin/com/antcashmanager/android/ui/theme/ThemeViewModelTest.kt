@@ -2,8 +2,6 @@ package com.antcashmanager.android.ui.theme
 
 import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.testutil.FakeSettingsRepository
-import com.antcashmanager.android.ui.theme.ThemeEvent
-import com.antcashmanager.android.ui.theme.ThemeViewModel
 import com.antcashmanager.domain.model.AppTheme
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch

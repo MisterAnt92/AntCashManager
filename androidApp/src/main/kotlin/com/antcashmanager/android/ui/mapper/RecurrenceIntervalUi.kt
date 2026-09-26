@@ -34,4 +34,5 @@ fun RecurrenceInterval.labelRes(): Int =
 
 /** Label for a raw persisted key; falls back to the generic "Recurring" label for unknown keys. */
 @StringRes
-fun recurrenceIntervalLabelRes(raw: String): Int = recurrenceIntervalOf(raw)?.labelRes() ?: R.string.transactions_recurring
+fun recurrenceIntervalLabelRes(raw: String): Int =
+    recurrenceIntervalOf(raw)?.labelRes() ?: R.string.transactions_recurring

@@ -96,9 +96,11 @@ class AutoBackupWorker(
             // Genera nome file e timestamp
             val timestamp = System.currentTimeMillis()
             val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
-            val fileName = "${SettingsDataConstant.BACKUP_FILE_PREFIX}${dateFormat.format(
-                Date(timestamp),
-            )}${SettingsDataConstant.BACKUP_FILE_SUFFIX}"
+            val fileName = "${SettingsDataConstant.BACKUP_FILE_PREFIX}${
+                dateFormat.format(
+                    Date(timestamp),
+                )
+            }${SettingsDataConstant.BACKUP_FILE_SUFFIX}"
 
             // ── 4. Scrivi a destinazione (LOCAL o GOOGLE_DRIVE) ──
             val writeResult =
@@ -260,11 +262,13 @@ class AutoBackupWorker(
                         Logger.w(tag = "AutoBackupWorker") { "Token expired — will retry after refresh" }
                         throw error // Re-throw per trigger Result.retry()
                     }
+
                     error?.message?.contains("403") == true -> {
                         Logger.e(tag = "AutoBackupWorker") { "Permission denied — user must sign in again" }
                         AutoBackupNotifier.notifyFailure(applicationContext)
                         false
                     }
+
                     else -> {
                         AutoBackupNotifier.notifyFailure(applicationContext)
                         false

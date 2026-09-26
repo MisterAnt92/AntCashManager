@@ -156,7 +156,7 @@ class AntCashManagerApp : Application() {
                         isDefault = true,
                     ),
                 ) + newDefaultExpenseCategories
-            ).mapIndexed { index, category -> category.copy(sortOrder = index) }
+                ).mapIndexed { index, category -> category.copy(sortOrder = index) }
 
         val incomeCategories =
             (
@@ -211,7 +211,7 @@ class AntCashManagerApp : Application() {
                         isDefault = true,
                     ),
                 ) + newDefaultIncomeCategories
-            ).mapIndexed { index, category -> category.copy(sortOrder = index) }
+                ).mapIndexed { index, category -> category.copy(sortOrder = index) }
 
         (expenseCategories + incomeCategories).forEach { category ->
             categoryRepository.insertCategory(category)

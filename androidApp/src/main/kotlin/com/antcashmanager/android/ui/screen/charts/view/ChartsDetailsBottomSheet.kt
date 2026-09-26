@@ -288,7 +288,8 @@ private fun TrendIndicator(direction: TrendDirection) {
                 .background(
                     color = trendColor.copy(alpha = 0.1f),
                     shape = MaterialTheme.shapes.small,
-                ).padding(12.dp),
+                )
+                .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
@@ -354,4 +355,6 @@ private fun Card(
 }
 
 // Helper extension for Modifier.size when used with Spacer
-private fun Modifier.size(size: androidx.compose.ui.unit.Dp): Modifier = this.width(size).height(size)
+private fun Modifier.size(size: androidx.compose.ui.unit.Dp): Modifier = this
+    .width(size)
+    .height(size)

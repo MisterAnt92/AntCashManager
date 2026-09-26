@@ -66,7 +66,11 @@ fun FoldableAwareLayout(
             // Horizontal fold (Z Flip style) - split top/bottom
             Column(modifier = modifier.fillMaxWidth()) {
                 // Top pane
-                Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                ) {
                     topContent(Dp.Unspecified, Dp.Unspecified)
                 }
 
@@ -74,7 +78,11 @@ fun FoldableAwareLayout(
                 Spacer(modifier = Modifier.height(HINGE_WIDTH))
 
                 // Bottom pane
-                Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                ) {
                     bottomContent?.invoke(Dp.Unspecified, Dp.Unspecified)
                         ?: topContent(Dp.Unspecified, Dp.Unspecified)
                 }

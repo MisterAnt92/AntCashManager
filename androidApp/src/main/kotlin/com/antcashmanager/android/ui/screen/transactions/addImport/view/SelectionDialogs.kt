@@ -130,7 +130,8 @@ internal fun TypeRadioButton(
                     } else {
                         MaterialTheme.colorScheme.surfaceVariant
                     },
-                ).clickable(onClick = onClick)
+                )
+                .clickable(onClick = onClick)
                 .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -201,7 +202,8 @@ internal fun PaymentTypeRadioButton(
                     } else {
                         MaterialTheme.colorScheme.surfaceVariant
                     },
-                ).clickable(onClick = onClick)
+                )
+                .clickable(onClick = onClick)
                 .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),

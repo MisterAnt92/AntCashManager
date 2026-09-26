@@ -8,6 +8,8 @@ import com.antcashmanager.domain.model.PaymentType
 data class ChartData(
     val incomeByCategory: Map<String, Double> = emptyMap(),
     val expenseByCategory: Map<String, Double> = emptyMap(),
+    val incomeCountByCategory: Map<String, Int> = emptyMap(),
+    val expenseCountByCategory: Map<String, Int> = emptyMap(),
     val totalIncome: Double = 0.0,
     val totalExpense: Double = 0.0,
     val monthlyData: List<MonthlyAmount> = emptyList(),

@@ -55,11 +55,42 @@ Regenerate: `grep -rhoE "^(internal )?fun [A-Z]\w+\(" androidApp/src/main/kotlin
 
 ## Previews
 
-- Required (light + dark) for composables in `ui/components/` and `screen/<feature>/view/`. Root `*Screen` composables have **no** previews (removed in FASE 7a — do not add them back).
+**REQUIRED for every composable in `ui/components/` and `screen/<feature>/view/`: 3 variants (Light, Dark, 2x font scale).** Root `*Screen` composables have **no** previews (removed in FASE 7a — do not add them back).
+
+Every new `@Composable` created must include these 3 previews immediately:
+
 ```kotlin
-@Preview(name = "Light") @Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable private fun IncomeExpenseRowPreview() { AntCashManagerTheme { IncomeExpenseRow(income = 100.0, expense = 40.0) } }
+@Preview(showBackground = true, name = "ComponentName - Light")
+@Composable
+private fun ComponentNameLightPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        ComponentName(/* realistic sample args */)
+    }
+}
+
+@Preview(showBackground = true, name = "ComponentName - Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun ComponentNameDarkPreview() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        ComponentName(/* realistic sample args */)
+    }
+}
+
+@Preview(showBackground = true, name = "ComponentName - 2x", fontScale = 2.0f)
+@Composable
+private fun ComponentNameLargeTextPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        ComponentName(/* realistic sample args */)
+    }
+}
 ```
+
+**Guidelines:**
+- `showBackground = true` on all 3
+- Dark uses `darkTheme = true, dynamicColor = false` (not `uiMode` inside theme)
+- 2x uses `fontScale = 2.0f` in annotation; same light theme
+- Function names: `<ComposableName><Variant>Preview`; all `private`
+- Sample args always realistic (never empty `""`, `0`, or defaults that hide real behavior)
 
 ## Strings — 13 locales
 

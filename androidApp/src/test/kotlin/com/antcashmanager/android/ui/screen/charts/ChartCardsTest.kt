@@ -8,7 +8,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.onNodeWithText
 import com.antcashmanager.android.BaseComposeUnitTest
-import com.antcashmanager.android.ui.screen.charts.DailyAmount
 import com.antcashmanager.android.ui.screen.charts.view.QuickStatsCard
 import com.antcashmanager.android.ui.screen.charts.view.WeekdayExpenseCard
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme

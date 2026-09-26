@@ -1,4 +1,5 @@
 package com.antcashmanager.android.ui.components.card
+
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.onNodeWithText
 import com.antcashmanager.android.BaseComposeUnitTest

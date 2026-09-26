@@ -5,6 +5,8 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.antcashmanager.android.R
+import com.antcashmanager.android.work.AutoBackupNotifier.ensureChannel
+import com.antcashmanager.android.work.AutoBackupNotifier.notifyFailure
 
 /**
  * Gestisce la creazione del NotificationChannel per i fallimenti del backup automatico

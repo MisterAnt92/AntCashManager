@@ -42,6 +42,7 @@ import com.antcashmanager.android.ui.screen.home.HomeState
 import com.antcashmanager.android.ui.screen.home.event.HomeEvent
 import com.antcashmanager.android.ui.screen.home.model.HomeTopCardType
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 
 private const val HOME_SCREEN_TAG = "home_screen"
 private const val RECENT_COUNT_TAG = "recent_transactions_count"
@@ -66,7 +67,9 @@ fun HomeListPane(
     }
 
     Scaffold(
-        modifier = modifier.fillMaxSize().testTag(HOME_SCREEN_TAG),
+        modifier = modifier
+            .fillMaxSize()
+            .testTag(HOME_SCREEN_TAG),
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         floatingActionButton = {
             AnimatedVisibility(
@@ -177,7 +180,7 @@ private fun TopCard(
             )
 
         HomeTopCardType.INCOME_EXPENSE ->
-            IncomeExpenseRow(totalIncome = state.totalIncome, totalExpense = state.totalExpense)
+            IncomeExpenseRow(totalIncome = state.totalIncome, totalExpense = abs(state.totalExpense))
 
         HomeTopCardType.QUICK_INSIGHTS ->
             QuickInsightsCard(

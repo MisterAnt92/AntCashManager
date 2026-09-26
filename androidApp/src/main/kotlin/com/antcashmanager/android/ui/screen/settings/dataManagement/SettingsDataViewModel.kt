@@ -11,6 +11,7 @@ import com.antcashmanager.android.security.BackupPayloadCipher
 import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.android.work.AutoBackupScheduler
 import com.antcashmanager.domain.model.BackupDestination
+import com.antcashmanager.domain.model.BackupFrequency
 import com.antcashmanager.domain.model.None
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
@@ -82,6 +83,11 @@ class SettingsDataViewModel(
         viewModelScope.launch {
             settingsRepositoryRef.getAutoBackupFolderUri().collect { uri ->
                 _state.update { it.copy(autoBackupFolderUri = uri) }
+            }
+        }
+        viewModelScope.launch {
+            settingsRepositoryRef.getBackupFrequency().collect { frequency ->
+                _state.update { it.copy(autoBackupFrequency = frequency) }
             }
         }
         // ── Phase 2: Google Drive Backup ──
@@ -191,8 +197,8 @@ class SettingsDataViewModel(
         logDebug("Setting auto backup enabled: $enabled")
         viewModelScope.launch {
             if (enabled) {
-                // Enable: chiama il scheduler per avviare il backup settimanale
-                autoBackupScheduler.schedule()
+                // Enable: chiama il scheduler con la frequenza corrente
+                autoBackupScheduler.schedule(_state.value.autoBackupFrequency.intervalDays)
             } else {
                 // Disable: cancella il lavoro schedulato
                 autoBackupScheduler.cancel()
@@ -207,7 +213,18 @@ class SettingsDataViewModel(
             // Persisti URI, abilita backup, e schedula il lavoro
             settingsRepositoryRef.setAutoBackupFolderUri(uriString)
             settingsRepositoryRef.setAutoBackupEnabled(true)
-            autoBackupScheduler.schedule()
+            autoBackupScheduler.schedule(_state.value.autoBackupFrequency.intervalDays)
+        }
+    }
+
+    fun setBackupFrequency(frequency: BackupFrequency) {
+        logDebug("Setting backup frequency: $frequency")
+        viewModelScope.launch {
+            settingsRepositoryRef.setBackupFrequency(frequency)
+            // Se il backup è abilitato, re-schedula con il nuovo intervallo
+            if (_state.value.autoBackupEnabled) {
+                autoBackupScheduler.schedule(frequency.intervalDays)
+            }
         }
     }
 
@@ -480,18 +497,23 @@ class SettingsDataViewModel(
                                                 "I backup con crittografia device-bound non possono essere ripristinati su telefoni diversi. " +
                                                 "Usa backup con password protetta (v1.8+) per trasferimenti tra dispositivi."
                                         }
+
                                         error.message?.contains("password-based") == true -> {
                                             "Questo backup richiede una password. Aggiorna all'app v1.8+ per ripristinare backup con password."
                                         }
+
                                         else -> "Payload di backup invalido o danneggiato"
                                     }
                                 }
+
                                 is javax.crypto.BadPaddingException -> {
                                     "Chiave di crittografia non corrisponde - password errata?"
                                 }
+
                                 is java.security.InvalidKeyException -> {
                                     "Chiave di crittografia non valida"
                                 }
+
                                 else -> {
                                     error.message ?: SettingsDataConstant.UNKNOWN_ERROR
                                 }
@@ -584,6 +606,7 @@ class SettingsDataViewModel(
                     settingsRepositoryRef.setAutoBackupDestination(BackupDestination.LOCAL)
                     _state.update { it.copy(showGoogleSignInDialog = false) }
                 }
+
                 BackupDestination.GOOGLE_DRIVE -> {
                     // Seleziona GOOGLE_DRIVE: verifica se già loggato
                     val isSignedIn = googleSignInManager.isSignedIn()

@@ -3,6 +3,7 @@ package com.antcashmanager.android.testutil
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.BackupDestination
+import com.antcashmanager.domain.model.BackupFrequency
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.SettingsRepository
@@ -69,8 +70,11 @@ open class FakeSettingsRepository : SettingsRepository {
     val autoBackupEnabled = MutableStateFlow(false)
     val autoBackupDestination = MutableStateFlow(BackupDestination.LOCAL)
     val autoBackupFolderUri = MutableStateFlow<String?>(null)
+    val backupFrequency = MutableStateFlow(BackupFrequency.WEEKLY)
     val googleDriveFolderId = MutableStateFlow<String?>(null)
     val googleDriveFolderName = MutableStateFlow<String?>(null)
+    val googleDriveAuthToken = MutableStateFlow<String?>(null)
+    val googleDriveRefreshToken = MutableStateFlow<String?>(null)
     val googleDriveUserEmail = MutableStateFlow<String?>(null)
     val defaultPaymentType = MutableStateFlow("ELECTRONIC")
 
@@ -245,7 +249,9 @@ open class FakeSettingsRepository : SettingsRepository {
 
     val analyticsConsent = MutableStateFlow<Boolean?>(null)
     override fun getAnalyticsConsent(): Flow<Boolean?> = analyticsConsent
-    override suspend fun setAnalyticsConsent(granted: Boolean) { analyticsConsent.value = granted }
+    override suspend fun setAnalyticsConsent(granted: Boolean) {
+        analyticsConsent.value = granted
+    }
 
     override fun getCategorySortOrderInitialized(): Flow<Boolean> = categorySortOrderInitialized
 
@@ -283,6 +289,12 @@ open class FakeSettingsRepository : SettingsRepository {
         autoBackupFolderUri.value = uri
     }
 
+    override fun getBackupFrequency(): Flow<BackupFrequency> = backupFrequency
+
+    override suspend fun setBackupFrequency(frequency: BackupFrequency) {
+        backupFrequency.value = frequency
+    }
+
     override fun getAutoBackupDestination(): Flow<BackupDestination> = autoBackupDestination
 
     override suspend fun setAutoBackupDestination(destination: BackupDestination) {
@@ -301,20 +313,16 @@ open class FakeSettingsRepository : SettingsRepository {
         googleDriveFolderName.value = folderName
     }
 
-    override fun getGoogleDriveAuthToken(): Flow<String?> {
-        TODO("Not yet implemented")
-    }
+    override fun getGoogleDriveAuthToken(): Flow<String?> = googleDriveAuthToken
 
     override suspend fun setGoogleDriveAuthToken(token: String?) {
-        TODO("Not yet implemented")
+        googleDriveAuthToken.value = token
     }
 
-    override fun getGoogleDriveRefreshToken(): Flow<String?> {
-        TODO("Not yet implemented")
-    }
+    override fun getGoogleDriveRefreshToken(): Flow<String?> = googleDriveRefreshToken
 
     override suspend fun setGoogleDriveRefreshToken(token: String?) {
-        TODO("Not yet implemented")
+        googleDriveRefreshToken.value = token
     }
 
     override fun getGoogleDriveUserEmail(): Flow<String?> = googleDriveUserEmail
@@ -388,6 +396,7 @@ open class FakeSettingsRepository : SettingsRepository {
         autoBackupEnabled.value = false
         autoBackupDestination.value = BackupDestination.LOCAL
         autoBackupFolderUri.value = null
+        backupFrequency.value = BackupFrequency.WEEKLY
         googleDriveFolderId.value = null
         googleDriveFolderName.value = null
         googleDriveUserEmail.value = null

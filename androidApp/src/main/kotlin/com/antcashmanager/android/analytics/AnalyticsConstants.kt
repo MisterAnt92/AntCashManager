@@ -1,5 +1,8 @@
 package com.antcashmanager.android.analytics
 
+import com.antcashmanager.android.analytics.AnalyticsConstants.ALLOWED_USAGE_EVENTS
+
+
 /**
  * Shared constants for analytics tracking.
  *

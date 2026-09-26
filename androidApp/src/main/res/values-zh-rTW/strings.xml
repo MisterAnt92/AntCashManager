@@ -170,7 +170,7 @@
     <string name="settings_theme_system">系統預設</string>
     <string name="settings_language">語言</string>
     <string name="settings_display">顯示</string>
-    <string name="settings_display_subtitle">自訂貨幣、小數和格式</string>
+    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
     <string name="settings_show_charts_section">顯示圖表部分</string>
     <string name="settings_show_charts_section_visible">導航中顯示圖表部分</string>
     <string name="settings_show_charts_section_hidden">導航中隱藏圖表部分</string>
@@ -191,8 +191,10 @@
     <string name="settings_separator_none">無</string>
     <string name="settings_date_format">日期格式</string>
     <string name="settings_section_currency">貨幣</string>
+    <string name="settings_section_formatting">Formatting</string>
     <string name="settings_section_dates">日期</string>
     <string name="settings_section_other">其他</string>
+    <string name="settings_section_data_privacy">Data &amp; Privacy</string>
     <string name="settings_reset_preferences">重置所有偏好設定</string>
     <string name="settings_reset_preferences_subtitle">將所有設定恢復為預設值</string>
     <string name="settings_section_widgets">小部件</string>
@@ -287,6 +289,10 @@
     <string name="settings_auto_backup">自動備份</string>
     <string name="settings_auto_backup_subtitle">每週自動備份</string>
     <string name="settings_auto_backup_weekly_label">自動備份每週進行一次</string>
+    <string name="settings_auto_backup_frequency_label">備份頻率</string>
+    <string name="settings_backup_frequency_weekly">每週</string>
+    <string name="settings_backup_frequency_biweekly">每兩週</string>
+    <string name="settings_backup_frequency_monthly">每月</string>
     <string name="settings_auto_backup_destination_local">本機</string>
     <string name="settings_auto_backup_google_drive_coming_soon">即將推出</string>
     <string name="settings_auto_backup_google_drive_sign_in_title">啟用Google Drive備份</string>
@@ -405,6 +411,8 @@
 
     <!-- Transaction Display -->
     <string name="settings_transaction_display">交易圖示</string>
+    <string name="settings_transaction_display_home">Transaction Icon (Home)</string>
+    <string name="settings_transaction_display_list">Transaction Icon (List)</string>
     <string name="settings_transaction_display_desc">選擇每條交易顯示的圖示</string>
     <string name="settings_transaction_display_trend">趨勢箭頭</string>
     <string name="settings_transaction_display_trend_desc">收入顯示上箭頭，支出顯示下箭頭</string>
@@ -467,7 +475,7 @@
     <string name="tutorial_finish">明白了！</string>
     <string name="tutorial_progress_cd">教程第 %1$d 步，共 %2$d 步</string>
 
-    <string name="settings_about">設定</string>
+    <string name="settings_about">Information</string>
 
     <!-- Category Translations (Keys) -->
     <string name="category_uncategorized">未分類</string>

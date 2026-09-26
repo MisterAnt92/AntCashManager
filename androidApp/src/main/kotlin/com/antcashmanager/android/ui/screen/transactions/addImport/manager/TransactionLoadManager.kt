@@ -3,6 +3,7 @@ package com.antcashmanager.android.ui.screen.transactions.addImport.manager
 import com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayConstant
 import com.antcashmanager.android.ui.screen.transactions.addImport.AddTransactionState
 import com.antcashmanager.domain.model.Category
+import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.settings.GetMealVoucherValueUseCase
 import com.antcashmanager.domain.usecase.transaction.GetTransactionByIdUseCase
@@ -97,6 +98,16 @@ class TransactionLoadManager(
         transactionId: Long,
         currentState: AddTransactionState,
     ): Result<AddTransactionState> =
+        prepareEditState(transactionId) { currentState }
+
+    /**
+     * Variante che legge lo stato corrente solo al momento del merge finale,
+     * evitando di sovrascrivere dati dinamici caricati in parallelo.
+     */
+    suspend fun prepareEditState(
+        transactionId: Long,
+        currentStateProvider: () -> AddTransactionState,
+    ): Result<AddTransactionState> =
         runCatching {
             val transaction =
                 getTransactionByIdUseCase(transactionId).getOrThrow()
@@ -119,6 +130,19 @@ class TransactionLoadManager(
                     visibleCategories
                 }
 
+            val currentState = currentStateProvider()
+
+            // Il valore unitario del buono non è persistito: lo si ricava dai dati salvati
+            // per preservare il totale storico anche se l'impostazione è cambiata.
+            val derivedVoucherValue =
+                if (transaction.paymentType == PaymentType.MEAL_VOUCHERS && transaction.mealVoucherCount > 0) {
+                    val raw =
+                        (abs(transaction.amount) - transaction.mealVoucherDifference) / transaction.mealVoucherCount
+                    (Math.round(raw * 10_000.0) / 10_000.0).takeIf { it.isFinite() && it > 0 }
+                } else {
+                    null
+                }
+
             currentState.copy(
                 isModifying = true,
                 transactionId = transactionId,
@@ -136,6 +160,7 @@ class TransactionLoadManager(
                 selectedPaymentType = transaction.paymentType,
                 mealVoucherCount = transaction.mealVoucherCount.toString(),
                 mealVoucherDifference = transaction.mealVoucherDifference.toString(),
+                mealVoucherValue = derivedVoucherValue ?: currentState.mealVoucherValue,
                 isLoading = false,
                 categories = categoriesForPicker,
             )

@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -25,6 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.Exposure
 import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material.icons.filled.MoreHoriz
@@ -69,6 +69,7 @@ import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
+import com.antcashmanager.android.ui.components.common.AppDivider
 import com.antcashmanager.android.ui.components.common.AppSlider
 import com.antcashmanager.android.ui.components.common.AppSwitch
 import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
@@ -76,7 +77,6 @@ import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
-import com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayEvent
 import com.antcashmanager.android.ui.screen.settings.view.CurrencySymbolDialog
 import com.antcashmanager.android.ui.screen.settings.view.DateFormatDialog
 import com.antcashmanager.android.ui.screen.settings.view.DecimalDigitsDialog
@@ -296,7 +296,7 @@ internal fun DisplayContent(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 item {
-                    CurrencySection(
+                    FormattingSection(
                         currencySymbol = currencySymbol,
                         decimalDigits = decimalDigits,
                         decimalSeparator = decimalSeparator,
@@ -305,6 +305,8 @@ internal fun DisplayContent(
                         onShowDecimalDigitsDialog = { showDecimalDigitsDialog = true },
                         onShowDecimalSeparatorDialog = { showDecimalSeparatorDialog = true },
                         onShowThousandsSeparatorDialog = { showThousandsSeparatorDialog = true },
+                        dateFormat = dateFormat,
+                        onShowDateFormatDialog = { showDateFormatDialog = true },
                     )
                 }
 
@@ -318,13 +320,6 @@ internal fun DisplayContent(
                         onShowMealVoucherDialog = { showMealVoucherDialog = true },
                         defaultPaymentType = defaultPaymentType,
                         onShowPaymentTypeDialog = { showPaymentTypeDialog = true },
-                    )
-                }
-
-                item {
-                    DateSection(
-                        dateFormat = dateFormat,
-                        onShowDateFormatDialog = { showDateFormatDialog = true },
                     )
                 }
 
@@ -393,14 +388,15 @@ internal fun DisplayContent(
                                     DisplayConstant.CONTENT_HORIZONTAL_PADDING_DP.dp,
                             bottom =
                                 innerPadding.calculateBottomPadding() + DisplayConstant.CONTENT_BOTTOM_PADDING_DP.dp,
-                        ).verticalScroll(rememberScrollState()),
+                        )
+                        .verticalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(DisplayConstant.TABLET_COLUMNS_SPACING_DP.dp),
             ) {
                 Column(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    CurrencySection(
+                    FormattingSection(
                         currencySymbol = currencySymbol,
                         decimalDigits = decimalDigits,
                         decimalSeparator = decimalSeparator,
@@ -409,6 +405,8 @@ internal fun DisplayContent(
                         onShowDecimalDigitsDialog = { showDecimalDigitsDialog = true },
                         onShowDecimalSeparatorDialog = { showDecimalSeparatorDialog = true },
                         onShowThousandsSeparatorDialog = { showThousandsSeparatorDialog = true },
+                        dateFormat = dateFormat,
+                        onShowDateFormatDialog = { showDateFormatDialog = true },
                     )
                     PaymentTypeSection(
                         currencySymbol = currencySymbol,
@@ -419,10 +417,6 @@ internal fun DisplayContent(
                         onShowMealVoucherDialog = { showMealVoucherDialog = true },
                         defaultPaymentType = defaultPaymentType,
                         onShowPaymentTypeDialog = { showPaymentTypeDialog = true },
-                    )
-                    DateSection(
-                        dateFormat = dateFormat,
-                        onShowDateFormatDialog = { showDateFormatDialog = true },
                     )
                     TransactionsDisplaySection(
                         transactionDisplayType = transactionsTransactionDisplayType,
@@ -535,10 +529,12 @@ internal fun DisplayContent(
                 )
             },
             confirmButton = {
-                TextButton(onClick = {
-                    onResetAllPreferences()
-                    showResetPreferencesDialog = false
-                }) {
+                TextButton(
+                    onClick = {
+                        onResetAllPreferences()
+                        showResetPreferencesDialog = false
+                    },
+                ) {
                     AppText(
                         stringResource(R.string.dialog_reset),
                         color = MaterialTheme.colorScheme.error,
@@ -770,7 +766,7 @@ private fun separatorLabel(
 }
 
 @Composable
-private fun CurrencySection(
+private fun FormattingSection(
     currencySymbol: String,
     decimalDigits: Int,
     decimalSeparator: String,
@@ -779,8 +775,10 @@ private fun CurrencySection(
     onShowDecimalDigitsDialog: () -> Unit,
     onShowDecimalSeparatorDialog: () -> Unit,
     onShowThousandsSeparatorDialog: () -> Unit,
+    dateFormat: String,
+    onShowDateFormatDialog: () -> Unit,
 ) {
-    AppCardSectionHeader(title = stringResource(R.string.settings_section_currency))
+    AppCardSectionHeader(title = stringResource(R.string.settings_section_formatting))
     VerticalSpacer(SpacingSize.XS)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -843,6 +841,23 @@ private fun CurrencySection(
             color = MaterialTheme.colorScheme.primary,
         )
     }
+
+    VerticalSpacer(SpacingSize.SM)
+
+    val currentDateExample =
+        remember(dateFormat) {
+            runCatching {
+                val formatter = SimpleDateFormat(dateFormat, Locale.getDefault())
+                formatter.format(Date())
+            }.getOrElse { dateFormat }
+        }
+
+    AppCard(
+        title = stringResource(R.string.settings_date_format),
+        subtitle = stringResource(R.string.settings_date_format_subtitle, currentDateExample),
+        leadingIcon = Icons.Default.CalendarMonth,
+        onClick = onShowDateFormatDialog,
+    )
 }
 
 @Composable
@@ -886,44 +901,38 @@ private fun PaymentTypeSection(
                 else -> stringResource(R.string.payment_type_electronic)
             }
 
+        val paymentTypeIcon =
+            when (defaultPaymentType) {
+                "CASH" -> Icons.Default.MonetizationOn
+                "MEAL_VOUCHERS" -> Icons.Default.Restaurant
+                else -> Icons.Default.CreditCard
+            }
+
         AppCard(
             title = stringResource(R.string.settings_default_payment_type),
             subtitle = stringResource(R.string.settings_default_payment_type_desc),
             leadingIcon = Icons.Default.Payment,
             onClick = onShowPaymentTypeDialog,
             trailingContent = {
-                AppText(
-                    text = paymentTypeLabel,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.primary,
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    Icon(
+                        imageVector = paymentTypeIcon,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    AppText(
+                        text = paymentTypeLabel,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             },
         )
     }
-}
-
-@Composable
-private fun DateSection(
-    dateFormat: String,
-    onShowDateFormatDialog: () -> Unit,
-) {
-    AppCardSectionHeader(title = stringResource(R.string.settings_section_dates))
-    VerticalSpacer(SpacingSize.XS)
-
-    val currentDateExample =
-        remember(dateFormat) {
-            runCatching {
-                val formatter = SimpleDateFormat(dateFormat, Locale.getDefault())
-                formatter.format(Date())
-            }.getOrElse { dateFormat }
-        }
-
-    AppCard(
-        title = stringResource(R.string.settings_date_format),
-        subtitle = stringResource(R.string.settings_date_format_subtitle, currentDateExample),
-        leadingIcon = Icons.Default.CalendarMonth,
-        onClick = onShowDateFormatDialog,
-    )
 }
 
 @Composable
@@ -1006,7 +1015,7 @@ private fun HomeDisplaySection(
         )
 
         AppCard(
-            title = stringResource(R.string.settings_transaction_display),
+            title = stringResource(R.string.settings_transaction_display_home),
             subtitle = stringResource(R.string.settings_transaction_display_desc),
             leadingIcon = Icons.Default.Visibility,
             onClick = onShowTransactionDisplayDialog,
@@ -1026,7 +1035,7 @@ private fun TransactionsDisplaySection(
     VerticalSpacer(SpacingSize.XS)
 
     AppCard(
-        title = stringResource(R.string.settings_transaction_display),
+        title = stringResource(R.string.settings_transaction_display_list),
         subtitle = stringResource(R.string.settings_transaction_display_desc),
         leadingIcon = Icons.Default.Visibility,
         onClick = onShowTransactionDisplayDialog,
@@ -1084,7 +1093,8 @@ private fun TrendPreviewCard() {
                     width = 1.dp,
                     color = MaterialTheme.colorScheme.outlineVariant,
                     shape = RoundedCornerShape(12.dp),
-                ).padding(12.dp),
+                )
+                .padding(12.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         AppText(
@@ -1160,7 +1170,8 @@ private fun CategoryPreviewCard() {
                     width = 1.dp,
                     color = MaterialTheme.colorScheme.outlineVariant,
                     shape = RoundedCornerShape(12.dp),
-                ).padding(12.dp),
+                )
+                .padding(12.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         AppText(
@@ -1220,7 +1231,8 @@ private fun NoIconPreviewCard() {
                     width = 1.dp,
                     color = MaterialTheme.colorScheme.outlineVariant,
                     shape = RoundedCornerShape(12.dp),
-                ).padding(12.dp),
+                )
+                .padding(12.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         AppText(
@@ -1297,6 +1309,10 @@ private fun OtherSection(
             },
             onClick = { onMaskAmountsChanged(!maskAmounts) },
         )
+
+        VerticalSpacer(SpacingSize.SM)
+        AppDivider()
+        VerticalSpacer(SpacingSize.SM)
 
         AppCard(
             title = stringResource(R.string.settings_reset_preferences),
@@ -1386,7 +1402,8 @@ private fun WidgetPreviewMock(
                     Brush.linearGradient(
                         listOf(Color(0xFF90A4AE), Color(0xFF64B5F6)),
                     ),
-                ).padding(10.dp),
+                )
+                .padding(10.dp),
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Column(

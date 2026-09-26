@@ -9,8 +9,8 @@ import com.antcashmanager.android.analytics.tracker.SessionTracker
 import com.antcashmanager.android.auth.GoogleSignInManager
 import com.antcashmanager.android.data.backup.BackupService
 import com.antcashmanager.android.data.receipt.MlKitReceiptOcrService
-import com.antcashmanager.android.data.repository.AndroidFeedbackRepository
 import com.antcashmanager.android.data.repository.AndroidDebugDataRepository
+import com.antcashmanager.android.data.repository.AndroidFeedbackRepository
 import com.antcashmanager.android.drive.DriveUploadManager
 import com.antcashmanager.android.ui.screen.categories.CategoriesViewModel
 import com.antcashmanager.android.ui.screen.charts.ChartsViewModel
@@ -46,7 +46,6 @@ import com.antcashmanager.domain.service.ReceiptOcrService
 import com.antcashmanager.domain.service.WidgetUpdateNotifier
 import com.antcashmanager.domain.usecase.SendFeedbackEmailUseCase
 import com.antcashmanager.domain.usecase.ShareTransactionUseCase
-import com.antcashmanager.domain.usecase.settings.ImportDebugDataUseCase
 import com.antcashmanager.domain.usecase.category.DeleteCategoryUseCase
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.category.InsertCategoryUseCase
@@ -70,6 +69,7 @@ import com.antcashmanager.domain.usecase.settings.GetThemeUseCase
 import com.antcashmanager.domain.usecase.settings.GetThousandsSeparatorUseCase
 import com.antcashmanager.domain.usecase.settings.GetTransactionDisplayTypeUseCase
 import com.antcashmanager.domain.usecase.settings.GetTransactionsDateFilterStateUseCase
+import com.antcashmanager.domain.usecase.settings.ImportDebugDataUseCase
 import com.antcashmanager.domain.usecase.settings.ResetAllPreferencesUseCase
 import com.antcashmanager.domain.usecase.settings.SetChartsDateFilterStateUseCase
 import com.antcashmanager.domain.usecase.settings.SetCurrencySymbolUseCase
