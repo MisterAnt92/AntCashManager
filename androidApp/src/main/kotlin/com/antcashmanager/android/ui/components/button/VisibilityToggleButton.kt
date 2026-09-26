@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.components.button
 
+import android.content.res.Configuration
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -8,7 +9,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 /**
  * Reusable component for show/hide toggle button.
@@ -48,5 +51,57 @@ fun VisibilityToggleButton(
                     },
                 ),
         )
+    }
+}
+
+@Preview(showBackground = true, name = "VisibilityToggleButton Visible - Light")
+@Composable
+private fun VisibilityToggleButtonVisibleLightPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        VisibilityToggleButton(isVisible = true, onToggle = {})
+    }
+}
+
+@Preview(
+    showBackground = true,
+    name = "VisibilityToggleButton Visible - Dark",
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Composable
+private fun VisibilityToggleButtonVisibleDarkPreview() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        VisibilityToggleButton(isVisible = true, onToggle = {})
+    }
+}
+
+@Preview(showBackground = true, name = "VisibilityToggleButton Visible - 2x", fontScale = 2.0f)
+@Composable
+private fun VisibilityToggleButtonVisibleLargeTextPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        VisibilityToggleButton(isVisible = true, onToggle = {})
+    }
+}
+
+@Preview(showBackground = true, name = "VisibilityToggleButton Hidden - Light")
+@Composable
+private fun VisibilityToggleButtonHiddenLightPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        VisibilityToggleButton(isVisible = false, onToggle = {})
+    }
+}
+
+@Preview(showBackground = true, name = "VisibilityToggleButton Hidden - Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun VisibilityToggleButtonHiddenDarkPreview() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        VisibilityToggleButton(isVisible = false, onToggle = {})
+    }
+}
+
+@Preview(showBackground = true, name = "VisibilityToggleButton Hidden - 2x", fontScale = 2.0f)
+@Composable
+private fun VisibilityToggleButtonHiddenLargeTextPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        VisibilityToggleButton(isVisible = false, onToggle = {})
     }
 }

@@ -47,7 +47,7 @@ data class HomeState(
 
     val isTopCardsOrderDialogVisible: Boolean get() = editingTopCardsOrder != null
 
-    val netBalance: Double = totalIncome - totalExpense
+    val netBalance: Double = balance
 
     val transactionCount: Int = filteredTransactions.size
 

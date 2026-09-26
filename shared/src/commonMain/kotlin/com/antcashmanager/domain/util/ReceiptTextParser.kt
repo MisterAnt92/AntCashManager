@@ -433,7 +433,7 @@ public object ReceiptTextParser {
                     value.lastIndexOf(
                         '.',
                     )
-                ->
+                    ->
                     value.replace(".", "").replace(",", ".")
                 // solo virgola come separatore decimale: "1234,56"
                 value.contains(',') && !value.contains('.') ->

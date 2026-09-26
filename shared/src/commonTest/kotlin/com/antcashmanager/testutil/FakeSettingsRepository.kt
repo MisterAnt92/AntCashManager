@@ -3,6 +3,7 @@ package com.antcashmanager.testutil
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.BackupDestination
+import com.antcashmanager.domain.model.BackupFrequency
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.SettingsRepository
@@ -62,6 +63,7 @@ open class FakeSettingsRepository : SettingsRepository {
     // ── Google Drive Backup Configuration ──
     val autoBackupEnabled = MutableStateFlow(false)
     val autoBackupFolderUri = MutableStateFlow<String?>(null)
+    val backupFrequency = MutableStateFlow(BackupFrequency.WEEKLY)
     val autoBackupDestination = MutableStateFlow(BackupDestination.LOCAL)
     val googleDriveFolderId = MutableStateFlow<String?>(null)
     val googleDriveFolderName = MutableStateFlow<String?>(null)
@@ -243,7 +245,9 @@ open class FakeSettingsRepository : SettingsRepository {
 
     val analyticsConsent = MutableStateFlow<Boolean?>(null)
     override fun getAnalyticsConsent(): Flow<Boolean?> = analyticsConsent
-    override suspend fun setAnalyticsConsent(granted: Boolean) { analyticsConsent.value = granted }
+    override suspend fun setAnalyticsConsent(granted: Boolean) {
+        analyticsConsent.value = granted
+    }
 
     override fun getCategorySortOrderInitialized(): Flow<Boolean> = categorySortOrderInitialized
 
@@ -316,6 +320,12 @@ open class FakeSettingsRepository : SettingsRepository {
 
     override suspend fun setAutoBackupFolderUri(uri: String?) {
         autoBackupFolderUri.value = uri
+    }
+
+    override fun getBackupFrequency(): Flow<BackupFrequency> = backupFrequency
+
+    override suspend fun setBackupFrequency(frequency: BackupFrequency) {
+        backupFrequency.value = frequency
     }
 
     override fun getAutoBackupDestination(): Flow<BackupDestination> = autoBackupDestination

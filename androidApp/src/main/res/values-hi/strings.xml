@@ -169,7 +169,7 @@
     <string name="settings_theme_system">सिस्टम डिफ़ॉल्ट</string>
     <string name="settings_language">भाषा</string>
     <string name="settings_display">डिस्प्ले</string>
-    <string name="settings_display_subtitle">मुद्रा, दशमलव और स्वरूपण कस्टमाइज़ करें</string>
+    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
     <string name="settings_show_charts_section">चार्ट अनुभाग दिखाएं</string>
     <string name="settings_show_charts_section_visible">नेविगेशन में चार्ट अनुभाग दिखाई दे रहा है</string>
     <string name="settings_show_charts_section_hidden">नेविगेशन से चार्ट अनुभाग ��िपा हुआ है</string>
@@ -190,8 +190,10 @@
     <string name="settings_separator_none">कोई नहीं</string>
     <string name="settings_date_format">तिथि प्रारूप</string>
     <string name="settings_section_currency">मुद्रा</string>
+    <string name="settings_section_formatting">Formatting</string>
     <string name="settings_section_dates">तिथियाँ</string>
     <string name="settings_section_other">अन्य</string>
+    <string name="settings_section_data_privacy">Data &amp; Privacy</string>
     <string name="settings_reset_preferences">सभी प्राथमिकताएं रीसेट करें</string>
     <string name="settings_reset_preferences_subtitle">सभी सेटिंग्स को उनके डिफ़ॉल्ट मानों पर पुनर्स्थापित करें</string>
     <string name="settings_section_widgets">विजेट</string>
@@ -290,6 +292,10 @@
     <string name="settings_auto_backup">स्वचालित बैकअप</string>
     <string name="settings_auto_backup_subtitle">साप्ताहिक स्वचालित बैकअप</string>
     <string name="settings_auto_backup_weekly_label">स्वचालित बैकअप साप्ताहिक है</string>
+    <string name="settings_auto_backup_frequency_label">बैकअप आवृत्ति</string>
+    <string name="settings_backup_frequency_weekly">साप्ताहिक</string>
+    <string name="settings_backup_frequency_biweekly">हर दो सप्ताह</string>
+    <string name="settings_backup_frequency_monthly">मासिक</string>
     <string name="settings_auto_backup_destination_local">स्थानीय</string>
     <string name="settings_auto_backup_google_drive_coming_soon">जल्द आ रहा है</string>
     <string name="settings_auto_backup_google_drive_sign_in_title">Google Drive बैकअप सक्षम करें</string>
@@ -409,6 +415,8 @@
 
     <!-- Transaction Display -->
     <string name="settings_transaction_display">लेनदेन पर आइकन</string>
+    <string name="settings_transaction_display_home">Transaction Icon (Home)</string>
+    <string name="settings_transaction_display_list">Transaction Icon (List)</string>
     <string name="settings_transaction_display_desc">प्रत्येक लेनदेन के लिए कौन सा आइकन प्रदर्शित करना है चुनें</string>
     <string name="settings_transaction_display_trend">ट्रेंड तीर</string>
     <string name="settings_transaction_display_trend_desc">आय के लिए ऊपर और खर्च के लिए नीचे का तीर प्रदर्शित करता है</string>
@@ -468,7 +476,7 @@
     <string name="tutorial_finish">समझ गया!</string>
     <string name="tutorial_progress_cd">ट्यूटोरियल चरण %1$d का %2$d</string>
 
-    <string name="settings_about">सेटिंग्स</string>
+    <string name="settings_about">Information</string>
 
     <!-- Category Translations (Keys) -->
     <string name="category_uncategorized">अवर्गीकृत</string>
@@ -621,7 +629,6 @@
     <string name="settings_default_payment_type">डिफ़ॉल्ट भुगतान विधि</string>
     <string name="settings_default_payment_type_desc">नए लेनदेन के लिए डिफ़ॉल्ट भुगतान विधि चुनें</string>
     <string name="dialog_payment_type_title">भुगतान विधि चुनें</string>
-
 
 
     <!-- Analytics Consent Dialog (GDPR) -->

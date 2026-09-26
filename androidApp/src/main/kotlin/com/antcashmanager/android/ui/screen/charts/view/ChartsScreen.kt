@@ -61,7 +61,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.touchlab.kermit.Logger
-import kotlinx.coroutines.flow.map
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.data.formatter.ShareTextFormatter
@@ -94,6 +93,7 @@ import com.antcashmanager.android.util.translateCategoryPlain
 import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.usecase.transaction.DateRange
+import kotlinx.coroutines.flow.map
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import java.text.SimpleDateFormat
@@ -110,7 +110,8 @@ fun ChartsScreen() {
     val selectedPresetIndex by viewModel.selectedPresetIndex.collectAsStateWithLifecycle()
     val chartsZoomEnabled by viewModel.chartsZoomEnabled.collectAsStateWithLifecycle(initialValue = false)
     val chartsCardOrder by viewModel.chartsCardOrder.collectAsStateWithLifecycle()
-    val errorState by viewModel.state.map { it.errorState }.collectAsStateWithLifecycle(initialValue = com.antcashmanager.android.ui.base.ErrorState())
+    val errorState by viewModel.state.map { it.errorState }
+        .collectAsStateWithLifecycle(initialValue = com.antcashmanager.android.ui.base.ErrorState())
 
     ChartsContent(
         chartData = chartData,
@@ -200,7 +201,7 @@ internal fun ChartsContent(
                 (
                     chartData.incomeByCategory.size + chartData.expenseByCategory.size +
                         chartData.monthlyData.size + chartData.yearlyData.size
-                )
+                    )
             val params =
                 android.os.Bundle().apply {
                     putInt("data_points", totalDataPoints)
@@ -332,18 +333,22 @@ internal fun ChartsContent(
                 SpendingForecastCard(chartData = chartData)
                 if (showSpacer) VerticalSpacer(SpacingSize.MD)
             }
+
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.QUICK_STATS_CARD -> {
                 QuickStatsCard(chartData = chartData)
                 if (showSpacer) VerticalSpacer(SpacingSize.MD)
             }
+
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.DAILY_EXPENSE_CHART_CARD -> {
                 DailyExpenseLineChartCard(chartData = chartData)
                 if (showSpacer) VerticalSpacer(SpacingSize.MD)
             }
+
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.WEEKDAY_DISTRIBUTION_CARD -> {
                 WeekdayExpenseCard(chartData = chartData)
                 if (showSpacer) VerticalSpacer(SpacingSize.MD)
             }
+
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.INCOME_CATEGORY_PIE_CHART -> {
                 if (chartData.incomeByCategory.isNotEmpty()) {
                     CategoryPieChartCard(
@@ -385,6 +390,7 @@ internal fun ChartsContent(
                     if (showSpacer) VerticalSpacer(SpacingSize.MD)
                 }
             }
+
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.EXPENSE_CATEGORY_PIE_CHART -> {
                 if (chartData.expenseByCategory.isNotEmpty()) {
                     CategoryPieChartCard(
@@ -426,6 +432,7 @@ internal fun ChartsContent(
                     if (showSpacer) VerticalSpacer(SpacingSize.MD)
                 }
             }
+
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.TOP_INCOME_CATEGORIES -> {
                 if (topIncomeCategories.isNotEmpty()) {
                     TopCategoriesCard(
@@ -438,6 +445,7 @@ internal fun ChartsContent(
                     if (showSpacer) VerticalSpacer(SpacingSize.MD)
                 }
             }
+
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.TOP_EXPENSE_CATEGORIES -> {
                 if (topExpenseCategories.isNotEmpty()) {
                     TopCategoriesCard(
@@ -450,6 +458,7 @@ internal fun ChartsContent(
                     if (showSpacer) VerticalSpacer(SpacingSize.MD)
                 }
             }
+
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.PAYMENT_TYPE_BREAKDOWN -> {
                 if (paymentBreakdownByLabel.isNotEmpty()) {
                     CategoryPieChartCard(
@@ -486,6 +495,7 @@ internal fun ChartsContent(
                     if (showSpacer) VerticalSpacer(SpacingSize.MD)
                 }
             }
+
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.MONTHLY_BAR_CHART -> {
                 if (chartData.monthlyData.isNotEmpty()) {
                     MonthlyBarChartCard(
@@ -501,6 +511,7 @@ internal fun ChartsContent(
                     if (showSpacer) VerticalSpacer(SpacingSize.MD)
                 }
             }
+
             com.antcashmanager.android.ui.screen.charts.model.ChartCardType.YEARLY_BAR_CHART -> {
                 if (chartData.yearlyData.isNotEmpty()) {
                     YearlyBarChartCard(
@@ -532,7 +543,8 @@ internal fun ChartsContent(
                         top = 12.dp,
                         end = padding.calculateEndPadding(LayoutDirection.Ltr) + 16.dp,
                         bottom = padding.calculateBottomPadding(),
-                    ).verticalScroll(rememberScrollState())
+                    )
+                    .verticalScroll(rememberScrollState())
                     .padding(bottom = 80.dp),
             // Extra space for visibility
         ) {
@@ -612,27 +624,31 @@ internal fun ChartsContent(
         DatePickerDialog(
             onDismissRequest = { showFromPicker = false },
             confirmButton = {
-                TextButton(onClick = {
-                    state.selectedDateMillis?.let {
-                        analyticsManager.logEvent("chart_custom_date_range_set")
-                        // Track filter combination
-                        analyticsManager.logEvent(
-                            "filter_combination_applied",
-                            android.os.Bundle().apply {
-                                putInt("filter_count", 1)
-                                putString("types", "date")
-                            },
-                        )
-                        onDateRangeChanged(it, dateRange.to)
-                    }
-                    selectedPreset = -1
-                    showFromPicker = false
-                }) { AppText(stringResource(R.string.dialog_ok)) }
+                TextButton(
+                    onClick = {
+                        state.selectedDateMillis?.let {
+                            analyticsManager.logEvent("chart_custom_date_range_set")
+                            // Track filter combination
+                            analyticsManager.logEvent(
+                                "filter_combination_applied",
+                                android.os.Bundle().apply {
+                                    putInt("filter_count", 1)
+                                    putString("types", "date")
+                                },
+                            )
+                            onDateRangeChanged(it, dateRange.to)
+                        }
+                        selectedPreset = -1
+                        showFromPicker = false
+                    },
+                ) { AppText(stringResource(R.string.dialog_ok)) }
             },
             dismissButton = {
-                TextButton(onClick = {
-                    showFromPicker = false
-                }) { AppText(stringResource(R.string.common_cancel)) }
+                TextButton(
+                    onClick = {
+                        showFromPicker = false
+                    },
+                ) { AppText(stringResource(R.string.common_cancel)) }
             },
         ) { DatePicker(state = state) }
     }
@@ -641,27 +657,31 @@ internal fun ChartsContent(
         DatePickerDialog(
             onDismissRequest = { showToPicker = false },
             confirmButton = {
-                TextButton(onClick = {
-                    state.selectedDateMillis?.let {
-                        analyticsManager.logEvent("chart_custom_date_range_set")
-                        // Track filter combination
-                        analyticsManager.logEvent(
-                            "filter_combination_applied",
-                            android.os.Bundle().apply {
-                                putInt("filter_count", 1)
-                                putString("types", "date")
-                            },
-                        )
-                        onDateRangeChanged(dateRange.from, it)
-                    }
-                    selectedPreset = -1
-                    showToPicker = false
-                }) { AppText(stringResource(R.string.dialog_ok)) }
+                TextButton(
+                    onClick = {
+                        state.selectedDateMillis?.let {
+                            analyticsManager.logEvent("chart_custom_date_range_set")
+                            // Track filter combination
+                            analyticsManager.logEvent(
+                                "filter_combination_applied",
+                                android.os.Bundle().apply {
+                                    putInt("filter_count", 1)
+                                    putString("types", "date")
+                                },
+                            )
+                            onDateRangeChanged(dateRange.from, it)
+                        }
+                        selectedPreset = -1
+                        showToPicker = false
+                    },
+                ) { AppText(stringResource(R.string.dialog_ok)) }
             },
             dismissButton = {
-                TextButton(onClick = {
-                    showToPicker = false
-                }) { AppText(stringResource(R.string.common_cancel)) }
+                TextButton(
+                    onClick = {
+                        showToPicker = false
+                    },
+                ) { AppText(stringResource(R.string.common_cancel)) }
             },
         ) { DatePicker(state = state) }
     }

@@ -37,7 +37,8 @@ class TransactionUiTest {
 
     @Test
     fun toUi_shouldFlagProtectedSalary_whenIncomeInProtectedCategory() {
-        val ui = base.copy(type = TransactionType.INCOME, category = PROTECTED_INCOME_CATEGORY).toUi(DatePatterns.ISO_DATE)
+        val ui =
+            base.copy(type = TransactionType.INCOME, category = PROTECTED_INCOME_CATEGORY).toUi(DatePatterns.ISO_DATE)
 
         assertTrue(ui.isProtectedSalary)
         assertTrue(ui.isIncome)

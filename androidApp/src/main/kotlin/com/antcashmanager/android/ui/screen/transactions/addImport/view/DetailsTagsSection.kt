@@ -78,13 +78,15 @@ internal fun DetailsTagsSection(
             shape = RoundedCornerShape(16.dp),
             trailingIcon = {
                 if (tagInput.isNotBlank()) {
-                    IconButton(onClick = {
-                        if (!currentTags.contains(tagInput.trim())) {
-                            val newTags = (currentTags + tagInput.trim()).joinToString(", ")
-                            onTagsChange(newTags)
-                        }
-                        tagInput = ""
-                    }) {
+                    IconButton(
+                        onClick = {
+                            if (!currentTags.contains(tagInput.trim())) {
+                                val newTags = (currentTags + tagInput.trim()).joinToString(", ")
+                                onTagsChange(newTags)
+                            }
+                            tagInput = ""
+                        },
+                    ) {
                         androidx.compose.material3.Icon(
                             Icons.Default.Add,
                             contentDescription = "Add Tag",

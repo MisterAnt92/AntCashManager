@@ -1,6 +1,7 @@
 package com.antcashmanager.android.data.repository
 
 import android.content.Context
+import co.touchlab.kermit.Logger
 import com.antcashmanager.android.BuildConfig
 import com.antcashmanager.android.ui.screen.settings.SettingsConstant
 import com.antcashmanager.domain.model.PaymentType
@@ -9,7 +10,6 @@ import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.DebugDataRepository
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
-import co.touchlab.kermit.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject

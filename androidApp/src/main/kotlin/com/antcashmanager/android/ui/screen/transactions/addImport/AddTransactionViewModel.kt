@@ -7,6 +7,7 @@ import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.analytics.tracker.ErrorTracker
 import com.antcashmanager.android.analytics.tracker.PerformanceTracker
 import com.antcashmanager.android.ui.base.BaseViewModel
+import com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayConstant
 import com.antcashmanager.android.ui.screen.transactions.addImport.event.AddTransactionEvent
 import com.antcashmanager.android.ui.screen.transactions.addImport.manager.SuggestionsManager
 import com.antcashmanager.android.ui.screen.transactions.addImport.manager.TransactionLoadManager
@@ -23,6 +24,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 // ══════════════════════════════════════════════════════════════════════════════
 // VIEWMODEL
@@ -51,13 +53,17 @@ class AddTransactionViewModel(
     // Track first form field interaction for analytics
     private var firstFormFieldTracked = false
 
+    // Valore unitario del buono da impostazioni (usato per nuovi voucher, non override quello derivato)
+    private var settingsMealVoucherValue = DisplayConstant.DEFAULT_MEAL_VOUCHER_VALUE
+
     init {
         loadCategories()
         loadTransactionSuggestions()
         loadMealVoucherValue()
-        loadDefaultPaymentType()
         if (transactionId != null) {
             loadTransactionForEdit(transactionId)
+        } else {
+            loadDefaultPaymentType()
         }
     }
 
@@ -66,7 +72,12 @@ class AddTransactionViewModel(
             loadManager
                 .loadMealVoucherValue()
                 .onSuccess { mealVoucherValue ->
-                    _state.update { it.copy(mealVoucherValue = mealVoucherValue) }
+                    settingsMealVoucherValue = mealVoucherValue
+                    // Non aggiornare lo state se stiamo editando una tx MEAL_VOUCHERS
+                    // (il valore derivato da prepareEditState ha la priorità)
+                    if (!_state.value.isModifying || _state.value.selectedPaymentType != PaymentType.MEAL_VOUCHERS) {
+                        _state.update { it.copy(mealVoucherValue = mealVoucherValue) }
+                    }
                 }.onFailure { error ->
                     if (error is CancellationException) throw error
                     logError("Error loading meal voucher value: ${error.message}", error)
@@ -78,6 +89,9 @@ class AddTransactionViewModel(
         viewModelScope.launch {
             try {
                 settingsRepository.getDefaultPaymentType().collect { defaultPaymentTypeStr ->
+                    if (_state.value.isModifying) {
+                        return@collect
+                    }
                     val paymentType =
                         try {
                             PaymentType.valueOf(defaultPaymentTypeStr ?: "ELECTRONIC")
@@ -145,9 +159,15 @@ class AddTransactionViewModel(
                 logDebug("Loading transaction with id: $id")
 
                 loadManager
-                    .prepareEditState(id, _state.value)
+                    .prepareEditState(
+                        transactionId = id,
+                        currentStateProvider = { _state.value },
+                    )
                     .onSuccess { newState ->
-                        _state.value = newState.copy(currentStep = AddTransactionStep.DETAILS)
+                        _state.value =
+                            newState.copy(
+                                currentStep = AddTransactionStep.DETAILS,
+                            )
                         logDebug("Transaction loaded: ${newState.title}, category: ${newState.selectedCategory?.name}")
                     }.onFailure { error ->
                         if (error is CancellationException) throw error
@@ -203,6 +223,7 @@ class AddTransactionViewModel(
                 }
                 _state.update { it.copy(title = event.title) }
             }
+
             is AddTransactionEvent.UpdateAmount -> {
                 // Permetti input libero durante la digitazione, validazione al salvataggio
                 _state.update { it.copy(amount = event.amount) }
@@ -213,11 +234,39 @@ class AddTransactionViewModel(
             is AddTransactionEvent.UpdateLocation -> _state.update { it.copy(location = event.location) }
             is AddTransactionEvent.UpdateTags -> _state.update { it.copy(tags = event.tags) }
             is AddTransactionEvent.UpdateMealVoucherCount -> {
-                _state.update { it.copy(mealVoucherCount = event.count) }
+                _state.update { currentState ->
+                    val newCount = event.count
+                    // Auto-calculate amount when count changes (if in MEAL_VOUCHERS mode)
+                    val newAmount =
+                        if (currentState.isMealVouchersPayment) {
+                            val count = newCount.toIntOrNull() ?: 0
+                            val subtotal = count * currentState.mealVoucherValue
+                            val difference = currentState.mealVoucherDifference.toDoubleOrNull() ?: 0.0
+                            val total = subtotal + difference
+                            String.format(Locale.US, "%.2f", total)
+                        } else {
+                            currentState.amount
+                        }
+                    currentState.copy(mealVoucherCount = newCount, amount = newAmount)
+                }
             }
 
             is AddTransactionEvent.UpdateMealVoucherDifference -> {
-                _state.update { it.copy(mealVoucherDifference = event.difference) }
+                _state.update { currentState ->
+                    val newDifference = event.difference
+                    // Auto-calculate amount when difference changes (if in MEAL_VOUCHERS mode)
+                    val newAmount =
+                        if (currentState.isMealVouchersPayment) {
+                            val count = currentState.mealVoucherCount.toIntOrNull() ?: 0
+                            val subtotal = count * currentState.mealVoucherValue
+                            val difference = newDifference.toDoubleOrNull() ?: 0.0
+                            val total = subtotal + difference
+                            String.format(Locale.US, "%.2f", total)
+                        } else {
+                            currentState.amount
+                        }
+                    currentState.copy(mealVoucherDifference = newDifference, amount = newAmount)
+                }
             }
 
             is AddTransactionEvent.UpdateTimestamp -> _state.update { it.copy(timestamp = event.timestamp) }
@@ -345,17 +394,28 @@ class AddTransactionViewModel(
             },
         )
         _state.update { currentState ->
-            // Se cambi DA MEAL_VOUCHERS a un altro tipo: resetta voucher, differenza e amount
-            val resetMealVouchers =
-                currentState.selectedPaymentType == PaymentType.MEAL_VOUCHERS &&
-                    paymentType != PaymentType.MEAL_VOUCHERS
+            // Reset campi quando si entra o si esce dal flusso MEAL_VOUCHERS.
+            val isSwitchingMealVoucherMode =
+                (currentState.selectedPaymentType == PaymentType.MEAL_VOUCHERS && paymentType != PaymentType.MEAL_VOUCHERS) ||
+                    (currentState.selectedPaymentType != PaymentType.MEAL_VOUCHERS && paymentType == PaymentType.MEAL_VOUCHERS)
+
+            val newMealVoucherValue =
+                if (currentState.selectedPaymentType != PaymentType.MEAL_VOUCHERS && paymentType == PaymentType.MEAL_VOUCHERS) {
+                    // Entrando in MEAL_VOUCHERS: usa il valore corrente delle impostazioni
+                    // (non il derivato della tx precedente, se era anch'essa MEAL_VOUCHERS)
+                    settingsMealVoucherValue
+                } else {
+                    // Diversamente, mantieni il valore attuale
+                    currentState.mealVoucherValue
+                }
 
             currentState.copy(
                 selectedPaymentType = paymentType,
                 showPaymentTypeDialog = false,
-                mealVoucherCount = if (resetMealVouchers) "0" else currentState.mealVoucherCount,
-                mealVoucherDifference = if (resetMealVouchers) "0" else currentState.mealVoucherDifference,
-                amount = if (resetMealVouchers) "" else currentState.amount,
+                mealVoucherCount = if (isSwitchingMealVoucherMode) "0" else currentState.mealVoucherCount,
+                mealVoucherDifference = if (isSwitchingMealVoucherMode) "0" else currentState.mealVoucherDifference,
+                amount = if (isSwitchingMealVoucherMode) "" else currentState.amount,
+                mealVoucherValue = newMealVoucherValue,
             )
         }
     }

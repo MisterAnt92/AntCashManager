@@ -70,7 +70,8 @@ fun AppCategoryCard(
                     width = if (isSelected) 2.dp else 1.dp,
                     color = borderColor,
                     shape = RoundedCornerShape(16.dp),
-                ).clickable(onClick = onClick)
+                )
+                .clickable(onClick = onClick)
                 .padding(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,

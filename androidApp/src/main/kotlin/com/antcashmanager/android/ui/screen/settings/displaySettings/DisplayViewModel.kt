@@ -73,8 +73,10 @@ class DisplayViewModel(
         ) { args ->
             @Suppress("UNCHECKED_CAST")
             val values = args as Array<Any?>
+
             @Suppress("UNCHECKED_CAST")
             val currencyDigits = values[0] as Pair<String, Int>
+
             @Suppress("UNCHECKED_CAST")
             val separators = values[1] as Pair<String, String>
             DisplayState(
@@ -104,23 +106,108 @@ class DisplayViewModel(
 
     // Backward-compatibility accessors for UI layer that expects individual StateFlow
     // These read from the consolidated state but present the same interface as before
-    val currencySymbol: StateFlow<String> get() = state.map { it.currencySymbol }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT), DisplayConstant.DEFAULT_CURRENCY_SYMBOL)
-    val decimalDigits: StateFlow<Int> get() = state.map { it.decimalDigits }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT), DisplayConstant.DEFAULT_DECIMAL_DIGITS)
-    val decimalSeparator: StateFlow<String> get() = state.map { it.decimalSeparator }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT), DisplayConstant.DEFAULT_DECIMAL_SEPARATOR)
-    val thousandsSeparator: StateFlow<String> get() = state.map { it.thousandsSeparator }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT), DisplayConstant.DEFAULT_THOUSANDS_SEPARATOR)
-    val mealVoucherValue: StateFlow<Double> get() = state.map { it.mealVoucherValue }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT), DisplayConstant.DEFAULT_MEAL_VOUCHER_VALUE)
-    val showChartsSection: StateFlow<Boolean> get() = state.map { it.showChartsSection }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT), DisplayConstant.DEFAULT_SHOW_CHARTS_SECTION)
-    val chartsZoomEnabled: StateFlow<Boolean> get() = state.map { it.chartsZoomEnabled }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT), DisplayConstant.DEFAULT_SHOW_CHARTS_ZOOM)
-    val dateFormat: StateFlow<String> get() = state.map { it.dateFormat }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT), DisplayConstant.DEFAULT_DATE_FORMAT)
-    val showTransactionNotes: StateFlow<Boolean> get() = state.map { it.showTransactionNotes }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT), DisplayConstant.DEFAULT_SHOW_TRANSACTION_NOTES)
-    val maskAmounts: StateFlow<Boolean> get() = state.map { it.maskAmounts }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT), DisplayConstant.DEFAULT_MASK_AMOUNTS)
-    val showPaymentTypeBreakdown: StateFlow<Boolean> get() = state.map { it.showPaymentTypeBreakdown }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT), DisplayConstant.DEFAULT_SHOW_PAYMENT_BREAKDOWN)
-    val showQuickInsightsCard: StateFlow<Boolean> get() = state.map { it.showQuickInsightsCard }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT), DisplayConstant.DEFAULT_SHOW_QUICK_INSIGHTS_CARD)
-    val defaultPaymentType: StateFlow<String> get() = state.map { it.defaultPaymentType }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT), DisplayConstant.DEFAULT_PAYMENT_TYPE)
-    val transactionDisplayType: StateFlow<TransactionDisplayType> get() = state.map { it.transactionDisplayType }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT), DisplayConstant.DEFAULT_TRANSACTION_DISPLAY_TYPE)
-    val transactionsTransactionDisplayType: StateFlow<TransactionDisplayType> get() = state.map { it.transactionsTransactionDisplayType }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT), DisplayConstant.DEFAULT_TRANSACTION_DISPLAY_TYPE)
-    val widgetBackgroundColor: StateFlow<Long> get() = state.map { it.widgetBackgroundColor }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT), DisplayConstant.DEFAULT_WIDGET_BACKGROUND_COLOR)
-    val widgetOpacity: StateFlow<Int> get() = state.map { it.widgetOpacity }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT), DisplayConstant.DEFAULT_WIDGET_OPACITY)
+    val currencySymbol: StateFlow<String>
+        get() = state.map { it.currencySymbol }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_CURRENCY_SYMBOL,
+        )
+    val decimalDigits: StateFlow<Int>
+        get() = state.map { it.decimalDigits }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_DECIMAL_DIGITS,
+        )
+    val decimalSeparator: StateFlow<String>
+        get() = state.map { it.decimalSeparator }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_DECIMAL_SEPARATOR,
+        )
+    val thousandsSeparator: StateFlow<String>
+        get() = state.map { it.thousandsSeparator }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_THOUSANDS_SEPARATOR,
+        )
+    val mealVoucherValue: StateFlow<Double>
+        get() = state.map { it.mealVoucherValue }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_MEAL_VOUCHER_VALUE,
+        )
+    val showChartsSection: StateFlow<Boolean>
+        get() = state.map { it.showChartsSection }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_SHOW_CHARTS_SECTION,
+        )
+    val chartsZoomEnabled: StateFlow<Boolean>
+        get() = state.map { it.chartsZoomEnabled }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_SHOW_CHARTS_ZOOM,
+        )
+    val dateFormat: StateFlow<String>
+        get() = state.map { it.dateFormat }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_DATE_FORMAT,
+        )
+    val showTransactionNotes: StateFlow<Boolean>
+        get() = state.map { it.showTransactionNotes }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_SHOW_TRANSACTION_NOTES,
+        )
+    val maskAmounts: StateFlow<Boolean>
+        get() = state.map { it.maskAmounts }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_MASK_AMOUNTS,
+        )
+    val showPaymentTypeBreakdown: StateFlow<Boolean>
+        get() = state.map { it.showPaymentTypeBreakdown }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_SHOW_PAYMENT_BREAKDOWN,
+        )
+    val showQuickInsightsCard: StateFlow<Boolean>
+        get() = state.map { it.showQuickInsightsCard }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_SHOW_QUICK_INSIGHTS_CARD,
+        )
+    val defaultPaymentType: StateFlow<String>
+        get() = state.map { it.defaultPaymentType }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_PAYMENT_TYPE,
+        )
+    val transactionDisplayType: StateFlow<TransactionDisplayType>
+        get() = state.map { it.transactionDisplayType }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_TRANSACTION_DISPLAY_TYPE,
+        )
+    val transactionsTransactionDisplayType: StateFlow<TransactionDisplayType>
+        get() = state.map { it.transactionsTransactionDisplayType }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_TRANSACTION_DISPLAY_TYPE,
+        )
+    val widgetBackgroundColor: StateFlow<Long>
+        get() = state.map { it.widgetBackgroundColor }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_WIDGET_BACKGROUND_COLOR,
+        )
+    val widgetOpacity: StateFlow<Int>
+        get() = state.map { it.widgetOpacity }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
+            DisplayConstant.DEFAULT_WIDGET_OPACITY,
+        )
 
     override fun onEvent(event: DisplayEvent) {
         logDebug("Event: $event")
@@ -143,6 +230,7 @@ class DisplayViewModel(
                 setTransactionsTransactionDisplayType(
                     event.displayType,
                 )
+
             is DisplayEvent.SetWidgetBackgroundColor -> setWidgetBackgroundColor(event.color)
             is DisplayEvent.SetWidgetOpacity -> setWidgetOpacity(event.opacity)
             is DisplayEvent.RetryLastOperation -> logInfo("Retry requested")

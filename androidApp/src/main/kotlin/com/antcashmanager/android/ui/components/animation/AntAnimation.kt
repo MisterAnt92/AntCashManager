@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.components.animation
 
+import android.content.res.Configuration
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -30,6 +31,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -37,6 +39,7 @@ import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.text.AppText
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import kotlinx.coroutines.delay
 
 @Composable
@@ -228,5 +231,53 @@ fun AntEasterEggAnimation(
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true, name = "BouncingAnt - Light")
+@Composable
+private fun BouncingAntLightPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        BouncingAnt()
+    }
+}
+
+@Preview(showBackground = true, name = "BouncingAnt - Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun BouncingAntDarkPreview() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        BouncingAnt()
+    }
+}
+
+@Preview(showBackground = true, name = "BouncingAnt - 2x", fontScale = 2.0f)
+@Composable
+private fun BouncingAntLargeTextPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        BouncingAnt()
+    }
+}
+
+@Preview(showBackground = true, name = "AntEasterEggAnimation - Light")
+@Composable
+private fun AntEasterEggAnimationLightPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        AntEasterEggAnimation(versionName = "1.7.9", onDismiss = {})
+    }
+}
+
+@Preview(showBackground = true, name = "AntEasterEggAnimation - Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun AntEasterEggAnimationDarkPreview() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        AntEasterEggAnimation(versionName = "1.7.9", onDismiss = {})
+    }
+}
+
+@Preview(showBackground = true, name = "AntEasterEggAnimation - 2x", fontScale = 2.0f)
+@Composable
+private fun AntEasterEggAnimationLargeTextPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        AntEasterEggAnimation(versionName = "1.7.9", onDismiss = {})
     }
 }

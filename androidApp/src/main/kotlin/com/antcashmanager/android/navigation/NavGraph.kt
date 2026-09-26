@@ -44,6 +44,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -90,8 +91,6 @@ import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.repository.SettingsRepository
-import androidx.compose.runtime.rememberCoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -209,6 +208,11 @@ fun AntCashManagerNavHost() {
 
             val isOnTutorial = currentDestination?.route == AppRoute.BottomRoute.Tutorial.route
 
+            val isOnSubScreen =
+                currentDestination?.route?.let {
+                    AppRoute.isSubScreen(it)
+                } == true
+
             BackHandler {
                 when {
                     isSidebarOpen -> isSidebarOpen = false
@@ -219,6 +223,7 @@ fun AntCashManagerNavHost() {
                         // This prevents race condition with language change recompositions
                         exitDialogContext = context
                     }
+
                     !navController.popBackStack() -> {
                         showExitDialog = true
                         // FIX 1: Capture stable context BEFORE dialog shows
@@ -250,7 +255,8 @@ fun AntCashManagerNavHost() {
                         if (isTutorialCompleted == true &&
                             !adaptiveLayoutInfo.preferRailNavigation &&
                             !isSidebarOpen &&
-                            !isOnCategoriesSettingsOrTutorial
+                            !isOnCategoriesSettingsOrTutorial &&
+                            !isOnSubScreen
                         ) {
                             Surface(
                                 color = MaterialTheme.colorScheme.surface,
@@ -409,7 +415,7 @@ fun AntCashManagerNavHost() {
                         }
                     }
 
-                    if (isTutorialCompleted == true && adaptiveLayoutInfo.preferRailNavigation && !isOnTutorial) {
+                    if (isTutorialCompleted == true && adaptiveLayoutInfo.preferRailNavigation && !isOnTutorial && !isOnSubScreen) {
                         Column(
                             modifier =
                                 Modifier
@@ -417,7 +423,7 @@ fun AntCashManagerNavHost() {
                                     .padding(innerPadding),
                         ) {
                             // Top bar con pulsanti (Search, Filter, Sort, Helper) - senza Hamburger menu su tablet
-                            if (!isOnTutorial) {
+                            if (!isOnTutorial && !isOnSubScreen) {
                                 Row(
                                     modifier =
                                         Modifier
@@ -537,7 +543,8 @@ fun AntCashManagerNavHost() {
                                                 top = 12.dp,
                                                 end = railPaddingEnd,
                                                 bottom = 12.dp,
-                                            ).width(railContainerWidth)
+                                            )
+                                            .width(railContainerWidth)
                                             .fillMaxHeight(),
                                 ) {
                                     NavigationRail(
@@ -598,8 +605,8 @@ fun AntCashManagerNavHost() {
                                 Column(
                                     modifier = Modifier.fillMaxSize(),
                                 ) {
-                                    // Top bar con hamburger menu - nascosto su Tutorial
-                                    if (!isOnTutorial) {
+                                    // Top bar con hamburger menu - nascosto su Tutorial e sub-screens
+                                    if (!isOnTutorial && !isOnSubScreen) {
                                         Row(
                                             modifier =
                                                 Modifier

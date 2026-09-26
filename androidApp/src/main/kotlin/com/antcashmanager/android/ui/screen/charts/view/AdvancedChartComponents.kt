@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 
 const val padding = 32f
+
 /**
  * Line chart with points showing daily expense trends.
  * Uses simplified rendering for better performance.

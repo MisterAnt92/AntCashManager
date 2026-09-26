@@ -37,8 +37,8 @@ android {
         applicationId = "com.sformica.ant_cashmanager"
         minSdk = 26
         targetSdk = 37
-        versionCode = 26
-        versionName = "1.7.8"
+        versionCode = 27
+        versionName = "1.7.9"
     }
 
     // ── Product Flavors for Optimization ──
@@ -206,8 +206,9 @@ dependencies {
     testImplementation(libs.androidx.compose.ui.test.junit4)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.work.testing)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.junit.ext)
-    androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
 
     // Android Test Orchestrator for better test isolation and parallelism
     androidTestUtil(libs.androidx.test.orchestrator)

@@ -1,7 +1,5 @@
 package com.antcashmanager.domain.model
 
-import com.antcashmanager.domain.model.PaymentType
-import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.testutil.testTransaction
 import kotlin.test.Test
 import kotlin.test.assertEquals

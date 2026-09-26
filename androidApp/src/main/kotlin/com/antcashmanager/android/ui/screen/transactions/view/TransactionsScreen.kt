@@ -6,13 +6,10 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,28 +24,20 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.TrendingDown
-import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Receipt
-import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
@@ -64,26 +53,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
-import com.antcashmanager.android.ui.mapper.recurrenceIntervalLabelRes
 import com.antcashmanager.android.navigation.AppRoute
 import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
 import com.antcashmanager.android.navigation.ScreenHeaderConfig
 import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
-import com.antcashmanager.android.ui.components.animation.AnimatedCard
-import com.antcashmanager.android.ui.components.animation.AnimatedListItem
 import com.antcashmanager.android.ui.components.animation.SkeletonLoader
-import com.antcashmanager.android.ui.components.button.AppButton
 import com.antcashmanager.android.ui.components.dialog.HelpButton
 import com.antcashmanager.android.ui.components.filter.DateRangeFilter
 import com.antcashmanager.android.ui.components.filter.SearchComponent
 import com.antcashmanager.android.ui.components.layout.FoldableAwareLayout
-import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
@@ -91,20 +74,8 @@ import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInf
 import com.antcashmanager.android.ui.components.state.AntEmptyState
 import com.antcashmanager.android.ui.components.state.AntErrorState
 import com.antcashmanager.android.ui.components.text.AppText
-import com.antcashmanager.android.ui.components.text.TransactionAmountText
-import com.antcashmanager.android.ui.screen.categories.view.categoryIconMap
-import com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
-import com.antcashmanager.android.ui.theme.ExpenseRed
-import com.antcashmanager.android.ui.theme.IncomeGreen
-import com.antcashmanager.android.ui.theme.LocalAnnaTheme
-import com.antcashmanager.android.util.LocalAmountsMasked
-import com.antcashmanager.android.util.isProtectedSalaryTransaction
-import com.antcashmanager.android.util.isValidNote
-import com.antcashmanager.domain.model.Category
-import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionDisplayType
-import com.antcashmanager.domain.model.TransactionType
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -231,17 +202,19 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
         DatePickerDialog(
             onDismissRequest = { showFromDatePicker = false },
             confirmButton = {
-                TextButton(onClick = {
-                    datePickerState.selectedDateMillis?.let {
-                        onEvent(
-                            com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.SetDateRange(
-                                from = it,
-                                to = state.dateRangeTo,
-                            ),
-                        )
-                    }
-                    showFromDatePicker = false
-                }) {
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let {
+                            onEvent(
+                                com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.SetDateRange(
+                                    from = it,
+                                    to = state.dateRangeTo,
+                                ),
+                            )
+                        }
+                        showFromDatePicker = false
+                    },
+                ) {
                     AppText(stringResource(R.string.common_confirm))
                 }
             },
@@ -263,17 +236,19 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
         DatePickerDialog(
             onDismissRequest = { showToDatePicker = false },
             confirmButton = {
-                TextButton(onClick = {
-                    datePickerState.selectedDateMillis?.let {
-                        onEvent(
-                            com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.SetDateRange(
-                                from = state.dateRangeFrom,
-                                to = it,
-                            ),
-                        )
-                    }
-                    showToDatePicker = false
-                }) {
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let {
+                            onEvent(
+                                com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.SetDateRange(
+                                    from = state.dateRangeFrom,
+                                    to = it,
+                                ),
+                            )
+                        }
+                        showToDatePicker = false
+                    },
+                ) {
                     AppText(stringResource(R.string.common_confirm))
                 }
             },
@@ -382,13 +357,18 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
                     when {
                         state.isLoading -> {
                             items(6) {
-                                Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 4.dp),
+                                ) {
                                     SkeletonLoader(height = 16.dp, cornerRadius = 8)
                                     VerticalSpacer(SpacingSize.XS)
                                     SkeletonLoader(height = 20.dp, cornerRadius = 8)
                                 }
                             }
                         }
+
                         state.filteredTransactions.isEmpty() -> {
                             item(span = { GridItemSpan(maxLineSpan) }) {
                                 AntEmptyState(
@@ -399,6 +379,7 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
                                 )
                             }
                         }
+
                         else -> {
                             items(state.filteredTransactions, key = { it.id }) { transaction ->
                                 TransactionItem(

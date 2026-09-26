@@ -334,7 +334,8 @@ internal fun BarChartLegend() {
                                     incomeColor.copy(alpha = 0.05f),
                                 ),
                         ),
-                    ).padding(horizontal = 12.dp, vertical = 6.dp),
+                    )
+                    .padding(horizontal = 12.dp, vertical = 6.dp),
         ) {
             Box(
                 modifier =
@@ -386,7 +387,8 @@ internal fun BarChartLegend() {
                                     expenseColor.copy(alpha = 0.05f),
                                 ),
                         ),
-                    ).padding(horizontal = 12.dp, vertical = 6.dp),
+                    )
+                    .padding(horizontal = 12.dp, vertical = 6.dp),
         ) {
             Box(
                 modifier =
@@ -842,7 +844,8 @@ internal fun ZoomablePieChart(
                                 offsetY = 0f
                             }
                         }
-                    }.graphicsLayer(
+                    }
+                    .graphicsLayer(
                         scaleX = scale.takeIf { it.isFinite() && it > 0f } ?: 1f,
                         scaleY = scale.takeIf { it.isFinite() && it > 0f } ?: 1f,
                         translationX = offsetX.takeIf { it.isFinite() } ?: 0f,

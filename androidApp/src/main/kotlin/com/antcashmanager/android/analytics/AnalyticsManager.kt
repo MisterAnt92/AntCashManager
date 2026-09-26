@@ -13,7 +13,8 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 open class AnalyticsManager {
     private val firebaseAnalytics: FirebaseAnalytics?
 
-    @Volatile private var consentGranted: Boolean = false
+    @Volatile
+    private var consentGranted: Boolean = false
 
     constructor(context: Context) {
         firebaseAnalytics = FirebaseAnalytics.getInstance(context.applicationContext)

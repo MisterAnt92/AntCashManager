@@ -80,19 +80,12 @@ data class AddTransactionState(
     /**
      * Importo da persistere sulla transazione.
      *
-     * Calcolo dipende dal tipo di pagamento:
-     * - MEAL_VOUCHERS: (mealVoucherCount × mealVoucherValue) + mealVoucherDifference
-     * - Altro: amount (inserito direttamente)
+     * Per tutti i tipi di pagamento (incluso MEAL_VOUCHERS):
+     * - L'amount è il totale finale inserito/calcolato dall'utente
+     * - Questo rappresenta l'importo reale da persistere nel DB
      */
     val totalAmount: Double
-        get() =
-            if (isMealVouchersPayment) {
-                val voucherSubtotal = (mealVoucherCount.toIntOrNull() ?: 0) * mealVoucherValue
-                val difference = mealVoucherDifference.toDoubleOrNull() ?: 0.0
-                voucherSubtotal + difference
-            } else {
-                amount.toDoubleOrNull() ?: 0.0
-            }
+        get() = amount.toDoubleOrNull()?.takeIf { it.isFinite() } ?: 0.0
 
     /**
      * Differenza pagata con altri mezzi rispetto al valore coperto dai buoni pasto.

@@ -1,6 +1,7 @@
 package com.antcashmanager.android.ui.screen.settings.dataManagement
 
 import com.antcashmanager.domain.model.BackupDestination
+import com.antcashmanager.domain.model.BackupFrequency
 
 /**
  * UDF Pattern: Events for Settings Data Management screen.
@@ -38,6 +39,10 @@ sealed class SettingsDataEvent {
 
     data class SetAutoBackupDestination(
         val destination: BackupDestination,
+    ) : SettingsDataEvent()
+
+    data class SetBackupFrequency(
+        val frequency: BackupFrequency,
     ) : SettingsDataEvent()
 
     // ── Delete All Data ──

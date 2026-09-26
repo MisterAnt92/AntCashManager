@@ -538,7 +538,8 @@ private fun ReceiptAmountCard(
                             MaterialTheme.colorScheme.primaryContainer
                         },
                     shape = MaterialTheme.shapes.medium,
-                ).padding(16.dp),
+                )
+                .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {

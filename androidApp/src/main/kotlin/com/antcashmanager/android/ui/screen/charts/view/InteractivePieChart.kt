@@ -91,7 +91,11 @@ internal fun InteractivePieChart(
                 }
             },
     ) {
-        Canvas(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
+        Canvas(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(),
+        ) {
             val outerRadius = minOf(size.width, size.height) * 0.38f
             val innerRadius = outerRadius * 0.5f // Creates donut effect (hole in center)
             val center = Offset(size.width / 2f, size.height / 2f)

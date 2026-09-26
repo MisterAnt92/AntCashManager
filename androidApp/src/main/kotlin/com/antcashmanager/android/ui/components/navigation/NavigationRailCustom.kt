@@ -1,17 +1,24 @@
 package com.antcashmanager.android.ui.components.navigation
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
 import com.antcashmanager.android.ui.components.text.AppText
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 
 /**
  * Enhanced NavigationRail for foldable devices and tablets.
@@ -100,5 +107,59 @@ fun getNavigationRailSpacing(): androidx.compose.ui.unit.Dp {
         adaptiveInfo.isExpanded -> 12.dp
         adaptiveInfo.isMedium -> 8.dp
         else -> 4.dp
+    }
+}
+
+@Preview(showBackground = true, name = "NavigationRailTablet - Light", widthDp = 100, heightDp = 600)
+@Composable
+private fun NavigationRailTabletLightPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        NavigationRailTablet(
+            items = listOf(
+                NavigationRailItem(label = "Home", icon = Icons.Default.Home),
+                NavigationRailItem(label = "Charts", icon = Icons.Default.BarChart),
+                NavigationRailItem(label = "Transactions", icon = Icons.Default.List),
+            ),
+            selectedItem = 0,
+            onItemSelected = {},
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    name = "NavigationRailTablet - Dark",
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    widthDp = 100,
+    heightDp = 600,
+)
+@Composable
+private fun NavigationRailTabletDarkPreview() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        NavigationRailTablet(
+            items = listOf(
+                NavigationRailItem(label = "Home", icon = Icons.Default.Home),
+                NavigationRailItem(label = "Charts", icon = Icons.Default.BarChart),
+                NavigationRailItem(label = "Transactions", icon = Icons.Default.List),
+            ),
+            selectedItem = 0,
+            onItemSelected = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "NavigationRailTablet - 2x", fontScale = 2.0f, widthDp = 100, heightDp = 600)
+@Composable
+private fun NavigationRailTabletLargeTextPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        NavigationRailTablet(
+            items = listOf(
+                NavigationRailItem(label = "Home", icon = Icons.Default.Home),
+                NavigationRailItem(label = "Charts", icon = Icons.Default.BarChart),
+                NavigationRailItem(label = "Transactions", icon = Icons.Default.List),
+            ),
+            selectedItem = 0,
+            onItemSelected = {},
+        )
     }
 }

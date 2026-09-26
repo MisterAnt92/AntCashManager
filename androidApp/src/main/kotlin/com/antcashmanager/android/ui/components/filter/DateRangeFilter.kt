@@ -199,7 +199,8 @@ fun DateRangeFilter(
                                 } else {
                                     "Filtro date compresso, tocca per espandere"
                                 }
-                        }.padding(16.dp),
+                        }
+                        .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {

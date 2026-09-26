@@ -364,12 +364,14 @@ class DriveUploadManager(
                             Result.failure(Exception("Token refresh failed after retry — permission revoked"))
                         }
                     }
+
                     e.message?.contains("403") == true -> {
                         logger.e(
                             tag = "DriveUploadManager",
                         ) { "Permission denied (403) — file not created by this app?" }
                         Result.failure(Exception("Permission denied — folder may not be owned by this app"))
                     }
+
                     e.message?.contains("5") == true -> {
                         if (retryCount < MAX_RETRIES) {
                             val delay = RETRY_DELAY_MS * (retryCount + 1) // Backoff esponenziale
@@ -382,6 +384,7 @@ class DriveUploadManager(
                             Result.failure(Exception("Server error after $MAX_RETRIES retries"))
                         }
                     }
+
                     else -> {
                         Result.failure(e)
                     }
