@@ -654,4 +654,13 @@
     <string name="transactions_help_display_title">@string/settings_transaction_display</string>
     <string name="transactions_help_display_desc">@string/settings_transaction_display_desc</string>
     <string name="transactions_details_empty">Wybierz transakcję, aby zobaczyć szczegóły</string>
+
+    <!-- Meal Vouchers Card -->
+    <string name="home_meal_vouchers_title">Bony Posiłkowe</string>
+    <string name="home_meal_vouchers_remaining">Pozostałe</string>
+    <string name="home_meal_vouchers_received">Otrzymane</string>
+    <string name="home_meal_vouchers_used">Zużyte</string>
+    <string name="home_meal_vouchers_remaining_value">Wartość pozostała</string>
+    <string name="home_meal_vouchers_warning_overused">Wykorzystano więcej niż otrzymano</string>
+    <string name="home_meal_vouchers_received_only_mode">Tylko śledzenie</string>
 </resources>

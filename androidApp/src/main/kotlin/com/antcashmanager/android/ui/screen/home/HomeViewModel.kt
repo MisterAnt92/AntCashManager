@@ -245,6 +245,7 @@ class HomeViewModel(
             settingsRepository.getTransactionDisplayType(),
             settingsRepository.getIsTutorialCompleted(),
             _editingTopCardsOrder,
+            settingsRepository.getMealVoucherValue(),
         ) { args: Array<Any?> ->
             val transactions = args[0] as List<com.antcashmanager.domain.model.Transaction>
             val filtered = args[1] as List<com.antcashmanager.domain.model.Transaction>
@@ -262,6 +263,7 @@ class HomeViewModel(
 
             @Suppress("UNCHECKED_CAST")
             val editingTopCardsOrder = args[13] as List<HomeTopCardType>?
+            val mealVoucherValue = args[14] as Double
 
             // Enrich transactions with category icon and color from cache
             val enrichedFiltered =
@@ -327,6 +329,32 @@ class HomeViewModel(
             }
             previousTopCategory = currentTopCategory
 
+            // Calculate meal voucher summary from all transactions (not filtered by date)
+            val mealVoucherTxs = transactions.filter { it.paymentType == com.antcashmanager.domain.model.PaymentType.MEAL_VOUCHERS }
+            val mealVoucherSummary = if (mealVoucherTxs.isNotEmpty()) {
+                val received = mealVoucherTxs
+                    .filter { it.type == com.antcashmanager.domain.model.TransactionType.INCOME }
+                    .sumOf { it.mealVoucherCount }
+                val used = mealVoucherTxs
+                    .filter { it.type == com.antcashmanager.domain.model.TransactionType.EXPENSE }
+                    .sumOf { it.mealVoucherCount }
+                if (received == 0 && used == 0) {
+                    null
+                } else {
+                    val remaining = received - used
+                    com.antcashmanager.domain.model.MealVoucherSummary(
+                        received = received,
+                        used = used,
+                        remaining = remaining,
+                        voucherValue = mealVoucherValue,
+                        remainingValue = remaining * mealVoucherValue,
+                        usedValue = used * mealVoucherValue,
+                    )
+                }
+            } else {
+                null
+            }
+
             HomeState(
                 transactions = transactions,
                 filteredTransactions = enrichedFiltered,
@@ -351,6 +379,7 @@ class HomeViewModel(
                 reduceMotion = reduceMotion,
                 transactionDisplayType = transactionDisplayType,
                 isTutorialCompleted = isTutorialCompleted,
+                mealVoucherSummary = mealVoucherSummary,
                 errorState = com.antcashmanager.android.ui.base.ErrorState(),
             )
         }.stateIn(

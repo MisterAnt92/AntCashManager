@@ -594,4 +594,13 @@
     <string name="transactions_help_title">@string/help_transactions_title</string>
     <string name="transactions_help_desc">@string/help_transactions_desc</string>
     <string name="transactions_details_empty">Sélectionnez une transaction pour voir les détails</string>
+
+    <!-- Meal Vouchers Card -->
+    <string name="home_meal_vouchers_title">Chèques Repas</string>
+    <string name="home_meal_vouchers_remaining">Restants</string>
+    <string name="home_meal_vouchers_received">Reçus</string>
+    <string name="home_meal_vouchers_used">Utilisés</string>
+    <string name="home_meal_vouchers_remaining_value">Valeur restante</string>
+    <string name="home_meal_vouchers_warning_overused">Utilisé plus que reçu</string>
+    <string name="home_meal_vouchers_received_only_mode">Suivi uniquement</string>
 </resources>

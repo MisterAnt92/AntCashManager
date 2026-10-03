@@ -656,4 +656,13 @@
     <string name="transactions_help_display_title">@string/settings_transaction_display</string>
     <string name="transactions_help_display_desc">@string/settings_transaction_display_desc</string>
     <string name="transactions_details_empty">Виберіть транзакцію, щоб переглянути деталі</string>
+
+    <!-- Meal Vouchers Card -->
+    <string name="home_meal_vouchers_title">Талони на харчування</string>
+    <string name="home_meal_vouchers_remaining">залишилось</string>
+    <string name="home_meal_vouchers_received">отримано</string>
+    <string name="home_meal_vouchers_used">використано</string>
+    <string name="home_meal_vouchers_remaining_value">залишкова вартість</string>
+    <string name="home_meal_vouchers_warning_overused">Використано більше, ніж отримано</string>
+    <string name="home_meal_vouchers_received_only_mode">Тільки відстеження</string>
 </resources>

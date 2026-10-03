@@ -642,4 +642,13 @@
     <string name="transactions_help_title">@string/help_transactions_title</string>
     <string name="transactions_help_desc">@string/help_transactions_desc</string>
     <string name="transactions_details_empty">Wählen Sie eine Transaktion aus, um Details anzuzeigen</string>
+
+    <!-- Meal Vouchers Card -->
+    <string name="home_meal_vouchers_title">Essengutscheine</string>
+    <string name="home_meal_vouchers_remaining">Verbleibend</string>
+    <string name="home_meal_vouchers_received">Erhalten</string>
+    <string name="home_meal_vouchers_used">Verwendet</string>
+    <string name="home_meal_vouchers_remaining_value">Restwert</string>
+    <string name="home_meal_vouchers_warning_overused">Mehr verwendet als erhalten</string>
+    <string name="home_meal_vouchers_received_only_mode">Nur Tracking</string>
 </resources>

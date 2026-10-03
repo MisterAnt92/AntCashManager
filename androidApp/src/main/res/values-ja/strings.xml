@@ -653,4 +653,13 @@
     <string name="transactions_help_display_title">@string/settings_transaction_display</string>
     <string name="transactions_help_display_desc">@string/settings_transaction_display_desc</string>
     <string name="transactions_details_empty">詳細を表示するには取引を選択してください</string>
+
+    <!-- Meal Vouchers Card -->
+    <string name="home_meal_vouchers_title">食事券</string>
+    <string name="home_meal_vouchers_remaining">残り</string>
+    <string name="home_meal_vouchers_received">受け取った</string>
+    <string name="home_meal_vouchers_used">使用した</string>
+    <string name="home_meal_vouchers_remaining_value">残存価値</string>
+    <string name="home_meal_vouchers_warning_overused">受け取ったより多く使用</string>
+    <string name="home_meal_vouchers_received_only_mode">トラッキングのみ</string>
 </resources>

@@ -642,4 +642,13 @@
     <string name="transactions_help_display_title">@string/settings_transaction_display</string>
     <string name="transactions_help_display_desc">@string/settings_transaction_display_desc</string>
     <string name="transactions_details_empty">選擇一筆交易以查看詳情</string>
+
+    <!-- Meal Vouchers Card -->
+    <string name="home_meal_vouchers_title">餐券</string>
+    <string name="home_meal_vouchers_remaining">剩余</string>
+    <string name="home_meal_vouchers_received">已收到</string>
+    <string name="home_meal_vouchers_used">已使用</string>
+    <string name="home_meal_vouchers_remaining_value">剩余價值</string>
+    <string name="home_meal_vouchers_warning_overused">使用多於收到</string>
+    <string name="home_meal_vouchers_received_only_mode">僅跟蹤</string>
 </resources>

@@ -657,4 +657,13 @@
     <string name="settings_analytics_consent_title">Share anonymous usage statistics</string>
     <string name="settings_analytics_consent_desc">Screens visited and errors only. No financial data is ever sent.</string>
     <string name="transactions_details_empty">Select a transaction to view details</string>
+
+    <!-- Meal Vouchers Card -->
+    <string name="home_meal_vouchers_title">Meal Vouchers</string>
+    <string name="home_meal_vouchers_remaining">Remaining</string>
+    <string name="home_meal_vouchers_received">Received</string>
+    <string name="home_meal_vouchers_used">Used</string>
+    <string name="home_meal_vouchers_remaining_value">Remaining value</string>
+    <string name="home_meal_vouchers_warning_overused">Used more than received</string>
+    <string name="home_meal_vouchers_received_only_mode">Tracking used only</string>
 </resources>

@@ -654,4 +654,13 @@
     <string name="settings_analytics_consent_desc">仅访问的界面和错误。不会发送任何财务数据。</string>
 
     <string name="transactions_details_empty">选择一笔交易以查看详情</string>
+
+    <!-- Meal Vouchers Card -->
+    <string name="home_meal_vouchers_title">饭券</string>
+    <string name="home_meal_vouchers_remaining">剩余</string>
+    <string name="home_meal_vouchers_received">已收到</string>
+    <string name="home_meal_vouchers_used">已使用</string>
+    <string name="home_meal_vouchers_remaining_value">剩余价值</string>
+    <string name="home_meal_vouchers_warning_overused">使用多于收到</string>
+    <string name="home_meal_vouchers_received_only_mode">仅跟踪</string>
 </resources>

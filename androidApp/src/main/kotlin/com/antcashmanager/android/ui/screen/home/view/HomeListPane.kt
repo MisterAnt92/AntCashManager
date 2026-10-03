@@ -192,5 +192,8 @@ private fun TopCard(
                 biggestExpenseCategory = state.biggestExpense?.category,
                 biggestExpenseAmount = state.biggestExpense?.amount,
             )
+
+        HomeTopCardType.MEAL_VOUCHERS ->
+            state.mealVoucherSummary?.let { MealVoucherCard(summary = it) }
     }
 }
