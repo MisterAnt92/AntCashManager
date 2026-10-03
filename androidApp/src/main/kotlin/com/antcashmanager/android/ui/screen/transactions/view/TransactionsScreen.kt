@@ -337,8 +337,9 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
                             .fillMaxSize()
                             .padding(
                                 horizontal = adaptiveLayoutInfo.horizontalPadding,
-                                vertical = 16.dp,
-                            ),
+                                vertical = 0.dp,
+                            )
+                            .padding(top = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(TransactionsScreenDefaults.CardSpacing),
                     verticalArrangement = Arrangement.spacedBy(TransactionsScreenDefaults.CardSpacing),
                     contentPadding = PaddingValues(bottom = TransactionsScreenDefaults.ListBottomSpacer),
@@ -406,8 +407,9 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
                             .fillMaxSize()
                             .padding(
                                 horizontal = adaptiveLayoutInfo.horizontalPadding,
-                                vertical = if (adaptiveLayoutInfo.isExpanded) 16.dp else 12.dp,
-                            ),
+                                vertical = 0.dp,
+                            )
+                            .padding(top = if (adaptiveLayoutInfo.isExpanded) 16.dp else 12.dp),
                     state = listState,
                     verticalArrangement = Arrangement.spacedBy(TransactionsScreenDefaults.CardSpacing),
                     contentPadding = PaddingValues(bottom = TransactionsScreenDefaults.ListBottomSpacer),

@@ -97,7 +97,8 @@ fun HomeListPane(
                 Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
-                    .padding(horizontal = horizontalPadding, vertical = if (isExpanded) 16.dp else 12.dp),
+                    .padding(horizontal = horizontalPadding, vertical = 0.dp)
+                    .padding(top = if (isExpanded) 16.dp else 12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             if (!state.isSearchExpanded) {
