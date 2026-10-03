@@ -1,3 +1,13 @@
+/**
+ * Typography system for AntCashManager using Material 3 standards.
+ *
+ * Font: Google Fonts Poppins (Open Source, SIL OFL)
+ * Weights: Light (300), Normal (400), Medium (500), SemiBold (600), Bold (700)
+ * Sizes: Semantic scales following Material Design 3
+ *
+ * Always use semantic styles (headlineSmall, bodyMedium, etc.) instead of hardcoding sizes.
+ * See: theme/README.md for usage guidelines
+ */
 package com.antcashmanager.android.ui.theme
 
 import androidx.compose.material3.Typography
