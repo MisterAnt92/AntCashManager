@@ -663,4 +663,18 @@
     <string name="home_meal_vouchers_remaining_value">Wartość pozostała</string>
     <string name="home_meal_vouchers_warning_overused">Wykorzystano więcej niż otrzymano</string>
     <string name="home_meal_vouchers_received_only_mode">Tylko śledzenie</string>
+
+    <!-- Month names (short format) -->
+    <string name="month_short_1">Sty</string>
+    <string name="month_short_2">Lut</string>
+    <string name="month_short_3">Mar</string>
+    <string name="month_short_4">Kwi</string>
+    <string name="month_short_5">Maj</string>
+    <string name="month_short_6">Cze</string>
+    <string name="month_short_7">Lip</string>
+    <string name="month_short_8">Sie</string>
+    <string name="month_short_9">Wrz</string>
+    <string name="month_short_10">Paz</string>
+    <string name="month_short_11">Lis</string>
+    <string name="month_short_12">Gru</string>
 </resources>

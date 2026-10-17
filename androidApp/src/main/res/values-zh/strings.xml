@@ -663,4 +663,18 @@
     <string name="home_meal_vouchers_remaining_value">剩余价值</string>
     <string name="home_meal_vouchers_warning_overused">使用多于收到</string>
     <string name="home_meal_vouchers_received_only_mode">仅跟踪</string>
+
+    <!-- Month names (short format) -->
+    <string name="month_short_1">1月</string>
+    <string name="month_short_2">2月</string>
+    <string name="month_short_3">3月</string>
+    <string name="month_short_4">4月</string>
+    <string name="month_short_5">5月</string>
+    <string name="month_short_6">6月</string>
+    <string name="month_short_7">7月</string>
+    <string name="month_short_8">8月</string>
+    <string name="month_short_9">9月</string>
+    <string name="month_short_10">10月</string>
+    <string name="month_short_11">11月</string>
+    <string name="month_short_12">12月</string>
 </resources>

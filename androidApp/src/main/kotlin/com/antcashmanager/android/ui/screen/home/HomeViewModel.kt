@@ -329,8 +329,8 @@ class HomeViewModel(
             }
             previousTopCategory = currentTopCategory
 
-            // Calculate meal voucher summary from all transactions (not filtered by date)
-            val mealVoucherTxs = transactions.filter { it.paymentType == com.antcashmanager.domain.model.PaymentType.MEAL_VOUCHERS }
+            // Calculate meal voucher summary from filtered transactions (respects date/search filters, like QuickInsightsCard)
+            val mealVoucherTxs = enrichedFiltered.filter { it.paymentType == com.antcashmanager.domain.model.PaymentType.MEAL_VOUCHERS }
             val mealVoucherSummary = if (mealVoucherTxs.isNotEmpty()) {
                 val received = mealVoucherTxs
                     .filter { it.type == com.antcashmanager.domain.model.TransactionType.INCOME }

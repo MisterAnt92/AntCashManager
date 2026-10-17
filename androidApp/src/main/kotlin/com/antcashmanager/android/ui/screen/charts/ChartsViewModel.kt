@@ -299,21 +299,8 @@ class ChartsViewModel(
         // Build monthly aggregation
         val cal = Calendar.getInstance()
         val monthlyMap = mutableMapOf<String, Pair<Double, Double>>()
-        val monthNames =
-            arrayOf(
-                "Jan",
-                "Feb",
-                "Mar",
-                "Apr",
-                "May",
-                "Jun",
-                "Jul",
-                "Aug",
-                "Sep",
-                "Oct",
-                "Nov",
-                "Dec",
-            )
+        // Usa DateFormatSymbols per ottenere i nomi dei mesi localizzati automaticamente
+        val monthNames = java.text.DateFormatSymbols().shortMonths.take(12).toTypedArray()
 
         transactions.forEach { tx ->
             cal.timeInMillis = tx.timestamp

@@ -663,4 +663,18 @@
     <string name="home_meal_vouchers_remaining_value">оставшаяся стоимость</string>
     <string name="home_meal_vouchers_warning_overused">Использовано больше, чем получено</string>
     <string name="home_meal_vouchers_received_only_mode">Только отслеживание</string>
+
+    <!-- Month names (short format) -->
+    <string name="month_short_1">Янв</string>
+    <string name="month_short_2">Фев</string>
+    <string name="month_short_3">Мар</string>
+    <string name="month_short_4">Апр</string>
+    <string name="month_short_5">Май</string>
+    <string name="month_short_6">Июн</string>
+    <string name="month_short_7">Июл</string>
+    <string name="month_short_8">Авг</string>
+    <string name="month_short_9">Сен</string>
+    <string name="month_short_10">Окт</string>
+    <string name="month_short_11">Ноя</string>
+    <string name="month_short_12">Дек</string>
 </resources>

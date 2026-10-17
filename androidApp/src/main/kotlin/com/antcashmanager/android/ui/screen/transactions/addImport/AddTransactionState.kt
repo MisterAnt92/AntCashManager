@@ -58,6 +58,8 @@ data class AddTransactionState(
     val showDatePicker: Boolean = false,
     val showDeleteConfirmDialog: Boolean = false,
     val showPaymentTypeDialog: Boolean = false,
+    // Meal vouchers available (calcolato dal ViewModel)
+    val availableMealVouchers: Int = 0,
 ) {
     val isMealVouchersPayment: Boolean
         get() = selectedPaymentType == PaymentType.MEAL_VOUCHERS
@@ -71,7 +73,10 @@ data class AddTransactionState(
                 (!isRecurring || recurrenceInterval.isNotBlank()) &&
                 // Per buoni pasto: numero voucher obbligatorio, nessun importo manuale
                 if (isMealVouchersPayment) {
-                    mealVoucherCount.toIntOrNull() != null && mealVoucherCount.toIntOrNull()!! > 0
+                    val voucherCount = mealVoucherCount.toIntOrNull() ?: 0
+                    voucherCount > 0 &&
+                        // Per EXPENSE: non può spendere più buoni di quelli disponibili
+                        (selectedType != TransactionType.EXPENSE || voucherCount <= availableMealVouchers)
                 } else {
                     // Per altre transazioni: importo totale obbligatorio
                     amount.isNotBlank() && amount.toDoubleOrNull() != null && amount.toDoubleOrNull()!! > 0

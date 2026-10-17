@@ -662,4 +662,18 @@
     <string name="home_meal_vouchers_remaining_value">남은 가치</string>
     <string name="home_meal_vouchers_warning_overused">받은 것보다 더 사용함</string>
     <string name="home_meal_vouchers_received_only_mode">추적만</string>
+
+    <!-- Month names (short format) -->
+    <string name="month_short_1">1월</string>
+    <string name="month_short_2">2월</string>
+    <string name="month_short_3">3월</string>
+    <string name="month_short_4">4월</string>
+    <string name="month_short_5">5월</string>
+    <string name="month_short_6">6월</string>
+    <string name="month_short_7">7월</string>
+    <string name="month_short_8">8월</string>
+    <string name="month_short_9">9월</string>
+    <string name="month_short_10">10월</string>
+    <string name="month_short_11">11월</string>
+    <string name="month_short_12">12월</string>
 </resources>

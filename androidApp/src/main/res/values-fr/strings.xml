@@ -603,4 +603,18 @@
     <string name="home_meal_vouchers_remaining_value">Valeur restante</string>
     <string name="home_meal_vouchers_warning_overused">Utilisé plus que reçu</string>
     <string name="home_meal_vouchers_received_only_mode">Suivi uniquement</string>
+
+    <!-- Month names (short format) -->
+    <string name="month_short_1">Jan</string>
+    <string name="month_short_2">Fév</string>
+    <string name="month_short_3">Mar</string>
+    <string name="month_short_4">Avr</string>
+    <string name="month_short_5">Mai</string>
+    <string name="month_short_6">Jui</string>
+    <string name="month_short_7">Jul</string>
+    <string name="month_short_8">Aou</string>
+    <string name="month_short_9">Sep</string>
+    <string name="month_short_10">Oct</string>
+    <string name="month_short_11">Nov</string>
+    <string name="month_short_12">Déc</string>
 </resources>

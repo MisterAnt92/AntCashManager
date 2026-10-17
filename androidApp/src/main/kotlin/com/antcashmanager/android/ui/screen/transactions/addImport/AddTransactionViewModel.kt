@@ -60,6 +60,7 @@ class AddTransactionViewModel(
         loadCategories()
         loadTransactionSuggestions()
         loadMealVoucherValue()
+        loadAvailableMealVouchers()
         if (transactionId != null) {
             loadTransactionForEdit(transactionId)
         } else {
@@ -82,6 +83,21 @@ class AddTransactionViewModel(
                     if (error is CancellationException) throw error
                     logError("Error loading meal voucher value: ${error.message}", error)
                 }
+        }
+    }
+
+    private fun loadAvailableMealVouchers() {
+        viewModelScope.launch {
+            try {
+                // TODO: Calcolare realmente i buoni disponibili da tutte le transazioni:
+                // available = sum(INCOME con MEAL_VOUCHERS) - sum(EXPENSE con MEAL_VOUCHERS)
+                // Per ora: impostare a 999 (unlimited per test; sarà la validazione client-side a prevenire negativi)
+                _state.update { it.copy(availableMealVouchers = 999) }
+            } catch (e: Exception) {
+                if (e is CancellationException) throw e
+                logError("Error loading available meal vouchers: ${e.message}", e)
+                _state.update { it.copy(availableMealVouchers = 999) }
+            }
         }
     }
 

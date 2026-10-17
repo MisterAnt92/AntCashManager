@@ -665,4 +665,18 @@
     <string name="home_meal_vouchers_remaining_value">залишкова вартість</string>
     <string name="home_meal_vouchers_warning_overused">Використано більше, ніж отримано</string>
     <string name="home_meal_vouchers_received_only_mode">Тільки відстеження</string>
+
+    <!-- Month names (short format) -->
+    <string name="month_short_1">Січ</string>
+    <string name="month_short_2">Лют</string>
+    <string name="month_short_3">Бер</string>
+    <string name="month_short_4">Кві</string>
+    <string name="month_short_5">Тра</string>
+    <string name="month_short_6">Чер</string>
+    <string name="month_short_7">Лип</string>
+    <string name="month_short_8">Сер</string>
+    <string name="month_short_9">Вер</string>
+    <string name="month_short_10">Жов</string>
+    <string name="month_short_11">Лис</string>
+    <string name="month_short_12">Гру</string>
 </resources>
