@@ -76,12 +76,17 @@ class ChartsViewModel(
     private val _selectedChartDetails = MutableStateFlow<ChartDetailsData?>(null)
     val selectedChartDetails: StateFlow<ChartDetailsData?> = _selectedChartDetails.asStateFlow()
 
+    // Locale tag supplied by the Screen via UpdateLocale event; avoids JVM-default locale bug.
+    private val _localeTag = MutableStateFlow(java.util.Locale.getDefault().toLanguageTag())
+
     val chartData: StateFlow<ChartData> =
-        _dateRange
-            .flatMapLatest { range ->
+        kotlinx.coroutines.flow.combine(_dateRange, _localeTag) { range, localeTag ->
+            range to localeTag
+        }
+            .flatMapLatest { (range, localeTag) ->
                 getTransactionsByDateRangeUseCase(range).map { result ->
                     // Apply amount correction for EXPENSE transactions
-                    buildChartData(result.getOrElse { emptyList() }.withCorrectAmounts())
+                    buildChartData(result.getOrElse { emptyList() }.withCorrectAmounts(), localeTag)
                 }
             }.stateIn(
                 scope = viewModelScope,
@@ -155,6 +160,7 @@ class ChartsViewModel(
             is ChartEvent.ClearChartSelection -> clearChartSelection()
             is ChartEvent.RetryLastOperation -> logInfo("Retry requested")
             is ChartEvent.SetChartCardsOrder -> setChartCardsOrder(event.order)
+            is ChartEvent.UpdateLocale -> _localeTag.value = event.languageTag
         }
     }
 
@@ -261,7 +267,7 @@ class ChartsViewModel(
         return DateRange(from.timeInMillis, now.timeInMillis)
     }
 
-    private fun buildChartData(transactions: List<Transaction>): ChartData {
+    private fun buildChartData(transactions: List<Transaction>, localeTag: String = java.util.Locale.getDefault().toLanguageTag()): ChartData {
         val startTime = System.currentTimeMillis()
         logDebug("Building chart data from ${transactions.size} transactions")
 
@@ -300,7 +306,7 @@ class ChartsViewModel(
         val cal = Calendar.getInstance()
         val monthlyMap = mutableMapOf<String, Pair<Double, Double>>()
         // Usa DateFormatSymbols per ottenere i nomi dei mesi localizzati automaticamente
-        val monthNames = java.text.DateFormatSymbols().shortMonths.take(12).toTypedArray()
+        val monthNames = java.text.DateFormatSymbols(java.util.Locale.forLanguageTag(localeTag)).shortMonths.take(12).toTypedArray()
 
         transactions.forEach { tx ->
             cal.timeInMillis = tx.timestamp

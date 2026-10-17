@@ -170,7 +170,7 @@
     <string name="settings_theme_system">系统默认</string>
     <string name="settings_language">语言</string>
     <string name="settings_display">显示</string>
-    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
+    <string name="settings_display_subtitle">自定义货币、格式、付款类型和显示偏好</string>
     <string name="settings_show_charts_section">显示图表部分</string>
     <string name="settings_show_charts_section_visible">导航中显示图表部分</string>
     <string name="settings_show_charts_section_hidden">导航中隐藏图表部分</string>
@@ -498,6 +498,7 @@
     <string name="category_gifts">礼物</string>
     <string name="category_subscriptions">订阅</string>
     <string name="category_personal_care">个人护理</string>
+    <string name="category_meal_vouchers">餐饮券</string>
 
     <!-- Receipt Scan Screen -->
     <string name="receipt_scan_title">扫描收据</string>

@@ -170,7 +170,7 @@
     <string name="settings_theme_system">系統預設</string>
     <string name="settings_language">語言</string>
     <string name="settings_display">顯示</string>
-    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
+    <string name="settings_display_subtitle">自訂貨幣、格式、付款類型和顯示偏好設定</string>
     <string name="settings_show_charts_section">顯示圖表部分</string>
     <string name="settings_show_charts_section_visible">導航中顯示圖表部分</string>
     <string name="settings_show_charts_section_hidden">導航中隱藏圖表部分</string>
@@ -497,6 +497,7 @@
     <string name="category_gifts">禮物</string>
     <string name="category_subscriptions">訂閱</string>
     <string name="category_personal_care">個人護理</string>
+    <string name="category_meal_vouchers">餐飲券</string>
 
     <!-- Receipt Scan Screen -->
     <string name="receipt_scan_title">掃描收據</string>
@@ -645,10 +646,10 @@
 
     <!-- Meal Vouchers Card -->
     <string name="home_meal_vouchers_title">餐券</string>
-    <string name="home_meal_vouchers_remaining">剩余</string>
+    <string name="home_meal_vouchers_remaining">剩餘</string>
     <string name="home_meal_vouchers_received">已收到</string>
     <string name="home_meal_vouchers_used">已使用</string>
-    <string name="home_meal_vouchers_remaining_value">剩余價值</string>
+    <string name="home_meal_vouchers_remaining_value">剩餘價值</string>
     <string name="home_meal_vouchers_warning_overused">使用多於收到</string>
     <string name="home_meal_vouchers_received_only_mode">僅跟蹤</string>
 

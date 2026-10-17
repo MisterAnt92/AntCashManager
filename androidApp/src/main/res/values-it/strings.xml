@@ -206,7 +206,7 @@
 
     <string name="settings_language">Lingua</string>
     <string name="settings_display">Visualizzazione</string>
-    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
+    <string name="settings_display_subtitle">Personalizza valuta, formattazione, tipi di pagamento e preferenze di visualizzazione</string>
     <string name="settings_show_charts_section">Mostra sezione grafici</string>
     <string name="settings_show_charts_section_visible">Sezione grafici visibile nella navigazione</string>
     <string name="settings_show_charts_section_hidden">Sezione grafici nascosta dalla navigazione</string>
@@ -500,6 +500,7 @@
     <string name="category_gifts">Regali</string>
     <string name="category_subscriptions">Abbonamenti</string>
     <string name="category_personal_care">Cura personale</string>
+    <string name="category_meal_vouchers">Buoni pasto</string>
     <string name="receipt_scan_title">Scansiona Scontrino</string>
     <string name="receipt_scan_capture_hint">Scatta una foto allo scontrino o scegline una dalla galleria per estrarre automaticamente importo, IVA, beneficiario e luogo.</string>
     <string name="receipt_scan_take_photo">Scatta Foto</string>

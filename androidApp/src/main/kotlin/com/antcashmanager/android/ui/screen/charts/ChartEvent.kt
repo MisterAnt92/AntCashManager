@@ -30,4 +30,6 @@ sealed class ChartEvent {
     data class SetChartCardsOrder(
         val order: String,
     ) : ChartEvent()
+
+    data class UpdateLocale(val languageTag: String) : ChartEvent()
 }

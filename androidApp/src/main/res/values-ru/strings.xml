@@ -170,7 +170,7 @@
     <string name="settings_theme_system">Системная по умолчанию</string>
     <string name="settings_language">Язык</string>
     <string name="settings_display">Отображение</string>
-    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
+    <string name="settings_display_subtitle">Настройка валюты, форматирования, типов платежей и настроек отображения</string>
     <string name="settings_show_charts_section">Показать раздел графиков</string>
     <string name="settings_show_charts_section_visible">Раздел графиков виден в навигации</string>
     <string name="settings_show_charts_section_hidden">Раздел графиков скрыт в навигации</string>
@@ -502,6 +502,7 @@
     <string name="category_gifts">Подарки</string>
     <string name="category_subscriptions">Подписки</string>
     <string name="category_personal_care">Личная гигиена</string>
+    <string name="category_meal_vouchers">Обеды по талонам</string>
 
     <!-- Receipt Scan Screen -->
     <string name="receipt_scan_title">Сканировать чек</string>

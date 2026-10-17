@@ -51,6 +51,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.antcashmanager.android.ui.LocalLocale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -105,6 +106,10 @@ import kotlin.math.abs
 fun ChartsScreen() {
     Logger.d(tag = "ChartsScreen") { "Displaying ChartsScreen" }
     val viewModel: ChartsViewModel = koinViewModel()
+    val appLocale = LocalLocale.current
+    LaunchedEffect(appLocale) {
+        viewModel.onEvent(ChartEvent.UpdateLocale(appLocale.toLanguageTag()))
+    }
     val chartData by viewModel.chartData.collectAsStateWithLifecycle()
     val dateRange by viewModel.dateRange.collectAsStateWithLifecycle()
     val selectedPresetIndex by viewModel.selectedPresetIndex.collectAsStateWithLifecycle()
@@ -161,7 +166,8 @@ internal fun ChartsContent(
     val foldingFeature = adaptiveLayoutInfo.foldingFeature
     val isGridLayout = adaptiveLayoutInfo.isExpanded && !adaptiveLayoutInfo.hasFold
 
-    val dateFormat = remember { SimpleDateFormat("dd MMM yyyy", Locale.getDefault()) }
+    val appLocale = LocalLocale.current
+    val dateFormat = remember(appLocale) { SimpleDateFormat("dd MMM yyyy", appLocale) }
     val fmt = LocalCurrencyFormat.current
     val shareLabel = stringResource(R.string.share)
     var selectedPreset by remember { mutableIntStateOf(initialPresetIndex) }

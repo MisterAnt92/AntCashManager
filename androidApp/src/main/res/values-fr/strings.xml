@@ -156,7 +156,7 @@
     <string name="settings_theme_system">Par d\u00e9faut du syst\u00e8me</string>
     <string name="settings_language">Langue</string>
     <string name="settings_display">Affichage</string>
-    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
+    <string name="settings_display_subtitle">Personnalisez la devise, la mise en forme, les types de paiement et les préférences d\'affichage</string>
     <string name="settings_show_charts_section">Afficher la section Graphiques</string>
     <string name="settings_show_charts_section_visible">Section Graphiques visible dans la navigation</string>
     <string name="settings_show_charts_section_hidden">Section Graphiques masquée de la navigation</string>
@@ -438,6 +438,7 @@
     <string name="category_gifts">Cadeaux</string>
     <string name="category_subscriptions">Abonnements</string>
     <string name="category_personal_care">Bien-être</string>
+    <string name="category_meal_vouchers">Tickets restaurant</string>
     <string name="help_features_label">Caractéristiques:</string>
     <string name="common_help">Aide</string>
     <string name="help_home_title">Guide Accueil</string>

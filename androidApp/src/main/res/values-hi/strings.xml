@@ -169,7 +169,7 @@
     <string name="settings_theme_system">सिस्टम डिफ़ॉल्ट</string>
     <string name="settings_language">भाषा</string>
     <string name="settings_display">डिस्प्ले</string>
-    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
+    <string name="settings_display_subtitle">मुद्रा, स्वरूपण, भुगतान प्रकार और प्रदर्शन प्राथमिकताएं अनुकूलित करें</string>
     <string name="settings_show_charts_section">चार्ट अनुभाग दिखाएं</string>
     <string name="settings_show_charts_section_visible">नेविगेशन में चार्ट अनुभाग दिखाई दे रहा है</string>
     <string name="settings_show_charts_section_hidden">नेविगेशन से चार्ट अनुभाग ��िपा हुआ है</string>
@@ -498,6 +498,7 @@
     <string name="category_gifts">उपहार</string>
     <string name="category_subscriptions">सदस्यताएं</string>
     <string name="category_personal_care">व्यक्तिगत देखभाल</string>
+    <string name="category_meal_vouchers">भोजन वाउचर</string>
 
     <!-- Receipt Scan Screen -->
     <string name="receipt_scan_title">रसीद स्कै��� करें</string>

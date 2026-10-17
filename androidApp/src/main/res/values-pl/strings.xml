@@ -170,7 +170,7 @@
     <string name="settings_theme_system">Domyślny systemowy</string>
     <string name="settings_language">Język</string>
     <string name="settings_display">Wyświetlanie</string>
-    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
+    <string name="settings_display_subtitle">Dostosuj walutę, formatowanie, typy płatności i preferencje wyświetlania</string>
     <string name="settings_show_charts_section">Pokaż sekcję wykresów</string>
     <string name="settings_show_charts_section_visible">Sekcja wykresów widoczna w nawigacji</string>
     <string name="settings_show_charts_section_hidden">Sekcja wykresów ukryta w nawigacji</string>
@@ -502,6 +502,7 @@
     <string name="category_gifts">Prezenty</string>
     <string name="category_subscriptions">Subskrypcje</string>
     <string name="category_personal_care">Higiena osobista</string>
+    <string name="category_meal_vouchers">Bony żywieniowe</string>
 
     <!-- Receipt Scan Screen -->
     <string name="receipt_scan_title">Skanuj paragon</string>

@@ -523,6 +523,7 @@
     <string name="category_gifts">Gifts</string>
     <string name="category_subscriptions">Subscriptions</string>
     <string name="category_personal_care">Personal Care</string>
+    <string name="category_meal_vouchers">Meal Vouchers</string>
 
     <!-- Receipt Scan Screen -->
     <string name="receipt_scan_title">Scan Receipt</string>

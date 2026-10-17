@@ -170,7 +170,7 @@
     <string name="settings_theme_system">システム設定</string>
     <string name="settings_language">言語</string>
     <string name="settings_display">表示</string>
-    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
+    <string name="settings_display_subtitle">通貨、書式、支払いタイプ、表示設定をカスタマイズ</string>
     <string name="settings_show_charts_section">グラフセクションを表示</string>
     <string name="settings_show_charts_section_visible">ナビゲーションにグラフセクションを表示</string>
     <string name="settings_show_charts_section_hidden">ナビゲーションからグラフセクションを隠す</string>
@@ -501,6 +501,7 @@
     <string name="category_gifts">ギフト</string>
     <string name="category_subscriptions">サブスク</string>
     <string name="category_personal_care">パーソナルケア</string>
+    <string name="category_meal_vouchers">食事券</string>
 
     <!-- Receipt Scan Screen -->
     <string name="receipt_scan_title">レシートスキャン</string>

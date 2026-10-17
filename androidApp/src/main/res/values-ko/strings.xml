@@ -170,7 +170,7 @@
     <string name="settings_theme_system">시스템 설정값</string>
     <string name="settings_language">언어</string>
     <string name="settings_display">표시 설정</string>
-    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
+    <string name="settings_display_subtitle">통화, 서식, 결제 유형 및 표시 기본 설정을 맞춤설정</string>
     <string name="settings_show_charts_section">차트 섹션 표시</string>
     <string name="settings_show_charts_section_visible">탐색 메뉴에 차트 섹션 표시됨</string>
     <string name="settings_show_charts_section_hidden">탐색 메뉴에서 차트 섹션 숨겨짐</string>
@@ -501,6 +501,7 @@
     <string name="category_gifts">선물</string>
     <string name="category_subscriptions">구독</string>
     <string name="category_personal_care">자기 관리</string>
+    <string name="category_meal_vouchers">식사 쿠폰</string>
 
     <!-- Receipt Scan Screen -->
     <string name="receipt_scan_title">영수증 스캔</string>

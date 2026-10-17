@@ -172,7 +172,7 @@
     <string name="settings_theme_system">Системна за замовчуванням</string>
     <string name="settings_language">Мова</string>
     <string name="settings_display">Дисплей</string>
-    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
+    <string name="settings_display_subtitle">Налаштуйте валюту, форматування, типи платежів та параметри відображення</string>
     <string name="settings_show_charts_section">Показати розділ графіків</string>
     <string name="settings_show_charts_section_visible">Розділ графіків видимий у навігації</string>
     <string name="settings_show_charts_section_hidden">Розділ графіків прихований у навігації</string>
@@ -504,6 +504,7 @@
     <string name="category_gifts">Подарунки</string>
     <string name="category_subscriptions">Підписки</string>
     <string name="category_personal_care">Особистий догляд</string>
+    <string name="category_meal_vouchers">Продовольчі ваучери</string>
 
     <!-- Receipt Scan Screen -->
     <string name="receipt_scan_title">Сканувати чек</string>

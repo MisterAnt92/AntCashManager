@@ -155,7 +155,7 @@
     <string name="settings_theme_system">Predeterminado del sistema</string>
     <string name="settings_language">Idioma</string>
     <string name="settings_display">Pantalla</string>
-    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
+    <string name="settings_display_subtitle">Personaliza moneda, formato, tipos de pago y preferencias de visualización</string>
     <string name="settings_show_charts_section">Mostrar sección de Gráficos</string>
     <string name="settings_show_charts_section_visible">Sección de Gráficos visible en la navegación</string>
     <string name="settings_show_charts_section_hidden">Sección de Gráficos oculta de la navegación</string>
@@ -435,6 +435,7 @@
     <string name="category_gifts">Regalos</string>
     <string name="category_subscriptions">Suscripciones</string>
     <string name="category_personal_care">Cuidado personal</string>
+    <string name="category_meal_vouchers">Vales de comida</string>
     <string name="help_features_label">Características:</string>
     <string name="common_help">Ayuda</string>
     <string name="help_home_title">Guía de Inicio</string>

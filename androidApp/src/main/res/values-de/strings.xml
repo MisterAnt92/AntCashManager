@@ -169,7 +169,7 @@
     <string name="settings_theme_system">Systemstandard</string>
     <string name="settings_language">Sprache</string>
     <string name="settings_display">Anzeige</string>
-    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
+    <string name="settings_display_subtitle">Währung, Formatierung, Zahlungsarten und Anzeigeeinstellungen anpassen</string>
     <string name="settings_show_charts_section">Diagramm-Bereich anzeigen</string>
     <string name="settings_show_charts_section_visible">Diagramm-Bereich in der Navigation sichtbar</string>
     <string name="settings_show_charts_section_hidden">Diagramm-Bereich in der Navigation ausgeblendet</string>
@@ -484,6 +484,7 @@
     <string name="category_gifts">Geschenke</string>
     <string name="category_subscriptions">Abonnements</string>
     <string name="category_personal_care">Körperpflege</string>
+    <string name="category_meal_vouchers">Essensgutscheine</string>
 
     <!-- Help Dialog -->
     <string name="help_features_label">Funktionen:</string>
@@ -644,7 +645,7 @@
     <string name="transactions_details_empty">Wählen Sie eine Transaktion aus, um Details anzuzeigen</string>
 
     <!-- Meal Vouchers Card -->
-    <string name="home_meal_vouchers_title">Essengutscheine</string>
+    <string name="home_meal_vouchers_title">Essensgutscheine</string>
     <string name="home_meal_vouchers_remaining">Verbleibend</string>
     <string name="home_meal_vouchers_received">Erhalten</string>
     <string name="home_meal_vouchers_used">Verwendet</string>
