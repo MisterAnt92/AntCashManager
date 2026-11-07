@@ -33,7 +33,7 @@ if [ -n "$STAGED_KT" ]; then
   export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
   cd "$REPO_ROOT"
   ./gradlew ktlintCheck --quiet 2>&1 | head -50 || {
-    echo "ktlint violations found. Run ./scripts/format.sh to auto-fix, then re-stage." >&2
+    echo "ktlint violations found. Run ./extra/scripts/format.sh to auto-fix, then re-stage." >&2
     FAILED=1
   }
 fi
@@ -45,4 +45,3 @@ fi
 
 echo "Pre-commit checks passed."
 exit 0
-

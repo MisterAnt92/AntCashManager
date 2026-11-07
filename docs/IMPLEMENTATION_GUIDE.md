@@ -1,6 +1,6 @@
 # Guida Implementativa - Skeleton Loading e Form Transazioni
 
-> 🔗 **[← Torna all'Indice Principale](./INDEX.md)** | **[README.md](./README.md)**
+> 🔗 **[← Torna all'Indice Principale](INDEX.md)** | **[README.md](README.md)**
 
 ---
 
@@ -34,7 +34,7 @@ Questo documento descrive una specifica milestone di implementazione relativa a:
 ## Note di Contesto
 
 - Questa guida documenta una milestone specifica, non l'intera architettura progetto.
-- Per le regole architetturali aggiornate fare riferimento a `wiki/ARCHITECTURE_GUIDELINES.md`.
+- Per le regole architetturali aggiornate fare riferimento a `ARCHITECTURE_GUIDELINES.md`.
 - Lo stato build indicato qui è storico rispetto al momento della milestone.
 
 ---

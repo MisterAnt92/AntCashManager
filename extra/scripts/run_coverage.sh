@@ -3,6 +3,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 export PATH="$JAVA_HOME/bin:$PATH"
@@ -11,19 +12,19 @@ echo "==> JAVA_HOME: $JAVA_HOME"
 echo "==> Java: $(java -version 2>&1 | head -1)"
 echo ""
 
-cd "$SCRIPT_DIR"
+cd "$PROJECT_ROOT"
 
 echo "==> Unit test: androidApp (FullDebug) + shared..."
 ./gradlew \
     :androidApp:testFullDebugUnitTest \
-    :shared:testDebugUnitTest \
+    :shared:testAndroidHostTest \
     --continue
 
 echo ""
 echo "==> Generazione report HTML Kover..."
 ./gradlew :koverHtmlReport
 
-REPORT_DIR="$SCRIPT_DIR/build/reports/kover/html"
+REPORT_DIR="$PROJECT_ROOT/build/reports/kover/html"
 
 echo ""
 echo "==> Applicazione stile personalizzato al report..."

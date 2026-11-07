@@ -254,11 +254,11 @@ val appModules = listOf(dataModule, useCaseModule, presentationModule)
 
 ## Quick Links
 
-- **Complete Guide**: [AGENTS.md](../../AGENTS.md)
-- **UseCase Patterns**: [.github/agents/agent-usecase-pattern.agent.md](.github/agents/agent-usecase-pattern.agent.md)
-- **ViewModel Patterns**: [.github/agents/agent-viewmodel-stateflow.agent.md](.github/agents/agent-viewmodel-stateflow.agent.md)
-- **UI Patterns**: [.github/agents/agent-compose-ui.agent.md](.github/agents/agent-compose-ui.agent.md)
-- **Testing Guide**: [.github/agents/agent-unit-tests-mockk.agent.md](.github/agents/agent-unit-tests-mockk.agent.md)
+- **Complete Guide**: [AGENTS.md](../../../AGENTS.md)
+- **UseCase Patterns**: [agent-usecase-pattern.agent.md](../../agents/agent-usecase-pattern.agent.md)
+- **ViewModel Patterns**: [agent-viewmodel-stateflow.agent.md](../../agents/agent-viewmodel-stateflow.agent.md)
+- **UI Patterns**: [agent-compose-ui.agent.md](../../agents/agent-compose-ui.agent.md)
+- **Testing Guide**: [agent-unit-tests-mockk.agent.md](../../agents/agent-unit-tests-mockk.agent.md)
 
 ---
 

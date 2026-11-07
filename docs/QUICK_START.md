@@ -31,7 +31,7 @@ Hai 5 minuti? Inizia da qui.
 ### 🗄️ Data Engineer (Conversione Dati)
 ```
 1. Leggi → CONVERSION_GUIDE.md "Uso Rapido"
-2. Esegui → python3 scripts/convert_to_debug_data.py
+2. Esegui dalla root del repository → `python3 extra/scripts/convert_to_debug_data.py`
 3. Se errore → Leggi SCRIPT_CONVERSION_README.md "Codici Errore"
 4. Se manutenzione → Leggi SCRIPT_CONVERSION_README.md completo
 ```
@@ -51,12 +51,12 @@ Hai 5 minuti? Inizia da qui.
 
 | Hai bisogno di... | Vai a | Tempo |
 |------------------|--------|-------|
-| Capire l'architettura | [ARCHITECTURE_GUIDELINES.md](./ARCHITECTURE_GUIDELINES.md) | 45 min |
-| Modificare UI transazioni | [IMPLEMENTATION_GUIDE.md](./IMPLEMENTATION_GUIDE.md) | 20 min |
-| Convertire dati | [CONVERSION_GUIDE.md](./CONVERSION_GUIDE.md) | 5 min |
-| Mantenere lo script | [SCRIPT_CONVERSION_README.md](./SCRIPT_CONVERSION_README.md) | 20 min |
-| Controllare privacy | [privacy-policy.html](./privacy-policy.html) | 10 min |
-| Navigazione completa | [NAVIGATION.md](./NAVIGATION.md) | 10 min |
+| Capire l'architettura | [ARCHITECTURE_GUIDELINES.md](ARCHITECTURE_GUIDELINES.md) | 45 min |
+| Modificare UI transazioni | [IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md) | 20 min |
+| Convertire dati | [CONVERSION_GUIDE.md](CONVERSION_GUIDE.md) | 5 min |
+| Mantenere lo script | [SCRIPT_CONVERSION_README.md](SCRIPT_CONVERSION_README.md) | 20 min |
+| Controllare privacy | [privacy-policy.html](wiki/privacy-policy.html) | 10 min |
+| Navigazione completa | [NAVIGATION.md](NAVIGATION.md) | 10 min |
 
 ---
 
@@ -82,7 +82,7 @@ Hai 5 minuti? Inizia da qui.
 ### Converto dati da PiggyBank?
 ```
 → CONVERSION_GUIDE.md
-  → Run: python3 scripts/convert_to_debug_data.py
+  → Run dalla root del repository: `python3 extra/scripts/convert_to_debug_data.py`
   → Se errore → SCRIPT_CONVERSION_README.md
 ```
 
@@ -117,40 +117,40 @@ Hai 5 minuti? Inizia da qui.
 
 | Documento | Link |
 |-----------|------|
-| Indice Principale | [INDEX.md](./INDEX.md) |
-| Architettura (UFFICIALE) | [ARCHITECTURE_GUIDELINES.md](./ARCHITECTURE_GUIDELINES.md) |
-| Implementazione UI | [IMPLEMENTATION_GUIDE.md](./IMPLEMENTATION_GUIDE.md) |
-| Conversione Dati | [CONVERSION_GUIDE.md](./CONVERSION_GUIDE.md) |
-| Dettagli Script | [SCRIPT_CONVERSION_README.md](./SCRIPT_CONVERSION_README.md) |
-| Privacy Policy | [privacy-policy.html](./privacy-policy.html) |
-| Navigazione per Ruolo | [NAVIGATION.md](./NAVIGATION.md) |
+| Indice Principale | [INDEX.md](INDEX.md) |
+| Architettura (UFFICIALE) | [ARCHITECTURE_GUIDELINES.md](ARCHITECTURE_GUIDELINES.md) |
+| Implementazione UI | [IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md) |
+| Conversione Dati | [CONVERSION_GUIDE.md](CONVERSION_GUIDE.md) |
+| Dettagli Script | [SCRIPT_CONVERSION_README.md](SCRIPT_CONVERSION_README.md) |
+| Privacy Policy | [privacy-policy.html](wiki/privacy-policy.html) |
+| Navigazione per Ruolo | [NAVIGATION.md](NAVIGATION.md) |
 
 ---
 
 ## ❓ Le Domande Più Comuni
 
-**P: Come inizio se è la mia prima feature?**  
+**P: Come inizio se è la mia prima feature?**
 R: ARCHITECTURE_GUIDELINES.md → sezione "Clean Architecture" + cerca il tipo di feature → copia l'esempio.
 
-**P: Come aggiungo un campo al form transazioni?**  
+**P: Come aggiungo un campo al form transazioni?**
 R: IMPLEMENTATION_GUIDE.md → "UI Layout" → copia pattern, aggiungi stringhe in strings.xml (5 lingue).
 
-**P: Posso usare hardcoded string?**  
+**P: Posso usare hardcoded string?**
 R: NO. SEMPRE `stringResource(R.string.*)`. Vedi ARCHITECTURE_GUIDELINES.md "Internazionalizzazione".
 
-**P: Devo scrivere test?**  
+**P: Devo scrivere test?**
 R: SÌ. Vedi ARCHITECTURE_GUIDELINES.md "Testing Requirements" per pattern.
 
-**P: Come converto dati da PiggyBank?**  
-R: `python3 scripts/convert_to_debug_data.py`. Vedi CONVERSION_GUIDE.md.
+**P: Come converto dati da PiggyBank?**
+R: `python3 extra/scripts/convert_to_debug_data.py` dalla root del repository. Vedi CONVERSION_GUIDE.md.
 
-**P: Che cosa è Result<T>?**  
+**P: Che cosa è Result<T>?**
 R: Pattern per gestire successo/errore. ARCHITECTURE_GUIDELINES.md → "Pattern Result negli UseCase".
 
-**P: Come gestisco gli errori?**  
+**P: Come gestisco gli errori?**
 R: Custom domain exceptions nel Domain layer. ARCHITECTURE_GUIDELINES.md → "Custom Domain Exceptions".
 
-**P: Pre-Commit Checklist è obbligatorio?**  
+**P: Pre-Commit Checklist è obbligatorio?**
 R: SÌ. ARCHITECTURE_GUIDELINES.md → ultima sezione. Controlla prima di PR.
 
 ---
@@ -190,15 +190,14 @@ R: SÌ. ARCHITECTURE_GUIDELINES.md → ultima sezione. Controlla prima di PR.
 
 ---
 
-**Non sai da dove iniziare?**  
-→ Leggi [INDEX.md](./INDEX.md) per una panoramica strutturata per ruolo.
+**Non sai da dove iniziare?**
+→ Leggi [INDEX.md](INDEX.md) per una panoramica strutturata per ruolo.
 
-**Preferisci una mappa visuale?**  
-→ Leggi [NAVIGATION.md](./NAVIGATION.md) per griglie per argomento e ricerca rapida.
+**Preferisci una mappa visuale?**
+→ Leggi [NAVIGATION.md](NAVIGATION.md) per griglie per argomento e ricerca rapida.
 
 ---
 
-**Ultima Modifica**: Maggio 2026  
-**Versione**: 1.0  
+**Ultima Modifica**: Maggio 2026
+**Versione**: 1.0
 **Scopo**: Accesso veloce ai documenti essenziali della wiki
-

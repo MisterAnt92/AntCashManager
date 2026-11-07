@@ -1,6 +1,6 @@
 # AntCashManager - Architecture Guidelines
 
-> 🔗 **[← Torna all'Indice Principale](./INDEX.md)** | **[README.md](./README.md)**
+> 🔗 **[← Torna all'Indice Principale](INDEX.md)** | **[README.md](README.md)**
 
 ---
 
@@ -30,8 +30,8 @@ Questa guida contiene esempi storici: applicare sempre questi aggiornamenti come
 - Testing: preferire fake repository a Mockito nelle aree KMP.
 
 Per dettagli aggiornati su script e conversioni dati consultare:
-- `wiki/CONVERSION_GUIDE.md`
-- `wiki/SCRIPT_CONVERSION_README.md`
+- `CONVERSION_GUIDE.md`
+- `SCRIPT_CONVERSION_README.md`
 
 ---
 
@@ -86,7 +86,7 @@ import kotlinx.coroutines.flow.Flow
 
 /**
  * UseCase per [descrizione funzionalità].
- * 
+ *
  * @param repository Repository necessario per l'operazione
  */
 class YourFeatureUseCase(
@@ -94,7 +94,7 @@ class YourFeatureUseCase(
 ) {
     /**
      * Esegue [operazione].
-     * 
+     *
      * @param param Parametro necessario
      * @return Flow con il risultato dell'operazione
      */
@@ -236,7 +236,7 @@ class SettingsViewModel(
     private val transactionRepository: TransactionRepository,
     categoryRepository: CategoryRepository,
 ) : ViewModel() {
-    
+
     val state: StateFlow<SettingsState> = combine(
         settingsRepository.getTheme(),
         settingsRepository.getLanguage(),
@@ -268,7 +268,7 @@ package com.antcashmanager.android.ui.screen.yourfeature
 
 /**
  * Stato UI per YourFeatureScreen.
- * 
+ *
  * @property isLoading Indica se è in corso un caricamento
  * @property data Dati da visualizzare
  * @property error Messaggio di errore, null se nessun errore
@@ -356,7 +356,7 @@ internal fun YourFeatureContent(
         ScreenHeader(
             title = stringResource(R.string.your_feature_title),
         )
-        
+
         // Content based on state
         when {
             state.isLoading -> LoadingIndicator()
@@ -539,7 +539,7 @@ class YourFeatureViewModelTest {
 
 ### 4.1 Definizione Stringhe
 
-**Location**: `androidApp/src/main/res/values/strings.xml`
+**Location**: `../androidApp/src/main/res/values/strings.xml`
 
 **Template**:
 ```xml
@@ -550,12 +550,12 @@ class YourFeatureViewModelTest {
     <string name="your_feature_subtitle">Manage your data</string>
     <string name="your_feature_empty">No data available</string>
     <string name="your_feature_error">Error loading data: %s</string>
-    
+
     <!-- Actions -->
     <string name="action_save">Save</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_delete">Delete</string>
-    
+
     <!-- Dialogs -->
     <string name="dialog_confirm_delete_title">Delete Item?</string>
     <string name="dialog_confirm_delete_message">Are you sure you want to delete \"%s\"? This action cannot be undone.</string>
@@ -727,7 +727,7 @@ AppRadioButton(
 AppListItem(
     headlineContent = { Text(stringResource(R.string.item_title)) },
     supportingContent = { Text(stringResource(R.string.item_subtitle)) },
-    leadingContent = { 
+    leadingContent = {
         RadioButton(selected = isSelected, onClick = { /* ... */ })
     },
     modifier = Modifier
@@ -863,7 +863,7 @@ fun YourFeatureSection(
     AppCardSectionHeader(
         title = stringResource(R.string.section_title)
     )
-    
+
     // Card group con spacing consistente (8.dp standard)
     Column(
         modifier = modifier,
@@ -876,7 +876,7 @@ fun YourFeatureSection(
             leadingIcon = Icons.Default.Settings,
             onClick = { onAction(Action.OpenSettings) }
         )
-        
+
         // Card con switch nel trailing
         AppCard(
             title = stringResource(R.string.item2_title),
@@ -890,7 +890,7 @@ fun YourFeatureSection(
             },
             onClick = { onAction(Action.ToggleNotifications(!state.notificationsEnabled)) }
         )
-        
+
         // Card con icona colorata custom
         AppCard(
             title = stringResource(R.string.item3_title),
@@ -923,7 +923,7 @@ Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         leadingIcon = Icons.Default.Palette,
         onClick = { showThemeDialog = true }
     )
-    
+
     AppCard(
         title = stringResource(R.string.settings_language),
         subtitle = languageDisplayName(currentLanguage),
@@ -1001,12 +1001,12 @@ Prima di scrivere codice UI, verifica:
 
 #### 5.3.6 Benefici del Riuso
 
-✅ **Consistenza visiva** - Stesso look & feel in tutta l'app  
-✅ **Manutenibilità** - Modifiche centralizzate in un solo posto  
-✅ **Tema automatico** - Rispetta sempre MaterialTheme.colorScheme  
-✅ **Meno codice** - Non riscrivere ciò che esiste già  
-✅ **Testabilità** - Componenti già testati e verificati  
-✅ **Velocità** - Sviluppo più rapido con componenti pronti  
+✅ **Consistenza visiva** - Stesso look & feel in tutta l'app
+✅ **Manutenibilità** - Modifiche centralizzate in un solo posto
+✅ **Tema automatico** - Rispetta sempre MaterialTheme.colorScheme
+✅ **Meno codice** - Non riscrivere ciò che esiste già
+✅ **Testabilità** - Componenti già testati e verificati
+✅ **Velocità** - Sviluppo più rapido con componenti pronti
 ✅ **Qualità** - Componenti già ottimizzati per performance e accessibilità
 
 ---
@@ -1098,11 +1098,11 @@ object Dimens {
     val paddingMedium = 16.dp
     val paddingLarge = 24.dp
     val paddingXLarge = 32.dp
-    
+
     // Elevation
     val elevationCard = 1.dp
     val elevationDialog = 8.dp
-    
+
     // Corner Radius
     val cornerRadiusSmall = 8.dp
     val cornerRadiusMedium = 12.dp
@@ -1148,7 +1148,7 @@ fun ComposeNavGraph(
                 navController = navController,
             )
         }
-        
+
         composable(
             route = Routes.TRANSACTION_DETAIL,
             arguments = listOf(navArgument("id") { type = NavType.LongType }),
@@ -1189,14 +1189,14 @@ navController.popBackStack(Routes.HOME, inclusive = false)
 import co.touchlab.kermit.Logger
 
 class YourFeatureViewModel(...) : ViewModel() {
-    
+
     companion object {
         private const val TAG = "YourFeatureViewModel"
     }
 
     fun performAction() {
         Logger.d(TAG) { "Starting action" }
-        
+
         try {
             // operation
             Logger.i(TAG) { "Action completed successfully" }
@@ -1226,7 +1226,7 @@ sealed class Result<out T> {
 // Uso nel ViewModel
 viewModelScope.launch {
     _state.update { it.copy(result = Result.Loading) }
-    
+
     try {
         val data = useCase.invoke()
         _state.update { it.copy(result = Result.Success(data)) }
@@ -1264,7 +1264,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
         // Initialize repositories
         val database = AppDatabase.getDatabase(applicationContext)
         repositories = RepositoryContainer(
@@ -1407,7 +1407,7 @@ fun DisplayScreen(
 ) {
     val viewModel: DisplayViewModel = viewModel(...)
     val state by viewModel.state.collectAsState()
-    
+
     DisplayContent(
         currencySymbol = state.currencySymbol,
         onCurrencySymbolSelected = { viewModel.setCurrencySymbol(it) },
@@ -1481,7 +1481,7 @@ class SendFeedbackEmailUseCase {
 @Composable
 fun TransactionScreen() {
     var transactions by remember { mutableStateOf<List<Transaction>>(emptyList()) }
-    
+
     LaunchedEffect(Unit) {
         // ❌ WRONG: Business logic in composable
         transactions = database.transactionDao().getAll()
@@ -1573,7 +1573,7 @@ exit 0
 
 ---
 
-**Last Updated**: May 2026  
-**Version**: 1.1  
+**Last Updated**: May 2026
+**Version**: 1.1
 **Maintainer**: AntCashManager Team
 

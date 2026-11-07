@@ -7,7 +7,7 @@ Visualizzazione completa della struttura e dei contenuti della wiki.
 ## 🌳 Albero dei Documenti
 
 ```
-wiki/
+docs/
 │
 ├── 📖 README.md ⭐ INIZIA DA QUI
 │   └─ Descrizione wiki, accesso rapido, info progetto
@@ -63,16 +63,16 @@ wiki/
 │   ├─ Esempi log
 │   └─ Codici errore
 │
-├── 🔐 privacy-policy.html (EN)
+├── 🔐 wiki/privacy-policy.html (EN)
 │   └─ Policy privacy ufficiale (lingua inglese)
 │
-├── 🔐 privacy-policy-de.html (DE)
+├── 🔐 wiki/privacy-policy-de.html (DE)
 │   └─ Policy privacy localizzata (lingua tedesca)
 │
-├── 🔐 privacy-policy-es.html (ES)
+├── 🔐 wiki/privacy-policy-es.html (ES)
 │   └─ Policy privacy localizzata (lingua spagnola)
 │
-├── 🔐 privacy-policy-fr.html (FR)
+├── 🔐 wiki/privacy-policy-fr.html (FR)
 │   └─ Policy privacy localizzata (lingua francese)
 │
 └── 📂 STRUTTURA_DOCUMENTAZIONE.md (questo file)
@@ -184,7 +184,7 @@ SCRIPT_CONVERSION_README.md
 ```
 1️⃣  QUICK_START.md sezione "Data Engineer"
 2️⃣  CONVERSION_GUIDE.md sezione "Uso Rapido"
-3️⃣  Run: python3 scripts/convert_to_debug_data.py
+3️⃣  Run dalla root del repository: python3 extra/scripts/convert_to_debug_data.py
 4️⃣  Se errore → SCRIPT_CONVERSION_README.md "Codici Errore"
 ```
 
@@ -222,10 +222,10 @@ SCRIPT_CONVERSION_README.md
 
 ## 🔧 File di Configurazione & Script
 
-File correlati (fuori da wiki):
+File correlati (fuori da docs):
 
 ```
-/opt/src/GIT/app/AntCashManager/
+repository-root/
 ├── androidApp/
 │   ├── build.gradle.kts (versione app qui)
 │   └── src/main/res/
@@ -235,10 +235,12 @@ File correlati (fuori da wiki):
 │       ├── values-de/strings.xml (DE)
 │       └── values-es/strings.xml (ES)
 ├── shared/ (Domain + Data layer)
-├── scripts/
-│   └── convert_to_debug_data.py (script conversione)
-└── wiki/ (QUESTA CARTELLA)
-    └── (tutti i .md e .html qui)
+├── extra/
+│   └── scripts/
+│       └── convert_to_debug_data.py (script conversione)
+└── docs/ (QUESTA CARTELLA)
+    ├── (documenti Markdown)
+    └── wiki/ (pagine HTML statiche)
 ```
 
 ---
@@ -318,15 +320,14 @@ Usa il browser Ctrl+F (Cmd+F su Mac) per cercare:
 
 Se hai domande sulla wiki:
 
-1. Consulta [QUICK_START.md](./QUICK_START.md) - FAQ rapida
-2. Naviga con [NAVIGATION.md](./NAVIGATION.md) - mappa per ruolo
-3. Cerca in [ARCHITECTURE_GUIDELINES.md](./ARCHITECTURE_GUIDELINES.md) - fonte ufficiale
+1. Consulta [QUICK_START.md](QUICK_START.md) - FAQ rapida
+2. Naviga con [NAVIGATION.md](NAVIGATION.md) - mappa per ruolo
+3. Cerca in [ARCHITECTURE_GUIDELINES.md](ARCHITECTURE_GUIDELINES.md) - fonte ufficiale
 4. Contatta Team AntCashManager per chiarimenti
 
 ---
 
-**Ultima Modifica**: Maggio 2026  
-**Versione**: 1.0  
-**Scopo**: Visualizzazione struttura completa della wiki AntCashManager  
+**Ultima Modifica**: Maggio 2026
+**Versione**: 1.0
+**Scopo**: Visualizzazione struttura completa della wiki AntCashManager
 **Maintainer**: Team AntCashManager Documentation
-

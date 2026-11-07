@@ -2,7 +2,9 @@
 """Script per aggiungere automaticamente le stringhe mancanti nei file di traduzione"""
 
 import xml.etree.ElementTree as ET
-import os
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 # Traduzioni mancanti
 translations = {
@@ -68,7 +70,7 @@ translations = {
 
 def add_strings_to_file(lang_code, translations_dict):
     """Aggiunge le stringhe mancanti al file di lingua specificato"""
-    file_path = f'androidApp/src/main/res/values-{lang_code}/strings.xml'
+    file_path = PROJECT_ROOT / 'androidApp' / 'src' / 'main' / 'res' / f'values-{lang_code}' / 'strings.xml'
 
     try:
         # Leggi il file esistente
@@ -103,8 +105,6 @@ def add_strings_to_file(lang_code, translations_dict):
         print(f"❌ Errore per {lang_code}: {e}")
 
 def main():
-    os.chdir('/opt/src/GIT/app/AntCashManager')
-
     print("🔄 Aggiunta stringhe mancanti...\n")
 
     for lang_code, trans_dict in translations.items():
@@ -115,4 +115,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

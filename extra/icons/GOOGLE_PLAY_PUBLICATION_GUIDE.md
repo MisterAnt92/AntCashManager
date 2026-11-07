@@ -108,12 +108,11 @@ extra/icons/
 Prima di caricare gli asset, devi avere un APK/Bundle di release compilato.
 
 ```bash
-# Compilare il build release
-cd /opt/src/GIT/app/AntCashManager
-./gradlew :androidApp:bundleRelease --no-daemon
+# Dalla root del repository, compilare la variante Full per Play Store
+./gradlew :androidApp:bundleFullRelease --no-daemon
 
 # L'APK/Bundle si trova in:
-# androidApp/build/outputs/bundle/release/app-release.aab
+# androidApp/build/outputs/bundle/fullRelease/
 ```
 
 ### Step 3: Creare un Release (Draft)
@@ -445,7 +444,7 @@ https://play.google.com/store/apps/details?id=com.sformica.ant_cashmanager
 Per aggiornare l'app a versione 1.5.0:
 
 1. Aggiorna `versionCode` e `versionName` in `build.gradle.kts`
-2. Compila nuovo bundle: `./gradlew :androidApp:bundleRelease`
+2. Dalla root del repository, compila il bundle Full: `./gradlew :androidApp:bundleFullRelease`
 3. Ripeti i step di testing
 4. Crea nuovo release nella console
 5. Compila release notes e pubblica
@@ -501,4 +500,3 @@ Se necessario aggiornare icone/screenshot:
 **Data**: Maggio 2026  
 **App**: AntCashManager v1.4.6  
 **Pacchetto**: com.sformica.ant_cashmanager
-

@@ -45,11 +45,11 @@ Questo consente:
 ### Step 1: Build the Release Bundle
 
 ```bash
-cd /opt/src/GIT/app/AntCashManager
-./gradlew bundleRelease
+# Dalla root del repository
+./gradlew :androidApp:bundleFullRelease
 ```
 
-Output: `androidApp/build/outputs/bundle/release/app-release.aab`
+Output: `androidApp/build/outputs/bundle/fullRelease/`
 
 ### Step 2: Carica su Google Play Console
 
@@ -167,8 +167,7 @@ Questo assicura che:
 
 **Prossimi step:**
 
-- Build e upload `bundleRelease` a Play Console (internal testing track)
+- Build e upload `bundleFullRelease` a Play Console (internal testing track)
 - Verifica che l'avvertimento scompaia
 - Monitora crash su Play Console → **Quality** → **Crashes and ANRs** per confermare decodifica
   corretta
-

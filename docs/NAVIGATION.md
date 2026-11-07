@@ -86,7 +86,7 @@ GUIDE        GUIDE
    ↓
 3. SCRIPT_CONVERSION_README.md (se manutenzione/estensione)
    ↓
-4. Script: /opt/src/GIT/app/AntCashManager/scripts/convert_to_debug_data.py
+4. Script: `extra/scripts/convert_to_debug_data.py` dalla root del repository
 ```
 
 ### ⚖️ **Legal / Compliance**
@@ -219,22 +219,22 @@ GUIDE        GUIDE
 
 ### Principal Documents
 
-- 📖 [INDEX.md](./INDEX.md) - **Indice centrale (INIZIA QUI)**
-- 📖 [README.md](./README.md) - Descrizione wiki e accesso rapido
-- 📖 [ARCHITECTURE_GUIDELINES.md](./ARCHITECTURE_GUIDELINES.md) - Architettura ufficiale
-- 📖 [IMPLEMENTATION_GUIDE.md](./IMPLEMENTATION_GUIDE.md) - Guide implementative feature
+- 📖 [INDEX.md](INDEX.md) - **Indice centrale (INIZIA QUI)**
+- 📖 [README.md](README.md) - Descrizione wiki e accesso rapido
+- 📖 [ARCHITECTURE_GUIDELINES.md](ARCHITECTURE_GUIDELINES.md) - Architettura ufficiale
+- 📖 [IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md) - Guide implementative feature
 
 ### Data Conversion
 
-- 📖 [CONVERSION_GUIDE.md](./CONVERSION_GUIDE.md) - Guida rapida conversione dati
-- 📖 [SCRIPT_CONVERSION_README.md](./SCRIPT_CONVERSION_README.md) - Dettagli tecnici script
+- 📖 [CONVERSION_GUIDE.md](CONVERSION_GUIDE.md) - Guida rapida conversione dati
+- 📖 [SCRIPT_CONVERSION_README.md](SCRIPT_CONVERSION_README.md) - Dettagli tecnici script
 
 ### Privacy
 
-- 📄 [privacy-policy.html](./privacy-policy.html) - Policy privacy (Inglese)
-- 📄 [privacy-policy-de.html](./privacy-policy-de.html) - Policy privacy (Tedesco)
-- 📄 [privacy-policy-es.html](./privacy-policy-es.html) - Policy privacy (Spagnolo)
-- 📄 [privacy-policy-fr.html](./privacy-policy-fr.html) - Policy privacy (Francese)
+- 📄 [privacy-policy.html](wiki/privacy-policy.html) - Policy privacy (Inglese)
+- 📄 [privacy-policy-de.html](wiki/privacy-policy-de.html) - Policy privacy (Tedesco)
+- 📄 [privacy-policy-es.html](wiki/privacy-policy-es.html) - Policy privacy (Spagnolo)
+- 📄 [privacy-policy-fr.html](wiki/privacy-policy-fr.html) - Policy privacy (Francese)
 
 ---
 
@@ -284,7 +284,6 @@ DAY 3+: Sviluppo
 
 ---
 
-**Ultima Modifica**: Maggio 2026  
-**Versione**: 1.0  
+**Ultima Modifica**: Maggio 2026
+**Versione**: 1.0
 **Scopo**: Facilitare navigazione e ricerca nella wiki AntCashManager
-

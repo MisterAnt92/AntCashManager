@@ -53,14 +53,15 @@ Documentazione organizzata per sviluppatori e agenti AI che lavorano nel progett
 
 - **[AGENTS.md](../../AGENTS.md)** - Guida principale per agenti AI (regole critical, best practices)
 - **[README.md](../../README.md)** - Overview app e info di progetto
-- **[IMPROVEMENT_ROADMAP_STATUS.md](../../IMPROVEMENT_ROADMAP_STATUS.md)** - Roadmap corrente e status settimanale
-- **[SETTINGS_CONSOLIDATION_MIGRATION.md](../../SETTINGS_CONSOLIDATION_MIGRATION.md)** - Guida alla migrazione settings
+- **[Documentazione tecnica](../../docs/README.md)** - Indice delle guide e dei riferimenti di progetto
+- **[Linee architetturali](../../docs/ARCHITECTURE_GUIDELINES.md)** - Pattern e confini architetturali correnti
 
 ---
 
 ## 📋 File Manager
 
-- **File Utili in Root**: AGENTS.md, README.md, IMPROVEMENT_ROADMAP_STATUS.md, SETTINGS_CONSOLIDATION_MIGRATION.md
+- **File Utili in Root**: AGENTS.md, README.md
+- **Documentazione tecnica**: docs/README.md e docs/INDEX.md
 - **File Utili in .github/agents/**: agent-*.agent.md (specializzati per task ricorrenti)
 - **File Eliminati**: Session summari, week reports, completion summaries (storage cleanup)
 

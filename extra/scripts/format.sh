@@ -3,10 +3,11 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 export PATH="$JAVA_HOME/bin:$PATH"
 
-cd "$SCRIPT_DIR/.."
+cd "$PROJECT_ROOT"
 
 echo "==> ktlintFormat su androidApp e shared..."
 ./gradlew ktlintFormat 2>&1 | tail -20

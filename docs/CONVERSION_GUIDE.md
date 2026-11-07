@@ -1,6 +1,6 @@
 # PiggyBank Pro → AntCashManager Data Conversion
 
-> 🔗 **[← Torna all'Indice Principale](./INDEX.md)** | **[README.md](./README.md)** | **[SCRIPT_CONVERSION_README.md](./SCRIPT_CONVERSION_README.md)**
+> 🔗 **[← Torna all'Indice Principale](INDEX.md)** | **[README.md](README.md)** | **[SCRIPT_CONVERSION_README.md](SCRIPT_CONVERSION_README.md)**
 
 ---
 
@@ -15,19 +15,19 @@ Questa guida descrive la conversione dei dati esportati da PiggyBank Pro nel for
 | App | `AntCashManager` |
 | Versione | `1.4.6` |
 | Package name (`applicationId`) | `com.sformica.ant_cashmanager` |
-| Script ufficiale | `scripts/convert_to_debug_data.py` |
+| Script ufficiale | `extra/scripts/convert_to_debug_data.py` |
 
 ## Prerequisiti
 
 - Python 3.8+
 - File input JSON disponibile
-- Repository locale in `/opt/src/GIT/app/AntCashManager`
+- Repository locale clonato
 
 ## Uso Rapido
 
 ```bash
-cd /opt/src/GIT/app/AntCashManager
-python3 scripts/convert_to_debug_data.py
+# Dalla root del repository
+python3 extra/scripts/convert_to_debug_data.py
 ```
 
 Comportamento di default:
@@ -37,8 +37,8 @@ Comportamento di default:
 Uso con input personalizzato:
 
 ```bash
-cd /opt/src/GIT/app/AntCashManager
-python3 scripts/convert_to_debug_data.py /path/to/input.json
+# Dalla root del repository
+python3 extra/scripts/convert_to_debug_data.py /path/to/input.json
 ```
 
 ## Mapping Dati
@@ -70,8 +70,8 @@ python3 scripts/convert_to_debug_data.py /path/to/input.json
 3. Avvia compilazione Android per controllo integrazione assets:
 
 ```bash
-cd /opt/src/GIT/app/AntCashManager
-./gradlew :androidApp:mergeDebugAssets :androidApp:compileDebugKotlin --no-daemon
+# Dalla root del repository
+./gradlew :androidApp:mergeFullDebugAssets :androidApp:compileFullDebugKotlin --no-daemon
 ```
 
 ## Troubleshooting
@@ -82,5 +82,5 @@ cd /opt/src/GIT/app/AntCashManager
 
 ## Riferimenti
 
-- Guida script dettagliata: `wiki/SCRIPT_CONVERSION_README.md`
-- Architettura progetto: `wiki/ARCHITECTURE_GUIDELINES.md`
+- Guida script dettagliata: `SCRIPT_CONVERSION_README.md`
+- Architettura progetto: `ARCHITECTURE_GUIDELINES.md`

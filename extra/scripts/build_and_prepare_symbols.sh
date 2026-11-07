@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Script per built, verificare e preparare i debug symbols per il caricamento su Play Console
-# Uso: bash build_and_prepare_symbols.sh [internal|closed-testing|production]
+# Build a release app bundle and prepare its Play Console upload notes.
+# Usage: ./extra/scripts/build_and_prepare_symbols.sh [full|lite]
 
-set -e
+set -euo pipefail
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -11,14 +11,27 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BUNDLE_OUTPUT="$PROJECT_ROOT/androidApp/build/outputs/bundle/release/app-release.aab"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+FLAVOR="${1:-full}"
+case "$FLAVOR" in
+    full|lite) ;;
+    *)
+        echo "Usage: $0 [full|lite]" >&2
+        exit 2
+        ;;
+esac
+
 SYMBOLS_OUTPUT="$PROJECT_ROOT/build/symbols"
-BUILD_LOG="$PROJECT_ROOT/build_symbols.log"
+BUILD_LOG="$SYMBOLS_OUTPUT/build_symbols.log"
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+export PATH="$JAVA_HOME/bin:$PATH"
+
+mkdir -p "$SYMBOLS_OUTPUT"
 
 echo -e "${BLUE}=== AntCashManager Debug Symbols Build ===${NC}"
 echo "Workspace: $PROJECT_ROOT"
-echo "Output: $BUNDLE_OUTPUT"
+echo "Flavor: $FLAVOR"
 echo ""
 
 # ============================================================================
@@ -26,14 +39,16 @@ echo ""
 # ============================================================================
 
 echo -e "${YELLOW}[1/4] Cleaning previous builds...${NC}"
-./gradlew clean --quiet || true
+cd "$PROJECT_ROOT"
+./gradlew clean --quiet
 
 echo -e "${YELLOW}[2/4] Building release bundle (this may take 2-3 minutes)...${NC}"
-if ./gradlew bundleRelease --no-daemon > "$BUILD_LOG" 2>&1; then
+TASK_FLAVOR="${FLAVOR^}"
+if ./gradlew ":androidApp:bundle${TASK_FLAVOR}Release" --no-daemon > "$BUILD_LOG" 2>&1; then
     echo -e "${GREEN}✓ Bundle built successfully${NC}"
 else
     echo -e "${RED}✗ Build failed. See $BUILD_LOG${NC}"
-    cat "$BUILD_LOG" | tail -50
+    tail -50 "$BUILD_LOG"
     exit 1
 fi
 
@@ -43,8 +58,14 @@ fi
 
 echo -e "${YELLOW}[3/4] Verifying bundle and extracting debug info...${NC}"
 
+OUTPUT_DIR="$PROJECT_ROOT/androidApp/build/outputs/bundle/${FLAVOR}Release"
+if [ ! -d "$OUTPUT_DIR" ]; then
+    echo -e "${RED}✗ Bundle output directory not found: $OUTPUT_DIR${NC}"
+    exit 1
+fi
+BUNDLE_OUTPUT="$(find "$OUTPUT_DIR" -maxdepth 1 -type f -name '*.aab' -print -quit)"
 if [ ! -f "$BUNDLE_OUTPUT" ]; then
-    echo -e "${RED}✗ Bundle not found: $BUNDLE_OUTPUT${NC}"
+    echo -e "${RED}✗ No app bundle found in: $OUTPUT_DIR${NC}"
     exit 1
 fi
 
@@ -53,26 +74,28 @@ echo -e "${GREEN}✓ Bundle file found ($BUNDLE_SIZE)${NC}"
 
 # Estrai il bundle temporaneamente per controllare i simboli
 TEMP_EXTRACT=$(mktemp -d)
-unzip -q "$BUNDLE_OUTPUT" -d "$TEMP_EXTRACT" 2>/dev/null || true
+trap 'rm -rf "$TEMP_EXTRACT"' EXIT
+if ! unzip -q "$BUNDLE_OUTPUT" -d "$TEMP_EXTRACT"; then
+    echo -e "${RED}✗ Could not extract app bundle: $BUNDLE_OUTPUT${NC}" >&2
+    exit 1
+fi
 
 echo -e "${YELLOW}   Checking for native libraries...${NC}"
-NATIVE_LIBS=$(find "$TEMP_EXTRACT/base/lib" -name "*.so" 2>/dev/null | wc -l)
+NATIVE_LIBS=$(find "$TEMP_EXTRACT" -path '*/lib/*.so' -type f | wc -l)
 if [ "$NATIVE_LIBS" -gt 0 ]; then
     echo -e "${GREEN}✓ Found $NATIVE_LIBS native libraries${NC}"
-    find "$TEMP_EXTRACT/base/lib" -name "*.so" | head -5 | xargs -I {} basename {} | sed 's/^/     /'
+    find "$TEMP_EXTRACT" -path '*/lib/*.so' -type f -print | sed -n '1,5p' | xargs -r -n 1 basename | sed 's/^/     /'
 else
     echo -e "${RED}⚠ No native libraries found${NC}"
 fi
 
 # Verifica ProGuard mapping
-MAPPING_FILE="$PROJECT_ROOT/androidApp/build/outputs/mapping/release/mapping.txt"
+MAPPING_FILE="$PROJECT_ROOT/androidApp/build/outputs/mapping/${FLAVOR}Release/mapping.txt"
 if [ -f "$MAPPING_FILE" ]; then
     echo -e "${GREEN}✓ ProGuard mapping file found${NC}"
 else
     echo -e "${YELLOW}⚠ ProGuard mapping file not found (expected at build time)${NC}"
 fi
-
-rm -rf "$TEMP_EXTRACT"
 
 # ============================================================================
 # Fase 3: Genera Informazioni per l'Upload
@@ -137,7 +160,7 @@ Next Step:
   Debug symbols will be extracted automatically
 
 Documentation:
-  See: $PROJECT_ROOT/DEBUG_SYMBOLS_GUIDE.md
+  See: $PROJECT_ROOT/.github/docs/deployment/DEBUG_SYMBOLS_GUIDE.md
 EOF
 
 echo -e "${BLUE}=== Build Complete ===${NC}"
@@ -150,4 +173,3 @@ echo "  $INSTRUCTIONS"
 echo ""
 echo "Next: Upload app-release.aab to Play Console"
 echo ""
-

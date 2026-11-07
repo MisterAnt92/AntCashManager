@@ -2,10 +2,10 @@
 
 Documentazione tecnica e operativa del progetto AntCashManager.
 
-> 👋 **[→ GUIDA LETTURA - Nuovo qui? Inizia da qui](./GUIDA_LETTURA.md)**  
-> ⚡ **[→ QUICK START - 5 minuti per iniziare](./QUICK_START.md)**  
-> 📖 **[→ INDICE CENTRALE - Clicca qui per navigare tutta la documentazione](./INDEX.md)**  
-> 🗺️ **[→ MAPPA DI NAVIGAZIONE - Preferisci una guida visuale per ruolo?](./NAVIGATION.md)**
+> 👋 **[→ GUIDA LETTURA - Nuovo qui? Inizia da qui](GUIDA_LETTURA.md)**
+> ⚡ **[→ QUICK START - 5 minuti per iniziare](QUICK_START.md)**
+> 📖 **[→ INDICE CENTRALE - Clicca qui per navigare tutta la documentazione](INDEX.md)**
+> 🗺️ **[→ MAPPA DI NAVIGAZIONE - Preferisci una guida visuale per ruolo?](NAVIGATION.md)**
 
 ---
 
@@ -18,7 +18,7 @@ Scegli il tuo profilo per accedere subito alla documentazione rilevante:
 La wiki è pubblicata anche come insieme di risorse statiche tramite GitHub Pages, così i file possono essere aperti direttamente da browser senza passare dalla vista repository.
 
 ### Indice esterno
-- `docs/wiki/index.html`
+- `wiki/index.html`
 - URL pubblico atteso: `https://misterant92.github.io/AntCashManager/wiki/`
 
 ### Privacy Policy pubbliche
@@ -32,11 +32,11 @@ La wiki è pubblicata anche come insieme di risorse statiche tramite GitHub Page
 ## Informazioni Progetto
 | Profilo | Task | Documento |
 |---------|------|-----------|
-| 👨‍💻 **Sviluppatore** | Nuova feature / Modifiche architettura | [ARCHITECTURE_GUIDELINES.md](./ARCHITECTURE_GUIDELINES.md) |
-| 🎨 **UI/UX Developer** | Modifiche transazioni / Form | [IMPLEMENTATION_GUIDE.md](./IMPLEMENTATION_GUIDE.md) |
-| 🗄️ **Data Engineer** | Conversione dati PiggyBank (uso) | [CONVERSION_GUIDE.md](./CONVERSION_GUIDE.md) |
-| 🔧 **Script Maintainer** | Manutenzione/estensione script | [SCRIPT_CONVERSION_README.md](./SCRIPT_CONVERSION_README.md) |
-| ⚖️ **Legal** | Privacy policy e compliance | [privacy-policy.html](./privacy-policy.html) |
+| 👨‍💻 **Sviluppatore** | Nuova feature / Modifiche architettura | [ARCHITECTURE_GUIDELINES.md](ARCHITECTURE_GUIDELINES.md) |
+| 🎨 **UI/UX Developer** | Modifiche transazioni / Form | [IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md) |
+| 🗄️ **Data Engineer** | Conversione dati PiggyBank (uso) | [CONVERSION_GUIDE.md](CONVERSION_GUIDE.md) |
+| 🔧 **Script Maintainer** | Manutenzione/estensione script | [SCRIPT_CONVERSION_README.md](SCRIPT_CONVERSION_README.md) |
+| ⚖️ **Legal** | Privacy policy e compliance | [privacy-policy.html](wiki/privacy-policy.html) |
 
 ---
 
@@ -56,7 +56,7 @@ La wiki è pubblicata anche come insieme di risorse statiche tramite GitHub Page
 ## 📚 Documenti Disponibili
 
 ### 🏗️ Architettura & Sviluppo
-**[ARCHITECTURE_GUIDELINES.md](./ARCHITECTURE_GUIDELINES.md)**
+**[ARCHITECTURE_GUIDELINES.md](ARCHITECTURE_GUIDELINES.md)**
 - ✅ Definisce Clean Architecture a 3 layer (Presentation/Domain/Data)
 - ✅ Pattern UseCase/ViewModel/State/Screen con esempi completi
 - ✅ Rules per testing, dispatcher injection, Result pattern
@@ -66,7 +66,7 @@ La wiki è pubblicata anche come insieme di risorse statiche tramite GitHub Page
 **Quando usarlo**: Sempre prima di scrivere codice, per verifiche strutturali, PR review.
 
 ### 📝 Guide Implementative
-**[IMPLEMENTATION_GUIDE.md](./IMPLEMENTATION_GUIDE.md)**
+**[IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md)**
 - ✅ Milestone: skeleton loading + form transazioni esteso
 - ✅ Dettagli implementazione UI (note, payee, location, tags, ricorrenza)
 - ✅ Flusso dati e pattern layout
@@ -75,13 +75,13 @@ La wiki è pubblicata anche come insieme di risorse statiche tramite GitHub Page
 **Quando usarlo**: Quando modifichi transazioni, form o skeleton loading.
 
 ### 🔄 Conversione Dati
-**[CONVERSION_GUIDE.md](./CONVERSION_GUIDE.md)** *(Guida esecutiva)*
+**[CONVERSION_GUIDE.md](CONVERSION_GUIDE.md)** *(Guida esecutiva)*
 - ✅ Flusso rapido conversione PiggyBank Pro → AntCashManager
 - ✅ Mapping campi e prerequisiti
 - ✅ Uso script e parametri default
 - ✅ Per **chi usa lo script**
 
-**[SCRIPT_CONVERSION_README.md](./SCRIPT_CONVERSION_README.md)** *(Dettagli tecnici)*
+**[SCRIPT_CONVERSION_README.md](SCRIPT_CONVERSION_README.md)** *(Dettagli tecnici)*
 - ✅ Schema input/output JSON
 - ✅ Validazioni e regole di conversione
 - ✅ Codici errore e esempi log
@@ -90,10 +90,10 @@ La wiki è pubblicata anche come insieme di risorse statiche tramite GitHub Page
 **Quando usarlo**: Conversione dati esportati da PiggyBank Pro.
 
 ### 🔐 Privacy & Policy
-**[privacy-policy.html](./privacy-policy.html)** - Inglese  
-**[privacy-policy-de.html](./privacy-policy-de.html)** - Tedesco  
-**[privacy-policy-es.html](./privacy-policy-es.html)** - Spagnolo  
-**[privacy-policy-fr.html](./privacy-policy-fr.html)** - Francese
+**[privacy-policy.html](wiki/privacy-policy.html)** - Inglese
+**[privacy-policy-de.html](wiki/privacy-policy-de.html)** - Tedesco
+**[privacy-policy-es.html](wiki/privacy-policy-es.html)** - Spagnolo
+**[privacy-policy-fr.html](wiki/privacy-policy-fr.html)** - Francese
 
 - ✅ Policy privacy ufficiale
 - ✅ Focus analytics usage-only (no dati personali)
@@ -122,7 +122,7 @@ La wiki è pubblicata anche come insieme di risorse statiche tramite GitHub Page
 ## 🛠️ Note di Manutenzione Wiki
 
 **Allineamento con il codice:**
-- Mantieni versione e package allineati con `androidApp/build.gradle.kts`
+- Mantieni versione e package allineati con `../androidApp/build.gradle.kts`
 - Aggiorna `ARCHITECTURE_GUIDELINES.md` se cambi i pattern architetturali
 - Se modifichi il script di conversione, aggiorna sia `CONVERSION_GUIDE.md` sia `SCRIPT_CONVERSION_README.md`
 - Se aggiungi una feature storica, documenta in `IMPLEMENTATION_GUIDE.md`
@@ -170,7 +170,7 @@ La policy di analytics segue il principio **usage-only**: tracciamo SOLO l'utili
 - ❌ Messaggi errore raw o stacktrace
 - ❌ Coordinate geografiche o dati sensibili
 
-**Linea guida:**  
+**Linea guida:**
 Se contiene info che identificherebbe o riguarderebbe direttamente un utente → **VIETATO**.
 
 ---
@@ -184,6 +184,6 @@ Per domande sulla documentazione:
 
 ---
 
-**Ultima Modifica**: Agosto 2026  
-**Versione Wiki**: 1.7.0  
+**Ultima Modifica**: Agosto 2026
+**Versione Wiki**: 1.7.0
 **Status**: ✅ Documentazione Completa

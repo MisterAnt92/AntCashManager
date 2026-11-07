@@ -2,7 +2,7 @@
 
 Questa guida ti aiuta a navigare la documentazione del progetto **AntCashManager** in base al tuo profilo.
 
-> **Se non hai tempo**: [QUICK_START.md](./QUICK_START.md) (5 minuti)
+> **Se non hai tempo**: [QUICK_START.md](QUICK_START.md) (5 minuti)
 
 ---
 
@@ -13,9 +13,9 @@ Questa guida ti aiuta a navigare la documentazione del progetto **AntCashManager
 
 **Percorso suggerito** (90 minuti):
 1. Leggi questo file fino alla fine (5 min)
-2. Apri [QUICK_START.md](./QUICK_START.md) sezione "Sviluppatore" (5 min)
-3. Leggi [ARCHITECTURE_GUIDELINES.md](./ARCHITECTURE_GUIDELINES.md) completo (45 min)
-4. Leggi [IMPLEMENTATION_GUIDE.md](./IMPLEMENTATION_GUIDE.md) (20 min)
+2. Apri [QUICK_START.md](QUICK_START.md) sezione "Sviluppatore" (5 min)
+3. Leggi [ARCHITECTURE_GUIDELINES.md](ARCHITECTURE_GUIDELINES.md) completo (45 min)
+4. Leggi [IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md) (20 min)
 5. Fai un esempio: scegli una feature semplice e sviluppala (120 min)
 6. Prima del commit: usa Pre-Commit Checklist in ARCHITECTURE_GUIDELINES.md (5 min)
 
@@ -28,9 +28,9 @@ Questa guida ti aiuta a navigare la documentazione del progetto **AntCashManager
 
 **Percorso suggerito** (60 minuti):
 1. Leggi questo file fino alla fine (5 min)
-2. Apri [QUICK_START.md](./QUICK_START.md) sezione "UI Developer" (5 min)
-3. Leggi [IMPLEMENTATION_GUIDE.md](./IMPLEMENTATION_GUIDE.md) (20 min)
-4. Consulta [ARCHITECTURE_GUIDELINES.md](./ARCHITECTURE_GUIDELINES.md) sezioni:
+2. Apri [QUICK_START.md](QUICK_START.md) sezione "UI Developer" (5 min)
+3. Leggi [IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md) (20 min)
+4. Consulta [ARCHITECTURE_GUIDELINES.md](ARCHITECTURE_GUIDELINES.md) sezioni:
    - "Componenti UI - USO OBBLIGATORIO" (10 min)
    - "Internazionalizzazione" (5 min)
    - "Tema & Styling" (5 min)
@@ -45,12 +45,12 @@ Questa guida ti aiuta a navigare la documentazione del progetto **AntCashManager
 
 **Percorso suggerito** (30 minuti):
 1. Leggi questo file fino alla fine (5 min)
-2. Apri [QUICK_START.md](./QUICK_START.md) sezione "Data Engineer" (5 min)
+2. Apri [QUICK_START.md](QUICK_START.md) sezione "Data Engineer" (5 min)
 3. Se usi lo script:
-   - Leggi [CONVERSION_GUIDE.md](./CONVERSION_GUIDE.md) (5 min)
-   - Esegui lo script: `python3 scripts/convert_to_debug_data.py` (5 min)
+   - Leggi [CONVERSION_GUIDE.md](CONVERSION_GUIDE.md) (5 min)
+   - Dalla root del repository, esegui: `python3 extra/scripts/convert_to_debug_data.py` (5 min)
 4. Se mantieni/estendi lo script:
-   - Leggi [SCRIPT_CONVERSION_README.md](./SCRIPT_CONVERSION_README.md) (15 min)
+   - Leggi [SCRIPT_CONVERSION_README.md](SCRIPT_CONVERSION_README.md) (15 min)
 
 **Output**: Sarai pronto a convertire dati o mantenere lo script.
 
@@ -61,12 +61,12 @@ Questa guida ti aiuta a navigare la documentazione del progetto **AntCashManager
 
 **Percorso suggerito** (15 minuti):
 1. Leggi questo file fino alla fine (5 min)
-2. Apri [privacy-policy.html](./privacy-policy.html) per policy ufficiale (10 min)
+2. Apri [privacy-policy.html](wiki/privacy-policy.html) per policy ufficiale (10 min)
 3. Se localizzato:
-   - [privacy-policy-de.html](./privacy-policy-de.html) (Tedesco)
-   - [privacy-policy-es.html](./privacy-policy-es.html) (Spagnolo)
-   - [privacy-policy-fr.html](./privacy-policy-fr.html) (Francese)
-4. Per analytics consentiti: vedi [README.md](./README.md) sezione "Privacy & Analytics"
+   - [privacy-policy-de.html](wiki/privacy-policy-de.html) (Tedesco)
+   - [privacy-policy-es.html](wiki/privacy-policy-es.html) (Spagnolo)
+   - [privacy-policy-fr.html](wiki/privacy-policy-fr.html) (Francese)
+4. Per analytics consentiti: vedi [README.md](README.md) sezione "Privacy & Analytics"
 
 **Output**: Hai tutto ciò che serve per compliance e audit.
 
@@ -77,10 +77,10 @@ Questa guida ti aiuta a navigare la documentazione del progetto **AntCashManager
 
 **Percorso suggerito** (120 minuti):
 1. Leggi questo file fino alla fine (5 min)
-2. Leggi [INDEX.md](./INDEX.md) (10 min)
-3. Leggi [ARCHITECTURE_GUIDELINES.md](./ARCHITECTURE_GUIDELINES.md) completo (60 min)
-4. Leggi [IMPLEMENTATION_GUIDE.md](./IMPLEMENTATION_GUIDE.md) (15 min)
-5. Consulta [NAVIGATION.md](./NAVIGATION.md) per PR review process (10 min)
+2. Leggi [INDEX.md](INDEX.md) (10 min)
+3. Leggi [ARCHITECTURE_GUIDELINES.md](ARCHITECTURE_GUIDELINES.md) completo (60 min)
+4. Leggi [IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md) (15 min)
+5. Consulta [NAVIGATION.md](NAVIGATION.md) per PR review process (10 min)
 6. Usa Pre-Commit Checklist per review (5 min)
 
 **Output**: Sarai autorità sugli standard del progetto.
@@ -233,15 +233,15 @@ Giorno 1 (✅ sopra) + :
 
 | Cosa Cerchi | Clicca |
 |------------|--------|
-| Indice principale | [INDEX.md](./INDEX.md) |
-| Accesso veloce (5 min) | [QUICK_START.md](./QUICK_START.md) |
-| Mappa navigazione | [NAVIGATION.md](./NAVIGATION.md) |
-| Architettura (UFFICIALE) | [ARCHITECTURE_GUIDELINES.md](./ARCHITECTURE_GUIDELINES.md) |
-| Feature storica: UI transazioni | [IMPLEMENTATION_GUIDE.md](./IMPLEMENTATION_GUIDE.md) |
-| Conversione dati | [CONVERSION_GUIDE.md](./CONVERSION_GUIDE.md) |
-| Dettagli script | [SCRIPT_CONVERSION_README.md](./SCRIPT_CONVERSION_README.md) |
-| Privacy policy | [privacy-policy.html](./privacy-policy.html) |
-| Struttura completa | [STRUTTURA_DOCUMENTAZIONE.md](./STRUTTURA_DOCUMENTAZIONE.md) |
+| Indice principale | [INDEX.md](INDEX.md) |
+| Accesso veloce (5 min) | [QUICK_START.md](QUICK_START.md) |
+| Mappa navigazione | [NAVIGATION.md](NAVIGATION.md) |
+| Architettura (UFFICIALE) | [ARCHITECTURE_GUIDELINES.md](ARCHITECTURE_GUIDELINES.md) |
+| Feature storica: UI transazioni | [IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md) |
+| Conversione dati | [CONVERSION_GUIDE.md](CONVERSION_GUIDE.md) |
+| Dettagli script | [SCRIPT_CONVERSION_README.md](SCRIPT_CONVERSION_README.md) |
+| Privacy policy | [privacy-policy.html](wiki/privacy-policy.html) |
+| Struttura completa | [STRUTTURA_DOCUMENTAZIONE.md](STRUTTURA_DOCUMENTAZIONE.md) |
 
 ---
 
@@ -258,9 +258,9 @@ Giorno 1 (✅ sopra) + :
 
 ## 📞 Non Sai Da Dove Iniziare?
 
-1. **Hai fretta?** → [QUICK_START.md](./QUICK_START.md) (5 min)
-2. **Vuoi una mappa?** → [NAVIGATION.md](./NAVIGATION.md) (10 min)
-3. **Vuoi l'indice?** → [INDEX.md](./INDEX.md) (15 min)
+1. **Hai fretta?** → [QUICK_START.md](QUICK_START.md) (5 min)
+2. **Vuoi una mappa?** → [NAVIGATION.md](NAVIGATION.md) (10 min)
+3. **Vuoi l'indice?** → [INDEX.md](INDEX.md) (15 min)
 4. **Vuoi capire tutto?** → Continua a leggere questa guida (20 min)
 
 ---
@@ -269,7 +269,7 @@ Giorno 1 (✅ sopra) + :
 
 Basato su dove sei ora:
 
-- ✅ **Ho finito di leggere questa guida** → Apri [QUICK_START.md](./QUICK_START.md)
+- ✅ **Ho finito di leggere questa guida** → Apri [QUICK_START.md](QUICK_START.md)
 - ✅ **Ho identificato il mio profilo** → Segui il percorso suggerito per il tuo profilo (sopra)
 - ✅ **Sono pronto a iniziare** → Apri il primo documento del tuo percorso
 
@@ -281,7 +281,6 @@ La documentazione è qui per supportarti. Se trovi spazi da migliorare, aiuta il
 
 ---
 
-**Versione**: 1.0  
-**Ultimo Aggiornamento**: Maggio 2026  
+**Versione**: 1.0
+**Ultimo Aggiornamento**: Maggio 2026
 **Scopo**: Guidare il primo accesso alla wiki AntCashManager
-

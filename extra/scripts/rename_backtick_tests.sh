@@ -6,16 +6,16 @@
 # camelCase seguendo la convenzione: method_shouldExpectedBehavior_whenCondition
 #
 # Uso:
-#   ./scripts/rename_backtick_tests.sh [--dry-run] [percorso_progetto]
+#   ./extra/scripts/rename_backtick_tests.sh [--dry-run] [percorso_progetto]
 #
 # Opzioni:
 #   --dry-run   Mostra solo le modifiche senza applicarle
 #   percorso    Radice del progetto (default: directory dello script/..)
 #
 # Esempi:
-#   ./scripts/rename_backtick_tests.sh
-#   ./scripts/rename_backtick_tests.sh --dry-run
-#   ./scripts/rename_backtick_tests.sh --dry-run /path/to/project
+#   ./extra/scripts/rename_backtick_tests.sh
+#   ./extra/scripts/rename_backtick_tests.sh --dry-run
+#   ./extra/scripts/rename_backtick_tests.sh --dry-run /path/to/project
 # =============================================================================
 
 set -euo pipefail
@@ -34,7 +34,7 @@ for arg in "$@"; do
 done
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="${PROJECT_ROOT:-$(cd "$SCRIPT_DIR/.." && pwd)}"
+PROJECT_ROOT="${PROJECT_ROOT:-$(cd "$SCRIPT_DIR/../.." && pwd)}"
 
 echo "============================================================"
 echo " Rinomina unit test: backtick → underscore/camelCase"
@@ -218,4 +218,3 @@ if dry_run and total_renamed > 0:
     print(" Riesegui senza --dry-run per applicare le modifiche.")
 
 PYTHON_EOF
-

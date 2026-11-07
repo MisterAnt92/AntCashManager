@@ -1,6 +1,6 @@
 # Script di Conversione Dati - AntCashManager
 
-> 🔗 **[← Torna all'Indice Principale](./INDEX.md)** | **[README.md](./README.md)** | **[CONVERSION_GUIDE.md](./CONVERSION_GUIDE.md)**
+> 🔗 **[← Torna all'Indice Principale](INDEX.md)** | **[README.md](README.md)** | **[CONVERSION_GUIDE.md](CONVERSION_GUIDE.md)**
 
 ---
 
@@ -17,7 +17,7 @@ Script unificato per convertire dati di backup/PiggyBank Pro nel formato
 | App | `AntCashManager` |
 | Versione | `1.4.6` |
 | Package name (`applicationId`) | `com.sformica.ant_cashmanager` |
-| Script | `scripts/convert_to_debug_data.py` |
+| Script | `extra/scripts/convert_to_debug_data.py` |
 
 ## Prerequisiti
 
@@ -30,8 +30,8 @@ Script unificato per convertire dati di backup/PiggyBank Pro nel formato
 ### Modalità standard (input di default)
 
 ```bash
-cd /opt/src/GIT/app/AntCashManager
-python3 scripts/convert_to_debug_data.py
+# Dalla root del repository
+python3 extra/scripts/convert_to_debug_data.py
 ```
 
 - Input: `androidApp/src/main/assets/piggybankpro_data.json`
@@ -40,8 +40,8 @@ python3 scripts/convert_to_debug_data.py
 ### Modalità custom (input esplicito)
 
 ```bash
-cd /opt/src/GIT/app/AntCashManager
-python3 scripts/convert_to_debug_data.py /path/to/input.json
+# Dalla root del repository
+python3 extra/scripts/convert_to_debug_data.py /path/to/input.json
 ```
 
 - Output sempre: `androidApp/src/main/assets/debug_initial_data.json`
@@ -216,4 +216,4 @@ Esempio di output di esecuzione:
 ## Note Finali
 
 - Lo script è pensato per essere rieseguito in sicurezza (sovrascrive l'output).
-- Per dettagli funzionali rapidi usa anche `wiki/CONVERSION_GUIDE.md`.
+- Per dettagli funzionali rapidi usa anche `CONVERSION_GUIDE.md`.
