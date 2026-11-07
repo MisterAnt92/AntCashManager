@@ -661,7 +661,6 @@
     <string name="home_meal_vouchers_received">受け取った</string>
     <string name="home_meal_vouchers_used">使用した</string>
     <string name="home_meal_vouchers_remaining_value">残存価値</string>
-    <string name="home_meal_vouchers_warning_overused">受け取ったより多く使用</string>
     <string name="home_meal_vouchers_received_only_mode">トラッキングのみ</string>
 
     <!-- Month names (short format) -->

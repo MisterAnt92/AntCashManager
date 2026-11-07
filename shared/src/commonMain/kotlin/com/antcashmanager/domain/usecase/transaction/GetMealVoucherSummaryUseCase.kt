@@ -32,7 +32,7 @@ public class GetMealVoucherSummaryUseCase(
 
         if (received == 0 && used == 0) return null
 
-        val remaining = received - used
+        val remaining = maxOf(0, received - used)
         val remainingValue = remaining * params.voucherValue
         val usedValue = used * params.voucherValue
 

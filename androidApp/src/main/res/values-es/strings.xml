@@ -601,7 +601,6 @@
     <string name="home_meal_vouchers_received">Recibidos</string>
     <string name="home_meal_vouchers_used">Utilizados</string>
     <string name="home_meal_vouchers_remaining_value">valor restante</string>
-    <string name="home_meal_vouchers_warning_overused">Utilizado más de lo recibido</string>
     <string name="home_meal_vouchers_received_only_mode">Solo seguimiento</string>
 
     <!-- Month names (short format) -->

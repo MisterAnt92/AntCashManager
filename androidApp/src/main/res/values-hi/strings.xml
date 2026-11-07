@@ -658,7 +658,6 @@
     <string name="home_meal_vouchers_received">प्राप्त</string>
     <string name="home_meal_vouchers_used">उपयोग की गई</string>
     <string name="home_meal_vouchers_remaining_value">शेष मूल्य</string>
-    <string name="home_meal_vouchers_warning_overused">प्राप्त से अधिक उपयोग</string>
     <string name="home_meal_vouchers_received_only_mode">केवल ट्रैकिंग</string>
 
     <!-- Month names (short format) -->

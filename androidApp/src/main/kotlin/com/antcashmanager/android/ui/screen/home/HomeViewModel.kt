@@ -341,7 +341,7 @@ class HomeViewModel(
                 if (received == 0 && used == 0) {
                     null
                 } else {
-                    val remaining = received - used
+                    val remaining = maxOf(0, received - used)
                     com.antcashmanager.domain.model.MealVoucherSummary(
                         received = received,
                         used = used,

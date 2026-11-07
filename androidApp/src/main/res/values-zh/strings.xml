@@ -662,7 +662,6 @@
     <string name="home_meal_vouchers_received">已收到</string>
     <string name="home_meal_vouchers_used">已使用</string>
     <string name="home_meal_vouchers_remaining_value">剩余价值</string>
-    <string name="home_meal_vouchers_warning_overused">使用多于收到</string>
     <string name="home_meal_vouchers_received_only_mode">仅跟踪</string>
 
     <!-- Month names (short format) -->

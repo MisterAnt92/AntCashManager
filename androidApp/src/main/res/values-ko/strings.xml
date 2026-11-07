@@ -661,7 +661,6 @@
     <string name="home_meal_vouchers_received">받음</string>
     <string name="home_meal_vouchers_used">사용함</string>
     <string name="home_meal_vouchers_remaining_value">남은 가치</string>
-    <string name="home_meal_vouchers_warning_overused">받은 것보다 더 사용함</string>
     <string name="home_meal_vouchers_received_only_mode">추적만</string>
 
     <!-- Month names (short format) -->

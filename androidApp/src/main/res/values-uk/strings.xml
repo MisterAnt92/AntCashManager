@@ -664,7 +664,6 @@
     <string name="home_meal_vouchers_received">отримано</string>
     <string name="home_meal_vouchers_used">використано</string>
     <string name="home_meal_vouchers_remaining_value">залишкова вартість</string>
-    <string name="home_meal_vouchers_warning_overused">Використано більше, ніж отримано</string>
     <string name="home_meal_vouchers_received_only_mode">Тільки відстеження</string>
 
     <!-- Month names (short format) -->

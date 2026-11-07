@@ -80,7 +80,8 @@ class GetMealVoucherSummaryUseCaseTest : BaseUseCaseTest() {
 
         assertEquals(0, result?.received)
         assertEquals(8, result?.used)
-        assertEquals(-8, result?.remaining)
+        assertEquals(0, result?.remaining)
+        assertEquals(0.0, result?.remainingValue)
         assertEquals(5.29, result?.voucherValue)
     }
 
@@ -137,7 +138,7 @@ class GetMealVoucherSummaryUseCaseTest : BaseUseCaseTest() {
     }
 
     @Test
-    fun execute_shouldAllowNegativeRemaining_whenUsedExceedsReceived() = runUnitTest {
+    fun execute_shouldClampRemainingToZero_whenUsedExceedsReceived() = runUnitTest {
         val transactions = listOf(
             testTransaction {
                 type = TransactionType.INCOME
@@ -159,7 +160,8 @@ class GetMealVoucherSummaryUseCaseTest : BaseUseCaseTest() {
 
         assertEquals(10, result?.received)
         assertEquals(15, result?.used)
-        assertEquals(-5, result?.remaining)
+        assertEquals(0, result?.remaining)
+        assertEquals(0.0, result?.remainingValue)
     }
 
     @Test

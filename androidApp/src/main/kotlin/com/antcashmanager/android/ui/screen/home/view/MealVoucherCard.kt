@@ -24,7 +24,6 @@ import com.antcashmanager.android.ui.components.animation.AnimatedCard
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.text.CompactMoneyText
 import com.antcashmanager.domain.model.MealVoucherSummary
-import kotlin.math.abs
 
 @Composable
 fun MealVoucherCard(
@@ -73,9 +72,7 @@ fun MealVoucherCard(
                         text = summary.remaining.toString(),
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
-                        color =
-                            if (summary.remaining < 0) MaterialTheme.colorScheme.error
-                            else MaterialTheme.colorScheme.primary,
+                        color = MaterialTheme.colorScheme.primary,
                     )
                     AppText(
                         text = stringResource(R.string.home_meal_vouchers_remaining),
@@ -117,7 +114,7 @@ fun MealVoucherCard(
                 LinearProgressIndicator(
                     progress = { kotlin.math.max(0f, summary.used.toFloat() / summary.received.toFloat()) },
                     modifier = Modifier.fillMaxWidth(),
-                    color = if (summary.remaining < 0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                    color = MaterialTheme.colorScheme.primary,
                     trackColor = MaterialTheme.colorScheme.surfaceVariant,
                 )
             }
@@ -133,18 +130,9 @@ fun MealVoucherCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 CompactMoneyText(
-                    amount = abs(summary.remainingValue),
+                    amount = summary.remainingValue,
                     fontSize = 14,
                     fontWeight = FontWeight.SemiBold,
-                )
-            }
-
-            if (summary.remaining < 0) {
-                AppText(
-                    text = stringResource(R.string.home_meal_vouchers_warning_overused),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(top = 4.dp),
                 )
             }
         }
