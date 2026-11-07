@@ -16,7 +16,9 @@ import com.antcashmanager.android.security.BackupPayloadCipher
 import com.antcashmanager.android.ui.screen.settings.dataManagement.SettingsDataConstant
 import com.antcashmanager.domain.model.BackupDestination
 import com.antcashmanager.domain.repository.SettingsRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.io.IOException
@@ -197,9 +199,11 @@ class AutoBackupWorker(
 
             // Scrivi il contenuto
             try {
-                applicationContext.contentResolver.openOutputStream(backupFile.uri)?.use { output ->
-                    output.write(content.toByteArray(Charsets.UTF_8))
-                    output.flush()
+                withContext(Dispatchers.IO) {
+                    applicationContext.contentResolver.openOutputStream(backupFile.uri)?.use { output ->
+                        output.write(content.toByteArray(Charsets.UTF_8))
+                        output.flush()
+                    }
                 }
                 Logger.d(tag = "AutoBackupWorker") { "Backup file written locally: ${backupFile.name}" }
                 true
@@ -231,7 +235,7 @@ class AutoBackupWorker(
             Logger.d(tag = "AutoBackupWorker") { "Uploading backup to Google Drive: $fileName" }
 
             // Step 1: Assicurati che la cartella esista
-            val folderResult = driveUploadManager.ensureFolderExists()
+            val folderResult = withContext(Dispatchers.IO) { driveUploadManager.ensureFolderExists() }
             if (!folderResult.isSuccess) {
                 Logger.e(
                     tag = "AutoBackupWorker",
@@ -242,11 +246,13 @@ class AutoBackupWorker(
 
             // Step 2: Upload il file
             val uploadResult =
-                driveUploadManager.uploadBackupFile(
-                    fileName = fileName,
-                    fileContent = content.toByteArray(Charsets.UTF_8),
-                    mimeType = "application/json", // Sempre JSON (cifratura opzionale è gestita a livello di contenuto)
-                )
+                withContext(Dispatchers.IO) {
+                    driveUploadManager.uploadBackupFile(
+                        fileName = fileName,
+                        fileContent = content.toByteArray(Charsets.UTF_8),
+                        mimeType = "application/json",
+                    )
+                }
 
             if (uploadResult.isSuccess) {
                 Logger.d(tag = "AutoBackupWorker") { "Backup uploaded to Google Drive: ${uploadResult.getOrNull()}" }

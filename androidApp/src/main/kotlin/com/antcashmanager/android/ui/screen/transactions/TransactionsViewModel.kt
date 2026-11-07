@@ -130,12 +130,12 @@ class TransactionsViewModel(
     private val transactionsFlow =
         getTransactionsUseCase()
             .map { it.getOrElse { emptyList() }.withCorrectAmounts() }
-            .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     private val categoriesFlow =
         getCategoriesUseCase()
             .map { it.getOrElse { emptyList() } }
-            .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     private val searchQueryFlow =
         _filterState

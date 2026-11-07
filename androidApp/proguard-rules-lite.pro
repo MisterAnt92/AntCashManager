@@ -23,12 +23,6 @@
 # Remove Guava (pulled by google-api-client)
 -dontwarn com.google.common.**
 
-# ── R8 Aggressive Shrinking ──
-# For lite variant, allow even more aggressive shrinking
-# (same as production, but with explicit Drive API removal)
--optimizationpasses 8
--repackageclasses 'com.antcashmanager.opt'
-
 # ── Keep only essential classes ──
 # Keep everything from main proguard-rules.pro
 # These rules will be merged with base rules

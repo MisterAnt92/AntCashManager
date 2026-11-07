@@ -134,7 +134,7 @@ class HomeViewModel(
     private val transactionsFlow =
         getTransactionsUseCase()
             .map { it.getOrElse { emptyList() }.withCorrectAmounts() }
-            .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     // ── Search query with debounce for performance ──
     private val debouncedSearchQuery =

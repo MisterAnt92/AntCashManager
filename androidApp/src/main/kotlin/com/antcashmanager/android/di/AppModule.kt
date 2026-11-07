@@ -370,7 +370,7 @@ val presentationModule =
         }
 
         // ── Manager per AddTransaction ──
-        single {
+        factory {
             TransactionLoadManager(
                 getTransactionByIdUseCase = get(),
                 getCategoriesUseCase = get(),
@@ -378,14 +378,14 @@ val presentationModule =
             )
         }
 
-        single {
+        factory {
             TransactionSubmitManager(
                 insertTransactionUseCase = get(),
                 updateTransactionUseCase = get(),
             )
         }
 
-        single {
+        factory {
             SuggestionsManager(
                 getTransactionSuggestionsUseCase = get(),
             )
