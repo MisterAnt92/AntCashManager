@@ -122,6 +122,7 @@ private fun SidebarHeader(onHeaderClick: () -> Unit = {}) {
     Column(
         modifier =
             Modifier
+                .fillMaxWidth()
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
