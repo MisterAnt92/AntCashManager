@@ -19,12 +19,24 @@ check_file() {
 
 FAILED=0
 
+# ── AI agent configuration files ──
 check_file ".github/ai-assistant.yml" || FAILED=1
 check_file ".github/agents/agent-compose-ui.agent.md" || FAILED=1
 check_file ".github/agents/agent-unit-tests-mockk.agent.md" || FAILED=1
 check_file ".github/agents/agent-usecase-pattern.agent.md" || FAILED=1
 check_file ".github/agents/agent-viewmodel-stateflow.agent.md" || FAILED=1
 check_file ".github/agents/agent-code-cleanup.agent.md" || FAILED=1
+
+# ── ktlint check on staged Kotlin files ──
+STAGED_KT=$(git diff --cached --name-only --diff-filter=ACM 2>/dev/null | grep -E '\.kts?$' || true)
+if [ -n "$STAGED_KT" ]; then
+  export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+  cd "$REPO_ROOT"
+  ./gradlew ktlintCheck --quiet 2>&1 | head -50 || {
+    echo "ktlint violations found. Run ./scripts/format.sh to auto-fix, then re-stage." >&2
+    FAILED=1
+  }
+fi
 
 if [ $FAILED -ne 0 ]; then
   echo "Pre-commit checks failed. Fix the errors above or copy the files into the repository." >&2

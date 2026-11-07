@@ -21,11 +21,13 @@ subprojects {
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
 
     configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+        version.set("1.5.0")
         android.set(true)
         ignoreFailures.set(false)
         reporters {
             reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.PLAIN)
             reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.CHECKSTYLE)
+            reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.HTML)
         }
     }
 }
