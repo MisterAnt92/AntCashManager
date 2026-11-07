@@ -20,7 +20,11 @@ check_file() {
 FAILED=0
 
 check_file ".github/ai-assistant.yml" || FAILED=1
-check_file ".github/agent-android-clean-architecture.md" || FAILED=1
+check_file ".github/agents/agent-compose-ui.agent.md" || FAILED=1
+check_file ".github/agents/agent-unit-tests-mockk.agent.md" || FAILED=1
+check_file ".github/agents/agent-usecase-pattern.agent.md" || FAILED=1
+check_file ".github/agents/agent-viewmodel-stateflow.agent.md" || FAILED=1
+check_file ".github/agents/agent-code-cleanup.agent.md" || FAILED=1
 
 if [ $FAILED -ne 0 ]; then
   echo "Pre-commit checks failed. Fix the errors above or copy the files into the repository." >&2
