@@ -13,6 +13,7 @@ plugins {
     alias(libs.plugins.kotlin.compose) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.ktlint) apply false
+    alias(libs.plugins.kover)
 }
 
 // ── Ktlint Configuration for all subprojects ──
@@ -38,6 +39,34 @@ subprojects {
                 // Enforce project(String) notation over deprecated Project object notation
                 // This configuration ensures compatibility with future Gradle versions
                 // where Project object as dependency notation will no longer be supported
+            }
+        }
+    }
+}
+
+// ── Kover Aggregated Coverage ──
+// Note: :shared uses com.android.kotlin.multiplatform.library (not supported by Kover 0.9.x).
+// androidApp already compiles shared sources, so its coverage includes shared domain/data classes.
+dependencies {
+    kover(project(":androidApp"))
+}
+
+kover {
+    reports {
+        filters {
+            excludes {
+                androidGeneratedClasses()
+                classes(
+                    "**.*ComposableSingletons*",
+                    "**.*_Impl*",
+                    "**.*\$\$serializer*",
+                )
+            }
+        }
+        total {
+            html {
+                title = "AntCashManager – Unit Test Coverage"
+                htmlDir.set(rootProject.layout.buildDirectory.dir("reports/kover/html"))
             }
         }
     }
