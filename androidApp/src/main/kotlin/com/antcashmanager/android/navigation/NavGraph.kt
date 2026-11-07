@@ -44,7 +44,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -58,6 +57,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hierarchy
+import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -90,9 +91,7 @@ import com.antcashmanager.android.util.AppExitManager.safeFinish
 import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.domain.model.CurrencyFormat
-import com.antcashmanager.domain.repository.SettingsRepository
 import kotlinx.coroutines.launch
-import org.koin.compose.koinInject
 
 /**
  * Host di navigazione principale dell'app.
@@ -100,33 +99,23 @@ import org.koin.compose.koinInject
  */
 @Composable
 fun AntCashManagerNavHost() {
-    val settingsRepository: SettingsRepository = koinInject()
+    val navSettingsViewModel: NavSettingsViewModel = koinViewModel()
+    val navSettings by navSettingsViewModel.state.collectAsStateWithLifecycle()
     val analyticsManager: AnalyticsManager = koinInject()
     val performanceTracker: PerformanceTracker = koinInject()
 
     val navController = rememberNavController()
-    val showCharts by settingsRepository.getShowCharts().collectAsStateWithLifecycle(initialValue = true)
-    val isTutorialCompleted by settingsRepository
-        .getIsTutorialCompleted()
-        .collectAsStateWithLifecycle(initialValue = null)
-    val currencySymbol by settingsRepository.getCurrencySymbol().collectAsStateWithLifecycle(initialValue = "\u20ac")
-    val decimalDigits by settingsRepository.getDecimalDigits().collectAsStateWithLifecycle(initialValue = 2)
-    val decimalSeparator by settingsRepository.getDecimalSeparator().collectAsStateWithLifecycle(initialValue = ",")
-    val thousandsSeparator by settingsRepository
-        .getThousandsSeparator()
-        .collectAsStateWithLifecycle(initialValue = "")
-    val maskAmounts by settingsRepository.getMaskAmounts().collectAsStateWithLifecycle(initialValue = false)
-    // null = never asked (loading/undecided); false = denied; true = granted
-    val analyticsConsent by settingsRepository
-        .getAnalyticsConsent()
-        .collectAsStateWithLifecycle(initialValue = false)
+    val showCharts = navSettings.showCharts
+    val isTutorialCompleted = navSettings.isTutorialCompleted
+    val maskAmounts = navSettings.maskAmounts
+    val analyticsConsent = navSettings.analyticsConsent
 
     val currencyFormat =
         CurrencyFormat(
-            currencySymbol = currencySymbol,
-            decimalDigits = decimalDigits,
-            decimalSeparator = decimalSeparator,
-            thousandsSeparator = thousandsSeparator,
+            currencySymbol = navSettings.currencySymbol,
+            decimalDigits = navSettings.decimalDigits,
+            decimalSeparator = navSettings.decimalSeparator,
+            thousandsSeparator = navSettings.thousandsSeparator,
         )
 
     if (isTutorialCompleted != null) {
@@ -138,18 +127,13 @@ fun AntCashManagerNavHost() {
             // GDPR consent dialog: shown once after tutorial, before any analytics event.
             // analyticsConsent == null means never asked (loading sentinel = false keeps it
             // from flashing during first composition while DataStore initialises).
-            val consentScope = rememberCoroutineScope()
             if (isTutorialCompleted == true && analyticsConsent == null) {
                 AnalyticsConsentDialog(
                     onAccept = {
-                        consentScope.launch(kotlinx.coroutines.Dispatchers.IO) {
-                            settingsRepository.setAnalyticsConsent(true)
-                        }
+                        navSettingsViewModel.onEvent(NavSettingsEvent.SetAnalyticsConsent(true))
                     },
                     onDecline = {
-                        consentScope.launch(kotlinx.coroutines.Dispatchers.IO) {
-                            settingsRepository.setAnalyticsConsent(false)
-                        }
+                        navSettingsViewModel.onEvent(NavSettingsEvent.SetAnalyticsConsent(false))
                     },
                 )
             }

@@ -99,6 +99,7 @@ import com.antcashmanager.domain.usecase.transaction.GetTransactionsUseCase
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.SyncTransactionCategoriesUseCase
 import com.antcashmanager.domain.usecase.transaction.UpdateTransactionUseCase
+import com.antcashmanager.android.navigation.NavSettingsViewModel
 import com.antcashmanager.domain.validation.TransactionValidator
 import com.antcashmanager.domain.validation.TransactionValidatorImpl
 import kotlinx.coroutines.flow.map
@@ -450,6 +451,7 @@ val presentationModule =
         }
         viewModelOf(::TransactionDetailsViewModel)
         viewModelOf(::ThemeViewModel)
+        viewModel { NavSettingsViewModel(settingsRepository = get()) }
     }
 
 /** Aggregazione di tutti i moduli Koin dell'app. */
