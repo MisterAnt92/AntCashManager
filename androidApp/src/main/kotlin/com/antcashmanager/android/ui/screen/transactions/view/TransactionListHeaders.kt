@@ -33,7 +33,7 @@ fun TransactionListHeaders(
             searchQuery = state.searchQuery,
             onSearchQueryChange = {
                 onEvent(
-                    TransactionsEvent.UpdateSearchQuery(it),
+                    TransactionsEvent.UpdateSearchQueryEvent(it),
                 )
             },
             searchSuggestions = state.searchSuggestions,
@@ -48,40 +48,40 @@ fun TransactionListHeaders(
             selectedPaymentType = state.pendingPaymentType,
             onCategorySelected = {
                 onEvent(
-                    TransactionsEvent.UpdateCategoryFilter(
+                    TransactionsEvent.UpdateCategoryFilterEvent(
                         it,
                     ),
                 )
             },
             onTransactionTypeSelected = {
                 onEvent(
-                    TransactionsEvent.UpdateTransactionTypeFilter(
+                    TransactionsEvent.UpdateTransactionTypeFilterEvent(
                         it,
                     ),
                 )
             },
             onPaymentTypeSelected = {
                 onEvent(
-                    TransactionsEvent.UpdatePaymentTypeFilter(
+                    TransactionsEvent.UpdatePaymentTypeFilterEvent(
                         it,
                     ),
                 )
             },
             onClearFilters = {
                 onEvent(
-                    TransactionsEvent.ClearAllFilters,
+                    TransactionsEvent.ClearAllFiltersEvent,
                 )
             },
             hasFilterChanges = state.hasFilterChanges,
             onApplyFilters = {
-                onEvent(TransactionsEvent.ApplyFilters)
+                onEvent(TransactionsEvent.ApplyFiltersEvent)
                 onEvent(
-                    TransactionsEvent.ToggleFiltersExpanded,
+                    TransactionsEvent.ToggleFiltersExpandedEvent,
                 )
             },
             onCancelFilters = {
                 onEvent(
-                    TransactionsEvent.CancelFilterChanges,
+                    TransactionsEvent.CancelFilterChangesEvent,
                 )
             },
         )
@@ -95,7 +95,7 @@ fun TransactionListHeaders(
             selectedPaymentType = state.selectedPaymentType,
             onClearAll = {
                 onEvent(
-                    TransactionsEvent.ClearAllFilters,
+                    TransactionsEvent.ClearAllFiltersEvent,
                 )
             },
         )
@@ -109,14 +109,14 @@ fun TransactionListHeaders(
         expanded = dateFilterExpanded,
         onExpandedChange = { expanded ->
             onEvent(
-                TransactionsEvent.SetDateFilterExpanded(
+                TransactionsEvent.SetDateFilterExpandedEvent(
                     expanded,
                 ),
             )
         },
         onPresetSelected = {
             onEvent(
-                TransactionsEvent.SelectPreset(it),
+                TransactionsEvent.SelectPresetEvent(it),
             )
         },
         onFromDateEdit = { onShowFromDatePicker() },

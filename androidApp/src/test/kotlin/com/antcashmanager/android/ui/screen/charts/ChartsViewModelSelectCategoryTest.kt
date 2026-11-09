@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.charts
 
+import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.analytics.tracker.PerformanceTracker
 import com.antcashmanager.android.analytics.tracker.SegmentationTracker
@@ -11,12 +12,16 @@ import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import java.util.Calendar
@@ -56,6 +61,15 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
             )
     }
 
+    @After
+    override fun tearDownDispatchers() {
+        if (::viewModel.isInitialized) {
+            runBlocking { viewModel.viewModelScope.coroutineContext[Job]?.cancelAndJoin() }
+            testDispatcher.scheduler.advanceUntilIdle()
+        }
+        super.tearDownDispatchers()
+    }
+
     @Test
     fun selectChartCategory_updatesSelectedChartDetails() =
         runViewModelTest {
@@ -65,7 +79,7 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
                 }
 
             viewModel.onEvent(
-                ChartEvent.SelectChartCategory(
+                ChartEvent.SelectChartCategoryEvent(
                     categoryName = "Food",
                     amount = 250.0,
                     colorHex = 0xFFE57373,
@@ -119,12 +133,12 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
             advanceUntilIdle()
 
             // Set date range to load transactions
-            viewModel.onEvent(ChartEvent.SetDateRange(timestamp - 86_400_000L, timestamp + 86_400_000L))
+            viewModel.onEvent(ChartEvent.SetDateRangeEvent(timestamp - 86_400_000L, timestamp + 86_400_000L))
             advanceUntilIdle()
 
             // Select Food category (100 out of 250 total = 40%)
             viewModel.onEvent(
-                ChartEvent.SelectChartCategory(
+                ChartEvent.SelectChartCategoryEvent(
                     categoryName = "Food",
                     amount = 100.0,
                     colorHex = 0xFFE57373,
@@ -148,7 +162,7 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
                 }
 
             viewModel.onEvent(
-                ChartEvent.SelectChartCategory(
+                ChartEvent.SelectChartCategoryEvent(
                     categoryName = "Test",
                     amount = 1000.0,
                     colorHex = 0xFFE57373,
@@ -175,7 +189,7 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
             advanceUntilIdle()
 
             viewModel.onEvent(
-                ChartEvent.SelectChartCategory(
+                ChartEvent.SelectChartCategoryEvent(
                     categoryName = "Empty",
                     amount = 100.0,
                     colorHex = 0xFFE57373,
@@ -201,7 +215,7 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
 
             val colorHex = 0xFFE57373L
             viewModel.onEvent(
-                ChartEvent.SelectChartCategory(
+                ChartEvent.SelectChartCategoryEvent(
                     categoryName = "Food",
                     amount = 250.0,
                     colorHex = colorHex,
@@ -226,7 +240,7 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
 
             // First select a category
             viewModel.onEvent(
-                ChartEvent.SelectChartCategory(
+                ChartEvent.SelectChartCategoryEvent(
                     categoryName = "Food",
                     amount = 250.0,
                     colorHex = 0xFFE57373,
@@ -237,7 +251,7 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
             assertNotNull(viewModel.selectedChartDetails.value)
 
             // Then clear
-            viewModel.onEvent(ChartEvent.ClearChartSelection)
+            viewModel.onEvent(ChartEvent.ClearChartSelectionEvent)
             advanceUntilIdle()
 
             assertNull(viewModel.selectedChartDetails.value)
@@ -254,7 +268,7 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
                 }
 
             viewModel.onEvent(
-                ChartEvent.SelectChartCategory(
+                ChartEvent.SelectChartCategoryEvent(
                     categoryName = "Salary",
                     amount = 5000.0,
                     colorHex = 0xFF81C784,
@@ -279,7 +293,7 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
                 }
 
             viewModel.onEvent(
-                ChartEvent.SelectChartCategory(
+                ChartEvent.SelectChartCategoryEvent(
                     categoryName = "Food",
                     amount = 250.0,
                     colorHex = 0xFFE57373,

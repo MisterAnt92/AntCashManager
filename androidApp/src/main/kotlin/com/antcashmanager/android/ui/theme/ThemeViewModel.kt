@@ -55,8 +55,8 @@ class ThemeViewModel(
     override fun onEvent(event: ThemeEvent) {
         logDebug("Event: $event")
         when (event) {
-            is ThemeEvent.SetTheme -> setTheme(event.theme)
-            is ThemeEvent.RetryLastOperation -> logInfo("Retry requested")
+            is ThemeEvent.SetThemeEvent -> setTheme(event.theme)
+            is ThemeEvent.RetryLastOperationEvent -> logInfo("Retry requested")
         }
     }
 

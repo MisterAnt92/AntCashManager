@@ -4,10 +4,10 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.antcashmanager.android.BaseComposeUnitTest
 import com.antcashmanager.android.ui.screen.charts.model.ChartCardType
 import com.antcashmanager.android.ui.screen.charts.view.ChartsCardsOrderDialog
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.android.test.base.BaseInstrumentationTest
 import org.junit.Test
 
 /**
@@ -20,11 +20,9 @@ import org.junit.Test
  * - Confirm e dismiss button behavior
  * - Accessibility (contentDescription)
  *
- * NOTE: These are Compose UI tests that require Roboelectric or instrumentation environment.
- * For instrumentation testing, use @RunWith(AndroidJUnit4::class) with createAndroidComposeRule().
- * For now, we keep them as unit test placeholders - they document the test structure.
+ * Runs with the Android instrumentation test environment.
  */
-class ChartsCardsOrderDialogTest : BaseComposeUnitTest() {
+class ChartsCardsOrderDialogTest : BaseInstrumentationTest() {
     private val testOrder =
         listOf(
             ChartCardType.SPENDING_FORECAST_CARD,

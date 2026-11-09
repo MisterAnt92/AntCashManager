@@ -39,7 +39,7 @@ class ThemeViewModelTest : BaseUnitTest() {
     @Test
     fun setThemeUpdatesRepository() =
         runViewModelTest {
-            viewModel.onEvent(ThemeEvent.SetTheme(AppTheme.DARK))
+            viewModel.onEvent(ThemeEvent.SetThemeEvent(AppTheme.DARK))
             advanceUntilIdle()
 
             // Fake repo mirrors setTheme into its flow

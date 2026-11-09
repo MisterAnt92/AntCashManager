@@ -147,9 +147,9 @@ class ChartsViewModel(
     override fun onEvent(event: ChartEvent) {
         logDebug("Event: $event")
         when (event) {
-            is ChartEvent.SetDateRange -> setDateRange(event.from, event.to)
-            is ChartEvent.SetPresetRange -> setPresetRange(event.preset)
-            is ChartEvent.SelectChartCategory ->
+            is ChartEvent.SetDateRangeEvent -> setDateRange(event.from, event.to)
+            is ChartEvent.SetPresetRangeEvent -> setPresetRange(event.preset)
+            is ChartEvent.SelectChartCategoryEvent ->
                 selectChartCategory(
                     event.categoryName,
                     event.amount,
@@ -157,10 +157,10 @@ class ChartsViewModel(
                     event.isExpense,
                 )
 
-            is ChartEvent.ClearChartSelection -> clearChartSelection()
-            is ChartEvent.RetryLastOperation -> logInfo("Retry requested")
-            is ChartEvent.SetChartCardsOrder -> setChartCardsOrder(event.order)
-            is ChartEvent.UpdateLocale -> _localeTag.value = event.languageTag
+            is ChartEvent.ClearChartSelectionEvent -> clearChartSelection()
+            is ChartEvent.RetryLastOperationEvent -> logInfo("Retry requested")
+            is ChartEvent.SetChartCardsOrderEvent -> setChartCardsOrder(event.order)
+            is ChartEvent.UpdateLocaleEvent -> _localeTag.value = event.languageTag
         }
     }
 

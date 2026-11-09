@@ -25,154 +25,135 @@ echo "==> Generazione report HTML Kover..."
 ./gradlew :koverHtmlReport
 
 REPORT_DIR="$PROJECT_ROOT/build/reports/kover/html"
+REPORT="$REPORT_DIR/index.html"
 
 echo ""
-echo "==> Applicazione stile personalizzato al report..."
+echo "==> Applicazione stile Material Design al report Kover..."
 python3 - "$REPORT_DIR" <<'PYEOF'
-import sys, os, re
+import os
+import re
+import sys
 
 REPORT_DIR = sys.argv[1]
+INDEX = os.path.join(REPORT_DIR, "index.html")
 
-CUSTOM_CSS = """
-<style id="ant-custom">
-  /* ── Reset & base ── */
-  *, *::before, *::after { box-sizing: border-box; }
+if not os.path.isfile(INDEX):
+    raise SystemExit(f"Kover HTML report index not found: {INDEX}")
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-                 "Helvetica Neue", Arial, sans-serif;
-    font-size: 14px;
-    line-height: 1.6;
-    color: #1a1a2e;
-    background: #f5f7fa;
-    margin: 0;
-    padding: 0;
-  }
+MATERIAL_CSS = r"""<style id="material-coverage">
+:root {
+  color-scheme: light;
+  --md-primary: #6750a4;
+  --md-on-primary: #fff;
+  --md-primary-container: #eaddff;
+  --md-on-primary-container: #21005d;
+  --md-secondary: #625b71;
+  --md-surface: #fef7ff;
+  --md-surface-container: #f3edf7;
+  --md-surface-high: #ece6f0;
+  --md-on-surface: #1d1b20;
+  --md-on-surface-variant: #49454f;
+  --md-outline: #79747e;
+  --md-outline-variant: #cac4d0;
+  --md-error: #b3261e;
+  --md-success: #386a20;
+  --md-warning: #7d5700;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  color: var(--md-on-surface);
+  background: var(--md-surface);
+  font: 400 14px/1.55 Roboto, "Segoe UI", Arial, sans-serif;
+}
+a { color: var(--md-primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+a:focus-visible, button:focus-visible { outline: 3px solid var(--md-primary); outline-offset: 2px; }
+h1, h2, h3 { color: var(--md-on-surface); font-weight: 500; line-height: 1.25; }
+h1 { font-size: clamp(1.6rem, 3vw, 2.25rem); }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.2rem; }
+body > header, #header, .header {
+  padding: 24px clamp(16px, 4vw, 48px);
+  color: var(--md-on-primary-container);
+  background: var(--md-primary-container);
+  border-bottom: 1px solid var(--md-outline-variant);
+}
+body > main, #content, #coverage, .coverageReport, body > table {
+  width: min(100% - 32px, 1440px);
+  margin: 24px auto;
+}
+table {
+  width: 100%;
+  margin: 16px 0 24px;
+  border: 1px solid var(--md-outline-variant);
+  border-spacing: 0;
+  border-radius: 12px;
+  background: var(--md-surface);
+  overflow: hidden;
+}
+thead { color: var(--md-on-primary); background: var(--md-primary); }
+th {
+  padding: 12px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-align: left;
+}
+td { padding: 10px 16px; border-top: 1px solid var(--md-outline-variant); }
+tbody tr:hover { background: var(--md-surface-container); }
+tr:hover a { text-decoration: underline; }
+pre, code, tt {
+  font-family: "Roboto Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: .92em;
+}
+pre {
+  max-width: 100%;
+  padding: 16px;
+  overflow: auto;
+  color: var(--md-on-surface);
+  background: var(--md-surface-container);
+  border: 1px solid var(--md-outline-variant);
+  border-radius: 12px;
+}
+.green, .covered, .coverageHigh { color: var(--md-success); }
+.yellow, .partial, .coverageMedium { color: var(--md-warning); }
+.red, .missed, .coverageLow { color: var(--md-error); }
+.covered { background: #e8f5e1; }
+.partial { background: #fff3cd; }
+.missed { background: #f9dedc; }
+hr { border: 0; border-top: 1px solid var(--md-outline-variant); }
+@media (max-width: 700px) {
+  body > main, #content, #coverage, .coverageReport, body > table { width: min(100% - 16px, 1440px); margin: 12px auto; }
+  table { display: block; overflow-x: auto; white-space: nowrap; }
+  th, td { padding: 8px 12px; }
+}
+</style>"""
 
-  /* ── Top header bar ── */
-  .header, #header, [id*="header"], .coverageReport > div:first-child {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    color: #fff;
-    padding: 20px 32px;
-    box-shadow: 0 2px 8px rgba(0,0,0,.25);
-  }
-  .header h1, #header h1 { font-size: 1.4rem; font-weight: 600; margin: 0; }
+STYLE_RE = re.compile(r'<style\b[^>]*\bid=["\'](?:ant-custom|material-coverage)["\'][^>]*>.*?</style>', re.I | re.S)
 
-  /* ── Page wrapper ── */
-  .coverageReport, #content, .container, main {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 24px 32px;
-  }
-
-  /* ── Coverage summary cards ── */
-  .coverageStat, .stat, [class*="Stat"] {
-    background: #fff;
-    border-radius: 10px;
-    padding: 16px 20px;
-    margin: 8px 0;
-    box-shadow: 0 1px 4px rgba(0,0,0,.08);
-    border-left: 4px solid #4361ee;
-  }
-
-  /* ── Tables ── */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #fff;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 1px 4px rgba(0,0,0,.08);
-    margin: 16px 0;
-  }
-  thead tr { background: #4361ee; color: #fff; }
-  th {
-    padding: 12px 16px;
-    font-weight: 600;
-    font-size: 0.82rem;
-    letter-spacing: .04em;
-    text-transform: uppercase;
-    text-align: left;
-  }
-  td { padding: 10px 16px; border-bottom: 1px solid #eef0f5; }
-  tbody tr:last-child td { border-bottom: none; }
-  tbody tr:hover { background: #f0f4ff; }
-
-  /* ── Coverage percentage colours ── */
-  .coverageHigh, [class*="high"], [class*="covered"] { color: #2d9e63; font-weight: 600; }
-  .coverageMedium, [class*="medium"], [class*="partial"] { color: #e07b2a; font-weight: 600; }
-  .coverageLow, [class*="low"], [class*="missed"] { color: #d64045; font-weight: 600; }
-
-  /* ── Coverage bars ── */
-  .coverageBar, [class*="Bar"], progress {
-    height: 8px;
-    border-radius: 4px;
-    background: #e8ecf4;
-    overflow: hidden;
-    display: block;
-    min-width: 80px;
-  }
-
-  /* ── Links ── */
-  a { color: #4361ee; text-decoration: none; }
-  a:hover { text-decoration: underline; }
-
-  /* ── Breadcrumb ── */
-  .breadcrumb, [class*="breadcrumb"], [class*="path"] {
-    font-size: 0.82rem;
-    color: #666;
-    margin-bottom: 12px;
-    padding: 8px 0;
-    border-bottom: 1px solid #eef0f5;
-  }
-
-  /* ── Source view (file detail pages) ── */
-  pre, code, .sourceCode, [class*="source"] {
-    font-family: "JetBrains Mono", "Fira Code", "Cascadia Code",
-                 "SF Mono", Consolas, "Liberation Mono", monospace;
-    font-size: 13px;
-    line-height: 1.7;
-    background: #1e1e2e;
-    color: #cdd6f4;
-    border-radius: 8px;
-    padding: 16px 20px;
-    overflow-x: auto;
-    margin: 16px 0;
-    box-shadow: 0 2px 8px rgba(0,0,0,.2);
-  }
-  .covered, [class*="covered"]   { background: rgba(45,158,99,.20); }
-  .missed,  [class*="missed"]    { background: rgba(214,64,69,.20); }
-  .partial, [class*="partial"]   { background: rgba(224,123,42,.15); }
-
-  /* ── Footer ── */
-  .footer, #footer { font-size: 0.75rem; color: #999; padding: 24px 32px; text-align: center; }
-</style>
-"""
-
-def inject(path):
-    with open(path, "r", encoding="utf-8", errors="replace") as f:
-        html = f.read()
-    if "ant-custom" in html:
-        return  # already injected
-    if "</head>" in html:
-        html = html.replace("</head>", CUSTOM_CSS + "\n</head>", 1)
-    elif "<body" in html:
-        html = re.sub(r"(<body[^>]*>)", r"\1\n" + CUSTOM_CSS, html, count=1)
-    else:
-        html = CUSTOM_CSS + html
-    with open(path, "w", encoding="utf-8") as f:
-        f.write(html)
-
-count = 0
+html_files = []
 for root, _, files in os.walk(REPORT_DIR):
-    for name in files:
-        if name.endswith(".html"):
-            inject(os.path.join(root, name))
-            count += 1
+    html_files.extend(os.path.join(root, name) for name in files if name.endswith(".html"))
 
-print(f"  Stile applicato a {count} file HTML.")
+for path in html_files:
+    with open(path, encoding="utf-8") as file:
+        html = file.read()
+    html = STYLE_RE.sub("", html)
+    if re.search(r"</head\s*>", html, re.I):
+        html = re.sub(r"</head\s*>", MATERIAL_CSS + "\n</head>", html, count=1, flags=re.I)
+    else:
+        raise SystemExit(f"Cannot apply Material styling: HTML head not found in {path}")
+    with open(path, "w", encoding="utf-8") as file:
+        file.write(html)
+
+print(f"  Stile Material applicato a {len(html_files)} pagine del report Kover.")
 PYEOF
 
-REPORT="$REPORT_DIR/index.html"
+if [ ! -f "$REPORT" ]; then
+    echo "❌ Report Kover non generato: $REPORT" >&2
+    exit 1
+fi
+
 echo ""
 echo "✅  Report pronto: $REPORT"

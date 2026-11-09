@@ -106,104 +106,104 @@ class DisplayViewModel(
 
     // Backward-compatibility accessors for UI layer that expects individual StateFlow
     // These read from the consolidated state but present the same interface as before
-    val currencySymbol: StateFlow<String>
-        get() = state.map { it.currencySymbol }.stateIn(
+    val currencySymbol: StateFlow<String> =
+        state.map { it.currencySymbol }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
             DisplayConstant.DEFAULT_CURRENCY_SYMBOL,
         )
-    val decimalDigits: StateFlow<Int>
-        get() = state.map { it.decimalDigits }.stateIn(
+    val decimalDigits: StateFlow<Int> =
+        state.map { it.decimalDigits }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
             DisplayConstant.DEFAULT_DECIMAL_DIGITS,
         )
-    val decimalSeparator: StateFlow<String>
-        get() = state.map { it.decimalSeparator }.stateIn(
+    val decimalSeparator: StateFlow<String> =
+        state.map { it.decimalSeparator }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
             DisplayConstant.DEFAULT_DECIMAL_SEPARATOR,
         )
-    val thousandsSeparator: StateFlow<String>
-        get() = state.map { it.thousandsSeparator }.stateIn(
+    val thousandsSeparator: StateFlow<String> =
+        state.map { it.thousandsSeparator }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
             DisplayConstant.DEFAULT_THOUSANDS_SEPARATOR,
         )
-    val mealVoucherValue: StateFlow<Double>
-        get() = state.map { it.mealVoucherValue }.stateIn(
+    val mealVoucherValue: StateFlow<Double> =
+        state.map { it.mealVoucherValue }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
             DisplayConstant.DEFAULT_MEAL_VOUCHER_VALUE,
         )
-    val showChartsSection: StateFlow<Boolean>
-        get() = state.map { it.showChartsSection }.stateIn(
+    val showChartsSection: StateFlow<Boolean> =
+        state.map { it.showChartsSection }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
             DisplayConstant.DEFAULT_SHOW_CHARTS_SECTION,
         )
-    val chartsZoomEnabled: StateFlow<Boolean>
-        get() = state.map { it.chartsZoomEnabled }.stateIn(
+    val chartsZoomEnabled: StateFlow<Boolean> =
+        state.map { it.chartsZoomEnabled }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
             DisplayConstant.DEFAULT_SHOW_CHARTS_ZOOM,
         )
-    val dateFormat: StateFlow<String>
-        get() = state.map { it.dateFormat }.stateIn(
+    val dateFormat: StateFlow<String> =
+        state.map { it.dateFormat }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
             DisplayConstant.DEFAULT_DATE_FORMAT,
         )
-    val showTransactionNotes: StateFlow<Boolean>
-        get() = state.map { it.showTransactionNotes }.stateIn(
+    val showTransactionNotes: StateFlow<Boolean> =
+        state.map { it.showTransactionNotes }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
             DisplayConstant.DEFAULT_SHOW_TRANSACTION_NOTES,
         )
-    val maskAmounts: StateFlow<Boolean>
-        get() = state.map { it.maskAmounts }.stateIn(
+    val maskAmounts: StateFlow<Boolean> =
+        state.map { it.maskAmounts }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
             DisplayConstant.DEFAULT_MASK_AMOUNTS,
         )
-    val showPaymentTypeBreakdown: StateFlow<Boolean>
-        get() = state.map { it.showPaymentTypeBreakdown }.stateIn(
+    val showPaymentTypeBreakdown: StateFlow<Boolean> =
+        state.map { it.showPaymentTypeBreakdown }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
             DisplayConstant.DEFAULT_SHOW_PAYMENT_BREAKDOWN,
         )
-    val showQuickInsightsCard: StateFlow<Boolean>
-        get() = state.map { it.showQuickInsightsCard }.stateIn(
+    val showQuickInsightsCard: StateFlow<Boolean> =
+        state.map { it.showQuickInsightsCard }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
             DisplayConstant.DEFAULT_SHOW_QUICK_INSIGHTS_CARD,
         )
-    val defaultPaymentType: StateFlow<String>
-        get() = state.map { it.defaultPaymentType }.stateIn(
+    val defaultPaymentType: StateFlow<String> =
+        state.map { it.defaultPaymentType }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
             DisplayConstant.DEFAULT_PAYMENT_TYPE,
         )
-    val transactionDisplayType: StateFlow<TransactionDisplayType>
-        get() = state.map { it.transactionDisplayType }.stateIn(
+    val transactionDisplayType: StateFlow<TransactionDisplayType> =
+        state.map { it.transactionDisplayType }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
             DisplayConstant.DEFAULT_TRANSACTION_DISPLAY_TYPE,
         )
-    val transactionsTransactionDisplayType: StateFlow<TransactionDisplayType>
-        get() = state.map { it.transactionsTransactionDisplayType }.stateIn(
+    val transactionsTransactionDisplayType: StateFlow<TransactionDisplayType> =
+        state.map { it.transactionsTransactionDisplayType }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
             DisplayConstant.DEFAULT_TRANSACTION_DISPLAY_TYPE,
         )
-    val widgetBackgroundColor: StateFlow<Long>
-        get() = state.map { it.widgetBackgroundColor }.stateIn(
+    val widgetBackgroundColor: StateFlow<Long> =
+        state.map { it.widgetBackgroundColor }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
             DisplayConstant.DEFAULT_WIDGET_BACKGROUND_COLOR,
         )
-    val widgetOpacity: StateFlow<Int>
-        get() = state.map { it.widgetOpacity }.stateIn(
+    val widgetOpacity: StateFlow<Int> =
+        state.map { it.widgetOpacity }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(DisplayConstant.SHARING_TIMEOUT),
             DisplayConstant.DEFAULT_WIDGET_OPACITY,
@@ -212,28 +212,28 @@ class DisplayViewModel(
     override fun onEvent(event: DisplayEvent) {
         logDebug("Event: $event")
         when (event) {
-            is DisplayEvent.SetCurrencySymbol -> setCurrencySymbol(event.symbol)
-            is DisplayEvent.SetDecimalDigits -> setDecimalDigits(event.digits)
-            is DisplayEvent.SetDecimalSeparator -> setDecimalSeparator(event.separator)
-            is DisplayEvent.SetThousandsSeparator -> setThousandsSeparator(event.separator)
-            is DisplayEvent.SetMealVoucherValue -> setMealVoucherValue(event.value)
-            is DisplayEvent.SetShowChartsSection -> setShowChartsSection(event.show)
-            is DisplayEvent.SetChartsZoomEnabled -> setChartsZoomEnabled(event.enabled)
-            is DisplayEvent.SetDateFormat -> setDateFormat(event.pattern)
-            is DisplayEvent.SetShowTransactionNotes -> setShowTransactionNotes(event.show)
-            is DisplayEvent.SetMaskAmounts -> setMaskAmounts(event.mask)
-            is DisplayEvent.SetShowPaymentTypeBreakdown -> setShowPaymentTypeBreakdown(event.show)
-            is DisplayEvent.SetShowQuickInsightsCard -> setShowQuickInsightsCard(event.show)
-            is DisplayEvent.SetDefaultPaymentType -> setDefaultPaymentType(event.paymentType)
-            is DisplayEvent.SetTransactionDisplayType -> setTransactionDisplayType(event.displayType)
-            is DisplayEvent.SetTransactionsTransactionDisplayType ->
+            is DisplayEvent.SetCurrencySymbolEvent -> setCurrencySymbol(event.symbol)
+            is DisplayEvent.SetDecimalDigitsEvent -> setDecimalDigits(event.digits)
+            is DisplayEvent.SetDecimalSeparatorEvent -> setDecimalSeparator(event.separator)
+            is DisplayEvent.SetThousandsSeparatorEvent -> setThousandsSeparator(event.separator)
+            is DisplayEvent.SetMealVoucherValueEvent -> setMealVoucherValue(event.value)
+            is DisplayEvent.SetShowChartsSectionEvent -> setShowChartsSection(event.show)
+            is DisplayEvent.SetChartsZoomEnabledEvent -> setChartsZoomEnabled(event.enabled)
+            is DisplayEvent.SetDateFormatEvent -> setDateFormat(event.pattern)
+            is DisplayEvent.SetShowTransactionNotesEvent -> setShowTransactionNotes(event.show)
+            is DisplayEvent.SetMaskAmountsEvent -> setMaskAmounts(event.mask)
+            is DisplayEvent.SetShowPaymentTypeBreakdownEvent -> setShowPaymentTypeBreakdown(event.show)
+            is DisplayEvent.SetShowQuickInsightsCardEvent -> setShowQuickInsightsCard(event.show)
+            is DisplayEvent.SetDefaultPaymentTypeEvent -> setDefaultPaymentType(event.paymentType)
+            is DisplayEvent.SetTransactionDisplayTypeEvent -> setTransactionDisplayType(event.displayType)
+            is DisplayEvent.SetTransactionsTransactionDisplayTypeEvent ->
                 setTransactionsTransactionDisplayType(
                     event.displayType,
                 )
 
-            is DisplayEvent.SetWidgetBackgroundColor -> setWidgetBackgroundColor(event.color)
-            is DisplayEvent.SetWidgetOpacity -> setWidgetOpacity(event.opacity)
-            is DisplayEvent.RetryLastOperation -> logInfo("Retry requested")
+            is DisplayEvent.SetWidgetBackgroundColorEvent -> setWidgetBackgroundColor(event.color)
+            is DisplayEvent.SetWidgetOpacityEvent -> setWidgetOpacity(event.opacity)
+            is DisplayEvent.RetryLastOperationEvent -> logInfo("Retry requested")
         }
     }
 

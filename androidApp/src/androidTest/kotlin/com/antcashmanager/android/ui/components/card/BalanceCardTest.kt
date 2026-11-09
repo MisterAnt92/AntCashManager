@@ -2,9 +2,9 @@ package com.antcashmanager.android.ui.components.card
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.onNodeWithText
-import com.antcashmanager.android.BaseComposeUnitTest
 import com.antcashmanager.android.ui.screen.home.view.BalanceCard
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.android.test.base.BaseInstrumentationTest
 import org.junit.Test
 
 /**
@@ -15,11 +15,9 @@ import org.junit.Test
  * - Stato positivo/negativo
  * - Breakdown dei tipi di pagamento (opzionale)
  *
- * NOTE: These are Compose UI tests that require Roboelectric or instrumentation environment.
- * For instrumentation testing, use @RunWith(AndroidJUnit4::class) with createAndroidComposeRule().
- * For now, we keep them as unit test placeholders - they document the test structure.
+ * Runs with the Android instrumentation test environment.
  */
-class BalanceCardTest : BaseComposeUnitTest() {
+class BalanceCardTest : BaseInstrumentationTest() {
     @Test
     fun balanceCard_shouldDisplayPositiveBalance() {
         composeTestRule.setContent {

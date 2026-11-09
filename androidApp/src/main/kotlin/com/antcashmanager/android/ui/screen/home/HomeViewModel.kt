@@ -403,18 +403,18 @@ class HomeViewModel(
     override fun onEvent(event: HomeEvent) {
         logDebug("Event: $event")
         when (event) {
-            is HomeEvent.SelectPreset -> selectPreset(event.index)
-            is HomeEvent.SetDateRange -> setDateRange(event.from, event.to)
-            is HomeEvent.ShowTransactionDetails -> showTransactionDetails(event.transaction)
-            HomeEvent.DismissTransactionDetails -> _selectedTransactionState.value = null
-            is HomeEvent.UpdateSearchQuery -> updateSearchQuery(event.query)
-            HomeEvent.ToggleSearchExpanded -> toggleSearchExpanded()
-            is HomeEvent.SetIsTutorialCompleted -> setIsTutorialCompleted(event.completed)
-            HomeEvent.StartTopCardsReorder -> _editingTopCardsOrder.value = state.value.visibleTopCards
-            is HomeEvent.MoveTopCard -> moveTopCard(event.index, event.up)
-            HomeEvent.CancelTopCardsReorder -> _editingTopCardsOrder.value = null
-            HomeEvent.ConfirmTopCardsOrder -> confirmTopCardsOrder()
-            is HomeEvent.SetDateFilterExpanded -> setDateFilterExpanded(event.expanded)
+            is HomeEvent.SelectPresetEvent -> selectPreset(event.index)
+            is HomeEvent.SetDateRangeEvent -> setDateRange(event.from, event.to)
+            is HomeEvent.ShowTransactionDetailsEvent -> showTransactionDetails(event.transaction)
+            HomeEvent.DismissTransactionDetailsEvent -> _selectedTransactionState.value = null
+            is HomeEvent.UpdateSearchQueryEvent -> updateSearchQuery(event.query)
+            HomeEvent.ToggleSearchExpandedEvent -> toggleSearchExpanded()
+            is HomeEvent.SetIsTutorialCompletedEvent -> setIsTutorialCompleted(event.completed)
+            HomeEvent.StartTopCardsReorderEvent -> _editingTopCardsOrder.value = state.value.visibleTopCards
+            is HomeEvent.MoveTopCardEvent -> moveTopCard(event.index, event.up)
+            HomeEvent.CancelTopCardsReorderEvent -> _editingTopCardsOrder.value = null
+            HomeEvent.ConfirmTopCardsOrderEvent -> confirmTopCardsOrder()
+            is HomeEvent.SetDateFilterExpandedEvent -> setDateFilterExpanded(event.expanded)
         }
     }
 

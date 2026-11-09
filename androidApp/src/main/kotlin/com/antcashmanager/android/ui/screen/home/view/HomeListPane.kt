@@ -109,8 +109,8 @@ fun HomeListPane(
                         dateRangeFrom = state.dateRangeFrom,
                         dateRangeTo = state.dateRangeTo,
                         expanded = state.dateFilterExpanded,
-                        onExpandedChange = { onEvent(HomeEvent.SetDateFilterExpanded(it)) },
-                        onPresetSelected = { onEvent(HomeEvent.SelectPreset(it)) },
+                        onExpandedChange = { onEvent(HomeEvent.SetDateFilterExpandedEvent(it)) },
+                        onPresetSelected = { onEvent(HomeEvent.SelectPresetEvent(it)) },
                         onFromDateEdit = onFromDateEdit,
                         onToDateEdit = onToDateEdit,
                     )
@@ -136,7 +136,7 @@ fun HomeListPane(
                     SearchComponent(
                         isVisible = true,
                         searchQuery = state.searchQuery,
-                        onSearchQueryChange = { onEvent(HomeEvent.UpdateSearchQuery(it)) },
+                        onSearchQueryChange = { onEvent(HomeEvent.UpdateSearchQueryEvent(it)) },
                         searchSuggestions = state.searchSuggestions,
                         modifier = Modifier.testTag(SEARCH_TAG),
                     )

@@ -2,11 +2,13 @@ package com.antcashmanager.android.ui.home
 
 import com.antcashmanager.android.BaseUnitTest
 import com.antcashmanager.android.analytics.tracker.SegmentationTracker
+import com.antcashmanager.android.ui.screen.home.HomeConstant
 import com.antcashmanager.android.ui.screen.home.HomeViewModel
 import com.antcashmanager.android.ui.screen.home.event.HomeEvent
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionSuggestions
+import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
@@ -49,6 +51,14 @@ class HomeViewModelMockkTest : BaseUnitTest() {
         getCategoriesUseCase = mockk()
         settingsRepository = mockk(relaxed = true)
         segmentationTracker = mockk(relaxed = true)
+        every { settingsRepository.getHomeTopCardsOrder() } returns flowOf(HomeConstant.DEFAULT_TOP_CARDS_ORDER)
+        every { settingsRepository.getDateFilterExpanded() } returns flowOf(false)
+        every { settingsRepository.getShowPaymentTypeBreakdown() } returns flowOf(false)
+        every { settingsRepository.getShowQuickInsightsCard() } returns flowOf(false)
+        every { settingsRepository.getReduceMotion() } returns flowOf(false)
+        every { settingsRepository.getTransactionDisplayType() } returns flowOf(TransactionDisplayType.TREND)
+        every { settingsRepository.getIsTutorialCompleted() } returns flowOf(false)
+        every { settingsRepository.getMealVoucherValue() } returns flowOf(0.0)
 
         every { getTransactionsUseCase() } returns flowOf(Result.success(emptyList()))
         coEvery { filterTransactionsUseCase(any()) } answers {
@@ -84,7 +94,7 @@ class HomeViewModelMockkTest : BaseUnitTest() {
             val from = 1_710_000_000_000L
             val to = 1_710_100_000_000L
 
-            viewModel.onEvent(HomeEvent.SetDateRange(from = from, to = to))
+            viewModel.onEvent(HomeEvent.SetDateRangeEvent(from = from, to = to))
             advanceUntilIdle()
 
             coVerify(atLeast = 1) {
@@ -108,7 +118,7 @@ class HomeViewModelMockkTest : BaseUnitTest() {
             val larger = 1_710_100_000_000L
             val smaller = 1_710_000_000_000L
 
-            viewModel.onEvent(HomeEvent.SetDateRange(from = larger, to = smaller))
+            viewModel.onEvent(HomeEvent.SetDateRangeEvent(from = larger, to = smaller))
             advanceUntilIdle()
 
             coVerify(atLeast = 1) {
@@ -130,7 +140,7 @@ class HomeViewModelMockkTest : BaseUnitTest() {
             val collectJob = launch { viewModel.state.collect {} }
 
             val presetIndex = 2
-            viewModel.onEvent(HomeEvent.SelectPreset(presetIndex))
+            viewModel.onEvent(HomeEvent.SelectPresetEvent(presetIndex))
             advanceUntilIdle()
 
             coVerify(atLeast = 1) {
@@ -156,7 +166,7 @@ class HomeViewModelMockkTest : BaseUnitTest() {
 
             val from = 1_712_000_000_000L
             val to = 1_712_100_000_000L
-            viewModel.onEvent(HomeEvent.SetDateRange(from = from, to = to))
+            viewModel.onEvent(HomeEvent.SetDateRangeEvent(from = from, to = to))
             advanceUntilIdle()
 
             coVerify(atLeast = 1) {
@@ -223,7 +233,7 @@ class HomeViewModelMockkTest : BaseUnitTest() {
             val collectJob = launch { viewModel.state.collect {} }
             advanceUntilIdle()
 
-            viewModel.onEvent(HomeEvent.SetDateRange(0L, Long.MAX_VALUE))
+            viewModel.onEvent(HomeEvent.SetDateRangeEvent(0L, Long.MAX_VALUE))
             advanceUntilIdle()
 
             val uiState = viewModel.state.value
@@ -267,7 +277,7 @@ class HomeViewModelMockkTest : BaseUnitTest() {
             val collectJob = launch { viewModel.state.collect {} }
             advanceUntilIdle()
 
-            viewModel.onEvent(HomeEvent.SetDateRange(0L, Long.MAX_VALUE))
+            viewModel.onEvent(HomeEvent.SetDateRangeEvent(0L, Long.MAX_VALUE))
             advanceUntilIdle()
 
             val uiState = viewModel.state.value

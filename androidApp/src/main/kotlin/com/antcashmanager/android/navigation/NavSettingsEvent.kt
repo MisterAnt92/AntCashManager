@@ -1,5 +1,5 @@
 package com.antcashmanager.android.navigation
 
 sealed class NavSettingsEvent {
-    data class SetAnalyticsConsent(val granted: Boolean) : NavSettingsEvent()
+    data class SetAnalyticsConsentEvent(val granted: Boolean) : NavSettingsEvent()
 }

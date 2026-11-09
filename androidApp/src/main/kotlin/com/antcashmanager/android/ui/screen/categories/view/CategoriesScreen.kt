@@ -221,16 +221,16 @@ fun CategoriesScreen() {
         CategoriesContent(
             state = state,
             onAddCategory = { name, icon, color, type ->
-                viewModel.onEvent(CategoryEvent.AddCategory(name, icon, color, type))
+                viewModel.onEvent(CategoryEvent.AddCategoryEvent(name, icon, color, type))
             },
             onDeleteCategory = { category ->
-                viewModel.onEvent(CategoryEvent.DeleteCategory(category))
+                viewModel.onEvent(CategoryEvent.DeleteCategoryEvent(category))
             },
             onSetCategoryHidden = { category, hidden ->
-                viewModel.onEvent(CategoryEvent.SetCategoryHidden(category, hidden))
+                viewModel.onEvent(CategoryEvent.SetCategoryHiddenEvent(category, hidden))
             },
             onReorderCategories = { categories ->
-                viewModel.onEvent(CategoryEvent.ReorderCategories(categories))
+                viewModel.onEvent(CategoryEvent.ReorderCategoriesEvent(categories))
             },
         )
 

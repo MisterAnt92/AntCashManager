@@ -52,10 +52,12 @@ class HomeViewModelComprehensiveTest : BaseUnitTest() {
     }
 
     @After
-    fun tearDown() {
+    override fun tearDownDispatchers() {
         if (::viewModel.isInitialized) {
             viewModel.viewModelScope.cancel()
+            testDispatcher.scheduler.advanceUntilIdle()
         }
+        super.tearDownDispatchers()
     }
 
     @Test
@@ -226,7 +228,7 @@ class HomeViewModelComprehensiveTest : BaseUnitTest() {
 
             val txs = viewModel.transactions.value
             assertEquals(1, txs.size)
-            assertEquals(0.0, txs[0].amount)
+            assertEquals(0.0, txs[0].amount, 0.0)
             collectJob.cancel()
         }
 
@@ -284,7 +286,7 @@ class HomeViewModelComprehensiveTest : BaseUnitTest() {
 
             val txs = viewModel.transactions.value
             assertEquals(1, txs.size)
-            assertEquals(9_999_999.99, txs[0].amount)
+            assertEquals(9_999_999.99, txs[0].amount, 0.01)
             collectJob.cancel()
         }
 

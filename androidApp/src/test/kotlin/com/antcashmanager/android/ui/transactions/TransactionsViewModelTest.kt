@@ -101,7 +101,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
 
             val now = System.currentTimeMillis()
             viewModel.onEvent(
-                TransactionsEvent.AddTransaction(
+                TransactionsEvent.AddTransactionEvent(
                     title = "Lunch",
                     amount = 15.0,
                     category = "Food",
@@ -157,7 +157,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
             advanceUntilIdle()
             assertEquals(1, viewModel.state.value.transactions.size)
 
-            viewModel.onEvent(TransactionsEvent.DeleteTransaction(transaction))
+            viewModel.onEvent(TransactionsEvent.DeleteTransactionEvent(transaction))
             advanceUntilIdle()
 
             assertTrue(
@@ -190,7 +190,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
             advanceUntilIdle()
 
             val updated = transaction.copy(title = "Espresso", amount = 2.5)
-            viewModel.onEvent(TransactionsEvent.UpdateTransaction(updated))
+            viewModel.onEvent(TransactionsEvent.UpdateTransactionEvent(updated))
             advanceUntilIdle()
 
             assertEquals(1, viewModel.state.value.transactions.size)
@@ -251,7 +251,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
 
             val now = System.currentTimeMillis()
             viewModel.onEvent(
-                TransactionsEvent.AddTransaction(
+                TransactionsEvent.AddTransactionEvent(
                     title = "Salary",
                     amount = 3000.0,
                     category = "Work",
@@ -323,7 +323,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
 
             // Ensure date range includes all data
             testViewModel.onEvent(
-                TransactionsEvent.SetDateRange(
+                TransactionsEvent.SetDateRangeEvent(
                     0L,
                     Long.MAX_VALUE,
                 ),
@@ -331,7 +331,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
             advanceUntilIdle()
 
             testViewModel.onEvent(
-                TransactionsEvent.UpdateSearchQuery("salary"),
+                TransactionsEvent.UpdateSearchQueryEvent("salary"),
             )
             advanceUntilIdle()
 
@@ -378,7 +378,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
             advanceUntilIdle()
 
             viewModel.onEvent(
-                TransactionsEvent.SetDateRange(
+                TransactionsEvent.SetDateRangeEvent(
                     0L,
                     Long.MAX_VALUE,
                 ),
@@ -386,7 +386,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
             advanceUntilIdle()
 
             viewModel.onEvent(
-                TransactionsEvent.UpdateSearchQuery("85,5"),
+                TransactionsEvent.UpdateSearchQueryEvent("85,5"),
             )
             advanceUntilIdle()
 
@@ -417,7 +417,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
             advanceUntilIdle()
 
             viewModel.onEvent(
-                com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.SetDateRange(
+                com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.SetDateRangeEvent(
                     from = from,
                     to = to,
                 ),
@@ -546,7 +546,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
             // Inserisce una transazione con timestamp = adesso (> staleStoredTo)
             val transactionTimestamp = System.currentTimeMillis()
             testViewModel.onEvent(
-                TransactionsEvent.AddTransaction(
+                TransactionsEvent.AddTransactionEvent(
                     title = "Caffè",
                     amount = 2.0,
                     category = "Food",
@@ -593,9 +593,9 @@ class TransactionsViewModelTest : BaseUnitTest() {
                 }
             advanceUntilIdle()
 
-            testViewModel.onEvent(TransactionsEvent.UpdateCategoryFilter("Work"))
-            testViewModel.onEvent(TransactionsEvent.UpdateTransactionTypeFilter(TransactionType.INCOME))
-            testViewModel.onEvent(TransactionsEvent.UpdatePaymentTypeFilter(PaymentType.CASH))
+            testViewModel.onEvent(TransactionsEvent.UpdateCategoryFilterEvent("Work"))
+            testViewModel.onEvent(TransactionsEvent.UpdateTransactionTypeFilterEvent(TransactionType.INCOME))
+            testViewModel.onEvent(TransactionsEvent.UpdatePaymentTypeFilterEvent(PaymentType.CASH))
             advanceUntilIdle()
 
             assertEquals("Work", testViewModel.state.value.pendingCategory)
@@ -618,8 +618,8 @@ class TransactionsViewModelTest : BaseUnitTest() {
                 }
             advanceUntilIdle()
 
-            viewModel.onEvent(TransactionsEvent.UpdateCategoryFilter("Work"))
-            viewModel.onEvent(TransactionsEvent.ApplyFilters)
+            viewModel.onEvent(TransactionsEvent.UpdateCategoryFilterEvent("Work"))
+            viewModel.onEvent(TransactionsEvent.ApplyFiltersEvent)
             advanceUntilIdle()
 
             assertEquals("Work", viewModel.state.value.selectedCategory)
@@ -635,12 +635,12 @@ class TransactionsViewModelTest : BaseUnitTest() {
                 }
             advanceUntilIdle()
 
-            viewModel.onEvent(TransactionsEvent.UpdateCategoryFilter("Work"))
+            viewModel.onEvent(TransactionsEvent.UpdateCategoryFilterEvent("Work"))
             advanceUntilIdle() // Ensure state is updated
             assertEquals("Work", viewModel.state.value.pendingCategory)
             assertNull(viewModel.state.value.selectedCategory)
 
-            viewModel.onEvent(TransactionsEvent.CancelFilterChanges)
+            viewModel.onEvent(TransactionsEvent.CancelFilterChangesEvent)
             advanceUntilIdle()
 
             assertNull(viewModel.state.value.pendingCategory)
@@ -656,15 +656,15 @@ class TransactionsViewModelTest : BaseUnitTest() {
                 }
             advanceUntilIdle()
 
-            viewModel.onEvent(TransactionsEvent.UpdateCategoryFilter("Work"))
-            viewModel.onEvent(TransactionsEvent.ApplyFilters)
-            viewModel.onEvent(TransactionsEvent.UpdateSearchQuery("Salary"))
+            viewModel.onEvent(TransactionsEvent.UpdateCategoryFilterEvent("Work"))
+            viewModel.onEvent(TransactionsEvent.ApplyFiltersEvent)
+            viewModel.onEvent(TransactionsEvent.UpdateSearchQueryEvent("Salary"))
             advanceUntilIdle()
 
             assertEquals("Work", viewModel.state.value.selectedCategory)
             assertEquals("Salary", viewModel.state.value.searchQuery)
 
-            viewModel.onEvent(TransactionsEvent.ClearAllFilters)
+            viewModel.onEvent(TransactionsEvent.ClearAllFiltersEvent)
             advanceUntilIdle()
 
             assertNull(viewModel.state.value.selectedCategory)
@@ -685,12 +685,12 @@ class TransactionsViewModelTest : BaseUnitTest() {
             advanceUntilIdle()
 
             assertFalse(viewModel.state.value.isSearchExpanded)
-            viewModel.onEvent(TransactionsEvent.ToggleSearchExpanded)
+            viewModel.onEvent(TransactionsEvent.ToggleSearchExpandedEvent)
             advanceUntilIdle()
             assertTrue(viewModel.state.value.isSearchExpanded)
 
             assertFalse(viewModel.state.value.isFiltersExpanded)
-            viewModel.onEvent(TransactionsEvent.ToggleFiltersExpanded)
+            viewModel.onEvent(TransactionsEvent.ToggleFiltersExpandedEvent)
             advanceUntilIdle()
             assertTrue(viewModel.state.value.isFiltersExpanded)
 
@@ -708,7 +708,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
 
             // Index 0 is "Today" usually (depends on implementation in TransactionsState, let's check)
             // For now just check it changes from the default (index 1)
-            viewModel.onEvent(TransactionsEvent.SelectPreset(0))
+            viewModel.onEvent(TransactionsEvent.SelectPresetEvent(0))
             advanceUntilIdle()
 
             assertEquals(0, viewModel.state.value.selectedPresetIndex)
@@ -728,7 +728,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
 
             val from = 2000L
             val to = 1000L
-            viewModel.onEvent(TransactionsEvent.SetDateRange(from, to))
+            viewModel.onEvent(TransactionsEvent.SetDateRangeEvent(from, to))
             advanceUntilIdle()
 
             assertEquals(1000L, viewModel.state.value.dateRangeFrom)
@@ -802,7 +802,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
                 }
             advanceUntilIdle()
 
-            viewModel.onEvent(TransactionsEvent.UpdateSearchQuery("Gr"))
+            viewModel.onEvent(TransactionsEvent.UpdateSearchQueryEvent("Gr"))
             advanceUntilIdle()
 
             val suggestions = viewModel.state.value.searchSuggestions
@@ -822,7 +822,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
                 }
             advanceUntilIdle()
 
-            viewModel.onEvent(TransactionsEvent.UpdateSearchQuery("   "))
+            viewModel.onEvent(TransactionsEvent.UpdateSearchQueryEvent("   "))
             advanceUntilIdle()
 
             assertTrue(
@@ -881,7 +881,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
                 }
             advanceUntilIdle()
 
-            viewModel.onEvent(TransactionsEvent.UpdateSearchQuery("Ap"))
+            viewModel.onEvent(TransactionsEvent.UpdateSearchQueryEvent("Ap"))
             advanceUntilIdle()
 
             val suggestions = viewModel.state.value.searchSuggestions

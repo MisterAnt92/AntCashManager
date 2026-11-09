@@ -93,7 +93,7 @@ class ChartsViewModelTest : BaseUnitTest() {
                     ),
                 )
             // Set date range to cover now
-            viewModel.onEvent(ChartEvent.SetDateRange(now - 86400000, now + 86400000))
+            viewModel.onEvent(ChartEvent.SetDateRangeEvent(now - 86400000, now + 86400000))
             advanceUntilIdle()
             assertEquals(2000.0, viewModel.chartData.value.totalIncome, 0.01)
             assertEquals(200.0, viewModel.chartData.value.totalExpense, 0.01)
@@ -125,7 +125,7 @@ class ChartsViewModelTest : BaseUnitTest() {
                         performanceTracker = mockk(relaxed = true),
                         segmentationTracker = mockk(relaxed = true),
                     )
-                presetViewModel.onEvent(ChartEvent.SetPresetRange(preset))
+                presetViewModel.onEvent(ChartEvent.SetPresetRangeEvent(preset))
                 advanceUntilIdle()
 
                 val range = presetViewModel.dateRange.value

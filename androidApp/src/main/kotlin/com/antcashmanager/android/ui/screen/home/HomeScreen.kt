@@ -97,8 +97,8 @@ internal fun HomeContent(
                 title = dashboardTitle,
                 showSearchIcon = true,
                 hasOrderOption = true,
-                onSearchClick = { onEvent(HomeEvent.ToggleSearchExpanded) },
-                onOrderClick = { onEvent(HomeEvent.StartTopCardsReorder) },
+                onSearchClick = { onEvent(HomeEvent.ToggleSearchExpandedEvent) },
+                onOrderClick = { onEvent(HomeEvent.StartTopCardsReorderEvent) },
                 actions = {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -113,7 +113,7 @@ internal fun HomeContent(
 
     // Tutorial full-screen (non durante il caricamento iniziale, per evitare flickering)
     if (!state.isTutorialCompleted && !state.isLoading) {
-        TutorialOverlay(onDismiss = { onEvent(HomeEvent.SetIsTutorialCompleted(true)) })
+        TutorialOverlay(onDismiss = { onEvent(HomeEvent.SetIsTutorialCompletedEvent(true)) })
         return
     }
 
@@ -133,14 +133,14 @@ internal fun HomeContent(
     if (showFromDatePicker) {
         HomeDatePickerDialog(
             initialDate = state.dateRangeFrom,
-            onConfirm = { onEvent(HomeEvent.SetDateRange(it, state.dateRangeTo)) },
+            onConfirm = { onEvent(HomeEvent.SetDateRangeEvent(it, state.dateRangeTo)) },
             onDismiss = { showFromDatePicker = false },
         )
     }
     if (showToDatePicker) {
         HomeDatePickerDialog(
             initialDate = state.dateRangeTo,
-            onConfirm = { onEvent(HomeEvent.SetDateRange(state.dateRangeFrom, it)) },
+            onConfirm = { onEvent(HomeEvent.SetDateRangeEvent(state.dateRangeFrom, it)) },
             onDismiss = { showToDatePicker = false },
         )
     }
@@ -150,16 +150,16 @@ internal fun HomeContent(
     state.editingTopCardsOrder?.let { editingOrder ->
         HomeTopCardsOrderDialog(
             order = editingOrder,
-            onMoveUp = { onEvent(HomeEvent.MoveTopCard(it, up = true)) },
-            onMoveDown = { onEvent(HomeEvent.MoveTopCard(it, up = false)) },
-            onDismiss = { onEvent(HomeEvent.CancelTopCardsReorder) },
-            onConfirm = { onEvent(HomeEvent.ConfirmTopCardsOrder) },
+            onMoveUp = { onEvent(HomeEvent.MoveTopCardEvent(it, up = true)) },
+            onMoveDown = { onEvent(HomeEvent.MoveTopCardEvent(it, up = false)) },
+            onDismiss = { onEvent(HomeEvent.CancelTopCardsReorderEvent) },
+            onConfirm = { onEvent(HomeEvent.ConfirmTopCardsOrderEvent) },
         )
     }
     state.selectedTransaction?.let { selected ->
         TransactionDetailsDialog(
             transaction = selected,
-            onDismiss = { onEvent(HomeEvent.DismissTransactionDetails) },
+            onDismiss = { onEvent(HomeEvent.DismissTransactionDetailsEvent) },
         )
     }
     if (showVersionDialog) {
@@ -184,7 +184,7 @@ internal fun HomeContent(
                     transaction = item.transaction,
                     navigateToDetailsPane = foldingFeature?.isSeparating == true,
                 )
-                onEvent(HomeEvent.ShowTransactionDetails(item.transaction))
+                onEvent(HomeEvent.ShowTransactionDetailsEvent(item.transaction))
             },
             modifier = modifier,
         )

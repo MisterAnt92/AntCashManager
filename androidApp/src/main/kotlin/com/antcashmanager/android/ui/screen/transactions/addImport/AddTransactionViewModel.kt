@@ -223,10 +223,10 @@ class AddTransactionViewModel(
     override fun onEvent(event: AddTransactionEvent) {
         logDebug("Event: $event")
         when (event) {
-            is AddTransactionEvent.SelectCategory -> selectCategory(event.category)
-            is AddTransactionEvent.SelectType -> selectType(event.type)
-            is AddTransactionEvent.SelectPaymentType -> selectPaymentType(event.paymentType)
-            is AddTransactionEvent.UpdateTitle -> {
+            is AddTransactionEvent.SelectCategoryEvent -> selectCategory(event.category)
+            is AddTransactionEvent.SelectTypeEvent -> selectType(event.type)
+            is AddTransactionEvent.SelectPaymentTypeEvent -> selectPaymentType(event.paymentType)
+            is AddTransactionEvent.UpdateTitleEvent -> {
                 // Track first form field interaction
                 if (!firstFormFieldTracked && event.title.isNotEmpty()) {
                     analyticsManager.logEvent(
@@ -240,16 +240,16 @@ class AddTransactionViewModel(
                 _state.update { it.copy(title = event.title) }
             }
 
-            is AddTransactionEvent.UpdateAmount -> {
+            is AddTransactionEvent.UpdateAmountEvent -> {
                 // Permetti input libero durante la digitazione, validazione al salvataggio
                 _state.update { it.copy(amount = event.amount) }
             }
 
-            is AddTransactionEvent.UpdateNotes -> _state.update { it.copy(notes = event.notes) }
-            is AddTransactionEvent.UpdatePayee -> _state.update { it.copy(payee = event.payee) }
-            is AddTransactionEvent.UpdateLocation -> _state.update { it.copy(location = event.location) }
-            is AddTransactionEvent.UpdateTags -> _state.update { it.copy(tags = event.tags) }
-            is AddTransactionEvent.UpdateMealVoucherCount -> {
+            is AddTransactionEvent.UpdateNotesEvent -> _state.update { it.copy(notes = event.notes) }
+            is AddTransactionEvent.UpdatePayeeEvent -> _state.update { it.copy(payee = event.payee) }
+            is AddTransactionEvent.UpdateLocationEvent -> _state.update { it.copy(location = event.location) }
+            is AddTransactionEvent.UpdateTagsEvent -> _state.update { it.copy(tags = event.tags) }
+            is AddTransactionEvent.UpdateMealVoucherCountEvent -> {
                 _state.update { currentState ->
                     val newCount = event.count
                     // Auto-calculate amount when count changes (if in MEAL_VOUCHERS mode)
@@ -267,7 +267,7 @@ class AddTransactionViewModel(
                 }
             }
 
-            is AddTransactionEvent.UpdateMealVoucherDifference -> {
+            is AddTransactionEvent.UpdateMealVoucherDifferenceEvent -> {
                 _state.update { currentState ->
                     val newDifference = event.difference
                     // Auto-calculate amount when difference changes (if in MEAL_VOUCHERS mode)
@@ -285,9 +285,9 @@ class AddTransactionViewModel(
                 }
             }
 
-            is AddTransactionEvent.UpdateTimestamp -> _state.update { it.copy(timestamp = event.timestamp) }
-            is AddTransactionEvent.SetRecurring -> _state.update { it.copy(isRecurring = event.isRecurring) }
-            is AddTransactionEvent.UpdateRecurrenceInterval -> {
+            is AddTransactionEvent.UpdateTimestampEvent -> _state.update { it.copy(timestamp = event.timestamp) }
+            is AddTransactionEvent.SetRecurringEvent -> _state.update { it.copy(isRecurring = event.isRecurring) }
+            is AddTransactionEvent.UpdateRecurrenceIntervalEvent -> {
                 // Track recurring interval selection
                 analyticsManager.logEvent(
                     "recurring_interval_selected",
@@ -302,54 +302,54 @@ class AddTransactionViewModel(
                 }
             }
 
-            is AddTransactionEvent.NextStep -> nextStep()
-            is AddTransactionEvent.PreviousStep -> previousStep()
-            is AddTransactionEvent.EditCategory -> _state.update { it.copy(showCategoryDialog = true) }
-            is AddTransactionEvent.EditType -> _state.update { it.copy(showTypeDialog = true) }
-            is AddTransactionEvent.EditDate -> _state.update { it.copy(showDatePicker = true) }
-            is AddTransactionEvent.EditPaymentType -> _state.update { it.copy(showPaymentTypeDialog = true) }
-            is AddTransactionEvent.ShowCategoryDialog -> _state.update { it.copy(showCategoryDialog = true) }
-            is AddTransactionEvent.ShowTypeDialog -> _state.update { it.copy(showTypeDialog = true) }
-            is AddTransactionEvent.ShowPaymentTypeDialog ->
+            is AddTransactionEvent.NextStepEvent -> nextStep()
+            is AddTransactionEvent.PreviousStepEvent -> previousStep()
+            is AddTransactionEvent.EditCategoryEvent -> _state.update { it.copy(showCategoryDialog = true) }
+            is AddTransactionEvent.EditTypeEvent -> _state.update { it.copy(showTypeDialog = true) }
+            is AddTransactionEvent.EditDateEvent -> _state.update { it.copy(showDatePicker = true) }
+            is AddTransactionEvent.EditPaymentTypeEvent -> _state.update { it.copy(showPaymentTypeDialog = true) }
+            is AddTransactionEvent.ShowCategoryDialogEvent -> _state.update { it.copy(showCategoryDialog = true) }
+            is AddTransactionEvent.ShowTypeDialogEvent -> _state.update { it.copy(showTypeDialog = true) }
+            is AddTransactionEvent.ShowPaymentTypeDialogEvent ->
                 _state.update {
                     it.copy(
                         showPaymentTypeDialog = true,
                     )
                 }
 
-            is AddTransactionEvent.DismissCategoryDialog ->
+            is AddTransactionEvent.DismissCategoryDialogEvent ->
                 _state.update {
                     it.copy(
                         showCategoryDialog = false,
                     )
                 }
 
-            is AddTransactionEvent.DismissTypeDialog -> _state.update { it.copy(showTypeDialog = false) }
-            is AddTransactionEvent.DismissPaymentTypeDialog ->
+            is AddTransactionEvent.DismissTypeDialogEvent -> _state.update { it.copy(showTypeDialog = false) }
+            is AddTransactionEvent.DismissPaymentTypeDialogEvent ->
                 _state.update {
                     it.copy(
                         showPaymentTypeDialog = false,
                     )
                 }
 
-            is AddTransactionEvent.DismissDatePicker -> _state.update { it.copy(showDatePicker = false) }
-            is AddTransactionEvent.Submit -> submitTransaction()
-            is AddTransactionEvent.Cancel -> _state.value = AddTransactionState()
-            is AddTransactionEvent.ShowDeleteConfirmDialog ->
+            is AddTransactionEvent.DismissDatePickerEvent -> _state.update { it.copy(showDatePicker = false) }
+            is AddTransactionEvent.SubmitEvent -> submitTransaction()
+            is AddTransactionEvent.CancelEvent -> _state.value = AddTransactionState()
+            is AddTransactionEvent.ShowDeleteConfirmDialogEvent ->
                 _state.update {
                     it.copy(
                         showDeleteConfirmDialog = true,
                     )
                 }
 
-            is AddTransactionEvent.DismissDeleteConfirmDialog ->
+            is AddTransactionEvent.DismissDeleteConfirmDialogEvent ->
                 _state.update {
                     it.copy(
                         showDeleteConfirmDialog = false,
                     )
                 }
 
-            is AddTransactionEvent.ConfirmDelete -> deleteTransaction()
+            is AddTransactionEvent.ConfirmDeleteEvent -> deleteTransaction()
         }
     }
 

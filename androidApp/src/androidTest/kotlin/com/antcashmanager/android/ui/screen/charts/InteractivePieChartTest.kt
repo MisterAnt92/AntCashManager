@@ -9,15 +9,13 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
 import androidx.compose.ui.unit.dp
-import com.antcashmanager.android.BaseComposeUnitTest
 import com.antcashmanager.android.ui.screen.charts.view.InteractivePieChart
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.android.test.base.BaseInstrumentationTest
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 
 /**
- * Unit tests for InteractivePieChart composable.
+ * Instrumentation tests for InteractivePieChart composable.
  *
  * Tests cover:
  * - Click detection on pie chart slices
@@ -28,11 +26,10 @@ import org.robolectric.RobolectricTestRunner
  * Note: Canvas-based click detection is tested through tap coordinates
  * that map to specific pie chart slices.
  *
- * Uses Compose UI Test v2 framework (no BaseUnitTest - pure Compose UI test).
+ * Runs with Compose UI Test v2 in the Android instrumentation environment.
  */
 
-@RunWith(RobolectricTestRunner::class)
-class InteractivePieChartTest : BaseComposeUnitTest() {
+class InteractivePieChartTest : BaseInstrumentationTest() {
     private val sampleData =
         mapOf(
             "Food" to 100.0,
@@ -145,14 +142,13 @@ class InteractivePieChartTest : BaseComposeUnitTest() {
 }
 
 /**
- * Unit tests for slice detection logic.
+ * Instrumentation tests for slice detection logic.
  *
  * These tests verify the mathematical correctness of the slice detection
  * algorithm without needing full Compose rendering.
  */
 
-@RunWith(RobolectricTestRunner::class)
-class PieChartSliceDetectionTest : BaseComposeUnitTest() {
+class PieChartSliceDetectionTest : BaseInstrumentationTest() {
     @Test
     fun sliceDetection_identifiesCorrectSliceAtStartAngle() {
         // Pie chart starts at -90 degrees (top)

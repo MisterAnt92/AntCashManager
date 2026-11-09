@@ -49,7 +49,8 @@ class SettingsRepositoryImplTest {
             PreferenceDataStoreFactory.create(scope = testScope) {
                 File(tempDir, "test.preferences_pb")
             }
-        context = mockk()
+        context = mockk(relaxed = true)
+        every { context.applicationContext } returns context
         mockkObject(DatabaseEncryptionManager)
         every { DatabaseEncryptionManager.setEncryptionDesired(any(), any()) } just Runs
         repository = SettingsRepositoryImpl(context = context, dataStore = dataStore)

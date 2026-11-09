@@ -4,6 +4,7 @@ package com.antcashmanager.android.ui.components.card
 
 import com.antcashmanager.android.BaseComposeUnitTest
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -17,6 +18,7 @@ import org.robolectric.RobolectricTestRunner
  * - Icon e color display
  */
 
+@Ignore("Compose UI test - requires androidTest")
 @RunWith(RobolectricTestRunner::class)
 class AppCategoryCardTest : BaseComposeUnitTest() {
     @Test

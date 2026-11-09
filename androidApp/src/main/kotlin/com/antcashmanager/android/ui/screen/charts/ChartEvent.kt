@@ -7,29 +7,29 @@ package com.antcashmanager.android.ui.screen.charts
  * that the ViewModel processes to update chart state and selection.
  */
 sealed class ChartEvent {
-    data class SetDateRange(
+    data class SetDateRangeEvent(
         val from: Long,
         val to: Long,
     ) : ChartEvent()
 
-    data class SetPresetRange(
+    data class SetPresetRangeEvent(
         val preset: RangePreset,
     ) : ChartEvent()
 
-    data class SelectChartCategory(
+    data class SelectChartCategoryEvent(
         val categoryName: String,
         val amount: Double,
         val colorHex: Long,
         val isExpense: Boolean = true,
     ) : ChartEvent()
 
-    data object ClearChartSelection : ChartEvent()
+    data object ClearChartSelectionEvent : ChartEvent()
 
-    data object RetryLastOperation : ChartEvent()
+    data object RetryLastOperationEvent : ChartEvent()
 
-    data class SetChartCardsOrder(
+    data class SetChartCardsOrderEvent(
         val order: String,
     ) : ChartEvent()
 
-    data class UpdateLocale(val languageTag: String) : ChartEvent()
+    data class UpdateLocaleEvent(val languageTag: String) : ChartEvent()
 }

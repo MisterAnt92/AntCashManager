@@ -106,7 +106,7 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
         importDebugDataUseCase = mockk(relaxed = true)
 
         // Default behavior for all getters: return success
-        every { getThemeUseCase() } returns flowOf(Result.success("dark"))
+        every { getThemeUseCase() } returns flowOf(Result.success(AppTheme.DARK.name))
         every { getLanguageUseCase() } returns flowOf(Result.success("it"))
         every { getShowChartsUseCase() } returns flowOf(Result.success(true))
         every { getHighContrastUseCase() } returns flowOf(Result.success(false))
@@ -142,7 +142,7 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
         runViewModelTest {
             val viewModel = buildViewModel()
 
-            viewModel.onEvent(SettingEvent.SetTheme(AppTheme.LIGHT))
+            viewModel.onEvent(SettingEvent.SetThemeEvent(AppTheme.LIGHT))
             advanceUntilIdle()
 
             coVerify(exactly = 1) { setThemeUseCase(any()) }
@@ -153,7 +153,7 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
         runViewModelTest {
             val viewModel = buildViewModel()
 
-            viewModel.onEvent(SettingEvent.SetLanguage(AppLanguage.SPANISH))
+            viewModel.onEvent(SettingEvent.SetLanguageEvent(AppLanguage.SPANISH))
             advanceUntilIdle()
 
             coVerify(exactly = 1) { setLanguageUseCase(any()) }
@@ -164,7 +164,7 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
         runViewModelTest {
             val viewModel = buildViewModel()
 
-            viewModel.onEvent(SettingEvent.SetShowCharts(false))
+            viewModel.onEvent(SettingEvent.SetShowChartsEvent(false))
             advanceUntilIdle()
 
             coVerify(exactly = 1) { setShowChartsUseCase(any()) }
@@ -175,7 +175,7 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
         runViewModelTest {
             val viewModel = buildViewModel()
 
-            viewModel.onEvent(SettingEvent.ResetAllPreferences)
+            viewModel.onEvent(SettingEvent.ResetAllPreferencesEvent)
             advanceUntilIdle()
 
             coVerify(exactly = 1) { resetAllPreferencesUseCase() }
@@ -202,7 +202,7 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
     @Test
     fun state_shouldReflectThemeUseCase_whenFlowEmits() =
         runViewModelTest {
-            every { getThemeUseCase() } returns flowOf(Result.success("light"))
+            every { getThemeUseCase() } returns flowOf(Result.success(AppTheme.LIGHT.name))
             val viewModel = buildViewModel()
             val collectJob = launch { viewModel.state.collect {} }
 

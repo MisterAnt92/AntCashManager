@@ -7,6 +7,7 @@ import com.antcashmanager.android.ui.screen.transactions.TransactionsViewModel
 import com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
+import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.model.TransactionSuggestions
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.SettingsRepository
@@ -61,6 +62,8 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
         settingsRepository = mockk(relaxed = true)
         analyticsManager = mockk(relaxed = true)
         engagementTracker = mockk(relaxed = true)
+        every { settingsRepository.getTransactionDisplayType() } returns flowOf(TransactionDisplayType.TREND)
+        every { settingsRepository.getDateFilterExpanded() } returns flowOf(false)
 
         every { getTransactionsUseCase() } returns flowOf(Result.success(emptyList()))
         every { getCategoriesUseCase() } returns flowOf(Result.success(emptyList()))
@@ -92,7 +95,7 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
             val viewModel = buildViewModel()
 
             viewModel.onEvent(
-                TransactionsEvent.AddTransaction(
+                TransactionsEvent.AddTransactionEvent(
                     title = "Lunch",
                     amount = 18.5,
                     category = "Food",
@@ -132,7 +135,7 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
                     timestamp = 1_712_100_000_000L,
                 )
 
-            viewModel.onEvent(TransactionsEvent.DeleteTransaction(transaction))
+            viewModel.onEvent(TransactionsEvent.DeleteTransactionEvent(transaction))
             advanceUntilIdle()
 
             coVerify(atLeast = 1) { deleteTransactionUseCase(transaction) }
@@ -152,7 +155,7 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
                     timestamp = 1_712_200_000_000L,
                 )
 
-            viewModel.onEvent(TransactionsEvent.UpdateTransaction(transaction))
+            viewModel.onEvent(TransactionsEvent.UpdateTransactionEvent(transaction))
             advanceUntilIdle()
 
             coVerify(exactly = 1) { updateTransactionUseCase(transaction) }
@@ -170,7 +173,7 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
             val viewModel = buildViewModel()
 
             viewModel.onEvent(
-                TransactionsEvent.AddTransaction(
+                TransactionsEvent.AddTransactionEvent(
                     title = "Lunch",
                     amount = 18.5,
                     category = "Food",
@@ -203,7 +206,7 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
                     timestamp = 1_712_200_000_000L,
                 )
 
-            viewModel.onEvent(TransactionsEvent.UpdateTransaction(transaction))
+            viewModel.onEvent(TransactionsEvent.UpdateTransactionEvent(transaction))
             advanceUntilIdle()
 
             coVerify(exactly = 1) { updateTransactionUseCase(transaction) }
@@ -229,7 +232,7 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
                     timestamp = 1_712_100_000_000L,
                 )
 
-            viewModel.onEvent(TransactionsEvent.DeleteTransaction(transaction))
+            viewModel.onEvent(TransactionsEvent.DeleteTransactionEvent(transaction))
             advanceUntilIdle()
 
             coVerify(exactly = 1) { deleteTransactionUseCase(transaction) }
@@ -247,7 +250,7 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
                 }
             advanceUntilIdle()
 
-            viewModel.onEvent(TransactionsEvent.SelectPreset(2))
+            viewModel.onEvent(TransactionsEvent.SelectPresetEvent(2))
             advanceUntilIdle()
 
             assertEquals(2, viewModel.state.value.selectedPresetIndex)

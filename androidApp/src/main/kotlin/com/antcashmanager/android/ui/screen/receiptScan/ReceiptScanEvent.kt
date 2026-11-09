@@ -10,47 +10,47 @@ import com.antcashmanager.domain.model.PaymentType
  * that the ViewModel processes to update receipt state.
  */
 sealed class ReceiptScanEvent {
-    data class ScanReceipt(
+    data class ScanReceiptEvent(
         val imageBytes: ByteArray,
     ) : ReceiptScanEvent()
 
-    data class UpdateTitle(
+    data class UpdateTitleEvent(
         val title: String,
     ) : ReceiptScanEvent()
 
-    data class UpdatePayee(
+    data class UpdatePayeeEvent(
         val payee: String,
     ) : ReceiptScanEvent()
 
-    data class UpdateLocation(
+    data class UpdateLocationEvent(
         val location: String,
     ) : ReceiptScanEvent()
 
-    data class UpdateNotes(
+    data class UpdateNotesEvent(
         val notes: String,
     ) : ReceiptScanEvent()
 
-    data class UpdateAmount(
+    data class UpdateAmountEvent(
         val amount: Double,
     ) : ReceiptScanEvent()
 
-    data class SelectCategory(
+    data class SelectCategoryEvent(
         val category: Category,
     ) : ReceiptScanEvent()
 
-    data class SelectPaymentType(
+    data class SelectPaymentTypeEvent(
         val paymentType: PaymentType,
     ) : ReceiptScanEvent()
 
-    data object ShowCategoryDialog : ReceiptScanEvent()
+    data object ShowCategoryDialogEvent : ReceiptScanEvent()
 
-    data object DismissCategoryDialog : ReceiptScanEvent()
+    data object DismissCategoryDialogEvent : ReceiptScanEvent()
 
-    data object ShowPaymentTypeDialog : ReceiptScanEvent()
+    data object ShowPaymentTypeDialogEvent : ReceiptScanEvent()
 
-    data object DismissPaymentTypeDialog : ReceiptScanEvent()
+    data object DismissPaymentTypeDialogEvent : ReceiptScanEvent()
 
-    data object RetryCapture : ReceiptScanEvent()
+    data object RetryCaptureEvent : ReceiptScanEvent()
 
-    data object RetryLastOperation : ReceiptScanEvent()
+    data object RetryLastOperationEvent : ReceiptScanEvent()
 }

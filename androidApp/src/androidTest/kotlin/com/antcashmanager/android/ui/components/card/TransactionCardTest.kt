@@ -2,14 +2,12 @@
 
 package com.antcashmanager.android.ui.components.card
 
-import com.antcashmanager.android.BaseComposeUnitTest
+import com.antcashmanager.android.test.base.BaseInstrumentationTest
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 
 /**
- * Unit tests per TransactionCard component.
+ * Instrumentation tests per TransactionCard component.
  *
  * Testa:
  * - Visualizzazione delle informazioni transazione (titolo, importo, categoria)
@@ -18,8 +16,7 @@ import org.robolectric.RobolectricTestRunner
  * - Color feedback (expense vs income)
  */
 
-@RunWith(RobolectricTestRunner::class)
-class TransactionCardTest : BaseComposeUnitTest() {
+class TransactionCardTest : BaseInstrumentationTest() {
     @Test
     fun transactionCard_shouldDisplayTitle() {
         val title = "Spesa al Supermercato"

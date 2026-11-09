@@ -35,9 +35,16 @@ class AppThemeEnumTest {
     }
 
     @Test
-    fun appTheme_shouldHaveThreeValues() {
-        val themes = AppTheme.values()
-        assertEquals(3, themes.size)
+    fun appTheme_shouldHaveAnnaTheme() {
+        val theme = AppTheme.ANNA
+        assertNotNull(theme)
+        assertEquals(AppTheme.ANNA, theme)
+    }
+
+    @Test
+    fun appTheme_shouldHaveFourValues() {
+        val themes = AppTheme.entries
+        assertEquals(4, themes.size)
     }
 
     @Test

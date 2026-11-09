@@ -2,14 +2,12 @@
 
 package com.antcashmanager.android.ui.components.layout
 
-import com.antcashmanager.android.BaseComposeUnitTest
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.android.test.base.BaseInstrumentationTest
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 
 /**
- * Unit tests per LeftSidebar layout component.
+ * Instrumentation tests per LeftSidebar layout component.
  *
  * Testa:
  * - Navigation items display
@@ -18,8 +16,7 @@ import org.robolectric.RobolectricTestRunner
  * - Layout structure
  */
 
-@RunWith(RobolectricTestRunner::class)
-class LeftSidebarTest : BaseComposeUnitTest() {
+class LeftSidebarTest : BaseInstrumentationTest() {
     @Test
     fun leftSidebar_shouldDisplayNavigation() {
         composeTestRule.setContent {

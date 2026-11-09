@@ -7,11 +7,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.onNodeWithText
-import com.antcashmanager.android.BaseComposeUnitTest
 import com.antcashmanager.android.ui.screen.charts.view.ChartDetailsData
 import com.antcashmanager.android.ui.screen.charts.view.ChartsDetailsBottomSheet
 import com.antcashmanager.android.ui.screen.charts.view.TrendDirection
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.android.test.base.BaseInstrumentationTest
 import org.junit.Test
 
 /**
@@ -23,10 +23,10 @@ import org.junit.Test
  * - Amount masking behavior
  * - Trend direction rendering
  *
- * Uses Compose UI Test v2 framework (no BaseUnitTest - pure Compose UI test).
+ * Uses Compose UI Test v2 in the Android instrumentation environment.
  */
 
-class ChartsDetailsBottomSheetTest : BaseComposeUnitTest() {
+class ChartsDetailsBottomSheetTest : BaseInstrumentationTest() {
     private val sampleDetails =
         ChartDetailsData(
             categoryName = "Food",

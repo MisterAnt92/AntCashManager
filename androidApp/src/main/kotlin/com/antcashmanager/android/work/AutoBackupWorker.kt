@@ -73,6 +73,11 @@ class AutoBackupWorker(
             val backupResult = backupService.createBackup()
             val backupJson =
                 backupResult.getOrElse { error ->
+                    if (error is IOException) {
+                        Logger.e(tag = "AutoBackupWorker") { "Backup generation failed with an IO error; retrying" }
+                        errorTracker.trackSyncError("backup_local", "generation_io_error")
+                        return Result.retry()
+                    }
                     Logger.e(tag = "AutoBackupWorker") { "Backup generation failed: $error" }
                     errorTracker.trackSyncError("backup_local", "generation_failed")
                     AutoBackupNotifier.notifyFailure(applicationContext)

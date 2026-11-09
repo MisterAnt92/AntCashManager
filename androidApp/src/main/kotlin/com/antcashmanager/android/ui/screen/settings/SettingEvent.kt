@@ -12,70 +12,70 @@ import com.antcashmanager.domain.model.TransactionDisplayType
  */
 sealed class SettingEvent {
     // Theme & Language
-    data class SetTheme(
+    data class SetThemeEvent(
         val theme: AppTheme,
     ) : SettingEvent()
 
-    data class SetLanguage(
+    data class SetLanguageEvent(
         val language: AppLanguage,
     ) : SettingEvent()
 
     // Display Preferences
-    data class SetShowCharts(
+    data class SetShowChartsEvent(
         val show: Boolean,
     ) : SettingEvent()
 
-    data class SetHighContrast(
+    data class SetHighContrastEvent(
         val enabled: Boolean,
     ) : SettingEvent()
 
-    data class SetLargeText(
+    data class SetLargeTextEvent(
         val enabled: Boolean,
     ) : SettingEvent()
 
-    data class SetReduceMotion(
+    data class SetReduceMotionEvent(
         val enabled: Boolean,
     ) : SettingEvent()
 
     // Number Formatting
-    data class SetCurrencySymbol(
+    data class SetCurrencySymbolEvent(
         val symbol: String,
     ) : SettingEvent()
 
-    data class SetDecimalDigits(
+    data class SetDecimalDigitsEvent(
         val digits: Int,
     ) : SettingEvent()
 
-    data class SetDecimalSeparator(
+    data class SetDecimalSeparatorEvent(
         val separator: String,
     ) : SettingEvent()
 
-    data class SetThousandsSeparator(
+    data class SetThousandsSeparatorEvent(
         val separator: String,
     ) : SettingEvent()
 
     // Transaction Display
-    data class SetTransactionDisplayType(
+    data class SetTransactionDisplayTypeEvent(
         val displayType: TransactionDisplayType,
     ) : SettingEvent()
 
-    data class SetTutorialCompleted(
+    data class SetTutorialCompletedEvent(
         val completed: Boolean,
     ) : SettingEvent()
 
     // Utilities
-    data object ResetAllPreferences : SettingEvent()
+    data object ResetAllPreferencesEvent : SettingEvent()
 
-    data object ImportDebugData : SettingEvent()
+    data object ImportDebugDataEvent : SettingEvent()
 
-    data class SendFeedbackEmail(
+    data class SendFeedbackEmailEvent(
         val emailBody: String,
     ) : SettingEvent()
 
-    data object RetryLastOperation : SettingEvent()
+    data object RetryLastOperationEvent : SettingEvent()
 
     // Analytics / Privacy
-    data class SetAnalyticsConsent(
+    data class SetAnalyticsConsentEvent(
         val granted: Boolean,
     ) : SettingEvent()
 }

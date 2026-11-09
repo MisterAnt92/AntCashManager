@@ -56,7 +56,7 @@ class NavSettingsViewModel(
 
     override fun onEvent(event: NavSettingsEvent) {
         when (event) {
-            is NavSettingsEvent.SetAnalyticsConsent -> setAnalyticsConsent(event.granted)
+            is NavSettingsEvent.SetAnalyticsConsentEvent -> setAnalyticsConsent(event.granted)
         }
     }
 

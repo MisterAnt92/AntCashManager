@@ -69,7 +69,7 @@ class DisplayViewModelTest : BaseUnitTest() {
                 ) { launch { viewModel.currencySymbol.collect { } } }
             advanceUntilIdle()
 
-            viewModel.onEvent(DisplayEvent.SetCurrencySymbol("$"))
+            viewModel.onEvent(DisplayEvent.SetCurrencySymbolEvent("$"))
             advanceUntilIdle()
 
             assertEquals("$", viewModel.currencySymbol.value)
@@ -85,7 +85,7 @@ class DisplayViewModelTest : BaseUnitTest() {
                 ) { launch { viewModel.decimalDigits.collect { } } }
             advanceUntilIdle()
 
-            viewModel.onEvent(DisplayEvent.SetDecimalDigits(0))
+            viewModel.onEvent(DisplayEvent.SetDecimalDigitsEvent(0))
             advanceUntilIdle()
 
             assertEquals(0, viewModel.decimalDigits.value)
@@ -104,8 +104,8 @@ class DisplayViewModelTest : BaseUnitTest() {
                 }
             advanceUntilIdle()
 
-            viewModel.onEvent(DisplayEvent.SetDecimalSeparator("."))
-            viewModel.onEvent(DisplayEvent.SetThousandsSeparator(","))
+            viewModel.onEvent(DisplayEvent.SetDecimalSeparatorEvent("."))
+            viewModel.onEvent(DisplayEvent.SetThousandsSeparatorEvent(","))
             advanceUntilIdle()
 
             assertEquals(".", viewModel.decimalSeparator.value)
@@ -137,16 +137,16 @@ class DisplayViewModelTest : BaseUnitTest() {
                 }
             advanceUntilIdle()
 
-            viewModel.onEvent(DisplayEvent.SetCurrencySymbol("INVALID"))
-            viewModel.onEvent(DisplayEvent.SetDecimalDigits(9))
-            viewModel.onEvent(DisplayEvent.SetThousandsSeparator("INVALID"))
+            viewModel.onEvent(DisplayEvent.SetCurrencySymbolEvent("INVALID"))
+            viewModel.onEvent(DisplayEvent.SetDecimalDigitsEvent(9))
+            viewModel.onEvent(DisplayEvent.SetThousandsSeparatorEvent("INVALID"))
             advanceUntilIdle()
 
             assertEquals("\u20ac", viewModel.currencySymbol.value)
             assertEquals(4, viewModel.decimalDigits.value)
             assertEquals("", viewModel.thousandsSeparator.value)
 
-            viewModel.onEvent(DisplayEvent.SetDecimalDigits(-5))
+            viewModel.onEvent(DisplayEvent.SetDecimalDigitsEvent(-5))
             advanceUntilIdle()
             assertEquals(0, viewModel.decimalDigits.value)
 
@@ -166,18 +166,18 @@ class DisplayViewModelTest : BaseUnitTest() {
             advanceUntilIdle()
 
             // 1. Setting thousands same as current decimal -> should result in default (empty)
-            viewModel.onEvent(DisplayEvent.SetThousandsSeparator(","))
+            viewModel.onEvent(DisplayEvent.SetThousandsSeparatorEvent(","))
             advanceUntilIdle()
             assertEquals(",", viewModel.decimalSeparator.value)
             assertEquals("", viewModel.thousandsSeparator.value)
 
             // 2. Setting thousands different -> should work
-            viewModel.onEvent(DisplayEvent.SetThousandsSeparator("."))
+            viewModel.onEvent(DisplayEvent.SetThousandsSeparatorEvent("."))
             advanceUntilIdle()
             assertEquals(".", viewModel.thousandsSeparator.value)
 
             // 3. Setting decimal same as current thousands -> should reset thousands to default (empty)
-            viewModel.onEvent(DisplayEvent.SetDecimalSeparator("."))
+            viewModel.onEvent(DisplayEvent.SetDecimalSeparatorEvent("."))
             advanceUntilIdle()
 
             assertEquals(".", viewModel.decimalSeparator.value)
@@ -195,11 +195,11 @@ class DisplayViewModelTest : BaseUnitTest() {
                 ) { launch { viewModel.mealVoucherValue.collect { } } }
             advanceUntilIdle()
 
-            viewModel.onEvent(DisplayEvent.SetMealVoucherValue(7.5))
+            viewModel.onEvent(DisplayEvent.SetMealVoucherValueEvent(7.5))
             advanceUntilIdle()
             assertEquals(7.5, viewModel.mealVoucherValue.value, 0.0)
 
-            viewModel.onEvent(DisplayEvent.SetMealVoucherValue(-1.0))
+            viewModel.onEvent(DisplayEvent.SetMealVoucherValueEvent(-1.0))
             advanceUntilIdle()
             assertEquals(0.0, viewModel.mealVoucherValue.value, 0.0)
 
@@ -215,7 +215,7 @@ class DisplayViewModelTest : BaseUnitTest() {
                 ) { launch { viewModel.dateFormat.collect { } } }
             advanceUntilIdle()
 
-            viewModel.onEvent(DisplayEvent.SetDateFormat("yyyy-MM-dd"))
+            viewModel.onEvent(DisplayEvent.SetDateFormatEvent("yyyy-MM-dd"))
             advanceUntilIdle()
             assertEquals("yyyy-MM-dd", viewModel.dateFormat.value)
 
@@ -238,12 +238,12 @@ class DisplayViewModelTest : BaseUnitTest() {
                 }
             advanceUntilIdle()
 
-            viewModel.onEvent(DisplayEvent.SetShowChartsSection(false))
-            viewModel.onEvent(DisplayEvent.SetChartsZoomEnabled(true))
-            viewModel.onEvent(DisplayEvent.SetShowTransactionNotes(false))
-            viewModel.onEvent(DisplayEvent.SetShowPaymentTypeBreakdown(true))
-            viewModel.onEvent(DisplayEvent.SetShowQuickInsightsCard(true))
-            viewModel.onEvent(DisplayEvent.SetMaskAmounts(true))
+            viewModel.onEvent(DisplayEvent.SetShowChartsSectionEvent(false))
+            viewModel.onEvent(DisplayEvent.SetChartsZoomEnabledEvent(true))
+            viewModel.onEvent(DisplayEvent.SetShowTransactionNotesEvent(false))
+            viewModel.onEvent(DisplayEvent.SetShowPaymentTypeBreakdownEvent(true))
+            viewModel.onEvent(DisplayEvent.SetShowQuickInsightsCardEvent(true))
+            viewModel.onEvent(DisplayEvent.SetMaskAmountsEvent(true))
             advanceUntilIdle()
 
             assertFalse(viewModel.showChartsSection.value)
@@ -268,8 +268,8 @@ class DisplayViewModelTest : BaseUnitTest() {
                 }
             advanceUntilIdle()
 
-            viewModel.onEvent(DisplayEvent.SetTransactionDisplayType(TransactionDisplayType.CATEGORY))
-            viewModel.onEvent(DisplayEvent.SetTransactionsTransactionDisplayType(TransactionDisplayType.CATEGORY))
+            viewModel.onEvent(DisplayEvent.SetTransactionDisplayTypeEvent(TransactionDisplayType.CATEGORY))
+            viewModel.onEvent(DisplayEvent.SetTransactionsTransactionDisplayTypeEvent(TransactionDisplayType.CATEGORY))
             advanceUntilIdle()
 
             assertEquals(TransactionDisplayType.CATEGORY, viewModel.transactionDisplayType.value)
@@ -308,7 +308,7 @@ class DisplayViewModelTest : BaseUnitTest() {
                 ) { launch { viewModel.widgetBackgroundColor.collect { } } }
             advanceUntilIdle()
 
-            viewModel.onEvent(DisplayEvent.SetWidgetBackgroundColor(0xFF212121L))
+            viewModel.onEvent(DisplayEvent.SetWidgetBackgroundColorEvent(0xFF212121L))
             advanceUntilIdle()
 
             assertEquals(0xFF212121L, viewModel.widgetBackgroundColor.value)
@@ -326,7 +326,7 @@ class DisplayViewModelTest : BaseUnitTest() {
                 ) { launch { viewModel.widgetOpacity.collect { } } }
             advanceUntilIdle()
 
-            viewModel.onEvent(DisplayEvent.SetWidgetOpacity(40))
+            viewModel.onEvent(DisplayEvent.SetWidgetOpacityEvent(40))
             advanceUntilIdle()
 
             assertEquals(40, viewModel.widgetOpacity.value)
@@ -344,11 +344,11 @@ class DisplayViewModelTest : BaseUnitTest() {
                 ) { launch { viewModel.widgetOpacity.collect { } } }
             advanceUntilIdle()
 
-            viewModel.onEvent(DisplayEvent.SetWidgetOpacity(150))
+            viewModel.onEvent(DisplayEvent.SetWidgetOpacityEvent(150))
             advanceUntilIdle()
             assertEquals(100, viewModel.widgetOpacity.value)
 
-            viewModel.onEvent(DisplayEvent.SetWidgetOpacity(-20))
+            viewModel.onEvent(DisplayEvent.SetWidgetOpacityEvent(-20))
             advanceUntilIdle()
             assertEquals(0, viewModel.widgetOpacity.value)
 

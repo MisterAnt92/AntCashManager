@@ -7,10 +7,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.onNodeWithText
-import com.antcashmanager.android.BaseComposeUnitTest
 import com.antcashmanager.android.ui.screen.charts.view.QuickStatsCard
 import com.antcashmanager.android.ui.screen.charts.view.WeekdayExpenseCard
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.android.test.base.BaseInstrumentationTest
 import com.antcashmanager.android.util.LocalCurrencyFormat
 import com.antcashmanager.domain.model.CurrencyFormat
 import org.junit.Test
@@ -25,11 +25,10 @@ import org.junit.Test
  * - Accessibility attributes (semantics)
  * - Empty state handling
  *
- * Uses Compose UI Test v2 framework (no BaseUnitTest - pure Compose UI test)
- * with kotlinx-coroutines-test for deterministic test execution.
+ * Uses Compose UI Test v2 in the Android instrumentation environment.
  */
 
-class ChartCardsTest : BaseComposeUnitTest() {
+class ChartCardsTest : BaseInstrumentationTest() {
     // ============== QuickStatsCard Tests ==============
 
     @Test
