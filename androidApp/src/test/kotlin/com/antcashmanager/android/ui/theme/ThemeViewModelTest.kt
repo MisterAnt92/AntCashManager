@@ -23,7 +23,7 @@ class ThemeViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun defaultThemeExposed() =
+    fun appTheme_shouldReturnSystemDefault_whenRepositoryHasNoValue() =
         runViewModelTest {
             val collectJob =
                 launch(UnconfinedTestDispatcher(testScheduler)) {
@@ -32,17 +32,31 @@ class ThemeViewModelTest : BaseUnitTest() {
             advanceUntilIdle()
 
             assertEquals(AppTheme.SYSTEM, viewModel.appTheme.value)
-
             collectJob.cancel()
         }
 
     @Test
-    fun setThemeUpdatesRepository() =
+    fun onSetThemeEvent_shouldUpdateRepository_whenThemeEventReceived() =
         runViewModelTest {
             viewModel.onEvent(ThemeEvent.SetThemeEvent(AppTheme.DARK))
             advanceUntilIdle()
 
-            // Fake repo mirrors setTheme into its flow
             assertEquals(AppTheme.DARK, fakeRepo.theme.value)
+        }
+
+    @Test
+    fun onSetThemeEvent_shouldUpdateExposedAppTheme_whenThemeChanges() =
+        runViewModelTest {
+            val collectJob =
+                launch(UnconfinedTestDispatcher(testScheduler)) {
+                    viewModel.appTheme.collect {}
+                }
+            advanceUntilIdle()
+
+            viewModel.onEvent(ThemeEvent.SetThemeEvent(AppTheme.LIGHT))
+            advanceUntilIdle()
+
+            assertEquals(AppTheme.LIGHT, viewModel.appTheme.value)
+            collectJob.cancel()
         }
 }

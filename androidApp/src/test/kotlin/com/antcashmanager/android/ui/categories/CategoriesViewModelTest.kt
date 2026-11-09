@@ -152,7 +152,7 @@ class CategoriesViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun updateCategory_shouldCompleteWithoutThrowing_whenSyncTransactionCategoriesUseCaseFails() =
+    fun updateCategory_shouldNotBeLoading_whenSyncTransactionCategoriesUseCaseFails() =
         runViewModelTest {
             val originalCategory =
                 Category(id = 6, name = "Old Name", icon = "local_dining", color = 0xFFE57373)
@@ -166,6 +166,7 @@ class CategoriesViewModelTest : BaseUnitTest() {
             advanceUntilIdle()
 
             coVerify(exactly = 1) { syncTransactionCategoriesUseCase(any()) }
+            assertEquals(false, viewModel.state.value.isLoading)
         }
 
     @Test
@@ -457,7 +458,7 @@ class CategoriesViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun updateCategory_shouldCompleteWithoutThrowing_whenUpdateUseCaseReturnsNotFoundFailure() =
+    fun updateCategory_shouldNotBeLoading_whenUpdateUseCaseReturnsNotFoundFailure() =
         runViewModelTest {
             coEvery { updateCategoryUseCase(any()) } returns
                 Result.failure(CategoryException.NotFound("Nonexistent"))
@@ -469,10 +470,11 @@ class CategoriesViewModelTest : BaseUnitTest() {
             advanceUntilIdle()
 
             coVerify(exactly = 1) { updateCategoryUseCase(category) }
+            assertEquals(false, viewModel.state.value.isLoading)
         }
 
     @Test
-    fun deleteCategory_shouldCompleteWithoutThrowing_whenDeleteUseCaseReturnsNotFoundFailure() =
+    fun deleteCategory_shouldNotBeLoading_whenDeleteUseCaseReturnsNotFoundFailure() =
         runViewModelTest {
             coEvery { deleteCategoryUseCase(any()) } returns
                 Result.failure(CategoryException.NotFound("Nonexistent"))
@@ -484,6 +486,7 @@ class CategoriesViewModelTest : BaseUnitTest() {
             advanceUntilIdle()
 
             coVerify(exactly = 1) { deleteCategoryUseCase(category) }
+            assertEquals(false, viewModel.state.value.isLoading)
         }
 
     @Test

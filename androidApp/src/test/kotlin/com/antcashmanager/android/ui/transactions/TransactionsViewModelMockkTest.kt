@@ -162,15 +162,14 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
         }
 
     @Test
-    fun addTransaction_shouldCompleteWithoutThrowing_whenInsertTransactionUseCaseFails() =
+    fun addTransaction_shouldNotBeLoading_whenInsertTransactionUseCaseFails() =
         runViewModelTest {
             coEvery { insertTransactionUseCase(any()) } returns
-                Result.failure(
-                    IllegalStateException(
-                        "insert failed",
-                    ),
-                )
+                Result.failure(IllegalStateException("insert failed"))
             val viewModel = buildViewModel()
+            val collectJob =
+                launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.state.collect {} }
+            advanceUntilIdle()
 
             viewModel.onEvent(
                 TransactionsEvent.AddTransactionEvent(
@@ -184,18 +183,19 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
             advanceUntilIdle()
 
             coVerify(exactly = 1) { insertTransactionUseCase(any()) }
+            assertEquals(false, viewModel.state.value.isLoading)
+            collectJob.cancel()
         }
 
     @Test
-    fun onEvent_shouldCompleteWithoutThrowing_whenUpdateTransactionUseCaseFails() =
+    fun onEvent_shouldNotBeLoading_whenUpdateTransactionUseCaseFails() =
         runViewModelTest {
             coEvery { updateTransactionUseCase(any()) } returns
-                Result.failure(
-                    IllegalStateException(
-                        "update failed",
-                    ),
-                )
+                Result.failure(IllegalStateException("update failed"))
             val viewModel = buildViewModel()
+            val collectJob =
+                launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.state.collect {} }
+            advanceUntilIdle()
             val transaction =
                 Transaction(
                     id = 8L,
@@ -210,18 +210,19 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
             advanceUntilIdle()
 
             coVerify(exactly = 1) { updateTransactionUseCase(transaction) }
+            assertEquals(false, viewModel.state.value.isLoading)
+            collectJob.cancel()
         }
 
     @Test
-    fun onEvent_shouldCompleteWithoutThrowing_whenDeleteTransactionUseCaseFails() =
+    fun onEvent_shouldNotBeLoading_whenDeleteTransactionUseCaseFails() =
         runViewModelTest {
             coEvery { deleteTransactionUseCase(any()) } returns
-                Result.failure(
-                    IllegalStateException(
-                        "delete failed",
-                    ),
-                )
+                Result.failure(IllegalStateException("delete failed"))
             val viewModel = buildViewModel()
+            val collectJob =
+                launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.state.collect {} }
+            advanceUntilIdle()
             val transaction =
                 Transaction(
                     id = 9L,
@@ -236,6 +237,8 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
             advanceUntilIdle()
 
             coVerify(exactly = 1) { deleteTransactionUseCase(transaction) }
+            assertEquals(false, viewModel.state.value.isLoading)
+            collectJob.cancel()
         }
 
     @Test

@@ -49,6 +49,23 @@ open class FakeCategoryRepository(
         categories.value = categories.value.filter { it.isDefault }
     }
 
+    override suspend fun deleteAllCategoriesForProfile(profileId: Long) {
+        errorToThrow?.let { throw it }
+        categories.value = emptyList()
+    }
+
+    override suspend fun deleteAllNonDefaultCategoriesForProfile(profileId: Long) {
+        errorToThrow?.let { throw it }
+        categories.update { list -> list.filter { it.isDefault } }
+    }
+
+    override suspend fun seedDefaultCategoriesForProfile(
+        sourceProfileId: Long,
+        targetProfileId: Long,
+    ) {
+        // no-op in tests
+    }
+
     override fun getCategoriesByType(type: String): Flow<List<Category>> =
         categories.map { list -> list.filter { it.type == type } }
 

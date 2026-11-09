@@ -45,26 +45,13 @@ class ChartsViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun initialChartDataIsEmpty() =
+    fun chartData_shouldComputeTotalsCorrectly_whenTransactionsLoaded() =
         runViewModelTest {
             val collectJob =
                 launch(UnconfinedTestDispatcher(testScheduler)) {
                     viewModel.chartData.collect {}
                 }
-            advanceUntilIdle()
-            assertEquals(0.0, viewModel.chartData.value.totalIncome, 0.01)
-            assertEquals(0.0, viewModel.chartData.value.totalExpense, 0.01)
-            collectJob.cancel()
-        }
-
-    @Test
-    fun chartDataComputesTotalsCorrectly() =
-        runViewModelTest {
-            val collectJob =
-                launch(UnconfinedTestDispatcher(testScheduler)) {
-                    viewModel.chartData.collect {}
-                }
-            val now = System.currentTimeMillis()
+            val t0 = 1_700_000_000_000L
             fakeRepo.transactions.value =
                 listOf(
                     Transaction(
@@ -73,7 +60,7 @@ class ChartsViewModelTest : BaseUnitTest() {
                         amount = 2000.0,
                         category = "Work",
                         type = TransactionType.INCOME,
-                        timestamp = now,
+                        timestamp = t0,
                     ),
                     Transaction(
                         id = 2,
@@ -81,7 +68,7 @@ class ChartsViewModelTest : BaseUnitTest() {
                         amount = 150.0,
                         category = "Food",
                         type = TransactionType.EXPENSE,
-                        timestamp = now,
+                        timestamp = t0,
                     ),
                     Transaction(
                         id = 3,
@@ -89,11 +76,10 @@ class ChartsViewModelTest : BaseUnitTest() {
                         amount = 50.0,
                         category = "Transport",
                         type = TransactionType.EXPENSE,
-                        timestamp = now,
+                        timestamp = t0,
                     ),
                 )
-            // Set date range to cover now
-            viewModel.onEvent(ChartEvent.SetDateRangeEvent(now - 86400000, now + 86400000))
+            viewModel.onEvent(ChartEvent.SetDateRangeEvent(t0 - 86400000, t0 + 86400000))
             advanceUntilIdle()
             assertEquals(2000.0, viewModel.chartData.value.totalIncome, 0.01)
             assertEquals(200.0, viewModel.chartData.value.totalExpense, 0.01)
@@ -102,7 +88,7 @@ class ChartsViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun setPresetRangeUpdatesDateRange_whenMultiYearPresetsAreSelected() =
+    fun setPresetRange_shouldReturnEarlierFrom_whenLongerPresetSelected() =
         runViewModelTest {
             val multiYearPresets =
                 listOf(

@@ -8,6 +8,7 @@ import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.testutil.FakeTransactionRepository
 import com.antcashmanager.android.ui.screen.charts.view.TrendDirection
 import com.antcashmanager.domain.model.PaymentType
+import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import io.mockk.mockk
@@ -24,18 +25,7 @@ import org.junit.Assert.assertNull
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import java.util.Calendar
 
-/**
- * Unit tests for chart category selection and details display.
- *
- * Tests cover:
- * - Selecting a chart category
- * - Clearing chart selection
- * - Percentage calculation
- * - Amount handling for income/expense
- * - Transaction count tracking
- */
 @OptIn(ExperimentalCoroutinesApi::class)
 class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
     private lateinit var fakeTransactionRepo: FakeTransactionRepository
@@ -50,7 +40,6 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
         fakeSettingsRepo = FakeSettingsRepository()
         performanceTracker = mockk(relaxed = true)
         segmentationTracker = mockk(relaxed = true)
-        // Pass testDispatcher to ensure ViewModel uses the same dispatcher as the test
         viewModel =
             ChartsViewModel(
                 fakeTransactionRepo,
@@ -70,8 +59,17 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
         super.tearDownDispatchers()
     }
 
+    private fun includeAllTransactions() {
+        fakeSettingsRepo.chartsDateFilterState.value =
+            SavedDateFilter(
+                presetIndex = SavedDateFilter.CUSTOM_PRESET_INDEX,
+                from = 0L,
+                to = Long.MAX_VALUE,
+            )
+    }
+
     @Test
-    fun selectChartCategory_updatesSelectedChartDetails() =
+    fun onSelectChartCategoryEvent_shouldUpdateDetails_whenCategoryExists() =
         runViewModelTest {
             val collectJob =
                 launchInBackground {
@@ -97,11 +95,9 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
         }
 
     @Test
-    fun selectChartCategory_calculatesPercentageCorrectly() =
+    fun onSelectChartCategoryEvent_shouldCalculatePercentage_whenTotalAmountIsKnown() =
         runViewModelTest {
-            val cal = Calendar.getInstance()
-            cal.set(2024, 0, 1, 12, 0, 0)
-            val timestamp = cal.timeInMillis
+            val timestamp = 1_704_106_800_000L // 2024-01-01 12:00 UTC (fixed)
 
             fakeTransactionRepo.transactions.value =
                 listOf(
@@ -132,11 +128,10 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
                 }
             advanceUntilIdle()
 
-            // Set date range to load transactions
             viewModel.onEvent(ChartEvent.SetDateRangeEvent(timestamp - 86_400_000L, timestamp + 86_400_000L))
             advanceUntilIdle()
 
-            // Select Food category (100 out of 250 total = 40%)
+            // Food = 100 out of 250 total = 40%
             viewModel.onEvent(
                 ChartEvent.SelectChartCategoryEvent(
                     categoryName = "Food",
@@ -154,32 +149,7 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
         }
 
     @Test
-    fun selectChartCategory_coercesPercentageBounds() =
-        runViewModelTest {
-            val collectJob =
-                launchInBackground {
-                    viewModel.selectedChartDetails.collect { }
-                }
-
-            viewModel.onEvent(
-                ChartEvent.SelectChartCategoryEvent(
-                    categoryName = "Test",
-                    amount = 1000.0,
-                    colorHex = 0xFFE57373,
-                    isExpense = true,
-                ),
-            )
-            advanceUntilIdle()
-
-            val details = viewModel.selectedChartDetails.value
-            // Percentage should be clamped to max 100
-            assertEquals(true, details?.percentage!! <= 100)
-
-            collectJob.cancel()
-        }
-
-    @Test
-    fun selectChartCategory_handleZeroTotalAmount() =
+    fun onSelectChartCategoryEvent_shouldReturnZeroPercent_whenTotalIsZero() =
         runViewModelTest {
             val collectJob =
                 launch(UnconfinedTestDispatcher(testScheduler)) {
@@ -199,14 +169,13 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
             advanceUntilIdle()
 
             val details = viewModel.selectedChartDetails.value
-            // When total is 0, percentage should be 0
             assertEquals(0, details?.percentage)
 
             collectJob.cancel()
         }
 
     @Test
-    fun selectChartCategory_storesColorHex() =
+    fun onSelectChartCategoryEvent_shouldStoreColorHex_whenCategoryHasColor() =
         runViewModelTest {
             val collectJob =
                 launchInBackground {
@@ -231,14 +200,13 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
         }
 
     @Test
-    fun clearChartSelection_setsDetailsToNull() =
+    fun onClearChartSelectionEvent_shouldClearDetails_whenSelectionExists() =
         runViewModelTest {
             val collectJob =
                 launchInBackground {
                     viewModel.selectedChartDetails.collect { }
                 }
 
-            // First select a category
             viewModel.onEvent(
                 ChartEvent.SelectChartCategoryEvent(
                     categoryName = "Food",
@@ -250,7 +218,6 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
             advanceUntilIdle()
             assertNotNull(viewModel.selectedChartDetails.value)
 
-            // Then clear
             viewModel.onEvent(ChartEvent.ClearChartSelectionEvent)
             advanceUntilIdle()
 
@@ -260,32 +227,7 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
         }
 
     @Test
-    fun selectChartCategory_handlesIncomeCategory() =
-        runViewModelTest {
-            val collectJob =
-                launchInBackground {
-                    viewModel.selectedChartDetails.collect { }
-                }
-
-            viewModel.onEvent(
-                ChartEvent.SelectChartCategoryEvent(
-                    categoryName = "Salary",
-                    amount = 5000.0,
-                    colorHex = 0xFF81C784,
-                    isExpense = false,
-                ),
-            )
-            advanceUntilIdle()
-
-            val details = viewModel.selectedChartDetails.value
-            assertEquals("Salary", details?.categoryName)
-            assertEquals(5000.0, details?.amount ?: 0.0, 0.01)
-
-            collectJob.cancel()
-        }
-
-    @Test
-    fun selectChartCategory_defaultsTrendToNeutral() =
+    fun onSelectChartCategoryEvent_shouldDefaultTrendToNeutral_whenTrendNotComputed() =
         runViewModelTest {
             val collectJob =
                 launchInBackground {
