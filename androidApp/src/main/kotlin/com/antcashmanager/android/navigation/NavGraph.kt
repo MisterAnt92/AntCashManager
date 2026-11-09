@@ -366,6 +366,11 @@ fun AntCashManagerNavHost() {
                                     composable(AppRoute.SettingsRoute.DataManagement.route) {
                                         SettingsDataScreen(navController = navController)
                                     }
+                                    composable(AppRoute.SettingsRoute.Profiles.route) {
+                                        com.antcashmanager.android.ui.screen.settings.profiles.ProfilesScreen(
+                                            navController = navController,
+                                        )
+                                    }
                                 }
 
                                 composable(AppRoute.BottomRoute.Tutorial.route) {

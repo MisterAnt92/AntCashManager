@@ -214,6 +214,17 @@
     <string name="settings_reduce_motion">减弱动态效果</string>
     <string name="settings_reduce_motion_subtitle">尽量减少动画和过渡效果。对动态效果敏感的用户很有帮助。</string>
     <string name="settings_data_management">数据管理</string>
+    <string name="settings_profiles">Profili</string>
+    <string name="profiles_title">Profili</string>
+    <string name="profiles_add_button">Aggiungi profilo</string>
+    <string name="profiles_switch_dialog_title">Cambia profilo</string>
+    <string name="profiles_switch_dialog_message">Passare a %1$s?</string>
+    <string name="profiles_delete_dialog_title">Elimina profilo</string>
+    <string name="profiles_delete_dialog_warning">Eliminare %1$s e tutti i suoi dati? Questa azione non può essere annullata.</string>
+    <string name="profiles_default_name">Default</string>
+    <string name="profiles_active_badge">Attivo</string>
+    <string name="profiles_create_dialog_title">Nuovo profilo</string>
+    <string name="profiles_name_hint">Nome profilo</string>
     <string name="settings_security">安全</string>
     <string name="settings_security_data_encryption">数据保�� - 加密</string>
     <string name="settings_security_data_encryption_subtitle">加密并保护本地应用数据</string>

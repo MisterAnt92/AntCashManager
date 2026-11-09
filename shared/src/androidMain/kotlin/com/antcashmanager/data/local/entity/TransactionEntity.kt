@@ -12,6 +12,8 @@ import androidx.room.PrimaryKey
         Index("is_recurring"), // WHERE is_recurring = 1
         Index("category"), // WHERE category = :category
         Index("type"), // WHERE type = :type
+        Index("profile_id"), // WHERE profile_id = :profileId
+        Index(value = ["profile_id", "timestamp"]), // scoped ORDER BY timestamp
     ],
 )
 public data class TransactionEntity(
@@ -44,4 +46,6 @@ public data class TransactionEntity(
     val categoryIcon: String = "",
     @ColumnInfo(name = "category_color", defaultValue = "9474862")
     val categoryColor: Long = 9474862, // 0xFF90A4AE in decimal
+    @ColumnInfo(name = "profile_id", defaultValue = "1")
+    val profileId: Long = 1,
 )

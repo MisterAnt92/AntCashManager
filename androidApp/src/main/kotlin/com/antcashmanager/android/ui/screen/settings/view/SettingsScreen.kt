@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.MotionPhotosOff
 import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PrivacyTip
 import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material3.MaterialTheme
@@ -309,6 +310,15 @@ internal fun SettingsContent(
             // ── Data & Privacy Section ──
             AppCardSectionHeader(title = stringResource(R.string.settings_section_data_privacy))
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                AppCard(
+                    title = stringResource(R.string.settings_profiles),
+                    leadingIcon = Icons.Default.Person,
+                    iconBackgroundColor = MaterialTheme.colorScheme.primaryContainer,
+                    iconTint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    onClick = {
+                        navController?.navigate(AppRoute.SettingsRoute.Profiles.route)
+                    },
+                )
                 AppCard(
                     title = stringResource(R.string.settings_data_management),
                     leadingIcon = Icons.Default.Backup,

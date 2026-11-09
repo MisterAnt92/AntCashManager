@@ -12,43 +12,39 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 public interface TransactionDao {
-    @Query("SELECT * FROM transactions ORDER BY timestamp DESC")
-    public fun getAllTransactions(): Flow<List<TransactionEntity>>
+    @Query("SELECT * FROM transactions WHERE profile_id = :profileId ORDER BY timestamp DESC")
+    public fun getAllTransactions(profileId: Long): Flow<List<TransactionEntity>>
 
-    @Query("SELECT COUNT(*) FROM transactions")
-    public suspend fun getCount(): Int
+    @Query("SELECT COUNT(*) FROM transactions WHERE profile_id = :profileId")
+    public suspend fun getCount(profileId: Long): Int
 
-    /**
-     * Fetch transactions with pagination.
-     * @param limit Number of transactions per page (recommended: 50-200)
-     * @param offset Offset from start (0 for first page)
-     * @return Flow of paginated transaction results
-     */
-    @Query("SELECT * FROM transactions ORDER BY timestamp DESC LIMIT :limit OFFSET :offset")
+    @Query(
+        "SELECT * FROM transactions WHERE profile_id = :profileId " +
+            "ORDER BY timestamp DESC LIMIT :limit OFFSET :offset",
+    )
     public fun getTransactionsPaginated(
+        profileId: Long,
         limit: Int,
         offset: Int,
     ): Flow<List<TransactionEntity>>
 
-    /**
-     * Filter transactions by category with pagination.
-     * Pushes filtering to database level for efficiency.
-     */
-    @Query("SELECT * FROM transactions WHERE category = :category ORDER BY timestamp DESC LIMIT :limit OFFSET :offset")
+    @Query(
+        "SELECT * FROM transactions WHERE profile_id = :profileId AND category = :category " +
+            "ORDER BY timestamp DESC LIMIT :limit OFFSET :offset",
+    )
     public fun getTransactionsByCategory(
+        profileId: Long,
         category: String,
         limit: Int = 100,
         offset: Int = 0,
     ): Flow<List<TransactionEntity>>
 
-    /**
-     * Filter transactions by date range and category with pagination.
-     * Optimized for charts and reports.
-     */
     @Query(
-        "SELECT * FROM transactions WHERE category = :category AND timestamp BETWEEN :from AND :to ORDER BY timestamp DESC LIMIT :limit OFFSET :offset",
+        "SELECT * FROM transactions WHERE profile_id = :profileId AND category = :category " +
+            "AND timestamp BETWEEN :from AND :to ORDER BY timestamp DESC LIMIT :limit OFFSET :offset",
     )
     public fun getTransactionsByCategoryAndDateRange(
+        profileId: Long,
         category: String,
         from: Long,
         to: Long,
@@ -56,14 +52,13 @@ public interface TransactionDao {
         offset: Int = 0,
     ): Flow<List<TransactionEntity>>
 
-    /**
-     * Search transactions by title/payee/notes with pagination.
-     * Case-insensitive search.
-     */
     @Query(
-        "SELECT * FROM transactions WHERE (title LIKE :query OR payee LIKE :query OR notes LIKE :query) ORDER BY timestamp DESC LIMIT :limit OFFSET :offset",
+        "SELECT * FROM transactions WHERE profile_id = :profileId " +
+            "AND (title LIKE :query OR payee LIKE :query OR notes LIKE :query) " +
+            "ORDER BY timestamp DESC LIMIT :limit OFFSET :offset",
     )
     public fun searchTransactions(
+        profileId: Long,
         query: String,
         limit: Int = 100,
         offset: Int = 0,
@@ -87,67 +82,84 @@ public interface TransactionDao {
     @Delete
     public suspend fun deleteTransaction(transaction: TransactionEntity)
 
-    @Query("DELETE FROM transactions")
-    public suspend fun deleteAllTransactions()
+    @Query("DELETE FROM transactions WHERE profile_id = :profileId")
+    public suspend fun deleteAllTransactions(profileId: Long)
 
-    @Query("SELECT * FROM transactions WHERE timestamp BETWEEN :from AND :to ORDER BY timestamp DESC")
+    @Query(
+        "SELECT * FROM transactions WHERE profile_id = :profileId " +
+            "AND timestamp BETWEEN :from AND :to ORDER BY timestamp DESC",
+    )
     public fun getTransactionsByDateRange(
+        profileId: Long,
         from: Long,
         to: Long,
     ): Flow<List<TransactionEntity>>
 
-    @Query("SELECT * FROM transactions WHERE is_recurring = 1 ORDER BY timestamp DESC")
-    public fun getRecurringTransactions(): Flow<List<TransactionEntity>>
+    @Query(
+        "SELECT * FROM transactions WHERE profile_id = :profileId AND is_recurring = 1 " +
+            "ORDER BY timestamp DESC",
+    )
+    public fun getRecurringTransactions(profileId: Long): Flow<List<TransactionEntity>>
 
     @Transaction
     @Query(
         "UPDATE transactions SET category = :newCategoryName, category_icon = :icon, category_color = :color " +
-            "WHERE category = :oldCategoryName",
+            "WHERE profile_id = :profileId AND category = :oldCategoryName",
     )
     public suspend fun renameCategory(
+        profileId: Long,
         oldCategoryName: String,
         newCategoryName: String,
         icon: String,
         color: Long,
     )
 
-    // Query per suggerimenti transazioni. :since filtra le transazioni con timestamp >= since.
     @Query(
-        "SELECT DISTINCT title FROM transactions WHERE title != '' AND timestamp >= :since ORDER BY timestamp DESC LIMIT 20",
+        "SELECT DISTINCT title FROM transactions " +
+            "WHERE profile_id = :profileId AND title != '' AND timestamp >= :since " +
+            "ORDER BY timestamp DESC LIMIT 20",
     )
-    public fun getDistinctTitles(since: Long): Flow<List<String>>
+    public fun getDistinctTitles(profileId: Long, since: Long): Flow<List<String>>
 
     @Query(
-        "SELECT DISTINCT payee FROM transactions WHERE payee != '' AND timestamp >= :since ORDER BY timestamp DESC LIMIT 20",
+        "SELECT DISTINCT payee FROM transactions " +
+            "WHERE profile_id = :profileId AND payee != '' AND timestamp >= :since " +
+            "ORDER BY timestamp DESC LIMIT 20",
     )
-    public fun getDistinctPayees(since: Long): Flow<List<String>>
+    public fun getDistinctPayees(profileId: Long, since: Long): Flow<List<String>>
 
     @Query(
-        "SELECT DISTINCT notes FROM transactions WHERE notes != '' AND timestamp >= :since ORDER BY timestamp DESC LIMIT 20",
+        "SELECT DISTINCT notes FROM transactions " +
+            "WHERE profile_id = :profileId AND notes != '' AND timestamp >= :since " +
+            "ORDER BY timestamp DESC LIMIT 20",
     )
-    public fun getDistinctNotes(since: Long): Flow<List<String>>
+    public fun getDistinctNotes(profileId: Long, since: Long): Flow<List<String>>
 
     @Query(
-        "SELECT DISTINCT location FROM transactions WHERE location != '' AND timestamp >= :since ORDER BY timestamp DESC LIMIT 20",
+        "SELECT DISTINCT location FROM transactions " +
+            "WHERE profile_id = :profileId AND location != '' AND timestamp >= :since " +
+            "ORDER BY timestamp DESC LIMIT 20",
     )
-    public fun getDistinctLocations(since: Long): Flow<List<String>>
+    public fun getDistinctLocations(profileId: Long, since: Long): Flow<List<String>>
 
     @Query(
-        "SELECT DISTINCT tags FROM transactions WHERE tags != '' AND timestamp >= :since ORDER BY timestamp DESC LIMIT 20",
+        "SELECT DISTINCT tags FROM transactions " +
+            "WHERE profile_id = :profileId AND tags != '' AND timestamp >= :since " +
+            "ORDER BY timestamp DESC LIMIT 20",
     )
-    public fun getDistinctTags(since: Long): Flow<List<String>>
+    public fun getDistinctTags(profileId: Long, since: Long): Flow<List<String>>
 
-    // Unified suggestions query: fetch all distinct fields in single query
     @Query(
         """
         SELECT DISTINCT title, payee, notes, location, tags
         FROM transactions
-        WHERE timestamp >= :since AND (title != '' OR payee != '' OR notes != '' OR location != '' OR tags != '')
+        WHERE profile_id = :profileId AND timestamp >= :since
+            AND (title != '' OR payee != '' OR notes != '' OR location != '' OR tags != '')
         ORDER BY timestamp DESC
         LIMIT 100
     """,
     )
-    public suspend fun getSuggestions(since: Long): List<SuggestionRow>
+    public suspend fun getSuggestions(profileId: Long, since: Long): List<SuggestionRow>
 }
 
 public data class SuggestionRow(

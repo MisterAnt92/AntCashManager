@@ -214,6 +214,17 @@
     <string name="settings_reduce_motion">動きを減らす</string>
     <string name="settings_reduce_motion_subtitle">アニメーションやトランジションを最小限に抑えます。</string>
     <string name="settings_data_management">データ管理</string>
+    <string name="settings_profiles">Profili</string>
+    <string name="profiles_title">Profili</string>
+    <string name="profiles_add_button">Aggiungi profilo</string>
+    <string name="profiles_switch_dialog_title">Cambia profilo</string>
+    <string name="profiles_switch_dialog_message">Passare a %1$s?</string>
+    <string name="profiles_delete_dialog_title">Elimina profilo</string>
+    <string name="profiles_delete_dialog_warning">Eliminare %1$s e tutti i suoi dati? Questa azione non può essere annullata.</string>
+    <string name="profiles_default_name">Default</string>
+    <string name="profiles_active_badge">Attivo</string>
+    <string name="profiles_create_dialog_title">Nuovo profilo</string>
+    <string name="profiles_name_hint">Nome profilo</string>
     <string name="settings_security">セキュリティ</string>
     <string name="settings_security_data_encryption">データ保護 - 暗号化</string>
     <string name="settings_security_data_encryption_subtitle">ローカルアプリデータを暗号化して保護します</string>

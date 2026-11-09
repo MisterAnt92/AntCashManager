@@ -231,6 +231,17 @@
     <string name="settings_reduce_motion">Reduce Motion</string>
     <string name="settings_reduce_motion_subtitle">Minimize animations and transitions. Helpful for users sensitive to motion.</string>
     <string name="settings_data_management">Data Management</string>
+    <string name="settings_profiles">Profiles</string>
+    <string name="profiles_title">Profiles</string>
+    <string name="profiles_add_button">Add profile</string>
+    <string name="profiles_switch_dialog_title">Switch profile</string>
+    <string name="profiles_switch_dialog_message">Switch to %1$s?</string>
+    <string name="profiles_delete_dialog_title">Delete profile</string>
+    <string name="profiles_delete_dialog_warning">Delete %1$s and all its data? This cannot be undone.</string>
+    <string name="profiles_default_name">Default</string>
+    <string name="profiles_active_badge">Active</string>
+    <string name="profiles_create_dialog_title">New profile</string>
+    <string name="profiles_name_hint">Profile name</string>
     <string name="settings_security">Security</string>
     <string name="settings_security_data_encryption">Data protection - Encryption</string>
     <string name="settings_security_data_encryption_subtitle">Encrypt and protect local app data</string>

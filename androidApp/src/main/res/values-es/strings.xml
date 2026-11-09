@@ -199,6 +199,17 @@
     <string name="settings_section_data_privacy">Data &amp; Privacy</string>
     <string name="dialog_choose_date_format">Elegir formato de fecha</string>
     <string name="settings_data_management">Gesti\u00f3n de datos</string>
+    <string name="settings_profiles">Profili</string>
+    <string name="profiles_title">Profili</string>
+    <string name="profiles_add_button">Aggiungi profilo</string>
+    <string name="profiles_switch_dialog_title">Cambia profilo</string>
+    <string name="profiles_switch_dialog_message">Passare a %1$s?</string>
+    <string name="profiles_delete_dialog_title">Elimina profilo</string>
+    <string name="profiles_delete_dialog_warning">Eliminare %1$s e tutti i suoi dati? Questa azione non può essere annullata.</string>
+    <string name="profiles_default_name">Default</string>
+    <string name="profiles_active_badge">Attivo</string>
+    <string name="profiles_create_dialog_title">Nuovo profilo</string>
+    <string name="profiles_name_hint">Nome profilo</string>
     <string name="settings_security">Seguridad</string>
     <string name="settings_security_data_encryption">Datos seguros - Cifrado</string>
     <string name="settings_security_data_encryption_subtitle">Cifra y protege los datos locales de la aplicaci\u00f3n</string>

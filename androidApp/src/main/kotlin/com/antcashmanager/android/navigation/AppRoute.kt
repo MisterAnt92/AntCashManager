@@ -54,6 +54,8 @@ sealed class AppRoute(
         object Display : SettingsRoute("display")
 
         object DataManagement : SettingsRoute("settings_data")
+
+        object Profiles : SettingsRoute("profiles")
     }
 
     // Chart routes
@@ -97,6 +99,7 @@ sealed class AppRoute(
                 SettingsRoute.Main.route,
                 SettingsRoute.Display.route,
                 SettingsRoute.DataManagement.route,
+                SettingsRoute.Profiles.route,
                     -> true
 
                 else -> false
@@ -115,7 +118,8 @@ sealed class AppRoute(
             return route.startsWith(TransactionRoute.Add.route) ||
                 route == TransactionRoute.ReceiptScan.route ||
                 route == SettingsRoute.Display.route ||
-                route == SettingsRoute.DataManagement.route
+                route == SettingsRoute.DataManagement.route ||
+                route == SettingsRoute.Profiles.route
         }
     }
 }

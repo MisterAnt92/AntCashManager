@@ -9,10 +9,13 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.preferencesDataStoreFile
 import co.touchlab.kermit.Logger
+import kotlinx.coroutines.flow.first
 import com.antcashmanager.data.local.DatabaseEncryptionManager
 import com.antcashmanager.data.security.LocalDataCipherImpl
+import com.antcashmanager.domain.manager.ProfileManager
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.BackupDestination
@@ -21,15 +24,42 @@ import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 public class SettingsRepositoryImpl(
     private val context: Context,
-    private val dataStore: DataStore<Preferences> = context.dataStore,
+    private val profileManager: ProfileManager,
     private val localDataCipher: LocalDataCipherImpl = LocalDataCipherImpl(context),
 ) : SettingsRepository {
+
+    // ── DataStore infrastructure ──────────────────────────────────────────────
+
+    /** Device-global store: backup schedule, Drive tokens, encryption, analytics, widget. */
+    private val deviceStore: DataStore<Preferences> by lazy {
+        PreferenceDataStoreFactory.create {
+            context.preferencesDataStoreFile("device_settings")
+        }
+    }
+
+    private val profileStoreCache =
+        java.util.concurrent.ConcurrentHashMap<Long, DataStore<Preferences>>()
+
+    private fun profileStore(id: Long): DataStore<Preferences> =
+        profileStoreCache.getOrPut(id) {
+            PreferenceDataStoreFactory.create {
+                context.preferencesDataStoreFile("settings_profile_$id")
+            }
+        }
+
+    /** Flow of the active profile's DataStore — switches automatically on profile change. */
+    private val activeProfileStore: Flow<DataStore<Preferences>> =
+        profileManager.activeProfileId.map { profileStore(it) }
+
+    private val pid get() = profileManager.getActiveProfileIdSync()
+
+    // ── Per-profile preference keys ───────────────────────────────────────────
+
     private val themeKey = stringPreferencesKey("theme")
     private val languageKey = stringPreferencesKey("language")
     private val showChartsKey = booleanPreferencesKey("show_charts")
@@ -62,25 +92,25 @@ public class SettingsRepositoryImpl(
     private val transactionsTransactionDisplayTypeKey =
         stringPreferencesKey("transactions_transaction_display_type")
     private val isTutorialCompletedKey = booleanPreferencesKey("is_tutorial_completed")
-    private val analyticsConsentKey = booleanPreferencesKey("analytics_consent")
+    private val suggestionsEnabledKey = booleanPreferencesKey("suggestions_enabled")
+    private val suggestionsClearedAtKey = longPreferencesKey("suggestions_cleared_at")
+    private val chartCardsOrderKey = stringPreferencesKey("chart_cards_order")
+    private val homeTopCardsOrderKey = stringPreferencesKey("home_top_cards_order")
+    private val defaultPaymentTypeKey = stringPreferencesKey("default_payment_type")
     private val categorySortOrderInitializedKey =
         booleanPreferencesKey("category_sort_order_initialized")
+
+    // ── Device-global preference keys ─────────────────────────────────────────
+
+    private val analyticsConsentKey = booleanPreferencesKey("analytics_consent")
     private val dataEncryptionEnabledKey = booleanPreferencesKey("data_encryption_enabled")
     private val lastBackupTimestampKey = longPreferencesKey("last_backup_timestamp")
     private val lastRestoreTimestampKey = longPreferencesKey("last_restore_timestamp")
     private val autoBackupEnabledKey = booleanPreferencesKey("auto_backup_enabled")
     private val autoBackupFolderUriKey = stringPreferencesKey("auto_backup_folder_uri")
     private val backupFrequencyKey = stringPreferencesKey("backup_frequency")
-    private val suggestionsEnabledKey = booleanPreferencesKey("suggestions_enabled")
-    private val suggestionsClearedAtKey = longPreferencesKey("suggestions_cleared_at")
     private val widgetBackgroundColorKey = longPreferencesKey("widget_background_color")
     private val widgetOpacityKey = intPreferencesKey("widget_opacity")
-
-    // ── Card Customization (v3+) ──
-    private val chartCardsOrderKey = stringPreferencesKey("chart_cards_order")
-    private val homeTopCardsOrderKey = stringPreferencesKey("home_top_cards_order")
-
-    // ── Google Drive Backup Configuration ──
     private val autoBackupDestinationKey = stringPreferencesKey("auto_backup_destination")
     private val googleDriveFolderIdKey = stringPreferencesKey("google_drive_folder_id")
     private val googleDriveFolderNameKey = stringPreferencesKey("google_drive_folder_name")
@@ -88,19 +118,11 @@ public class SettingsRepositoryImpl(
     private val googleDriveRefreshTokenKey = stringPreferencesKey("google_drive_refresh_token")
     private val googleDriveUserEmailKey = stringPreferencesKey("google_drive_user_email")
 
-    // ── Default Payment Type ──
-    private val defaultPaymentTypeKey = stringPreferencesKey("default_payment_type")
+    // ── Date filter helpers ───────────────────────────────────────────────────
 
-    private fun createSavedDateFilter(
-        defaultPresetIndex: Int,
-        defaultDurationMs: Long,
-    ): SavedDateFilter {
+    private fun createSavedDateFilter(defaultPresetIndex: Int, defaultDurationMs: Long): SavedDateFilter {
         val now = System.currentTimeMillis()
-        return SavedDateFilter(
-            presetIndex = defaultPresetIndex,
-            from = now - defaultDurationMs,
-            to = now,
-        )
+        return SavedDateFilter(presetIndex = defaultPresetIndex, from = now - defaultDurationMs, to = now)
     }
 
     private fun defaultHomeDateFilter(): SavedDateFilter =
@@ -112,497 +134,467 @@ public class SettingsRepositoryImpl(
     private fun defaultChartsDateFilter(): SavedDateFilter =
         createSavedDateFilter(defaultPresetIndex = 1, defaultDurationMs = MONTH_IN_MILLIS)
 
-    private fun SavedDateFilter.normalized(): SavedDateFilter {
-        val normalizedFrom = minOf(from, to)
-        val normalizedTo = maxOf(from, to)
-        return copy(from = normalizedFrom, to = normalizedTo)
-    }
+    private fun SavedDateFilter.normalized(): SavedDateFilter =
+        copy(from = minOf(from, to), to = maxOf(from, to))
+
+    // ── Per-profile settings ──────────────────────────────────────────────────
 
     override fun getTheme(): Flow<AppTheme> =
-        dataStore.data.map { preferences ->
-            val themeName = preferences[themeKey] ?: AppTheme.SYSTEM.name
-            val theme = AppTheme.entries.find { it.name == themeName } ?: AppTheme.SYSTEM
-            Logger.d(tag = "SettingsRepo") { "Loaded theme from DataStore: $theme" }
-            theme
+        activeProfileStore.flatMapLatest { store ->
+            store.data.map { prefs ->
+                val name = prefs[themeKey] ?: AppTheme.SYSTEM.name
+                Logger.d(tag = "SettingsRepo") { "Loaded theme: $name" }
+                AppTheme.entries.find { it.name == name } ?: AppTheme.SYSTEM
+            }
         }
 
     override suspend fun setTheme(theme: AppTheme) {
-        Logger.d(tag = "SettingsRepo") { "Saving theme to DataStore: $theme" }
-        dataStore.edit { preferences ->
-            preferences[themeKey] = theme.name
-        }
-        Logger.d(tag = "SettingsRepo") { "Theme saved successfully" }
+        profileStore(pid).edit { it[themeKey] = theme.name }
     }
 
     override fun getLanguage(): Flow<AppLanguage> =
-        dataStore.data.map { preferences ->
-            val langName = preferences[languageKey] ?: AppLanguage.SYSTEM.name
-            val language = AppLanguage.entries.find { it.name == langName } ?: AppLanguage.SYSTEM
-            Logger.d(tag = "SettingsRepo") { "Loaded language from DataStore: $language" }
-            language
+        activeProfileStore.flatMapLatest { store ->
+            store.data.map { prefs ->
+                val name = prefs[languageKey] ?: AppLanguage.SYSTEM.name
+                AppLanguage.entries.find { it.name == name } ?: AppLanguage.SYSTEM
+            }
         }
 
     override suspend fun setLanguage(language: AppLanguage) {
-        Logger.d(tag = "SettingsRepo") { "Saving language to DataStore: $language" }
-        dataStore.edit { preferences ->
-            preferences[languageKey] = language.name
-        }
-        Logger.d(tag = "SettingsRepo") { "Language saved successfully" }
+        profileStore(pid).edit { it[languageKey] = language.name }
     }
 
     override fun getShowCharts(): Flow<Boolean> =
-        dataStore.data.map { preferences ->
-            preferences[showChartsKey] ?: true
-        }
+        activeProfileStore.flatMapLatest { it.data.map { p -> p[showChartsKey] ?: true } }
 
     override suspend fun setShowCharts(show: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[showChartsKey] = show
-        }
+        profileStore(pid).edit { it[showChartsKey] = show }
     }
 
     override fun getHighContrast(): Flow<Boolean> =
-        dataStore.data.map { preferences ->
-            preferences[highContrastKey] ?: false
-        }
+        activeProfileStore.flatMapLatest { it.data.map { p -> p[highContrastKey] ?: false } }
 
     override suspend fun setHighContrast(enabled: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[highContrastKey] = enabled
-        }
+        profileStore(pid).edit { it[highContrastKey] = enabled }
     }
 
     override fun getLargeText(): Flow<Boolean> =
-        dataStore.data.map { preferences ->
-            preferences[largeTextKey] ?: false
-        }
+        activeProfileStore.flatMapLatest { it.data.map { p -> p[largeTextKey] ?: false } }
 
     override suspend fun setLargeText(enabled: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[largeTextKey] = enabled
-        }
+        profileStore(pid).edit { it[largeTextKey] = enabled }
     }
 
     override fun getReduceMotion(): Flow<Boolean> =
-        dataStore.data.map { preferences ->
-            preferences[reduceMotionKey] ?: false
-        }
+        activeProfileStore.flatMapLatest { it.data.map { p -> p[reduceMotionKey] ?: false } }
 
     override suspend fun setReduceMotion(enabled: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[reduceMotionKey] = enabled
-        }
+        profileStore(pid).edit { it[reduceMotionKey] = enabled }
     }
 
     override fun getShowTransactionNotes(): Flow<Boolean> =
-        dataStore.data.map { preferences ->
-            preferences[showTransactionNotesKey] ?: true
-        }
+        activeProfileStore.flatMapLatest { it.data.map { p -> p[showTransactionNotesKey] ?: true } }
 
     override suspend fun setShowTransactionNotes(show: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[showTransactionNotesKey] = show
-        }
+        profileStore(pid).edit { it[showTransactionNotesKey] = show }
     }
 
     override fun getMaskAmounts(): Flow<Boolean> =
-        dataStore.data.map { preferences ->
-            preferences[maskAmountsKey] ?: false
-        }
+        activeProfileStore.flatMapLatest { it.data.map { p -> p[maskAmountsKey] ?: false } }
 
     override suspend fun setMaskAmounts(mask: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[maskAmountsKey] = mask
-        }
+        profileStore(pid).edit { it[maskAmountsKey] = mask }
     }
 
-    override fun getCurrencySymbol(): Flow<String> = dataStore.data.map { it[currencySymbolKey] ?: "\u20ac" }
+    override fun getCurrencySymbol(): Flow<String> =
+        activeProfileStore.flatMapLatest { it.data.map { p -> p[currencySymbolKey] ?: "€" } }
 
     override suspend fun setCurrencySymbol(symbol: String) {
-        dataStore.edit { it[currencySymbolKey] = symbol }
+        profileStore(pid).edit { it[currencySymbolKey] = symbol }
     }
 
-    override fun getDecimalDigits(): Flow<Int> = dataStore.data.map { it[decimalDigitsKey] ?: 2 }
+    override fun getDecimalDigits(): Flow<Int> =
+        activeProfileStore.flatMapLatest { it.data.map { p -> p[decimalDigitsKey] ?: 2 } }
 
     override suspend fun setDecimalDigits(digits: Int) {
-        dataStore.edit { it[decimalDigitsKey] = digits }
+        profileStore(pid).edit { it[decimalDigitsKey] = digits }
     }
 
-    override fun getDecimalSeparator(): Flow<String> = dataStore.data.map { it[decimalSeparatorKey] ?: "," }
+    override fun getDecimalSeparator(): Flow<String> =
+        activeProfileStore.flatMapLatest { it.data.map { p -> p[decimalSeparatorKey] ?: "," } }
 
     override suspend fun setDecimalSeparator(separator: String) {
-        dataStore.edit { it[decimalSeparatorKey] = separator }
+        profileStore(pid).edit { it[decimalSeparatorKey] = separator }
     }
 
-    override fun getThousandsSeparator(): Flow<String> = dataStore.data.map { it[thousandsSeparatorKey] ?: "." }
+    override fun getThousandsSeparator(): Flow<String> =
+        activeProfileStore.flatMapLatest { it.data.map { p -> p[thousandsSeparatorKey] ?: "" } }
 
     override suspend fun setThousandsSeparator(separator: String) {
-        dataStore.edit { it[thousandsSeparatorKey] = separator }
+        profileStore(pid).edit { it[thousandsSeparatorKey] = separator }
     }
 
     override fun getMealVoucherValue(): Flow<Double> =
-        dataStore.data.map { it[mealVoucherValueKey] ?: DEFAULT_MEAL_VOUCHER_VALUE }
+        activeProfileStore.flatMapLatest {
+            it.data.map { p -> p[mealVoucherValueKey] ?: DEFAULT_MEAL_VOUCHER_VALUE }
+        }
 
     override suspend fun setMealVoucherValue(value: Double) {
-        dataStore.edit { it[mealVoucherValueKey] = value }
+        profileStore(pid).edit { it[mealVoucherValueKey] = value }
     }
 
-    override fun getDateFormat(): Flow<String> = dataStore.data.map { it[dateFormatKey] ?: "dd/MM/yyyy" }
+    override fun getDateFormat(): Flow<String> =
+        activeProfileStore.flatMapLatest { it.data.map { p -> p[dateFormatKey] ?: "dd/MM/yyyy" } }
 
     override suspend fun setDateFormat(pattern: String) {
-        dataStore.edit { it[dateFormatKey] = pattern }
+        profileStore(pid).edit { it[dateFormatKey] = pattern }
     }
 
     override fun getDateFilterExpanded(): Flow<Boolean> =
-        dataStore.data.map { preferences ->
-            preferences[dateFilterExpandedKey] ?: true
-        }
+        activeProfileStore.flatMapLatest { it.data.map { p -> p[dateFilterExpandedKey] ?: true } }
 
     override suspend fun setDateFilterExpanded(expanded: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[dateFilterExpandedKey] = expanded
-        }
+        profileStore(pid).edit { it[dateFilterExpandedKey] = expanded }
     }
 
-    override fun getHomeDateFilterPreset(): Flow<Int> = dataStore.data.map { it[homeDateFilterPresetKey] ?: 1 }
+    override fun getHomeDateFilterPreset(): Flow<Int> =
+        activeProfileStore.flatMapLatest { it.data.map { p -> p[homeDateFilterPresetKey] ?: 1 } }
 
     override suspend fun setHomeDateFilterPreset(index: Int) {
-        dataStore.edit { it[homeDateFilterPresetKey] = index }
+        profileStore(pid).edit { it[homeDateFilterPresetKey] = index }
     }
 
     override fun getHomeDateFilterState(): Flow<SavedDateFilter> =
-        dataStore.data.map { preferences ->
-            val defaultFilter = defaultHomeDateFilter()
-            SavedDateFilter(
-                presetIndex = preferences[homeDateFilterPresetKey] ?: defaultFilter.presetIndex,
-                from = preferences[homeDateFilterFromKey] ?: defaultFilter.from,
-                to = preferences[homeDateFilterToKey] ?: defaultFilter.to,
-            ).normalized()
+        activeProfileStore.flatMapLatest { store ->
+            store.data.map { prefs ->
+                val default = defaultHomeDateFilter()
+                SavedDateFilter(
+                    presetIndex = prefs[homeDateFilterPresetKey] ?: default.presetIndex,
+                    from = prefs[homeDateFilterFromKey] ?: default.from,
+                    to = prefs[homeDateFilterToKey] ?: default.to,
+                ).normalized()
+            }
         }
 
     override suspend fun setHomeDateFilterState(filter: SavedDateFilter) {
-        val normalizedFilter = filter.normalized()
-        dataStore.edit { preferences ->
-            preferences[homeDateFilterPresetKey] = normalizedFilter.presetIndex
-            preferences[homeDateFilterFromKey] = normalizedFilter.from
-            preferences[homeDateFilterToKey] = normalizedFilter.to
+        val n = filter.normalized()
+        profileStore(pid).edit {
+            it[homeDateFilterPresetKey] = n.presetIndex
+            it[homeDateFilterFromKey] = n.from
+            it[homeDateFilterToKey] = n.to
         }
     }
 
     override fun getTransactionsDateFilterPreset(): Flow<Int> =
-        dataStore.data.map { it[transactionsDateFilterPresetKey] ?: 1 }
+        activeProfileStore.flatMapLatest {
+            it.data.map { p -> p[transactionsDateFilterPresetKey] ?: 1 }
+        }
 
     override suspend fun setTransactionsDateFilterPreset(index: Int) {
-        dataStore.edit { it[transactionsDateFilterPresetKey] = index }
+        profileStore(pid).edit { it[transactionsDateFilterPresetKey] = index }
     }
 
     override fun getTransactionsDateFilterState(): Flow<SavedDateFilter> =
-        dataStore.data.map { preferences ->
-            val defaultFilter = defaultTransactionsDateFilter()
-            SavedDateFilter(
-                presetIndex =
-                    preferences[transactionsDateFilterPresetKey] ?: defaultFilter.presetIndex,
-                from = preferences[transactionsDateFilterFromKey] ?: defaultFilter.from,
-                to = preferences[transactionsDateFilterToKey] ?: defaultFilter.to,
-            ).normalized()
+        activeProfileStore.flatMapLatest { store ->
+            store.data.map { prefs ->
+                val default = defaultTransactionsDateFilter()
+                SavedDateFilter(
+                    presetIndex = prefs[transactionsDateFilterPresetKey] ?: default.presetIndex,
+                    from = prefs[transactionsDateFilterFromKey] ?: default.from,
+                    to = prefs[transactionsDateFilterToKey] ?: default.to,
+                ).normalized()
+            }
         }
 
     override suspend fun setTransactionsDateFilterState(filter: SavedDateFilter) {
-        val normalizedFilter = filter.normalized()
-        dataStore.edit { preferences ->
-            preferences[transactionsDateFilterPresetKey] = normalizedFilter.presetIndex
-            preferences[transactionsDateFilterFromKey] = normalizedFilter.from
-            preferences[transactionsDateFilterToKey] = normalizedFilter.to
+        val n = filter.normalized()
+        profileStore(pid).edit {
+            it[transactionsDateFilterPresetKey] = n.presetIndex
+            it[transactionsDateFilterFromKey] = n.from
+            it[transactionsDateFilterToKey] = n.to
         }
     }
 
-    override fun getChartsDateFilterPreset(): Flow<Int> = dataStore.data.map { it[chartsDateFilterPresetKey] ?: 1 }
+    override fun getChartsDateFilterPreset(): Flow<Int> =
+        activeProfileStore.flatMapLatest {
+            it.data.map { p -> p[chartsDateFilterPresetKey] ?: 1 }
+        }
 
     override suspend fun setChartsDateFilterPreset(index: Int) {
-        dataStore.edit { it[chartsDateFilterPresetKey] = index }
+        profileStore(pid).edit { it[chartsDateFilterPresetKey] = index }
     }
 
     override fun getChartsDateFilterState(): Flow<SavedDateFilter> =
-        dataStore.data.map { preferences ->
-            val defaultFilter = defaultChartsDateFilter()
-            SavedDateFilter(
-                presetIndex = preferences[chartsDateFilterPresetKey] ?: defaultFilter.presetIndex,
-                from = preferences[chartsDateFilterFromKey] ?: defaultFilter.from,
-                to = preferences[chartsDateFilterToKey] ?: defaultFilter.to,
-            ).normalized()
+        activeProfileStore.flatMapLatest { store ->
+            store.data.map { prefs ->
+                val default = defaultChartsDateFilter()
+                SavedDateFilter(
+                    presetIndex = prefs[chartsDateFilterPresetKey] ?: default.presetIndex,
+                    from = prefs[chartsDateFilterFromKey] ?: default.from,
+                    to = prefs[chartsDateFilterToKey] ?: default.to,
+                ).normalized()
+            }
         }
 
     override suspend fun setChartsDateFilterState(filter: SavedDateFilter) {
-        val normalizedFilter = filter.normalized()
-        dataStore.edit { preferences ->
-            preferences[chartsDateFilterPresetKey] = normalizedFilter.presetIndex
-            preferences[chartsDateFilterFromKey] = normalizedFilter.from
-            preferences[chartsDateFilterToKey] = normalizedFilter.to
+        val n = filter.normalized()
+        profileStore(pid).edit {
+            it[chartsDateFilterPresetKey] = n.presetIndex
+            it[chartsDateFilterFromKey] = n.from
+            it[chartsDateFilterToKey] = n.to
         }
     }
 
-    override fun getChartsZoomEnabled(): Flow<Boolean> = dataStore.data.map { it[chartsZoomEnabledKey] ?: false }
+    override fun getChartsZoomEnabled(): Flow<Boolean> =
+        activeProfileStore.flatMapLatest { it.data.map { p -> p[chartsZoomEnabledKey] ?: false } }
 
     override suspend fun setChartsZoomEnabled(enabled: Boolean) {
-        dataStore.edit { it[chartsZoomEnabledKey] = enabled }
+        profileStore(pid).edit { it[chartsZoomEnabledKey] = enabled }
     }
 
     override fun getShowPaymentTypeBreakdown(): Flow<Boolean> =
-        dataStore.data.map { preferences ->
-            preferences[showPaymentTypeBreakdownKey] ?: false
+        activeProfileStore.flatMapLatest {
+            it.data.map { p -> p[showPaymentTypeBreakdownKey] ?: false }
         }
 
     override suspend fun setShowPaymentTypeBreakdown(show: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[showPaymentTypeBreakdownKey] = show
-        }
+        profileStore(pid).edit { it[showPaymentTypeBreakdownKey] = show }
     }
 
     override fun getShowQuickInsightsCard(): Flow<Boolean> =
-        dataStore.data.map { preferences ->
-            preferences[showQuickInsightsCardKey] ?: true
+        activeProfileStore.flatMapLatest {
+            it.data.map { p -> p[showQuickInsightsCardKey] ?: true }
         }
 
     override suspend fun setShowQuickInsightsCard(show: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[showQuickInsightsCardKey] = show
-        }
+        profileStore(pid).edit { it[showQuickInsightsCardKey] = show }
     }
 
     override fun getDefaultPaymentType(): Flow<String> =
-        dataStore.data.map { preferences ->
-            preferences[defaultPaymentTypeKey] ?: "ELECTRONIC"
+        activeProfileStore.flatMapLatest {
+            it.data.map { p -> p[defaultPaymentTypeKey] ?: "ELECTRONIC" }
         }
 
     override suspend fun setDefaultPaymentType(paymentType: String) {
-        dataStore.edit { preferences ->
-            preferences[defaultPaymentTypeKey] = paymentType
-        }
+        profileStore(pid).edit { it[defaultPaymentTypeKey] = paymentType }
     }
 
     override fun getTransactionDisplayType(): Flow<TransactionDisplayType> =
-        dataStore.data.map { preferences ->
-            val typeName =
-                preferences[transactionDisplayTypeKey] ?: TransactionDisplayType.TREND.name
-            try {
-                TransactionDisplayType.valueOf(typeName)
-            } catch (_: IllegalArgumentException) {
-                TransactionDisplayType.TREND
+        activeProfileStore.flatMapLatest { store ->
+            store.data.map { prefs ->
+                val name = prefs[transactionDisplayTypeKey] ?: TransactionDisplayType.TREND.name
+                runCatching { TransactionDisplayType.valueOf(name) }.getOrDefault(TransactionDisplayType.TREND)
             }
         }
 
     override suspend fun setTransactionDisplayType(displayType: TransactionDisplayType) {
-        dataStore.edit { preferences ->
-            preferences[transactionDisplayTypeKey] = displayType.name
-        }
+        profileStore(pid).edit { it[transactionDisplayTypeKey] = displayType.name }
     }
 
     override fun getTransactionsTransactionDisplayType(): Flow<TransactionDisplayType> =
-        dataStore.data.map { preferences ->
-            val typeName =
-                preferences[transactionsTransactionDisplayTypeKey]
+        activeProfileStore.flatMapLatest { store ->
+            store.data.map { prefs ->
+                val name = prefs[transactionsTransactionDisplayTypeKey]
                     ?: TransactionDisplayType.TREND.name
-            try {
-                TransactionDisplayType.valueOf(typeName)
-            } catch (_: IllegalArgumentException) {
-                TransactionDisplayType.TREND
+                runCatching { TransactionDisplayType.valueOf(name) }
+                    .getOrDefault(TransactionDisplayType.TREND)
             }
         }
 
     override suspend fun setTransactionsTransactionDisplayType(displayType: TransactionDisplayType) {
-        dataStore.edit { preferences ->
-            preferences[transactionsTransactionDisplayTypeKey] = displayType.name
-        }
+        profileStore(pid).edit { it[transactionsTransactionDisplayTypeKey] = displayType.name }
     }
 
-    override fun getIsTutorialCompleted(): Flow<Boolean> = dataStore.data.map { it[isTutorialCompletedKey] ?: false }
+    override fun getIsTutorialCompleted(): Flow<Boolean> =
+        activeProfileStore.flatMapLatest {
+            it.data.map { p -> p[isTutorialCompletedKey] ?: false }
+        }
 
     override suspend fun setIsTutorialCompleted(completed: Boolean) {
-        dataStore.edit { it[isTutorialCompletedKey] = completed }
-    }
-
-    /** null = never asked; true = granted; false = denied. Not reset by resetAllPreferences(). */
-    override fun getAnalyticsConsent(): Flow<Boolean?> = dataStore.data.map { it[analyticsConsentKey] }
-
-    override suspend fun setAnalyticsConsent(granted: Boolean) {
-        dataStore.edit { it[analyticsConsentKey] = granted }
+        profileStore(pid).edit { it[isTutorialCompletedKey] = completed }
     }
 
     override fun getCategorySortOrderInitialized(): Flow<Boolean> =
-        dataStore.data.map { it[categorySortOrderInitializedKey] ?: false }
+        activeProfileStore.flatMapLatest {
+            it.data.map { p -> p[categorySortOrderInitializedKey] ?: false }
+        }
 
     override suspend fun setCategorySortOrderInitialized(initialized: Boolean) {
-        dataStore.edit { it[categorySortOrderInitializedKey] = initialized }
+        profileStore(pid).edit { it[categorySortOrderInitializedKey] = initialized }
+    }
+
+    override fun getSuggestionsEnabled(): Flow<Boolean> =
+        activeProfileStore.flatMapLatest {
+            it.data.map { p -> p[suggestionsEnabledKey] ?: true }
+        }
+
+    override suspend fun setSuggestionsEnabled(enabled: Boolean) {
+        profileStore(pid).edit { it[suggestionsEnabledKey] = enabled }
+    }
+
+    override fun getSuggestionsClearedAt(): Flow<Long?> =
+        activeProfileStore.flatMapLatest { it.data.map { p -> p[suggestionsClearedAtKey] } }
+
+    override suspend fun setSuggestionsClearedAt(timestamp: Long) {
+        profileStore(pid).edit { it[suggestionsClearedAtKey] = timestamp }
+    }
+
+    override fun getChartCardsOrder(): Flow<String> =
+        activeProfileStore.flatMapLatest { it.data.map { p -> p[chartCardsOrderKey] ?: "" } }
+
+    override suspend fun setChartCardsOrder(order: String) {
+        profileStore(pid).edit { it[chartCardsOrderKey] = order }
+    }
+
+    override fun getHomeTopCardsOrder(): Flow<String> =
+        activeProfileStore.flatMapLatest { it.data.map { p -> p[homeTopCardsOrderKey] ?: "" } }
+
+    override suspend fun setHomeTopCardsOrder(order: String) {
+        profileStore(pid).edit { it[homeTopCardsOrderKey] = order }
+    }
+
+    // ── Device-global settings ────────────────────────────────────────────────
+
+    override fun getAnalyticsConsent(): Flow<Boolean?> =
+        deviceStore.data.map { it[analyticsConsentKey] }
+
+    override suspend fun setAnalyticsConsent(granted: Boolean) {
+        deviceStore.edit { it[analyticsConsentKey] = granted }
     }
 
     override fun getDataEncryptionEnabled(): Flow<Boolean> =
-        dataStore.data.map { it[dataEncryptionEnabledKey] ?: false }
+        deviceStore.data.map { it[dataEncryptionEnabledKey] ?: false }
 
     override suspend fun setDataEncryptionEnabled(enabled: Boolean) {
-        dataStore.edit { it[dataEncryptionEnabledKey] = enabled }
+        deviceStore.edit { it[dataEncryptionEnabledKey] = enabled }
         DatabaseEncryptionManager.setEncryptionDesired(context, enabled)
-        // Invalidate cipher cache so new encryption state is reflected immediately
         localDataCipher.invalidateEncryptionFlag()
     }
 
-    override fun getLastBackupTimestamp(): Flow<Long?> = dataStore.data.map { it[lastBackupTimestampKey] ?: 0L }
+    override fun getLastBackupTimestamp(): Flow<Long?> =
+        deviceStore.data.map { it[lastBackupTimestampKey] ?: 0L }
 
     override suspend fun setLastBackupTimestamp(timestamp: Long) {
-        dataStore.edit { it[lastBackupTimestampKey] = timestamp }
+        deviceStore.edit { it[lastBackupTimestampKey] = timestamp }
     }
 
-    override fun getLastRestoreTimestamp(): Flow<Long?> = dataStore.data.map { it[lastRestoreTimestampKey] }
+    override fun getLastRestoreTimestamp(): Flow<Long?> =
+        deviceStore.data.map { it[lastRestoreTimestampKey] }
 
     override suspend fun setLastRestoreTimestamp(timestamp: Long) {
-        dataStore.edit { it[lastRestoreTimestampKey] = timestamp }
+        deviceStore.edit { it[lastRestoreTimestampKey] = timestamp }
     }
 
-    override fun getAutoBackupEnabled(): Flow<Boolean> = dataStore.data.map { it[autoBackupEnabledKey] ?: false }
+    override fun getAutoBackupEnabled(): Flow<Boolean> =
+        deviceStore.data.map { it[autoBackupEnabledKey] ?: false }
 
     override suspend fun setAutoBackupEnabled(enabled: Boolean) {
-        dataStore.edit { it[autoBackupEnabledKey] = enabled }
+        deviceStore.edit { it[autoBackupEnabledKey] = enabled }
     }
 
-    override fun getAutoBackupFolderUri(): Flow<String?> = dataStore.data.map { it[autoBackupFolderUriKey] }
+    override fun getAutoBackupFolderUri(): Flow<String?> =
+        deviceStore.data.map { it[autoBackupFolderUriKey] }
 
     override suspend fun setAutoBackupFolderUri(uri: String?) {
-        dataStore.edit { preferences ->
-            if (uri == null) {
-                preferences.remove(autoBackupFolderUriKey)
-            } else {
-                preferences[autoBackupFolderUriKey] = uri
-            }
+        deviceStore.edit { prefs ->
+            if (uri == null) prefs.remove(autoBackupFolderUriKey) else prefs[autoBackupFolderUriKey] = uri
         }
     }
 
     override fun getBackupFrequency(): Flow<BackupFrequency> =
-        dataStore.data.map { prefs ->
+        deviceStore.data.map { prefs ->
             prefs[backupFrequencyKey]
                 ?.let { runCatching { BackupFrequency.valueOf(it) }.getOrNull() }
                 ?: BackupFrequency.WEEKLY
         }
 
     override suspend fun setBackupFrequency(frequency: BackupFrequency) {
-        dataStore.edit { it[backupFrequencyKey] = frequency.name }
-    }
-
-    override fun getSuggestionsEnabled(): Flow<Boolean> = dataStore.data.map { it[suggestionsEnabledKey] ?: true }
-
-    override suspend fun setSuggestionsEnabled(enabled: Boolean) {
-        dataStore.edit { it[suggestionsEnabledKey] = enabled }
-    }
-
-    override fun getSuggestionsClearedAt(): Flow<Long?> = dataStore.data.map { it[suggestionsClearedAtKey] }
-
-    override suspend fun setSuggestionsClearedAt(timestamp: Long) {
-        dataStore.edit { it[suggestionsClearedAtKey] = timestamp }
+        deviceStore.edit { it[backupFrequencyKey] = frequency.name }
     }
 
     override fun getWidgetBackgroundColor(): Flow<Long> =
-        dataStore.data.map { it[widgetBackgroundColorKey] ?: DEFAULT_WIDGET_BACKGROUND_COLOR }
+        deviceStore.data.map { it[widgetBackgroundColorKey] ?: DEFAULT_WIDGET_BACKGROUND_COLOR }
 
     override suspend fun setWidgetBackgroundColor(color: Long) {
-        dataStore.edit { it[widgetBackgroundColorKey] = color }
+        deviceStore.edit { it[widgetBackgroundColorKey] = color }
     }
 
-    override fun getWidgetOpacity(): Flow<Int> = dataStore.data.map { it[widgetOpacityKey] ?: DEFAULT_WIDGET_OPACITY }
+    override fun getWidgetOpacity(): Flow<Int> =
+        deviceStore.data.map { it[widgetOpacityKey] ?: DEFAULT_WIDGET_OPACITY }
 
     override suspend fun setWidgetOpacity(opacity: Int) {
-        dataStore.edit { it[widgetOpacityKey] = opacity }
+        deviceStore.edit { it[widgetOpacityKey] = opacity }
     }
 
-    // ── Card Customization (v3+) ──
-    override fun getChartCardsOrder(): Flow<String> = dataStore.data.map { it[chartCardsOrderKey] ?: "" }
-
-    override suspend fun setChartCardsOrder(order: String) {
-        dataStore.edit { it[chartCardsOrderKey] = order }
-    }
-
-    override fun getHomeTopCardsOrder(): Flow<String> = dataStore.data.map { it[homeTopCardsOrderKey] ?: "" }
-
-    override suspend fun setHomeTopCardsOrder(order: String) {
-        dataStore.edit { it[homeTopCardsOrderKey] = order }
-    }
-
-    // ── Google Drive Backup Configuration ──
     override fun getAutoBackupDestination(): Flow<BackupDestination> =
-        dataStore.data.map { preferences ->
-            val destinationName = preferences[autoBackupDestinationKey] ?: BackupDestination.LOCAL.name
-            BackupDestination.valueOf(destinationName)
+        deviceStore.data.map { prefs ->
+            val name = prefs[autoBackupDestinationKey] ?: BackupDestination.LOCAL.name
+            BackupDestination.valueOf(name)
         }
 
     override suspend fun setAutoBackupDestination(destination: BackupDestination) {
-        dataStore.edit { preferences ->
-            preferences[autoBackupDestinationKey] = destination.name
-        }
+        deviceStore.edit { it[autoBackupDestinationKey] = destination.name }
     }
 
-    override fun getGoogleDriveFolderId(): Flow<String?> = dataStore.data.map { it[googleDriveFolderIdKey] }
+    override fun getGoogleDriveFolderId(): Flow<String?> =
+        deviceStore.data.map { it[googleDriveFolderIdKey] }
 
     override suspend fun setGoogleDriveFolderId(folderId: String?) {
-        dataStore.edit { preferences ->
-            if (folderId == null) {
-                preferences.remove(googleDriveFolderIdKey)
-            } else {
-                preferences[googleDriveFolderIdKey] = folderId
-            }
+        deviceStore.edit { prefs ->
+            if (folderId == null) prefs.remove(googleDriveFolderIdKey)
+            else prefs[googleDriveFolderIdKey] = folderId
         }
     }
 
-    override fun getGoogleDriveFolderName(): Flow<String?> = dataStore.data.map { it[googleDriveFolderNameKey] }
+    override fun getGoogleDriveFolderName(): Flow<String?> =
+        deviceStore.data.map { it[googleDriveFolderNameKey] }
 
     override suspend fun setGoogleDriveFolderName(folderName: String?) {
-        dataStore.edit { preferences ->
-            if (folderName == null) {
-                preferences.remove(googleDriveFolderNameKey)
-            } else {
-                preferences[googleDriveFolderNameKey] = folderName
-            }
+        deviceStore.edit { prefs ->
+            if (folderName == null) prefs.remove(googleDriveFolderNameKey)
+            else prefs[googleDriveFolderNameKey] = folderName
         }
     }
 
-    override fun getGoogleDriveAuthToken(): Flow<String?> = dataStore.data.map { it[googleDriveAuthTokenKey] }
+    override fun getGoogleDriveAuthToken(): Flow<String?> =
+        deviceStore.data.map { it[googleDriveAuthTokenKey] }
 
     override suspend fun setGoogleDriveAuthToken(token: String?) {
-        dataStore.edit { preferences ->
-            if (token == null) {
-                preferences.remove(googleDriveAuthTokenKey)
-            } else {
-                preferences[googleDriveAuthTokenKey] = token
-            }
+        deviceStore.edit { prefs ->
+            if (token == null) prefs.remove(googleDriveAuthTokenKey)
+            else prefs[googleDriveAuthTokenKey] = token
         }
     }
 
-    override fun getGoogleDriveRefreshToken(): Flow<String?> = dataStore.data.map { it[googleDriveRefreshTokenKey] }
+    override fun getGoogleDriveRefreshToken(): Flow<String?> =
+        deviceStore.data.map { it[googleDriveRefreshTokenKey] }
 
     override suspend fun setGoogleDriveRefreshToken(token: String?) {
-        dataStore.edit { preferences ->
-            if (token == null) {
-                preferences.remove(googleDriveRefreshTokenKey)
-            } else {
-                preferences[googleDriveRefreshTokenKey] = token
-            }
+        deviceStore.edit { prefs ->
+            if (token == null) prefs.remove(googleDriveRefreshTokenKey)
+            else prefs[googleDriveRefreshTokenKey] = token
         }
     }
 
-    override fun getGoogleDriveUserEmail(): Flow<String?> = dataStore.data.map { it[googleDriveUserEmailKey] }
+    override fun getGoogleDriveUserEmail(): Flow<String?> =
+        deviceStore.data.map { it[googleDriveUserEmailKey] }
 
     override suspend fun setGoogleDriveUserEmail(email: String?) {
-        dataStore.edit { preferences ->
-            if (email == null) {
-                preferences.remove(googleDriveUserEmailKey)
-            } else {
-                preferences[googleDriveUserEmailKey] = email
-            }
+        deviceStore.edit { prefs ->
+            if (email == null) prefs.remove(googleDriveUserEmailKey)
+            else prefs[googleDriveUserEmailKey] = email
         }
     }
+
+    // ── Reset ─────────────────────────────────────────────────────────────────
 
     override suspend fun resetAllPreferences() {
         val defaultHomeFilter = defaultHomeDateFilter()
         val defaultTransactionsFilter = defaultTransactionsDateFilter()
         val defaultChartsFilter = defaultChartsDateFilter()
 
-        dataStore.edit { prefs ->
+        // Reset only the active profile's settings; device-global keys are not touched
+        profileStore(pid).edit { prefs ->
             prefs[themeKey] = AppTheme.SYSTEM.name
             prefs[languageKey] = AppLanguage.SYSTEM.name
             prefs[showChartsKey] = true
@@ -611,7 +603,7 @@ public class SettingsRepositoryImpl(
             prefs[reduceMotionKey] = false
             prefs[showTransactionNotesKey] = true
             prefs[maskAmountsKey] = false
-            prefs[currencySymbolKey] = "\u20ac"
+            prefs[currencySymbolKey] = "€"
             prefs[decimalDigitsKey] = 2
             prefs[decimalSeparatorKey] = ","
             prefs[thousandsSeparatorKey] = ""
@@ -633,22 +625,111 @@ public class SettingsRepositoryImpl(
             prefs[transactionDisplayTypeKey] = TransactionDisplayType.TREND.name
             prefs[transactionsTransactionDisplayTypeKey] = TransactionDisplayType.TREND.name
             prefs[isTutorialCompletedKey] = false
-            prefs[dataEncryptionEnabledKey] = false
             prefs[suggestionsEnabledKey] = true
             prefs.remove(suggestionsClearedAtKey)
-            prefs[widgetBackgroundColorKey] = DEFAULT_WIDGET_BACKGROUND_COLOR
-            prefs[widgetOpacityKey] = DEFAULT_WIDGET_OPACITY
             prefs[chartCardsOrderKey] = ""
             prefs[homeTopCardsOrderKey] = ""
+            prefs[defaultPaymentTypeKey] = "ELECTRONIC"
         }
         DatabaseEncryptionManager.setEncryptionDesired(context, false)
+    }
+
+    // ── Backup helpers (used by BackupService in androidApp) ──────────────────
+
+    /** Reads all per-profile settings as a snapshot for backup. */
+    public suspend fun readProfileSettingsSnapshot(profileId: Long): ProfileSettingsSnapshot {
+        val prefs = profileStore(profileId).data.first()
+        return ProfileSettingsSnapshot(
+            theme = prefs[themeKey] ?: AppTheme.SYSTEM.name,
+            language = prefs[languageKey] ?: AppLanguage.SYSTEM.name,
+            showCharts = prefs[showChartsKey] ?: true,
+            highContrast = prefs[highContrastKey] ?: false,
+            largeText = prefs[largeTextKey] ?: false,
+            reduceMotion = prefs[reduceMotionKey] ?: false,
+            showTransactionNotes = prefs[showTransactionNotesKey] ?: true,
+            maskAmounts = prefs[maskAmountsKey] ?: false,
+            showPaymentTypeBreakdown = prefs[showPaymentTypeBreakdownKey] ?: false,
+            showQuickInsightsCard = prefs[showQuickInsightsCardKey] ?: true,
+            transactionDisplayType = prefs[transactionDisplayTypeKey] ?: TransactionDisplayType.TREND.name,
+            transactionsTransactionDisplayType = prefs[transactionsTransactionDisplayTypeKey] ?: TransactionDisplayType.TREND.name,
+            currencySymbol = prefs[currencySymbolKey] ?: "€",
+            decimalDigits = prefs[decimalDigitsKey] ?: 2,
+            decimalSeparator = prefs[decimalSeparatorKey] ?: ",",
+            thousandsSeparator = prefs[thousandsSeparatorKey] ?: "",
+            mealVoucherValue = prefs[mealVoucherValueKey] ?: DEFAULT_MEAL_VOUCHER_VALUE,
+            dateFormat = prefs[dateFormatKey] ?: "dd/MM/yyyy",
+            chartsZoomEnabled = prefs[chartsZoomEnabledKey] ?: false,
+            suggestionsEnabled = prefs[suggestionsEnabledKey] ?: true,
+            suggestionsClearedAt = prefs[suggestionsClearedAtKey],
+            chartCardsOrder = prefs[chartCardsOrderKey] ?: "",
+            homeTopCardsOrder = prefs[homeTopCardsOrderKey] ?: "",
+            defaultPaymentType = prefs[defaultPaymentTypeKey] ?: "ELECTRONIC",
+        )
+    }
+
+    /** Applies a snapshot to a specific profile's DataStore. Device-global keys are skipped. */
+    public suspend fun applyProfileSettingsSnapshot(profileId: Long, snapshot: ProfileSettingsSnapshot) {
+        profileStore(profileId).edit { prefs ->
+            prefs[themeKey] = snapshot.theme
+            prefs[languageKey] = snapshot.language
+            prefs[showChartsKey] = snapshot.showCharts
+            prefs[highContrastKey] = snapshot.highContrast
+            prefs[largeTextKey] = snapshot.largeText
+            prefs[reduceMotionKey] = snapshot.reduceMotion
+            prefs[showTransactionNotesKey] = snapshot.showTransactionNotes
+            prefs[maskAmountsKey] = snapshot.maskAmounts
+            prefs[showPaymentTypeBreakdownKey] = snapshot.showPaymentTypeBreakdown
+            prefs[showQuickInsightsCardKey] = snapshot.showQuickInsightsCard
+            prefs[transactionDisplayTypeKey] = snapshot.transactionDisplayType
+            prefs[transactionsTransactionDisplayTypeKey] = snapshot.transactionsTransactionDisplayType
+            prefs[currencySymbolKey] = snapshot.currencySymbol
+            prefs[decimalDigitsKey] = snapshot.decimalDigits
+            prefs[decimalSeparatorKey] = snapshot.decimalSeparator
+            prefs[thousandsSeparatorKey] = snapshot.thousandsSeparator
+            prefs[mealVoucherValueKey] = snapshot.mealVoucherValue
+            prefs[dateFormatKey] = snapshot.dateFormat
+            prefs[chartsZoomEnabledKey] = snapshot.chartsZoomEnabled
+            prefs[suggestionsEnabledKey] = snapshot.suggestionsEnabled
+            snapshot.suggestionsClearedAt?.let { prefs[suggestionsClearedAtKey] = it }
+            prefs[chartCardsOrderKey] = snapshot.chartCardsOrder
+            prefs[homeTopCardsOrderKey] = snapshot.homeTopCardsOrder
+            prefs[defaultPaymentTypeKey] = snapshot.defaultPaymentType
+        }
     }
 
     private companion object {
         const val WEEK_IN_MILLIS = 7L * 24 * 60 * 60 * 1000
         const val MONTH_IN_MILLIS = 30L * 24 * 60 * 60 * 1000
         const val DEFAULT_MEAL_VOUCHER_VALUE = 5.29
-        const val DEFAULT_WIDGET_BACKGROUND_COLOR = -16777216L // Black (ARGB)
+        const val DEFAULT_WIDGET_BACKGROUND_COLOR = -16777216L
         const val DEFAULT_WIDGET_OPACITY = 100
     }
 }
+
+/** Snapshot of a profile's per-profile settings for backup/restore purposes. */
+public data class ProfileSettingsSnapshot(
+    val theme: String = "SYSTEM",
+    val language: String = "SYSTEM",
+    val showCharts: Boolean = true,
+    val highContrast: Boolean = false,
+    val largeText: Boolean = false,
+    val reduceMotion: Boolean = false,
+    val showTransactionNotes: Boolean = true,
+    val maskAmounts: Boolean = false,
+    val showPaymentTypeBreakdown: Boolean = false,
+    val showQuickInsightsCard: Boolean = true,
+    val transactionDisplayType: String = "TREND",
+    val transactionsTransactionDisplayType: String = "TREND",
+    val currencySymbol: String = "€",
+    val decimalDigits: Int = 2,
+    val decimalSeparator: String = ",",
+    val thousandsSeparator: String = "",
+    val mealVoucherValue: Double = 5.29,
+    val dateFormat: String = "dd/MM/yyyy",
+    val chartsZoomEnabled: Boolean = false,
+    val suggestionsEnabled: Boolean = true,
+    val suggestionsClearedAt: Long? = null,
+    val chartCardsOrder: String = "",
+    val homeTopCardsOrder: String = "",
+    val defaultPaymentType: String = "ELECTRONIC",
+)

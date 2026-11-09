@@ -7,6 +7,7 @@ import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.di.appModules
 import com.antcashmanager.android.work.AutoBackupNotifier
 import com.antcashmanager.domain.model.Category
+import com.antcashmanager.domain.manager.ProfileManager
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.security.LocalDataCipher
@@ -49,6 +50,8 @@ class AntCashManagerApp : Application() {
         }
 
         appScope.launch {
+            // Initialize ProfileManager before any ViewModel reads activeProfileId
+            get<ProfileManager>().initialize()
             seedDefaultCategories()
             ensureCategorySortOrderInitialized()
         }

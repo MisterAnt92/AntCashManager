@@ -4,13 +4,15 @@ import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.antcashmanager.data.local.dao.CategoryDao
+import com.antcashmanager.data.local.dao.ProfileDao
 import com.antcashmanager.data.local.dao.TransactionDao
 import com.antcashmanager.data.local.entity.CategoryEntity
+import com.antcashmanager.data.local.entity.ProfileEntity
 import com.antcashmanager.data.local.entity.TransactionEntity
 
 @Database(
-    entities = [TransactionEntity::class, CategoryEntity::class],
-    version = 10,
+    entities = [TransactionEntity::class, CategoryEntity::class, ProfileEntity::class],
+    version = 11,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
@@ -23,10 +25,13 @@ import com.antcashmanager.data.local.entity.TransactionEntity
         AutoMigration(from = 8, to = 9),
         // NOTE: 9→10 is handled by manual Migration_9_10 in DatabaseProvider
         // (remove AutoMigration here to avoid conflicts with the manual migration)
+        AutoMigration(from = 10, to = 11),
     ],
 )
 public abstract class AppDatabase : RoomDatabase() {
     public abstract fun transactionDao(): TransactionDao
 
     public abstract fun categoryDao(): CategoryDao
+
+    public abstract fun profileDao(): ProfileDao
 }

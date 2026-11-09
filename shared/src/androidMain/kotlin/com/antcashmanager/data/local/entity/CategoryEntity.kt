@@ -10,6 +10,7 @@ import androidx.room.PrimaryKey
     indices = [
         Index("type"), // WHERE type = :type in getCategoriesByType
         Index("name"), // Potential unique constraint
+        Index("profile_id"), // WHERE profile_id = :profileId
     ],
 )
 public data class CategoryEntity(
@@ -26,4 +27,6 @@ public data class CategoryEntity(
     val sortOrder: Int = 0,
     @ColumnInfo(name = "is_hidden", defaultValue = "0")
     val isHidden: Boolean = false,
+    @ColumnInfo(name = "profile_id", defaultValue = "1")
+    val profileId: Long = 1,
 )
