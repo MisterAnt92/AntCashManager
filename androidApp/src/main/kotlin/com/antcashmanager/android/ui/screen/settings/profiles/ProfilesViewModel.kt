@@ -1,7 +1,9 @@
 package com.antcashmanager.android.ui.screen.settings.profiles
 
+import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.ui.base.BaseViewModel
+import com.antcashmanager.android.util.ProfilePhotoStorage
 import com.antcashmanager.domain.manager.ProfileManager
 import com.antcashmanager.domain.model.Profile
 import com.antcashmanager.domain.usecase.profile.CreateProfileParams
@@ -14,7 +16,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -25,6 +26,7 @@ class ProfilesViewModel(
     private val deleteProfileUseCase: DeleteProfileUseCase,
     private val switchProfileUseCase: SwitchProfileUseCase,
     private val profileManager: ProfileManager,
+    private val profilePhotoStorage: ProfilePhotoStorage,
 ) : BaseViewModel<ProfilesEvent>() {
 
     private val _state = MutableStateFlow(ProfilesState())
@@ -51,8 +53,16 @@ class ProfilesViewModel(
             is ProfilesEvent.DismissDelete -> dismissDelete()
             is ProfilesEvent.ShowCreateDialog -> _state.update { it.copy(showCreateDialog = true) }
             is ProfilesEvent.DismissCreateDialog -> _state.update { it.copy(showCreateDialog = false) }
-            is ProfilesEvent.CreateProfile -> createProfile(event.name, event.colorArgb, event.avatarEmoji)
-            is ProfilesEvent.UpdateProfile -> updateProfile(event.profile)
+            is ProfilesEvent.CreateProfile -> createProfile(
+                event.name,
+                event.colorArgb,
+                event.avatarEmoji,
+                event.photoUri,
+            )
+
+            is ProfilesEvent.UpdateProfile -> updateProfile(event.profile, event.newPhotoUri)
+            is ProfilesEvent.ShowEditDialog -> _state.update { it.copy(showEditDialog = event.profile) }
+            is ProfilesEvent.DismissEditDialog -> _state.update { it.copy(showEditDialog = null) }
             is ProfilesEvent.DismissError -> _state.update { it.copy(errorMessage = null) }
         }
     }
@@ -96,19 +106,49 @@ class ProfilesViewModel(
         _state.update { it.copy(showDeleteConfirmation = null) }
     }
 
-    private fun createProfile(name: String, colorArgb: Long, avatarEmoji: String) {
+    private fun createProfile(name: String, colorArgb: Long, avatarEmoji: String, photoUri: Uri?) {
         _state.update { it.copy(showCreateDialog = false, isLoading = true) }
         viewModelScope.launch {
-            createProfileUseCase(CreateProfileParams(name, colorArgb, avatarEmoji)).handleError { err ->
+            val newId = createProfileUseCase(CreateProfileParams(name, colorArgb, avatarEmoji)).handleError { err ->
                 _state.update { it.copy(isLoading = false, errorMessage = err.message) }
+            } ?: run {
+                _state.update { it.copy(isLoading = false) }
+                return@launch
+            }
+            if (photoUri != null) {
+                val path = try {
+                    profilePhotoStorage.savePhoto(newId, photoUri)
+                } catch (e: Exception) {
+                    logWarn("Failed to save profile photo: ${e.message}")
+                    null
+                }
+                if (path != null) {
+                    val profiles = _state.value.profiles
+                    val newProfile = profiles.firstOrNull { it.id == newId }
+                    if (newProfile != null) {
+                        updateProfileUseCase(newProfile.copy(photoPath = path)).handleError { err ->
+                            logWarn("Failed to persist photo path: ${err.message}")
+                        }
+                    }
+                }
             }
             _state.update { it.copy(isLoading = false) }
         }
     }
 
-    private fun updateProfile(profile: Profile) {
+    private fun updateProfile(profile: Profile, newPhotoUri: Uri?) {
         viewModelScope.launch {
-            updateProfileUseCase(profile).handleError { err ->
+            val photoPath = if (newPhotoUri != null) {
+                try {
+                    profilePhotoStorage.savePhoto(profile.id, newPhotoUri)
+                } catch (e: Exception) {
+                    logWarn("Failed to save profile photo: ${e.message}")
+                    profile.photoPath
+                }
+            } else {
+                profile.photoPath
+            }
+            updateProfileUseCase(profile.copy(photoPath = photoPath)).handleError { err ->
                 _state.update { it.copy(errorMessage = err.message) }
             }
         }

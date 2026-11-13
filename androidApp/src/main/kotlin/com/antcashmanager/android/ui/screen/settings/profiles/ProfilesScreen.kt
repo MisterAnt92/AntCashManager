@@ -1,5 +1,11 @@
 package com.antcashmanager.android.ui.screen.settings.profiles
 
+import android.graphics.BitmapFactory
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -23,8 +29,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -46,12 +54,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -62,17 +75,48 @@ import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
+import com.antcashmanager.android.ui.components.profile.ProfileAvatar
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.domain.model.Profile
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 
 private val PROFILE_COLORS = listOf(
-    0xFFE57373L, 0xFFFF8A65L, 0xFFFFB74DL, 0xFF81C784L,
-    0xFF4DB6ACL, 0xFF64B5F6L, 0xFF7986CBL, 0xFFBA68C8L,
-    0xFFF06292L, 0xFF90A4AEL,
+    // Reds
+    0xFFEF5350L, 0xFFE57373L,
+    // Oranges
+    0xFFFF7043L, 0xFFFF8A65L,
+    // Ambers
+    0xFFFFA726L, 0xFFFFB74DL,
+    // Greens
+    0xFF66BB6AL, 0xFF81C784L,
+    // Teals
+    0xFF26A69AL, 0xFF4DB6ACL,
+    // Blues
+    0xFF42A5F5L, 0xFF64B5F6L,
+    // Indigos
+    0xFF5C6BC0L, 0xFF7986CBL,
+    // Purples
+    0xFF8E24AAL, 0xFFBA68C8L,
+    // Pinks
+    0xFFE91E63L, 0xFFF06292L,
+    // Neutrals
+    0xFF795548L, 0xFF78909CL,
 )
 
-private val PROFILE_EMOJIS = listOf("👤", "👑", "⭐", "💰", "🏠", "✈️", "🛒", "💼", "🎯", "🌟", "❤️", "🔑")
+private val PROFILE_EMOJIS = listOf(
+    // Persone generiche
+    "👤", "👩", "👨", "🧑", "👦", "👧",
+    // Professionisti
+    "👩‍💼", "👨‍💼", "👩‍🎓", "👨‍🎓", "👩‍💻", "👨‍💻",
+    // Ruoli speciali
+    "👷", "👮", "🤵", "👸", "🕵️", "🧙",
+    // Personaggi / fantasia
+    "👼", "🧚", "🦸", "🤴", "🎅", "🤶",
+    // Animali (popolari come avatar)
+    "🐱", "🐶", "🦊", "🐻", "🦁", "🐧",
+)
 
 @Composable
 fun ProfilesScreen(
@@ -146,7 +190,10 @@ private fun ProfilesContent(
                 ) {
                     if (activeProfile != null) {
                         item(key = "active_header") {
-                            ActiveProfileHeader(profile = activeProfile)
+                            ActiveProfileHeader(
+                                profile = activeProfile,
+                                onEdit = { onEvent(ProfilesEvent.ShowEditDialog(activeProfile)) },
+                            )
                             VerticalSpacer(SpacingSize.SM)
                         }
                     }
@@ -156,6 +203,7 @@ private fun ProfilesContent(
                             profile = profile,
                             isActive = profile.id == state.activeProfileId,
                             onSwitch = { onEvent(ProfilesEvent.SwitchProfile(profile)) },
+                            onEdit = { onEvent(ProfilesEvent.ShowEditDialog(profile)) },
                             onDelete = { onEvent(ProfilesEvent.DeleteProfile(profile)) },
                         )
                     }
@@ -201,11 +249,25 @@ private fun ProfilesContent(
     }
 
     if (state.showCreateDialog) {
-        CreateProfileDialog(
-            onConfirm = { name, color, emoji ->
-                onEvent(ProfilesEvent.CreateProfile(name, color, emoji))
+        ProfileFormDialog(
+            initialProfile = null,
+            titleRes = R.string.profiles_create_dialog_title,
+            onConfirm = { name, color, emoji, photoUri ->
+                onEvent(ProfilesEvent.CreateProfile(name, color, emoji, photoUri))
             },
             onDismiss = { onEvent(ProfilesEvent.DismissCreateDialog) },
+        )
+    }
+
+    state.showEditDialog?.let { profile ->
+        ProfileFormDialog(
+            initialProfile = profile,
+            titleRes = R.string.profiles_edit_dialog_title,
+            onConfirm = { name, color, emoji, photoUri ->
+                onEvent(ProfilesEvent.UpdateProfile(profile.copy(name = name, colorArgb = color, avatarEmoji = emoji), photoUri))
+                onEvent(ProfilesEvent.DismissEditDialog)
+            },
+            onDismiss = { onEvent(ProfilesEvent.DismissEditDialog) },
         )
     }
 }
@@ -213,14 +275,13 @@ private fun ProfilesContent(
 @Composable
 private fun ActiveProfileHeader(
     profile: Profile,
+    onEdit: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.large,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-        ),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
     ) {
         Row(
@@ -229,11 +290,7 @@ private fun ActiveProfileHeader(
                 .padding(horizontal = 20.dp, vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            ProfileAvatar(
-                profile = profile,
-                isActive = true,
-                size = 56.dp,
-            )
+            ProfileAvatar(profile = profile, isActive = true, size = 56.dp)
             HorizontalSpacer(SpacingSize.MD)
             Column(modifier = Modifier.weight(1f)) {
                 AppText(
@@ -255,12 +312,21 @@ private fun ActiveProfileHeader(
                     )
                 }
             }
-            Icon(
-                imageVector = Icons.Filled.Check,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                modifier = Modifier.size(24.dp),
-            )
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f))
+                    .clickable(onClick = onEdit),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Edit,
+                    contentDescription = stringResource(R.string.profiles_edit_dialog_title),
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.size(18.dp),
+                )
+            }
         }
     }
 }
@@ -270,6 +336,7 @@ private fun ProfileItem(
     profile: Profile,
     isActive: Boolean,
     onSwitch: () -> Unit,
+    onEdit: () -> Unit,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -279,9 +346,7 @@ private fun ProfileItem(
             .fillMaxWidth()
             .border(2.dp, borderColor, MaterialTheme.shapes.medium),
         shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-        ),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
         onClick = onSwitch,
     ) {
@@ -291,11 +356,7 @@ private fun ProfileItem(
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            ProfileAvatar(
-                profile = profile,
-                isActive = isActive,
-                size = 48.dp,
-            )
+            ProfileAvatar(profile = profile, isActive = isActive, size = 48.dp)
             HorizontalSpacer(SpacingSize.MD)
             Column(modifier = Modifier.weight(1f)) {
                 AppText(
@@ -326,21 +387,31 @@ private fun ProfileItem(
                     modifier = Modifier.size(20.dp),
                 )
             }
+            HorizontalSpacer(SpacingSize.XS)
+            // Edit button — available for all profiles
+            ActionIconButton(
+                onClick = onEdit,
+                backgroundColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.15f),
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Edit,
+                    contentDescription = stringResource(R.string.profiles_edit_dialog_title),
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(18.dp),
+                )
+            }
+            // Delete button — hidden for the Default profile (id=1)
             if (profile.id != 1L) {
-                HorizontalSpacer(SpacingSize.XS)
-                Box(
-                    modifier = Modifier
-                        .size(44.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.15f))
-                        .clickable(onClick = onDelete),
-                    contentAlignment = Alignment.Center,
+                HorizontalSpacer(SpacingSize.XXS)
+                ActionIconButton(
+                    onClick = onDelete,
+                    backgroundColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.15f),
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Delete,
                         contentDescription = stringResource(R.string.profiles_delete_dialog_title),
                         tint = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.size(20.dp),
+                        modifier = Modifier.size(18.dp),
                     )
                 }
             }
@@ -349,57 +420,125 @@ private fun ProfileItem(
 }
 
 @Composable
-private fun ProfileAvatar(
-    profile: Profile,
-    isActive: Boolean,
-    size: androidx.compose.ui.unit.Dp,
+private fun ActionIconButton(
+    onClick: () -> Unit,
+    backgroundColor: Color,
     modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
 ) {
-    val bgColor = when {
-        isActive -> MaterialTheme.colorScheme.primary
-        profile.colorArgb != 0xFF6650A4L -> Color(profile.colorArgb)
-        else -> MaterialTheme.colorScheme.surfaceVariant
-    }
-    val contentTint = if (isActive) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
-
     Box(
         modifier = modifier
-            .size(size)
+            .size(40.dp)
             .clip(CircleShape)
-            .background(bgColor),
+            .background(backgroundColor)
+            .clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
-    ) {
-        if (profile.avatarEmoji.isNotEmpty()) {
-            AppText(
-                text = profile.avatarEmoji,
-                style = if (size >= 56.dp) MaterialTheme.typography.titleLarge else MaterialTheme.typography.titleMedium,
-            )
-        } else {
-            Icon(
-                imageVector = Icons.Filled.Person,
-                contentDescription = null,
-                tint = contentTint,
-                modifier = Modifier.size(if (size >= 56.dp) 32.dp else 26.dp),
-            )
-        }
-    }
+        content = { content() },
+    )
 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun CreateProfileDialog(
-    onConfirm: (name: String, colorArgb: Long, avatarEmoji: String) -> Unit,
+private fun ProfileFormDialog(
+    initialProfile: Profile?,
+    titleRes: Int,
+    onConfirm: (name: String, colorArgb: Long, avatarEmoji: String, photoUri: Uri?) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    var name by remember { mutableStateOf("") }
-    var selectedColor by remember { mutableStateOf(PROFILE_COLORS.first()) }
-    var selectedEmoji by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf(initialProfile?.name ?: "") }
+    var selectedColor by remember { mutableStateOf(initialProfile?.colorArgb ?: PROFILE_COLORS.first()) }
+    var selectedEmoji by remember { mutableStateOf(initialProfile?.avatarEmoji ?: "") }
+    var selectedPhotoUri by remember { mutableStateOf<Uri?>(null) }
+
+    val context = LocalContext.current
+    val pickerLauncher = rememberLauncherForActivityResult(PickVisualMedia()) { uri ->
+        if (uri != null) {
+            selectedPhotoUri = uri
+            selectedEmoji = "" // photo overrides emoji
+        }
+    }
+
+    // Load bitmap preview: new URI takes priority over existing saved photo path
+    val previewPhotoPath = initialProfile?.photoPath
+    val previewBitmap by produceState<ImageBitmap?>(null, selectedPhotoUri, previewPhotoPath) {
+        value = when {
+            selectedPhotoUri != null -> withContext(Dispatchers.IO) {
+                try {
+                    context.contentResolver.openInputStream(selectedPhotoUri!!)?.use {
+                        BitmapFactory.decodeStream(it)?.asImageBitmap()
+                    }
+                } catch (_: Exception) { null }
+            }
+            previewPhotoPath != null -> withContext(Dispatchers.IO) {
+                try { BitmapFactory.decodeFile(previewPhotoPath)?.asImageBitmap() } catch (_: Exception) { null }
+            }
+            else -> null
+        }
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { AppText(text = stringResource(R.string.profiles_create_dialog_title), style = MaterialTheme.typography.titleMedium) },
+        title = { AppText(text = stringResource(titleRes), style = MaterialTheme.typography.titleMedium) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                // Photo picker row
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    // Avatar preview
+                    Box(
+                        modifier = Modifier
+                            .size(64.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                            .clickable {
+                                pickerLauncher.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))
+                            },
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        when {
+                            previewBitmap != null -> {
+                                Image(
+                                    bitmap = previewBitmap!!,
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.fillMaxSize(),
+                                )
+                            }
+                            selectedEmoji.isNotEmpty() -> {
+                                AppText(text = selectedEmoji, style = MaterialTheme.typography.titleLarge)
+                            }
+                            else -> {
+                                Icon(
+                                    imageVector = Icons.Filled.AddAPhoto,
+                                    contentDescription = stringResource(R.string.profiles_change_photo),
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.size(28.dp),
+                                )
+                            }
+                        }
+                    }
+                    Column {
+                        AppText(
+                            text = stringResource(R.string.profiles_change_photo),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.clickable {
+                                pickerLauncher.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))
+                            },
+                        )
+                        if (previewBitmap != null && selectedEmoji.isEmpty()) {
+                            AppText(
+                                text = "✓",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
+                }
+
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
@@ -408,13 +547,13 @@ private fun CreateProfileDialog(
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
-                        if (name.isNotBlank()) onConfirm(name.trim(), selectedColor, selectedEmoji)
+                        if (name.isNotBlank()) onConfirm(name.trim(), selectedColor, selectedEmoji, selectedPhotoUri)
                     }),
                 )
 
                 Column {
                     AppText(
-                        text = "Colore",
+                        text = stringResource(R.string.profiles_color_label),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -436,7 +575,7 @@ private fun CreateProfileDialog(
 
                 Column {
                     AppText(
-                        text = "Emoji",
+                        text = stringResource(R.string.profiles_emoji_label),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -456,7 +595,10 @@ private fun CreateProfileDialog(
                                         if (isSelected) MaterialTheme.colorScheme.primaryContainer
                                         else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
                                     )
-                                    .clickable { selectedEmoji = if (isSelected) "" else emoji },
+                                    .clickable {
+                                        selectedEmoji = if (isSelected) "" else emoji
+                                        if (!isSelected) selectedPhotoUri = null // emoji overrides photo
+                                    },
                                 contentAlignment = Alignment.Center,
                             ) {
                                 AppText(text = emoji, style = MaterialTheme.typography.bodyLarge)
@@ -468,7 +610,7 @@ private fun CreateProfileDialog(
         },
         confirmButton = {
             TextButton(
-                onClick = { if (name.isNotBlank()) onConfirm(name.trim(), selectedColor, selectedEmoji) },
+                onClick = { if (name.isNotBlank()) onConfirm(name.trim(), selectedColor, selectedEmoji, selectedPhotoUri) },
                 enabled = name.isNotBlank(),
             ) {
                 AppText(text = stringResource(android.R.string.ok))
@@ -495,11 +637,8 @@ private fun ColorSwatch(
             .clip(CircleShape)
             .background(Color(colorValue))
             .then(
-                if (isSelected) {
-                    Modifier.border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
-                } else {
-                    Modifier
-                },
+                if (isSelected) Modifier.border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
+                else Modifier,
             )
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center,

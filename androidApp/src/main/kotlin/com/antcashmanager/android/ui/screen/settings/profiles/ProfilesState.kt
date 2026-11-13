@@ -10,4 +10,5 @@ data class ProfilesState(
     val showDeleteConfirmation: Profile? = null,
     val showSwitchConfirmation: Profile? = null,
     val showCreateDialog: Boolean = false,
+    val showEditDialog: Profile? = null,
 )

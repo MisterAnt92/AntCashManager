@@ -12,7 +12,7 @@ import com.antcashmanager.data.local.entity.TransactionEntity
 
 @Database(
     entities = [TransactionEntity::class, CategoryEntity::class, ProfileEntity::class],
-    version = 11,
+    version = 12,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
@@ -26,6 +26,7 @@ import com.antcashmanager.data.local.entity.TransactionEntity
         // NOTE: 9→10 is handled by manual Migration_9_10 in DatabaseProvider
         // (remove AutoMigration here to avoid conflicts with the manual migration)
         AutoMigration(from = 10, to = 11),
+        AutoMigration(from = 11, to = 12),
     ],
 )
 public abstract class AppDatabase : RoomDatabase() {

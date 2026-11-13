@@ -26,23 +26,37 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
+import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.BeachAccess
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Celebration
+import androidx.compose.material.icons.filled.ChildCare
 import androidx.compose.material.icons.filled.Coffee
+import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.CurrencyExchange
 import androidx.compose.material.icons.filled.DirectionsBike
 import androidx.compose.material.icons.filled.DirectionsBus
 import androidx.compose.material.icons.filled.DirectionsCar
+import androidx.compose.material.icons.filled.ElderlyWoman
 import androidx.compose.material.icons.filled.Fastfood
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Flight
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.Laptop
 import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.LocalBar
+import androidx.compose.material.icons.filled.LocalCafe
 import androidx.compose.material.icons.filled.LocalDining
+import androidx.compose.material.icons.filled.LocalGasStation
 import androidx.compose.material.icons.filled.LocalHospital
+import androidx.compose.material.icons.filled.Medication
 import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material.icons.filled.Movie
+import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Payments
+import androidx.compose.material.icons.filled.Percent
 import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.filled.Redeem
 import androidx.compose.material.icons.filled.Restaurant
@@ -50,10 +64,16 @@ import androidx.compose.material.icons.filled.Savings
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.ShoppingBag
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.Smartphone
 import androidx.compose.material.icons.filled.Spa
+import androidx.compose.material.icons.filled.SportsSoccer
+import androidx.compose.material.icons.filled.SportsEsports
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Storefront
 import androidx.compose.material.icons.filled.Subscriptions
 import androidx.compose.material.icons.filled.TheaterComedy
+import androidx.compose.material.icons.filled.TwoWheeler
+import androidx.compose.material.icons.filled.Umbrella
 import androidx.compose.material.icons.filled.VolunteerActivism
 import androidx.compose.material.icons.filled.Work
 import androidx.compose.material3.AlertDialog
@@ -112,6 +132,7 @@ import org.koin.compose.koinInject
 /** Map icon key names to Material Icons. */
 val categoryIconMap: Map<String, ImageVector> =
     mapOf(
+        // Existing icons
         "home" to Icons.Default.Home,
         "directions_car" to Icons.Default.DirectionsCar,
         "restaurant" to Icons.Default.Restaurant,
@@ -142,6 +163,27 @@ val categoryIconMap: Map<String, ImageVector> =
         "shopping_cart" to Icons.Default.ShoppingCart,
         "coffee" to Icons.Default.Coffee,
         "spa" to Icons.Default.Spa,
+        // New icons
+        "local_bar" to Icons.Default.LocalBar,
+        "local_cafe" to Icons.Default.LocalCafe,
+        "music_note" to Icons.Default.MusicNote,
+        "movie" to Icons.Default.Movie,
+        "sports_esports" to Icons.Default.SportsEsports,
+        "account_balance" to Icons.Default.AccountBalance,
+        "credit_card" to Icons.Default.CreditCard,
+        "smartphone" to Icons.Default.Smartphone,
+        "laptop" to Icons.Default.Laptop,
+        "child_care" to Icons.Default.ChildCare,
+        "local_gas_station" to Icons.Default.LocalGasStation,
+        "build" to Icons.Default.Build,
+        "beach_access" to Icons.Default.BeachAccess,
+        "percent" to Icons.Default.Percent,
+        "two_wheeler" to Icons.Default.TwoWheeler,
+        "storefront" to Icons.Default.Storefront,
+        "umbrella" to Icons.Default.Umbrella,
+        "sports_soccer" to Icons.Default.SportsSoccer,
+        "medication" to Icons.Default.Medication,
+        "elderly_woman" to Icons.Default.ElderlyWoman,
     )
 
 /**
@@ -181,6 +223,26 @@ fun getIconContentDescription(iconKey: String): String {
             "shopping_cart" -> R.string.icon_shopping_cart
             "coffee" -> R.string.icon_coffee
             "spa" -> R.string.icon_spa
+            "local_bar" -> R.string.icon_local_bar
+            "local_cafe" -> R.string.icon_local_cafe
+            "music_note" -> R.string.icon_music_note
+            "movie" -> R.string.icon_movie
+            "sports_esports" -> R.string.icon_sports_esports
+            "account_balance" -> R.string.icon_account_balance
+            "credit_card" -> R.string.icon_credit_card
+            "smartphone" -> R.string.icon_smartphone
+            "laptop" -> R.string.icon_laptop
+            "child_care" -> R.string.icon_child_care
+            "local_gas_station" -> R.string.icon_local_gas_station
+            "build" -> R.string.icon_build
+            "beach_access" -> R.string.icon_beach_access
+            "percent" -> R.string.icon_percent
+            "two_wheeler" -> R.string.icon_two_wheeler
+            "storefront" -> R.string.icon_storefront
+            "umbrella" -> R.string.icon_umbrella
+            "sports_soccer" -> R.string.icon_sports_soccer
+            "medication" -> R.string.icon_medication
+            "elderly_woman" -> R.string.icon_elderly_woman
             else -> R.string.categories_icon_label
         }
     return stringResource(resId)
@@ -188,20 +250,24 @@ fun getIconContentDescription(iconKey: String): String {
 
 val categoryColors =
     listOf(
-        0xFFE57373L,
-        0xFFFF8A65L,
-        0xFFFFB74DL,
-        0xFFFFD54FL,
-        0xFFDCE775L,
-        0xFF81C784L,
-        0xFF4DB6ACL,
-        0xFF4FC3F7L,
-        0xFF64B5F6L,
-        0xFF7986CBL,
-        0xFFBA68C8L,
-        0xFFF06292L,
-        0xFF90A4AEL,
-        0xFFA1887FL,
+        // Reds
+        0xFFEF5350L, 0xFFE57373L,
+        // Oranges
+        0xFFFF7043L, 0xFFFF8A65L,
+        // Ambers/Yellows
+        0xFFFFA726L, 0xFFFFB74DL, 0xFFFFD54FL,
+        // Limes/Greens
+        0xFFD4E157L, 0xFFDCE775L, 0xFF81C784L, 0xFF66BB6AL,
+        // Teals/Cyans
+        0xFF26A69AL, 0xFF4DB6ACL, 0xFF4FC3F7L,
+        // Blues
+        0xFF42A5F5L, 0xFF64B5F6L,
+        // Indigos/Purples
+        0xFF5C6BC0L, 0xFF7986CBL, 0xFFBA68C8L, 0xFF8E24AAL,
+        // Pinks
+        0xFFE91E63L, 0xFFF06292L,
+        // Neutrals
+        0xFFA1887FL, 0xFF90A4AEL,
     )
 
 @Composable

@@ -24,4 +24,6 @@ public data class ProfileEntity(
     val colorArgb: Long = 0xFF6650A4,
     @ColumnInfo(name = "avatar_emoji", defaultValue = "")
     val avatarEmoji: String = "",
+    @ColumnInfo(name = "photo_path", defaultValue = "")
+    val photoPath: String? = null,
 )

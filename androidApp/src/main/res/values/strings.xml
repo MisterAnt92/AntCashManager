@@ -123,6 +123,26 @@
     <string name="icon_shopping_cart">Groceries</string>
     <string name="icon_coffee">Coffee</string>
     <string name="icon_spa">Personal Care</string>
+    <string name="icon_local_bar">Bar</string>
+    <string name="icon_local_cafe">Café</string>
+    <string name="icon_music_note">Music</string>
+    <string name="icon_movie">Cinema</string>
+    <string name="icon_sports_esports">Gaming</string>
+    <string name="icon_account_balance">Banking</string>
+    <string name="icon_credit_card">Card Payments</string>
+    <string name="icon_smartphone">Phone/Telecom</string>
+    <string name="icon_laptop">Technology</string>
+    <string name="icon_child_care">Children</string>
+    <string name="icon_local_gas_station">Fuel</string>
+    <string name="icon_build">Maintenance</string>
+    <string name="icon_beach_access">Vacation</string>
+    <string name="icon_percent">Taxes/Fees</string>
+    <string name="icon_two_wheeler">Motorcycle</string>
+    <string name="icon_storefront">Store</string>
+    <string name="icon_umbrella">Insurance</string>
+    <string name="icon_sports_soccer">Sports</string>
+    <string name="icon_medication">Medicine</string>
+    <string name="icon_elderly_woman">Elderly Care</string>
     <string name="icon_card_giftcard">Meal Vouchers</string>
 
     <!-- Charts Screen -->
@@ -242,6 +262,11 @@
     <string name="profiles_active_badge">Active</string>
     <string name="profiles_create_dialog_title">New profile</string>
     <string name="profiles_name_hint">Profile name</string>
+    <string name="profiles_edit_dialog_title">Edit profile</string>
+    <string name="profiles_section_title">Profile</string>
+    <string name="profiles_color_label">Color</string>
+    <string name="profiles_emoji_label">Avatar</string>
+    <string name="profiles_change_photo">Change photo</string>
     <string name="settings_security">Security</string>
     <string name="settings_security_data_encryption">Data protection - Encryption</string>
     <string name="settings_security_data_encryption_subtitle">Encrypt and protect local app data</string>

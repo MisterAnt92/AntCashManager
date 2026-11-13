@@ -57,8 +57,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hierarchy
-import org.koin.androidx.compose.koinViewModel
-import org.koin.compose.koinInject
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -90,8 +88,11 @@ import com.antcashmanager.android.ui.screen.tutorial.TutorialScreen
 import com.antcashmanager.android.util.AppExitManager.safeFinish
 import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.LocalCurrencyFormat
+import com.antcashmanager.domain.manager.ProfileManager
 import com.antcashmanager.domain.model.CurrencyFormat
-import kotlinx.coroutines.launch
+import com.antcashmanager.domain.usecase.profile.GetProfilesUseCase
+import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 /**
  * Host di navigazione principale dell'app.
@@ -103,6 +104,13 @@ fun AntCashManagerNavHost() {
     val navSettings by navSettingsViewModel.state.collectAsStateWithLifecycle()
     val analyticsManager: AnalyticsManager = koinInject()
     val performanceTracker: PerformanceTracker = koinInject()
+    val profileManager: ProfileManager = koinInject()
+    val getProfilesUseCase: GetProfilesUseCase = koinInject()
+    val profilesResult by getProfilesUseCase().collectAsStateWithLifecycle(
+        initialValue = Result.success(emptyList()),
+    )
+    val activeProfileId by profileManager.activeProfileId.collectAsStateWithLifecycle()
+    val activeProfile = profilesResult.getOrNull()?.firstOrNull { it.id == activeProfileId }
 
     val navController = rememberNavController()
     val showCharts = navSettings.showCharts
@@ -127,7 +135,7 @@ fun AntCashManagerNavHost() {
             // GDPR consent dialog: shown once after tutorial, before any analytics event.
             // analyticsConsent == null means never asked (loading sentinel = false keeps it
             // from flashing during first composition while DataStore initialises).
-            if (isTutorialCompleted == true && analyticsConsent == null) {
+            if (isTutorialCompleted && analyticsConsent == null) {
                 AnalyticsConsentDialog(
                     onAccept = {
                         navSettingsViewModel.onEvent(NavSettingsEvent.SetAnalyticsConsentEvent(true))
@@ -775,14 +783,18 @@ fun AntCashManagerNavHost() {
                                     launchSingleTop = true
                                     restoreState = true
                                 }
-                                // Chiudi la sidebar dopo la navigazione
                                 isSidebarOpen = false
                             },
                             visibleNavItems = sidebarNavItems,
+                            activeProfile = activeProfile,
+                            onProfileClick = {
+                                navController.navigate(AppRoute.SettingsRoute.Profiles.route) {
+                                    launchSingleTop = true
+                                }
+                                isSidebarOpen = false
+                            },
                             onHeaderClick = { showAntAnimation = true },
-                            modifier =
-                                Modifier
-                                    .padding(top = 8.dp, bottom = 8.dp),
+                            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
                         )
                     }
                 }

@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.settings.profiles
 
+import android.net.Uri
 import com.antcashmanager.domain.model.Profile
 
 sealed class ProfilesEvent {
@@ -15,7 +16,15 @@ sealed class ProfilesEvent {
         val name: String,
         val colorArgb: Long,
         val avatarEmoji: String,
+        val photoUri: Uri? = null,
     ) : ProfilesEvent()
-    data class UpdateProfile(val profile: Profile) : ProfilesEvent()
+
+    data class UpdateProfile(
+        val profile: Profile,
+        val newPhotoUri: Uri? = null,
+    ) : ProfilesEvent()
+
+    data class ShowEditDialog(val profile: Profile) : ProfilesEvent()
+    data object DismissEditDialog : ProfilesEvent()
     data object DismissError : ProfilesEvent()
 }

@@ -99,6 +99,7 @@ fun SettingsScreen(
         onDecimalSeparatorSelected = { viewModel.onEvent(SettingEvent.SetDecimalSeparatorEvent(it)) },
         thousandsSeparator = state.thousandsSeparator,
         onThousandsSeparatorSelected = { viewModel.onEvent(SettingEvent.SetThousandsSeparatorEvent(it)) },
+        activeProfileName = state.activeProfileName,
         analyticsConsent = analyticsConsent,
         onAnalyticsConsentChanged = { viewModel.onEvent(SettingEvent.SetAnalyticsConsentEvent(it)) },
         onImportDebugData = { viewModel.onEvent(SettingEvent.ImportDebugDataEvent) },
@@ -134,6 +135,7 @@ internal fun SettingsContent(
     onDecimalSeparatorSelected: (String) -> Unit = {},
     thousandsSeparator: String = "",
     onThousandsSeparatorSelected: (String) -> Unit = {},
+    activeProfileName: String = "",
     analyticsConsent: Boolean? = null,
     onAnalyticsConsentChanged: (Boolean) -> Unit = {},
     onImportDebugData: () -> Unit = {},
@@ -229,8 +231,23 @@ internal fun SettingsContent(
                     .verticalScroll(rememberScrollState())
                     .padding(bottom = 24.dp),
         ) {
+            // ── Profile Section ──
+            AppCardSectionHeader(title = stringResource(R.string.profiles_section_title))
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                AppCard(
+                    title = stringResource(R.string.settings_profiles),
+                    subtitle = activeProfileName.takeIf { it.isNotEmpty() },
+                    leadingIcon = Icons.Default.Person,
+                    iconBackgroundColor = MaterialTheme.colorScheme.primaryContainer,
+                    iconTint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    onClick = {
+                        navController?.navigate(AppRoute.SettingsRoute.Profiles.route)
+                    },
+                )
+            }
+            VerticalSpacer(SpacingSize.SM)
+
             // ── Appearance Section ──
-            // ... rest of Column content ...
             AppCardSectionHeader(title = stringResource(R.string.settings_appearance))
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 AppCard(
@@ -310,15 +327,6 @@ internal fun SettingsContent(
             // ── Data & Privacy Section ──
             AppCardSectionHeader(title = stringResource(R.string.settings_section_data_privacy))
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                AppCard(
-                    title = stringResource(R.string.settings_profiles),
-                    leadingIcon = Icons.Default.Person,
-                    iconBackgroundColor = MaterialTheme.colorScheme.primaryContainer,
-                    iconTint = MaterialTheme.colorScheme.onPrimaryContainer,
-                    onClick = {
-                        navController?.navigate(AppRoute.SettingsRoute.Profiles.route)
-                    },
-                )
                 AppCard(
                     title = stringResource(R.string.settings_data_management),
                     leadingIcon = Icons.Default.Backup,

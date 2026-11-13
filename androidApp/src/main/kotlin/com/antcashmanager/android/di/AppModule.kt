@@ -12,6 +12,7 @@ import com.antcashmanager.android.data.receipt.MlKitReceiptOcrService
 import com.antcashmanager.android.data.repository.AndroidDebugDataRepository
 import com.antcashmanager.android.data.repository.AndroidFeedbackRepository
 import com.antcashmanager.android.drive.DriveUploadManager
+import com.antcashmanager.android.navigation.NavSettingsViewModel
 import com.antcashmanager.android.ui.screen.categories.CategoriesViewModel
 import com.antcashmanager.android.ui.screen.charts.ChartsViewModel
 import com.antcashmanager.android.ui.screen.home.HomeViewModel
@@ -35,10 +36,10 @@ import com.antcashmanager.data.repository.ProfileRepositoryImpl
 import com.antcashmanager.data.repository.SettingsRepositoryImpl
 import com.antcashmanager.data.repository.TransactionRepositoryImpl
 import com.antcashmanager.data.security.LocalDataCipherImpl
+import com.antcashmanager.domain.manager.ProfileManager
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.TransactionDisplayType
-import com.antcashmanager.domain.manager.ProfileManager
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.DebugDataRepository
 import com.antcashmanager.domain.repository.FeedbackRepository
@@ -54,6 +55,12 @@ import com.antcashmanager.domain.usecase.category.DeleteCategoryUseCase
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.category.InsertCategoryUseCase
 import com.antcashmanager.domain.usecase.category.UpdateCategoryUseCase
+import com.antcashmanager.domain.usecase.profile.CreateProfileUseCase
+import com.antcashmanager.domain.usecase.profile.DeleteProfileUseCase
+import com.antcashmanager.domain.usecase.profile.GetActiveProfileUseCase
+import com.antcashmanager.domain.usecase.profile.GetProfilesUseCase
+import com.antcashmanager.domain.usecase.profile.SwitchProfileUseCase
+import com.antcashmanager.domain.usecase.profile.UpdateProfileUseCase
 import com.antcashmanager.domain.usecase.receipt.CreateTransactionFromReceiptUseCase
 import com.antcashmanager.domain.usecase.receipt.ScanReceiptUseCase
 import com.antcashmanager.domain.usecase.settings.GetChartsDateFilterStateUseCase
@@ -93,12 +100,6 @@ import com.antcashmanager.domain.usecase.settings.SetTransactionDisplayTypeUseCa
 import com.antcashmanager.domain.usecase.settings.SetTransactionsDateFilterStateUseCase
 import com.antcashmanager.domain.usecase.settings.SetTutorialCompletedUseCase
 import com.antcashmanager.domain.usecase.settings.SettingsUseCasesProvider
-import com.antcashmanager.domain.usecase.profile.CreateProfileUseCase
-import com.antcashmanager.domain.usecase.profile.DeleteProfileUseCase
-import com.antcashmanager.domain.usecase.profile.GetActiveProfileUseCase
-import com.antcashmanager.domain.usecase.profile.GetProfilesUseCase
-import com.antcashmanager.domain.usecase.profile.SwitchProfileUseCase
-import com.antcashmanager.domain.usecase.profile.UpdateProfileUseCase
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
 import com.antcashmanager.domain.usecase.transaction.DeleteTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.FilterTransactionsUseCase
@@ -109,7 +110,6 @@ import com.antcashmanager.domain.usecase.transaction.GetTransactionsUseCase
 import com.antcashmanager.domain.usecase.transaction.InsertTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.SyncTransactionCategoriesUseCase
 import com.antcashmanager.domain.usecase.transaction.UpdateTransactionUseCase
-import com.antcashmanager.android.navigation.NavSettingsViewModel
 import com.antcashmanager.domain.validation.TransactionValidator
 import com.antcashmanager.domain.validation.TransactionValidatorImpl
 import kotlinx.coroutines.flow.map
@@ -150,6 +150,7 @@ val dataModule =
             )
         }
         single<SettingsRepository> { SettingsRepositoryImpl(androidApplication(), get()) }
+        single { com.antcashmanager.android.util.ProfilePhotoStorage(androidApplication()) }
         single { AutoBackupScheduler(androidApplication()) }
         single { GoogleSignInManager(androidApplication(), get<SettingsRepository>()) }
         single { DriveUploadManager(androidApplication(), get<GoogleSignInManager>(), get<SettingsRepository>()) }
@@ -453,6 +454,8 @@ val presentationModule =
                 widgetUpdateNotifier = get(),
                 sendFeedbackEmailUseCase = get(),
                 importDebugDataUseCase = get(),
+                getProfilesUseCase = get(),
+                profileManager = get(),
             )
         }
         viewModel {
@@ -498,6 +501,7 @@ val presentationModule =
                 deleteProfileUseCase = get(),
                 switchProfileUseCase = get(),
                 profileManager = get(),
+                profilePhotoStorage = get(),
             )
         }
     }

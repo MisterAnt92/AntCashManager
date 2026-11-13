@@ -48,6 +48,7 @@ public class ProfileRepositoryImpl(
         isActive = isActive,
         colorArgb = colorArgb,
         avatarEmoji = avatarEmoji,
+        photoPath = photoPath,
     )
 
     private fun Profile.toEntity() = ProfileEntity(
@@ -58,5 +59,6 @@ public class ProfileRepositoryImpl(
         isActive = isActive,
         colorArgb = colorArgb,
         avatarEmoji = avatarEmoji,
+        photoPath = photoPath,
     )
 }

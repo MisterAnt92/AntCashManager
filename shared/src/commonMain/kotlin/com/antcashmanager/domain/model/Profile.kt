@@ -8,4 +8,5 @@ public data class Profile(
     val isActive: Boolean = false,
     val colorArgb: Long = 0xFF6650A4,
     val avatarEmoji: String = "",
+    val photoPath: String? = null,
 )
