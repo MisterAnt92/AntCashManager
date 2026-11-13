@@ -18,10 +18,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.HorizontalDivider
@@ -34,7 +32,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -83,21 +80,20 @@ fun LeftSidebar(
         shadowElevation = 8.dp,
         shape = RoundedCornerShape(topEnd = 24.dp, bottomEnd = 24.dp),
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .verticalScroll(rememberScrollState()),
-        ) {
+        Column(modifier = Modifier.fillMaxHeight()) {
             // ── Profile Hero Header (edge-to-edge) ──
             ProfileSidebarHeader(
                 activeProfile = activeProfile,
                 onProfileClick = onProfileClick,
             )
 
-            // ── Navigation Items ──
+            // ── Navigation Items — riempie lo spazio disponibile ──
             Column(
-                modifier = Modifier.fillMaxHeight(),
-                verticalArrangement = Arrangement.spacedBy(2.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(horizontal = 0.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.SpaceEvenly,
             ) {
                 visibleNavItems.forEach { item ->
                     SidebarMenuItem(
@@ -106,12 +102,10 @@ fun LeftSidebar(
                         onClick = { onNavigate(item.route) },
                     )
                 }
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                // ── Footer ──
-                SidebarFooter()
             }
+
+            // ── Footer — sempre ancorato in fondo ──
+            SidebarFooter()
         }
     }
 }
@@ -124,11 +118,7 @@ private fun ProfileSidebarHeader(
     activeProfile: Profile?,
     onProfileClick: () -> Unit,
 ) {
-    val bannerColor = if (activeProfile != null) Color(activeProfile.colorArgb)
-    else MaterialTheme.colorScheme.primary
-
-    // On-banner text: white su scuri, quasi-nero su chiari
-    val onBannerColor = if (bannerColor.luminance() > 0.4f) Color(0xFF1C1B1F) else Color.White
+    val bannerColor = MaterialTheme.colorScheme.primary
 
     Column(
         modifier = Modifier
@@ -144,9 +134,9 @@ private fun ProfileSidebarHeader(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(84.dp),
+                .height(180.dp),
         ) {
-            // Sfondo colorato
+            // Sfondo colorato (tema app)
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -155,7 +145,7 @@ private fun ProfileSidebarHeader(
             // Avatar centrato, sfora di 33dp verso il basso
             Box(
                 modifier = Modifier
-                    .size(66.dp)
+                    .size(99.dp)
                     .align(Alignment.BottomCenter)
                     .offset(y = 33.dp)
                     .background(MaterialTheme.colorScheme.surface, CircleShape),
@@ -165,7 +155,7 @@ private fun ProfileSidebarHeader(
                     ProfileAvatar(
                         profile = activeProfile,
                         isActive = true,
-                        size = 60.dp,
+                        size = 90.dp,
                     )
                 } else {
                     Box(
