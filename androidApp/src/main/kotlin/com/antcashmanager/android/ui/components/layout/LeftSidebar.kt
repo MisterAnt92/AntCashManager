@@ -20,8 +20,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.Image
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.ui.res.painterResource
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -102,6 +104,8 @@ fun LeftSidebar(
                         onClick = { onNavigate(item.route) },
                     )
                 }
+                // Slot vuoti non cliccabili: occupano spazio tra l'ultimo item e il footer
+                repeat(2) { SidebarEmptySlot() }
             }
 
             // ── Footer — sempre ancorato in fondo ──
@@ -119,6 +123,12 @@ private fun ProfileSidebarHeader(
     onProfileClick: () -> Unit,
 ) {
     val bannerColor = MaterialTheme.colorScheme.primary
+    // Costanti banner: cambia bannerHeight per ridimensionare tutto il banner
+    val ringSize = 99.dp
+    val ringOverflow = 33.dp
+    val bannerHeight = 230.dp
+    // contentAreaHeight: area visibile del banner sopra il bordo superiore dell'avatar ring
+    val contentAreaHeight = bannerHeight - ringSize
 
     Column(
         modifier = Modifier
@@ -134,20 +144,55 @@ private fun ProfileSidebarHeader(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(180.dp),
+                .height(bannerHeight),
         ) {
             // Sfondo colorato (tema app)
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .matchParentSize()
                     .background(bannerColor),
             )
-            // Avatar centrato, sfora di 33dp verso il basso
+            // Formichina + nome app centrati nella contentAreaHeight (area sopra avatar)
+            // Centratura verticale garantita: Box(height=contentAreaHeight) con contentAlignment=Center
             Box(
                 modifier = Modifier
-                    .size(99.dp)
+                    .fillMaxWidth()
+                    .padding(top = 24.dp)
+                    .height(contentAreaHeight)
+                    .align(Alignment.TopCenter),
+                contentAlignment = Alignment.Center,
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.ic_ant_mascot),
+                        contentDescription = null,
+                        modifier = Modifier.size(38.dp),
+                    )
+                    Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
+                        AppText(
+                            text = stringResource(R.string.app_name),
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                        )
+                        AppText(
+                            text = stringResource(R.string.app_description),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f),
+                        )
+                    }
+                }
+            }
+            // Avatar centrato, sfora di ringOverflow verso il basso
+            Box(
+                modifier = Modifier
+                    .size(ringSize)
                     .align(Alignment.BottomCenter)
-                    .offset(y = 33.dp)
+                    .offset(y = ringOverflow)
                     .background(MaterialTheme.colorScheme.surface, CircleShape),
                 contentAlignment = Alignment.Center,
             ) {
@@ -281,6 +326,20 @@ private fun SidebarMenuItem(
         // if (isSelected) { Spacer(Modifier.weight(1f))
         //   Icon(painter=painterResource(R.drawable.ic_ant_mascot), Modifier.size(20.dp)) }
     }
+}
+
+/**
+ * Slot vuoto non cliccabile: stessa altezza di SidebarMenuItem, nessun contenuto visivo.
+ * Occupa spazio nello SpaceEvenly per allontanare visivamente gli item reali dal footer.
+ */
+@Composable
+private fun SidebarEmptySlot() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp)
+            .height(52.dp),
+    )
 }
 
 /**
