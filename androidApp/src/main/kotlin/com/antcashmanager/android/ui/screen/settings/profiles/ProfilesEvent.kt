@@ -22,6 +22,7 @@ sealed class ProfilesEvent {
     data class UpdateProfile(
         val profile: Profile,
         val newPhotoUri: Uri? = null,
+        val clearPhoto: Boolean = false,
     ) : ProfilesEvent()
 
     data class ShowEditDialog(val profile: Profile) : ProfilesEvent()

@@ -51,9 +51,13 @@ class SettingsRepositoryImplTest {
             }
         context = mockk(relaxed = true)
         every { context.applicationContext } returns context
+        every { context.filesDir } returns tempDir
+        val profileManager: com.antcashmanager.domain.manager.ProfileManager = mockk(relaxed = true)
+        every { profileManager.activeProfileId } returns kotlinx.coroutines.flow.MutableStateFlow(1L)
+        every { profileManager.getActiveProfileIdSync() } returns 1L
         mockkObject(DatabaseEncryptionManager)
         every { DatabaseEncryptionManager.setEncryptionDesired(any(), any()) } just Runs
-        repository = SettingsRepositoryImpl(context = context, dataStore = dataStore)
+        repository = SettingsRepositoryImpl(context = context, profileManager = profileManager)
     }
 
     @After
@@ -174,12 +178,11 @@ class SettingsRepositoryImplTest {
         }
 
     @Test
-    fun resetAllPreferences_shouldRestoreAllDefaultsAndDisableEncryption_whenCalled() =
+    fun resetAllPreferences_shouldRestoreAllDefaults_whenCalled() =
         runTest {
             repository.setTheme(AppTheme.DARK)
             repository.setLanguage(AppLanguage.ITALIAN)
             repository.setCurrencySymbol("$")
-            repository.setDataEncryptionEnabled(true)
             repository.setTransactionDisplayType(TransactionDisplayType.CATEGORY)
 
             repository.resetAllPreferences()
@@ -187,9 +190,7 @@ class SettingsRepositoryImplTest {
             assertEquals(AppTheme.SYSTEM, repository.getTheme().first())
             assertEquals(AppLanguage.SYSTEM, repository.getLanguage().first())
             assertEquals("€", repository.getCurrencySymbol().first())
-            assertEquals(false, repository.getDataEncryptionEnabled().first())
             assertEquals(TransactionDisplayType.TREND, repository.getTransactionDisplayType().first())
-            verify(exactly = 1) { DatabaseEncryptionManager.setEncryptionDesired(context, false) }
         }
 
     @Test
@@ -291,9 +292,9 @@ class SettingsRepositoryImplTest {
         }
 
     @Test
-    fun getThousandsSeparator_shouldReturnDefaultDot_whenNotStored() =
+    fun getThousandsSeparator_shouldReturnDefaultEmpty_whenNotStored() =
         runTest {
-            assertEquals(".", repository.getThousandsSeparator().first())
+            assertEquals("", repository.getThousandsSeparator().first())
         }
 
     @Test

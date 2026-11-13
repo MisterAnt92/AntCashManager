@@ -252,7 +252,7 @@ private fun ProfilesContent(
         ProfileFormDialog(
             initialProfile = null,
             titleRes = R.string.profiles_create_dialog_title,
-            onConfirm = { name, color, emoji, photoUri ->
+            onConfirm = { name, color, emoji, photoUri, _ ->
                 onEvent(ProfilesEvent.CreateProfile(name, color, emoji, photoUri))
             },
             onDismiss = { onEvent(ProfilesEvent.DismissCreateDialog) },
@@ -263,8 +263,14 @@ private fun ProfilesContent(
         ProfileFormDialog(
             initialProfile = profile,
             titleRes = R.string.profiles_edit_dialog_title,
-            onConfirm = { name, color, emoji, photoUri ->
-                onEvent(ProfilesEvent.UpdateProfile(profile.copy(name = name, colorArgb = color, avatarEmoji = emoji), photoUri))
+            onConfirm = { name, color, emoji, photoUri, clearPhoto ->
+                onEvent(
+                    ProfilesEvent.UpdateProfile(
+                        profile = profile.copy(name = name, colorArgb = color, avatarEmoji = emoji),
+                        newPhotoUri = photoUri,
+                        clearPhoto = clearPhoto,
+                    ),
+                )
                 onEvent(ProfilesEvent.DismissEditDialog)
             },
             onDismiss = { onEvent(ProfilesEvent.DismissEditDialog) },
@@ -442,25 +448,30 @@ private fun ActionIconButton(
 private fun ProfileFormDialog(
     initialProfile: Profile?,
     titleRes: Int,
-    onConfirm: (name: String, colorArgb: Long, avatarEmoji: String, photoUri: Uri?) -> Unit,
+    onConfirm: (name: String, colorArgb: Long, avatarEmoji: String, photoUri: Uri?, clearPhoto: Boolean) -> Unit,
     onDismiss: () -> Unit,
 ) {
     var name by remember { mutableStateOf(initialProfile?.name ?: "") }
     var selectedColor by remember { mutableStateOf(initialProfile?.colorArgb ?: PROFILE_COLORS.first()) }
     var selectedEmoji by remember { mutableStateOf(initialProfile?.avatarEmoji ?: "") }
     var selectedPhotoUri by remember { mutableStateOf<Uri?>(null) }
+    // true quando l'utente ha esplicitamente scelto un emoji o rimosso la foto:
+    // impedisce che la foto salvata ritorni se l'emoji viene de-selezionata
+    var photoCleared by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
     val pickerLauncher = rememberLauncherForActivityResult(PickVisualMedia()) { uri ->
         if (uri != null) {
             selectedPhotoUri = uri
             selectedEmoji = "" // photo overrides emoji
+            photoCleared = false // nuova foto: annulla eventuale clearPhoto precedente
         }
     }
 
-    // Load bitmap preview: new URI takes priority over existing saved photo path
+    // Load bitmap preview: new URI takes priority over existing saved photo path.
+    // selectedEmoji e photoCleared sono chiavi: quando cambiano, il bitmap viene ricalcolato.
     val previewPhotoPath = initialProfile?.photoPath
-    val previewBitmap by produceState<ImageBitmap?>(null, selectedPhotoUri, previewPhotoPath) {
+    val previewBitmap by produceState<ImageBitmap?>(null, selectedPhotoUri, previewPhotoPath, selectedEmoji, photoCleared) {
         value = when {
             selectedPhotoUri != null -> withContext(Dispatchers.IO) {
                 try {
@@ -469,7 +480,8 @@ private fun ProfileFormDialog(
                     }
                 } catch (_: Exception) { null }
             }
-            previewPhotoPath != null -> withContext(Dispatchers.IO) {
+            // Carica la foto esistente SOLO se l'utente non ha scelto emoji né ha rimosso la foto
+            previewPhotoPath != null && selectedEmoji.isEmpty() && !photoCleared -> withContext(Dispatchers.IO) {
                 try { BitmapFactory.decodeFile(previewPhotoPath)?.asImageBitmap() } catch (_: Exception) { null }
             }
             else -> null
@@ -547,7 +559,10 @@ private fun ProfileFormDialog(
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
-                        if (name.isNotBlank()) onConfirm(name.trim(), selectedColor, selectedEmoji, selectedPhotoUri)
+                        if (name.isNotBlank()) onConfirm(
+                            name.trim(), selectedColor, selectedEmoji, selectedPhotoUri,
+                            selectedPhotoUri == null && (selectedEmoji.isNotEmpty() || photoCleared),
+                        )
                     }),
                 )
 
@@ -596,8 +611,16 @@ private fun ProfileFormDialog(
                                         else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
                                     )
                                     .clickable {
-                                        selectedEmoji = if (isSelected) "" else emoji
-                                        if (!isSelected) selectedPhotoUri = null // emoji overrides photo
+                                        if (!isSelected) {
+                                            // selezione emoji: sovrascrive foto
+                                            selectedEmoji = emoji
+                                            selectedPhotoUri = null
+                                            photoCleared = true
+                                        } else {
+                                            // deselezione emoji: photoCleared resta true,
+                                            // la foto NON viene ripristinata automaticamente
+                                            selectedEmoji = ""
+                                        }
                                     },
                                 contentAlignment = Alignment.Center,
                             ) {
@@ -610,7 +633,12 @@ private fun ProfileFormDialog(
         },
         confirmButton = {
             TextButton(
-                onClick = { if (name.isNotBlank()) onConfirm(name.trim(), selectedColor, selectedEmoji, selectedPhotoUri) },
+                onClick = {
+                    if (name.isNotBlank()) onConfirm(
+                        name.trim(), selectedColor, selectedEmoji, selectedPhotoUri,
+                        selectedPhotoUri == null && (selectedEmoji.isNotEmpty() || photoCleared),
+                    )
+                },
                 enabled = name.isNotBlank(),
             ) {
                 AppText(text = stringResource(android.R.string.ok))

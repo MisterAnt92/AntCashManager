@@ -63,7 +63,6 @@ import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
 import com.antcashmanager.android.navigation.ScreenHeaderConfig
 import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
 import com.antcashmanager.android.ui.components.animation.SkeletonLoader
-import com.antcashmanager.android.ui.components.dialog.HelpButton
 import com.antcashmanager.android.ui.components.filter.DateRangeFilter
 import com.antcashmanager.android.ui.components.filter.SearchComponent
 import com.antcashmanager.android.ui.components.layout.FoldableAwareLayout
@@ -176,8 +175,6 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
     // Local UI state for dialogs only (not business logic)
     var showFromDatePicker by remember { mutableStateOf(false) }
     var showToDatePicker by remember { mutableStateOf(false) }
-    var showHelpDialog by remember { mutableStateOf(false) }
-
     // DateRangeFilter expanded state from state (UDF)
     val dateFilterExpanded = state.dateFilterExpanded
     val coroutineScope = rememberCoroutineScope()
@@ -262,10 +259,6 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
         }
     }
 
-    if (showHelpDialog) {
-        HelpDialog(onDismiss = { showHelpDialog = false })
-    }
-
     // Configure screen header with actions
     val headerConfigCallback = LocalScreenHeaderConfigCallback.current
     val transactionsTitle = stringResource(R.string.common_transactions)
@@ -306,12 +299,6 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
                                     },
                             )
                         }
-                        HelpButton(
-                            onHelpClick = {
-                                analyticsManager.logEvent("transactions_help_opened")
-                                showHelpDialog = true
-                            },
-                        )
                     }
                 },
             ),

@@ -111,7 +111,6 @@ import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
 import com.antcashmanager.android.navigation.ScreenHeaderConfig
 import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
-import com.antcashmanager.android.ui.components.dialog.HelpButton
 import com.antcashmanager.android.ui.components.layout.FoldableAwareLayout
 import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
 import com.antcashmanager.android.ui.components.layout.SpacingSize
@@ -323,7 +322,6 @@ internal fun CategoriesContent(
     var selectedTab by remember { mutableIntStateOf(0) }
     var showAddDialog by remember { mutableStateOf(false) }
     var categoryToDelete by remember { mutableStateOf<Category?>(null) }
-    var showHelpDialog by remember { mutableStateOf(false) }
     var showReorderDialog by remember { mutableStateOf(false) }
     var hiddenSectionExpanded by remember { mutableStateOf(false) }
 
@@ -332,11 +330,6 @@ internal fun CategoriesContent(
     val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo(displayFeatures = displayFeatures)
     val multiPaneCoordinator = LocalMultiPaneCoordinator.current
     val foldingFeature = adaptiveLayoutInfo.foldingFeature
-
-    // Help dialog
-    if (showHelpDialog) {
-        HelpDialog(onDismiss = { showHelpDialog = false })
-    }
 
     val tabs =
         listOf(
@@ -361,19 +354,6 @@ internal fun CategoriesContent(
                     if (currentCategories.size > 1) {
                         analyticsManager.logEvent("categories_reorder_opened")
                         showReorderDialog = true
-                    }
-                },
-                actions = {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        HelpButton(
-                            onHelpClick = {
-                                analyticsManager.logEvent("categories_help_opened")
-                                showHelpDialog = true
-                            },
-                        )
                     }
                 },
             ),

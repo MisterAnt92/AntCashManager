@@ -2,18 +2,26 @@ package com.antcashmanager.data.local.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "transactions",
+    foreignKeys = [
+        ForeignKey(
+            entity = ProfileEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["profile_id"],
+            onDelete = ForeignKey.CASCADE,
+        ),
+    ],
     indices = [
         Index("timestamp"), // ORDER BY timestamp
         Index("is_recurring"), // WHERE is_recurring = 1
-        Index("category"), // WHERE category = :category
         Index("type"), // WHERE type = :type
-        Index("profile_id"), // WHERE profile_id = :profileId
         Index(value = ["profile_id", "timestamp"]), // scoped ORDER BY timestamp
+        Index(value = ["profile_id", "category"]), // scoped WHERE profile_id = :profileId AND category = :category
     ],
 )
 public data class TransactionEntity(

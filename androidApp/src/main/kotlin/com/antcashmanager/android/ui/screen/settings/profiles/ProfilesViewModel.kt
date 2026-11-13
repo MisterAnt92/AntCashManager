@@ -60,7 +60,7 @@ class ProfilesViewModel(
                 event.photoUri,
             )
 
-            is ProfilesEvent.UpdateProfile -> updateProfile(event.profile, event.newPhotoUri)
+            is ProfilesEvent.UpdateProfile -> updateProfile(event.profile, event.newPhotoUri, event.clearPhoto)
             is ProfilesEvent.ShowEditDialog -> _state.update { it.copy(showEditDialog = event.profile) }
             is ProfilesEvent.DismissEditDialog -> _state.update { it.copy(showEditDialog = null) }
             is ProfilesEvent.DismissError -> _state.update { it.copy(errorMessage = null) }
@@ -136,17 +136,21 @@ class ProfilesViewModel(
         }
     }
 
-    private fun updateProfile(profile: Profile, newPhotoUri: Uri?) {
+    private fun updateProfile(profile: Profile, newPhotoUri: Uri?, clearPhoto: Boolean) {
         viewModelScope.launch {
-            val photoPath = if (newPhotoUri != null) {
-                try {
+            val photoPath = when {
+                newPhotoUri != null -> try {
                     profilePhotoStorage.savePhoto(profile.id, newPhotoUri)
                 } catch (e: Exception) {
                     logWarn("Failed to save profile photo: ${e.message}")
                     profile.photoPath
                 }
-            } else {
-                profile.photoPath
+                // User switched to emoji: rimuovi la foto salvata
+                clearPhoto -> {
+                    if (profile.photoPath != null) profilePhotoStorage.deletePhoto(profile.id)
+                    null
+                }
+                else -> profile.photoPath
             }
             updateProfileUseCase(profile.copy(photoPath = photoPath)).handleError { err ->
                 _state.update { it.copy(errorMessage = err.message) }

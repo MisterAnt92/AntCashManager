@@ -68,7 +68,6 @@ import com.antcashmanager.android.data.formatter.ShareTextFormatter
 import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
 import com.antcashmanager.android.navigation.ScreenHeaderConfig
 import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
-import com.antcashmanager.android.ui.components.dialog.HelpButton
 import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
@@ -173,7 +172,6 @@ internal fun ChartsContent(
     var selectedPreset by remember { mutableIntStateOf(initialPresetIndex) }
     var showFromPicker by remember { mutableStateOf(false) }
     var showToPicker by remember { mutableStateOf(false) }
-    var showHelpDialog by remember { mutableStateOf(false) }
     var isVisualizationsSectionExpanded by remember { mutableStateOf(true) }
     var selectedChartDetails by remember { mutableStateOf<ChartDetailsData?>(null) }
 
@@ -216,11 +214,6 @@ internal fun ChartsContent(
         }
     }
 
-    // Help dialog
-    if (showHelpDialog) {
-        HelpDialog(onDismiss = { showHelpDialog = false })
-    }
-
     // Configure screen header with actions
     val headerConfigCallback = LocalScreenHeaderConfigCallback.current
     val chartsTitle = stringResource(R.string.common_charts)
@@ -230,14 +223,6 @@ internal fun ChartsContent(
                 title = chartsTitle,
                 hasOrderOption = true,
                 onOrderClick = { showChartsCardsOrderDialog = true },
-                actions = {
-                    HelpButton(
-                        onHelpClick = {
-                            analyticsManager.logEvent("chart_help_opened")
-                            showHelpDialog = true
-                        },
-                    )
-                },
             ),
         )
     }

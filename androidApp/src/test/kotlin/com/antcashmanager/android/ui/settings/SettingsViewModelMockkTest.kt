@@ -243,6 +243,8 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
         val widgetUpdateNotifier: WidgetUpdateNotifier = mockk(relaxed = true)
 
         return SettingsViewModel(
+            getProfilesUseCase = mockk(relaxed = true),
+            profileManager = mockk(relaxed = true),
             settingsUseCases = settingsUseCasesProvider,
             settingsRepository = mockk(relaxed = true),
             deleteAllTransactionsUseCase = deleteAllTransactionsUseCase,

@@ -8,6 +8,8 @@ import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.security.LocalDataCipher
 import com.antcashmanager.domain.service.WidgetUpdateNotifier
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,7 +33,10 @@ class TransactionRepositoryImplTest {
         fakeDao = FakeTransactionDao()
         fakeCipher = FakeLocalDataCipher()
         fakeWidgetUpdateNotifier = FakeWidgetUpdateNotifier()
-        repository = TransactionRepositoryImpl(fakeDao, fakeCipher, fakeWidgetUpdateNotifier)
+        val profileManager: com.antcashmanager.domain.manager.ProfileManager = mockk(relaxed = true)
+        every { profileManager.activeProfileId } returns kotlinx.coroutines.flow.MutableStateFlow(1L)
+        every { profileManager.getActiveProfileIdSync() } returns 1L
+        repository = TransactionRepositoryImpl(fakeDao, fakeCipher, profileManager, fakeWidgetUpdateNotifier)
     }
 
     @Test
@@ -390,9 +395,9 @@ private class FakeTransactionDao : TransactionDao {
     var lastBatchInserted: List<TransactionEntity>? = null
     var lastBatchUpdated: List<TransactionEntity>? = null
 
-    override fun getAllTransactions(): Flow<List<TransactionEntity>> = transactionsFlow
+    override fun getAllTransactions(profileId: Long): Flow<List<TransactionEntity>> = transactionsFlow
 
-    override suspend fun getCount(): Int = transactionsFlow.value.size
+    override suspend fun getCount(profileId: Long): Int = transactionsFlow.value.size
 
     override suspend fun getTransactionById(id: Long): TransactionEntity? =
         transactionsFlow.value.firstOrNull { it.id == id }
@@ -414,19 +419,21 @@ private class FakeTransactionDao : TransactionDao {
         transactionsFlow.value = transactionsFlow.value.filterNot { it.id == transaction.id }
     }
 
-    override suspend fun deleteAllTransactions() {
+    override suspend fun deleteAllTransactions(profileId: Long) {
         transactionsFlow.value = emptyList()
     }
 
     override fun getTransactionsByDateRange(
+        profileId: Long,
         from: Long,
         to: Long,
     ): Flow<List<TransactionEntity>> = flowOf(transactionsFlow.value.filter { it.timestamp in from..to })
 
-    override fun getRecurringTransactions(): Flow<List<TransactionEntity>> =
+    override fun getRecurringTransactions(profileId: Long): Flow<List<TransactionEntity>> =
         flowOf(transactionsFlow.value.filter { it.isRecurring })
 
     override fun getTransactionsPaginated(
+        profileId: Long,
         limit: Int,
         offset: Int,
     ): Flow<List<TransactionEntity>> =
@@ -438,6 +445,7 @@ private class FakeTransactionDao : TransactionDao {
         )
 
     override fun getTransactionsByCategory(
+        profileId: Long,
         category: String,
         limit: Int,
         offset: Int,
@@ -452,6 +460,7 @@ private class FakeTransactionDao : TransactionDao {
         )
 
     override fun getTransactionsByCategoryAndDateRange(
+        profileId: Long,
         category: String,
         from: Long,
         to: Long,
@@ -468,6 +477,7 @@ private class FakeTransactionDao : TransactionDao {
         )
 
     override fun searchTransactions(
+        profileId: Long,
         query: String,
         limit: Int,
         offset: Int,
@@ -484,6 +494,7 @@ private class FakeTransactionDao : TransactionDao {
         )
 
     override suspend fun renameCategory(
+        profileId: Long,
         oldCategoryName: String,
         newCategoryName: String,
         icon: String,
@@ -499,27 +510,27 @@ private class FakeTransactionDao : TransactionDao {
             }
     }
 
-    override fun getDistinctTitles(since: Long): Flow<List<String>> {
+    override fun getDistinctTitles(profileId: Long, since: Long): Flow<List<String>> {
         lastDistinctTitlesSince = since
         return distinctTitlesFlow
     }
 
-    override fun getDistinctPayees(since: Long): Flow<List<String>> {
+    override fun getDistinctPayees(profileId: Long, since: Long): Flow<List<String>> {
         lastDistinctPayeesSince = since
         return distinctPayeesFlow
     }
 
-    override fun getDistinctNotes(since: Long): Flow<List<String>> {
+    override fun getDistinctNotes(profileId: Long, since: Long): Flow<List<String>> {
         lastDistinctNotesSince = since
         return distinctNotesFlow
     }
 
-    override fun getDistinctLocations(since: Long): Flow<List<String>> {
+    override fun getDistinctLocations(profileId: Long, since: Long): Flow<List<String>> {
         lastDistinctLocationsSince = since
         return distinctLocationsFlow
     }
 
-    override fun getDistinctTags(since: Long): Flow<List<String>> {
+    override fun getDistinctTags(profileId: Long, since: Long): Flow<List<String>> {
         lastDistinctTagsSince = since
         return distinctTagsFlow
     }
@@ -538,7 +549,7 @@ private class FakeTransactionDao : TransactionDao {
             }
     }
 
-    override suspend fun getSuggestions(since: Long): List<SuggestionRow> =
+    override suspend fun getSuggestions(profileId: Long, since: Long): List<SuggestionRow> =
         transactionsFlow.value
             .filter { it.timestamp >= since }
             .filter {

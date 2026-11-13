@@ -9,6 +9,7 @@ import androidx.room.PrimaryKey
     tableName = "profiles",
     indices = [
         Index("is_active"), // WHERE is_active = 1
+        Index(value = ["uuid"], unique = true),
     ],
 )
 public data class ProfileEntity(

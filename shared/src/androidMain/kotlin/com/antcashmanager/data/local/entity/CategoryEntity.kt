@@ -2,15 +2,24 @@ package com.antcashmanager.data.local.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "categories",
+    foreignKeys = [
+        ForeignKey(
+            entity = ProfileEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["profile_id"],
+            onDelete = ForeignKey.CASCADE,
+        ),
+    ],
     indices = [
         Index("type"), // WHERE type = :type in getCategoriesByType
-        Index("name"), // Potential unique constraint
-        Index("profile_id"), // WHERE profile_id = :profileId
+        Index(value = ["profile_id", "name"]), // Query by name scoped to profile
+        Index(value = ["profile_id", "type"]), // Query categories by type scoped to profile
     ],
 )
 public data class CategoryEntity(

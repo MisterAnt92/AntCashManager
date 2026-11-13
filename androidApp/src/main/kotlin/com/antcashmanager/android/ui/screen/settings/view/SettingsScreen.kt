@@ -52,7 +52,6 @@ import com.antcashmanager.android.ui.components.animation.AntEasterEggAnimation
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
 import com.antcashmanager.android.ui.components.common.AppSwitch
-import com.antcashmanager.android.ui.components.dialog.HelpButton
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.text.AppText
@@ -151,7 +150,6 @@ internal fun SettingsContent(
     var showDecimalDigitsDialog by remember { mutableStateOf(false) }
     var showDecimalSeparatorDialog by remember { mutableStateOf(false) }
     var showThousandsSeparatorDialog by remember { mutableStateOf(false) }
-    var showHelpDialog by remember { mutableStateOf(false) }
     var showAntAnimation by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val analyticsManager: AnalyticsManager = koinInject()
@@ -189,11 +187,6 @@ internal fun SettingsContent(
         onReduceMotionChanged(enabled)
     }
 
-    // Help dialog
-    if (showHelpDialog) {
-        HelpDialog(onDismiss = { showHelpDialog = false })
-    }
-
     // Configure screen header with actions
     val headerConfigCallback = LocalScreenHeaderConfigCallback.current
     val settingsTitle = stringResource(R.string.common_settings)
@@ -201,14 +194,6 @@ internal fun SettingsContent(
         headerConfigCallback?.invoke(
             ScreenHeaderConfig(
                 title = settingsTitle,
-                actions = {
-                    HelpButton(
-                        onHelpClick = {
-                            analyticsManager.logEvent("settings_help_opened")
-                            showHelpDialog = true
-                        },
-                    )
-                },
             ),
         )
     }

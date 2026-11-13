@@ -47,8 +47,6 @@ subprojects {
 }
 
 // ── Kover Aggregated Coverage ──
-// Note: :shared uses com.android.kotlin.multiplatform.library (not supported by Kover 0.9.x).
-// androidApp already compiles shared sources, so its coverage includes shared domain/data classes.
 dependencies {
     kover(project(":androidApp"))
 }
@@ -72,6 +70,11 @@ kover {
             }
         }
     }
+}
+
+// Ensure Kover report tasks depend on both androidApp and shared unit test tasks
+tasks.matching { it.name.contains("kover", ignoreCase = true) }.configureEach {
+    dependsOn(":androidApp:testFullDebugUnitTest", ":shared:testAndroidHostTest")
 }
 
 // ── Test Coverage Reporting ──
