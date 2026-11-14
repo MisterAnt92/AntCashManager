@@ -12,6 +12,8 @@ import com.antcashmanager.domain.model.TransactionSuggestions
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
+import com.antcashmanager.domain.usecase.settings.GetHomeDateFilterStateUseCase
+import com.antcashmanager.domain.usecase.settings.SetHomeDateFilterStateUseCase
 import com.antcashmanager.domain.usecase.transaction.FilterTransactionsUseCase
 import com.antcashmanager.domain.usecase.transaction.GetTransactionSuggestionsUseCase
 import com.antcashmanager.domain.usecase.transaction.GetTransactionsUseCase

@@ -874,13 +874,13 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     // ── FASE 2: Error Handling Tests ──
 
     @Test
-    fun loadTransaction_shouldShowError_ifCategoryNotFound() =
+    fun loadTransaction_shouldFallback_ifCategoryNotFound() =
         runViewModelTest {
-            // Simula: transazione con categoria che non esiste più
+            // Simula: transazione con categoria che non esiste più nel repo categorie
             val transactionWithMissingCategory =
                 mockTransaction.copy(
                     id = 99L,
-                    category = "DeletedCategory", // Categoria che non esiste
+                    category = "DeletedCategory",
                 )
             transactionRepository.transactions.value =
                 transactionRepository.transactions.value + transactionWithMissingCategory
@@ -888,22 +888,9 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             viewModel = createViewModel(transactionId = 99L)
             advanceUntilLoaded()
 
-            // Dovrebbe mostrare errore di categoria non trovata
-            val error = viewModel.state.value.error
-            assertTrue("Should show error", !error.isNullOrEmpty())
-            assertTrue(
-                "Error should mention missing category or load error",
-                error?.contains("DeletedCategory") == true ||
-                    error?.contains("not found") == true ||
-                    error?.contains(
-                        "ERROR",
-                    ) == true,
-            )
-            // Should not be able to edit without category
-            assertFalse(
-                "Should not be in DETAILS without valid category",
-                viewModel.state.value.isModifying,
-            )
+            // Deve usare la categoria di fallback ricavata dalla transazione stessa
+            assertEquals("DeletedCategory", viewModel.state.value.selectedCategory?.name)
+            assertTrue("Should be in modifying/details mode", viewModel.state.value.isModifying)
         }
 
     @Test
@@ -1523,7 +1510,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
 
     private fun createViewModel(transactionId: Long? = null): AddTransactionViewModel {
         val getCategoriesUC = GetCategoriesUseCase(categoryRepository, testDispatcher)
-        val getMealVoucherValueUC = GetSettingUseCase<T>() or SetSettingUseCase<T>()
+        val getMealVoucherValueUC = GetMealVoucherValueUseCase(settingsRepository, testDispatcher)
         val getTransactionByIdUC = GetTransactionByIdUseCase(transactionRepository, testDispatcher)
         val insertTransactionUC = InsertTransactionUseCase(transactionRepository, testDispatcher)
         val updateTransactionUC = UpdateTransactionUseCase(transactionRepository, testDispatcher)
