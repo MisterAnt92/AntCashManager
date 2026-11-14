@@ -247,19 +247,23 @@ class HomeViewModel(
             _editingTopCardsOrder,
             settingsRepository.getMealVoucherValue(),
         ) { args: Array<Any?> ->
-            val transactions = args[0] as List<com.antcashmanager.domain.model.Transaction>
-            val filtered = args[1] as List<com.antcashmanager.domain.model.Transaction>
-            val suggestions = args[2] as List<String>
-            val filterState = args[3] as FilterState
-            val selectedTransaction = args[4] as com.antcashmanager.domain.model.Transaction?
-            val categoryCache = args[5] as Map<String, com.antcashmanager.domain.model.Category>
-            val topCardsOrder = HomeTopCardType.parse(args[6] as String)
-            val dateFilterExpanded = args[7] as Boolean
-            val showPaymentTypeBreakdown = args[8] as Boolean
-            val showQuickInsightsCard = args[9] as Boolean
-            val reduceMotion = args[10] as Boolean
-            val transactionDisplayType = args[11] as TransactionDisplayType
-            val isTutorialCompleted = args[12] as Boolean
+            @Suppress("UNCHECKED_CAST")
+            val transactions = (args[0] as? List<com.antcashmanager.domain.model.Transaction>) ?: emptyList()
+            @Suppress("UNCHECKED_CAST")
+            val filtered = (args[1] as? List<com.antcashmanager.domain.model.Transaction>) ?: emptyList()
+            @Suppress("UNCHECKED_CAST")
+            val suggestions = (args[2] as? List<String>) ?: emptyList()
+            val filterState = (args[3] as? FilterState) ?: FilterState()
+            val selectedTransaction = args[4] as? com.antcashmanager.domain.model.Transaction
+            @Suppress("UNCHECKED_CAST")
+            val categoryCache = (args[5] as? Map<String, com.antcashmanager.domain.model.Category>) ?: emptyMap()
+            val topCardsOrder = HomeTopCardType.parse((args[6] as? String) ?: "")
+            val dateFilterExpanded = (args[7] as? Boolean) ?: true
+            val showPaymentTypeBreakdown = (args[8] as? Boolean) ?: false
+            val showQuickInsightsCard = (args[9] as? Boolean) ?: true
+            val reduceMotion = (args[10] as? Boolean) ?: false
+            val transactionDisplayType = (args[11] as? TransactionDisplayType) ?: TransactionDisplayType.TREND
+            val isTutorialCompleted = (args[12] as? Boolean) ?: false
 
             // If the user already has transactions the tutorial must not appear,
             // regardless of the stored flag (handles device-store migration for existing users).
@@ -269,8 +273,8 @@ class HomeViewModel(
             }
 
             @Suppress("UNCHECKED_CAST")
-            val editingTopCardsOrder = args[13] as List<HomeTopCardType>?
-            val mealVoucherValue = args[14] as Double
+            val editingTopCardsOrder = args[13] as? List<HomeTopCardType>
+            val mealVoucherValue = (args[14] as? Double) ?: com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayConstant.DEFAULT_MEAL_VOUCHER_VALUE
 
             // Enrich transactions with category icon and color from cache
             val enrichedFiltered =

@@ -158,14 +158,15 @@ class TransactionsViewModel(
             _filterState.map { it.dateRangeTo }.distinctUntilChanged(),
             _filterState.map { it.selectedPresetIndex }.distinctUntilChanged(),
         ) { args: Array<Any?> ->
-            val transactions = args[0] as List<Transaction>
-            val query = args[1] as String
-            val category = args[2] as String?
-            val type = args[3] as TransactionType?
-            val payment = args[4] as PaymentType?
-            val storedFrom = args[5] as Long
-            val storedTo = args[6] as Long
-            val presetIndex = args[7] as Int
+            @Suppress("UNCHECKED_CAST")
+            val transactions = (args[0] as? List<Transaction>) ?: emptyList()
+            val query = (args[1] as? String) ?: ""
+            val category = args[2] as? String
+            val type = args[3] as? TransactionType
+            val payment = args[4] as? PaymentType
+            val storedFrom = (args[5] as? Long) ?: (System.currentTimeMillis() - TransactionsConstant.ONE_WEEK_MS)
+            val storedTo = (args[6] as? Long) ?: System.currentTimeMillis()
+            val presetIndex = (args[7] as? Int) ?: TransactionsConstant.DEFAULT_PRESET_INDEX
 
             // Per i preset relativi, ricalcola i bound dinamicamente al momento dell'esecuzione.
             // Il combine si riesegue ogni volta che transactionsFlow emette (Room insert/update),

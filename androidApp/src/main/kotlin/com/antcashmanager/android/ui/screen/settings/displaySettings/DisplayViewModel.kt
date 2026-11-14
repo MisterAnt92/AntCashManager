@@ -75,28 +75,28 @@ class DisplayViewModel(
             val values = args as Array<Any?>
 
             @Suppress("UNCHECKED_CAST")
-            val currencyDigits = values[0] as Pair<String, Int>
+            val currencyDigits = (values[0] as? Pair<String, Int>) ?: Pair(DisplayConstant.DEFAULT_CURRENCY_SYMBOL, DisplayConstant.DEFAULT_DECIMAL_DIGITS)
 
             @Suppress("UNCHECKED_CAST")
-            val separators = values[1] as Pair<String, String>
+            val separators = (values[1] as? Pair<String, String>) ?: Pair(DisplayConstant.DEFAULT_DECIMAL_SEPARATOR, DisplayConstant.DEFAULT_THOUSANDS_SEPARATOR)
             DisplayState(
                 currencySymbol = currencyDigits.first,
                 decimalDigits = currencyDigits.second,
                 decimalSeparator = separators.first,
                 thousandsSeparator = separators.second,
-                mealVoucherValue = values[2] as Double,
-                showChartsSection = values[3] as Boolean,
-                chartsZoomEnabled = values[4] as Boolean,
-                dateFormat = values[5] as String,
-                showTransactionNotes = values[6] as Boolean,
-                maskAmounts = values[7] as Boolean,
-                showPaymentTypeBreakdown = values[8] as Boolean,
-                showQuickInsightsCard = values[9] as Boolean,
-                defaultPaymentType = values[10] as String,
-                transactionDisplayType = values[11] as TransactionDisplayType,
-                transactionsTransactionDisplayType = values[12] as TransactionDisplayType,
-                widgetBackgroundColor = values[13] as Long,
-                widgetOpacity = values[14] as Int,
+                mealVoucherValue = (values[2] as? Double) ?: DisplayConstant.DEFAULT_MEAL_VOUCHER_VALUE,
+                showChartsSection = (values[3] as? Boolean) ?: DisplayConstant.DEFAULT_SHOW_CHARTS_SECTION,
+                chartsZoomEnabled = (values[4] as? Boolean) ?: DisplayConstant.DEFAULT_SHOW_CHARTS_ZOOM,
+                dateFormat = (values[5] as? String) ?: DisplayConstant.DEFAULT_DATE_FORMAT,
+                showTransactionNotes = (values[6] as? Boolean) ?: DisplayConstant.DEFAULT_SHOW_TRANSACTION_NOTES,
+                maskAmounts = (values[7] as? Boolean) ?: DisplayConstant.DEFAULT_MASK_AMOUNTS,
+                showPaymentTypeBreakdown = (values[8] as? Boolean) ?: DisplayConstant.DEFAULT_SHOW_PAYMENT_BREAKDOWN,
+                showQuickInsightsCard = (values[9] as? Boolean) ?: DisplayConstant.DEFAULT_SHOW_QUICK_INSIGHTS_CARD,
+                defaultPaymentType = (values[10] as? String) ?: DisplayConstant.DEFAULT_PAYMENT_TYPE,
+                transactionDisplayType = (values[11] as? TransactionDisplayType) ?: DisplayConstant.DEFAULT_TRANSACTION_DISPLAY_TYPE,
+                transactionsTransactionDisplayType = (values[12] as? TransactionDisplayType) ?: DisplayConstant.DEFAULT_TRANSACTION_DISPLAY_TYPE,
+                widgetBackgroundColor = (values[13] as? Long) ?: DisplayConstant.DEFAULT_WIDGET_BACKGROUND_COLOR,
+                widgetOpacity = (values[14] as? Int) ?: DisplayConstant.DEFAULT_WIDGET_OPACITY,
             )
         }.stateIn(
             viewModelScope,
