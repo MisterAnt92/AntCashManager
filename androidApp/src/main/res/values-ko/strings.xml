@@ -421,6 +421,8 @@
     <string name="payment_type_electronic">전자 결제</string>
     <string name="payment_type_cash">현금</string>
     <string name="payment_type_meal_vouchers">식권</string>
+    <string name="payment_type_meal_vouchers_with_cash">식권 + 현금/카드</string>
+    <string name="transaction_details_meal_vouchers_covered">식권 커버 금액</string>
 
     <!-- Add Transaction Payment Type -->
     <string name="add_transaction_payment_type">결제 유형</string>

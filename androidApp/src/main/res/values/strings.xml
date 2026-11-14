@@ -437,6 +437,8 @@
     <string name="payment_type_electronic">Electronic Payment</string>
     <string name="payment_type_cash">Cash</string>
     <string name="payment_type_meal_vouchers">Meal Vouchers</string>
+    <string name="payment_type_meal_vouchers_with_cash">Meal Vouchers + Cash/Card</string>
+    <string name="transaction_details_meal_vouchers_covered">Covered by Vouchers</string>
 
     <!-- Add Transaction Payment Type -->
     <string name="add_transaction_payment_type">Payment Type</string>

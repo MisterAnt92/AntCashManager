@@ -34,8 +34,9 @@ class TransactionRepositoryImplTest {
         fakeCipher = FakeLocalDataCipher()
         fakeWidgetUpdateNotifier = FakeWidgetUpdateNotifier()
         val profileManager: com.antcashmanager.domain.manager.ProfileManager = mockk(relaxed = true)
-        every { profileManager.activeProfileId } returns kotlinx.coroutines.flow.MutableStateFlow(1L)
+        every { profileManager.activeProfileId } returns MutableStateFlow(1L)
         every { profileManager.getActiveProfileIdSync() } returns 1L
+        every { profileManager.sharedProfileIds } returns MutableStateFlow(listOf(1L))
         repository = TransactionRepositoryImpl(fakeDao, fakeCipher, profileManager, fakeWidgetUpdateNotifier)
     }
 
@@ -560,4 +561,38 @@ private class FakeTransactionDao : TransactionDao {
                     it.tags.isNotEmpty()
             }.distinctBy { it.title + it.payee + it.notes + it.location + it.tags }
             .map { SuggestionRow(it.title, it.payee, it.notes, it.location, it.tags) }
+
+    override fun getAllTransactionsByProfiles(profileIds: List<Long>): Flow<List<TransactionEntity>> = transactionsFlow
+    override suspend fun getCountMulti(profileIds: List<Long>): Int = transactionsFlow.value.size
+    override fun getTransactionsByDateRangeMulti(profileIds: List<Long>, from: Long, to: Long): Flow<List<TransactionEntity>> = flowOf(transactionsFlow.value.filter { it.timestamp in from..to })
+    override fun getRecurringTransactionsMulti(profileIds: List<Long>): Flow<List<TransactionEntity>> = flowOf(transactionsFlow.value.filter { it.isRecurring })
+    override fun getTransactionsPaginatedMulti(profileIds: List<Long>, limit: Int, offset: Int): Flow<List<TransactionEntity>> = flowOf(transactionsFlow.value)
+    override fun getTransactionsByCategoryMulti(profileIds: List<Long>, category: String, limit: Int, offset: Int): Flow<List<TransactionEntity>> = flowOf(transactionsFlow.value)
+    override fun searchTransactionsMulti(profileIds: List<Long>, query: String, limit: Int, offset: Int): Flow<List<TransactionEntity>> = flowOf(transactionsFlow.value)
+    override fun getDistinctTitlesMulti(profileIds: List<Long>, since: Long): Flow<List<String>> {
+        lastDistinctTitlesSince = since
+        return distinctTitlesFlow
+    }
+    override fun getDistinctPayeesMulti(profileIds: List<Long>, since: Long): Flow<List<String>> {
+        lastDistinctPayeesSince = since
+        return distinctPayeesFlow
+    }
+    override fun getDistinctNotesMulti(profileIds: List<Long>, since: Long): Flow<List<String>> {
+        lastDistinctNotesSince = since
+        return distinctNotesFlow
+    }
+    override fun getDistinctLocationsMulti(profileIds: List<Long>, since: Long): Flow<List<String>> {
+        lastDistinctLocationsSince = since
+        return distinctLocationsFlow
+    }
+    override fun getDistinctTagsMulti(profileIds: List<Long>, since: Long): Flow<List<String>> {
+        lastDistinctTagsSince = since
+        return distinctTagsFlow
+    }
+    override suspend fun getSuggestionsMulti(profileIds: List<Long>, since: Long): List<SuggestionRow> = getSuggestions(1L, since)
+    override suspend fun getTransactionByIdScoped(profileId: Long, id: Long): TransactionEntity? = getTransactionById(id)
+    override suspend fun deleteAllTransactionsMulti(profileIds: List<Long>) { transactionsFlow.value = emptyList() }
+    override suspend fun renameCategoryMulti(profileIds: List<Long>, oldCategoryName: String, newCategoryName: String, icon: String, color: Long) {
+        renameCategory(1L, oldCategoryName, newCategoryName, icon, color)
+    }
 }

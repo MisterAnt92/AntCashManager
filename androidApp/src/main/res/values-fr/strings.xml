@@ -388,6 +388,8 @@
     <string name="payment_type_electronic">Paiement Électronique</string>
     <string name="payment_type_cash">Espèces</string>
     <string name="payment_type_meal_vouchers">Tickets Repas</string>
+    <string name="payment_type_meal_vouchers_with_cash">Titres-Restaurant + Espèces/Carte</string>
+    <string name="transaction_details_meal_vouchers_covered">Couvert par Titres</string>
     <string name="add_transaction_payment_type">Type de Paiement</string>
     <string name="add_transaction_select_payment_type">Sélectionner Type de Paiement</string>
     <string name="add_transaction_payment_type_electronic">Électronique</string>

@@ -419,6 +419,8 @@
     <string name="payment_type_electronic">Безналичный расчет</string>
     <string name="payment_type_cash">Наличные</string>
     <string name="payment_type_meal_vouchers">Чеки на еду</string>
+    <string name="payment_type_meal_vouchers_with_cash">Талоны на питание + Наличные/Карта</string>
+    <string name="transaction_details_meal_vouchers_covered">Покрыто талонами</string>
 
     <!-- Add Transaction Payment Type -->
     <string name="add_transaction_payment_type">Тип платежа</string>

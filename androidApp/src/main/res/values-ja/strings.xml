@@ -421,6 +421,8 @@
     <string name="payment_type_electronic">電子決済</string>
     <string name="payment_type_cash">現金</string>
     <string name="payment_type_meal_vouchers">食事チケット</string>
+    <string name="payment_type_meal_vouchers_with_cash">食事券 + 現金/カード</string>
+    <string name="transaction_details_meal_vouchers_covered">食事券充当額</string>
 
     <!-- Add Transaction Payment Type -->
     <string name="add_transaction_payment_type">支払い方法</string>

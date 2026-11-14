@@ -435,6 +435,8 @@
     <string name="payment_type_electronic">Pagamento Elettronico</string>
     <string name="payment_type_cash">Contante</string>
     <string name="payment_type_meal_vouchers">Buoni Pasto</string>
+    <string name="payment_type_meal_vouchers_with_cash">Buoni Pasto + Contanti/Carta</string>
+    <string name="transaction_details_meal_vouchers_covered">Coperto da Buoni</string>
     <string name="add_transaction_payment_type">Tipo di Pagamento</string>
     <string name="add_transaction_select_payment_type">Seleziona Tipo di Pagamento</string>
     <string name="add_transaction_payment_type_electronic">Elettronico</string>

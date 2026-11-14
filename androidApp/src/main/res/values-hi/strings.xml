@@ -418,6 +418,8 @@
     <string name="payment_type_electronic">इलेक्ट्रॉनिक भुगतान</string>
     <string name="payment_type_cash">नकद</string>
     <string name="payment_type_meal_vouchers">भोजन वाउचर</string>
+    <string name="payment_type_meal_vouchers_with_cash">मील वाउचर + नकद/कार्ड</string>
+    <string name="transaction_details_meal_vouchers_covered">वाउचर द्वारा कवर किया गया</string>
 
     <!-- Add Transaction Payment Type -->
     <string name="add_transaction_payment_type">भुगतान का प्रकार</string>

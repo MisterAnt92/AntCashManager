@@ -385,6 +385,8 @@
     <string name="payment_type_electronic">Pago Electrónico</string>
     <string name="payment_type_cash">Efectivo</string>
     <string name="payment_type_meal_vouchers">Vales de Comida</string>
+    <string name="payment_type_meal_vouchers_with_cash">Vales de Comida + Efectivo/Tarjeta</string>
+    <string name="transaction_details_meal_vouchers_covered">Cubierto con Vales</string>
     <string name="add_transaction_payment_type">Tipo de Pago</string>
     <string name="add_transaction_select_payment_type">Seleccionar Tipo de Pago</string>
     <string name="add_transaction_payment_type_electronic">Electrónico</string>
