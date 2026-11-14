@@ -31,13 +31,11 @@ import kotlinx.coroutines.launch
 class SettingsViewModel(
     private val settingsUseCases: SettingsUseCasesProvider,
     private val settingsRepository: SettingsRepository,
-    private val deleteAllTransactionsUseCase: DeleteAllTransactionsUseCase,
-    private val insertTransactionUseCase: InsertTransactionUseCase,
     private val widgetUpdateNotifier: WidgetUpdateNotifier,
     private val sendFeedbackEmailUseCase: SendFeedbackEmailUseCase,
     private val importDebugDataUseCase: ImportDebugDataUseCase,
     private val getProfilesUseCase: GetProfilesUseCase,
-    private val profileManager: ProfileManager,
+    profileManager: ProfileManager,
 ) : BaseViewModel<SettingEvent>() {
     // Convenience properties for readability (delegate to provider)
     private val getThemeUseCase get() = settingsUseCases.getTheme

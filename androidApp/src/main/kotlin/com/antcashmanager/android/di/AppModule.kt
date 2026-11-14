@@ -449,8 +449,6 @@ val presentationModule =
             SettingsViewModel(
                 settingsUseCases = get(),
                 settingsRepository = get(),
-                deleteAllTransactionsUseCase = get(),
-                insertTransactionUseCase = get(),
                 widgetUpdateNotifier = get(),
                 sendFeedbackEmailUseCase = get(),
                 importDebugDataUseCase = get(),

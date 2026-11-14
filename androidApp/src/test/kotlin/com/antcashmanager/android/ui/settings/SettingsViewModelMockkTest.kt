@@ -247,8 +247,6 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
             profileManager = mockk(relaxed = true),
             settingsUseCases = settingsUseCasesProvider,
             settingsRepository = mockk(relaxed = true),
-            deleteAllTransactionsUseCase = deleteAllTransactionsUseCase,
-            insertTransactionUseCase = insertTransactionUseCase,
             widgetUpdateNotifier = widgetUpdateNotifier,
             sendFeedbackEmailUseCase = sendFeedbackEmailUseCase,
             importDebugDataUseCase = importDebugDataUseCase,
