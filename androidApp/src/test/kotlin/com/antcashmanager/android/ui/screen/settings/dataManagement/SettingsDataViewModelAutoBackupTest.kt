@@ -156,21 +156,21 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
             val settingsRepositoryWithUri: SettingsRepository = mockk(relaxed = true)
 
             // Mock the flow to return the URI
-            io.mockk.coEvery { settingsRepositoryWithUri.getAutoBackupFolderUri() } returns
+            coEvery { settingsRepositoryWithUri.getAutoBackupFolderUri() } returns
                 kotlinx.coroutines.flow.flowOf(testUri)
-            io.mockk.coEvery { settingsRepositoryWithUri.getAutoBackupEnabled() } returns
+            coEvery { settingsRepositoryWithUri.getAutoBackupEnabled() } returns
                 kotlinx.coroutines.flow.flowOf(true)
-            io.mockk.coEvery { settingsRepositoryWithUri.getLastBackupTimestamp() } returns
+            coEvery { settingsRepositoryWithUri.getLastBackupTimestamp() } returns
                 kotlinx.coroutines.flow.flowOf(null)
-            io.mockk.coEvery { settingsRepositoryWithUri.getLastRestoreTimestamp() } returns
+            coEvery { settingsRepositoryWithUri.getLastRestoreTimestamp() } returns
                 kotlinx.coroutines.flow.flowOf(null)
-            io.mockk.coEvery { settingsRepositoryWithUri.getSuggestionsEnabled() } returns
+            coEvery { settingsRepositoryWithUri.getSuggestionsEnabled() } returns
                 kotlinx.coroutines.flow.flowOf(false)
-            io.mockk.coEvery { settingsRepositoryWithUri.getDataEncryptionEnabled() } returns
+            coEvery { settingsRepositoryWithUri.getDataEncryptionEnabled() } returns
                 kotlinx.coroutines.flow.flowOf(false)
-            io.mockk.coEvery { settingsRepositoryWithUri.getAutoBackupDestination() } returns
+            coEvery { settingsRepositoryWithUri.getAutoBackupDestination() } returns
                 kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.BackupDestination.LOCAL)
-            io.mockk.coEvery { settingsRepositoryWithUri.getGoogleDriveUserEmail() } returns
+            coEvery { settingsRepositoryWithUri.getGoogleDriveUserEmail() } returns
                 kotlinx.coroutines.flow.flowOf(null)
 
             val viewModel =

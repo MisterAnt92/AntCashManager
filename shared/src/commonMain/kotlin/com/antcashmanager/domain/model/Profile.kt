@@ -9,4 +9,5 @@ public data class Profile(
     val colorArgb: Long = 0xFF6650A4,
     val avatarEmoji: String = "",
     val photoPath: String? = null,
+    val shareTransactions: Boolean = false,
 )

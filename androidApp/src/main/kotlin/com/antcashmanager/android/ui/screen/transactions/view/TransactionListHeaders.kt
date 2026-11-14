@@ -103,7 +103,7 @@ fun TransactionListHeaders(
     VerticalSpacer(SpacingSize.SM)
     DateRangeFilter(
         selectedPresetIndex = state.selectedPresetIndex,
-        presets = TransactionsState.Companion.PRESETS,
+        presets = TransactionsState.PRESETS,
         dateRangeFrom = state.dateRangeFrom,
         dateRangeTo = state.dateRangeTo,
         expanded = dateFilterExpanded,

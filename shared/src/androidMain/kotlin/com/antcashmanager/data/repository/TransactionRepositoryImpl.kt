@@ -25,9 +25,9 @@ public class TransactionRepositoryImpl(
     private val pid get() = profileManager.getActiveProfileIdSync()
 
     override fun getAllTransactions(): Flow<List<Transaction>> =
-        profileManager.activeProfileId
-            .flatMapLatest { profileId ->
-                transactionDao.getAllTransactions(profileId)
+        profileManager.sharedProfileIds
+            .flatMapLatest { ids ->
+                transactionDao.getAllTransactionsByProfiles(ids)
             }.flowOn(Dispatchers.Default)
             .map { entities -> entities.map { decryptEntity(it).toDomain() } }
 
@@ -35,10 +35,10 @@ public class TransactionRepositoryImpl(
         pageSize: Int,
         pageIndex: Int,
     ): Flow<List<Transaction>> =
-        profileManager.activeProfileId
-            .flatMapLatest { profileId ->
-                transactionDao.getTransactionsPaginated(
-                    profileId = profileId,
+        profileManager.sharedProfileIds
+            .flatMapLatest { ids ->
+                transactionDao.getTransactionsPaginatedMulti(
+                    profileIds = ids,
                     limit = pageSize,
                     offset = pageIndex * pageSize,
                 )
@@ -50,10 +50,10 @@ public class TransactionRepositoryImpl(
         pageSize: Int,
         pageIndex: Int,
     ): Flow<List<Transaction>> =
-        profileManager.activeProfileId
-            .flatMapLatest { profileId ->
-                transactionDao.getTransactionsByCategory(
-                    profileId = profileId,
+        profileManager.sharedProfileIds
+            .flatMapLatest { ids ->
+                transactionDao.getTransactionsByCategoryMulti(
+                    profileIds = ids,
                     category = category,
                     limit = pageSize,
                     offset = pageIndex * pageSize,
@@ -67,10 +67,10 @@ public class TransactionRepositoryImpl(
         pageIndex: Int,
     ): Flow<List<Transaction>> {
         if (!localDataCipher.isEncryptionEnabled()) {
-            return profileManager.activeProfileId
-                .flatMapLatest { profileId ->
-                    transactionDao.searchTransactions(
-                        profileId = profileId,
+            return profileManager.sharedProfileIds
+                .flatMapLatest { ids ->
+                    transactionDao.searchTransactionsMulti(
+                        profileIds = ids,
                         query = "%$query%",
                         limit = pageSize,
                         offset = pageIndex * pageSize,
@@ -79,10 +79,10 @@ public class TransactionRepositoryImpl(
                 .map { entities -> entities.map { decryptEntity(it).toDomain() } }
         }
 
-        // Encryption enabled: load all for active profile, decrypt, filter in memory
-        return profileManager.activeProfileId
-            .flatMapLatest { profileId ->
-                transactionDao.getAllTransactions(profileId)
+        // Encryption enabled: load all visible transactions, decrypt, filter in memory
+        return profileManager.sharedProfileIds
+            .flatMapLatest { ids ->
+                transactionDao.getAllTransactionsByProfiles(ids)
             }.flowOn(Dispatchers.Default)
             .map { entities ->
                 entities
@@ -138,7 +138,7 @@ public class TransactionRepositoryImpl(
     }
 
     override suspend fun deleteAllTransactions() {
-        transactionDao.deleteAllTransactions(pid)
+        transactionDao.deleteAllTransactionsMulti(profileManager.sharedProfileIds.value)
         widgetUpdateNotifier.notifyTransactionsChanged()
     }
 
@@ -151,16 +151,16 @@ public class TransactionRepositoryImpl(
         from: Long,
         to: Long,
     ): Flow<List<Transaction>> =
-        profileManager.activeProfileId
-            .flatMapLatest { profileId ->
-                transactionDao.getTransactionsByDateRange(profileId, from, to)
+        profileManager.sharedProfileIds
+            .flatMapLatest { ids ->
+                transactionDao.getTransactionsByDateRangeMulti(ids, from, to)
             }.flowOn(Dispatchers.Default)
             .map { entities -> entities.map { decryptEntity(it).toDomain() } }
 
     override fun getRecurringTransactions(): Flow<List<Transaction>> =
-        profileManager.activeProfileId
-            .flatMapLatest { profileId ->
-                transactionDao.getRecurringTransactions(profileId)
+        profileManager.sharedProfileIds
+            .flatMapLatest { ids ->
+                transactionDao.getRecurringTransactionsMulti(ids)
             }.flowOn(Dispatchers.Default)
             .map { entities -> entities.map { decryptEntity(it).toDomain() } }
 
@@ -169,18 +169,20 @@ public class TransactionRepositoryImpl(
         newCategoryName: String,
         icon: String,
         color: Long,
-    ): Unit = transactionDao.renameCategory(pid, oldCategoryName, newCategoryName, icon, color)
+    ): Unit = transactionDao.renameCategoryMulti(
+        profileManager.sharedProfileIds.value, oldCategoryName, newCategoryName, icon, color,
+    )
 
     override fun getDistinctTitles(since: Long): Flow<List<String>> {
         if (!localDataCipher.isEncryptionEnabled()) {
-            return profileManager.activeProfileId
-                .flatMapLatest { profileId ->
-                    transactionDao.getDistinctTitles(profileId, since)
+            return profileManager.sharedProfileIds
+                .flatMapLatest { ids ->
+                    transactionDao.getDistinctTitlesMulti(ids, since)
                 }.flowOn(Dispatchers.Default)
                 .map { values -> values.map(localDataCipher::decryptString).distinct() }
         }
-        return profileManager.activeProfileId
-            .flatMapLatest { profileId -> transactionDao.getAllTransactions(profileId) }
+        return profileManager.sharedProfileIds
+            .flatMapLatest { ids -> transactionDao.getAllTransactionsByProfiles(ids) }
             .flowOn(Dispatchers.Default)
             .map { entities ->
                 entities.asSequence()
@@ -191,14 +193,14 @@ public class TransactionRepositoryImpl(
 
     override fun getDistinctPayees(since: Long): Flow<List<String>> {
         if (!localDataCipher.isEncryptionEnabled()) {
-            return profileManager.activeProfileId
-                .flatMapLatest { profileId ->
-                    transactionDao.getDistinctPayees(profileId, since)
+            return profileManager.sharedProfileIds
+                .flatMapLatest { ids ->
+                    transactionDao.getDistinctPayeesMulti(ids, since)
                 }.flowOn(Dispatchers.Default)
                 .map { values -> values.map(localDataCipher::decryptString).distinct() }
         }
-        return profileManager.activeProfileId
-            .flatMapLatest { profileId -> transactionDao.getAllTransactions(profileId) }
+        return profileManager.sharedProfileIds
+            .flatMapLatest { ids -> transactionDao.getAllTransactionsByProfiles(ids) }
             .flowOn(Dispatchers.Default)
             .map { entities ->
                 entities.asSequence()
@@ -209,14 +211,14 @@ public class TransactionRepositoryImpl(
 
     override fun getDistinctNotes(since: Long): Flow<List<String>> {
         if (!localDataCipher.isEncryptionEnabled()) {
-            return profileManager.activeProfileId
-                .flatMapLatest { profileId ->
-                    transactionDao.getDistinctNotes(profileId, since)
+            return profileManager.sharedProfileIds
+                .flatMapLatest { ids ->
+                    transactionDao.getDistinctNotesMulti(ids, since)
                 }.flowOn(Dispatchers.Default)
                 .map { values -> values.map(localDataCipher::decryptString).distinct() }
         }
-        return profileManager.activeProfileId
-            .flatMapLatest { profileId -> transactionDao.getAllTransactions(profileId) }
+        return profileManager.sharedProfileIds
+            .flatMapLatest { ids -> transactionDao.getAllTransactionsByProfiles(ids) }
             .flowOn(Dispatchers.Default)
             .map { entities ->
                 entities.asSequence()
@@ -227,14 +229,14 @@ public class TransactionRepositoryImpl(
 
     override fun getDistinctLocations(since: Long): Flow<List<String>> {
         if (!localDataCipher.isEncryptionEnabled()) {
-            return profileManager.activeProfileId
-                .flatMapLatest { profileId ->
-                    transactionDao.getDistinctLocations(profileId, since)
+            return profileManager.sharedProfileIds
+                .flatMapLatest { ids ->
+                    transactionDao.getDistinctLocationsMulti(ids, since)
                 }.flowOn(Dispatchers.Default)
                 .map { values -> values.map(localDataCipher::decryptString).distinct() }
         }
-        return profileManager.activeProfileId
-            .flatMapLatest { profileId -> transactionDao.getAllTransactions(profileId) }
+        return profileManager.sharedProfileIds
+            .flatMapLatest { ids -> transactionDao.getAllTransactionsByProfiles(ids) }
             .flowOn(Dispatchers.Default)
             .map { entities ->
                 entities.asSequence()
@@ -245,14 +247,14 @@ public class TransactionRepositoryImpl(
 
     override fun getDistinctTags(since: Long): Flow<List<String>> {
         if (!localDataCipher.isEncryptionEnabled()) {
-            return profileManager.activeProfileId
-                .flatMapLatest { profileId ->
-                    transactionDao.getDistinctTags(profileId, since)
+            return profileManager.sharedProfileIds
+                .flatMapLatest { ids ->
+                    transactionDao.getDistinctTagsMulti(ids, since)
                 }.flowOn(Dispatchers.Default)
                 .map { values -> values.map(localDataCipher::decryptString).distinct() }
         }
-        return profileManager.activeProfileId
-            .flatMapLatest { profileId -> transactionDao.getAllTransactions(profileId) }
+        return profileManager.sharedProfileIds
+            .flatMapLatest { ids -> transactionDao.getAllTransactionsByProfiles(ids) }
             .flowOn(Dispatchers.Default)
             .map { entities ->
                 entities.asSequence()
@@ -262,7 +264,8 @@ public class TransactionRepositoryImpl(
     }
 
     override suspend fun getSuggestions(since: Long): com.antcashmanager.domain.model.TransactionSuggestions {
-        val rows = transactionDao.getSuggestions(pid, since)
+        val ids = profileManager.sharedProfileIds.value
+        val rows = transactionDao.getSuggestionsMulti(ids, since)
         val decryptedRows = rows.mapNotNull { row ->
             val title = localDataCipher.decryptString(row.title)
             val payee = localDataCipher.decryptString(row.payee)

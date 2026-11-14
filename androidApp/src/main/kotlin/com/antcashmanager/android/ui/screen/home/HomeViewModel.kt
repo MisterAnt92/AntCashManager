@@ -261,6 +261,13 @@ class HomeViewModel(
             val transactionDisplayType = args[11] as TransactionDisplayType
             val isTutorialCompleted = args[12] as Boolean
 
+            // If the user already has transactions the tutorial must not appear,
+            // regardless of the stored flag (handles device-store migration for existing users).
+            val effectiveTutorialCompleted = isTutorialCompleted || transactions.isNotEmpty()
+            if (!isTutorialCompleted && transactions.isNotEmpty()) {
+                viewModelScope.launch { settingsRepository.setIsTutorialCompleted(true) }
+            }
+
             @Suppress("UNCHECKED_CAST")
             val editingTopCardsOrder = args[13] as List<HomeTopCardType>?
             val mealVoucherValue = args[14] as Double
@@ -378,7 +385,7 @@ class HomeViewModel(
                 showQuickInsightsCard = showQuickInsightsCard,
                 reduceMotion = reduceMotion,
                 transactionDisplayType = transactionDisplayType,
-                isTutorialCompleted = isTutorialCompleted,
+                isTutorialCompleted = effectiveTutorialCompleted,
                 mealVoucherSummary = mealVoucherSummary,
                 errorState = com.antcashmanager.android.ui.base.ErrorState(),
             )

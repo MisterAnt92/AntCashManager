@@ -251,6 +251,9 @@
     <string name="profiles_section_title">Профіль</string>
     <string name="profiles_color_label">Колір</string>
     <string name="profiles_change_photo"></string>
+    <string name="profiles_share_transactions_title">Поділитися транзакціями</string>
+    <string name="profiles_share_transactions_description">Видно всім профілям з активованою цією опцією</string>
+    <string name="profiles_share_transactions_create_description">Наявні транзакції буде поширено з цим профілем. Ви зможете змінити це пізніше.</string>
     <string name="profiles_emoji_label">Аватар</string>
     <string name="settings_security">Безпека</string>
     <string name="settings_security_data_encryption">Захист даних - Шифрування</string>

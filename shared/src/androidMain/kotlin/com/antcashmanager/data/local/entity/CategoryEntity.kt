@@ -17,9 +17,9 @@ import androidx.room.PrimaryKey
         ),
     ],
     indices = [
-        Index("type"), // WHERE type = :type in getCategoriesByType
         Index(value = ["profile_id", "name"]), // Query by name scoped to profile
         Index(value = ["profile_id", "type"]), // Query categories by type scoped to profile
+        Index(value = ["profile_id", "is_hidden", "sort_order"]), // ORDER BY is_hidden, sort_order
     ],
 )
 public data class CategoryEntity(

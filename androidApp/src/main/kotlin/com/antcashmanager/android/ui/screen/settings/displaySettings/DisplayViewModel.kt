@@ -54,7 +54,7 @@ class DisplayViewModel(
      */
     val state: StateFlow<DisplayState> =
 
-        kotlinx.coroutines.flow.combine(
+        combine(
             currencyAndDigitsFlow,
             separatorsFlow,
             settingsRepository.getMealVoucherValue(),

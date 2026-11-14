@@ -7,13 +7,11 @@ import com.antcashmanager.android.ui.screen.home.HomeViewModel
 import com.antcashmanager.android.ui.screen.home.event.HomeEvent
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
-import com.antcashmanager.domain.model.TransactionSuggestions
 import com.antcashmanager.domain.model.TransactionDisplayType
+import com.antcashmanager.domain.model.TransactionSuggestions
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
-import com.antcashmanager.domain.usecase.settings.GetHomeDateFilterStateUseCase
-import com.antcashmanager.domain.usecase.settings.SetHomeDateFilterStateUseCase
 import com.antcashmanager.domain.usecase.transaction.FilterTransactionsUseCase
 import com.antcashmanager.domain.usecase.transaction.GetTransactionSuggestionsUseCase
 import com.antcashmanager.domain.usecase.transaction.GetTransactionsUseCase

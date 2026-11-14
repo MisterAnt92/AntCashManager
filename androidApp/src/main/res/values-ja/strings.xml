@@ -249,6 +249,9 @@
     <string name="profiles_section_title">プロフィール</string>
     <string name="profiles_color_label">色</string>
     <string name="profiles_change_photo"></string>
+    <string name="profiles_share_transactions_title">取引を共有</string>
+    <string name="profiles_share_transactions_description">このオプションが有効な全てのプロフィールに表示されます</string>
+    <string name="profiles_share_transactions_create_description">既存の取引はこのプロフィールと共有されます。後で変更できます。</string>
     <string name="profiles_emoji_label">アバター</string>
     <string name="settings_security">セキュリティ</string>
     <string name="settings_security_data_encryption">データ保護 - 暗号化</string>

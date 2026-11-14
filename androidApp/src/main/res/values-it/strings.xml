@@ -286,6 +286,9 @@
     <string name="profiles_section_title">Profilo</string>
     <string name="profiles_color_label">Colore</string>
     <string name="profiles_change_photo"></string>
+    <string name="profiles_share_transactions_title">Condividi transazioni</string>
+    <string name="profiles_share_transactions_description">Visibile a tutti i profili con questa opzione attiva</string>
+    <string name="profiles_share_transactions_create_description">Le transazioni esistenti saranno condivise con questo profilo. Potrai modificarlo in seguito.</string>
     <string name="profiles_emoji_label">Avatar</string>
     <string name="settings_security">Sicurezza</string>
     <string name="settings_security_data_encryption">Dati in sicurezza - Crittografia</string>

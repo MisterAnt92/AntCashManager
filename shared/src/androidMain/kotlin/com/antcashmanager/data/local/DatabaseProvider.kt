@@ -20,7 +20,8 @@ public object DatabaseProvider {
                     appContext,
                     AppDatabase::class.java,
                     DATABASE_NAME,
-                ).addMigrations(Migration_9_10())
+                ).setJournalMode(androidx.room.RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING)
+                .addMigrations(Migration_9_10())
                 .addCallback(object : androidx.room.RoomDatabase.Callback() {
                     override fun onOpen(db: SupportSQLiteDatabase) {
                         // Seed Default profile on first open (new install or after 10→11 migration)

@@ -10,6 +10,7 @@ import androidx.room.PrimaryKey
     indices = [
         Index("is_active"), // WHERE is_active = 1
         Index(value = ["uuid"], unique = true),
+        Index("share_transactions"), // fast filter for shared-profile queries
     ],
 )
 public data class ProfileEntity(
@@ -27,4 +28,6 @@ public data class ProfileEntity(
     val avatarEmoji: String = "",
     @ColumnInfo(name = "photo_path", defaultValue = "")
     val photoPath: String? = null,
+    @ColumnInfo(name = "share_transactions", defaultValue = "0")
+    val shareTransactions: Boolean = false,
 )

@@ -2,6 +2,7 @@ package com.antcashmanager.data.repository
 
 import android.content.Context
 import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
@@ -9,10 +10,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.preferencesDataStoreFile
 import co.touchlab.kermit.Logger
-import kotlinx.coroutines.flow.first
 import com.antcashmanager.data.local.DatabaseEncryptionManager
 import com.antcashmanager.data.security.LocalDataCipherImpl
 import com.antcashmanager.domain.manager.ProfileManager
@@ -24,6 +23,7 @@ import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 
@@ -72,7 +72,6 @@ public class SettingsRepositoryImpl(
     private val decimalDigitsKey = intPreferencesKey("decimal_digits")
     private val decimalSeparatorKey = stringPreferencesKey("decimal_separator")
     private val thousandsSeparatorKey = stringPreferencesKey("thousands_separator")
-    private val mealVoucherValueKey = doublePreferencesKey("meal_voucher_value")
     private val dateFormatKey = stringPreferencesKey("date_format")
     private val dateFilterExpandedKey = booleanPreferencesKey("date_filter_expanded")
     private val homeDateFilterPresetKey = intPreferencesKey("home_date_filter_preset")
@@ -91,7 +90,6 @@ public class SettingsRepositoryImpl(
     private val transactionDisplayTypeKey = stringPreferencesKey("transaction_display_type")
     private val transactionsTransactionDisplayTypeKey =
         stringPreferencesKey("transactions_transaction_display_type")
-    private val isTutorialCompletedKey = booleanPreferencesKey("is_tutorial_completed")
     private val suggestionsEnabledKey = booleanPreferencesKey("suggestions_enabled")
     private val suggestionsClearedAtKey = longPreferencesKey("suggestions_cleared_at")
     private val chartCardsOrderKey = stringPreferencesKey("chart_cards_order")
@@ -117,6 +115,8 @@ public class SettingsRepositoryImpl(
     private val googleDriveAuthTokenKey = stringPreferencesKey("google_drive_auth_token")
     private val googleDriveRefreshTokenKey = stringPreferencesKey("google_drive_refresh_token")
     private val googleDriveUserEmailKey = stringPreferencesKey("google_drive_user_email")
+    private val mealVoucherValueKey = doublePreferencesKey("meal_voucher_value")
+    private val isTutorialCompletedKey = booleanPreferencesKey("is_tutorial_completed")
 
     // ── Date filter helpers ───────────────────────────────────────────────────
 
@@ -235,12 +235,10 @@ public class SettingsRepositoryImpl(
     }
 
     override fun getMealVoucherValue(): Flow<Double> =
-        activeProfileStore.flatMapLatest {
-            it.data.map { p -> p[mealVoucherValueKey] ?: DEFAULT_MEAL_VOUCHER_VALUE }
-        }
+        deviceStore.data.map { it[mealVoucherValueKey] ?: DEFAULT_MEAL_VOUCHER_VALUE }
 
     override suspend fun setMealVoucherValue(value: Double) {
-        profileStore(pid).edit { it[mealVoucherValueKey] = value }
+        deviceStore.edit { it[mealVoucherValueKey] = value }
     }
 
     override fun getDateFormat(): Flow<String> =
@@ -406,12 +404,10 @@ public class SettingsRepositoryImpl(
     }
 
     override fun getIsTutorialCompleted(): Flow<Boolean> =
-        activeProfileStore.flatMapLatest {
-            it.data.map { p -> p[isTutorialCompletedKey] ?: false }
-        }
+        deviceStore.data.map { it[isTutorialCompletedKey] ?: false }
 
     override suspend fun setIsTutorialCompleted(completed: Boolean) {
-        profileStore(pid).edit { it[isTutorialCompletedKey] = completed }
+        deviceStore.edit { it[isTutorialCompletedKey] = completed }
     }
 
     override fun getCategorySortOrderInitialized(): Flow<Boolean> =
@@ -607,7 +603,6 @@ public class SettingsRepositoryImpl(
             prefs[decimalDigitsKey] = 2
             prefs[decimalSeparatorKey] = ","
             prefs[thousandsSeparatorKey] = ""
-            prefs[mealVoucherValueKey] = DEFAULT_MEAL_VOUCHER_VALUE
             prefs[dateFormatKey] = "dd/MM/yyyy"
             prefs[dateFilterExpandedKey] = true
             prefs[homeDateFilterPresetKey] = defaultHomeFilter.presetIndex
@@ -624,7 +619,6 @@ public class SettingsRepositoryImpl(
             prefs[showQuickInsightsCardKey] = true
             prefs[transactionDisplayTypeKey] = TransactionDisplayType.TREND.name
             prefs[transactionsTransactionDisplayTypeKey] = TransactionDisplayType.TREND.name
-            prefs[isTutorialCompletedKey] = false
             prefs[suggestionsEnabledKey] = true
             prefs.remove(suggestionsClearedAtKey)
             prefs[chartCardsOrderKey] = ""
@@ -656,7 +650,6 @@ public class SettingsRepositoryImpl(
             decimalDigits = prefs[decimalDigitsKey] ?: 2,
             decimalSeparator = prefs[decimalSeparatorKey] ?: ",",
             thousandsSeparator = prefs[thousandsSeparatorKey] ?: "",
-            mealVoucherValue = prefs[mealVoucherValueKey] ?: DEFAULT_MEAL_VOUCHER_VALUE,
             dateFormat = prefs[dateFormatKey] ?: "dd/MM/yyyy",
             chartsZoomEnabled = prefs[chartsZoomEnabledKey] ?: false,
             suggestionsEnabled = prefs[suggestionsEnabledKey] ?: true,
@@ -686,7 +679,6 @@ public class SettingsRepositoryImpl(
             prefs[decimalDigitsKey] = snapshot.decimalDigits
             prefs[decimalSeparatorKey] = snapshot.decimalSeparator
             prefs[thousandsSeparatorKey] = snapshot.thousandsSeparator
-            prefs[mealVoucherValueKey] = snapshot.mealVoucherValue
             prefs[dateFormatKey] = snapshot.dateFormat
             prefs[chartsZoomEnabledKey] = snapshot.chartsZoomEnabled
             prefs[suggestionsEnabledKey] = snapshot.suggestionsEnabled
@@ -724,7 +716,6 @@ public data class ProfileSettingsSnapshot(
     val decimalDigits: Int = 2,
     val decimalSeparator: String = ",",
     val thousandsSeparator: String = "",
-    val mealVoucherValue: Double = 5.29,
     val dateFormat: String = "dd/MM/yyyy",
     val chartsZoomEnabled: Boolean = false,
     val suggestionsEnabled: Boolean = true,

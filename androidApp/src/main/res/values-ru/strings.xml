@@ -249,6 +249,9 @@
     <string name="profiles_section_title">Профиль</string>
     <string name="profiles_color_label">Цвет</string>
     <string name="profiles_change_photo"></string>
+    <string name="profiles_share_transactions_title">Поделиться транзакциями</string>
+    <string name="profiles_share_transactions_description">Видно всем профилям с активированной этой опцией</string>
+    <string name="profiles_share_transactions_create_description">Существующие транзакции будут доступны этому профилю. Вы сможете изменить это позже.</string>
     <string name="profiles_emoji_label">Аватар</string>
     <string name="settings_security">Безопасность</string>
     <string name="settings_security_data_encryption">Защита данных - Шифрование</string>

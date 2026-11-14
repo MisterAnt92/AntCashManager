@@ -114,12 +114,11 @@ sealed class AppRoute(
          * the optional-argument pattern ("add_transaction?transactionId={transactionId}").
          */
         fun isSubScreen(route: String?): Boolean {
-            if (route == null) return false
-            return route.startsWith(TransactionRoute.Add.route) ||
+            return route != null && (route.startsWith(TransactionRoute.Add.route) ||
                 route == TransactionRoute.ReceiptScan.route ||
                 route == SettingsRoute.Display.route ||
                 route == SettingsRoute.DataManagement.route ||
-                route == SettingsRoute.Profiles.route
+                route == SettingsRoute.Profiles.route)
         }
     }
 }

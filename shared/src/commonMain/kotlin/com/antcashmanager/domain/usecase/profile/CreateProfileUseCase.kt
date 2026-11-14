@@ -26,6 +26,7 @@ public class CreateProfileUseCase(
                 uuid = uuid,
                 colorArgb = params.colorArgb,
                 avatarEmoji = params.avatarEmoji,
+                shareTransactions = params.shareTransactions,
             ),
         )
         categoryRepository.seedDefaultCategoriesForProfile(

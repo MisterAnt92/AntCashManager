@@ -58,6 +58,7 @@ import com.antcashmanager.domain.usecase.category.UpdateCategoryUseCase
 import com.antcashmanager.domain.usecase.profile.CreateProfileUseCase
 import com.antcashmanager.domain.usecase.profile.DeleteProfileUseCase
 import com.antcashmanager.domain.usecase.profile.GetActiveProfileUseCase
+import com.antcashmanager.domain.usecase.profile.GetProfileByIdUseCase
 import com.antcashmanager.domain.usecase.profile.GetProfilesUseCase
 import com.antcashmanager.domain.usecase.profile.SwitchProfileUseCase
 import com.antcashmanager.domain.usecase.profile.UpdateProfileUseCase
@@ -218,6 +219,7 @@ val useCaseModule =
         // Profile use cases
         factory { GetProfilesUseCase(profileRepository = get()) }
         factory { GetActiveProfileUseCase(profileRepository = get()) }
+        factory { GetProfileByIdUseCase(profileRepository = get()) }
         factory {
             CreateProfileUseCase(
                 profileRepository = get(),
@@ -307,7 +309,6 @@ val useCaseModule =
 
         factory { CreateTransactionFromReceiptUseCase(transactionRepository = get()) }
         factory { ShareTransactionUseCase() }
-        factory { ResetAllPreferencesUseCase(settingsRepository = get()) }
 
         factory {
             val repo = get<SettingsRepository>()
@@ -498,6 +499,7 @@ val presentationModule =
                 updateProfileUseCase = get(),
                 deleteProfileUseCase = get(),
                 switchProfileUseCase = get(),
+                getProfileByIdUseCase = get(),
                 profileManager = get(),
                 profilePhotoStorage = get(),
             )

@@ -17,6 +17,7 @@ sealed class ProfilesEvent {
         val colorArgb: Long,
         val avatarEmoji: String,
         val photoUri: Uri? = null,
+        val shareTransactions: Boolean = true,
     ) : ProfilesEvent()
 
     data class UpdateProfile(
@@ -27,5 +28,6 @@ sealed class ProfilesEvent {
 
     data class ShowEditDialog(val profile: Profile) : ProfilesEvent()
     data object DismissEditDialog : ProfilesEvent()
+    data class ToggleShareTransactions(val profile: Profile, val enabled: Boolean) : ProfilesEvent()
     data object DismissError : ProfilesEvent()
 }

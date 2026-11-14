@@ -47,7 +47,14 @@ class AddTransactionViewModel(
     // Nota: SavedStateHandle è disponibile per future implementazioni di state recovery
     // Per adesso usiamo MutableStateFlow standard; future: sincroniazzare con savedStateHandle per preservare
     // lo stato del form durante reconfigurazioni (rotation, process death)
-    private val _state = MutableStateFlow(AddTransactionState())
+    private val _state = MutableStateFlow(
+        AddTransactionState(
+            isLoading = transactionId != null,
+            isModifying = transactionId != null,
+            currentStep = if (transactionId != null) AddTransactionStep.DETAILS else AddTransactionStep.CATEGORY_SELECTION,
+            transactionId = transactionId,
+        ),
+    )
     val state: StateFlow<AddTransactionState> = _state.asStateFlow()
 
     // Track first form field interaction for analytics

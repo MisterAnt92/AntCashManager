@@ -123,7 +123,7 @@ class ChartsViewModel(
             chartsCardOrder,
         ) { args ->
             @Suppress("UNCHECKED_CAST")
-            val values = args as Array<Any?>
+            val values = args
             ChartsState(
                 dateRange = values[0] as DateRange,
                 selectedPresetIndex = values[1] as Int,
@@ -284,7 +284,7 @@ class ChartsViewModel(
         val expenseByCategory =
             expenseTransactions
                 .groupBy { it.category }
-                .mapValues { (_, txs) -> kotlin.math.abs(txs.sumOf { it.amount }) } // Use absolute value for pie chart
+                .mapValues { (_, txs) -> abs(txs.sumOf { it.amount }) } // Use absolute value for pie chart
 
         val incomeCountByCategory =
             incomeTransactions
@@ -315,7 +315,7 @@ class ChartsViewModel(
             monthlyMap[key] =
                 when (tx.type) {
                     TransactionType.INCOME -> (current.first + tx.amount) to current.second
-                    TransactionType.EXPENSE -> current.first to (current.second + kotlin.math.abs(tx.amount)) // Use absolute value
+                    TransactionType.EXPENSE -> current.first to (current.second + abs(tx.amount)) // Use absolute value
                 }
         }
 
@@ -342,7 +342,7 @@ class ChartsViewModel(
             yearlyMap[year] =
                 when (tx.type) {
                     TransactionType.INCOME -> (current.first + tx.amount) to current.second
-                    TransactionType.EXPENSE -> current.first to (current.second + kotlin.math.abs(tx.amount)) // Use absolute value
+                    TransactionType.EXPENSE -> current.first to (current.second + abs(tx.amount)) // Use absolute value
                 }
         }
 
@@ -364,7 +364,7 @@ class ChartsViewModel(
         val paymentTypeBreakdown =
             transactions
                 .groupBy { it.paymentType }
-                .mapValues { (_, txs) -> kotlin.math.abs(txs.sumOf { it.amount }) }
+                .mapValues { (_, txs) -> abs(txs.sumOf { it.amount }) }
                 .filterValues { it != 0.0 }
 
         // Calculate expense by weekday (1=Mon...7=Sun per EU convention)
@@ -379,7 +379,7 @@ class ChartsViewModel(
                     if (calendarDayOfWeek == 1) 7 else calendarDayOfWeek - 1
                 }.mapValues { (_, txs) ->
                     if (txs.isNotEmpty()) {
-                        kotlin.math.abs(txs.sumOf { it.amount })
+                        abs(txs.sumOf { it.amount })
                     } else {
                         0.0
                     }
@@ -392,7 +392,7 @@ class ChartsViewModel(
             cal.timeInMillis = tx.timestamp
             val dateLabel = dateFormat.format(cal.time)
             val current = dailyMap.getOrDefault(dateLabel, 0.0)
-            dailyMap[dateLabel] = current + kotlin.math.abs(tx.amount)
+            dailyMap[dateLabel] = current + abs(tx.amount)
         }
 
         val dailyTimeline =

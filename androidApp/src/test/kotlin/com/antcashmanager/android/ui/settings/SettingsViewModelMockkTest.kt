@@ -9,7 +9,6 @@ import com.antcashmanager.domain.service.WidgetUpdateNotifier
 import com.antcashmanager.domain.usecase.SendFeedbackEmailUseCase
 import com.antcashmanager.domain.usecase.settings.GetSettingUseCase
 import com.antcashmanager.domain.usecase.settings.ImportDebugDataUseCase
-import com.antcashmanager.domain.usecase.settings.ResetAllPreferencesUseCase
 import com.antcashmanager.domain.usecase.settings.SetSettingUseCase
 import com.antcashmanager.domain.usecase.settings.SettingsUseCasesProvider
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase

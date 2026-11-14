@@ -64,8 +64,113 @@ public interface TransactionDao {
         offset: Int = 0,
     ): Flow<List<TransactionEntity>>
 
+    // ── Multi-profile queries (used when shareTransactions is active) ──────────
+
+    @Query("SELECT * FROM transactions WHERE profile_id IN (:profileIds) ORDER BY timestamp DESC")
+    public fun getAllTransactionsByProfiles(profileIds: List<Long>): Flow<List<TransactionEntity>>
+
+    @Query("SELECT COUNT(*) FROM transactions WHERE profile_id IN (:profileIds)")
+    public suspend fun getCountMulti(profileIds: List<Long>): Int
+
+    @Query(
+        "SELECT * FROM transactions WHERE profile_id IN (:profileIds) " +
+            "AND timestamp BETWEEN :from AND :to ORDER BY timestamp DESC",
+    )
+    public fun getTransactionsByDateRangeMulti(
+        profileIds: List<Long>,
+        from: Long,
+        to: Long,
+    ): Flow<List<TransactionEntity>>
+
+    @Query(
+        "SELECT * FROM transactions WHERE profile_id IN (:profileIds) AND is_recurring = 1 " +
+            "ORDER BY timestamp DESC",
+    )
+    public fun getRecurringTransactionsMulti(profileIds: List<Long>): Flow<List<TransactionEntity>>
+
+    @Query(
+        "SELECT * FROM transactions WHERE profile_id IN (:profileIds) " +
+            "ORDER BY timestamp DESC LIMIT :limit OFFSET :offset",
+    )
+    public fun getTransactionsPaginatedMulti(
+        profileIds: List<Long>,
+        limit: Int,
+        offset: Int,
+    ): Flow<List<TransactionEntity>>
+
+    @Query(
+        "SELECT * FROM transactions WHERE profile_id IN (:profileIds) AND category = :category " +
+            "ORDER BY timestamp DESC LIMIT :limit OFFSET :offset",
+    )
+    public fun getTransactionsByCategoryMulti(
+        profileIds: List<Long>,
+        category: String,
+        limit: Int,
+        offset: Int,
+    ): Flow<List<TransactionEntity>>
+
+    @Query(
+        "SELECT * FROM transactions WHERE profile_id IN (:profileIds) " +
+            "AND (title LIKE :query OR payee LIKE :query OR notes LIKE :query) " +
+            "ORDER BY timestamp DESC LIMIT :limit OFFSET :offset",
+    )
+    public fun searchTransactionsMulti(
+        profileIds: List<Long>,
+        query: String,
+        limit: Int,
+        offset: Int,
+    ): Flow<List<TransactionEntity>>
+
+    @Query(
+        "SELECT DISTINCT title FROM transactions " +
+            "WHERE profile_id IN (:profileIds) AND title != '' AND timestamp >= :since " +
+            "ORDER BY timestamp DESC LIMIT 20",
+    )
+    public fun getDistinctTitlesMulti(profileIds: List<Long>, since: Long): Flow<List<String>>
+
+    @Query(
+        "SELECT DISTINCT payee FROM transactions " +
+            "WHERE profile_id IN (:profileIds) AND payee != '' AND timestamp >= :since " +
+            "ORDER BY timestamp DESC LIMIT 20",
+    )
+    public fun getDistinctPayeesMulti(profileIds: List<Long>, since: Long): Flow<List<String>>
+
+    @Query(
+        "SELECT DISTINCT notes FROM transactions " +
+            "WHERE profile_id IN (:profileIds) AND notes != '' AND timestamp >= :since " +
+            "ORDER BY timestamp DESC LIMIT 20",
+    )
+    public fun getDistinctNotesMulti(profileIds: List<Long>, since: Long): Flow<List<String>>
+
+    @Query(
+        "SELECT DISTINCT location FROM transactions " +
+            "WHERE profile_id IN (:profileIds) AND location != '' AND timestamp >= :since " +
+            "ORDER BY timestamp DESC LIMIT 20",
+    )
+    public fun getDistinctLocationsMulti(profileIds: List<Long>, since: Long): Flow<List<String>>
+
+    @Query(
+        "SELECT DISTINCT tags FROM transactions " +
+            "WHERE profile_id IN (:profileIds) AND tags != '' AND timestamp >= :since " +
+            "ORDER BY timestamp DESC LIMIT 20",
+    )
+    public fun getDistinctTagsMulti(profileIds: List<Long>, since: Long): Flow<List<String>>
+
+    @Query(
+        """SELECT DISTINCT title, payee, notes, location, tags FROM transactions
+        WHERE profile_id IN (:profileIds) AND timestamp >= :since
+            AND (title != '' OR payee != '' OR notes != '' OR location != '' OR tags != '')
+        ORDER BY timestamp DESC LIMIT 100""",
+    )
+    public suspend fun getSuggestionsMulti(profileIds: List<Long>, since: Long): List<SuggestionRow>
+
+    // ── Single-row lookup ─────────────────────────────────────────────────────
+
     @Query("SELECT * FROM transactions WHERE id = :id")
     public suspend fun getTransactionById(id: Long): TransactionEntity?
+
+    @Query("SELECT * FROM transactions WHERE profile_id = :profileId AND id = :id")
+    public suspend fun getTransactionByIdScoped(profileId: Long, id: Long): TransactionEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public suspend fun insertTransaction(transaction: TransactionEntity): Long
@@ -81,6 +186,9 @@ public interface TransactionDao {
 
     @Delete
     public suspend fun deleteTransaction(transaction: TransactionEntity)
+
+    @Query("DELETE FROM transactions WHERE profile_id IN (:profileIds)")
+    public suspend fun deleteAllTransactionsMulti(profileIds: List<Long>)
 
     @Query("DELETE FROM transactions WHERE profile_id = :profileId")
     public suspend fun deleteAllTransactions(profileId: Long)
@@ -108,6 +216,19 @@ public interface TransactionDao {
     )
     public suspend fun renameCategory(
         profileId: Long,
+        oldCategoryName: String,
+        newCategoryName: String,
+        icon: String,
+        color: Long,
+    )
+
+    @Transaction
+    @Query(
+        "UPDATE transactions SET category = :newCategoryName, category_icon = :icon, category_color = :color " +
+            "WHERE profile_id IN (:profileIds) AND category = :oldCategoryName",
+    )
+    public suspend fun renameCategoryMulti(
+        profileIds: List<Long>,
         oldCategoryName: String,
         newCategoryName: String,
         icon: String,

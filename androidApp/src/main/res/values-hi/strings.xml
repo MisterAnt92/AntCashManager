@@ -248,6 +248,9 @@
     <string name="profiles_section_title">प्रोफ़ाइल</string>
     <string name="profiles_color_label">रंग</string>
     <string name="profiles_change_photo"></string>
+    <string name="profiles_share_transactions_title">लेनदेन साझा करें</string>
+    <string name="profiles_share_transactions_description">इस विकल्प को सक्रिय करने वाले सभी प्रोफाइल को दिखाई देता है</string>
+    <string name="profiles_share_transactions_create_description">मौजूदा लेनदेन इस प्रोफ़ाइल के साथ साझा किए जाएंगे। आप इसे बाद में बदल सकते हैं।</string>
     <string name="profiles_emoji_label">अवतार</string>
     <string name="settings_security">सुरक्षा</string>
     <string name="settings_security_data_encryption">डेटा सुरक्षा - एन्क्रिप्शन</string>

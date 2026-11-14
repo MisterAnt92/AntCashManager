@@ -17,6 +17,9 @@ public interface CategoryDao {
     @Query("SELECT * FROM categories WHERE id = :id")
     public suspend fun getCategoryById(id: Long): CategoryEntity?
 
+    @Query("SELECT * FROM categories WHERE profile_id = :profileId AND id = :id")
+    public suspend fun getCategoryByIdScoped(profileId: Long, id: Long): CategoryEntity?
+
     @Query("SELECT * FROM categories WHERE profile_id = :profileId AND name = :name LIMIT 1")
     public suspend fun getCategoryByName(profileId: Long, name: String): CategoryEntity?
 

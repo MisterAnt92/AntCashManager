@@ -249,6 +249,9 @@
     <string name="profiles_section_title">Profil</string>
     <string name="profiles_color_label">Kolor</string>
     <string name="profiles_change_photo"></string>
+    <string name="profiles_share_transactions_title">Udostępnij transakcje</string>
+    <string name="profiles_share_transactions_description">Widoczne dla wszystkich profili z aktywną tą opcją</string>
+    <string name="profiles_share_transactions_create_description">Istniejące transakcje będą udostępnione temu profilowi. Możesz to zmienić później.</string>
     <string name="profiles_emoji_label">Awatar</string>
     <string name="settings_security">Bezpieczeństwo</string>
     <string name="settings_security_data_encryption">Ochrona danych - Szyfrowanie</string>

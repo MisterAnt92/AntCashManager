@@ -249,6 +249,9 @@
     <string name="profiles_section_title">档案</string>
     <string name="profiles_color_label">颜色</string>
     <string name="profiles_change_photo"></string>
+    <string name="profiles_share_transactions_title">共享交易记录</string>
+    <string name="profiles_share_transactions_description">对所有启用此选项的配置文件可见</string>
+    <string name="profiles_share_transactions_create_description">现有交易记录将与此配置文件共享。您可以稍后更改此设置。</string>
     <string name="profiles_emoji_label">头像</string>
     <string name="settings_security">安全</string>
     <string name="settings_security_data_encryption">数据保�� - 加密</string>

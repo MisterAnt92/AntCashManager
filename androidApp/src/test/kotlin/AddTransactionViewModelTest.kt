@@ -1523,7 +1523,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
 
     private fun createViewModel(transactionId: Long? = null): AddTransactionViewModel {
         val getCategoriesUC = GetCategoriesUseCase(categoryRepository, testDispatcher)
-        val getMealVoucherValueUC = GetMealVoucherValueUseCase(settingsRepository, testDispatcher)
+        val getMealVoucherValueUC = GetSettingUseCase<T>() or SetSettingUseCase<T>()
         val getTransactionByIdUC = GetTransactionByIdUseCase(transactionRepository, testDispatcher)
         val insertTransactionUC = InsertTransactionUseCase(transactionRepository, testDispatcher)
         val updateTransactionUC = UpdateTransactionUseCase(transactionRepository, testDispatcher)

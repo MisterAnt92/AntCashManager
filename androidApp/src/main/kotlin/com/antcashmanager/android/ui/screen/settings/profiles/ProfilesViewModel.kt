@@ -9,6 +9,7 @@ import com.antcashmanager.domain.model.Profile
 import com.antcashmanager.domain.usecase.profile.CreateProfileParams
 import com.antcashmanager.domain.usecase.profile.CreateProfileUseCase
 import com.antcashmanager.domain.usecase.profile.DeleteProfileUseCase
+import com.antcashmanager.domain.usecase.profile.GetProfileByIdUseCase
 import com.antcashmanager.domain.usecase.profile.GetProfilesUseCase
 import com.antcashmanager.domain.usecase.profile.SwitchProfileUseCase
 import com.antcashmanager.domain.usecase.profile.UpdateProfileUseCase
@@ -25,6 +26,7 @@ class ProfilesViewModel(
     private val updateProfileUseCase: UpdateProfileUseCase,
     private val deleteProfileUseCase: DeleteProfileUseCase,
     private val switchProfileUseCase: SwitchProfileUseCase,
+    private val getProfileByIdUseCase: GetProfileByIdUseCase,
     private val profileManager: ProfileManager,
     private val profilePhotoStorage: ProfilePhotoStorage,
 ) : BaseViewModel<ProfilesEvent>() {
@@ -38,7 +40,16 @@ class ProfilesViewModel(
             profileManager.activeProfileId,
         ) { profilesResult, activeId ->
             profilesResult.getOrNull()?.let { profiles ->
-                _state.update { it.copy(profiles = profiles, activeProfileId = activeId, isLoading = false) }
+                _state.update { current ->
+                    current.copy(
+                        profiles = profiles,
+                        activeProfileId = activeId,
+                        isLoading = false,
+                        showEditDialog = current.showEditDialog?.let { editing ->
+                            profiles.find { it.id == editing.id } ?: editing
+                        },
+                    )
+                }
             } ?: _state.update { it.copy(isLoading = false) }
         }.launchIn(viewModelScope)
     }
@@ -58,11 +69,13 @@ class ProfilesViewModel(
                 event.colorArgb,
                 event.avatarEmoji,
                 event.photoUri,
+                event.shareTransactions,
             )
 
             is ProfilesEvent.UpdateProfile -> updateProfile(event.profile, event.newPhotoUri, event.clearPhoto)
             is ProfilesEvent.ShowEditDialog -> _state.update { it.copy(showEditDialog = event.profile) }
             is ProfilesEvent.DismissEditDialog -> _state.update { it.copy(showEditDialog = null) }
+            is ProfilesEvent.ToggleShareTransactions -> toggleShareTransactions(event.profile, event.enabled)
             is ProfilesEvent.DismissError -> _state.update { it.copy(errorMessage = null) }
         }
     }
@@ -106,10 +119,18 @@ class ProfilesViewModel(
         _state.update { it.copy(showDeleteConfirmation = null) }
     }
 
-    private fun createProfile(name: String, colorArgb: Long, avatarEmoji: String, photoUri: Uri?) {
+    private fun createProfile(name: String, colorArgb: Long, avatarEmoji: String, photoUri: Uri?, shareTransactions: Boolean = true) {
         _state.update { it.copy(showCreateDialog = false, isLoading = true) }
         viewModelScope.launch {
-            val newId = createProfileUseCase(CreateProfileParams(name, colorArgb, avatarEmoji)).handleError { err ->
+            if (shareTransactions) {
+                val activeProfile = _state.value.profiles.find { it.id == _state.value.activeProfileId }
+                if (activeProfile != null && !activeProfile.shareTransactions) {
+                    updateProfileUseCase(activeProfile.copy(shareTransactions = true)).handleError { err ->
+                        logWarn("Failed to enable shareTransactions on active profile: ${err.message}")
+                    }
+                }
+            }
+            val newId = createProfileUseCase(CreateProfileParams(name, colorArgb, avatarEmoji, shareTransactions = shareTransactions)).handleError { err ->
                 _state.update { it.copy(isLoading = false, errorMessage = err.message) }
             } ?: run {
                 _state.update { it.copy(isLoading = false) }
@@ -123,16 +144,43 @@ class ProfilesViewModel(
                     null
                 }
                 if (path != null) {
-                    val profiles = _state.value.profiles
-                    val newProfile = profiles.firstOrNull { it.id == newId }
+                    // Legge il profilo dal DB (già committato da createProfileUseCase) per evitare
+                    // la race condition con lo StateFlow che potrebbe non aver emesso il nuovo profilo ancora.
+                    val newProfile = getProfileByIdUseCase(newId).getOrNull()
                     if (newProfile != null) {
                         updateProfileUseCase(newProfile.copy(photoPath = path)).handleError { err ->
                             logWarn("Failed to persist photo path: ${err.message}")
                         }
+                    } else {
+                        logWarn("Profile $newId not found after creation, photo path lost")
                     }
                 }
             }
             _state.update { it.copy(isLoading = false) }
+        }
+    }
+
+    private fun toggleShareTransactions(profile: Profile, enabled: Boolean) {
+        _state.update { current ->
+            current.copy(
+                showEditDialog = current.showEditDialog
+                    ?.takeIf { it.id == profile.id }
+                    ?.copy(shareTransactions = enabled)
+                    ?: current.showEditDialog,
+            )
+        }
+        viewModelScope.launch {
+            updateProfileUseCase(profile.copy(shareTransactions = enabled)).handleError { err ->
+                _state.update { current ->
+                    current.copy(
+                        showEditDialog = current.showEditDialog
+                            ?.takeIf { it.id == profile.id }
+                            ?.copy(shareTransactions = !enabled)
+                            ?: current.showEditDialog,
+                        errorMessage = err.message,
+                    )
+                }
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.settings.profiles
 
+import android.content.res.Configuration
 import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -22,10 +23,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -33,7 +36,6 @@ import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -48,11 +50,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -68,15 +72,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.components.common.AppIcon
 import com.antcashmanager.android.ui.components.layout.HorizontalSpacer
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.profile.ProfileAvatar
 import com.antcashmanager.android.ui.components.text.AppText
+import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.Profile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -252,8 +259,11 @@ private fun ProfilesContent(
         ProfileFormDialog(
             initialProfile = null,
             titleRes = R.string.profiles_create_dialog_title,
-            onConfirm = { name, color, emoji, photoUri, _ ->
-                onEvent(ProfilesEvent.CreateProfile(name, color, emoji, photoUri))
+            defaultShareTransactions = true,
+            shareTransactionsDescriptionRes = R.string.profiles_share_transactions_create_description,
+            onShareTransactionsToggle = {},
+            onConfirm = { name, color, emoji, photoUri, _, shareTransactions ->
+                onEvent(ProfilesEvent.CreateProfile(name, color, emoji, photoUri, shareTransactions))
             },
             onDismiss = { onEvent(ProfilesEvent.DismissCreateDialog) },
         )
@@ -263,10 +273,15 @@ private fun ProfilesContent(
         ProfileFormDialog(
             initialProfile = profile,
             titleRes = R.string.profiles_edit_dialog_title,
-            onConfirm = { name, color, emoji, photoUri, clearPhoto ->
+            onConfirm = { name, color, emoji, photoUri, clearPhoto, shareTransactions ->
                 onEvent(
                     ProfilesEvent.UpdateProfile(
-                        profile = profile.copy(name = name, colorArgb = color, avatarEmoji = emoji),
+                        profile = profile.copy(
+                            name = name,
+                            colorArgb = color,
+                            avatarEmoji = emoji,
+                            shareTransactions = shareTransactions,
+                        ),
                         newPhotoUri = photoUri,
                         clearPhoto = clearPhoto,
                     ),
@@ -274,6 +289,9 @@ private fun ProfilesContent(
                 onEvent(ProfilesEvent.DismissEditDialog)
             },
             onDismiss = { onEvent(ProfilesEvent.DismissEditDialog) },
+            onShareTransactionsToggle = if (state.profiles.size > 1) { enabled ->
+                onEvent(ProfilesEvent.ToggleShareTransactions(profile, enabled))
+            } else null,
         )
     }
 }
@@ -326,7 +344,7 @@ private fun ActiveProfileHeader(
                     .clickable(onClick = onEdit),
                 contentAlignment = Alignment.Center,
             ) {
-                Icon(
+                AppIcon(
                     imageVector = Icons.Filled.Edit,
                     contentDescription = stringResource(R.string.profiles_edit_dialog_title),
                     tint = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -386,7 +404,7 @@ private fun ProfileItem(
                 }
             }
             if (isActive) {
-                Icon(
+                AppIcon(
                     imageVector = Icons.Filled.Check,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
@@ -399,7 +417,7 @@ private fun ProfileItem(
                 onClick = onEdit,
                 backgroundColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.15f),
             ) {
-                Icon(
+                AppIcon(
                     imageVector = Icons.Filled.Edit,
                     contentDescription = stringResource(R.string.profiles_edit_dialog_title),
                     tint = MaterialTheme.colorScheme.primary,
@@ -413,7 +431,7 @@ private fun ProfileItem(
                     onClick = onDelete,
                     backgroundColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.15f),
                 ) {
-                    Icon(
+                    AppIcon(
                         imageVector = Icons.Filled.Delete,
                         contentDescription = stringResource(R.string.profiles_delete_dialog_title),
                         tint = MaterialTheme.colorScheme.error,
@@ -448,16 +466,22 @@ private fun ActionIconButton(
 private fun ProfileFormDialog(
     initialProfile: Profile?,
     titleRes: Int,
-    onConfirm: (name: String, colorArgb: Long, avatarEmoji: String, photoUri: Uri?, clearPhoto: Boolean) -> Unit,
+    onConfirm: (name: String, colorArgb: Long, avatarEmoji: String, photoUri: Uri?, clearPhoto: Boolean, shareTransactions: Boolean) -> Unit,
     onDismiss: () -> Unit,
+    defaultShareTransactions: Boolean = false,
+    shareTransactionsDescriptionRes: Int = R.string.profiles_share_transactions_description,
+    onShareTransactionsToggle: ((Boolean) -> Unit)? = null,
 ) {
     var name by remember { mutableStateOf(initialProfile?.name ?: "") }
-    var selectedColor by remember { mutableStateOf(initialProfile?.colorArgb ?: PROFILE_COLORS.first()) }
+    var selectedColor by remember { mutableLongStateOf(initialProfile?.colorArgb ?: PROFILE_COLORS.first()) }
     var selectedEmoji by remember { mutableStateOf(initialProfile?.avatarEmoji ?: "") }
     var selectedPhotoUri by remember { mutableStateOf<Uri?>(null) }
     // true quando l'utente ha esplicitamente scelto un emoji o rimosso la foto:
     // impedisce che la foto salvata ritorni se l'emoji viene de-selezionata
     var photoCleared by remember { mutableStateOf(false) }
+    var shareTransactionsChecked by remember {
+        mutableStateOf(initialProfile?.shareTransactions ?: defaultShareTransactions)
+    }
 
     val context = LocalContext.current
     val pickerLauncher = rememberLauncherForActivityResult(PickVisualMedia()) { uri ->
@@ -492,7 +516,10 @@ private fun ProfileFormDialog(
         onDismissRequest = onDismiss,
         title = { AppText(text = stringResource(titleRes), style = MaterialTheme.typography.titleMedium) },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
                 // Photo picker row
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -523,7 +550,7 @@ private fun ProfileFormDialog(
                                 AppText(text = selectedEmoji, style = MaterialTheme.typography.titleLarge)
                             }
                             else -> {
-                                Icon(
+                                AppIcon(
                                     imageVector = Icons.Filled.AddAPhoto,
                                     contentDescription = stringResource(R.string.profiles_change_photo),
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -558,13 +585,42 @@ private fun ProfileFormDialog(
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = {
-                        if (name.isNotBlank()) onConfirm(
-                            name.trim(), selectedColor, selectedEmoji, selectedPhotoUri,
-                            selectedPhotoUri == null && (selectedEmoji.isNotEmpty() || photoCleared),
-                        )
-                    }),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            if (name.isNotBlank()) onConfirm(
+                                name.trim(), selectedColor, selectedEmoji, selectedPhotoUri,
+                                selectedPhotoUri == null && (selectedEmoji.isNotEmpty() || photoCleared),
+                                shareTransactionsChecked,
+                            )
+                        },
+                    ),
                 )
+
+                if (onShareTransactionsToggle != null) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            AppText(
+                                text = stringResource(R.string.profiles_share_transactions_title),
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                            AppText(
+                                text = stringResource(shareTransactionsDescriptionRes),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        Switch(
+                            checked = shareTransactionsChecked,
+                            onCheckedChange = { checked ->
+                                shareTransactionsChecked = checked
+                                onShareTransactionsToggle(checked)
+                            },
+                        )
+                    }
+                }
 
                 Column {
                     AppText(
@@ -637,6 +693,7 @@ private fun ProfileFormDialog(
                     if (name.isNotBlank()) onConfirm(
                         name.trim(), selectedColor, selectedEmoji, selectedPhotoUri,
                         selectedPhotoUri == null && (selectedEmoji.isNotEmpty() || photoCleared),
+                        shareTransactionsChecked,
                     )
                 },
                 enabled = name.isNotBlank(),
@@ -672,12 +729,158 @@ private fun ColorSwatch(
         contentAlignment = Alignment.Center,
     ) {
         if (isSelected) {
-            Icon(
+            AppIcon(
                 imageVector = Icons.Filled.Check,
                 contentDescription = null,
                 tint = Color.White,
                 modifier = Modifier.size(16.dp),
             )
+        }
+    }
+}
+
+// ─── Previews ───────────────────────────────────────────────────────────────
+
+private val previewProfileActive = Profile(
+    id = 1L, name = "Alice", uuid = "preview-1",
+    isActive = true, colorArgb = 0xFF6650A4, avatarEmoji = "😊",
+)
+
+private val previewProfileInactive = Profile(
+    id = 2L, name = "Bob", uuid = "preview-2",
+    isActive = false, colorArgb = 0xFF4CAF50, avatarEmoji = "🧑",
+    shareTransactions = true,
+)
+
+@Preview(showBackground = true, name = "ActiveProfileHeader - Light")
+@Composable
+private fun ActiveProfileHeaderLightPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        ActiveProfileHeader(profile = previewProfileActive, onEdit = {})
+    }
+}
+
+@Preview(showBackground = true, name = "ActiveProfileHeader - Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun ActiveProfileHeaderDarkPreview() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        ActiveProfileHeader(profile = previewProfileActive, onEdit = {})
+    }
+}
+
+@Preview(showBackground = true, name = "ActiveProfileHeader - 2x", fontScale = 2.0f)
+@Composable
+private fun ActiveProfileHeaderLargeTextPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        ActiveProfileHeader(profile = previewProfileActive, onEdit = {})
+    }
+}
+
+@Preview(showBackground = true, name = "ProfileItem Active - Light")
+@Composable
+private fun ProfileItemActiveLightPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        ProfileItem(
+            profile = previewProfileActive,
+            isActive = true,
+            onSwitch = {}, onEdit = {}, onDelete = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "ProfileItem Active - Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun ProfileItemActiveDarkPreview() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        ProfileItem(
+            profile = previewProfileActive,
+            isActive = true,
+            onSwitch = {}, onEdit = {}, onDelete = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "ProfileItem Inactive - Light")
+@Composable
+private fun ProfileItemInactiveLightPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        ProfileItem(
+            profile = previewProfileInactive,
+            isActive = false,
+            onSwitch = {}, onEdit = {}, onDelete = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "ProfileFormDialog Create - Light")
+@Composable
+private fun ProfileFormDialogCreateLightPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        ProfileFormDialog(
+            initialProfile = null,
+            titleRes = R.string.profiles_create_dialog_title,
+            onConfirm = { _, _, _, _, _, _ -> },
+            onDismiss = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "ProfileFormDialog Create - Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun ProfileFormDialogCreateDarkPreview() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        ProfileFormDialog(
+            initialProfile = null,
+            titleRes = R.string.profiles_create_dialog_title,
+            onConfirm = { _, _, _, _, _, _ -> },
+            onDismiss = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "ProfileFormDialog Edit + Share - Light")
+@Composable
+private fun ProfileFormDialogEditShareLightPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        ProfileFormDialog(
+            initialProfile = previewProfileInactive,
+            titleRes = R.string.profiles_edit_dialog_title,
+            onConfirm = { _, _, _, _, _, _ -> },
+            onDismiss = {},
+            onShareTransactionsToggle = {},
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    name = "ProfileFormDialog Edit + Share - Dark",
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Composable
+private fun ProfileFormDialogEditShareDarkPreview() {
+    AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
+        ProfileFormDialog(
+            initialProfile = previewProfileInactive,
+            titleRes = R.string.profiles_edit_dialog_title,
+            onConfirm = { _, _, _, _, _, _ -> },
+            onDismiss = {},
+            onShareTransactionsToggle = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "ColorSwatch - Light")
+@Composable
+private fun ColorSwatchLightPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        androidx.compose.foundation.layout.Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(16.dp),
+        ) {
+            ColorSwatch(colorValue = 0xFF6650A4L, isSelected = true, onClick = {})
+            ColorSwatch(colorValue = 0xFF4CAF50L, isSelected = false, onClick = {})
+            ColorSwatch(colorValue = 0xFFEF5350L, isSelected = false, onClick = {})
         }
     }
 }

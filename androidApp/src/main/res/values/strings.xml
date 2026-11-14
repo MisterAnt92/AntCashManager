@@ -267,6 +267,9 @@
     <string name="profiles_color_label">Color</string>
     <string name="profiles_emoji_label">Avatar</string>
     <string name="profiles_change_photo">Change photo</string>
+    <string name="profiles_share_transactions_title">Share transactions</string>
+    <string name="profiles_share_transactions_description">Visible to all profiles with this option active</string>
+    <string name="profiles_share_transactions_create_description">Existing transactions will be shared with this profile. You can change this later.</string>
     <string name="settings_security">Security</string>
     <string name="settings_security_data_encryption">Data protection - Encryption</string>
     <string name="settings_security_data_encryption_subtitle">Encrypt and protect local app data</string>

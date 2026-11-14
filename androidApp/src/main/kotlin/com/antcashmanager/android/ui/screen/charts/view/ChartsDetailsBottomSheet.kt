@@ -16,8 +16,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -230,7 +230,7 @@ private fun DetailsMetricCard(
     label: String,
     value: String,
     isMasked: Boolean,
-    icon: androidx.compose.runtime.Composable? = null,
+    icon: Composable? = null,
 ) {
     val displayValue = if (isMasked) "••••••" else value
     val animatedHorizontalPadding by animateDpAsState(
@@ -294,7 +294,7 @@ private fun TrendIndicator(direction: TrendDirection) {
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Icon(
-            imageVector = Icons.Default.TrendingUp,
+            imageVector = Icons.AutoMirrored.Filled.TrendingUp,
             contentDescription = null,
             tint = trendColor,
             modifier = Modifier.width(20.dp),

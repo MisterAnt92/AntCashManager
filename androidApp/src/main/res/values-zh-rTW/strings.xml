@@ -249,6 +249,9 @@
     <string name="profiles_section_title">個人檔案</string>
     <string name="profiles_color_label">顏色</string>
     <string name="profiles_change_photo">更換照片</string>
+    <string name="profiles_share_transactions_title">分享交易記錄</string>
+    <string name="profiles_share_transactions_description">對所有啟用此選項的設定檔可見</string>
+    <string name="profiles_share_transactions_create_description">現有的交易記錄將與此設定檔共享。您可以稍後變更此設定。</string>
     <string name="profiles_emoji_label">頭像</string>
 
     <string name="settings_security">安全</string>
