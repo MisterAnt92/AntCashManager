@@ -4,6 +4,7 @@ import android.app.Application
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.Severity
 import com.antcashmanager.android.analytics.AnalyticsManager
+import com.antcashmanager.android.data.migrateSettingsFromLegacyDataStore
 import com.antcashmanager.android.di.appModules
 import com.antcashmanager.android.work.AutoBackupNotifier
 import com.antcashmanager.domain.model.Category
@@ -16,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.get
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -31,6 +33,13 @@ class AntCashManagerApp : Application() {
         // to logcat and to let R8 dead-code-eliminate the unused log lambdas.
         if (!BuildConfig.DEBUG) Logger.setMinSeverity(Severity.Warn)
         Logger.d(tag = "AntCashManagerApp") { "Application started" }
+
+        // Migrate legacy "settings" DataStore (v1.7) to split stores (v1.8) before Koin creates
+        // any DataStore instance. runBlocking is intentional: a one-shot disk read/write that
+        // completes in <100ms and must finish before any SettingsRepository access.
+        runBlocking(Dispatchers.IO) {
+            migrateSettingsFromLegacyDataStore(this@AntCashManagerApp)
+        }
 
         startKoin {
             androidLogger(Level.ERROR)
