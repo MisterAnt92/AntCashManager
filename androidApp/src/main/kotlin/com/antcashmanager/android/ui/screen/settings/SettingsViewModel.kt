@@ -2,12 +2,14 @@ package com.antcashmanager.android.ui.screen.settings
 
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.ui.base.BaseViewModel
+import com.antcashmanager.domain.manager.ProfileManager
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.service.WidgetUpdateNotifier
 import com.antcashmanager.domain.usecase.SendFeedbackEmailUseCase
+import com.antcashmanager.domain.usecase.profile.GetProfilesUseCase
 import com.antcashmanager.domain.usecase.settings.ImportDebugDataUseCase
 import com.antcashmanager.domain.usecase.settings.SettingsUseCasesProvider
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
@@ -20,18 +22,20 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(
     private val settingsUseCases: SettingsUseCasesProvider,
     private val settingsRepository: SettingsRepository,
-    private val deleteAllTransactionsUseCase: DeleteAllTransactionsUseCase,
-    private val insertTransactionUseCase: InsertTransactionUseCase,
     private val widgetUpdateNotifier: WidgetUpdateNotifier,
     private val sendFeedbackEmailUseCase: SendFeedbackEmailUseCase,
     private val importDebugDataUseCase: ImportDebugDataUseCase,
+    private val getProfilesUseCase: GetProfilesUseCase,
+    profileManager: ProfileManager,
 ) : BaseViewModel<SettingEvent>() {
     // Convenience properties for readability (delegate to provider)
     private val getThemeUseCase get() = settingsUseCases.getTheme
@@ -73,23 +77,23 @@ class SettingsViewModel(
     override fun onEvent(event: SettingEvent) {
         logDebug("Event: $event")
         when (event) {
-            is SettingEvent.SetTheme -> setTheme(event.theme)
-            is SettingEvent.SetLanguage -> setLanguage(event.language)
-            is SettingEvent.SetShowCharts -> setShowCharts(event.show)
-            is SettingEvent.SetHighContrast -> setHighContrast(event.enabled)
-            is SettingEvent.SetLargeText -> setLargeText(event.enabled)
-            is SettingEvent.SetReduceMotion -> setReduceMotion(event.enabled)
-            is SettingEvent.SetCurrencySymbol -> setCurrencySymbol(event.symbol)
-            is SettingEvent.SetDecimalDigits -> setDecimalDigits(event.digits)
-            is SettingEvent.SetDecimalSeparator -> setDecimalSeparator(event.separator)
-            is SettingEvent.SetThousandsSeparator -> setThousandsSeparator(event.separator)
-            is SettingEvent.SetTransactionDisplayType -> setTransactionDisplayType(event.displayType)
-            is SettingEvent.SetTutorialCompleted -> setIsTutorialCompleted(event.completed)
-            is SettingEvent.ResetAllPreferences -> resetAllPreferences()
-            SettingEvent.ImportDebugData -> importDebugData()
-            is SettingEvent.SendFeedbackEmail -> sendFeedbackEmail(event.emailBody)
-            is SettingEvent.RetryLastOperation -> logInfo("Retry requested")
-            is SettingEvent.SetAnalyticsConsent -> setAnalyticsConsent(event.granted)
+            is SettingEvent.SetThemeEvent -> setTheme(event.theme)
+            is SettingEvent.SetLanguageEvent -> setLanguage(event.language)
+            is SettingEvent.SetShowChartsEvent -> setShowCharts(event.show)
+            is SettingEvent.SetHighContrastEvent -> setHighContrast(event.enabled)
+            is SettingEvent.SetLargeTextEvent -> setLargeText(event.enabled)
+            is SettingEvent.SetReduceMotionEvent -> setReduceMotion(event.enabled)
+            is SettingEvent.SetCurrencySymbolEvent -> setCurrencySymbol(event.symbol)
+            is SettingEvent.SetDecimalDigitsEvent -> setDecimalDigits(event.digits)
+            is SettingEvent.SetDecimalSeparatorEvent -> setDecimalSeparator(event.separator)
+            is SettingEvent.SetThousandsSeparatorEvent -> setThousandsSeparator(event.separator)
+            is SettingEvent.SetTransactionDisplayTypeEvent -> setTransactionDisplayType(event.displayType)
+            is SettingEvent.SetTutorialCompletedEvent -> setIsTutorialCompleted(event.completed)
+            is SettingEvent.ResetAllPreferencesEvent -> resetAllPreferences()
+            SettingEvent.ImportDebugDataEvent -> importDebugData()
+            is SettingEvent.SendFeedbackEmailEvent -> sendFeedbackEmail(event.emailBody)
+            is SettingEvent.RetryLastOperationEvent -> logInfo("Retry requested")
+            is SettingEvent.SetAnalyticsConsentEvent -> setAnalyticsConsent(event.granted)
         }
     }
 
@@ -117,8 +121,10 @@ class SettingsViewModel(
         }
     }
 
+    private val _activeProfileName = MutableStateFlow("")
+
     // Stato aggregato delle preferenze - combinare i flussi in gruppi
-    val state: StateFlow<SettingsState> =
+    private val _prefsState =
         combine(
             combine(
                 getThemeUseCase()
@@ -236,25 +242,45 @@ class SettingsViewModel(
                     SettingsConstant.DEFAULT_TRANSACTION_DISPLAY_TYPE,
                 ),
         ) { prefs1, prefs2, showTransactionNotes, transactionDisplayType ->
+            SettingsPreferencesAll(prefs1, prefs2, showTransactionNotes, transactionDisplayType)
+        }
+
+    val state: StateFlow<SettingsState> =
+        combine(
+            _prefsState,
+            _activeProfileName,
+        ) { prefs, activeProfileName ->
             SettingsState(
-                theme = prefs1.theme,
-                language = prefs1.language,
-                showCharts = prefs1.showCharts,
-                highContrast = prefs1.highContrast,
-                largeText = prefs1.largeText,
-                reduceMotion = prefs2.reduceMotion,
-                currencySymbol = prefs2.currencySymbol,
-                decimalDigits = prefs2.decimalDigits,
-                decimalSeparator = prefs2.decimalSeparator,
-                thousandsSeparator = prefs2.thousandsSeparator,
-                showTransactionNotes = showTransactionNotes,
-                transactionDisplayType = transactionDisplayType,
+                theme = prefs.prefs1.theme,
+                language = prefs.prefs1.language,
+                showCharts = prefs.prefs1.showCharts,
+                highContrast = prefs.prefs1.highContrast,
+                largeText = prefs.prefs1.largeText,
+                reduceMotion = prefs.prefs2.reduceMotion,
+                currencySymbol = prefs.prefs2.currencySymbol,
+                decimalDigits = prefs.prefs2.decimalDigits,
+                decimalSeparator = prefs.prefs2.decimalSeparator,
+                thousandsSeparator = prefs.prefs2.thousandsSeparator,
+                showTransactionNotes = prefs.showTransactionNotes,
+                transactionDisplayType = prefs.transactionDisplayType,
+                activeProfileName = activeProfileName,
             )
         }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(SettingsConstant.SHARING_TIMEOUT),
             SettingsState(),
         )
+
+    init {
+        combine(
+            getProfilesUseCase(),
+            profileManager.activeProfileId,
+        ) { profilesResult, activeId ->
+            profilesResult.getOrNull()?.firstOrNull { it.id == activeId }?.name ?: ""
+        }.onEach { name ->
+            _activeProfileName.value = name
+        }.launchIn(viewModelScope)
+    }
 
     /** Separate flow for analytics consent — not included in the heavy combine() above. */
     val analyticsConsent: StateFlow<Boolean?> =
@@ -432,4 +458,11 @@ private data class SettingsPreferences2(
     val decimalDigits: Int,
     val decimalSeparator: String,
     val thousandsSeparator: String,
+)
+
+private data class SettingsPreferencesAll(
+    val prefs1: SettingsPreferences1,
+    val prefs2: SettingsPreferences2,
+    val showTransactionNotes: Boolean,
+    val transactionDisplayType: TransactionDisplayType,
 )

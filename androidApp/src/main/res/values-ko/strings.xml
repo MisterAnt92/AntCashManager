@@ -105,6 +105,26 @@
     <string name="icon_directions_bike">스포츠</string>
     <string name="icon_shopping_cart">식료품</string>
     <string name="icon_coffee">커피</string>
+    <string name="icon_local_bar">바</string>
+    <string name="icon_local_cafe">카페</string>
+    <string name="icon_music_note">음악</string>
+    <string name="icon_movie">영화</string>
+    <string name="icon_sports_esports">게임</string>
+    <string name="icon_account_balance">은행</string>
+    <string name="icon_credit_card">카드 결제</string>
+    <string name="icon_smartphone">전화/통신</string>
+    <string name="icon_laptop">기술</string>
+    <string name="icon_child_care">육아</string>
+    <string name="icon_local_gas_station">연료</string>
+    <string name="icon_build">유지보수</string>
+    <string name="icon_beach_access">휴가</string>
+    <string name="icon_percent">세금/수수료</string>
+    <string name="icon_two_wheeler">오토바이</string>
+    <string name="icon_storefront">매장</string>
+    <string name="icon_umbrella">보험</string>
+    <string name="icon_sports_soccer">스포츠</string>
+    <string name="icon_medication">약품</string>
+    <string name="icon_elderly_woman">노인 돌봄</string>
     <string name="icon_spa">자기 관리</string>
     <string name="icon_card_giftcard">식권</string>
 
@@ -170,7 +190,7 @@
     <string name="settings_theme_system">시스템 설정값</string>
     <string name="settings_language">언어</string>
     <string name="settings_display">표시 설정</string>
-    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
+    <string name="settings_display_subtitle">통화, 서식, 결제 유형 및 표시 기본 설정을 맞춤설정</string>
     <string name="settings_show_charts_section">차트 섹션 표시</string>
     <string name="settings_show_charts_section_visible">탐색 메뉴에 차트 섹션 표시됨</string>
     <string name="settings_show_charts_section_hidden">탐색 메뉴에서 차트 섹션 숨겨짐</string>
@@ -214,6 +234,25 @@
     <string name="settings_reduce_motion">동작 줄이기</string>
     <string name="settings_reduce_motion_subtitle">애니메이션과 전환 효과를 최소화합니다.</string>
     <string name="settings_data_management">데이터 관리</string>
+    <string name="settings_profiles">Profili</string>
+    <string name="profiles_title">Profili</string>
+    <string name="profiles_add_button">Aggiungi profilo</string>
+    <string name="profiles_switch_dialog_title">Cambia profilo</string>
+    <string name="profiles_switch_dialog_message">Passare a %1$s?</string>
+    <string name="profiles_delete_dialog_title">Elimina profilo</string>
+    <string name="profiles_delete_dialog_warning">Eliminare %1$s e tutti i suoi dati? Questa azione non può essere annullata.</string>
+    <string name="profiles_default_name">Default</string>
+    <string name="profiles_active_badge">Attivo</string>
+    <string name="profiles_create_dialog_title">Nuovo profilo</string>
+    <string name="profiles_name_hint">Nome profilo</string>
+    <string name="profiles_edit_dialog_title">프로필 편집</string>
+    <string name="profiles_section_title">프로필</string>
+    <string name="profiles_color_label">색상</string>
+    <string name="profiles_change_photo"></string>
+    <string name="profiles_share_transactions_title">거래 공유</string>
+    <string name="profiles_share_transactions_description">이 옵션이 활성화된 모든 프로필에서 표시됩니다</string>
+    <string name="profiles_share_transactions_create_description">기존 거래 내역이 이 프로필과 공유됩니다. 나중에 변경할 수 있습니다.</string>
+    <string name="profiles_emoji_label">아바타</string>
     <string name="settings_security">보안</string>
     <string name="settings_security_data_encryption">데이터 보호 - 암호화</string>
     <string name="settings_security_data_encryption_subtitle">로컬 앱 데이터를 암호화하여 보호합니다</string>
@@ -382,6 +421,8 @@
     <string name="payment_type_electronic">전자 결제</string>
     <string name="payment_type_cash">현금</string>
     <string name="payment_type_meal_vouchers">식권</string>
+    <string name="payment_type_meal_vouchers_with_cash">식권 + 현금/카드</string>
+    <string name="transaction_details_meal_vouchers_covered">식권 커버 금액</string>
 
     <!-- Add Transaction Payment Type -->
     <string name="add_transaction_payment_type">결제 유형</string>
@@ -501,6 +542,7 @@
     <string name="category_gifts">선물</string>
     <string name="category_subscriptions">구독</string>
     <string name="category_personal_care">자기 관리</string>
+    <string name="category_meal_vouchers">식사 쿠폰</string>
 
     <!-- Receipt Scan Screen -->
     <string name="receipt_scan_title">영수증 스캔</string>
@@ -653,4 +695,26 @@
     <string name="transactions_help_display_title">@string/settings_transaction_display</string>
     <string name="transactions_help_display_desc">@string/settings_transaction_display_desc</string>
     <string name="transactions_details_empty">세부 정보를 보려면 거래를 선택하세요</string>
+
+    <!-- Meal Vouchers Card -->
+    <string name="home_meal_vouchers_title">식사 바우처</string>
+    <string name="home_meal_vouchers_remaining">남음</string>
+    <string name="home_meal_vouchers_received">받음</string>
+    <string name="home_meal_vouchers_used">사용함</string>
+    <string name="home_meal_vouchers_remaining_value">남은 가치</string>
+    <string name="home_meal_vouchers_received_only_mode">추적만</string>
+
+    <!-- Month names (short format) -->
+    <string name="month_short_1">1월</string>
+    <string name="month_short_2">2월</string>
+    <string name="month_short_3">3월</string>
+    <string name="month_short_4">4월</string>
+    <string name="month_short_5">5월</string>
+    <string name="month_short_6">6월</string>
+    <string name="month_short_7">7월</string>
+    <string name="month_short_8">8월</string>
+    <string name="month_short_9">9월</string>
+    <string name="month_short_10">10월</string>
+    <string name="month_short_11">11월</string>
+    <string name="month_short_12">12월</string>
 </resources>

@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.MotionPhotosOff
 import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PrivacyTip
 import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material3.MaterialTheme
@@ -51,7 +52,6 @@ import com.antcashmanager.android.ui.components.animation.AntEasterEggAnimation
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
 import com.antcashmanager.android.ui.components.common.AppSwitch
-import com.antcashmanager.android.ui.components.dialog.HelpButton
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.text.AppText
@@ -78,31 +78,32 @@ fun SettingsScreen(
 
     SettingsContent(
         currentTheme = state.theme,
-        onThemeSelected = { viewModel.onEvent(SettingEvent.SetTheme(it)) },
+        onThemeSelected = { viewModel.onEvent(SettingEvent.SetThemeEvent(it)) },
         currentLanguage = state.language,
-        onLanguageSelected = { viewModel.onEvent(SettingEvent.SetLanguage(it)) },
+        onLanguageSelected = { viewModel.onEvent(SettingEvent.SetLanguageEvent(it)) },
         versionName = BuildConfig.VERSION_NAME,
         showCharts = state.showCharts,
-        onShowChartsChanged = { viewModel.onEvent(SettingEvent.SetShowCharts(it)) },
+        onShowChartsChanged = { viewModel.onEvent(SettingEvent.SetShowChartsEvent(it)) },
         highContrast = state.highContrast,
-        onHighContrastChanged = { viewModel.onEvent(SettingEvent.SetHighContrast(it)) },
+        onHighContrastChanged = { viewModel.onEvent(SettingEvent.SetHighContrastEvent(it)) },
         largeText = state.largeText,
-        onLargeTextChanged = { viewModel.onEvent(SettingEvent.SetLargeText(it)) },
+        onLargeTextChanged = { viewModel.onEvent(SettingEvent.SetLargeTextEvent(it)) },
         reduceMotion = state.reduceMotion,
-        onReduceMotionChanged = { viewModel.onEvent(SettingEvent.SetReduceMotion(it)) },
+        onReduceMotionChanged = { viewModel.onEvent(SettingEvent.SetReduceMotionEvent(it)) },
         currencySymbol = state.currencySymbol,
-        onCurrencySymbolSelected = { viewModel.onEvent(SettingEvent.SetCurrencySymbol(it)) },
+        onCurrencySymbolSelected = { viewModel.onEvent(SettingEvent.SetCurrencySymbolEvent(it)) },
         decimalDigits = state.decimalDigits,
-        onDecimalDigitsSelected = { viewModel.onEvent(SettingEvent.SetDecimalDigits(it)) },
+        onDecimalDigitsSelected = { viewModel.onEvent(SettingEvent.SetDecimalDigitsEvent(it)) },
         decimalSeparator = state.decimalSeparator,
-        onDecimalSeparatorSelected = { viewModel.onEvent(SettingEvent.SetDecimalSeparator(it)) },
+        onDecimalSeparatorSelected = { viewModel.onEvent(SettingEvent.SetDecimalSeparatorEvent(it)) },
         thousandsSeparator = state.thousandsSeparator,
-        onThousandsSeparatorSelected = { viewModel.onEvent(SettingEvent.SetThousandsSeparator(it)) },
+        onThousandsSeparatorSelected = { viewModel.onEvent(SettingEvent.SetThousandsSeparatorEvent(it)) },
+        activeProfileName = state.activeProfileName,
         analyticsConsent = analyticsConsent,
-        onAnalyticsConsentChanged = { viewModel.onEvent(SettingEvent.SetAnalyticsConsent(it)) },
-        onImportDebugData = { viewModel.onEvent(SettingEvent.ImportDebugData) },
+        onAnalyticsConsentChanged = { viewModel.onEvent(SettingEvent.SetAnalyticsConsentEvent(it)) },
+        onImportDebugData = { viewModel.onEvent(SettingEvent.ImportDebugDataEvent) },
         onSendFeedbackEmail = { emailBody ->
-            viewModel.onEvent(SettingEvent.SendFeedbackEmail(emailBody))
+            viewModel.onEvent(SettingEvent.SendFeedbackEmailEvent(emailBody))
             // TODO: handle success/failure via errorState in state (FASE 5)
         },
         navController = navController,
@@ -133,6 +134,7 @@ internal fun SettingsContent(
     onDecimalSeparatorSelected: (String) -> Unit = {},
     thousandsSeparator: String = "",
     onThousandsSeparatorSelected: (String) -> Unit = {},
+    activeProfileName: String = "",
     analyticsConsent: Boolean? = null,
     onAnalyticsConsentChanged: (Boolean) -> Unit = {},
     onImportDebugData: () -> Unit = {},
@@ -148,7 +150,6 @@ internal fun SettingsContent(
     var showDecimalDigitsDialog by remember { mutableStateOf(false) }
     var showDecimalSeparatorDialog by remember { mutableStateOf(false) }
     var showThousandsSeparatorDialog by remember { mutableStateOf(false) }
-    var showHelpDialog by remember { mutableStateOf(false) }
     var showAntAnimation by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val analyticsManager: AnalyticsManager = koinInject()
@@ -186,11 +187,6 @@ internal fun SettingsContent(
         onReduceMotionChanged(enabled)
     }
 
-    // Help dialog
-    if (showHelpDialog) {
-        HelpDialog(onDismiss = { showHelpDialog = false })
-    }
-
     // Configure screen header with actions
     val headerConfigCallback = LocalScreenHeaderConfigCallback.current
     val settingsTitle = stringResource(R.string.common_settings)
@@ -198,14 +194,6 @@ internal fun SettingsContent(
         headerConfigCallback?.invoke(
             ScreenHeaderConfig(
                 title = settingsTitle,
-                actions = {
-                    HelpButton(
-                        onHelpClick = {
-                            analyticsManager.logEvent("settings_help_opened")
-                            showHelpDialog = true
-                        },
-                    )
-                },
             ),
         )
     }
@@ -228,8 +216,23 @@ internal fun SettingsContent(
                     .verticalScroll(rememberScrollState())
                     .padding(bottom = 24.dp),
         ) {
+            // ── Profile Section ──
+            AppCardSectionHeader(title = stringResource(R.string.profiles_section_title))
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                AppCard(
+                    title = stringResource(R.string.settings_profiles),
+                    subtitle = activeProfileName.takeIf { it.isNotEmpty() },
+                    leadingIcon = Icons.Default.Person,
+                    iconBackgroundColor = MaterialTheme.colorScheme.primaryContainer,
+                    iconTint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    onClick = {
+                        navController?.navigate(AppRoute.SettingsRoute.Profiles.route)
+                    },
+                )
+            }
+            VerticalSpacer(SpacingSize.SM)
+
             // ── Appearance Section ──
-            // ... rest of Column content ...
             AppCardSectionHeader(title = stringResource(R.string.settings_appearance))
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 AppCard(

@@ -98,13 +98,13 @@ class TransactionTypeTest {
 
 class AppThemeTest {
     @Test
-    fun appThemeHasExactlyThreeValues() {
-        assertEquals(3, AppTheme.entries.size)
+    fun appThemeHasFourValues() {
+        assertEquals(4, AppTheme.entries.size)
     }
 
     @Test
-    fun appThemeValuesAreLIGHTDARKSYSTEM() {
+    fun appThemeValuesAreLIGHTDARKSYSTEMANNA() {
         val values = AppTheme.entries.map { it.name }
-        assertEquals(listOf("LIGHT", "DARK", "SYSTEM"), values)
+        assertEquals(listOf("LIGHT", "DARK", "SYSTEM", "ANNA"), values)
     }
 }

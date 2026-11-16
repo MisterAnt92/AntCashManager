@@ -80,10 +80,12 @@ class ReceiptScanViewModelTest : BaseUnitTest() {
     }
 
     @After
-    fun tearDown() {
+    override fun tearDownDispatchers() {
         if (::viewModel.isInitialized) {
             viewModel.viewModelScope.cancel()
+            testDispatcher.scheduler.advanceUntilIdle()
         }
+        super.tearDownDispatchers()
     }
 
     // ── Initial State ────────────────────────────────────────────────────────
@@ -121,7 +123,7 @@ class ReceiptScanViewModelTest : BaseUnitTest() {
 
     @Test
     fun updateTitle_shouldUpdateTitleInState() {
-        viewModel.onEvent(ReceiptScanEvent.UpdateTitle("Nuovo Titolo"))
+        viewModel.onEvent(ReceiptScanEvent.UpdateTitleEvent("Nuovo Titolo"))
         assertEquals("Nuovo Titolo", viewModel.state.value.title)
     }
 
@@ -129,7 +131,7 @@ class ReceiptScanViewModelTest : BaseUnitTest() {
 
     @Test
     fun updatePayee_shouldUpdatePayeeInState() {
-        viewModel.onEvent(ReceiptScanEvent.UpdatePayee("COOP Italia"))
+        viewModel.onEvent(ReceiptScanEvent.UpdatePayeeEvent("COOP Italia"))
         assertEquals("COOP Italia", viewModel.state.value.payee)
     }
 
@@ -137,7 +139,7 @@ class ReceiptScanViewModelTest : BaseUnitTest() {
 
     @Test
     fun updateLocation_shouldUpdateLocationInState() {
-        viewModel.onEvent(ReceiptScanEvent.UpdateLocation("Via Garibaldi 1"))
+        viewModel.onEvent(ReceiptScanEvent.UpdateLocationEvent("Via Garibaldi 1"))
         assertEquals("Via Garibaldi 1", viewModel.state.value.location)
     }
 
@@ -146,7 +148,7 @@ class ReceiptScanViewModelTest : BaseUnitTest() {
     @Test
     fun selectCategory_shouldUpdateSelectedCategory() {
         val cat = Category(id = 3L, name = "Trasporti", type = "EXPENSE")
-        viewModel.onEvent(ReceiptScanEvent.SelectCategory(cat))
+        viewModel.onEvent(ReceiptScanEvent.SelectCategoryEvent(cat))
         assertEquals(
             "Trasporti",
             viewModel.state.value.selectedCategory
@@ -156,9 +158,9 @@ class ReceiptScanViewModelTest : BaseUnitTest() {
 
     @Test
     fun selectCategory_shouldDismissCategoryDialog() {
-        viewModel.onEvent(ReceiptScanEvent.ShowCategoryDialog)
+        viewModel.onEvent(ReceiptScanEvent.ShowCategoryDialogEvent)
         assertTrue(viewModel.state.value.showCategoryDialog)
-        viewModel.onEvent(ReceiptScanEvent.SelectCategory(expenseCategory))
+        viewModel.onEvent(ReceiptScanEvent.SelectCategoryEvent(expenseCategory))
         assertFalse(viewModel.state.value.showCategoryDialog)
     }
 
@@ -166,14 +168,14 @@ class ReceiptScanViewModelTest : BaseUnitTest() {
 
     @Test
     fun showCategoryDialog_shouldSetShowCategoryDialogTrue() {
-        viewModel.onEvent(ReceiptScanEvent.ShowCategoryDialog)
+        viewModel.onEvent(ReceiptScanEvent.ShowCategoryDialogEvent)
         assertTrue(viewModel.state.value.showCategoryDialog)
     }
 
     @Test
     fun dismissCategoryDialog_shouldSetShowCategoryDialogFalse() {
-        viewModel.onEvent(ReceiptScanEvent.ShowCategoryDialog)
-        viewModel.onEvent(ReceiptScanEvent.DismissCategoryDialog)
+        viewModel.onEvent(ReceiptScanEvent.ShowCategoryDialogEvent)
+        viewModel.onEvent(ReceiptScanEvent.DismissCategoryDialogEvent)
         assertFalse(viewModel.state.value.showCategoryDialog)
     }
 
@@ -181,21 +183,21 @@ class ReceiptScanViewModelTest : BaseUnitTest() {
 
     @Test
     fun selectPaymentType_shouldUpdateSelectedPaymentType() {
-        viewModel.onEvent(ReceiptScanEvent.SelectPaymentType(PaymentType.CASH))
+        viewModel.onEvent(ReceiptScanEvent.SelectPaymentTypeEvent(PaymentType.CASH))
         assertEquals(PaymentType.CASH, viewModel.state.value.selectedPaymentType)
     }
 
     @Test
     fun selectPaymentType_shouldUpdateToMealVouchers() {
-        viewModel.onEvent(ReceiptScanEvent.SelectPaymentType(PaymentType.MEAL_VOUCHERS))
+        viewModel.onEvent(ReceiptScanEvent.SelectPaymentTypeEvent(PaymentType.MEAL_VOUCHERS))
         assertEquals(PaymentType.MEAL_VOUCHERS, viewModel.state.value.selectedPaymentType)
     }
 
     @Test
     fun selectPaymentType_shouldDismissPaymentTypeDialog() {
-        viewModel.onEvent(ReceiptScanEvent.ShowPaymentTypeDialog)
+        viewModel.onEvent(ReceiptScanEvent.ShowPaymentTypeDialogEvent)
         assertTrue(viewModel.state.value.showPaymentTypeDialog)
-        viewModel.onEvent(ReceiptScanEvent.SelectPaymentType(PaymentType.CASH))
+        viewModel.onEvent(ReceiptScanEvent.SelectPaymentTypeEvent(PaymentType.CASH))
         assertFalse(viewModel.state.value.showPaymentTypeDialog)
     }
 
@@ -203,14 +205,14 @@ class ReceiptScanViewModelTest : BaseUnitTest() {
 
     @Test
     fun showPaymentTypeDialog_shouldSetShowPaymentTypeDialogTrue() {
-        viewModel.onEvent(ReceiptScanEvent.ShowPaymentTypeDialog)
+        viewModel.onEvent(ReceiptScanEvent.ShowPaymentTypeDialogEvent)
         assertTrue(viewModel.state.value.showPaymentTypeDialog)
     }
 
     @Test
     fun dismissPaymentTypeDialog_shouldSetShowPaymentTypeDialogFalse() {
-        viewModel.onEvent(ReceiptScanEvent.ShowPaymentTypeDialog)
-        viewModel.onEvent(ReceiptScanEvent.DismissPaymentTypeDialog)
+        viewModel.onEvent(ReceiptScanEvent.ShowPaymentTypeDialogEvent)
+        viewModel.onEvent(ReceiptScanEvent.DismissPaymentTypeDialogEvent)
         assertFalse(viewModel.state.value.showPaymentTypeDialog)
     }
 
@@ -220,8 +222,8 @@ class ReceiptScanViewModelTest : BaseUnitTest() {
     fun retryCapture_shouldResetToCapture_preservingCategories() =
         runViewModelTest {
             advanceUntilIdle()
-            viewModel.onEvent(ReceiptScanEvent.UpdateTitle("Titolo test"))
-            viewModel.onEvent(ReceiptScanEvent.RetryCapture)
+            viewModel.onEvent(ReceiptScanEvent.UpdateTitleEvent("Titolo test"))
+            viewModel.onEvent(ReceiptScanEvent.RetryCaptureEvent)
 
             val state = viewModel.state.value
             assertEquals(ReceiptScanStep.CAPTURE, state.step)

@@ -105,6 +105,26 @@
     <string name="icon_directions_bike">Sport</string>
     <string name="icon_shopping_cart">Artykuły spożywcze</string>
     <string name="icon_coffee">Kawa</string>
+    <string name="icon_local_bar">Bar</string>
+    <string name="icon_local_cafe">Kawiarnia</string>
+    <string name="icon_music_note">Muzyka</string>
+    <string name="icon_movie">Kino</string>
+    <string name="icon_sports_esports">Gry</string>
+    <string name="icon_account_balance">Bank</string>
+    <string name="icon_credit_card">Płatności kartą</string>
+    <string name="icon_smartphone">Telefon/Telekom</string>
+    <string name="icon_laptop">Technologia</string>
+    <string name="icon_child_care">Dzieci</string>
+    <string name="icon_local_gas_station">Paliwo</string>
+    <string name="icon_build">Konserwacja</string>
+    <string name="icon_beach_access">Wakacje</string>
+    <string name="icon_percent">Podatki/Opłaty</string>
+    <string name="icon_two_wheeler">Motocykl/Skuter</string>
+    <string name="icon_storefront">Sklep</string>
+    <string name="icon_umbrella">Ubezpieczenie</string>
+    <string name="icon_sports_soccer">Sport</string>
+    <string name="icon_medication">Leki</string>
+    <string name="icon_elderly_woman">Opieka nad starszymi</string>
     <string name="icon_spa">Higiena osobista</string>
     <string name="icon_card_giftcard">Bony na posiłek</string>
 
@@ -170,7 +190,7 @@
     <string name="settings_theme_system">Domyślny systemowy</string>
     <string name="settings_language">Język</string>
     <string name="settings_display">Wyświetlanie</string>
-    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
+    <string name="settings_display_subtitle">Dostosuj walutę, formatowanie, typy płatności i preferencje wyświetlania</string>
     <string name="settings_show_charts_section">Pokaż sekcję wykresów</string>
     <string name="settings_show_charts_section_visible">Sekcja wykresów widoczna w nawigacji</string>
     <string name="settings_show_charts_section_hidden">Sekcja wykresów ukryta w nawigacji</string>
@@ -214,6 +234,25 @@
     <string name="settings_reduce_motion">Redukuj ruch</string>
     <string name="settings_reduce_motion_subtitle">Minimalizuj animacje i przejścia. Pomocne dla osób wrażliwych na ruch.</string>
     <string name="settings_data_management">Zarządzanie danymi</string>
+    <string name="settings_profiles">Profili</string>
+    <string name="profiles_title">Profili</string>
+    <string name="profiles_add_button">Aggiungi profilo</string>
+    <string name="profiles_switch_dialog_title">Cambia profilo</string>
+    <string name="profiles_switch_dialog_message">Passare a %1$s?</string>
+    <string name="profiles_delete_dialog_title">Elimina profilo</string>
+    <string name="profiles_delete_dialog_warning">Eliminare %1$s e tutti i suoi dati? Questa azione non può essere annullata.</string>
+    <string name="profiles_default_name">Default</string>
+    <string name="profiles_active_badge">Attivo</string>
+    <string name="profiles_create_dialog_title">Nuovo profilo</string>
+    <string name="profiles_name_hint">Nome profilo</string>
+    <string name="profiles_edit_dialog_title">Edytuj profil</string>
+    <string name="profiles_section_title">Profil</string>
+    <string name="profiles_color_label">Kolor</string>
+    <string name="profiles_change_photo"></string>
+    <string name="profiles_share_transactions_title">Udostępnij transakcje</string>
+    <string name="profiles_share_transactions_description">Widoczne dla wszystkich profili z aktywną tą opcją</string>
+    <string name="profiles_share_transactions_create_description">Istniejące transakcje będą udostępnione temu profilowi. Możesz to zmienić później.</string>
+    <string name="profiles_emoji_label">Awatar</string>
     <string name="settings_security">Bezpieczeństwo</string>
     <string name="settings_security_data_encryption">Ochrona danych - Szyfrowanie</string>
     <string name="settings_security_data_encryption_subtitle">Szyfruj i chroń lokalne dane aplikacji</string>
@@ -380,6 +419,8 @@
     <string name="payment_type_electronic">Płatność elektroniczna</string>
     <string name="payment_type_cash">Gotówka</string>
     <string name="payment_type_meal_vouchers">Bony na posiłek</string>
+    <string name="payment_type_meal_vouchers_with_cash">Bony żywieniowe + Gotówka/Karta</string>
+    <string name="transaction_details_meal_vouchers_covered">Pokryte bonami</string>
 
     <!-- Add Transaction Payment Type -->
     <string name="add_transaction_payment_type">Typ płatności</string>
@@ -502,6 +543,7 @@
     <string name="category_gifts">Prezenty</string>
     <string name="category_subscriptions">Subskrypcje</string>
     <string name="category_personal_care">Higiena osobista</string>
+    <string name="category_meal_vouchers">Bony żywieniowe</string>
 
     <!-- Receipt Scan Screen -->
     <string name="receipt_scan_title">Skanuj paragon</string>
@@ -654,4 +696,26 @@
     <string name="transactions_help_display_title">@string/settings_transaction_display</string>
     <string name="transactions_help_display_desc">@string/settings_transaction_display_desc</string>
     <string name="transactions_details_empty">Wybierz transakcję, aby zobaczyć szczegóły</string>
+
+    <!-- Meal Vouchers Card -->
+    <string name="home_meal_vouchers_title">Bony Posiłkowe</string>
+    <string name="home_meal_vouchers_remaining">Pozostałe</string>
+    <string name="home_meal_vouchers_received">Otrzymane</string>
+    <string name="home_meal_vouchers_used">Zużyte</string>
+    <string name="home_meal_vouchers_remaining_value">Wartość pozostała</string>
+    <string name="home_meal_vouchers_received_only_mode">Tylko śledzenie</string>
+
+    <!-- Month names (short format) -->
+    <string name="month_short_1">Sty</string>
+    <string name="month_short_2">Lut</string>
+    <string name="month_short_3">Mar</string>
+    <string name="month_short_4">Kwi</string>
+    <string name="month_short_5">Maj</string>
+    <string name="month_short_6">Cze</string>
+    <string name="month_short_7">Lip</string>
+    <string name="month_short_8">Sie</string>
+    <string name="month_short_9">Wrz</string>
+    <string name="month_short_10">Paz</string>
+    <string name="month_short_11">Lis</string>
+    <string name="month_short_12">Gru</string>
 </resources>

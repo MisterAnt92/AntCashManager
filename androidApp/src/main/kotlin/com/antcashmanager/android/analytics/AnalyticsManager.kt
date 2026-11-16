@@ -37,7 +37,13 @@ open class AnalyticsManager {
                 FirebaseAnalytics.ConsentType.AD_PERSONALIZATION to FirebaseAnalytics.ConsentStatus.DENIED,
             ),
         )
-        runCatching { FirebaseCrashlytics.getInstance().isCrashlyticsCollectionEnabled = granted }
+        runCatching {
+            FirebaseCrashlytics.getInstance().isCrashlyticsCollectionEnabled = granted
+        }.onFailure { e ->
+            Logger.e(throwable = e, tag = AnalyticsConstants.TAG) {
+                "Failed to set Crashlytics collection enabled=$granted"
+            }
+        }
     }
 
     fun logScreenView(route: String) {
@@ -60,6 +66,15 @@ open class AnalyticsManager {
                 throwable = error,
                 tag = AnalyticsConstants.TAG,
             ) { "Failed to log screen view for route=$route" }
+        }
+    }
+
+    fun recordNonFatalException(throwable: Throwable) {
+        if (!consentGranted) return
+        runCatching {
+            FirebaseCrashlytics.getInstance().recordException(throwable)
+        }.onFailure { e ->
+            Logger.w(tag = AnalyticsConstants.TAG) { "Failed to record non-fatal exception: ${e.message}" }
         }
     }
 

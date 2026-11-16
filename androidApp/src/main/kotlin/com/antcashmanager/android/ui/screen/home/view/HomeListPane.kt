@@ -97,7 +97,8 @@ fun HomeListPane(
                 Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
-                    .padding(horizontal = horizontalPadding, vertical = if (isExpanded) 16.dp else 12.dp),
+                    .padding(horizontal = horizontalPadding, vertical = 0.dp)
+                    .padding(top = if (isExpanded) 16.dp else 12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             if (!state.isSearchExpanded) {
@@ -108,8 +109,8 @@ fun HomeListPane(
                         dateRangeFrom = state.dateRangeFrom,
                         dateRangeTo = state.dateRangeTo,
                         expanded = state.dateFilterExpanded,
-                        onExpandedChange = { onEvent(HomeEvent.SetDateFilterExpanded(it)) },
-                        onPresetSelected = { onEvent(HomeEvent.SelectPreset(it)) },
+                        onExpandedChange = { onEvent(HomeEvent.SetDateFilterExpandedEvent(it)) },
+                        onPresetSelected = { onEvent(HomeEvent.SelectPresetEvent(it)) },
                         onFromDateEdit = onFromDateEdit,
                         onToDateEdit = onToDateEdit,
                     )
@@ -135,7 +136,7 @@ fun HomeListPane(
                     SearchComponent(
                         isVisible = true,
                         searchQuery = state.searchQuery,
-                        onSearchQueryChange = { onEvent(HomeEvent.UpdateSearchQuery(it)) },
+                        onSearchQueryChange = { onEvent(HomeEvent.UpdateSearchQueryEvent(it)) },
                         searchSuggestions = state.searchSuggestions,
                         modifier = Modifier.testTag(SEARCH_TAG),
                     )
@@ -191,5 +192,8 @@ private fun TopCard(
                 biggestExpenseCategory = state.biggestExpense?.category,
                 biggestExpenseAmount = state.biggestExpense?.amount,
             )
+
+        HomeTopCardType.MEAL_VOUCHERS ->
+            state.mealVoucherSummary?.let { MealVoucherCard(summary = it) }
     }
 }

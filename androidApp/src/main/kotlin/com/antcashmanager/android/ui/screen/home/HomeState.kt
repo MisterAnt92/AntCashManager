@@ -3,6 +3,7 @@ package com.antcashmanager.android.ui.screen.home
 import com.antcashmanager.android.ui.base.ErrorState
 import com.antcashmanager.android.ui.mapper.TransactionUi
 import com.antcashmanager.android.ui.screen.home.model.HomeTopCardType
+import com.antcashmanager.domain.model.MealVoucherSummary
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionDisplayType
@@ -38,12 +39,15 @@ data class HomeState(
     val reduceMotion: Boolean = false,
     val transactionDisplayType: TransactionDisplayType = TransactionDisplayType.TREND,
     val isTutorialCompleted: Boolean = false,
+    val mealVoucherSummary: MealVoucherSummary? = null,
     // Error handling (FASE 5: Error Feedback UX)
     val errorState: ErrorState = ErrorState(),
 ) {
-    /** Top cards actually rendered: Quick Insights is dropped when its setting is off. */
+    /** Top cards actually rendered: Quick Insights is dropped when its setting is off, Meal Vouchers when no data. */
     val visibleTopCards: List<HomeTopCardType> =
-        if (showQuickInsightsCard) topCardsOrder else topCardsOrder.filterNot { it == HomeTopCardType.QUICK_INSIGHTS }
+        topCardsOrder
+            .filterNot { it == HomeTopCardType.QUICK_INSIGHTS && !showQuickInsightsCard }
+            .filterNot { it == HomeTopCardType.MEAL_VOUCHERS && mealVoucherSummary == null }
 
     val isTopCardsOrderDialogVisible: Boolean get() = editingTopCardsOrder != null
 

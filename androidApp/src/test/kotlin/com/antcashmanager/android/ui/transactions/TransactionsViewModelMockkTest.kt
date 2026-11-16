@@ -7,6 +7,7 @@ import com.antcashmanager.android.ui.screen.transactions.TransactionsViewModel
 import com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
 import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.Transaction
+import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.model.TransactionSuggestions
 import com.antcashmanager.domain.model.TransactionType
 import com.antcashmanager.domain.repository.SettingsRepository
@@ -61,6 +62,8 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
         settingsRepository = mockk(relaxed = true)
         analyticsManager = mockk(relaxed = true)
         engagementTracker = mockk(relaxed = true)
+        every { settingsRepository.getTransactionDisplayType() } returns flowOf(TransactionDisplayType.TREND)
+        every { settingsRepository.getDateFilterExpanded() } returns flowOf(false)
 
         every { getTransactionsUseCase() } returns flowOf(Result.success(emptyList()))
         every { getCategoriesUseCase() } returns flowOf(Result.success(emptyList()))
@@ -92,7 +95,7 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
             val viewModel = buildViewModel()
 
             viewModel.onEvent(
-                TransactionsEvent.AddTransaction(
+                TransactionsEvent.AddTransactionEvent(
                     title = "Lunch",
                     amount = 18.5,
                     category = "Food",
@@ -132,7 +135,7 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
                     timestamp = 1_712_100_000_000L,
                 )
 
-            viewModel.onEvent(TransactionsEvent.DeleteTransaction(transaction))
+            viewModel.onEvent(TransactionsEvent.DeleteTransactionEvent(transaction))
             advanceUntilIdle()
 
             coVerify(atLeast = 1) { deleteTransactionUseCase(transaction) }
@@ -152,25 +155,24 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
                     timestamp = 1_712_200_000_000L,
                 )
 
-            viewModel.onEvent(TransactionsEvent.UpdateTransaction(transaction))
+            viewModel.onEvent(TransactionsEvent.UpdateTransactionEvent(transaction))
             advanceUntilIdle()
 
             coVerify(exactly = 1) { updateTransactionUseCase(transaction) }
         }
 
     @Test
-    fun addTransaction_shouldCompleteWithoutThrowing_whenInsertTransactionUseCaseFails() =
+    fun addTransaction_shouldNotBeLoading_whenInsertTransactionUseCaseFails() =
         runViewModelTest {
             coEvery { insertTransactionUseCase(any()) } returns
-                Result.failure(
-                    IllegalStateException(
-                        "insert failed",
-                    ),
-                )
+                Result.failure(IllegalStateException("insert failed"))
             val viewModel = buildViewModel()
+            val collectJob =
+                launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.state.collect {} }
+            advanceUntilIdle()
 
             viewModel.onEvent(
-                TransactionsEvent.AddTransaction(
+                TransactionsEvent.AddTransactionEvent(
                     title = "Lunch",
                     amount = 18.5,
                     category = "Food",
@@ -181,18 +183,19 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
             advanceUntilIdle()
 
             coVerify(exactly = 1) { insertTransactionUseCase(any()) }
+            assertEquals(false, viewModel.state.value.isLoading)
+            collectJob.cancel()
         }
 
     @Test
-    fun onEvent_shouldCompleteWithoutThrowing_whenUpdateTransactionUseCaseFails() =
+    fun onEvent_shouldNotBeLoading_whenUpdateTransactionUseCaseFails() =
         runViewModelTest {
             coEvery { updateTransactionUseCase(any()) } returns
-                Result.failure(
-                    IllegalStateException(
-                        "update failed",
-                    ),
-                )
+                Result.failure(IllegalStateException("update failed"))
             val viewModel = buildViewModel()
+            val collectJob =
+                launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.state.collect {} }
+            advanceUntilIdle()
             val transaction =
                 Transaction(
                     id = 8L,
@@ -203,22 +206,23 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
                     timestamp = 1_712_200_000_000L,
                 )
 
-            viewModel.onEvent(TransactionsEvent.UpdateTransaction(transaction))
+            viewModel.onEvent(TransactionsEvent.UpdateTransactionEvent(transaction))
             advanceUntilIdle()
 
             coVerify(exactly = 1) { updateTransactionUseCase(transaction) }
+            assertEquals(false, viewModel.state.value.isLoading)
+            collectJob.cancel()
         }
 
     @Test
-    fun onEvent_shouldCompleteWithoutThrowing_whenDeleteTransactionUseCaseFails() =
+    fun onEvent_shouldNotBeLoading_whenDeleteTransactionUseCaseFails() =
         runViewModelTest {
             coEvery { deleteTransactionUseCase(any()) } returns
-                Result.failure(
-                    IllegalStateException(
-                        "delete failed",
-                    ),
-                )
+                Result.failure(IllegalStateException("delete failed"))
             val viewModel = buildViewModel()
+            val collectJob =
+                launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.state.collect {} }
+            advanceUntilIdle()
             val transaction =
                 Transaction(
                     id = 9L,
@@ -229,10 +233,12 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
                     timestamp = 1_712_100_000_000L,
                 )
 
-            viewModel.onEvent(TransactionsEvent.DeleteTransaction(transaction))
+            viewModel.onEvent(TransactionsEvent.DeleteTransactionEvent(transaction))
             advanceUntilIdle()
 
             coVerify(exactly = 1) { deleteTransactionUseCase(transaction) }
+            assertEquals(false, viewModel.state.value.isLoading)
+            collectJob.cancel()
         }
 
     @Test
@@ -247,7 +253,7 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
                 }
             advanceUntilIdle()
 
-            viewModel.onEvent(TransactionsEvent.SelectPreset(2))
+            viewModel.onEvent(TransactionsEvent.SelectPresetEvent(2))
             advanceUntilIdle()
 
             assertEquals(2, viewModel.state.value.selectedPresetIndex)

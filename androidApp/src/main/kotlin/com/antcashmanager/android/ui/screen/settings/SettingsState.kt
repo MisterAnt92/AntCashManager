@@ -37,6 +37,8 @@ data class SettingsState(
     // Transaction Display
     val showTransactionNotes: Boolean = true,
     val transactionDisplayType: TransactionDisplayType = TransactionDisplayType.CATEGORY,
+    // Active profile
+    val activeProfileName: String = "",
     // Analytics / Privacy
     val analyticsConsent: Boolean? = null,
     // Error handling & loading

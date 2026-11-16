@@ -32,9 +32,10 @@ import androidx.compose.material.icons.filled.Receipt
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.Divider
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -63,7 +64,6 @@ import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
 import com.antcashmanager.android.navigation.ScreenHeaderConfig
 import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
 import com.antcashmanager.android.ui.components.animation.SkeletonLoader
-import com.antcashmanager.android.ui.components.dialog.HelpButton
 import com.antcashmanager.android.ui.components.filter.DateRangeFilter
 import com.antcashmanager.android.ui.components.filter.SearchComponent
 import com.antcashmanager.android.ui.components.layout.FoldableAwareLayout
@@ -107,7 +107,7 @@ fun TransactionsScreen(
                 state = state,
                 onEvent = { event ->
                     when (event) {
-                        is com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ApplyFilters -> {
+                        is com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ApplyFiltersEvent -> {
                             val params =
                                 Bundle().apply {
                                     putString(
@@ -144,7 +144,7 @@ fun TransactionsScreen(
                             }
                         }
 
-                        is com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ClearAllFilters -> {
+                        is com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ClearAllFiltersEvent -> {
                             analyticsManager.logEvent("transactions_filter_cleared")
                         }
 
@@ -176,8 +176,6 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
     // Local UI state for dialogs only (not business logic)
     var showFromDatePicker by remember { mutableStateOf(false) }
     var showToDatePicker by remember { mutableStateOf(false) }
-    var showHelpDialog by remember { mutableStateOf(false) }
-
     // DateRangeFilter expanded state from state (UDF)
     val dateFilterExpanded = state.dateFilterExpanded
     val coroutineScope = rememberCoroutineScope()
@@ -206,7 +204,7 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
                     onClick = {
                         datePickerState.selectedDateMillis?.let {
                             onEvent(
-                                com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.SetDateRange(
+                                com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.SetDateRangeEvent(
                                     from = it,
                                     to = state.dateRangeTo,
                                 ),
@@ -240,7 +238,7 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
                     onClick = {
                         datePickerState.selectedDateMillis?.let {
                             onEvent(
-                                com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.SetDateRange(
+                                com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.SetDateRangeEvent(
                                     from = state.dateRangeFrom,
                                     to = it,
                                 ),
@@ -262,10 +260,6 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
         }
     }
 
-    if (showHelpDialog) {
-        HelpDialog(onDismiss = { showHelpDialog = false })
-    }
-
     // Configure screen header with actions
     val headerConfigCallback = LocalScreenHeaderConfigCallback.current
     val transactionsTitle = stringResource(R.string.common_transactions)
@@ -280,7 +274,7 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
                         analyticsManager.logEvent("transactions_filter_opened")
                     }
                     onEvent(
-                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ToggleFiltersExpanded,
+                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ToggleFiltersExpandedEvent,
                     )
                 },
                 actions = {
@@ -291,7 +285,7 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
                         IconButton(
                             onClick = {
                                 onEvent(
-                                    com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ToggleSearchExpanded,
+                                    com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ToggleSearchExpandedEvent,
                                 )
                             },
                         ) {
@@ -306,12 +300,6 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
                                     },
                             )
                         }
-                        HelpButton(
-                            onHelpClick = {
-                                analyticsManager.logEvent("transactions_help_opened")
-                                showHelpDialog = true
-                            },
-                        )
                     }
                 },
             ),
@@ -337,8 +325,9 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
                             .fillMaxSize()
                             .padding(
                                 horizontal = adaptiveLayoutInfo.horizontalPadding,
-                                vertical = 16.dp,
-                            ),
+                                vertical = 0.dp,
+                            )
+                            .padding(top = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(TransactionsScreenDefaults.CardSpacing),
                     verticalArrangement = Arrangement.spacedBy(TransactionsScreenDefaults.CardSpacing),
                     contentPadding = PaddingValues(bottom = TransactionsScreenDefaults.ListBottomSpacer),
@@ -406,8 +395,9 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
                             .fillMaxSize()
                             .padding(
                                 horizontal = adaptiveLayoutInfo.horizontalPadding,
-                                vertical = if (adaptiveLayoutInfo.isExpanded) 16.dp else 12.dp,
-                            ),
+                                vertical = 0.dp,
+                            )
+                            .padding(top = if (adaptiveLayoutInfo.isExpanded) 16.dp else 12.dp),
                     state = listState,
                     verticalArrangement = Arrangement.spacedBy(TransactionsScreenDefaults.CardSpacing),
                     contentPadding = PaddingValues(bottom = TransactionsScreenDefaults.ListBottomSpacer),
@@ -421,7 +411,7 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
                                 onSearchQueryChange = {
                                     onEvent(
                                         com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
-                                            .UpdateSearchQuery(
+                                            .UpdateSearchQueryEvent(
                                                 it,
                                             ),
                                     )
@@ -442,7 +432,7 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
                                 onCategorySelected = {
                                     onEvent(
                                         com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
-                                            .UpdateCategoryFilter(
+                                            .UpdateCategoryFilterEvent(
                                                 it,
                                             ),
                                     )
@@ -450,7 +440,7 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
                                 onTransactionTypeSelected = {
                                     onEvent(
                                         com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
-                                            .UpdateTransactionTypeFilter(
+                                            .UpdateTransactionTypeFilterEvent(
                                                 it,
                                             ),
                                     )
@@ -458,28 +448,28 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
                                 onPaymentTypeSelected = {
                                     onEvent(
                                         com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
-                                            .UpdatePaymentTypeFilter(
+                                            .UpdatePaymentTypeFilterEvent(
                                                 it,
                                             ),
                                     )
                                 },
                                 onClearFilters = {
                                     onEvent(
-                                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ClearAllFilters,
+                                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ClearAllFiltersEvent,
                                     )
                                 },
                                 hasFilterChanges = state.hasFilterChanges,
                                 onApplyFilters = {
                                     onEvent(
-                                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ApplyFilters,
+                                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ApplyFiltersEvent,
                                     )
                                     onEvent(
-                                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ToggleFiltersExpanded,
+                                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ToggleFiltersExpandedEvent,
                                     )
                                 },
                                 onCancelFilters = {
                                     onEvent(
-                                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.CancelFilterChanges,
+                                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.CancelFilterChangesEvent,
                                     )
                                 },
                             )
@@ -496,7 +486,7 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
                                 selectedPaymentType = state.selectedPaymentType,
                                 onClearAll = {
                                     onEvent(
-                                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ClearAllFilters,
+                                        com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.ClearAllFiltersEvent,
                                     )
                                 },
                             )
@@ -514,7 +504,7 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
                             onExpandedChange = { expanded ->
                                 onEvent(
                                     com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
-                                        .SetDateFilterExpanded(
+                                        .SetDateFilterExpandedEvent(
                                             expanded,
                                         ),
                                 )
@@ -522,7 +512,7 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
                             onPresetSelected = {
                                 onEvent(
                                     com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
-                                        .SelectPreset(
+                                        .SelectPresetEvent(
                                             it,
                                         ),
                                 )
@@ -735,7 +725,11 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
             )
 
             if (transaction.notes.isNotEmpty()) {
-                Divider(modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    thickness = DividerDefaults.Thickness,
+                    color = DividerDefaults.color
+                )
                 AppText(
                     text = "Notes",
                     style = MaterialTheme.typography.labelMedium,

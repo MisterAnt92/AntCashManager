@@ -90,7 +90,8 @@ fun FeatureScreen(navController: NavController, modifier: Modifier = Modifier) {
 - Navigation only via `navigation/NavigationExtensions.kt` (`navigateToHome()`, `navigateToAddTransaction()`, `safePopBackStack()`, …) and `AppRoute` — never string literals.
 - Root-only exception: `AntCashManagerNavHost` may inject `SettingsRepository` via Koin for global display prefs.
 - Colors/typography from `MaterialTheme`. Only allowed semantic colors outside it: `IncomeGreen`/`ExpenseRed` (`ui/theme/Color.kt`). Spacing 8/16/24 dp.
-- Reuse `ui/components/` (inventory in `agent-compose-ui.agent.md`). `@Preview` light+dark for components in `components/` and `view/`; root Screens have no previews.
+- Reuse `ui/components/` (inventory in `agent-compose-ui.agent.md`).
+- **MANDATORY — every new `@Composable` (including root `*Screen` composables, `ui/components/`, and `screen/<feature>/view/`) must include 3 `@Preview` variants immediately: Light, Dark (`uiMode = Configuration.UI_MODE_NIGHT_YES`, `darkTheme = true`), and 2× font scale (`fontScale = 2.0f`).** See `.github/agents/agent-compose-ui.agent.md` for the exact template.
 
 ## 9. Feature layout & limits
 

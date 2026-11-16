@@ -43,10 +43,10 @@ Questa repository non deve contenere dati personali utente, token o credenziali 
 - Gli analytics custom sono usage-only (no contenuti testuali utente)
 - Non vengono inviati in analytics: note, query, email, payee, location, tags, stacktrace raw
 - La policy privacy ufficiale e in:
-  - `wiki/privacy-policy.html` (riferimento inglese)
-  - `wiki/privacy-policy-de.html`
-  - `wiki/privacy-policy-fr.html`
-  - `wiki/privacy-policy-es.html`
+  - `docs/wiki/privacy-policy.html` (riferimento inglese)
+  - `docs/wiki/privacy-policy-de.html`
+  - `docs/wiki/privacy-policy-fr.html`
+  - `docs/wiki/privacy-policy-es.html`
 
 Nota: e presente anche una copia statica della privacy policy in `docs/wiki/` per pubblicazione esterna.
 
@@ -131,8 +131,8 @@ AntCashManager/
 |- shared/                     # Modulo KMP (domain + data)
 |  |- src/commonMain/          # Domain
 |  |- src/androidMain/         # Data Android
-|- wiki/                       # Documentazione progetto (Markdown + privacy HTML)
-|- docs/wiki/                  # Copia statica wiki per pubblicazione web
+|- docs/                       # Documentazione progetto (Markdown)
+|  |- wiki/                    # Pagine statiche per pubblicazione web
 |- gradle/
 ```
 
@@ -141,14 +141,14 @@ AntCashManager/
 Documentazione locale (repository):
 
 - **Guida AI Agents**: [`AGENTS.md`](AGENTS.md) – guida tecnica per AI coding agents
-- Indice wiki: [`wiki/README.md`](wiki/README.md)
-- Indice centrale: [`wiki/INDEX.md`](wiki/INDEX.md)
-- Guida lettura: [`wiki/GUIDA_LETTURA.md`](wiki/GUIDA_LETTURA.md)
-- Quick start wiki: [`wiki/QUICK_START.md`](wiki/QUICK_START.md)
-- Linee architetturali: [`wiki/ARCHITECTURE_GUIDELINES.md`](wiki/ARCHITECTURE_GUIDELINES.md)
-- Guida implementazione: [`wiki/IMPLEMENTATION_GUIDE.md`](wiki/IMPLEMENTATION_GUIDE.md)
-- Guida conversione: [`wiki/CONVERSION_GUIDE.md`](wiki/CONVERSION_GUIDE.md)
-- Privacy policy (EN): [`wiki/privacy-policy.html`](wiki/privacy-policy.html)
+- Indice documentazione: [`docs/README.md`](docs/README.md)
+- Indice centrale: [`docs/INDEX.md`](docs/INDEX.md)
+- Guida lettura: [`docs/GUIDA_LETTURA.md`](docs/GUIDA_LETTURA.md)
+- Quick start: [`docs/QUICK_START.md`](docs/QUICK_START.md)
+- Linee architetturali: [`docs/ARCHITECTURE_GUIDELINES.md`](docs/ARCHITECTURE_GUIDELINES.md)
+- Guida implementazione: [`docs/IMPLEMENTATION_GUIDE.md`](docs/IMPLEMENTATION_GUIDE.md)
+- Guida conversione: [`docs/CONVERSION_GUIDE.md`](docs/CONVERSION_GUIDE.md)
+- Privacy policy (EN): [`docs/wiki/privacy-policy.html`](docs/wiki/privacy-policy.html)
 
 Versione statica per consultazione web:
 
@@ -275,7 +275,7 @@ Evento Firebase standard usato: `screen_view`.
 
 1. Fork del repository
 2. Crea branch feature/fix
-3. Mantieni allineamento con linee guida in `wiki/ARCHITECTURE_GUIDELINES.md`
+3. Mantieni allineamento con linee guida in `docs/ARCHITECTURE_GUIDELINES.md`
 4. Apri Pull Request con descrizione chiara e test eseguiti
 
 ## Licenza

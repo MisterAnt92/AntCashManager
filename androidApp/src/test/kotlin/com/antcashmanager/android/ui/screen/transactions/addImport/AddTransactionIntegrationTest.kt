@@ -139,7 +139,7 @@ class AddTransactionIntegrationTest : BaseUnitTest() {
                 viewModel.state.value.categories
                     .find { it.name == "Food" }
             assertNotNull("Food category should exist", foodCategory)
-            viewModel.onEvent(AddTransactionEvent.SelectCategory(foodCategory!!))
+            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(foodCategory!!))
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertEquals(AddTransactionStep.DETAILS, viewModel.state.value.currentStep)
@@ -151,10 +151,10 @@ class AddTransactionIntegrationTest : BaseUnitTest() {
             assertEquals(TransactionType.EXPENSE, viewModel.state.value.selectedType)
 
             // Step 3: Fill in details
-            viewModel.onEvent(AddTransactionEvent.UpdateTitle("Coffee"))
-            viewModel.onEvent(AddTransactionEvent.UpdateAmount("4.50"))
-            viewModel.onEvent(AddTransactionEvent.UpdateNotes("Morning coffee"))
-            viewModel.onEvent(AddTransactionEvent.UpdatePayee("Starbucks"))
+            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Coffee"))
+            viewModel.onEvent(AddTransactionEvent.UpdateAmountEvent("4.50"))
+            viewModel.onEvent(AddTransactionEvent.UpdateNotesEvent("Morning coffee"))
+            viewModel.onEvent(AddTransactionEvent.UpdatePayeeEvent("Starbucks"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Verify state updated
@@ -164,7 +164,7 @@ class AddTransactionIntegrationTest : BaseUnitTest() {
             assertEquals("Starbucks", viewModel.state.value.payee)
 
             // Step 4: Submit transaction
-            viewModel.onEvent(AddTransactionEvent.Submit)
+            viewModel.onEvent(AddTransactionEvent.SubmitEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Step 5: Verify saved
@@ -191,18 +191,18 @@ class AddTransactionIntegrationTest : BaseUnitTest() {
             val salaryCategory =
                 viewModel.state.value.categories
                     .find { it.name == "Salary" }
-            viewModel.onEvent(AddTransactionEvent.SelectCategory(salaryCategory!!))
+            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(salaryCategory!!))
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertEquals(TransactionType.INCOME, viewModel.state.value.selectedType)
 
             // Fill details
-            viewModel.onEvent(AddTransactionEvent.UpdateTitle("Monthly Salary"))
-            viewModel.onEvent(AddTransactionEvent.UpdateAmount("3000.00"))
+            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Monthly Salary"))
+            viewModel.onEvent(AddTransactionEvent.UpdateAmountEvent("3000.00"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Submit
-            viewModel.onEvent(AddTransactionEvent.Submit)
+            viewModel.onEvent(AddTransactionEvent.SubmitEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Verify
@@ -253,13 +253,13 @@ class AddTransactionIntegrationTest : BaseUnitTest() {
             assertEquals("Restaurant", viewModel.state.value.payee)
 
             // Modify details
-            viewModel.onEvent(AddTransactionEvent.UpdateTitle("Dinner"))
-            viewModel.onEvent(AddTransactionEvent.UpdateAmount("50.00"))
-            viewModel.onEvent(AddTransactionEvent.UpdateNotes("Updated notes"))
+            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Dinner"))
+            viewModel.onEvent(AddTransactionEvent.UpdateAmountEvent("50.00"))
+            viewModel.onEvent(AddTransactionEvent.UpdateNotesEvent("Updated notes"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Submit changes
-            viewModel.onEvent(AddTransactionEvent.Submit)
+            viewModel.onEvent(AddTransactionEvent.SubmitEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Verify updated in database
@@ -287,11 +287,11 @@ class AddTransactionIntegrationTest : BaseUnitTest() {
             val foodCategory =
                 viewModel.state.value.categories
                     .find { it.name == "Food" }!!
-            viewModel.onEvent(AddTransactionEvent.SelectCategory(foodCategory))
+            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(foodCategory))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Try to submit without title
-            viewModel.onEvent(AddTransactionEvent.Submit)
+            viewModel.onEvent(AddTransactionEvent.SubmitEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Verify not saved and error shown
@@ -317,13 +317,13 @@ class AddTransactionIntegrationTest : BaseUnitTest() {
             val foodCategory =
                 viewModel.state.value.categories
                     .find { it.name == "Food" }!!
-            viewModel.onEvent(AddTransactionEvent.SelectCategory(foodCategory))
+            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(foodCategory))
             testDispatcher.scheduler.advanceUntilIdle()
-            viewModel.onEvent(AddTransactionEvent.UpdateTitle("Coffee"))
+            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Coffee"))
 
             // Try invalid amount
-            viewModel.onEvent(AddTransactionEvent.UpdateAmount("invalid"))
-            viewModel.onEvent(AddTransactionEvent.Submit)
+            viewModel.onEvent(AddTransactionEvent.UpdateAmountEvent("invalid"))
+            viewModel.onEvent(AddTransactionEvent.SubmitEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Verify not saved
@@ -344,11 +344,11 @@ class AddTransactionIntegrationTest : BaseUnitTest() {
             val foodCategory =
                 viewModel.state.value.categories
                     .find { it.name == "Food" }!!
-            viewModel.onEvent(AddTransactionEvent.SelectCategory(foodCategory))
+            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(foodCategory))
             testDispatcher.scheduler.advanceUntilIdle()
-            viewModel.onEvent(AddTransactionEvent.UpdateTitle("Coffee"))
-            viewModel.onEvent(AddTransactionEvent.UpdateAmount("4.50"))
-            viewModel.onEvent(AddTransactionEvent.Submit)
+            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Coffee"))
+            viewModel.onEvent(AddTransactionEvent.UpdateAmountEvent("4.50"))
+            viewModel.onEvent(AddTransactionEvent.SubmitEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertEquals(1, transactionRepository.getAllTransactions().first().size)
@@ -360,11 +360,11 @@ class AddTransactionIntegrationTest : BaseUnitTest() {
             val transportCategory =
                 viewModel.state.value.categories
                     .find { it.name == "Transport" }!!
-            viewModel.onEvent(AddTransactionEvent.SelectCategory(transportCategory))
+            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(transportCategory))
             testDispatcher.scheduler.advanceUntilIdle()
-            viewModel.onEvent(AddTransactionEvent.UpdateTitle("Taxi"))
-            viewModel.onEvent(AddTransactionEvent.UpdateAmount("15.00"))
-            viewModel.onEvent(AddTransactionEvent.Submit)
+            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Taxi"))
+            viewModel.onEvent(AddTransactionEvent.UpdateAmountEvent("15.00"))
+            viewModel.onEvent(AddTransactionEvent.SubmitEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Verify both saved
@@ -385,14 +385,14 @@ class AddTransactionIntegrationTest : BaseUnitTest() {
             val foodCategory =
                 viewModel.state.value.categories
                     .find { it.name == "Food" }!!
-            viewModel.onEvent(AddTransactionEvent.SelectCategory(foodCategory))
+            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(foodCategory))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Setup recurring transaction
-            viewModel.onEvent(AddTransactionEvent.UpdateTitle("Weekly Coffee"))
-            viewModel.onEvent(AddTransactionEvent.UpdateAmount("4.50"))
-            viewModel.onEvent(AddTransactionEvent.SetRecurring(true))
-            viewModel.onEvent(AddTransactionEvent.UpdateRecurrenceInterval("weekly"))
+            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Weekly Coffee"))
+            viewModel.onEvent(AddTransactionEvent.UpdateAmountEvent("4.50"))
+            viewModel.onEvent(AddTransactionEvent.SetRecurringEvent(true))
+            viewModel.onEvent(AddTransactionEvent.UpdateRecurrenceIntervalEvent("weekly"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Verify state
@@ -400,7 +400,7 @@ class AddTransactionIntegrationTest : BaseUnitTest() {
             assertEquals("weekly", viewModel.state.value.recurrenceInterval)
 
             // Submit and verify
-            viewModel.onEvent(AddTransactionEvent.Submit)
+            viewModel.onEvent(AddTransactionEvent.SubmitEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             val saved = transactionRepository.getAllTransactions().first()[0]
@@ -417,15 +417,15 @@ class AddTransactionIntegrationTest : BaseUnitTest() {
             val foodCategory =
                 viewModel.state.value.categories
                     .find { it.name == "Food" }!!
-            viewModel.onEvent(AddTransactionEvent.SelectCategory(foodCategory))
+            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(foodCategory))
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.UpdateTitle("Coffee"))
-            viewModel.onEvent(AddTransactionEvent.UpdateAmount("4.50"))
-            viewModel.onEvent(AddTransactionEvent.UpdateTags("food,coffee,morning"))
+            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Coffee"))
+            viewModel.onEvent(AddTransactionEvent.UpdateAmountEvent("4.50"))
+            viewModel.onEvent(AddTransactionEvent.UpdateTagsEvent("food,coffee,morning"))
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.Submit)
+            viewModel.onEvent(AddTransactionEvent.SubmitEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             val saved = transactionRepository.getAllTransactions().first()[0]

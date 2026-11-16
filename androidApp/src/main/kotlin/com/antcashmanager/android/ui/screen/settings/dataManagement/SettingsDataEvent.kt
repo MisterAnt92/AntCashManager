@@ -11,88 +11,88 @@ import com.antcashmanager.domain.model.BackupFrequency
  */
 sealed class SettingsDataEvent {
     // ── Data Encryption ──
-    data class SetDataEncryptionEnabled(
+    data class SetDataEncryptionEnabledEvent(
         val enabled: Boolean,
     ) : SettingsDataEvent()
 
     // ── Suggestions ──
-    data class SetSuggestionsEnabled(
+    data class SetSuggestionsEnabledEvent(
         val enabled: Boolean,
     ) : SettingsDataEvent()
 
-    data object ShowDeleteSuggestionsDialog : SettingsDataEvent()
+    data object ShowDeleteSuggestionsDialogEvent : SettingsDataEvent()
 
-    data object DismissDeleteSuggestionsDialog : SettingsDataEvent()
+    data object DismissDeleteSuggestionsDialogEvent : SettingsDataEvent()
 
-    data object DeleteAllSuggestions : SettingsDataEvent()
+    data object DeleteAllSuggestionsEvent : SettingsDataEvent()
 
     // ── Automatic Backup (Phase 1 & 2) ──
-    data class SetAutoBackupEnabled(
+    data class SetAutoBackupEnabledEvent(
         val enabled: Boolean,
     ) : SettingsDataEvent()
 
-    data class OnAutoBackupFolderSelected(
+    data class OnAutoBackupFolderSelectedEvent(
         val uriString: String,
     ) : SettingsDataEvent()
 
-    data object OnAutoBackupFolderSelectionCancelled : SettingsDataEvent()
+    data object OnAutoBackupFolderSelectionCancelledEvent : SettingsDataEvent()
 
-    data class SetAutoBackupDestination(
+    data class SetAutoBackupDestinationEvent(
         val destination: BackupDestination,
     ) : SettingsDataEvent()
 
-    data class SetBackupFrequency(
+    data class SetBackupFrequencyEvent(
         val frequency: BackupFrequency,
     ) : SettingsDataEvent()
 
     // ── Delete All Data ──
-    data object ShowDeleteConfirmDialog : SettingsDataEvent()
+    data object ShowDeleteConfirmDialogEvent : SettingsDataEvent()
 
-    data object DismissDeleteConfirmDialog : SettingsDataEvent()
+    data object DismissDeleteConfirmDialogEvent : SettingsDataEvent()
 
-    data object DismissDeleteSuccessDialog : SettingsDataEvent()
+    data object DismissDeleteSuccessDialogEvent : SettingsDataEvent()
 
-    data object DeleteAllData : SettingsDataEvent()
+    data object DeleteAllDataEvent : SettingsDataEvent()
 
     // ── Reset Preferences ──
-    data object ShowResetPreferencesDialog : SettingsDataEvent()
+    data object ShowResetPreferencesDialogEvent : SettingsDataEvent()
 
-    data object DismissResetPreferencesDialog : SettingsDataEvent()
+    data object DismissResetPreferencesDialogEvent : SettingsDataEvent()
 
-    data object ResetAllPreferences : SettingsDataEvent()
+    data object ResetAllPreferencesEvent : SettingsDataEvent()
 
     // ── Backup Operations ──
-    data object CreateBackup : SettingsDataEvent()
+    data object CreateBackupEvent : SettingsDataEvent()
 
-    data object OnBackupFileSaved : SettingsDataEvent()
+    data object OnBackupFileSavedEvent : SettingsDataEvent()
 
-    data object ClearPendingBackupRequest : SettingsDataEvent()
+    data object ClearPendingBackupRequestEvent : SettingsDataEvent()
 
-    data class OnBackupFileSaveError(
+    data class OnBackupFileSaveErrorEvent(
         val message: String,
     ) : SettingsDataEvent()
 
-    data object DismissBackupSuccessDialog : SettingsDataEvent()
+    data object DismissBackupSuccessDialogEvent : SettingsDataEvent()
 
-    data object DismissBackupErrorDialog : SettingsDataEvent()
+    data object DismissBackupErrorDialogEvent : SettingsDataEvent()
 
     // ── Restore Operations ──
-    data class RestoreBackup(
+    data class RestoreBackupEvent(
         val jsonString: String,
     ) : SettingsDataEvent()
 
-    data class OnRestoreFileReadError(
+    data class OnRestoreFileReadErrorEvent(
         val message: String,
     ) : SettingsDataEvent()
 
-    data object DismissRestoreSuccessDialog : SettingsDataEvent()
+    data object DismissRestoreSuccessDialogEvent : SettingsDataEvent()
 
-    data object DismissRestoreErrorDialog : SettingsDataEvent()
+    data object DismissRestoreErrorDialogEvent : SettingsDataEvent()
 
     // ── Google Drive Sign-In (Phase 2) ──
-    data object InitiateGoogleSignIn : SettingsDataEvent()
+    data object InitiateGoogleSignInEvent : SettingsDataEvent()
 
-    data object SignOutFromGoogle : SettingsDataEvent()
+    data object SignOutFromGoogleEvent : SettingsDataEvent()
 
-    data object DismissGoogleSignInDialog : SettingsDataEvent()
+    data object DismissGoogleSignInDialogEvent : SettingsDataEvent()
 }

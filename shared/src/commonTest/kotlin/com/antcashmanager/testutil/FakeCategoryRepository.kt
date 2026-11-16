@@ -53,4 +53,18 @@ open class FakeCategoryRepository(
         categories.map { list -> list.filter { it.type == type } }
 
     override suspend fun getDefaultCategoryCount(): Int = categories.value.count { it.isDefault }
+
+    override suspend fun deleteAllCategoriesForProfile(profileId: Long) {
+        errorToThrow?.let { throw it }
+        categories.value = emptyList()
+    }
+
+    override suspend fun deleteAllNonDefaultCategoriesForProfile(profileId: Long) {
+        errorToThrow?.let { throw it }
+        categories.value = categories.value.filter { it.isDefault }
+    }
+
+    override suspend fun seedDefaultCategoriesForProfile(sourceProfileId: Long, targetProfileId: Long) {
+        errorToThrow?.let { throw it }
+    }
 }

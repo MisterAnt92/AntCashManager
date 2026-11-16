@@ -81,6 +81,16 @@ internal fun DetailsMealVoucherSection(
             )
             VerticalSpacer(SpacingSize.XS)
 
+            // Avviso per transazioni EXPENSE
+            if (isExpenseType) {
+                AppText(
+                    text = "⚠️ Puoi spendere solo i buoni che hai ricevuto",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.error,
+                )
+                VerticalSpacer(SpacingSize.XS)
+            }
+
             // Valore unitario del voucher
             AppText(
                 text =

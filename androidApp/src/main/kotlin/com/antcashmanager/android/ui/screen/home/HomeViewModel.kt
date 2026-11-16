@@ -134,7 +134,7 @@ class HomeViewModel(
     private val transactionsFlow =
         getTransactionsUseCase()
             .map { it.getOrElse { emptyList() }.withCorrectAmounts() }
-            .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     // ── Search query with debounce for performance ──
     private val debouncedSearchQuery =
@@ -245,23 +245,36 @@ class HomeViewModel(
             settingsRepository.getTransactionDisplayType(),
             settingsRepository.getIsTutorialCompleted(),
             _editingTopCardsOrder,
+            settingsRepository.getMealVoucherValue(),
         ) { args: Array<Any?> ->
-            val transactions = args[0] as List<com.antcashmanager.domain.model.Transaction>
-            val filtered = args[1] as List<com.antcashmanager.domain.model.Transaction>
-            val suggestions = args[2] as List<String>
-            val filterState = args[3] as FilterState
-            val selectedTransaction = args[4] as com.antcashmanager.domain.model.Transaction?
-            val categoryCache = args[5] as Map<String, com.antcashmanager.domain.model.Category>
-            val topCardsOrder = HomeTopCardType.parse(args[6] as String)
-            val dateFilterExpanded = args[7] as Boolean
-            val showPaymentTypeBreakdown = args[8] as Boolean
-            val showQuickInsightsCard = args[9] as Boolean
-            val reduceMotion = args[10] as Boolean
-            val transactionDisplayType = args[11] as TransactionDisplayType
-            val isTutorialCompleted = args[12] as Boolean
+            @Suppress("UNCHECKED_CAST")
+            val transactions = (args[0] as? List<com.antcashmanager.domain.model.Transaction>) ?: emptyList()
+            @Suppress("UNCHECKED_CAST")
+            val filtered = (args[1] as? List<com.antcashmanager.domain.model.Transaction>) ?: emptyList()
+            @Suppress("UNCHECKED_CAST")
+            val suggestions = (args[2] as? List<String>) ?: emptyList()
+            val filterState = (args[3] as? FilterState) ?: FilterState()
+            val selectedTransaction = args[4] as? com.antcashmanager.domain.model.Transaction
+            @Suppress("UNCHECKED_CAST")
+            val categoryCache = (args[5] as? Map<String, com.antcashmanager.domain.model.Category>) ?: emptyMap()
+            val topCardsOrder = HomeTopCardType.parse((args[6] as? String) ?: "")
+            val dateFilterExpanded = (args[7] as? Boolean) ?: true
+            val showPaymentTypeBreakdown = (args[8] as? Boolean) ?: false
+            val showQuickInsightsCard = (args[9] as? Boolean) ?: true
+            val reduceMotion = (args[10] as? Boolean) ?: false
+            val transactionDisplayType = (args[11] as? TransactionDisplayType) ?: TransactionDisplayType.TREND
+            val isTutorialCompleted = (args[12] as? Boolean) ?: false
+
+            // If the user already has transactions the tutorial must not appear,
+            // regardless of the stored flag (handles device-store migration for existing users).
+            val effectiveTutorialCompleted = isTutorialCompleted || transactions.isNotEmpty()
+            if (!isTutorialCompleted && transactions.isNotEmpty()) {
+                viewModelScope.launch { settingsRepository.setIsTutorialCompleted(true) }
+            }
 
             @Suppress("UNCHECKED_CAST")
-            val editingTopCardsOrder = args[13] as List<HomeTopCardType>?
+            val editingTopCardsOrder = args[13] as? List<HomeTopCardType>
+            val mealVoucherValue = (args[14] as? Double) ?: com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayConstant.DEFAULT_MEAL_VOUCHER_VALUE
 
             // Enrich transactions with category icon and color from cache
             val enrichedFiltered =
@@ -327,6 +340,32 @@ class HomeViewModel(
             }
             previousTopCategory = currentTopCategory
 
+            // Calculate meal voucher summary from filtered transactions (respects date/search filters, like QuickInsightsCard)
+            val mealVoucherTxs = enrichedFiltered.filter { it.paymentType == com.antcashmanager.domain.model.PaymentType.MEAL_VOUCHERS }
+            val mealVoucherSummary = if (mealVoucherTxs.isNotEmpty()) {
+                val received = mealVoucherTxs
+                    .filter { it.type == com.antcashmanager.domain.model.TransactionType.INCOME }
+                    .sumOf { it.mealVoucherCount }
+                val used = mealVoucherTxs
+                    .filter { it.type == com.antcashmanager.domain.model.TransactionType.EXPENSE }
+                    .sumOf { it.mealVoucherCount }
+                if (received == 0 && used == 0) {
+                    null
+                } else {
+                    val remaining = maxOf(0, received - used)
+                    com.antcashmanager.domain.model.MealVoucherSummary(
+                        received = received,
+                        used = used,
+                        remaining = remaining,
+                        voucherValue = mealVoucherValue,
+                        remainingValue = remaining * mealVoucherValue,
+                        usedValue = used * mealVoucherValue,
+                    )
+                }
+            } else {
+                null
+            }
+
             HomeState(
                 transactions = transactions,
                 filteredTransactions = enrichedFiltered,
@@ -350,7 +389,8 @@ class HomeViewModel(
                 showQuickInsightsCard = showQuickInsightsCard,
                 reduceMotion = reduceMotion,
                 transactionDisplayType = transactionDisplayType,
-                isTutorialCompleted = isTutorialCompleted,
+                isTutorialCompleted = effectiveTutorialCompleted,
+                mealVoucherSummary = mealVoucherSummary,
                 errorState = com.antcashmanager.android.ui.base.ErrorState(),
             )
         }.stateIn(
@@ -374,18 +414,18 @@ class HomeViewModel(
     override fun onEvent(event: HomeEvent) {
         logDebug("Event: $event")
         when (event) {
-            is HomeEvent.SelectPreset -> selectPreset(event.index)
-            is HomeEvent.SetDateRange -> setDateRange(event.from, event.to)
-            is HomeEvent.ShowTransactionDetails -> showTransactionDetails(event.transaction)
-            HomeEvent.DismissTransactionDetails -> _selectedTransactionState.value = null
-            is HomeEvent.UpdateSearchQuery -> updateSearchQuery(event.query)
-            HomeEvent.ToggleSearchExpanded -> toggleSearchExpanded()
-            is HomeEvent.SetIsTutorialCompleted -> setIsTutorialCompleted(event.completed)
-            HomeEvent.StartTopCardsReorder -> _editingTopCardsOrder.value = state.value.visibleTopCards
-            is HomeEvent.MoveTopCard -> moveTopCard(event.index, event.up)
-            HomeEvent.CancelTopCardsReorder -> _editingTopCardsOrder.value = null
-            HomeEvent.ConfirmTopCardsOrder -> confirmTopCardsOrder()
-            is HomeEvent.SetDateFilterExpanded -> setDateFilterExpanded(event.expanded)
+            is HomeEvent.SelectPresetEvent -> selectPreset(event.index)
+            is HomeEvent.SetDateRangeEvent -> setDateRange(event.from, event.to)
+            is HomeEvent.ShowTransactionDetailsEvent -> showTransactionDetails(event.transaction)
+            HomeEvent.DismissTransactionDetailsEvent -> _selectedTransactionState.value = null
+            is HomeEvent.UpdateSearchQueryEvent -> updateSearchQuery(event.query)
+            HomeEvent.ToggleSearchExpandedEvent -> toggleSearchExpanded()
+            is HomeEvent.SetIsTutorialCompletedEvent -> setIsTutorialCompleted(event.completed)
+            HomeEvent.StartTopCardsReorderEvent -> _editingTopCardsOrder.value = state.value.visibleTopCards
+            is HomeEvent.MoveTopCardEvent -> moveTopCard(event.index, event.up)
+            HomeEvent.CancelTopCardsReorderEvent -> _editingTopCardsOrder.value = null
+            HomeEvent.ConfirmTopCardsOrderEvent -> confirmTopCardsOrder()
+            is HomeEvent.SetDateFilterExpandedEvent -> setDateFilterExpanded(event.expanded)
         }
     }
 

@@ -76,12 +76,17 @@ class ChartsViewModel(
     private val _selectedChartDetails = MutableStateFlow<ChartDetailsData?>(null)
     val selectedChartDetails: StateFlow<ChartDetailsData?> = _selectedChartDetails.asStateFlow()
 
+    // Locale tag supplied by the Screen via UpdateLocale event; avoids JVM-default locale bug.
+    private val _localeTag = MutableStateFlow(java.util.Locale.getDefault().toLanguageTag())
+
     val chartData: StateFlow<ChartData> =
-        _dateRange
-            .flatMapLatest { range ->
+        kotlinx.coroutines.flow.combine(_dateRange, _localeTag) { range, localeTag ->
+            range to localeTag
+        }
+            .flatMapLatest { (range, localeTag) ->
                 getTransactionsByDateRangeUseCase(range).map { result ->
                     // Apply amount correction for EXPENSE transactions
-                    buildChartData(result.getOrElse { emptyList() }.withCorrectAmounts())
+                    buildChartData(result.getOrElse { emptyList() }.withCorrectAmounts(), localeTag)
                 }
             }.stateIn(
                 scope = viewModelScope,
@@ -118,7 +123,7 @@ class ChartsViewModel(
             chartsCardOrder,
         ) { args ->
             @Suppress("UNCHECKED_CAST")
-            val values = args as Array<Any?>
+            val values = args
             ChartsState(
                 dateRange = values[0] as DateRange,
                 selectedPresetIndex = values[1] as Int,
@@ -142,9 +147,9 @@ class ChartsViewModel(
     override fun onEvent(event: ChartEvent) {
         logDebug("Event: $event")
         when (event) {
-            is ChartEvent.SetDateRange -> setDateRange(event.from, event.to)
-            is ChartEvent.SetPresetRange -> setPresetRange(event.preset)
-            is ChartEvent.SelectChartCategory ->
+            is ChartEvent.SetDateRangeEvent -> setDateRange(event.from, event.to)
+            is ChartEvent.SetPresetRangeEvent -> setPresetRange(event.preset)
+            is ChartEvent.SelectChartCategoryEvent ->
                 selectChartCategory(
                     event.categoryName,
                     event.amount,
@@ -152,9 +157,10 @@ class ChartsViewModel(
                     event.isExpense,
                 )
 
-            is ChartEvent.ClearChartSelection -> clearChartSelection()
-            is ChartEvent.RetryLastOperation -> logInfo("Retry requested")
-            is ChartEvent.SetChartCardsOrder -> setChartCardsOrder(event.order)
+            is ChartEvent.ClearChartSelectionEvent -> clearChartSelection()
+            is ChartEvent.RetryLastOperationEvent -> logInfo("Retry requested")
+            is ChartEvent.SetChartCardsOrderEvent -> setChartCardsOrder(event.order)
+            is ChartEvent.UpdateLocaleEvent -> _localeTag.value = event.languageTag
         }
     }
 
@@ -261,7 +267,7 @@ class ChartsViewModel(
         return DateRange(from.timeInMillis, now.timeInMillis)
     }
 
-    private fun buildChartData(transactions: List<Transaction>): ChartData {
+    private fun buildChartData(transactions: List<Transaction>, localeTag: String = java.util.Locale.getDefault().toLanguageTag()): ChartData {
         val startTime = System.currentTimeMillis()
         logDebug("Building chart data from ${transactions.size} transactions")
 
@@ -278,7 +284,7 @@ class ChartsViewModel(
         val expenseByCategory =
             expenseTransactions
                 .groupBy { it.category }
-                .mapValues { (_, txs) -> kotlin.math.abs(txs.sumOf { it.amount }) } // Use absolute value for pie chart
+                .mapValues { (_, txs) -> abs(txs.sumOf { it.amount }) } // Use absolute value for pie chart
 
         val incomeCountByCategory =
             incomeTransactions
@@ -299,21 +305,8 @@ class ChartsViewModel(
         // Build monthly aggregation
         val cal = Calendar.getInstance()
         val monthlyMap = mutableMapOf<String, Pair<Double, Double>>()
-        val monthNames =
-            arrayOf(
-                "Jan",
-                "Feb",
-                "Mar",
-                "Apr",
-                "May",
-                "Jun",
-                "Jul",
-                "Aug",
-                "Sep",
-                "Oct",
-                "Nov",
-                "Dec",
-            )
+        // Usa DateFormatSymbols per ottenere i nomi dei mesi localizzati automaticamente
+        val monthNames = java.text.DateFormatSymbols(java.util.Locale.forLanguageTag(localeTag)).shortMonths.take(12).toTypedArray()
 
         transactions.forEach { tx ->
             cal.timeInMillis = tx.timestamp
@@ -322,7 +315,7 @@ class ChartsViewModel(
             monthlyMap[key] =
                 when (tx.type) {
                     TransactionType.INCOME -> (current.first + tx.amount) to current.second
-                    TransactionType.EXPENSE -> current.first to (current.second + kotlin.math.abs(tx.amount)) // Use absolute value
+                    TransactionType.EXPENSE -> current.first to (current.second + abs(tx.amount)) // Use absolute value
                 }
         }
 
@@ -349,7 +342,7 @@ class ChartsViewModel(
             yearlyMap[year] =
                 when (tx.type) {
                     TransactionType.INCOME -> (current.first + tx.amount) to current.second
-                    TransactionType.EXPENSE -> current.first to (current.second + kotlin.math.abs(tx.amount)) // Use absolute value
+                    TransactionType.EXPENSE -> current.first to (current.second + abs(tx.amount)) // Use absolute value
                 }
         }
 
@@ -371,7 +364,7 @@ class ChartsViewModel(
         val paymentTypeBreakdown =
             transactions
                 .groupBy { it.paymentType }
-                .mapValues { (_, txs) -> kotlin.math.abs(txs.sumOf { it.amount }) }
+                .mapValues { (_, txs) -> abs(txs.sumOf { it.amount }) }
                 .filterValues { it != 0.0 }
 
         // Calculate expense by weekday (1=Mon...7=Sun per EU convention)
@@ -386,7 +379,7 @@ class ChartsViewModel(
                     if (calendarDayOfWeek == 1) 7 else calendarDayOfWeek - 1
                 }.mapValues { (_, txs) ->
                     if (txs.isNotEmpty()) {
-                        kotlin.math.abs(txs.sumOf { it.amount })
+                        abs(txs.sumOf { it.amount })
                     } else {
                         0.0
                     }
@@ -399,7 +392,7 @@ class ChartsViewModel(
             cal.timeInMillis = tx.timestamp
             val dateLabel = dateFormat.format(cal.time)
             val current = dailyMap.getOrDefault(dateLabel, 0.0)
-            dailyMap[dateLabel] = current + kotlin.math.abs(tx.amount)
+            dailyMap[dateLabel] = current + abs(tx.amount)
         }
 
         val dailyTimeline =

@@ -132,15 +132,46 @@ private fun TransactionDetailsDialogContent(
                 )
 
                 // Payment Type
+                val isMealVouchers = transaction.paymentType == PaymentType.MEAL_VOUCHERS
+                val hasCashDifference = isMealVouchers && transaction.mealVoucherDifference > 0.001
+
                 TransactionDetailRow(
                     label = stringResource(R.string.transaction_details_payment_type),
                     value =
                         when (transaction.paymentType) {
                             PaymentType.ELECTRONIC -> stringResource(R.string.payment_type_electronic)
                             PaymentType.CASH -> stringResource(R.string.payment_type_cash)
-                            PaymentType.MEAL_VOUCHERS -> stringResource(R.string.payment_type_meal_vouchers)
+                            PaymentType.MEAL_VOUCHERS -> {
+                                if (hasCashDifference) {
+                                    stringResource(R.string.payment_type_meal_vouchers_with_cash)
+                                } else {
+                                    stringResource(R.string.payment_type_meal_vouchers)
+                                }
+                            }
                         },
                 )
+
+                // Meal Vouchers Details (if MEAL_VOUCHERS)
+                if (isMealVouchers) {
+                    if (transaction.mealVoucherCount > 0) {
+                        TransactionDetailRow(
+                            label = stringResource(R.string.add_transaction_meal_voucher_count),
+                            value = "${transaction.mealVoucherCount}",
+                        )
+                        val totalAbs = abs(transaction.amount)
+                        val voucherCoverage = maxOf(0.0, totalAbs - transaction.mealVoucherDifference)
+                        TransactionDetailRow(
+                            label = stringResource(R.string.transaction_details_meal_vouchers_covered),
+                            value = "${String.format(Locale.US, "%.2f", voucherCoverage)}€",
+                        )
+                    }
+                    if (hasCashDifference) {
+                        TransactionDetailRow(
+                            label = stringResource(R.string.add_transaction_meal_voucher_difference_paid),
+                            value = "${String.format(Locale.US, "%.2f", transaction.mealVoucherDifference)}€",
+                        )
+                    }
+                }
 
                 // Date
                 TransactionDetailRow(
@@ -311,6 +342,30 @@ private fun TransactionDetailsDialogExpensePreview() {
                     notes = "Weekly shopping",
                     tags = "food, groceries, shopping",
                     paymentType = PaymentType.CASH,
+                ),
+            onDismiss = {},
+            onShareTransaction = { _, _ -> },
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Transaction Details Dialog - Meal Vouchers with Cash Difference")
+@Composable
+private fun TransactionDetailsDialogMealVoucherPreview() {
+    AntCashManagerTheme(dynamicColor = false) {
+        TransactionDetailsDialogContent(
+            transaction =
+                Transaction(
+                    id = 3,
+                    title = "Pranzo Ristorante",
+                    amount = 14.00,
+                    category = "Cibo",
+                    type = TransactionType.EXPENSE,
+                    timestamp = System.currentTimeMillis(),
+                    notes = "Pranzo di lavoro con buono e differenza contanti",
+                    paymentType = PaymentType.MEAL_VOUCHERS,
+                    mealVoucherCount = 2,
+                    mealVoucherDifference = 3.42,
                 ),
             onDismiss = {},
             onShareTransaction = { _, _ -> },

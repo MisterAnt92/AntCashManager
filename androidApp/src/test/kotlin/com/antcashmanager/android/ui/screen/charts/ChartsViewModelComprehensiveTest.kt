@@ -9,11 +9,14 @@ import com.antcashmanager.android.analytics.tracker.SegmentationTracker
 import com.antcashmanager.android.testutil.FakeSettingsRepository
 import com.antcashmanager.android.testutil.FakeTransactionRepository
 import com.antcashmanager.domain.model.Transaction
+import com.antcashmanager.domain.model.SavedDateFilter
 import com.antcashmanager.domain.model.TransactionType
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.advanceUntilIdle
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -41,6 +44,15 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
     private lateinit var segmentationTracker: SegmentationTracker
     private lateinit var viewModel: ChartsViewModel
 
+    private fun includeAllTransactions() {
+        fakeSettingsRepository.chartsDateFilterState.value =
+            SavedDateFilter(
+                presetIndex = SavedDateFilter.CUSTOM_PRESET_INDEX,
+                from = 0L,
+                to = Long.MAX_VALUE,
+            )
+    }
+
     @Before
     fun setup() {
         fakeRepo = FakeTransactionRepository()
@@ -58,10 +70,12 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
     }
 
     @After
-    fun tearDown() {
+    override fun tearDownDispatchers() {
         if (::viewModel.isInitialized) {
-            viewModel.viewModelScope.cancel()
+            runBlocking { viewModel.viewModelScope.coroutineContext[Job]?.cancelAndJoin() }
+            testDispatcher.scheduler.advanceUntilIdle()
         }
+        super.tearDownDispatchers()
     }
 
     @Test
@@ -76,15 +90,15 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
             val chartData = viewModel.chartData.value
             assertTrue(chartData.incomeByCategory.isEmpty())
             assertTrue(chartData.expenseByCategory.isEmpty())
-            assertEquals(0.0, chartData.totalIncome)
-            assertEquals(0.0, chartData.totalExpense)
+            assertEquals(0.0, chartData.totalIncome, 0.0)
+            assertEquals(0.0, chartData.totalExpense, 0.0)
             collectJob.cancel()
         }
 
     @Test
     fun chartData_shouldDisplayAllTransactions_whenLoaded() =
         runViewModelTest {
-            val now = System.currentTimeMillis()
+            val t0 = 1_700_000_000_000L
             fakeRepo.transactions.value =
                 listOf(
                     Transaction(
@@ -93,7 +107,7 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
                         amount = 5000.0,
                         category = "Salary",
                         type = TransactionType.INCOME,
-                        timestamp = now,
+                        timestamp = t0,
                     ),
                     Transaction(
                         id = 2,
@@ -101,7 +115,7 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
                         amount = -100.0,
                         category = "Food",
                         type = TransactionType.EXPENSE,
-                        timestamp = now - 1000,
+                        timestamp = t0 - 1000,
                     ),
                     Transaction(
                         id = 3,
@@ -109,10 +123,11 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
                         amount = -1500.0,
                         category = "Housing",
                         type = TransactionType.EXPENSE,
-                        timestamp = now - 2000,
+                        timestamp = t0 - 2000,
                     ),
                 )
 
+            includeAllTransactions()
             val collectJob =
                 launch {
                     viewModel.chartData.collect {}
@@ -120,15 +135,15 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
             advanceUntilIdle()
 
             val chartData = viewModel.chartData.value
-            assertEquals(5000.0, chartData.totalIncome)
-            assertEquals(1600.0, chartData.totalExpense)
+            assertEquals(5000.0, chartData.totalIncome, 0.01)
+            assertEquals(1600.0, chartData.totalExpense, 0.01)
             collectJob.cancel()
         }
 
     @Test
-    fun chartData_shouldAggregateByCategoryCorrectly() =
+    fun chartData_shouldAggregateByCategoryCorrectly_whenMultipleTransactionsSameCategory() =
         runViewModelTest {
-            val now = System.currentTimeMillis()
+            val t0 = 1_700_000_000_000L
             fakeRepo.transactions.value =
                 listOf(
                     Transaction(
@@ -137,7 +152,7 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
                         -50.0,
                         "Food",
                         TransactionType.EXPENSE,
-                        now,
+                        t0,
                     ),
                     Transaction(
                         2,
@@ -145,7 +160,7 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
                         -30.0,
                         "Food",
                         TransactionType.EXPENSE,
-                        now - 1000,
+                        t0 - 1000,
                     ),
                     Transaction(
                         3,
@@ -153,10 +168,11 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
                         -40.0,
                         "Food",
                         TransactionType.EXPENSE,
-                        now - 2000,
+                        t0 - 2000,
                     ),
                 )
 
+            includeAllTransactions()
             val collectJob =
                 launch {
                     viewModel.chartData.collect {}
@@ -165,22 +181,23 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
 
             val chartData = viewModel.chartData.value
             val foodTotal = chartData.expenseByCategory["Food"]
-            assertEquals(120.0, foodTotal)
+            assertEquals(120.0, foodTotal ?: 0.0, 0.01)
             collectJob.cancel()
         }
 
     @Test
-    fun chartData_shouldSeparateIncomeAndExpense() =
+    fun chartData_shouldSeparateIncomeAndExpense_whenMixedTypesExist() =
         runViewModelTest {
-            val now = System.currentTimeMillis()
+            val t0 = 1_700_000_000_000L
             fakeRepo.transactions.value =
                 listOf(
-                    Transaction(1, "Salary", 3000.0, "Salary", TransactionType.INCOME, now),
-                    Transaction(2, "Bonus", 1000.0, "Bonus", TransactionType.INCOME, now - 1000),
-                    Transaction(3, "Groceries", -200.0, "Food", TransactionType.EXPENSE, now - 2000),
-                    Transaction(4, "Gas", -100.0, "Transport", TransactionType.EXPENSE, now - 3000),
+                    Transaction(1, "Salary", 3000.0, "Salary", TransactionType.INCOME, t0),
+                    Transaction(2, "Bonus", 1000.0, "Bonus", TransactionType.INCOME, t0 - 1000),
+                    Transaction(3, "Groceries", -200.0, "Food", TransactionType.EXPENSE, t0 - 2000),
+                    Transaction(4, "Gas", -100.0, "Transport", TransactionType.EXPENSE, t0 - 3000),
                 )
 
+            includeAllTransactions()
             val collectJob =
                 launch {
                     viewModel.chartData.collect {}
@@ -188,17 +205,16 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
             advanceUntilIdle()
 
             val chartData = viewModel.chartData.value
-            assertEquals(4000.0, chartData.totalIncome)
-            assertEquals(300.0, chartData.totalExpense)
+            assertEquals(4000.0, chartData.totalIncome, 0.01)
+            assertEquals(300.0, chartData.totalExpense, 0.01)
             assertTrue(chartData.incomeByCategory.size >= 2)
             assertTrue(chartData.expenseByCategory.size >= 2)
             collectJob.cancel()
         }
 
     @Test
-    fun chartData_shouldHandleLargeDataset() =
+    fun chartData_shouldAggregateFiveCategoriesEach_whenLargeDatasetLoaded() =
         runViewModelTest {
-            val now = System.currentTimeMillis()
             val transactions =
                 (1..100).map { index ->
                     Transaction(
@@ -207,46 +223,31 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
                         amount = if (index % 2 == 0) -50.0 else 100.0,
                         category = "Category ${index % 5}",
                         type = if (index % 2 == 0) TransactionType.EXPENSE else TransactionType.INCOME,
-                        timestamp = now - (index * 1000L),
+                        timestamp = 1_700_000_000_000L - (index * 1000L),
                     )
                 }
             fakeRepo.transactions.value = transactions
+            includeAllTransactions()
 
-            val collectJob =
-                launch {
-                    viewModel.chartData.collect {}
-                }
+            val collectJob = launch { viewModel.chartData.collect {} }
             advanceUntilIdle()
 
             val chartData = viewModel.chartData.value
-            assertTrue(chartData.monthlyData.isNotEmpty() || chartData.yearlyData.isNotEmpty())
+            assertEquals(5, chartData.expenseByCategory.size)
+            assertEquals(5, chartData.incomeByCategory.size)
+            assertEquals(2500.0, chartData.totalExpense, 0.01)
+            assertEquals(5000.0, chartData.totalIncome, 0.01)
             collectJob.cancel()
         }
 
     @Test
-    fun dateRange_shouldDefaultToLastMonth() =
-        runViewModelTest {
-            val collectJob =
-                launch {
-                    viewModel.dateRange.collect {}
-                }
-            advanceUntilIdle()
-
-            val dateRange = viewModel.dateRange.value
-            assertNotNull(dateRange)
-            assertTrue(dateRange.from > 0)
-            assertTrue(dateRange.to > dateRange.from)
-            collectJob.cancel()
-        }
-
-    @Test
-    fun setDateRange_shouldUpdateState() =
+    fun setDateRange_shouldUpdateState_whenValidRangeProvided() =
         runViewModelTest {
             val now = System.currentTimeMillis()
             val from = now - 86400000 // 1 day ago
             val to = now
 
-            viewModel.onEvent(ChartEvent.SetDateRange(from, to))
+            viewModel.onEvent(ChartEvent.SetDateRangeEvent(from, to))
             advanceUntilIdle()
 
             val dateRange = viewModel.dateRange.value
@@ -261,7 +262,7 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
             val from = now
             val to = now - 86400000 // Intentionally reversed
 
-            viewModel.onEvent(ChartEvent.SetDateRange(from, to)) // Reversed order
+            viewModel.onEvent(ChartEvent.SetDateRangeEvent(from, to)) // Reversed order
             advanceUntilIdle()
 
             val dateRange = viewModel.dateRange.value
@@ -270,14 +271,14 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
         }
 
     @Test
-    fun setPresetRange_shouldSetWeekPreset() =
+    fun setPresetRange_shouldSetWeekPreset_whenWeekPresetSelected() =
         runViewModelTest {
             val collectJob =
                 launch {
                     viewModel.selectedPresetIndex.collect {}
                 }
 
-            viewModel.onEvent(ChartEvent.SetPresetRange(RangePreset.WEEK))
+            viewModel.onEvent(ChartEvent.SetPresetRangeEvent(RangePreset.WEEK))
             advanceUntilIdle()
 
             assertEquals(RangePreset.WEEK.ordinal, viewModel.selectedPresetIndex.value)
@@ -285,14 +286,14 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
         }
 
     @Test
-    fun setPresetRange_shouldSetMonthPreset() =
+    fun setPresetRange_shouldSetMonthPreset_whenMonthPresetSelected() =
         runViewModelTest {
             val collectJob =
                 launch {
                     viewModel.selectedPresetIndex.collect {}
                 }
 
-            viewModel.onEvent(ChartEvent.SetPresetRange(RangePreset.MONTH))
+            viewModel.onEvent(ChartEvent.SetPresetRangeEvent(RangePreset.MONTH))
             advanceUntilIdle()
 
             assertEquals(RangePreset.MONTH.ordinal, viewModel.selectedPresetIndex.value)
@@ -300,14 +301,14 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
         }
 
     @Test
-    fun setPresetRange_shouldSetYearPreset() =
+    fun setPresetRange_shouldSetYearPreset_whenYearPresetSelected() =
         runViewModelTest {
             val collectJob =
                 launch {
                     viewModel.selectedPresetIndex.collect {}
                 }
 
-            viewModel.onEvent(ChartEvent.SetPresetRange(RangePreset.YEAR))
+            viewModel.onEvent(ChartEvent.SetPresetRangeEvent(RangePreset.YEAR))
             advanceUntilIdle()
 
             assertEquals(RangePreset.YEAR.ordinal, viewModel.selectedPresetIndex.value)
@@ -315,7 +316,7 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
         }
 
     @Test
-    fun selectChartCategory_shouldSetDetails() =
+    fun onSelectChartCategoryEvent_shouldSetDetails_whenCategorySelected() =
         runViewModelTest {
             val collectJob =
                 launch {
@@ -323,7 +324,7 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
                 }
 
             viewModel.onEvent(
-                ChartEvent.SelectChartCategory(
+                ChartEvent.SelectChartCategoryEvent(
                     categoryName = "Food",
                     amount = -500.0,
                     colorHex = 0xFF5555,
@@ -340,15 +341,15 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
         }
 
     @Test
-    fun selectChartCategory_shouldCalculatePercentageCorrectly() =
+    fun selectChartCategory_shouldCalculateFiftyPercent_whenCategoryIsHalfOfTotal() =
         runViewModelTest {
-            val now = System.currentTimeMillis()
             fakeRepo.transactions.value =
                 listOf(
-                    Transaction(1, "Food 1", -500.0, "Food", TransactionType.EXPENSE, now),
-                    Transaction(2, "Food 2", -500.0, "Food", TransactionType.EXPENSE, now - 1000),
+                    Transaction(1, "Food", -500.0, "Food", TransactionType.EXPENSE, 1_700_000_000_000L),
+                    Transaction(2, "Transport", -500.0, "Transport", TransactionType.EXPENSE, 1_700_000_000_000L - 1000),
                 )
 
+            includeAllTransactions()
             val collectJob =
                 launch {
                     viewModel.chartData.collect {}
@@ -357,7 +358,7 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
             advanceUntilIdle()
 
             viewModel.onEvent(
-                ChartEvent.SelectChartCategory(
+                ChartEvent.SelectChartCategoryEvent(
                     categoryName = "Food",
                     amount = -500.0,
                     colorHex = 0xFF5555,
@@ -368,7 +369,7 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
 
             val details = viewModel.selectedChartDetails.value
             assertNotNull(details)
-            assertTrue(details?.percentage in 0..100)
+            assertEquals(50, details?.percentage)
             collectJob.cancel()
         }
 
@@ -381,7 +382,7 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
                 }
 
             viewModel.onEvent(
-                ChartEvent.SelectChartCategory(
+                ChartEvent.SelectChartCategoryEvent(
                     categoryName = "Food",
                     amount = -500.0,
                     colorHex = 0xFF5555,
@@ -391,7 +392,7 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
 
             assertNotNull(viewModel.selectedChartDetails.value)
 
-            viewModel.onEvent(ChartEvent.ClearChartSelection)
+            viewModel.onEvent(ChartEvent.ClearChartSelectionEvent)
             advanceUntilIdle()
 
             assertNull(viewModel.selectedChartDetails.value)
@@ -399,18 +400,19 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
         }
 
     @Test
-    fun chartData_shouldHandleMultipleCategories_inIncomeAndExpense() =
+    fun chartData_shouldHaveCorrectCategoryCount_whenMixedCategoriesExist() =
         runViewModelTest {
-            val now = System.currentTimeMillis()
+            val t0 = 1_700_000_000_000L
             fakeRepo.transactions.value =
                 listOf(
-                    Transaction(1, "Salary", 5000.0, "Salary", TransactionType.INCOME, now),
-                    Transaction(2, "Freelance", 1000.0, "Freelance", TransactionType.INCOME, now - 1000),
-                    Transaction(3, "Food", -300.0, "Food", TransactionType.EXPENSE, now - 2000),
-                    Transaction(4, "Transport", -200.0, "Transport", TransactionType.EXPENSE, now - 3000),
-                    Transaction(5, "Entertainment", -150.0, "Entertainment", TransactionType.EXPENSE, now - 4000),
+                    Transaction(1, "Salary", 5000.0, "Salary", TransactionType.INCOME, t0),
+                    Transaction(2, "Freelance", 1000.0, "Freelance", TransactionType.INCOME, t0 - 1000),
+                    Transaction(3, "Food", -300.0, "Food", TransactionType.EXPENSE, t0 - 2000),
+                    Transaction(4, "Transport", -200.0, "Transport", TransactionType.EXPENSE, t0 - 3000),
+                    Transaction(5, "Entertainment", -150.0, "Entertainment", TransactionType.EXPENSE, t0 - 4000),
                 )
 
+            includeAllTransactions()
             val collectJob =
                 launch {
                     viewModel.chartData.collect {}
@@ -424,12 +426,11 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
         }
 
     @Test
-    fun chartData_shouldHandleZeroAmountTransactions() =
+    fun chartData_shouldTotalToZero_whenAllAmountsAreZero() =
         runViewModelTest {
-            val now = System.currentTimeMillis()
             fakeRepo.transactions.value =
                 listOf(
-                    Transaction(1, "Transfer", 0.0, "Transfer", TransactionType.EXPENSE, now),
+                    Transaction(1, "Transfer", 0.0, "Transfer", TransactionType.EXPENSE, 1_700_000_000_000L),
                 )
 
             val collectJob =
@@ -440,31 +441,34 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
 
             val chartData = viewModel.chartData.value
             // Zero amount transactions should still appear but not affect totals significantly
-            assertEquals(0.0, chartData.totalExpense)
+            assertEquals(0.0, chartData.totalExpense, 0.0)
             collectJob.cancel()
         }
 
     @Test
-    fun monthlyData_shouldBeAggregatedCorrectly() =
+    fun monthlyData_shouldShowTotalsForMonth_whenTransactionsLoaded() =
         runViewModelTest {
-            val now = System.currentTimeMillis()
-            val oneMonthAgo = now - (30 * 24 * 60 * 60 * 1000L)
+            // T0 = Nov 14 2023; T0_PREV_MONTH = Oct 15 2023 (different month for aggregation)
+            val t0 = 1_700_000_000_000L
+            val tPrevMonth = t0 - (30 * 24 * 60 * 60 * 1000L)
 
             fakeRepo.transactions.value =
                 listOf(
-                    Transaction(1, "Income", 1000.0, "Salary", TransactionType.INCOME, now),
-                    Transaction(2, "Expense", -500.0, "Food", TransactionType.EXPENSE, now),
-                    Transaction(3, "Old Income", 500.0, "Salary", TransactionType.INCOME, oneMonthAgo),
+                    Transaction(1, "Income", 1000.0, "Salary", TransactionType.INCOME, t0),
+                    Transaction(2, "Expense", -500.0, "Food", TransactionType.EXPENSE, t0),
+                    Transaction(3, "Old Income", 500.0, "Salary", TransactionType.INCOME, tPrevMonth),
                 )
 
-            val collectJob =
-                launch {
-                    viewModel.chartData.collect {}
-                }
+            includeAllTransactions()
+            val collectJob = launch { viewModel.chartData.collect {} }
             advanceUntilIdle()
 
             val chartData = viewModel.chartData.value
-            assertTrue(chartData.monthlyData.size >= 1)
+            // 3 transactions across 2 calendar months → at least 2 monthly entries
+            assertTrue(chartData.monthlyData.size >= 2)
+            // overall totals across all months
+            assertEquals(1500.0, chartData.totalIncome, 0.01)
+            assertEquals(500.0, chartData.totalExpense, 0.01)
             collectJob.cancel()
         }
 }

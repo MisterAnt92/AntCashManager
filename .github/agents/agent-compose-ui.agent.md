@@ -55,7 +55,7 @@ Regenerate: `grep -rhoE "^(internal )?fun [A-Z]\w+\(" androidApp/src/main/kotlin
 
 ## Previews
 
-**REQUIRED for every composable in `ui/components/` and `screen/<feature>/view/`: 3 variants (Light, Dark, 2x font scale).** Root `*Screen` composables have **no** previews (removed in FASE 7a — do not add them back).
+**REQUIRED for every `@Composable` — including root `*Screen` composables, `ui/components/`, and `screen/<feature>/view/`: 3 variants (Light, Dark, 2x font scale).**
 
 Every new `@Composable` created must include these 3 previews immediately:
 
@@ -103,6 +103,6 @@ private fun ComponentNameLargeTextPreview() {
 - [ ] Reused inventory components; new component only if none fits, placed in `ui/components/<kind>/`
 - [ ] Strings via `stringResource`, present in all 13 locales
 - [ ] Colors/typography from `MaterialTheme`; spacing 8/16/24
-- [ ] Previews light+dark for components and `view/` composables
+- [ ] Previews Light+Dark+2x for **every** composable (components, `view/`, and root `*Screen`)
 - [ ] Screen ≤ 400 lines; sub-composables in `view/`
 - [ ] Imports clean, package matches directory
