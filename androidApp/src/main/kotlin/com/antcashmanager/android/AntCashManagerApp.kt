@@ -47,12 +47,21 @@ class AntCashManagerApp : Application() {
             modules(appModules)
         }
 
+        // Apply consent synchronously so Crashlytics is enabled before any coroutine or
+        // ViewModel starts. Without this, crashes in the ~300ms window between Koin init and
+        // the first DataStore emission are silently lost (firebase_crashlytics_collection_enabled
+        // is false in the Manifest for GDPR compliance). The async collect below handles future
+        // consent changes (e.g. user toggles the setting).
+        runBlocking(Dispatchers.IO) {
+            val consent = get<SettingsRepository>().getAnalyticsConsent().first()
+            get<AnalyticsManager>().applyConsent(consent == true)
+        }
+
         appScope.launch {
             // Crea il notification channel per i fallimenti del backup automatico
             AutoBackupNotifier.ensureChannel(this@AntCashManagerApp)
 
-            // Apply analytics consent whenever the stored preference changes (GDPR).
-            // collect is infinite; SupervisorJob keeps it alive for the app's lifetime.
+            // Keep consent in sync with DataStore for the app's lifetime (GDPR toggle).
             get<SettingsRepository>().getAnalyticsConsent().collect { consent ->
                 get<AnalyticsManager>().applyConsent(consent == true)
             }

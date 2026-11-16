@@ -36,6 +36,7 @@ class ErrorTracker(
     fun trackTransactionValidationError(
         fieldName: String,
         errorCode: String,
+        throwable: Throwable? = null,
     ) {
         analyticsManager.logEvent(
             "transaction_validation_error",
@@ -44,6 +45,7 @@ class ErrorTracker(
                 putString("error_code", errorCode)
             },
         )
+        throwable?.let { analyticsManager.recordNonFatalException(it) }
     }
 
     /**
@@ -57,6 +59,7 @@ class ErrorTracker(
     fun trackReceiptOcrError(
         errorCode: String,
         retryCount: Int = 0,
+        throwable: Throwable? = null,
     ) {
         analyticsManager.logEvent(
             "receipt_ocr_error",
@@ -65,6 +68,7 @@ class ErrorTracker(
                 putInt("retry_count", retryCount)
             },
         )
+        throwable?.let { analyticsManager.recordNonFatalException(it) }
     }
 
     /**
@@ -78,6 +82,7 @@ class ErrorTracker(
     fun trackDatabaseError(
         operation: String,
         errorCode: String,
+        throwable: Throwable? = null,
     ) {
         analyticsManager.logEvent(
             "database_error",
@@ -86,6 +91,7 @@ class ErrorTracker(
                 putString("error_code", errorCode)
             },
         )
+        throwable?.let { analyticsManager.recordNonFatalException(it) }
     }
 
     /**
@@ -99,6 +105,7 @@ class ErrorTracker(
     fun trackSyncError(
         operation: String,
         errorCode: String,
+        throwable: Throwable? = null,
     ) {
         analyticsManager.logEvent(
             "sync_error",
@@ -107,6 +114,7 @@ class ErrorTracker(
                 putString("error_code", errorCode)
             },
         )
+        throwable?.let { analyticsManager.recordNonFatalException(it) }
     }
 
     /**
@@ -120,6 +128,7 @@ class ErrorTracker(
     fun trackPaymentMethodError(
         paymentType: String,
         errorCode: String,
+        throwable: Throwable? = null,
     ) {
         analyticsManager.logEvent(
             "payment_method_error",
@@ -128,5 +137,6 @@ class ErrorTracker(
                 putString("error_code", errorCode)
             },
         )
+        throwable?.let { analyticsManager.recordNonFatalException(it) }
     }
 }

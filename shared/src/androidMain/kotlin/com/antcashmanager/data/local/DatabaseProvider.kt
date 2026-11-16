@@ -3,7 +3,6 @@ package com.antcashmanager.data.local
 import android.content.Context
 import androidx.room.Room
 import androidx.sqlite.db.SupportSQLiteDatabase
-import java.util.UUID
 
 public object DatabaseProvider {
     private const val DATABASE_NAME = "antcashmanager.db"
@@ -21,17 +20,20 @@ public object DatabaseProvider {
                     AppDatabase::class.java,
                     DATABASE_NAME,
                 ).setJournalMode(androidx.room.RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING)
-                .addMigrations(Migration_9_10())
-                .addCallback(object : androidx.room.RoomDatabase.Callback() {
+                .addMigrations(
+                    Migration_9_10(),
+                    Migration_10_11(),
+                    Migration_11_12(),
+                    Migration_12_13(),
+                    Migration_13_14(),
+                    Migration_14_15(),
+                ).addCallback(object : androidx.room.RoomDatabase.Callback() {
+                    override fun onCreate(db: SupportSQLiteDatabase) {
+                        ensureDefaultProfileAndCleanOrphans(db)
+                    }
+
                     override fun onOpen(db: SupportSQLiteDatabase) {
-                        // Seed Default profile on first open (new install or after 10→11 migration)
-                        val uuid = UUID.randomUUID().toString()
-                        val timestamp = System.currentTimeMillis()
-                        db.execSQL(
-                            "INSERT OR IGNORE INTO profiles " +
-                                "(id, name, uuid, created_at, is_active, color_argb, avatar_emoji) " +
-                                "VALUES (1, 'Default', '$uuid', $timestamp, 1, 4284955319, '')",
-                        )
+                        ensureDefaultProfileAndCleanOrphans(db)
                     }
                 })
                 .build()

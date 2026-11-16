@@ -23,13 +23,8 @@ import com.antcashmanager.data.local.entity.TransactionEntity
         AutoMigration(from = 6, to = 7),
         AutoMigration(from = 7, to = 8),
         AutoMigration(from = 8, to = 9),
-        // NOTE: 9→10 is handled by manual Migration_9_10 in DatabaseProvider
-        // (remove AutoMigration here to avoid conflicts with the manual migration)
-        AutoMigration(from = 10, to = 11),
-        AutoMigration(from = 11, to = 12),
-        AutoMigration(from = 12, to = 13),
-        AutoMigration(from = 13, to = 14),
-        AutoMigration(from = 14, to = 15),
+        // NOTE: 9→10, 10→11, 11→12, 12→13, 13→14, 14→15 are handled by manual migrations in DatabaseProvider
+        // (remove AutoMigration here to avoid conflicts with the manual migrations and ensure default profile seeding)
     ],
 )
 public abstract class AppDatabase : RoomDatabase() {
