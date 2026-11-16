@@ -17,9 +17,29 @@ public fun ensureDefaultProfileAndCleanOrphans(db: SupportSQLiteDatabase) {
                 "(id, name, uuid, created_at, is_active, color_argb, avatar_emoji) " +
                 "VALUES (1, 'Default', '$uuid', $timestamp, 1, 4284955319, '')",
         )
-        db.execSQL("UPDATE transactions SET profile_id = 1 WHERE profile_id IS NULL OR profile_id NOT IN (SELECT id FROM profiles)")
-        db.execSQL("UPDATE categories SET profile_id = 1 WHERE profile_id IS NULL OR profile_id NOT IN (SELECT id FROM profiles)")
+        if (hasColumn(db, "transactions", "profile_id")) {
+            db.execSQL("UPDATE transactions SET profile_id = 1 WHERE profile_id IS NULL OR profile_id NOT IN (SELECT id FROM profiles)")
+        }
+        if (hasColumn(db, "categories", "profile_id")) {
+            db.execSQL("UPDATE categories SET profile_id = 1 WHERE profile_id IS NULL OR profile_id NOT IN (SELECT id FROM profiles)")
+        }
     }
+}
+
+private fun hasColumn(db: SupportSQLiteDatabase, tableName: String, columnName: String): Boolean {
+    val cursor = db.query("PRAGMA table_info(`$tableName`)")
+    val nameIndex = cursor.getColumnIndex("name")
+    var exists = false
+    if (nameIndex != -1) {
+        while (cursor.moveToNext()) {
+            if (cursor.getString(nameIndex) == columnName) {
+                exists = true
+                break
+            }
+        }
+    }
+    cursor.close()
+    return exists
 }
 
 public class Migration_10_11 : Migration(10, 11) {
@@ -121,6 +141,13 @@ public class Migration_12_13 : Migration(12, 13) {
         db.execSQL("DROP TABLE `profiles`")
         db.execSQL("ALTER TABLE `_new_profiles` RENAME TO `profiles`")
         db.execSQL("CREATE INDEX IF NOT EXISTS `index_profiles_is_active` ON `profiles` (`is_active`)")
+        // Defensive dedup: remove any profiles with a duplicate uuid keeping the lowest id.
+        // Normally impossible (uuid is random), but guards against corrupt backup-restore paths
+        // that could otherwise crash the following CREATE UNIQUE INDEX with UNIQUE constraint failed.
+        db.execSQL(
+            "DELETE FROM `profiles` WHERE `id` NOT IN " +
+                "(SELECT MIN(`id`) FROM `profiles` GROUP BY `uuid`)",
+        )
         db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_profiles_uuid` ON `profiles` (`uuid`)")
 
         db.execSQL(

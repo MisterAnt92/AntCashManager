@@ -224,16 +224,16 @@ private fun ProfileSidebarHeader(
         // ── Testo profilo (sotto l'avatar) ──
         Spacer(modifier = Modifier.height(40.dp)) // 33dp overflow + 7dp gap
         AppText(
+            text = stringResource(R.string.profiles_section_title),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Spacer(modifier = Modifier.height(2.dp))
+        AppText(
             text = activeProfile?.name ?: stringResource(R.string.profiles_title),
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Bold,
             maxLines = 1,
-        )
-        Spacer(modifier = Modifier.height(2.dp))
-        AppText(
-            text = stringResource(R.string.profiles_section_title),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Spacer(modifier = Modifier.height(14.dp))
         HorizontalDivider(
