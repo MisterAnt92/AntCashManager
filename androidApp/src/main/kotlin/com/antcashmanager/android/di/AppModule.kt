@@ -4,6 +4,7 @@ import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.analytics.tracker.EngagementTracker
 import com.antcashmanager.android.analytics.tracker.ErrorTracker
 import com.antcashmanager.android.analytics.tracker.PerformanceTracker
+import com.antcashmanager.android.analytics.tracker.ProfileTracker
 import com.antcashmanager.android.analytics.tracker.SegmentationTracker
 import com.antcashmanager.android.analytics.tracker.SessionTracker
 import com.antcashmanager.android.auth.GoogleSignInManager
@@ -179,6 +180,7 @@ val dataModule =
         // PHASE 3: Advanced Analytics (Segmentation & Engagement)
         single { SegmentationTracker(get<AnalyticsManager>()) }
         single { EngagementTracker(get<AnalyticsManager>()) }
+        single { ProfileTracker(get<AnalyticsManager>()) }
 
         single {
             BackupService(
@@ -502,6 +504,7 @@ val presentationModule =
                 getProfileByIdUseCase = get(),
                 profileManager = get(),
                 profilePhotoStorage = get(),
+                profileTracker = get(),
             )
         }
     }

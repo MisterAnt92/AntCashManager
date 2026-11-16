@@ -207,7 +207,13 @@ fun AntCashManagerNavHost() {
 
             BackHandler {
                 when {
-                    isSidebarOpen -> isSidebarOpen = false
+                    isSidebarOpen -> {
+                        analyticsManager.logEvent(
+                            "sidebar_toggled",
+                            android.os.Bundle().apply { putBoolean("isOpen", false) },
+                        )
+                        isSidebarOpen = false
+                    }
                     showExitDialog -> showExitDialog = false
                     isOnTopLevelRoute -> {
                         showExitDialog = true
@@ -774,6 +780,10 @@ fun AntCashManagerNavHost() {
                                         indication = null,
                                         interactionSource = remember { MutableInteractionSource() },
                                     ) {
+                                        analyticsManager.logEvent(
+                                            "sidebar_toggled",
+                                            android.os.Bundle().apply { putBoolean("isOpen", false) },
+                                        )
                                         isSidebarOpen = false
                                     },
                         )
@@ -782,6 +792,10 @@ fun AntCashManagerNavHost() {
                         LeftSidebar(
                             selectedRoute = currentDestination?.route,
                             onNavigate = { route ->
+                                analyticsManager.logEvent(
+                                    "sidebar_navigation_clicked",
+                                    android.os.Bundle().apply { putString("destination", route) },
+                                )
                                 navController.navigate(route) {
                                     popUpTo(navController.graph.findStartDestination().id) {
                                         saveState = true
@@ -794,6 +808,7 @@ fun AntCashManagerNavHost() {
                             visibleNavItems = sidebarNavItems,
                             activeProfile = activeProfile,
                             onProfileClick = {
+                                analyticsManager.logEvent("sidebar_profile_header_clicked")
                                 navController.navigate(AppRoute.SettingsRoute.Profiles.route) {
                                     launchSingleTop = true
                                 }

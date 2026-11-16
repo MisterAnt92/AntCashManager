@@ -137,10 +137,18 @@ object AnalyticsConstants {
         const val SETTINGS_CUSTOMIZATION_SCORE = "settings_customization_score"
         const val EASTER_EGG_ANIMATION_OPENED = "easter_egg_animation_opened"
 
-        // Navigation
+        // Navigation / Drawer
         const val SIDEBAR_NAVIGATION_CLICKED = "sidebar_navigation_clicked"
         const val SIDEBAR_TOGGLED = "sidebar_toggled"
+        const val SIDEBAR_PROFILE_HEADER_CLICKED = "sidebar_profile_header_clicked"
         const val SCREEN_LOAD_TIME = "screen_load_time"
+
+        // Profiles
+        const val PROFILE_CREATED = "profile_created"
+        const val PROFILE_SWITCHED = "profile_switched"
+        const val PROFILE_DELETED = "profile_deleted"
+        const val PROFILE_UPDATED = "profile_updated"
+        const val PROFILE_SHARE_TRANSACTIONS_TOGGLED = "profile_share_transactions_toggled"
 
         // Tutorial
         const val TUTORIAL_REPLAY_REQUESTED = "tutorial_replay_requested"
@@ -216,6 +224,13 @@ object AnalyticsConstants {
         const val ERROR_CODE = "error_code"
         const val DURATION_MS = "duration_ms"
         const val ZOOM_ENABLED = "zoom_enabled"
+        const val DESTINATION = "destination"
+        const val HAS_PHOTO = "has_photo"
+        const val SHARE_TRANSACTIONS = "share_transactions"
+        const val PROFILE_COUNT = "profile_count"
+        const val REMAINING_COUNT = "remaining_count"
+        const val PHOTO_CHANGED = "photo_changed"
+        const val SHARE_TRANSACTIONS_CHANGED = "share_transactions_changed"
 
         // Common values
         const val VALUE_YES = "yes"
@@ -361,5 +376,11 @@ object AnalyticsConstants {
             Events.VIEWMODEL_CLEARED,
             Events.TRANSACTION_VALIDATION_ERROR,
             Events.RECEIPT_OCR_ERROR,
+            Events.SIDEBAR_PROFILE_HEADER_CLICKED,
+            Events.PROFILE_CREATED,
+            Events.PROFILE_SWITCHED,
+            Events.PROFILE_DELETED,
+            Events.PROFILE_UPDATED,
+            Events.PROFILE_SHARE_TRANSACTIONS_TOGGLED,
         )
 }

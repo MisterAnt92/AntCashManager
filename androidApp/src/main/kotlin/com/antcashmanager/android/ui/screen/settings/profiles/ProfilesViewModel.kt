@@ -2,6 +2,7 @@ package com.antcashmanager.android.ui.screen.settings.profiles
 
 import android.net.Uri
 import androidx.lifecycle.viewModelScope
+import com.antcashmanager.android.analytics.tracker.ProfileTracker
 import com.antcashmanager.android.ui.base.BaseViewModel
 import com.antcashmanager.android.util.ProfilePhotoStorage
 import com.antcashmanager.domain.manager.ProfileManager
@@ -29,6 +30,7 @@ class ProfilesViewModel(
     private val getProfileByIdUseCase: GetProfileByIdUseCase,
     private val profileManager: ProfileManager,
     private val profilePhotoStorage: ProfilePhotoStorage,
+    private val profileTracker: ProfileTracker,
 ) : BaseViewModel<ProfilesEvent>() {
 
     private val _state = MutableStateFlow(ProfilesState())
@@ -87,11 +89,13 @@ class ProfilesViewModel(
 
     private fun confirmSwitch() {
         val target = _state.value.showSwitchConfirmation ?: return
+        val profileCount = _state.value.profiles.size
         _state.update { it.copy(showSwitchConfirmation = null, isLoading = true) }
         viewModelScope.launch {
             switchProfileUseCase(target.id).handleError { err ->
                 _state.update { it.copy(isLoading = false, errorMessage = err.message) }
             }
+            profileTracker.trackProfileSwitched(profileCount)
             _state.update { it.copy(isLoading = false) }
         }
     }
@@ -106,11 +110,13 @@ class ProfilesViewModel(
 
     private fun confirmDelete() {
         val target = _state.value.showDeleteConfirmation ?: return
+        val remainingCount = (_state.value.profiles.size - 1).coerceAtLeast(0)
         _state.update { it.copy(showDeleteConfirmation = null, isLoading = true) }
         viewModelScope.launch {
             deleteProfileUseCase(target).handleError { err ->
                 _state.update { it.copy(isLoading = false, errorMessage = err.message) }
             }
+            profileTracker.trackProfileDeleted(remainingCount)
             _state.update { it.copy(isLoading = false) }
         }
     }
@@ -156,6 +162,7 @@ class ProfilesViewModel(
                     }
                 }
             }
+            profileTracker.trackProfileCreated(hasPhoto = photoUri != null, shareTransactions = shareTransactions)
             _state.update { it.copy(isLoading = false) }
         }
     }
@@ -170,7 +177,8 @@ class ProfilesViewModel(
             )
         }
         viewModelScope.launch {
-            updateProfileUseCase(profile.copy(shareTransactions = enabled)).handleError { err ->
+            val result = updateProfileUseCase(profile.copy(shareTransactions = enabled))
+            result.handleError { err ->
                 _state.update { current ->
                     current.copy(
                         showEditDialog = current.showEditDialog
@@ -181,10 +189,12 @@ class ProfilesViewModel(
                     )
                 }
             }
+            if (result.isSuccess) profileTracker.trackShareTransactionsToggled(enabled)
         }
     }
 
     private fun updateProfile(profile: Profile, newPhotoUri: Uri?, clearPhoto: Boolean) {
+        val originalProfile = _state.value.profiles.find { it.id == profile.id }
         viewModelScope.launch {
             val photoPath = when {
                 newPhotoUri != null -> try {
@@ -200,8 +210,15 @@ class ProfilesViewModel(
                 }
                 else -> profile.photoPath
             }
-            updateProfileUseCase(profile.copy(photoPath = photoPath)).handleError { err ->
+            val result = updateProfileUseCase(profile.copy(photoPath = photoPath))
+            result.handleError { err ->
                 _state.update { it.copy(errorMessage = err.message) }
+            }
+            if (result.isSuccess) {
+                profileTracker.trackProfileUpdated(
+                    photoChanged = newPhotoUri != null || clearPhoto,
+                    shareTransactionsChanged = originalProfile?.shareTransactions != profile.shareTransactions,
+                )
             }
         }
     }
