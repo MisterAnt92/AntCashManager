@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.transactions.event
 
+import com.antcashmanager.architecture.UIEvent
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionType
@@ -11,50 +12,50 @@ import com.antcashmanager.domain.model.TransactionType
 /**
  * UI Events for Transactions screen.
  */
-sealed interface TransactionsEvent {
+sealed class TransactionsEvent : UIEvent() {
     // Date range events
     data class SelectPresetEvent(
         val index: Int,
-    ) : TransactionsEvent
+    ) : TransactionsEvent()
 
     data class SetDateRangeEvent(
         val from: Long,
         val to: Long,
-    ) : TransactionsEvent
+    ) : TransactionsEvent()
 
     // Search & Filter events
     data class UpdateSearchQueryEvent(
         val query: String,
-    ) : TransactionsEvent
+    ) : TransactionsEvent()
 
     data class UpdateCategoryFilterEvent(
         val category: String?,
-    ) : TransactionsEvent
+    ) : TransactionsEvent()
 
     data class UpdateTransactionTypeFilterEvent(
         val type: TransactionType?,
-    ) : TransactionsEvent
+    ) : TransactionsEvent()
 
     data class UpdatePaymentTypeFilterEvent(
         val paymentType: PaymentType?,
-    ) : TransactionsEvent
+    ) : TransactionsEvent()
 
-    data object ToggleSearchExpandedEvent : TransactionsEvent
+    data object ToggleSearchExpandedEvent : TransactionsEvent()
 
-    data object ToggleFiltersExpandedEvent : TransactionsEvent
+    data object ToggleFiltersExpandedEvent : TransactionsEvent()
 
-    data object ApplyFiltersEvent : TransactionsEvent
+    data object ApplyFiltersEvent : TransactionsEvent()
 
-    data object CancelFilterChangesEvent : TransactionsEvent
+    data object CancelFilterChangesEvent : TransactionsEvent()
 
-    data object ClearAllFiltersEvent : TransactionsEvent
+    data object ClearAllFiltersEvent : TransactionsEvent()
 
     data class SetDateFilterExpandedEvent(
         val expanded: Boolean,
-    ) : TransactionsEvent
+    ) : TransactionsEvent()
 
     // Transaction CRUD events
-    data object AddTransactionClickedEvent : TransactionsEvent
+    data object AddTransactionClickedEvent : TransactionsEvent()
 
     data class AddTransactionEvent(
         val title: String,
@@ -68,25 +69,25 @@ sealed interface TransactionsEvent {
         val tags: String = "",
         val isRecurring: Boolean = false,
         val recurrenceInterval: String = "",
-    ) : TransactionsEvent
+    ) : TransactionsEvent()
 
     data class DeleteTransactionEvent(
         val transaction: Transaction,
-    ) : TransactionsEvent
+    ) : TransactionsEvent()
 
     data class UpdateTransactionEvent(
         val transaction: Transaction,
-    ) : TransactionsEvent
+    ) : TransactionsEvent()
 
     data class ShowTransactionDetailsEvent(
         val index: Int,
-    ) : TransactionsEvent
+    ) : TransactionsEvent()
 
-    data object DismissTransactionDetailsEvent : TransactionsEvent
+    data object DismissTransactionDetailsEvent : TransactionsEvent()
 
-    data object HelpOpenedEvent : TransactionsEvent
+    data object HelpOpenedEvent : TransactionsEvent()
 
-    data object ReceiptScanOpenedEvent : TransactionsEvent
+    data object ReceiptScanOpenedEvent : TransactionsEvent()
 
-    data object AddTransactionOpenedEvent : TransactionsEvent
+    data object AddTransactionOpenedEvent : TransactionsEvent()
 }

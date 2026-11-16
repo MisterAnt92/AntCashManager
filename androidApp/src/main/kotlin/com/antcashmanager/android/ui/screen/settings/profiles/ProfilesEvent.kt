@@ -1,9 +1,11 @@
 package com.antcashmanager.android.ui.screen.settings.profiles
 
+import com.antcashmanager.architecture.UIEvent
+
 import android.net.Uri
 import com.antcashmanager.domain.model.Profile
 
-sealed class ProfilesEvent {
+sealed class ProfilesEvent : UIEvent() {
     data class SwitchProfile(val profile: Profile) : ProfilesEvent()
     data object ConfirmSwitch : ProfilesEvent()
     data object DismissSwitch : ProfilesEvent()

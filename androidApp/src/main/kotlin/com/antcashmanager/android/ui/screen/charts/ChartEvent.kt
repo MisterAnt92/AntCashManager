@@ -1,12 +1,14 @@
 package com.antcashmanager.android.ui.screen.charts
 
+import com.antcashmanager.architecture.UIEvent
+
 /**
  * UDF Pattern: Events for Charts screen.
  *
  * All user interactions (date range changes, category selection) emit events
  * that the ViewModel processes to update chart state and selection.
  */
-sealed class ChartEvent {
+sealed class ChartEvent : UIEvent() {
     data class SetDateRangeEvent(
         val from: Long,
         val to: Long,

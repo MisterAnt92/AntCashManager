@@ -505,7 +505,7 @@ class AddTransactionViewModel(
             return
         }
 
-        viewModelScope.launch {
+        launchCancelling {
             try {
                 _state.update { it.copy(isLoading = true) }
 
@@ -545,7 +545,7 @@ class AddTransactionViewModel(
     }
 
     private fun deleteTransaction() {
-        viewModelScope.launch {
+        launchCancelling {
             try {
                 _state.update { it.copy(isLoading = true) }
                 logDebug("Deleting transaction with id: $transactionId")

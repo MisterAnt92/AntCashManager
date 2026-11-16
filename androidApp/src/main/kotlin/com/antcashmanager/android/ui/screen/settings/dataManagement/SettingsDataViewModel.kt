@@ -118,7 +118,7 @@ class SettingsDataViewModel(
 
     fun setDataEncryptionEnabled(enabled: Boolean) {
         logDebug("Setting data encryption enabled: $enabled")
-        viewModelScope.launch {
+        launchCancelling {
             try {
                 // Apply encryption flag
                 settingsRepositoryRef.setDataEncryptionEnabled(enabled)
@@ -126,6 +126,8 @@ class SettingsDataViewModel(
                 // Re-encrypt/decrypt all existing transactions
                 // CRITICAL: Must run AFTER flag is applied, so cipher respects new state
                 performReEncryption()
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logError("Failed to toggle encryption: ${e.message}")
                 // Rollback the flag on error
@@ -666,6 +668,8 @@ class SettingsDataViewModel(
                         }
                     handleGoogleSignInError(error)
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 handleGoogleSignInError(e)
             }
@@ -753,6 +757,8 @@ class SettingsDataViewModel(
                 } else {
                     logError("Sign-out failed: ${result.exceptionOrNull()?.message}")
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logError("Error signing out: ${e.message}", e)
             }

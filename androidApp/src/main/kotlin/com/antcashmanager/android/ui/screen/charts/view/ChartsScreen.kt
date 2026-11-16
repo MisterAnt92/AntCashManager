@@ -107,7 +107,7 @@ fun ChartsScreen() {
     val viewModel: ChartsViewModel = koinViewModel()
     val appLocale = LocalLocale.current
     LaunchedEffect(appLocale) {
-        viewModel.onEvent(ChartEvent.UpdateLocaleEvent(appLocale.toLanguageTag()))
+        viewModel.emitEvent(ChartEvent.UpdateLocaleEvent(appLocale.toLanguageTag()))
     }
     val chartData by viewModel.chartData.collectAsStateWithLifecycle()
     val dateRange by viewModel.dateRange.collectAsStateWithLifecycle()
@@ -124,9 +124,9 @@ fun ChartsScreen() {
         zoomEnabled = chartsZoomEnabled,
         chartsCardOrderRaw = chartsCardOrder,
         errorState = errorState,
-        onDateRangeChanged = { from, to -> viewModel.onEvent(ChartEvent.SetDateRangeEvent(from, to)) },
-        onPresetSelected = { preset -> viewModel.onEvent(ChartEvent.SetPresetRangeEvent(preset)) },
-        onEvent = viewModel::onEvent,
+        onDateRangeChanged = { from, to -> viewModel.emitEvent(ChartEvent.SetDateRangeEvent(from, to)) },
+        onPresetSelected = { preset -> viewModel.emitEvent(ChartEvent.SetPresetRangeEvent(preset)) },
+        onEvent = viewModel::emitEvent,
     )
 }
 

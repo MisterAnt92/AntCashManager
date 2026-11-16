@@ -1,13 +1,18 @@
 package com.antcashmanager.android.ui.base
 
 import androidx.lifecycle.ViewModel
-import co.touchlab.kermit.Logger
+import androidx.lifecycle.viewModelScope
 import com.antcashmanager.architecture.BaseViewModel
+import com.antcashmanager.architecture.UIEvent
 import java.io.IOException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 
 /**
  * Unified error state model for all ViewModels.
@@ -30,43 +35,48 @@ data class ErrorState(
  *
  * Estende [ViewModel] (lifecycle-aware) e implementa [BaseViewModel] (contratto architetturale
  * definito in :architectureModule). Fornisce:
+ * - Event queue tramite [Channel] UNLIMITED: eventi accodati FIFO, processati sequenzialmente
  * - Logging centralizzato tramite Kermit ([logDebug], [logInfo], [logWarn], [logError])
  * - Tag automatico derivato da [this::class.simpleName]
  * - Crash tracking tramite [trackCrash]
  * - Dispatcher configurabile per operazioni async
  * - Error handling via [ErrorState] e [handleError] extension
- * - Gestione eventi UDF: [onEvent] è `final` e delega a [handleEvent] (override nelle subclass)
+ * - Helper [launchCancelling] per operazioni restartable (cancella il job precedente)
  *
- * @param E il tipo dell'evento sealed class. [Nothing] per i ViewModel senza eventi.
+ * @param E il tipo dell'evento, deve estendere [UIEvent]. [Nothing] per i ViewModel senza eventi.
  * @param dispatcher il [CoroutineDispatcher] da usare in operazioni async. Default: [Dispatchers.Default].
  */
-abstract class AndroidBaseViewModel<E : Any>(
+abstract class AndroidBaseViewModel<E : UIEvent>(
     protected val dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : ViewModel(), BaseViewModel<E> {
 
-    protected val tag: String = this::class.simpleName ?: "ViewModel"
+    override val tag: String = this::class.simpleName ?: "ViewModel"
     protected var activeJob: Job? = null
 
-    protected fun logDebug(message: String) {
-        Logger.d(tag = tag) { message }
+    // ── Event Channel ──────────────────────────────────────────────────────
+    // UNLIMITED: trySend è sempre non-blocking su Channel.UNLIMITED.
+    private val _eventChannel = Channel<E>(Channel.UNLIMITED)
+
+    /** Punto di ingresso pubblico per tutti gli eventi UI. Non-suspend, thread-safe. */
+    final override fun emitEvent(event: E) {
+        _eventChannel.trySend(event)
     }
 
-    protected fun logInfo(message: String) {
-        Logger.i(tag = tag) { message }
-    }
-
-    protected fun logWarn(message: String) {
-        Logger.w(tag = tag) { message }
-    }
-
-    protected fun logError(
-        message: String,
-        throwable: Throwable? = null,
-    ) {
-        if (throwable != null) {
-            Logger.e(throwable = throwable, tag = tag) { message }
-        } else {
-            Logger.e(tag = tag) { message }
+    init {
+        // Consumer sequenziale: handleEvent è chiamato uno alla volta, nell'ordine FIFO.
+        // try-catch impedisce che un'eccezione in handleEvent blocchi il consumer permanentemente.
+        viewModelScope.launch {
+            _eventChannel.receiveAsFlow().collect { event ->
+                logDebug("→ Event[${event.id}] ${event::class.simpleName}")
+                try {
+                    handleEvent(event)
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    logError("Event[${event.id}] handling failed: ${e.message}", e)
+                    trackCrash(e)
+                }
+            }
         }
     }
 
@@ -82,20 +92,25 @@ abstract class AndroidBaseViewModel<E : Any>(
     }
 
     /**
-     * Punto di ingresso unico per gli eventi UI. `final`: non sovrascrivere nelle subclass;
-     * implementare invece [handleEvent].
-     */
-    final override fun onEvent(event: E) = handleEvent(event)
-
-    /**
      * Gestisce gli eventi UI. Override necessario nelle subclass che supportano eventi.
      * Implementare con un `when` che delega a metodi privati.
      */
     protected abstract fun handleEvent(event: E)
 
+    /**
+     * Cancella il job precedente ([activeJob]) e lancia un nuovo coroutine su [viewModelScope].
+     * Pattern standard per operazioni restartable (ricerca, scan, re-encryption): garantisce
+     * che non girino due coroutine concorrenti per la stessa operazione.
+     */
+    protected fun launchCancelling(block: suspend CoroutineScope.() -> Unit): Job {
+        activeJob?.cancel()
+        return viewModelScope.launch(block = block).also { activeJob = it }
+    }
+
     override fun onCleared() {
         super.onCleared()
         activeJob?.cancel()
+        _eventChannel.close()
     }
 
     /**

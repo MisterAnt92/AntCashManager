@@ -7,6 +7,7 @@ import com.antcashmanager.android.R
 import com.antcashmanager.android.ui.base.AndroidBaseViewModel
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.usecase.ShareTransactionUseCase
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
 /**
@@ -40,6 +41,7 @@ class TransactionDetailsViewModel(
                 // Il Context viene gestito dalla composable che chiama shareTransaction()
                 // Non è responsabilità del ViewModel gestire l'intent
             }.onFailure { error ->
+                if (error is CancellationException) throw error
                 logError("Failed to format share text", error)
             }
         }
@@ -75,6 +77,7 @@ class TransactionDetailsViewModel(
                     ),
                 )
             }.onFailure { error ->
+                if (error is CancellationException) throw error
                 logError("Failed to format share text", error)
             }
         }

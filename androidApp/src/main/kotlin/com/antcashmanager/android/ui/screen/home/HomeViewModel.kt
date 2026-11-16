@@ -38,8 +38,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -268,9 +271,6 @@ class HomeViewModel(
             // If the user already has transactions the tutorial must not appear,
             // regardless of the stored flag (handles device-store migration for existing users).
             val effectiveTutorialCompleted = isTutorialCompleted || transactions.isNotEmpty()
-            if (!isTutorialCompleted && transactions.isNotEmpty()) {
-                viewModelScope.launch { settingsRepository.setIsTutorialCompleted(true) }
-            }
 
             @Suppress("UNCHECKED_CAST")
             val editingTopCardsOrder = args[13] as? List<HomeTopCardType>
@@ -407,6 +407,14 @@ class HomeViewModel(
 
     init {
         observeSavedDateFilter()
+        // One-shot: mark tutorial completed the first time the user has transactions.
+        // Extracted from combine lambda to avoid multiple launches per emission.
+        viewModelScope.launch {
+            state
+                .filter { !it.isTutorialCompleted && it.recentTransactions.isNotEmpty() }
+                .take(1)
+                .collect { settingsRepository.setIsTutorialCompleted(true) }
+        }
         logDebug("HomeViewModel initialized")
     }
 
