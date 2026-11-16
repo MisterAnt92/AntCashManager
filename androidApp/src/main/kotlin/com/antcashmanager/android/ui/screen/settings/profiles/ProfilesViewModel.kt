@@ -14,8 +14,6 @@ import com.antcashmanager.domain.usecase.profile.GetProfileByIdUseCase
 import com.antcashmanager.domain.usecase.profile.GetProfilesUseCase
 import com.antcashmanager.domain.usecase.profile.SwitchProfileUseCase
 import com.antcashmanager.domain.usecase.profile.UpdateProfileUseCase
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.update
@@ -31,10 +29,7 @@ class ProfilesViewModel(
     private val profileManager: ProfileManager,
     private val profilePhotoStorage: ProfilePhotoStorage,
     private val profileTracker: ProfileTracker,
-) : AndroidBaseViewModel<ProfilesEvent>() {
-
-    private val _state = MutableStateFlow(ProfilesState())
-    val state: StateFlow<ProfilesState> = _state
+) : AndroidBaseViewModel<ProfilesEvent, ProfilesState>(ProfilesState()) {
 
     init {
         combine(

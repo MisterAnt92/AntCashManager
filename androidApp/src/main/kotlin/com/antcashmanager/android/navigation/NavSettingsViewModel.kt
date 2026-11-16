@@ -18,9 +18,9 @@ import kotlinx.coroutines.launch
  */
 class NavSettingsViewModel(
     private val settingsRepository: SettingsRepository,
-) : AndroidBaseViewModel<NavSettingsEvent>() {
+) : AndroidBaseViewModel<NavSettingsEvent, NavSettingsState>(NavSettingsState()) {
 
-    val state: StateFlow<NavSettingsState> = combine(
+    override val state: StateFlow<NavSettingsState> = combine(
         combine(
             settingsRepository.getShowCharts(),
             settingsRepository.getIsTutorialCompleted().map { it as Boolean? }.onStart { emit(null) },

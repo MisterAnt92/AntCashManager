@@ -19,9 +19,6 @@ import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -48,14 +45,11 @@ class SettingsDataViewModel(
     private val googleSignInManager: GoogleSignInManager,
     private val performanceTracker: PerformanceTracker,
     private val errorTracker: ErrorTracker,
-) : AndroidBaseViewModel<None>() {
+) : AndroidBaseViewModel<None, SettingsDataState>(SettingsDataState()) {
 
     override fun handleEvent(event: None) = Unit
 
     private val settingsRepositoryRef = settingsRepository
-
-    private val _state = MutableStateFlow(SettingsDataState())
-    val state: StateFlow<SettingsDataState> = _state.asStateFlow()
 
     init {
         viewModelScope.launch {

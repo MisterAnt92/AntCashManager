@@ -46,6 +46,7 @@ import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import com.antcashmanager.architecture.ErrorState
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -66,7 +67,7 @@ class HomeViewModel(
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val segmentationTracker: SegmentationTracker,
     private val analyticsManager: AnalyticsManager,
-) : AndroidBaseViewModel<HomeEvent>(dispatcher) {
+) : AndroidBaseViewModel<HomeEvent, HomeState>(HomeState(), dispatcher) {
     constructor(
         transactionRepository: TransactionRepository,
         settingsRepository: SettingsRepository,
@@ -232,7 +233,7 @@ class HomeViewModel(
     private var previousTopCategory: String? = null
 
     // ── Combined UI State ──
-    val state: StateFlow<HomeState> =
+    override val state: StateFlow<HomeState> =
         combine(
             transactionsFlow,
             filteredTransactionsFlow,
@@ -391,7 +392,7 @@ class HomeViewModel(
                 transactionDisplayType = transactionDisplayType,
                 isTutorialCompleted = effectiveTutorialCompleted,
                 mealVoucherSummary = mealVoucherSummary,
-                errorState = com.antcashmanager.android.ui.base.ErrorState(),
+                errorState = ErrorState(),
             )
         }.stateIn(
             scope = viewModelScope,

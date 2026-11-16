@@ -11,8 +11,6 @@ import com.antcashmanager.domain.usecase.category.InsertCategoryUseCase
 import com.antcashmanager.domain.usecase.category.UpdateCategoryUseCase
 import com.antcashmanager.domain.usecase.transaction.SyncTransactionCategoriesUseCase
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -23,9 +21,7 @@ class CategoriesViewModel(
     private val deleteCategoryUseCase: DeleteCategoryUseCase,
     private val syncTransactionCategoriesUseCase: SyncTransactionCategoriesUseCase,
     private val analyticsManager: AnalyticsManager,
-) : AndroidBaseViewModel<CategoryEvent>() {
-    private val _state = MutableStateFlow(CategoriesState())
-    val state: StateFlow<CategoriesState> = _state
+) : AndroidBaseViewModel<CategoryEvent, CategoriesState>(CategoriesState()) {
 
     init {
         viewModelScope.launch {

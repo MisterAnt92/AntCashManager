@@ -36,7 +36,7 @@ class SettingsViewModel(
     private val importDebugDataUseCase: ImportDebugDataUseCase,
     private val getProfilesUseCase: GetProfilesUseCase,
     profileManager: ProfileManager,
-) : AndroidBaseViewModel<SettingEvent>() {
+) : AndroidBaseViewModel<SettingEvent, SettingsState>(SettingsState()) {
     // Convenience properties for readability (delegate to provider)
     private val getThemeUseCase get() = settingsUseCases.getTheme
     private val setThemeUseCase get() = settingsUseCases.setTheme
@@ -245,7 +245,7 @@ class SettingsViewModel(
             SettingsPreferencesAll(prefs1, prefs2, showTransactionNotes, transactionDisplayType)
         }
 
-    val state: StateFlow<SettingsState> =
+    override val state: StateFlow<SettingsState> =
         combine(
             _prefsState,
             _activeProfileName,

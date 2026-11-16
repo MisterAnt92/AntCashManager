@@ -3,7 +3,9 @@ package com.antcashmanager.android.ui.base
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.architecture.BaseViewModel
+import com.antcashmanager.architecture.ErrorState
 import com.antcashmanager.architecture.UIEvent
+import com.antcashmanager.architecture.UIState
 import java.io.IOException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
@@ -11,30 +13,20 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-
-/**
- * Unified error state model for all ViewModels.
- * Centralizes error handling across the app.
- *
- * @param isError true if an error occurred
- * @param message human-readable error message
- * @param throwable the underlying exception (for logging only, never exposed to UI)
- * @param retryable true if the operation can be retried (e.g., network errors)
- */
-data class ErrorState(
-    val isError: Boolean = false,
-    val message: String? = null,
-    val throwable: Throwable? = null,
-    val retryable: Boolean = false,
-)
 
 /**
  * Base class Android per tutti i ViewModel dell'app.
  *
  * Estende [ViewModel] (lifecycle-aware) e implementa [BaseViewModel] (contratto architetturale
  * definito in :architectureModule). Fornisce:
+ * - [_state] ereditato: MutableStateFlow<S> inizializzato con [initialState]; usato da ViewModel
+ *   semplici e push-to-state via `_state.update { it.copy(...) }`.
+ *   I ViewModel reactive-override ignorano `_state` e overridano `state` con una combine pipeline.
  * - Event queue tramite [Channel] UNLIMITED: eventi accodati FIFO, processati sequenzialmente
  * - Logging centralizzato tramite Kermit ([logDebug], [logInfo], [logWarn], [logError])
  * - Tag automatico derivato da [this::class.simpleName]
@@ -44,11 +36,18 @@ data class ErrorState(
  * - Helper [launchCancelling] per operazioni restartable (cancella il job precedente)
  *
  * @param E il tipo dell'evento, deve estendere [UIEvent]. [Nothing] per i ViewModel senza eventi.
+ * @param S il tipo dello state, deve estendere [UIState].
+ * @param initialState stato iniziale; i ViewModel reactive-override passano lo stesso valore
+ *   usato come default in `stateIn(...)`.
  * @param dispatcher il [CoroutineDispatcher] da usare in operazioni async. Default: [Dispatchers.Default].
  */
-abstract class AndroidBaseViewModel<E : UIEvent>(
+abstract class AndroidBaseViewModel<E : UIEvent, S : UIState>(
+    initialState: S,
     protected val dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : ViewModel(), BaseViewModel<E> {
+) : ViewModel(), BaseViewModel<E, S> {
+
+    protected val _state: MutableStateFlow<S> = MutableStateFlow(initialState)
+    override val state: StateFlow<S> = _state.asStateFlow()
 
     override val tag: String = this::class.simpleName ?: "ViewModel"
     protected var activeJob: Job? = null

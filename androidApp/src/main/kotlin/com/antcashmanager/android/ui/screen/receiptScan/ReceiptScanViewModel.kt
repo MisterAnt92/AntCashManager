@@ -17,9 +17,6 @@ import com.antcashmanager.domain.usecase.receipt.ScanReceiptUseCase
 import com.antcashmanager.domain.usecase.transaction.GetTransactionSuggestionsUseCase
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -45,11 +42,7 @@ class ReceiptScanViewModel(
     private val analyticsManager: AnalyticsManager,
     private val performanceTracker: PerformanceTracker,
     private val errorTracker: ErrorTracker,
-) : AndroidBaseViewModel<ReceiptScanEvent>() {
-    // ── State ─────────────────────────────────────────────────────────────────
-    private val _state = MutableStateFlow(ReceiptScanState())
-    val state: StateFlow<ReceiptScanState> = _state.asStateFlow()
-
+) : AndroidBaseViewModel<ReceiptScanEvent, ReceiptScanState>(ReceiptScanState()) {
     private var distinctTitles = listOf<String>()
     private var distinctLocations = listOf<String>()
 

@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import com.antcashmanager.architecture.ErrorState
 import java.util.Calendar
 import kotlin.math.abs
 
@@ -42,7 +43,7 @@ class ChartsViewModel(
     private val segmentationTracker: SegmentationTracker,
     private val settingsRepository: SettingsRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : AndroidBaseViewModel<ChartEvent>(dispatcher) {
+) : AndroidBaseViewModel<ChartEvent, ChartsState>(ChartsState(), dispatcher) {
     constructor(
         transactionRepository: TransactionRepository,
         settingsRepository: SettingsRepository,
@@ -113,7 +114,7 @@ class ChartsViewModel(
             )
 
     // ── Unified State (FASE 5: Error Feedback UX) ──
-    val state: StateFlow<ChartsState> =
+    override val state: StateFlow<ChartsState> =
         kotlinx.coroutines.flow.combine(
             _dateRange,
             _selectedPresetIndex,
@@ -129,7 +130,7 @@ class ChartsViewModel(
                 selectedPresetIndex = values[1] as Int,
                 selectedChartDetails = values[2] as ChartDetailsData?,
                 chartData = values[3] as ChartData,
-                errorState = com.antcashmanager.android.ui.base.ErrorState(),
+                errorState = ErrorState(),
             )
         }.stateIn(
             viewModelScope,

@@ -63,7 +63,7 @@ class TransactionsViewModel(
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val engagementTracker: EngagementTracker,
     private val analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager,
-) : AndroidBaseViewModel<TransactionsEvent>(dispatcher) {
+) : AndroidBaseViewModel<TransactionsEvent, TransactionsState>(TransactionsState(), dispatcher) {
     constructor(
         transactionRepository: TransactionRepository,
         categoryRepository: CategoryRepository,
@@ -257,7 +257,7 @@ class TransactionsViewModel(
         }
 
     // Layer 2: Combine Layer1 + filter + suggestions + displayType + dateFilterExpanded
-    val state: StateFlow<TransactionsState> =
+    override val state: StateFlow<TransactionsState> =
         combine(
             dataLayer,
             searchSuggestionsFlow,

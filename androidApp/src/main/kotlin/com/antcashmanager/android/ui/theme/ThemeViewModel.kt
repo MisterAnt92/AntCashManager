@@ -2,6 +2,7 @@ package com.antcashmanager.android.ui.theme
 
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.ui.base.AndroidBaseViewModel
+import com.antcashmanager.android.ui.theme.ThemeState
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,7 +16,7 @@ import kotlinx.coroutines.launch
  */
 class ThemeViewModel(
     private val settingsRepository: SettingsRepository,
-) : AndroidBaseViewModel<ThemeEvent>() {
+) : AndroidBaseViewModel<ThemeEvent, ThemeState>(ThemeState()) {
     val appTheme =
         settingsRepository
             .getTheme()

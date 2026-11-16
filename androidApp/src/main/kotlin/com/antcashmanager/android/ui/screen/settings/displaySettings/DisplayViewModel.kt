@@ -26,7 +26,7 @@ class DisplayViewModel(
     private val widgetUpdateNotifier: WidgetUpdateNotifier = NoOpWidgetUpdateNotifier,
     private val analyticsManager: AnalyticsManager,
     private val engagementTracker: EngagementTracker,
-) : AndroidBaseViewModel<DisplayEvent>() {
+) : AndroidBaseViewModel<DisplayEvent, DisplayState>(DisplayState()) {
     private var settingsModifiedCount = 0
 
     // Split into minimal 2-flow combines to avoid Kotlin 2.0 type inference issues
@@ -52,7 +52,7 @@ class DisplayViewModel(
      * UDF Pattern: Consolidated state for Display Settings screen.
      * Combines all 16 flow using minimal 2-flow combines to avoid Kotlin type inference issues.
      */
-    val state: StateFlow<DisplayState> =
+    override val state: StateFlow<DisplayState> =
 
         combine(
             currencyAndDigitsFlow,
