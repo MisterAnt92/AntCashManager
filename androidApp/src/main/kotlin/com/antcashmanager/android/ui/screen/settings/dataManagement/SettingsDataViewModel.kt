@@ -8,7 +8,7 @@ import com.antcashmanager.android.analytics.tracker.PerformanceTracker
 import com.antcashmanager.android.auth.GoogleSignInManager
 import com.antcashmanager.android.data.backup.BackupService
 import com.antcashmanager.android.security.BackupPayloadCipher
-import com.antcashmanager.android.ui.base.BaseViewModel
+import com.antcashmanager.android.ui.base.AndroidBaseViewModel
 import com.antcashmanager.android.work.AutoBackupScheduler
 import com.antcashmanager.domain.model.BackupDestination
 import com.antcashmanager.domain.model.BackupFrequency
@@ -48,7 +48,10 @@ class SettingsDataViewModel(
     private val googleSignInManager: GoogleSignInManager,
     private val performanceTracker: PerformanceTracker,
     private val errorTracker: ErrorTracker,
-) : BaseViewModel<None>() {
+) : AndroidBaseViewModel<None>() {
+
+    override fun handleEvent(event: None) = Unit
+
     private val settingsRepositoryRef = settingsRepository
 
     private val _state = MutableStateFlow(SettingsDataState())

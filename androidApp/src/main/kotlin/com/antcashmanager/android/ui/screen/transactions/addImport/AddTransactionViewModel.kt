@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.analytics.tracker.ErrorTracker
 import com.antcashmanager.android.analytics.tracker.PerformanceTracker
-import com.antcashmanager.android.ui.base.BaseViewModel
+import com.antcashmanager.android.ui.base.AndroidBaseViewModel
 import com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayConstant
 import com.antcashmanager.android.ui.screen.transactions.addImport.event.AddTransactionEvent
 import com.antcashmanager.android.ui.screen.transactions.addImport.manager.SuggestionsManager
@@ -42,7 +42,7 @@ class AddTransactionViewModel(
     private val errorTracker: ErrorTracker,
     private val transactionId: Long? = null,
     private val savedStateHandle: SavedStateHandle, // NEW: Preserva form state su rotation
-) : BaseViewModel<AddTransactionEvent>() {
+) : AndroidBaseViewModel<AddTransactionEvent>() {
     // ── State ──
     // Nota: SavedStateHandle è disponibile per future implementazioni di state recovery
     // Per adesso usiamo MutableStateFlow standard; future: sincroniazzare con savedStateHandle per preservare
@@ -227,7 +227,7 @@ class AddTransactionViewModel(
     /**
      * Gestisce gli eventi della UI.
      */
-    override fun onEvent(event: AddTransactionEvent) {
+    override fun handleEvent(event: AddTransactionEvent) {
         logDebug("Event: $event")
         when (event) {
             is AddTransactionEvent.SelectCategoryEvent -> selectCategory(event.category)

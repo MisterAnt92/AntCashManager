@@ -6,7 +6,7 @@ import com.antcashmanager.android.analytics.AnalyticsConstants.Events
 import com.antcashmanager.android.analytics.AnalyticsConstants.Params
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.analytics.tracker.SegmentationTracker
-import com.antcashmanager.android.ui.base.BaseViewModel
+import com.antcashmanager.android.ui.base.AndroidBaseViewModel
 import com.antcashmanager.android.ui.mapper.toUi
 import com.antcashmanager.android.ui.screen.home.event.HomeEvent
 import com.antcashmanager.android.ui.screen.home.model.HomeTopCardType
@@ -63,7 +63,7 @@ class HomeViewModel(
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val segmentationTracker: SegmentationTracker,
     private val analyticsManager: AnalyticsManager,
-) : BaseViewModel<HomeEvent>(dispatcher) {
+) : AndroidBaseViewModel<HomeEvent>(dispatcher) {
     constructor(
         transactionRepository: TransactionRepository,
         settingsRepository: SettingsRepository,
@@ -411,7 +411,7 @@ class HomeViewModel(
     }
 
     // ── Event Handling ──
-    override fun onEvent(event: HomeEvent) {
+    override fun handleEvent(event: HomeEvent) {
         logDebug("Event: $event")
         when (event) {
             is HomeEvent.SelectPresetEvent -> selectPreset(event.index)

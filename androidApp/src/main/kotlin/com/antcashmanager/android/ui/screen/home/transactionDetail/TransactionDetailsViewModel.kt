@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.R
-import com.antcashmanager.android.ui.base.BaseViewModel
+import com.antcashmanager.android.ui.base.AndroidBaseViewModel
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.usecase.ShareTransactionUseCase
 import kotlinx.coroutines.launch
@@ -16,8 +16,8 @@ import kotlinx.coroutines.launch
  */
 class TransactionDetailsViewModel(
     private val shareTransactionUseCase: ShareTransactionUseCase,
-) : BaseViewModel<TransactionDetailsEvent>() {
-    override fun onEvent(event: TransactionDetailsEvent) {
+) : AndroidBaseViewModel<TransactionDetailsEvent>() {
+    override fun handleEvent(event: TransactionDetailsEvent) {
         logDebug("Event: $event")
         when (event) {
             is TransactionDetailsEvent.ShareTransactionEvent -> shareTransactionImpl(event.transaction)

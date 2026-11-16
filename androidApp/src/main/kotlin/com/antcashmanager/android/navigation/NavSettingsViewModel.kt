@@ -1,7 +1,7 @@
 package com.antcashmanager.android.navigation
 
 import androidx.lifecycle.viewModelScope
-import com.antcashmanager.android.ui.base.BaseViewModel
+import com.antcashmanager.android.ui.base.AndroidBaseViewModel
 import com.antcashmanager.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
  */
 class NavSettingsViewModel(
     private val settingsRepository: SettingsRepository,
-) : BaseViewModel<NavSettingsEvent>() {
+) : AndroidBaseViewModel<NavSettingsEvent>() {
 
     val state: StateFlow<NavSettingsState> = combine(
         combine(
@@ -54,7 +54,7 @@ class NavSettingsViewModel(
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), NavSettingsState())
 
-    override fun onEvent(event: NavSettingsEvent) {
+    override fun handleEvent(event: NavSettingsEvent) {
         when (event) {
             is NavSettingsEvent.SetAnalyticsConsentEvent -> setAnalyticsConsent(event.granted)
         }

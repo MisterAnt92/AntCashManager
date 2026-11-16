@@ -1,7 +1,7 @@
 package com.antcashmanager.android.ui.theme
 
 import androidx.lifecycle.viewModelScope
-import com.antcashmanager.android.ui.base.BaseViewModel
+import com.antcashmanager.android.ui.base.AndroidBaseViewModel
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
  */
 class ThemeViewModel(
     private val settingsRepository: SettingsRepository,
-) : BaseViewModel<ThemeEvent>() {
+) : AndroidBaseViewModel<ThemeEvent>() {
     val appTheme =
         settingsRepository
             .getTheme()
@@ -52,7 +52,7 @@ class ThemeViewModel(
                 ThemeConstants.DEFAULT_REDUCE_MOTION,
             )
 
-    override fun onEvent(event: ThemeEvent) {
+    override fun handleEvent(event: ThemeEvent) {
         logDebug("Event: $event")
         when (event) {
             is ThemeEvent.SetThemeEvent -> setTheme(event.theme)

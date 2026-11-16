@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.R
 import com.antcashmanager.android.analytics.tracker.PerformanceTracker
 import com.antcashmanager.android.analytics.tracker.SegmentationTracker
-import com.antcashmanager.android.ui.base.BaseViewModel
+import com.antcashmanager.android.ui.base.AndroidBaseViewModel
 import com.antcashmanager.android.ui.screen.charts.view.ChartDetailsData
 import com.antcashmanager.android.ui.screen.charts.view.TrendDirection
 import com.antcashmanager.android.util.withCorrectAmounts
@@ -42,7 +42,7 @@ class ChartsViewModel(
     private val segmentationTracker: SegmentationTracker,
     private val settingsRepository: SettingsRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : BaseViewModel<ChartEvent>(dispatcher) {
+) : AndroidBaseViewModel<ChartEvent>(dispatcher) {
     constructor(
         transactionRepository: TransactionRepository,
         settingsRepository: SettingsRepository,
@@ -144,7 +144,7 @@ class ChartsViewModel(
         observeSavedDateFilter()
     }
 
-    override fun onEvent(event: ChartEvent) {
+    override fun handleEvent(event: ChartEvent) {
         logDebug("Event: $event")
         when (event) {
             is ChartEvent.SetDateRangeEvent -> setDateRange(event.from, event.to)

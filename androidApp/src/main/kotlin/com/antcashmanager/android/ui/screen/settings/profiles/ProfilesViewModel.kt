@@ -3,7 +3,7 @@ package com.antcashmanager.android.ui.screen.settings.profiles
 import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.analytics.tracker.ProfileTracker
-import com.antcashmanager.android.ui.base.BaseViewModel
+import com.antcashmanager.android.ui.base.AndroidBaseViewModel
 import com.antcashmanager.android.util.ProfilePhotoStorage
 import com.antcashmanager.domain.manager.ProfileManager
 import com.antcashmanager.domain.model.Profile
@@ -31,7 +31,7 @@ class ProfilesViewModel(
     private val profileManager: ProfileManager,
     private val profilePhotoStorage: ProfilePhotoStorage,
     private val profileTracker: ProfileTracker,
-) : BaseViewModel<ProfilesEvent>() {
+) : AndroidBaseViewModel<ProfilesEvent>() {
 
     private val _state = MutableStateFlow(ProfilesState())
     val state: StateFlow<ProfilesState> = _state
@@ -56,7 +56,7 @@ class ProfilesViewModel(
         }.launchIn(viewModelScope)
     }
 
-    override fun onEvent(event: ProfilesEvent) {
+    override fun handleEvent(event: ProfilesEvent) {
         when (event) {
             is ProfilesEvent.SwitchProfile -> requestSwitch(event.profile)
             is ProfilesEvent.ConfirmSwitch -> confirmSwitch()

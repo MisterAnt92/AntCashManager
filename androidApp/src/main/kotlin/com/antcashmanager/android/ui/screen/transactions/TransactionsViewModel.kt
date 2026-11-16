@@ -6,7 +6,7 @@ package com.antcashmanager.android.ui.screen.transactions
 
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.analytics.tracker.EngagementTracker
-import com.antcashmanager.android.ui.base.BaseViewModel
+import com.antcashmanager.android.ui.base.AndroidBaseViewModel
 import com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
 import com.antcashmanager.android.util.withCorrectAmounts
 import com.antcashmanager.domain.model.PaymentType
@@ -63,7 +63,7 @@ class TransactionsViewModel(
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val engagementTracker: EngagementTracker,
     private val analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager,
-) : BaseViewModel<TransactionsEvent>(dispatcher) {
+) : AndroidBaseViewModel<TransactionsEvent>(dispatcher) {
     constructor(
         transactionRepository: TransactionRepository,
         categoryRepository: CategoryRepository,
@@ -317,7 +317,7 @@ class TransactionsViewModel(
     }
 
     // ── Event Handling ──
-    override fun onEvent(event: TransactionsEvent) {
+    override fun handleEvent(event: TransactionsEvent) {
         logDebug("Event: $event")
         when (event) {
             // Date range events

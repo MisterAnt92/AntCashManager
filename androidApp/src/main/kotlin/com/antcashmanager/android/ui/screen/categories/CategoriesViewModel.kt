@@ -3,7 +3,7 @@ package com.antcashmanager.android.ui.screen.categories
 import android.os.Bundle
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.analytics.AnalyticsManager
-import com.antcashmanager.android.ui.base.BaseViewModel
+import com.antcashmanager.android.ui.base.AndroidBaseViewModel
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.usecase.category.DeleteCategoryUseCase
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
@@ -23,7 +23,7 @@ class CategoriesViewModel(
     private val deleteCategoryUseCase: DeleteCategoryUseCase,
     private val syncTransactionCategoriesUseCase: SyncTransactionCategoriesUseCase,
     private val analyticsManager: AnalyticsManager,
-) : BaseViewModel<CategoryEvent>() {
+) : AndroidBaseViewModel<CategoryEvent>() {
     private val _state = MutableStateFlow(CategoriesState())
     val state: StateFlow<CategoriesState> = _state
 
@@ -59,7 +59,7 @@ class CategoriesViewModel(
         }
     }
 
-    override fun onEvent(event: CategoryEvent) {
+    override fun handleEvent(event: CategoryEvent) {
         logDebug("Event: $event")
         when (event) {
             is CategoryEvent.AddCategoryEvent -> addCategory(event.name, event.icon, event.color, event.type)

@@ -2,10 +2,12 @@ package com.antcashmanager.android.ui.base
 
 import androidx.lifecycle.ViewModel
 import co.touchlab.kermit.Logger
+import com.antcashmanager.architecture.BaseViewModel
+import java.io.IOException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import java.io.IOException
+import kotlinx.coroutines.Job
 
 /**
  * Unified error state model for all ViewModels.
@@ -24,44 +26,26 @@ data class ErrorState(
 )
 
 /**
- * Base class per tutti i ViewModel dell'app con supporto generico per eventi e dispatcher.
+ * Base class Android per tutti i ViewModel dell'app.
  *
- * Fornisce:
- * - Logging centralizzato tramite helper ([logDebug], [logInfo], [logWarn], [logError])
+ * Estende [ViewModel] (lifecycle-aware) e implementa [BaseViewModel] (contratto architetturale
+ * definito in :architectureModule). Fornisce:
+ * - Logging centralizzato tramite Kermit ([logDebug], [logInfo], [logWarn], [logError])
  * - Tag automatico derivato da [this::class.simpleName]
- * - Supporto per gli eventi tramite [onEvent] (override necessario nei ViewModel con eventi)
- * - Dispatcher configurabile (default [Dispatchers.Default]) per l'esecuzione di operazioni async
- * - Centralizzato error handling via [ErrorState] e [handleError] extension
+ * - Crash tracking tramite [trackCrash]
+ * - Dispatcher configurabile per operazioni async
+ * - Error handling via [ErrorState] e [handleError] extension
+ * - Gestione eventi UDF: [onEvent] è `final` e delega a [handleEvent] (override nelle subclass)
  *
- * I ViewModel senza eventi estendono [BaseViewModel]<[Nothing]>; quelli con eventi specificano
- * il tipo dell'evento (e.g., [BaseViewModel]<HomeEvent>).
- *
- * **UDF Pattern**:
- * ```
- * FeatureState { errorState: ErrorState, data: T }
- * FeatureEvent { sealed events }
- * FeatureViewModel: onEvent() processes events → updates state via StateFlow
- * FeatureScreen: reads state.collectAsStateWithLifecycle() + emits onEvent()
- * ```
- *
- * @param E il tipo dell'evento. [Nothing] per i ViewModel senza eventi.
+ * @param E il tipo dell'evento sealed class. [Nothing] per i ViewModel senza eventi.
  * @param dispatcher il [CoroutineDispatcher] da usare in operazioni async. Default: [Dispatchers.Default].
  */
-abstract class BaseViewModel<E : Any>(
+abstract class AndroidBaseViewModel<E : Any>(
     protected val dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : ViewModel() {
-    protected val tag: String = this::class.simpleName ?: "ViewModel"
+) : ViewModel(), BaseViewModel<E> {
 
-    /**
-     * Gestisce gli eventi del ViewModel.
-     * Override necessario nei ViewModel che supportano eventi.
-     * Implementazione default: logga l'evento.
-     *
-     * @param event l'evento ricevuto
-     */
-    open fun onEvent(event: E) {
-        logDebug("Event: $event")
-    }
+    protected val tag: String = this::class.simpleName ?: "ViewModel"
+    protected var activeJob: Job? = null
 
     protected fun logDebug(message: String) {
         Logger.d(tag = tag) { message }
@@ -87,18 +71,36 @@ abstract class BaseViewModel<E : Any>(
     }
 
     /**
+     * Registra il crash nelle analisi/diagnostica (es. Firebase Crashlytics).
+     * Override per collegarlo a un vero crash reporter.
+     */
+    protected open fun trackCrash(
+        t: Throwable,
+        context: Map<String, Any> = emptyMap(),
+    ) {
+        logError("Crash tracked: ${t.message}", t)
+    }
+
+    /**
+     * Punto di ingresso unico per gli eventi UI. `final`: non sovrascrivere nelle subclass;
+     * implementare invece [handleEvent].
+     */
+    final override fun onEvent(event: E) = handleEvent(event)
+
+    /**
+     * Gestisce gli eventi UI. Override necessario nelle subclass che supportano eventi.
+     * Implementare con un `when` che delega a metodi privati.
+     */
+    protected abstract fun handleEvent(event: E)
+
+    override fun onCleared() {
+        super.onCleared()
+        activeJob?.cancel()
+    }
+
+    /**
      * Centralizzato error handling for Result<T>.
      * Automatically detects retryable errors (IOException) and logs appropriately.
-     *
-     * Usage in ViewModel:
-     * ```
-     * result.handleError { errorState ->
-     *     _state.value = _state.value.copy(errorState = errorState)
-     * }
-     * ```
-     *
-     * @param onError callback to handle the error state
-     * @return the successful value or null if error occurred
      */
     protected fun <T> Result<T>.handleError(
         onError: (error: ErrorState) -> Unit = { logError(it.message ?: "Unknown error") },

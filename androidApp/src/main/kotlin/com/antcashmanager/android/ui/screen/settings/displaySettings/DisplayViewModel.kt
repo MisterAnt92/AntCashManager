@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.analytics.tracker.EngagementTracker
-import com.antcashmanager.android.ui.base.BaseViewModel
+import com.antcashmanager.android.ui.base.AndroidBaseViewModel
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.service.NoOpWidgetUpdateNotifier
@@ -26,7 +26,7 @@ class DisplayViewModel(
     private val widgetUpdateNotifier: WidgetUpdateNotifier = NoOpWidgetUpdateNotifier,
     private val analyticsManager: AnalyticsManager,
     private val engagementTracker: EngagementTracker,
-) : BaseViewModel<DisplayEvent>() {
+) : AndroidBaseViewModel<DisplayEvent>() {
     private var settingsModifiedCount = 0
 
     // Split into minimal 2-flow combines to avoid Kotlin 2.0 type inference issues
@@ -209,7 +209,7 @@ class DisplayViewModel(
             DisplayConstant.DEFAULT_WIDGET_OPACITY,
         )
 
-    override fun onEvent(event: DisplayEvent) {
+    override fun handleEvent(event: DisplayEvent) {
         logDebug("Event: $event")
         when (event) {
             is DisplayEvent.SetCurrencySymbolEvent -> setCurrencySymbol(event.symbol)
