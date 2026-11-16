@@ -123,6 +123,26 @@
     <string name="icon_shopping_cart">Groceries</string>
     <string name="icon_coffee">Coffee</string>
     <string name="icon_spa">Personal Care</string>
+    <string name="icon_local_bar">Bar</string>
+    <string name="icon_local_cafe">Café</string>
+    <string name="icon_music_note">Music</string>
+    <string name="icon_movie">Cinema</string>
+    <string name="icon_sports_esports">Gaming</string>
+    <string name="icon_account_balance">Banking</string>
+    <string name="icon_credit_card">Card Payments</string>
+    <string name="icon_smartphone">Phone/Telecom</string>
+    <string name="icon_laptop">Technology</string>
+    <string name="icon_child_care">Children</string>
+    <string name="icon_local_gas_station">Fuel</string>
+    <string name="icon_build">Maintenance</string>
+    <string name="icon_beach_access">Vacation</string>
+    <string name="icon_percent">Taxes/Fees</string>
+    <string name="icon_two_wheeler">Motorcycle</string>
+    <string name="icon_storefront">Store</string>
+    <string name="icon_umbrella">Insurance</string>
+    <string name="icon_sports_soccer">Sports</string>
+    <string name="icon_medication">Medicine</string>
+    <string name="icon_elderly_woman">Elderly Care</string>
     <string name="icon_card_giftcard">Meal Vouchers</string>
 
     <!-- Charts Screen -->
@@ -231,6 +251,25 @@
     <string name="settings_reduce_motion">Reduce Motion</string>
     <string name="settings_reduce_motion_subtitle">Minimize animations and transitions. Helpful for users sensitive to motion.</string>
     <string name="settings_data_management">Data Management</string>
+    <string name="settings_profiles">Profiles</string>
+    <string name="profiles_title">Profiles</string>
+    <string name="profiles_add_button">Add profile</string>
+    <string name="profiles_switch_dialog_title">Switch profile</string>
+    <string name="profiles_switch_dialog_message">Switch to %1$s?</string>
+    <string name="profiles_delete_dialog_title">Delete profile</string>
+    <string name="profiles_delete_dialog_warning">Delete %1$s and all its data? This cannot be undone.</string>
+    <string name="profiles_default_name">Default</string>
+    <string name="profiles_active_badge">Active</string>
+    <string name="profiles_create_dialog_title">New profile</string>
+    <string name="profiles_name_hint">Profile name</string>
+    <string name="profiles_edit_dialog_title">Edit profile</string>
+    <string name="profiles_section_title">Profile</string>
+    <string name="profiles_color_label">Color</string>
+    <string name="profiles_emoji_label">Avatar</string>
+    <string name="profiles_change_photo">Change photo</string>
+    <string name="profiles_share_transactions_title">Share transactions</string>
+    <string name="profiles_share_transactions_description">Visible to all profiles with this option active</string>
+    <string name="profiles_share_transactions_create_description">Existing transactions will be shared with this profile. You can change this later.</string>
     <string name="settings_security">Security</string>
     <string name="settings_security_data_encryption">Data protection - Encryption</string>
     <string name="settings_security_data_encryption_subtitle">Encrypt and protect local app data</string>
@@ -398,6 +437,8 @@
     <string name="payment_type_electronic">Electronic Payment</string>
     <string name="payment_type_cash">Cash</string>
     <string name="payment_type_meal_vouchers">Meal Vouchers</string>
+    <string name="payment_type_meal_vouchers_with_cash">Meal Vouchers + Cash/Card</string>
+    <string name="transaction_details_meal_vouchers_covered">Covered by Vouchers</string>
 
     <!-- Add Transaction Payment Type -->
     <string name="add_transaction_payment_type">Payment Type</string>
@@ -523,6 +564,7 @@
     <string name="category_gifts">Gifts</string>
     <string name="category_subscriptions">Subscriptions</string>
     <string name="category_personal_care">Personal Care</string>
+    <string name="category_meal_vouchers">Meal Vouchers</string>
 
     <!-- Receipt Scan Screen -->
     <string name="receipt_scan_title">Scan Receipt</string>
@@ -657,4 +699,26 @@
     <string name="settings_analytics_consent_title">Share anonymous usage statistics</string>
     <string name="settings_analytics_consent_desc">Screens visited and errors only. No financial data is ever sent.</string>
     <string name="transactions_details_empty">Select a transaction to view details</string>
+
+    <!-- Meal Vouchers Card -->
+    <string name="home_meal_vouchers_title">Meal Vouchers</string>
+    <string name="home_meal_vouchers_remaining">Remaining</string>
+    <string name="home_meal_vouchers_received">Received</string>
+    <string name="home_meal_vouchers_used">Used</string>
+    <string name="home_meal_vouchers_remaining_value">Remaining value</string>
+    <string name="home_meal_vouchers_received_only_mode">Tracking used only</string>
+
+    <!-- Month names (short format) -->
+    <string name="month_short_1">Jan</string>
+    <string name="month_short_2">Feb</string>
+    <string name="month_short_3">Mar</string>
+    <string name="month_short_4">Apr</string>
+    <string name="month_short_5">May</string>
+    <string name="month_short_6">Jun</string>
+    <string name="month_short_7">Jul</string>
+    <string name="month_short_8">Aug</string>
+    <string name="month_short_9">Sep</string>
+    <string name="month_short_10">Oct</string>
+    <string name="month_short_11">Nov</string>
+    <string name="month_short_12">Dec</string>
 </resources>

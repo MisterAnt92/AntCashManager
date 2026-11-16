@@ -1,3 +1,13 @@
+/**
+ * Color definitions for AntCashManager Material 3 theme.
+ *
+ * Supports 3 themes:
+ * 1. Default (Light & Dark) - System colors
+ * 2. Anna Theme - Alternative palette with warmer tones
+ * 3. Semantic colors - IncomeGreen, ExpenseRed for transaction states
+ *
+ * See: theme/README.md for usage guidelines
+ */
 package com.antcashmanager.android.ui.theme
 
 import androidx.compose.ui.graphics.Color

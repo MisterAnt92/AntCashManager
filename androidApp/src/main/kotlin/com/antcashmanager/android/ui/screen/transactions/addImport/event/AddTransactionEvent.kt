@@ -14,99 +14,99 @@ import com.antcashmanager.domain.model.TransactionType
  */
 sealed interface AddTransactionEvent {
     // ── Selezione ──
-    data class SelectCategory(
+    data class SelectCategoryEvent(
         val category: Category,
     ) : AddTransactionEvent
 
-    data class SelectType(
+    data class SelectTypeEvent(
         val type: TransactionType,
     ) : AddTransactionEvent
 
-    data class SelectPaymentType(
+    data class SelectPaymentTypeEvent(
         val paymentType: PaymentType,
     ) : AddTransactionEvent
 
     // ── Modifica campi ──
-    data class UpdateTitle(
+    data class UpdateTitleEvent(
         val title: String,
     ) : AddTransactionEvent
 
-    data class UpdateAmount(
+    data class UpdateAmountEvent(
         val amount: String,
     ) : AddTransactionEvent
 
-    data class UpdateNotes(
+    data class UpdateNotesEvent(
         val notes: String,
     ) : AddTransactionEvent
 
-    data class UpdatePayee(
+    data class UpdatePayeeEvent(
         val payee: String,
     ) : AddTransactionEvent
 
-    data class UpdateLocation(
+    data class UpdateLocationEvent(
         val location: String,
     ) : AddTransactionEvent
 
-    data class UpdateTags(
+    data class UpdateTagsEvent(
         val tags: String,
     ) : AddTransactionEvent
 
-    data class UpdateTimestamp(
+    data class UpdateTimestampEvent(
         val timestamp: Long,
     ) : AddTransactionEvent
 
-    data class SetRecurring(
+    data class SetRecurringEvent(
         val isRecurring: Boolean,
     ) : AddTransactionEvent
 
-    data class UpdateRecurrenceInterval(
+    data class UpdateRecurrenceIntervalEvent(
         val interval: String,
     ) : AddTransactionEvent
 
-    data class UpdateMealVoucherCount(
+    data class UpdateMealVoucherCountEvent(
         val count: String,
     ) : AddTransactionEvent
 
-    data class UpdateMealVoucherDifference(
+    data class UpdateMealVoucherDifferenceEvent(
         val difference: String,
     ) : AddTransactionEvent
 
     // ── Navigazione ──
-    data object NextStep : AddTransactionEvent
+    data object NextStepEvent : AddTransactionEvent
 
-    data object PreviousStep : AddTransactionEvent
+    data object PreviousStepEvent : AddTransactionEvent
 
-    data object Submit : AddTransactionEvent
+    data object SubmitEvent : AddTransactionEvent
 
-    data object Cancel : AddTransactionEvent
+    data object CancelEvent : AddTransactionEvent
 
     // ── Dialog inline per modifica rapida ──
-    data object EditCategory : AddTransactionEvent
+    data object EditCategoryEvent : AddTransactionEvent
 
-    data object EditType : AddTransactionEvent
+    data object EditTypeEvent : AddTransactionEvent
 
-    data object EditDate : AddTransactionEvent
+    data object EditDateEvent : AddTransactionEvent
 
-    data object EditPaymentType : AddTransactionEvent
+    data object EditPaymentTypeEvent : AddTransactionEvent
 
-    data object ShowCategoryDialog : AddTransactionEvent
+    data object ShowCategoryDialogEvent : AddTransactionEvent
 
-    data object ShowTypeDialog : AddTransactionEvent
+    data object ShowTypeDialogEvent : AddTransactionEvent
 
-    data object ShowPaymentTypeDialog : AddTransactionEvent
+    data object ShowPaymentTypeDialogEvent : AddTransactionEvent
 
-    data object DismissCategoryDialog : AddTransactionEvent
+    data object DismissCategoryDialogEvent : AddTransactionEvent
 
-    data object DismissTypeDialog : AddTransactionEvent
+    data object DismissTypeDialogEvent : AddTransactionEvent
 
-    data object DismissPaymentTypeDialog : AddTransactionEvent
+    data object DismissPaymentTypeDialogEvent : AddTransactionEvent
 
-    data object DismissDatePicker : AddTransactionEvent
+    data object DismissDatePickerEvent : AddTransactionEvent
 
     // ── Dialog eliminazione ──
-    data object ShowDeleteConfirmDialog : AddTransactionEvent
+    data object ShowDeleteConfirmDialogEvent : AddTransactionEvent
 
-    data object DismissDeleteConfirmDialog : AddTransactionEvent
+    data object DismissDeleteConfirmDialogEvent : AddTransactionEvent
 
-    data object ConfirmDelete : AddTransactionEvent
+    data object ConfirmDeleteEvent : AddTransactionEvent
 }

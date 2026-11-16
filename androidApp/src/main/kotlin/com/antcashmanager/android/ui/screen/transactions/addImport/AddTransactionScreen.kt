@@ -97,7 +97,7 @@ internal fun AddTransactionContent(
             CategorySelectionStep(
                 categories = state.categories,
                 selectedCategory = state.selectedCategory,
-                onSelectCategory = { onEvent(AddTransactionEvent.SelectCategory(it)) },
+                onSelectCategory = { onEvent(AddTransactionEvent.SelectCategoryEvent(it)) },
                 onCancel = {
                     analyticsManager?.logEvent("transaction_form_cancelled")
                     navController?.popBackStack()

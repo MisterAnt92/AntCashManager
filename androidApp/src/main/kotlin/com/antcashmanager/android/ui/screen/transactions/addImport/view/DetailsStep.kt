@@ -54,7 +54,7 @@ internal fun DetailsStep(
     val analyticsManager: AnalyticsManager = koinInject()
     val setRecurring: (Boolean) -> Unit = { recurring ->
         analyticsManager.logEvent("transaction_recurring_toggled")
-        onEvent(AddTransactionEvent.SetRecurring(recurring))
+        onEvent(AddTransactionEvent.SetRecurringEvent(recurring))
     }
     val isMealVouchersPayment = state.isMealVouchersPayment
 
@@ -63,8 +63,8 @@ internal fun DetailsStep(
         CategorySelectionDialog(
             categories = state.categories,
             selectedCategory = state.selectedCategory,
-            onSelectCategory = { onEvent(AddTransactionEvent.SelectCategory(it)) },
-            onDismiss = { onEvent(AddTransactionEvent.DismissCategoryDialog) },
+            onSelectCategory = { onEvent(AddTransactionEvent.SelectCategoryEvent(it)) },
+            onDismiss = { onEvent(AddTransactionEvent.DismissCategoryDialogEvent) },
         )
     }
 
@@ -72,8 +72,8 @@ internal fun DetailsStep(
     if (state.showTypeDialog) {
         TypeSelectionDialog(
             selectedType = state.selectedType,
-            onSelectType = { onEvent(AddTransactionEvent.SelectType(it)) },
-            onDismiss = { onEvent(AddTransactionEvent.DismissTypeDialog) },
+            onSelectType = { onEvent(AddTransactionEvent.SelectTypeEvent(it)) },
+            onDismiss = { onEvent(AddTransactionEvent.DismissTypeDialogEvent) },
         )
     }
 
@@ -81,21 +81,21 @@ internal fun DetailsStep(
     if (state.showDatePicker) {
         val datePickerState = rememberDatePickerState(initialSelectedDateMillis = state.timestamp)
         DatePickerDialog(
-            onDismissRequest = { onEvent(AddTransactionEvent.DismissDatePicker) },
+            onDismissRequest = { onEvent(AddTransactionEvent.DismissDatePickerEvent) },
             confirmButton = {
                 TextButton(
                     onClick = {
                         datePickerState.selectedDateMillis?.let { date ->
-                            onEvent(AddTransactionEvent.UpdateTimestamp(date))
+                            onEvent(AddTransactionEvent.UpdateTimestampEvent(date))
                         }
-                        onEvent(AddTransactionEvent.DismissDatePicker)
+                        onEvent(AddTransactionEvent.DismissDatePickerEvent)
                     },
                 ) {
                     AppText(stringResource(R.string.common_confirm))
                 }
             },
             dismissButton = {
-                TextButton(onClick = { onEvent(AddTransactionEvent.DismissDatePicker) }) {
+                TextButton(onClick = { onEvent(AddTransactionEvent.DismissDatePickerEvent) }) {
                     AppText(stringResource(R.string.common_cancel))
                 }
             },
@@ -108,15 +108,15 @@ internal fun DetailsStep(
     if (state.showPaymentTypeDialog) {
         PaymentTypeSelectionDialog(
             selectedPaymentType = state.selectedPaymentType,
-            onSelectPaymentType = { onEvent(AddTransactionEvent.SelectPaymentType(it)) },
-            onDismiss = { onEvent(AddTransactionEvent.DismissPaymentTypeDialog) },
+            onSelectPaymentType = { onEvent(AddTransactionEvent.SelectPaymentTypeEvent(it)) },
+            onDismiss = { onEvent(AddTransactionEvent.DismissPaymentTypeDialogEvent) },
         )
     }
 
     // ── Dialog: Conferma eliminazione ──
     if (state.showDeleteConfirmDialog) {
         AlertDialog(
-            onDismissRequest = { onEvent(AddTransactionEvent.DismissDeleteConfirmDialog) },
+            onDismissRequest = { onEvent(AddTransactionEvent.DismissDeleteConfirmDialogEvent) },
             title = {
                 AppText(
                     text = stringResource(R.string.dialog_delete),
@@ -134,7 +134,7 @@ internal fun DetailsStep(
                 TextButton(
                     onClick = {
                         analyticsManager.logEvent("transaction_deleted")
-                        onEvent(AddTransactionEvent.ConfirmDelete)
+                        onEvent(AddTransactionEvent.ConfirmDeleteEvent)
                     },
                 ) {
                     AppText(
@@ -144,7 +144,7 @@ internal fun DetailsStep(
                 }
             },
             dismissButton = {
-                TextButton(onClick = { onEvent(AddTransactionEvent.DismissDeleteConfirmDialog) }) {
+                TextButton(onClick = { onEvent(AddTransactionEvent.DismissDeleteConfirmDialogEvent) }) {
                     AppText(stringResource(R.string.common_cancel))
                 }
             },
@@ -177,7 +177,7 @@ internal fun DetailsStep(
                     // Pulsante elimina (solo in modalità modifica)
                     if (state.isModifying) {
                         IconButton(
-                            onClick = { onEvent(AddTransactionEvent.ShowDeleteConfirmDialog) },
+                            onClick = { onEvent(AddTransactionEvent.ShowDeleteConfirmDialogEvent) },
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
@@ -208,17 +208,17 @@ internal fun DetailsStep(
                 selectedType = state.selectedType,
                 selectedPaymentType = state.selectedPaymentType,
                 timestamp = state.timestamp,
-                onEditCategory = { onEvent(AddTransactionEvent.EditCategory) },
-                onEditType = { onEvent(AddTransactionEvent.EditType) },
-                onEditDate = { onEvent(AddTransactionEvent.EditDate) },
-                onEditPaymentType = { onEvent(AddTransactionEvent.EditPaymentType) },
+                onEditCategory = { onEvent(AddTransactionEvent.EditCategoryEvent) },
+                onEditType = { onEvent(AddTransactionEvent.EditTypeEvent) },
+                onEditDate = { onEvent(AddTransactionEvent.EditDateEvent) },
+                onEditPaymentType = { onEvent(AddTransactionEvent.EditPaymentTypeEvent) },
             )
 
             // ── Titolo ──
             val analyticsManager: AnalyticsManager = koinInject()
             AutocompleteTextField(
                 value = state.title,
-                onValueChange = { onEvent(AddTransactionEvent.UpdateTitle(it)) },
+                onValueChange = { onEvent(AddTransactionEvent.UpdateTitleEvent(it)) },
                 suggestions = state.titleSuggestions,
                 label = stringResource(R.string.add_transaction_title_required),
                 modifier = Modifier.fillMaxWidth(),
@@ -238,7 +238,7 @@ internal fun DetailsStep(
             // ── Importo ──
             DetailsAmountField(
                 amount = state.amount,
-                onAmountChanged = { onEvent(AddTransactionEvent.UpdateAmount(it)) },
+                onAmountChanged = { onEvent(AddTransactionEvent.UpdateAmountEvent(it)) },
                 isMealVouchersPayment = state.isMealVouchersPayment,
                 selectedCategoryName = state.selectedCategory?.name,
                 selectedType = state.selectedType,
@@ -256,9 +256,9 @@ internal fun DetailsStep(
                 notesSuggestions = state.notesSuggestions,
                 payeeSuggestions = state.payeeSuggestions,
                 locationSuggestions = state.locationSuggestions,
-                onNotesChanged = { onEvent(AddTransactionEvent.UpdateNotes(it)) },
-                onPayeeChanged = { onEvent(AddTransactionEvent.UpdatePayee(it)) },
-                onLocationChanged = { onEvent(AddTransactionEvent.UpdateLocation(it)) },
+                onNotesChanged = { onEvent(AddTransactionEvent.UpdateNotesEvent(it)) },
+                onPayeeChanged = { onEvent(AddTransactionEvent.UpdatePayeeEvent(it)) },
+                onLocationChanged = { onEvent(AddTransactionEvent.UpdateLocationEvent(it)) },
             )
             VerticalSpacer(SpacingSize.SM)
 
@@ -268,8 +268,8 @@ internal fun DetailsStep(
                 mealVoucherValue = state.mealVoucherValue,
                 mealVoucherDifference = state.mealVoucherDifference,
                 totalAmount = String.format("%.2f", state.totalAmount),
-                onMealVoucherCountChanged = { onEvent(AddTransactionEvent.UpdateMealVoucherCount(it)) },
-                onMealVoucherDifferenceChanged = { onEvent(AddTransactionEvent.UpdateMealVoucherDifference(it)) },
+                onMealVoucherCountChanged = { onEvent(AddTransactionEvent.UpdateMealVoucherCountEvent(it)) },
+                onMealVoucherDifferenceChanged = { onEvent(AddTransactionEvent.UpdateMealVoucherDifferenceEvent(it)) },
                 isMealVouchersPayment = isMealVouchersPayment,
                 isExpenseType = state.selectedType == TransactionType.EXPENSE,
             )
@@ -280,7 +280,7 @@ internal fun DetailsStep(
             // ── Tags – Improved management with chips ──
             DetailsTagsSection(
                 tags = state.tags,
-                onTagsChange = { onEvent(AddTransactionEvent.UpdateTags(it)) },
+                onTagsChange = { onEvent(AddTransactionEvent.UpdateTagsEvent(it)) },
                 suggestions = state.tagsSuggestions,
             )
             VerticalSpacer(SpacingSize.SM)
@@ -290,7 +290,7 @@ internal fun DetailsStep(
                 isRecurring = state.isRecurring,
                 recurrenceInterval = state.recurrenceInterval,
                 onRecurringChanged = setRecurring,
-                onIntervalChanged = { onEvent(AddTransactionEvent.UpdateRecurrenceInterval(it)) },
+                onIntervalChanged = { onEvent(AddTransactionEvent.UpdateRecurrenceIntervalEvent(it)) },
             )
 
             // ── Errore ──
@@ -315,7 +315,7 @@ internal fun DetailsStep(
                     AppButton(
                         text = stringResource(R.string.add_transaction_previous),
                         modifier = Modifier.weight(1f),
-                        onClick = { onEvent(AddTransactionEvent.PreviousStep) },
+                        onClick = { onEvent(AddTransactionEvent.PreviousStepEvent) },
                     )
                 }
                 AppButton(
@@ -334,7 +334,7 @@ internal fun DetailsStep(
                             )
                         },
                     enabled = state.isFormValid,
-                    onClick = { onEvent(AddTransactionEvent.Submit) },
+                    onClick = { onEvent(AddTransactionEvent.SubmitEvent) },
                 )
             }
             VerticalSpacer(SpacingSize.MD)

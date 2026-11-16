@@ -1,6 +1,6 @@
 # Copilot Prompt Context - AntCashManager
 
-Questo file fornisce contesto locale per GitHub Copilot. **Tutte le regole dettagliate sono in [AGENTS.md](../../AGENTS.md)** - consultalo come source of truth.
+Questo file fornisce contesto locale per GitHub Copilot. **Tutte le regole dettagliate sono in [AGENTS.md](../../../AGENTS.md)** - consultalo come source of truth.
 
 ## Quick Reference
 
@@ -63,10 +63,10 @@ ui/screen/<feature>/
 
 ## Quick Links
 
-- **Complete Architecture Guide**: [AGENTS.md](../../AGENTS.md)
-- **Testing Agent**: [.github/agents/agent-unit-tests-mockk.agent.md](.github/agents/agent-unit-tests-mockk.agent.md)
+- **Complete Architecture Guide**: [AGENTS.md](../../../AGENTS.md)
+- **Testing Agent**: [agent-unit-tests-mockk.agent.md](../../agents/agent-unit-tests-mockk.agent.md)
 - **Clean Architecture Agent**: [AGENTS.md](../../../AGENTS.md)
-- **Agent Index**: [.github/agents/README.md](.github/agents/README.md)
+- **Agent Index**: [README.md](../../agents/README.md)
 
 ## When in Doubt
 

@@ -130,12 +130,12 @@ class TransactionsViewModel(
     private val transactionsFlow =
         getTransactionsUseCase()
             .map { it.getOrElse { emptyList() }.withCorrectAmounts() }
-            .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     private val categoriesFlow =
         getCategoriesUseCase()
             .map { it.getOrElse { emptyList() } }
-            .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     private val searchQueryFlow =
         _filterState
@@ -158,14 +158,15 @@ class TransactionsViewModel(
             _filterState.map { it.dateRangeTo }.distinctUntilChanged(),
             _filterState.map { it.selectedPresetIndex }.distinctUntilChanged(),
         ) { args: Array<Any?> ->
-            val transactions = args[0] as List<Transaction>
-            val query = args[1] as String
-            val category = args[2] as String?
-            val type = args[3] as TransactionType?
-            val payment = args[4] as PaymentType?
-            val storedFrom = args[5] as Long
-            val storedTo = args[6] as Long
-            val presetIndex = args[7] as Int
+            @Suppress("UNCHECKED_CAST")
+            val transactions = (args[0] as? List<Transaction>) ?: emptyList()
+            val query = (args[1] as? String) ?: ""
+            val category = args[2] as? String
+            val type = args[3] as? TransactionType
+            val payment = args[4] as? PaymentType
+            val storedFrom = (args[5] as? Long) ?: (System.currentTimeMillis() - TransactionsConstant.ONE_WEEK_MS)
+            val storedTo = (args[6] as? Long) ?: System.currentTimeMillis()
+            val presetIndex = (args[7] as? Int) ?: TransactionsConstant.DEFAULT_PRESET_INDEX
 
             // Per i preset relativi, ricalcola i bound dinamicamente al momento dell'esecuzione.
             // Il combine si riesegue ogni volta che transactionsFlow emette (Room insert/update),
@@ -320,26 +321,26 @@ class TransactionsViewModel(
         logDebug("Event: $event")
         when (event) {
             // Date range events
-            is TransactionsEvent.SelectPreset -> selectPreset(event.index)
-            is TransactionsEvent.SetDateRange -> setDateRange(event.from, event.to)
+            is TransactionsEvent.SelectPresetEvent -> selectPreset(event.index)
+            is TransactionsEvent.SetDateRangeEvent -> setDateRange(event.from, event.to)
 
             // Search & Filter events
-            is TransactionsEvent.UpdateSearchQuery -> updateSearchQuery(event.query)
-            is TransactionsEvent.UpdateCategoryFilter -> updateCategoryFilter(event.category)
-            is TransactionsEvent.UpdateTransactionTypeFilter -> updateTransactionTypeFilter(event.type)
-            is TransactionsEvent.UpdatePaymentTypeFilter -> updatePaymentTypeFilter(event.paymentType)
-            is TransactionsEvent.ToggleSearchExpanded -> toggleSearchExpanded()
-            is TransactionsEvent.ToggleFiltersExpanded -> toggleFiltersExpanded()
-            is TransactionsEvent.ApplyFilters -> applyFilters()
-            is TransactionsEvent.CancelFilterChanges -> cancelFilterChanges()
-            is TransactionsEvent.ClearAllFilters -> clearAllFilters()
-            is TransactionsEvent.SetDateFilterExpanded -> setDateFilterExpanded(event.expanded)
+            is TransactionsEvent.UpdateSearchQueryEvent -> updateSearchQuery(event.query)
+            is TransactionsEvent.UpdateCategoryFilterEvent -> updateCategoryFilter(event.category)
+            is TransactionsEvent.UpdateTransactionTypeFilterEvent -> updateTransactionTypeFilter(event.type)
+            is TransactionsEvent.UpdatePaymentTypeFilterEvent -> updatePaymentTypeFilter(event.paymentType)
+            is TransactionsEvent.ToggleSearchExpandedEvent -> toggleSearchExpanded()
+            is TransactionsEvent.ToggleFiltersExpandedEvent -> toggleFiltersExpanded()
+            is TransactionsEvent.ApplyFiltersEvent -> applyFilters()
+            is TransactionsEvent.CancelFilterChangesEvent -> cancelFilterChanges()
+            is TransactionsEvent.ClearAllFiltersEvent -> clearAllFilters()
+            is TransactionsEvent.SetDateFilterExpandedEvent -> setDateFilterExpanded(event.expanded)
 
             // Transaction CRUD events
-            is TransactionsEvent.AddTransactionClicked -> { // Navigation handled by Screen
+            is TransactionsEvent.AddTransactionClickedEvent -> { // Navigation handled by Screen
             }
 
-            is TransactionsEvent.AddTransaction ->
+            is TransactionsEvent.AddTransactionEvent ->
                 addTransaction(
                     title = event.title,
                     amount = event.amount,
@@ -354,23 +355,23 @@ class TransactionsViewModel(
                     recurrenceInterval = event.recurrenceInterval,
                 )
 
-            is TransactionsEvent.DeleteTransaction -> deleteTransaction(event.transaction)
-            is TransactionsEvent.UpdateTransaction -> updateTransaction(event.transaction)
+            is TransactionsEvent.DeleteTransactionEvent -> deleteTransaction(event.transaction)
+            is TransactionsEvent.UpdateTransactionEvent -> updateTransaction(event.transaction)
 
             // New UI state events (for split-pane & navigation)
-            is TransactionsEvent.ShowTransactionDetails -> { /* Handled by Screen for foldable sync */
+            is TransactionsEvent.ShowTransactionDetailsEvent -> { /* Handled by Screen for foldable sync */
             }
 
-            is TransactionsEvent.DismissTransactionDetails -> { /* Handled by Screen */
+            is TransactionsEvent.DismissTransactionDetailsEvent -> { /* Handled by Screen */
             }
 
-            is TransactionsEvent.HelpOpened -> { /* Navigation handled by Screen */
+            is TransactionsEvent.HelpOpenedEvent -> { /* Navigation handled by Screen */
             }
 
-            is TransactionsEvent.ReceiptScanOpened -> { /* Navigation handled by Screen */
+            is TransactionsEvent.ReceiptScanOpenedEvent -> { /* Navigation handled by Screen */
             }
 
-            is TransactionsEvent.AddTransactionOpened -> { /* Navigation handled by Screen */
+            is TransactionsEvent.AddTransactionOpenedEvent -> { /* Navigation handled by Screen */
             }
         }
     }

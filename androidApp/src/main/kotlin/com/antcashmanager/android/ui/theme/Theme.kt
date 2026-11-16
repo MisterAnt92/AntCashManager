@@ -1,3 +1,20 @@
+/**
+ * Material 3 theme implementation for AntCashManager.
+ *
+ * Features:
+ * - Dynamic color support (Material You on Android 12+)
+ * - Dark mode and high contrast modes
+ * - Accessibility support (large text, reduced motion)
+ * - Runtime theme switching via Composition Locals
+ * - 3 theme variants: Default (Light/Dark), Anna theme
+ *
+ * Usage:
+ *   AntCashManagerTheme(darkTheme = isSystemDarkMode) {
+ *       MyScreen()
+ *   }
+ *
+ * See: theme/README.md for full documentation
+ */
 package com.antcashmanager.android.ui.theme
 
 import android.app.Activity

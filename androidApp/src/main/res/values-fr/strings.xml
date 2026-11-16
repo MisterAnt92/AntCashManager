@@ -96,6 +96,26 @@
     <string name="icon_directions_bike">Sport</string>
     <string name="icon_shopping_cart">Courses</string>
     <string name="icon_coffee">Caf\u00e9</string>
+    <string name="icon_local_bar">Bar</string>
+    <string name="icon_local_cafe">Café</string>
+    <string name="icon_music_note">Musique</string>
+    <string name="icon_movie">Cinéma</string>
+    <string name="icon_sports_esports">Jeux vidéo</string>
+    <string name="icon_account_balance">Banque</string>
+    <string name="icon_credit_card">Paiements carte</string>
+    <string name="icon_smartphone">Téléphone/Télécom</string>
+    <string name="icon_laptop">Technologie</string>
+    <string name="icon_child_care">Enfants</string>
+    <string name="icon_local_gas_station">Carburant</string>
+    <string name="icon_build">Entretien</string>
+    <string name="icon_beach_access">Vacances</string>
+    <string name="icon_percent">Taxes/Frais</string>
+    <string name="icon_two_wheeler">Moto/Scooter</string>
+    <string name="icon_storefront">Boutique</string>
+    <string name="icon_umbrella">Assurance</string>
+    <string name="icon_sports_soccer">Sport</string>
+    <string name="icon_medication">Médicaments</string>
+    <string name="icon_elderly_woman">Aide aux aînés</string>
     <string name="icon_spa">Bien-\u00eatre</string>
     <string name="icon_card_giftcard">Titres-Restaurant</string>
 
@@ -156,7 +176,7 @@
     <string name="settings_theme_system">Par d\u00e9faut du syst\u00e8me</string>
     <string name="settings_language">Langue</string>
     <string name="settings_display">Affichage</string>
-    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
+    <string name="settings_display_subtitle">Personnalisez la devise, la mise en forme, les types de paiement et les préférences d\'affichage</string>
     <string name="settings_show_charts_section">Afficher la section Graphiques</string>
     <string name="settings_show_charts_section_visible">Section Graphiques visible dans la navigation</string>
     <string name="settings_show_charts_section_hidden">Section Graphiques masquée de la navigation</string>
@@ -200,6 +220,25 @@
     <string name="settings_section_data_privacy">Data &amp; Privacy</string>
     <string name="dialog_choose_date_format">Choisir le format de date</string>
     <string name="settings_data_management">Gestion des donn\u00e9es</string>
+    <string name="settings_profiles">Profili</string>
+    <string name="profiles_title">Profili</string>
+    <string name="profiles_add_button">Aggiungi profilo</string>
+    <string name="profiles_switch_dialog_title">Cambia profilo</string>
+    <string name="profiles_switch_dialog_message">Passare a %1$s?</string>
+    <string name="profiles_delete_dialog_title">Elimina profilo</string>
+    <string name="profiles_delete_dialog_warning">Eliminare %1$s e tutti i suoi dati? Questa azione non può essere annullata.</string>
+    <string name="profiles_default_name">Default</string>
+    <string name="profiles_active_badge">Attivo</string>
+    <string name="profiles_create_dialog_title">Nuovo profilo</string>
+    <string name="profiles_name_hint">Nome profilo</string>
+    <string name="profiles_edit_dialog_title">Modifier le profil</string>
+    <string name="profiles_section_title">Profil</string>
+    <string name="profiles_color_label">Couleur</string>
+    <string name="profiles_change_photo"></string>
+    <string name="profiles_share_transactions_title">Partager les transactions</string>
+    <string name="profiles_share_transactions_description">Visible pour tous les profils ayant cette option active</string>
+    <string name="profiles_share_transactions_create_description">Les transactions existantes seront partagées avec ce profil. Vous pourrez modifier cela ultérieurement.</string>
+    <string name="profiles_emoji_label">Avatar</string>
     <string name="settings_security">S\u00e9curit\u00e9</string>
     <string name="settings_security_data_encryption">Protection des donn\u00e9es - Chiffrement</string>
     <string name="settings_security_data_encryption_subtitle">Chiffre et prot\u00e8ge les donn\u00e9es locales de l\'application</string>
@@ -349,6 +388,8 @@
     <string name="payment_type_electronic">Paiement Électronique</string>
     <string name="payment_type_cash">Espèces</string>
     <string name="payment_type_meal_vouchers">Tickets Repas</string>
+    <string name="payment_type_meal_vouchers_with_cash">Titres-Restaurant + Espèces/Carte</string>
+    <string name="transaction_details_meal_vouchers_covered">Couvert par Titres</string>
     <string name="add_transaction_payment_type">Type de Paiement</string>
     <string name="add_transaction_select_payment_type">Sélectionner Type de Paiement</string>
     <string name="add_transaction_payment_type_electronic">Électronique</string>
@@ -438,6 +479,7 @@
     <string name="category_gifts">Cadeaux</string>
     <string name="category_subscriptions">Abonnements</string>
     <string name="category_personal_care">Bien-être</string>
+    <string name="category_meal_vouchers">Tickets restaurant</string>
     <string name="help_features_label">Caractéristiques:</string>
     <string name="common_help">Aide</string>
     <string name="help_home_title">Guide Accueil</string>
@@ -594,4 +636,26 @@
     <string name="transactions_help_title">@string/help_transactions_title</string>
     <string name="transactions_help_desc">@string/help_transactions_desc</string>
     <string name="transactions_details_empty">Sélectionnez une transaction pour voir les détails</string>
+
+    <!-- Meal Vouchers Card -->
+    <string name="home_meal_vouchers_title">Chèques Repas</string>
+    <string name="home_meal_vouchers_remaining">Restants</string>
+    <string name="home_meal_vouchers_received">Reçus</string>
+    <string name="home_meal_vouchers_used">Utilisés</string>
+    <string name="home_meal_vouchers_remaining_value">Valeur restante</string>
+    <string name="home_meal_vouchers_received_only_mode">Suivi uniquement</string>
+
+    <!-- Month names (short format) -->
+    <string name="month_short_1">Jan</string>
+    <string name="month_short_2">Fév</string>
+    <string name="month_short_3">Mar</string>
+    <string name="month_short_4">Avr</string>
+    <string name="month_short_5">Mai</string>
+    <string name="month_short_6">Jui</string>
+    <string name="month_short_7">Jul</string>
+    <string name="month_short_8">Aou</string>
+    <string name="month_short_9">Sep</string>
+    <string name="month_short_10">Oct</string>
+    <string name="month_short_11">Nov</string>
+    <string name="month_short_12">Déc</string>
 </resources>

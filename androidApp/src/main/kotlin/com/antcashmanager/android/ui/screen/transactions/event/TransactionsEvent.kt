@@ -13,50 +13,50 @@ import com.antcashmanager.domain.model.TransactionType
  */
 sealed interface TransactionsEvent {
     // Date range events
-    data class SelectPreset(
+    data class SelectPresetEvent(
         val index: Int,
     ) : TransactionsEvent
 
-    data class SetDateRange(
+    data class SetDateRangeEvent(
         val from: Long,
         val to: Long,
     ) : TransactionsEvent
 
     // Search & Filter events
-    data class UpdateSearchQuery(
+    data class UpdateSearchQueryEvent(
         val query: String,
     ) : TransactionsEvent
 
-    data class UpdateCategoryFilter(
+    data class UpdateCategoryFilterEvent(
         val category: String?,
     ) : TransactionsEvent
 
-    data class UpdateTransactionTypeFilter(
+    data class UpdateTransactionTypeFilterEvent(
         val type: TransactionType?,
     ) : TransactionsEvent
 
-    data class UpdatePaymentTypeFilter(
+    data class UpdatePaymentTypeFilterEvent(
         val paymentType: PaymentType?,
     ) : TransactionsEvent
 
-    data object ToggleSearchExpanded : TransactionsEvent
+    data object ToggleSearchExpandedEvent : TransactionsEvent
 
-    data object ToggleFiltersExpanded : TransactionsEvent
+    data object ToggleFiltersExpandedEvent : TransactionsEvent
 
-    data object ApplyFilters : TransactionsEvent
+    data object ApplyFiltersEvent : TransactionsEvent
 
-    data object CancelFilterChanges : TransactionsEvent
+    data object CancelFilterChangesEvent : TransactionsEvent
 
-    data object ClearAllFilters : TransactionsEvent
+    data object ClearAllFiltersEvent : TransactionsEvent
 
-    data class SetDateFilterExpanded(
+    data class SetDateFilterExpandedEvent(
         val expanded: Boolean,
     ) : TransactionsEvent
 
     // Transaction CRUD events
-    data object AddTransactionClicked : TransactionsEvent
+    data object AddTransactionClickedEvent : TransactionsEvent
 
-    data class AddTransaction(
+    data class AddTransactionEvent(
         val title: String,
         val amount: Double,
         val category: String,
@@ -70,23 +70,23 @@ sealed interface TransactionsEvent {
         val recurrenceInterval: String = "",
     ) : TransactionsEvent
 
-    data class DeleteTransaction(
+    data class DeleteTransactionEvent(
         val transaction: Transaction,
     ) : TransactionsEvent
 
-    data class UpdateTransaction(
+    data class UpdateTransactionEvent(
         val transaction: Transaction,
     ) : TransactionsEvent
 
-    data class ShowTransactionDetails(
+    data class ShowTransactionDetailsEvent(
         val index: Int,
     ) : TransactionsEvent
 
-    data object DismissTransactionDetails : TransactionsEvent
+    data object DismissTransactionDetailsEvent : TransactionsEvent
 
-    data object HelpOpened : TransactionsEvent
+    data object HelpOpenedEvent : TransactionsEvent
 
-    data object ReceiptScanOpened : TransactionsEvent
+    data object ReceiptScanOpenedEvent : TransactionsEvent
 
-    data object AddTransactionOpened : TransactionsEvent
+    data object AddTransactionOpenedEvent : TransactionsEvent
 }

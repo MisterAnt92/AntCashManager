@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+set -o pipefail
 
 # Navigate to project root
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -136,19 +137,11 @@ fi
 # ─── Generate Coverage Reports ──────────────────────────────────────────────
 if [ "$TEST_TYPE" = "all" ] || [ "$TEST_TYPE" = "coverage" ]; then
     echo ""
-    echo "▶️  Generating Coverage Reports (JaCoCo)..."
-    echo "   • :shared:testAndroidHostTest (with coverage)"
-    echo "   • :androidApp:testFullDebugUnitTest (with coverage)"
-    echo "   • jacocoTestDebugUnitTestReport"
+    echo "▶️  Generating Coverage Report (Kover)..."
+    echo "   • extra/scripts/run_coverage.sh"
     echo ""
 
-    ./gradlew \
-      :shared:testAndroidHostTest \
-      :androidApp:testFullDebugUnitTest \
-      :shared:testCoverageReport \
-      :androidApp:jacocoTestDebugUnitTestReport \
-      :androidApp:testCoverageReport \
-      --info 2>&1 | tee -a "$TEST_OUTPUT" || BUILD_STATUS=$?
+    ./extra/scripts/run_coverage.sh 2>&1 | tee -a "$TEST_OUTPUT" || BUILD_STATUS=$?
 fi
 
 # ─── Helper: aggrega i risultati da file TEST-*.xml JUnit ──────────────────────
@@ -245,64 +238,14 @@ fi
 
 # ─── Show Coverage Reports ────────────────────────────────────────────────────
 if [ "$TEST_TYPE" = "all" ] || [ "$TEST_TYPE" = "coverage" ]; then
-    echo "  📈 Coverage Reports (JaCoCo)"
+    echo "  📈 Coverage Report (Kover)"
     echo ""
 
-    # Try multiple possible paths for androidApp coverage
-    JACOCO_ANDROID_PATHS=(
-        "$PROJECT_ROOT/androidApp/build/reports/jacoco/jacocoTestDebugUnitTestReport/html/index.html"
-        "$PROJECT_ROOT/androidApp/build/reports/jacoco/jacocoConnectedDebugAndroidTestReport/html/index.html"
-        "$PROJECT_ROOT/androidApp/build/reports/coverage/debug/index.html"
-    )
-
-    JACOCO_ANDROID=""
-    for path in "${JACOCO_ANDROID_PATHS[@]}"; do
-        if [ -f "$path" ]; then
-            JACOCO_ANDROID="$path"
-            break
-        fi
-    done
-
-    # Try multiple possible paths for shared coverage
-    JACOCO_SHARED_PATHS=(
-        "$PROJECT_ROOT/shared/build/reports/jacoco/jacocoTestReport/html/index.html"
-        "$PROJECT_ROOT/shared/build/reports/jacoco/testAndroidHostTestCoverage/html/index.html"
-        "$PROJECT_ROOT/shared/build/reports/coverage/androidMain/index.html"
-    )
-
-    JACOCO_SHARED=""
-    for path in "${JACOCO_SHARED_PATHS[@]}"; do
-        if [ -f "$path" ]; then
-            JACOCO_SHARED="$path"
-            break
-        fi
-    done
-
-    COVERAGE_FOUND=false
-
-    if [ -n "$JACOCO_ANDROID" ]; then
-        printf "    📊 androidApp  →  file://%s\n" "$JACOCO_ANDROID"
-        COVERAGE_FOUND=true
+    KOVER_REPORT="$PROJECT_ROOT/build/reports/kover/html/index.html"
+    if [ -f "$KOVER_REPORT" ]; then
+        printf "    📊 Kover       →  file://%s\n" "$KOVER_REPORT"
     else
-        printf "    ⚠️  androidApp coverage report not found\n"
-    fi
-
-    if [ -n "$JACOCO_SHARED" ]; then
-        printf "    📊 shared      →  file://%s\n" "$JACOCO_SHARED"
-        COVERAGE_FOUND=true
-    else
-        printf "    ⚠️  shared coverage report not found\n"
-    fi
-
-    if [ "$COVERAGE_FOUND" = false ]; then
-        echo ""
-        echo "    💡 Tips to generate coverage reports:"
-        echo "       1. Make sure JaCoCo is enabled in build.gradle"
-        echo "       2. Run tests with coverage generation:"
-        echo "          ./gradlew :androidApp:testFullDebugUnitTest --info"
-        echo "          ./gradlew :shared:testAndroidHostTest --info"
-        echo ""
-        echo "       3. Look for 'Creating coverage report' in build output"
+        echo "    ⚠️  Kover report not found"
     fi
     echo ""
 fi
@@ -329,7 +272,7 @@ echo "  Types:"
 echo "    all              - Run unit, instrumentation, and coverage tests (default)"
 echo "    unit             - Run unit tests only (shared + androidApp)"
 echo "    instrumentation  - Run instrumentation tests (requires device/emulator)"
-echo "    coverage         - Run unit tests with coverage reports (JaCoCo)"
+echo "    coverage         - Run unit tests with a Kover coverage report"
 echo ""
 echo "  Examples:"
 echo "    ./extra/scripts/run-tests.sh"
@@ -358,9 +301,8 @@ echo ""
 echo "  # Run instrumentation tests:"
 echo "  ./gradlew :androidApp:connectedDebugAndroidTest"
 echo ""
-echo "  # Generate coverage reports:"
-echo "  ./gradlew :androidApp:testCoverageReport"
-echo "  ./gradlew :shared:testCoverageReport"
+echo "  # Generate the Kover coverage report:"
+echo "  ./extra/scripts/run_coverage.sh"
 echo ""
 echo "  # List connected devices:"
 echo "  adb devices"

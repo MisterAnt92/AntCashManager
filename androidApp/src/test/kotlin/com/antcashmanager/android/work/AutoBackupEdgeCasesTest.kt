@@ -1,22 +1,31 @@
 package com.antcashmanager.android.work
 
+import android.app.Application
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.work.ListenableWorker
 import androidx.work.testing.TestListenableWorkerBuilder
+import com.antcashmanager.android.analytics.AnalyticsManager
+import com.antcashmanager.android.analytics.tracker.ErrorTracker
+import com.antcashmanager.android.auth.GoogleSignInManager
 import com.antcashmanager.android.data.backup.BackupService
+import com.antcashmanager.android.drive.DriveUploadManager
+import com.antcashmanager.domain.model.BackupDestination
 import com.antcashmanager.domain.repository.SettingsRepository
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
+import org.robolectric.annotation.Config
 
 /**
  * Edge case and stress tests for AutoBackupWorker.
@@ -30,10 +39,12 @@ import org.koin.dsl.module
  * - Storage quota scenarios
  */
 @RunWith(AndroidJUnit4::class)
+@Config(application = Application::class)
 class AutoBackupEdgeCasesTest {
     private lateinit var context: Context
     private val settingsRepository: SettingsRepository = mockk(relaxed = true)
     private val backupService: BackupService = mockk(relaxed = true)
+    private val driveUploadManager: DriveUploadManager = mockk(relaxed = true)
 
     @Before
     fun setup() {
@@ -45,14 +56,26 @@ class AutoBackupEdgeCasesTest {
                 module {
                     single { settingsRepository }
                     single { backupService }
+                    single { mockk<GoogleSignInManager>(relaxed = true) }
+                    single { driveUploadManager }
+                    single { mockk<AnalyticsManager>(relaxed = true) }
+                    single { mockk<ErrorTracker>(relaxed = true) }
                 },
             )
         }
 
         coEvery { settingsRepository.getAutoBackupEnabled() } returns flowOf(true)
+        every { settingsRepository.getAutoBackupDestination() } returns flowOf(BackupDestination.GOOGLE_DRIVE)
         coEvery { settingsRepository.getAutoBackupFolderUri() } returns flowOf("content://test/uri")
         coEvery { settingsRepository.getDataEncryptionEnabled() } returns flowOf(false)
         coEvery { settingsRepository.setLastBackupTimestamp(any()) } returns Unit
+        coEvery { driveUploadManager.ensureFolderExists() } returns Result.success("backup-folder")
+        coEvery { driveUploadManager.uploadBackupFile(any(), any(), any(), any()) } returns Result.success("backup-file")
+    }
+
+    @After
+    fun tearDown() {
+        stopKoin()
     }
 
     @Test
@@ -176,6 +199,7 @@ class AutoBackupEdgeCasesTest {
     @Test
     fun null_or_empty_folder_uri_fails_gracefully() =
         runTest {
+            every { settingsRepository.getAutoBackupDestination() } returns flowOf(BackupDestination.LOCAL)
             coEvery { settingsRepository.getAutoBackupFolderUri() } returns flowOf(null)
             coEvery { backupService.createBackup() } returns Result.success("{\"data\":\"test\"}")
 
@@ -186,14 +210,14 @@ class AutoBackupEdgeCasesTest {
         }
 
     @Test
-    fun malformed_json_backup_fails_gracefully() =
+    fun malformed_backupPayload_isUploadedWithoutParsing() =
         runTest {
             coEvery { backupService.createBackup() } returns Result.success("{invalid json")
 
             val worker = TestListenableWorkerBuilder<AutoBackupWorker>(context).build()
             val result = worker.doWork()
 
-            assert(result == ListenableWorker.Result.failure() || result == ListenableWorker.Result.retry())
+            assert(result == ListenableWorker.Result.success())
         }
 
     // Helper functions

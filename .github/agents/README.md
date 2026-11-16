@@ -10,6 +10,7 @@ Le regole trasversali (git, workflow step-by-step, token, architettura, i18n, te
 | Scrivere o aggiornare unit test | `agent-unit-tests-mockk.agent.md` |
 | Rimuovere codice/risorse non usati | `agent-code-cleanup.agent.md` |
 | Feature completa (UseCase → VM → Screen → test) | i quattro agent sopra, in quest'ordine, uno step alla volta |
+| Verificare correttezza logiche di business, calcoli, filtri, UDF | `antcashmanager-logic-verify` (skill in `.claude/skills/`) |
 
 ## Convenzioni per questa cartella
 

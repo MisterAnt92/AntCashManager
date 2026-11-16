@@ -104,6 +104,26 @@
     <string name="icon_directions_bike">खेल</string>
     <string name="icon_shopping_cart">किराने का सामान</string>
     <string name="icon_coffee">कॉफ��</string>
+    <string name="icon_local_bar">बार</string>
+    <string name="icon_local_cafe">कैफे</string>
+    <string name="icon_music_note">संगीत</string>
+    <string name="icon_movie">सिनेमा</string>
+    <string name="icon_sports_esports">गेमिंग</string>
+    <string name="icon_account_balance">बैंकिंग</string>
+    <string name="icon_credit_card">कार्ड भुगतान</string>
+    <string name="icon_smartphone">फ़ोन/टेलीकॉम</string>
+    <string name="icon_laptop">तकनीक</string>
+    <string name="icon_child_care">बच्चे</string>
+    <string name="icon_local_gas_station">ईंधन</string>
+    <string name="icon_build">रखरखाव</string>
+    <string name="icon_beach_access">छुट्टी</string>
+    <string name="icon_percent">कर/शुल्क</string>
+    <string name="icon_two_wheeler">मोटरसाइकिल</string>
+    <string name="icon_storefront">दुकान</string>
+    <string name="icon_umbrella">बीमा</string>
+    <string name="icon_sports_soccer">खेल</string>
+    <string name="icon_medication">दवाइयाँ</string>
+    <string name="icon_elderly_woman">बुज़ुर्ग देखभाल</string>
     <string name="icon_spa">व्यक्तिगत देखभाल</string>
     <string name="icon_card_giftcard">भोजन वाउचर</string>
 
@@ -169,7 +189,7 @@
     <string name="settings_theme_system">सिस्टम डिफ़ॉल्ट</string>
     <string name="settings_language">भाषा</string>
     <string name="settings_display">डिस्प्ले</string>
-    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
+    <string name="settings_display_subtitle">मुद्रा, स्वरूपण, भुगतान प्रकार और प्रदर्शन प्राथमिकताएं अनुकूलित करें</string>
     <string name="settings_show_charts_section">चार्ट अनुभाग दिखाएं</string>
     <string name="settings_show_charts_section_visible">नेविगेशन में चार्ट अनुभाग दिखाई दे रहा है</string>
     <string name="settings_show_charts_section_hidden">नेविगेशन से चार्ट अनुभाग ��िपा हुआ है</string>
@@ -213,6 +233,25 @@
     <string name="settings_reduce_motion">मोशन कम करें</string>
     <string name="settings_reduce_motion_subtitle">एनिमेशन और ट्रांज़िशन को कम करें। मोश�� के प्रति संवेदनशील उपयोगकर्ताओं के लिए सहायक।</string>
     <string name="settings_data_management">डेटा प्रबंधन</string>
+    <string name="settings_profiles">Profili</string>
+    <string name="profiles_title">Profili</string>
+    <string name="profiles_add_button">Aggiungi profilo</string>
+    <string name="profiles_switch_dialog_title">Cambia profilo</string>
+    <string name="profiles_switch_dialog_message">Passare a %1$s?</string>
+    <string name="profiles_delete_dialog_title">Elimina profilo</string>
+    <string name="profiles_delete_dialog_warning">Eliminare %1$s e tutti i suoi dati? Questa azione non può essere annullata.</string>
+    <string name="profiles_default_name">Default</string>
+    <string name="profiles_active_badge">Attivo</string>
+    <string name="profiles_create_dialog_title">Nuovo profilo</string>
+    <string name="profiles_name_hint">Nome profilo</string>
+    <string name="profiles_edit_dialog_title">प्रोफ़ाइल संपादित करें</string>
+    <string name="profiles_section_title">प्रोफ़ाइल</string>
+    <string name="profiles_color_label">रंग</string>
+    <string name="profiles_change_photo"></string>
+    <string name="profiles_share_transactions_title">लेनदेन साझा करें</string>
+    <string name="profiles_share_transactions_description">इस विकल्प को सक्रिय करने वाले सभी प्रोफाइल को दिखाई देता है</string>
+    <string name="profiles_share_transactions_create_description">मौजूदा लेनदेन इस प्रोफ़ाइल के साथ साझा किए जाएंगे। आप इसे बाद में बदल सकते हैं।</string>
+    <string name="profiles_emoji_label">अवतार</string>
     <string name="settings_security">सुरक्षा</string>
     <string name="settings_security_data_encryption">डेटा सुरक्षा - एन्क्रिप्शन</string>
     <string name="settings_security_data_encryption_subtitle">स्थानीय ऐप डेटा को एन्क्रिप्ट और सुरक्षित करें</string>
@@ -379,6 +418,8 @@
     <string name="payment_type_electronic">इलेक्ट्रॉनिक भुगतान</string>
     <string name="payment_type_cash">नकद</string>
     <string name="payment_type_meal_vouchers">भोजन वाउचर</string>
+    <string name="payment_type_meal_vouchers_with_cash">मील वाउचर + नकद/कार्ड</string>
+    <string name="transaction_details_meal_vouchers_covered">वाउचर द्वारा कवर किया गया</string>
 
     <!-- Add Transaction Payment Type -->
     <string name="add_transaction_payment_type">भुगतान का प्रकार</string>
@@ -498,6 +539,7 @@
     <string name="category_gifts">उपहार</string>
     <string name="category_subscriptions">सदस्यताएं</string>
     <string name="category_personal_care">व्यक्तिगत देखभाल</string>
+    <string name="category_meal_vouchers">भोजन वाउचर</string>
 
     <!-- Receipt Scan Screen -->
     <string name="receipt_scan_title">रसीद स्कै��� करें</string>
@@ -650,4 +692,26 @@
     <string name="transactions_help_display_title">@string/settings_transaction_display</string>
     <string name="transactions_help_display_desc">@string/settings_transaction_display_desc</string>
     <string name="transactions_details_empty">विवरण देखने के लिए एक लेन-देन चुनें</string>
+
+    <!-- Meal Vouchers Card -->
+    <string name="home_meal_vouchers_title">भोजन वाउचर</string>
+    <string name="home_meal_vouchers_remaining">शेष</string>
+    <string name="home_meal_vouchers_received">प्राप्त</string>
+    <string name="home_meal_vouchers_used">उपयोग की गई</string>
+    <string name="home_meal_vouchers_remaining_value">शेष मूल्य</string>
+    <string name="home_meal_vouchers_received_only_mode">केवल ट्रैकिंग</string>
+
+    <!-- Month names (short format) -->
+    <string name="month_short_1">Jan</string>
+    <string name="month_short_2">Feb</string>
+    <string name="month_short_3">Mar</string>
+    <string name="month_short_4">Apr</string>
+    <string name="month_short_5">May</string>
+    <string name="month_short_6">Jun</string>
+    <string name="month_short_7">Jul</string>
+    <string name="month_short_8">Aug</string>
+    <string name="month_short_9">Sep</string>
+    <string name="month_short_10">Oct</string>
+    <string name="month_short_11">Nov</string>
+    <string name="month_short_12">Dec</string>
 </resources>

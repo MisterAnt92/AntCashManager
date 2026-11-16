@@ -30,8 +30,8 @@ Optional tablet equivalents can be stored in `tablet/` with the same naming patt
 When a device or emulator is connected, launch the English capture flow from the project root:
 
 ```bash
-cd /opt/src/GIT/app/AntCashManager/extra/icons
-bash store-assets/capture_screenshots.sh en
+# Dalla root del repository
+bash extra/icons/store-assets/capture_screenshots.sh en
 ```
 
 ## Notes
@@ -39,4 +39,3 @@ bash store-assets/capture_screenshots.sh en
 - Use localized English UI strings in the app before capture.
 - Avoid exposing personal data, real transactions, or sensitive information.
 - Review the final images before uploading them to Google Play Console.
-

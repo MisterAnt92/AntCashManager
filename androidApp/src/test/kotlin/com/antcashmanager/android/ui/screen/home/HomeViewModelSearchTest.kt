@@ -58,10 +58,12 @@ class HomeViewModelSearchTest : BaseUnitTest() {
     }
 
     @After
-    fun tearDown() {
+    override fun tearDownDispatchers() {
         if (::viewModel.isInitialized) {
             viewModel.viewModelScope.cancel()
+            testDispatcher.scheduler.advanceUntilIdle()
         }
+        super.tearDownDispatchers()
     }
 
     @Test
@@ -114,7 +116,7 @@ class HomeViewModelSearchTest : BaseUnitTest() {
             assertEquals(3, viewModel.state.value.filteredTransactions.size)
 
             // Apply search filter for "gro"
-            viewModel.onEvent(HomeEvent.UpdateSearchQuery("gro"))
+            viewModel.onEvent(HomeEvent.UpdateSearchQueryEvent("gro"))
             advanceUntilIdle()
 
             // Should filter to 2 transactions matching "gro" (case-insensitive)
@@ -157,13 +159,13 @@ class HomeViewModelSearchTest : BaseUnitTest() {
             advanceUntilIdle()
 
             // Set search query
-            viewModel.onEvent(HomeEvent.UpdateSearchQuery("Salary"))
+            viewModel.onEvent(HomeEvent.UpdateSearchQueryEvent("Salary"))
             advanceUntilIdle()
             assertEquals(1, viewModel.state.value.filteredTransactions.size)
             assertEquals("Salary", viewModel.state.value.searchQuery)
 
             // Clear search query
-            viewModel.onEvent(HomeEvent.UpdateSearchQuery(""))
+            viewModel.onEvent(HomeEvent.UpdateSearchQueryEvent(""))
             advanceUntilIdle()
 
             // Should return to showing all transactions
@@ -202,17 +204,17 @@ class HomeViewModelSearchTest : BaseUnitTest() {
             advanceUntilIdle()
 
             // Test lowercase search
-            viewModel.onEvent(HomeEvent.UpdateSearchQuery("salary"))
+            viewModel.onEvent(HomeEvent.UpdateSearchQueryEvent("salary"))
             advanceUntilIdle()
             assertEquals(1, viewModel.state.value.filteredTransactions.size)
 
             // Test uppercase search
-            viewModel.onEvent(HomeEvent.UpdateSearchQuery("SALARY"))
+            viewModel.onEvent(HomeEvent.UpdateSearchQueryEvent("SALARY"))
             advanceUntilIdle()
             assertEquals(1, viewModel.state.value.filteredTransactions.size)
 
             // Test mixed case search
-            viewModel.onEvent(HomeEvent.UpdateSearchQuery("SaLaRy"))
+            viewModel.onEvent(HomeEvent.UpdateSearchQueryEvent("SaLaRy"))
             advanceUntilIdle()
             assertEquals(1, viewModel.state.value.filteredTransactions.size)
 
@@ -257,7 +259,7 @@ class HomeViewModelSearchTest : BaseUnitTest() {
             advanceUntilIdle()
 
             // Test search with decimal point
-            viewModel.onEvent(HomeEvent.UpdateSearchQuery("85.50"))
+            viewModel.onEvent(HomeEvent.UpdateSearchQueryEvent("85.50"))
             advanceUntilIdle()
             assertEquals(1, viewModel.state.value.filteredTransactions.size)
             assertEquals(
@@ -268,7 +270,7 @@ class HomeViewModelSearchTest : BaseUnitTest() {
             )
 
             // Test search with comma separator
-            viewModel.onEvent(HomeEvent.UpdateSearchQuery("45,75"))
+            viewModel.onEvent(HomeEvent.UpdateSearchQueryEvent("45,75"))
             advanceUntilIdle()
             assertEquals(1, viewModel.state.value.filteredTransactions.size)
             assertEquals(
@@ -294,12 +296,12 @@ class HomeViewModelSearchTest : BaseUnitTest() {
             assertFalse(viewModel.state.value.isSearchExpanded)
 
             // Toggle to expand
-            viewModel.onEvent(HomeEvent.ToggleSearchExpanded)
+            viewModel.onEvent(HomeEvent.ToggleSearchExpandedEvent)
             advanceUntilIdle()
             assertTrue(viewModel.state.value.isSearchExpanded)
 
             // Toggle to collapse
-            viewModel.onEvent(HomeEvent.ToggleSearchExpanded)
+            viewModel.onEvent(HomeEvent.ToggleSearchExpandedEvent)
             advanceUntilIdle()
             assertFalse(viewModel.state.value.isSearchExpanded)
 
@@ -329,12 +331,12 @@ class HomeViewModelSearchTest : BaseUnitTest() {
             advanceUntilIdle()
 
             // Set search query
-            viewModel.onEvent(HomeEvent.UpdateSearchQuery("Salary"))
+            viewModel.onEvent(HomeEvent.UpdateSearchQueryEvent("Salary"))
             advanceUntilIdle()
             assertEquals("Salary", viewModel.state.value.searchQuery)
 
             // Toggle search expansion
-            viewModel.onEvent(HomeEvent.ToggleSearchExpanded)
+            viewModel.onEvent(HomeEvent.ToggleSearchExpandedEvent)
             advanceUntilIdle()
 
             // Query should persist
@@ -382,7 +384,7 @@ class HomeViewModelSearchTest : BaseUnitTest() {
             )
 
             // Set search query
-            viewModel.onEvent(HomeEvent.UpdateSearchQuery("Sal"))
+            viewModel.onEvent(HomeEvent.UpdateSearchQueryEvent("Sal"))
             advanceUntilIdle()
 
             // Suggestions should appear matching the query
@@ -421,7 +423,7 @@ class HomeViewModelSearchTest : BaseUnitTest() {
             advanceUntilIdle()
 
             // Set query and verify suggestions appear
-            viewModel.onEvent(HomeEvent.UpdateSearchQuery("Sal"))
+            viewModel.onEvent(HomeEvent.UpdateSearchQueryEvent("Sal"))
             advanceUntilIdle()
             assertTrue(
                 viewModel.state.value.searchSuggestions
@@ -429,7 +431,7 @@ class HomeViewModelSearchTest : BaseUnitTest() {
             )
 
             // Clear query
-            viewModel.onEvent(HomeEvent.UpdateSearchQuery(""))
+            viewModel.onEvent(HomeEvent.UpdateSearchQueryEvent(""))
             advanceUntilIdle()
 
             // Suggestions should disappear
@@ -472,7 +474,7 @@ class HomeViewModelSearchTest : BaseUnitTest() {
             advanceUntilIdle()
 
             // Search for something that doesn't exist
-            viewModel.onEvent(HomeEvent.UpdateSearchQuery("xyz"))
+            viewModel.onEvent(HomeEvent.UpdateSearchQueryEvent("xyz"))
             advanceUntilIdle()
 
             // Should return empty results

@@ -52,10 +52,12 @@ class HomeViewModelTest : BaseUnitTest() {
     }
 
     @After
-    fun tearDown() {
+    override fun tearDownDispatchers() {
         if (::viewModel.isInitialized) {
             viewModel.viewModelScope.cancel()
+            testDispatcher.scheduler.advanceUntilIdle()
         }
+        super.tearDownDispatchers()
     }
 
     @Test
@@ -103,7 +105,7 @@ class HomeViewModelTest : BaseUnitTest() {
             advanceUntilIdle()
 
             viewModel.onEvent(
-                HomeEvent.SetDateRange(
+                HomeEvent.SetDateRangeEvent(
                     0L,
                     Long.MAX_VALUE,
                 ),
@@ -201,7 +203,7 @@ class HomeViewModelTest : BaseUnitTest() {
             advanceUntilIdle()
 
             viewModel.onEvent(
-                HomeEvent.SetDateRange(
+                HomeEvent.SetDateRangeEvent(
                     0L,
                     Long.MAX_VALUE,
                 ),
@@ -241,7 +243,7 @@ class HomeViewModelTest : BaseUnitTest() {
             advanceUntilIdle()
 
             viewModel.onEvent(
-                HomeEvent.ShowTransactionDetails(
+                HomeEvent.ShowTransactionDetailsEvent(
                     transaction,
                 ),
             )
@@ -274,14 +276,14 @@ class HomeViewModelTest : BaseUnitTest() {
             advanceUntilIdle()
 
             viewModel.onEvent(
-                HomeEvent.ShowTransactionDetails(
+                HomeEvent.ShowTransactionDetailsEvent(
                     transaction,
                 ),
             )
             advanceUntilIdle()
             assertEquals(transaction, viewModel.state.value.selectedTransaction)
 
-            viewModel.onEvent(HomeEvent.DismissTransactionDetails)
+            viewModel.onEvent(HomeEvent.DismissTransactionDetailsEvent)
             advanceUntilIdle()
             assertEquals(null, viewModel.state.value.selectedTransaction)
             collectJob.cancel()
@@ -537,7 +539,7 @@ class HomeViewModelTest : BaseUnitTest() {
 
             // Ensure we are using CUSTOM filter with full range for this test
             testViewModel.onEvent(
-                HomeEvent.SetDateRange(
+                HomeEvent.SetDateRangeEvent(
                     0L,
                     Long.MAX_VALUE,
                 ),
@@ -586,7 +588,7 @@ class HomeViewModelTest : BaseUnitTest() {
 
             // Ensure we are using CUSTOM filter with full range for this test
             viewModel.onEvent(
-                HomeEvent.SetDateRange(
+                HomeEvent.SetDateRangeEvent(
                     0L,
                     Long.MAX_VALUE,
                 ),
@@ -658,7 +660,7 @@ class HomeViewModelTest : BaseUnitTest() {
             advanceUntilIdle()
 
             testViewModel.onEvent(
-                HomeEvent.SetDateRange(
+                HomeEvent.SetDateRangeEvent(
                     rangeFrom,
                     rangeTo,
                 ),
@@ -686,7 +688,7 @@ class HomeViewModelTest : BaseUnitTest() {
             advanceUntilIdle()
 
             viewModel.onEvent(
-                HomeEvent.SetDateRange(from, to),
+                HomeEvent.SetDateRangeEvent(from, to),
             )
             advanceUntilIdle()
 

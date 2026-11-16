@@ -244,7 +244,7 @@ internal fun WeekdayExpenseCard(
             VerticalSpacer(SpacingSize.SM)
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 (1..7).forEach { day ->
                     val expense = chartData.expenseByWeekday[day] ?: 0.0
@@ -262,16 +262,18 @@ internal fun WeekdayExpenseCard(
                     ) {
                         AppText(
                             text = dayLabel,
-                            style = MaterialTheme.typography.labelSmall,
+                            style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
-                        VerticalSpacer(SpacingSize.XXXS)
+                        VerticalSpacer(SpacingSize.XS)
                         AppText(
                             text = amountFormatted,
-                            style = MaterialTheme.typography.labelSmall,
+                            style = MaterialTheme.typography.bodySmall,
                             fontWeight = if (expense > 0.0) FontWeight.Bold else FontWeight.Normal,
+                            color = if (expense > 0.0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
+                            overflow = TextOverflow.Clip,
                         )
                     }
                 }

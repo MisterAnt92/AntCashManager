@@ -107,6 +107,26 @@
     <string name="icon_directions_bike">Спорт</string>
     <string name="icon_shopping_cart">Продукти</string>
     <string name="icon_coffee">Кава</string>
+    <string name="icon_local_bar">Бар</string>
+    <string name="icon_local_cafe">Кафе</string>
+    <string name="icon_music_note">Музика</string>
+    <string name="icon_movie">Кіно</string>
+    <string name="icon_sports_esports">Ігри</string>
+    <string name="icon_account_balance">Банк</string>
+    <string name="icon_credit_card">Оплата карткою</string>
+    <string name="icon_smartphone">Телефон/Зв\'язок</string>
+    <string name="icon_laptop">Технології</string>
+    <string name="icon_child_care">Діти</string>
+    <string name="icon_local_gas_station">Пальне</string>
+    <string name="icon_build">Обслуговування</string>
+    <string name="icon_beach_access">Відпустка</string>
+    <string name="icon_percent">Податки/Збори</string>
+    <string name="icon_two_wheeler">Мотоцикл</string>
+    <string name="icon_storefront">Магазин</string>
+    <string name="icon_umbrella">Страхування</string>
+    <string name="icon_sports_soccer">Спорт</string>
+    <string name="icon_medication">Ліки</string>
+    <string name="icon_elderly_woman">Догляд за літніми</string>
     <string name="icon_spa">Особистий догляд</string>
     <string name="icon_card_giftcard">Ваучери на їжу</string>
 
@@ -172,7 +192,7 @@
     <string name="settings_theme_system">Системна за замовчуванням</string>
     <string name="settings_language">Мова</string>
     <string name="settings_display">Дисплей</string>
-    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
+    <string name="settings_display_subtitle">Налаштуйте валюту, форматування, типи платежів та параметри відображення</string>
     <string name="settings_show_charts_section">Показати розділ графіків</string>
     <string name="settings_show_charts_section_visible">Розділ графіків видимий у навігації</string>
     <string name="settings_show_charts_section_hidden">Розділ графіків прихований у навігації</string>
@@ -216,6 +236,25 @@
     <string name="settings_reduce_motion">Зменшити рух</string>
     <string name="settings_reduce_motion_subtitle">Мінімізуйте анімації та переходи. Корисно для користувачів, чутливих до руху.</string>
     <string name="settings_data_management">Керування даними</string>
+    <string name="settings_profiles">Profili</string>
+    <string name="profiles_title">Profili</string>
+    <string name="profiles_add_button">Aggiungi profilo</string>
+    <string name="profiles_switch_dialog_title">Cambia profilo</string>
+    <string name="profiles_switch_dialog_message">Passare a %1$s?</string>
+    <string name="profiles_delete_dialog_title">Elimina profilo</string>
+    <string name="profiles_delete_dialog_warning">Eliminare %1$s e tutti i suoi dati? Questa azione non può essere annullata.</string>
+    <string name="profiles_default_name">Default</string>
+    <string name="profiles_active_badge">Attivo</string>
+    <string name="profiles_create_dialog_title">Nuovo profilo</string>
+    <string name="profiles_name_hint">Nome profilo</string>
+    <string name="profiles_edit_dialog_title">Редагувати профіль</string>
+    <string name="profiles_section_title">Профіль</string>
+    <string name="profiles_color_label">Колір</string>
+    <string name="profiles_change_photo"></string>
+    <string name="profiles_share_transactions_title">Поділитися транзакціями</string>
+    <string name="profiles_share_transactions_description">Видно всім профілям з активованою цією опцією</string>
+    <string name="profiles_share_transactions_create_description">Наявні транзакції буде поширено з цим профілем. Ви зможете змінити це пізніше.</string>
+    <string name="profiles_emoji_label">Аватар</string>
     <string name="settings_security">Безпека</string>
     <string name="settings_security_data_encryption">Захист даних - Шифрування</string>
     <string name="settings_security_data_encryption_subtitle">Шифрувати та захищати локальні дані додатка</string>
@@ -382,6 +421,8 @@
     <string name="payment_type_electronic">Безготівковий розрахунок</string>
     <string name="payment_type_cash">Готівка</string>
     <string name="payment_type_meal_vouchers">Ваучери на їжу</string>
+    <string name="payment_type_meal_vouchers_with_cash">Талони на харчування + Готівка/Картка</string>
+    <string name="transaction_details_meal_vouchers_covered">Покрито талонами</string>
 
     <!-- Add Transaction Payment Type -->
     <string name="add_transaction_payment_type">Тип платежу</string>
@@ -504,6 +545,7 @@
     <string name="category_gifts">Подарунки</string>
     <string name="category_subscriptions">Підписки</string>
     <string name="category_personal_care">Особистий догляд</string>
+    <string name="category_meal_vouchers">Продовольчі ваучери</string>
 
     <!-- Receipt Scan Screen -->
     <string name="receipt_scan_title">Сканувати чек</string>
@@ -656,4 +698,26 @@
     <string name="transactions_help_display_title">@string/settings_transaction_display</string>
     <string name="transactions_help_display_desc">@string/settings_transaction_display_desc</string>
     <string name="transactions_details_empty">Виберіть транзакцію, щоб переглянути деталі</string>
+
+    <!-- Meal Vouchers Card -->
+    <string name="home_meal_vouchers_title">Талони на харчування</string>
+    <string name="home_meal_vouchers_remaining">залишилось</string>
+    <string name="home_meal_vouchers_received">отримано</string>
+    <string name="home_meal_vouchers_used">використано</string>
+    <string name="home_meal_vouchers_remaining_value">залишкова вартість</string>
+    <string name="home_meal_vouchers_received_only_mode">Тільки відстеження</string>
+
+    <!-- Month names (short format) -->
+    <string name="month_short_1">Січ</string>
+    <string name="month_short_2">Лют</string>
+    <string name="month_short_3">Бер</string>
+    <string name="month_short_4">Кві</string>
+    <string name="month_short_5">Тра</string>
+    <string name="month_short_6">Чер</string>
+    <string name="month_short_7">Лип</string>
+    <string name="month_short_8">Сер</string>
+    <string name="month_short_9">Вер</string>
+    <string name="month_short_10">Жов</string>
+    <string name="month_short_11">Лис</string>
+    <string name="month_short_12">Гру</string>
 </resources>

@@ -51,6 +51,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.antcashmanager.android.ui.LocalLocale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -67,7 +68,6 @@ import com.antcashmanager.android.data.formatter.ShareTextFormatter
 import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
 import com.antcashmanager.android.navigation.ScreenHeaderConfig
 import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
-import com.antcashmanager.android.ui.components.dialog.HelpButton
 import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
@@ -105,6 +105,10 @@ import kotlin.math.abs
 fun ChartsScreen() {
     Logger.d(tag = "ChartsScreen") { "Displaying ChartsScreen" }
     val viewModel: ChartsViewModel = koinViewModel()
+    val appLocale = LocalLocale.current
+    LaunchedEffect(appLocale) {
+        viewModel.onEvent(ChartEvent.UpdateLocaleEvent(appLocale.toLanguageTag()))
+    }
     val chartData by viewModel.chartData.collectAsStateWithLifecycle()
     val dateRange by viewModel.dateRange.collectAsStateWithLifecycle()
     val selectedPresetIndex by viewModel.selectedPresetIndex.collectAsStateWithLifecycle()
@@ -120,8 +124,8 @@ fun ChartsScreen() {
         zoomEnabled = chartsZoomEnabled,
         chartsCardOrderRaw = chartsCardOrder,
         errorState = errorState,
-        onDateRangeChanged = { from, to -> viewModel.onEvent(ChartEvent.SetDateRange(from, to)) },
-        onPresetSelected = { preset -> viewModel.onEvent(ChartEvent.SetPresetRange(preset)) },
+        onDateRangeChanged = { from, to -> viewModel.onEvent(ChartEvent.SetDateRangeEvent(from, to)) },
+        onPresetSelected = { preset -> viewModel.onEvent(ChartEvent.SetPresetRangeEvent(preset)) },
         onEvent = viewModel::onEvent,
     )
 }
@@ -161,13 +165,13 @@ internal fun ChartsContent(
     val foldingFeature = adaptiveLayoutInfo.foldingFeature
     val isGridLayout = adaptiveLayoutInfo.isExpanded && !adaptiveLayoutInfo.hasFold
 
-    val dateFormat = remember { SimpleDateFormat("dd MMM yyyy", Locale.getDefault()) }
+    val appLocale = LocalLocale.current
+    val dateFormat = remember(appLocale) { SimpleDateFormat("dd MMM yyyy", appLocale) }
     val fmt = LocalCurrencyFormat.current
     val shareLabel = stringResource(R.string.share)
     var selectedPreset by remember { mutableIntStateOf(initialPresetIndex) }
     var showFromPicker by remember { mutableStateOf(false) }
     var showToPicker by remember { mutableStateOf(false) }
-    var showHelpDialog by remember { mutableStateOf(false) }
     var isVisualizationsSectionExpanded by remember { mutableStateOf(true) }
     var selectedChartDetails by remember { mutableStateOf<ChartDetailsData?>(null) }
 
@@ -210,11 +214,6 @@ internal fun ChartsContent(
         }
     }
 
-    // Help dialog
-    if (showHelpDialog) {
-        HelpDialog(onDismiss = { showHelpDialog = false })
-    }
-
     // Configure screen header with actions
     val headerConfigCallback = LocalScreenHeaderConfigCallback.current
     val chartsTitle = stringResource(R.string.common_charts)
@@ -224,14 +223,6 @@ internal fun ChartsContent(
                 title = chartsTitle,
                 hasOrderOption = true,
                 onOrderClick = { showChartsCardsOrderDialog = true },
-                actions = {
-                    HelpButton(
-                        onHelpClick = {
-                            analyticsManager.logEvent("chart_help_opened")
-                            showHelpDialog = true
-                        },
-                    )
-                },
             ),
         )
     }
@@ -265,7 +256,7 @@ internal fun ChartsContent(
             onDismiss = { showChartsCardsOrderDialog = false },
             onConfirm = {
                 // Persist card order to settings for backup/restore
-                onEvent(ChartEvent.SetChartCardsOrder(localChartsCardOrderRaw))
+                onEvent(ChartEvent.SetChartCardsOrderEvent(localChartsCardOrderRaw))
                 showChartsCardsOrderDialog = false
             },
         )

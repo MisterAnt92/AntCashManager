@@ -166,6 +166,11 @@ open class FakeTransactionRepository(
         )
     }
 
+    override suspend fun deleteAllTransactionsForProfile(profileId: Long) {
+        applyDelayAndMaybeThrow()
+        transactions.value = emptyList()
+    }
+
     private fun distinctValuesOf(
         since: Long,
         selector: (Transaction) -> String,

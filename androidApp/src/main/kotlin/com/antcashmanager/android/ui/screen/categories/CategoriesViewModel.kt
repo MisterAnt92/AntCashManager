@@ -62,12 +62,12 @@ class CategoriesViewModel(
     override fun onEvent(event: CategoryEvent) {
         logDebug("Event: $event")
         when (event) {
-            is CategoryEvent.AddCategory -> addCategory(event.name, event.icon, event.color, event.type)
-            is CategoryEvent.UpdateCategory -> updateCategory(event.category)
-            is CategoryEvent.DeleteCategory -> deleteCategory(event.category)
-            is CategoryEvent.SetCategoryHidden -> setCategoryHidden(event.category, event.hidden)
-            is CategoryEvent.ReorderCategories -> reorderCategories(event.reordered)
-            is CategoryEvent.RetryLastOperation -> logInfo("Retry requested")
+            is CategoryEvent.AddCategoryEvent -> addCategory(event.name, event.icon, event.color, event.type)
+            is CategoryEvent.UpdateCategoryEvent -> updateCategory(event.category)
+            is CategoryEvent.DeleteCategoryEvent -> deleteCategory(event.category)
+            is CategoryEvent.SetCategoryHiddenEvent -> setCategoryHidden(event.category, event.hidden)
+            is CategoryEvent.ReorderCategoriesEvent -> reorderCategories(event.reordered)
+            is CategoryEvent.RetryLastOperationEvent -> logInfo("Retry requested")
         }
     }
 

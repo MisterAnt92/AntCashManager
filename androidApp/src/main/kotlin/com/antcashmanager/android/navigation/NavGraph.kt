@@ -25,10 +25,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -44,7 +44,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -89,9 +88,10 @@ import com.antcashmanager.android.ui.screen.tutorial.TutorialScreen
 import com.antcashmanager.android.util.AppExitManager.safeFinish
 import com.antcashmanager.android.util.LocalAmountsMasked
 import com.antcashmanager.android.util.LocalCurrencyFormat
+import com.antcashmanager.domain.manager.ProfileManager
 import com.antcashmanager.domain.model.CurrencyFormat
-import com.antcashmanager.domain.repository.SettingsRepository
-import kotlinx.coroutines.launch
+import com.antcashmanager.domain.usecase.profile.GetProfilesUseCase
+import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
 /**
@@ -100,33 +100,30 @@ import org.koin.compose.koinInject
  */
 @Composable
 fun AntCashManagerNavHost() {
-    val settingsRepository: SettingsRepository = koinInject()
+    val navSettingsViewModel: NavSettingsViewModel = koinViewModel()
+    val navSettings by navSettingsViewModel.state.collectAsStateWithLifecycle()
     val analyticsManager: AnalyticsManager = koinInject()
     val performanceTracker: PerformanceTracker = koinInject()
+    val profileManager: ProfileManager = koinInject()
+    val getProfilesUseCase: GetProfilesUseCase = koinInject()
+    val profilesResult by getProfilesUseCase().collectAsStateWithLifecycle(
+        initialValue = Result.success(emptyList()),
+    )
+    val activeProfileId by profileManager.activeProfileId.collectAsStateWithLifecycle()
+    val activeProfile = profilesResult.getOrNull()?.firstOrNull { it.id == activeProfileId }
 
     val navController = rememberNavController()
-    val showCharts by settingsRepository.getShowCharts().collectAsStateWithLifecycle(initialValue = true)
-    val isTutorialCompleted by settingsRepository
-        .getIsTutorialCompleted()
-        .collectAsStateWithLifecycle(initialValue = null)
-    val currencySymbol by settingsRepository.getCurrencySymbol().collectAsStateWithLifecycle(initialValue = "\u20ac")
-    val decimalDigits by settingsRepository.getDecimalDigits().collectAsStateWithLifecycle(initialValue = 2)
-    val decimalSeparator by settingsRepository.getDecimalSeparator().collectAsStateWithLifecycle(initialValue = ",")
-    val thousandsSeparator by settingsRepository
-        .getThousandsSeparator()
-        .collectAsStateWithLifecycle(initialValue = "")
-    val maskAmounts by settingsRepository.getMaskAmounts().collectAsStateWithLifecycle(initialValue = false)
-    // null = never asked (loading/undecided); false = denied; true = granted
-    val analyticsConsent by settingsRepository
-        .getAnalyticsConsent()
-        .collectAsStateWithLifecycle(initialValue = false)
+    val showCharts = navSettings.showCharts
+    val isTutorialCompleted = navSettings.isTutorialCompleted
+    val maskAmounts = navSettings.maskAmounts
+    val analyticsConsent = navSettings.analyticsConsent
 
     val currencyFormat =
         CurrencyFormat(
-            currencySymbol = currencySymbol,
-            decimalDigits = decimalDigits,
-            decimalSeparator = decimalSeparator,
-            thousandsSeparator = thousandsSeparator,
+            currencySymbol = navSettings.currencySymbol,
+            decimalDigits = navSettings.decimalDigits,
+            decimalSeparator = navSettings.decimalSeparator,
+            thousandsSeparator = navSettings.thousandsSeparator,
         )
 
     if (isTutorialCompleted != null) {
@@ -138,18 +135,13 @@ fun AntCashManagerNavHost() {
             // GDPR consent dialog: shown once after tutorial, before any analytics event.
             // analyticsConsent == null means never asked (loading sentinel = false keeps it
             // from flashing during first composition while DataStore initialises).
-            val consentScope = rememberCoroutineScope()
-            if (isTutorialCompleted == true && analyticsConsent == null) {
+            if (isTutorialCompleted && analyticsConsent == null) {
                 AnalyticsConsentDialog(
                     onAccept = {
-                        consentScope.launch(kotlinx.coroutines.Dispatchers.IO) {
-                            settingsRepository.setAnalyticsConsent(true)
-                        }
+                        navSettingsViewModel.onEvent(NavSettingsEvent.SetAnalyticsConsentEvent(true))
                     },
                     onDecline = {
-                        consentScope.launch(kotlinx.coroutines.Dispatchers.IO) {
-                            settingsRepository.setAnalyticsConsent(false)
-                        }
+                        navSettingsViewModel.onEvent(NavSettingsEvent.SetAnalyticsConsentEvent(false))
                     },
                 )
             }
@@ -215,7 +207,13 @@ fun AntCashManagerNavHost() {
 
             BackHandler {
                 when {
-                    isSidebarOpen -> isSidebarOpen = false
+                    isSidebarOpen -> {
+                        analyticsManager.logEvent(
+                            "sidebar_toggled",
+                            android.os.Bundle().apply { putBoolean("isOpen", false) },
+                        )
+                        isSidebarOpen = false
+                    }
                     showExitDialog -> showExitDialog = false
                     isOnTopLevelRoute -> {
                         showExitDialog = true
@@ -382,6 +380,11 @@ fun AntCashManagerNavHost() {
                                     composable(AppRoute.SettingsRoute.DataManagement.route) {
                                         SettingsDataScreen(navController = navController)
                                     }
+                                    composable(AppRoute.SettingsRoute.Profiles.route) {
+                                        com.antcashmanager.android.ui.screen.settings.profiles.ProfilesScreen(
+                                            navController = navController,
+                                        )
+                                    }
                                 }
 
                                 composable(AppRoute.BottomRoute.Tutorial.route) {
@@ -415,183 +418,193 @@ fun AntCashManagerNavHost() {
                         }
                     }
 
-                    if (isTutorialCompleted == true && adaptiveLayoutInfo.preferRailNavigation && !isOnTutorial && !isOnSubScreen) {
+                    if (adaptiveLayoutInfo.preferRailNavigation) {
+                        // TABLET: struttura stabile Column > Row indipendente dallo stato del tutorial.
+                        // NavHost è SEMPRE a Row[1]; solo la topbar e il rail si mostrano/nascondono.
                         Column(
                             modifier =
                                 Modifier
                                     .fillMaxSize()
-                                    .padding(innerPadding),
+                                    .padding(if (isOnTutorial) PaddingValues() else innerPadding),
                         ) {
-                            // Top bar con pulsanti (Search, Filter, Sort, Helper) - senza Hamburger menu su tablet
-                            if (!isOnTutorial && !isOnSubScreen) {
-                                Row(
-                                    modifier =
-                                        Modifier
-                                            .fillMaxWidth()
-                                            .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                ) {
-                                    // Screen Title (left side)
-                                    if (screenHeaderConfig.title.isNotEmpty()) {
-                                        AppText(
-                                            text = screenHeaderConfig.title,
-                                            style = MaterialTheme.typography.headlineSmall,
-                                            fontWeight = FontWeight.Bold,
-                                            color = MaterialTheme.colorScheme.onBackground,
-                                        )
-                                    }
-
-                                    // Filter/Order/Search Icons (right side) - Tablet version (senza hamburger)
+                            // Top bar placeholder – SEMPRE a Column[0], può essere vuoto
+                            Box(modifier = Modifier.fillMaxWidth()) {
+                                if (isTutorialCompleted == true && !isOnTutorial && !isOnSubScreen) {
                                     Row(
+                                        modifier =
+                                            Modifier
+                                                .fillMaxWidth()
+                                                .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
                                         verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
                                     ) {
-                                        // Search Icon
-                                        if (screenHeaderConfig.showSearchIcon) {
-                                            IconButton(
-                                                onClick = { screenHeaderConfig.onSearchClick?.invoke() },
-                                                modifier =
-                                                    Modifier
-                                                        .size(48.dp)
-                                                        .testTag("header_search_icon"),
-                                            ) {
-                                                Icon(
-                                                    imageVector = Icons.Default.Search,
-                                                    contentDescription = "Search",
-                                                    modifier = Modifier.size(24.dp),
-                                                    tint = MaterialTheme.colorScheme.primary,
-                                                )
-                                            }
+                                        // Screen Title (left side)
+                                        if (screenHeaderConfig.title.isNotEmpty()) {
+                                            AppText(
+                                                text = screenHeaderConfig.title,
+                                                style = MaterialTheme.typography.headlineSmall,
+                                                fontWeight = FontWeight.Bold,
+                                                color = MaterialTheme.colorScheme.onBackground,
+                                            )
                                         }
 
-                                        // Filter Icon with Badge
-                                        if (screenHeaderConfig.onFilterClick != null) {
-                                            IconButton(
-                                                onClick = { screenHeaderConfig.onFilterClick!!.invoke() },
-                                                modifier = Modifier.size(48.dp),
-                                            ) {
-                                                Box {
+                                        // Filter/Order/Search Icons (right side) - Tablet version (senza hamburger)
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                        ) {
+                                            // Search Icon
+                                            if (screenHeaderConfig.showSearchIcon) {
+                                                IconButton(
+                                                    onClick = { screenHeaderConfig.onSearchClick?.invoke() },
+                                                    modifier =
+                                                        Modifier
+                                                            .size(48.dp)
+                                                            .testTag("header_search_icon"),
+                                                ) {
                                                     Icon(
-                                                        imageVector = Icons.Default.FilterList,
-                                                        contentDescription = "Filtri",
+                                                        imageVector = Icons.Default.Search,
+                                                        contentDescription = "Search",
                                                         modifier = Modifier.size(24.dp),
                                                         tint = MaterialTheme.colorScheme.primary,
                                                     )
-                                                    // Badge for active filters
-                                                    if (screenHeaderConfig.filterCount > 0) {
-                                                        Surface(
-                                                            shape = CircleShape,
-                                                            color = MaterialTheme.colorScheme.error,
-                                                            modifier =
-                                                                Modifier
-                                                                    .size(18.dp)
-                                                                    .align(Alignment.TopEnd)
-                                                                    .padding(top = 2.dp, end = 2.dp),
-                                                        ) {
-                                                            AppText(
-                                                                text = screenHeaderConfig.filterCount.toString(),
-                                                                style = MaterialTheme.typography.labelSmall,
-                                                                color = MaterialTheme.colorScheme.onError,
+                                                }
+                                            }
+
+                                            // Filter Icon with Badge
+                                            if (screenHeaderConfig.onFilterClick != null) {
+                                                IconButton(
+                                                    onClick = { screenHeaderConfig.onFilterClick!!.invoke() },
+                                                    modifier = Modifier.size(48.dp),
+                                                ) {
+                                                    Box {
+                                                        Icon(
+                                                            imageVector = Icons.Default.FilterList,
+                                                            contentDescription = "Filtri",
+                                                            modifier = Modifier.size(24.dp),
+                                                            tint = MaterialTheme.colorScheme.primary,
+                                                        )
+                                                        // Badge for active filters
+                                                        if (screenHeaderConfig.filterCount > 0) {
+                                                            Surface(
+                                                                shape = CircleShape,
+                                                                color = MaterialTheme.colorScheme.error,
                                                                 modifier =
                                                                     Modifier
-                                                                        .padding(2.dp)
-                                                                        .align(Alignment.Center),
-                                                            )
+                                                                        .size(18.dp)
+                                                                        .align(Alignment.TopEnd)
+                                                                        .padding(top = 2.dp, end = 2.dp),
+                                                            ) {
+                                                                AppText(
+                                                                    text = screenHeaderConfig.filterCount.toString(),
+                                                                    style = MaterialTheme.typography.labelSmall,
+                                                                    color = MaterialTheme.colorScheme.onError,
+                                                                    modifier =
+                                                                        Modifier
+                                                                            .padding(2.dp)
+                                                                            .align(Alignment.Center),
+                                                                )
+                                                            }
                                                         }
                                                     }
                                                 }
                                             }
-                                        }
 
-                                        // Sort/Order Icon
-                                        if (screenHeaderConfig.hasOrderOption) {
-                                            IconButton(
-                                                onClick = { screenHeaderConfig.onOrderClick?.invoke() },
-                                                modifier = Modifier.size(48.dp),
-                                            ) {
-                                                Icon(
-                                                    imageVector = Icons.Default.Sort,
-                                                    contentDescription = "Ordinamento",
-                                                    modifier = Modifier.size(24.dp),
-                                                    tint = MaterialTheme.colorScheme.primary,
-                                                )
+                                            // Sort/Order Icon
+                                            if (screenHeaderConfig.hasOrderOption) {
+                                                IconButton(
+                                                    onClick = { screenHeaderConfig.onOrderClick?.invoke() },
+                                                    modifier = Modifier.size(48.dp),
+                                                ) {
+                                                    Icon(
+                                                        imageVector = Icons.AutoMirrored.Filled.Sort,
+                                                        contentDescription = "Ordinamento",
+                                                        modifier = Modifier.size(24.dp),
+                                                        tint = MaterialTheme.colorScheme.primary,
+                                                    )
+                                                }
                                             }
-                                        }
 
-                                        // Action Buttons (dynamic) - Helper button
-                                        if (screenHeaderConfig.actions != null) {
-                                            screenHeaderConfig.actions!!()
+                                            // Action Buttons (dynamic) - Helper button
+                                            if (screenHeaderConfig.actions != null) {
+                                                screenHeaderConfig.actions!!()
+                                            }
                                         }
                                     }
                                 }
                             }
 
-                            // Navigation Rail + Content
+                            // Navigation Rail + Content – SEMPRE a Column[1]
                             Row(
                                 modifier = Modifier.fillMaxSize(),
                             ) {
-                                Surface(
-                                    tonalElevation = 4.dp,
-                                    shadowElevation = 6.dp,
-                                    shape = RoundedCornerShape(24.dp),
-                                    color = MaterialTheme.colorScheme.surfaceContainerLow,
-                                    modifier =
-                                        Modifier
-                                            .padding(
-                                                start = railPaddingStart,
-                                                top = 12.dp,
-                                                end = railPaddingEnd,
-                                                bottom = 12.dp,
-                                            )
-                                            .width(railContainerWidth)
-                                            .fillMaxHeight(),
-                                ) {
-                                    NavigationRail(
-                                        modifier =
-                                            Modifier
-                                                .fillMaxHeight()
-                                                .padding(vertical = 8.dp),
-                                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                                    ) {
-                                        visibleNavItems.forEach { item ->
-                                            NavigationRailItem(
-                                                selected =
-                                                    currentDestination?.hierarchy?.any {
-                                                        it.route == item.route
-                                                    } == true,
-                                                onClick = {
-                                                    val params =
-                                                        android.os.Bundle().apply {
-                                                            putString("destination", item.route)
-                                                        }
-                                                    analyticsManager.logEvent("sidebar_navigation_clicked", params)
-                                                    navController.navigateToBottomTab(item.route)
-                                                },
-                                                icon = {
-                                                    Icon(
-                                                        imageVector = item.icon,
-                                                        contentDescription = stringResource(item.titleResId),
+                                // Rail placeholder – SEMPRE a Row[0], può essere vuoto
+                                Box {
+                                    if (isTutorialCompleted == true && !isOnTutorial && !isOnSubScreen) {
+                                        Surface(
+                                            tonalElevation = 4.dp,
+                                            shadowElevation = 6.dp,
+                                            shape = RoundedCornerShape(24.dp),
+                                            color = MaterialTheme.colorScheme.surfaceContainerLow,
+                                            modifier =
+                                                Modifier
+                                                    .padding(
+                                                        start = railPaddingStart,
+                                                        top = 12.dp,
+                                                        end = railPaddingEnd,
+                                                        bottom = 12.dp,
                                                     )
-                                                },
-                                                label = {
-                                                    AppText(
-                                                        text = stringResource(item.titleResId),
-                                                        maxLines = 1,
-                                                        overflow = TextOverflow.Ellipsis,
+                                                    .width(railContainerWidth)
+                                                    .fillMaxHeight(),
+                                        ) {
+                                            NavigationRail(
+                                                modifier =
+                                                    Modifier
+                                                        .fillMaxHeight()
+                                                        .padding(vertical = 8.dp),
+                                                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                                            ) {
+                                                visibleNavItems.forEach { item ->
+                                                    NavigationRailItem(
+                                                        selected =
+                                                            currentDestination?.hierarchy?.any {
+                                                                it.route == item.route
+                                                            } == true,
+                                                        onClick = {
+                                                            val params =
+                                                                android.os.Bundle().apply {
+                                                                    putString("destination", item.route)
+                                                                }
+                                                            analyticsManager.logEvent("sidebar_navigation_clicked", params)
+                                                            navController.navigateToBottomTab(item.route)
+                                                        },
+                                                        icon = {
+                                                            Icon(
+                                                                imageVector = item.icon,
+                                                                contentDescription = stringResource(item.titleResId),
+                                                            )
+                                                        },
+                                                        label = {
+                                                            AppText(
+                                                                text = stringResource(item.titleResId),
+                                                                maxLines = 1,
+                                                                overflow = TextOverflow.Ellipsis,
+                                                            )
+                                                        },
+                                                        alwaysShowLabel = true,
                                                     )
-                                                },
-                                                alwaysShowLabel = true,
-                                            )
+                                                }
+                                            }
                                         }
                                     }
                                 }
-
+                                // NavHost – SEMPRE a Row[1]
                                 navHostContent(Modifier.weight(1f))
                             }
                         }
-                    } else if (isTutorialCompleted == true) {
-                        // Per dispositivi NON tablet: Sidebar scorrevole (drawer-style) + Content con BottomBar
+                    } else {
+                        // PHONE: struttura stabile Box > Box > Column indipendente dallo stato del tutorial.
+                        // NavHost è SEMPRE a Column[1]; solo la topbar si mostra/nasconde.
                         Box(
                             modifier = Modifier.fillMaxSize(),
                         ) {
@@ -605,148 +618,144 @@ fun AntCashManagerNavHost() {
                                 Column(
                                     modifier = Modifier.fillMaxSize(),
                                 ) {
-                                    // Top bar con hamburger menu - nascosto su Tutorial e sub-screens
-                                    if (!isOnTutorial && !isOnSubScreen) {
-                                        Row(
-                                            modifier =
-                                                Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                        ) {
+                                    // Top bar placeholder – SEMPRE a Column[0], può essere vuoto
+                                    Box(modifier = Modifier.fillMaxWidth()) {
+                                        if (isTutorialCompleted == true && !isOnTutorial && !isOnSubScreen) {
                                             Row(
+                                                modifier =
+                                                    Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
                                                 verticalAlignment = Alignment.CenterVertically,
-                                                modifier = Modifier.weight(1f),
-                                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                                horizontalArrangement = Arrangement.SpaceBetween,
                                             ) {
-                                                // Hamburger Menu
-                                                IconButton(
-                                                    onClick = {
-                                                        val params =
-                                                            android.os.Bundle().apply {
-                                                                putBoolean("isOpen", !isSidebarOpen)
-                                                            }
-                                                        analyticsManager.logEvent("sidebar_toggled", params)
-                                                        isSidebarOpen = !isSidebarOpen
-                                                    },
-                                                    modifier = Modifier.size(48.dp),
+                                                Row(
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    modifier = Modifier.weight(1f),
+                                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                                                 ) {
-                                                    Icon(
-                                                        imageVector = Icons.Default.Menu,
-                                                        contentDescription = "Toggle Navigation",
-                                                        modifier = Modifier.size(24.dp),
-                                                        tint = MaterialTheme.colorScheme.primary,
-                                                    )
-                                                }
-
-                                                // Screen Title (dynamic)
-                                                if (screenHeaderConfig.title.isNotEmpty()) {
-                                                    AppText(
-                                                        text = screenHeaderConfig.title,
-                                                        style = MaterialTheme.typography.headlineSmall,
-                                                        fontWeight = FontWeight.Bold,
-                                                        color = MaterialTheme.colorScheme.onBackground,
-                                                    )
-                                                }
-                                            }
-
-                                            // Filter/Order/Search Icons (dynamic)
-                                            Row(
-                                                verticalAlignment = Alignment.CenterVertically,
-                                                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                                            ) {
-                                                // Search Icon
-                                                if (screenHeaderConfig.showSearchIcon) {
+                                                    // Hamburger Menu
                                                     IconButton(
-                                                        onClick = { screenHeaderConfig.onSearchClick?.invoke() },
-                                                        modifier =
-                                                            Modifier
-                                                                .size(48.dp)
-                                                                .testTag("header_search_icon"),
+                                                        onClick = {
+                                                            val params =
+                                                                android.os.Bundle().apply {
+                                                                    putBoolean("isOpen", !isSidebarOpen)
+                                                                }
+                                                            analyticsManager.logEvent("sidebar_toggled", params)
+                                                            isSidebarOpen = !isSidebarOpen
+                                                        },
+                                                        modifier = Modifier.size(48.dp),
                                                     ) {
                                                         Icon(
-                                                            imageVector = Icons.Default.Search,
-                                                            contentDescription = "Search",
+                                                            imageVector = Icons.Default.Menu,
+                                                            contentDescription = "Toggle Navigation",
                                                             modifier = Modifier.size(24.dp),
                                                             tint = MaterialTheme.colorScheme.primary,
                                                         )
                                                     }
+
+                                                    // Screen Title (dynamic)
+                                                    if (screenHeaderConfig.title.isNotEmpty()) {
+                                                        AppText(
+                                                            text = screenHeaderConfig.title,
+                                                            style = MaterialTheme.typography.headlineSmall,
+                                                            fontWeight = FontWeight.Bold,
+                                                            color = MaterialTheme.colorScheme.onBackground,
+                                                        )
+                                                    }
                                                 }
 
-                                                // Filter Icon with Badge
-                                                if (screenHeaderConfig.onFilterClick != null) {
-                                                    IconButton(
-                                                        onClick = { screenHeaderConfig.onFilterClick!!.invoke() },
-                                                        modifier = Modifier.size(48.dp),
-                                                    ) {
-                                                        Box {
+                                                // Filter/Order/Search Icons (dynamic)
+                                                Row(
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                                ) {
+                                                    // Search Icon
+                                                    if (screenHeaderConfig.showSearchIcon) {
+                                                        IconButton(
+                                                            onClick = { screenHeaderConfig.onSearchClick?.invoke() },
+                                                            modifier =
+                                                                Modifier
+                                                                    .size(48.dp)
+                                                                    .testTag("header_search_icon"),
+                                                        ) {
                                                             Icon(
-                                                                imageVector = Icons.Default.FilterList,
-                                                                contentDescription = "Filtri",
+                                                                imageVector = Icons.Default.Search,
+                                                                contentDescription = "Search",
                                                                 modifier = Modifier.size(24.dp),
                                                                 tint = MaterialTheme.colorScheme.primary,
                                                             )
-                                                            // Badge for active filters
-                                                            if (screenHeaderConfig.filterCount > 0) {
-                                                                Surface(
-                                                                    shape = CircleShape,
-                                                                    color = MaterialTheme.colorScheme.error,
-                                                                    modifier =
-                                                                        Modifier
-                                                                            .size(18.dp)
-                                                                            .align(Alignment.TopEnd)
-                                                                            .padding(top = 2.dp, end = 2.dp),
-                                                                ) {
-                                                                    AppText(
-                                                                        text = screenHeaderConfig.filterCount.toString(),
-                                                                        style = MaterialTheme.typography.labelSmall,
-                                                                        color = MaterialTheme.colorScheme.onError,
+                                                        }
+                                                    }
+
+                                                    // Filter Icon with Badge
+                                                    if (screenHeaderConfig.onFilterClick != null) {
+                                                        IconButton(
+                                                            onClick = { screenHeaderConfig.onFilterClick!!.invoke() },
+                                                            modifier = Modifier.size(48.dp),
+                                                        ) {
+                                                            Box {
+                                                                Icon(
+                                                                    imageVector = Icons.Default.FilterList,
+                                                                    contentDescription = "Filtri",
+                                                                    modifier = Modifier.size(24.dp),
+                                                                    tint = MaterialTheme.colorScheme.primary,
+                                                                )
+                                                                // Badge for active filters
+                                                                if (screenHeaderConfig.filterCount > 0) {
+                                                                    Surface(
+                                                                        shape = CircleShape,
+                                                                        color = MaterialTheme.colorScheme.error,
                                                                         modifier =
                                                                             Modifier
-                                                                                .padding(2.dp)
-                                                                                .align(Alignment.Center),
-                                                                    )
+                                                                                .size(18.dp)
+                                                                                .align(Alignment.TopEnd)
+                                                                                .padding(top = 2.dp, end = 2.dp),
+                                                                    ) {
+                                                                        AppText(
+                                                                            text = screenHeaderConfig.filterCount.toString(),
+                                                                            style = MaterialTheme.typography.labelSmall,
+                                                                            color = MaterialTheme.colorScheme.onError,
+                                                                            modifier =
+                                                                                Modifier
+                                                                                    .padding(2.dp)
+                                                                                    .align(Alignment.Center),
+                                                                        )
+                                                                    }
                                                                 }
                                                             }
                                                         }
                                                     }
-                                                }
 
-                                                // Sort/Order Icon
-                                                if (screenHeaderConfig.hasOrderOption) {
-                                                    IconButton(
-                                                        onClick = { screenHeaderConfig.onOrderClick?.invoke() },
-                                                        modifier = Modifier.size(48.dp),
-                                                    ) {
-                                                        Icon(
-                                                            imageVector = Icons.Default.Sort,
-                                                            contentDescription = "Ordinamento",
-                                                            modifier = Modifier.size(24.dp),
-                                                            tint = MaterialTheme.colorScheme.primary,
-                                                        )
+                                                    // Sort/Order Icon
+                                                    if (screenHeaderConfig.hasOrderOption) {
+                                                        IconButton(
+                                                            onClick = { screenHeaderConfig.onOrderClick?.invoke() },
+                                                            modifier = Modifier.size(48.dp),
+                                                        ) {
+                                                            Icon(
+                                                                imageVector = Icons.AutoMirrored.Filled.Sort,
+                                                                contentDescription = "Ordinamento",
+                                                                modifier = Modifier.size(24.dp),
+                                                                tint = MaterialTheme.colorScheme.primary,
+                                                            )
+                                                        }
                                                     }
                                                 }
-                                            }
 
-                                            // Action Buttons (dynamic)
-                                            if (screenHeaderConfig.actions != null) {
-                                                screenHeaderConfig.actions!!()
+                                                // Action Buttons (dynamic)
+                                                if (screenHeaderConfig.actions != null) {
+                                                    screenHeaderConfig.actions!!()
+                                                }
                                             }
                                         }
                                     }
 
-                                    // Content
+                                    // NavHost – SEMPRE a Column[1]
                                     navHostContent(Modifier.weight(1f))
                                 }
                             }
                         }
-                    } else if (isOnTutorial && adaptiveLayoutInfo.preferRailNavigation) {
-                        // Tutorial in fullscreen su tablet
-                        navHostContent(Modifier.fillMaxSize())
-                    } else {
-                        // Caso di fallback (tutorial non completato)
-                        navHostContent(Modifier.padding(innerPadding))
                     }
                 }
 
@@ -771,6 +780,10 @@ fun AntCashManagerNavHost() {
                                         indication = null,
                                         interactionSource = remember { MutableInteractionSource() },
                                     ) {
+                                        analyticsManager.logEvent(
+                                            "sidebar_toggled",
+                                            android.os.Bundle().apply { putBoolean("isOpen", false) },
+                                        )
                                         isSidebarOpen = false
                                     },
                         )
@@ -779,6 +792,10 @@ fun AntCashManagerNavHost() {
                         LeftSidebar(
                             selectedRoute = currentDestination?.route,
                             onNavigate = { route ->
+                                analyticsManager.logEvent(
+                                    "sidebar_navigation_clicked",
+                                    android.os.Bundle().apply { putString("destination", route) },
+                                )
                                 navController.navigate(route) {
                                     popUpTo(navController.graph.findStartDestination().id) {
                                         saveState = true
@@ -786,14 +803,19 @@ fun AntCashManagerNavHost() {
                                     launchSingleTop = true
                                     restoreState = true
                                 }
-                                // Chiudi la sidebar dopo la navigazione
                                 isSidebarOpen = false
                             },
                             visibleNavItems = sidebarNavItems,
+                            activeProfile = activeProfile,
+                            onProfileClick = {
+                                analyticsManager.logEvent("sidebar_profile_header_clicked")
+                                navController.navigate(AppRoute.SettingsRoute.Profiles.route) {
+                                    launchSingleTop = true
+                                }
+                                isSidebarOpen = false
+                            },
                             onHeaderClick = { showAntAnimation = true },
-                            modifier =
-                                Modifier
-                                    .padding(top = 8.dp, bottom = 8.dp),
+                            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
                         )
                     }
                 }

@@ -81,4 +81,7 @@ public interface TransactionRepository {
 
     // Unified suggestions in a single query (optimized)
     public suspend fun getSuggestions(since: Long = 0L): com.antcashmanager.domain.model.TransactionSuggestions
+
+    /** Deletes ALL transactions belonging to [profileId]. Used when deleting a profile or in backup restore. */
+    public suspend fun deleteAllTransactionsForProfile(profileId: Long)
 }

@@ -7,6 +7,7 @@ import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
+import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
@@ -15,8 +16,15 @@ class LocalDataCipherImplTest {
     private lateinit var cipher: LocalDataCipherImpl
     private lateinit var mockContext: Context
 
+    companion object {
+        private val isAndroidKeyStoreAvailable: Boolean by lazy {
+            runCatching { java.security.KeyStore.getInstance("AndroidKeyStore") }.isSuccess
+        }
+    }
+
     @Before
     fun setup() {
+        assumeTrue("AndroidKeyStore is not available on host JVM", isAndroidKeyStoreAvailable)
         mockContext = mockk(relaxed = true)
 
         // Setup SharedPreferences mock to enable encryption by default

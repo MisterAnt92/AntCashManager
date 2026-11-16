@@ -105,6 +105,26 @@
     <string name="icon_directions_bike">スポーツ</string>
     <string name="icon_shopping_cart">食料品</string>
     <string name="icon_coffee">コーヒー</string>
+    <string name="icon_local_bar">バー</string>
+    <string name="icon_local_cafe">カフェ</string>
+    <string name="icon_music_note">音楽</string>
+    <string name="icon_movie">映画</string>
+    <string name="icon_sports_esports">ゲーム</string>
+    <string name="icon_account_balance">銀行</string>
+    <string name="icon_credit_card">カード決済</string>
+    <string name="icon_smartphone">電話/通信</string>
+    <string name="icon_laptop">テクノロジー</string>
+    <string name="icon_child_care">育児</string>
+    <string name="icon_local_gas_station">燃料</string>
+    <string name="icon_build">メンテナンス</string>
+    <string name="icon_beach_access">休暇</string>
+    <string name="icon_percent">税金/手数料</string>
+    <string name="icon_two_wheeler">バイク</string>
+    <string name="icon_storefront">ショップ</string>
+    <string name="icon_umbrella">保険</string>
+    <string name="icon_sports_soccer">スポーツ</string>
+    <string name="icon_medication">薬</string>
+    <string name="icon_elderly_woman">介護</string>
     <string name="icon_spa">パーソナルケア</string>
     <string name="icon_card_giftcard">食事チケット</string>
 
@@ -170,7 +190,7 @@
     <string name="settings_theme_system">システム設定</string>
     <string name="settings_language">言語</string>
     <string name="settings_display">表示</string>
-    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
+    <string name="settings_display_subtitle">通貨、書式、支払いタイプ、表示設定をカスタマイズ</string>
     <string name="settings_show_charts_section">グラフセクションを表示</string>
     <string name="settings_show_charts_section_visible">ナビゲーションにグラフセクションを表示</string>
     <string name="settings_show_charts_section_hidden">ナビゲーションからグラフセクションを隠す</string>
@@ -214,6 +234,25 @@
     <string name="settings_reduce_motion">動きを減らす</string>
     <string name="settings_reduce_motion_subtitle">アニメーションやトランジションを最小限に抑えます。</string>
     <string name="settings_data_management">データ管理</string>
+    <string name="settings_profiles">Profili</string>
+    <string name="profiles_title">Profili</string>
+    <string name="profiles_add_button">Aggiungi profilo</string>
+    <string name="profiles_switch_dialog_title">Cambia profilo</string>
+    <string name="profiles_switch_dialog_message">Passare a %1$s?</string>
+    <string name="profiles_delete_dialog_title">Elimina profilo</string>
+    <string name="profiles_delete_dialog_warning">Eliminare %1$s e tutti i suoi dati? Questa azione non può essere annullata.</string>
+    <string name="profiles_default_name">Default</string>
+    <string name="profiles_active_badge">Attivo</string>
+    <string name="profiles_create_dialog_title">Nuovo profilo</string>
+    <string name="profiles_name_hint">Nome profilo</string>
+    <string name="profiles_edit_dialog_title">プロフィールを編集</string>
+    <string name="profiles_section_title">プロフィール</string>
+    <string name="profiles_color_label">色</string>
+    <string name="profiles_change_photo"></string>
+    <string name="profiles_share_transactions_title">取引を共有</string>
+    <string name="profiles_share_transactions_description">このオプションが有効な全てのプロフィールに表示されます</string>
+    <string name="profiles_share_transactions_create_description">既存の取引はこのプロフィールと共有されます。後で変更できます。</string>
+    <string name="profiles_emoji_label">アバター</string>
     <string name="settings_security">セキュリティ</string>
     <string name="settings_security_data_encryption">データ保護 - 暗号化</string>
     <string name="settings_security_data_encryption_subtitle">ローカルアプリデータを暗号化して保護します</string>
@@ -382,6 +421,8 @@
     <string name="payment_type_electronic">電子決済</string>
     <string name="payment_type_cash">現金</string>
     <string name="payment_type_meal_vouchers">食事チケット</string>
+    <string name="payment_type_meal_vouchers_with_cash">食事券 + 現金/カード</string>
+    <string name="transaction_details_meal_vouchers_covered">食事券充当額</string>
 
     <!-- Add Transaction Payment Type -->
     <string name="add_transaction_payment_type">支払い方法</string>
@@ -501,6 +542,7 @@
     <string name="category_gifts">ギフト</string>
     <string name="category_subscriptions">サブスク</string>
     <string name="category_personal_care">パーソナルケア</string>
+    <string name="category_meal_vouchers">食事券</string>
 
     <!-- Receipt Scan Screen -->
     <string name="receipt_scan_title">レシートスキャン</string>
@@ -653,4 +695,26 @@
     <string name="transactions_help_display_title">@string/settings_transaction_display</string>
     <string name="transactions_help_display_desc">@string/settings_transaction_display_desc</string>
     <string name="transactions_details_empty">詳細を表示するには取引を選択してください</string>
+
+    <!-- Meal Vouchers Card -->
+    <string name="home_meal_vouchers_title">食事券</string>
+    <string name="home_meal_vouchers_remaining">残り</string>
+    <string name="home_meal_vouchers_received">受け取った</string>
+    <string name="home_meal_vouchers_used">使用した</string>
+    <string name="home_meal_vouchers_remaining_value">残存価値</string>
+    <string name="home_meal_vouchers_received_only_mode">トラッキングのみ</string>
+
+    <!-- Month names (short format) -->
+    <string name="month_short_1">Jan</string>
+    <string name="month_short_2">Feb</string>
+    <string name="month_short_3">Mar</string>
+    <string name="month_short_4">Apr</string>
+    <string name="month_short_5">May</string>
+    <string name="month_short_6">Jun</string>
+    <string name="month_short_7">Jul</string>
+    <string name="month_short_8">Aug</string>
+    <string name="month_short_9">Sep</string>
+    <string name="month_short_10">Oct</string>
+    <string name="month_short_11">Nov</string>
+    <string name="month_short_12">Dec</string>
 </resources>

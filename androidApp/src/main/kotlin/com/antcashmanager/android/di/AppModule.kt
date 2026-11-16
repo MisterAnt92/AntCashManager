@@ -4,6 +4,7 @@ import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.analytics.tracker.EngagementTracker
 import com.antcashmanager.android.analytics.tracker.ErrorTracker
 import com.antcashmanager.android.analytics.tracker.PerformanceTracker
+import com.antcashmanager.android.analytics.tracker.ProfileTracker
 import com.antcashmanager.android.analytics.tracker.SegmentationTracker
 import com.antcashmanager.android.analytics.tracker.SessionTracker
 import com.antcashmanager.android.auth.GoogleSignInManager
@@ -12,6 +13,7 @@ import com.antcashmanager.android.data.receipt.MlKitReceiptOcrService
 import com.antcashmanager.android.data.repository.AndroidDebugDataRepository
 import com.antcashmanager.android.data.repository.AndroidFeedbackRepository
 import com.antcashmanager.android.drive.DriveUploadManager
+import com.antcashmanager.android.navigation.NavSettingsViewModel
 import com.antcashmanager.android.ui.screen.categories.CategoriesViewModel
 import com.antcashmanager.android.ui.screen.charts.ChartsViewModel
 import com.antcashmanager.android.ui.screen.home.HomeViewModel
@@ -29,16 +31,20 @@ import com.antcashmanager.android.ui.theme.ThemeViewModel
 import com.antcashmanager.android.ui.widget.GlanceWidgetUpdateNotifier
 import com.antcashmanager.android.work.AutoBackupScheduler
 import com.antcashmanager.data.local.DatabaseProvider
+import com.antcashmanager.data.manager.ProfileManagerImpl
 import com.antcashmanager.data.repository.CategoryRepositoryImpl
+import com.antcashmanager.data.repository.ProfileRepositoryImpl
 import com.antcashmanager.data.repository.SettingsRepositoryImpl
 import com.antcashmanager.data.repository.TransactionRepositoryImpl
 import com.antcashmanager.data.security.LocalDataCipherImpl
+import com.antcashmanager.domain.manager.ProfileManager
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.DebugDataRepository
 import com.antcashmanager.domain.repository.FeedbackRepository
+import com.antcashmanager.domain.repository.ProfileRepository
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.security.LocalDataCipher
@@ -50,6 +56,13 @@ import com.antcashmanager.domain.usecase.category.DeleteCategoryUseCase
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.category.InsertCategoryUseCase
 import com.antcashmanager.domain.usecase.category.UpdateCategoryUseCase
+import com.antcashmanager.domain.usecase.profile.CreateProfileUseCase
+import com.antcashmanager.domain.usecase.profile.DeleteProfileUseCase
+import com.antcashmanager.domain.usecase.profile.GetActiveProfileUseCase
+import com.antcashmanager.domain.usecase.profile.GetProfileByIdUseCase
+import com.antcashmanager.domain.usecase.profile.GetProfilesUseCase
+import com.antcashmanager.domain.usecase.profile.SwitchProfileUseCase
+import com.antcashmanager.domain.usecase.profile.UpdateProfileUseCase
 import com.antcashmanager.domain.usecase.receipt.CreateTransactionFromReceiptUseCase
 import com.antcashmanager.domain.usecase.receipt.ScanReceiptUseCase
 import com.antcashmanager.domain.usecase.settings.GetChartsDateFilterStateUseCase
@@ -124,20 +137,29 @@ val dataModule =
         single { DatabaseProvider.getDatabase(androidApplication()) }
         single<LocalDataCipher> { LocalDataCipherImpl(androidApplication()) }
         single<WidgetUpdateNotifier> { GlanceWidgetUpdateNotifier(androidApplication()) }
+        single<ProfileRepository> {
+            ProfileRepositoryImpl(
+                profileDao = get<com.antcashmanager.data.local.AppDatabase>().profileDao(),
+            )
+        }
+        single<ProfileManager> { ProfileManagerImpl(get()) }
         single<TransactionRepository> {
             TransactionRepositoryImpl(
                 transactionDao = get<com.antcashmanager.data.local.AppDatabase>().transactionDao(),
                 localDataCipher = get(),
+                profileManager = get(),
                 widgetUpdateNotifier = get(),
             )
         }
-        single<SettingsRepository> { SettingsRepositoryImpl(androidApplication()) }
+        single<SettingsRepository> { SettingsRepositoryImpl(androidApplication(), get()) }
+        single { com.antcashmanager.android.util.ProfilePhotoStorage(androidApplication()) }
         single { AutoBackupScheduler(androidApplication()) }
         single { GoogleSignInManager(androidApplication(), get<SettingsRepository>()) }
         single { DriveUploadManager(androidApplication(), get<GoogleSignInManager>(), get<SettingsRepository>()) }
         single<CategoryRepository> {
             CategoryRepositoryImpl(
                 categoryDao = get<com.antcashmanager.data.local.AppDatabase>().categoryDao(),
+                profileManager = get(),
             )
         }
         single { AnalyticsManager(androidApplication()) }
@@ -158,6 +180,7 @@ val dataModule =
         // PHASE 3: Advanced Analytics (Segmentation & Engagement)
         single { SegmentationTracker(get<AnalyticsManager>()) }
         single { EngagementTracker(get<AnalyticsManager>()) }
+        single { ProfileTracker(get<AnalyticsManager>()) }
 
         single {
             BackupService(
@@ -194,6 +217,27 @@ val useCaseModule =
         factory { InsertCategoryUseCase(categoryRepository = get()) }
         factory { UpdateCategoryUseCase(categoryRepository = get()) }
         factory { DeleteCategoryUseCase(categoryRepository = get()) }
+
+        // Profile use cases
+        factory { GetProfilesUseCase(profileRepository = get()) }
+        factory { GetActiveProfileUseCase(profileRepository = get()) }
+        factory { GetProfileByIdUseCase(profileRepository = get()) }
+        factory {
+            CreateProfileUseCase(
+                profileRepository = get(),
+                categoryRepository = get(),
+            )
+        }
+        factory { UpdateProfileUseCase(profileRepository = get()) }
+        factory {
+            DeleteProfileUseCase(
+                profileRepository = get(),
+                transactionRepository = get(),
+                categoryRepository = get(),
+                profileManager = get(),
+            )
+        }
+        factory { SwitchProfileUseCase(profileManager = get()) }
 
         // ─────────────────────────────────────────────────────────────────────────────
         // GENERIC SETTINGS USE CASES (Consolidation: reduces 33 boilerplate → 2 generics)
@@ -267,7 +311,6 @@ val useCaseModule =
 
         factory { CreateTransactionFromReceiptUseCase(transactionRepository = get()) }
         factory { ShareTransactionUseCase() }
-        factory { ResetAllPreferencesUseCase(settingsRepository = get()) }
 
         factory {
             val repo = get<SettingsRepository>()
@@ -369,7 +412,7 @@ val presentationModule =
         }
 
         // ── Manager per AddTransaction ──
-        single {
+        factory {
             TransactionLoadManager(
                 getTransactionByIdUseCase = get(),
                 getCategoriesUseCase = get(),
@@ -377,14 +420,14 @@ val presentationModule =
             )
         }
 
-        single {
+        factory {
             TransactionSubmitManager(
                 insertTransactionUseCase = get(),
                 updateTransactionUseCase = get(),
             )
         }
 
-        single {
+        factory {
             SuggestionsManager(
                 getTransactionSuggestionsUseCase = get(),
             )
@@ -409,11 +452,11 @@ val presentationModule =
             SettingsViewModel(
                 settingsUseCases = get(),
                 settingsRepository = get(),
-                deleteAllTransactionsUseCase = get(),
-                insertTransactionUseCase = get(),
                 widgetUpdateNotifier = get(),
                 sendFeedbackEmailUseCase = get(),
                 importDebugDataUseCase = get(),
+                getProfilesUseCase = get(),
+                profileManager = get(),
             )
         }
         viewModel {
@@ -450,6 +493,20 @@ val presentationModule =
         }
         viewModelOf(::TransactionDetailsViewModel)
         viewModelOf(::ThemeViewModel)
+        viewModel { NavSettingsViewModel(settingsRepository = get()) }
+        viewModel {
+            com.antcashmanager.android.ui.screen.settings.profiles.ProfilesViewModel(
+                getProfilesUseCase = get(),
+                createProfileUseCase = get(),
+                updateProfileUseCase = get(),
+                deleteProfileUseCase = get(),
+                switchProfileUseCase = get(),
+                getProfileByIdUseCase = get(),
+                profileManager = get(),
+                profilePhotoStorage = get(),
+                profileTracker = get(),
+            )
+        }
     }
 
 /** Aggregazione di tutti i moduli Koin dell'app. */

@@ -10,74 +10,74 @@ import com.antcashmanager.domain.model.TransactionDisplayType
  */
 sealed class DisplayEvent {
     // Number Formatting
-    data class SetCurrencySymbol(
+    data class SetCurrencySymbolEvent(
         val symbol: String,
     ) : DisplayEvent()
 
-    data class SetDecimalDigits(
+    data class SetDecimalDigitsEvent(
         val digits: Int,
     ) : DisplayEvent()
 
-    data class SetDecimalSeparator(
+    data class SetDecimalSeparatorEvent(
         val separator: String,
     ) : DisplayEvent()
 
-    data class SetThousandsSeparator(
+    data class SetThousandsSeparatorEvent(
         val separator: String,
     ) : DisplayEvent()
 
     // Display Options
-    data class SetMealVoucherValue(
+    data class SetMealVoucherValueEvent(
         val value: Double,
     ) : DisplayEvent()
 
-    data class SetShowChartsSection(
+    data class SetShowChartsSectionEvent(
         val show: Boolean,
     ) : DisplayEvent()
 
-    data class SetChartsZoomEnabled(
+    data class SetChartsZoomEnabledEvent(
         val enabled: Boolean,
     ) : DisplayEvent()
 
-    data class SetDateFormat(
+    data class SetDateFormatEvent(
         val pattern: String,
     ) : DisplayEvent()
 
-    data class SetShowTransactionNotes(
+    data class SetShowTransactionNotesEvent(
         val show: Boolean,
     ) : DisplayEvent()
 
-    data class SetMaskAmounts(
+    data class SetMaskAmountsEvent(
         val mask: Boolean,
     ) : DisplayEvent()
 
-    data class SetShowPaymentTypeBreakdown(
+    data class SetShowPaymentTypeBreakdownEvent(
         val show: Boolean,
     ) : DisplayEvent()
 
-    data class SetShowQuickInsightsCard(
+    data class SetShowQuickInsightsCardEvent(
         val show: Boolean,
     ) : DisplayEvent()
 
-    data class SetDefaultPaymentType(
+    data class SetDefaultPaymentTypeEvent(
         val paymentType: String,
     ) : DisplayEvent()
 
-    data class SetTransactionDisplayType(
+    data class SetTransactionDisplayTypeEvent(
         val displayType: TransactionDisplayType,
     ) : DisplayEvent()
 
-    data class SetTransactionsTransactionDisplayType(
+    data class SetTransactionsTransactionDisplayTypeEvent(
         val displayType: TransactionDisplayType,
     ) : DisplayEvent()
 
-    data class SetWidgetBackgroundColor(
+    data class SetWidgetBackgroundColorEvent(
         val color: Long,
     ) : DisplayEvent()
 
-    data class SetWidgetOpacity(
+    data class SetWidgetOpacityEvent(
         val opacity: Int,
     ) : DisplayEvent()
 
-    data object RetryLastOperation : DisplayEvent()
+    data object RetryLastOperationEvent : DisplayEvent()
 }

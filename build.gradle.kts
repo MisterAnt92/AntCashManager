@@ -13,6 +13,7 @@ plugins {
     alias(libs.plugins.kotlin.compose) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.ktlint) apply false
+    alias(libs.plugins.kover)
 }
 
 // ── Ktlint Configuration for all subprojects ──
@@ -20,11 +21,13 @@ subprojects {
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
 
     configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+        version.set("1.5.0")
         android.set(true)
         ignoreFailures.set(false)
         reporters {
             reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.PLAIN)
             reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.CHECKSTYLE)
+            reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.HTML)
         }
     }
 }
@@ -41,6 +44,37 @@ subprojects {
             }
         }
     }
+}
+
+// ── Kover Aggregated Coverage ──
+dependencies {
+    kover(project(":androidApp"))
+}
+
+kover {
+    reports {
+        filters {
+            excludes {
+                androidGeneratedClasses()
+                classes(
+                    "**.*ComposableSingletons*",
+                    "**.*_Impl*",
+                    "**.*\$\$serializer*",
+                )
+            }
+        }
+        total {
+            html {
+                title = "AntCashManager – Unit Test Coverage"
+                htmlDir.set(rootProject.layout.buildDirectory.dir("reports/kover/html"))
+            }
+        }
+    }
+}
+
+// Ensure Kover report tasks depend on both androidApp and shared unit test tasks
+tasks.matching { it.name.contains("kover", ignoreCase = true) }.configureEach {
+    dependsOn(":androidApp:testFullDebugUnitTest", ":shared:testAndroidHostTest")
 }
 
 // ── Test Coverage Reporting ──

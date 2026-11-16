@@ -67,7 +67,7 @@ class CategoriesViewModelTest : BaseUnitTest() {
         runViewModelTest {
             val viewModel = buildViewModel()
 
-            viewModel.onEvent(CategoryEvent.AddCategory("Food", "category", 0xFFE57373, "EXPENSE"))
+            viewModel.onEvent(CategoryEvent.AddCategoryEvent("Food", "category", 0xFFE57373, "EXPENSE"))
             advanceUntilIdle()
 
             coVerify(exactly = 1) {
@@ -81,7 +81,7 @@ class CategoriesViewModelTest : BaseUnitTest() {
             val viewModel = buildViewModel()
             val category = Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373)
 
-            viewModel.onEvent(CategoryEvent.UpdateCategory(category))
+            viewModel.onEvent(CategoryEvent.UpdateCategoryEvent(category))
             advanceUntilIdle()
 
             coVerify(exactly = 1) { updateCategoryUseCase(category) }
@@ -94,7 +94,7 @@ class CategoriesViewModelTest : BaseUnitTest() {
             val viewModel = buildViewModel()
             val category = Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373)
 
-            viewModel.onEvent(CategoryEvent.UpdateCategory(category))
+            viewModel.onEvent(CategoryEvent.UpdateCategoryEvent(category))
             advanceUntilIdle()
 
             coVerify(exactly = 0) { syncTransactionCategoriesUseCase(any()) }
@@ -116,7 +116,7 @@ class CategoriesViewModelTest : BaseUnitTest() {
             advanceUntilIdle()
 
             val renamedCategory = originalCategory.copy(name = "Pranzi/Cene fuori")
-            viewModel.onEvent(CategoryEvent.UpdateCategory(renamedCategory))
+            viewModel.onEvent(CategoryEvent.UpdateCategoryEvent(renamedCategory))
             advanceUntilIdle()
 
             coVerify(exactly = 1) {
@@ -141,7 +141,7 @@ class CategoriesViewModelTest : BaseUnitTest() {
             advanceUntilIdle()
 
             val recoloredCategory = originalCategory.copy(color = 0xFF00FF00)
-            viewModel.onEvent(CategoryEvent.UpdateCategory(recoloredCategory))
+            viewModel.onEvent(CategoryEvent.UpdateCategoryEvent(recoloredCategory))
             advanceUntilIdle()
 
             coVerify(exactly = 1) {
@@ -152,7 +152,7 @@ class CategoriesViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun updateCategory_shouldCompleteWithoutThrowing_whenSyncTransactionCategoriesUseCaseFails() =
+    fun updateCategory_shouldNotBeLoading_whenSyncTransactionCategoriesUseCaseFails() =
         runViewModelTest {
             val originalCategory =
                 Category(id = 6, name = "Old Name", icon = "local_dining", color = 0xFFE57373)
@@ -162,10 +162,11 @@ class CategoriesViewModelTest : BaseUnitTest() {
             val viewModel = buildViewModel()
             advanceUntilIdle()
 
-            viewModel.onEvent(CategoryEvent.UpdateCategory(originalCategory.copy(name = "New Name")))
+            viewModel.onEvent(CategoryEvent.UpdateCategoryEvent(originalCategory.copy(name = "New Name")))
             advanceUntilIdle()
 
             coVerify(exactly = 1) { syncTransactionCategoriesUseCase(any()) }
+            assertEquals(false, viewModel.state.value.isLoading)
         }
 
     @Test
@@ -174,7 +175,7 @@ class CategoriesViewModelTest : BaseUnitTest() {
             val viewModel = buildViewModel()
             val category = Category(id = 1, name = "Food", icon = "category", color = 0xFFE57373)
 
-            viewModel.onEvent(CategoryEvent.DeleteCategory(category))
+            viewModel.onEvent(CategoryEvent.DeleteCategoryEvent(category))
             advanceUntilIdle()
 
             coVerify(exactly = 1) { deleteCategoryUseCase(category) }
@@ -378,7 +379,7 @@ class CategoriesViewModelTest : BaseUnitTest() {
             val viewModel = buildViewModel()
             advanceUntilIdle()
 
-            viewModel.onEvent(CategoryEvent.AddCategory("New", "category", 0xFFE57373, "EXPENSE"))
+            viewModel.onEvent(CategoryEvent.AddCategoryEvent("New", "category", 0xFFE57373, "EXPENSE"))
             advanceUntilIdle()
 
             coVerify(exactly = 1) { insertCategoryUseCase(match { it.name == "New" && it.sortOrder == 3 }) }
@@ -397,7 +398,7 @@ class CategoriesViewModelTest : BaseUnitTest() {
                     isHidden = false,
                 )
 
-            viewModel.onEvent(CategoryEvent.SetCategoryHidden(category, true))
+            viewModel.onEvent(CategoryEvent.SetCategoryHiddenEvent(category, true))
             advanceUntilIdle()
 
             coVerify(exactly = 1) { updateCategoryUseCase(category.copy(isHidden = true)) }
@@ -413,7 +414,7 @@ class CategoriesViewModelTest : BaseUnitTest() {
             val changed =
                 Category(id = 2, name = "Second", icon = "category", color = 0xFFE57373, sortOrder = 5)
 
-            viewModel.onEvent(CategoryEvent.ReorderCategories(listOf(unchanged, changed)))
+            viewModel.onEvent(CategoryEvent.ReorderCategoriesEvent(listOf(unchanged, changed)))
             advanceUntilIdle()
 
             coVerify(exactly = 0) { updateCategoryUseCase(unchanged) }
@@ -429,7 +430,7 @@ class CategoriesViewModelTest : BaseUnitTest() {
                 Result.failure(CategoryException.DuplicateName("Food"))
             val viewModel = buildViewModel()
 
-            viewModel.onEvent(CategoryEvent.AddCategory("Food", "category", 0xFFE57373, "EXPENSE"))
+            viewModel.onEvent(CategoryEvent.AddCategoryEvent("Food", "category", 0xFFE57373, "EXPENSE"))
             advanceUntilIdle()
 
             coVerify(exactly = 1) { insertCategoryUseCase(any()) }
@@ -446,7 +447,7 @@ class CategoriesViewModelTest : BaseUnitTest() {
                 Result.failure(IllegalArgumentException("Invalid amount"))
             val viewModel = buildViewModel()
 
-            viewModel.onEvent(CategoryEvent.AddCategory("Food", "category", 0xFFE57373, "EXPENSE"))
+            viewModel.onEvent(CategoryEvent.AddCategoryEvent("Food", "category", 0xFFE57373, "EXPENSE"))
             advanceUntilIdle()
 
             coVerify(exactly = 1) { insertCategoryUseCase(any()) }
@@ -457,7 +458,7 @@ class CategoriesViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun updateCategory_shouldCompleteWithoutThrowing_whenUpdateUseCaseReturnsNotFoundFailure() =
+    fun updateCategory_shouldNotBeLoading_whenUpdateUseCaseReturnsNotFoundFailure() =
         runViewModelTest {
             coEvery { updateCategoryUseCase(any()) } returns
                 Result.failure(CategoryException.NotFound("Nonexistent"))
@@ -465,14 +466,15 @@ class CategoriesViewModelTest : BaseUnitTest() {
             val category =
                 Category(id = 99, name = "Nonexistent", icon = "icon", color = 0xFF000000)
 
-            viewModel.onEvent(CategoryEvent.UpdateCategory(category))
+            viewModel.onEvent(CategoryEvent.UpdateCategoryEvent(category))
             advanceUntilIdle()
 
             coVerify(exactly = 1) { updateCategoryUseCase(category) }
+            assertEquals(false, viewModel.state.value.isLoading)
         }
 
     @Test
-    fun deleteCategory_shouldCompleteWithoutThrowing_whenDeleteUseCaseReturnsNotFoundFailure() =
+    fun deleteCategory_shouldNotBeLoading_whenDeleteUseCaseReturnsNotFoundFailure() =
         runViewModelTest {
             coEvery { deleteCategoryUseCase(any()) } returns
                 Result.failure(CategoryException.NotFound("Nonexistent"))
@@ -480,10 +482,11 @@ class CategoriesViewModelTest : BaseUnitTest() {
             val category =
                 Category(id = 99, name = "Nonexistent", icon = "icon", color = 0xFF000000)
 
-            viewModel.onEvent(CategoryEvent.DeleteCategory(category))
+            viewModel.onEvent(CategoryEvent.DeleteCategoryEvent(category))
             advanceUntilIdle()
 
             coVerify(exactly = 1) { deleteCategoryUseCase(category) }
+            assertEquals(false, viewModel.state.value.isLoading)
         }
 
     @Test

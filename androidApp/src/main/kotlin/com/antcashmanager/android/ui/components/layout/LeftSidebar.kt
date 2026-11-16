@@ -2,24 +2,29 @@ package com.antcashmanager.android.ui.components.layout
 
 import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.Image
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.ui.res.painterResource
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -27,75 +32,70 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.BuildConfig
 import com.antcashmanager.android.R
 import com.antcashmanager.android.navigation.BottomNavItem
+import com.antcashmanager.android.ui.components.profile.ProfileAvatar
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.domain.model.Profile
 
 /**
- * Sidebar di navigazione laterale sinistra con UX migliorata.
+ * Sidebar di navigazione laterale sinistra con profilo utente in header.
  *
  * Mostra:
- * - Logo della formichina + nome app in header card elegante
+ * - Card profilo attivo (avatar circolare + nome) cliccabile → ProfilesScreen
  * - Voci di navigazione con hover effects e animazioni
  * - Indicatore animato della schermata attiva
  * - Version badge stylizzato
- *
- * Caratteristiche:
- * - Animazioni fluide su selezione e hover
- * - Responsive: si adatta alle diverse larghezze di schermo
- * - Dark mode: automaticamente supportato
- * - Feedback tattile con ripple effect
  */
 @Composable
 fun LeftSidebar(
     selectedRoute: String?,
     onNavigate: (String) -> Unit,
     visibleNavItems: List<BottomNavItem>,
+    activeProfile: Profile? = null,
+    onProfileClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     onHeaderClick: () -> Unit = {},
 ) {
     Surface(
-        modifier =
-            modifier
-                .width(280.dp)
-                .fillMaxHeight()
-                .clickable(
-                    enabled = true,
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() },
-                    onClick = {
-                        // Block click propagation to parent (dimming overlay)
-                        // This prevents closing sidebar when clicking on sidebar itself
-                    },
-                ),
+        modifier = modifier
+            .width(280.dp)
+            .fillMaxHeight()
+            .clickable(
+                enabled = true,
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() },
+                onClick = {
+                    // Block click propagation to parent (dimming overlay)
+                },
+            ),
         color = MaterialTheme.colorScheme.surface,
         tonalElevation = 6.dp,
         shadowElevation = 8.dp,
         shape = RoundedCornerShape(topEnd = 24.dp, bottomEnd = 24.dp),
     ) {
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxHeight()
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            // ── Header Card: Logo + App Name ──
-            SidebarHeader(onHeaderClick = onHeaderClick)
+        Column(modifier = Modifier.fillMaxHeight()) {
+            // ── Profile Hero Header (edge-to-edge) ──
+            ProfileSidebarHeader(
+                activeProfile = activeProfile,
+                onProfileClick = onProfileClick,
+            )
 
-            // ── Navigation Items ──
+            // ── Navigation Items — riempie lo spazio disponibile ──
             Column(
-                modifier = Modifier.fillMaxHeight(),
-                verticalArrangement = Arrangement.spacedBy(6.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(horizontal = 0.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.SpaceEvenly,
             ) {
                 visibleNavItems.forEach { item ->
                     SidebarMenuItem(
@@ -104,66 +104,177 @@ fun LeftSidebar(
                         onClick = { onNavigate(item.route) },
                     )
                 }
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                // ── Footer Info ──
-                SidebarFooter()
+                // Slot vuoti non cliccabili: occupano spazio tra l'ultimo item e il footer
+                repeat(2) { SidebarEmptySlot() }
             }
+
+            // ── Footer — sempre ancorato in fondo ──
+            SidebarFooter()
         }
     }
 }
 
 /**
- * Header della sidebar con launcher icon e nome app (trasparente).
+ * Header della sidebar: banner colorato con avatar che sfora il bordo inferiore.
  */
 @Composable
-private fun SidebarHeader(onHeaderClick: () -> Unit = {}) {
+private fun ProfileSidebarHeader(
+    activeProfile: Profile?,
+    onProfileClick: () -> Unit,
+) {
+    val bannerColor = MaterialTheme.colorScheme.primary
+    // Costanti banner: cambia bannerHeight per ridimensionare tutto il banner
+    val ringSize = 99.dp
+    val ringOverflow = 33.dp
+    val bannerHeight = 230.dp
+    // contentAreaHeight: area visibile del banner sopra il bordo superiore dell'avatar ring
+    val contentAreaHeight = bannerHeight - ringSize
+
     Column(
-        modifier =
-            Modifier
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null,
-                    onClick = onHeaderClick,
-                )
-                .padding(vertical = 16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onProfileClick,
+            ),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        // Launcher Icon (quadrato Google Play style)
-        Image(
-            painter = painterResource(id = R.drawable.ic_ant_mascot),
-            contentDescription = stringResource(R.string.app_name),
-            modifier = Modifier.size(64.dp),
-        )
+        // ── Banner + avatar in overflow ──
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(bannerHeight),
+        ) {
+            // Sfondo colorato (tema app)
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .background(bannerColor),
+            )
+            // Formichina + nome app centrati nella contentAreaHeight (area sopra avatar)
+            // Centratura verticale garantita: Box(height=contentAreaHeight) con contentAlignment=Center
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 24.dp)
+                    .height(contentAreaHeight)
+                    .align(Alignment.TopCenter),
+                contentAlignment = Alignment.Center,
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.ic_ant_mascot),
+                        contentDescription = null,
+                        modifier = Modifier.size(38.dp),
+                    )
+                    Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
+                        AppText(
+                            text = stringResource(R.string.app_name),
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                        )
+                        AppText(
+                            text = stringResource(R.string.app_description),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f),
+                        )
+                    }
+                }
+            }
+            // Avatar centrato, sfora di ringOverflow verso il basso
+            Box(
+                modifier = Modifier
+                    .size(ringSize)
+                    .align(Alignment.BottomCenter)
+                    .offset(y = ringOverflow)
+                    .background(MaterialTheme.colorScheme.surface, CircleShape),
+                contentAlignment = Alignment.Center,
+            ) {
+                if (activeProfile != null) {
+                    ProfileAvatar(
+                        profile = activeProfile,
+                        isActive = true,
+                        size = 90.dp,
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .size(60.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.surfaceVariant),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Person,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(28.dp),
+                        )
+                    }
+                }
+            }
+        }
 
-        // App Name
+        // ── Testo profilo (sotto l'avatar) ──
+        Spacer(modifier = Modifier.height(40.dp)) // 33dp overflow + 7dp gap
         AppText(
-            text = stringResource(R.string.app_name),
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary,
-        )
-
-        // App Description
-        AppText(
-            text = stringResource(R.string.app_description),
-            style = MaterialTheme.typography.bodySmall,
+            text = stringResource(R.string.profiles_section_title),
+            style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-            modifier =
-                Modifier
-                    .fillMaxWidth(0.75f)
-                    .padding(horizontal = 12.dp),
-            maxLines = 8,
-            fontWeight = FontWeight.Normal,
         )
+        Spacer(modifier = Modifier.height(2.dp))
+        AppText(
+            text = activeProfile?.name ?: stringResource(R.string.profiles_title),
+            style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.Bold,
+            maxLines = 1,
+        )
+        Spacer(modifier = Modifier.height(14.dp))
+        HorizontalDivider(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+        )
+        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
+/*
+ * Original SidebarHeader (ant mascot) — kept but not shown.
+ *
+ * @Composable
+ * private fun SidebarHeader(onHeaderClick: () -> Unit = {}) {
+ *     Column(
+ *         modifier = Modifier.fillMaxWidth()
+ *             .clickable(interactionSource = remember { MutableInteractionSource() },
+ *                 indication = null, onClick = onHeaderClick)
+ *             .padding(vertical = 16.dp),
+ *         horizontalAlignment = Alignment.CenterHorizontally,
+ *         verticalArrangement = Arrangement.spacedBy(4.dp),
+ *     ) {
+ *         Image(painter = painterResource(id = R.drawable.ic_ant_mascot),
+ *             contentDescription = stringResource(R.string.app_name),
+ *             modifier = Modifier.size(64.dp))
+ *         AppText(text = stringResource(R.string.app_name),
+ *             style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold,
+ *             color = MaterialTheme.colorScheme.primary)
+ *         AppText(text = stringResource(R.string.app_description),
+ *             style = MaterialTheme.typography.bodySmall,
+ *             color = MaterialTheme.colorScheme.onSurfaceVariant,
+ *             textAlign = TextAlign.Center,
+ *             modifier = Modifier.fillMaxWidth(0.75f).padding(horizontal = 12.dp),
+ *             maxLines = 8, fontWeight = FontWeight.Normal)
+ *     }
+ * }
+ */
+
 /**
- * Voce di menu della sidebar con animazioni e feedback tattile.
+ * Voce di menu della sidebar con pill highlight animata.
  */
 @Composable
 private fun SidebarMenuItem(
@@ -171,143 +282,93 @@ private fun SidebarMenuItem(
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
-    // Animazioni
-    val backgroundColor =
-        animateColorAsState(
-            targetValue =
-                if (isSelected) {
-                    MaterialTheme.colorScheme.primaryContainer
-                } else {
-                    androidx.compose.material3.LocalContentColor.current
-                        .copy(alpha = 0f)
-                },
-            label = "menuItemBgColor",
-        )
+    val backgroundColor = animateColorAsState(
+        targetValue = if (isSelected) MaterialTheme.colorScheme.primaryContainer
+        else Color.Transparent,
+        label = "menuItemBgColor",
+    )
 
-    val textColor =
-        animateColorAsState(
-            targetValue =
-                if (isSelected) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    MaterialTheme.colorScheme.onSurface
-                },
-            label = "menuItemTextColor",
-        )
-
-    val iconScale =
-        animateFloatAsState(
-            targetValue = if (isSelected) 1.1f else 1f,
-            label = "menuItemIconScale",
-        )
-
-    val borderOpacity =
-        animateFloatAsState(
-            targetValue = if (isSelected) 1f else 0f,
-            label = "menuItemBorderOpacity",
-        )
+    val contentColor = animateColorAsState(
+        targetValue = if (isSelected) MaterialTheme.colorScheme.primary
+        else MaterialTheme.colorScheme.onSurface,
+        label = "menuItemContentColor",
+    )
 
     Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-                .clickable(
-                    enabled = true,
-                    onClick = onClick,
-                    interactionSource = remember { MutableInteractionSource() },
-                )
-                .background(
-                    color = backgroundColor.value,
-                    shape = RoundedCornerShape(14.dp),
-                )
-                .padding(horizontal = 20.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp)
+            .height(52.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .background(color = backgroundColor.value)
+            .clickable(
+                enabled = true,
+                onClick = onClick,
+                interactionSource = remember { MutableInteractionSource() },
+            )
+            .padding(horizontal = 14.dp),
         horizontalArrangement = Arrangement.spacedBy(14.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        // Left Border Indicator (animato)
-        Spacer(
-            modifier =
-                Modifier
-                    .width(4.dp)
-                    .height(32.dp)
-                    .background(
-                        color =
-                            MaterialTheme.colorScheme.primary.copy(
-                                alpha = borderOpacity.value,
-                            ),
-                        shape = RoundedCornerShape(2.dp),
-                    ),
-        )
-
-        // Icon with scale animation
         Icon(
             imageVector = item.icon,
             contentDescription = stringResource(item.titleResId),
-            modifier =
-                Modifier
-                    .size(24.dp)
-                    .width(24.dp * iconScale.value),
-            tint = textColor.value,
+            modifier = Modifier.size(22.dp),
+            tint = contentColor.value,
         )
-
-        // Label with color animation
         AppText(
             text = stringResource(item.titleResId),
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-            color = textColor.value,
+            color = contentColor.value,
         )
-
-        // Animated ant indicator (small mascot)
-        if (isSelected) {
-            Spacer(modifier = Modifier.weight(1f))
-            Icon(
-                painter = painterResource(id = R.drawable.ic_ant_mascot),
-                contentDescription = null,
-                modifier = Modifier.size(20.dp),
-                tint = androidx.compose.material3.LocalContentColor.current,
-            )
-        }
+        // Ant mascot indicator (preserved, hidden):
+        // if (isSelected) { Spacer(Modifier.weight(1f))
+        //   Icon(painter=painterResource(R.drawable.ic_ant_mascot), Modifier.size(20.dp)) }
     }
 }
 
 /**
- * Footer della sidebar con version badge stylizzato.
+ * Slot vuoto non cliccabile: stessa altezza di SidebarMenuItem, nessun contenuto visivo.
+ * Occupa spazio nello SpaceEvenly per allontanare visivamente gli item reali dal footer.
+ */
+@Composable
+private fun SidebarEmptySlot() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp)
+            .height(52.dp),
+    )
+}
+
+/**
+ * Footer della sidebar: versione centrata.
  */
 @Composable
 private fun SidebarFooter() {
-    Column(
-        modifier =
-            Modifier
-                .fillMaxHeight()
-                .padding(top = 8.dp),
-        verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Box(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
+        contentAlignment = Alignment.Center,
     ) {
-        Spacer(modifier = Modifier.weight(1f))
-
-        // Elegant divider line
-        Surface(
-            modifier =
-                Modifier
-                    .fillMaxHeight(0.001f)
-                    .height(1.dp),
-            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
-        ) {}
-
-        VerticalSpacer(SpacingSize.MD)
-
-        // Version badge (transparent)
         AppText(
             text = "v${BuildConfig.VERSION_NAME}",
             style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(bottom = 8.dp),
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
             fontWeight = FontWeight.Medium,
         )
     }
 }
+
+private val fakeProfile = Profile(
+    id = 1L,
+    name = "Mario Rossi",
+    uuid = "preview",
+    createdAt = 0L,
+    isActive = true,
+    colorArgb = 0xFF6650A4L,
+    avatarEmoji = "👤",
+)
 
 @Preview(showBackground = true, name = "LeftSidebar - Light")
 @Composable
@@ -316,14 +377,14 @@ private fun LeftSidebarLightPreview() {
         LeftSidebar(
             selectedRoute = "home",
             onNavigate = {},
-            visibleNavItems =
-                listOf(
-                    BottomNavItem.Home,
-                    BottomNavItem.Charts,
-                    BottomNavItem.Transactions,
-                    BottomNavItem.Categories,
-                    BottomNavItem.Settings,
-                ),
+            visibleNavItems = listOf(
+                BottomNavItem.Home,
+                BottomNavItem.Charts,
+                BottomNavItem.Transactions,
+                BottomNavItem.Categories,
+                BottomNavItem.Settings,
+            ),
+            activeProfile = fakeProfile,
         )
     }
 }
@@ -335,14 +396,14 @@ private fun LeftSidebarDarkPreview() {
         LeftSidebar(
             selectedRoute = "home",
             onNavigate = {},
-            visibleNavItems =
-                listOf(
-                    BottomNavItem.Home,
-                    BottomNavItem.Charts,
-                    BottomNavItem.Transactions,
-                    BottomNavItem.Categories,
-                    BottomNavItem.Settings,
-                ),
+            visibleNavItems = listOf(
+                BottomNavItem.Home,
+                BottomNavItem.Charts,
+                BottomNavItem.Transactions,
+                BottomNavItem.Categories,
+                BottomNavItem.Settings,
+            ),
+            activeProfile = fakeProfile,
         )
     }
 }
@@ -354,14 +415,14 @@ private fun LeftSidebarLargeTextPreview() {
         LeftSidebar(
             selectedRoute = "home",
             onNavigate = {},
-            visibleNavItems =
-                listOf(
-                    BottomNavItem.Home,
-                    BottomNavItem.Charts,
-                    BottomNavItem.Transactions,
-                    BottomNavItem.Categories,
-                    BottomNavItem.Settings,
-                ),
+            visibleNavItems = listOf(
+                BottomNavItem.Home,
+                BottomNavItem.Charts,
+                BottomNavItem.Transactions,
+                BottomNavItem.Categories,
+                BottomNavItem.Settings,
+            ),
+            activeProfile = fakeProfile,
         )
     }
 }

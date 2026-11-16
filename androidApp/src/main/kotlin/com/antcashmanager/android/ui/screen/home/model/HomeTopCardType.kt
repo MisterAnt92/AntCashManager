@@ -9,10 +9,11 @@ enum class HomeTopCardType(
     BALANCE("balance", R.string.home_total_balance),
     INCOME_EXPENSE("income_expense", R.string.home_income_expense_card_title),
     QUICK_INSIGHTS("quick_insights", R.string.home_quick_insights_title),
+    MEAL_VOUCHERS("meal_vouchers", R.string.home_meal_vouchers_title),
     ;
 
     companion object {
-        val defaultOrder = listOf(BALANCE, INCOME_EXPENSE, QUICK_INSIGHTS)
+        val defaultOrder = listOf(BALANCE, INCOME_EXPENSE, QUICK_INSIGHTS, MEAL_VOUCHERS)
 
         fun parse(raw: String): List<HomeTopCardType> {
             val ordered =

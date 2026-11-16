@@ -215,3 +215,7 @@ fun NavController.navigateToAddTransaction() {
 fun NavController.navigateToEditTransaction(transactionId: Long) {
     navigateToTransaction(AppRoute.TransactionRoute.Edit.createRoute(transactionId))
 }
+
+fun NavController.navigateToProfiles() {
+    navigateToSettings(AppRoute.SettingsRoute.Profiles.route)
+}

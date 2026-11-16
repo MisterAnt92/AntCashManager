@@ -6,46 +6,46 @@ import com.antcashmanager.domain.model.Transaction
  * UI Events for Home screen.
  */
 sealed interface HomeEvent {
-    data class SelectPreset(
+    data class SelectPresetEvent(
         val index: Int,
     ) : HomeEvent
 
-    data class SetDateRange(
+    data class SetDateRangeEvent(
         val from: Long,
         val to: Long,
     ) : HomeEvent
 
-    data class ShowTransactionDetails(
+    data class ShowTransactionDetailsEvent(
         val transaction: Transaction,
     ) : HomeEvent
 
-    data object DismissTransactionDetails : HomeEvent
+    data object DismissTransactionDetailsEvent : HomeEvent
 
     // Search events
-    data class UpdateSearchQuery(
+    data class UpdateSearchQueryEvent(
         val query: String,
     ) : HomeEvent
 
-    data object ToggleSearchExpanded : HomeEvent
+    data object ToggleSearchExpandedEvent : HomeEvent
 
     // Top cards reorder dialog
-    data object StartTopCardsReorder : HomeEvent
+    data object StartTopCardsReorderEvent : HomeEvent
 
-    data class MoveTopCard(
+    data class MoveTopCardEvent(
         val index: Int,
         val up: Boolean,
     ) : HomeEvent
 
-    data object CancelTopCardsReorder : HomeEvent
+    data object CancelTopCardsReorderEvent : HomeEvent
 
-    data object ConfirmTopCardsOrder : HomeEvent
+    data object ConfirmTopCardsOrderEvent : HomeEvent
 
     // Settings events
-    data class SetIsTutorialCompleted(
+    data class SetIsTutorialCompletedEvent(
         val completed: Boolean,
     ) : HomeEvent
 
-    data class SetDateFilterExpanded(
+    data class SetDateFilterExpandedEvent(
         val expanded: Boolean,
     ) : HomeEvent
 }

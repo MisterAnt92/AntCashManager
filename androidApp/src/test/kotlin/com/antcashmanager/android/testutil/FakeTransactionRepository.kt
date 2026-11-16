@@ -115,6 +115,11 @@ open class FakeTransactionRepository(
         transactions.value = emptyList()
     }
 
+    override suspend fun deleteAllTransactionsForProfile(profileId: Long) {
+        applyDelayAndMaybeThrow()
+        transactions.value = emptyList()
+    }
+
     override fun getTransactionsByDateRange(
         from: Long,
         to: Long,

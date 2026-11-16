@@ -182,6 +182,8 @@ fun TutorialOverlay(onDismiss: () -> Unit) {
                     .padding(horizontal = horizontalPadding, vertical = verticalPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            androidx.compose.foundation.layout.Spacer(modifier = Modifier.height(16.dp))
+
             // Contenuto per-step (titolo, descrizione, immagine/highlights) con transizione
             // slide+fade orizzontale, la cui direzione segue il verso di navigazione
             // (avanti → scorre da destra, indietro → scorre da sinistra). Il primo step

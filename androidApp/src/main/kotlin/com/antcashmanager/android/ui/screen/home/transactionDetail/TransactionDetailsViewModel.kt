@@ -20,8 +20,8 @@ class TransactionDetailsViewModel(
     override fun onEvent(event: TransactionDetailsEvent) {
         logDebug("Event: $event")
         when (event) {
-            is TransactionDetailsEvent.ShareTransaction -> shareTransactionImpl(event.transaction)
-            TransactionDetailsEvent.RetryLastOperation -> logInfo("Retry requested")
+            is TransactionDetailsEvent.ShareTransactionEvent -> shareTransactionImpl(event.transaction)
+            TransactionDetailsEvent.RetryLastOperationEvent -> logInfo("Retry requested")
         }
     }
 

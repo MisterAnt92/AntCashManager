@@ -30,6 +30,7 @@ private fun categoryResId(categoryName: String): Int? =
         "category_gifts" -> R.string.category_gifts
         "category_subscriptions" -> R.string.category_subscriptions
         "category_personal_care" -> R.string.category_personal_care
+        "category_meal_vouchers" -> R.string.category_meal_vouchers
 
         "Non categorizzato" -> R.string.category_uncategorized
         "Casa" -> R.string.category_home
@@ -51,6 +52,7 @@ private fun categoryResId(categoryName: String): Int? =
         "Regali" -> R.string.category_gifts
         "Abbonamenti" -> R.string.category_subscriptions
         "Cura personale" -> R.string.category_personal_care
+        "Buoni pasto" -> R.string.category_meal_vouchers
         // English keys (for future proofing or if they were seeded in English)
         "Uncategorized" -> R.string.category_uncategorized
         "Home" -> R.string.category_home

@@ -28,7 +28,6 @@ import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
 import com.antcashmanager.android.navigation.ScreenHeaderConfig
 import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
 import com.antcashmanager.android.ui.components.animation.AntEasterEggAnimation
-import com.antcashmanager.android.ui.components.dialog.HelpButton
 import com.antcashmanager.android.ui.components.layout.FoldableAwareLayout
 import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
 import com.antcashmanager.android.ui.components.layout.rememberAdaptiveLayoutInfo
@@ -38,7 +37,7 @@ import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.components.transaction.TransactionDetailsPane
 import com.antcashmanager.android.ui.screen.home.event.HomeEvent
 import com.antcashmanager.android.ui.screen.home.transactionDetail.TransactionDetailsDialog
-import com.antcashmanager.android.ui.screen.home.view.HelpDialog
+
 import com.antcashmanager.android.ui.screen.home.view.HomeListPane
 import com.antcashmanager.android.ui.screen.home.view.HomeTopCardsOrderDialog
 import com.antcashmanager.android.ui.screen.home.view.LoadingState
@@ -78,7 +77,6 @@ internal fun HomeContent(
     // Pure UI state: dialog visibility
     var showFromDatePicker by remember { mutableStateOf(false) }
     var showToDatePicker by remember { mutableStateOf(false) }
-    var showHelpDialog by remember { mutableStateOf(false) }
     var showVersionDialog by remember { mutableStateOf(false) }
 
     // Foldable device support
@@ -97,23 +95,15 @@ internal fun HomeContent(
                 title = dashboardTitle,
                 showSearchIcon = true,
                 hasOrderOption = true,
-                onSearchClick = { onEvent(HomeEvent.ToggleSearchExpanded) },
-                onOrderClick = { onEvent(HomeEvent.StartTopCardsReorder) },
-                actions = {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        HelpButton(onHelpClick = { showHelpDialog = true })
-                    }
-                },
+                onSearchClick = { onEvent(HomeEvent.ToggleSearchExpandedEvent) },
+                onOrderClick = { onEvent(HomeEvent.StartTopCardsReorderEvent) },
             ),
         )
     }
 
     // Tutorial full-screen (non durante il caricamento iniziale, per evitare flickering)
     if (!state.isTutorialCompleted && !state.isLoading) {
-        TutorialOverlay(onDismiss = { onEvent(HomeEvent.SetIsTutorialCompleted(true)) })
+        TutorialOverlay(onDismiss = { onEvent(HomeEvent.SetIsTutorialCompletedEvent(true)) })
         return
     }
 
@@ -133,33 +123,30 @@ internal fun HomeContent(
     if (showFromDatePicker) {
         HomeDatePickerDialog(
             initialDate = state.dateRangeFrom,
-            onConfirm = { onEvent(HomeEvent.SetDateRange(it, state.dateRangeTo)) },
+            onConfirm = { onEvent(HomeEvent.SetDateRangeEvent(it, state.dateRangeTo)) },
             onDismiss = { showFromDatePicker = false },
         )
     }
     if (showToDatePicker) {
         HomeDatePickerDialog(
             initialDate = state.dateRangeTo,
-            onConfirm = { onEvent(HomeEvent.SetDateRange(state.dateRangeFrom, it)) },
+            onConfirm = { onEvent(HomeEvent.SetDateRangeEvent(state.dateRangeFrom, it)) },
             onDismiss = { showToDatePicker = false },
         )
-    }
-    if (showHelpDialog) {
-        HelpDialog(onDismiss = { showHelpDialog = false })
     }
     state.editingTopCardsOrder?.let { editingOrder ->
         HomeTopCardsOrderDialog(
             order = editingOrder,
-            onMoveUp = { onEvent(HomeEvent.MoveTopCard(it, up = true)) },
-            onMoveDown = { onEvent(HomeEvent.MoveTopCard(it, up = false)) },
-            onDismiss = { onEvent(HomeEvent.CancelTopCardsReorder) },
-            onConfirm = { onEvent(HomeEvent.ConfirmTopCardsOrder) },
+            onMoveUp = { onEvent(HomeEvent.MoveTopCardEvent(it, up = true)) },
+            onMoveDown = { onEvent(HomeEvent.MoveTopCardEvent(it, up = false)) },
+            onDismiss = { onEvent(HomeEvent.CancelTopCardsReorderEvent) },
+            onConfirm = { onEvent(HomeEvent.ConfirmTopCardsOrderEvent) },
         )
     }
     state.selectedTransaction?.let { selected ->
         TransactionDetailsDialog(
             transaction = selected,
-            onDismiss = { onEvent(HomeEvent.DismissTransactionDetails) },
+            onDismiss = { onEvent(HomeEvent.DismissTransactionDetailsEvent) },
         )
     }
     if (showVersionDialog) {
@@ -184,7 +171,7 @@ internal fun HomeContent(
                     transaction = item.transaction,
                     navigateToDetailsPane = foldingFeature?.isSeparating == true,
                 )
-                onEvent(HomeEvent.ShowTransactionDetails(item.transaction))
+                onEvent(HomeEvent.ShowTransactionDetailsEvent(item.transaction))
             },
             modifier = modifier,
         )

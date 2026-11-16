@@ -116,15 +116,19 @@ class TransactionLoadManager(
             val categoryList = getCategoriesUseCase().first().getOrThrow()
             val selectedCat =
                 categoryList.find { it.name == transaction.category }
-                    ?: throw IllegalArgumentException(
-                        "Category '${transaction.category}' not found for transaction ${transaction.id}",
+                    ?: Category(
+                        id = 0L,
+                        name = transaction.category,
+                        icon = transaction.categoryIcon.ifEmpty { "📁" },
+                        color = transaction.categoryColor,
+                        type = transaction.type.name,
                     )
 
             // La categoria già assegnata alla transazione deve restare selezionabile
             // nel picker anche se nel frattempo è stata nascosta
             val visibleCategories = categoryList.filterNot { it.isHidden }
             val categoriesForPicker =
-                if (selectedCat.isHidden) {
+                if (selectedCat.isHidden || categoryList.none { it.name == selectedCat.name }) {
                     visibleCategories + selectedCat
                 } else {
                     visibleCategories

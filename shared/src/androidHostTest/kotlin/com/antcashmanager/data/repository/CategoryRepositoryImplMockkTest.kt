@@ -17,35 +17,43 @@ import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 
+import com.antcashmanager.domain.manager.ProfileManager
+
+import kotlinx.coroutines.flow.MutableStateFlow
+
 @OptIn(ExperimentalCoroutinesApi::class)
 class CategoryRepositoryImplMockkTest {
     private lateinit var categoryDao: CategoryDao
+    private lateinit var profileManager: ProfileManager
     private lateinit var repository: CategoryRepositoryImpl
 
     @Before
     fun setup() {
         categoryDao = mockk(relaxed = true)
-        repository = CategoryRepositoryImpl(categoryDao)
+        profileManager = mockk(relaxed = true)
+        every { profileManager.activeProfileId } returns MutableStateFlow(1L)
+        every { profileManager.getActiveProfileIdSync() } returns 1L
+        repository = CategoryRepositoryImpl(categoryDao, profileManager)
     }
 
     @Test
     fun getAllCategories_shouldMapEntitiesToDomain_whenDaoEmitsCategories() =
         runTest {
             val entity = sampleEntity(id = 5L, name = "Food", isDefault = true)
-            every { categoryDao.getAllCategories() } returns flowOf(listOf(entity))
+            every { categoryDao.getAllCategories(any()) } returns flowOf(listOf(entity))
 
             val result = repository.getAllCategories().first()
 
             assertEquals(1, result.size)
             assertEquals(sampleCategory(id = 5L, name = "Food", isDefault = true), result.first())
-            verify(exactly = 1) { categoryDao.getAllCategories() }
+            verify(exactly = 1) { categoryDao.getAllCategories(any()) }
         }
 
     @Test
     fun getAllCategories_shouldMapSortOrderAndIsHidden_whenEntityHasNonDefaultValues() =
         runTest {
             val entity = sampleEntity(id = 7L, name = "Hobby", sortOrder = 3, isHidden = true)
-            every { categoryDao.getAllCategories() } returns flowOf(listOf(entity))
+            every { categoryDao.getAllCategories(any()) } returns flowOf(listOf(entity))
 
             val result = repository.getAllCategories().first()
 
@@ -59,23 +67,23 @@ class CategoryRepositoryImplMockkTest {
     fun getCategoryByName_shouldReturnMappedCategory_whenDaoReturnsEntity() =
         runTest {
             val entity = sampleEntity(id = 9L, name = "Transport")
-            coEvery { categoryDao.getCategoryByName("Transport") } returns entity
+            coEvery { categoryDao.getCategoryByName(any(), "Transport") } returns entity
 
             val result = repository.getCategoryByName("Transport")
 
             assertEquals(sampleCategory(id = 9L, name = "Transport"), result)
-            coVerify(exactly = 1) { categoryDao.getCategoryByName("Transport") }
+            coVerify(exactly = 1) { categoryDao.getCategoryByName(any(), "Transport") }
         }
 
     @Test
     fun getCategoryByName_shouldReturnNull_whenDaoReturnsNull() =
         runTest {
-            coEvery { categoryDao.getCategoryByName("Missing") } returns null
+            coEvery { categoryDao.getCategoryByName(any(), "Missing") } returns null
 
             val result = repository.getCategoryByName("Missing")
 
             assertNull(result)
-            coVerify(exactly = 1) { categoryDao.getCategoryByName("Missing") }
+            coVerify(exactly = 1) { categoryDao.getCategoryByName(any(), "Missing") }
         }
 
     @Test
@@ -114,8 +122,8 @@ class CategoryRepositoryImplMockkTest {
         runTest {
             repository.deleteAllCategories()
 
-            coVerify(exactly = 1) { categoryDao.deleteAllNonDefaultCategories() }
-            coVerify(exactly = 0) { categoryDao.deleteAllCategories() }
+            coVerify(exactly = 1) { categoryDao.deleteAllNonDefaultCategories(any()) }
+            coVerify(exactly = 0) { categoryDao.deleteAllCategories(any()) }
         }
 
     @Test
@@ -178,7 +186,7 @@ class CategoryRepositoryImplMockkTest {
             val incomeEntity =
                 sampleEntity(id = 7L, name = "Salary", sortOrder = 0)
                     .copy(type = "INCOME")
-            every { categoryDao.getCategoriesByType("EXPENSE") } returns flowOf(listOf(expenseEntity))
+            every { categoryDao.getCategoriesByType(any(), "EXPENSE") } returns flowOf(listOf(expenseEntity))
 
             val result = repository.getCategoriesByType("EXPENSE").first()
 
@@ -190,12 +198,12 @@ class CategoryRepositoryImplMockkTest {
     @Test
     fun getDefaultCategoryCount_shouldReturnCountOfDefaultCategories_whenQueried() =
         runTest {
-            coEvery { categoryDao.getDefaultCategoryCount() } returns 5
+            coEvery { categoryDao.getDefaultCategoryCount(any()) } returns 5
 
             val result = repository.getDefaultCategoryCount()
 
             assertEquals(5, result)
-            coVerify(exactly = 1) { categoryDao.getDefaultCategoryCount() }
+            coVerify(exactly = 1) { categoryDao.getDefaultCategoryCount(any()) }
         }
 
     @Test

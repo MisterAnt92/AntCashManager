@@ -311,7 +311,7 @@ def convert_data(input_path: Path, output_path: Path) -> int:
 
 def main():
     """Entry point dello script."""
-    root = Path('/opt/src/GIT/app/AntCashManager')
+    root = Path(__file__).resolve().parents[2]
     assets_dir = root / 'androidApp' / 'src' / 'main' / 'assets'
 
     # Accetta argomenti da linea di comando
@@ -334,4 +334,3 @@ def main():
 
 if __name__ == '__main__':
     raise SystemExit(main())
-

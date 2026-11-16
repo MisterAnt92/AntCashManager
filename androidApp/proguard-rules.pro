@@ -233,12 +233,21 @@
 # 15. R8 OPTIMIZATION – LOG STRIPPING
 # ------------------------------------------------------------------------------
 
-# Remove logging calls in release builds (Log.d, Log.v, Log.i have no side effects)
-# This reduces APK size by ~50-100 KB without affecting functionality.
+# Remove logging calls in release builds (Log.e kept for Crashlytics stacktraces)
 -assumenosideeffects class android.util.Log {
     public static *** d(...);
     public static *** v(...);
     public static *** i(...);
+    public static *** w(...);
+}
+
+# Strip Kermit Logger lambdas: R8 strips android.util.Log but not the lambda
+# that builds the message string. This eliminates the lambda overhead in hot paths.
+-assumenosideeffects class co.touchlab.kermit.Logger {
+    public static void d(java.lang.String, ...);
+    public static void v(java.lang.String, ...);
+    public static void i(java.lang.String, ...);
+    public static void w(java.lang.String, ...);
 }
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -308,11 +317,12 @@
 # ══════════════════════════════════════════════════════════════════════════════
 
 # R8 Specific: Enable 8 optimization passes (default 5)
-# Each pass removes more dead code, inlines more methods, optimizes further
 -optimizationpasses 8
 
+# Allow R8 to widen visibility (private → package) for more aggressive inlining
+-allowaccessmodification
+
 # Aggressive class and member renaming to short names (a, b, c...)
-# This significantly reduces string constant pool and method/class metadata
 -repackageclasses 'com.antcashmanager.opt'
 
 # R8 automatically removes empty inner classes in aggressive mode

@@ -105,6 +105,26 @@
     <string name="icon_directions_bike">運動</string>
     <string name="icon_shopping_cart">雜貨</string>
     <string name="icon_coffee">咖啡</string>
+    <string name="icon_local_bar">酒吧</string>
+    <string name="icon_local_cafe">咖啡廳</string>
+    <string name="icon_music_note">音樂</string>
+    <string name="icon_movie">電影</string>
+    <string name="icon_sports_esports">遊戲</string>
+    <string name="icon_account_balance">銀行</string>
+    <string name="icon_credit_card">刷卡消費</string>
+    <string name="icon_smartphone">電話/通訊</string>
+    <string name="icon_laptop">科技</string>
+    <string name="icon_child_care">育兒</string>
+    <string name="icon_local_gas_station">燃油</string>
+    <string name="icon_build">維修保養</string>
+    <string name="icon_beach_access">度假</string>
+    <string name="icon_percent">稅費</string>
+    <string name="icon_two_wheeler">機車</string>
+    <string name="icon_storefront">商店</string>
+    <string name="icon_umbrella">保險</string>
+    <string name="icon_sports_soccer">運動</string>
+    <string name="icon_medication">藥品</string>
+    <string name="icon_elderly_woman">老人護理</string>
     <string name="icon_spa">個人護理</string>
     <string name="icon_card_giftcard">餐券</string>
 
@@ -170,7 +190,7 @@
     <string name="settings_theme_system">系統預設</string>
     <string name="settings_language">語言</string>
     <string name="settings_display">顯示</string>
-    <string name="settings_display_subtitle">Customize currency, formatting, payment types, and display preferences</string>
+    <string name="settings_display_subtitle">自訂貨幣、格式、付款類型和顯示偏好設定</string>
     <string name="settings_show_charts_section">顯示圖表部分</string>
     <string name="settings_show_charts_section_visible">導航中顯示圖表部分</string>
     <string name="settings_show_charts_section_hidden">導航中隱藏圖表部分</string>
@@ -214,6 +234,26 @@
     <string name="settings_reduce_motion">減弱動態效果</string>
     <string name="settings_reduce_motion_subtitle">盡量減少動畫和過渡效果。對動態效果敏感的使用者很有幫助。</string>
     <string name="settings_data_management">資料管理</string>
+    <string name="settings_profiles">Profili</string>
+    <string name="profiles_title">Profili</string>
+    <string name="profiles_add_button">Aggiungi profilo</string>
+    <string name="profiles_switch_dialog_title">Cambia profilo</string>
+    <string name="profiles_switch_dialog_message">Passare a %1$s?</string>
+    <string name="profiles_delete_dialog_title">Elimina profilo</string>
+    <string name="profiles_delete_dialog_warning">Eliminare %1$s e tutti i suoi dati? Questa azione non può essere annullata.</string>
+    <string name="profiles_default_name">Default</string>
+    <string name="profiles_active_badge">Attivo</string>
+    <string name="profiles_create_dialog_title">Nuovo profilo</string>
+    <string name="profiles_name_hint">Nome profilo</string>
+    <string name="profiles_edit_dialog_title">編輯個人檔案</string>
+    <string name="profiles_section_title">個人檔案</string>
+    <string name="profiles_color_label">顏色</string>
+    <string name="profiles_change_photo">更換照片</string>
+    <string name="profiles_share_transactions_title">分享交易記錄</string>
+    <string name="profiles_share_transactions_description">對所有啟用此選項的設定檔可見</string>
+    <string name="profiles_share_transactions_create_description">現有的交易記錄將與此設定檔共享。您可以稍後變更此設定。</string>
+    <string name="profiles_emoji_label">頭像</string>
+
     <string name="settings_security">安全</string>
     <string name="settings_security_data_encryption">資��保護 - 加密</string>
     <string name="settings_security_data_encryption_subtitle">加密並保護本地應用資料</string>
@@ -375,6 +415,8 @@
     <string name="payment_type_electronic">電子支付</string>
     <string name="payment_type_cash">現金</string>
     <string name="payment_type_meal_vouchers">餐券</string>
+    <string name="payment_type_meal_vouchers_with_cash">餐券 + 現金/刷卡</string>
+    <string name="transaction_details_meal_vouchers_covered">餐券抵扣金額</string>
 
     <!-- Add Transaction Payment Type -->
     <string name="add_transaction_payment_type">支付類型</string>
@@ -497,6 +539,7 @@
     <string name="category_gifts">禮物</string>
     <string name="category_subscriptions">訂閱</string>
     <string name="category_personal_care">個人護理</string>
+    <string name="category_meal_vouchers">餐飲券</string>
 
     <!-- Receipt Scan Screen -->
     <string name="receipt_scan_title">掃描收據</string>
@@ -642,4 +685,26 @@
     <string name="transactions_help_display_title">@string/settings_transaction_display</string>
     <string name="transactions_help_display_desc">@string/settings_transaction_display_desc</string>
     <string name="transactions_details_empty">選擇一筆交易以查看詳情</string>
+
+    <!-- Meal Vouchers Card -->
+    <string name="home_meal_vouchers_title">餐券</string>
+    <string name="home_meal_vouchers_remaining">剩餘</string>
+    <string name="home_meal_vouchers_received">已收到</string>
+    <string name="home_meal_vouchers_used">已使用</string>
+    <string name="home_meal_vouchers_remaining_value">剩餘價值</string>
+    <string name="home_meal_vouchers_received_only_mode">僅跟蹤</string>
+
+    <!-- Month names (short format) -->
+    <string name="month_short_1">1月</string>
+    <string name="month_short_2">2月</string>
+    <string name="month_short_3">3月</string>
+    <string name="month_short_4">4月</string>
+    <string name="month_short_5">5月</string>
+    <string name="month_short_6">6月</string>
+    <string name="month_short_7">7月</string>
+    <string name="month_short_8">8月</string>
+    <string name="month_short_9">9月</string>
+    <string name="month_short_10">10月</string>
+    <string name="month_short_11">11月</string>
+    <string name="month_short_12">12月</string>
 </resources>

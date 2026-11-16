@@ -684,6 +684,7 @@ class SettingsDataViewModel(
         try {
             // I token sono già salvati da GoogleSignInManager.handleSignInSuccess()
             // Aggiorna solo l'UI
+            settingsRepositoryRef.setAutoBackupDestination(BackupDestination.GOOGLE_DRIVE)
             _state.update {
                 it.copy(
                     googleDriveUserEmail = result.email,
@@ -693,8 +694,9 @@ class SettingsDataViewModel(
                     googleDriveSignInLoading = false,
                 )
             }
-            // Persisti destinazione
-            settingsRepositoryRef.setAutoBackupDestination(BackupDestination.GOOGLE_DRIVE)
+            if (_state.value.autoBackupEnabled) {
+                autoBackupScheduler.schedule(_state.value.autoBackupFrequency.intervalDays)
+            }
         } catch (e: Exception) {
             logError("Error handling sign-in success: ${e.message}", e)
             handleGoogleSignInError(e)
@@ -737,6 +739,7 @@ class SettingsDataViewModel(
                 val result = googleSignInManager.signOut()
                 if (result.isSuccess) {
                     logDebug("Signed out successfully")
+                    settingsRepositoryRef.setAutoBackupDestination(BackupDestination.LOCAL)
                     _state.update {
                         it.copy(
                             googleDriveUserEmail = null,

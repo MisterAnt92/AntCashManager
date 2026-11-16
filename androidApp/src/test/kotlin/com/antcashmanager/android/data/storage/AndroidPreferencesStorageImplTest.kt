@@ -193,7 +193,7 @@ class AndroidPreferencesStorageImplTest {
             val result = storage.getDouble("meal_voucher_value", 0.0)
 
             // Assert
-            assertEquals(10.50, result)
+            assertEquals(10.50, result, 0.001)
         }
 
     @Test
@@ -206,7 +206,7 @@ class AndroidPreferencesStorageImplTest {
             val result = storage.getDouble("meal_voucher_value", 0.0)
 
             // Assert
-            assertEquals(0.0, result)
+            assertEquals(0.0, result, 0.001)
         }
 
     @Test
