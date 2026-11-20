@@ -43,7 +43,7 @@ class AddTransactionViewModel(
     initialState = AddTransactionState(
         isLoading = transactionId != null,
         isModifying = transactionId != null,
-        currentStep = AddTransactionStep.DETAILS,
+        currentStep = if (transactionId != null) AddTransactionStep.DETAILS else AddTransactionStep.CATEGORY_SELECTION,
         transactionId = transactionId,
     ),
 ) {

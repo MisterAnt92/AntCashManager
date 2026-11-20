@@ -7,7 +7,7 @@ import com.antcashmanager.domain.model.TransactionType
 
 /**
  * Flusso semplificato:
- * - Nuova transazione: Dettagli (salvataggio diretto; categoria selezionabile dal form)
+ * - Nuova transazione: Categoria -> Dettagli (salvataggio diretto)
  * - Modifica transazione: Dettagli (salvataggio diretto)
  *
  * Categoria, Tipo e Data sono sempre modificabili al tap tramite dialog.

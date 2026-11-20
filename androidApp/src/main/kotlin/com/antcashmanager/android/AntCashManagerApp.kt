@@ -284,6 +284,13 @@ class AntCashManagerApp : Application() {
     private val newDefaultExpenseCategories by lazy {
         listOf(
             Category(
+                name = "Non categorizzato",
+                icon = "more_horiz",
+                color = 0xFF90A4AE,
+                type = "EXPENSE",
+                isDefault = true,
+            ),
+            Category(
                 name = "Regali",
                 icon = "redeem",
                 color = 0xFFFF8A65,
@@ -310,6 +317,13 @@ class AntCashManagerApp : Application() {
     private val newDefaultIncomeCategories by lazy {
         listOf(
             Category(
+                name = "Non categorizzato",
+                icon = "more_horiz",
+                color = 0xFF90A4AE,
+                type = "INCOME",
+                isDefault = true,
+            ),
+            Category(
                 name = "Regalo",
                 icon = "redeem",
                 color = 0xFFFF8A65,
@@ -327,15 +341,11 @@ class AntCashManagerApp : Application() {
     }
 
     private suspend fun backfillNewDefaultCategories(categoryRepository: CategoryRepository) {
-        newDefaultExpenseCategories.forEach { category ->
-            if (categoryRepository.getCategoryByName(category.name) == null) {
-                Logger.d(tag = "AntCashManagerApp") { "Backfilling new default category: ${category.name}" }
-                categoryRepository.insertCategory(category)
-            }
-        }
-        newDefaultIncomeCategories.forEach { category ->
-            if (categoryRepository.getCategoryByName(category.name) == null) {
-                Logger.d(tag = "AntCashManagerApp") { "Backfilling new default category: ${category.name}" }
+        val existing = categoryRepository.getAllCategories().first()
+        (newDefaultExpenseCategories + newDefaultIncomeCategories).forEach { category ->
+            val exists = existing.any { it.name == category.name && it.type == category.type }
+            if (!exists) {
+                Logger.d(tag = "AntCashManagerApp") { "Backfilling new default category: ${category.name} (${category.type})" }
                 categoryRepository.insertCategory(category)
             }
         }

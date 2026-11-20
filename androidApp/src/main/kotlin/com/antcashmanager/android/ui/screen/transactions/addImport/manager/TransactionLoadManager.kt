@@ -39,7 +39,6 @@ class TransactionLoadManager(
             getCategoriesUseCase()
                 .first()
                 .getOrThrow()
-                .filterNot { it.isHidden }
                 .sortedBy { it.sortOrder }
         }
 
