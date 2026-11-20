@@ -64,7 +64,7 @@ open class FakeCategoryRepository(
         categories.value = categories.value.filter { it.isDefault }
     }
 
-    override suspend fun seedDefaultCategoriesForProfile(sourceProfileId: Long, targetProfileId: Long) {
+    override suspend fun seedDefaultCategoriesForProfile(targetProfileId: Long) {
         errorToThrow?.let { throw it }
     }
 }
