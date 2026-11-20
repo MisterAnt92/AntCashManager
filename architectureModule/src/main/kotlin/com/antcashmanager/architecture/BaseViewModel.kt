@@ -25,6 +25,9 @@ public interface BaseViewModel<E : UIEvent, S : UIState> {
 
     public fun emitEvent(event: E)
 
+    /** Alias di comodo per [emitEvent]. */
+    public fun onEvent(event: E): Unit = emitEvent(event)
+
     /** Tag usato nei messaggi di log. Default: nome semplice della classe. */
     public val tag: String get() = this::class.simpleName ?: "ViewModel"
 
