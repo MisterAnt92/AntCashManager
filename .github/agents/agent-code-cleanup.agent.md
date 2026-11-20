@@ -20,7 +20,7 @@ Regole generali in [AGENTS.md §2, §3](../../AGENTS.md). Workflow: analizza →
 - Prima di eliminare un simbolo: cerca usi via reflection, serialization (`@Serializable`), Koin (`get<X>()`, `::X`), `AndroidManifest`, `proguard-rules.pro`. Se c'è un dubbio, non rimuovere.
 - Prima di eliminare una risorsa: cerca in `R.string.x`, `@string/x`, `R.drawable.x`, `@drawable/x`, manifest, `themes.xml`, widget `xml/`, e nome costruito dinamicamente (`getIdentifier`).
 - Le stringhe vanno rimosse da **tutte le 13 locale** (`values*/strings.xml`) o da `values/untranslable.xml` se non traducibili, mai da un file solo.
-- Non rimuovere `@Preview` in `ui/components/` e `screen/*/view/` (richieste); i `*Screen` root non ne hanno.
+- Non rimuovere `@Preview` in `ui/components/`, `screen/*/view/`, **e le Screen root** (tutte obbligatorie per AGENTS.md §8).
 - Non rimuovere classi `Fake*`/`TestDataBuilder` in `testutil/` anche se poco usate.
 - Modifiche atomiche e revisionabili; import puliti e package corretto in ogni file toccato.
 

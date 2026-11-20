@@ -4,7 +4,7 @@ description: "Domain UseCase implementation: base class choice, execute() return
 
 # Agent: UseCase
 
-Rules live in [AGENTS.md §6](../../AGENTS.md). Base classes: `shared/src/commonMain/kotlin/com/antcashmanager/domain/usecase/base/`.
+Rules live in [AGENTS.md §6](../../AGENTS.md). Base classes: `architectureModule/src/main/kotlin/com/antcashmanager/domain/usecase/base/`.
 
 ## Choose the base class
 
@@ -13,7 +13,7 @@ Rules live in [AGENTS.md §6](../../AGENTS.md). Base classes: `shared/src/common
 | yes | no | `UseCase<P, R>` | `override suspend fun execute(params: P): R` |
 | no | no | `NoParamsUseCase<R>` | `override suspend fun execute(): R` |
 | yes | yes | `ObservableUseCase<P, R>` | `override fun execute(params: P): Flow<R>` |
-| no | yes | `NoParamsObservableUseCase<R>` | `override fun execute(): Flow<R>` |
+| no | yes | `NoParamsObservableUseCase<R>` | `override fun execute(params: Unit): Flow<R>` |
 
 Multiple params → a nested `data class Params(...)` inside the UseCase (see `SyncTransactionCategoriesUseCase.Params`).
 
@@ -42,7 +42,7 @@ class GetCategoriesUseCase(
     private val repository: CategoryRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : NoParamsObservableUseCase<List<Category>>(dispatcher) {
-    override fun execute(): Flow<List<Category>> = repository.getAll()
+    override fun execute(params: Unit): Flow<List<Category>> = repository.getAll()
 }
 // Caller collects Flow<Result<List<Category>>>
 ```

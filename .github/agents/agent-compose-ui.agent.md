@@ -16,7 +16,7 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
 
     HomeContent(
         state = state,
-        onEvent = viewModel::onEvent,
+        onEvent = viewModel::emitEvent,                          // ← emitEvent, NOT onEvent
         onAddTransaction = { navController.navigateToAddTransaction() },
         modifier = modifier,
     )
@@ -26,7 +26,13 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
 internal fun HomeContent(state: HomeState, onEvent: (HomeEvent) -> Unit, onAddTransaction: () -> Unit, modifier: Modifier = Modifier) { … }
 ```
 - `Content` gets plain values + lambdas → previewable and testable. Sub-composables in `view/`.
-- Navigation: only `NavigationExtensions.kt` (`navigateToHome/Charts/Transactions/Categories/SettingsMain/DisplaySettings/DataManagement/Tutorial/ReceiptScan/AddTransaction()`, `navigateToTransaction(route)`, `safePopBackStack()`) and `AppRoute`. No string literals.
+- Navigation: only `NavigationExtensions.kt` and `AppRoute`. No string literals. Full list:
+  `navigateToHome()`, `navigateToCharts()`, `navigateToTransactions()`, `navigateToCategories()`,
+  `navigateToSettingsMain()`, `navigateToDisplaySettings()`, `navigateToDataManagement()`,
+  `navigateToTutorial()`, `navigateToReceiptScan()`, `navigateToAddTransaction()`,
+  `navigateToEditTransaction(transactionId: Long)`, `navigateToProfiles()`,
+  `navigateToBottomTab(route)`, `navigateToSettings(route)`, `navigateToTransaction(route)`,
+  `safePopBackStack()`.
 - Header: `LocalScreenHeaderConfigCallback` + `ScreenHeaderConfig` (see HomeScreen) instead of a custom top bar.
 
 ## Component inventory — `ui/components/` (reuse, never recreate)
@@ -55,7 +61,7 @@ Regenerate: `grep -rhoE "^(internal )?fun [A-Z]\w+\(" androidApp/src/main/kotlin
 
 ## Previews
 
-**REQUIRED for every `@Composable` — including root `*Screen` composables, `ui/components/`, and `screen/<feature>/view/`: 3 variants (Light, Dark, 2x font scale).**
+**REQUIRED for every `@Composable` — including root `*Screen` composables, `ui/components/`, and `screen/<feature>/view/`: 3 variants (Light, Dark, 2x font scale). This applies to ALL composables without exception (AGENTS.md §8).**
 
 Every new `@Composable` created must include these 3 previews immediately:
 
