@@ -17,7 +17,7 @@ Questa guida contiene esempi storici: applicare sempre questi aggiornamenti come
 
 | Campo | Valore |
 |---|---|
-| Versione riferimento | `1.4.6` |
+| Versione riferimento | `1.9.0` |
 | Package name (`applicationId`) | `com.sformica.ant_cashmanager` |
 | Namespace Android | `com.antcashmanager.android` |
 
@@ -1573,7 +1573,18 @@ exit 0
 
 ---
 
-**Last Updated**: May 2026
-**Version**: 1.1
+**Last Updated**: Novembre 2026
+**Version**: 1.2
 **Maintainer**: AntCashManager Team
+
+---
+
+## Diagrammi
+
+Visualizzazioni aggiornate alla v1.9.0:
+
+- **Struttura app** (entità DB, navigation flow, moduli Gradle): [`docs/diagrams/app_structure.drawio`](diagrams/app_structure.drawio)
+- **Pattern architetturali** (Clean Architecture layers, UseCase pattern, ViewModel UDF, DI graph): [`docs/diagrams/architecture_patterns.drawio`](diagrams/architecture_patterns.drawio)
+
+Aprire con [app.diagrams.net](https://app.diagrams.net) o con il plugin draw.io per VS Code / IntelliJ.
 
