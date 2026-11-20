@@ -228,10 +228,10 @@ grep -rn "Result\." shared/src/commonMain/kotlin/com/antcashmanager/domain/useca
 ## 8. Verifica layer ViewModel
 
 **Checklist:**
-- [ ] Estende `BaseViewModel<FeatureEvent>`.
-- [ ] Un solo `private val _state = MutableStateFlow(FeatureState())`.
-- [ ] `val state: StateFlow<FeatureState>` esposto pubblicamente.
-- [ ] `override fun onEvent(event: E)` unico entry point pubblico, con `when` exhaustivo.
+- [ ] Estende `AndroidBaseViewModel<FeatureEvent, FeatureState>(FeatureState())`.
+- [ ] `FeatureEvent : UIEvent()` e `FeatureState : UIState()` — parent obbligatori.
+- [ ] Non ridichiarare `_state` o `state` — sono ereditati da `AndroidBaseViewModel`.
+- [ ] `override fun handleEvent(event: E)` router interno (protected); `emitEvent()` è il public entry point.
 - [ ] Tutti i metodi che mutano stato sono `private`.
 - [ ] Nessun `Context` iniettato.
 - [ ] Nessun repository eccetto `SettingsRepository` (eccezione documentata).
@@ -260,7 +260,7 @@ grep -rn "Repository" androidApp/src/main/kotlin/com/antcashmanager/android/ui/s
 - [ ] Navigazione solo tramite `NavigationExtensions.kt` e `AppRoute`.
 - [ ] Colori: solo `MaterialTheme.colorScheme.*`, `IncomeGreen`, `ExpenseRed`.
 - [ ] Spaziatura: 8/16/24 dp.
-- [ ] `@Preview` light+dark+2x per composable in `view/` e `ui/components/`; nessun preview su Screen root.
+- [ ] `@Preview` light+dark+2x per **ogni** `@Composable`: `view/`, `ui/components/`, **e Screen root** (AGENTS.md §8).
 - [ ] Nessuna stringa letterale nella UI (`stringResource(R.string.key)`).
 
 ```bash
@@ -315,7 +315,7 @@ Prima di dichiarare "done", verifica nell'ordine:
 2. **Domain**: UseCase ha `execute()` che restituisce raw value; test in `commonTest` passano.
 3. **Calcoli**: tutti i calcoli finanziari usano `withCorrectAmounts()` prima di sommare.
 4. **Validation**: `amount > 0` e `title` non blank verificati a livello domain, non solo UI.
-5. **ViewModel**: `onEvent()` exhaustivo; stato aggiornato via `_state.update { it.copy(...) }`.
+5. **ViewModel**: `handleEvent()` exhaustivo; stato aggiornato via `_state.update { it.copy(...) }`.
 6. **Screen**: zero logica di business; navigazione via `NavigationExtensions.kt`.
 7. **DI**: UseCase e ViewModel registrati in `AppModule.kt`.
 8. **i18n**: tutte le 13 locale aggiornate.

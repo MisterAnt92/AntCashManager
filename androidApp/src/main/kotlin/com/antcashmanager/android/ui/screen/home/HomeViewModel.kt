@@ -6,7 +6,7 @@ import com.antcashmanager.android.analytics.AnalyticsConstants.Events
 import com.antcashmanager.android.analytics.AnalyticsConstants.Params
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.analytics.tracker.SegmentationTracker
-import com.antcashmanager.android.ui.base.BaseViewModel
+import com.antcashmanager.android.ui.base.AndroidBaseViewModel
 import com.antcashmanager.android.ui.mapper.toUi
 import com.antcashmanager.android.ui.screen.home.event.HomeEvent
 import com.antcashmanager.android.ui.screen.home.model.HomeTopCardType
@@ -38,11 +38,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import com.antcashmanager.architecture.ErrorState
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -63,7 +67,7 @@ class HomeViewModel(
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val segmentationTracker: SegmentationTracker,
     private val analyticsManager: AnalyticsManager,
-) : BaseViewModel<HomeEvent>(dispatcher) {
+) : AndroidBaseViewModel<HomeEvent, HomeState>(HomeState(), dispatcher) {
     constructor(
         transactionRepository: TransactionRepository,
         settingsRepository: SettingsRepository,
@@ -229,7 +233,7 @@ class HomeViewModel(
     private var previousTopCategory: String? = null
 
     // ── Combined UI State ──
-    val state: StateFlow<HomeState> =
+    override val state: StateFlow<HomeState> =
         combine(
             transactionsFlow,
             filteredTransactionsFlow,
@@ -268,9 +272,6 @@ class HomeViewModel(
             // If the user already has transactions the tutorial must not appear,
             // regardless of the stored flag (handles device-store migration for existing users).
             val effectiveTutorialCompleted = isTutorialCompleted || transactions.isNotEmpty()
-            if (!isTutorialCompleted && transactions.isNotEmpty()) {
-                viewModelScope.launch { settingsRepository.setIsTutorialCompleted(true) }
-            }
 
             @Suppress("UNCHECKED_CAST")
             val editingTopCardsOrder = args[13] as? List<HomeTopCardType>
@@ -391,7 +392,7 @@ class HomeViewModel(
                 transactionDisplayType = transactionDisplayType,
                 isTutorialCompleted = effectiveTutorialCompleted,
                 mealVoucherSummary = mealVoucherSummary,
-                errorState = com.antcashmanager.android.ui.base.ErrorState(),
+                errorState = ErrorState(),
             )
         }.stateIn(
             scope = viewModelScope,
@@ -407,11 +408,19 @@ class HomeViewModel(
 
     init {
         observeSavedDateFilter()
+        // One-shot: mark tutorial completed the first time the user has transactions.
+        // Extracted from combine lambda to avoid multiple launches per emission.
+        viewModelScope.launch {
+            state
+                .filter { !it.isTutorialCompleted && it.recentTransactions.isNotEmpty() }
+                .take(1)
+                .collect { settingsRepository.setIsTutorialCompleted(true) }
+        }
         logDebug("HomeViewModel initialized")
     }
 
     // ── Event Handling ──
-    override fun onEvent(event: HomeEvent) {
+    override fun handleEvent(event: HomeEvent) {
         logDebug("Event: $event")
         when (event) {
             is HomeEvent.SelectPresetEvent -> selectPreset(event.index)

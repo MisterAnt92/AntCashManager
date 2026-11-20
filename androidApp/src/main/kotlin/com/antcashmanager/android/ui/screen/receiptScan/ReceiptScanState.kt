@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.receiptScan
 
+import com.antcashmanager.architecture.UIState
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.ReceiptData
@@ -24,7 +25,7 @@ data class ReceiptScanState(
     val isTransactionSaved: Boolean = false,
     val showCategoryDialog: Boolean = false,
     val showPaymentTypeDialog: Boolean = false,
-)
+) : UIState()
 
 /**
  * Step del flusso di scansione scontrino.

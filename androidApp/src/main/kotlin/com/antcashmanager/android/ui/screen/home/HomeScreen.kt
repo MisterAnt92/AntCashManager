@@ -57,7 +57,7 @@ fun HomeScreen(
 
     HomeContent(
         state = state,
-        onEvent = viewModel::onEvent,
+        onEvent = viewModel::emitEvent,
         navController = navController,
         modifier = modifier,
     )

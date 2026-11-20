@@ -1,6 +1,7 @@
 package com.antcashmanager.android.ui.screen.transactions
 
-import com.antcashmanager.android.ui.base.ErrorState
+import com.antcashmanager.architecture.ErrorState
+import com.antcashmanager.architecture.UIState
 import com.antcashmanager.android.ui.screen.common.DateRangePreset
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
@@ -35,7 +36,7 @@ data class TransactionsState(
     val dateFilterExpanded: Boolean = false,
     // Error handling (FASE 5: Error Feedback UX)
     val errorState: ErrorState = ErrorState(),
-) {
+) : UIState() {
     val hasActiveFilters: Boolean
         get() =
             searchQuery.isNotBlank() ||

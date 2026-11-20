@@ -28,6 +28,6 @@ public interface CategoryRepository {
     /** Deletes non-default categories belonging to [profileId] (used during backup restore). */
     public suspend fun deleteAllNonDefaultCategoriesForProfile(profileId: Long)
 
-    /** Copies default categories from [sourceProfileId] into [targetProfileId]. Used when creating a new profile. */
-    public suspend fun seedDefaultCategoriesForProfile(sourceProfileId: Long, targetProfileId: Long)
+    /** Seeds all default categories into [targetProfileId]. Used when creating a new profile. */
+    public suspend fun seedDefaultCategoriesForProfile(targetProfileId: Long)
 }

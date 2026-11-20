@@ -1,5 +1,7 @@
 package com.antcashmanager.android.ui.screen.settings.dataManagement
 
+import com.antcashmanager.architecture.UIEvent
+
 import com.antcashmanager.domain.model.BackupDestination
 import com.antcashmanager.domain.model.BackupFrequency
 
@@ -9,7 +11,7 @@ import com.antcashmanager.domain.model.BackupFrequency
  * All user interactions (backup, restore, encryption toggle, etc.) emit events
  * that the ViewModel processes to update data management state.
  */
-sealed class SettingsDataEvent {
+sealed class SettingsDataEvent : UIEvent() {
     // ── Data Encryption ──
     data class SetDataEncryptionEnabledEvent(
         val enabled: Boolean,

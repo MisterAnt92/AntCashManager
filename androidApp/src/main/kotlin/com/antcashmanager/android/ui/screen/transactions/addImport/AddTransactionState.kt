@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.transactions.addImport
 
+import com.antcashmanager.architecture.UIState
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.TransactionType
@@ -60,7 +61,7 @@ data class AddTransactionState(
     val showPaymentTypeDialog: Boolean = false,
     // Meal vouchers available (calcolato dal ViewModel)
     val availableMealVouchers: Int = 0,
-) {
+) : UIState() {
     val isMealVouchersPayment: Boolean
         get() = selectedPaymentType == PaymentType.MEAL_VOUCHERS
 

@@ -1,24 +1,31 @@
 ---
-description: "ViewModel UDF pattern: BaseViewModel<Event>, onEvent() routing, single StateFlow<State>, handleError. Use when creating or refactoring a ViewModel, its Event or State."
+description: "ViewModel UDF pattern: AndroidBaseViewModel<Event,State>, handleEvent() routing, inherited StateFlow<State>, UIEvent/UIState, emitEvent(). Use when creating or refactoring a ViewModel, its Event or State."
 ---
 
 # Agent: ViewModel (UDF)
 
 Rules live in [AGENTS.md §7](../../AGENTS.md). This file gives the templates, copied from real code.
 
+## Architecture types (`:architectureModule`)
+
+- `UIEvent` — abstract class, all Event sealed classes extend it. Carries `id: String` (UUID).
+- `UIState` — abstract marker class, all State data classes extend it.
+- `BaseViewModel<E, S>` — interface (not class); `AndroidBaseViewModel` implements it.
+- `AndroidBaseViewModel<E : UIEvent, S : UIState>` — the concrete Android base (`ViewModel` + `BaseViewModel`). Provides `_state`, `state`, `emitEvent()`, logging helpers, `handleError {}`.
+
 ## Files to create
 
 ```
-ui/screen/<feature>/<Feature>Event.kt      sealed class, one type per user action
-ui/screen/<feature>/<Feature>State.kt      immutable data class, includes errorState: ErrorState
-ui/screen/<feature>/<Feature>ViewModel.kt  BaseViewModel<<Feature>Event>
+ui/screen/<feature>/<Feature>Event.kt      sealed class : UIEvent(), one type per user action
+ui/screen/<feature>/<Feature>State.kt      data class : UIState(), includes errorState: ErrorState
+ui/screen/<feature>/<Feature>ViewModel.kt  AndroidBaseViewModel<<Feature>Event, <Feature>State>
 di/AppModule.kt                            viewModel { FeatureViewModel(get(), get()) }
 ```
 
 ## Event (from `categories/CategoryEvent.kt`)
 
 ```kotlin
-sealed class CategoryEvent {
+sealed class CategoryEvent : UIEvent() {
     data class AddCategory(val name: String, val icon: String, val color: Long, val type: String = "EXPENSE") : CategoryEvent()
     data class UpdateCategory(val category: Category) : CategoryEvent()
     data class DeleteCategory(val category: Category) : CategoryEvent()
@@ -32,8 +39,8 @@ sealed class CategoryEvent {
 data class CategoriesState(
     val categories: List<Category> = emptyList(),
     val isLoading: Boolean = false,
-    val errorState: ErrorState = ErrorState(),   // com.antcashmanager.android.ui.base.ErrorState
-)
+    val errorState: ErrorState = ErrorState(),   // com.antcashmanager.architecture.ErrorState
+) : UIState()   // ← required: extends UIState marker from architectureModule
 ```
 
 ## ViewModel (from `categories/CategoriesViewModel.kt`, trimmed)
@@ -42,9 +49,8 @@ data class CategoriesState(
 class CategoriesViewModel(
     private val getCategoriesUseCase: GetCategoriesUseCase,
     private val insertCategoryUseCase: InsertCategoryUseCase,
-) : BaseViewModel<CategoryEvent>() {
-    private val _state = MutableStateFlow(CategoriesState())
-    val state: StateFlow<CategoriesState> = _state
+) : AndroidBaseViewModel<CategoryEvent, CategoriesState>(CategoriesState()) {
+    // _state and state are inherited from AndroidBaseViewModel — do NOT redeclare them
 
     init {
         viewModelScope.launch {
@@ -59,7 +65,7 @@ class CategoriesViewModel(
         }
     }
 
-    override fun onEvent(event: CategoryEvent) {
+    override fun handleEvent(event: CategoryEvent) {
         logDebug("Event: $event")
         when (event) {
             is CategoryEvent.AddCategory -> addCategory(event.name, event.icon, event.color, event.type)
@@ -84,11 +90,12 @@ class CategoriesViewModel(
 Allowed exception: `SettingsRepository` injected directly for preferences.
 
 ```kotlin
-class ThemeViewModel(private val settingsRepository: SettingsRepository) : BaseViewModel<ThemeEvent>() {
-    val appTheme = settingsRepository.getTheme()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000L), AppTheme.SYSTEM)
+class ThemeViewModel(
+    private val settingsRepository: SettingsRepository,
+) : AndroidBaseViewModel<ThemeEvent, ThemeState>(ThemeState()) {
+    // init: collect settingsRepository flows → _state.update { it.copy(...) }
 
-    override fun onEvent(event: ThemeEvent) {
+    override fun handleEvent(event: ThemeEvent) {
         when (event) {
             is ThemeEvent.SetTheme -> viewModelScope.launch { settingsRepository.setTheme(event.theme) }
         }
@@ -112,10 +119,10 @@ class CategoriesViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun onEvent_shouldInsertCategory_whenAddCategoryReceived() = runViewModelTest {
+    fun handleEvent_shouldInsertCategory_whenAddCategoryReceived() = runViewModelTest {
         coEvery { insertCategory(any()) } returns Result.success(Unit)
 
-        viewModel.onEvent(CategoryEvent.AddCategory("Rent", "home", 0xFF0000L))
+        viewModel.emitEvent(CategoryEvent.AddCategory("Rent", "home", 0xFF0000L))
         advanceUntilIdle()
 
         coVerify(exactly = 1) { insertCategory(match { it.name == "Rent" }) }
@@ -126,12 +133,15 @@ class CategoriesViewModelTest : BaseUnitTest() {
 
 ## Checklist
 
-- [ ] Extends `BaseViewModel<FeatureEvent>`; only `onEvent()` is public
-- [ ] `_state` private `MutableStateFlow`, `state` public `StateFlow`, updates via `update { copy() }`
+- [ ] Extends `AndroidBaseViewModel<FeatureEvent, FeatureState>(FeatureState())`
+- [ ] `FeatureEvent : UIEvent()`, `FeatureState : UIState()` — required parent classes
+- [ ] Do NOT redeclare `_state` or `state` — they are inherited
+- [ ] `override fun handleEvent(event: E)` is the internal router (protected, not public)
+- [ ] `emitEvent(event)` is the public entry point — called from Screen via `viewModel::emitEvent`
 - [ ] Business data via UseCases; `SettingsRepository` only for preferences
 - [ ] `handleError { }` for `Result`, re-throw `CancellationException` in flow collectors
 - [ ] `logDebug/logError` from base — no `TAG`, `Log`, `println`
 - [ ] No `Context`; ≤ 300 lines; State ≤ 100 lines in its own file
 - [ ] Registered in `AppModule.presentationModule`
-- [ ] Test extends `BaseUnitTest`, drives via `onEvent`, name `method_shouldX_whenY`
+- [ ] Test extends `BaseUnitTest`, drives via `emitEvent`, name `method_shouldX_whenY`
 - [ ] Imports clean, package matches directory

@@ -18,6 +18,10 @@ Root: `/opt/src/GIT/app/AntCashManager/`
 
 ```
 Presentation (androidApp)  →  Domain (shared/commonMain)  →  Data (shared/androidMain)
+                                       ↑
+                           :architectureModule (cross-cutting)
+                           UIEvent, UIState, BaseViewModel<E,S> (interfaccia),
+                           UseCase base classes, ErrorState
 ```
 
 - **Package-by-feature**. KMP scope: Android only. **Nessun import Android in `commonMain`** (domain è pure Kotlin).
@@ -51,7 +55,7 @@ Presentation (androidApp)  →  Domain (shared/commonMain)  →  Data (shared/an
 
 ## UseCase (domain — `shared/commonMain`)
 
-Quattro classi base in `domain/usecase/base/`:
+Classi base in `architectureModule/src/main/kotlin/com/antcashmanager/domain/usecase/base/`:
 
 | Params | Flow | Classe base | Implementa |
 |---|---|---|---|
@@ -82,7 +86,12 @@ class GetTransactionsUseCase(
 
 ## ViewModel — UDF (`androidApp`)
 
-Tutti i ViewModel estendono `BaseViewModel<E>` dove `E` = sealed class `<Feature>Event` (o `Nothing`).
+Tutti i ViewModel estendono `AndroidBaseViewModel<E, S>` dove `E : UIEvent` e `S : UIState`.
+
+**Tipi in `:architectureModule`:**
+- `UIEvent` — classe astratta con `id: String` (UUID). Tutti gli Event la estendono.
+- `UIState` — marker astratto. Tutti gli State la estendono.
+- `AndroidBaseViewModel<E, S>` — fornisce `_state`, `state`, `emitEvent()`, `handleError {}`, logging.
 
 ### Pattern obbligatorio
 
@@ -91,16 +100,14 @@ class FeatureViewModel(
     private val getSomethingUseCase: GetSomethingUseCase,
     private val settingsRepository: SettingsRepository,  // eccezione documentata
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : BaseViewModel<FeatureEvent>(dispatcher) {
-
-    private val _state = MutableStateFlow(FeatureState())
-    val state: StateFlow<FeatureState> = _state.asStateFlow()
+) : AndroidBaseViewModel<FeatureEvent, FeatureState>(FeatureState(), dispatcher) {
+    // _state e state sono EREDITATI — non ridichiarare
 
     init {
         loadData()
     }
 
-    override fun onEvent(event: FeatureEvent) = when (event) {
+    override fun handleEvent(event: FeatureEvent) = when (event) {
         is FeatureEvent.DoSomething -> doSomething(event.param)
         is FeatureEvent.Reset       -> reset()
     }
@@ -118,8 +125,9 @@ class FeatureViewModel(
 ```
 
 **Regole:**
-- **Unico entry point pubblico: `onEvent()`** con `when` che delega a metodi privati.
-- Stato: un solo `private val _state = MutableStateFlow(FeatureState())`.
+- **Entry point pubblico: `emitEvent(event)`** (dalla base) — usato dalla Screen via `viewModel::emitEvent`.
+- **Router interno: `override fun handleEvent(event: E)`** — protected, con `when` che delega a metodi privati.
+- **Non ridichiarare `_state` o `state`** — sono forniti da `AndroidBaseViewModel`.
 - Aggiorna con `_state.update { it.copy(...) }`.
 - Flow reattivi: `combine(...).stateIn(viewModelScope, WhileSubscribed(5_000), default)`.
 - Result: `useCase(p).handleError { ... }` (restituisce valore o `null`).
@@ -127,7 +135,7 @@ class FeatureViewModel(
 - **Mai `Context`** nel ViewModel.
 - Eccezione documentata: `SettingsRepository` si può iniettare direttamente solo per leggere preference Flow o scrivere in `viewModelScope.launch`. Nessun altro repository nel ViewModel.
 - Per `Flow<Result<R>>` reattivi: `.onSuccess { }.onFailure { if (it is CancellationException) throw it; logError(...) }`.
-- `activeJob?.cancel()` per operazioni riavviabili.
+- `activeJob?.cancel()` (via `launchCancelling { }`) per operazioni riavviabili.
 - Limiti: ViewModel ≤ 300 righe, State ≤ 100 righe.
 
 ---
@@ -137,17 +145,17 @@ class FeatureViewModel(
 ```
 ui/screen/<feature>/
   <Feature>Screen.kt    ≤ 400 righe
-  <Feature>State.kt     ≤ 100 righe   (data class, in file proprio)
+  <Feature>State.kt     ≤ 100 righe   (data class : UIState(), in file proprio)
   <Feature>ViewModel.kt ≤ 300 righe
   <Feature>Constant.kt (shared consts)
   event/
-    <Feature>Event.kt   (sealed interface)
+    <Feature>Event.kt   (sealed class : UIEvent())
   model/                (sub-models UI)
   view/                 (composable interni)
 ```
 
-- State: `data class FeatureState(...)`, niente `typealias`.
-- Event: `sealed interface FeatureEvent { data class X(...): FeatureEvent; data object Y: FeatureEvent }`.
+- State: `data class FeatureState(...) : UIState()`, niente `typealias`.
+- Event: `sealed class FeatureEvent : UIEvent() { data class X(...): FeatureEvent; data object Y: FeatureEvent }`.
 
 ---
 
@@ -158,17 +166,17 @@ ui/screen/<feature>/
 fun FeatureScreen(navController: NavController, modifier: Modifier = Modifier) {
     val viewModel: FeatureViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
-    FeatureContent(state = state, onEvent = viewModel::onEvent,
+    FeatureContent(state = state, onEvent = viewModel::emitEvent,
                    navController = navController, modifier = modifier)
 }
 ```
 
-- UI legge `state`, emette `onEvent(...)`. Zero accesso a repository, zero logica di business.
+- UI legge `state`, emette eventi via `viewModel::emitEvent`. Zero accesso a repository, zero logica di business.
 - Navigazione solo via `navigation/NavigationExtensions.kt` (`navigateToHome()`, ecc.) e `AppRoute`.
 - Colori/tipografia da `MaterialTheme`. Colori semantici extra permessi: `IncomeGreen`/`ExpenseRed`.
 - Spaziatura: 8/16/24 dp.
 - Riusa `ui/components/` prima di creare nuovi composable. Per l'inventario componenti consulta `.github/agents/agent-compose-ui.agent.md`.
-- `@Preview` light+dark per composable in `components/` **e in `view/`**; le Screen root non hanno preview.
+- **`@Preview` Light + Dark + 2× font scale OBBLIGATORIE** per ogni `@Composable`: composable in `ui/components/`, `view/`, **e le Screen root** (AGENTS.md §8).
 
 ---
 
@@ -210,13 +218,13 @@ viewModel { (id: Long?) -> AddTransactionViewModel(get(), get(), get(), id) }
 - Usa `Fake*Repository` da `testutil/` quando serve comportamento stateful o Flow.
 - Mai `Dispatchers.setMain`, `StandardTestDispatcher()`, `runTest` a mano in `androidApp/src/test`.
 - Naming: `method_shouldExpectedBehavior_whenCondition` (no backtick). Mantieni l'intent originale quando aggiorni un test.
-- Testa ViewModel tramite `viewModel.onEvent(Event.X)` + `advanceUntilIdle()`, poi assertisci su `state.value`.
+- Testa ViewModel tramite `viewModel.emitEvent(Event.X)` + `advanceUntilIdle()`, poi assertisci su `state.value`.
 - Niente Robolectric, Room, DataStore, `Context`, file I/O in `src/test` (Robolectric **consentito** solo in `src/androidTest`).
 
 ```kotlin
 @Test
 fun loadTransactions_shouldPopulateState_whenRepositoryReturnsData() = runViewModelTest {
-    viewModel.onEvent(HomeEvent.SelectPreset(0))
+    viewModel.emitEvent(HomeEvent.SelectPreset(0))
     advanceUntilIdle()
     assertEquals(expected, viewModel.state.value.transactions)
 }
@@ -275,7 +283,7 @@ export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64   # sempre, build fallisce s
 
 1. **Domain**: crea UseCase in `shared/commonMain/.../domain/usecase/<feature>/` → testa in `commonTest`.
 2. **State + Event**: crea `FeatureState.kt` e `event/FeatureEvent.kt` in `ui/screen/<feature>/`.
-3. **ViewModel**: crea `FeatureViewModel.kt`, estende `BaseViewModel<FeatureEvent>`.
+3. **ViewModel**: crea `FeatureViewModel.kt`, estende `AndroidBaseViewModel<FeatureEvent, FeatureState>(FeatureState())`.
 4. **Screen**: crea `FeatureScreen.kt` seguendo il pattern in §Screen.
 5. **DI**: registra UseCase in `useCaseModule` e ViewModel in `presentationModule`.
 6. **i18n**: aggiungi tutte le stringhe in tutti e 13 i file.

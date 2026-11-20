@@ -44,6 +44,7 @@ kotlin {
     sourceSets {
         getByName("commonMain") {
             dependencies {
+                api(project(":architectureModule"))
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.kermit)
                 implementation(libs.datastore.preferences.core)

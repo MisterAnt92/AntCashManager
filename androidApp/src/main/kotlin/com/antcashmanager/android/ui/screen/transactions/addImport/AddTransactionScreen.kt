@@ -64,7 +64,7 @@ fun AddTransactionScreen(
 
     AddTransactionContent(
         state = state,
-        onEvent = { event -> viewModel.onEvent(event) },
+        onEvent = { event -> viewModel.emitEvent(event) },
         navController = navController,
         analyticsManager = analyticsManager,
         modifier = modifier,

@@ -1,5 +1,7 @@
 package com.antcashmanager.android.ui.screen.categories
 
+import com.antcashmanager.architecture.UIEvent
+
 import com.antcashmanager.domain.model.Category
 
 /**
@@ -9,7 +11,7 @@ import com.antcashmanager.domain.model.Category
  * to update the state. This decouples the UI layer from business logic and
  * provides a clear audit trail of all actions.
  */
-sealed class CategoryEvent {
+sealed class CategoryEvent : UIEvent() {
     data class AddCategoryEvent(
         val name: String,
         val icon: String,

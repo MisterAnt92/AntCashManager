@@ -9,6 +9,15 @@ Documentazione tecnica e operativa del progetto AntCashManager.
 
 ---
 
+## 📐 Diagrammi
+
+| File | Contenuto |
+|------|-----------|
+| [app_structure.drawio](diagrams/app_structure.drawio) | Entità DB, navigation flow, struttura moduli |
+| [architecture_patterns.drawio](diagrams/architecture_patterns.drawio) | Clean Architecture, UseCase, ViewModel UDF, DI |
+
+---
+
 ## 🎯 Accesso Rapido
 
 Scegli il tuo profilo per accedere subito alla documentazione rilevante:

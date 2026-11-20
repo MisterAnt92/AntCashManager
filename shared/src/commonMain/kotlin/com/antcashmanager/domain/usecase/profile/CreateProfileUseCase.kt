@@ -8,7 +8,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
 /**
- * Creates a new profile and seeds it with the Default profile's default categories.
+ * Creates a new profile and seeds it with all default categories.
  *
  * Returns the new profile's id.
  */
@@ -29,14 +29,7 @@ public class CreateProfileUseCase(
                 shareTransactions = params.shareTransactions,
             ),
         )
-        categoryRepository.seedDefaultCategoriesForProfile(
-            sourceProfileId = DEFAULT_PROFILE_ID,
-            targetProfileId = newId,
-        )
+        categoryRepository.seedDefaultCategoriesForProfile(targetProfileId = newId)
         return newId
-    }
-
-    private companion object {
-        const val DEFAULT_PROFILE_ID = 1L
     }
 }

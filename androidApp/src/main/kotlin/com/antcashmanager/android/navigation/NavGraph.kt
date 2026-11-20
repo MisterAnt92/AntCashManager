@@ -138,10 +138,10 @@ fun AntCashManagerNavHost() {
             if (isTutorialCompleted && analyticsConsent == null) {
                 AnalyticsConsentDialog(
                     onAccept = {
-                        navSettingsViewModel.onEvent(NavSettingsEvent.SetAnalyticsConsentEvent(true))
+                        navSettingsViewModel.emitEvent(NavSettingsEvent.SetAnalyticsConsentEvent(true))
                     },
                     onDecline = {
-                        navSettingsViewModel.onEvent(NavSettingsEvent.SetAnalyticsConsentEvent(false))
+                        navSettingsViewModel.emitEvent(NavSettingsEvent.SetAnalyticsConsentEvent(false))
                     },
                 )
             }

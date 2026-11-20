@@ -2,6 +2,7 @@ package com.antcashmanager.android.ui.screen.charts.view
 
 import android.content.Context
 import android.content.Intent
+import com.antcashmanager.architecture.ErrorState
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
@@ -107,7 +108,7 @@ fun ChartsScreen() {
     val viewModel: ChartsViewModel = koinViewModel()
     val appLocale = LocalLocale.current
     LaunchedEffect(appLocale) {
-        viewModel.onEvent(ChartEvent.UpdateLocaleEvent(appLocale.toLanguageTag()))
+        viewModel.emitEvent(ChartEvent.UpdateLocaleEvent(appLocale.toLanguageTag()))
     }
     val chartData by viewModel.chartData.collectAsStateWithLifecycle()
     val dateRange by viewModel.dateRange.collectAsStateWithLifecycle()
@@ -115,7 +116,7 @@ fun ChartsScreen() {
     val chartsZoomEnabled by viewModel.chartsZoomEnabled.collectAsStateWithLifecycle(initialValue = false)
     val chartsCardOrder by viewModel.chartsCardOrder.collectAsStateWithLifecycle()
     val errorState by viewModel.state.map { it.errorState }
-        .collectAsStateWithLifecycle(initialValue = com.antcashmanager.android.ui.base.ErrorState())
+        .collectAsStateWithLifecycle(initialValue = ErrorState())
 
     ChartsContent(
         chartData = chartData,
@@ -124,9 +125,9 @@ fun ChartsScreen() {
         zoomEnabled = chartsZoomEnabled,
         chartsCardOrderRaw = chartsCardOrder,
         errorState = errorState,
-        onDateRangeChanged = { from, to -> viewModel.onEvent(ChartEvent.SetDateRangeEvent(from, to)) },
-        onPresetSelected = { preset -> viewModel.onEvent(ChartEvent.SetPresetRangeEvent(preset)) },
-        onEvent = viewModel::onEvent,
+        onDateRangeChanged = { from, to -> viewModel.emitEvent(ChartEvent.SetDateRangeEvent(from, to)) },
+        onPresetSelected = { preset -> viewModel.emitEvent(ChartEvent.SetPresetRangeEvent(preset)) },
+        onEvent = viewModel::emitEvent,
     )
 }
 
@@ -138,7 +139,7 @@ internal fun ChartsContent(
     initialPresetIndex: Int = 1,
     zoomEnabled: Boolean = false,
     chartsCardOrderRaw: String,
-    errorState: com.antcashmanager.android.ui.base.ErrorState = com.antcashmanager.android.ui.base.ErrorState(),
+    errorState: ErrorState = ErrorState(),
     onDateRangeChanged: (Long, Long) -> Unit = { _, _ -> },
     onPresetSelected: (RangePreset) -> Unit = {},
     onEvent: (ChartEvent) -> Unit = {},

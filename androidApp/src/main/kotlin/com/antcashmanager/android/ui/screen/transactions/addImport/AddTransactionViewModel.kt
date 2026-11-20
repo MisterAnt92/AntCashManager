@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.analytics.tracker.ErrorTracker
 import com.antcashmanager.android.analytics.tracker.PerformanceTracker
-import com.antcashmanager.android.ui.base.BaseViewModel
+import com.antcashmanager.android.ui.base.AndroidBaseViewModel
 import com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayConstant
 import com.antcashmanager.android.ui.screen.transactions.addImport.event.AddTransactionEvent
 import com.antcashmanager.android.ui.screen.transactions.addImport.manager.SuggestionsManager
@@ -19,9 +19,6 @@ import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.usecase.transaction.DeleteTransactionUseCase
 import com.antcashmanager.domain.usecase.transaction.GetTransactionByIdUseCase
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -42,21 +39,14 @@ class AddTransactionViewModel(
     private val errorTracker: ErrorTracker,
     private val transactionId: Long? = null,
     private val savedStateHandle: SavedStateHandle, // NEW: Preserva form state su rotation
-) : BaseViewModel<AddTransactionEvent>() {
-    // ── State ──
-    // Nota: SavedStateHandle è disponibile per future implementazioni di state recovery
-    // Per adesso usiamo MutableStateFlow standard; future: sincroniazzare con savedStateHandle per preservare
-    // lo stato del form durante reconfigurazioni (rotation, process death)
-    private val _state = MutableStateFlow(
-        AddTransactionState(
-            isLoading = transactionId != null,
-            isModifying = transactionId != null,
-            currentStep = if (transactionId != null) AddTransactionStep.DETAILS else AddTransactionStep.CATEGORY_SELECTION,
-            transactionId = transactionId,
-        ),
-    )
-    val state: StateFlow<AddTransactionState> = _state.asStateFlow()
-
+) : AndroidBaseViewModel<AddTransactionEvent, AddTransactionState>(
+    initialState = AddTransactionState(
+        isLoading = transactionId != null,
+        isModifying = transactionId != null,
+        currentStep = if (transactionId != null) AddTransactionStep.DETAILS else AddTransactionStep.CATEGORY_SELECTION,
+        transactionId = transactionId,
+    ),
+) {
     // Track first form field interaction for analytics
     private var firstFormFieldTracked = false
 
@@ -227,7 +217,7 @@ class AddTransactionViewModel(
     /**
      * Gestisce gli eventi della UI.
      */
-    override fun onEvent(event: AddTransactionEvent) {
+    override fun handleEvent(event: AddTransactionEvent) {
         logDebug("Event: $event")
         when (event) {
             is AddTransactionEvent.SelectCategoryEvent -> selectCategory(event.category)
@@ -505,7 +495,7 @@ class AddTransactionViewModel(
             return
         }
 
-        viewModelScope.launch {
+        launchCancelling {
             try {
                 _state.update { it.copy(isLoading = true) }
 
@@ -545,7 +535,7 @@ class AddTransactionViewModel(
     }
 
     private fun deleteTransaction() {
-        viewModelScope.launch {
+        launchCancelling {
             try {
                 _state.update { it.copy(isLoading = true) }
                 logDebug("Deleting transaction with id: $transactionId")

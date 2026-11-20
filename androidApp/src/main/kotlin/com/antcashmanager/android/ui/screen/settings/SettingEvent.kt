@@ -1,5 +1,7 @@
 package com.antcashmanager.android.ui.screen.settings
 
+import com.antcashmanager.architecture.UIEvent
+
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.TransactionDisplayType
@@ -10,7 +12,7 @@ import com.antcashmanager.domain.model.TransactionDisplayType
  * All preference changes and settings operations emit events
  * that the ViewModel processes to persist and update state.
  */
-sealed class SettingEvent {
+sealed class SettingEvent : UIEvent() {
     // Theme & Language
     data class SetThemeEvent(
         val theme: AppTheme,

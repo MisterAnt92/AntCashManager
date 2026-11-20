@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.settings.displaySettings
 
+import com.antcashmanager.architecture.UIState
 import com.antcashmanager.domain.model.TransactionDisplayType
 
 /**
@@ -34,4 +35,4 @@ data class DisplayState(
     // ── Widget Settings ──
     val widgetBackgroundColor: Long = DisplayConstant.DEFAULT_WIDGET_BACKGROUND_COLOR,
     val widgetOpacity: Int = DisplayConstant.DEFAULT_WIDGET_OPACITY,
-)
+) : UIState()

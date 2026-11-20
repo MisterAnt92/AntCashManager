@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.settings.profiles
 
+import com.antcashmanager.architecture.UIState
 import com.antcashmanager.domain.model.Profile
 
 data class ProfilesState(
@@ -11,4 +12,4 @@ data class ProfilesState(
     val showSwitchConfirmation: Profile? = null,
     val showCreateDialog: Boolean = false,
     val showEditDialog: Profile? = null,
-)
+) : UIState()

@@ -8,7 +8,7 @@ import com.antcashmanager.android.analytics.tracker.PerformanceTracker
 import com.antcashmanager.android.auth.GoogleSignInManager
 import com.antcashmanager.android.data.backup.BackupService
 import com.antcashmanager.android.security.BackupPayloadCipher
-import com.antcashmanager.android.ui.base.BaseViewModel
+import com.antcashmanager.android.ui.base.AndroidBaseViewModel
 import com.antcashmanager.android.work.AutoBackupScheduler
 import com.antcashmanager.domain.model.BackupDestination
 import com.antcashmanager.domain.model.BackupFrequency
@@ -19,9 +19,6 @@ import com.antcashmanager.domain.repository.TransactionRepository
 import com.antcashmanager.domain.usecase.transaction.DeleteAllTransactionsUseCase
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -48,11 +45,11 @@ class SettingsDataViewModel(
     private val googleSignInManager: GoogleSignInManager,
     private val performanceTracker: PerformanceTracker,
     private val errorTracker: ErrorTracker,
-) : BaseViewModel<None>() {
-    private val settingsRepositoryRef = settingsRepository
+) : AndroidBaseViewModel<None, SettingsDataState>(SettingsDataState()) {
 
-    private val _state = MutableStateFlow(SettingsDataState())
-    val state: StateFlow<SettingsDataState> = _state.asStateFlow()
+    override fun handleEvent(event: None) = Unit
+
+    private val settingsRepositoryRef = settingsRepository
 
     init {
         viewModelScope.launch {
@@ -115,7 +112,7 @@ class SettingsDataViewModel(
 
     fun setDataEncryptionEnabled(enabled: Boolean) {
         logDebug("Setting data encryption enabled: $enabled")
-        viewModelScope.launch {
+        launchCancelling {
             try {
                 // Apply encryption flag
                 settingsRepositoryRef.setDataEncryptionEnabled(enabled)
@@ -123,6 +120,8 @@ class SettingsDataViewModel(
                 // Re-encrypt/decrypt all existing transactions
                 // CRITICAL: Must run AFTER flag is applied, so cipher respects new state
                 performReEncryption()
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logError("Failed to toggle encryption: ${e.message}")
                 // Rollback the flag on error
@@ -663,6 +662,8 @@ class SettingsDataViewModel(
                         }
                     handleGoogleSignInError(error)
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 handleGoogleSignInError(e)
             }
@@ -750,6 +751,8 @@ class SettingsDataViewModel(
                 } else {
                     logError("Sign-out failed: ${result.exceptionOrNull()?.message}")
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logError("Error signing out: ${e.message}", e)
             }

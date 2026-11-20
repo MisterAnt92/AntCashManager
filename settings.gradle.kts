@@ -20,5 +20,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "AntCashManager"
+include(":architectureModule")
 include(":androidApp")
 include(":shared")

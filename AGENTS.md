@@ -67,9 +67,10 @@ Base classes in `shared/commonMain/.../domain/usecase/base/`:
 
 ## 7. ViewModel — UDF (presentation)
 
-All ViewModels extend `ui/base/BaseViewModel<E>` (`E` = `<Feature>Event` sealed class, or `Nothing`).
+All ViewModels extend `AndroidBaseViewModel<E, S>` from `:architectureModule` (`E` = `<Feature>Event : UIEvent`, `S` = `<Feature>State : UIState`).
 
-- **Single public entry point: `override fun onEvent(event: E)`** with a `when` that delegates to **private** methods. No other public mutators.
+- **Public entry point: `emitEvent(event: E)`** (final, non-suspend, thread-safe). Enqueues into `Channel<E>`.
+- **Internal routing: `override fun handleEvent(event: E)`** — implement with a `when` that delegates to **private** methods. No other public mutators.
 - State: one `private val _state = MutableStateFlow(<Feature>State())`, exposed as `val state: StateFlow<...>`; update with `_state.update { it.copy(...) }`. Reactive sources: `combine(...)` + `stateIn(viewModelScope, WhileSubscribed(5_000), default)`.
 - Results: `useCase(p).handleError { err -> _state.update { it.copy(errorState = err) } }` (returns value or `null`). For `Flow<Result<R>>`: `.onSuccess { } .onFailure { if (it is CancellationException) throw it; logError(...) }`.
 - Logging: `logDebug/logInfo/logWarn/logError` from the base (tag is automatic). Never `Log`, `println`, or a manual `TAG`.
@@ -83,10 +84,10 @@ All ViewModels extend `ui/base/BaseViewModel<E>` (`E` = `<Feature>Event` sealed 
 fun FeatureScreen(navController: NavController, modifier: Modifier = Modifier) {
     val viewModel: FeatureViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
-    FeatureContent(state = state, onEvent = viewModel::onEvent, navController = navController, modifier = modifier)
+    FeatureContent(state = state, onEvent = viewModel::emitEvent, navController = navController, modifier = modifier)
 }
 ```
-- UI reads `state`, emits `onEvent(...)`. Zero repository access, zero business logic.
+- UI reads `state`, calls `onEvent(...)` mapped to `viewModel::emitEvent`. Zero repository access, zero business logic.
 - Navigation only via `navigation/NavigationExtensions.kt` (`navigateToHome()`, `navigateToAddTransaction()`, `safePopBackStack()`, …) and `AppRoute` — never string literals.
 - Root-only exception: `AntCashManagerNavHost` may inject `SettingsRepository` via Koin for global display prefs.
 - Colors/typography from `MaterialTheme`. Only allowed semantic colors outside it: `IncomeGreen`/`ExpenseRed` (`ui/theme/Color.kt`). Spacing 8/16/24 dp.
@@ -129,7 +130,7 @@ ui/screen/<feature>/
 - Never `Dispatchers.setMain`, `StandardTestDispatcher()`, or `runTest` by hand in `androidApp` tests — the base classes do it.
 - No Robolectric, Room, DataStore, `Context`, file I/O in `src/test`.
 - Naming: `method_shouldExpectedBehavior_whenCondition`, **no backticks**. Keep the original intent when updating a test.
-- Test ViewModels through `viewModel.onEvent(Event.X)` + `advanceUntilIdle()`, then assert `state.value`.
+- Test ViewModels through `viewModel.emitEvent(Event.X)` + `advanceUntilIdle()`, then assert `state.value`.
 
 ## 13. Analytics & protected files
 

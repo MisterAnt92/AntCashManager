@@ -1,6 +1,7 @@
 package com.antcashmanager.android.ui.screen.categories
 
-import com.antcashmanager.android.ui.base.ErrorState
+import com.antcashmanager.architecture.ErrorState
+import com.antcashmanager.architecture.UIState
 import com.antcashmanager.domain.model.Category
 
 /**
@@ -25,4 +26,4 @@ data class CategoriesState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val errorState: ErrorState = ErrorState(),
-)
+) : UIState()

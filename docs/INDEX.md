@@ -25,6 +25,14 @@ Tutto ciò di cui hai bisogno per sviluppare nuove feature seguendo i principi d
 |-----------|-------|-------------|--------|
 | **ARCHITECTURE_GUIDELINES.md** | Definisce pattern UseCase/ViewModel/State/Screen, layer boundaries, testing, logging e anti-pattern. Fonte ufficiale per decisioni architetturali. | Sviluppatori, Tech Lead | [📖 Leggi](ARCHITECTURE_GUIDELINES.md) |
 
+### 📐 **Diagrammi**
+Diagrammi visivi per comprendere la struttura dell'app, le entità del DB, il flusso di navigazione e i pattern architetturali.
+
+| Documento | Contenuto | Accedi |
+|-----------|-----------|--------|
+| **app_structure.drawio** | Entità DB (Room), navigation flow (NavHost + schermate), struttura moduli Gradle | [📊 Apri](diagrams/app_structure.drawio) |
+| **architecture_patterns.drawio** | Clean Architecture layers, UseCase pattern, ViewModel UDF cycle, DI module graph (Koin) | [📊 Apri](diagrams/architecture_patterns.drawio) |
+
 ### 📚 **Guide Implementative**
 Documentazione di specifiche milestone o feature implementate.
 
