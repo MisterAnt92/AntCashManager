@@ -1,5 +1,7 @@
 package com.antcashmanager.android.navigation
 
+import com.antcashmanager.architecture.UIState
+
 /**
  * Stato UI per le impostazioni globali usate dal NavHost (formato valuta, visibilità grafici, ecc.).
  * [isTutorialCompleted] è null finché il DataStore non ha emesso il primo valore (splash screen attivo).
@@ -14,4 +16,4 @@ data class NavSettingsState(
     val thousandsSeparator: String = "",
     val maskAmounts: Boolean = false,
     val analyticsConsent: Boolean? = false,
-)
+) : UIState()

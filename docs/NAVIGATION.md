@@ -37,6 +37,8 @@ GUIDE        GUIDE
 | Modifiche UI | IMPLEMENTATION_GUIDE.md | Vedi layout e flusso dati transazioni |
 | Prima di commit | ARCHITECTURE_GUIDELINES.md | Checklist "Pre-Commit" |
 | Domanda architettura | ARCHITECTURE_GUIDELINES.md | Cerca nella tabella indici (TOC) |
+| Visuale struttura | diagrams/app_structure.drawio | DB entities, navigation flow, moduli |
+| Visuale pattern | diagrams/architecture_patterns.drawio | Clean layers, UDF cycle, DI graph |
 
 **Percorso consigliato:**
 ```

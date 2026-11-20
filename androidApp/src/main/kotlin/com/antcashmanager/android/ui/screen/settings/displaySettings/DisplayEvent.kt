@@ -1,5 +1,7 @@
 package com.antcashmanager.android.ui.screen.settings.displaySettings
 
+import com.antcashmanager.architecture.UIEvent
+
 import com.antcashmanager.domain.model.TransactionDisplayType
 
 /**
@@ -8,7 +10,7 @@ import com.antcashmanager.domain.model.TransactionDisplayType
  * All display preference changes emit events that the ViewModel processes
  * to persist and update display state.
  */
-sealed class DisplayEvent {
+sealed class DisplayEvent : UIEvent() {
     // Number Formatting
     data class SetCurrencySymbolEvent(
         val symbol: String,

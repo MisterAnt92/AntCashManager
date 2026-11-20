@@ -53,6 +53,7 @@ import com.antcashmanager.domain.service.WidgetUpdateNotifier
 import com.antcashmanager.domain.usecase.SendFeedbackEmailUseCase
 import com.antcashmanager.domain.usecase.ShareTransactionUseCase
 import com.antcashmanager.domain.usecase.category.DeleteCategoryUseCase
+import com.antcashmanager.domain.usecase.category.EnsureDefaultCategoriesUseCase
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.category.InsertCategoryUseCase
 import com.antcashmanager.domain.usecase.category.UpdateCategoryUseCase
@@ -217,6 +218,7 @@ val useCaseModule =
         factory { InsertCategoryUseCase(categoryRepository = get()) }
         factory { UpdateCategoryUseCase(categoryRepository = get()) }
         factory { DeleteCategoryUseCase(categoryRepository = get()) }
+        factory { EnsureDefaultCategoriesUseCase(categoryRepository = get()) }
 
         // Profile use cases
         factory { GetProfilesUseCase(profileRepository = get()) }

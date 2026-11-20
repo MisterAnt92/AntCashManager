@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.transactions.addImport.event
 
+import com.antcashmanager.architecture.UIEvent
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.model.TransactionType
@@ -12,101 +13,101 @@ import com.antcashmanager.domain.model.TransactionType
  * Events per la schermata di aggiunta/modifica transazione.
  * Flusso semplificato: Categoria → Dettagli (con salvataggio diretto).
  */
-sealed interface AddTransactionEvent {
+sealed class AddTransactionEvent : UIEvent() {
     // ── Selezione ──
     data class SelectCategoryEvent(
         val category: Category,
-    ) : AddTransactionEvent
+    ) : AddTransactionEvent()
 
     data class SelectTypeEvent(
         val type: TransactionType,
-    ) : AddTransactionEvent
+    ) : AddTransactionEvent()
 
     data class SelectPaymentTypeEvent(
         val paymentType: PaymentType,
-    ) : AddTransactionEvent
+    ) : AddTransactionEvent()
 
     // ── Modifica campi ──
     data class UpdateTitleEvent(
         val title: String,
-    ) : AddTransactionEvent
+    ) : AddTransactionEvent()
 
     data class UpdateAmountEvent(
         val amount: String,
-    ) : AddTransactionEvent
+    ) : AddTransactionEvent()
 
     data class UpdateNotesEvent(
         val notes: String,
-    ) : AddTransactionEvent
+    ) : AddTransactionEvent()
 
     data class UpdatePayeeEvent(
         val payee: String,
-    ) : AddTransactionEvent
+    ) : AddTransactionEvent()
 
     data class UpdateLocationEvent(
         val location: String,
-    ) : AddTransactionEvent
+    ) : AddTransactionEvent()
 
     data class UpdateTagsEvent(
         val tags: String,
-    ) : AddTransactionEvent
+    ) : AddTransactionEvent()
 
     data class UpdateTimestampEvent(
         val timestamp: Long,
-    ) : AddTransactionEvent
+    ) : AddTransactionEvent()
 
     data class SetRecurringEvent(
         val isRecurring: Boolean,
-    ) : AddTransactionEvent
+    ) : AddTransactionEvent()
 
     data class UpdateRecurrenceIntervalEvent(
         val interval: String,
-    ) : AddTransactionEvent
+    ) : AddTransactionEvent()
 
     data class UpdateMealVoucherCountEvent(
         val count: String,
-    ) : AddTransactionEvent
+    ) : AddTransactionEvent()
 
     data class UpdateMealVoucherDifferenceEvent(
         val difference: String,
-    ) : AddTransactionEvent
+    ) : AddTransactionEvent()
 
     // ── Navigazione ──
-    data object NextStepEvent : AddTransactionEvent
+    data object NextStepEvent : AddTransactionEvent()
 
-    data object PreviousStepEvent : AddTransactionEvent
+    data object PreviousStepEvent : AddTransactionEvent()
 
-    data object SubmitEvent : AddTransactionEvent
+    data object SubmitEvent : AddTransactionEvent()
 
-    data object CancelEvent : AddTransactionEvent
+    data object CancelEvent : AddTransactionEvent()
 
     // ── Dialog inline per modifica rapida ──
-    data object EditCategoryEvent : AddTransactionEvent
+    data object EditCategoryEvent : AddTransactionEvent()
 
-    data object EditTypeEvent : AddTransactionEvent
+    data object EditTypeEvent : AddTransactionEvent()
 
-    data object EditDateEvent : AddTransactionEvent
+    data object EditDateEvent : AddTransactionEvent()
 
-    data object EditPaymentTypeEvent : AddTransactionEvent
+    data object EditPaymentTypeEvent : AddTransactionEvent()
 
-    data object ShowCategoryDialogEvent : AddTransactionEvent
+    data object ShowCategoryDialogEvent : AddTransactionEvent()
 
-    data object ShowTypeDialogEvent : AddTransactionEvent
+    data object ShowTypeDialogEvent : AddTransactionEvent()
 
-    data object ShowPaymentTypeDialogEvent : AddTransactionEvent
+    data object ShowPaymentTypeDialogEvent : AddTransactionEvent()
 
-    data object DismissCategoryDialogEvent : AddTransactionEvent
+    data object DismissCategoryDialogEvent : AddTransactionEvent()
 
-    data object DismissTypeDialogEvent : AddTransactionEvent
+    data object DismissTypeDialogEvent : AddTransactionEvent()
 
-    data object DismissPaymentTypeDialogEvent : AddTransactionEvent
+    data object DismissPaymentTypeDialogEvent : AddTransactionEvent()
 
-    data object DismissDatePickerEvent : AddTransactionEvent
+    data object DismissDatePickerEvent : AddTransactionEvent()
 
     // ── Dialog eliminazione ──
-    data object ShowDeleteConfirmDialogEvent : AddTransactionEvent
+    data object ShowDeleteConfirmDialogEvent : AddTransactionEvent()
 
-    data object DismissDeleteConfirmDialogEvent : AddTransactionEvent
+    data object DismissDeleteConfirmDialogEvent : AddTransactionEvent()
 
-    data object ConfirmDeleteEvent : AddTransactionEvent
+    data object ConfirmDeleteEvent : AddTransactionEvent()
 }

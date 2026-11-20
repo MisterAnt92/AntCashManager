@@ -4,6 +4,7 @@ import com.antcashmanager.data.local.dao.CategoryDao
 import com.antcashmanager.data.mapper.toDomain
 import com.antcashmanager.data.mapper.toEntity
 import com.antcashmanager.domain.manager.ProfileManager
+import com.antcashmanager.domain.model.ALL_DEFAULT_CATEGORIES
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.repository.CategoryRepository
 import kotlinx.coroutines.flow.Flow
@@ -58,13 +59,9 @@ public class CategoryRepositoryImpl(
         categoryDao.deleteAllNonDefaultCategories(profileId)
     }
 
-    override suspend fun seedDefaultCategoriesForProfile(
-        sourceProfileId: Long,
-        targetProfileId: Long,
-    ) {
-        val defaults = categoryDao.getDefaultCategoriesForProfile(sourceProfileId)
-        defaults.forEach { entity ->
-            categoryDao.insertCategory(entity.copy(id = 0, profileId = targetProfileId))
+    override suspend fun seedDefaultCategoriesForProfile(targetProfileId: Long) {
+        ALL_DEFAULT_CATEGORIES.forEach { category ->
+            categoryDao.insertCategory(category.toEntity().copy(profileId = targetProfileId))
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.antcashmanager.android.ui.screen.settings.dataManagement
 
+import com.antcashmanager.architecture.UIState
 import com.antcashmanager.domain.model.BackupDestination
 import com.antcashmanager.domain.model.BackupFrequency
 
@@ -48,7 +49,7 @@ data class SettingsDataState(
     val isGoogleDriveSignedIn: Boolean = false,
     val showGoogleSignInDialog: Boolean = false,
     val googleDriveSignInLoading: Boolean = false,
-)
+) : UIState()
 
 data class RestoreSuccessInfo(
     val transactions: Int,

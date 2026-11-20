@@ -4,9 +4,11 @@ import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.R
-import com.antcashmanager.android.ui.base.BaseViewModel
+import com.antcashmanager.android.ui.base.AndroidBaseViewModel
+import com.antcashmanager.android.ui.screen.home.transactionDetail.TransactionDetailsState
 import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.usecase.ShareTransactionUseCase
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
 /**
@@ -16,8 +18,8 @@ import kotlinx.coroutines.launch
  */
 class TransactionDetailsViewModel(
     private val shareTransactionUseCase: ShareTransactionUseCase,
-) : BaseViewModel<TransactionDetailsEvent>() {
-    override fun onEvent(event: TransactionDetailsEvent) {
+) : AndroidBaseViewModel<TransactionDetailsEvent, TransactionDetailsState>(TransactionDetailsState()) {
+    override fun handleEvent(event: TransactionDetailsEvent) {
         logDebug("Event: $event")
         when (event) {
             is TransactionDetailsEvent.ShareTransactionEvent -> shareTransactionImpl(event.transaction)
@@ -40,6 +42,7 @@ class TransactionDetailsViewModel(
                 // Il Context viene gestito dalla composable che chiama shareTransaction()
                 // Non è responsabilità del ViewModel gestire l'intent
             }.onFailure { error ->
+                if (error is CancellationException) throw error
                 logError("Failed to format share text", error)
             }
         }
@@ -75,6 +78,7 @@ class TransactionDetailsViewModel(
                     ),
                 )
             }.onFailure { error ->
+                if (error is CancellationException) throw error
                 logError("Failed to format share text", error)
             }
         }

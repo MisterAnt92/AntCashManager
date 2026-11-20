@@ -1,6 +1,7 @@
 package com.antcashmanager.android.ui.screen.home
 
-import com.antcashmanager.android.ui.base.ErrorState
+import com.antcashmanager.architecture.ErrorState
+import com.antcashmanager.architecture.UIState
 import com.antcashmanager.android.ui.mapper.TransactionUi
 import com.antcashmanager.android.ui.screen.home.model.HomeTopCardType
 import com.antcashmanager.domain.model.MealVoucherSummary
@@ -42,7 +43,7 @@ data class HomeState(
     val mealVoucherSummary: MealVoucherSummary? = null,
     // Error handling (FASE 5: Error Feedback UX)
     val errorState: ErrorState = ErrorState(),
-) {
+) : UIState() {
     /** Top cards actually rendered: Quick Insights is dropped when its setting is off, Meal Vouchers when no data. */
     val visibleTopCards: List<HomeTopCardType> =
         topCardsOrder

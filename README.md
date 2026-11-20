@@ -10,7 +10,7 @@ e mantenere il controllo dei dati in locale, con un approccio privacy-first e se
 | Campo | Valore |
 |---|---|
 | App name | `AntCashManager` |
-| Versione | `1.7.0` (versionCode: 19) |
+| Versione | `1.9.0` (versionCode: 33) |
 | Application ID | `com.sformica.ant_cashmanager` |
 | Android namespace | `com.antcashmanager.android` |
 | Min SDK | `26` |
@@ -18,16 +18,21 @@ e mantenere il controllo dei dati in locale, con un approccio privacy-first e se
 
 ## Cosa Fa l'App
 
-- Gestione transazioni di entrata e uscita
-- Categorie predefinite e personalizzabili
-- Grafici e insight per analisi spese/entrate
-- Scansione scontrini con OCR (ML Kit) per creazione rapida transazioni
-- Widget home screen (Glance API) per transazioni recenti e breakdown categorie
-- Backup e restore dei dati
-- Crittografia opzionale dei dati sensibili
-- Supporto multilingua (EN, IT, FR, DE, ES)
-- UI moderna con Jetpack Compose e Material 3
-- Navigazione adattiva (bottom bar per phone, navigation rail per tablet/foldable)
+- **Multi-profilo**: crea, modifica, elimina profili; switch rapido tra profili
+- **Transazioni**: entrata, uscita, ricorrenti (con intervallo configurabile)
+- **Categorie** personalizzate (icone, colori, ordinamento, nascondi/mostra)
+- **Grafici e insight**: torta per categoria, filtri data preimpostati, card riordinabili
+- **Tracciamento buoni pasto**: contatore, differenza per scontrino, riepilogo mensile
+- **Scansione scontrini OCR** (ML Kit Text Recognition v2) per creazione rapida transazioni
+- **Backup locale** (SAF picker) + **Google Drive** (OAuth2, Drive API v3)
+- **Backup automatico** (WorkManager; frequenza configurabile: settimanale / quindicinale / mensile)
+- **Crittografia locale** dei dati sensibili
+- **Personalizzazione display**: tema (chiaro/scuro/auto), 13 lingue, dimensione testo, contrasto elevato, riduzione animazioni
+- **Ricerca e filtri avanzati** (home e schermata transazioni)
+- **Widget home screen** (Glance API): transazioni recenti e breakdown categorie
+- **Layout adattivo** per foldable e tablet (split-pane)
+- **Deep link navigation** (`antcashmanager://app/…`)
+- UI moderna con Jetpack Compose + Material 3
 
 ## Perche è Open Source
 
@@ -54,24 +59,27 @@ Nota: e presente anche una copia statica della privacy policy in `docs/wiki/` pe
 
 Il progetto segue Clean Architecture con organizzazione per feature:
 
-- **Presentation** (`androidApp`) → Compose + ViewModel + Widget Glance + Navigation adattiva
-- **Domain** (`shared/commonMain`) → modelli, use case, interfacce repository e servizi
-- **Data** (`shared/androidMain`) → repository implementation, Room DB, DataStore, cifratura
+- **Presentation** (`:androidApp`) → Compose + AndroidBaseViewModel + Widget Glance + Navigation adattiva
+- **Domain** (`:shared/commonMain`) → modelli, use case, interfacce repository e servizi (Kotlin puro)
+- **Data** (`:shared/androidMain`) → repository implementation, Room DB, DataStore, cifratura
+- **Architecture** (`:architectureModule`) → classi base (`AndroidBaseViewModel`, `UIEvent`, `UIState`, UseCase base classes)
 
 Pattern principali:
 
-- MVVM + `StateFlow`
+- **UDF** (Unidirectional Data Flow): `emitEvent()` → `handleEvent()` → `_state.update` → `StateFlow`
 - UseCase per feature (con `Result<T>` pattern)
 - Repository pattern
 - Dependency Injection con Koin
 - Service layer (es. `ReceiptOcrService` per ML Kit)
-- **Manager pattern** per business logic extraction
+- Manager pattern per business logic extraction
 
 Moduli chiave:
 - `ui/screen/` → feature screen (home, transactions, charts, categories, settings, receipt scan)
 - `ui/widget/` → Glance widgets (recent transactions, category breakdown)
 - `data/receipt/` → implementazione OCR con ML Kit
 - `data/backup/` → backup/restore service
+
+Diagrammi: [`docs/diagrams/`](docs/diagrams/)
 
 ## Tech Stack
 
@@ -129,9 +137,11 @@ Moduli chiave:
 AntCashManager/
 |- androidApp/                 # App Android (UI, navigazione, DI)
 |- shared/                     # Modulo KMP (domain + data)
-|  |- src/commonMain/          # Domain
-|  |- src/androidMain/         # Data Android
+|  |- src/commonMain/          # Domain (Kotlin puro)
+|  |- src/androidMain/         # Data Android (Room, DataStore)
+|- architectureModule/         # Classi base (AndroidBaseViewModel, UseCase, UIEvent, UIState)
 |- docs/                       # Documentazione progetto (Markdown)
+|  |- diagrams/                # Diagrammi draw.io (DB, navigation, architettura)
 |  |- wiki/                    # Pagine statiche per pubblicazione web
 |- gradle/
 ```
@@ -146,6 +156,7 @@ Documentazione locale (repository):
 - Guida lettura: [`docs/GUIDA_LETTURA.md`](docs/GUIDA_LETTURA.md)
 - Quick start: [`docs/QUICK_START.md`](docs/QUICK_START.md)
 - Linee architetturali: [`docs/ARCHITECTURE_GUIDELINES.md`](docs/ARCHITECTURE_GUIDELINES.md)
+- **Diagrammi architettura**: [`docs/diagrams/`](docs/diagrams/) – entità DB, navigation flow, moduli, pattern UDF/DI
 - Guida implementazione: [`docs/IMPLEMENTATION_GUIDE.md`](docs/IMPLEMENTATION_GUIDE.md)
 - Guida conversione: [`docs/CONVERSION_GUIDE.md`](docs/CONVERSION_GUIDE.md)
 - Privacy policy (EN): [`docs/wiki/privacy-policy.html`](docs/wiki/privacy-policy.html)
@@ -171,8 +182,9 @@ Build debug:
 ```bash
 git clone https://github.com/your-username/AntCashManager.git
 cd AntCashManager
-./gradlew :androidApp:assembleDebug
-./gradlew :androidApp:installDebug
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64   # richiesto, build fallisce senza
+./gradlew :androidApp:assembleFullDebug
+./gradlew :androidApp:installFullDebug
 ```
 
 ## Test
@@ -180,8 +192,9 @@ cd AntCashManager
 Unit test:
 
 ```bash
-./gradlew :shared:test
-./gradlew :androidApp:testDebugUnitTest
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+./gradlew :shared:testAndroidHostTest
+./gradlew :androidApp:testFullDebugUnitTest
 ```
 
 Instrumentation test (device/emulatore connesso):

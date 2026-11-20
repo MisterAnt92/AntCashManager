@@ -26,8 +26,8 @@ Mai scrivere a mano `Dispatchers.setMain`, `StandardTestDispatcher()`, `runTest(
 
 ## MockK vs Fake
 
-- **MockK** per i collaboratori del soggetto: UseCase nel test di ViewModel, repository nel test di UseCase, DAO/servizi.
-- **Fake** (`testutil/Fake*Repository`) quando serve stato o Flow controllato dal test (cancellazione, in-memory, emissioni multiple).
+- **MockK** preferito per i collaboratori di ViewModel (UseCase, repository, servizi). Usare `every + flowOf` per Flow; `MutableStateFlow` esposto tramite mockk per Flow mutabili.
+- **Fake** (`testutil/Fake*Repository`) consigliato nei test UseCase quando serve stato condiviso, Flow con emissioni multiple, o `errorToThrow`. Rimangono validi, non sono deprecati per questo scope.
 - Classi pure (formatter, parser): nessun mock, testa l'output.
 
 ## ViewModel — guida via `onEvent`
@@ -44,8 +44,8 @@ class SettingsViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun onEvent_shouldPersistTheme_whenSetThemeReceived() = runViewModelTest {
-        viewModel.onEvent(SettingEvent.SetTheme(AppTheme.ANNA))
+    fun handleEvent_shouldPersistTheme_whenSetThemeReceived() = runViewModelTest {
+        viewModel.emitEvent(SettingEvent.SetTheme(AppTheme.ANNA))
         advanceUntilIdle()
         coVerify(exactly = 1) { settingsRepository.setTheme(AppTheme.ANNA) }
     }

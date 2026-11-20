@@ -32,7 +32,7 @@ Progetto: `/opt/src/GIT/app/AntCashManager/`
 
 ## Regola 1 — Usare MockK per tutte le dipendenze, inclusi Flow e stato
 
-Usa `mockk()` per **tutte** le dipendenze, anche quando restituiscono `Flow`. I Fake in `testutil/` esistono ma sono un approccio legacy: preferire sempre MockK per controllo esplicito e leggibilità.
+Usa `mockk()` per le dipendenze dei **ViewModel test**, anche quando restituiscono `Flow`. Per i **UseCase test**, i Fake in `testutil/` sono ancora consigliati quando serve stato condiviso o emissioni multiple su un Flow. Preferire MockK per ViewModel, Fake per UseCase è la strategia raccomandata.
 
 ```kotlin
 // Repository con Flow → every + flowOf
@@ -109,7 +109,7 @@ class MyFeatureViewModelTest : BaseUnitTest() {
     @Test
     fun state_shouldShowError_whenRepositoryFails() = runViewModelTest {
         fakeRepo.errorToThrow = RuntimeException("DB error")
-        viewModel.onEvent(MyFeatureEvent.Load)
+        viewModel.emitEvent(MyFeatureEvent.Load)
         advanceUntilIdle()
 
         assertNotNull(viewModel.state.value.errorState)
@@ -120,7 +120,7 @@ class MyFeatureViewModelTest : BaseUnitTest() {
 **Regole chiave:**
 
 - `runViewModelTest { }` per ogni test coroutine (mai `runTest` nudo nei ViewModel test).
-- `advanceUntilIdle()` dopo ogni `onEvent(…)` prima di assertare lo state.
+- `advanceUntilIdle()` dopo ogni `emitEvent(…)` prima di assertare lo state.
 - Testare sempre lo **stato iniziale** prima degli eventi.
 - Cancellare il `viewModelScope` in `@After` (evita leak tra test).
 - Disabilitare debounce con `searchDebounceMs = 0L` nel costruttore quando disponibile.
@@ -234,7 +234,7 @@ Ogni test verifica **un solo comportamento**. Se serve verificare più propriet�
 @Test
 fun onDeleteEvent_shouldRemoveTransactionAndShowConfirmation_whenIdIsValid() = runViewModelTest {
     fakeRepo.transactions.value = listOf(testTransaction { id = 42L })
-    viewModel.onEvent(MyEvent.Delete(id = 42L))
+    viewModel.emitEvent(MyEvent.Delete(id = 42L))
     advanceUntilIdle()
 
     assertTrue(fakeRepo.transactions.value.isEmpty())
@@ -244,9 +244,9 @@ fun onDeleteEvent_shouldRemoveTransactionAndShowConfirmation_whenIdIsValid() = r
 // Sbagliato: due eventi in un test
 @Test
 fun testAddAndDelete() = runViewModelTest {
-    viewModel.onEvent(MyEvent.Add(...))
+    viewModel.emitEvent(MyEvent.Add(...))
     advanceUntilIdle()
-    viewModel.onEvent(MyEvent.Delete(...))
+    viewModel.emitEvent(MyEvent.Delete(...))
     advanceUntilIdle()
     // Qual è il comportamento che si sta testando?
 }
@@ -289,7 +289,7 @@ Non limitarsi ai casi happy-path. Ogni UseCase e ViewModel che gestisce errori d
 @Test
 fun state_shouldExposeError_whenLoadFails() = runViewModelTest {
     fakeRepo.errorToThrow = RuntimeException("DB unavailable")
-    viewModel.onEvent(HomeEvent.Load)
+    viewModel.emitEvent(HomeEvent.Load)
     advanceUntilIdle()
 
     assertNotNull(viewModel.state.value.errorState)

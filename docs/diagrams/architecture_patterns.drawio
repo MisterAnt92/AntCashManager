@@ -1,0 +1,258 @@
+<mxfile host="app.diagrams.net" version="21.0.0">
+  <diagram id="clean-arch" name="Clean Architecture Layers">
+    <mxGraphModel dx="1200" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <!-- PRESENTATION -->
+        <mxCell id="pres" value="PRESENTATION LAYER — :androidApp" style="swimlane;fontStyle=1;startSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="80" y="40" width="980" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="pr_scr" value="Screens (Compose)&#xa;@Composable&#xa;legge state&#xa;emette eventi" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="pres">
+          <mxGeometry x="20" y="40" width="150" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="pr_vm" value="ViewModels&#xa;AndroidBaseViewModel&lt;E,S&gt;&#xa;emitEvent() / handleEvent()&#xa;_state.update { it.copy() }" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="pres">
+          <mxGeometry x="200" y="40" width="180" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="pr_st" value="UI State&#xa;*State : UIState&#xa;data class immutabile&#xa;≤ 100 righe" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="pres">
+          <mxGeometry x="410" y="40" width="150" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="pr_ev" value="UI Events&#xa;*Event : UIEvent&#xa;sealed class&#xa;un tipo per azione" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="pres">
+          <mxGeometry x="590" y="40" width="150" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="pr_di" value="DI: Koin&#xa;dataModule&#xa;useCaseModule&#xa;presentationModule" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="pres">
+          <mxGeometry x="775" y="40" width="150" height="100" as="geometry"/>
+        </mxCell>
+        <!-- arrow P->D -->
+        <mxCell id="arr1" value="dipende da (UseCases; eccezione: SettingsRepository)" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#6c8ebf;" edge="1" parent="1" source="pres" target="dom">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- DOMAIN -->
+        <mxCell id="dom" value="DOMAIN LAYER — :shared / commonMain (Kotlin puro, zero import Android)" style="swimlane;fontStyle=1;startSize=30;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="80" y="290" width="980" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="dm_uc" value="UseCases&#xa;UseCase&lt;P,R&gt; / ObservableUseCase&lt;P,R&gt;&#xa;NoParamsUseCase&lt;R&gt; / NoParamsObservableUseCase&lt;R&gt;&#xa;execute() throws; invoke() = Result&lt;R&gt;" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="dom">
+          <mxGeometry x="20" y="40" width="280" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="dm_rp" value="Repository Interfaces&#xa;TransactionRepository&#xa;CategoryRepository&#xa;ProfileRepository&#xa;SettingsRepository" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="dom">
+          <mxGeometry x="330" y="40" width="180" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="dm_mo" value="Domain Models&#xa;Transaction · Category&#xa;Profile · AppSettings&#xa;(pure data classes)" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="dom">
+          <mxGeometry x="540" y="40" width="160" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="dm_ex" value="Domain Exceptions&#xa;sealed classes&#xa;domain/exception/&#xa;niente tipi Android" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="dom">
+          <mxGeometry x="730" y="40" width="150" height="100" as="geometry"/>
+        </mxCell>
+        <!-- arrow D->Data -->
+        <mxCell id="arr2" value="interfacce implementate da" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#82b366;" edge="1" parent="1" source="dom" target="data">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- DATA -->
+        <mxCell id="data" value="DATA LAYER — :shared / androidMain" style="swimlane;fontStyle=1;startSize=30;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="80" y="540" width="980" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="da_rp" value="Repository Impl&#xa;TransactionRepositoryImpl&#xa;CategoryRepositoryImpl&#xa;ProfileRepositoryImpl&#xa;SettingsRepositoryImpl" style="rounded=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="data">
+          <mxGeometry x="20" y="40" width="200" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="da_rm" value="Room (AppDatabase v15)&#xa;TransactionDao · CategoryDao&#xa;ProfileDao&#xa;Entities + TypeConverters" style="rounded=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="data">
+          <mxGeometry x="250" y="40" width="180" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="da_ds" value="DataStore Preferences&#xa;SettingsRepositoryImpl&#xa;letture reactive Flow&lt;T&gt;" style="rounded=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="data">
+          <mxGeometry x="460" y="40" width="160" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="da_sv" value="Service Impl&#xa;MlKitReceiptOcrService&#xa;LocalDataCipherImpl&#xa;BackupService&#xa;DriveUploadManager" style="rounded=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="data">
+          <mxGeometry x="650" y="40" width="180" height="100" as="geometry"/>
+        </mxCell>
+        <!-- Rule -->
+        <mxCell id="rule" value="Regola d'oro: le dipendenze scorrono SOLO verso il basso. Domain non ha dipendenze. Data non importa mai Presentation." style="text;strokeColor=#d6b656;fillColor=#fff2cc;fontStyle=2;rounded=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="80" y="745" width="980" height="35" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <diagram id="usecase-pattern" name="UseCase Pattern">
+    <mxGraphModel dx="1200" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="ttl" value="UseCase Pattern — Domain Layer" style="text;fontStyle=1;fontSize=14;strokeColor=none;fillColor=none;align=center;" vertex="1" parent="1">
+          <mxGeometry x="80" y="20" width="500" height="30" as="geometry"/>
+        </mxCell>
+        <!-- Base classes -->
+        <mxCell id="bc" value="UseCase Base Classes (:architectureModule)" style="swimlane;fontStyle=1;startSize=25;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="80" y="70" width="860" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc1" value="UseCase&lt;P, R&gt;&#xa;suspend execute(P): R" style="rounded=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="bc">
+          <mxGeometry x="20" y="35" width="185" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc2" value="NoParamsUseCase&lt;R&gt;&#xa;suspend execute(): R" style="rounded=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="bc">
+          <mxGeometry x="225" y="35" width="185" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc3" value="ObservableUseCase&lt;P, R&gt;&#xa;execute(P): Flow&lt;R&gt;" style="rounded=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="bc">
+          <mxGeometry x="430" y="35" width="185" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc4" value="NoParamsObservableUseCase&lt;R&gt;&#xa;execute(): Flow&lt;R&gt;" style="rounded=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="bc">
+          <mxGeometry x="635" y="35" width="205" height="60" as="geometry"/>
+        </mxCell>
+        <!-- invoke contract -->
+        <mxCell id="inv" value="invoke() — final, non sovrascrivere mai&#xa;invoke(params) = runCatching { execute(params) }  →  se CancellationException rilancia  →  altrimenti logga  →  restituisce Result&lt;R&gt;" style="rounded=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="230" width="860" height="55" as="geometry"/>
+        </mxCell>
+        <!-- Call sequence -->
+        <mxCell id="sv" value="ViewModel" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="340" width="140" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="si" value="useCase(params)&#xa;→ invoke() [final]" style="rounded=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="300" y="340" width="160" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="se" value="execute(params)&#xa;suspend, may throw" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="540" y="340" width="160" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="sr" value="Result&lt;R&gt;&#xa;restituito al VM" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="780" y="340" width="160" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="e1" edge="1" source="sv" target="si" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e2" edge="1" source="si" target="se" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e3" value="Result.success / Result.failure" edge="1" source="se" target="sr" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- Consumption -->
+        <mxCell id="cons" value="Consumo nel ViewModel:&#xa;useCase(params).handleError { err → _state.update { it.copy(errorState = err) } }  //  restituisce T? (null su errore; CancellationException rilanciato)&#xa;Versione Flow: .onSuccess { } .onFailure { if (it is CancellationException) throw it }" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="440" width="860" height="70" as="geometry"/>
+        </mxCell>
+        <!-- Settings note -->
+        <mxCell id="sn" value="Settings: usare GetSettingUseCase&lt;T&gt; / SetSettingUseCase&lt;T&gt; con lambda nel DI. Non creare classi UseCase per-setting." style="text;strokeColor=#d6b656;fillColor=#fff2cc;rounded=1;fontStyle=2;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="80" y="540" width="860" height="40" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <diagram id="vm-udf" name="ViewModel UDF">
+    <mxGraphModel dx="1200" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="ttl" value="ViewModel UDF — AndroidBaseViewModel&lt;E:UIEvent, S:UIState&gt;" style="text;fontStyle=1;fontSize=14;strokeColor=none;fillColor=none;align=center;" vertex="1" parent="1">
+          <mxGeometry x="80" y="20" width="700" height="30" as="geometry"/>
+        </mxCell>
+        <!-- Screen -->
+        <mxCell id="scr" value="Screen (Composable)" style="swimlane;fontStyle=1;startSize=25;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="80" y="80" width="260" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="scr1" value="val state by viewModel.state&#xa;  .collectAsStateWithLifecycle()" style="rounded=0;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="scr">
+          <mxGeometry x="10" y="30" width="240" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="scr2" value="onEvent = viewModel::emitEvent&#xa;FeatureContent(state, onEvent)" style="rounded=0;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="scr">
+          <mxGeometry x="10" y="80" width="240" height="40" as="geometry"/>
+        </mxCell>
+        <!-- ViewModel -->
+        <mxCell id="vm" value="ViewModel (AndroidBaseViewModel&lt;E, S&gt;)" style="swimlane;fontStyle=1;startSize=25;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="430" y="60" width="430" height="300" as="geometry"/>
+        </mxCell>
+        <mxCell id="vm1" value="emitEvent(event: E)  [final, public, non-suspend]&#xa;→ Channel&lt;E&gt;.trySend(event)  (thread-safe)" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="vm">
+          <mxGeometry x="10" y="35" width="410" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="vm2" value="Channel&lt;E&gt; UNLIMITED (coda FIFO)&#xa;coroutine consumatrice in init {}" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="vm">
+          <mxGeometry x="10" y="100" width="410" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="vm3" value="handleEvent(event: E)  [abstract, internal]&#xa;when (event) { is X → metodoPrivato() }" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="vm">
+          <mxGeometry x="10" y="160" width="410" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="vm4" value="_state.update { it.copy(…) }&#xa;oppure combine(…).stateIn(viewModelScope, WhileSubscribed(5_000), default)" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="vm">
+          <mxGeometry x="10" y="225" width="410" height="50" as="geometry"/>
+        </mxCell>
+        <!-- StateFlow -->
+        <mxCell id="sf" value="state: StateFlow&lt;S&gt;" style="rounded=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="430" y="420" width="260" height="40" as="geometry"/>
+        </mxCell>
+        <!-- UDF arrows -->
+        <mxCell id="e_emit" value="1. azione utente → emitEvent()" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#6c8ebf;fontStyle=2;" edge="1" source="scr2" target="vm1" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_state" value="4. state → ricomposizione" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#82b366;fontStyle=2;" edge="1" source="sf" target="scr1" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_upd" value="3. _state.update" edge="1" source="vm4" target="sf" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- Notes -->
+        <mxCell id="err" value="Gestione errori: useCase(p).handleError { err → _state.update { it.copy(errorState = err) } }  — CancellationException sempre rilanciata." style="rounded=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="80" y="510" width="780" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="test" value="Unit test: viewModel.emitEvent(Event.X)  →  advanceUntilIdle()  →  assert state.value" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="80" y="590" width="380" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="settexc" value="Eccezione: SettingsRepository può essere iniettato&#xa;direttamente per leggere preference flows / scrivere in&#xa;viewModelScope.launch. Nessun altro Repository nel VM." style="rounded=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="490" y="590" width="370" height="60" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <diagram id="di-graph" name="DI Module Graph">
+    <mxGraphModel dx="1200" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="ttl" value="DI Module Graph — Koin (AppModule.kt)" style="text;fontStyle=1;fontSize=14;strokeColor=none;fillColor=none;align=center;" vertex="1" parent="1">
+          <mxGeometry x="80" y="20" width="600" height="30" as="geometry"/>
+        </mxCell>
+        <!-- dataModule -->
+        <mxCell id="dm" value="dataModule" style="swimlane;fontStyle=1;startSize=25;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="80" y="70" width="310" height="390" as="geometry"/>
+        </mxCell>
+        <mxCell id="dm1" value="single { DatabaseProvider }&#xa;single { AppDatabase }&#xa;single { TransactionDao }&#xa;single { CategoryDao }&#xa;single { ProfileDao }" style="rounded=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;align=left;spacingLeft=8;" vertex="1" parent="dm">
+          <mxGeometry x="10" y="35" width="290" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="dm2" value="single { TransactionRepositoryImpl }&#xa;single { CategoryRepositoryImpl }&#xa;single { ProfileRepositoryImpl }&#xa;single { SettingsRepositoryImpl }&#xa;→ legati a interfacce domain" style="rounded=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;align=left;spacingLeft=8;" vertex="1" parent="dm">
+          <mxGeometry x="10" y="135" width="290" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="dm3" value="single { MlKitReceiptOcrService }&#xa;single { LocalDataCipherImpl }&#xa;single { BackupService }&#xa;single { DriveUploadManager }&#xa;single { AutoBackupScheduler }&#xa;single { GlanceWidgetUpdateNotifier }" style="rounded=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;align=left;spacingLeft=8;" vertex="1" parent="dm">
+          <mxGeometry x="10" y="235" width="290" height="120" as="geometry"/>
+        </mxCell>
+        <!-- useCaseModule -->
+        <mxCell id="ucm" value="useCaseModule" style="swimlane;fontStyle=1;startSize=25;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="430" y="70" width="310" height="390" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucm1" value="factory { GetTransactionsUseCase(get()) }&#xa;factory { InsertTransactionUseCase(get()) }&#xa;factory { UpdateTransactionUseCase(get()) }&#xa;factory { DeleteTransactionUseCase(get()) }&#xa;factory { ShareTransactionUseCase() }" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;align=left;spacingLeft=8;" vertex="1" parent="ucm">
+          <mxGeometry x="10" y="35" width="290" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucm2" value="factory { GetCategoriesUseCase(get()) }&#xa;factory { InsertCategoryUseCase(get()) }&#xa;factory { UpdateCategoryUseCase(get()) }&#xa;factory { DeleteCategoryUseCase(get()) }" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;align=left;spacingLeft=8;" vertex="1" parent="ucm">
+          <mxGeometry x="10" y="135" width="290" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucm3" value="factory { GetProfilesUseCase(get()) }&#xa;factory { CreateProfileUseCase(get()) }&#xa;factory { SwitchProfileUseCase(get()) }&#xa;factory { DeleteProfileUseCase(get()) }" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;align=left;spacingLeft=8;" vertex="1" parent="ucm">
+          <mxGeometry x="10" y="225" width="290" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucm4" value="factory { ScanReceiptUseCase(get()) }&#xa;factory { GetSettingUseCase&lt;T&gt;(get(), lambda) }&#xa;factory { SetSettingUseCase&lt;T&gt;(get(), lambda) }" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;align=left;spacingLeft=8;" vertex="1" parent="ucm">
+          <mxGeometry x="10" y="315" width="290" height="60" as="geometry"/>
+        </mxCell>
+        <!-- presentationModule -->
+        <mxCell id="pm" value="presentationModule" style="swimlane;fontStyle=1;startSize=25;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="80" y="500" width="660" height="230" as="geometry"/>
+        </mxCell>
+        <mxCell id="pm1" value="viewModel { HomeViewModel(get(), get()) }&#xa;viewModel { ChartsViewModel(get()) }&#xa;viewModel { TransactionsViewModel(get(), get()) }&#xa;viewModel { CategoriesViewModel(get(), get(), get(), get()) }&#xa;viewModel { SettingsViewModel(get(), get(), get()) }&#xa;viewModel { DisplayViewModel(get()) }&#xa;viewModel { SettingsDataViewModel(get(), get()) }&#xa;viewModel { ProfilesViewModel(get(), get(), get()) }" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;spacingLeft=8;" vertex="1" parent="pm">
+          <mxGeometry x="10" y="35" width="310" height="165" as="geometry"/>
+        </mxCell>
+        <mxCell id="pm2" value="viewModel { (id: Long?) → AddTransactionViewModel(get(),get(),id) }&#xa;  — SuggestionsManager, TransactionLoadManager,&#xa;    TransactionSubmitManager iniettati internamente&#xa;viewModel { ReceiptScanViewModel(get()) }&#xa;viewModel { TransactionDetailsViewModel(get()) }&#xa;viewModel { ThemeViewModel(get()) }&#xa;viewModelOf(::NavSettingsViewModel)" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;spacingLeft=8;" vertex="1" parent="pm">
+          <mxGeometry x="340" y="35" width="310" height="165" as="geometry"/>
+        </mxCell>
+        <!-- Dep arrows -->
+        <mxCell id="d1" value="get() repos" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#82b366;" edge="1" source="ucm" target="dm" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="d2" value="get() usecases" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#6c8ebf;" edge="1" source="pm" target="ucm" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="d3" value="get() SettingsRepo (eccezione)" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;strokeColor=#6c8ebf;dashed=1;" edge="1" source="pm" target="dm" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

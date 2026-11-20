@@ -1,6 +1,7 @@
 package com.antcashmanager.android.ui.screen.settings
 
-import com.antcashmanager.android.ui.base.ErrorState
+import com.antcashmanager.architecture.ErrorState
+import com.antcashmanager.architecture.UIState
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.TransactionDisplayType
@@ -44,4 +45,4 @@ data class SettingsState(
     // Error handling & loading
     val errorState: ErrorState = ErrorState(),
     val isLoading: Boolean = false,
-)
+) : UIState()

@@ -150,7 +150,7 @@ fun TransactionsScreen(
 
                         else -> Unit
                     }
-                    viewModel.onEvent(event)
+                    viewModel.emitEvent(event)
                 },
                 navController = navController,
                 transactionDisplayType = transactionDisplayType,

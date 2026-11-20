@@ -134,7 +134,7 @@ fun ProfilesScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     ProfilesContent(
         state = state,
-        onEvent = viewModel::onEvent,
+        onEvent = viewModel::emitEvent,
         onNavigateBack = { navController.popBackStack() },
         modifier = modifier,
     )

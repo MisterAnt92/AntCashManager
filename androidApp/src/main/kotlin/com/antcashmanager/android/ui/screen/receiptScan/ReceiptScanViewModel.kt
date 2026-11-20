@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.analytics.tracker.ErrorTracker
 import com.antcashmanager.android.analytics.tracker.PerformanceTracker
-import com.antcashmanager.android.ui.base.BaseViewModel
+import com.antcashmanager.android.ui.base.AndroidBaseViewModel
 import com.antcashmanager.domain.exception.ReceiptScanException
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
@@ -17,9 +17,6 @@ import com.antcashmanager.domain.usecase.receipt.ScanReceiptUseCase
 import com.antcashmanager.domain.usecase.transaction.GetTransactionSuggestionsUseCase
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -45,13 +42,7 @@ class ReceiptScanViewModel(
     private val analyticsManager: AnalyticsManager,
     private val performanceTracker: PerformanceTracker,
     private val errorTracker: ErrorTracker,
-) : BaseViewModel<ReceiptScanEvent>() {
-    // ── State ─────────────────────────────────────────────────────────────────
-    private val _state = MutableStateFlow(ReceiptScanState())
-    val state: StateFlow<ReceiptScanState> = _state.asStateFlow()
-
-    private var activeJob: Job? = null
-
+) : AndroidBaseViewModel<ReceiptScanEvent, ReceiptScanState>(ReceiptScanState()) {
     private var distinctTitles = listOf<String>()
     private var distinctLocations = listOf<String>()
 
@@ -62,7 +53,7 @@ class ReceiptScanViewModel(
 
     // ── Public API ────────────────────────────────────────────────────────────
 
-    override fun onEvent(event: ReceiptScanEvent) {
+    override fun handleEvent(event: ReceiptScanEvent) {
         logDebug("Event: $event")
         when (event) {
             is ReceiptScanEvent.ScanReceiptEvent -> scanReceipt(event.imageBytes)

@@ -1,5 +1,7 @@
 package com.antcashmanager.android.ui.screen.receiptScan
 
+import com.antcashmanager.architecture.UIEvent
+
 import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.model.PaymentType
 
@@ -9,7 +11,7 @@ import com.antcashmanager.domain.model.PaymentType
  * All OCR scan operations and transaction field updates emit events
  * that the ViewModel processes to update receipt state.
  */
-sealed class ReceiptScanEvent {
+sealed class ReceiptScanEvent : UIEvent() {
     data class ScanReceiptEvent(
         val imageBytes: ByteArray,
     ) : ReceiptScanEvent()

@@ -1,7 +1,7 @@
 package com.antcashmanager.android.ui.screen.settings
 
 import androidx.lifecycle.viewModelScope
-import com.antcashmanager.android.ui.base.BaseViewModel
+import com.antcashmanager.android.ui.base.AndroidBaseViewModel
 import com.antcashmanager.domain.manager.ProfileManager
 import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
@@ -36,7 +36,7 @@ class SettingsViewModel(
     private val importDebugDataUseCase: ImportDebugDataUseCase,
     private val getProfilesUseCase: GetProfilesUseCase,
     profileManager: ProfileManager,
-) : BaseViewModel<SettingEvent>() {
+) : AndroidBaseViewModel<SettingEvent, SettingsState>(SettingsState()) {
     // Convenience properties for readability (delegate to provider)
     private val getThemeUseCase get() = settingsUseCases.getTheme
     private val setThemeUseCase get() = settingsUseCases.setTheme
@@ -74,7 +74,7 @@ class SettingsViewModel(
     private val _isLanguageChanging = MutableStateFlow(false)
     val isLanguageChanging: StateFlow<Boolean> = _isLanguageChanging.asStateFlow()
 
-    override fun onEvent(event: SettingEvent) {
+    override fun handleEvent(event: SettingEvent) {
         logDebug("Event: $event")
         when (event) {
             is SettingEvent.SetThemeEvent -> setTheme(event.theme)
@@ -245,7 +245,7 @@ class SettingsViewModel(
             SettingsPreferencesAll(prefs1, prefs2, showTransactionNotes, transactionDisplayType)
         }
 
-    val state: StateFlow<SettingsState> =
+    override val state: StateFlow<SettingsState> =
         combine(
             _prefsState,
             _activeProfileName,
