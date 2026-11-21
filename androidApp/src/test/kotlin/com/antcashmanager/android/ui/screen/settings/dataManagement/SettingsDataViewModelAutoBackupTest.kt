@@ -48,6 +48,7 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
             googleSignInManager = googleSignInManager,
             performanceTracker = performanceTracker,
             errorTracker = errorTracker,
+            analyticsManager = mockk(relaxed = true),
         )
 
     @Test
@@ -185,6 +186,7 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
                     googleSignInManager = googleSignInManager,
                     performanceTracker = mockk(relaxed = true),
                     errorTracker = mockk(relaxed = true),
+                    analyticsManager = mockk(relaxed = true),
                 )
 
             assertEquals(testUri, viewModel.state.value.autoBackupFolderUri)
@@ -218,6 +220,7 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
                     googleSignInManager = googleSignInManager,
                     performanceTracker = mockk(relaxed = true),
                     errorTracker = mockk(relaxed = true),
+                    analyticsManager = mockk(relaxed = true),
                 )
 
             assertNull(viewModel.state.value.autoBackupFolderUri)

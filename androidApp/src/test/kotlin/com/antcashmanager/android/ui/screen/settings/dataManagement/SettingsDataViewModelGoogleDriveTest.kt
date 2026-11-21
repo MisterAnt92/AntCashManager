@@ -56,6 +56,7 @@ class SettingsDataViewModelGoogleDriveTest : BaseUnitTest() {
             googleSignInManager = googleSignInManager,
             performanceTracker = performanceTracker,
             errorTracker = errorTracker,
+            analyticsManager = mockk(relaxed = true),
         )
     }
 

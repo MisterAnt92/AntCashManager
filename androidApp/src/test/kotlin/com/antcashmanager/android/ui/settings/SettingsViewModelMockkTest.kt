@@ -250,6 +250,7 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
             widgetUpdateNotifier = widgetUpdateNotifier,
             sendFeedbackEmailUseCase = sendFeedbackEmailUseCase,
             importDebugDataUseCase = importDebugDataUseCase,
+            analyticsManager = mockk(relaxed = true),
         )
     }
 }
