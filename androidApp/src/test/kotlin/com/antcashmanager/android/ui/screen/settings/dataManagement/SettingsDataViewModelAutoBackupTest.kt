@@ -17,6 +17,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import com.antcashmanager.domain.model.BackupDestination
 
 /**
  * Test per il ViewModel di Gestione Dati, focalizzato su Automatic Backup.
@@ -169,7 +170,7 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
             coEvery { settingsRepositoryWithUri.getDataEncryptionEnabled() } returns
                 kotlinx.coroutines.flow.flowOf(false)
             coEvery { settingsRepositoryWithUri.getAutoBackupDestination() } returns
-                kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.BackupDestination.LOCAL)
+                kotlinx.coroutines.flow.flowOf(BackupDestination.LOCAL)
             coEvery { settingsRepositoryWithUri.getGoogleDriveUserEmail() } returns
                 kotlinx.coroutines.flow.flowOf(null)
 
@@ -203,7 +204,7 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
             coEvery { settingsRepositoryNoUri.getSuggestionsEnabled() } returns flowOf(false)
             coEvery { settingsRepositoryNoUri.getDataEncryptionEnabled() } returns flowOf(false)
             coEvery { settingsRepositoryNoUri.getAutoBackupDestination() } returns
-                flowOf(com.antcashmanager.domain.model.BackupDestination.LOCAL)
+                flowOf(BackupDestination.LOCAL)
             coEvery { settingsRepositoryNoUri.getGoogleDriveUserEmail() } returns flowOf(null)
 
             val viewModel =

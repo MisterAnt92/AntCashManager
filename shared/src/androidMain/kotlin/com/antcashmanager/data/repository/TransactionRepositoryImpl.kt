@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import com.antcashmanager.data.local.entity.TransactionEntity
+import com.antcashmanager.domain.model.TransactionSuggestions
 
 public class TransactionRepositoryImpl(
     private val transactionDao: TransactionDao,
@@ -263,7 +265,7 @@ public class TransactionRepositoryImpl(
             }
     }
 
-    override suspend fun getSuggestions(since: Long): com.antcashmanager.domain.model.TransactionSuggestions {
+    override suspend fun getSuggestions(since: Long): TransactionSuggestions {
         val ids = profileManager.sharedProfileIds.value
         val rows = transactionDao.getSuggestionsMulti(ids, since)
         val decryptedRows = rows.mapNotNull { row ->
@@ -293,7 +295,7 @@ public class TransactionRepositoryImpl(
             if (row.location.isNotEmpty()) locationSet.add(row.location)
             if (row.tags.isNotEmpty()) tagSet.add(row.tags)
         }
-        return com.antcashmanager.domain.model.TransactionSuggestions(
+        return TransactionSuggestions(
             titles = titleSet.toList(),
             payees = payeeSet.toList(),
             notes = noteSet.toList(),
@@ -310,7 +312,7 @@ public class TransactionRepositoryImpl(
         val tags: String,
     )
 
-    private fun encryptEntity(entity: com.antcashmanager.data.local.entity.TransactionEntity) =
+    private fun encryptEntity(entity: TransactionEntity) =
         entity.copy(
             title = localDataCipher.encryptString(entity.title),
             notes = localDataCipher.encryptString(entity.notes),
@@ -319,7 +321,7 @@ public class TransactionRepositoryImpl(
             tags = localDataCipher.encryptString(entity.tags),
         )
 
-    private fun decryptEntity(entity: com.antcashmanager.data.local.entity.TransactionEntity) =
+    private fun decryptEntity(entity: TransactionEntity) =
         entity.copy(
             title = localDataCipher.decryptString(entity.title),
             notes = localDataCipher.decryptString(entity.notes),

@@ -43,6 +43,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import com.antcashmanager.android.analytics.AnalyticsManager
 
 // ══════════════════════════════════════════════════════════════════════════════
 // VIEWMODEL
@@ -62,7 +63,7 @@ class TransactionsViewModel(
     private val settingsRepository: SettingsRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val engagementTracker: EngagementTracker,
-    private val analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager,
+    private val analyticsManager: AnalyticsManager,
 ) : AndroidBaseViewModel<TransactionsEvent, TransactionsState>(TransactionsState(), dispatcher) {
     constructor(
         transactionRepository: TransactionRepository,
@@ -70,7 +71,7 @@ class TransactionsViewModel(
         settingsRepository: SettingsRepository,
         dispatcher: CoroutineDispatcher = Dispatchers.Default,
         engagementTracker: EngagementTracker,
-        analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager,
+        analyticsManager: AnalyticsManager,
     ) : this(
         getTransactionsUseCase =
             GetTransactionsUseCase(

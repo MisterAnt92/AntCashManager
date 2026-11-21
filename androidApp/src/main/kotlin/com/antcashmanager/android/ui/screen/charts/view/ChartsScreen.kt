@@ -101,6 +101,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import kotlin.math.abs
+import com.antcashmanager.android.ui.components.layout.AdaptiveLayoutInfo
+import com.antcashmanager.android.ui.screen.charts.model.ChartCardType
 
 @Composable
 fun ChartsScreen() {
@@ -182,7 +184,7 @@ internal fun ChartsContent(
     }
     val chartsCardOrder =
         remember(localChartsCardOrderRaw) {
-            com.antcashmanager.android.ui.screen.charts.model.ChartCardType
+            ChartCardType
                 .parse(localChartsCardOrderRaw)
         }
     var showChartsCardsOrderDialog by remember { mutableStateOf(false) }
@@ -239,7 +241,7 @@ internal fun ChartsContent(
                     mutableOrder[index] = mutableOrder[index - 1]
                     mutableOrder[index - 1] = temp
                     localChartsCardOrderRaw =
-                        com.antcashmanager.android.ui.screen.charts.model.ChartCardType
+                        ChartCardType
                             .serialize(mutableOrder)
                 }
             },
@@ -250,7 +252,7 @@ internal fun ChartsContent(
                     mutableOrder[index] = mutableOrder[index + 1]
                     mutableOrder[index + 1] = temp
                     localChartsCardOrderRaw =
-                        com.antcashmanager.android.ui.screen.charts.model.ChartCardType
+                        ChartCardType
                             .serialize(mutableOrder)
                 }
             },
@@ -317,31 +319,31 @@ internal fun ChartsContent(
     // Function to render a single chart card based on type
     @Composable
     fun RenderChartCard(
-        cardType: com.antcashmanager.android.ui.screen.charts.model.ChartCardType,
+        cardType: ChartCardType,
         showSpacer: Boolean = true,
     ) {
         when (cardType) {
-            com.antcashmanager.android.ui.screen.charts.model.ChartCardType.SPENDING_FORECAST_CARD -> {
+            ChartCardType.SPENDING_FORECAST_CARD -> {
                 SpendingForecastCard(chartData = chartData)
                 if (showSpacer) VerticalSpacer(SpacingSize.MD)
             }
 
-            com.antcashmanager.android.ui.screen.charts.model.ChartCardType.QUICK_STATS_CARD -> {
+            ChartCardType.QUICK_STATS_CARD -> {
                 QuickStatsCard(chartData = chartData)
                 if (showSpacer) VerticalSpacer(SpacingSize.MD)
             }
 
-            com.antcashmanager.android.ui.screen.charts.model.ChartCardType.DAILY_EXPENSE_CHART_CARD -> {
+            ChartCardType.DAILY_EXPENSE_CHART_CARD -> {
                 DailyExpenseLineChartCard(chartData = chartData)
                 if (showSpacer) VerticalSpacer(SpacingSize.MD)
             }
 
-            com.antcashmanager.android.ui.screen.charts.model.ChartCardType.WEEKDAY_DISTRIBUTION_CARD -> {
+            ChartCardType.WEEKDAY_DISTRIBUTION_CARD -> {
                 WeekdayExpenseCard(chartData = chartData)
                 if (showSpacer) VerticalSpacer(SpacingSize.MD)
             }
 
-            com.antcashmanager.android.ui.screen.charts.model.ChartCardType.INCOME_CATEGORY_PIE_CHART -> {
+            ChartCardType.INCOME_CATEGORY_PIE_CHART -> {
                 if (chartData.incomeByCategory.isNotEmpty()) {
                     CategoryPieChartCard(
                         title = stringResource(R.string.charts_income_by_category),
@@ -383,7 +385,7 @@ internal fun ChartsContent(
                 }
             }
 
-            com.antcashmanager.android.ui.screen.charts.model.ChartCardType.EXPENSE_CATEGORY_PIE_CHART -> {
+            ChartCardType.EXPENSE_CATEGORY_PIE_CHART -> {
                 if (chartData.expenseByCategory.isNotEmpty()) {
                     CategoryPieChartCard(
                         title = stringResource(R.string.charts_expense_by_category),
@@ -425,7 +427,7 @@ internal fun ChartsContent(
                 }
             }
 
-            com.antcashmanager.android.ui.screen.charts.model.ChartCardType.TOP_INCOME_CATEGORIES -> {
+            ChartCardType.TOP_INCOME_CATEGORIES -> {
                 if (topIncomeCategories.isNotEmpty()) {
                     TopCategoriesCard(
                         title = stringResource(R.string.charts_top_income_categories),
@@ -438,7 +440,7 @@ internal fun ChartsContent(
                 }
             }
 
-            com.antcashmanager.android.ui.screen.charts.model.ChartCardType.TOP_EXPENSE_CATEGORIES -> {
+            ChartCardType.TOP_EXPENSE_CATEGORIES -> {
                 if (topExpenseCategories.isNotEmpty()) {
                     TopCategoriesCard(
                         title = stringResource(R.string.charts_top_expense_categories),
@@ -451,7 +453,7 @@ internal fun ChartsContent(
                 }
             }
 
-            com.antcashmanager.android.ui.screen.charts.model.ChartCardType.PAYMENT_TYPE_BREAKDOWN -> {
+            ChartCardType.PAYMENT_TYPE_BREAKDOWN -> {
                 if (paymentBreakdownByLabel.isNotEmpty()) {
                     CategoryPieChartCard(
                         title = stringResource(R.string.charts_payment_breakdown_title),
@@ -488,7 +490,7 @@ internal fun ChartsContent(
                 }
             }
 
-            com.antcashmanager.android.ui.screen.charts.model.ChartCardType.MONTHLY_BAR_CHART -> {
+            ChartCardType.MONTHLY_BAR_CHART -> {
                 if (chartData.monthlyData.isNotEmpty()) {
                     MonthlyBarChartCard(
                         data = chartData.monthlyData,
@@ -504,7 +506,7 @@ internal fun ChartsContent(
                 }
             }
 
-            com.antcashmanager.android.ui.screen.charts.model.ChartCardType.YEARLY_BAR_CHART -> {
+            ChartCardType.YEARLY_BAR_CHART -> {
                 if (chartData.yearlyData.isNotEmpty()) {
                     YearlyBarChartCard(
                         data = chartData.yearlyData,
@@ -784,7 +786,7 @@ private fun PeriodFilterCard(
 @Composable
 private fun NewVisualizationsSection(
     chartData: ChartData,
-    adaptiveLayoutInfo: com.antcashmanager.android.ui.components.layout.AdaptiveLayoutInfo,
+    adaptiveLayoutInfo: AdaptiveLayoutInfo,
 ) {
     if (adaptiveLayoutInfo.isCompact) {
         // Phone: single column

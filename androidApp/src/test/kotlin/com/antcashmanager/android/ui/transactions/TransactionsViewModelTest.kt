@@ -417,7 +417,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
             advanceUntilIdle()
 
             viewModel.emitEvent(
-                com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent.SetDateRangeEvent(
+                TransactionsEvent.SetDateRangeEvent(
                     from = from,
                     to = to,
                 ),

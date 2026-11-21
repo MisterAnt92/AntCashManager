@@ -30,6 +30,8 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import com.antcashmanager.android.auth.GoogleSignInManager
+import com.antcashmanager.android.work.AutoBackupScheduler
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsDataViewModelMockkTest : BaseUnitTest() {
@@ -549,8 +551,8 @@ class SettingsDataViewModelMockkTest : BaseUnitTest() {
         }
 
     private fun buildViewModel(): SettingsDataViewModel {
-        val autoBackupScheduler: com.antcashmanager.android.work.AutoBackupScheduler = mockk(relaxed = true)
-        val googleSignInManager: com.antcashmanager.android.auth.GoogleSignInManager = mockk(relaxed = true)
+        val autoBackupScheduler: AutoBackupScheduler = mockk(relaxed = true)
+        val googleSignInManager: GoogleSignInManager = mockk(relaxed = true)
         val performanceTracker: PerformanceTracker = mockk(relaxed = true)
         val errorTracker: ErrorTracker = mockk(relaxed = true)
 

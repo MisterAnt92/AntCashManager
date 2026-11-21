@@ -62,10 +62,11 @@ import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.DrawableLoader
 import org.koin.compose.koinInject
+import com.antcashmanager.android.analytics.AnalyticsManager
 
 @Composable
 fun TutorialOverlay(onDismiss: () -> Unit) {
-    val analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager = koinInject()
+    val analyticsManager: AnalyticsManager = koinInject()
     val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
     var currentStep by remember { mutableIntStateOf(0) }
     val steps =

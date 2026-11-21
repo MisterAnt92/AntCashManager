@@ -25,6 +25,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import com.antcashmanager.android.auth.GoogleSignInResult
 
 /**
  * ViewModel per la sotto-sezione Gestione Dati.
@@ -680,7 +681,7 @@ class SettingsDataViewModel(
      * - Chiude il dialog di sign-in
      * - Disabilita il loading state
      */
-    private suspend fun handleGoogleSignInSuccess(result: com.antcashmanager.android.auth.GoogleSignInResult) {
+    private suspend fun handleGoogleSignInSuccess(result: GoogleSignInResult) {
         logDebug("Google Sign-In successful for ${result.email}")
         try {
             // I token sono già salvati da GoogleSignInManager.handleSignInSuccess()
