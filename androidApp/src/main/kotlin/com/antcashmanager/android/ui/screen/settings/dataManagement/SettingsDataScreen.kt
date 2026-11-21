@@ -173,11 +173,9 @@ internal fun SettingsDataContent(
     val analyticsManager: AnalyticsManager = koinInject()
     val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
     val handleDataEncryptionEnabledChange: (Boolean) -> Unit = { enabled ->
-        analyticsManager.logEvent("data_encryption_toggled")
         onDataEncryptionEnabledChange(enabled)
     }
     val handleSuggestionsEnabledChange: (Boolean) -> Unit = { enabled ->
-        analyticsManager.logEvent("suggestions_toggled")
         onSuggestionsEnabledChange(enabled)
     }
     val backupLauncher =
@@ -344,7 +342,6 @@ internal fun SettingsDataContent(
 
     // Logica per gestire il toggle del backup automatico
     val handleAutoBackupToggle: (Boolean) -> Unit = { enabled ->
-        analyticsManager.logEvent("auto_backup_toggled")
         if (enabled && autoBackupFolderUri.isNullOrBlank()) {
             // Se abilita senza URI: apri il folder picker
             folderPickerLauncher?.launch(null)

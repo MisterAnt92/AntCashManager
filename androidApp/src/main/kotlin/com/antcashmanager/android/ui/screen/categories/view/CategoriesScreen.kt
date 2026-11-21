@@ -461,10 +461,7 @@ internal fun CategoriesContent(
                                         categoryToDelete = category
                                     }
                                 },
-                                onToggleHidden = {
-                                    analyticsManager.logEvent("category_hidden")
-                                    onSetCategoryHidden(category, true)
-                                },
+                                onToggleHidden = { onSetCategoryHidden(category, true) },
                             )
                         }
                         if (currentHiddenCategories.isNotEmpty()) {
@@ -484,10 +481,7 @@ internal fun CategoriesContent(
                                                 categoryToDelete = category
                                             }
                                         },
-                                        onToggleHidden = {
-                                            analyticsManager.logEvent("category_shown")
-                                            onSetCategoryHidden(category, false)
-                                        },
+                                        onToggleHidden = { onSetCategoryHidden(category, false) },
                                     )
                                 }
                             }
@@ -512,10 +506,7 @@ internal fun CategoriesContent(
                                         categoryToDelete = category
                                     }
                                 },
-                                onToggleHidden = {
-                                    analyticsManager.logEvent("category_hidden")
-                                    onSetCategoryHidden(category, true)
-                                },
+                                onToggleHidden = { onSetCategoryHidden(category, true) },
                             )
                         }
                         if (currentHiddenCategories.isNotEmpty()) {
@@ -538,10 +529,7 @@ internal fun CategoriesContent(
                                                 categoryToDelete = category
                                             }
                                         },
-                                        onToggleHidden = {
-                                            analyticsManager.logEvent("category_shown")
-                                            onSetCategoryHidden(category, false)
-                                        },
+                                        onToggleHidden = { onSetCategoryHidden(category, false) },
                                     )
                                 }
                             }
@@ -633,7 +621,6 @@ internal fun CategoriesContent(
         AddCategoryDialog(
             currentType = currentType,
             onConfirm = { name, icon, color ->
-                analyticsManager.logEvent("category_created")
                 onAddCategory(name, icon, color, currentType)
                 showAddDialog = false
             },
@@ -646,7 +633,6 @@ internal fun CategoriesContent(
             categories = currentCategories,
             onDismiss = { showReorderDialog = false },
             onConfirm = { reordered ->
-                analyticsManager.logEvent("categories_reordered")
                 onReorderCategories(reordered)
                 showReorderDialog = false
             },
@@ -668,7 +654,6 @@ internal fun CategoriesContent(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        analyticsManager.logEvent("category_deleted")
                         onDeleteCategory(category)
                         categoryToDelete = null
                     },

@@ -462,6 +462,7 @@ val presentationModule =
                 importDebugDataUseCase = get(),
                 getProfilesUseCase = get(),
                 profileManager = get(),
+                analyticsManager = get(),
             )
         }
         viewModel {
@@ -483,6 +484,7 @@ val presentationModule =
                 googleSignInManager = get(),
                 performanceTracker = get<PerformanceTracker>(),
                 errorTracker = get<ErrorTracker>(),
+                analyticsManager = get(),
             )
         }
         viewModel {

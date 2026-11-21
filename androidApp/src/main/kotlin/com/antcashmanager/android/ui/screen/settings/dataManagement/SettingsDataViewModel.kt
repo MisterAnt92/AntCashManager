@@ -3,6 +3,10 @@ package com.antcashmanager.android.ui.screen.settings.dataManagement
 import android.os.Build
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
+import android.os.Bundle
+import com.antcashmanager.android.analytics.AnalyticsConstants.Events
+import com.antcashmanager.android.analytics.AnalyticsConstants.Params
+import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.analytics.tracker.ErrorTracker
 import com.antcashmanager.android.analytics.tracker.PerformanceTracker
 import com.antcashmanager.android.auth.GoogleSignInManager
@@ -46,6 +50,7 @@ class SettingsDataViewModel(
     private val googleSignInManager: GoogleSignInManager,
     private val performanceTracker: PerformanceTracker,
     private val errorTracker: ErrorTracker,
+    private val analyticsManager: AnalyticsManager,
 ) : AndroidBaseViewModel<None, SettingsDataState>(SettingsDataState()) {
 
     override fun handleEvent(event: None) = Unit
@@ -112,6 +117,7 @@ class SettingsDataViewModel(
     }
 
     fun setDataEncryptionEnabled(enabled: Boolean) {
+        analyticsManager.logEvent(Events.DATA_ENCRYPTION_TOGGLED, Bundle().apply { putBoolean(Params.ENABLED, enabled) })
         logDebug("Setting data encryption enabled: $enabled")
         launchCancelling {
             try {
@@ -171,6 +177,7 @@ class SettingsDataViewModel(
     }
 
     fun setSuggestionsEnabled(enabled: Boolean) {
+        analyticsManager.logEvent(Events.SUGGESTIONS_TOGGLED, Bundle().apply { putBoolean(Params.ENABLED, enabled) })
         logDebug("Setting suggestions enabled: $enabled")
         viewModelScope.launch {
             settingsRepositoryRef.setSuggestionsEnabled(enabled)
@@ -194,6 +201,7 @@ class SettingsDataViewModel(
     }
 
     fun setAutoBackupEnabled(enabled: Boolean) {
+        analyticsManager.logEvent(Events.AUTO_BACKUP_TOGGLED, Bundle().apply { putBoolean(Params.ENABLED, enabled) })
         logDebug("Setting auto backup enabled: $enabled")
         viewModelScope.launch {
             if (enabled) {
@@ -218,6 +226,7 @@ class SettingsDataViewModel(
     }
 
     fun setBackupFrequency(frequency: BackupFrequency) {
+        analyticsManager.logEvent(Events.BACKUP_FREQUENCY_CHANGED, Bundle().apply { putString(Params.FREQUENCY, frequency.name) })
         logDebug("Setting backup frequency: $frequency")
         viewModelScope.launch {
             settingsRepositoryRef.setBackupFrequency(frequency)
@@ -598,6 +607,7 @@ class SettingsDataViewModel(
      * - Persiste la destinazione in SettingsRepository
      */
     fun setAutoBackupDestination(destination: BackupDestination) {
+        analyticsManager.logEvent(Events.AUTO_BACKUP_DESTINATION_CHANGED, Bundle().apply { putString(Params.DESTINATION, destination.name) })
         logDebug("Setting auto backup destination: $destination")
         viewModelScope.launch {
             when (destination) {
@@ -682,6 +692,7 @@ class SettingsDataViewModel(
      * - Disabilita il loading state
      */
     private suspend fun handleGoogleSignInSuccess(result: GoogleSignInResult) {
+        analyticsManager.logEvent(Events.GOOGLE_DRIVE_SIGNED_IN)
         logDebug("Google Sign-In successful for ${result.email}")
         try {
             // I token sono già salvati da GoogleSignInManager.handleSignInSuccess()

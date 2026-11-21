@@ -62,6 +62,10 @@ object AnalyticsConstants {
         const val SUGGESTIONS_TOGGLED = "suggestions_toggled"
         const val AUTO_BACKUP_TOGGLED = "auto_backup_toggled"
         const val AUTO_BACKUP_FOLDER_SELECTED = "auto_backup_folder_selected"
+        const val BACKUP_FREQUENCY_CHANGED = "backup_frequency_changed"
+        const val AUTO_BACKUP_DESTINATION_CHANGED = "auto_backup_destination_changed"
+        const val GOOGLE_DRIVE_SIGNED_IN = "google_drive_signed_in"
+        const val GOOGLE_DRIVE_SIGNED_OUT = "google_drive_signed_out"
         const val NOTIFICATION_PERMISSION_GRANTED = "notification_permission_granted"
         const val APP_AUTO_BACKUP_EXECUTED = "app_auto_backup_executed"
 
@@ -225,6 +229,7 @@ object AnalyticsConstants {
         const val DURATION_MS = "duration_ms"
         const val ZOOM_ENABLED = "zoom_enabled"
         const val DESTINATION = "destination"
+        const val FREQUENCY = "frequency"
         const val HAS_PHOTO = "has_photo"
         const val SHARE_TRANSACTIONS = "share_transactions"
         const val PROFILE_COUNT = "profile_count"
@@ -346,7 +351,12 @@ object AnalyticsConstants {
             Events.FILTER_COMBINATION_APPLIED,
             Events.CATEGORY_CRUD_OPERATION,
             Events.FORM_FIELD_FIRST_INTERACTION,
+            Events.AUTO_BACKUP_TOGGLED,
             Events.APP_AUTO_BACKUP_EXECUTED,
+            Events.BACKUP_FREQUENCY_CHANGED,
+            Events.AUTO_BACKUP_DESTINATION_CHANGED,
+            Events.GOOGLE_DRIVE_SIGNED_IN,
+            Events.GOOGLE_DRIVE_SIGNED_OUT,
             Events.WIDGET_TAP_ACTION_TRIGGERED,
             Events.TRANSACTION_DUPLICATE_SUGGESTION_ACCEPTED,
             Events.SCREEN_LOAD_TIME,

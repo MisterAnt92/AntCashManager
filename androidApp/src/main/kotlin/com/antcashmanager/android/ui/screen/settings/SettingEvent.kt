@@ -80,4 +80,12 @@ sealed class SettingEvent : UIEvent() {
     data class SetAnalyticsConsentEvent(
         val granted: Boolean,
     ) : SettingEvent()
+
+    // Analytics-only UI events (no state change)
+    data class SubmenuOpenedEvent(val submenu: String) : SettingEvent()
+    data class DialogDismissedEvent(val dialogType: String) : SettingEvent()
+    data object FeedbackEmailOpenedEvent : SettingEvent()
+    data object PrivacyPolicyOpenedEvent : SettingEvent()
+    data object EasterEggOpenedEvent : SettingEvent()
+    data object ThirdPartyLibsOpenedEvent : SettingEvent()
 }
