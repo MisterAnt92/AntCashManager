@@ -1,9 +1,6 @@
 package com.antcashmanager.android.ui.screen.categories.view
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,7 +40,6 @@ import androidx.compose.material.icons.filled.Fastfood
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Flight
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Laptop
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.LocalBar
@@ -98,7 +94,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -328,19 +323,14 @@ internal fun CategoriesContent(
     var categoryToEdit by remember { mutableStateOf<Category?>(null) }
     var categoryToDelete by remember { mutableStateOf<Category?>(null) }
     var showReorderDialog by remember { mutableStateOf(false) }
+    var reorderDialogCategories by remember { mutableStateOf(emptyList<Category>()) }
 
     val currentCategories =
         if (selectedTab == 0) state.expenseCategories else state.incomeCategories
-    val currentHiddenCategories =
-        if (selectedTab == 0) state.hiddenExpenseCategories else state.hiddenIncomeCategories
-
-    var hiddenSectionExpanded by remember { mutableStateOf(false) }
-
-    LaunchedEffect(currentCategories.isEmpty(), currentHiddenCategories.isNotEmpty()) {
-        if (currentCategories.isEmpty() && currentHiddenCategories.isNotEmpty()) {
-            hiddenSectionExpanded = true
-        }
-    }
+    val currentDefaultCategories =
+        if (selectedTab == 0) state.defaultExpenseCategories else state.defaultIncomeCategories
+    val currentCustomCategories =
+        if (selectedTab == 0) state.customExpenseCategories else state.customIncomeCategories
 
     // Foldable device support
     val displayFeatures = LocalDisplayFeatures.current
@@ -362,13 +352,7 @@ internal fun CategoriesContent(
         headerConfigCallback?.invoke(
             ScreenHeaderConfig(
                 title = categoriesTitle,
-                hasOrderOption = currentCategories.size > 1,
-                onOrderClick = {
-                    if (currentCategories.size > 1) {
-                        onEvent(CategoryEvent.LogReorderOpenedEvent)
-                        showReorderDialog = true
-                    }
-                },
+                hasOrderOption = false,
             ),
         )
     }
@@ -441,7 +425,7 @@ internal fun CategoriesContent(
                 VerticalSpacer(SpacingSize.SM)
 
                 val isGridLayout = adaptiveLayoutInfo.isExpanded && !adaptiveLayoutInfo.hasFold
-                if (currentCategories.isEmpty() && currentHiddenCategories.isEmpty()) {
+                if (currentDefaultCategories.isEmpty() && currentCustomCategories.isEmpty()) {
                     AntEmptyState(
                         mascotRes = R.drawable.ic_ant_mascot,
                         title = stringResource(R.string.categories_empty),
@@ -456,11 +440,22 @@ internal fun CategoriesContent(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         contentPadding = PaddingValues(bottom = 80.dp),
                     ) {
-                        items(currentCategories, key = { if (it.id != 0L) it.id else "${it.type}_${it.name}" }) { category ->
+                        item(key = "default_section_header", span = { GridItemSpan(maxLineSpan) }) {
+                            CategorySectionHeader(
+                                title = stringResource(R.string.categories_default_section),
+                                count = currentDefaultCategories.size,
+                                onReorder = {
+                                    onEvent(CategoryEvent.LogReorderOpenedEvent)
+                                    reorderDialogCategories = currentDefaultCategories
+                                    showReorderDialog = true
+                                },
+                            )
+                        }
+                        items(currentDefaultCategories, key = { if (it.id != 0L) it.id else "${it.type}_${it.name}" }) { category ->
                             CategoryItem(
                                 category = category,
                                 onClick = {
-                                    onEvent(CategoryEvent.LogItemClickedEvent(category.name, currentCategories.indexOf(category)))
+                                    onEvent(CategoryEvent.LogItemClickedEvent(category.name, currentDefaultCategories.indexOf(category)))
                                     categoryToEdit = category
                                 },
                                 onDelete = {
@@ -471,40 +466,48 @@ internal fun CategoriesContent(
                                 onToggleHidden = { onSetCategoryHidden(category, !category.isHidden) },
                             )
                         }
-                        if (currentHiddenCategories.isNotEmpty()) {
-                            item(key = "hidden_section_header", span = { GridItemSpan(maxLineSpan) }) {
-                                HiddenCategoriesSectionHeader(
-                                    count = currentHiddenCategories.size,
-                                    expanded = hiddenSectionExpanded,
-                                    onExpandedChange = { hiddenSectionExpanded = it },
-                                )
-                            }
-                            if (hiddenSectionExpanded) {
-                                items(currentHiddenCategories, key = { if (it.id != 0L) "hidden_${it.id}" else "hidden_${it.type}_${it.name}" }) { category ->
-                                    CategoryItem(
-                                        category = category,
-                                        onClick = {
-                                            categoryToEdit = category
-                                        },
-                                        onDelete = {
-                                            if (!category.isDefault) {
-                                                categoryToDelete = category
-                                            }
-                                        },
-                                        onToggleHidden = { onSetCategoryHidden(category, !category.isHidden) },
-                                    )
-                                }
-                            }
+                        item(key = "custom_section_header", span = { GridItemSpan(maxLineSpan) }) {
+                            CategorySectionHeader(
+                                title = stringResource(R.string.categories_custom_section),
+                                count = currentCustomCategories.size,
+                                onReorder = {
+                                    onEvent(CategoryEvent.LogReorderOpenedEvent)
+                                    reorderDialogCategories = currentCustomCategories
+                                    showReorderDialog = true
+                                },
+                            )
+                        }
+                        items(currentCustomCategories, key = { if (it.id != 0L) it.id else "custom_${it.type}_${it.name}" }) { category ->
+                            CategoryItem(
+                                category = category,
+                                onClick = {
+                                    onEvent(CategoryEvent.LogItemClickedEvent(category.name, currentCustomCategories.indexOf(category)))
+                                    categoryToEdit = category
+                                },
+                                onDelete = { categoryToDelete = category },
+                                onToggleHidden = { onSetCategoryHidden(category, !category.isHidden) },
+                            )
                         }
                         item(span = { GridItemSpan(maxLineSpan) }) { VerticalSpacer(SpacingSize.XXXL) }
                     }
                 } else {
                     LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        items(currentCategories, key = { if (it.id != 0L) it.id else "${it.type}_${it.name}" }) { category ->
+                        item(key = "default_section_header") {
+                            CategorySectionHeader(
+                                title = stringResource(R.string.categories_default_section),
+                                count = currentDefaultCategories.size,
+                                onReorder = {
+                                    onEvent(CategoryEvent.LogReorderOpenedEvent)
+                                    reorderDialogCategories = currentDefaultCategories
+                                    showReorderDialog = true
+                                },
+                            )
+                        }
+                        items(currentDefaultCategories, key = { if (it.id != 0L) it.id else "${it.type}_${it.name}" }) { category ->
                             CategoryItem(
                                 category = category,
                                 onClick = {
-                                    onEvent(CategoryEvent.LogItemClickedEvent(category.name, currentCategories.indexOf(category)))
+                                    onEvent(CategoryEvent.LogItemClickedEvent(category.name, currentDefaultCategories.indexOf(category)))
                                     categoryToEdit = category
                                 },
                                 onDelete = {
@@ -515,33 +518,27 @@ internal fun CategoriesContent(
                                 onToggleHidden = { onSetCategoryHidden(category, !category.isHidden) },
                             )
                         }
-                        if (currentHiddenCategories.isNotEmpty()) {
-                            item(key = "hidden_section_header") {
-                                HiddenCategoriesSectionHeader(
-                                    count = currentHiddenCategories.size,
-                                    expanded = hiddenSectionExpanded,
-                                    onExpandedChange = { hiddenSectionExpanded = it },
-                                )
-                            }
-                            if (hiddenSectionExpanded) {
-                                items(
-                                    currentHiddenCategories,
-                                    key = { if (it.id != 0L) "hidden_${it.id}" else "hidden_${it.type}_${it.name}" },
-                                ) { category ->
-                                    CategoryItem(
-                                        category = category,
-                                        onClick = {
-                                            categoryToEdit = category
-                                        },
-                                        onDelete = {
-                                            if (!category.isDefault) {
-                                                categoryToDelete = category
-                                            }
-                                        },
-                                        onToggleHidden = { onSetCategoryHidden(category, !category.isHidden) },
-                                    )
-                                }
-                            }
+                        item(key = "custom_section_header") {
+                            CategorySectionHeader(
+                                title = stringResource(R.string.categories_custom_section),
+                                count = currentCustomCategories.size,
+                                onReorder = {
+                                    onEvent(CategoryEvent.LogReorderOpenedEvent)
+                                    reorderDialogCategories = currentCustomCategories
+                                    showReorderDialog = true
+                                },
+                            )
+                        }
+                        items(currentCustomCategories, key = { if (it.id != 0L) it.id else "custom_${it.type}_${it.name}" }) { category ->
+                            CategoryItem(
+                                category = category,
+                                onClick = {
+                                    onEvent(CategoryEvent.LogItemClickedEvent(category.name, currentCustomCategories.indexOf(category)))
+                                    categoryToEdit = category
+                                },
+                                onDelete = { categoryToDelete = category },
+                                onToggleHidden = { onSetCategoryHidden(category, !category.isHidden) },
+                            )
                         }
                         item { VerticalSpacer(SpacingSize.XXXL) }
                     }
@@ -655,7 +652,7 @@ internal fun CategoriesContent(
 
     if (showReorderDialog) {
         CategoriesReorderDialog(
-            categories = currentCategories,
+            categories = reorderDialogCategories,
             onDismiss = { showReorderDialog = false },
             onConfirm = { reordered ->
                 onReorderCategories(reordered)
@@ -699,46 +696,29 @@ internal fun CategoriesContent(
 }
 
 @Composable
-private fun HiddenCategoriesSectionHeader(
+private fun CategorySectionHeader(
+    title: String,
     count: Int,
-    expanded: Boolean,
-    onExpandedChange: (Boolean) -> Unit,
+    onReorder: () -> Unit,
 ) {
-    val rotationAngle by animateFloatAsState(
-        targetValue = if (expanded) 180f else 0f,
-        animationSpec = tween(300),
-        label = "hidden_categories_chevron_rotation",
-    )
-    val expandCollapseLabel =
-        if (expanded) {
-            stringResource(R.string.common_collapse)
-        } else {
-            stringResource(R.string.common_expand)
-        }
     Row(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .testTag("hidden_categories_section_header")
-                .clickable(onClickLabel = expandCollapseLabel) { onExpandedChange(!expanded) }
                 .padding(vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AppText(
-            text = stringResource(R.string.categories_hidden_section_title, count),
+            text = "$title ($count)",
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        Icon(
-            imageVector = Icons.Default.KeyboardArrowDown,
-            contentDescription = expandCollapseLabel,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier =
-                Modifier
-                    .graphicsLayer(rotationZ = rotationAngle)
-                    .size(24.dp),
-        )
+        if (count > 1) {
+            TextButton(onClick = onReorder) {
+                AppText(stringResource(R.string.categories_reorder))
+            }
+        }
     }
 }
 

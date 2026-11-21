@@ -70,6 +70,8 @@
     <string name="categories_tab_expense">Видаток</string>
     <string name="categories_tab_income">Дохід</string>
     <string name="categories_default_badge">За замовчуванням</string>
+    <string name="categories_default_section">Стандартні</string>
+    <string name="categories_custom_section">Користувацькі</string>
     <string name="categories_icon_label">Значок</string>
     <string name="categories_hide">Приховати категорію</string>
     <string name="categories_show">Показати категорію</string>

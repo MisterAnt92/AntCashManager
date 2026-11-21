@@ -72,6 +72,8 @@
     <string name="categories_tab_expense">Ausgaben</string>
     <string name="categories_tab_income">Einnahmen</string>
     <string name="categories_default_badge">Standard</string>
+    <string name="categories_default_section">Standard</string>
+    <string name="categories_custom_section">Benutzerdefiniert</string>
     <string name="categories_icon_label">Symbol</string>
     <string name="categories_hide">Kategorie ausblenden</string>
     <string name="categories_show">Kategorie einblenden</string>

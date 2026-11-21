@@ -68,6 +68,8 @@
     <string name="categories_tab_expense">支出</string>
     <string name="categories_tab_income">収入</string>
     <string name="categories_default_badge">デフォルト</string>
+    <string name="categories_default_section">デフォルト</string>
+    <string name="categories_custom_section">カスタム</string>
     <string name="categories_icon_label">アイコン</string>
     <string name="categories_hide">カテゴリを非表示</string>
     <string name="categories_show">カテゴリを表示</string>

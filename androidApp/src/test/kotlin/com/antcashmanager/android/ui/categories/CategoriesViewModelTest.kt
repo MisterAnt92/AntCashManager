@@ -220,6 +220,28 @@ class CategoriesViewModelTest : BaseUnitTest() {
         }
 
     @Test
+    fun state_shouldSplitExpenseAndIncomeCategories_whenLoadingCategories() =
+        runViewModelTest {
+            val categories =
+                listOf(
+                    Category(id = 1, name = "Rent", type = "EXPENSE", isDefault = true),
+                    Category(id = 2, name = "Gym", type = "EXPENSE", isDefault = false, isHidden = true),
+                    Category(id = 3, name = "Salary", type = "INCOME", isDefault = true),
+                    Category(id = 4, name = "Refund", type = "INCOME", isDefault = false),
+                )
+            every { getCategoriesUseCase() } returns flowOf(Result.success(categories))
+            val viewModel = buildViewModel()
+
+            advanceUntilIdle()
+
+            assertEquals(listOf("Rent"), viewModel.state.value.defaultExpenseCategories.map { it.name })
+            assertEquals(listOf("Gym"), viewModel.state.value.customExpenseCategories.map { it.name })
+            assertEquals(listOf("Salary"), viewModel.state.value.defaultIncomeCategories.map { it.name })
+            assertEquals(listOf("Refund"), viewModel.state.value.customIncomeCategories.map { it.name })
+            assertEquals(listOf("Gym"), viewModel.state.value.hiddenExpenseCategories.map { it.name })
+        }
+
+    @Test
     fun state_shouldFilterExpenseCategories_whenCategoriesContainMixedTypes() =
         runViewModelTest {
             val categories =

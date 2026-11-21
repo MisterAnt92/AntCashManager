@@ -32,11 +32,17 @@ class CategoriesViewModel(
                     .onSuccess { cats ->
                         val expense = cats.filter { it.type == "EXPENSE" }.sortedBy { it.sortOrder }
                         val income = cats.filter { it.type == "INCOME" }.sortedBy { it.sortOrder }
+                        val visibleExpense = expense.filterNot { category -> category.isHidden }
+                        val visibleIncome = income.filterNot { category -> category.isHidden }
                         _state.update {
                             it.copy(
                                 categories = cats,
-                                expenseCategories = expense.filterNot { category -> category.isHidden },
-                                incomeCategories = income.filterNot { category -> category.isHidden },
+                                expenseCategories = visibleExpense,
+                                incomeCategories = visibleIncome,
+                                defaultExpenseCategories = expense.filter { category -> category.isDefault },
+                                customExpenseCategories = expense.filter { category -> !category.isDefault },
+                                defaultIncomeCategories = income.filter { category -> category.isDefault },
+                                customIncomeCategories = income.filter { category -> !category.isDefault },
                                 hiddenExpenseCategories = expense.filter { category -> category.isHidden },
                                 hiddenIncomeCategories = income.filter { category -> category.isHidden },
                             )

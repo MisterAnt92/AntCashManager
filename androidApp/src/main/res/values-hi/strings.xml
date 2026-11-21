@@ -67,6 +67,8 @@
     <string name="categories_tab_expense">खर्च</string>
     <string name="categories_tab_income">आय</string>
     <string name="categories_default_badge">डिफ़ॉल्ट</string>
+    <string name="categories_default_section">डिफ़ॉल्ट</string>
+    <string name="categories_custom_section">कस्टम</string>
     <string name="categories_icon_label">आइकन</string>
     <string name="categories_hide">श्रेणी छिपाएं</string>
     <string name="categories_show">श्रेणी दिखाएं</string>

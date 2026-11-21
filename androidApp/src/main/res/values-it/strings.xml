@@ -111,6 +111,8 @@
     <string name="categories_tab_expense">Uscite</string>
     <string name="categories_tab_income">Entrate</string>
     <string name="categories_default_badge">Predefinita</string>
+    <string name="categories_default_section">Predefinite</string>
+    <string name="categories_custom_section">Custom</string>
     <string name="categories_icon_label">Icona</string>
     <string name="categories_hide">Nascondi categoria</string>
     <string name="categories_show">Mostra categoria</string>

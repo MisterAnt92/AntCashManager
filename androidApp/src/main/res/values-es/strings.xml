@@ -60,6 +60,8 @@
     <string name="categories_tab_expense">Gastos</string>
     <string name="categories_tab_income">Ingresos</string>
     <string name="categories_default_badge">Predeterminada</string>
+    <string name="categories_default_section">Predeterminadas</string>
+    <string name="categories_custom_section">Personalizadas</string>
     <string name="categories_icon_label">Icono</string>
     <string name="categories_hide">Ocultar categoría</string>
     <string name="categories_show">Mostrar categoría</string>

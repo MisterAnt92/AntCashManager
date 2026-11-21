@@ -68,6 +68,8 @@
     <string name="categories_tab_expense">지출</string>
     <string name="categories_tab_income">수입</string>
     <string name="categories_default_badge">기본값</string>
+    <string name="categories_default_section">기본값</string>
+    <string name="categories_custom_section">사용자 지정</string>
     <string name="categories_icon_label">아이콘</string>
     <string name="categories_hide">카테고리 숨기기</string>
     <string name="categories_show">카테고리 표시</string>

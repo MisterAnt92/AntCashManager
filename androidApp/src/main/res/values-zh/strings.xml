@@ -68,6 +68,8 @@
     <string name="categories_tab_expense">支出</string>
     <string name="categories_tab_income">收入</string>
     <string name="categories_default_badge">默认</string>
+    <string name="categories_default_section">默认</string>
+    <string name="categories_custom_section">自定义</string>
     <string name="categories_icon_label">图标</string>
     <string name="categories_hide">隐藏分类</string>
     <string name="categories_show">显示分类</string>
