@@ -538,7 +538,7 @@ class HomeViewModelTest : BaseUnitTest() {
             advanceUntilIdle()
 
             // Ensure we are using CUSTOM filter with full range for this test
-            testViewModel.onEvent(
+            testViewModel.emitEvent(
                 HomeEvent.SetDateRangeEvent(
                     0L,
                     Long.MAX_VALUE,
@@ -659,7 +659,7 @@ class HomeViewModelTest : BaseUnitTest() {
                 }
             advanceUntilIdle()
 
-            testViewModel.onEvent(
+            testViewModel.emitEvent(
                 HomeEvent.SetDateRangeEvent(
                     rangeFrom,
                     rangeTo,

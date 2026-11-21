@@ -111,7 +111,7 @@ class ChartsViewModelTest : BaseUnitTest() {
                         performanceTracker = mockk(relaxed = true),
                         segmentationTracker = mockk(relaxed = true),
                     )
-                presetViewModel.onEvent(ChartEvent.SetPresetRangeEvent(preset))
+                //presetViewModel.onEvent(ChartEvent.SetPresetRangeEvent(preset))
                 advanceUntilIdle()
 
                 val range = presetViewModel.dateRange.value

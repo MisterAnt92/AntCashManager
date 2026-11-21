@@ -322,7 +322,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
             advanceUntilIdle()
 
             // Ensure date range includes all data
-            testViewModel.onEvent(
+            testViewModel.emitEvent(
                 TransactionsEvent.SetDateRangeEvent(
                     0L,
                     Long.MAX_VALUE,
@@ -330,7 +330,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
             )
             advanceUntilIdle()
 
-            testViewModel.onEvent(
+            testViewModel.emitEvent(
                 TransactionsEvent.UpdateSearchQueryEvent("salary"),
             )
             advanceUntilIdle()
@@ -545,7 +545,7 @@ class TransactionsViewModelTest : BaseUnitTest() {
 
             // Inserisce una transazione con timestamp = adesso (> staleStoredTo)
             val transactionTimestamp = System.currentTimeMillis()
-            testViewModel.onEvent(
+            testViewModel.emitEvent(
                 TransactionsEvent.AddTransactionEvent(
                     title = "Caffè",
                     amount = 2.0,
@@ -593,9 +593,9 @@ class TransactionsViewModelTest : BaseUnitTest() {
                 }
             advanceUntilIdle()
 
-            testViewModel.onEvent(TransactionsEvent.UpdateCategoryFilterEvent("Work"))
-            testViewModel.onEvent(TransactionsEvent.UpdateTransactionTypeFilterEvent(TransactionType.INCOME))
-            testViewModel.onEvent(TransactionsEvent.UpdatePaymentTypeFilterEvent(PaymentType.CASH))
+            testViewModel.emitEvent(TransactionsEvent.UpdateCategoryFilterEvent("Work"))
+            testViewModel.emitEvent(TransactionsEvent.UpdateTransactionTypeFilterEvent(TransactionType.INCOME))
+            testViewModel.emitEvent(TransactionsEvent.UpdatePaymentTypeFilterEvent(PaymentType.CASH))
             advanceUntilIdle()
 
             assertEquals("Work", testViewModel.state.value.pendingCategory)
