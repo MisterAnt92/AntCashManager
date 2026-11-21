@@ -94,7 +94,7 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
         runViewModelTest {
             val viewModel = buildViewModel()
 
-            viewModel.onEvent(
+            viewModel.emitEvent(
                 TransactionsEvent.AddTransactionEvent(
                     title = "Lunch",
                     amount = 18.5,
@@ -122,7 +122,7 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
         }
 
     @Test
-    fun onEvent_shouldCallDeleteUseCase_whenDeleteTransactionEventArrives() =
+    fun emitEvent_shouldCallDeleteUseCase_whenDeleteTransactionEventArrives() =
         runViewModelTest {
             val viewModel = buildViewModel()
             val transaction =
@@ -135,14 +135,14 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
                     timestamp = 1_712_100_000_000L,
                 )
 
-            viewModel.onEvent(TransactionsEvent.DeleteTransactionEvent(transaction))
+            viewModel.emitEvent(TransactionsEvent.DeleteTransactionEvent(transaction))
             advanceUntilIdle()
 
             coVerify(atLeast = 1) { deleteTransactionUseCase(transaction) }
         }
 
     @Test
-    fun onEvent_shouldDelegateToUpdateUseCase_whenUpdateTransactionEventArrives() =
+    fun emitEvent_shouldDelegateToUpdateUseCase_whenUpdateTransactionEventArrives() =
         runViewModelTest {
             val viewModel = buildViewModel()
             val transaction =
@@ -155,7 +155,7 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
                     timestamp = 1_712_200_000_000L,
                 )
 
-            viewModel.onEvent(TransactionsEvent.UpdateTransactionEvent(transaction))
+            viewModel.emitEvent(TransactionsEvent.UpdateTransactionEvent(transaction))
             advanceUntilIdle()
 
             coVerify(exactly = 1) { updateTransactionUseCase(transaction) }
@@ -171,7 +171,7 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
                 launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.state.collect {} }
             advanceUntilIdle()
 
-            viewModel.onEvent(
+            viewModel.emitEvent(
                 TransactionsEvent.AddTransactionEvent(
                     title = "Lunch",
                     amount = 18.5,
@@ -188,7 +188,7 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
         }
 
     @Test
-    fun onEvent_shouldNotBeLoading_whenUpdateTransactionUseCaseFails() =
+    fun emitEvent_shouldNotBeLoading_whenUpdateTransactionUseCaseFails() =
         runViewModelTest {
             coEvery { updateTransactionUseCase(any()) } returns
                 Result.failure(IllegalStateException("update failed"))
@@ -206,7 +206,7 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
                     timestamp = 1_712_200_000_000L,
                 )
 
-            viewModel.onEvent(TransactionsEvent.UpdateTransactionEvent(transaction))
+            viewModel.emitEvent(TransactionsEvent.UpdateTransactionEvent(transaction))
             advanceUntilIdle()
 
             coVerify(exactly = 1) { updateTransactionUseCase(transaction) }
@@ -215,7 +215,7 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
         }
 
     @Test
-    fun onEvent_shouldNotBeLoading_whenDeleteTransactionUseCaseFails() =
+    fun emitEvent_shouldNotBeLoading_whenDeleteTransactionUseCaseFails() =
         runViewModelTest {
             coEvery { deleteTransactionUseCase(any()) } returns
                 Result.failure(IllegalStateException("delete failed"))
@@ -233,7 +233,7 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
                     timestamp = 1_712_100_000_000L,
                 )
 
-            viewModel.onEvent(TransactionsEvent.DeleteTransactionEvent(transaction))
+            viewModel.emitEvent(TransactionsEvent.DeleteTransactionEvent(transaction))
             advanceUntilIdle()
 
             coVerify(exactly = 1) { deleteTransactionUseCase(transaction) }
@@ -242,7 +242,7 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
         }
 
     @Test
-    fun onEvent_shouldUpdateStateOptimistically_whenSetTransactionsDateFilterStateUseCaseFails() =
+    fun emitEvent_shouldUpdateStateOptimistically_whenSetTransactionsDateFilterStateUseCaseFails() =
         runViewModelTest {
             coEvery { setTransactionsDateFilterStateUseCase(any()) } returns
                 Result.failure(IllegalStateException("persist failed"))
@@ -253,7 +253,7 @@ class TransactionsViewModelMockkTest : BaseUnitTest() {
                 }
             advanceUntilIdle()
 
-            viewModel.onEvent(TransactionsEvent.SelectPresetEvent(2))
+            viewModel.emitEvent(TransactionsEvent.SelectPresetEvent(2))
             advanceUntilIdle()
 
             assertEquals(2, viewModel.state.value.selectedPresetIndex)

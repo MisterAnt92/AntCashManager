@@ -1,6 +1,10 @@
 package com.antcashmanager.android.ui.screen.settings
 
+import android.os.Bundle
 import androidx.lifecycle.viewModelScope
+import com.antcashmanager.android.analytics.AnalyticsConstants.Events
+import com.antcashmanager.android.analytics.AnalyticsConstants.Params
+import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.base.AndroidBaseViewModel
 import com.antcashmanager.domain.manager.ProfileManager
 import com.antcashmanager.domain.model.AppLanguage
@@ -36,6 +40,7 @@ class SettingsViewModel(
     private val importDebugDataUseCase: ImportDebugDataUseCase,
     private val getProfilesUseCase: GetProfilesUseCase,
     profileManager: ProfileManager,
+    private val analyticsManager: AnalyticsManager,
 ) : AndroidBaseViewModel<SettingEvent, SettingsState>(SettingsState()) {
     // Convenience properties for readability (delegate to provider)
     private val getThemeUseCase get() = settingsUseCases.getTheme
@@ -94,6 +99,18 @@ class SettingsViewModel(
             is SettingEvent.SendFeedbackEmailEvent -> sendFeedbackEmail(event.emailBody)
             is SettingEvent.RetryLastOperationEvent -> logInfo("Retry requested")
             is SettingEvent.SetAnalyticsConsentEvent -> setAnalyticsConsent(event.granted)
+            is SettingEvent.SubmenuOpenedEvent -> analyticsManager.logEvent(
+                Events.SETTINGS_SUBMENU_OPENED,
+                Bundle().apply { putString(Params.SUBMENU, event.submenu) },
+            )
+            is SettingEvent.DialogDismissedEvent -> analyticsManager.logEvent(
+                Events.SETTINGS_DIALOG_DISMISSED,
+                Bundle().apply { putString(Params.DIALOG_TYPE, event.dialogType) },
+            )
+            is SettingEvent.FeedbackEmailOpenedEvent -> analyticsManager.logEvent(Events.FEEDBACK_EMAIL_SENT)
+            is SettingEvent.PrivacyPolicyOpenedEvent -> analyticsManager.logEvent(Events.SETTINGS_PRIVACY_POLICY_OPENED)
+            is SettingEvent.EasterEggOpenedEvent -> analyticsManager.logEvent(Events.EASTER_EGG_ANIMATION_OPENED)
+            is SettingEvent.ThirdPartyLibsOpenedEvent -> analyticsManager.logEvent(Events.SETTINGS_THIRD_PARTY_LIBRARIES_OPENED)
         }
     }
 
@@ -318,6 +335,7 @@ class SettingsViewModel(
         setThemeJob =
             viewModelScope.launch {
                 delay(300)
+                analyticsManager.logEvent(Events.THEME_CHANGED, Bundle().apply { putString(Params.THEME, theme.name) })
                 updatePreference(
                     logMsg = "Setting theme to: $theme",
                     action = { setThemeUseCase(theme.name) },
@@ -333,6 +351,7 @@ class SettingsViewModel(
         setLanguageJob =
             viewModelScope.launch {
                 delay(300)
+                analyticsManager.logEvent(Events.LANGUAGE_CHANGED, Bundle().apply { putString(Params.SETTING, language.name) })
                 updatePreference(
                     logMsg = "Setting language to: $language",
                     action = {
@@ -354,53 +373,69 @@ class SettingsViewModel(
             action = { setShowChartsUseCase(show) },
         )
 
-    private fun setHighContrast(enabled: Boolean) =
+    private fun setHighContrast(enabled: Boolean) {
+        analyticsManager.logEvent(Events.SETTINGS_HIGH_CONTRAST_TOGGLED, Bundle().apply { putBoolean(Params.ENABLED, enabled) })
         updatePreference(
             logMsg = "Setting high contrast: $enabled",
             action = { setHighContrastUseCase(enabled) },
         )
+    }
 
-    private fun setLargeText(enabled: Boolean) =
+    private fun setLargeText(enabled: Boolean) {
+        analyticsManager.logEvent(Events.SETTINGS_LARGE_TEXT_TOGGLED, Bundle().apply { putBoolean(Params.ENABLED, enabled) })
         updatePreference(
             logMsg = "Setting large text: $enabled",
             action = { setLargeTextUseCase(enabled) },
         )
+    }
 
-    private fun setReduceMotion(enabled: Boolean) =
+    private fun setReduceMotion(enabled: Boolean) {
+        analyticsManager.logEvent(Events.SETTINGS_REDUCE_MOTION_TOGGLED, Bundle().apply { putBoolean(Params.ENABLED, enabled) })
         updatePreference(
             logMsg = "Setting reduce motion: $enabled",
             action = { setReduceMotionUseCase(enabled) },
         )
+    }
 
-    private fun setCurrencySymbol(symbol: String) =
+    private fun setCurrencySymbol(symbol: String) {
+        analyticsManager.logEvent(Events.CURRENCY_FORMAT_CHANGED)
         updatePreference(
             logMsg = "Setting currency symbol: $symbol",
             action = { setCurrencySymbolUseCase(symbol) },
         )
+    }
 
-    private fun setDecimalDigits(digits: Int) =
+    private fun setDecimalDigits(digits: Int) {
+        analyticsManager.logEvent(Events.DECIMAL_DIGITS_CHANGED, Bundle().apply { putInt(Params.VALUE, digits) })
         updatePreference(
             logMsg = "Setting decimal digits: $digits",
             action = { setDecimalDigitsUseCase(digits) },
         )
+    }
 
-    private fun setDecimalSeparator(separator: String) =
+    private fun setDecimalSeparator(separator: String) {
+        analyticsManager.logEvent(Events.DECIMAL_SEPARATOR_CHANGED)
         updatePreference(
             logMsg = "Setting decimal separator: $separator",
             action = { setDecimalSeparatorUseCase(separator) },
         )
+    }
 
-    private fun setThousandsSeparator(separator: String) =
+    private fun setThousandsSeparator(separator: String) {
+        analyticsManager.logEvent(Events.THOUSANDS_SEPARATOR_CHANGED)
         updatePreference(
             logMsg = "Setting thousands separator: $separator",
             action = { setThousandsSeparatorUseCase(separator) },
         )
+    }
 
-    private fun setTransactionDisplayType(displayType: TransactionDisplayType) =
+    private fun setTransactionDisplayType(displayType: TransactionDisplayType) {
+        analyticsManager.logEvent(Events.TRANSACTION_DISPLAY_TYPE_CHANGED, Bundle().apply { putString(Params.TYPE, displayType.name) })
         updatePreference(
             logMsg = "Setting transaction display type: $displayType",
             action = { setTransactionDisplayTypeUseCase(displayType.name) },
         )
+    }
 
     private fun setIsTutorialCompleted(completed: Boolean) =
         updatePreference(
@@ -415,7 +450,8 @@ class SettingsViewModel(
         }
     }
 
-    private fun resetAllPreferences() =
+    private fun resetAllPreferences() {
+        analyticsManager.logEvent(Events.RESET_PREFERENCES_CONFIRMED)
         updatePreference(
             logMsg = "Resetting all preferences",
             action = {
@@ -424,6 +460,7 @@ class SettingsViewModel(
                 result
             },
         )
+    }
 
     private fun sendFeedbackEmail(emailBody: String) {
         viewModelScope.launch {

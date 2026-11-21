@@ -68,7 +68,7 @@ fun CategoriesReorderDialog(
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                itemsIndexed(order, key = { _, category -> category.id }) { index, category ->
+                itemsIndexed(order, key = { _, category -> if (category.id != 0L) category.id else "${category.type}_${category.name}" }) { index, category ->
                     Row(
                         modifier =
                             Modifier

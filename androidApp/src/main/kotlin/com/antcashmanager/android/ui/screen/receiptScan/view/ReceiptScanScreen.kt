@@ -69,6 +69,7 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import java.io.File
+import com.antcashmanager.domain.model.ReceiptData
 
 // ══════════════════════════════════════════════════════════════════════════════
 // SCREEN ENTRY POINT (FASE 7c: Refactored to remove callbacks)
@@ -643,7 +644,7 @@ fun ReceiptScanReviewPreview() {
                     selectedPaymentType = PaymentType.ELECTRONIC,
                     categories = listOf(category),
                     receiptData =
-                        com.antcashmanager.domain.model.ReceiptData(
+                        ReceiptData(
                             totalAmount = 68.90,
                             vatRate = 22.0,
                             vatAmount = 12.50,

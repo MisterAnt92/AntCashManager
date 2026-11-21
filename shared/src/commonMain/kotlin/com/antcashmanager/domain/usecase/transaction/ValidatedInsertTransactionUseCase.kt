@@ -7,6 +7,7 @@ import com.antcashmanager.domain.validation.TransactionValidator
 import com.antcashmanager.domain.validation.ValidationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import com.antcashmanager.domain.validation.ValidationError
 
 /**
  * Enhanced InsertTransactionUseCase with domain-level validation.
@@ -83,7 +84,7 @@ public class ValidatedInsertTransactionUseCase(
  * ```
  */
 public fun <T> Result<T>.handleValidationError(
-    action: (List<com.antcashmanager.domain.validation.ValidationError>) -> Unit,
+    action: (List<ValidationError>) -> Unit,
 ): Result<T> {
     val exception = exceptionOrNull()
     if (exception is ValidationException) {

@@ -93,6 +93,8 @@ import com.antcashmanager.domain.model.CurrencyFormat
 import com.antcashmanager.domain.usecase.profile.GetProfilesUseCase
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
+import com.antcashmanager.android.BuildConfig
+import com.antcashmanager.android.ui.screen.settings.profiles.ProfilesScreen
 
 /**
  * Host di navigazione principale dell'app.
@@ -381,7 +383,7 @@ fun AntCashManagerNavHost() {
                                         SettingsDataScreen(navController = navController)
                                     }
                                     composable(AppRoute.SettingsRoute.Profiles.route) {
-                                        com.antcashmanager.android.ui.screen.settings.profiles.ProfilesScreen(
+                                        ProfilesScreen(
                                             navController = navController,
                                         )
                                     }
@@ -845,7 +847,7 @@ fun AntCashManagerNavHost() {
 
             if (showAntAnimation) {
                 AntEasterEggAnimation(
-                    versionName = com.antcashmanager.android.BuildConfig.VERSION_NAME,
+                    versionName = BuildConfig.VERSION_NAME,
                     onDismiss = { showAntAnimation = false },
                 )
             }

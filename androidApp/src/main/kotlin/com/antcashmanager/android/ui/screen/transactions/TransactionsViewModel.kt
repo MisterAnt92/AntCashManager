@@ -43,6 +43,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import android.os.Bundle
+import com.antcashmanager.android.analytics.AnalyticsConstants.Events
+import com.antcashmanager.android.analytics.AnalyticsConstants.Params
+import com.antcashmanager.android.analytics.AnalyticsManager
 
 // ══════════════════════════════════════════════════════════════════════════════
 // VIEWMODEL
@@ -62,7 +66,7 @@ class TransactionsViewModel(
     private val settingsRepository: SettingsRepository,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val engagementTracker: EngagementTracker,
-    private val analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager,
+    private val analyticsManager: AnalyticsManager,
 ) : AndroidBaseViewModel<TransactionsEvent, TransactionsState>(TransactionsState(), dispatcher) {
     constructor(
         transactionRepository: TransactionRepository,
@@ -70,7 +74,7 @@ class TransactionsViewModel(
         settingsRepository: SettingsRepository,
         dispatcher: CoroutineDispatcher = Dispatchers.Default,
         engagementTracker: EngagementTracker,
-        analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager,
+        analyticsManager: AnalyticsManager,
     ) : this(
         getTransactionsUseCase =
             GetTransactionsUseCase(
@@ -368,11 +372,11 @@ class TransactionsViewModel(
             is TransactionsEvent.HelpOpenedEvent -> { /* Navigation handled by Screen */
             }
 
-            is TransactionsEvent.ReceiptScanOpenedEvent -> { /* Navigation handled by Screen */
-            }
+            is TransactionsEvent.ReceiptScanOpenedEvent -> analyticsManager.logEvent(Events.RECEIPT_SCAN_OPENED)
 
-            is TransactionsEvent.AddTransactionOpenedEvent -> { /* Navigation handled by Screen */
-            }
+            is TransactionsEvent.AddTransactionOpenedEvent -> analyticsManager.logEvent(Events.TRANSACTION_ADD_OPENED)
+
+            is TransactionsEvent.LogItemClickedEvent -> logTransactionItemClicked(event.transaction, event.index)
         }
     }
 
@@ -497,10 +501,46 @@ class TransactionsViewModel(
     }
 
     private fun toggleFiltersExpanded() {
+        if (!_filterState.value.isFiltersExpanded) {
+            analyticsManager.logEvent(Events.TRANSACTIONS_FILTER_OPENED)
+        }
         _filterState.update { it.copy(isFiltersExpanded = !it.isFiltersExpanded) }
     }
 
+    private fun logTransactionItemClicked(transaction: com.antcashmanager.domain.model.Transaction, index: Int) {
+        analyticsManager.logEvent(
+            Events.TRANSACTIONS_LIST_ITEM_CLICKED,
+            Bundle().apply {
+                putInt(Params.INDEX, index)
+                putString(Params.TRANSACTION_TYPE, transaction.type.name)
+                putString(Params.DATE, java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(java.util.Date(transaction.timestamp)))
+            },
+        )
+    }
+
     private fun applyFilters() {
+        val pending = _filterState.value
+        val filterParams = Bundle().apply {
+            putString(Params.HAS_SEARCH_QUERY, if (pending.pendingSearchQuery.isNotBlank()) "yes" else "no")
+            putString(Params.HAS_CATEGORY_FILTER, if (pending.pendingCategory != null) "yes" else "no")
+            putString(Params.TRANSACTION_TYPE, pending.pendingTransactionType?.name ?: "all")
+            putString(Params.PAYMENT_TYPE, pending.pendingPaymentType?.name ?: "all")
+        }
+        analyticsManager.logEvent(Events.TRANSACTIONS_FILTER_APPLIED, filterParams)
+        val filterTypes = mutableListOf<String>()
+        if (pending.pendingSearchQuery.isNotBlank()) filterTypes.add("search")
+        if (pending.pendingCategory != null) filterTypes.add("category")
+        if (pending.pendingTransactionType != null) filterTypes.add("type")
+        if (pending.pendingPaymentType != null) filterTypes.add("payment_type")
+        if (filterTypes.isNotEmpty()) {
+            analyticsManager.logEvent(
+                Events.FILTER_COMBINATION_APPLIED,
+                Bundle().apply {
+                    putInt(Params.FILTER_COUNT, filterTypes.size)
+                    putString(Params.TYPES, filterTypes.joinToString("|"))
+                },
+            )
+        }
         _filterState.update {
             it.copy(
                 searchQuery = it.pendingSearchQuery,
@@ -523,6 +563,7 @@ class TransactionsViewModel(
     }
 
     private fun clearAllFilters() {
+        analyticsManager.logEvent(Events.TRANSACTIONS_FILTER_CLEARED)
         _filterState.update {
             it.copy(
                 searchQuery = "",

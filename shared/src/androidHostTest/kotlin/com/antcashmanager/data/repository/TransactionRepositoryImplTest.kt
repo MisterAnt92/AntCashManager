@@ -20,6 +20,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import com.antcashmanager.domain.manager.ProfileManager
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TransactionRepositoryImplTest {
@@ -33,7 +34,7 @@ class TransactionRepositoryImplTest {
         fakeDao = FakeTransactionDao()
         fakeCipher = FakeLocalDataCipher()
         fakeWidgetUpdateNotifier = FakeWidgetUpdateNotifier()
-        val profileManager: com.antcashmanager.domain.manager.ProfileManager = mockk(relaxed = true)
+        val profileManager: ProfileManager = mockk(relaxed = true)
         every { profileManager.activeProfileId } returns MutableStateFlow(1L)
         every { profileManager.getActiveProfileIdSync() } returns 1L
         every { profileManager.sharedProfileIds } returns MutableStateFlow(listOf(1L))

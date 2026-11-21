@@ -137,7 +137,7 @@ internal fun DetailsMealVoucherSection(
                     label = {
                         AppText(stringResource(R.string.add_transaction_meal_voucher_difference))
                     },
-                    placeholder = { AppText("0.00") },
+                    placeholder = { AppText(stringResource(R.string.transaction_amount_placeholder_zero)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
@@ -154,7 +154,7 @@ internal fun DetailsMealVoucherSection(
                     label = {
                         AppText(stringResource(R.string.add_transaction_amount_total_meal_vouchers))
                     },
-                    placeholder = { AppText("0.00") },
+                    placeholder = { AppText(stringResource(R.string.transaction_amount_placeholder_zero)) },
                     enabled = false,
                     singleLine = true,
                     modifier =

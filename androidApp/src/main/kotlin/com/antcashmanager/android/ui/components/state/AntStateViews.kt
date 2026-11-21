@@ -39,6 +39,7 @@ import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.ui.theme.LocalReduceMotion
 import org.koin.compose.koinInject
+import com.antcashmanager.android.analytics.AnalyticsManager
 
 /**
  * Reusable empty-state composable with ant mascot image,
@@ -61,7 +62,7 @@ fun AntEmptyState(
     LaunchedEffect(Unit) { visible = true }
 
     val enterDuration = if (reduceMotion) 0 else 500
-    val analyticsManager: com.antcashmanager.android.analytics.AnalyticsManager = koinInject()
+    val analyticsManager: AnalyticsManager = koinInject()
 
     AnimatedVisibility(
         visible = visible,

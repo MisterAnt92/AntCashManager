@@ -90,4 +90,9 @@ sealed class TransactionsEvent : UIEvent() {
     data object ReceiptScanOpenedEvent : TransactionsEvent()
 
     data object AddTransactionOpenedEvent : TransactionsEvent()
+
+    data class LogItemClickedEvent(
+        val transaction: Transaction,
+        val index: Int,
+    ) : TransactionsEvent()
 }

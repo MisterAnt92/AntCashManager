@@ -104,7 +104,7 @@ class HomeViewModelTest : BaseUnitTest() {
                 }
             advanceUntilIdle()
 
-            viewModel.onEvent(
+            viewModel.emitEvent(
                 HomeEvent.SetDateRangeEvent(
                     0L,
                     Long.MAX_VALUE,
@@ -202,7 +202,7 @@ class HomeViewModelTest : BaseUnitTest() {
                 }
             advanceUntilIdle()
 
-            viewModel.onEvent(
+            viewModel.emitEvent(
                 HomeEvent.SetDateRangeEvent(
                     0L,
                     Long.MAX_VALUE,
@@ -221,7 +221,7 @@ class HomeViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun onEvent_shouldSetSelectedTransaction_whenShowTransactionDetailsIsReceived() =
+    fun emitEvent_shouldSetSelectedTransaction_whenShowTransactionDetailsIsReceived() =
         runViewModelTest {
             // Use timestamp within default filter range
             val now = fakeSettingsRepository.homeDateFilterState.value.to - 1_000L
@@ -242,7 +242,7 @@ class HomeViewModelTest : BaseUnitTest() {
                 }
             advanceUntilIdle()
 
-            viewModel.onEvent(
+            viewModel.emitEvent(
                 HomeEvent.ShowTransactionDetailsEvent(
                     transaction,
                 ),
@@ -254,7 +254,7 @@ class HomeViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun onEvent_shouldClearSelectedTransaction_whenDismissTransactionDetailsIsReceived() =
+    fun emitEvent_shouldClearSelectedTransaction_whenDismissTransactionDetailsIsReceived() =
         runViewModelTest {
             // Use timestamp within default filter range
             val now = fakeSettingsRepository.homeDateFilterState.value.to - 1_000L
@@ -275,7 +275,7 @@ class HomeViewModelTest : BaseUnitTest() {
                 }
             advanceUntilIdle()
 
-            viewModel.onEvent(
+            viewModel.emitEvent(
                 HomeEvent.ShowTransactionDetailsEvent(
                     transaction,
                 ),
@@ -283,7 +283,7 @@ class HomeViewModelTest : BaseUnitTest() {
             advanceUntilIdle()
             assertEquals(transaction, viewModel.state.value.selectedTransaction)
 
-            viewModel.onEvent(HomeEvent.DismissTransactionDetailsEvent)
+            viewModel.emitEvent(HomeEvent.DismissTransactionDetailsEvent)
             advanceUntilIdle()
             assertEquals(null, viewModel.state.value.selectedTransaction)
             collectJob.cancel()
@@ -538,7 +538,7 @@ class HomeViewModelTest : BaseUnitTest() {
             advanceUntilIdle()
 
             // Ensure we are using CUSTOM filter with full range for this test
-            testViewModel.onEvent(
+            testViewModel.emitEvent(
                 HomeEvent.SetDateRangeEvent(
                     0L,
                     Long.MAX_VALUE,
@@ -587,7 +587,7 @@ class HomeViewModelTest : BaseUnitTest() {
             advanceUntilIdle()
 
             // Ensure we are using CUSTOM filter with full range for this test
-            viewModel.onEvent(
+            viewModel.emitEvent(
                 HomeEvent.SetDateRangeEvent(
                     0L,
                     Long.MAX_VALUE,
@@ -604,7 +604,7 @@ class HomeViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun onEvent_shouldUpdateTotals_whenSetDateRangeIsReceived() =
+    fun emitEvent_shouldUpdateTotals_whenSetDateRangeIsReceived() =
         runViewModelTest {
             // Cancel shared viewModel
             viewModel.viewModelScope.cancel()
@@ -659,7 +659,7 @@ class HomeViewModelTest : BaseUnitTest() {
                 }
             advanceUntilIdle()
 
-            testViewModel.onEvent(
+            testViewModel.emitEvent(
                 HomeEvent.SetDateRangeEvent(
                     rangeFrom,
                     rangeTo,
@@ -676,7 +676,7 @@ class HomeViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun onEvent_shouldPersistCustomFilterState_whenSetDateRangeIsReceived() =
+    fun emitEvent_shouldPersistCustomFilterState_whenSetDateRangeIsReceived() =
         runViewModelTest {
             val from = 1_700_000_000_000L
             val to = 1_700_100_000_000L
@@ -687,7 +687,7 @@ class HomeViewModelTest : BaseUnitTest() {
                 }
             advanceUntilIdle()
 
-            viewModel.onEvent(
+            viewModel.emitEvent(
                 HomeEvent.SetDateRangeEvent(from, to),
             )
             advanceUntilIdle()

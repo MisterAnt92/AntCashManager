@@ -10,6 +10,7 @@ import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionDisplayType
 import com.antcashmanager.domain.model.TransactionType
 import kotlin.math.abs
+import com.antcashmanager.android.ui.screen.common.DateRangePreset
 
 /**
  * UI State for Home screen. Derived values are computed once per emission so the screen
@@ -77,6 +78,6 @@ data class HomeState(
         val PRESETS = HomeConstant.PRESETS
 
         fun getDateFromForPreset(index: Int): Long =
-            com.antcashmanager.android.ui.screen.common.DateRangePreset.dateFromForPreset(index)
+            DateRangePreset.dateFromForPreset(index)
     }
 }

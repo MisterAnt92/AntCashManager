@@ -110,7 +110,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
 
             assertEquals("Categories should be loaded", 2, viewModel.state.value.categories.size)
 
-            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0]))
+            viewModel.emitEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0]))
             testDispatcher.scheduler.advanceUntilIdle()
 
             val state = viewModel.state.value
@@ -133,7 +133,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[1]))
+            viewModel.emitEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[1]))
             testDispatcher.scheduler.advanceUntilIdle()
 
             val state = viewModel.state.value
@@ -178,55 +178,55 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     // ── EditCategory: apre sempre il dialog ──
 
     @Test
-    fun onEvent_shouldOpenCategoryDialog_whenEditCategoryEventReceived() =
+    fun emitEvent_shouldOpenCategoryDialog_whenEditCategoryEventReceived() =
         runViewModelTest {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.EditCategoryEvent)
+            viewModel.emitEvent(AddTransactionEvent.EditCategoryEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertTrue("Category dialog should be open", viewModel.state.value.showCategoryDialog)
         }
 
     @Test
-    fun onEvent_shouldOpenCategoryDialog_whenEditCategoryInModifyingMode() =
+    fun emitEvent_shouldOpenCategoryDialog_whenEditCategoryInModifyingMode() =
         runViewModelTest {
             viewModel = createViewModel(transactionId = 1L)
             advanceUntilLoaded()
 
-            viewModel.onEvent(AddTransactionEvent.EditCategoryEvent)
+            viewModel.emitEvent(AddTransactionEvent.EditCategoryEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertTrue("Category dialog should be open", viewModel.state.value.showCategoryDialog)
         }
 
     @Test
-    fun onEvent_shouldCloseCategoryDialog_whenDismissCategoryDialogEventReceived() =
+    fun emitEvent_shouldCloseCategoryDialog_whenDismissCategoryDialogEventReceived() =
         runViewModelTest {
             viewModel = createViewModel(transactionId = 1L)
             advanceUntilLoaded()
 
-            viewModel.onEvent(AddTransactionEvent.EditCategoryEvent)
+            viewModel.emitEvent(AddTransactionEvent.EditCategoryEvent)
             testDispatcher.scheduler.advanceUntilIdle()
             assertTrue("Dialog should be open", viewModel.state.value.showCategoryDialog)
 
-            viewModel.onEvent(AddTransactionEvent.DismissCategoryDialogEvent)
+            viewModel.emitEvent(AddTransactionEvent.DismissCategoryDialogEvent)
             testDispatcher.scheduler.advanceUntilIdle()
             assertFalse("Dialog should be closed", viewModel.state.value.showCategoryDialog)
         }
 
     @Test
-    fun onEvent_shouldCloseCategoryDialogAndSelectCategory_whenCategorySelected() =
+    fun emitEvent_shouldCloseCategoryDialogAndSelectCategory_whenCategorySelected() =
         runViewModelTest {
             viewModel = createViewModel(transactionId = 1L)
             advanceUntilLoaded()
 
-            viewModel.onEvent(AddTransactionEvent.EditCategoryEvent)
+            viewModel.emitEvent(AddTransactionEvent.EditCategoryEvent)
             testDispatcher.scheduler.advanceUntilIdle()
             assertTrue("Dialog should be open", viewModel.state.value.showCategoryDialog)
 
-            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[1]))
+            viewModel.emitEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[1]))
             testDispatcher.scheduler.advanceUntilIdle()
 
             val state = viewModel.state.value
@@ -251,7 +251,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
                 viewModel.state.value.currentStep,
             )
 
-            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[1]))
+            viewModel.emitEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[1]))
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertEquals(
@@ -264,40 +264,40 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     // ── EditType: apre sempre il dialog ──
 
     @Test
-    fun onEvent_shouldOpenTypeDialog_whenEditTypeEventReceived() =
+    fun emitEvent_shouldOpenTypeDialog_whenEditTypeEventReceived() =
         runViewModelTest {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.EditTypeEvent)
+            viewModel.emitEvent(AddTransactionEvent.EditTypeEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertTrue("Type dialog should be open", viewModel.state.value.showTypeDialog)
         }
 
     @Test
-    fun onEvent_shouldOpenTypeDialog_whenEditTypeInModifyingMode() =
+    fun emitEvent_shouldOpenTypeDialog_whenEditTypeInModifyingMode() =
         runViewModelTest {
             viewModel = createViewModel(transactionId = 1L)
             advanceUntilLoaded()
 
-            viewModel.onEvent(AddTransactionEvent.EditTypeEvent)
+            viewModel.emitEvent(AddTransactionEvent.EditTypeEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertTrue("Type dialog should be open", viewModel.state.value.showTypeDialog)
         }
 
     @Test
-    fun onEvent_shouldCloseTypeDialogAndSelectType_whenTypeSelected() =
+    fun emitEvent_shouldCloseTypeDialogAndSelectType_whenTypeSelected() =
         runViewModelTest {
             viewModel = createViewModel(transactionId = 1L)
             advanceUntilLoaded()
 
-            viewModel.onEvent(AddTransactionEvent.EditTypeEvent)
+            viewModel.emitEvent(AddTransactionEvent.EditTypeEvent)
             testDispatcher.scheduler.advanceUntilIdle()
             assertTrue("Dialog should be open", viewModel.state.value.showTypeDialog)
 
-            viewModel.onEvent(AddTransactionEvent.SelectTypeEvent(TransactionType.INCOME))
+            viewModel.emitEvent(AddTransactionEvent.SelectTypeEvent(TransactionType.INCOME))
             testDispatcher.scheduler.advanceUntilIdle()
 
             val state = viewModel.state.value
@@ -308,40 +308,40 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     // ── EditDate: apre il date picker ──
 
     @Test
-    fun onEvent_shouldOpenDatePicker_whenEditDateEventReceived() =
+    fun emitEvent_shouldOpenDatePicker_whenEditDateEventReceived() =
         runViewModelTest {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.EditDateEvent)
+            viewModel.emitEvent(AddTransactionEvent.EditDateEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertTrue("Date picker should be shown", viewModel.state.value.showDatePicker)
         }
 
     @Test
-    fun onEvent_shouldCloseDatePicker_whenDismissDatePickerEventReceived() =
+    fun emitEvent_shouldCloseDatePicker_whenDismissDatePickerEventReceived() =
         runViewModelTest {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.EditDateEvent)
+            viewModel.emitEvent(AddTransactionEvent.EditDateEvent)
             testDispatcher.scheduler.advanceUntilIdle()
             assertTrue("Date picker should be open", viewModel.state.value.showDatePicker)
 
-            viewModel.onEvent(AddTransactionEvent.DismissDatePickerEvent)
+            viewModel.emitEvent(AddTransactionEvent.DismissDatePickerEvent)
             testDispatcher.scheduler.advanceUntilIdle()
             assertFalse("Date picker should be closed", viewModel.state.value.showDatePicker)
         }
 
     @Test
-    fun onEvent_shouldUpdateTimestamp_whenUpdateTimestampEventReceived() =
+    fun emitEvent_shouldUpdateTimestamp_whenUpdateTimestampEventReceived() =
         runViewModelTest {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
             val newTimestamp = 1700000000000L
-            viewModel.onEvent(AddTransactionEvent.UpdateTimestampEvent(newTimestamp))
+            viewModel.emitEvent(AddTransactionEvent.UpdateTimestampEvent(newTimestamp))
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertEquals("Timestamp should be updated", newTimestamp, viewModel.state.value.timestamp)
@@ -350,18 +350,18 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     // ── Navigazione ──
 
     @Test
-    fun onEvent_shouldGoBackToCategorySelection_whenPreviousStepInCreationMode() =
+    fun emitEvent_shouldGoBackToCategorySelection_whenPreviousStepInCreationMode() =
         runViewModelTest {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Avanza a DETAILS selezionando una categoria
-            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0]))
+            viewModel.emitEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0]))
             testDispatcher.scheduler.advanceUntilIdle()
             assertEquals(AddTransactionStep.DETAILS, viewModel.state.value.currentStep)
 
             // Torna indietro
-            viewModel.onEvent(AddTransactionEvent.PreviousStepEvent)
+            viewModel.emitEvent(AddTransactionEvent.PreviousStepEvent)
             testDispatcher.scheduler.advanceUntilIdle()
             assertEquals(
                 "Should go back to CATEGORY_SELECTION",
@@ -371,12 +371,12 @@ class AddTransactionViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun onEvent_shouldDoNothing_whenPreviousStepInModifyingMode() =
+    fun emitEvent_shouldDoNothing_whenPreviousStepInModifyingMode() =
         runViewModelTest {
             viewModel = createViewModel(transactionId = 1L)
             advanceUntilLoaded()
 
-            viewModel.onEvent(AddTransactionEvent.PreviousStepEvent)
+            viewModel.emitEvent(AddTransactionEvent.PreviousStepEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertEquals(
@@ -389,19 +389,19 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     // ── Aggiornamento campi ──
 
     @Test
-    fun onEvent_shouldUpdateAllFields_whenFieldUpdateEventsReceived() =
+    fun emitEvent_shouldUpdateAllFields_whenFieldUpdateEventsReceived() =
         runViewModelTest {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("New Title"))
-            viewModel.onEvent(AddTransactionEvent.UpdateAmountEvent("42.50"))
-            viewModel.onEvent(AddTransactionEvent.UpdateNotesEvent("Some notes"))
-            viewModel.onEvent(AddTransactionEvent.UpdatePayeeEvent("John"))
-            viewModel.onEvent(AddTransactionEvent.UpdateLocationEvent("Rome"))
-            viewModel.onEvent(AddTransactionEvent.UpdateTagsEvent("food,lunch"))
-            viewModel.onEvent(AddTransactionEvent.SetRecurringEvent(true))
-            viewModel.onEvent(AddTransactionEvent.UpdateRecurrenceIntervalEvent("monthly"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateTitleEvent("New Title"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateAmountEvent("42.50"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateNotesEvent("Some notes"))
+            viewModel.emitEvent(AddTransactionEvent.UpdatePayeeEvent("John"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateLocationEvent("Rome"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateTagsEvent("food,lunch"))
+            viewModel.emitEvent(AddTransactionEvent.SetRecurringEvent(true))
+            viewModel.emitEvent(AddTransactionEvent.UpdateRecurrenceIntervalEvent("monthly"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             val state = viewModel.state.value
@@ -424,9 +424,9 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Test"))
-            viewModel.onEvent(AddTransactionEvent.UpdateAmountEvent("10"))
-            viewModel.onEvent(AddTransactionEvent.SubmitEvent)
+            viewModel.emitEvent(AddTransactionEvent.UpdateTitleEvent("Test"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateAmountEvent("10"))
+            viewModel.emitEvent(AddTransactionEvent.SubmitEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertNotNull("Should have an error", viewModel.state.value.error)
@@ -440,9 +440,9 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0]))
-            viewModel.onEvent(AddTransactionEvent.UpdateAmountEvent("10"))
-            viewModel.onEvent(AddTransactionEvent.SubmitEvent)
+            viewModel.emitEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0]))
+            viewModel.emitEvent(AddTransactionEvent.UpdateAmountEvent("10"))
+            viewModel.emitEvent(AddTransactionEvent.SubmitEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertNotNull("Should have an error", viewModel.state.value.error)
@@ -454,10 +454,10 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0]))
-            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Pizza"))
-            viewModel.onEvent(AddTransactionEvent.UpdateAmountEvent("12.50"))
-            viewModel.onEvent(AddTransactionEvent.SubmitEvent)
+            viewModel.emitEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0]))
+            viewModel.emitEvent(AddTransactionEvent.UpdateTitleEvent("Pizza"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateAmountEvent("12.50"))
+            viewModel.emitEvent(AddTransactionEvent.SubmitEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertTrue("Should be saved", viewModel.state.value.isTransactionSaved)
@@ -470,8 +470,8 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             viewModel = createViewModel(transactionId = 1L)
             advanceUntilLoaded()
 
-            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Updated Title"))
-            viewModel.onEvent(AddTransactionEvent.SubmitEvent)
+            viewModel.emitEvent(AddTransactionEvent.UpdateTitleEvent("Updated Title"))
+            viewModel.emitEvent(AddTransactionEvent.SubmitEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertTrue("Should be saved", viewModel.state.value.isTransactionSaved)
@@ -480,12 +480,12 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     // ── Payment type dialog ──
 
     @Test
-    fun onEvent_shouldOpenPaymentTypeDialog_whenShowPaymentTypeDialogEventReceived() =
+    fun emitEvent_shouldOpenPaymentTypeDialog_whenShowPaymentTypeDialogEventReceived() =
         runViewModelTest {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.ShowPaymentTypeDialogEvent)
+            viewModel.emitEvent(AddTransactionEvent.ShowPaymentTypeDialogEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertTrue(
@@ -495,12 +495,12 @@ class AddTransactionViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun onEvent_shouldOpenPaymentTypeDialog_whenEditPaymentTypeEventReceived() =
+    fun emitEvent_shouldOpenPaymentTypeDialog_whenEditPaymentTypeEventReceived() =
         runViewModelTest {
             viewModel = createViewModel(transactionId = 1L)
             advanceUntilLoaded()
 
-            viewModel.onEvent(AddTransactionEvent.EditPaymentTypeEvent)
+            viewModel.emitEvent(AddTransactionEvent.EditPaymentTypeEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertTrue(
@@ -510,28 +510,28 @@ class AddTransactionViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun onEvent_shouldClosePaymentTypeDialog_whenDismissPaymentTypeDialogEventReceived() =
+    fun emitEvent_shouldClosePaymentTypeDialog_whenDismissPaymentTypeDialogEventReceived() =
         runViewModelTest {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.ShowPaymentTypeDialogEvent)
+            viewModel.emitEvent(AddTransactionEvent.ShowPaymentTypeDialogEvent)
             testDispatcher.scheduler.advanceUntilIdle()
             assertTrue("Dialog should be open", viewModel.state.value.showPaymentTypeDialog)
 
-            viewModel.onEvent(AddTransactionEvent.DismissPaymentTypeDialogEvent)
+            viewModel.emitEvent(AddTransactionEvent.DismissPaymentTypeDialogEvent)
             testDispatcher.scheduler.advanceUntilIdle()
             assertFalse("Dialog should be closed", viewModel.state.value.showPaymentTypeDialog)
         }
 
     @Test
-    fun onEvent_shouldSelectPaymentTypeAndCloseDialog_whenSelectPaymentTypeEventReceived() =
+    fun emitEvent_shouldSelectPaymentTypeAndCloseDialog_whenSelectPaymentTypeEventReceived() =
         runViewModelTest {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.ShowPaymentTypeDialogEvent)
-            viewModel.onEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.CASH))
+            viewModel.emitEvent(AddTransactionEvent.ShowPaymentTypeDialogEvent)
+            viewModel.emitEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.CASH))
             testDispatcher.scheduler.advanceUntilIdle()
 
             val state = viewModel.state.value
@@ -542,12 +542,12 @@ class AddTransactionViewModelTest : BaseUnitTest() {
     // ── Delete flow ──
 
     @Test
-    fun onEvent_shouldOpenDeleteConfirmDialog_whenShowDeleteConfirmDialogEventReceived() =
+    fun emitEvent_shouldOpenDeleteConfirmDialog_whenShowDeleteConfirmDialogEventReceived() =
         runViewModelTest {
             viewModel = createViewModel(transactionId = 1L)
             advanceUntilLoaded()
 
-            viewModel.onEvent(AddTransactionEvent.ShowDeleteConfirmDialogEvent)
+            viewModel.emitEvent(AddTransactionEvent.ShowDeleteConfirmDialogEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertTrue(
@@ -557,16 +557,16 @@ class AddTransactionViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun onEvent_shouldCloseDeleteConfirmDialog_whenDismissDeleteConfirmDialogEventReceived() =
+    fun emitEvent_shouldCloseDeleteConfirmDialog_whenDismissDeleteConfirmDialogEventReceived() =
         runViewModelTest {
             viewModel = createViewModel(transactionId = 1L)
             advanceUntilLoaded()
 
-            viewModel.onEvent(AddTransactionEvent.ShowDeleteConfirmDialogEvent)
+            viewModel.emitEvent(AddTransactionEvent.ShowDeleteConfirmDialogEvent)
             testDispatcher.scheduler.advanceUntilIdle()
             assertTrue("Dialog should be open", viewModel.state.value.showDeleteConfirmDialog)
 
-            viewModel.onEvent(AddTransactionEvent.DismissDeleteConfirmDialogEvent)
+            viewModel.emitEvent(AddTransactionEvent.DismissDeleteConfirmDialogEvent)
             testDispatcher.scheduler.advanceUntilIdle()
             assertFalse("Dialog should be closed", viewModel.state.value.showDeleteConfirmDialog)
         }
@@ -577,7 +577,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             viewModel = createViewModel(transactionId = 1L)
             advanceUntilLoaded()
 
-            viewModel.onEvent(AddTransactionEvent.ConfirmDeleteEvent)
+            viewModel.emitEvent(AddTransactionEvent.ConfirmDeleteEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             val state = viewModel.state.value
@@ -592,7 +592,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             viewModel = createViewModel(transactionId = 999L)
             advanceUntilLoaded()
 
-            viewModel.onEvent(AddTransactionEvent.ConfirmDeleteEvent)
+            viewModel.emitEvent(AddTransactionEvent.ConfirmDeleteEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertEquals(
@@ -608,7 +608,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             viewModel = createViewModel(transactionId = 1L)
             advanceUntilLoaded()
 
-            viewModel.onEvent(AddTransactionEvent.ConfirmDeleteEvent)
+            viewModel.emitEvent(AddTransactionEvent.ConfirmDeleteEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             val state = viewModel.state.value
@@ -625,10 +625,10 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0]))
-            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Pizza"))
-            viewModel.onEvent(AddTransactionEvent.UpdateAmountEvent("0"))
-            viewModel.onEvent(AddTransactionEvent.SubmitEvent)
+            viewModel.emitEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0]))
+            viewModel.emitEvent(AddTransactionEvent.UpdateTitleEvent("Pizza"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateAmountEvent("0"))
+            viewModel.emitEvent(AddTransactionEvent.SubmitEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertEquals(AddTransactionConstant.ERROR_INVALID_AMOUNT, viewModel.state.value.error)
@@ -641,10 +641,10 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0]))
-            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Pizza"))
-            viewModel.onEvent(AddTransactionEvent.UpdateAmountEvent("-5"))
-            viewModel.onEvent(AddTransactionEvent.SubmitEvent)
+            viewModel.emitEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0]))
+            viewModel.emitEvent(AddTransactionEvent.UpdateTitleEvent("Pizza"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateAmountEvent("-5"))
+            viewModel.emitEvent(AddTransactionEvent.SubmitEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertEquals(AddTransactionConstant.ERROR_INVALID_AMOUNT, viewModel.state.value.error)
@@ -657,10 +657,10 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0]))
-            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Pizza"))
-            viewModel.onEvent(AddTransactionEvent.UpdateAmountEvent("abc"))
-            viewModel.onEvent(AddTransactionEvent.SubmitEvent)
+            viewModel.emitEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0]))
+            viewModel.emitEvent(AddTransactionEvent.UpdateTitleEvent("Pizza"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateAmountEvent("abc"))
+            viewModel.emitEvent(AddTransactionEvent.SubmitEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertEquals(AddTransactionConstant.ERROR_INVALID_AMOUNT, viewModel.state.value.error)
@@ -675,10 +675,10 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0]))
-            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Pizza"))
-            viewModel.onEvent(AddTransactionEvent.UpdateAmountEvent("12.50"))
-            viewModel.onEvent(AddTransactionEvent.SubmitEvent)
+            viewModel.emitEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0]))
+            viewModel.emitEvent(AddTransactionEvent.UpdateTitleEvent("Pizza"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateAmountEvent("12.50"))
+            viewModel.emitEvent(AddTransactionEvent.SubmitEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             val state = viewModel.state.value
@@ -693,8 +693,8 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             advanceUntilLoaded()
             transactionRepository.errorToThrow = IllegalStateException("update failed")
 
-            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Updated Title"))
-            viewModel.onEvent(AddTransactionEvent.SubmitEvent)
+            viewModel.emitEvent(AddTransactionEvent.UpdateTitleEvent("Updated Title"))
+            viewModel.emitEvent(AddTransactionEvent.SubmitEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             val state = viewModel.state.value
@@ -712,18 +712,18 @@ class AddTransactionViewModelTest : BaseUnitTest() {
 
             // IMPORTANTE: Buoni Pasto è INCOME, non EXPENSE!
             val incomeCategory = mockCategories[1] // Salary è INCOME
-            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(incomeCategory))
-            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Pranzo"))
+            viewModel.emitEvent(AddTransactionEvent.SelectCategoryEvent(incomeCategory))
+            viewModel.emitEvent(AddTransactionEvent.UpdateTitleEvent("Pranzo"))
             // Seleziona MEAL_VOUCHERS - nel campo amount viene ignorato perché nascosto
-            viewModel.onEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.MEAL_VOUCHERS))
+            viewModel.emitEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.MEAL_VOUCHERS))
             // Inserisci 3 voucher - l'importo viene calcolato automaticamente (3 * 5.29 = 15.87)
-            viewModel.onEvent(AddTransactionEvent.UpdateMealVoucherCountEvent("3"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateMealVoucherCountEvent("3"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // L'importo deve essere calcolato automaticamente dal numero di voucher
             assertEquals("Amount should be auto-calculated", "15.87", viewModel.state.value.amount)
 
-            viewModel.onEvent(AddTransactionEvent.SubmitEvent)
+            viewModel.emitEvent(AddTransactionEvent.SubmitEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             // L'importo persistito deve essere il valore calcolato (3 * 5.29 = 15.87)
@@ -757,7 +757,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
                 viewModel.state.value.amount,
             )
 
-            viewModel.onEvent(AddTransactionEvent.SubmitEvent)
+            viewModel.emitEvent(AddTransactionEvent.SubmitEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Ri-salvando senza modifiche, l'importo persistito deve restare invariato:
@@ -775,16 +775,16 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0])) // Food
-            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Test"))
-            viewModel.onEvent(AddTransactionEvent.UpdateAmountEvent("10"))
+            viewModel.emitEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0])) // Food
+            viewModel.emitEvent(AddTransactionEvent.UpdateTitleEvent("Test"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateAmountEvent("10"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Form è valido senza ricorrenza
             assertTrue("Form should be valid", viewModel.state.value.isFormValid)
 
             // Abilita ricorrenza senza intervallo
-            viewModel.onEvent(AddTransactionEvent.SetRecurringEvent(true))
+            viewModel.emitEvent(AddTransactionEvent.SetRecurringEvent(true))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Form diventa invalido
@@ -794,7 +794,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             )
 
             // Scegli intervallo
-            viewModel.onEvent(AddTransactionEvent.UpdateRecurrenceIntervalEvent("monthly"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateRecurrenceIntervalEvent("monthly"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Form torna valido
@@ -807,17 +807,17 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0])) // Food
-            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Pranzo"))
-            viewModel.onEvent(AddTransactionEvent.UpdateAmountEvent("20.00"))
+            viewModel.emitEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0])) // Food
+            viewModel.emitEvent(AddTransactionEvent.UpdateTitleEvent("Pranzo"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateAmountEvent("20.00"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Cambia a MEAL_VOUCHERS
-            viewModel.onEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.MEAL_VOUCHERS))
+            viewModel.emitEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.MEAL_VOUCHERS))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Inserisci 3 voucher - l'importo viene RICALCOLATO automaticamente
-            viewModel.onEvent(AddTransactionEvent.UpdateMealVoucherCountEvent("3"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateMealVoucherCountEvent("3"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertEquals("Voucher count should be 3", "3", viewModel.state.value.mealVoucherCount)
@@ -829,7 +829,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             )
 
             // Cambia a CASH
-            viewModel.onEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.CASH))
+            viewModel.emitEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.CASH))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Voucher count e amount vengono resetati
@@ -848,9 +848,9 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0])) // Food
-            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Test"))
-            viewModel.onEvent(AddTransactionEvent.UpdateAmountEvent("10"))
+            viewModel.emitEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0])) // Food
+            viewModel.emitEvent(AddTransactionEvent.UpdateTitleEvent("Test"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateAmountEvent("10"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertTrue("Form should be valid", viewModel.state.value.isFormValid)
@@ -859,7 +859,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             categoryRepository.removeCategory(mockCategories[0].id)
 
             // Prova a salvare
-            viewModel.onEvent(AddTransactionEvent.SubmitEvent)
+            viewModel.emitEvent(AddTransactionEvent.SubmitEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Dovrebbe fallire con errore categoria non trovata
@@ -900,13 +900,13 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0]))
-            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Pizza"))
-            viewModel.onEvent(AddTransactionEvent.UpdateAmountEvent("12.50"))
+            viewModel.emitEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0]))
+            viewModel.emitEvent(AddTransactionEvent.UpdateTitleEvent("Pizza"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateAmountEvent("12.50"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Prova a salvare
-            viewModel.onEvent(AddTransactionEvent.SubmitEvent)
+            viewModel.emitEvent(AddTransactionEvent.SubmitEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Dovrebbe mostrare errore
@@ -929,11 +929,11 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             advanceUntilLoaded()
 
             // Modifica titolo
-            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Updated Pizza"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateTitleEvent("Updated Pizza"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Prova a salvare (update)
-            viewModel.onEvent(AddTransactionEvent.SubmitEvent)
+            viewModel.emitEvent(AddTransactionEvent.SubmitEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Dovrebbe mostrare errore
@@ -955,7 +955,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             advanceUntilLoaded()
 
             // Apri delete dialog e conferma
-            viewModel.onEvent(AddTransactionEvent.ShowDeleteConfirmDialogEvent)
+            viewModel.emitEvent(AddTransactionEvent.ShowDeleteConfirmDialogEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertTrue(
@@ -963,7 +963,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
                 viewModel.state.value.showDeleteConfirmDialog,
             )
 
-            viewModel.onEvent(AddTransactionEvent.ConfirmDeleteEvent)
+            viewModel.emitEvent(AddTransactionEvent.ConfirmDeleteEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Dovrebbe mostrare errore di delete
@@ -984,17 +984,17 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0]))
-            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Coffee"))
+            viewModel.emitEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0]))
+            viewModel.emitEvent(AddTransactionEvent.UpdateTitleEvent("Coffee"))
             // Inserisci importo con 4 decimali
-            viewModel.onEvent(AddTransactionEvent.UpdateAmountEvent("3.1415"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateAmountEvent("3.1415"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Form dovrebbe essere valido (3.1415 è un numero valido)
             assertTrue("Form should be valid", viewModel.state.value.isFormValid)
 
             // Salva
-            viewModel.onEvent(AddTransactionEvent.SubmitEvent)
+            viewModel.emitEvent(AddTransactionEvent.SubmitEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Dovrebbe salvare correttamente
@@ -1007,11 +1007,11 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0]))
+            viewModel.emitEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0]))
             // Titolo di 256 caratteri
             val longTitle = "A".repeat(256)
-            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent(longTitle))
-            viewModel.onEvent(AddTransactionEvent.UpdateAmountEvent("10"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateTitleEvent(longTitle))
+            viewModel.emitEvent(AddTransactionEvent.UpdateAmountEvent("10"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Form dovrebbe essere valido (validazione non controlla lunghezza)
@@ -1022,7 +1022,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             )
 
             // Prova a salvare
-            viewModel.onEvent(AddTransactionEvent.SubmitEvent)
+            viewModel.emitEvent(AddTransactionEvent.SubmitEvent)
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Il salvataggio avviene anche se titolo è lungo
@@ -1039,20 +1039,20 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[1])) // Salary (INCOME)
-            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Monthly Salary"))
-            viewModel.onEvent(AddTransactionEvent.UpdateAmountEvent("3000"))
+            viewModel.emitEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[1])) // Salary (INCOME)
+            viewModel.emitEvent(AddTransactionEvent.UpdateTitleEvent("Monthly Salary"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateAmountEvent("3000"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Abilita ricorrenza senza intervallo
-            viewModel.onEvent(AddTransactionEvent.SetRecurringEvent(true))
+            viewModel.emitEvent(AddTransactionEvent.SetRecurringEvent(true))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Form non dovrebbe essere valido
             assertFalse("Form should be invalid without interval", viewModel.state.value.isFormValid)
 
             // Aggiungi intervallo
-            viewModel.onEvent(AddTransactionEvent.UpdateRecurrenceIntervalEvent("1"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateRecurrenceIntervalEvent("1"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Adesso form dovrebbe essere valido
@@ -1066,7 +1066,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Seleziona INCOME
-            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[1])) // Salary = INCOME
+            viewModel.emitEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[1])) // Salary = INCOME
             testDispatcher.scheduler.advanceUntilIdle()
             assertEquals(
                 "Type should be INCOME",
@@ -1074,12 +1074,12 @@ class AddTransactionViewModelTest : BaseUnitTest() {
                 viewModel.state.value.selectedType,
             )
 
-            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Test"))
-            viewModel.onEvent(AddTransactionEvent.UpdateAmountEvent("100"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateTitleEvent("Test"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateAmountEvent("100"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Cambia a EXPENSE
-            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0])) // Food = EXPENSE
+            viewModel.emitEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0])) // Food = EXPENSE
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Type dovrebbe cambiare a EXPENSE
@@ -1101,10 +1101,10 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(incomeCategory))
-            viewModel.onEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.MEAL_VOUCHERS))
+            viewModel.emitEvent(AddTransactionEvent.SelectCategoryEvent(incomeCategory))
+            viewModel.emitEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.MEAL_VOUCHERS))
             // Inserisci 5 voucher - l'importo viene calcolato automaticamente (5 * 5.29 = 26.45)
-            viewModel.onEvent(AddTransactionEvent.UpdateMealVoucherCountEvent("5"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateMealVoucherCountEvent("5"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertEquals(
@@ -1120,7 +1120,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             )
 
             // Cambia payment type DA MEAL_VOUCHERS a ELECTRONIC
-            viewModel.onEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.ELECTRONIC))
+            viewModel.emitEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.ELECTRONIC))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Voucher count e amount dovrebbero essere resettati perché stiamo uscendo da MEAL_VOUCHERS
@@ -1139,10 +1139,10 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0]))
-            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Lunch"))
+            viewModel.emitEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0]))
+            viewModel.emitEvent(AddTransactionEvent.UpdateTitleEvent("Lunch"))
             // Inserisci con punto (normalizzato dal UI)
-            viewModel.onEvent(AddTransactionEvent.UpdateAmountEvent("12.50"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateAmountEvent("12.50"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // L'importo dovrebbe essere valido perché usa il punto
@@ -1159,13 +1159,13 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Seleziona categoria con payment type MEAL_VOUCHERS
-            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0]))
-            viewModel.onEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.MEAL_VOUCHERS))
-            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Lunch"))
+            viewModel.emitEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0]))
+            viewModel.emitEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.MEAL_VOUCHERS))
+            viewModel.emitEvent(AddTransactionEvent.UpdateTitleEvent("Lunch"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Inserisci voucher count negativo
-            viewModel.onEvent(AddTransactionEvent.UpdateMealVoucherCountEvent("-1"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateMealVoucherCountEvent("-1"))
             testDispatcher.scheduler.advanceUntilIdle()
             assertFalse(
                 "Form should be invalid with negative voucher count",
@@ -1173,7 +1173,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             )
 
             // Inserisci voucher count zero
-            viewModel.onEvent(AddTransactionEvent.UpdateMealVoucherCountEvent("0"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateMealVoucherCountEvent("0"))
             testDispatcher.scheduler.advanceUntilIdle()
             assertFalse(
                 "Form should be invalid with zero voucher count",
@@ -1181,7 +1181,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             )
 
             // Inserisci voucher count valido
-            viewModel.onEvent(AddTransactionEvent.UpdateMealVoucherCountEvent("3"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateMealVoucherCountEvent("3"))
             testDispatcher.scheduler.advanceUntilIdle()
             assertTrue(
                 "Form should be valid with positive voucher count",
@@ -1189,7 +1189,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             )
 
             // Inserisci voucher count non-integer
-            viewModel.onEvent(AddTransactionEvent.UpdateMealVoucherCountEvent("3.5"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateMealVoucherCountEvent("3.5"))
             testDispatcher.scheduler.advanceUntilIdle()
             assertFalse(
                 "Form should be invalid with decimal voucher count",
@@ -1204,12 +1204,12 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Seleziona MEAL_VOUCHERS payment type
-            viewModel.onEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.MEAL_VOUCHERS))
-            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Lunch"))
+            viewModel.emitEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.MEAL_VOUCHERS))
+            viewModel.emitEvent(AddTransactionEvent.UpdateTitleEvent("Lunch"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Inserisci differenza pagata
-            viewModel.onEvent(AddTransactionEvent.UpdateMealVoucherDifferenceEvent("3.55"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateMealVoucherDifferenceEvent("3.55"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertEquals(
@@ -1226,16 +1226,16 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Seleziona MEAL_VOUCHERS
-            viewModel.onEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.MEAL_VOUCHERS))
-            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Lunch"))
+            viewModel.emitEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.MEAL_VOUCHERS))
+            viewModel.emitEvent(AddTransactionEvent.UpdateTitleEvent("Lunch"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Setup: 5 buoni × 5.29€ = 26.45€
-            viewModel.onEvent(AddTransactionEvent.UpdateMealVoucherCountEvent("5"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateMealVoucherCountEvent("5"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Aggiungere differenza: 3.55€
-            viewModel.onEvent(AddTransactionEvent.UpdateMealVoucherDifferenceEvent("3.55"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateMealVoucherDifferenceEvent("3.55"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Totale = 26.45 + 3.55 = 30.00
@@ -1255,12 +1255,12 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Seleziona MEAL_VOUCHERS
-            viewModel.onEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.MEAL_VOUCHERS))
-            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Lunch"))
+            viewModel.emitEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.MEAL_VOUCHERS))
+            viewModel.emitEvent(AddTransactionEvent.UpdateTitleEvent("Lunch"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Setup: 5 buoni × 5.29€ = 26.45€
-            viewModel.onEvent(AddTransactionEvent.UpdateMealVoucherCountEvent("5"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateMealVoucherCountEvent("5"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Differenza vuota (default "0")
@@ -1280,9 +1280,9 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Imposta MEAL_VOUCHERS con differenza
-            viewModel.onEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.MEAL_VOUCHERS))
-            viewModel.onEvent(AddTransactionEvent.UpdateMealVoucherCountEvent("5"))
-            viewModel.onEvent(AddTransactionEvent.UpdateMealVoucherDifferenceEvent("3.55"))
+            viewModel.emitEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.MEAL_VOUCHERS))
+            viewModel.emitEvent(AddTransactionEvent.UpdateMealVoucherCountEvent("5"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateMealVoucherDifferenceEvent("3.55"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertEquals("3.55", viewModel.state.value.mealVoucherDifference)
@@ -1293,7 +1293,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             )
 
             // Cambia a CASH payment type
-            viewModel.onEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.CASH))
+            viewModel.emitEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.CASH))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Verifica che differenza e count siano resettate
@@ -1317,8 +1317,8 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Test"))
-            viewModel.onEvent(AddTransactionEvent.UpdateAmountEvent("10"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateTitleEvent("Test"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateAmountEvent("10"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             viewModel.reset()
@@ -1374,9 +1374,9 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0])) // Food
-            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Test"))
-            viewModel.onEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.MEAL_VOUCHERS))
+            viewModel.emitEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0])) // Food
+            viewModel.emitEvent(AddTransactionEvent.UpdateTitleEvent("Test"))
+            viewModel.emitEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.MEAL_VOUCHERS))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Settings voucher value is 5.29
@@ -1388,7 +1388,7 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             )
 
             // Update count to 3
-            viewModel.onEvent(AddTransactionEvent.UpdateMealVoucherCountEvent("3"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateMealVoucherCountEvent("3"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Verify: amount should be auto-calculated (3 * 5.29 = 15.87)
@@ -1406,16 +1406,16 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             viewModel = createViewModel()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0])) // Food
-            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Test"))
-            viewModel.onEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.MEAL_VOUCHERS))
-            viewModel.onEvent(AddTransactionEvent.UpdateMealVoucherCountEvent("3"))
+            viewModel.emitEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0])) // Food
+            viewModel.emitEvent(AddTransactionEvent.UpdateTitleEvent("Test"))
+            viewModel.emitEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.MEAL_VOUCHERS))
+            viewModel.emitEvent(AddTransactionEvent.UpdateMealVoucherCountEvent("3"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertEquals("Initial amount should be 15.87", "15.87", viewModel.state.value.amount)
 
             // Add difference of 1.50
-            viewModel.onEvent(AddTransactionEvent.UpdateMealVoucherDifferenceEvent("1.50"))
+            viewModel.emitEvent(AddTransactionEvent.UpdateMealVoucherDifferenceEvent("1.50"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Verify: amount should be 15.87 + 1.50 = 17.37
@@ -1437,13 +1437,13 @@ class AddTransactionViewModelTest : BaseUnitTest() {
             val settingsVoucherValue = settingsRepository.getMealVoucherValue().first()
             assertEquals("Settings voucher value should be 5.29", 5.29, settingsVoucherValue, 0.001)
 
-            viewModel.onEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0])) // Food
-            viewModel.onEvent(AddTransactionEvent.UpdateTitleEvent("Snack"))
-            viewModel.onEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.ELECTRONIC))
+            viewModel.emitEvent(AddTransactionEvent.SelectCategoryEvent(mockCategories[0])) // Food
+            viewModel.emitEvent(AddTransactionEvent.UpdateTitleEvent("Snack"))
+            viewModel.emitEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.ELECTRONIC))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Switch to MEAL_VOUCHERS
-            viewModel.onEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.MEAL_VOUCHERS))
+            viewModel.emitEvent(AddTransactionEvent.SelectPaymentTypeEvent(PaymentType.MEAL_VOUCHERS))
             testDispatcher.scheduler.advanceUntilIdle()
 
             // Verify: mealVoucherValue should reset to settings value (5.29), not a derived value

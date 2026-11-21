@@ -30,6 +30,18 @@ if (!hasReleaseKeystore) {
         "Copy signing.properties.example and fill in your keystore details before uploading to Play Store.")
 }
 
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        freeCompilerArgs.addAll(
+            "-opt-in=kotlin.RequiresOptIn",
+            "-progressive",
+            "-Xjvm-default=all",
+            "-Xstring-concat=inline",
+        )
+    }
+}
+
 android {
     namespace = "com.antcashmanager.android"
     compileSdk = 37
@@ -38,8 +50,8 @@ android {
         applicationId = "com.sformica.ant_cashmanager"
         minSdk = 26
         targetSdk = 37
-        versionCode = 33
-        versionName = "1.9.0"
+        versionCode = 34
+        versionName = "1.9.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

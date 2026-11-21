@@ -1,9 +1,6 @@
 package com.antcashmanager.android.ui.screen.categories.view
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,7 +40,6 @@ import androidx.compose.material.icons.filled.Fastfood
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Flight
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Laptop
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.LocalBar
@@ -91,7 +87,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -99,7 +94,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -109,7 +103,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.antcashmanager.android.R
-import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
 import com.antcashmanager.android.navigation.ScreenHeaderConfig
 import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
@@ -128,7 +121,6 @@ import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.translateCategory
 import com.antcashmanager.domain.model.Category
 import org.koin.androidx.compose.koinViewModel
-import org.koin.compose.koinInject
 
 /** Map icon key names to Material Icons. */
 val categoryIconMap: Map<String, ImageVector> =
@@ -290,6 +282,9 @@ fun CategoriesScreen() {
             onAddCategory = { name, icon, color, type ->
                 viewModel.emitEvent(CategoryEvent.AddCategoryEvent(name, icon, color, type))
             },
+            onUpdateCategory = { category ->
+                viewModel.emitEvent(CategoryEvent.UpdateCategoryEvent(category))
+            },
             onDeleteCategory = { category ->
                 viewModel.emitEvent(CategoryEvent.DeleteCategoryEvent(category))
             },
@@ -299,6 +294,7 @@ fun CategoriesScreen() {
             onReorderCategories = { categories ->
                 viewModel.emitEvent(CategoryEvent.ReorderCategoriesEvent(categories))
             },
+            onEvent = viewModel::emitEvent,
         )
 
         SnackbarHost(
@@ -315,17 +311,26 @@ fun CategoriesScreen() {
 internal fun CategoriesContent(
     state: CategoriesState,
     onAddCategory: (String, String, Long, String) -> Unit = { _, _, _, _ -> },
+    onUpdateCategory: (Category) -> Unit = {},
     onDeleteCategory: (Category) -> Unit = {},
     onSetCategoryHidden: (Category, Boolean) -> Unit = { _, _ -> },
     onReorderCategories: (List<Category>) -> Unit = {},
+    onEvent: (CategoryEvent) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
-    val analyticsManager: AnalyticsManager = koinInject()
-    var selectedTab by remember { mutableIntStateOf(0) }
+    val selectedTab = state.selectedTabIndex
     var showAddDialog by remember { mutableStateOf(false) }
+    var categoryToEdit by remember { mutableStateOf<Category?>(null) }
     var categoryToDelete by remember { mutableStateOf<Category?>(null) }
     var showReorderDialog by remember { mutableStateOf(false) }
-    var hiddenSectionExpanded by remember { mutableStateOf(false) }
+    var reorderDialogCategories by remember { mutableStateOf(emptyList<Category>()) }
+
+    val currentCategories =
+        if (selectedTab == 0) state.expenseCategories else state.incomeCategories
+    val currentDefaultCategories =
+        if (selectedTab == 0) state.defaultExpenseCategories else state.defaultIncomeCategories
+    val currentCustomCategories =
+        if (selectedTab == 0) state.customExpenseCategories else state.customIncomeCategories
 
     // Foldable device support
     val displayFeatures = LocalDisplayFeatures.current
@@ -338,10 +343,6 @@ internal fun CategoriesContent(
             stringResource(R.string.categories_tab_expense),
             stringResource(R.string.categories_tab_income),
         )
-    val currentCategories =
-        if (selectedTab == 0) state.expenseCategories else state.incomeCategories
-    val currentHiddenCategories =
-        if (selectedTab == 0) state.hiddenExpenseCategories else state.hiddenIncomeCategories
     val currentType = if (selectedTab == 0) "EXPENSE" else "INCOME"
 
     // Configure screen header with actions
@@ -351,13 +352,7 @@ internal fun CategoriesContent(
         headerConfigCallback?.invoke(
             ScreenHeaderConfig(
                 title = categoriesTitle,
-                hasOrderOption = currentCategories.size > 1,
-                onOrderClick = {
-                    if (currentCategories.size > 1) {
-                        analyticsManager.logEvent("categories_reorder_opened")
-                        showReorderDialog = true
-                    }
-                },
+                hasOrderOption = false,
             ),
         )
     }
@@ -366,8 +361,8 @@ internal fun CategoriesContent(
     if (state.errorState.isError) {
         AntErrorState(
             mascotRes = R.drawable.ic_piggy_bank,
-            title = state.errorState.message ?: "An error occurred",
-            subtitle = "Please try again",
+            title = state.errorState.message ?: stringResource(R.string.error_generic),
+            subtitle = stringResource(R.string.error_generic_subtitle),
             modifier = modifier.fillMaxSize(),
             retryLabel = null,
             onRetry = null,
@@ -421,7 +416,7 @@ internal fun CategoriesContent(
                     tabs.forEachIndexed { index, title ->
                         Tab(
                             selected = selectedTab == index,
-                            onClick = { selectedTab = index },
+                            onClick = { onEvent(CategoryEvent.SelectTabEvent(index)) },
                             text = { AppText(title, fontWeight = FontWeight.SemiBold) },
                         )
                     }
@@ -430,7 +425,7 @@ internal fun CategoriesContent(
                 VerticalSpacer(SpacingSize.SM)
 
                 val isGridLayout = adaptiveLayoutInfo.isExpanded && !adaptiveLayoutInfo.hasFold
-                if (currentCategories.isEmpty() && currentHiddenCategories.isEmpty()) {
+                if (currentDefaultCategories.isEmpty() && currentCustomCategories.isEmpty()) {
                     AntEmptyState(
                         mascotRes = R.drawable.ic_ant_mascot,
                         title = stringResource(R.string.categories_empty),
@@ -445,106 +440,105 @@ internal fun CategoriesContent(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         contentPadding = PaddingValues(bottom = 80.dp),
                     ) {
-                        items(currentCategories, key = { it.id }) { category ->
+                        item(key = "default_section_header", span = { GridItemSpan(maxLineSpan) }) {
+                            CategorySectionHeader(
+                                title = stringResource(R.string.categories_default_section),
+                                count = currentDefaultCategories.size,
+                                onReorder = {
+                                    onEvent(CategoryEvent.LogReorderOpenedEvent)
+                                    reorderDialogCategories = currentDefaultCategories
+                                    showReorderDialog = true
+                                },
+                            )
+                        }
+                        items(currentDefaultCategories, key = { if (it.id != 0L) it.id else "${it.type}_${it.name}" }) { category ->
                             CategoryItem(
                                 category = category,
                                 onClick = {
-                                    val params =
-                                        android.os.Bundle().apply {
-                                            putString("category_name", category.name)
-                                            putInt("index", currentCategories.indexOf(category))
-                                        }
-                                    analyticsManager.logEvent("categories_list_item_clicked", params)
+                                    onEvent(CategoryEvent.LogItemClickedEvent(category.name, currentDefaultCategories.indexOf(category)))
+                                    categoryToEdit = category
                                 },
                                 onDelete = {
                                     if (!category.isDefault) {
                                         categoryToDelete = category
                                     }
                                 },
-                                onToggleHidden = {
-                                    analyticsManager.logEvent("category_hidden")
-                                    onSetCategoryHidden(category, true)
+                                onToggleHidden = { onSetCategoryHidden(category, !category.isHidden) },
+                            )
+                        }
+                        item(key = "custom_section_header", span = { GridItemSpan(maxLineSpan) }) {
+                            CategorySectionHeader(
+                                title = stringResource(R.string.categories_custom_section),
+                                count = currentCustomCategories.size,
+                                onReorder = {
+                                    onEvent(CategoryEvent.LogReorderOpenedEvent)
+                                    reorderDialogCategories = currentCustomCategories
+                                    showReorderDialog = true
                                 },
                             )
                         }
-                        if (currentHiddenCategories.isNotEmpty()) {
-                            item(key = "hidden_section_header", span = { GridItemSpan(maxLineSpan) }) {
-                                HiddenCategoriesSectionHeader(
-                                    count = currentHiddenCategories.size,
-                                    expanded = hiddenSectionExpanded,
-                                    onExpandedChange = { hiddenSectionExpanded = it },
-                                )
-                            }
-                            if (hiddenSectionExpanded) {
-                                items(currentHiddenCategories, key = { "hidden_${it.id}" }) { category ->
-                                    CategoryItem(
-                                        category = category,
-                                        onDelete = {
-                                            if (!category.isDefault) {
-                                                categoryToDelete = category
-                                            }
-                                        },
-                                        onToggleHidden = {
-                                            analyticsManager.logEvent("category_shown")
-                                            onSetCategoryHidden(category, false)
-                                        },
-                                    )
-                                }
-                            }
+                        items(currentCustomCategories, key = { if (it.id != 0L) it.id else "custom_${it.type}_${it.name}" }) { category ->
+                            CategoryItem(
+                                category = category,
+                                onClick = {
+                                    onEvent(CategoryEvent.LogItemClickedEvent(category.name, currentCustomCategories.indexOf(category)))
+                                    categoryToEdit = category
+                                },
+                                onDelete = { categoryToDelete = category },
+                                onToggleHidden = { onSetCategoryHidden(category, !category.isHidden) },
+                            )
                         }
                         item(span = { GridItemSpan(maxLineSpan) }) { VerticalSpacer(SpacingSize.XXXL) }
                     }
                 } else {
                     LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        items(currentCategories, key = { it.id }) { category ->
+                        item(key = "default_section_header") {
+                            CategorySectionHeader(
+                                title = stringResource(R.string.categories_default_section),
+                                count = currentDefaultCategories.size,
+                                onReorder = {
+                                    onEvent(CategoryEvent.LogReorderOpenedEvent)
+                                    reorderDialogCategories = currentDefaultCategories
+                                    showReorderDialog = true
+                                },
+                            )
+                        }
+                        items(currentDefaultCategories, key = { if (it.id != 0L) it.id else "${it.type}_${it.name}" }) { category ->
                             CategoryItem(
                                 category = category,
                                 onClick = {
-                                    val params =
-                                        android.os.Bundle().apply {
-                                            putString("category_name", category.name)
-                                            putInt("index", currentCategories.indexOf(category))
-                                        }
-                                    analyticsManager.logEvent("categories_list_item_clicked", params)
+                                    onEvent(CategoryEvent.LogItemClickedEvent(category.name, currentDefaultCategories.indexOf(category)))
+                                    categoryToEdit = category
                                 },
                                 onDelete = {
                                     if (!category.isDefault) {
                                         categoryToDelete = category
                                     }
                                 },
-                                onToggleHidden = {
-                                    analyticsManager.logEvent("category_hidden")
-                                    onSetCategoryHidden(category, true)
+                                onToggleHidden = { onSetCategoryHidden(category, !category.isHidden) },
+                            )
+                        }
+                        item(key = "custom_section_header") {
+                            CategorySectionHeader(
+                                title = stringResource(R.string.categories_custom_section),
+                                count = currentCustomCategories.size,
+                                onReorder = {
+                                    onEvent(CategoryEvent.LogReorderOpenedEvent)
+                                    reorderDialogCategories = currentCustomCategories
+                                    showReorderDialog = true
                                 },
                             )
                         }
-                        if (currentHiddenCategories.isNotEmpty()) {
-                            item(key = "hidden_section_header") {
-                                HiddenCategoriesSectionHeader(
-                                    count = currentHiddenCategories.size,
-                                    expanded = hiddenSectionExpanded,
-                                    onExpandedChange = { hiddenSectionExpanded = it },
-                                )
-                            }
-                            if (hiddenSectionExpanded) {
-                                items(
-                                    currentHiddenCategories,
-                                    key = { "hidden_${it.id}" },
-                                ) { category ->
-                                    CategoryItem(
-                                        category = category,
-                                        onDelete = {
-                                            if (!category.isDefault) {
-                                                categoryToDelete = category
-                                            }
-                                        },
-                                        onToggleHidden = {
-                                            analyticsManager.logEvent("category_shown")
-                                            onSetCategoryHidden(category, false)
-                                        },
-                                    )
-                                }
-                            }
+                        items(currentCustomCategories, key = { if (it.id != 0L) it.id else "custom_${it.type}_${it.name}" }) { category ->
+                            CategoryItem(
+                                category = category,
+                                onClick = {
+                                    onEvent(CategoryEvent.LogItemClickedEvent(category.name, currentCustomCategories.indexOf(category)))
+                                    categoryToEdit = category
+                                },
+                                onDelete = { categoryToDelete = category },
+                                onToggleHidden = { onSetCategoryHidden(category, !category.isHidden) },
+                            )
                         }
                         item { VerticalSpacer(SpacingSize.XXXL) }
                     }
@@ -629,24 +623,38 @@ internal fun CategoriesContent(
         CategoryListPane()
     }
 
-    if (showAddDialog) {
+    if (showAddDialog || categoryToEdit != null) {
         AddCategoryDialog(
             currentType = currentType,
-            onConfirm = { name, icon, color ->
-                analyticsManager.logEvent("category_created")
-                onAddCategory(name, icon, color, currentType)
+            categoryToEdit = categoryToEdit,
+            onConfirm = { name, icon, color, isHidden ->
+                if (categoryToEdit != null) {
+                    onUpdateCategory(
+                        categoryToEdit!!.copy(
+                            name = name,
+                            icon = icon,
+                            color = color,
+                            isHidden = isHidden,
+                        ),
+                    )
+                } else {
+                    onAddCategory(name, icon, color, currentType)
+                }
                 showAddDialog = false
+                categoryToEdit = null
             },
-            onDismiss = { showAddDialog = false },
+            onDismiss = {
+                showAddDialog = false
+                categoryToEdit = null
+            },
         )
     }
 
     if (showReorderDialog) {
         CategoriesReorderDialog(
-            categories = currentCategories,
+            categories = reorderDialogCategories,
             onDismiss = { showReorderDialog = false },
             onConfirm = { reordered ->
-                analyticsManager.logEvent("categories_reordered")
                 onReorderCategories(reordered)
                 showReorderDialog = false
             },
@@ -668,7 +676,6 @@ internal fun CategoriesContent(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        analyticsManager.logEvent("category_deleted")
                         onDeleteCategory(category)
                         categoryToDelete = null
                     },
@@ -689,45 +696,29 @@ internal fun CategoriesContent(
 }
 
 @Composable
-private fun HiddenCategoriesSectionHeader(
+private fun CategorySectionHeader(
+    title: String,
     count: Int,
-    expanded: Boolean,
-    onExpandedChange: (Boolean) -> Unit,
+    onReorder: () -> Unit,
 ) {
-    val rotationAngle by animateFloatAsState(
-        targetValue = if (expanded) 180f else 0f,
-        animationSpec = tween(300),
-        label = "hidden_categories_chevron_rotation",
-    )
-    val expandCollapseLabel =
-        if (expanded) {
-            stringResource(R.string.common_collapse)
-        } else {
-            stringResource(R.string.common_expand)
-        }
     Row(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .clickable(onClickLabel = expandCollapseLabel) { onExpandedChange(!expanded) }
                 .padding(vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AppText(
-            text = stringResource(R.string.categories_hidden_section_title, count),
+            text = "$title ($count)",
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        Icon(
-            imageVector = Icons.Default.KeyboardArrowDown,
-            contentDescription = expandCollapseLabel,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier =
-                Modifier
-                    .graphicsLayer(rotationZ = rotationAngle)
-                    .size(24.dp),
-        )
+        if (count > 1) {
+            TextButton(onClick = onReorder) {
+                AppText(stringResource(R.string.categories_reorder))
+            }
+        }
     }
 }
 
@@ -845,7 +836,7 @@ private fun AddCategoryDialogPreview() {
     AntCashManagerTheme(dynamicColor = false) {
         AddCategoryDialog(
             currentType = "EXPENSE",
-            onConfirm = { _, _, _ -> },
+            onConfirm = { _, _, _, _ -> },
             onDismiss = {},
         )
     }

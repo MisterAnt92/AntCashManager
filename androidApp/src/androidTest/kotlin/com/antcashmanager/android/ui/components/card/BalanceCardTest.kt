@@ -6,6 +6,7 @@ import com.antcashmanager.android.ui.screen.home.view.BalanceCard
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.test.base.BaseInstrumentationTest
 import org.junit.Test
+import com.antcashmanager.domain.model.PaymentType
 
 /**
  * Unit tests per [BalanceCard] component.
@@ -63,7 +64,7 @@ class BalanceCardTest : BaseInstrumentationTest() {
 
     @Test
     fun balanceCard_withPaymentTypeBreakdown_shouldDisplay() {
-        val paymentBreakdown: List<Pair<com.antcashmanager.domain.model.PaymentType, Double>> = emptyList()
+        val paymentBreakdown: List<Pair<PaymentType, Double>> = emptyList()
 
         composeTestRule.setContent {
             AntCashManagerTheme {

@@ -60,6 +60,8 @@
     <string name="categories_tab_expense">D\u00e9penses</string>
     <string name="categories_tab_income">Revenus</string>
     <string name="categories_default_badge">Par d\u00e9faut</string>
+    <string name="categories_default_section">Pr\u00e9d\u00e9finies</string>
+    <string name="categories_custom_section">Personnalis\u00e9es</string>
     <string name="categories_icon_label">Ic\u00f4ne</string>
     <string name="categories_hide">Masquer la cat\u00e9gorie</string>
     <string name="categories_show">Afficher la cat\u00e9gorie</string>
@@ -658,4 +660,14 @@
     <string name="month_short_10">Oct</string>
     <string name="month_short_11">Nov</string>
     <string name="month_short_12">Déc</string>
+    <string name="error_generic_subtitle">Réessayer</string>
+    <string name="meal_voucher_error_invalid">Valeur invalide</string>
+    <string name="meal_voucher_error_positive">La valeur doit être supérieure à 0</string>
+    <string name="chart_days_tracked_cd">Jours suivis : %d</string>
+    <string name="chart_max_daily_cd">Maximum journalier : %s</string>
+    <string name="chart_avg_daily_cd">Moyenne journalière : %s</string>
+    <string name="chart_weekday_bar_cd">%1$s : %2$s</string>
+    <string name="app_icon_description">Icône application</string>
+    <string name="transaction_add_tag_description">Ajouter étiquette</string>
+    <string name="transaction_remove_tag_description">Supprimer</string>
 </resources>

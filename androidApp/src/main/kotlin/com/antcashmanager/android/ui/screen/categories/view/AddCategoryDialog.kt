@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -34,28 +35,42 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.antcashmanager.android.R
+import com.antcashmanager.android.ui.components.common.AppSwitch
 import com.antcashmanager.android.ui.components.layout.SpacingSize
 import com.antcashmanager.android.ui.components.layout.VerticalSpacer
 import com.antcashmanager.android.ui.components.text.AppText
 import com.antcashmanager.android.ui.theme.AntCashManagerTheme
+import com.antcashmanager.domain.model.Category
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AddCategoryDialog(
     currentType: String,
-    onConfirm: (String, String, Long) -> Unit,
+    categoryToEdit: Category? = null,
+    onConfirm: (String, String, Long, Boolean) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    var name by remember { mutableStateOf("") }
-    var selectedColor by remember { mutableLongStateOf(categoryColors.first()) }
-    var selectedIcon by remember { mutableStateOf("category") }
+    var name by remember { mutableStateOf(categoryToEdit?.name ?: "") }
+    var selectedColor by remember { mutableLongStateOf(categoryToEdit?.color ?: categoryColors.first()) }
+    var selectedIcon by remember { mutableStateOf(categoryToEdit?.icon ?: "category") }
+    var isHidden by remember { mutableStateOf(categoryToEdit?.isHidden ?: false) }
+
+    val isEditing = categoryToEdit != null
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { AppText(stringResource(R.string.categories_add)) },
+        title = {
+            AppText(
+                stringResource(
+                    if (isEditing) R.string.profiles_edit_dialog_title else R.string.categories_add,
+                ),
+            )
+        },
         text = {
             Column(
                 modifier =
@@ -72,6 +87,25 @@ fun AddCategoryDialog(
                     modifier = Modifier.fillMaxWidth(),
                 )
                 VerticalSpacer(SpacingSize.MD)
+
+                // Visibility Toggle (when editing)
+                if (isEditing) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        AppText(
+                            text = stringResource(if (isHidden) R.string.categories_show else R.string.categories_hide),
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                        AppSwitch(
+                            checked = isHidden,
+                            onCheckedChange = { isHidden = it },
+                        )
+                    }
+                    VerticalSpacer(SpacingSize.MD)
+                }
 
                 // Icon Selection
                 AppText(
@@ -144,7 +178,8 @@ fun AddCategoryDialog(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    categoryColors.forEach { color ->
+                    categoryColors.forEachIndexed { index, color ->
+                        val isSelected = color == selectedColor
                         Box(
                             modifier =
                                 Modifier
@@ -152,7 +187,7 @@ fun AddCategoryDialog(
                                     .clip(CircleShape)
                                     .background(Color(color))
                                     .then(
-                                        if (color == selectedColor) {
+                                        if (isSelected) {
                                             Modifier.border(
                                                 3.dp,
                                                 MaterialTheme.colorScheme.primary,
@@ -162,10 +197,17 @@ fun AddCategoryDialog(
                                             Modifier
                                         },
                                     )
-                                    .clickable { selectedColor = color },
+                                    .semantics {
+                                        contentDescription = "Color option ${index + 1}"
+                                    }
+                                    .selectable(
+                                        selected = isSelected,
+                                        onClick = { selectedColor = color },
+                                        role = Role.RadioButton,
+                                    ),
                             contentAlignment = Alignment.Center,
                         ) {
-                            if (color == selectedColor) {
+                            if (isSelected) {
                                 Icon(
                                     imageVector = Icons.Default.Check,
                                     contentDescription = stringResource(R.string.categories_selected),
@@ -186,12 +228,13 @@ fun AddCategoryDialog(
                             name.trim(),
                             selectedIcon,
                             selectedColor,
+                            isHidden,
                         )
                     }
                 },
                 enabled = name.isNotBlank(),
             ) {
-                AppText(stringResource(R.string.dialog_add))
+                AppText(stringResource(if (isEditing) R.string.add_transaction_save else R.string.dialog_add))
             }
         },
         dismissButton = {
@@ -206,7 +249,7 @@ private fun AddCategoryDialogLightPreview() {
     AntCashManagerTheme(dynamicColor = false) {
         AddCategoryDialog(
             currentType = "EXPENSE",
-            onConfirm = { _, _, _ -> },
+            onConfirm = { _, _, _, _ -> },
             onDismiss = {},
         )
     }
@@ -218,7 +261,7 @@ private fun AddCategoryDialogDarkPreview() {
     AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
         AddCategoryDialog(
             currentType = "EXPENSE",
-            onConfirm = { _, _, _ -> },
+            onConfirm = { _, _, _, _ -> },
             onDismiss = {},
         )
     }
@@ -230,7 +273,7 @@ private fun AddCategoryDialogLargeTextPreview() {
     AntCashManagerTheme(dynamicColor = false) {
         AddCategoryDialog(
             currentType = "EXPENSE",
-            onConfirm = { _, _, _ -> },
+            onConfirm = { _, _, _, _ -> },
             onDismiss = {},
         )
     }

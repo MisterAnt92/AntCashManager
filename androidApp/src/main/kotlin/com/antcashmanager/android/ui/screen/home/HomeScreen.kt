@@ -1,7 +1,5 @@
 package com.antcashmanager.android.ui.screen.home
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.DatePicker
@@ -16,10 +14,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.antcashmanager.android.BuildConfig
@@ -111,8 +107,8 @@ internal fun HomeContent(
     if (state.errorState.isError) {
         AntErrorState(
             mascotRes = R.drawable.ic_piggy_bank,
-            title = state.errorState.message ?: "An error occurred",
-            subtitle = "Please try again",
+            title = state.errorState.message ?: stringResource(R.string.error_generic),
+            subtitle = stringResource(R.string.error_generic_subtitle),
             modifier = modifier.fillMaxSize(),
             retryLabel = null, // TODO: add RetryLastOperation event to HomeEvent
             onRetry = null,

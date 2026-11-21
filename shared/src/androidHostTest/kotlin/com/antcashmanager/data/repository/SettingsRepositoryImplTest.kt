@@ -32,6 +32,7 @@ import org.junit.Before
 import org.junit.Test
 import java.io.File
 import java.nio.file.Files
+import com.antcashmanager.domain.manager.ProfileManager
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsRepositoryImplTest {
@@ -52,7 +53,7 @@ class SettingsRepositoryImplTest {
         context = mockk(relaxed = true)
         every { context.applicationContext } returns context
         every { context.filesDir } returns tempDir
-        val profileManager: com.antcashmanager.domain.manager.ProfileManager = mockk(relaxed = true)
+        val profileManager: ProfileManager = mockk(relaxed = true)
         every { profileManager.activeProfileId } returns kotlinx.coroutines.flow.MutableStateFlow(1L)
         every { profileManager.getActiveProfileIdSync() } returns 1L
         mockkObject(DatabaseEncryptionManager)

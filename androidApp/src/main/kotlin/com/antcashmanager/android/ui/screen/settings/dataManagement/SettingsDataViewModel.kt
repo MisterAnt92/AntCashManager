@@ -2,7 +2,10 @@ package com.antcashmanager.android.ui.screen.settings.dataManagement
 
 import android.os.Build
 import androidx.lifecycle.viewModelScope
-import co.touchlab.kermit.Logger
+import android.os.Bundle
+import com.antcashmanager.android.analytics.AnalyticsConstants.Events
+import com.antcashmanager.android.analytics.AnalyticsConstants.Params
+import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.analytics.tracker.ErrorTracker
 import com.antcashmanager.android.analytics.tracker.PerformanceTracker
 import com.antcashmanager.android.auth.GoogleSignInManager
@@ -12,7 +15,6 @@ import com.antcashmanager.android.ui.base.AndroidBaseViewModel
 import com.antcashmanager.android.work.AutoBackupScheduler
 import com.antcashmanager.domain.model.BackupDestination
 import com.antcashmanager.domain.model.BackupFrequency
-import com.antcashmanager.domain.model.None
 import com.antcashmanager.domain.repository.CategoryRepository
 import com.antcashmanager.domain.repository.SettingsRepository
 import com.antcashmanager.domain.repository.TransactionRepository
@@ -25,6 +27,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import com.antcashmanager.android.auth.GoogleSignInResult
 
 /**
  * ViewModel per la sotto-sezione Gestione Dati.
@@ -45,9 +48,52 @@ class SettingsDataViewModel(
     private val googleSignInManager: GoogleSignInManager,
     private val performanceTracker: PerformanceTracker,
     private val errorTracker: ErrorTracker,
-) : AndroidBaseViewModel<None, SettingsDataState>(SettingsDataState()) {
+    private val analyticsManager: AnalyticsManager,
+) : AndroidBaseViewModel<SettingsDataEvent, SettingsDataState>(SettingsDataState()) {
 
-    override fun handleEvent(event: None) = Unit
+    override fun handleEvent(event: SettingsDataEvent) {
+        when (event) {
+            is SettingsDataEvent.SetDataEncryptionEnabledEvent -> setDataEncryptionEnabled(event.enabled)
+            is SettingsDataEvent.SetSuggestionsEnabledEvent -> setSuggestionsEnabled(event.enabled)
+            is SettingsDataEvent.ShowDeleteSuggestionsDialogEvent -> showDeleteSuggestionsDialog()
+            is SettingsDataEvent.DismissDeleteSuggestionsDialogEvent -> dismissDeleteSuggestionsDialog()
+            is SettingsDataEvent.DeleteAllSuggestionsEvent -> deleteAllSuggestions()
+            is SettingsDataEvent.SetAutoBackupEnabledEvent -> setAutoBackupEnabled(event.enabled)
+            is SettingsDataEvent.OnAutoBackupFolderSelectedEvent -> onAutoBackupFolderSelected(event.uriString)
+            is SettingsDataEvent.OnAutoBackupFolderSelectionCancelledEvent -> onAutoBackupFolderSelectionCancelled()
+            is SettingsDataEvent.SetAutoBackupDestinationEvent -> setAutoBackupDestination(event.destination)
+            is SettingsDataEvent.SetBackupFrequencyEvent -> setBackupFrequency(event.frequency)
+            is SettingsDataEvent.ShowDeleteConfirmDialogEvent -> showDeleteConfirmDialog()
+            is SettingsDataEvent.DismissDeleteConfirmDialogEvent -> dismissDeleteConfirmDialog()
+            is SettingsDataEvent.DismissDeleteSuccessDialogEvent -> dismissDeleteSuccessDialog()
+            is SettingsDataEvent.DeleteAllDataEvent -> deleteAllData()
+            is SettingsDataEvent.ShowResetPreferencesDialogEvent -> showResetPreferencesDialog()
+            is SettingsDataEvent.DismissResetPreferencesDialogEvent -> dismissResetPreferencesDialog()
+            is SettingsDataEvent.ResetAllPreferencesEvent -> resetAllPreferences()
+            is SettingsDataEvent.CreateBackupEvent -> createBackup()
+            is SettingsDataEvent.OnBackupFileSavedEvent -> onBackupFileSaved()
+            is SettingsDataEvent.ClearPendingBackupRequestEvent -> clearPendingBackupRequest()
+            is SettingsDataEvent.OnBackupFileSaveErrorEvent -> onBackupFileSaveError(event.message)
+            is SettingsDataEvent.DismissBackupSuccessDialogEvent -> dismissBackupSuccessDialog()
+            is SettingsDataEvent.DismissBackupErrorDialogEvent -> dismissBackupErrorDialog()
+            is SettingsDataEvent.RestoreBackupEvent -> restoreBackup(event.jsonString)
+            is SettingsDataEvent.OnRestoreFileReadErrorEvent -> onRestoreFileReadError(event.message)
+            is SettingsDataEvent.DismissRestoreSuccessDialogEvent -> dismissRestoreSuccessDialog()
+            is SettingsDataEvent.DismissRestoreErrorDialogEvent -> dismissRestoreErrorDialog()
+            is SettingsDataEvent.InitiateGoogleSignInEvent -> initiateGoogleSignIn()
+            is SettingsDataEvent.SignOutFromGoogleEvent -> signOutFromGoogle()
+            is SettingsDataEvent.DismissGoogleSignInDialogEvent -> dismissGoogleSignInDialog()
+            is SettingsDataEvent.LogRestoreOpenRequestedEvent -> analyticsManager.logEvent(Events.RESTORE_FILE_SELECTED)
+            is SettingsDataEvent.LogRestoreFileSelectedEvent -> analyticsManager.logEvent(Events.RESTORE_FILE_SELECTED)
+            is SettingsDataEvent.LogBackupFileReadCharsetErrorEvent -> analyticsManager.logEvent(Events.BACKUP_FILE_READ_CHARSET_ERROR)
+            is SettingsDataEvent.LogNotificationPermissionGrantedEvent -> analyticsManager.logEvent(Events.NOTIFICATION_PERMISSION_GRANTED)
+            is SettingsDataEvent.LogAutoBackupFolderSelectedEvent -> analyticsManager.logEvent(Events.AUTO_BACKUP_FOLDER_SELECTED)
+            is SettingsDataEvent.LogBackupCreateRequestedEvent -> analyticsManager.logEvent(Events.BACKUP_CREATE_REQUESTED)
+            is SettingsDataEvent.LogDeleteAllDataConfirmedEvent -> analyticsManager.logEvent(Events.DELETE_ALL_DATA_CONFIRMED)
+            is SettingsDataEvent.LogResetPreferencesConfirmedEvent -> analyticsManager.logEvent(Events.RESET_PREFERENCES_CONFIRMED)
+            is SettingsDataEvent.LogDeleteSuggestionsConfirmedEvent -> analyticsManager.logEvent(Events.DELETE_SUGGESTIONS_CONFIRMED)
+        }
+    }
 
     private val settingsRepositoryRef = settingsRepository
 
@@ -110,7 +156,8 @@ class SettingsDataViewModel(
         }
     }
 
-    fun setDataEncryptionEnabled(enabled: Boolean) {
+    private fun setDataEncryptionEnabled(enabled: Boolean) {
+        analyticsManager.logEvent(Events.DATA_ENCRYPTION_TOGGLED, Bundle().apply { putBoolean(Params.ENABLED, enabled) })
         logDebug("Setting data encryption enabled: $enabled")
         launchCancelling {
             try {
@@ -169,22 +216,23 @@ class SettingsDataViewModel(
         }
     }
 
-    fun setSuggestionsEnabled(enabled: Boolean) {
+    private fun setSuggestionsEnabled(enabled: Boolean) {
+        analyticsManager.logEvent(Events.SUGGESTIONS_TOGGLED, Bundle().apply { putBoolean(Params.ENABLED, enabled) })
         logDebug("Setting suggestions enabled: $enabled")
         viewModelScope.launch {
             settingsRepositoryRef.setSuggestionsEnabled(enabled)
         }
     }
 
-    fun showDeleteSuggestionsDialog() {
+    private fun showDeleteSuggestionsDialog() {
         _state.update { it.copy(showDeleteSuggestionsDialog = true) }
     }
 
-    fun dismissDeleteSuggestionsDialog() {
+    private fun dismissDeleteSuggestionsDialog() {
         _state.update { it.copy(showDeleteSuggestionsDialog = false) }
     }
 
-    fun deleteAllSuggestions() {
+    private fun deleteAllSuggestions() {
         logDebug("Deleting all suggestions")
         viewModelScope.launch {
             settingsRepositoryRef.setSuggestionsClearedAt(System.currentTimeMillis())
@@ -192,7 +240,8 @@ class SettingsDataViewModel(
         }
     }
 
-    fun setAutoBackupEnabled(enabled: Boolean) {
+    private fun setAutoBackupEnabled(enabled: Boolean) {
+        analyticsManager.logEvent(Events.AUTO_BACKUP_TOGGLED, Bundle().apply { putBoolean(Params.ENABLED, enabled) })
         logDebug("Setting auto backup enabled: $enabled")
         viewModelScope.launch {
             if (enabled) {
@@ -206,7 +255,7 @@ class SettingsDataViewModel(
         }
     }
 
-    fun onAutoBackupFolderSelected(uriString: String) {
+    private fun onAutoBackupFolderSelected(uriString: String) {
         logDebug("Auto backup folder selected: $uriString")
         viewModelScope.launch {
             // Persisti URI, abilita backup, e schedula il lavoro
@@ -216,7 +265,8 @@ class SettingsDataViewModel(
         }
     }
 
-    fun setBackupFrequency(frequency: BackupFrequency) {
+    private fun setBackupFrequency(frequency: BackupFrequency) {
+        analyticsManager.logEvent(Events.BACKUP_FREQUENCY_CHANGED, Bundle().apply { putString(Params.FREQUENCY, frequency.name) })
         logDebug("Setting backup frequency: $frequency")
         viewModelScope.launch {
             settingsRepositoryRef.setBackupFrequency(frequency)
@@ -227,20 +277,20 @@ class SettingsDataViewModel(
         }
     }
 
-    fun onAutoBackupFolderSelectionCancelled() {
+    private fun onAutoBackupFolderSelectionCancelled() {
         logDebug("Auto backup folder selection cancelled")
         // No-op: il toggle rimane OFF, niente è stato persistito
     }
 
-    fun showDeleteConfirmDialog() {
+    private fun showDeleteConfirmDialog() {
         _state.update { it.copy(showDeleteConfirmDialog = true) }
     }
 
-    fun dismissDeleteConfirmDialog() {
+    private fun dismissDeleteConfirmDialog() {
         _state.update { it.copy(showDeleteConfirmDialog = false) }
     }
 
-    fun dismissDeleteSuccessDialog() {
+    private fun dismissDeleteSuccessDialog() {
         _state.update {
             it.copy(
                 showDeleteSuccessDialog = false,
@@ -249,15 +299,15 @@ class SettingsDataViewModel(
         }
     }
 
-    fun showResetPreferencesDialog() {
+    private fun showResetPreferencesDialog() {
         _state.update { it.copy(showResetPreferencesDialog = true) }
     }
 
-    fun dismissResetPreferencesDialog() {
+    private fun dismissResetPreferencesDialog() {
         _state.update { it.copy(showResetPreferencesDialog = false) }
     }
 
-    fun dismissBackupSuccessDialog() {
+    private fun dismissBackupSuccessDialog() {
         _state.update {
             it.copy(
                 showBackupSuccessDialog = false,
@@ -266,7 +316,7 @@ class SettingsDataViewModel(
         }
     }
 
-    fun dismissBackupErrorDialog() {
+    private fun dismissBackupErrorDialog() {
         _state.update {
             it.copy(
                 showBackupErrorDialog = false,
@@ -276,7 +326,7 @@ class SettingsDataViewModel(
         }
     }
 
-    fun dismissRestoreSuccessDialog() {
+    private fun dismissRestoreSuccessDialog() {
         _state.update {
             it.copy(
                 showRestoreSuccessDialog = false,
@@ -286,7 +336,7 @@ class SettingsDataViewModel(
         }
     }
 
-    fun dismissRestoreErrorDialog() {
+    private fun dismissRestoreErrorDialog() {
         _state.update {
             it.copy(
                 showRestoreErrorDialog = false,
@@ -296,7 +346,8 @@ class SettingsDataViewModel(
         }
     }
 
-    fun onBackupFileSaved() {
+    private fun onBackupFileSaved() {
+        analyticsManager.logEvent(Events.BACKUP_FILE_SAVED)
         _state.update {
             it.copy(
                 pendingBackupData = null,
@@ -309,7 +360,7 @@ class SettingsDataViewModel(
         }
     }
 
-    fun clearPendingBackupRequest() {
+    private fun clearPendingBackupRequest() {
         _state.update {
             it.copy(
                 pendingBackupData = null,
@@ -318,7 +369,8 @@ class SettingsDataViewModel(
         }
     }
 
-    fun onBackupFileSaveError(message: String) {
+    private fun onBackupFileSaveError(message: String) {
+        analyticsManager.logEvent(Events.BACKUP_FILE_SAVE_ERROR)
         _state.update {
             it.copy(
                 pendingBackupData = null,
@@ -330,7 +382,7 @@ class SettingsDataViewModel(
         }
     }
 
-    fun onRestoreFileReadError(message: String) {
+    private fun onRestoreFileReadError(message: String) {
         _state.update {
             it.copy(
                 restoreResult = RestoreOperationResult.Error(message),
@@ -340,7 +392,7 @@ class SettingsDataViewModel(
         }
     }
 
-    fun deleteAllData() {
+    private fun deleteAllData() {
         logDebug("Deleting all data")
         viewModelScope.launch {
             try {
@@ -398,7 +450,7 @@ class SettingsDataViewModel(
         return result
     }
 
-    fun createBackup() {
+    private fun createBackup() {
         logDebug("Creating backup")
         _state.update { it.copy(backupResult = BackupResult.Loading) }
         viewModelScope.launch {
@@ -463,7 +515,7 @@ class SettingsDataViewModel(
         }
     }
 
-    fun restoreBackup(jsonString: String) {
+    private fun restoreBackup(jsonString: String) {
         logDebug("Restoring backup")
         _state.update { it.copy(restoreResult = RestoreOperationResult.Loading) }
         val restoreStartTime = System.currentTimeMillis()
@@ -473,9 +525,7 @@ class SettingsDataViewModel(
                 runCatching { BackupPayloadCipher.decrypt(jsonString) }
                     .onFailure { error ->
                         // ✅ Log API level info for diagnostics
-                        Logger.e(tag = "SettingsDataViewModel") {
-                            "Decryption failed on API ${Build.VERSION.SDK_INT}: ${error.message}"
-                        }
+                        logError("Decryption failed on API ${Build.VERSION.SDK_INT}: ${error.message}")
                         // Track decryption error
                         val errorCode =
                             when (error) {
@@ -576,7 +626,7 @@ class SettingsDataViewModel(
         }
     }
 
-    fun resetAllPreferences() {
+    private fun resetAllPreferences() {
         logDebug("Resetting all preferences")
         viewModelScope.launch {
             settingsRepositoryRef.resetAllPreferences()
@@ -596,7 +646,8 @@ class SettingsDataViewModel(
      * - Se cambio a LOCAL, disabilita il dialog di sign-in
      * - Persiste la destinazione in SettingsRepository
      */
-    fun setAutoBackupDestination(destination: BackupDestination) {
+    private fun setAutoBackupDestination(destination: BackupDestination) {
+        analyticsManager.logEvent(Events.AUTO_BACKUP_DESTINATION_CHANGED, Bundle().apply { putString(Params.DESTINATION, destination.name) })
         logDebug("Setting auto backup destination: $destination")
         viewModelScope.launch {
             when (destination) {
@@ -636,7 +687,7 @@ class SettingsDataViewModel(
      * `registerForActivityResult(ActivityResultContracts.StartActivityForResult())`.
      * Questo metodo coordina il flusso post-picker.
      */
-    fun initiateGoogleSignIn() {
+    private fun initiateGoogleSignIn() {
         logDebug("Initiating Google Sign-In flow")
         _state.update { it.copy(googleDriveSignInLoading = true) }
         viewModelScope.launch {
@@ -680,7 +731,8 @@ class SettingsDataViewModel(
      * - Chiude il dialog di sign-in
      * - Disabilita il loading state
      */
-    private suspend fun handleGoogleSignInSuccess(result: com.antcashmanager.android.auth.GoogleSignInResult) {
+    private suspend fun handleGoogleSignInSuccess(result: GoogleSignInResult) {
+        analyticsManager.logEvent(Events.GOOGLE_DRIVE_SIGNED_IN)
         logDebug("Google Sign-In successful for ${result.email}")
         try {
             // I token sono già salvati da GoogleSignInManager.handleSignInSuccess()
@@ -733,7 +785,7 @@ class SettingsDataViewModel(
      * - Ripristina destinazione a LOCAL
      * - Aggiorna stato UI
      */
-    fun signOutFromGoogle() {
+    private fun signOutFromGoogle() {
         logDebug("Signing out from Google")
         viewModelScope.launch {
             try {
@@ -767,7 +819,7 @@ class SettingsDataViewModel(
      * - Mantiene la destinazione su LOCAL
      * - Disabilita il loading state
      */
-    fun dismissGoogleSignInDialog() {
+    private fun dismissGoogleSignInDialog() {
         logDebug("Dismissing Google Sign-In dialog")
         _state.update {
             it.copy(

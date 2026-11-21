@@ -68,6 +68,8 @@
     <string name="categories_tab_expense">支出</string>
     <string name="categories_tab_income">収入</string>
     <string name="categories_default_badge">デフォルト</string>
+    <string name="categories_default_section">デフォルト</string>
+    <string name="categories_custom_section">カスタム</string>
     <string name="categories_icon_label">アイコン</string>
     <string name="categories_hide">カテゴリを非表示</string>
     <string name="categories_show">カテゴリを表示</string>
@@ -717,4 +719,14 @@
     <string name="month_short_10">Oct</string>
     <string name="month_short_11">Nov</string>
     <string name="month_short_12">Dec</string>
+    <string name="error_generic_subtitle">再試行</string>
+    <string name="meal_voucher_error_invalid">無効な値</string>
+    <string name="meal_voucher_error_positive">値は0より大きくなければなりません</string>
+    <string name="chart_days_tracked_cd">追跡日数: %d</string>
+    <string name="chart_max_daily_cd">最大日次: %s</string>
+    <string name="chart_avg_daily_cd">平均日次: %s</string>
+    <string name="chart_weekday_bar_cd">%1$s: %2$s</string>
+    <string name="app_icon_description">アプリアイコン</string>
+    <string name="transaction_add_tag_description">タグを追加</string>
+    <string name="transaction_remove_tag_description">削除</string>
 </resources>

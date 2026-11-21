@@ -50,7 +50,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.antcashmanager.android.R
-import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.components.card.AppCard
 import com.antcashmanager.android.ui.components.card.AppCardSectionHeader
 import com.antcashmanager.android.ui.components.common.AppListItem
@@ -65,7 +64,6 @@ import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.domain.model.BackupDestination
 import com.antcashmanager.domain.model.BackupFrequency
 import org.koin.androidx.compose.koinViewModel
-import org.koin.compose.koinInject
 import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -78,32 +76,33 @@ fun SettingsDataScreen(navController: NavController) {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    val onEvent = viewModel::emitEvent
     SettingsDataContent(
         state = state,
-        onDeleteAllData = viewModel::deleteAllData,
-        onCreateBackup = viewModel::createBackup,
-        onRestoreBackup = viewModel::restoreBackup,
-        onResetAllPreferences = viewModel::resetAllPreferences,
-        onShowDeleteConfirmDialog = viewModel::showDeleteConfirmDialog,
-        onDismissDeleteConfirmDialog = viewModel::dismissDeleteConfirmDialog,
-        onDismissDeleteSuccessDialog = viewModel::dismissDeleteSuccessDialog,
-        onShowResetPreferencesDialog = viewModel::showResetPreferencesDialog,
-        onDismissResetPreferencesDialog = viewModel::dismissResetPreferencesDialog,
-        onDismissBackupSuccessDialog = viewModel::dismissBackupSuccessDialog,
-        onDismissBackupErrorDialog = viewModel::dismissBackupErrorDialog,
-        onDismissRestoreSuccessDialog = viewModel::dismissRestoreSuccessDialog,
-        onDismissRestoreErrorDialog = viewModel::dismissRestoreErrorDialog,
-        onBackupFileSaved = viewModel::onBackupFileSaved,
-        onBackupFileSaveError = viewModel::onBackupFileSaveError,
-        onRestoreFileReadError = viewModel::onRestoreFileReadError,
-        onClearPendingBackupRequest = viewModel::clearPendingBackupRequest,
-        onDataEncryptionEnabledChange = viewModel::setDataEncryptionEnabled,
-        onSuggestionsEnabledChange = viewModel::setSuggestionsEnabled,
-        onShowDeleteSuggestionsDialog = viewModel::showDeleteSuggestionsDialog,
-        onDismissDeleteSuggestionsDialog = viewModel::dismissDeleteSuggestionsDialog,
-        onDeleteAllSuggestions = viewModel::deleteAllSuggestions,
-        onAutoBackupEnabledChange = viewModel::setAutoBackupEnabled,
-        onAutoBackupFolderSelected = viewModel::onAutoBackupFolderSelected,
+        onDeleteAllData = { onEvent(SettingsDataEvent.DeleteAllDataEvent) },
+        onCreateBackup = { onEvent(SettingsDataEvent.CreateBackupEvent) },
+        onRestoreBackup = { json -> onEvent(SettingsDataEvent.RestoreBackupEvent(json)) },
+        onResetAllPreferences = { onEvent(SettingsDataEvent.ResetAllPreferencesEvent) },
+        onShowDeleteConfirmDialog = { onEvent(SettingsDataEvent.ShowDeleteConfirmDialogEvent) },
+        onDismissDeleteConfirmDialog = { onEvent(SettingsDataEvent.DismissDeleteConfirmDialogEvent) },
+        onDismissDeleteSuccessDialog = { onEvent(SettingsDataEvent.DismissDeleteSuccessDialogEvent) },
+        onShowResetPreferencesDialog = { onEvent(SettingsDataEvent.ShowResetPreferencesDialogEvent) },
+        onDismissResetPreferencesDialog = { onEvent(SettingsDataEvent.DismissResetPreferencesDialogEvent) },
+        onDismissBackupSuccessDialog = { onEvent(SettingsDataEvent.DismissBackupSuccessDialogEvent) },
+        onDismissBackupErrorDialog = { onEvent(SettingsDataEvent.DismissBackupErrorDialogEvent) },
+        onDismissRestoreSuccessDialog = { onEvent(SettingsDataEvent.DismissRestoreSuccessDialogEvent) },
+        onDismissRestoreErrorDialog = { onEvent(SettingsDataEvent.DismissRestoreErrorDialogEvent) },
+        onBackupFileSaved = { onEvent(SettingsDataEvent.OnBackupFileSavedEvent) },
+        onBackupFileSaveError = { msg -> onEvent(SettingsDataEvent.OnBackupFileSaveErrorEvent(msg)) },
+        onRestoreFileReadError = { msg -> onEvent(SettingsDataEvent.OnRestoreFileReadErrorEvent(msg)) },
+        onClearPendingBackupRequest = { onEvent(SettingsDataEvent.ClearPendingBackupRequestEvent) },
+        onDataEncryptionEnabledChange = { v -> onEvent(SettingsDataEvent.SetDataEncryptionEnabledEvent(v)) },
+        onSuggestionsEnabledChange = { v -> onEvent(SettingsDataEvent.SetSuggestionsEnabledEvent(v)) },
+        onShowDeleteSuggestionsDialog = { onEvent(SettingsDataEvent.ShowDeleteSuggestionsDialogEvent) },
+        onDismissDeleteSuggestionsDialog = { onEvent(SettingsDataEvent.DismissDeleteSuggestionsDialogEvent) },
+        onDeleteAllSuggestions = { onEvent(SettingsDataEvent.DeleteAllSuggestionsEvent) },
+        onAutoBackupEnabledChange = { v -> onEvent(SettingsDataEvent.SetAutoBackupEnabledEvent(v)) },
+        onAutoBackupFolderSelected = { uri -> onEvent(SettingsDataEvent.OnAutoBackupFolderSelectedEvent(uri)) },
         onSelectBackupPath = {},
         autoBackupEnabled = state.autoBackupEnabled,
         autoBackupFolderUri = state.autoBackupFolderUri,
@@ -113,12 +112,13 @@ fun SettingsDataScreen(navController: NavController) {
         isGoogleDriveSignedIn = state.isGoogleDriveSignedIn,
         showGoogleSignInDialog = state.showGoogleSignInDialog,
         googleDriveSignInLoading = state.googleDriveSignInLoading,
-        onAutoBackupDestinationChange = viewModel::setAutoBackupDestination,
-        onAutoBackupFrequencyChange = viewModel::setBackupFrequency,
-        onGoogleSignInClick = viewModel::initiateGoogleSignIn,
-        onGoogleSignOutClick = viewModel::signOutFromGoogle,
-        onDismissGoogleSignInDialog = viewModel::dismissGoogleSignInDialog,
+        onAutoBackupDestinationChange = { d -> onEvent(SettingsDataEvent.SetAutoBackupDestinationEvent(d)) },
+        onAutoBackupFrequencyChange = { f -> onEvent(SettingsDataEvent.SetBackupFrequencyEvent(f)) },
+        onGoogleSignInClick = { onEvent(SettingsDataEvent.InitiateGoogleSignInEvent) },
+        onGoogleSignOutClick = { onEvent(SettingsDataEvent.SignOutFromGoogleEvent) },
+        onDismissGoogleSignInDialog = { onEvent(SettingsDataEvent.DismissGoogleSignInDialogEvent) },
         onNavigateBack = { navController.popBackStack() },
+        onEvent = onEvent,
     )
 }
 
@@ -165,19 +165,17 @@ internal fun SettingsDataContent(
     onGoogleSignOutClick: () -> Unit = {},
     onDismissGoogleSignInDialog: () -> Unit = {},
     onNavigateBack: () -> Unit = {},
+    onEvent: (SettingsDataEvent) -> Unit = {},
 ) {
     val context = LocalContext.current
     val isPreview = LocalInspectionMode.current
     val filePickerUnavailableMessage =
         stringResource(R.string.settings_data_file_picker_unavailable)
-    val analyticsManager: AnalyticsManager = koinInject()
     val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
     val handleDataEncryptionEnabledChange: (Boolean) -> Unit = { enabled ->
-        analyticsManager.logEvent("data_encryption_toggled")
         onDataEncryptionEnabledChange(enabled)
     }
     val handleSuggestionsEnabledChange: (Boolean) -> Unit = { enabled ->
-        analyticsManager.logEvent("suggestions_toggled")
         onSuggestionsEnabledChange(enabled)
     }
     val backupLauncher =
@@ -208,10 +206,8 @@ internal fun SettingsDataContent(
                         stream.flush()
                     }
 
-                    analyticsManager.logEvent("backup_file_saved")
                     onBackupFileSaved()
                 } catch (error: Exception) {
-                    analyticsManager.logEvent("backup_file_save_error")
                     onBackupFileSaveError(error.message ?: SettingsDataConstant.UNKNOWN_ERROR)
                 }
             }
@@ -250,7 +246,7 @@ internal fun SettingsDataContent(
                         reader.readText()
                     }
                 } catch (fallbackError: Exception) {
-                    analyticsManager.logEvent("backup_file_read_charset_error")
+                    onEvent(SettingsDataEvent.LogBackupFileReadCharsetErrorEvent)
                     onRestoreFileReadError(
                         "Impossibile leggere il file: ${fallbackError.message ?: "Charset error"}",
                     )
@@ -267,7 +263,7 @@ internal fun SettingsDataContent(
                 contract = ActivityResultContracts.OpenDocument(),
             ) { uri ->
                 if (uri == null) return@rememberLauncherForActivityResult
-                analyticsManager.logEvent("restore_file_selected")
+                onEvent(SettingsDataEvent.LogRestoreFileSelectedEvent)
 
                 try {
                     val inputStream =
@@ -285,7 +281,6 @@ internal fun SettingsDataContent(
 
                     onRestoreBackup(payload)
                 } catch (error: Exception) {
-                    analyticsManager.logEvent("backup_file_read_error")
                     onRestoreFileReadError(error.message ?: SettingsDataConstant.UNKNOWN_ERROR)
                 }
             }
@@ -300,7 +295,7 @@ internal fun SettingsDataContent(
                 // L'esito è ignorato: il backup funziona comunque, le notifiche di fallimento
                 // degenerano gracefully se il permesso non è concesso
                 if (isGranted) {
-                    analyticsManager.logEvent("notification_permission_granted")
+                    onEvent(SettingsDataEvent.LogNotificationPermissionGrantedEvent)
                 }
             }
         } else {
@@ -333,7 +328,7 @@ internal fun SettingsDataContent(
                 }
 
                 onAutoBackupFolderSelected(uri.toString())
-                analyticsManager.logEvent("auto_backup_folder_selected")
+                onEvent(SettingsDataEvent.LogAutoBackupFolderSelectedEvent)
 
                 // Opzionale: richiedi il permesso POST_NOTIFICATIONS su API 33+ dopo il folder
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -344,7 +339,6 @@ internal fun SettingsDataContent(
 
     // Logica per gestire il toggle del backup automatico
     val handleAutoBackupToggle: (Boolean) -> Unit = { enabled ->
-        analyticsManager.logEvent("auto_backup_toggled")
         if (enabled && autoBackupFolderUri.isNullOrBlank()) {
             // Se abilita senza URI: apri il folder picker
             folderPickerLauncher?.launch(null)
@@ -392,12 +386,12 @@ internal fun SettingsDataContent(
                         lastBackupTimestamp = state.lastBackupTimestamp,
                         lastRestoreTimestamp = state.lastRestoreTimestamp,
                         onCreateBackup = {
-                            analyticsManager.logEvent("backup_create_requested")
+                            onEvent(SettingsDataEvent.LogBackupCreateRequestedEvent)
                             onCreateBackup()
                         },
                         onRestoreBackup = {
                             if (restoreLauncher != null) {
-                                analyticsManager.logEvent("restore_open_requested")
+                                onEvent(SettingsDataEvent.LogRestoreOpenRequestedEvent)
                                 restoreLauncher.launch(
                                     arrayOf(
                                         "application/json", // Standard JSON
@@ -476,12 +470,12 @@ internal fun SettingsDataContent(
                         lastBackupTimestamp = state.lastBackupTimestamp,
                         lastRestoreTimestamp = state.lastRestoreTimestamp,
                         onCreateBackup = {
-                            analyticsManager.logEvent("backup_create_requested")
+                            onEvent(SettingsDataEvent.LogBackupCreateRequestedEvent)
                             onCreateBackup()
                         },
                         onRestoreBackup = {
                             if (restoreLauncher != null) {
-                                analyticsManager.logEvent("restore_open_requested")
+                                onEvent(SettingsDataEvent.LogRestoreOpenRequestedEvent)
                                 restoreLauncher.launch(
                                     arrayOf(
                                         "application/json", // Standard JSON
@@ -547,7 +541,7 @@ internal fun SettingsDataContent(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        analyticsManager.logEvent("delete_all_data_confirmed")
+                        onEvent(SettingsDataEvent.LogDeleteAllDataConfirmedEvent)
                         onDeleteAllData()
                     },
                 ) {
@@ -674,7 +668,7 @@ internal fun SettingsDataContent(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        analyticsManager.logEvent("reset_preferences_confirmed")
+                        onEvent(SettingsDataEvent.LogResetPreferencesConfirmedEvent)
                         onResetAllPreferences()
                     },
                 ) {
@@ -712,7 +706,7 @@ internal fun SettingsDataContent(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        analyticsManager.logEvent("delete_suggestions_confirmed")
+                        onEvent(SettingsDataEvent.LogDeleteSuggestionsConfirmedEvent)
                         onDeleteAllSuggestions()
                     },
                 ) {

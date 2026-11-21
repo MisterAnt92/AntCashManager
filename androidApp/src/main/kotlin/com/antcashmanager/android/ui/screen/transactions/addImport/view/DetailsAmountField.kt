@@ -63,7 +63,7 @@ internal fun DetailsAmountField(
                 stringResource(R.string.add_transaction_amount_required),
             )
         },
-        placeholder = { AppText("0.00") },
+        placeholder = { AppText(stringResource(R.string.transaction_amount_placeholder_zero)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
         shape = RoundedCornerShape(16.dp),
         modifier = modifier,

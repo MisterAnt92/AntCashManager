@@ -3,6 +3,7 @@ package com.antcashmanager.data.repository
 import com.antcashmanager.data.local.dao.CategoryDao
 import com.antcashmanager.data.local.entity.CategoryEntity
 import com.antcashmanager.domain.model.Category
+import com.antcashmanager.domain.model.ALL_DEFAULT_CATEGORIES
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -18,6 +19,7 @@ import org.junit.Before
 import org.junit.Test
 
 import com.antcashmanager.domain.manager.ProfileManager
+import com.antcashmanager.data.mapper.toEntity
 
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -153,12 +155,32 @@ class CategoryRepositoryImplMockkTest {
         runTest {
             val category = sampleCategory(id = 4L, name = "Health")
             val expectedId = 4L
+            coEvery { categoryDao.getDefaultCategoriesForProfile(any()) } returns
+                ALL_DEFAULT_CATEGORIES.map { it.toEntity().copy(profileId = 1L) }
             coEvery { categoryDao.insertCategory(any()) } returns expectedId
 
             val result = repository.insertCategory(category)
 
             assertEquals(expectedId, result)
             coVerify(exactly = 1) { categoryDao.insertCategory(any()) }
+        }
+
+    @Test
+    fun insertCategory_shouldSeedMissingDefaultCategories_whenAddingCustomCategory() =
+        runTest {
+            val category = sampleCategory(id = 4L, name = "Health")
+            coEvery { categoryDao.getDefaultCategoriesForProfile(1L) } returns emptyList()
+            coEvery { categoryDao.insertCategory(any()) } returnsMany
+                List(ALL_DEFAULT_CATEGORIES.size + 1) { it.toLong() + 1L }
+
+            repository.insertCategory(category)
+
+            coVerify(exactly = ALL_DEFAULT_CATEGORIES.size) {
+                categoryDao.insertCategory(match { it.isDefault })
+            }
+            coVerify(exactly = 1) {
+                categoryDao.insertCategory(match { it.name == "Health" && !it.isDefault })
+            }
         }
 
     @Test

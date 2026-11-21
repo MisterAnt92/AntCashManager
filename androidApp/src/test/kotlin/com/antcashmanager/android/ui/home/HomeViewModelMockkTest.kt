@@ -86,7 +86,7 @@ class HomeViewModelMockkTest : BaseUnitTest() {
     }
 
     @Test
-    fun onEvent_shouldPersistCustomFilter_whenSetDateRangeEventIsReceived() =
+    fun emitEvent_shouldPersistCustomFilter_whenSetDateRangeEventIsReceived() =
         runViewModelTest {
             val viewModel = buildViewModel()
             val collectJob = launch { viewModel.state.collect {} }
@@ -94,7 +94,7 @@ class HomeViewModelMockkTest : BaseUnitTest() {
             val from = 1_710_000_000_000L
             val to = 1_710_100_000_000L
 
-            viewModel.onEvent(HomeEvent.SetDateRangeEvent(from = from, to = to))
+            viewModel.emitEvent(HomeEvent.SetDateRangeEvent(from = from, to = to))
             advanceUntilIdle()
 
             coVerify(atLeast = 1) {
@@ -110,7 +110,7 @@ class HomeViewModelMockkTest : BaseUnitTest() {
         }
 
     @Test
-    fun onEvent_shouldNormalizeRange_whenFromIsGreaterThanTo() =
+    fun emitEvent_shouldNormalizeRange_whenFromIsGreaterThanTo() =
         runViewModelTest {
             val viewModel = buildViewModel()
             val collectJob = launch { viewModel.state.collect {} }
@@ -118,7 +118,7 @@ class HomeViewModelMockkTest : BaseUnitTest() {
             val larger = 1_710_100_000_000L
             val smaller = 1_710_000_000_000L
 
-            viewModel.onEvent(HomeEvent.SetDateRangeEvent(from = larger, to = smaller))
+            viewModel.emitEvent(HomeEvent.SetDateRangeEvent(from = larger, to = smaller))
             advanceUntilIdle()
 
             coVerify(atLeast = 1) {
@@ -134,13 +134,13 @@ class HomeViewModelMockkTest : BaseUnitTest() {
         }
 
     @Test
-    fun onEvent_shouldPersistPresetFilter_whenSelectPresetEventIsReceived() =
+    fun emitEvent_shouldPersistPresetFilter_whenSelectPresetEventIsReceived() =
         runViewModelTest {
             val viewModel = buildViewModel()
             val collectJob = launch { viewModel.state.collect {} }
 
             val presetIndex = 2
-            viewModel.onEvent(HomeEvent.SelectPresetEvent(presetIndex))
+            viewModel.emitEvent(HomeEvent.SelectPresetEvent(presetIndex))
             advanceUntilIdle()
 
             coVerify(atLeast = 1) {
@@ -155,7 +155,7 @@ class HomeViewModelMockkTest : BaseUnitTest() {
         }
 
     @Test
-    fun onEvent_shouldUpdateUiState_whenPersistDateFilterFails() =
+    fun emitEvent_shouldUpdateUiState_whenPersistDateFilterFails() =
         runViewModelTest {
             coEvery { setHomeDateFilterStateUseCase(any()) } returns
                 Result.failure(
@@ -166,7 +166,7 @@ class HomeViewModelMockkTest : BaseUnitTest() {
 
             val from = 1_712_000_000_000L
             val to = 1_712_100_000_000L
-            viewModel.onEvent(HomeEvent.SetDateRangeEvent(from = from, to = to))
+            viewModel.emitEvent(HomeEvent.SetDateRangeEvent(from = from, to = to))
             advanceUntilIdle()
 
             coVerify(atLeast = 1) {
@@ -233,7 +233,7 @@ class HomeViewModelMockkTest : BaseUnitTest() {
             val collectJob = launch { viewModel.state.collect {} }
             advanceUntilIdle()
 
-            viewModel.onEvent(HomeEvent.SetDateRangeEvent(0L, Long.MAX_VALUE))
+            viewModel.emitEvent(HomeEvent.SetDateRangeEvent(0L, Long.MAX_VALUE))
             advanceUntilIdle()
 
             val uiState = viewModel.state.value
@@ -277,7 +277,7 @@ class HomeViewModelMockkTest : BaseUnitTest() {
             val collectJob = launch { viewModel.state.collect {} }
             advanceUntilIdle()
 
-            viewModel.onEvent(HomeEvent.SetDateRangeEvent(0L, Long.MAX_VALUE))
+            viewModel.emitEvent(HomeEvent.SetDateRangeEvent(0L, Long.MAX_VALUE))
             advanceUntilIdle()
 
             val uiState = viewModel.state.value

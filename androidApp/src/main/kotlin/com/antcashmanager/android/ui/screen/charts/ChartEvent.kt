@@ -34,4 +34,17 @@ sealed class ChartEvent : UIEvent() {
     ) : ChartEvent()
 
     data class UpdateLocaleEvent(val languageTag: String) : ChartEvent()
+
+    data class LogChartLoadingCompletedEvent(val dataPoints: Int) : ChartEvent()
+
+    data class LogChartItemClickedEvent(
+        val chartType: String,
+        val category: String,
+    ) : ChartEvent()
+
+    data object LogPresetFilterAppliedEvent : ChartEvent()
+
+    data object LogCustomDateFilterAppliedEvent : ChartEvent()
+
+    data object LogChartSharedEvent : ChartEvent()
 }
