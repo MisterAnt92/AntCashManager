@@ -91,7 +91,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -109,7 +108,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.antcashmanager.android.R
-import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
 import com.antcashmanager.android.navigation.ScreenHeaderConfig
 import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
@@ -128,7 +126,6 @@ import com.antcashmanager.android.ui.theme.AntCashManagerTheme
 import com.antcashmanager.android.util.translateCategory
 import com.antcashmanager.domain.model.Category
 import org.koin.androidx.compose.koinViewModel
-import org.koin.compose.koinInject
 
 /** Map icon key names to Material Icons. */
 val categoryIconMap: Map<String, ImageVector> =
@@ -299,6 +296,7 @@ fun CategoriesScreen() {
             onReorderCategories = { categories ->
                 viewModel.emitEvent(CategoryEvent.ReorderCategoriesEvent(categories))
             },
+            onEvent = viewModel::emitEvent,
         )
 
         SnackbarHost(
@@ -318,10 +316,10 @@ internal fun CategoriesContent(
     onDeleteCategory: (Category) -> Unit = {},
     onSetCategoryHidden: (Category, Boolean) -> Unit = { _, _ -> },
     onReorderCategories: (List<Category>) -> Unit = {},
+    onEvent: (CategoryEvent) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
-    val analyticsManager: AnalyticsManager = koinInject()
-    var selectedTab by remember { mutableIntStateOf(0) }
+    val selectedTab = state.selectedTabIndex
     var showAddDialog by remember { mutableStateOf(false) }
     var categoryToDelete by remember { mutableStateOf<Category?>(null) }
     var showReorderDialog by remember { mutableStateOf(false) }
@@ -354,7 +352,7 @@ internal fun CategoriesContent(
                 hasOrderOption = currentCategories.size > 1,
                 onOrderClick = {
                     if (currentCategories.size > 1) {
-                        analyticsManager.logEvent("categories_reorder_opened")
+                        onEvent(CategoryEvent.LogReorderOpenedEvent)
                         showReorderDialog = true
                     }
                 },
@@ -366,8 +364,8 @@ internal fun CategoriesContent(
     if (state.errorState.isError) {
         AntErrorState(
             mascotRes = R.drawable.ic_piggy_bank,
-            title = state.errorState.message ?: "An error occurred",
-            subtitle = "Please try again",
+            title = state.errorState.message ?: stringResource(R.string.error_generic),
+            subtitle = stringResource(R.string.error_generic_subtitle),
             modifier = modifier.fillMaxSize(),
             retryLabel = null,
             onRetry = null,
@@ -421,7 +419,7 @@ internal fun CategoriesContent(
                     tabs.forEachIndexed { index, title ->
                         Tab(
                             selected = selectedTab == index,
-                            onClick = { selectedTab = index },
+                            onClick = { onEvent(CategoryEvent.SelectTabEvent(index)) },
                             text = { AppText(title, fontWeight = FontWeight.SemiBold) },
                         )
                     }
@@ -449,12 +447,7 @@ internal fun CategoriesContent(
                             CategoryItem(
                                 category = category,
                                 onClick = {
-                                    val params =
-                                        android.os.Bundle().apply {
-                                            putString("category_name", category.name)
-                                            putInt("index", currentCategories.indexOf(category))
-                                        }
-                                    analyticsManager.logEvent("categories_list_item_clicked", params)
+                                    onEvent(CategoryEvent.LogItemClickedEvent(category.name, currentCategories.indexOf(category)))
                                 },
                                 onDelete = {
                                     if (!category.isDefault) {
@@ -494,12 +487,7 @@ internal fun CategoriesContent(
                             CategoryItem(
                                 category = category,
                                 onClick = {
-                                    val params =
-                                        android.os.Bundle().apply {
-                                            putString("category_name", category.name)
-                                            putInt("index", currentCategories.indexOf(category))
-                                        }
-                                    analyticsManager.logEvent("categories_list_item_clicked", params)
+                                    onEvent(CategoryEvent.LogItemClickedEvent(category.name, currentCategories.indexOf(category)))
                                 },
                                 onDelete = {
                                     if (!category.isDefault) {

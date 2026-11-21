@@ -97,4 +97,23 @@ sealed class SettingsDataEvent : UIEvent() {
     data object SignOutFromGoogleEvent : SettingsDataEvent()
 
     data object DismissGoogleSignInDialogEvent : SettingsDataEvent()
+
+    // ── Analytics-only events (UI-layer interactions reported to ViewModel) ──
+    data object LogRestoreOpenRequestedEvent : SettingsDataEvent()
+
+    data object LogRestoreFileSelectedEvent : SettingsDataEvent()
+
+    data object LogBackupFileReadCharsetErrorEvent : SettingsDataEvent()
+
+    data object LogNotificationPermissionGrantedEvent : SettingsDataEvent()
+
+    data object LogAutoBackupFolderSelectedEvent : SettingsDataEvent()
+
+    data object LogBackupCreateRequestedEvent : SettingsDataEvent()
+
+    data object LogDeleteAllDataConfirmedEvent : SettingsDataEvent()
+
+    data object LogResetPreferencesConfirmedEvent : SettingsDataEvent()
+
+    data object LogDeleteSuggestionsConfirmedEvent : SettingsDataEvent()
 }

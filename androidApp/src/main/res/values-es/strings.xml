@@ -657,4 +657,14 @@
     <string name="month_short_10">Oct</string>
     <string name="month_short_11">Nov</string>
     <string name="month_short_12">Dic</string>
+    <string name="error_generic_subtitle">Inténtalo de nuevo</string>
+    <string name="meal_voucher_error_invalid">Valor no válido</string>
+    <string name="meal_voucher_error_positive">El valor debe ser mayor que 0</string>
+    <string name="chart_days_tracked_cd">Días registrados: %d</string>
+    <string name="chart_max_daily_cd">Máximo diario: %s</string>
+    <string name="chart_avg_daily_cd">Promedio diario: %s</string>
+    <string name="chart_weekday_bar_cd">%1$s: %2$s</string>
+    <string name="app_icon_description">Icono de la app</string>
+    <string name="transaction_add_tag_description">Añadir etiqueta</string>
+    <string name="transaction_remove_tag_description">Eliminar</string>
 </resources>

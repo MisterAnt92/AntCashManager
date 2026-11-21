@@ -102,7 +102,6 @@ fun SettingsScreen(
         onImportDebugData = { viewModel.emitEvent(SettingEvent.ImportDebugDataEvent) },
         onSendFeedbackEmail = { emailBody ->
             viewModel.emitEvent(SettingEvent.SendFeedbackEmailEvent(emailBody))
-            // TODO: handle success/failure via errorState in state (FASE 5)
         },
         onEvent = viewModel::emitEvent,
         navController = navController,

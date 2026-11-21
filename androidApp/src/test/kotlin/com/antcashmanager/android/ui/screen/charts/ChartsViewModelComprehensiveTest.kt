@@ -66,6 +66,7 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
                 dispatcher = testDispatcher,
                 performanceTracker = performanceTracker,
                 segmentationTracker = segmentationTracker,
+                analyticsManager = mockk(relaxed = true),
             )
     }
 

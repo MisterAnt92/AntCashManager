@@ -69,7 +69,7 @@ class SettingsDataViewModelGoogleDriveTest : BaseUnitTest() {
             coEvery { googleSignInManager.isSignedIn() } returns false
 
             // Act: change destination to Google Drive
-            viewModel.setAutoBackupDestination(BackupDestination.GOOGLE_DRIVE)
+            viewModel.emitEvent(SettingsDataEvent.SetAutoBackupDestinationEvent(BackupDestination.GOOGLE_DRIVE))
 
             // Assert: dialog should be shown
             assert(viewModel.state.value.showGoogleSignInDialog) {
@@ -84,7 +84,7 @@ class SettingsDataViewModelGoogleDriveTest : BaseUnitTest() {
             coEvery { googleSignInManager.isSignedIn() } returns true
 
             // Act: change destination to Google Drive
-            viewModel.setAutoBackupDestination(BackupDestination.GOOGLE_DRIVE)
+            viewModel.emitEvent(SettingsDataEvent.SetAutoBackupDestinationEvent(BackupDestination.GOOGLE_DRIVE))
 
             // Assert: dialog should NOT be shown, destination should be set directly
             assert(!viewModel.state.value.showGoogleSignInDialog) {
@@ -97,10 +97,10 @@ class SettingsDataViewModelGoogleDriveTest : BaseUnitTest() {
     fun `setAutoBackupDestination_toLocal_closesDialog`() =
         runUnitTest {
             // Setup: dialog is open
-            viewModel.dismissGoogleSignInDialog() // Ensure state is clean
+            viewModel.emitEvent(SettingsDataEvent.DismissGoogleSignInDialogEvent) // Ensure state is clean
 
             // Act: change destination to LOCAL
-            viewModel.setAutoBackupDestination(BackupDestination.LOCAL)
+            viewModel.emitEvent(SettingsDataEvent.SetAutoBackupDestinationEvent(BackupDestination.LOCAL))
 
             // Assert: dialog should be closed
             assert(!viewModel.state.value.showGoogleSignInDialog) {
@@ -126,7 +126,7 @@ class SettingsDataViewModelGoogleDriveTest : BaseUnitTest() {
             coEvery { googleSignInManager.signIn() } returns Result.success(signInResult)
 
             // Act: initiate sign-in
-            viewModel.initiateGoogleSignIn()
+            viewModel.emitEvent(SettingsDataEvent.InitiateGoogleSignInEvent)
 
             // Assert: state should reflect successful login
             assert(viewModel.state.value.isGoogleDriveSignedIn) {
@@ -148,7 +148,7 @@ class SettingsDataViewModelGoogleDriveTest : BaseUnitTest() {
             coEvery { googleSignInManager.signIn() } returns Result.failure(error)
 
             // Act: initiate sign-in
-            viewModel.initiateGoogleSignIn()
+            viewModel.emitEvent(SettingsDataEvent.InitiateGoogleSignInEvent)
 
             // Assert: state should roll back to LOCAL
             assert(!viewModel.state.value.isGoogleDriveSignedIn) {
@@ -171,7 +171,7 @@ class SettingsDataViewModelGoogleDriveTest : BaseUnitTest() {
             coEvery { googleSignInManager.signOut() } returns Result.success(Unit)
 
             // Act: sign out
-            viewModel.signOutFromGoogle()
+            viewModel.emitEvent(SettingsDataEvent.SignOutFromGoogleEvent)
 
             // Assert: state should be cleared
             assert(!viewModel.state.value.isGoogleDriveSignedIn) {
@@ -194,7 +194,7 @@ class SettingsDataViewModelGoogleDriveTest : BaseUnitTest() {
             coEvery { googleSignInManager.signOut() } returns Result.failure(error)
 
             // Act: sign out
-            viewModel.signOutFromGoogle()
+            viewModel.emitEvent(SettingsDataEvent.SignOutFromGoogleEvent)
 
             // Assert: state should still be cleared even if sign-out failed
             // (in practice, token is already cleared, only Google account needs revocation)
@@ -220,13 +220,13 @@ class SettingsDataViewModelGoogleDriveTest : BaseUnitTest() {
             coEvery { googleSignInManager.signIn() } returns Result.success(signInResult)
 
             // Step 1: User selects Google Drive (not signed in yet)
-            viewModel.setAutoBackupDestination(BackupDestination.GOOGLE_DRIVE)
+            viewModel.emitEvent(SettingsDataEvent.SetAutoBackupDestinationEvent(BackupDestination.GOOGLE_DRIVE))
             assert(viewModel.state.value.showGoogleSignInDialog) {
                 "Step 1: Dialog should be shown"
             }
 
             // Step 2: User initiates sign-in
-            viewModel.initiateGoogleSignIn()
+            viewModel.emitEvent(SettingsDataEvent.InitiateGoogleSignInEvent)
             assert(viewModel.state.value.isGoogleDriveSignedIn) {
                 "Step 2: Should be signed in after successful sign-in"
             }
@@ -246,7 +246,7 @@ class SettingsDataViewModelGoogleDriveTest : BaseUnitTest() {
             coEvery { settingsRepository.getGoogleDriveUserEmail() } returns flowOf("user@example.com")
 
             // Step 1: User signs out
-            viewModel.signOutFromGoogle()
+            viewModel.emitEvent(SettingsDataEvent.SignOutFromGoogleEvent)
 
             // Step 2: Verify state is cleaned
             assert(!viewModel.state.value.isGoogleDriveSignedIn) {

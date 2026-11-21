@@ -397,6 +397,7 @@ val presentationModule =
                 performanceTracker = get<PerformanceTracker>(),
                 segmentationTracker = get<SegmentationTracker>(),
                 settingsRepository = get(),
+                analyticsManager = get(),
             )
         }
         viewModel {

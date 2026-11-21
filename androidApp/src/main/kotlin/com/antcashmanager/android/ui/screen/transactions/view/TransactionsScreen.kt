@@ -1,6 +1,5 @@
 package com.antcashmanager.android.ui.screen.transactions.view
 
-import android.os.Bundle
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -78,11 +77,6 @@ import com.antcashmanager.domain.model.Transaction
 import com.antcashmanager.domain.model.TransactionDisplayType
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
-import org.koin.compose.koinInject
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.screen.transactions.TransactionsState
 import com.antcashmanager.android.ui.screen.transactions.TransactionsViewModel
 import com.antcashmanager.android.ui.screen.transactions.event.TransactionsEvent
@@ -97,8 +91,6 @@ fun TransactionsScreen(
     modifier: Modifier = Modifier,
 ) {
     Logger.d(tag = "TransactionsScreen") { "Displaying TransactionsScreen" }
-    val analyticsManager: AnalyticsManager = koinInject()
-
     val viewModel: TransactionsViewModel =
         koinViewModel()
 
@@ -109,53 +101,7 @@ fun TransactionsScreen(
         params =
             TransactionsContentParams(
                 state = state,
-                onEvent = { event ->
-                    when (event) {
-                        is TransactionsEvent.ApplyFiltersEvent -> {
-                            val params =
-                                Bundle().apply {
-                                    putString(
-                                        "has_search_query",
-                                        if (state.pendingSearchQuery.isNotBlank()) "yes" else "no",
-                                    )
-                                    putString(
-                                        "has_category_filter",
-                                        if (state.pendingCategory != null) "yes" else "no",
-                                    )
-                                    putString(
-                                        "transaction_type",
-                                        state.pendingTransactionType?.name ?: "all",
-                                    )
-                                    putString("payment_type", state.pendingPaymentType?.name ?: "all")
-                                }
-                            analyticsManager.logEvent("transactions_filter_applied", params)
-
-                            // Track filter combination
-                            val filterTypes = mutableListOf<String>()
-                            if (state.pendingSearchQuery.isNotBlank()) filterTypes.add("search")
-                            if (state.pendingCategory != null) filterTypes.add("category")
-                            if (state.pendingTransactionType != null) filterTypes.add("type")
-                            if (state.pendingPaymentType != null) filterTypes.add("payment_type")
-
-                            if (filterTypes.isNotEmpty()) {
-                                analyticsManager.logEvent(
-                                    "filter_combination_applied",
-                                    Bundle().apply {
-                                        putInt("filter_count", filterTypes.size)
-                                        putString("types", filterTypes.joinToString("|"))
-                                    },
-                                )
-                            }
-                        }
-
-                        is TransactionsEvent.ClearAllFiltersEvent -> {
-                            analyticsManager.logEvent("transactions_filter_cleared")
-                        }
-
-                        else -> Unit
-                    }
-                    viewModel.emitEvent(event)
-                },
+                onEvent = viewModel::emitEvent,
                 navController = navController,
                 transactionDisplayType = transactionDisplayType,
                 modifier = modifier,
@@ -170,7 +116,6 @@ fun TransactionsScreen(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 internal fun TransactionsContent(params: TransactionsContentParams) {
-    val analyticsManager: AnalyticsManager = koinInject()
     val state = params.state
     val onEvent = params.onEvent
     val navController = params.navController
@@ -274,12 +219,7 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
                 title = transactionsTitle,
                 filterCount = if (state.hasActiveFilters) 1 else 0,
                 onFilterClick = {
-                    if (!state.isFiltersExpanded) {
-                        analyticsManager.logEvent("transactions_filter_opened")
-                    }
-                    onEvent(
-                        TransactionsEvent.ToggleFiltersExpandedEvent,
-                    )
+                    onEvent(TransactionsEvent.ToggleFiltersExpandedEvent)
                 },
                 actions = {
                     Row(
@@ -594,19 +534,7 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
                                 TransactionItem(
                                     transaction = transaction,
                                     onClick = {
-                                        val params =
-                                            Bundle().apply {
-                                                putInt("index", state.filteredTransactions.indexOf(transaction))
-                                                putString("type", transaction.type.name)
-                                                putString(
-                                                    "date",
-                                                    SimpleDateFormat(
-                                                        "yyyy-MM-dd",
-                                                        Locale.getDefault(),
-                                                    ).format(Date(transaction.timestamp)),
-                                                )
-                                            }
-                                        analyticsManager.logEvent("transactions_list_item_clicked", params)
+                                        onEvent(TransactionsEvent.LogItemClickedEvent(transaction, state.filteredTransactions.indexOf(transaction)))
                                         // Notify multi-pane coordinator for foldable split-view sync
                                         multiPaneCoordinator?.selectTransaction(
                                             transaction = transaction,
@@ -662,7 +590,7 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
                     // FloatingActionButton scan receipt (sempre visibile)
                     FloatingActionButton(
                         onClick = {
-                            analyticsManager.logEvent("receipt_scan_opened")
+                            onEvent(TransactionsEvent.ReceiptScanOpenedEvent)
                             navController?.navigate(AppRoute.TransactionRoute.ReceiptScan.route)
                         },
                         containerColor = MaterialTheme.colorScheme.tertiaryContainer,
@@ -677,7 +605,7 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
                     // FloatingActionButton add transaction (sempre visibile)
                     FloatingActionButton(
                         onClick = {
-                            analyticsManager.logEvent("transaction_add_opened")
+                            onEvent(TransactionsEvent.AddTransactionOpenedEvent)
                             navController?.navigate(AppRoute.TransactionRoute.Add.route)
                         },
                         containerColor = MaterialTheme.colorScheme.primary,
@@ -750,8 +678,8 @@ internal fun TransactionsContent(params: TransactionsContentParams) {
     if (state.errorState.isError) {
         AntErrorState(
             mascotRes = R.drawable.ic_piggy_bank,
-            title = state.errorState.message ?: "An error occurred",
-            subtitle = "Please try again",
+            title = state.errorState.message ?: stringResource(R.string.error_generic),
+            subtitle = stringResource(R.string.error_generic_subtitle),
             modifier = modifier.fillMaxSize(),
             retryLabel = null, // TODO: add RetryLastOperation event to TransactionsEvent
             onRetry = null,

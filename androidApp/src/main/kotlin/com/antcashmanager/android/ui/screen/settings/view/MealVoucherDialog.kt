@@ -38,6 +38,8 @@ fun MealVoucherDialog(
 ) {
     var inputText by remember { mutableStateOf(currentValue.toString()) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    val errorInvalid = stringResource(R.string.meal_voucher_error_invalid)
+    val errorPositive = stringResource(R.string.meal_voucher_error_positive)
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -71,11 +73,11 @@ fun MealVoucherDialog(
                     val parsed = normalized.toDoubleOrNull()
                     when {
                         parsed == null -> {
-                            errorMessage = "Valore non valido"
+                            errorMessage = errorInvalid
                         }
 
                         parsed <= 0.0 -> {
-                            errorMessage = "Il valore deve essere maggiore di 0"
+                            errorMessage = errorPositive
                         }
 
                         else -> {

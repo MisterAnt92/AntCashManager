@@ -221,6 +221,8 @@
     <string name="dialog_meal_voucher_title">Set Meal Voucher Value</string>
     <string name="dialog_meal_voucher_message">Enter the fixed value for your meal voucher.</string>
     <string name="dialog_meal_voucher_label">Voucher Value</string>
+    <string name="meal_voucher_error_invalid">Invalid value</string>
+    <string name="meal_voucher_error_positive">Value must be greater than 0</string>
     <string name="settings_format_preview">Preview:</string>
     <string name="settings_separator_comma">Comma (,)</string>
     <string name="settings_separator_period">Period (.)</string>
@@ -685,10 +687,18 @@
     <string name="chart_trend_increasing">Spending trend: Increasing</string>
     <string name="chart_trend_decreasing">Spending trend: Decreasing</string>
     <string name="chart_trend_stable">Spending trend: Stable</string>
+    <string name="chart_days_tracked_cd">Days tracked: %d</string>
+    <string name="chart_max_daily_cd">Max daily: %s</string>
+    <string name="chart_avg_daily_cd">Average daily: %s</string>
+    <string name="chart_weekday_bar_cd">%1$s: %2$s</string>
     <string name="error_generic">An error occurred</string>
+    <string name="error_generic_subtitle">Please try again</string>
 
     <!-- App Description -->
     <string name="app_description">This app was born from the need to track family expenses for free and compare price increases.</string>
+    <string name="app_icon_description">App Icon</string>
+    <string name="transaction_add_tag_description">Add Tag</string>
+    <string name="transaction_remove_tag_description">Remove</string>
 
     <!-- Analytics Consent Dialog (GDPR) -->
     <string name="consent_title">Help us improve</string>

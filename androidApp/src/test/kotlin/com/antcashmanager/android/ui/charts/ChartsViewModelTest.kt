@@ -41,6 +41,7 @@ class ChartsViewModelTest : BaseUnitTest() {
                 dispatcher = testDispatcher,
                 performanceTracker = performanceTracker,
                 segmentationTracker = segmentationTracker,
+                analyticsManager = mockk(relaxed = true),
             )
     }
 
@@ -110,6 +111,7 @@ class ChartsViewModelTest : BaseUnitTest() {
                         dispatcher = testDispatcher,
                         performanceTracker = mockk(relaxed = true),
                         segmentationTracker = mockk(relaxed = true),
+                        analyticsManager = mockk(relaxed = true),
                     )
                 //presetViewModel.onEvent(ChartEvent.SetPresetRangeEvent(preset))
                 advanceUntilIdle()

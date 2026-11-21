@@ -79,6 +79,9 @@ internal fun QuickStatsCard(
         }
 
     val format = LocalCurrencyFormat.current
+    val daysTrackedCd = stringResource(R.string.chart_days_tracked_cd, totalDays)
+    val maxDailyCd = stringResource(R.string.chart_max_daily_cd, formatAmount(maxDailyExpense, format))
+    val avgDailyCd = stringResource(R.string.chart_avg_daily_cd, formatAmount(avgDailyExpense, format))
 
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -102,7 +105,7 @@ internal fun QuickStatsCard(
                         Modifier
                             .weight(1f)
                             .semantics(mergeDescendants = true) {
-                                this.contentDescription = "Days tracked: $totalDays"
+                                this.contentDescription = daysTrackedCd
                             },
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
@@ -126,7 +129,7 @@ internal fun QuickStatsCard(
                         Modifier
                             .weight(1f)
                             .semantics(mergeDescendants = true) {
-                                this.contentDescription = "Max daily: ${formatAmount(maxDailyExpense, format)}"
+                                this.contentDescription = maxDailyCd
                             },
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
@@ -152,7 +155,7 @@ internal fun QuickStatsCard(
                         Modifier
                             .weight(1f)
                             .semantics(mergeDescendants = true) {
-                                this.contentDescription = "Average daily: ${formatAmount(avgDailyExpense, format)}"
+                                this.contentDescription = avgDailyCd
                             },
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
@@ -250,13 +253,14 @@ internal fun WeekdayExpenseCard(
                     val expense = chartData.expenseByWeekday[day] ?: 0.0
                     val dayLabel = translateWeekday(day)
                     val amountFormatted = if (expense > 0.0) formatAmount(expense, format) else "—"
+                    val weekdayBarCd = stringResource(R.string.chart_weekday_bar_cd, dayLabel, amountFormatted)
 
                     Column(
                         modifier =
                             Modifier
                                 .weight(1f)
                                 .semantics(mergeDescendants = true) {
-                                    this.contentDescription = "$dayLabel: $amountFormatted"
+                                    this.contentDescription = weekdayBarCd
                                 },
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {

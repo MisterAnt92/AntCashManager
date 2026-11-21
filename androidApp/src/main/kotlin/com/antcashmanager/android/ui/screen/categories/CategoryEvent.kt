@@ -37,4 +37,13 @@ sealed class CategoryEvent : UIEvent() {
     ) : CategoryEvent()
 
     data object RetryLastOperationEvent : CategoryEvent()
+
+    data class LogItemClickedEvent(
+        val categoryName: String,
+        val index: Int,
+    ) : CategoryEvent()
+
+    data object LogReorderOpenedEvent : CategoryEvent()
+
+    data class SelectTabEvent(val index: Int) : CategoryEvent()
 }

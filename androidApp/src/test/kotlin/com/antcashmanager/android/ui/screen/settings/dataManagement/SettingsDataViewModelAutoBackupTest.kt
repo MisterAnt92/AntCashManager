@@ -56,7 +56,7 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
         runUnitTest {
             val viewModel = createViewModel()
 
-            viewModel.setAutoBackupEnabled(true)
+            viewModel.emitEvent(SettingsDataEvent.SetAutoBackupEnabledEvent(true))
 
             coVerify { autoBackupScheduler.schedule() }
             coVerify { settingsRepository.setAutoBackupEnabled(true) }
@@ -67,7 +67,7 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
         runUnitTest {
             val viewModel = createViewModel()
 
-            viewModel.setAutoBackupEnabled(false)
+            viewModel.emitEvent(SettingsDataEvent.SetAutoBackupEnabledEvent(false))
 
             coVerify { autoBackupScheduler.cancel() }
             coVerify { settingsRepository.setAutoBackupEnabled(false) }
@@ -79,7 +79,7 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
             val viewModel = createViewModel()
             val testUri = "content://com.android.externalstorage.documents/tree/primary%3ADocuments"
 
-            viewModel.onAutoBackupFolderSelected(testUri)
+            viewModel.emitEvent(SettingsDataEvent.OnAutoBackupFolderSelectedEvent(testUri))
 
             coVerify { settingsRepository.setAutoBackupFolderUri(testUri) }
             coVerify { settingsRepository.setAutoBackupEnabled(true) }
@@ -91,7 +91,7 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
         runUnitTest {
             val viewModel = createViewModel()
 
-            viewModel.onAutoBackupFolderSelectionCancelled()
+            viewModel.emitEvent(SettingsDataEvent.OnAutoBackupFolderSelectionCancelledEvent)
 
             // Nessuna chiamata al repository o scheduler
             coVerify(exactly = 0) { settingsRepository.setAutoBackupEnabled(any()) }
@@ -104,7 +104,7 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
             val viewModel = createViewModel()
             val invalidUri = "invalid://uri/path"
 
-            viewModel.onAutoBackupFolderSelected(invalidUri)
+            viewModel.emitEvent(SettingsDataEvent.OnAutoBackupFolderSelectedEvent(invalidUri))
 
             // Should still persist the URI (validation happens later)
             coVerify { settingsRepository.setAutoBackupFolderUri(invalidUri) }
@@ -115,7 +115,7 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
         runUnitTest {
             val viewModel = createViewModel()
 
-            viewModel.setAutoBackupEnabled(false)
+            viewModel.emitEvent(SettingsDataEvent.SetAutoBackupEnabledEvent(false))
 
             coVerify { autoBackupScheduler.cancel() }
             coVerify { settingsRepository.setAutoBackupEnabled(false) }
@@ -126,11 +126,11 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
         runUnitTest {
             val viewModel = createViewModel()
 
-            viewModel.setAutoBackupEnabled(true)
+            viewModel.emitEvent(SettingsDataEvent.SetAutoBackupEnabledEvent(true))
 
-            viewModel.setAutoBackupEnabled(false)
+            viewModel.emitEvent(SettingsDataEvent.SetAutoBackupEnabledEvent(false))
 
-            viewModel.setAutoBackupEnabled(true)
+            viewModel.emitEvent(SettingsDataEvent.SetAutoBackupEnabledEvent(true))
 
             // Final state should be enabled
             coVerify { settingsRepository.setAutoBackupEnabled(true) }
@@ -144,9 +144,9 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
             val uri1 = "content://first/path"
             val uri2 = "content://second/path"
 
-            viewModel.onAutoBackupFolderSelected(uri1)
+            viewModel.emitEvent(SettingsDataEvent.OnAutoBackupFolderSelectedEvent(uri1))
 
-            viewModel.onAutoBackupFolderSelected(uri2)
+            viewModel.emitEvent(SettingsDataEvent.OnAutoBackupFolderSelectedEvent(uri2))
 
             coVerify { settingsRepository.setAutoBackupFolderUri(uri2) }
         }

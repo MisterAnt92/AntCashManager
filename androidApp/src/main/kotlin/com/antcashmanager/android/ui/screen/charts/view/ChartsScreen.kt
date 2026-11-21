@@ -64,7 +64,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.R
-import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.data.formatter.ShareTextFormatter
 import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
 import com.antcashmanager.android.navigation.ScreenHeaderConfig
@@ -96,7 +95,6 @@ import com.antcashmanager.domain.model.PaymentType
 import com.antcashmanager.domain.usecase.transaction.DateRange
 import kotlinx.coroutines.flow.map
 import org.koin.androidx.compose.koinViewModel
-import org.koin.compose.koinInject
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -150,8 +148,8 @@ internal fun ChartsContent(
     if (errorState.isError) {
         AntErrorState(
             mascotRes = R.drawable.ic_piggy_bank,
-            title = errorState.message ?: "An error occurred",
-            subtitle = "Please try again",
+            title = errorState.message ?: stringResource(R.string.error_generic),
+            subtitle = stringResource(R.string.error_generic_subtitle),
             modifier = Modifier.fillMaxSize(),
             retryLabel = null,
             onRetry = null,
@@ -159,7 +157,6 @@ internal fun ChartsContent(
         return
     }
     val context = LocalContext.current
-    val analyticsManager: AnalyticsManager = koinInject()
     val scope = rememberCoroutineScope()
     // Foldable device support
     val displayFeatures = LocalDisplayFeatures.current
@@ -209,11 +206,7 @@ internal fun ChartsContent(
                     chartData.incomeByCategory.size + chartData.expenseByCategory.size +
                         chartData.monthlyData.size + chartData.yearlyData.size
                     )
-            val params =
-                android.os.Bundle().apply {
-                    putInt("data_points", totalDataPoints)
-                }
-            analyticsManager.logEvent("chart_loading_completed", params)
+            onEvent(ChartEvent.LogChartLoadingCompletedEvent(totalDataPoints))
         }
     }
 
@@ -357,14 +350,9 @@ internal fun ChartsContent(
                         fmt = fmt,
                         shareLabel = shareLabel,
                         context = context,
-                        onShared = { analyticsManager.logEvent("chart_shared") },
+                        onShared = { onEvent(ChartEvent.LogChartSharedEvent) },
                         onCategorySelected = { category, amount, color ->
-                            val params =
-                                android.os.Bundle().apply {
-                                    putString("chart_type", "pie_income")
-                                    putString("category", category)
-                                }
-                            analyticsManager.logEvent("chart_item_clicked", params)
+                            onEvent(ChartEvent.LogChartItemClickedEvent("pie_income", category))
                             selectedChartDetails =
                                 ChartDetailsData(
                                     categoryName = category,
@@ -399,14 +387,9 @@ internal fun ChartsContent(
                         fmt = fmt,
                         shareLabel = shareLabel,
                         context = context,
-                        onShared = { analyticsManager.logEvent("chart_shared") },
+                        onShared = { onEvent(ChartEvent.LogChartSharedEvent) },
                         onCategorySelected = { category, amount, color ->
-                            val params =
-                                android.os.Bundle().apply {
-                                    putString("chart_type", "pie_expense")
-                                    putString("category", category)
-                                }
-                            analyticsManager.logEvent("chart_item_clicked", params)
+                            onEvent(ChartEvent.LogChartItemClickedEvent("pie_expense", category))
                             selectedChartDetails =
                                 ChartDetailsData(
                                     categoryName = category,
@@ -467,14 +450,9 @@ internal fun ChartsContent(
                         fmt = fmt,
                         shareLabel = shareLabel,
                         context = context,
-                        onShared = { analyticsManager.logEvent("chart_shared") },
+                        onShared = { onEvent(ChartEvent.LogChartSharedEvent) },
                         onCategorySelected = { paymentLabel, amount, color ->
-                            val params =
-                                android.os.Bundle().apply {
-                                    putString("chart_type", "payment_breakdown")
-                                    putString("payment_type", paymentLabel)
-                                }
-                            analyticsManager.logEvent("chart_item_clicked", params)
+                            onEvent(ChartEvent.LogChartItemClickedEvent("payment_breakdown", paymentLabel))
                             selectedChartDetails =
                                 ChartDetailsData(
                                     categoryName = paymentLabel,
@@ -500,7 +478,7 @@ internal fun ChartsContent(
                         fmt = fmt,
                         shareLabel = shareLabel,
                         context = context,
-                        onShared = { analyticsManager.logEvent("chart_shared") },
+                        onShared = { onEvent(ChartEvent.LogChartSharedEvent) },
                     )
                     if (showSpacer) VerticalSpacer(SpacingSize.MD)
                 }
@@ -516,7 +494,7 @@ internal fun ChartsContent(
                         fmt = fmt,
                         shareLabel = shareLabel,
                         context = context,
-                        onShared = { analyticsManager.logEvent("chart_shared") },
+                        onShared = { onEvent(ChartEvent.LogChartSharedEvent) },
                     )
                     if (showSpacer) VerticalSpacer(SpacingSize.MD)
                 }
@@ -549,15 +527,7 @@ internal fun ChartsContent(
                 dateFormat = dateFormat,
                 onPresetSelected = { index, preset ->
                     selectedPreset = index
-                    analyticsManager.logEvent("chart_date_filter_changed")
-                    // Track filter combination
-                    analyticsManager.logEvent(
-                        "filter_combination_applied",
-                        android.os.Bundle().apply {
-                            putInt("filter_count", 1)
-                            putString("types", "date")
-                        },
-                    )
+                    onEvent(ChartEvent.LogPresetFilterAppliedEvent)
                     onPresetSelected(preset)
                 },
                 onShowFromPicker = { showFromPicker = true },
@@ -621,15 +591,7 @@ internal fun ChartsContent(
                 TextButton(
                     onClick = {
                         state.selectedDateMillis?.let {
-                            analyticsManager.logEvent("chart_custom_date_range_set")
-                            // Track filter combination
-                            analyticsManager.logEvent(
-                                "filter_combination_applied",
-                                android.os.Bundle().apply {
-                                    putInt("filter_count", 1)
-                                    putString("types", "date")
-                                },
-                            )
+                            onEvent(ChartEvent.LogCustomDateFilterAppliedEvent)
                             onDateRangeChanged(it, dateRange.to)
                         }
                         selectedPreset = -1
@@ -654,15 +616,7 @@ internal fun ChartsContent(
                 TextButton(
                     onClick = {
                         state.selectedDateMillis?.let {
-                            analyticsManager.logEvent("chart_custom_date_range_set")
-                            // Track filter combination
-                            analyticsManager.logEvent(
-                                "filter_combination_applied",
-                                android.os.Bundle().apply {
-                                    putInt("filter_count", 1)
-                                    putString("types", "date")
-                                },
-                            )
+                            onEvent(ChartEvent.LogCustomDateFilterAppliedEvent)
                             onDateRangeChanged(dateRange.from, it)
                         }
                         selectedPreset = -1
@@ -779,81 +733,6 @@ private fun PeriodFilterCard(
                     )
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun NewVisualizationsSection(
-    chartData: ChartData,
-    adaptiveLayoutInfo: AdaptiveLayoutInfo,
-) {
-    if (adaptiveLayoutInfo.isCompact) {
-        // Phone: single column
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            SpendingForecastCard(chartData = chartData)
-            QuickStatsCard(chartData = chartData)
-            DailyExpenseLineChartCard(chartData = chartData)
-            WeekdayExpenseCard(chartData = chartData)
-        }
-    } else if (adaptiveLayoutInfo.isExpanded) {
-        // Tablet 10"+: 3-column layout for maximum screen utilization
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    SpendingForecastCard(chartData = chartData)
-                }
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    QuickStatsCard(chartData = chartData)
-                }
-            }
-            // Full width charts
-            DailyExpenseLineChartCard(chartData = chartData)
-            WeekdayExpenseCard(chartData = chartData)
-        }
-    } else {
-        // Tablet 7" (medium): 2-column layout
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    QuickStatsCard(chartData = chartData)
-                }
-                Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    SpendingForecastCard(chartData = chartData)
-                    DailyExpenseLineChartCard(chartData = chartData)
-                }
-            }
-            WeekdayExpenseCard(chartData = chartData)
         }
     }
 }

@@ -23,6 +23,7 @@ data class CategoriesState(
     val incomeCategories: List<Category> = emptyList(),
     val hiddenExpenseCategories: List<Category> = emptyList(),
     val hiddenIncomeCategories: List<Category> = emptyList(),
+    val selectedTabIndex: Int = 0,
     val isLoading: Boolean = false,
     val error: String? = null,
     val errorState: ErrorState = ErrorState(),

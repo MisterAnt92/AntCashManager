@@ -66,7 +66,20 @@ class CategoriesViewModel(
             is CategoryEvent.SetCategoryHiddenEvent -> setCategoryHidden(event.category, event.hidden)
             is CategoryEvent.ReorderCategoriesEvent -> reorderCategories(event.reordered)
             is CategoryEvent.RetryLastOperationEvent -> logInfo("Retry requested")
+            is CategoryEvent.LogItemClickedEvent -> logCategoryItemClicked(event.categoryName, event.index)
+            is CategoryEvent.LogReorderOpenedEvent -> analyticsManager.logEvent(Events.CATEGORIES_REORDER_OPENED)
+            is CategoryEvent.SelectTabEvent -> _state.update { it.copy(selectedTabIndex = event.index) }
         }
+    }
+
+    private fun logCategoryItemClicked(categoryName: String, index: Int) {
+        analyticsManager.logEvent(
+            Events.CATEGORIES_LIST_ITEM_CLICKED,
+            Bundle().apply {
+                putString(Params.CATEGORY_NAME, categoryName)
+                putInt(Params.INDEX, index)
+            },
+        )
     }
 
     private fun addCategory(

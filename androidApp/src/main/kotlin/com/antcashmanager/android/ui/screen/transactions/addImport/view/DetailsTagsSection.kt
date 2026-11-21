@@ -89,7 +89,7 @@ internal fun DetailsTagsSection(
                     ) {
                         androidx.compose.material3.Icon(
                             Icons.Default.Add,
-                            contentDescription = "Add Tag",
+                            contentDescription = stringResource(R.string.transaction_add_tag_description),
                         )
                     }
                 }
@@ -113,7 +113,7 @@ internal fun DetailsTagsSection(
                         trailingIcon = {
                             androidx.compose.material3.Icon(
                                 Icons.Default.Close,
-                                contentDescription = "Remove",
+                                contentDescription = stringResource(R.string.transaction_remove_tag_description),
                                 modifier =
                                     Modifier
                                         .size(16.dp)

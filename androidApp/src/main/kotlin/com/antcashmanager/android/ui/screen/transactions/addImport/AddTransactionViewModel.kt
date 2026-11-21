@@ -86,9 +86,7 @@ class AddTransactionViewModel(
     private fun loadAvailableMealVouchers() {
         viewModelScope.launch {
             try {
-                // TODO: Calcolare realmente i buoni disponibili da tutte le transazioni:
-                // available = sum(INCOME con MEAL_VOUCHERS) - sum(EXPENSE con MEAL_VOUCHERS)
-                // Per ora: impostare a 999 (unlimited per test; sarà la validazione client-side a prevenire negativi)
+                // TODO: compute from sum(INCOME MEAL_VOUCHERS) - sum(EXPENSE MEAL_VOUCHERS)
                 _state.update { it.copy(availableMealVouchers = 999) }
             } catch (e: Exception) {
                 if (e is CancellationException) throw e
