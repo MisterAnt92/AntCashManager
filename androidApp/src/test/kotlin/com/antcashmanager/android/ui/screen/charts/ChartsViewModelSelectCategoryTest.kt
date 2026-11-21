@@ -76,7 +76,7 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
                     viewModel.selectedChartDetails.collect { }
                 }
 
-            viewModel.onEvent(
+            viewModel.emitEvent(
                 ChartEvent.SelectChartCategoryEvent(
                     categoryName = "Food",
                     amount = 250.0,
@@ -128,11 +128,11 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
                 }
             advanceUntilIdle()
 
-            viewModel.onEvent(ChartEvent.SetDateRangeEvent(timestamp - 86_400_000L, timestamp + 86_400_000L))
+            viewModel.emitEvent(ChartEvent.SetDateRangeEvent(timestamp - 86_400_000L, timestamp + 86_400_000L))
             advanceUntilIdle()
 
             // Food = 100 out of 250 total = 40%
-            viewModel.onEvent(
+            viewModel.emitEvent(
                 ChartEvent.SelectChartCategoryEvent(
                     categoryName = "Food",
                     amount = 100.0,
@@ -158,7 +158,7 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
                 }
             advanceUntilIdle()
 
-            viewModel.onEvent(
+            viewModel.emitEvent(
                 ChartEvent.SelectChartCategoryEvent(
                     categoryName = "Empty",
                     amount = 100.0,
@@ -183,7 +183,7 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
                 }
 
             val colorHex = 0xFFE57373L
-            viewModel.onEvent(
+            viewModel.emitEvent(
                 ChartEvent.SelectChartCategoryEvent(
                     categoryName = "Food",
                     amount = 250.0,
@@ -207,7 +207,7 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
                     viewModel.selectedChartDetails.collect { }
                 }
 
-            viewModel.onEvent(
+            viewModel.emitEvent(
                 ChartEvent.SelectChartCategoryEvent(
                     categoryName = "Food",
                     amount = 250.0,
@@ -218,7 +218,7 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
             advanceUntilIdle()
             assertNotNull(viewModel.selectedChartDetails.value)
 
-            viewModel.onEvent(ChartEvent.ClearChartSelectionEvent)
+            viewModel.emitEvent(ChartEvent.ClearChartSelectionEvent)
             advanceUntilIdle()
 
             assertNull(viewModel.selectedChartDetails.value)
@@ -234,7 +234,7 @@ class ChartsViewModelSelectCategoryTest : BaseUnitTest() {
                     viewModel.selectedChartDetails.collect { }
                 }
 
-            viewModel.onEvent(
+            viewModel.emitEvent(
                 ChartEvent.SelectChartCategoryEvent(
                     categoryName = "Food",
                     amount = 250.0,

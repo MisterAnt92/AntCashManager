@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
  *
  * Definisce:
  * - [state]: stato UI osservabile, aggiornato via [StateFlow]
- * - [emitEvent]: punto di ingresso unico per gli eventi UI
+ * - [emitEvent]: punto di ingresso unico per gli eventi UI; [handleEvent] è il consumer interno
  * - [tag]: identificatore usato nei log (implementazione default: nome della classe)
  * - logging centralizzato tramite Kermit ([logDebug], [logInfo], [logWarn], [logError])
  *
@@ -24,9 +24,6 @@ public interface BaseViewModel<E : UIEvent, S : UIState> {
     public val state: StateFlow<S>
 
     public fun emitEvent(event: E)
-
-    /** Alias di comodo per [emitEvent]. */
-    public fun onEvent(event: E): Unit = emitEvent(event)
 
     /** Tag usato nei messaggi di log. Default: nome semplice della classe. */
     public val tag: String get() = this::class.simpleName ?: "ViewModel"

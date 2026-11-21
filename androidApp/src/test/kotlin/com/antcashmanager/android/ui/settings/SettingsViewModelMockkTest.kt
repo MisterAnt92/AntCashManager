@@ -142,7 +142,7 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
         runViewModelTest {
             val viewModel = buildViewModel()
 
-            viewModel.onEvent(SettingEvent.SetThemeEvent(AppTheme.LIGHT))
+            viewModel.emitEvent(SettingEvent.SetThemeEvent(AppTheme.LIGHT))
             advanceUntilIdle()
 
             coVerify(exactly = 1) { setThemeUseCase(any()) }
@@ -153,7 +153,7 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
         runViewModelTest {
             val viewModel = buildViewModel()
 
-            viewModel.onEvent(SettingEvent.SetLanguageEvent(AppLanguage.SPANISH))
+            viewModel.emitEvent(SettingEvent.SetLanguageEvent(AppLanguage.SPANISH))
             advanceUntilIdle()
 
             coVerify(exactly = 1) { setLanguageUseCase(any()) }
@@ -164,7 +164,7 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
         runViewModelTest {
             val viewModel = buildViewModel()
 
-            viewModel.onEvent(SettingEvent.SetShowChartsEvent(false))
+            viewModel.emitEvent(SettingEvent.SetShowChartsEvent(false))
             advanceUntilIdle()
 
             coVerify(exactly = 1) { setShowChartsUseCase(any()) }
@@ -175,7 +175,7 @@ class SettingsViewModelMockkTest : BaseUnitTest() {
         runViewModelTest {
             val viewModel = buildViewModel()
 
-            viewModel.onEvent(SettingEvent.ResetAllPreferencesEvent)
+            viewModel.emitEvent(SettingEvent.ResetAllPreferencesEvent)
             advanceUntilIdle()
 
             coVerify(exactly = 1) { resetAllPreferencesUseCase() }
