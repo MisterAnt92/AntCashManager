@@ -21,7 +21,10 @@ public class CategoryRepositoryImpl(
     override fun getAllCategories(): Flow<List<Category>> =
         profileManager.activeProfileId
             .flatMapLatest { profileId -> categoryDao.getAllCategories(profileId) }
-            .map { entities -> entities.map { it.toDomain() } }
+            .map { entities ->
+                val categories = entities.map { it.toDomain() }
+                if (categories.isEmpty()) ALL_DEFAULT_CATEGORIES else categories
+            }
 
     override suspend fun getCategoryById(id: Long): Category? =
         categoryDao.getCategoryById(id)?.toDomain()
@@ -46,7 +49,14 @@ public class CategoryRepositoryImpl(
     override fun getCategoriesByType(type: String): Flow<List<Category>> =
         profileManager.activeProfileId
             .flatMapLatest { profileId -> categoryDao.getCategoriesByType(profileId, type) }
-            .map { entities -> entities.map { it.toDomain() } }
+            .map { entities ->
+                val categories = entities.map { it.toDomain() }
+                if (categories.isEmpty()) {
+                    ALL_DEFAULT_CATEGORIES.filter { it.type == type }
+                } else {
+                    categories
+                }
+            }
 
     override suspend fun getDefaultCategoryCount(): Int =
         categoryDao.getDefaultCategoryCount(pid)

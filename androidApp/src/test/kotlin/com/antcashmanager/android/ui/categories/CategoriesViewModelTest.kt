@@ -362,6 +362,62 @@ class CategoriesViewModelTest : BaseUnitTest() {
         }
 
     @Test
+    fun state_shouldPartitionIncomeAndExpenseHiddenCategories_correctly() =
+        runViewModelTest {
+            val categories =
+                listOf(
+                    Category(
+                        id = 1,
+                        name = "Hidden Expense",
+                        icon = "category",
+                        color = 0xFFE57373,
+                        type = "EXPENSE",
+                        isHidden = true,
+                    ),
+                    Category(
+                        id = 2,
+                        name = "Hidden Income",
+                        icon = "category",
+                        color = 0xFF51CF66,
+                        type = "INCOME",
+                        isHidden = true,
+                    ),
+                )
+            every { getCategoriesUseCase() } returns flowOf(Result.success(categories))
+            val viewModel = buildViewModel()
+
+            advanceUntilIdle()
+
+            assertEquals(
+                listOf("Hidden Expense"),
+                viewModel.state.value.hiddenExpenseCategories.map { it.name },
+            )
+            assertEquals(
+                listOf("Hidden Income"),
+                viewModel.state.value.hiddenIncomeCategories.map { it.name },
+            )
+        }
+
+    @Test
+    fun setCategoryUnhidden_shouldCallUpdateUseCaseWithIsHiddenFalse() =
+        runViewModelTest {
+            val viewModel = buildViewModel()
+            val category =
+                Category(
+                    id = 1,
+                    name = "Food",
+                    icon = "category",
+                    color = 0xFFE57373,
+                    isHidden = true,
+                )
+
+            viewModel.emitEvent(CategoryEvent.SetCategoryHiddenEvent(category, false))
+            advanceUntilIdle()
+
+            coVerify(exactly = 1) { updateCategoryUseCase(category.copy(isHidden = false)) }
+        }
+
+    @Test
     fun addCategory_shouldAppendSortOrder_whenCategoriesOfSameTypeAlreadyExist() =
         runViewModelTest {
             val categories =

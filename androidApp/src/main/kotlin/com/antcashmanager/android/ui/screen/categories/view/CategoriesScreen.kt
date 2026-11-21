@@ -287,6 +287,9 @@ fun CategoriesScreen() {
             onAddCategory = { name, icon, color, type ->
                 viewModel.emitEvent(CategoryEvent.AddCategoryEvent(name, icon, color, type))
             },
+            onUpdateCategory = { category ->
+                viewModel.emitEvent(CategoryEvent.UpdateCategoryEvent(category))
+            },
             onDeleteCategory = { category ->
                 viewModel.emitEvent(CategoryEvent.DeleteCategoryEvent(category))
             },
@@ -313,6 +316,7 @@ fun CategoriesScreen() {
 internal fun CategoriesContent(
     state: CategoriesState,
     onAddCategory: (String, String, Long, String) -> Unit = { _, _, _, _ -> },
+    onUpdateCategory: (Category) -> Unit = {},
     onDeleteCategory: (Category) -> Unit = {},
     onSetCategoryHidden: (Category, Boolean) -> Unit = { _, _ -> },
     onReorderCategories: (List<Category>) -> Unit = {},
@@ -321,9 +325,22 @@ internal fun CategoriesContent(
 ) {
     val selectedTab = state.selectedTabIndex
     var showAddDialog by remember { mutableStateOf(false) }
+    var categoryToEdit by remember { mutableStateOf<Category?>(null) }
     var categoryToDelete by remember { mutableStateOf<Category?>(null) }
     var showReorderDialog by remember { mutableStateOf(false) }
+
+    val currentCategories =
+        if (selectedTab == 0) state.expenseCategories else state.incomeCategories
+    val currentHiddenCategories =
+        if (selectedTab == 0) state.hiddenExpenseCategories else state.hiddenIncomeCategories
+
     var hiddenSectionExpanded by remember { mutableStateOf(false) }
+
+    LaunchedEffect(currentCategories.isEmpty(), currentHiddenCategories.isNotEmpty()) {
+        if (currentCategories.isEmpty() && currentHiddenCategories.isNotEmpty()) {
+            hiddenSectionExpanded = true
+        }
+    }
 
     // Foldable device support
     val displayFeatures = LocalDisplayFeatures.current
@@ -336,10 +353,6 @@ internal fun CategoriesContent(
             stringResource(R.string.categories_tab_expense),
             stringResource(R.string.categories_tab_income),
         )
-    val currentCategories =
-        if (selectedTab == 0) state.expenseCategories else state.incomeCategories
-    val currentHiddenCategories =
-        if (selectedTab == 0) state.hiddenExpenseCategories else state.hiddenIncomeCategories
     val currentType = if (selectedTab == 0) "EXPENSE" else "INCOME"
 
     // Configure screen header with actions
@@ -443,18 +456,19 @@ internal fun CategoriesContent(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         contentPadding = PaddingValues(bottom = 80.dp),
                     ) {
-                        items(currentCategories, key = { it.id }) { category ->
+                        items(currentCategories, key = { if (it.id != 0L) it.id else "${it.type}_${it.name}" }) { category ->
                             CategoryItem(
                                 category = category,
                                 onClick = {
                                     onEvent(CategoryEvent.LogItemClickedEvent(category.name, currentCategories.indexOf(category)))
+                                    categoryToEdit = category
                                 },
                                 onDelete = {
                                     if (!category.isDefault) {
                                         categoryToDelete = category
                                     }
                                 },
-                                onToggleHidden = { onSetCategoryHidden(category, true) },
+                                onToggleHidden = { onSetCategoryHidden(category, !category.isHidden) },
                             )
                         }
                         if (currentHiddenCategories.isNotEmpty()) {
@@ -466,15 +480,18 @@ internal fun CategoriesContent(
                                 )
                             }
                             if (hiddenSectionExpanded) {
-                                items(currentHiddenCategories, key = { "hidden_${it.id}" }) { category ->
+                                items(currentHiddenCategories, key = { if (it.id != 0L) "hidden_${it.id}" else "hidden_${it.type}_${it.name}" }) { category ->
                                     CategoryItem(
                                         category = category,
+                                        onClick = {
+                                            categoryToEdit = category
+                                        },
                                         onDelete = {
                                             if (!category.isDefault) {
                                                 categoryToDelete = category
                                             }
                                         },
-                                        onToggleHidden = { onSetCategoryHidden(category, false) },
+                                        onToggleHidden = { onSetCategoryHidden(category, !category.isHidden) },
                                     )
                                 }
                             }
@@ -483,18 +500,19 @@ internal fun CategoriesContent(
                     }
                 } else {
                     LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        items(currentCategories, key = { it.id }) { category ->
+                        items(currentCategories, key = { if (it.id != 0L) it.id else "${it.type}_${it.name}" }) { category ->
                             CategoryItem(
                                 category = category,
                                 onClick = {
                                     onEvent(CategoryEvent.LogItemClickedEvent(category.name, currentCategories.indexOf(category)))
+                                    categoryToEdit = category
                                 },
                                 onDelete = {
                                     if (!category.isDefault) {
                                         categoryToDelete = category
                                     }
                                 },
-                                onToggleHidden = { onSetCategoryHidden(category, true) },
+                                onToggleHidden = { onSetCategoryHidden(category, !category.isHidden) },
                             )
                         }
                         if (currentHiddenCategories.isNotEmpty()) {
@@ -508,16 +526,19 @@ internal fun CategoriesContent(
                             if (hiddenSectionExpanded) {
                                 items(
                                     currentHiddenCategories,
-                                    key = { "hidden_${it.id}" },
+                                    key = { if (it.id != 0L) "hidden_${it.id}" else "hidden_${it.type}_${it.name}" },
                                 ) { category ->
                                     CategoryItem(
                                         category = category,
+                                        onClick = {
+                                            categoryToEdit = category
+                                        },
                                         onDelete = {
                                             if (!category.isDefault) {
                                                 categoryToDelete = category
                                             }
                                         },
-                                        onToggleHidden = { onSetCategoryHidden(category, false) },
+                                        onToggleHidden = { onSetCategoryHidden(category, !category.isHidden) },
                                     )
                                 }
                             }
@@ -605,14 +626,30 @@ internal fun CategoriesContent(
         CategoryListPane()
     }
 
-    if (showAddDialog) {
+    if (showAddDialog || categoryToEdit != null) {
         AddCategoryDialog(
             currentType = currentType,
-            onConfirm = { name, icon, color ->
-                onAddCategory(name, icon, color, currentType)
+            categoryToEdit = categoryToEdit,
+            onConfirm = { name, icon, color, isHidden ->
+                if (categoryToEdit != null) {
+                    onUpdateCategory(
+                        categoryToEdit!!.copy(
+                            name = name,
+                            icon = icon,
+                            color = color,
+                            isHidden = isHidden,
+                        ),
+                    )
+                } else {
+                    onAddCategory(name, icon, color, currentType)
+                }
                 showAddDialog = false
+                categoryToEdit = null
             },
-            onDismiss = { showAddDialog = false },
+            onDismiss = {
+                showAddDialog = false
+                categoryToEdit = null
+            },
         )
     }
 
@@ -682,6 +719,7 @@ private fun HiddenCategoriesSectionHeader(
         modifier =
             Modifier
                 .fillMaxWidth()
+                .testTag("hidden_categories_section_header")
                 .clickable(onClickLabel = expandCollapseLabel) { onExpandedChange(!expanded) }
                 .padding(vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -818,7 +856,7 @@ private fun AddCategoryDialogPreview() {
     AntCashManagerTheme(dynamicColor = false) {
         AddCategoryDialog(
             currentType = "EXPENSE",
-            onConfirm = { _, _, _ -> },
+            onConfirm = { _, _, _, _ -> },
             onDismiss = {},
         )
     }

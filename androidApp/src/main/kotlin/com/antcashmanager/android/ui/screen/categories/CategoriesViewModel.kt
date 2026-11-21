@@ -192,6 +192,10 @@ class CategoriesViewModel(
     }
 
     private fun deleteCategory(category: Category) {
+        if (category.isDefault) {
+            logWarn("Attempted to delete default category '${category.name}' - deletion ignored")
+            return
+        }
         logDebug("Deleting category: ${category.name}")
         analyticsManager.logEvent(
             Events.CATEGORY_CRUD_OPERATION,
