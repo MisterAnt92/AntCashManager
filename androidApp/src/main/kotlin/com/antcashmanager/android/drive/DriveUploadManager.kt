@@ -13,6 +13,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import com.google.api.services.drive.model.File as DriveFile
+import com.antcashmanager.android.auth.GoogleSignInManager
+import com.antcashmanager.domain.repository.SettingsRepository
 
 /**
  * Gestisce l'upload dei file di backup a Google Drive.
@@ -60,8 +62,8 @@ import com.google.api.services.drive.model.File as DriveFile
  */
 class DriveUploadManager(
     private val context: Context,
-    private val signInManager: com.antcashmanager.android.auth.GoogleSignInManager,
-    private val settingsRepository: com.antcashmanager.domain.repository.SettingsRepository,
+    private val signInManager: GoogleSignInManager,
+    private val settingsRepository: SettingsRepository,
 ) {
     // ── Feature Gating: Google Drive Backup ──
     init {

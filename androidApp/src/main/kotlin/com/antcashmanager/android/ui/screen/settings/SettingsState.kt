@@ -19,7 +19,7 @@ import com.antcashmanager.domain.model.TransactionDisplayType
  * UDF Pattern:
  * - state: SettingsState (this)
  * - events: SettingEvent (sealed class)
- * - viewModel: SettingsViewModel (onEvent handler)
+ * - viewModel: SettingsViewModel (emitEvent entry point)
  */
 data class SettingsState(
     // Theme & Language

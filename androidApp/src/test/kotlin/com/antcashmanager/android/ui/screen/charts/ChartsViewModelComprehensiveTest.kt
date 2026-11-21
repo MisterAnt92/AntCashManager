@@ -66,6 +66,7 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
                 dispatcher = testDispatcher,
                 performanceTracker = performanceTracker,
                 segmentationTracker = segmentationTracker,
+                analyticsManager = mockk(relaxed = true),
             )
     }
 
@@ -247,7 +248,7 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
             val from = now - 86400000 // 1 day ago
             val to = now
 
-            viewModel.onEvent(ChartEvent.SetDateRangeEvent(from, to))
+            viewModel.emitEvent(ChartEvent.SetDateRangeEvent(from, to))
             advanceUntilIdle()
 
             val dateRange = viewModel.dateRange.value
@@ -262,7 +263,7 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
             val from = now
             val to = now - 86400000 // Intentionally reversed
 
-            viewModel.onEvent(ChartEvent.SetDateRangeEvent(from, to)) // Reversed order
+            viewModel.emitEvent(ChartEvent.SetDateRangeEvent(from, to)) // Reversed order
             advanceUntilIdle()
 
             val dateRange = viewModel.dateRange.value
@@ -278,7 +279,7 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
                     viewModel.selectedPresetIndex.collect {}
                 }
 
-            viewModel.onEvent(ChartEvent.SetPresetRangeEvent(RangePreset.WEEK))
+            viewModel.emitEvent(ChartEvent.SetPresetRangeEvent(RangePreset.WEEK))
             advanceUntilIdle()
 
             assertEquals(RangePreset.WEEK.ordinal, viewModel.selectedPresetIndex.value)
@@ -293,7 +294,7 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
                     viewModel.selectedPresetIndex.collect {}
                 }
 
-            viewModel.onEvent(ChartEvent.SetPresetRangeEvent(RangePreset.MONTH))
+            viewModel.emitEvent(ChartEvent.SetPresetRangeEvent(RangePreset.MONTH))
             advanceUntilIdle()
 
             assertEquals(RangePreset.MONTH.ordinal, viewModel.selectedPresetIndex.value)
@@ -308,7 +309,7 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
                     viewModel.selectedPresetIndex.collect {}
                 }
 
-            viewModel.onEvent(ChartEvent.SetPresetRangeEvent(RangePreset.YEAR))
+            viewModel.emitEvent(ChartEvent.SetPresetRangeEvent(RangePreset.YEAR))
             advanceUntilIdle()
 
             assertEquals(RangePreset.YEAR.ordinal, viewModel.selectedPresetIndex.value)
@@ -323,7 +324,7 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
                     viewModel.selectedChartDetails.collect {}
                 }
 
-            viewModel.onEvent(
+            viewModel.emitEvent(
                 ChartEvent.SelectChartCategoryEvent(
                     categoryName = "Food",
                     amount = -500.0,
@@ -357,7 +358,7 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
                 }
             advanceUntilIdle()
 
-            viewModel.onEvent(
+            viewModel.emitEvent(
                 ChartEvent.SelectChartCategoryEvent(
                     categoryName = "Food",
                     amount = -500.0,
@@ -381,7 +382,7 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
                     viewModel.selectedChartDetails.collect {}
                 }
 
-            viewModel.onEvent(
+            viewModel.emitEvent(
                 ChartEvent.SelectChartCategoryEvent(
                     categoryName = "Food",
                     amount = -500.0,
@@ -392,7 +393,7 @@ class ChartsViewModelComprehensiveTest : BaseUnitTest() {
 
             assertNotNull(viewModel.selectedChartDetails.value)
 
-            viewModel.onEvent(ChartEvent.ClearChartSelectionEvent)
+            viewModel.emitEvent(ChartEvent.ClearChartSelectionEvent)
             advanceUntilIdle()
 
             assertNull(viewModel.selectedChartDetails.value)

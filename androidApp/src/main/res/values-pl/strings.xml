@@ -68,6 +68,8 @@
     <string name="categories_tab_expense">Wydatek</string>
     <string name="categories_tab_income">Przychód</string>
     <string name="categories_default_badge">Domyślna</string>
+    <string name="categories_default_section">Domyślne</string>
+    <string name="categories_custom_section">Własne</string>
     <string name="categories_icon_label">Ikona</string>
     <string name="categories_hide">Ukryj kategorię</string>
     <string name="categories_show">Pokaż kategorię</string>
@@ -718,4 +720,14 @@
     <string name="month_short_10">Paz</string>
     <string name="month_short_11">Lis</string>
     <string name="month_short_12">Gru</string>
+    <string name="error_generic_subtitle">Spróbuj ponownie</string>
+    <string name="meal_voucher_error_invalid">Nieprawidłowa wartość</string>
+    <string name="meal_voucher_error_positive">Wartość musi być większa niż 0</string>
+    <string name="chart_days_tracked_cd">Śledzone dni: %d</string>
+    <string name="chart_max_daily_cd">Maksimum dziennie: %s</string>
+    <string name="chart_avg_daily_cd">Średnia dzienna: %s</string>
+    <string name="chart_weekday_bar_cd">%1$s: %2$s</string>
+    <string name="app_icon_description">Ikona aplikacji</string>
+    <string name="transaction_add_tag_description">Dodaj tag</string>
+    <string name="transaction_remove_tag_description">Usuń</string>
 </resources>

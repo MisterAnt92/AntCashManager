@@ -68,6 +68,8 @@
     <string name="categories_tab_expense">지출</string>
     <string name="categories_tab_income">수입</string>
     <string name="categories_default_badge">기본값</string>
+    <string name="categories_default_section">기본값</string>
+    <string name="categories_custom_section">사용자 지정</string>
     <string name="categories_icon_label">아이콘</string>
     <string name="categories_hide">카테고리 숨기기</string>
     <string name="categories_show">카테고리 표시</string>
@@ -717,4 +719,14 @@
     <string name="month_short_10">10월</string>
     <string name="month_short_11">11월</string>
     <string name="month_short_12">12월</string>
+    <string name="error_generic_subtitle">다시 시도</string>
+    <string name="meal_voucher_error_invalid">잘못된 값</string>
+    <string name="meal_voucher_error_positive">값은 0보다 커야 합니다</string>
+    <string name="chart_days_tracked_cd">추적 일수: %d</string>
+    <string name="chart_max_daily_cd">최대 일일: %s</string>
+    <string name="chart_avg_daily_cd">평균 일일: %s</string>
+    <string name="chart_weekday_bar_cd">%1$s: %2$s</string>
+    <string name="app_icon_description">앱 아이콘</string>
+    <string name="transaction_add_tag_description">태그 추가</string>
+    <string name="transaction_remove_tag_description">제거</string>
 </resources>

@@ -49,6 +49,12 @@ import kotlinx.coroutines.flow.stateIn
 import com.antcashmanager.architecture.ErrorState
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayConstant
+import com.antcashmanager.domain.model.Category
+import com.antcashmanager.domain.model.MealVoucherSummary
+import com.antcashmanager.domain.model.PaymentType
+import com.antcashmanager.domain.model.Transaction
+import com.antcashmanager.domain.model.TransactionType
 
 // ══════════════════════════════════════════════════════════════════════════════
 // VIEWMODEL
@@ -115,7 +121,7 @@ class HomeViewModel(
     )
 
     // ── Categories cache for enriching transactions ──
-    private val categoriesCache: StateFlow<Map<String, com.antcashmanager.domain.model.Category>> =
+    private val categoriesCache: StateFlow<Map<String, Category>> =
         getCategoriesUseCase()
             .map { result -> result.getOrElse { emptyList() }.associateBy { it.name } }
             .stateIn(
@@ -129,7 +135,7 @@ class HomeViewModel(
 
     // ── Internal transaction selection state ──
     private val _selectedTransactionState =
-        MutableStateFlow<com.antcashmanager.domain.model.Transaction?>(null)
+        MutableStateFlow<Transaction?>(null)
 
     // ── Top cards order being edited in the reorder dialog (null = dialog closed) ──
     private val _editingTopCardsOrder = MutableStateFlow<List<HomeTopCardType>?>(null)
@@ -252,15 +258,15 @@ class HomeViewModel(
             settingsRepository.getMealVoucherValue(),
         ) { args: Array<Any?> ->
             @Suppress("UNCHECKED_CAST")
-            val transactions = (args[0] as? List<com.antcashmanager.domain.model.Transaction>) ?: emptyList()
+            val transactions = (args[0] as? List<Transaction>) ?: emptyList()
             @Suppress("UNCHECKED_CAST")
-            val filtered = (args[1] as? List<com.antcashmanager.domain.model.Transaction>) ?: emptyList()
+            val filtered = (args[1] as? List<Transaction>) ?: emptyList()
             @Suppress("UNCHECKED_CAST")
             val suggestions = (args[2] as? List<String>) ?: emptyList()
             val filterState = (args[3] as? FilterState) ?: FilterState()
-            val selectedTransaction = args[4] as? com.antcashmanager.domain.model.Transaction
+            val selectedTransaction = args[4] as? Transaction
             @Suppress("UNCHECKED_CAST")
-            val categoryCache = (args[5] as? Map<String, com.antcashmanager.domain.model.Category>) ?: emptyMap()
+            val categoryCache = (args[5] as? Map<String, Category>) ?: emptyMap()
             val topCardsOrder = HomeTopCardType.parse((args[6] as? String) ?: "")
             val dateFilterExpanded = (args[7] as? Boolean) ?: true
             val showPaymentTypeBreakdown = (args[8] as? Boolean) ?: false
@@ -275,7 +281,7 @@ class HomeViewModel(
 
             @Suppress("UNCHECKED_CAST")
             val editingTopCardsOrder = args[13] as? List<HomeTopCardType>
-            val mealVoucherValue = (args[14] as? Double) ?: com.antcashmanager.android.ui.screen.settings.displaySettings.DisplayConstant.DEFAULT_MEAL_VOUCHER_VALUE
+            val mealVoucherValue = (args[14] as? Double) ?: DisplayConstant.DEFAULT_MEAL_VOUCHER_VALUE
 
             // Enrich transactions with category icon and color from cache
             val enrichedFiltered =
@@ -342,19 +348,19 @@ class HomeViewModel(
             previousTopCategory = currentTopCategory
 
             // Calculate meal voucher summary from filtered transactions (respects date/search filters, like QuickInsightsCard)
-            val mealVoucherTxs = enrichedFiltered.filter { it.paymentType == com.antcashmanager.domain.model.PaymentType.MEAL_VOUCHERS }
+            val mealVoucherTxs = enrichedFiltered.filter { it.paymentType == PaymentType.MEAL_VOUCHERS }
             val mealVoucherSummary = if (mealVoucherTxs.isNotEmpty()) {
                 val received = mealVoucherTxs
-                    .filter { it.type == com.antcashmanager.domain.model.TransactionType.INCOME }
+                    .filter { it.type == TransactionType.INCOME }
                     .sumOf { it.mealVoucherCount }
                 val used = mealVoucherTxs
-                    .filter { it.type == com.antcashmanager.domain.model.TransactionType.EXPENSE }
+                    .filter { it.type == TransactionType.EXPENSE }
                     .sumOf { it.mealVoucherCount }
                 if (received == 0 && used == 0) {
                     null
                 } else {
                     val remaining = maxOf(0, received - used)
-                    com.antcashmanager.domain.model.MealVoucherSummary(
+                    MealVoucherSummary(
                         received = received,
                         used = used,
                         remaining = remaining,
@@ -438,7 +444,7 @@ class HomeViewModel(
         }
     }
 
-    private fun showTransactionDetails(transaction: com.antcashmanager.domain.model.Transaction) {
+    private fun showTransactionDetails(transaction: Transaction) {
         _selectedTransactionState.value = transaction
         val index = state.value.recentTransactions.indexOfFirst { it.id == transaction.id }
         analyticsManager.logEvent(

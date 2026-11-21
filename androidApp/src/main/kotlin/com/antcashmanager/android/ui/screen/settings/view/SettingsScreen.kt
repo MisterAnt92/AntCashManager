@@ -44,7 +44,6 @@ import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import com.antcashmanager.android.BuildConfig
 import com.antcashmanager.android.R
-import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.navigation.AppRoute
 import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
 import com.antcashmanager.android.navigation.ScreenHeaderConfig
@@ -62,7 +61,6 @@ import com.antcashmanager.domain.model.AppLanguage
 import com.antcashmanager.domain.model.AppTheme
 import com.antcashmanager.domain.model.CurrencyFormat
 import org.koin.androidx.compose.koinViewModel
-import org.koin.compose.koinInject
 
 @Composable
 fun SettingsScreen(
@@ -104,8 +102,8 @@ fun SettingsScreen(
         onImportDebugData = { viewModel.emitEvent(SettingEvent.ImportDebugDataEvent) },
         onSendFeedbackEmail = { emailBody ->
             viewModel.emitEvent(SettingEvent.SendFeedbackEmailEvent(emailBody))
-            // TODO: handle success/failure via errorState in state (FASE 5)
         },
+        onEvent = viewModel::emitEvent,
         navController = navController,
         modifier = modifier,
     )
@@ -139,6 +137,7 @@ internal fun SettingsContent(
     onAnalyticsConsentChanged: (Boolean) -> Unit = {},
     onImportDebugData: () -> Unit = {},
     onSendFeedbackEmail: (String) -> Unit = {},
+    onEvent: (SettingEvent) -> Unit = {},
     navController: NavController? = null,
     modifier: Modifier = Modifier,
 ) {
@@ -152,40 +151,6 @@ internal fun SettingsContent(
     var showThousandsSeparatorDialog by remember { mutableStateOf(false) }
     var showAntAnimation by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    val analyticsManager: AnalyticsManager = koinInject()
-    val handleHighContrastChanged: (Boolean) -> Unit = { enabled ->
-        analyticsManager.logEvent("settings_high_contrast_toggled")
-        analyticsManager.logEvent(
-            "settings_accessibility_change",
-            android.os.Bundle().apply {
-                putString("setting", "high_contrast")
-                putBoolean("enabled", enabled)
-            },
-        )
-        onHighContrastChanged(enabled)
-    }
-    val handleLargeTextChanged: (Boolean) -> Unit = { enabled ->
-        analyticsManager.logEvent("settings_large_text_toggled")
-        analyticsManager.logEvent(
-            "settings_accessibility_change",
-            android.os.Bundle().apply {
-                putString("setting", "large_text")
-                putBoolean("enabled", enabled)
-            },
-        )
-        onLargeTextChanged(enabled)
-    }
-    val handleReduceMotionChanged: (Boolean) -> Unit = { enabled ->
-        analyticsManager.logEvent("settings_reduce_motion_toggled")
-        analyticsManager.logEvent(
-            "settings_accessibility_change",
-            android.os.Bundle().apply {
-                putString("setting", "reduce_motion")
-                putBoolean("enabled", enabled)
-            },
-        )
-        onReduceMotionChanged(enabled)
-    }
 
     // Configure screen header with actions
     val headerConfigCallback = LocalScreenHeaderConfigCallback.current
@@ -258,11 +223,7 @@ internal fun SettingsContent(
                     subtitle = stringResource(R.string.settings_display_subtitle),
                     leadingIcon = Icons.Default.TextFields,
                     onClick = {
-                        val params =
-                            android.os.Bundle().apply {
-                                putString("submenu", "display")
-                            }
-                        analyticsManager.logEvent("settings_submenu_opened", params)
+                        onEvent(SettingEvent.SubmenuOpenedEvent("display"))
                         navController?.navigate(AppRoute.SettingsRoute.Display.route)
                     },
                 )
@@ -278,10 +239,10 @@ internal fun SettingsContent(
                     trailingContent = {
                         AppSwitch(
                             checked = highContrast,
-                            onCheckedChange = handleHighContrastChanged,
+                            onCheckedChange = onHighContrastChanged,
                         )
                     },
-                    onClick = { handleHighContrastChanged(!highContrast) },
+                    onClick = { onHighContrastChanged(!highContrast) },
                 )
                 AppCard(
                     title = stringResource(R.string.settings_large_text),
@@ -290,10 +251,10 @@ internal fun SettingsContent(
                     trailingContent = {
                         AppSwitch(
                             checked = largeText,
-                            onCheckedChange = handleLargeTextChanged,
+                            onCheckedChange = onLargeTextChanged,
                         )
                     },
-                    onClick = { handleLargeTextChanged(!largeText) },
+                    onClick = { onLargeTextChanged(!largeText) },
                 )
                 AppCard(
                     title = stringResource(R.string.settings_reduce_motion),
@@ -302,10 +263,10 @@ internal fun SettingsContent(
                     trailingContent = {
                         AppSwitch(
                             checked = reduceMotion,
-                            onCheckedChange = handleReduceMotionChanged,
+                            onCheckedChange = onReduceMotionChanged,
                         )
                     },
-                    onClick = { handleReduceMotionChanged(!reduceMotion) },
+                    onClick = { onReduceMotionChanged(!reduceMotion) },
                 )
             }
 
@@ -318,11 +279,7 @@ internal fun SettingsContent(
                     iconBackgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
                     iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
                     onClick = {
-                        val params =
-                            android.os.Bundle().apply {
-                                putString("submenu", "data_management")
-                            }
-                        analyticsManager.logEvent("settings_submenu_opened", params)
+                        onEvent(SettingEvent.SubmenuOpenedEvent("data_management"))
                         navController?.navigate(AppRoute.SettingsRoute.DataManagement.route)
                     },
                 )
@@ -374,7 +331,7 @@ internal fun SettingsContent(
                     iconBackgroundColor = MaterialTheme.colorScheme.secondaryContainer,
                     iconTint = MaterialTheme.colorScheme.onSecondaryContainer,
                     onClick = {
-                        analyticsManager.logEvent("feedback_email_sent")
+                        onEvent(SettingEvent.FeedbackEmailOpenedEvent)
                         onSendFeedbackEmail(feedbackEmailBody)
                     },
                 )
@@ -385,7 +342,7 @@ internal fun SettingsContent(
                     iconBackgroundColor = MaterialTheme.colorScheme.secondaryContainer,
                     iconTint = MaterialTheme.colorScheme.onSecondaryContainer,
                     onClick = {
-                        analyticsManager.logEvent("settings_privacy_policy_opened")
+                        onEvent(SettingEvent.PrivacyPolicyOpenedEvent)
                         showPrivacyDialog = true
                     },
                 )
@@ -400,7 +357,7 @@ internal fun SettingsContent(
                     leadingIcon = Icons.Default.Info,
                     showChevron = false,
                     onClick = {
-                        analyticsManager.logEvent("easter_egg_animation_opened")
+                        onEvent(SettingEvent.EasterEggOpenedEvent)
                         showAntAnimation = true
                     },
                 )
@@ -409,7 +366,7 @@ internal fun SettingsContent(
                     subtitle = stringResource(R.string.settings_third_party_subtitle),
                     leadingIcon = Icons.AutoMirrored.Filled.LibraryBooks,
                     onClick = {
-                        analyticsManager.logEvent("settings_third_party_libraries_opened")
+                        onEvent(SettingEvent.ThirdPartyLibsOpenedEvent)
                         showLibrariesDialog = true
                     },
                 )
@@ -432,17 +389,11 @@ internal fun SettingsContent(
         ThemeSelectionDialog(
             currentTheme = currentTheme,
             onThemeSelected = { theme ->
-                analyticsManager.logEvent("theme_changed")
                 onThemeSelected(theme)
                 showThemeDialog = false
             },
             onDismiss = {
-                analyticsManager.logEvent(
-                    "settings_dialog_dismissed",
-                    android.os.Bundle().apply {
-                        putString("dialog_type", "theme_selection")
-                    },
-                )
+                onEvent(SettingEvent.DialogDismissedEvent("theme_selection"))
                 showThemeDialog = false
             },
         )
@@ -452,17 +403,11 @@ internal fun SettingsContent(
         LanguageSelectionDialog(
             currentLanguage = currentLanguage,
             onLanguageSelected = { language ->
-                analyticsManager.logEvent("language_changed")
                 onLanguageSelected(language)
                 showLanguageDialog = false
             },
             onDismiss = {
-                analyticsManager.logEvent(
-                    "settings_dialog_dismissed",
-                    android.os.Bundle().apply {
-                        putString("dialog_type", "language_selection")
-                    },
-                )
+                onEvent(SettingEvent.DialogDismissedEvent("language_selection"))
                 showLanguageDialog = false
             },
         )
@@ -471,12 +416,7 @@ internal fun SettingsContent(
     if (showPrivacyDialog) {
         PrivacyPolicyDialog(
             onDismiss = {
-                analyticsManager.logEvent(
-                    "settings_dialog_dismissed",
-                    android.os.Bundle().apply {
-                        putString("dialog_type", "privacy_policy")
-                    },
-                )
+                onEvent(SettingEvent.DialogDismissedEvent("privacy_policy"))
                 showPrivacyDialog = false
             },
         )
@@ -486,12 +426,7 @@ internal fun SettingsContent(
         ThirdPartyLibrariesDialog(
             context = context,
             onDismiss = {
-                analyticsManager.logEvent(
-                    "settings_dialog_dismissed",
-                    android.os.Bundle().apply {
-                        putString("dialog_type", "third_party_libraries")
-                    },
-                )
+                onEvent(SettingEvent.DialogDismissedEvent("third_party_libraries"))
                 showLibrariesDialog = false
             },
         )
@@ -501,17 +436,11 @@ internal fun SettingsContent(
         CurrencySymbolDialog(
             currentSymbol = currencySymbol,
             onSymbolSelected = {
-                analyticsManager.logEvent("currency_format_changed")
                 onCurrencySymbolSelected(it)
                 showCurrencyDialog = false
             },
             onDismiss = {
-                analyticsManager.logEvent(
-                    "settings_dialog_dismissed",
-                    android.os.Bundle().apply {
-                        putString("dialog_type", "currency_symbol")
-                    },
-                )
+                onEvent(SettingEvent.DialogDismissedEvent("currency_symbol"))
                 showCurrencyDialog = false
             },
         )
@@ -525,12 +454,7 @@ internal fun SettingsContent(
                 showDecimalDigitsDialog = false
             },
             onDismiss = {
-                analyticsManager.logEvent(
-                    "settings_dialog_dismissed",
-                    android.os.Bundle().apply {
-                        putString("dialog_type", "decimal_digits")
-                    },
-                )
+                onEvent(SettingEvent.DialogDismissedEvent("decimal_digits"))
                 showDecimalDigitsDialog = false
             },
         )
@@ -552,12 +476,7 @@ internal fun SettingsContent(
                 showDecimalSeparatorDialog = false
             },
             onDismiss = {
-                analyticsManager.logEvent(
-                    "settings_dialog_dismissed",
-                    android.os.Bundle().apply {
-                        putString("dialog_type", "decimal_separator")
-                    },
-                )
+                onEvent(SettingEvent.DialogDismissedEvent("decimal_separator"))
                 showDecimalSeparatorDialog = false
             },
         )
@@ -579,12 +498,7 @@ internal fun SettingsContent(
                 showThousandsSeparatorDialog = false
             },
             onDismiss = {
-                analyticsManager.logEvent(
-                    "settings_dialog_dismissed",
-                    android.os.Bundle().apply {
-                        putString("dialog_type", "thousands_separator")
-                    },
-                )
+                onEvent(SettingEvent.DialogDismissedEvent("thousands_separator"))
                 showThousandsSeparatorDialog = false
             },
         )

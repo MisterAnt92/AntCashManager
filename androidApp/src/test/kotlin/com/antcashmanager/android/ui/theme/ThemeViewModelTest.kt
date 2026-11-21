@@ -38,7 +38,7 @@ class ThemeViewModelTest : BaseUnitTest() {
     @Test
     fun onSetThemeEvent_shouldUpdateRepository_whenThemeEventReceived() =
         runViewModelTest {
-            viewModel.onEvent(ThemeEvent.SetThemeEvent(AppTheme.DARK))
+            viewModel.emitEvent(ThemeEvent.SetThemeEvent(AppTheme.DARK))
             advanceUntilIdle()
 
             assertEquals(AppTheme.DARK, fakeRepo.theme.value)
@@ -53,7 +53,7 @@ class ThemeViewModelTest : BaseUnitTest() {
                 }
             advanceUntilIdle()
 
-            viewModel.onEvent(ThemeEvent.SetThemeEvent(AppTheme.LIGHT))
+            viewModel.emitEvent(ThemeEvent.SetThemeEvent(AppTheme.LIGHT))
             advanceUntilIdle()
 
             assertEquals(AppTheme.LIGHT, viewModel.appTheme.value)

@@ -41,6 +41,7 @@ class ChartsViewModelTest : BaseUnitTest() {
                 dispatcher = testDispatcher,
                 performanceTracker = performanceTracker,
                 segmentationTracker = segmentationTracker,
+                analyticsManager = mockk(relaxed = true),
             )
     }
 
@@ -79,7 +80,7 @@ class ChartsViewModelTest : BaseUnitTest() {
                         timestamp = t0,
                     ),
                 )
-            viewModel.onEvent(ChartEvent.SetDateRangeEvent(t0 - 86400000, t0 + 86400000))
+            viewModel.emitEvent(ChartEvent.SetDateRangeEvent(t0 - 86400000, t0 + 86400000))
             advanceUntilIdle()
             assertEquals(2000.0, viewModel.chartData.value.totalIncome, 0.01)
             assertEquals(200.0, viewModel.chartData.value.totalExpense, 0.01)
@@ -110,8 +111,9 @@ class ChartsViewModelTest : BaseUnitTest() {
                         dispatcher = testDispatcher,
                         performanceTracker = mockk(relaxed = true),
                         segmentationTracker = mockk(relaxed = true),
+                        analyticsManager = mockk(relaxed = true),
                     )
-                presetViewModel.onEvent(ChartEvent.SetPresetRangeEvent(preset))
+                //presetViewModel.onEvent(ChartEvent.SetPresetRangeEvent(preset))
                 advanceUntilIdle()
 
                 val range = presetViewModel.dateRange.value

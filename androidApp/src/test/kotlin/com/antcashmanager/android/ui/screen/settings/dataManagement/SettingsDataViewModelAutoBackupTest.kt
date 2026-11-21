@@ -17,6 +17,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import com.antcashmanager.domain.model.BackupDestination
 
 /**
  * Test per il ViewModel di Gestione Dati, focalizzato su Automatic Backup.
@@ -47,6 +48,7 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
             googleSignInManager = googleSignInManager,
             performanceTracker = performanceTracker,
             errorTracker = errorTracker,
+            analyticsManager = mockk(relaxed = true),
         )
 
     @Test
@@ -54,7 +56,7 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
         runUnitTest {
             val viewModel = createViewModel()
 
-            viewModel.setAutoBackupEnabled(true)
+            viewModel.emitEvent(SettingsDataEvent.SetAutoBackupEnabledEvent(true))
 
             coVerify { autoBackupScheduler.schedule() }
             coVerify { settingsRepository.setAutoBackupEnabled(true) }
@@ -65,7 +67,7 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
         runUnitTest {
             val viewModel = createViewModel()
 
-            viewModel.setAutoBackupEnabled(false)
+            viewModel.emitEvent(SettingsDataEvent.SetAutoBackupEnabledEvent(false))
 
             coVerify { autoBackupScheduler.cancel() }
             coVerify { settingsRepository.setAutoBackupEnabled(false) }
@@ -77,7 +79,7 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
             val viewModel = createViewModel()
             val testUri = "content://com.android.externalstorage.documents/tree/primary%3ADocuments"
 
-            viewModel.onAutoBackupFolderSelected(testUri)
+            viewModel.emitEvent(SettingsDataEvent.OnAutoBackupFolderSelectedEvent(testUri))
 
             coVerify { settingsRepository.setAutoBackupFolderUri(testUri) }
             coVerify { settingsRepository.setAutoBackupEnabled(true) }
@@ -89,7 +91,7 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
         runUnitTest {
             val viewModel = createViewModel()
 
-            viewModel.onAutoBackupFolderSelectionCancelled()
+            viewModel.emitEvent(SettingsDataEvent.OnAutoBackupFolderSelectionCancelledEvent)
 
             // Nessuna chiamata al repository o scheduler
             coVerify(exactly = 0) { settingsRepository.setAutoBackupEnabled(any()) }
@@ -102,7 +104,7 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
             val viewModel = createViewModel()
             val invalidUri = "invalid://uri/path"
 
-            viewModel.onAutoBackupFolderSelected(invalidUri)
+            viewModel.emitEvent(SettingsDataEvent.OnAutoBackupFolderSelectedEvent(invalidUri))
 
             // Should still persist the URI (validation happens later)
             coVerify { settingsRepository.setAutoBackupFolderUri(invalidUri) }
@@ -113,7 +115,7 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
         runUnitTest {
             val viewModel = createViewModel()
 
-            viewModel.setAutoBackupEnabled(false)
+            viewModel.emitEvent(SettingsDataEvent.SetAutoBackupEnabledEvent(false))
 
             coVerify { autoBackupScheduler.cancel() }
             coVerify { settingsRepository.setAutoBackupEnabled(false) }
@@ -124,11 +126,11 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
         runUnitTest {
             val viewModel = createViewModel()
 
-            viewModel.setAutoBackupEnabled(true)
+            viewModel.emitEvent(SettingsDataEvent.SetAutoBackupEnabledEvent(true))
 
-            viewModel.setAutoBackupEnabled(false)
+            viewModel.emitEvent(SettingsDataEvent.SetAutoBackupEnabledEvent(false))
 
-            viewModel.setAutoBackupEnabled(true)
+            viewModel.emitEvent(SettingsDataEvent.SetAutoBackupEnabledEvent(true))
 
             // Final state should be enabled
             coVerify { settingsRepository.setAutoBackupEnabled(true) }
@@ -142,9 +144,9 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
             val uri1 = "content://first/path"
             val uri2 = "content://second/path"
 
-            viewModel.onAutoBackupFolderSelected(uri1)
+            viewModel.emitEvent(SettingsDataEvent.OnAutoBackupFolderSelectedEvent(uri1))
 
-            viewModel.onAutoBackupFolderSelected(uri2)
+            viewModel.emitEvent(SettingsDataEvent.OnAutoBackupFolderSelectedEvent(uri2))
 
             coVerify { settingsRepository.setAutoBackupFolderUri(uri2) }
         }
@@ -169,7 +171,7 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
             coEvery { settingsRepositoryWithUri.getDataEncryptionEnabled() } returns
                 kotlinx.coroutines.flow.flowOf(false)
             coEvery { settingsRepositoryWithUri.getAutoBackupDestination() } returns
-                kotlinx.coroutines.flow.flowOf(com.antcashmanager.domain.model.BackupDestination.LOCAL)
+                kotlinx.coroutines.flow.flowOf(BackupDestination.LOCAL)
             coEvery { settingsRepositoryWithUri.getGoogleDriveUserEmail() } returns
                 kotlinx.coroutines.flow.flowOf(null)
 
@@ -184,6 +186,7 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
                     googleSignInManager = googleSignInManager,
                     performanceTracker = mockk(relaxed = true),
                     errorTracker = mockk(relaxed = true),
+                    analyticsManager = mockk(relaxed = true),
                 )
 
             assertEquals(testUri, viewModel.state.value.autoBackupFolderUri)
@@ -203,7 +206,7 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
             coEvery { settingsRepositoryNoUri.getSuggestionsEnabled() } returns flowOf(false)
             coEvery { settingsRepositoryNoUri.getDataEncryptionEnabled() } returns flowOf(false)
             coEvery { settingsRepositoryNoUri.getAutoBackupDestination() } returns
-                flowOf(com.antcashmanager.domain.model.BackupDestination.LOCAL)
+                flowOf(BackupDestination.LOCAL)
             coEvery { settingsRepositoryNoUri.getGoogleDriveUserEmail() } returns flowOf(null)
 
             val viewModel =
@@ -217,6 +220,7 @@ class SettingsDataViewModelAutoBackupTest : BaseUnitTest() {
                     googleSignInManager = googleSignInManager,
                     performanceTracker = mockk(relaxed = true),
                     errorTracker = mockk(relaxed = true),
+                    analyticsManager = mockk(relaxed = true),
                 )
 
             assertNull(viewModel.state.value.autoBackupFolderUri)

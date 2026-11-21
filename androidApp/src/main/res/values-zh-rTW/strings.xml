@@ -68,6 +68,8 @@
     <string name="categories_tab_expense">支出</string>
     <string name="categories_tab_income">收入</string>
     <string name="categories_default_badge">預設</string>
+    <string name="categories_default_section">預設</string>
+    <string name="categories_custom_section">自訂</string>
     <string name="categories_icon_label">圖示</string>
     <string name="categories_hide">隱藏分類</string>
     <string name="categories_show">顯示分類</string>
@@ -707,4 +709,14 @@
     <string name="month_short_10">10月</string>
     <string name="month_short_11">11月</string>
     <string name="month_short_12">12月</string>
+    <string name="error_generic_subtitle">請重試</string>
+    <string name="meal_voucher_error_invalid">無效值</string>
+    <string name="meal_voucher_error_positive">值必須大於0</string>
+    <string name="chart_days_tracked_cd">已追蹤天數: %d</string>
+    <string name="chart_max_daily_cd">每日最大: %s</string>
+    <string name="chart_avg_daily_cd">每日平均: %s</string>
+    <string name="chart_weekday_bar_cd">%1$s: %2$s</string>
+    <string name="app_icon_description">應用程式圖示</string>
+    <string name="transaction_add_tag_description">新增標籤</string>
+    <string name="transaction_remove_tag_description">刪除</string>
 </resources>

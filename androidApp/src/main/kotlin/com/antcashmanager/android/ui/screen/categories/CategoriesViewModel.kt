@@ -2,6 +2,8 @@ package com.antcashmanager.android.ui.screen.categories
 
 import android.os.Bundle
 import androidx.lifecycle.viewModelScope
+import com.antcashmanager.android.analytics.AnalyticsConstants.Events
+import com.antcashmanager.android.analytics.AnalyticsConstants.Params
 import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.ui.base.AndroidBaseViewModel
 import com.antcashmanager.domain.model.Category
@@ -30,11 +32,17 @@ class CategoriesViewModel(
                     .onSuccess { cats ->
                         val expense = cats.filter { it.type == "EXPENSE" }.sortedBy { it.sortOrder }
                         val income = cats.filter { it.type == "INCOME" }.sortedBy { it.sortOrder }
+                        val visibleExpense = expense.filterNot { category -> category.isHidden }
+                        val visibleIncome = income.filterNot { category -> category.isHidden }
                         _state.update {
                             it.copy(
                                 categories = cats,
-                                expenseCategories = expense.filterNot { category -> category.isHidden },
-                                incomeCategories = income.filterNot { category -> category.isHidden },
+                                expenseCategories = visibleExpense,
+                                incomeCategories = visibleIncome,
+                                defaultExpenseCategories = expense.filter { category -> category.isDefault },
+                                customExpenseCategories = expense.filter { category -> !category.isDefault },
+                                defaultIncomeCategories = income.filter { category -> category.isDefault },
+                                customIncomeCategories = income.filter { category -> !category.isDefault },
                                 hiddenExpenseCategories = expense.filter { category -> category.isHidden },
                                 hiddenIncomeCategories = income.filter { category -> category.isHidden },
                             )
@@ -64,7 +72,20 @@ class CategoriesViewModel(
             is CategoryEvent.SetCategoryHiddenEvent -> setCategoryHidden(event.category, event.hidden)
             is CategoryEvent.ReorderCategoriesEvent -> reorderCategories(event.reordered)
             is CategoryEvent.RetryLastOperationEvent -> logInfo("Retry requested")
+            is CategoryEvent.LogItemClickedEvent -> logCategoryItemClicked(event.categoryName, event.index)
+            is CategoryEvent.LogReorderOpenedEvent -> analyticsManager.logEvent(Events.CATEGORIES_REORDER_OPENED)
+            is CategoryEvent.SelectTabEvent -> _state.update { it.copy(selectedTabIndex = event.index) }
         }
+    }
+
+    private fun logCategoryItemClicked(categoryName: String, index: Int) {
+        analyticsManager.logEvent(
+            Events.CATEGORIES_LIST_ITEM_CLICKED,
+            Bundle().apply {
+                putString(Params.CATEGORY_NAME, categoryName)
+                putInt(Params.INDEX, index)
+            },
+        )
     }
 
     private fun addCategory(
@@ -74,12 +95,11 @@ class CategoriesViewModel(
         type: String = "EXPENSE",
     ) {
         logDebug("Adding category: $name ($type)")
-        // Track category creation
         analyticsManager.logEvent(
-            "category_crud_operation",
+            Events.CATEGORY_CRUD_OPERATION,
             Bundle().apply {
-                putString("operation", "create")
-                putString("type", type)
+                putString(Params.OPERATION, Params.VALUE_CREATE)
+                putString(Params.TYPE, type)
             },
         )
         // Accoda la nuova categoria in fondo all'ordine esistente per quel tipo, invece di
@@ -108,12 +128,11 @@ class CategoriesViewModel(
 
     private fun updateCategory(category: Category) {
         logDebug("Updating category: ${category.name}")
-        // Track category update
         analyticsManager.logEvent(
-            "category_crud_operation",
+            Events.CATEGORY_CRUD_OPERATION,
             Bundle().apply {
-                putString("operation", "update")
-                putString("type", category.type)
+                putString(Params.OPERATION, Params.VALUE_UPDATE)
+                putString(Params.TYPE, category.type)
             },
         )
         val oldName =
@@ -148,6 +167,7 @@ class CategoriesViewModel(
         category: Category,
         hidden: Boolean,
     ) {
+        analyticsManager.logEvent(if (hidden) Events.CATEGORY_HIDDEN else Events.CATEGORY_SHOWN)
         logDebug("Setting category '${category.name}' hidden=$hidden")
         viewModelScope.launch {
             updateCategoryUseCase(category.copy(isHidden = hidden)).handleError { errorState ->
@@ -162,12 +182,9 @@ class CategoriesViewModel(
      */
     private fun reorderCategories(reordered: List<Category>) {
         logDebug("Reordering ${reordered.size} categories")
-        // Track category reorder
         analyticsManager.logEvent(
-            "category_crud_operation",
-            Bundle().apply {
-                putString("operation", "reorder")
-            },
+            Events.CATEGORY_CRUD_OPERATION,
+            Bundle().apply { putString(Params.OPERATION, "reorder") },
         )
         viewModelScope.launch {
             reordered.forEachIndexed { index, category ->
@@ -181,13 +198,16 @@ class CategoriesViewModel(
     }
 
     private fun deleteCategory(category: Category) {
+        if (category.isDefault) {
+            logWarn("Attempted to delete default category '${category.name}' - deletion ignored")
+            return
+        }
         logDebug("Deleting category: ${category.name}")
-        // Track category delete
         analyticsManager.logEvent(
-            "category_crud_operation",
+            Events.CATEGORY_CRUD_OPERATION,
             Bundle().apply {
-                putString("operation", "delete")
-                putString("type", category.type)
+                putString(Params.OPERATION, "delete")
+                putString(Params.TYPE, category.type)
             },
         )
         viewModelScope.launch {

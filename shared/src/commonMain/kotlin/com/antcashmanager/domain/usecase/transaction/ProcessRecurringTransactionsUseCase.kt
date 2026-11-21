@@ -7,6 +7,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.datetime.Clock
+import com.antcashmanager.domain.model.Transaction
 
 /**
  * Processes recurring transactions by checking each one and generating
@@ -22,8 +23,8 @@ public class ProcessRecurringTransactionsUseCase(
         val recurring = transactionRepository.getRecurringTransactions().first()
         val now = clock.now().toEpochMilliseconds()
 
-        val toInsert = mutableListOf<com.antcashmanager.domain.model.Transaction>()
-        val toUpdate = mutableListOf<com.antcashmanager.domain.model.Transaction>()
+        val toInsert = mutableListOf<Transaction>()
+        val toUpdate = mutableListOf<Transaction>()
 
         for (transaction in recurring) {
             val interval =

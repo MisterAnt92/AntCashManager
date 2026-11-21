@@ -36,10 +36,13 @@ sealed class CategoryEvent : UIEvent() {
 ## State (from `categories/CategoriesState.kt`)
 
 ```kotlin
+import com.antcashmanager.architecture.ErrorState
+import com.antcashmanager.architecture.UIState
+
 data class CategoriesState(
     val categories: List<Category> = emptyList(),
     val isLoading: Boolean = false,
-    val errorState: ErrorState = ErrorState(),   // com.antcashmanager.architecture.ErrorState
+    val errorState: ErrorState = ErrorState(),
 ) : UIState()   // ← required: extends UIState marker from architectureModule
 ```
 

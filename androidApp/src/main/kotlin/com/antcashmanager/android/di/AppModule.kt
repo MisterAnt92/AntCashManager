@@ -120,6 +120,9 @@ import org.koin.android.ext.koin.androidApplication
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
+import com.antcashmanager.android.ui.screen.settings.profiles.ProfilesViewModel
+import com.antcashmanager.android.util.ProfilePhotoStorage
+import com.antcashmanager.data.local.AppDatabase
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Data Layer
@@ -140,26 +143,26 @@ val dataModule =
         single<WidgetUpdateNotifier> { GlanceWidgetUpdateNotifier(androidApplication()) }
         single<ProfileRepository> {
             ProfileRepositoryImpl(
-                profileDao = get<com.antcashmanager.data.local.AppDatabase>().profileDao(),
+                profileDao = get<AppDatabase>().profileDao(),
             )
         }
         single<ProfileManager> { ProfileManagerImpl(get()) }
         single<TransactionRepository> {
             TransactionRepositoryImpl(
-                transactionDao = get<com.antcashmanager.data.local.AppDatabase>().transactionDao(),
+                transactionDao = get<AppDatabase>().transactionDao(),
                 localDataCipher = get(),
                 profileManager = get(),
                 widgetUpdateNotifier = get(),
             )
         }
         single<SettingsRepository> { SettingsRepositoryImpl(androidApplication(), get()) }
-        single { com.antcashmanager.android.util.ProfilePhotoStorage(androidApplication()) }
+        single { ProfilePhotoStorage(androidApplication()) }
         single { AutoBackupScheduler(androidApplication()) }
         single { GoogleSignInManager(androidApplication(), get<SettingsRepository>()) }
         single { DriveUploadManager(androidApplication(), get<GoogleSignInManager>(), get<SettingsRepository>()) }
         single<CategoryRepository> {
             CategoryRepositoryImpl(
-                categoryDao = get<com.antcashmanager.data.local.AppDatabase>().categoryDao(),
+                categoryDao = get<AppDatabase>().categoryDao(),
                 profileManager = get(),
             )
         }
@@ -394,6 +397,7 @@ val presentationModule =
                 performanceTracker = get<PerformanceTracker>(),
                 segmentationTracker = get<SegmentationTracker>(),
                 settingsRepository = get(),
+                analyticsManager = get(),
             )
         }
         viewModel {
@@ -459,6 +463,7 @@ val presentationModule =
                 importDebugDataUseCase = get(),
                 getProfilesUseCase = get(),
                 profileManager = get(),
+                analyticsManager = get(),
             )
         }
         viewModel {
@@ -480,6 +485,7 @@ val presentationModule =
                 googleSignInManager = get(),
                 performanceTracker = get<PerformanceTracker>(),
                 errorTracker = get<ErrorTracker>(),
+                analyticsManager = get(),
             )
         }
         viewModel {
@@ -497,7 +503,7 @@ val presentationModule =
         viewModelOf(::ThemeViewModel)
         viewModel { NavSettingsViewModel(settingsRepository = get()) }
         viewModel {
-            com.antcashmanager.android.ui.screen.settings.profiles.ProfilesViewModel(
+            ProfilesViewModel(
                 getProfilesUseCase = get(),
                 createProfileUseCase = get(),
                 updateProfileUseCase = get(),

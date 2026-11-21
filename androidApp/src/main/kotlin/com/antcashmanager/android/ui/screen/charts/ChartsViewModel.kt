@@ -3,6 +3,10 @@ package com.antcashmanager.android.ui.screen.charts
 import androidx.annotation.StringRes
 import androidx.lifecycle.viewModelScope
 import com.antcashmanager.android.R
+import android.os.Bundle
+import com.antcashmanager.android.analytics.AnalyticsConstants.Events
+import com.antcashmanager.android.analytics.AnalyticsConstants.Params
+import com.antcashmanager.android.analytics.AnalyticsManager
 import com.antcashmanager.android.analytics.tracker.PerformanceTracker
 import com.antcashmanager.android.analytics.tracker.SegmentationTracker
 import com.antcashmanager.android.ui.base.AndroidBaseViewModel
@@ -42,6 +46,7 @@ class ChartsViewModel(
     private val performanceTracker: PerformanceTracker,
     private val segmentationTracker: SegmentationTracker,
     private val settingsRepository: SettingsRepository,
+    private val analyticsManager: AnalyticsManager,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : AndroidBaseViewModel<ChartEvent, ChartsState>(ChartsState(), dispatcher) {
     constructor(
@@ -50,6 +55,7 @@ class ChartsViewModel(
         dispatcher: CoroutineDispatcher = Dispatchers.Default,
         performanceTracker: PerformanceTracker,
         segmentationTracker: SegmentationTracker,
+        analyticsManager: AnalyticsManager,
     ) : this(
         getTransactionsByDateRangeUseCase =
             GetTransactionsByDateRangeUseCase(
@@ -65,6 +71,7 @@ class ChartsViewModel(
         performanceTracker = performanceTracker,
         segmentationTracker = segmentationTracker,
         settingsRepository = settingsRepository,
+        analyticsManager = analyticsManager,
         dispatcher = dispatcher,
     )
 
@@ -162,6 +169,38 @@ class ChartsViewModel(
             is ChartEvent.RetryLastOperationEvent -> logInfo("Retry requested")
             is ChartEvent.SetChartCardsOrderEvent -> setChartCardsOrder(event.order)
             is ChartEvent.UpdateLocaleEvent -> _localeTag.value = event.languageTag
+            is ChartEvent.LogChartLoadingCompletedEvent -> analyticsManager.logEvent(
+                Events.CHART_LOADING_COMPLETED,
+                Bundle().apply { putInt(Params.DATA_POINTS, event.dataPoints) },
+            )
+            is ChartEvent.LogChartItemClickedEvent -> analyticsManager.logEvent(
+                Events.CHART_ITEM_CLICKED,
+                Bundle().apply {
+                    putString(Params.CHART_TYPE, event.chartType)
+                    putString(Params.CATEGORY, event.category)
+                },
+            )
+            is ChartEvent.LogPresetFilterAppliedEvent -> {
+                analyticsManager.logEvent(Events.CHART_DATE_FILTER_CHANGED)
+                analyticsManager.logEvent(
+                    Events.FILTER_COMBINATION_APPLIED,
+                    Bundle().apply {
+                        putInt(Params.FILTER_COUNT, 1)
+                        putString(Params.TYPES, "date")
+                    },
+                )
+            }
+            is ChartEvent.LogChartSharedEvent -> analyticsManager.logEvent(Events.CHART_SHARED)
+            is ChartEvent.LogCustomDateFilterAppliedEvent -> {
+                analyticsManager.logEvent(Events.CHART_CUSTOM_DATE_RANGE_SET)
+                analyticsManager.logEvent(
+                    Events.FILTER_COMBINATION_APPLIED,
+                    Bundle().apply {
+                        putInt(Params.FILTER_COUNT, 1)
+                        putString(Params.TYPES, "date")
+                    },
+                )
+            }
         }
     }
 

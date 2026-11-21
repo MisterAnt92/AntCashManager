@@ -27,6 +27,7 @@ import com.antcashmanager.android.util.isValidNote
 import com.antcashmanager.android.util.maskDigits
 import com.antcashmanager.android.util.translateCategory
 import com.antcashmanager.domain.model.Transaction
+import com.antcashmanager.domain.model.TransactionType
 
 /**
  * Right pane of the split layout on foldables/tablets: details of the selected transaction,
@@ -99,7 +100,7 @@ private fun TransactionDetailsPaneLightPreview() {
             transaction = Transaction(
                 id = 1L,
                 amount = 50.0,
-                type = com.antcashmanager.domain.model.TransactionType.EXPENSE,
+                type = TransactionType.EXPENSE,
                 title = "Caffè",
                 category = "Food",
                 timestamp = System.currentTimeMillis(),
@@ -118,7 +119,7 @@ private fun TransactionDetailsPaneDarkPreview() {
             transaction = Transaction(
                 id = 1L,
                 amount = 150.50,
-                type = com.antcashmanager.domain.model.TransactionType.INCOME,
+                type = TransactionType.INCOME,
                 title = "Stipendio",
                 category = "Salary",
                 timestamp = System.currentTimeMillis(),
@@ -137,7 +138,7 @@ private fun TransactionDetailsPaneLargeTextPreview() {
             transaction = Transaction(
                 id = 1L,
                 amount = 75.25,
-                type = com.antcashmanager.domain.model.TransactionType.EXPENSE,
+                type = TransactionType.EXPENSE,
                 title = "Cena",
                 category = "Food",
                 timestamp = System.currentTimeMillis(),

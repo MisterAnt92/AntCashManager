@@ -2,6 +2,7 @@ package com.antcashmanager.domain.repository
 
 import com.antcashmanager.domain.model.Transaction
 import kotlinx.coroutines.flow.Flow
+import com.antcashmanager.domain.model.TransactionSuggestions
 
 public interface TransactionRepository {
     public fun getAllTransactions(): Flow<List<Transaction>>
@@ -80,7 +81,7 @@ public interface TransactionRepository {
     public fun getDistinctTags(since: Long = 0L): Flow<List<String>>
 
     // Unified suggestions in a single query (optimized)
-    public suspend fun getSuggestions(since: Long = 0L): com.antcashmanager.domain.model.TransactionSuggestions
+    public suspend fun getSuggestions(since: Long = 0L): TransactionSuggestions
 
     /** Deletes ALL transactions belonging to [profileId]. Used when deleting a profile or in backup restore. */
     public suspend fun deleteAllTransactionsForProfile(profileId: Long)
