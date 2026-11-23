@@ -116,7 +116,8 @@ fun AntCashManagerNavHost() {
     val performanceTracker: PerformanceTracker = koinInject()
     val profileManager: ProfileManager = koinInject()
     val getProfilesUseCase: GetProfilesUseCase = koinInject()
-    val profilesResult by getProfilesUseCase().collectAsStateWithLifecycle(
+    val profilesFlow = remember { getProfilesUseCase() }
+    val profilesResult by profilesFlow.collectAsStateWithLifecycle(
         initialValue = Result.success(emptyList()),
     )
     val activeProfileId by profileManager.activeProfileId.collectAsStateWithLifecycle()
@@ -130,13 +131,19 @@ fun AntCashManagerNavHost() {
     val maskAmounts = navSettings.maskAmounts
     val analyticsConsent = navSettings.analyticsConsent
 
-    val currencyFormat =
+    val currencyFormat = remember(
+        navSettings.currencySymbol,
+        navSettings.decimalDigits,
+        navSettings.decimalSeparator,
+        navSettings.thousandsSeparator,
+    ) {
         CurrencyFormat(
             currencySymbol = navSettings.currencySymbol,
             decimalDigits = navSettings.decimalDigits,
             decimalSeparator = navSettings.decimalSeparator,
             thousandsSeparator = navSettings.thousandsSeparator,
         )
+    }
 
     if (isTutorialCompleted != null) {
         // Mostra il contenuto principale solo dopo che i dati critici sono caricati
@@ -163,7 +170,7 @@ fun AntCashManagerNavHost() {
             val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo(displayFeatures = displayFeatures)
             // ... existing AntScreenScaffold code ...
 
-            val visibleNavItems =
+            val visibleNavItems = remember(showCharts, adaptiveLayoutInfo.preferRailNavigation) {
                 buildList {
                     add(BottomNavItem.Home)
                     if (showCharts) add(BottomNavItem.Charts)
@@ -175,9 +182,10 @@ fun AntCashManagerNavHost() {
                         add(BottomNavItem.Settings)
                     }
                 }
+            }
 
             // Sidebar mostra sempre tutti gli item (incluso Charts se abilitato)
-            val sidebarNavItems =
+            val sidebarNavItems = remember(showCharts) {
                 buildList {
                     add(BottomNavItem.Home)
                     if (showCharts) add(BottomNavItem.Charts)
@@ -185,6 +193,7 @@ fun AntCashManagerNavHost() {
                     add(BottomNavItem.Categories)
                     add(BottomNavItem.Settings)
                 }
+            }
 
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentDestination = navBackStackEntry?.destination
@@ -265,11 +274,22 @@ fun AntCashManagerNavHost() {
                 prevTutorialCompleted = isTutorialCompleted
             }
 
-            // Drive reveal spotlight based on tutorial step
+            // Drive reveal spotlight based on tutorial step.
+            // Retries with 50 ms back-off because a revealable key may not yet be registered
+            // when the composable hosting it hasn't been laid out (e.g. HomeListPane lazy items).
             LaunchedEffect(tutorialState.currentStep, tutorialState.isActive) {
                 val key = stepKeyFor(tutorialState.currentStep)
                 if (tutorialState.isActive && key != null) {
-                    revealState.reveal(key)
+                    var attempts = 0
+                    while (attempts < 10) {
+                        try {
+                            revealState.reveal(key)
+                            break
+                        } catch (_: IllegalArgumentException) {
+                            attempts++
+                            kotlinx.coroutines.delay(50L)
+                        }
+                    }
                 } else {
                     revealState.hide()
                 }
