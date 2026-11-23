@@ -44,7 +44,7 @@ data class AddTransactionState(
     val mealVoucherDifference: String = "0",
     // Dati disponibili
     val categories: List<Category> = emptyList(),
-    val isLoading: Boolean = false,
+    override val isLoading: Boolean = false,
     val error: String? = null,
     val isTransactionSaved: Boolean = false,
     // Suggerimenti per campi

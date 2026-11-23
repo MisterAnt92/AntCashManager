@@ -24,7 +24,7 @@ data class HomeState(
     val totalExpense: Double = 0.0,
     val balance: Double = 0.0,
     val balanceByPaymentType: Map<PaymentType, Double> = emptyMap(),
-    val isLoading: Boolean = false,
+    override val isLoading: Boolean = false,
     val selectedPresetIndex: Int = HomeConstant.DEFAULT_PRESET_INDEX,
     val dateRangeFrom: Long = System.currentTimeMillis() - HomeConstant.ONE_WEEK_MS,
     val dateRangeTo: Long = System.currentTimeMillis(),

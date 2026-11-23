@@ -117,6 +117,8 @@ fun ChartsScreen() {
     val chartsCardOrder by viewModel.chartsCardOrder.collectAsStateWithLifecycle()
     val errorState by viewModel.state.map { it.errorState }
         .collectAsStateWithLifecycle(initialValue = ErrorState())
+    val isLoading by viewModel.state.map { it.isLoading }
+        .collectAsStateWithLifecycle(initialValue = true)
 
     ChartsContent(
         chartData = chartData,
@@ -125,6 +127,7 @@ fun ChartsScreen() {
         zoomEnabled = chartsZoomEnabled,
         chartsCardOrderRaw = chartsCardOrder,
         errorState = errorState,
+        isLoading = isLoading,
         onDateRangeChanged = { from, to -> viewModel.emitEvent(ChartEvent.SetDateRangeEvent(from, to)) },
         onPresetSelected = { preset -> viewModel.emitEvent(ChartEvent.SetPresetRangeEvent(preset)) },
         onEvent = viewModel::emitEvent,
@@ -140,10 +143,16 @@ internal fun ChartsContent(
     zoomEnabled: Boolean = false,
     chartsCardOrderRaw: String,
     errorState: ErrorState = ErrorState(),
+    isLoading: Boolean = false,
     onDateRangeChanged: (Long, Long) -> Unit = { _, _ -> },
     onPresetSelected: (RangePreset) -> Unit = {},
     onEvent: (ChartEvent) -> Unit = {},
 ) {
+    if (isLoading) {
+        ChartsSkeletonLoader()
+        return
+    }
+
     // Error state overlay (FASE 5: Error Feedback UX)
     if (errorState.isError) {
         AntErrorState(

@@ -34,8 +34,8 @@ import com.antcashmanager.android.ui.screen.home.event.HomeEvent
 import com.antcashmanager.android.ui.screen.home.transactionDetail.TransactionDetailsDialog
 
 import com.antcashmanager.android.ui.screen.home.view.HomeListPane
+import com.antcashmanager.android.ui.screen.home.view.HomeSkeletonLoader
 import com.antcashmanager.android.ui.screen.home.view.HomeTopCardsOrderDialog
-import com.antcashmanager.android.ui.screen.home.view.LoadingState
 import org.koin.androidx.compose.koinViewModel
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -167,7 +167,7 @@ internal fun HomeContent(
     }
 
     when {
-        state.isLoading -> LoadingState()
+        state.isLoading -> HomeSkeletonLoader(horizontalPadding = adaptiveLayoutInfo.horizontalPadding)
         adaptiveLayoutInfo.hasFold && foldingFeature != null ->
             FoldableAwareLayout(
                 foldingFeature = foldingFeature,

@@ -138,6 +138,7 @@ class ChartsViewModel(
                 selectedChartDetails = values[2] as ChartDetailsData?,
                 chartData = values[3] as ChartData,
                 errorState = ErrorState(),
+                isLoading = false,
             )
         }.stateIn(
             viewModelScope,
@@ -145,6 +146,7 @@ class ChartsViewModel(
             ChartsState(
                 dateRange = getDefaultDateRange(),
                 selectedPresetIndex = 1,
+                isLoading = true,
             ),
         )
 

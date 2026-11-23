@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -65,42 +66,50 @@ fun CategoryItem(
                     .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Box(
-                modifier =
-                    Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(Color(category.color)),
-                contentAlignment = Alignment.Center,
+            // Contenuto principale: dimmed quando nascosto, occhio sempre piena opacità
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .alpha(if (category.isHidden) 0.38f else 1f),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                if (icon != null) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier.size(22.dp),
-                    )
-                } else {
-                    AppText(
-                        text = translatedName.take(1).uppercase(),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                    )
+                Box(
+                    modifier =
+                        Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .background(Color(category.color)),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    if (icon != null) {
+                        Icon(
+                            imageVector = icon,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(22.dp),
+                        )
+                    } else {
+                        AppText(
+                            text = translatedName.take(1).uppercase(),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
                 }
-            }
-            HorizontalSpacer(SpacingSize.MD)
-            Column(modifier = Modifier.weight(1f)) {
-                AppText(
-                    text = translatedName,
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                if (category.isDefault) {
+                HorizontalSpacer(SpacingSize.MD)
+                Column {
                     AppText(
-                        text = stringResource(R.string.categories_default_badge),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.primary,
+                        text = translatedName,
+                        style = MaterialTheme.typography.titleMedium,
                     )
+                    if (category.isDefault) {
+                        AppText(
+                            text = stringResource(R.string.categories_default_badge),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary,
+                        )
+                    }
                 }
             }
             IconButton(onClick = onToggleHidden) {
@@ -112,7 +121,7 @@ fun CategoryItem(
                         } else {
                             stringResource(R.string.categories_hide)
                         },
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = if (category.isHidden) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
             if (!category.isDefault) {

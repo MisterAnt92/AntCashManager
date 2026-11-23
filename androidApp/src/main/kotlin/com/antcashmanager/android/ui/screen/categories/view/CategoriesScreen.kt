@@ -446,7 +446,7 @@ internal fun CategoriesContent(
                                 count = currentDefaultCategories.size,
                                 onReorder = {
                                     onEvent(CategoryEvent.LogReorderOpenedEvent)
-                                    reorderDialogCategories = currentDefaultCategories
+                                    reorderDialogCategories = currentDefaultCategories.filterNot { it.isHidden }
                                     showReorderDialog = true
                                 },
                             )
@@ -472,7 +472,7 @@ internal fun CategoriesContent(
                                 count = currentCustomCategories.size,
                                 onReorder = {
                                     onEvent(CategoryEvent.LogReorderOpenedEvent)
-                                    reorderDialogCategories = currentCustomCategories
+                                    reorderDialogCategories = currentCustomCategories.filterNot { it.isHidden }
                                     showReorderDialog = true
                                 },
                             )
@@ -498,7 +498,7 @@ internal fun CategoriesContent(
                                 count = currentDefaultCategories.size,
                                 onReorder = {
                                     onEvent(CategoryEvent.LogReorderOpenedEvent)
-                                    reorderDialogCategories = currentDefaultCategories
+                                    reorderDialogCategories = currentDefaultCategories.filterNot { it.isHidden }
                                     showReorderDialog = true
                                 },
                             )
@@ -524,7 +524,7 @@ internal fun CategoriesContent(
                                 count = currentCustomCategories.size,
                                 onReorder = {
                                     onEvent(CategoryEvent.LogReorderOpenedEvent)
-                                    reorderDialogCategories = currentCustomCategories
+                                    reorderDialogCategories = currentCustomCategories.filterNot { it.isHidden }
                                     showReorderDialog = true
                                 },
                             )
