@@ -6,6 +6,8 @@ import android.content.ContextWrapper
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
@@ -312,12 +314,6 @@ fun AntCashManagerNavHost() {
                     )
                 },
             ) {
-            // Invisible anchor for the WELCOME step (no real element to highlight)
-            Box(
-                modifier = Modifier
-                    .size(0.dp)
-                    .revealable(TutorialKey.WELCOME, state = revealState),
-            )
             Box(modifier = Modifier.fillMaxSize()) {
                 AntScreenScaffold(
                     showTopBar = false,
@@ -347,6 +343,7 @@ fun AntCashManagerNavHost() {
                                     visibleNavItems.forEach { item ->
                                         val isSelected =
                                             currentDestination?.hierarchy?.any { it.route == item.route } == true
+                                        val tutorialKey = navItemToTutorialKey(item)
                                         NavigationBarItem(
                                             selected = isSelected,
                                             onClick = {
@@ -357,7 +354,10 @@ fun AntCashManagerNavHost() {
                                                 analyticsManager.logEvent("sidebar_navigation_clicked", params)
                                                 navController.navigateToBottomTab(item.route)
                                             },
-                                            modifier = Modifier.testTag("nav_${item.route}"),
+                                            modifier = if (tutorialKey != null)
+                                                Modifier.testTag("nav_${item.route}").revealable(tutorialKey, state = revealState)
+                                            else
+                                                Modifier.testTag("nav_${item.route}"),
                                             icon = {
                                                 Icon(
                                                     item.icon,
@@ -834,65 +834,65 @@ fun AntCashManagerNavHost() {
                     }
                 }
 
-                // Sidebar animata (slide in/out) con dimming overlay - LIVELLO TOP-LEVEL FUORI DALLO SCAFFOLD
-                // Posizionato SOPRA lo Scaffold per coprire tutta la superficie dello schermo (inclusi i margini)
+                // Dimming overlay con fade indipendente dallo slide della sidebar
+                AnimatedVisibility(
+                    visible = isSidebarOpen,
+                    enter = fadeIn(animationSpec = tween(200)),
+                    exit = fadeOut(animationSpec = tween(200)),
+                ) {
+                    Box(
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .background(Color.Black.copy(alpha = 0.3f))
+                                .clickable(
+                                    enabled = isSidebarOpen,
+                                    indication = null,
+                                    interactionSource = remember { MutableInteractionSource() },
+                                ) {
+                                    analyticsManager.logEvent(
+                                        "sidebar_toggled",
+                                        android.os.Bundle().apply { putBoolean("isOpen", false) },
+                                    )
+                                    isSidebarOpen = false
+                                },
+                    )
+                }
+
+                // Sidebar animata con solo slide — non trascina l'overlay
                 AnimatedVisibility(
                     visible = isSidebarOpen,
                     enter = slideInHorizontally(initialOffsetX = { -it }, animationSpec = tween(300)),
                     exit = slideOutHorizontally(targetOffsetX = { -it }, animationSpec = tween(300)),
                 ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                    ) {
-                        // Dimming overlay - copre TUTTA la superficie dello schermo senza alcun margine
-                        Box(
-                            modifier =
-                                Modifier
-                                    .fillMaxSize()
-                                    .background(Color.Black.copy(alpha = 0.3f))
-                                    .clickable(
-                                        enabled = isSidebarOpen,
-                                        indication = null,
-                                        interactionSource = remember { MutableInteractionSource() },
-                                    ) {
-                                        analyticsManager.logEvent(
-                                            "sidebar_toggled",
-                                            android.os.Bundle().apply { putBoolean("isOpen", false) },
-                                        )
-                                        isSidebarOpen = false
-                                    },
-                        )
-
-                        // Sidebar - non propagates clicks al dimming overlay
-                        LeftSidebar(
-                            selectedRoute = currentDestination?.route,
-                            onNavigate = { route ->
-                                analyticsManager.logEvent(
-                                    "sidebar_navigation_clicked",
-                                    android.os.Bundle().apply { putString("destination", route) },
-                                )
-                                navController.navigate(route) {
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        saveState = true
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
+                    LeftSidebar(
+                        selectedRoute = currentDestination?.route,
+                        onNavigate = { route ->
+                            analyticsManager.logEvent(
+                                "sidebar_navigation_clicked",
+                                android.os.Bundle().apply { putString("destination", route) },
+                            )
+                            navController.navigate(route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
                                 }
-                                isSidebarOpen = false
-                            },
-                            visibleNavItems = sidebarNavItems,
-                            activeProfile = activeProfile,
-                            onProfileClick = {
-                                analyticsManager.logEvent("sidebar_profile_header_clicked")
-                                navController.navigate(AppRoute.SettingsRoute.Profiles.route) {
-                                    launchSingleTop = true
-                                }
-                                isSidebarOpen = false
-                            },
-                            onHeaderClick = { showAntAnimation = true },
-                            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
-                        )
-                    }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                            isSidebarOpen = false
+                        },
+                        visibleNavItems = sidebarNavItems,
+                        activeProfile = activeProfile,
+                        onProfileClick = {
+                            analyticsManager.logEvent("sidebar_profile_header_clicked")
+                            navController.navigate(AppRoute.SettingsRoute.Profiles.route) {
+                                launchSingleTop = true
+                            }
+                            isSidebarOpen = false
+                        },
+                        onHeaderClick = { showAntAnimation = true },
+                        modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
+                    )
                 }
             }
 
@@ -937,10 +937,10 @@ val LocalRevealState = androidx.compose.runtime.compositionLocalOf<RevealState?>
 
 private fun navItemToTutorialKey(item: BottomNavItem): TutorialKey? =
     when (item) {
-        BottomNavItem.Charts -> TutorialKey.CHARTS_NAV
-        BottomNavItem.Categories -> TutorialKey.CATEGORIES_NAV
-        BottomNavItem.Settings -> TutorialKey.SETTINGS_NAV
-        else -> null
+        BottomNavItem.Charts       -> TutorialKey.CHARTS_NAV
+        BottomNavItem.Transactions -> TutorialKey.TRANSACTIONS_NAV
+        BottomNavItem.Categories   -> TutorialKey.CATEGORIES_NAV
+        else                       -> null
     }
 
 private tailrec fun Context.findActivity(): Activity? =

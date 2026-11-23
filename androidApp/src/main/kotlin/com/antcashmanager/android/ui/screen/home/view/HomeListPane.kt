@@ -120,17 +120,9 @@ fun HomeListPane(
                         onToDateEdit = onToDateEdit,
                     )
                 }
-                state.visibleTopCards.forEachIndexed { index, topCardType ->
+                state.visibleTopCards.forEach { topCardType ->
                     item(key = topCardType.storageKey) {
-                        Box(
-                            modifier = if (index == 0 && revealState != null) {
-                                Modifier.revealable(TutorialKey.BALANCE_CARD, state = revealState)
-                            } else {
-                                Modifier
-                            },
-                        ) {
-                            TopCard(topCardType, state)
-                        }
+                        TopCard(topCardType, state)
                     }
                 }
             }
@@ -144,7 +136,7 @@ fun HomeListPane(
                     modifier = if (revealState != null) {
                         Modifier
                             .testTag(RECENT_COUNT_TAG)
-                            .revealable(TutorialKey.TRANSACTIONS, state = revealState)
+                            .revealable(TutorialKey.HOME_TRANSACTIONS, state = revealState)
                     } else {
                         Modifier.testTag(RECENT_COUNT_TAG)
                     },

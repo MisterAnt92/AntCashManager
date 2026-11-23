@@ -53,13 +53,11 @@ fun TutorialTooltipContent(
         R.string.tutorial_finish_title
     } else {
         when (key) {
-            TutorialKey.WELCOME -> R.string.tutorial_welcome_title
-            TutorialKey.BALANCE_CARD -> R.string.tutorial_dashboard_title
-            TutorialKey.TRANSACTIONS -> R.string.tutorial_transactions_title
-            TutorialKey.CHARTS_NAV -> R.string.tutorial_charts_title
-            TutorialKey.CATEGORIES_NAV -> R.string.tutorial_categories_title
-            TutorialKey.SETTINGS_NAV -> R.string.tutorial_settings_title
-            null -> R.string.tutorial_finish_title
+            TutorialKey.HOME_TRANSACTIONS -> R.string.tutorial_transactions_title
+            TutorialKey.CHARTS_NAV        -> R.string.tutorial_charts_title
+            TutorialKey.TRANSACTIONS_NAV  -> R.string.tutorial_add_transaction_title
+            TutorialKey.CATEGORIES_NAV    -> R.string.tutorial_categories_title
+            null                          -> R.string.tutorial_finish_title
         }
     }
 
@@ -67,13 +65,11 @@ fun TutorialTooltipContent(
         R.string.tutorial_finish_desc
     } else {
         when (key) {
-            TutorialKey.WELCOME -> R.string.tutorial_welcome_desc
-            TutorialKey.BALANCE_CARD -> R.string.tutorial_dashboard_desc
-            TutorialKey.TRANSACTIONS -> R.string.tutorial_transactions_desc
-            TutorialKey.CHARTS_NAV -> R.string.tutorial_charts_desc
-            TutorialKey.CATEGORIES_NAV -> R.string.tutorial_categories_desc
-            TutorialKey.SETTINGS_NAV -> R.string.tutorial_settings_desc
-            null -> R.string.tutorial_finish_desc
+            TutorialKey.HOME_TRANSACTIONS -> R.string.tutorial_transactions_desc
+            TutorialKey.CHARTS_NAV        -> R.string.tutorial_charts_desc
+            TutorialKey.TRANSACTIONS_NAV  -> R.string.tutorial_add_transaction_desc
+            TutorialKey.CATEGORIES_NAV    -> R.string.tutorial_categories_desc
+            null                          -> R.string.tutorial_finish_desc
         }
     }
 
@@ -168,8 +164,8 @@ private fun TutorialDots(
 private fun TutorialTooltipContentPreviewLight() {
     AntCashManagerTheme {
         TutorialTooltipContent(
-            key = TutorialKey.BALANCE_CARD,
-            state = TutorialState(currentStep = 1, isActive = true),
+            key = TutorialKey.HOME_TRANSACTIONS,
+            state = TutorialState(currentStep = 0, isActive = true),
             onEvent = {},
         )
     }
@@ -184,7 +180,7 @@ private fun TutorialTooltipContentPreviewLight() {
 private fun TutorialTooltipContentPreviewDark() {
     AntCashManagerTheme(darkTheme = true) {
         TutorialTooltipContent(
-            key = TutorialKey.BALANCE_CARD,
+            key = TutorialKey.CHARTS_NAV,
             state = TutorialState(currentStep = 1, isActive = true),
             onEvent = {},
         )
@@ -196,8 +192,8 @@ private fun TutorialTooltipContentPreviewDark() {
 private fun TutorialTooltipContentPreview2xFont() {
     AntCashManagerTheme {
         TutorialTooltipContent(
-            key = TutorialKey.SETTINGS_NAV,
-            state = TutorialState(currentStep = 5, isActive = true),
+            key = TutorialKey.CATEGORIES_NAV,
+            state = TutorialState(currentStep = 3, isActive = true),
             onEvent = {},
         )
     }
