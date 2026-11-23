@@ -36,7 +36,7 @@ sealed class CategoryEvent : UIEvent() {
         val reordered: List<Category>,
     ) : CategoryEvent()
 
-    data object RetryLastOperationEvent : CategoryEvent()
+    data object RestoreDefaultCategoriesEvent : CategoryEvent()
 
     data class LogItemClickedEvent(
         val categoryName: String,

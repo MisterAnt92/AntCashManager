@@ -504,6 +504,8 @@
     <string name="tutorial_add_transaction_desc">點擊此處快速記錄新的收入或支出。</string>
     <string name="tutorial_categories_title">分類</string>
     <string name="tutorial_categories_desc">使用自訂分類、圖示和顏色來組織您的交易。</string>
+    <string name="tutorial_sidebar_title">選單與分類</string>
+    <string name="tutorial_sidebar_desc">點擊選單圖示，從側邊欄存取分類、設定及更多功能。</string>
     <string name="tutorial_finish_title">一切準備就緒！</string>
     <string name="tutorial_finish_desc">今天就開始使用 AntCashManager 開啟您的財務之旅吧。理財愉快！</string>
     <string name="tutorial_next">下一步</string>
@@ -711,4 +713,5 @@
     <string name="app_icon_description">應用程式圖示</string>
     <string name="transaction_add_tag_description">新增標籤</string>
     <string name="transaction_remove_tag_description">刪除</string>
+    <string name="categories_restore_defaults">還原預設類別</string>
 </resources>

@@ -507,6 +507,8 @@
     <string name="tutorial_add_transaction_desc">새 수입이나 지출을 빠르게 기록하려면 여기를 탭하세요.</string>
     <string name="tutorial_categories_title">카테고리</string>
     <string name="tutorial_categories_desc">맞춤형 카테고리, 아이콘, 색상으로 거래를 정리하세요.</string>
+    <string name="tutorial_sidebar_title">메뉴 및 카테고리</string>
+    <string name="tutorial_sidebar_desc">메뉴 아이콘을 탭하여 사이드바에서 카테고리, 설정 등에 접근하세요.</string>
     <string name="tutorial_finish_title">준비가 끝났습니다!</string>
     <string name="tutorial_finish_desc">오늘부터 AntCashManager와 함께 재정 여정을 시작하세요. 즐거운 저축 되세요!</string>
     <string name="tutorial_next">다음</string>
@@ -721,4 +723,5 @@
     <string name="app_icon_description">앱 아이콘</string>
     <string name="transaction_add_tag_description">태그 추가</string>
     <string name="transaction_remove_tag_description">제거</string>
+    <string name="categories_restore_defaults">기본 카테고리 복원</string>
 </resources>

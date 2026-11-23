@@ -508,6 +508,8 @@
     <string name="tutorial_add_transaction_desc">Нажмите здесь, чтобы быстро записать новый доход или расход.</string>
     <string name="tutorial_categories_title">Категории</string>
     <string name="tutorial_categories_desc">Организуйте транзакции с помощью собственных категорий, значков и цветов.</string>
+    <string name="tutorial_sidebar_title">Меню и категории</string>
+    <string name="tutorial_sidebar_desc">Нажмите на иконку меню, чтобы открыть Категории, Настройки и другие функции из боковой панели.</string>
     <string name="tutorial_finish_title">Все готово!</string>
     <string name="tutorial_finish_desc">Начните свой финансовый путь с AntCashManager сегодня. Удачных накоплений!</string>
     <string name="tutorial_next">Далее</string>
@@ -722,4 +724,5 @@
     <string name="app_icon_description">Значок приложения</string>
     <string name="transaction_add_tag_description">Добавить тег</string>
     <string name="transaction_remove_tag_description">Удалить</string>
+    <string name="categories_restore_defaults">Восстановить категории по умолчанию</string>
 </resources>

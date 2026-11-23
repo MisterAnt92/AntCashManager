@@ -530,6 +530,8 @@
     <string name="tutorial_add_transaction_desc">Toca aquí para registrar rápidamente un nuevo ingreso o gasto.</string>
     <string name="tutorial_categories_title">Categorías</string>
     <string name="tutorial_categories_desc">Organiza tus transacciones con categorías personalizadas, iconos y colores.</string>
+    <string name="tutorial_sidebar_title">Menú y categorías</string>
+    <string name="tutorial_sidebar_desc">Toca el icono del menú para acceder a Categorías, Ajustes y más desde la barra lateral.</string>
     <string name="tutorial_finish_title">¡Estás listo!</string>
     <string name="tutorial_finish_desc">Comienza tu viaje financiero con AntCashManager hoy. ¡Feliz ahorro!</string>
     <string name="tutorial_next">Siguiente</string>
@@ -661,4 +663,5 @@
     <string name="app_icon_description">Icono de la app</string>
     <string name="transaction_add_tag_description">Añadir etiqueta</string>
     <string name="transaction_remove_tag_description">Eliminar</string>
+    <string name="categories_restore_defaults">Restaurar categorías predeterminadas</string>
 </resources>

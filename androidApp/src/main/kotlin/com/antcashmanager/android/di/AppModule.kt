@@ -57,6 +57,7 @@ import com.antcashmanager.domain.usecase.category.DeleteCategoryUseCase
 import com.antcashmanager.domain.usecase.category.EnsureDefaultCategoriesUseCase
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.category.InsertCategoryUseCase
+import com.antcashmanager.domain.usecase.category.RestoreDefaultCategoriesUseCase
 import com.antcashmanager.domain.usecase.category.UpdateCategoryUseCase
 import com.antcashmanager.domain.usecase.profile.CreateProfileUseCase
 import com.antcashmanager.domain.usecase.profile.DeleteProfileUseCase
@@ -223,6 +224,7 @@ val useCaseModule =
         factory { UpdateCategoryUseCase(categoryRepository = get()) }
         factory { DeleteCategoryUseCase(categoryRepository = get()) }
         factory { EnsureDefaultCategoriesUseCase(categoryRepository = get()) }
+        factory { RestoreDefaultCategoriesUseCase(categoryRepository = get()) }
 
         // Profile use cases
         factory { GetProfilesUseCase(profileRepository = get()) }
@@ -386,6 +388,7 @@ val presentationModule =
                 insertCategoryUseCase = get(),
                 updateCategoryUseCase = get(),
                 deleteCategoryUseCase = get(),
+                restoreDefaultCategoriesUseCase = get(),
                 syncTransactionCategoriesUseCase = get(),
                 analyticsManager = get(),
             )

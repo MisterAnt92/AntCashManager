@@ -10,6 +10,7 @@ import com.antcashmanager.domain.model.Category
 import com.antcashmanager.domain.usecase.category.DeleteCategoryUseCase
 import com.antcashmanager.domain.usecase.category.GetCategoriesUseCase
 import com.antcashmanager.domain.usecase.category.InsertCategoryUseCase
+import com.antcashmanager.domain.usecase.category.RestoreDefaultCategoriesUseCase
 import com.antcashmanager.domain.usecase.category.UpdateCategoryUseCase
 import com.antcashmanager.domain.usecase.transaction.SyncTransactionCategoriesUseCase
 import kotlinx.coroutines.CancellationException
@@ -21,6 +22,7 @@ class CategoriesViewModel(
     private val insertCategoryUseCase: InsertCategoryUseCase,
     private val updateCategoryUseCase: UpdateCategoryUseCase,
     private val deleteCategoryUseCase: DeleteCategoryUseCase,
+    private val restoreDefaultCategoriesUseCase: RestoreDefaultCategoriesUseCase,
     private val syncTransactionCategoriesUseCase: SyncTransactionCategoriesUseCase,
     private val analyticsManager: AnalyticsManager,
 ) : AndroidBaseViewModel<CategoryEvent, CategoriesState>(CategoriesState()) {
@@ -43,8 +45,6 @@ class CategoriesViewModel(
                                 customExpenseCategories = expense.filter { category -> !category.isDefault },
                                 defaultIncomeCategories = income.filter { category -> category.isDefault },
                                 customIncomeCategories = income.filter { category -> !category.isDefault },
-                                hiddenExpenseCategories = expense.filter { category -> category.isHidden },
-                                hiddenIncomeCategories = income.filter { category -> category.isHidden },
                             )
                         }
                         // Track category type distribution
@@ -71,7 +71,7 @@ class CategoriesViewModel(
             is CategoryEvent.DeleteCategoryEvent -> deleteCategory(event.category)
             is CategoryEvent.SetCategoryHiddenEvent -> setCategoryHidden(event.category, event.hidden)
             is CategoryEvent.ReorderCategoriesEvent -> reorderCategories(event.reordered)
-            is CategoryEvent.RetryLastOperationEvent -> logInfo("Retry requested")
+            is CategoryEvent.RestoreDefaultCategoriesEvent -> restoreDefaultCategories()
             is CategoryEvent.LogItemClickedEvent -> logCategoryItemClicked(event.categoryName, event.index)
             is CategoryEvent.LogReorderOpenedEvent -> analyticsManager.logEvent(Events.CATEGORIES_REORDER_OPENED)
             is CategoryEvent.SelectTabEvent -> _state.update { it.copy(selectedTabIndex = event.index) }
@@ -157,6 +157,15 @@ class CategoriesViewModel(
         }
     }
 
+    private fun restoreDefaultCategories() {
+        logInfo("Restoring default categories")
+        viewModelScope.launch {
+            restoreDefaultCategoriesUseCase().handleError { errorState ->
+                _state.update { it.copy(errorState = errorState) }
+            }
+        }
+    }
+
     /**
      * Nasconde/mostra di nuovo una categoria senza cancellarla. A differenza di [updateCategory],
      * non propaga nulla alle transazioni esistenti: nome/icona/colore non cambiano, quindi la
@@ -167,6 +176,10 @@ class CategoriesViewModel(
         category: Category,
         hidden: Boolean,
     ) {
+        if (category.isDefault) {
+            logWarn("Attempted to hide default category '${category.name}' - ignored")
+            return
+        }
         analyticsManager.logEvent(if (hidden) Events.CATEGORY_HIDDEN else Events.CATEGORY_SHOWN)
         logDebug("Setting category '${category.name}' hidden=$hidden")
         viewModelScope.launch {

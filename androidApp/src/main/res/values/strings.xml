@@ -531,6 +531,8 @@
     <string name="tutorial_add_transaction_desc">Tap here to quickly record a new income or expense.</string>
     <string name="tutorial_categories_title">Categories</string>
     <string name="tutorial_categories_desc">Organize your transactions with custom categories, icons, and colors.</string>
+    <string name="tutorial_sidebar_title">Menu &amp; Categories</string>
+    <string name="tutorial_sidebar_desc">Tap the menu icon to access Categories, Settings, and more from the sidebar.</string>
     <string name="tutorial_finish_title">You\'re all set!</string>
     <string name="tutorial_finish_desc">Start your financial journey with AntCashManager today. Happy saving!</string>
     <string name="tutorial_next">Next</string>
@@ -725,4 +727,5 @@
     <string name="month_short_10">Oct</string>
     <string name="month_short_11">Nov</string>
     <string name="month_short_12">Dec</string>
+    <string name="categories_restore_defaults">Restore default categories</string>
 </resources>

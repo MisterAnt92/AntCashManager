@@ -50,7 +50,6 @@ import com.antcashmanager.domain.model.Category
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AddCategoryDialog(
-    currentType: String,
     categoryToEdit: Category? = null,
     onConfirm: (String, String, Long, Boolean) -> Unit,
     onDismiss: () -> Unit,
@@ -88,8 +87,8 @@ fun AddCategoryDialog(
                 )
                 VerticalSpacer(SpacingSize.MD)
 
-                // Visibility Toggle (when editing)
-                if (isEditing) {
+                // Visibility Toggle (solo categorie custom in edit mode)
+                if (isEditing && categoryToEdit?.isDefault == false) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -248,7 +247,6 @@ fun AddCategoryDialog(
 private fun AddCategoryDialogLightPreview() {
     AntCashManagerTheme(dynamicColor = false) {
         AddCategoryDialog(
-            currentType = "EXPENSE",
             onConfirm = { _, _, _, _ -> },
             onDismiss = {},
         )
@@ -260,7 +258,6 @@ private fun AddCategoryDialogLightPreview() {
 private fun AddCategoryDialogDarkPreview() {
     AntCashManagerTheme(darkTheme = true, dynamicColor = false) {
         AddCategoryDialog(
-            currentType = "EXPENSE",
             onConfirm = { _, _, _, _ -> },
             onDismiss = {},
         )
@@ -272,7 +269,6 @@ private fun AddCategoryDialogDarkPreview() {
 private fun AddCategoryDialogLargeTextPreview() {
     AntCashManagerTheme(dynamicColor = false) {
         AddCategoryDialog(
-            currentType = "EXPENSE",
             onConfirm = { _, _, _, _ -> },
             onDismiss = {},
         )

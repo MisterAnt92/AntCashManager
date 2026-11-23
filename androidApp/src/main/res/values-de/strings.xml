@@ -593,6 +593,8 @@
     <string name="tutorial_add_transaction_desc">Tippen Sie hier, um schnell eine neue Einnahme oder Ausgabe zu erfassen.</string>
     <string name="tutorial_categories_title">Kategorien</string>
     <string name="tutorial_categories_desc">Organisieren Sie Ihre Transaktionen mit benutzerdefinierten Kategorien, Symbolen und Farben.</string>
+    <string name="tutorial_sidebar_title">Menü &amp; Kategorien</string>
+    <string name="tutorial_sidebar_desc">Tippen Sie auf das Menüsymbol, um über die Seitenleiste auf Kategorien, Einstellungen und mehr zuzugreifen.</string>
     <string name="tutorial_finish_title">Sie sind bereit!</string>
     <string name="tutorial_finish_desc">Beginnen Sie heute Ihre finanzielle Reise mit AntCashManager. Viel Spaß beim Sparen!</string>
     <string name="tutorial_next">Weiter</string>
@@ -710,4 +712,5 @@
     <string name="app_icon_description">App-Symbol</string>
     <string name="transaction_add_tag_description">Tag hinzufügen</string>
     <string name="transaction_remove_tag_description">Entfernen</string>
+    <string name="categories_restore_defaults">Standardkategorien wiederherstellen</string>
 </resources>

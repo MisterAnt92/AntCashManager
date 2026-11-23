@@ -504,6 +504,8 @@
     <string name="tutorial_add_transaction_desc">नई आय या व्यय जल्दी दर्ज करने के लिए यहाँ टैप करें।</string>
     <string name="tutorial_categories_title">श्रेणियां</string>
     <string name="tutorial_categories_desc">कस्टम श्रेणियों, आइकन और रंगों के साथ अपने लेनदेन व्यवस्थित करें।</string>
+    <string name="tutorial_sidebar_title">मेनू और श्रेणियां</string>
+    <string name="tutorial_sidebar_desc">साइडबार से श्रेणियां, सेटिंग और अन्य सुविधाओं तक पहुंचने के लिए मेनू आइकन पर टैप करें।</string>
     <string name="tutorial_finish_title">आप पूरी तरह तैयार हैं!</string>
     <string name="tutorial_finish_desc">आज ही AntCashManager के साथ अपनी वित्तीय यात्रा शुरू करें। खुश बचत!</string>
     <string name="tutorial_next">अगला</string>
@@ -718,4 +720,5 @@
     <string name="app_icon_description">ऐप आइकन</string>
     <string name="transaction_add_tag_description">टैग जोड़ें</string>
     <string name="transaction_remove_tag_description">हटाएं</string>
+    <string name="categories_restore_defaults">डिफ़ॉल्ट श्रेणियाँ पुनर्स्थापित करें</string>
 </resources>

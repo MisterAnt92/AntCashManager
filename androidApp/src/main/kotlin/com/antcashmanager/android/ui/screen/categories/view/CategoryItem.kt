@@ -112,17 +112,19 @@ fun CategoryItem(
                     }
                 }
             }
-            IconButton(onClick = onToggleHidden) {
-                Icon(
-                    imageVector = if (category.isHidden) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                    contentDescription =
-                        if (category.isHidden) {
-                            stringResource(R.string.categories_show)
-                        } else {
-                            stringResource(R.string.categories_hide)
-                        },
-                    tint = if (category.isHidden) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+            if (!category.isDefault) {
+                IconButton(onClick = onToggleHidden) {
+                    Icon(
+                        imageVector = if (category.isHidden) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                        contentDescription =
+                            if (category.isHidden) {
+                                stringResource(R.string.categories_show)
+                            } else {
+                                stringResource(R.string.categories_hide)
+                            },
+                        tint = if (category.isHidden) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
             if (!category.isDefault) {
                 IconButton(onClick = onDelete) {

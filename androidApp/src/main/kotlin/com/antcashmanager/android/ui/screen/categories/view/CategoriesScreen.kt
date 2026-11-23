@@ -105,7 +105,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.antcashmanager.android.R
 import com.antcashmanager.android.navigation.LocalScreenHeaderConfigCallback
 import com.antcashmanager.android.navigation.ScreenHeaderConfig
-import com.antcashmanager.android.ui.base.LocalMultiPaneCoordinator
 import com.antcashmanager.android.ui.components.layout.FoldableAwareLayout
 import com.antcashmanager.android.ui.components.layout.LocalDisplayFeatures
 import com.antcashmanager.android.ui.components.layout.SpacingSize
@@ -335,7 +334,6 @@ internal fun CategoriesContent(
     // Foldable device support
     val displayFeatures = LocalDisplayFeatures.current
     val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo(displayFeatures = displayFeatures)
-    val multiPaneCoordinator = LocalMultiPaneCoordinator.current
     val foldingFeature = adaptiveLayoutInfo.foldingFeature
 
     val tabs =
@@ -488,6 +486,14 @@ internal fun CategoriesContent(
                                 onToggleHidden = { onSetCategoryHidden(category, !category.isHidden) },
                             )
                         }
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            TextButton(
+                                onClick = { onEvent(CategoryEvent.RestoreDefaultCategoriesEvent) },
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                AppText(stringResource(R.string.categories_restore_defaults))
+                            }
+                        }
                         item(span = { GridItemSpan(maxLineSpan) }) { VerticalSpacer(SpacingSize.XXXL) }
                     }
                 } else {
@@ -540,6 +546,14 @@ internal fun CategoriesContent(
                                 onToggleHidden = { onSetCategoryHidden(category, !category.isHidden) },
                             )
                         }
+                        item {
+                            TextButton(
+                                onClick = { onEvent(CategoryEvent.RestoreDefaultCategoriesEvent) },
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                AppText(stringResource(R.string.categories_restore_defaults))
+                            }
+                        }
                         item { VerticalSpacer(SpacingSize.XXXL) }
                     }
                 }
@@ -547,55 +561,7 @@ internal fun CategoriesContent(
         }
     }
 
-    // FASE 1: Composable for category details pane
-    @Composable
-    fun CategoryDetailsPane(category: Category) {
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            AppText(
-                text = "Details",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-            )
-
-            AppText(
-                text = translateCategory(category.name),
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-            )
-
-            AppText(
-                text = category.type,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-
-            Box(
-                modifier =
-                    Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                        .background(Color(category.color)),
-                contentAlignment = Alignment.Center,
-            ) {
-                categoryIconMap[category.icon]?.let { icon ->
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier.size(24.dp),
-                    )
-                }
-            }
-        }
-    }
-
-    // FASE 1: Main layout logic - split-pane or single-pane
+    // Main layout logic - split-pane or single-pane
     if (adaptiveLayoutInfo.hasFold && foldingFeature != null) {
         FoldableAwareLayout(
             foldingFeature = foldingFeature,
@@ -625,7 +591,6 @@ internal fun CategoriesContent(
 
     if (showAddDialog || categoryToEdit != null) {
         AddCategoryDialog(
-            currentType = currentType,
             categoryToEdit = categoryToEdit,
             onConfirm = { name, icon, color, isHidden ->
                 if (categoryToEdit != null) {
@@ -835,7 +800,6 @@ private fun CategoriesContentDarkPreview() {
 private fun AddCategoryDialogPreview() {
     AntCashManagerTheme(dynamicColor = false) {
         AddCategoryDialog(
-            currentType = "EXPENSE",
             onConfirm = { _, _, _, _ -> },
             onDismiss = {},
         )
